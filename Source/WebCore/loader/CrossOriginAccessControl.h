@@ -79,10 +79,10 @@ WEBCORE_EXPORT void cleanHTTPRequestHeadersForAccessControl(ResourceRequest&, Op
 
 class WEBCORE_EXPORT CrossOriginAccessControlCheckDisabler {
 public:
-    static CrossOriginAccessControlCheckDisabler& NODELETE singleton();
+    static CrossOriginAccessControlCheckDisabler& LEGACY_NODELETE singleton();
     virtual ~CrossOriginAccessControlCheckDisabler() = default;
-    void NODELETE setCrossOriginAccessControlCheckEnabled(bool);
-    virtual bool NODELETE crossOriginAccessControlCheckEnabled() const;
+    void LEGACY_NODELETE setCrossOriginAccessControlCheckEnabled(bool);
+    virtual bool LEGACY_NODELETE crossOriginAccessControlCheckEnabled() const;
 private:
     bool m_accessControlCheckEnabled { true };
 };

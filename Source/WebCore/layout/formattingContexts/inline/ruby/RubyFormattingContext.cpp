@@ -39,18 +39,18 @@
 namespace WebCore {
 namespace Layout {
 
-static inline InlineLayoutUnit NODELETE fullWidthAdvance(const Box& box)
+static inline InlineLayoutUnit LEGACY_NODELETE fullWidthAdvance(const Box& box)
 {
     // A fullwidth character (including fullwidth punctuation) advances one em.
     return box.style().usedFontSize();
 }
 
-static inline InlineLayoutUnit NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)
+static inline InlineLayoutUnit LEGACY_NODELETE halfOfAFullWidthCharacter(const Box& annotationBox)
 {
     return fullWidthAdvance(annotationBox) / 2.f;
 }
 
-static inline size_t NODELETE baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
+static inline size_t LEGACY_NODELETE baseContentIndex(size_t rubyBaseStart, std::span<InlineDisplay::Box> boxes)
 {
     auto baseContentIndex = rubyBaseStart + 1;
     if (boxes[baseContentIndex].layoutBox().isRubyAnnotationBox())
@@ -58,7 +58,7 @@ static inline size_t NODELETE baseContentIndex(size_t rubyBaseStart, std::span<I
     return baseContentIndex;
 }
 
-static RubyPosition NODELETE rubyPosition(const Box& rubyBaseLayoutBox)
+static RubyPosition LEGACY_NODELETE rubyPosition(const Box& rubyBaseLayoutBox)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto computedRubyPosition = rubyBaseLayoutBox.style().rubyPosition();

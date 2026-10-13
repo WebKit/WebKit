@@ -73,7 +73,7 @@ template<> struct CSSValueConversion<OffsetRotate> { OffsetRotate operator()(Bui
 // MARK: - Blending
 
 template<> struct Blending<OffsetRotate> {
-    bool NODELETE canBlend(const OffsetRotate&, const OffsetRotate&);
+    bool LEGACY_NODELETE canBlend(const OffsetRotate&, const OffsetRotate&);
     auto blend(const OffsetRotate&, const OffsetRotate&, const BlendingContext&) -> OffsetRotate;
 };
 
@@ -82,7 +82,7 @@ template<> struct Blending<OffsetRotate> {
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<OffsetRotate, AcceleratedEffectOffsetRotate> {
-    AcceleratedEffectOffsetRotate NODELETE operator()(const OffsetRotate&);
+    AcceleratedEffectOffsetRotate LEGACY_NODELETE operator()(const OffsetRotate&);
 };
 
 #endif

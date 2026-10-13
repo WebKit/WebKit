@@ -51,7 +51,7 @@ public:
 
     virtual ~VideoTrackPrivateMediaSourceAVFObjC();
 
-    AVAssetTrack* NODELETE assetTrack() const;
+    AVAssetTrack* LEGACY_NODELETE assetTrack() const;
 
     FloatSize naturalSize() const;
 

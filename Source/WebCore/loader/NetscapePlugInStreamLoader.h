@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT static void create(LocalFrame&, NetscapePlugInStreamLoaderClient&, ResourceRequest&&, FetchOptions::Destination, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&&);
     virtual ~NetscapePlugInStreamLoader();
 
-    WEBCORE_EXPORT bool NODELETE isDone() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isDone() const;
 
 private:
     void init(ResourceRequest&&, CompletionHandler<void(bool)>&&) override;

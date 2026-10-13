@@ -40,7 +40,7 @@ public:
 protected:
     MainThreadStylePropertyMapReadOnly();
 
-    static Document* NODELETE documentFromContext(ScriptExecutionContext&);
+    static Document* LEGACY_NODELETE documentFromContext(ScriptExecutionContext&);
 
     virtual RefPtr<CSSValue> propertyValue(CSSPropertyID) const = 0;
     virtual String shorthandPropertySerialization(CSSPropertyID) const = 0;

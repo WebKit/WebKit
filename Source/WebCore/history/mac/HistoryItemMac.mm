@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-id NODELETE HistoryItem::viewState() const
+id LEGACY_NODELETE HistoryItem::viewState() const
 {
     return m_viewState.get();
 }

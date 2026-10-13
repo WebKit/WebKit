@@ -83,8 +83,8 @@ public:
     // Returns true if the position changed. In that case, the flexItem will have to be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    bool NODELETE isComputingFlexBaseSizes() const;
-    bool NODELETE isInCrossAxisStretchLayout() const;
+    bool LEGACY_NODELETE isComputingFlexBaseSizes() const;
+    bool LEGACY_NODELETE isInCrossAxisStretchLayout() const;
 
 protected:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;

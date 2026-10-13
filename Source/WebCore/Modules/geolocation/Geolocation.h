@@ -65,7 +65,7 @@ public:
     WEBCORE_EXPORT ~Geolocation();
 
     WEBCORE_EXPORT void resetAllGeolocationPermission();
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     void getCurrentPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
@@ -82,8 +82,8 @@ public:
     void setError(GeolocationError&);
     bool shouldBlockGeolocationRequests();
 
-    Navigator* NODELETE navigator();
-    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
+    Navigator* LEGACY_NODELETE navigator();
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE frame() const;
 
 private:
     explicit Geolocation(Navigator&);
@@ -97,7 +97,7 @@ private:
 
     bool isDenied() const { return m_allowGeolocation == AllowGeolocation::No; }
 
-    Page* NODELETE page() const;
+    Page* LEGACY_NODELETE page() const;
     SecurityOrigin* securityOrigin() const;
 
     typedef Vector<Ref<GeoNotifier>> GeoNotifierVector;
@@ -109,9 +109,9 @@ private:
         GeoNotifier* find(int id);
         void remove(int id);
         void remove(GeoNotifier*);
-        bool NODELETE contains(GeoNotifier*) const;
+        bool LEGACY_NODELETE contains(GeoNotifier*) const;
         void clear();
-        bool NODELETE isEmpty() const;
+        bool LEGACY_NODELETE isEmpty() const;
         void getNotifiersVector(GeoNotifierVector&) const;
     private:
         typedef OrderedHashMap<int, Ref<GeoNotifier>> IdToNotifierMap;

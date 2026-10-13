@@ -98,7 +98,7 @@ namespace WebCore {
 using namespace Inspector;
 
 static Lock allWorkerGlobalScopeIdentifiersLock;
-static HashSet<ScriptExecutionContextIdentifier>& NODELETE allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
+static HashSet<ScriptExecutionContextIdentifier>& LEGACY_NODELETE allWorkerGlobalScopeIdentifiers() WTF_REQUIRES_LOCK(allWorkerGlobalScopeIdentifiersLock)
 {
     static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
     ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());

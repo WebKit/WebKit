@@ -46,14 +46,14 @@ private:
     PlatformTimeRanges buffered() const final;
     PlatformTimeRanges seekable() const final;
     bool isStreamingContent() const final;
-    bool NODELETE attachToElement(WeakPtr<HTMLMediaElement>&&) final;
+    bool LEGACY_NODELETE attachToElement(WeakPtr<HTMLMediaElement>&&) final;
     void detachFromElement() final;
     void elementIsShuttingDown() final;
     void openIfDeferredOpen() final;
     bool isManaged() const final;
-    void NODELETE setAsSrcObject(bool) final;
+    void LEGACY_NODELETE setAsSrcObject(bool) final;
     void memoryPressure() final;
-    bool NODELETE detachable() const final;
+    bool LEGACY_NODELETE detachable() const final;
     void setLogIdentifier(uint64_t) final;
 
     explicit MediaSourceInterfaceMainThread(Ref<MediaSource>&&);

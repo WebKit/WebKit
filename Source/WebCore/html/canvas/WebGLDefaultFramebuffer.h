@@ -102,9 +102,9 @@ public:
     // reallocation does not allocate more than is already allocated.
     bool pendingSizeShrinksStorage() const { return m_needsReshape && m_size.unclampedArea() < m_storageSize.unclampedArea(); }
     GCGLbitfield dirtyBuffers() const { return m_dirtyBuffers; }
-    void NODELETE markBuffersClear(GCGLbitfield clearBuffers);
-    void NODELETE markAllUnpreservedBuffersDirty();
-    void NODELETE markAllBuffersDirty();
+    void LEGACY_NODELETE markBuffersClear(GCGLbitfield clearBuffers);
+    void LEGACY_NODELETE markAllUnpreservedBuffersDirty();
+    void LEGACY_NODELETE markAllBuffersDirty();
 
     // DRAW_BUFFER0 and READ_BUFFER of the default framebuffer, which the application can set to
     // BACK or NONE only. BACK is simulated with COLOR_ATTACHMENT0, so the state is tracked here

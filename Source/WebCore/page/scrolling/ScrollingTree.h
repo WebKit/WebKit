@@ -105,8 +105,8 @@ public:
     WEBCORE_EXPORT virtual void setRubberBandingInProgressForNode(ScrollingNodeID, bool);
 
 #if HAVE(RUBBER_BANDING)
-    void NODELETE setPendingMainFrameRubberbandingState(std::optional<RubberbandingState>&&) WTF_REQUIRES_LOCK(m_treeLock);
-    std::optional<RubberbandingState> NODELETE takePendingMainFrameRubberbandingState() WTF_REQUIRES_LOCK(m_treeLock);
+    void LEGACY_NODELETE setPendingMainFrameRubberbandingState(std::optional<RubberbandingState>&&) WTF_REQUIRES_LOCK(m_treeLock);
+    std::optional<RubberbandingState> LEGACY_NODELETE takePendingMainFrameRubberbandingState() WTF_REQUIRES_LOCK(m_treeLock);
 #endif
 
     bool isUserScrollInProgressForNode(std::optional<ScrollingNodeID>);
@@ -354,7 +354,7 @@ private:
     void notifyRelatedNodesRecursive(ScrollingTreeNode&);
     void traverseScrollingTreeRecursive(ScrollingTreeNode&, NOESCAPE const VisitorFunction&) WTF_REQUIRES_LOCK(m_treeLock);
     
-    void NODELETE setOverlayScrollbarsEnabled(bool);
+    void LEGACY_NODELETE setOverlayScrollbarsEnabled(bool);
 
     virtual void didCommitTree() { }
 

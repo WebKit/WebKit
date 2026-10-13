@@ -109,7 +109,7 @@ Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::Resour
     return Inspector::Protocol::Page::ResourceType::Other;
 }
 
-static Inspector::Protocol::Network::ReferrerPolicy NODELETE referrerPolicyToProtocol(ReferrerPolicy referrerPolicy)
+static Inspector::Protocol::Network::ReferrerPolicy LEGACY_NODELETE referrerPolicyToProtocol(ReferrerPolicy referrerPolicy)
 {
     switch (referrerPolicy) {
     case ReferrerPolicy::EmptyString:
@@ -518,7 +518,7 @@ Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeade
     return headersValue;
 }
 
-static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
+static Inspector::Protocol::Network::Metrics::Priority LEGACY_NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
     case NetworkLoadPriority::Low:
@@ -706,7 +706,7 @@ InitiatorData copyInitiatorData(Document* document, const ResourceRequest* resou
     return data;
 }
 
-static Inspector::Protocol::Network::Initiator::Type NODELETE toProtocol(InitiatorType type)
+static Inspector::Protocol::Network::Initiator::Type LEGACY_NODELETE toProtocol(InitiatorType type)
 {
     switch (type) {
     case InitiatorType::Parser:

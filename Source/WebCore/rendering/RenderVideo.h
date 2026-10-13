@@ -40,7 +40,7 @@ public:
     RenderVideo(HTMLVideoElement&, Style::ComputedStyle&&);
     virtual ~RenderVideo();
 
-    WEBCORE_EXPORT HTMLVideoElement& NODELETE videoElement() const;
+    WEBCORE_EXPORT HTMLVideoElement& LEGACY_NODELETE videoElement() const;
 
     IntRect videoBox() const;
     WEBCORE_EXPORT IntRect videoBoxInMainFrameView() const;
@@ -54,7 +54,7 @@ public:
     // bypass is active.
     bool isBypassingObjectViewBoxForPictureInPicture() const;
 
-    static IntSize NODELETE defaultSize();
+    static IntSize LEGACY_NODELETE defaultSize();
 
     bool supportsAcceleratedRendering() const;
     void acceleratedRenderingStateChanged();

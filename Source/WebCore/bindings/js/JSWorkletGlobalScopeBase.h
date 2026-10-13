@@ -49,12 +49,12 @@ public:
     WorkletGlobalScope& wrapped() const { return m_wrapped; }
 
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
-    static bool NODELETE supportsRichSourceInfo(const JSC::JSGlobalObject*);
-    static bool NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
-    static bool NODELETE shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
-    static JSC::RuntimeFlags NODELETE javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
-    static JSC::ScriptExecutionStatus NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
-    static void NODELETE reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
+    static bool LEGACY_NODELETE supportsRichSourceInfo(const JSC::JSGlobalObject*);
+    static bool LEGACY_NODELETE shouldInterruptScript(const JSC::JSGlobalObject*);
+    static bool LEGACY_NODELETE shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
+    static JSC::RuntimeFlags LEGACY_NODELETE javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
+    static JSC::ScriptExecutionStatus LEGACY_NODELETE scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    static void LEGACY_NODELETE reportViolationForUnsafeEval(JSC::JSGlobalObject*, const String&);
 
 protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, Ref<WorkletGlobalScope>&&);

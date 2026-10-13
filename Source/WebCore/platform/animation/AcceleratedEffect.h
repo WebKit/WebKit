@@ -106,8 +106,8 @@ public:
     const OptionSet<AcceleratedEffectProperty>& replacedProperties() const LIFETIME_BOUND { return m_replacedProperties; }
     const OptionSet<AcceleratedEffectProperty> composedProperties() const;
 
-    bool NODELETE animatesTransformRelatedProperty() const;
-    WEBCORE_EXPORT bool NODELETE hasHighImpact() const;
+    bool LEGACY_NODELETE animatesTransformRelatedProperty() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasHighImpact() const;
 
 private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&, const OptionSet<AcceleratedEffectProperty>&);

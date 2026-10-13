@@ -47,9 +47,9 @@ public:
     DOMHighResTimeStamp processingEnd() const { return m_processingEnd.milliseconds(); }
     bool cancelable() const { return m_cancelable; }
     RefPtr<Node> target() const;
-    uint64_t NODELETE interactionId() const;
+    uint64_t LEGACY_NODELETE interactionId() const;
 
-    Type NODELETE performanceEntryType() const final;
+    Type LEGACY_NODELETE performanceEntryType() const final;
     ASCIILiteral entryType() const final;
 
     static constexpr DOMHighResTimeStamp durationResolutionInMilliseconds = 8;

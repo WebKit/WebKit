@@ -53,7 +53,7 @@ enum class WorkerType : bool;
 // A proxy to talk to the worker context.
 class WorkerGlobalScopeProxy {
 public:
-    static WorkerGlobalScopeProxy& NODELETE create(Worker&);
+    static WorkerGlobalScopeProxy& LEGACY_NODELETE create(Worker&);
 
     virtual void startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID, const String& name, WorkerInitializationData&&, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
     virtual void terminateWorkerGlobalScope() = 0;

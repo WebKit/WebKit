@@ -244,7 +244,7 @@ public:
     virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, std::optional<size_t> itemIndex = std::nullopt);
     virtual WEBCORE_EXPORT void read(PasteboardFileReader&, std::optional<size_t> itemIndex = std::nullopt);
 
-    static bool NODELETE canWriteTrustworthyWebURLsPboardType();
+    static bool LEGACY_NODELETE canWriteTrustworthyWebURLsPboardType();
 
     virtual WEBCORE_EXPORT void write(const Color&);
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);

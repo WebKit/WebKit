@@ -64,7 +64,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
     );
 }
 
-static FloatPoint NODELETE normalPositionForOffsetPath(const Style::OffsetPath& offsetPath, const FloatRect& referenceRect)
+static FloatPoint LEGACY_NODELETE normalPositionForOffsetPath(const Style::OffsetPath& offsetPath, const FloatRect& referenceRect)
 {
     if (WTF::holdsAlternative<Style::RayPath>(offsetPath) || WTF::holdsAlternative<Style::BasicShapePath>(offsetPath))
         return referenceRect.center();
@@ -189,12 +189,12 @@ bool MotionPath::needsUpdateAfterContainingBlockLayout(const Style::OffsetPath& 
         || WTF::holdsAlternative<Style::BasicShapePath>(offsetPath);
 }
 
-FloatPoint NODELETE MotionPathData::currentOffset() const
+FloatPoint LEGACY_NODELETE MotionPathData::currentOffset() const
 {
     return FloatPoint(usedStartingPosition - offsetFromContainingBlock);
 }
 
-FloatRoundedRect NODELETE MotionPathData::offsetRect() const
+FloatRoundedRect LEGACY_NODELETE MotionPathData::offsetRect() const
 {
     auto rect = containingBlockBoundingRect;
     auto shiftedPoint = offsetFromContainingBlock;

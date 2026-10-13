@@ -84,18 +84,18 @@ public:
     void destroy();
 
     WEBCORE_EXPORT void setCachedFramePlatformData(std::unique_ptr<CachedFramePlatformData>);
-    WEBCORE_EXPORT CachedFramePlatformData* NODELETE cachedFramePlatformData() LIFETIME_BOUND;
+    WEBCORE_EXPORT CachedFramePlatformData* LEGACY_NODELETE cachedFramePlatformData() LIFETIME_BOUND;
 
     HasInsecureContent hasInsecureContent() const;
-    UsedLegacyTLS NODELETE usedLegacyTLS() const;
-    WasPrivateRelayed NODELETE wasPrivateRelayed() const;
+    UsedLegacyTLS LEGACY_NODELETE usedLegacyTLS() const;
+    WasPrivateRelayed LEGACY_NODELETE wasPrivateRelayed() const;
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
     using CachedFrameBase::url;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
 
-    size_t NODELETE descendantFrameCount() const;
+    size_t LEGACY_NODELETE descendantFrameCount() const;
 };
 
 } // namespace WebCore

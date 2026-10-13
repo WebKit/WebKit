@@ -123,7 +123,7 @@ inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigne
     return { afterWidth - beforeWidth, initialAdvance };
 }
 
-static inline std::pair<bool, bool> NODELETE expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
+static inline std::pair<bool, bool> LEGACY_NODELETE expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
 {
     bool expandLeft = ideograph;
     bool expandRight = ideograph;
@@ -241,13 +241,13 @@ struct SmallCapsState {
         isSmallCaps = false;
     }
 
-    void NODELETE setIsSmallCaps(bool isSmallCaps)
+    void LEGACY_NODELETE setIsSmallCaps(bool isSmallCaps)
     {
         isLastSmallCaps = this->isSmallCaps;
         this->isSmallCaps = isSmallCaps;
     }
 
-    bool NODELETE skipSmallCapsProcessing() const
+    bool LEGACY_NODELETE skipSmallCapsProcessing() const
     {
         return fontVariantCaps == FontVariantCaps::Normal;
     }
@@ -280,7 +280,7 @@ struct AdvanceInternalState {
     {
     }
 
-    bool NODELETE fontChanged() const
+    bool LEGACY_NODELETE fontChanged() const
     {
         return font != lastFont;
     }
@@ -322,7 +322,7 @@ void WidthIterator::commitIgnorable(char32_t characterToWrite, AdvanceInternalSt
     advanceInternalState.updateFont(&primaryFont);
 }
 
-static const Font* NODELETE fontForRange(const Font* font, const SmallCapsState& smallCapsData, bool isSmallCaps)
+static const Font* LEGACY_NODELETE fontForRange(const Font* font, const SmallCapsState& smallCapsData, bool isSmallCaps)
 {
     if (!smallCapsData.synthesizedFont)
         return font;
@@ -363,7 +363,7 @@ static bool resetFontRangeIfNeeded(AdvanceInternalState& advanceInternalState, S
     return false;
 }
 
-static void NODELETE updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, std::optional<char32_t> capitalizedCharacter, char32_t& characterToWrite)
+static void LEGACY_NODELETE updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, std::optional<char32_t> capitalizedCharacter, char32_t& characterToWrite)
 {
     if (smallCapsState.skipSmallCapsProcessing())
         return;
@@ -620,7 +620,7 @@ static CharacterToGlyphMapping buildCharacterToGlyphMapping(const GlyphBuffer& g
     return mapping;
 }
 
-static void NODELETE applyHorizontalGlyphStretch(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex, const TextRun& run)
+static void LEGACY_NODELETE applyHorizontalGlyphStretch(GlyphBuffer& glyphBuffer, unsigned glyphBufferStartIndex, const TextRun& run)
 {
     if (run.horizontalGlyphStretch() == 1)
         return;

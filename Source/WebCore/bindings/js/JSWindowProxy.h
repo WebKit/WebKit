@@ -58,10 +58,10 @@ public:
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
     void setWindow(DOMWindow&);
 
-    WindowProxy* NODELETE windowProxy() const;
+    WindowProxy* LEGACY_NODELETE windowProxy() const;
 
-    DOMWindow& NODELETE wrapped() const;
-    static WindowProxy* NODELETE toWrapped(JSC::VM&, JSC::JSValue);
+    DOMWindow& LEGACY_NODELETE wrapped() const;
+    static WindowProxy* LEGACY_NODELETE toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world() { return m_world; }
 
@@ -74,7 +74,7 @@ private:
     JSWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
     ~JSWindowProxy();
     void finishCreation(JSC::VM&, DOMWindow&);
-    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(JSC::VM&);
 
     const Ref<DOMWrapperWorld> m_world;
 };

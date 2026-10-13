@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-static ResourceLoadObserver*& NODELETE sharedObserver()
+static ResourceLoadObserver*& LEGACY_NODELETE sharedObserver()
 {
     static ResourceLoadObserver* observer = nullptr;
     return observer;

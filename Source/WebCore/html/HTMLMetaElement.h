@@ -35,9 +35,9 @@ public:
     static Ref<HTMLMetaElement> create(Document&);
     static Ref<HTMLMetaElement> create(const QualifiedName&, Document&);
 
-    const AtomString& NODELETE content() const;
-    const AtomString& NODELETE httpEquiv() const;
-    const AtomString& NODELETE name() const;
+    const AtomString& LEGACY_NODELETE content() const;
+    const AtomString& LEGACY_NODELETE httpEquiv() const;
+    const AtomString& LEGACY_NODELETE name() const;
 
     bool mediaAttributeMatches();
 

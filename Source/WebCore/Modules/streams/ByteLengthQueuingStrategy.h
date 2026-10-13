@@ -41,7 +41,7 @@ public:
         double highWaterMark;
     };
 
-    static Ref<ByteLengthQueuingStrategy> NODELETE create(Init&&);
+    static Ref<ByteLengthQueuingStrategy> LEGACY_NODELETE create(Init&&);
     ~ByteLengthQueuingStrategy();
 
     double highWaterMark() const { return m_highWaterMark; }

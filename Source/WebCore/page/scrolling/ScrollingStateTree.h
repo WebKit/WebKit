@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT ScrollingStateTree(ScrollingStateTree&&);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
-    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> NODELETE rootStateNode() const;
+    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> LEGACY_NODELETE rootStateNode() const;
     WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(std::optional<ScrollingNodeID>) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
@@ -67,7 +67,7 @@ public:
     // Copies the current tree state and clears the changed properties mask in the original.
     WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
 
-    WEBCORE_EXPORT void NODELETE attachDeserializedNodes();
+    WEBCORE_EXPORT void LEGACY_NODELETE attachDeserializedNodes();
 
     WEBCORE_EXPORT void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }

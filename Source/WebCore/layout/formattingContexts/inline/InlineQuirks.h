@@ -37,11 +37,11 @@ class InlineQuirks {
 public:
     InlineQuirks(const InlineFormattingContext&);
 
-    bool NODELETE trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
-    InlineLayoutUnit NODELETE initialLineHeight() const;
+    bool LEGACY_NODELETE trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
+    InlineLayoutUnit LEGACY_NODELETE initialLineHeight() const;
     bool inlineBoxAffectsLineBox(const InlineLevelBox&) const;
-    static bool NODELETE lineBreakBoxIsOnlyContentOnLine(const LineBox&);
-    static bool NODELETE lineBreakBoxAffectsParentInlineBox(const LineBox&);
+    static bool LEGACY_NODELETE lineBreakBoxIsOnlyContentOnLine(const LineBox&);
+    static bool LEGACY_NODELETE lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const Style::ComputedStyle& lineBoxStyle) const;
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
     std::optional<InlineLayoutUnit> adjustmentForLineGridLineSnap(const LineBox&) const;

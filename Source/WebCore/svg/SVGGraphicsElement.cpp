@@ -62,7 +62,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGGraphicsElement);
 
 // FIXME: This doesn't match SVGElement::viewportElement() as it has an extra check for
 // foreign object.
-static bool NODELETE isViewportElement(const SVGElement* element)
+static bool LEGACY_NODELETE isViewportElement(const SVGElement* element)
 {
     if (!element)
         return false;

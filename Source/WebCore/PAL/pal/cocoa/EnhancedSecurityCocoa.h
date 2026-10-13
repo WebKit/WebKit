@@ -31,9 +31,9 @@
 
 namespace PAL {
 
-PAL_EXPORT bool NODELETE isEnhancedSecurityEnabledForCurrentProcess();
+PAL_EXPORT bool LEGACY_NODELETE isEnhancedSecurityEnabledForCurrentProcess();
 
-PAL_EXPORT void NODELETE setEnhancedSecurityEnabledForCurrentProcess(bool);
+PAL_EXPORT void LEGACY_NODELETE setEnhancedSecurityEnabledForCurrentProcess(bool);
 
 } // namespace PAL
 

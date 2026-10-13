@@ -112,10 +112,10 @@ Child copyAndSimplify(const Child&, const SimplificationOptions&);
 
 // MARK: In-place Simplify
 
-std::optional<Child> NODELETE simplify(Number&, const SimplificationOptions&);
-std::optional<Child> NODELETE simplify(Percentage&, const SimplificationOptions&);
+std::optional<Child> LEGACY_NODELETE simplify(Number&, const SimplificationOptions&);
+std::optional<Child> LEGACY_NODELETE simplify(Percentage&, const SimplificationOptions&);
 std::optional<Child> simplify(NonCanonicalDimension&, const SimplificationOptions&);
-std::optional<Child> NODELETE simplify(CanonicalDimension&, const SimplificationOptions&);
+std::optional<Child> LEGACY_NODELETE simplify(CanonicalDimension&, const SimplificationOptions&);
 std::optional<Child> simplify(Symbol&, const SimplificationOptions&);
 std::optional<Child> simplify(SiblingCount&, const SimplificationOptions&);
 std::optional<Child> simplify(SiblingIndex&, const SimplificationOptions&);

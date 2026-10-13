@@ -339,7 +339,7 @@ public:
 
 protected:
     // For predicates that must not construct a CalcSize, since its Ref would run a destructor in
-    // callers annotated NODELETE.
+    // callers annotated LEGACY_NODELETE.
     ALWAYS_INLINE CalcSizeValue& calcSizeValue() const requires (hasCalcSize) { return m_value.calcSizeValue(); }
 
 private:

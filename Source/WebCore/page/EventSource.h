@@ -79,7 +79,7 @@ private:
     EventSource(ScriptExecutionContext&, const URL&, Init&&);
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::EventSource; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -95,9 +95,9 @@ private:
 
     // ActiveDOMObject
     void stop() final;
-    void NODELETE suspend(ReasonForSuspension) final;
+    void LEGACY_NODELETE suspend(ReasonForSuspension) final;
     void resume() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     void connect();
     void networkRequestEnded();

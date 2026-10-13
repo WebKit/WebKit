@@ -76,7 +76,7 @@ namespace WebCore {
 using LayerToPlatformCALayerMap = HashMap<void*, PlatformCALayer*>;
 
 static Lock layerToPlatformLayerMapLock;
-static LayerToPlatformCALayerMap& NODELETE layerToPlatformLayerMap() WTF_REQUIRES_LOCK(layerToPlatformLayerMapLock)
+static LayerToPlatformCALayerMap& LEGACY_NODELETE layerToPlatformLayerMap() WTF_REQUIRES_LOCK(layerToPlatformLayerMapLock)
 {
     static NeverDestroyed<LayerToPlatformCALayerMap> layerMap;
     return layerMap;

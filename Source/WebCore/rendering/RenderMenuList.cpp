@@ -64,7 +64,7 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, Style::ComputedStyle&
 
 RenderMenuList::~RenderMenuList() = default;
 
-HTMLSelectElement& NODELETE RenderMenuList::selectElement() const
+HTMLSelectElement& LEGACY_NODELETE RenderMenuList::selectElement() const
 {
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }

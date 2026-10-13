@@ -102,14 +102,14 @@ public:
     const IDBError& error() const LIFETIME_BOUND { return m_error; }
     IDBDatabaseConnectionIdentifier databaseConnectionIdentifier() const { return *m_databaseConnectionIdentifier; }
 
-    const IDBDatabaseInfo& NODELETE databaseInfo() const;
-    const IDBTransactionInfo& NODELETE transactionInfo() const;
+    const IDBDatabaseInfo& LEGACY_NODELETE databaseInfo() const;
+    const IDBTransactionInfo& LEGACY_NODELETE transactionInfo() const;
 
     const IDBKeyData* resultKey() const LIFETIME_BOUND { return m_resultKey.get(); }
     uint64_t resultInteger() const { return m_resultInteger; }
 
-    WEBCORE_EXPORT const IDBGetResult& NODELETE getResult() const;
-    WEBCORE_EXPORT const IDBGetAllResult& NODELETE getAllResult() const;
+    WEBCORE_EXPORT const IDBGetResult& LEGACY_NODELETE getResult() const;
+    WEBCORE_EXPORT const IDBGetAllResult& LEGACY_NODELETE getAllResult() const;
 
     // NetworkProcess-internal: set by UniqueIDBDatabaseTransaction before delegate dispatch so
     // IDBStorageConnectionToClient can route per-origin work without a side map. Never encoded

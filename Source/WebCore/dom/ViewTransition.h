@@ -199,16 +199,16 @@ public:
 
     UniqueRef<ViewTransitionParams> takeViewTransitionParams();
 
-    DOMPromise& NODELETE ready();
-    DOMPromise& NODELETE updateCallbackDone();
-    DOMPromise& NODELETE finished();
+    DOMPromise& LEGACY_NODELETE ready();
+    DOMPromise& LEGACY_NODELETE updateCallbackDone();
+    DOMPromise& LEGACY_NODELETE finished();
 
     ViewTransitionPhase phase() const { return m_phase; }
     const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
-    bool NODELETE documentElementIsCaptured() const;
+    bool LEGACY_NODELETE documentElementIsCaptured() const;
 
     const ViewTransitionTypeSet& types() const { return m_types; }
     void setTypes(Ref<ViewTransitionTypeSet>&&);

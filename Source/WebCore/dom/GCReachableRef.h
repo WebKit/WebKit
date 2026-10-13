@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    WEBCORE_EXPORT static HashCountedSet<EventTarget*>& NODELETE map();
+    WEBCORE_EXPORT static HashCountedSet<EventTarget*>& LEGACY_NODELETE map();
 };
 
 template <typename T>

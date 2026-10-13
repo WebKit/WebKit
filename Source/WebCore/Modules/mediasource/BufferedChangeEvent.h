@@ -53,8 +53,8 @@ public:
         return adoptRef(*new BufferedChangeEvent(type, WTF::move(init)));
     }
 
-    RefPtr<TimeRanges> NODELETE addedRanges() const;
-    RefPtr<TimeRanges> NODELETE removedRanges() const;
+    RefPtr<TimeRanges> LEGACY_NODELETE addedRanges() const;
+    RefPtr<TimeRanges> LEGACY_NODELETE removedRanges() const;
 
 private:
     BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed);

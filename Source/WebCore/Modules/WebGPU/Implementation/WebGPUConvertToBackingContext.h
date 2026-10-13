@@ -142,8 +142,8 @@ class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
 public:
     virtual ~ConvertToBackingContext() = default;
 
-    WGPUAddressMode NODELETE convertToBacking(AddressMode);
-    WGPUBlendFactor NODELETE convertToBacking(BlendFactor);
+    WGPUAddressMode LEGACY_NODELETE convertToBacking(AddressMode);
+    WGPUBlendFactor LEGACY_NODELETE convertToBacking(BlendFactor);
     WGPUBlendOperation convertToBacking(BlendOperation);
     WGPUBufferBindingType convertToBacking(BufferBindingType);
     WGPUCompareFunction convertToBacking(CompareFunction);
@@ -158,7 +158,7 @@ public:
     WGPUIndexFormat convertToBacking(IndexFormat);
     WGPULoadOp convertToBacking(LoadOp);
     WGPUPowerPreference convertToBacking(PowerPreference);
-    WGPUColorSpace NODELETE convertToBacking(PredefinedColorSpace);
+    WGPUColorSpace LEGACY_NODELETE convertToBacking(PredefinedColorSpace);
     WGPUPrimitiveTopology convertToBacking(PrimitiveTopology);
     WGPUQueryType convertToBacking(QueryType);
     WGPUSamplerBindingType convertToBacking(SamplerBindingType);
@@ -173,14 +173,14 @@ public:
     WGPUVertexFormat convertToBacking(VertexFormat);
     WGPUVertexStepMode convertToBacking(VertexStepMode);
 
-    WGPUBufferUsage NODELETE convertBufferUsageFlagsToBacking(BufferUsageFlags);
-    WGPUColorWriteMask NODELETE convertColorWriteFlagsToBacking(ColorWriteFlags);
-    WGPUMapMode NODELETE convertMapModeFlagsToBacking(MapModeFlags);
-    WGPUShaderStage NODELETE convertShaderStageFlagsToBacking(ShaderStageFlags);
-    WGPUTextureUsage NODELETE convertTextureUsageFlagsToBacking(TextureUsageFlags);
+    WGPUBufferUsage LEGACY_NODELETE convertBufferUsageFlagsToBacking(BufferUsageFlags);
+    WGPUColorWriteMask LEGACY_NODELETE convertColorWriteFlagsToBacking(ColorWriteFlags);
+    WGPUMapMode LEGACY_NODELETE convertMapModeFlagsToBacking(MapModeFlags);
+    WGPUShaderStage LEGACY_NODELETE convertShaderStageFlagsToBacking(ShaderStageFlags);
+    WGPUTextureUsage LEGACY_NODELETE convertTextureUsageFlagsToBacking(TextureUsageFlags);
 
-    WGPUOptionalBool NODELETE convertToBacking(std::optional<bool>);
-    uint32_t NODELETE convertDepthSliceToBacking(std::optional<IntegerCoordinate>);
+    WGPUOptionalBool LEGACY_NODELETE convertToBacking(std::optional<bool>);
+    uint32_t LEGACY_NODELETE convertDepthSliceToBacking(std::optional<IntegerCoordinate>);
     WGPUColor convertToBacking(const Color&);
     WGPUExtent3D convertToBacking(const Extent3D&);
     WGPUOrigin3D convertToBacking(const Origin2D&);

@@ -44,7 +44,7 @@ public:
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
     RemoteFrame& frame() const final { return m_frame; }
 
-    WEBCORE_EXPORT LayoutRect NODELETE layoutViewportRect() const final;
+    WEBCORE_EXPORT LayoutRect LEGACY_NODELETE layoutViewportRect() const final;
     WEBCORE_EXPORT IntSize contentsSize() const final;
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
 
@@ -62,25 +62,25 @@ private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
 
     bool isRemoteFrameView() const final { return true; }
-    bool NODELETE isScrollableOrRubberbandable() final;
-    bool NODELETE hasScrollableOrRubberbandableAncestor() final;
-    bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
-    void NODELETE invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
+    bool LEGACY_NODELETE isScrollableOrRubberbandable() final;
+    bool LEGACY_NODELETE hasScrollableOrRubberbandableAncestor() final;
+    bool LEGACY_NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
+    void LEGACY_NODELETE invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     IntRect windowClipRect() const final;
     void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, RegionContext*) final;
-    void NODELETE addedOrRemovedScrollbar() final;
-    void NODELETE delegatedScrollingModeDidChange() final;
-    void NODELETE updateScrollCorner() final;
-    bool NODELETE scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
-    void NODELETE scrollContentsSlowPath(const IntRect& updateRect) final;
-    bool NODELETE isVerticalDocument() const final;
-    bool NODELETE isFlippedDocument() const final;
-    bool NODELETE shouldDeferScrollUpdateAfterContentSizeChange() final;
-    void NODELETE scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset&, const ScrollOffset&) final;
-    void NODELETE unobscuredContentSizeChanged() final;
-    void NODELETE didFinishProhibitingScrollingWhenChangingContentSize() final;
-    void NODELETE updateLayerPositionsAfterScrolling() final;
-    void NODELETE updateCompositingLayersAfterScrolling() final;
+    void LEGACY_NODELETE addedOrRemovedScrollbar() final;
+    void LEGACY_NODELETE delegatedScrollingModeDidChange() final;
+    void LEGACY_NODELETE updateScrollCorner() final;
+    bool LEGACY_NODELETE scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
+    void LEGACY_NODELETE scrollContentsSlowPath(const IntRect& updateRect) final;
+    bool LEGACY_NODELETE isVerticalDocument() const final;
+    bool LEGACY_NODELETE isFlippedDocument() const final;
+    bool LEGACY_NODELETE shouldDeferScrollUpdateAfterContentSizeChange() final;
+    void LEGACY_NODELETE scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset&, const ScrollOffset&) final;
+    void LEGACY_NODELETE unobscuredContentSizeChanged() final;
+    void LEGACY_NODELETE didFinishProhibitingScrollingWhenChangingContentSize() final;
+    void LEGACY_NODELETE updateLayerPositionsAfterScrolling() final;
+    void LEGACY_NODELETE updateCompositingLayersAfterScrolling() final;
 
     void setFrameRect(const IntRect&) final;
 

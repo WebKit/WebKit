@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMathMLScripts);
 
-static bool NODELETE isPrescriptDelimiter(const RenderObject& renderObject)
+static bool LEGACY_NODELETE isPrescriptDelimiter(const RenderObject& renderObject)
 {
     return renderObject.node() && renderObject.node()->hasTagName(MathMLNames::mprescriptsTag);
 }

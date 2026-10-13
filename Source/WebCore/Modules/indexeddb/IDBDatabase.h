@@ -55,8 +55,8 @@ public:
     virtual ~IDBDatabase();
 
     // IDBDatabase IDL
-    const String NODELETE name() const;
-    uint64_t NODELETE version() const;
+    const String LEGACY_NODELETE name() const;
+    uint64_t LEGACY_NODELETE version() const;
     Ref<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
@@ -79,7 +79,7 @@ public:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::IDBDatabase; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 

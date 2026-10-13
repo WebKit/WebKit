@@ -100,12 +100,12 @@ public:
     void removePendingSheet(const Element&);
     void addPendingSheet(const ProcessingInstruction&);
     void removePendingSheet(const ProcessingInstruction&);
-    bool NODELETE hasPendingSheets() const;
-    bool NODELETE hasPendingSheetsBeforeBody() const;
-    bool NODELETE hasPendingSheetsInBody() const;
-    bool NODELETE hasPendingSheet(const Element&) const;
-    bool NODELETE hasPendingSheetInBody(const Element&) const;
-    bool NODELETE hasPendingSheet(const ProcessingInstruction&) const;
+    bool LEGACY_NODELETE hasPendingSheets() const;
+    bool LEGACY_NODELETE hasPendingSheetsBeforeBody() const;
+    bool LEGACY_NODELETE hasPendingSheetsInBody() const;
+    bool LEGACY_NODELETE hasPendingSheet(const Element&) const;
+    bool LEGACY_NODELETE hasPendingSheetInBody(const Element&) const;
+    bool LEGACY_NODELETE hasPendingSheet(const ProcessingInstruction&) const;
 
     bool usesStyleBasedEditability() const { return m_usesStyleBasedEditability; }
     bool usesHasPseudoClass() const { return m_usesHasPseudoClass; }
@@ -140,11 +140,11 @@ public:
     ShadowRoot* shadowRoot() { return m_shadowRoot; }
 
     // The document scope for this scope's tree (itself if this is the document scope).
-    DocumentScope& NODELETE documentScope();
+    DocumentScope& LEGACY_NODELETE documentScope();
 
-    CheckedPtr<const Scope> NODELETE hostScope() const;
+    CheckedPtr<const Scope> LEGACY_NODELETE hostScope() const;
 
-    static Scope& NODELETE forNode(Node&);
+    static Scope& LEGACY_NODELETE forNode(Node&);
     static const Scope& forNode(const Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
     static const Scope* forOrdinal(const Element&, ScopeOrdinal);
@@ -166,7 +166,7 @@ protected:
 private:
     friend class DocumentScope;
 
-    bool NODELETE isForUserAgentShadowTree() const;
+    bool LEGACY_NODELETE isForUserAgentShadowTree() const;
 
     void didRemovePendingStylesheet();
 
@@ -206,7 +206,7 @@ private:
     void pendingUpdateTimerFired();
     void clearPendingUpdate();
 
-    TreeScope& NODELETE treeScope();
+    TreeScope& LEGACY_NODELETE treeScope();
 
     const CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };

@@ -40,7 +40,7 @@ struct AcceleratedEffectOffsetDistance {
 // MARK: - Blending
 
 constexpr bool canBlend(const AcceleratedEffectOffsetDistance&, const AcceleratedEffectOffsetDistance&) { return true; }
-AcceleratedEffectOffsetDistance NODELETE blend(const AcceleratedEffectOffsetDistance&, const AcceleratedEffectOffsetDistance&, const BlendingContext&);
+AcceleratedEffectOffsetDistance LEGACY_NODELETE blend(const AcceleratedEffectOffsetDistance&, const AcceleratedEffectOffsetDistance&, const BlendingContext&);
 
 } // namespace WebCore
 

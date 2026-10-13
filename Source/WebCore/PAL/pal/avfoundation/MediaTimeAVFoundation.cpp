@@ -34,7 +34,7 @@
 
 namespace PAL {
 
-static bool NODELETE CMTimeHasFlags(const CMTime& cmTime, uint32_t flags)
+static bool LEGACY_NODELETE CMTimeHasFlags(const CMTime& cmTime, uint32_t flags)
 {
     return (cmTime.flags & flags) == flags;
 }

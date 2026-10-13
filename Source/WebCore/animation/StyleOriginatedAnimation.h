@@ -50,7 +50,7 @@ public:
 
     bool isStyleOriginatedAnimation() const final { return true; }
 
-    const std::optional<const Styleable> NODELETE owningElement() const;
+    const std::optional<const Styleable> LEGACY_NODELETE owningElement() const;
 
     void cancelFromStyle(WebAnimation::Silently = WebAnimation::Silently::No);
 

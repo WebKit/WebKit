@@ -40,7 +40,7 @@ namespace WebCore {
 
 struct AcceleratedEffectCirclePathPolicy final : public TinyLRUCachePolicy<FloatRect, WebCore::Path> {
 public:
-    static bool NODELETE isKeyNull(const FloatRect& rect)
+    static bool LEGACY_NODELETE isKeyNull(const FloatRect& rect)
     {
         return rect.isEmpty();
     }

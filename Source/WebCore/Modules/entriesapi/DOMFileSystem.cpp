@@ -95,7 +95,7 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
 }
 
 // https://wicg.github.io/entries-api/#name
-static bool NODELETE isValidPathNameCharacter(char16_t c)
+static bool LEGACY_NODELETE isValidPathNameCharacter(char16_t c)
 {
     return c != '\0' && c != '/' && c != '\\';
 }

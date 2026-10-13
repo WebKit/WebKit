@@ -132,7 +132,7 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
 
 #endif
 
-static bool NODELETE pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
+static bool LEGACY_NODELETE pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
 {
     auto& document = element.document();
     auto* page = document.page();
@@ -153,7 +153,7 @@ public:
         m_mediaSession->removeObserver(*this);
     }
 
-    void NODELETE ref() const final { RefCounted::ref(); }
+    void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
     void metadataChanged(const RefPtr<MediaMetadata>& metadata) final
@@ -1499,7 +1499,7 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 
 #if ENABLE(MEDIA_SESSION)
 #if ENABLE(MEDIA_STREAM)
-static bool NODELETE isDocumentPlayingSeveralMediaStreamsAndCapturing(Document& document)
+static bool LEGACY_NODELETE isDocumentPlayingSeveralMediaStreamsAndCapturing(Document& document)
 {
     // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
     auto* page = document.page();

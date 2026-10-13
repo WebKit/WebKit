@@ -39,13 +39,13 @@ public:
     static Ref<DeclaredStylePropertyMap> create(CSSStyleRule&);
 
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
-    unsigned NODELETE size() const final;
+    unsigned LEGACY_NODELETE size() const final;
     Type type() const final { return Type::Declared; }
 
 private:
     explicit DeclaredStylePropertyMap(CSSStyleRule&);
 
-    StyleRule* NODELETE styleRule() const;
+    StyleRule* LEGACY_NODELETE styleRule() const;
 
     void clear() final;
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;

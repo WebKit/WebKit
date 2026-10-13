@@ -45,22 +45,22 @@ public:
     static bool isGStreamerEnabled() { return singleton().m_GStreamerEnabled; }
 #endif
 
-    WEBCORE_EXPORT static void NODELETE setMockScrollbarsEnabled(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setMockScrollbarsEnabled(bool);
     static bool mockScrollbarsEnabled() { return singleton().m_mockScrollbarsEnabled; }
 
-    WEBCORE_EXPORT static void NODELETE setUsesOverlayScrollbars(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setUsesOverlayScrollbars(bool);
     static bool usesOverlayScrollbars() { return singleton().m_usesOverlayScrollbars; }
 
     static bool lowPowerVideoAudioBufferSizeEnabled() { return singleton().m_lowPowerVideoAudioBufferSizeEnabled; }
     static void setLowPowerVideoAudioBufferSizeEnabled(bool flag) { singleton().m_lowPowerVideoAudioBufferSizeEnabled = flag; }
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static void NODELETE setMediaResourceLoadTimeoutForTesting(unsigned);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setMediaResourceLoadTimeoutForTesting(unsigned);
     static unsigned mediaResourceLoadTimeoutForTesting() { return singleton().m_mediaResourceLoadTimeoutForTesting.load(std::memory_order_relaxed); }
 #endif
 
     static bool trackingPreventionEnabled() { return singleton().m_trackingPreventionEnabled; }
-    WEBCORE_EXPORT static void NODELETE setTrackingPreventionEnabled(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setTrackingPreventionEnabled(bool);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static void setAudioSessionCategoryOverride(unsigned);
@@ -77,12 +77,12 @@ public:
 #endif
 
 #if USE(AUDIO_SESSION)
-    WEBCORE_EXPORT static void NODELETE setShouldManageAudioSessionCategory(bool);
-    WEBCORE_EXPORT static bool NODELETE shouldManageAudioSessionCategory();
+    WEBCORE_EXPORT static void LEGACY_NODELETE setShouldManageAudioSessionCategory(bool);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE shouldManageAudioSessionCategory();
 #endif
 
-    WEBCORE_EXPORT static void NODELETE setAllowsAnySSLCertificate(bool);
-    WEBCORE_EXPORT static bool NODELETE allowsAnySSLCertificate();
+    WEBCORE_EXPORT static void LEGACY_NODELETE setAllowsAnySSLCertificate(bool);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE allowsAnySSLCertificate();
 
     static void setCustomPasteboardDataEnabled(bool isEnabled) { singleton().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return singleton().m_isCustomPasteboardDataEnabled; }
@@ -120,7 +120,7 @@ public:
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { singleton().m_builtInNotificationsEnabled = isEnabled; }
-    WEBCORE_EXPORT static bool NODELETE builtInNotificationsEnabled();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE builtInNotificationsEnabled();
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -134,7 +134,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT static DeprecatedGlobalSettings& NODELETE singleton();
+    WEBCORE_EXPORT static DeprecatedGlobalSettings& LEGACY_NODELETE singleton();
     DeprecatedGlobalSettings() = default;
     ~DeprecatedGlobalSettings() = default;
 

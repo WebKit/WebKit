@@ -43,7 +43,7 @@ class MultiGamepadProvider : public GamepadProvider, public GamepadProviderClien
 public:
     virtual ~MultiGamepadProvider() = default;
 
-    WEBCORE_EXPORT static MultiGamepadProvider& NODELETE singleton();
+    WEBCORE_EXPORT static MultiGamepadProvider& LEGACY_NODELETE singleton();
 
     // Do nothing since this is a singleton.
     void ref() const final { }

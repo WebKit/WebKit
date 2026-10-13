@@ -40,7 +40,7 @@ public:
     RenderSVGText(SVGTextElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGText();
 
-    SVGTextElement& NODELETE textElement() const;
+    SVGTextElement& LEGACY_NODELETE textElement() const;
 
     bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
@@ -50,8 +50,8 @@ public:
     // FIXME: [LBSE] Only needed for legacy SVG engine.
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 
-    static RenderSVGText* NODELETE locateRenderSVGTextAncestor(RenderObject&);
-    static const RenderSVGText* NODELETE locateRenderSVGTextAncestor(const RenderObject&);
+    static RenderSVGText* LEGACY_NODELETE locateRenderSVGTextAncestor(RenderObject&);
+    static const RenderSVGText* LEGACY_NODELETE locateRenderSVGTextAncestor(const RenderObject&);
 
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() LIFETIME_BOUND { return m_layoutAttributes; }
 
@@ -110,7 +110,7 @@ private:
     const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
     // FIXME: [LBSE] End code only needed for legacy SVG engine.
 
-    bool NODELETE shouldHandleSubtreeMutations() const;
+    bool LEGACY_NODELETE shouldHandleSubtreeMutations() const;
 
     SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
 

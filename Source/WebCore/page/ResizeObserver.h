@@ -93,8 +93,8 @@ private:
     void removeAllTargets();
     bool removeObservation(const Element&);
     void observeInternal(Element&, const ResizeObserverBoxOptions);
-    bool NODELETE isNativeCallback();
-    bool NODELETE isJSCallback();
+    bool LEGACY_NODELETE isNativeCallback();
+    bool LEGACY_NODELETE isJSCallback();
 
     struct ResizeObservationHashFunctions {
         using T = Ref<ResizeObservation>;

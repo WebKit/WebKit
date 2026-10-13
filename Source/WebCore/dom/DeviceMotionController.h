@@ -54,7 +54,7 @@ public:
 
     bool hasLastData() override;
     RefPtr<Event> getLastEvent() override;
-    DeviceClient& NODELETE client() final;
+    DeviceClient& LEGACY_NODELETE client() final;
 
     static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);

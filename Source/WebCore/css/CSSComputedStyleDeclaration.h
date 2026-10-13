@@ -56,18 +56,18 @@ private:
     CSSComputedStyleDeclaration(Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
     // CSSOM functions. Don't make these public.
-    CSSRule* NODELETE parentRule() const final;
-    CSSRuleList* NODELETE cssRules() const final;
+    CSSRule* LEGACY_NODELETE parentRule() const final;
+    CSSRuleList* LEGACY_NODELETE cssRules() const final;
     unsigned length() const final;
     String item(unsigned index) const final;
     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
     String getPropertyValue(const String& propertyName) final;
-    String NODELETE getPropertyPriority(const String& propertyName) final;
-    String NODELETE getPropertyShorthand(const String& propertyName) final;
-    bool NODELETE isPropertyImplicit(const String& propertyName) final;
+    String LEGACY_NODELETE getPropertyPriority(const String& propertyName) final;
+    String LEGACY_NODELETE getPropertyShorthand(const String& propertyName) final;
+    bool LEGACY_NODELETE isPropertyImplicit(const String& propertyName) final;
     ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
     ExceptionOr<String> removeProperty(const String& propertyName) final;
-    String NODELETE cssText() const final;
+    String LEGACY_NODELETE cssText() const final;
     ExceptionOr<void> setCssText(const String&) final;
     String getPropertyValueInternal(CSSPropertyID) final;
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
@@ -75,7 +75,7 @@ private:
 
     Element& element() const { return m_element; }
 
-    const Settings* NODELETE settings() const final;
+    const Settings* LEGACY_NODELETE settings() const final;
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
 
     Style::Extractor extractor() const;

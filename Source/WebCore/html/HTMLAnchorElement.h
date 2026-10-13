@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT URL href() const;
 
-    const AtomString& NODELETE name() const;
+    const AtomString& LEGACY_NODELETE name() const;
 
     WEBCORE_EXPORT String origin() const;
 
@@ -63,7 +63,7 @@ public:
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
     bool hasActivationBehavior() const final;
 
-    bool NODELETE hasRel(Relation) const;
+    bool LEGACY_NODELETE hasRel(Relation) const;
     
     inline SharedStringHash visitedLinkHash() const;
 
@@ -96,7 +96,7 @@ private:
     bool isKeyboardFocusable(const FocusEventData&) const override;
     void defaultEventHandler(Event&) final;
     void setActive(bool active, Style::InvalidationScope) final;
-    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
     int defaultTabIndex() const final;
     bool draggable() const final;
@@ -117,10 +117,10 @@ private:
         MouseEventWithShiftKey,
         NonMouseEvent,
     };
-    static EventType NODELETE eventType(Event&);
+    static EventType LEGACY_NODELETE eventType(Event&);
     bool treatLinkAsLiveForEventType(EventType) const;
 
-    Element* NODELETE rootEditableElementForSelectionOnMouseDown() const;
+    Element* LEGACY_NODELETE rootEditableElementForSelectionOnMouseDown() const;
     void setRootEditableElementForSelectionOnMouseDown(Element*);
     void clearRootEditableElementForSelectionOnMouseDown();
 

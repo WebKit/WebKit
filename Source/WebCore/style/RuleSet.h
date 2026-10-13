@@ -92,7 +92,7 @@ public:
     void addRule(const StyleRule&, unsigned selectorIndex, unsigned selectorListIndex);
     void addPageRule(StyleRulePage&);
     void setViewTransitionRule(StyleRuleViewTransition&);
-    RefPtr<StyleRuleViewTransition> NODELETE viewTransitionRule() const;
+    RefPtr<StyleRuleViewTransition> LEGACY_NODELETE viewTransitionRule() const;
 
     void addToRuleSet(const AtomString& key, AtomRuleMap&, const RuleData&);
     void shrinkToFit();
@@ -156,7 +156,7 @@ public:
     const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
 
 #if ENABLE(SPATIAL_PORTAL)
-    RefPtr<const StyleRuleEnvironmentMap> NODELETE environmentMapRuleForName(const AtomString&) const;
+    RefPtr<const StyleRuleEnvironmentMap> LEGACY_NODELETE environmentMapRuleForName(const AtomString&) const;
 #endif
 
     WTF::String selectorsForDebugging() const;

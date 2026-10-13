@@ -154,7 +154,7 @@ public:
     void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
     bool isSnapshotting() const { return m_isSnapshotting; }
 
-    bool NODELETE isControlledByOffscreen() const;
+    bool LEGACY_NODELETE isControlledByOffscreen() const;
 
     void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
     void dispatchEvent(Event&) final;

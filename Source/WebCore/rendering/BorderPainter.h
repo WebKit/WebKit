@@ -47,7 +47,7 @@ public:
     static std::optional<Path> pathForBorderArea(const LayoutRect&, const Style::ComputedStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true });
 
     static bool shouldAntialiasLines(GraphicsContext&);
-    static bool NODELETE decorationHasAllSolidEdges(const RectEdges<BorderEdge>&);
+    static bool LEGACY_NODELETE decorationHasAllSolidEdges(const RectEdges<BorderEdge>&);
 
 private:
     friend class OutlinePainter;
@@ -79,7 +79,7 @@ private:
 
     static Color calculateBorderStyleColor(const BorderStyle&, const BoxSide&, const Color&);
 
-    const Document& NODELETE document() const;
+    const Document& LEGACY_NODELETE document() const;
 
     CheckedRef<const RenderElement> m_renderer;
     const PaintInfo& m_paintInfo;

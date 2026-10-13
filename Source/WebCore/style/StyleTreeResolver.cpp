@@ -617,7 +617,7 @@ std::optional<ElementUpdate> TreeResolver::resolveAncestorPseudoElement(Element&
     return createAnimatedElementUpdate(WTF::move(*pseudoElementStyle), { element, pseudoElementIdentifier }, changes, resolutionContext);
 }
 
-static bool NODELETE isChildInBlockFormattingContext(const Style::ComputedStyle& style)
+static bool LEGACY_NODELETE isChildInBlockFormattingContext(const Style::ComputedStyle& style)
 {
     // FIXME: Incomplete. There should be shared code with layout for this.
     if (style.display() != DisplayType::BlockFlow && style.display() != DisplayType::BlockFlowListItem)
@@ -1267,7 +1267,7 @@ auto TreeResolver::determineResolutionType(const Element& element, const Style::
     return { };
 }
 
-static void NODELETE clearNeedsStyleResolution(Element& element)
+static void LEGACY_NODELETE clearNeedsStyleResolution(Element& element)
 {
     element.setHasValidStyle();
     if (auto* before = element.beforePseudoElement())
@@ -2073,13 +2073,13 @@ void TreeResolver::collectChangedAnchorNames(const Style::ComputedStyle& newStyl
     }
 }
 
-static Vector<Function<void ()>>& NODELETE postResolutionCallbackQueue()
+static Vector<Function<void ()>>& LEGACY_NODELETE postResolutionCallbackQueue()
 {
     static NeverDestroyed<Vector<Function<void ()>>> vector;
     return vector;
 }
 
-static Vector<Ref<Frame>>& NODELETE memoryCacheClientCallsResumeQueue()
+static Vector<Ref<Frame>>& LEGACY_NODELETE memoryCacheClientCallsResumeQueue()
 {
     static NeverDestroyed<Vector<Ref<Frame>>> vector;
     return vector;

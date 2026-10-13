@@ -68,8 +68,8 @@ public:
 
     void applyPerspective(const FloatPoint& originTranslate);
 
-    void NODELETE applyTransformOrigin(const FloatPoint3D& originTranslate);
-    void NODELETE unapplyTransformOrigin(const FloatPoint3D& originTranslate);
+    void LEGACY_NODELETE applyTransformOrigin(const FloatPoint3D& originTranslate);
+    void LEGACY_NODELETE unapplyTransformOrigin(const FloatPoint3D& originTranslate);
 
     void applyCSSTransform(const TransformOperationData&, OptionSet<Option> = allTransformOperations);
 

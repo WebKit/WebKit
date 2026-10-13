@@ -48,7 +48,7 @@ class FileIconLoader {
 public:
     explicit FileIconLoader(FileIconLoaderClient&);
 
-    void NODELETE invalidate();
+    void LEGACY_NODELETE invalidate();
     WEBCORE_EXPORT void iconLoaded(RefPtr<Icon>&&);
 
 private:

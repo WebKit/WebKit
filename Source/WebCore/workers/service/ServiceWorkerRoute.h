@@ -85,7 +85,7 @@ struct ServiceWorkerRoute {
     ServiceWorkerRoute isolatedCopy() const &;
 };
 
-std::optional<size_t> NODELETE countRouterInnerConditions(const ServiceWorkerRouteCondition&, size_t result, size_t depth);
+std::optional<size_t> LEGACY_NODELETE countRouterInnerConditions(const ServiceWorkerRouteCondition&, size_t result, size_t depth);
 std::optional<ExceptionData> validateServiceWorkerRoute(ServiceWorkerRoute&);
 
 bool matchRouterCondition(const ServiceWorkerRouteCondition&, const FetchOptions&, const ResourceRequest&, bool isServiceWorkerRunning);

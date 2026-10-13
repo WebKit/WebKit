@@ -57,14 +57,14 @@ private:
 
     struct Token;
 
-    bool NODELETE isBinaryOperatorContext() const;
+    bool LEGACY_NODELETE isBinaryOperatorContext() const;
 
-    void NODELETE skipWS();
+    void LEGACY_NODELETE skipWS();
     Token makeTokenAndAdvance(int type, int advance = 1);
     Token makeTokenAndAdvance(int type, NumericOp::Opcode, int advance = 1);
     Token makeTokenAndAdvance(int type, EqTestOp::Opcode, int advance = 1);
-    char NODELETE peekAheadHelper();
-    char NODELETE peekCurHelper();
+    char LEGACY_NODELETE peekAheadHelper();
+    char LEGACY_NODELETE peekCurHelper();
 
     Token lexString();
     Token lexNumber();

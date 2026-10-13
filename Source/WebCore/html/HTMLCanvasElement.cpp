@@ -719,7 +719,7 @@ static String toEncodingMimeType(const String& mimeType)
 }
 
 // https://html.spec.whatwg.org/multipage/canvas.html#a-serialisation-of-the-bitmap-as-a-file
-static std::optional<double> NODELETE qualityFromJSValue(JSC::JSValue qualityValue)
+static std::optional<double> LEGACY_NODELETE qualityFromJSValue(JSC::JSValue qualityValue)
 {
     if (!qualityValue.isNumber())
         return std::nullopt;

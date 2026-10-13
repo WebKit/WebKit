@@ -159,7 +159,7 @@ public:
     RefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
     Node* cacheAncestorsOfStartToBeConverted(const Position&, const Position&);
-    bool NODELETE isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
+    bool LEGACY_NODELETE isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
     HashMap<Element*, std::unique_ptr<WebCore::Style::Extractor>> m_computedStyles;

@@ -40,7 +40,7 @@ struct FourCC;
 class CDMFactoryFairPlayStreaming final : public CDMFactory {
     WTF_MAKE_TZONE_ALLOCATED(CDMFactoryFairPlayStreaming);
 public:
-    static CDMFactoryFairPlayStreaming& NODELETE singleton();
+    static CDMFactoryFairPlayStreaming& LEGACY_NODELETE singleton();
 
     virtual ~CDMFactoryFairPlayStreaming();
 

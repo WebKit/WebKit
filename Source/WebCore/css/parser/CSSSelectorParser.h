@@ -86,15 +86,15 @@ private:
     std::unique_ptr<MutableCSSSelector> consumeAttribute(CSSParserTokenRange&);
     std::unique_ptr<MutableCSSSelector> consumeNesting(CSSParserTokenRange&);
 
-    CSSSelector::Relation NODELETE consumeCombinator(CSSParserTokenRange&);
+    CSSSelector::Relation LEGACY_NODELETE consumeCombinator(CSSParserTokenRange&);
     CSSSelector::Match consumeAttributeMatch(CSSParserTokenRange&);
     CSSSelector::AttributeMatchType consumeAttributeFlags(CSSParserTokenRange&);
 
-    const AtomString& NODELETE defaultNamespace() const;
-    const AtomString& NODELETE determineNamespace(const AtomString& prefix);
+    const AtomString& LEGACY_NODELETE defaultNamespace() const;
+    const AtomString& LEGACY_NODELETE determineNamespace(const AtomString& prefix);
     void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, MutableCSSSelector&);
     static std::unique_ptr<MutableCSSSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<MutableCSSSelector> compoundSelector, const CSSSelectorParserContext&);
-    static bool NODELETE containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
+    static bool LEGACY_NODELETE containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
 
     class DisallowPseudoElementsScope;
 

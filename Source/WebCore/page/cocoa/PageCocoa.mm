@@ -137,7 +137,7 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
     }
 }
 
-const String& NODELETE Page::presentingApplicationBundleIdentifier() const
+const String& LEGACY_NODELETE Page::presentingApplicationBundleIdentifier() const
 {
     return m_presentingApplicationBundleIdentifier;
 }

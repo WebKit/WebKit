@@ -149,7 +149,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     return ResourceUtilities::buildObjectForResourceRequest(request, ResourceUtilities::copyRequestExtras(request, resourceLoader));
 }
 
-static Inspector::Protocol::Network::Response::Source NODELETE responseSource(ResourceResponse::Source source)
+static Inspector::Protocol::Network::Response::Source LEGACY_NODELETE responseSource(ResourceResponse::Source source)
 {
     switch (source) {
     case ResourceResponse::Source::DOMCache:
@@ -662,7 +662,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::disable()
     return { };
 }
 
-static NetworkStage NODELETE networkStageFromProtocol(Inspector::Protocol::Network::NetworkStage stage)
+static NetworkStage LEGACY_NODELETE networkStageFromProtocol(Inspector::Protocol::Network::NetworkStage stage)
 {
     switch (stage) {
     case Inspector::Protocol::Network::NetworkStage::Request:
@@ -1107,7 +1107,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
     return { };
 }
 
-static ResourceError::Type NODELETE toResourceErrorType(Inspector::Protocol::Network::ResourceErrorType protocolResourceErrorType)
+static ResourceError::Type LEGACY_NODELETE toResourceErrorType(Inspector::Protocol::Network::ResourceErrorType protocolResourceErrorType)
 {
     switch (protocolResourceErrorType) {
     case Inspector::Protocol::Network::ResourceErrorType::General:

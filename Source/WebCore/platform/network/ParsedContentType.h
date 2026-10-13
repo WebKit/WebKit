@@ -50,7 +50,7 @@ public:
 
     // Note that in the case of multiple values for the same name, the last value is returned.
     WEBCORE_EXPORT String parameterValueForName(const String&) const;
-    size_t NODELETE parameterCount() const;
+    size_t LEGACY_NODELETE parameterCount() const;
 
     WEBCORE_EXPORT String serialize() const;
 

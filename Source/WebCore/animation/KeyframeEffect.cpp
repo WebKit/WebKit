@@ -1771,7 +1771,7 @@ void KeyframeEffect::computeAcceleratedPropertiesState()
         m_acceleratedPropertiesState = AcceleratedProperties::All;
 }
 
-static bool NODELETE isLinearTimingFunctionWithPoints(const TimingFunction* timingFunction)
+static bool LEGACY_NODELETE isLinearTimingFunctionWithPoints(const TimingFunction* timingFunction)
 {
     auto* linearTimingFunction = dynamicDowncast<LinearTimingFunction>(timingFunction);
     return linearTimingFunction && !linearTimingFunction->points().isEmpty();

@@ -57,7 +57,7 @@ private:
     bool hasClampingAndNoFlexing() const;
 
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
-    void NODELETE placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
+    void LEGACY_NODELETE placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
 
     bool hasMultipleLines() const { return style().boxLines() == BoxLines::Multiple; }
     bool isVertical() const { return style().boxOrient() == BoxOrient::Vertical; }

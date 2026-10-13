@@ -86,7 +86,7 @@ public:
     void handleAlternativeTextUIResult(const String& result) UNLESS_ENABLED({ UNUSED_PARAM(result); })
     void handleCancelOperation() UNLESS_ENABLED({ })
 
-    bool NODELETE hasPendingCorrection() const UNLESS_ENABLED({ return false; })
+    bool LEGACY_NODELETE hasPendingCorrection() const UNLESS_ENABLED({ return false; })
     bool isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const UNLESS_ENABLED({ UNUSED_PARAM(misspellingRange); return true; })
     bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
     bool canEnableAutomaticSpellingCorrection() const UNLESS_ENABLED({ return false; })
@@ -117,7 +117,7 @@ private:
     bool shouldStartTimerFor(const DocumentMarker&, int endOffset) const;
     bool respondToMarkerAtEndOfWord(const DocumentMarker&, const Position& endOfWordPosition);
 
-    EditorClient* NODELETE editorClient();
+    EditorClient* LEGACY_NODELETE editorClient();
     
     TextCheckerClient* textChecker();
     FloatRect rootViewRectForRange(const SimpleRange&) const;
@@ -136,9 +136,9 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 #if USE(DICTATION_ALTERNATIVES) || USE(AUTOCORRECTION_PANEL)
-    String NODELETE markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
+    String LEGACY_NODELETE markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarkerType);
     void applyAlternativeTextToRange(const SimpleRange&, const String&, AlternativeTextType, OptionSet<DocumentMarkerType>);
-    AlternativeTextClient* NODELETE alternativeTextClient();
+    AlternativeTextClient* LEGACY_NODELETE alternativeTextClient();
 #endif
     void removeCorrectionIndicatorMarkers();
 

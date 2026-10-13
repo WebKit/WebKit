@@ -50,7 +50,7 @@ public:
 
 private:
     static ASCIILiteral supplementName() { return "DOMWindowIndexedDatabase"_s; }
-    bool NODELETE isDOMWindowIndexedDatabase() const final { return true; }
+    bool LEGACY_NODELETE isDOMWindowIndexedDatabase() const final { return true; }
 
     const RefPtr<IDBFactory> m_idbFactory;
 };
@@ -63,7 +63,7 @@ public:
 
     static WorkerGlobalScopeIndexedDatabase* from(WorkerGlobalScope&);
     IDBFactory* indexedDB();
-    bool NODELETE isWorkerGlobalScopeIndexedDatabase() const final { return true; }
+    bool LEGACY_NODELETE isWorkerGlobalScopeIndexedDatabase() const final { return true; }
 
 private:
     static ASCIILiteral supplementName() { return "WorkerGlobalScopeIndexedDatabase"_s; }

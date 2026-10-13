@@ -1343,7 +1343,7 @@ void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const At
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ConditionEventListener)
-    static bool NODELETE isType(const WebCore::EventListener& listener)
+    static bool LEGACY_NODELETE isType(const WebCore::EventListener& listener)
     {
         return listener.type() == WebCore::EventListener::ConditionEventListenerType;
     }

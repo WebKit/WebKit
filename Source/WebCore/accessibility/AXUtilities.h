@@ -59,8 +59,8 @@ RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node&);
 RefPtr<ContainerNode> composedParentIgnoringDocumentFragments(const Node*);
 
 // Returns NodeName and not ElementName because it's impossible to forward declare ElementName.
-NodeName NODELETE elementName(Node*);
-NodeName NODELETE elementName(Node&);
+NodeName LEGACY_NODELETE elementName(Node*);
+NodeName LEGACY_NODELETE elementName(Node&);
 
 RenderImage* toSimpleImage(RenderObject&);
 
@@ -81,15 +81,15 @@ enum class DocumentNeeds : uint8_t {
 // accessibility tree from. Returns an empty set if the document is clean.
 OptionSet<DocumentNeeds> needsLayoutOrStyleRecalc(const Document&);
 
-bool NODELETE isRenderHidden(const Style::ComputedStyle*);
+bool LEGACY_NODELETE isRenderHidden(const Style::ComputedStyle*);
 // Checks both CSS display properties, and CSS visibility properties.
-bool NODELETE isRenderHidden(const RenderObject&);
+bool LEGACY_NODELETE isRenderHidden(const RenderObject&);
 // For elements without a renderer, and for comparing styles.
-bool NODELETE isRenderHidden(const Style::ComputedStyle&);
+bool LEGACY_NODELETE isRenderHidden(const Style::ComputedStyle&);
 // Only checks CSS visibility properties.
-bool NODELETE isVisibilityHidden(const RenderObject&);
+bool LEGACY_NODELETE isVisibilityHidden(const RenderObject&);
 // For elements without a renderer, and for comparing styles.
-bool NODELETE isVisibilityHidden(const Style::ComputedStyle&);
+bool LEGACY_NODELETE isVisibilityHidden(const Style::ComputedStyle&);
 const Style::ComputedStyle* safeStyleFrom(Element&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXNotification);

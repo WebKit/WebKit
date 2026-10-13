@@ -54,7 +54,7 @@ public:
     virtual ~CanvasImage();
 
     bool operator==(const Image&) const final;
-    bool NODELETE equals(const CanvasImage&) const;
+    bool LEGACY_NODELETE equals(const CanvasImage&) const;
 
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 

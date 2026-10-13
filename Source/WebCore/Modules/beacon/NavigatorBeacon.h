@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT static Ref<NavigatorBeacon> from(Navigator&);
 
     // CachedResourceClient.
-    WEBCORE_EXPORT void NODELETE ref() const final;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const final;
     WEBCORE_EXPORT void deref() const final;
 
 private:

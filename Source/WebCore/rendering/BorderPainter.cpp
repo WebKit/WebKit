@@ -61,7 +61,7 @@ template<typename> struct NinePieceImageSizingKind;
 template<> struct NinePieceImageSizingKind<Style::BorderImage> { using type = Style::BorderImageSizing; };
 template<> struct NinePieceImageSizingKind<Style::MaskBorder> { using type = Style::MaskBorderSizing; };
 
-static bool NODELETE borderStyleFillsBorderArea(BorderStyle style)
+static bool LEGACY_NODELETE borderStyleFillsBorderArea(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -80,7 +80,7 @@ static bool NODELETE borderStyleFillsBorderArea(BorderStyle style)
     return true;
 }
 
-static bool NODELETE styleRequiresClipPolygon(BorderStyle style)
+static bool LEGACY_NODELETE styleRequiresClipPolygon(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -101,7 +101,7 @@ static bool NODELETE styleRequiresClipPolygon(BorderStyle style)
     return false;
 }
 
-static bool NODELETE borderStyleHasInnerDetail(BorderStyle style)
+static bool LEGACY_NODELETE borderStyleHasInnerDetail(BorderStyle style)
 {
     switch (style) {
     case BorderStyle::None:
@@ -122,12 +122,12 @@ static bool NODELETE borderStyleHasInnerDetail(BorderStyle style)
     return false;
 }
 
-static bool NODELETE borderStyleIsDottedOrDashed(BorderStyle style)
+static bool LEGACY_NODELETE borderStyleIsDottedOrDashed(BorderStyle style)
 {
     return style == BorderStyle::Dotted || style == BorderStyle::Dashed;
 }
 
-static bool NODELETE decorationHasAllSimpleEdges(const RectEdges<BorderEdge>& edges)
+static bool LEGACY_NODELETE decorationHasAllSimpleEdges(const RectEdges<BorderEdge>& edges)
 {
     for (auto side : allBoxSides) {
         auto& currEdge = edges.at(side);
@@ -572,7 +572,7 @@ static inline bool colorNeedsAntiAliasAtCorner(BoxSide side, BoxSide adjacentSid
 }
 
 // This assumes that we draw in order: top, bottom, left, right.
-static inline bool NODELETE willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
+static inline bool LEGACY_NODELETE willBeOverdrawn(BoxSide side, BoxSide adjacentSide, const BorderEdges& edges)
 {
     switch (side) {
     case BoxSide::Top:

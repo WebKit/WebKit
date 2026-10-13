@@ -416,7 +416,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static CryptoKeyUsageBitmap NODELETE toCryptoKeyUsageBitmap(CryptoKeyUsage usage)
+static CryptoKeyUsageBitmap LEGACY_NODELETE toCryptoKeyUsageBitmap(CryptoKeyUsage usage)
 {
     switch (usage) {
     case CryptoKeyUsage::Encrypt:
@@ -440,7 +440,7 @@ static CryptoKeyUsageBitmap NODELETE toCryptoKeyUsageBitmap(CryptoKeyUsage usage
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static CryptoKeyUsageBitmap NODELETE toCryptoKeyUsageBitmap(const Vector<CryptoKeyUsage>& usages)
+static CryptoKeyUsageBitmap LEGACY_NODELETE toCryptoKeyUsageBitmap(const Vector<CryptoKeyUsage>& usages)
 {
     CryptoKeyUsageBitmap result = 0;
     // Maybe we shouldn't silently bypass duplicated usages?
@@ -481,7 +481,7 @@ static void rejectWithException(Ref<DeferredPromise>&& passedPromise, ExceptionC
     ASSERT_NOT_REACHED();
 }
 
-static void NODELETE normalizeJsonWebKey(JsonWebKey& webKey)
+static void LEGACY_NODELETE normalizeJsonWebKey(JsonWebKey& webKey)
 {
     // Maybe we shouldn't silently bypass duplicated usages?
     webKey.usages = webKey.key_ops ? toCryptoKeyUsageBitmap(webKey.key_ops.value()) : 0;
@@ -527,7 +527,7 @@ static Vector<uint8_t> copyToVector(BufferSource&& data)
     return data.span();
 }
 
-static bool NODELETE isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
+static bool LEGACY_NODELETE isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::AES_CFB:

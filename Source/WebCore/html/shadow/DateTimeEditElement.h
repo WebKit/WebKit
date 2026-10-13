@@ -71,7 +71,7 @@ public:
     void deref() const final { HTMLDivElement::deref(); }
 
     void addField(Ref<DateTimeFieldElement>);
-    Element& NODELETE fieldsWrapperElement() const;
+    Element& LEGACY_NODELETE fieldsWrapperElement() const;
     void focusByOwner();
     void resetFields();
     void setEmptyValue(const LayoutParameters&);

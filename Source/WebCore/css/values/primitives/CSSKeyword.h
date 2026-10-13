@@ -62,7 +62,7 @@ template<> struct CSSValueChildrenVisitor<Keyword> { constexpr IterationStatus o
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Keyword&);
 
-void NODELETE add(Hasher&, const Keyword&);
+void LEGACY_NODELETE add(Hasher&, const Keyword&);
 
 } // namespace CSS
 } // namespace WebCore

@@ -77,9 +77,9 @@ private:
         Aborting
     }; // enum class InteractionState
 
-    bool NODELETE canTransitionTo(InteractionState) const;
-    InteractionState NODELETE interactionState() const;
-    void NODELETE setInteractionState(InteractionState);
+    bool LEGACY_NODELETE canTransitionTo(InteractionState) const;
+    InteractionState LEGACY_NODELETE interactionState() const;
+    void LEGACY_NODELETE setInteractionState(InteractionState);
 
     void initiateTheCredentialRequest(const Document&, Vector<ValidatedDigitalCredentialRequest>&&, Vector<UnvalidatedDigitalCredentialRequest>&&, RefPtr<AbortSignal>);
     void processCredentialChooserResponse(std::expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);

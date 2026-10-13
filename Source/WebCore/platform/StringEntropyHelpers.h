@@ -29,7 +29,7 @@
 
 namespace WebCore::StringEntropyHelpers {
 
-bool NODELETE isProbablyHumanReadable(StringView);
+bool LEGACY_NODELETE isProbablyHumanReadable(StringView);
 String lowEntropyLastPathComponent(const URL&, const String& fallbackName, const String& mimeType);
 URL removeHighEntropyComponents(const URL&);
 

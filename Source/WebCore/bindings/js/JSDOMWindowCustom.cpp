@@ -462,7 +462,7 @@ JSValue JSDOMWindow::getPrototype(JSObject* object, JSGlobalObject* lexicalGloba
     return Base::getPrototype(object, lexicalGlobalObject);
 }
 
-bool NODELETE JSDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
+bool LEGACY_NODELETE JSDOMWindow::preventExtensions(JSObject*, JSGlobalObject*)
 {
     return false;
 }
@@ -612,7 +612,7 @@ JSValue JSDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFra
     return jsUndefined();
 }
 
-DOMWindow* NODELETE JSDOMWindow::toWrapped(VM&, JSValue value)
+DOMWindow* LEGACY_NODELETE JSDOMWindow::toWrapped(VM&, JSValue value)
 {
     if (!value.isObject())
         return nullptr;
@@ -641,17 +641,17 @@ void JSDOMWindow::setOpener(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSVal
     createDataProperty(&lexicalGlobalObject, builtinNames(lexicalGlobalObject.vm()).openerPublicName(), value, shouldThrow);
 }
 
-JSValue NODELETE JSDOMWindow::self(JSC::JSGlobalObject&) const
+JSValue LEGACY_NODELETE JSDOMWindow::self(JSC::JSGlobalObject&) const
 {
     return globalThis();
 }
 
-JSValue NODELETE JSDOMWindow::window(JSC::JSGlobalObject&) const
+JSValue LEGACY_NODELETE JSDOMWindow::window(JSC::JSGlobalObject&) const
 {
     return globalThis();
 }
 
-JSValue NODELETE JSDOMWindow::frames(JSC::JSGlobalObject&) const
+JSValue LEGACY_NODELETE JSDOMWindow::frames(JSC::JSGlobalObject&) const
 {
     return globalThis();
 }

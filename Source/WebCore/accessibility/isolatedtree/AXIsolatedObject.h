@@ -559,7 +559,7 @@ private:
     bool hasUnderline() const final { return colorAttributeValue(AXProperty::UnderlineColor) != Accessibility::defaultColor(); }
     AXTextMarkerRange textInputMarkedTextMarkerRange() const final;
     Element* element() const final;
-    Node* NODELETE node() const final;
+    Node* LEGACY_NODELETE node() const final;
     RenderObject* renderer() const final;
 
     AccessibilityChildrenVector relatedObjects(AXRelation) const final;
@@ -585,7 +585,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const final;
 #endif
-    AXObjectCache* NODELETE axObjectCache() const;
+    AXObjectCache* LEGACY_NODELETE axObjectCache() const;
     Element* actionElement() const final;
     Path elementPath() const final;
     bool supportsPath() const final;

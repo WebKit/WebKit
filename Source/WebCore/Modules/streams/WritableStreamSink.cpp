@@ -53,7 +53,7 @@ public:
     }
 
     void errorIfNeeded(JSC::JSGlobalObject&, JSC::JSValue);
-    JSWritableStreamDefaultController* NODELETE jsController() { return m_jsController; }
+    JSWritableStreamDefaultController* LEGACY_NODELETE jsController() { return m_jsController; }
     RefPtr<AbortSignal> signal() const;
 
 private:
@@ -153,7 +153,7 @@ JSC::JSValue JSWritableStreamSink::start(JSC::JSGlobalObject& globalObject, JSC:
     return JSC::jsUndefined();
 }
 
-JSC::JSValue NODELETE JSWritableStreamSink::controller(JSC::JSGlobalObject&) const
+JSC::JSValue LEGACY_NODELETE JSWritableStreamSink::controller(JSC::JSGlobalObject&) const
 {
     ASSERT_NOT_REACHED();
     return JSC::jsUndefined();

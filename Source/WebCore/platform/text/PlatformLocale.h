@@ -152,8 +152,8 @@ protected:
     void setLocaleData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
 
 private:
-    bool NODELETE detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
-    unsigned NODELETE matchedDecimalSymbolIndex(const String& input, unsigned& position);
+    bool LEGACY_NODELETE detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
+    unsigned LEGACY_NODELETE matchedDecimalSymbolIndex(const String& input, unsigned& position);
 
     std::array<String, DecimalSymbolsSize> m_decimalSymbols;
     String m_positivePrefix;

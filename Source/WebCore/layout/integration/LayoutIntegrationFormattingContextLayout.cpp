@@ -163,7 +163,7 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
     }
 }
 
-static inline size_t NODELETE remainingLinesForLineClamp(auto& inlineLayoutState)
+static inline size_t LEGACY_NODELETE remainingLinesForLineClamp(auto& inlineLayoutState)
 {
     // The lines we have already put on the parent's own lines (and in its earlier nested blocks) are part of the clamp's
     // budget, and the nested block has to lay out within what is left of it. A block level sibling gets this from

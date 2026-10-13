@@ -52,7 +52,7 @@ public:
     }
 
     Type messageType() const { return m_messageType; }
-    RefPtr<JSC::ArrayBuffer> NODELETE message() const;
+    RefPtr<JSC::ArrayBuffer> LEGACY_NODELETE message() const;
 
 private:
     MediaKeyMessageEvent(const AtomString&, const MediaKeyMessageEventInit&, IsTrusted);

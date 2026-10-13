@@ -161,10 +161,10 @@ public:
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }
     bool applyPropertyToVisitedLinkStyle() const { return m_linkMatch != SelectorChecker::MatchLink; }
 
-    float NODELETE zoomWithTextZoomFactor();
+    float LEGACY_NODELETE zoomWithTextZoomFactor();
 
-    bool NODELETE useSVGZoomRules() const;
-    bool NODELETE useSVGZoomRulesForLength() const;
+    bool LEGACY_NODELETE useSVGZoomRules() const;
+    bool LEGACY_NODELETE useSVGZoomRulesForLength() const;
 
     // Defaults to Element when called outside property cascade application (e.g. attr() resolution
     // during container-query evaluation), where there is no current property in flight.
@@ -191,20 +191,20 @@ public:
         return m_currentProperty && m_currentProperty->origin == PropertyCascade::Origin::Author;
     }
 
-    CSSPropertyID NODELETE cssPropertyID() const;
+    CSSPropertyID LEGACY_NODELETE cssPropertyID() const;
     AtomString customPropertyName() const;
 
-    bool NODELETE isCurrentPropertyInvalidAtComputedValueTime() const;
-    void NODELETE setCurrentPropertyInvalidAtComputedValueTime();
+    bool LEGACY_NODELETE isCurrentPropertyInvalidAtComputedValueTime() const;
+    void LEGACY_NODELETE setCurrentPropertyInvalidAtComputedValueTime();
 
-    void NODELETE setUsesViewportUnits();
-    void NODELETE setIsContainerDependent();
+    void LEGACY_NODELETE setUsesViewportUnits();
+    void LEGACY_NODELETE setIsContainerDependent();
 
     double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&, std::optional<CSS::Keyword::ElementScoped>) const;
 
     // Accessors for sibling information used by the sibling-count() and sibling-index() CSS functions.
-    unsigned NODELETE siblingCount();
-    unsigned NODELETE siblingIndex();
+    unsigned LEGACY_NODELETE siblingCount();
+    unsigned LEGACY_NODELETE siblingIndex();
 
     AnchorPositionedStates* anchorPositionedStates() LIFETIME_BOUND { return m_context.treeResolutionState ? &m_context.treeResolutionState->anchorPositionedStates : nullptr; }
     const std::optional<BuilderPositionTryFallback>& positionTryFallback() const LIFETIME_BOUND { return m_context.positionTryFallback; }
@@ -267,7 +267,7 @@ private:
 
     BuilderState(ComputedStyle&, BuilderContext&&);
 
-    void NODELETE adjustStyleForInterCharacterRuby();
+    void LEGACY_NODELETE adjustStyleForInterCharacterRuby();
 
     void updateFont();
     void updateFontForTextSizeAdjust();

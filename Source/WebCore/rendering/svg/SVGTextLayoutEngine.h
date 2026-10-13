@@ -75,9 +75,9 @@ public:
     void finishLayout();
 
 private:
-    void NODELETE updateCharacterPositionIfNeeded(float& x, float& y);
-    void NODELETE updateCurrentTextPosition(float x, float y, float glyphAdvance);
-    void NODELETE updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
+    void LEGACY_NODELETE updateCharacterPositionIfNeeded(float& x, float& y);
+    void LEGACY_NODELETE updateCurrentTextPosition(float x, float y, float glyphAdvance);
+    void LEGACY_NODELETE updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
     void recordTextFragment(const SVGTextLayoutBox&, const Vector<SVGTextMetrics>&);
     Vector<SVGTextFragment>& fragmentsForBox(const SVGTextLayoutBox&);
@@ -87,12 +87,12 @@ private:
 
     void layoutTextOnLineOrPath(const SVGTextLayoutBox&, const Style::ComputedStyle&);
 
-    bool NODELETE currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
-    bool NODELETE currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
+    bool LEGACY_NODELETE currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
+    bool LEGACY_NODELETE currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
     bool currentVisualCharacterMetrics(const SVGTextLayoutBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
 
-    void NODELETE advanceToNextLogicalCharacter(const SVGTextMetrics&);
-    void NODELETE advanceToNextVisualCharacter(const SVGTextMetrics&);
+    void LEGACY_NODELETE advanceToNextLogicalCharacter(const SVGTextMetrics&);
+    void LEGACY_NODELETE advanceToNextVisualCharacter(const SVGTextMetrics&);
 
 private:
     Vector<SVGTextLayoutAttributes*>& m_layoutAttributes;

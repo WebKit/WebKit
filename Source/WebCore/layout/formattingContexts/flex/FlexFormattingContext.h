@@ -46,20 +46,20 @@ public:
     FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent);
 
     // The item's content-box main size plus its main-axis border, padding and margin.
-    LayoutUnit NODELETE outerMainSize(LayoutUnit mainSize) const;
-    const Style::ComputedStyle& NODELETE style() const LIFETIME_BOUND;
+    LayoutUnit LEGACY_NODELETE outerMainSize(LayoutUnit mainSize) const;
+    const Style::ComputedStyle& LEGACY_NODELETE style() const LIFETIME_BOUND;
 
     // The item's current, laid-out geometry.
-    LayoutUnit NODELETE logicalWidth() const;
-    LayoutUnit NODELETE logicalHeight() const;
+    LayoutUnit LEGACY_NODELETE logicalWidth() const;
+    LayoutUnit LEGACY_NODELETE logicalHeight() const;
     LayoutUnit borderAndPaddingLogicalHeight() const;
     LayoutSize intrinsicSize() const;
 #if ASSERT_ENABLED
     bool needsLayout() const;
 #endif
 
-    bool NODELETE isTable() const;
-    bool NODELETE isReplaced() const;
+    bool LEGACY_NODELETE isTable() const;
+    bool LEGACY_NODELETE isReplaced() const;
 
     CheckedRef<RenderBox> renderer;
     const LayoutUnit mainAxisBorderAndPadding;
@@ -190,7 +190,7 @@ private:
 
     bool flexItemHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const FlexLayoutItem&);
 
-    LayoutUnit NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
+    LayoutUnit LEGACY_NODELETE autoMarginOffsetInMainAxis(std::span<const FlexLayoutItem>, LayoutUnit& availableFreeSpace);
 
     LayoutUnit applyStretchAlignmentToFlexItem(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LayoutUnit crossContentExtent);
     LayoutUnit applyStretchMinMaxCrossSize(const FlexLayoutItem&, LayoutUnit lineCrossAxisExtent, LogicalBoxAxis, LayoutUnit crossContentExtent);

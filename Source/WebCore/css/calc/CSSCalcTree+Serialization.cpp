@@ -130,7 +130,7 @@ static constexpr unsigned sortPriorityBase = __COUNTER__;
 static constexpr unsigned errorSortPriority = std::numeric_limits<unsigned>::max() - 1;
 static constexpr unsigned otherSortPriority = std::numeric_limits<unsigned>::max();
 
-static unsigned NODELETE sortPriority(CSSUnitType unit)
+static unsigned LEGACY_NODELETE sortPriority(CSSUnitType unit)
 {
     // Sort order: number, percentage, dimension (by unit, ordered ASCII case-insensitively), other.
 

@@ -47,9 +47,9 @@ public:
     
     void setDelayFrames(double numberOfFrames) { m_desiredDelayFrames = numberOfFrames; }
 
-    double NODELETE tailTime() const override;
-    double NODELETE latencyTime() const override;
-    bool NODELETE requiresTailProcessing() const final;
+    double LEGACY_NODELETE tailTime() const override;
+    double LEGACY_NODELETE latencyTime() const override;
+    bool LEGACY_NODELETE requiresTailProcessing() const final;
 
 private:
     void processARate(std::span<const float> source, std::span<float> destination);

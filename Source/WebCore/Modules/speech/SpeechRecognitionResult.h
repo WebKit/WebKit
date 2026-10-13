@@ -39,7 +39,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     uint64_t length() const { return m_alternatives.size(); }
     bool isFinal() const { return m_isFinal; }
-    SpeechRecognitionAlternative* NODELETE item(uint64_t index) const;
+    SpeechRecognitionAlternative* LEGACY_NODELETE item(uint64_t index) const;
 
 private:
     SpeechRecognitionResult(Vector<Ref<SpeechRecognitionAlternative>>&&, bool isFinal);

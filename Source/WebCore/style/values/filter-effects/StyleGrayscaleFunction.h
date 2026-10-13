@@ -45,7 +45,7 @@ struct Grayscale {
 
     Parameter value;
 
-    static Grayscale NODELETE passthroughForInterpolation();
+    static Grayscale LEGACY_NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }

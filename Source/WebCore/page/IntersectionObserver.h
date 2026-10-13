@@ -90,7 +90,7 @@ public:
     enum class Type : bool { Local, Remote };
     Type type() const { return m_type; }
 
-    Document* NODELETE trackingDocument() const;
+    Document* LEGACY_NODELETE trackingDocument() const;
 
     ContainerNode* root() const { return m_root.get(); }
     String rootMargin() const;
@@ -100,7 +100,7 @@ public:
     const Vector<double>& thresholds() const LIFETIME_BOUND { return m_thresholds; }
     const WeakListHashSet<Element, WeakPtrImplWithEventTargetData>& observationTargets() const LIFETIME_BOUND { return m_observationTargets; }
     bool hasObservationTargets() const { return !m_observationTargets.isEmptyIgnoringNullReferences(); }
-    bool NODELETE isObserving(const Element&) const;
+    bool LEGACY_NODELETE isObserving(const Element&) const;
 
     void resetPreviousThresholdIndexForTarget(const Element&);
 

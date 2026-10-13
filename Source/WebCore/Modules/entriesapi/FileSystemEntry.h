@@ -49,13 +49,13 @@ public:
 
     const String& name() const LIFETIME_BOUND { return m_name; }
     const String& virtualPath() const LIFETIME_BOUND { return m_virtualPath; }
-    DOMFileSystem& NODELETE filesystem() const;
+    DOMFileSystem& LEGACY_NODELETE filesystem() const;
 
     void getParent(ScriptExecutionContext&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&&);
 
 protected:
     FileSystemEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
 private:
     const Ref<DOMFileSystem> m_filesystem;

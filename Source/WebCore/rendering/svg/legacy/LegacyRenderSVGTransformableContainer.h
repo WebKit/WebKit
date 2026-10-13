@@ -41,7 +41,7 @@ public:
     const FloatSize& additionalTranslation() const LIFETIME_BOUND { return m_additionalTranslation; }
 
 private:
-    SVGGraphicsElement& NODELETE graphicsElement();
+    SVGGraphicsElement& LEGACY_NODELETE graphicsElement();
 
     void element() const = delete;
     bool calculateLocalTransform() override;

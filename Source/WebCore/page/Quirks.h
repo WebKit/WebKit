@@ -68,7 +68,7 @@ public:
     Quirks(Document&);
     ~Quirks();
 
-    bool NODELETE hasRelevantQuirks() const;
+    bool LEGACY_NODELETE hasRelevantQuirks() const;
 
     bool shouldSilenceResizeObservers() const;
     bool shouldSilenceWindowResizeEventsDuringApplicationSnapshotting() const;
@@ -85,26 +85,26 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
 #endif
-    bool NODELETE needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
-    WEBCORE_EXPORT bool NODELETE inputMethodUsesCorrectKeyEventOrder() const;
+    bool LEGACY_NODELETE needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE inputMethodUsesCorrectKeyEventOrder() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
-    WEBCORE_EXPORT bool NODELETE needsYouTubeMouseOutQuirk() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool needsCaptionMirroringQuirk() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
-    WEBCORE_EXPORT static bool NODELETE needsDesktopUserAgent(const URL&);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE needsDesktopUserAgent(const URL&);
     WEBCORE_EXPORT static std::optional<String> needsCustomUserAgentOverride(const URL&, const String& applicationNameForUserAgent, const String& currentUserAgent);
 
     WEBCORE_EXPORT static bool needsPartitionedCookies(const ResourceRequest&);
 
-    WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> NODELETE defaultVisibilityAdjustmentSelectors(const URL&);
+    WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> LEGACY_NODELETE defaultVisibilityAdjustmentSelectors(const URL&);
 
-    WEBCORE_EXPORT bool static NODELETE shouldDisableBlobFileAccessEnforcement();
+    WEBCORE_EXPORT bool static LEGACY_NODELETE shouldDisableBlobFileAccessEnforcement();
 
     bool shouldAllowMixedContentConnectionToLoopback(const URL&);
 

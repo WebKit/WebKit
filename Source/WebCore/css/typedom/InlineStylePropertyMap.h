@@ -41,7 +41,7 @@ public:
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
     String shorthandPropertySerialization(CSSPropertyID) const final;
     RefPtr<CSSValue> customPropertyValue(const AtomString& property) const final;
-    unsigned NODELETE size() const final;
+    unsigned LEGACY_NODELETE size() const final;
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
     void removeProperty(CSSPropertyID) final;
     bool setShorthandProperty(CSSPropertyID, const String& value) final;

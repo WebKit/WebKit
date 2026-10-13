@@ -49,14 +49,14 @@ struct MotionPathData {
     FloatPoint usedStartingPosition;
     RectCorners<float> cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 
-    FloatPoint NODELETE currentOffset() const;
-    FloatRoundedRect NODELETE offsetRect() const;
+    FloatPoint LEGACY_NODELETE currentOffset() const;
+    FloatRoundedRect LEGACY_NODELETE offsetRect() const;
 };
 
 class MotionPath {
 public:
     static std::optional<MotionPathData> motionPathDataForRenderer(const RenderElement&);
-    static bool NODELETE needsUpdateAfterContainingBlockLayout(const Style::OffsetPath&);
+    static bool LEGACY_NODELETE needsUpdateAfterContainingBlockLayout(const Style::OffsetPath&);
 
     static void applyMotionPathTransform(TransformationMatrix&, const TransformOperationData&, FloatPoint transformOrigin, TransformBox, const Path&, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto);
 };

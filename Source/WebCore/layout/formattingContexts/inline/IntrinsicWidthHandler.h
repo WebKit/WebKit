@@ -51,11 +51,11 @@ private:
     InlineLayoutUnit lineBuilderMinimumContentSize();
     InlineLayoutUnit simplifiedMaximumWidth(MayCacheLayoutResult = MayCacheLayoutResult::No);
 
-    InlineFormattingContext& NODELETE formattingContext() LIFETIME_BOUND;
-    const InlineFormattingContext& NODELETE formattingContext() const LIFETIME_BOUND;
+    InlineFormattingContext& LEGACY_NODELETE formattingContext() LIFETIME_BOUND;
+    const InlineFormattingContext& LEGACY_NODELETE formattingContext() const LIFETIME_BOUND;
     const InlineContentCache& formattingState() const LIFETIME_BOUND;
-    const ElementBox& NODELETE formattingContextRoot() const;
-    const ElementBox& NODELETE lineBuilderRoot() const;
+    const ElementBox& LEGACY_NODELETE formattingContextRoot() const;
+    const ElementBox& LEGACY_NODELETE lineBuilderRoot() const;
     const InlineItemList& inlineItemList() const LIFETIME_BOUND { return m_inlineItems.content(); }
 
 private:

@@ -111,10 +111,10 @@ public:
 
     virtual bool isSupportingAV1HardwareDecoder() const { return false; }
 
-    WEBCORE_EXPORT void NODELETE disableEnumeratingAllNetworkInterfaces();
-    WEBCORE_EXPORT void NODELETE enableEnumeratingAllNetworkInterfaces();
-    bool NODELETE isEnumeratingAllNetworkInterfacesEnabled() const;
-    WEBCORE_EXPORT void NODELETE enableEnumeratingVisibleNetworkInterfaces();
+    WEBCORE_EXPORT void LEGACY_NODELETE disableEnumeratingAllNetworkInterfaces();
+    WEBCORE_EXPORT void LEGACY_NODELETE enableEnumeratingAllNetworkInterfaces();
+    bool LEGACY_NODELETE isEnumeratingAllNetworkInterfacesEnabled() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE enableEnumeratingVisibleNetworkInterfaces();
     bool isEnumeratingVisibleNetworkInterfacesEnabled() const { return m_enableEnumeratingVisibleNetworkInterfaces; }
 
     class SuspendableSocketFactory : public webrtc::PacketSocketFactory {

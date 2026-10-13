@@ -500,7 +500,7 @@ public:
     void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
     void deferElementAddedOrRemoved(Element*);
-    void NODELETE handleScrolledToAnchor(const Node& anchorNode);
+    void LEGACY_NODELETE handleScrolledToAnchor(const Node& anchorNode);
     void onScrollbarUpdate(ScrollView&);
     void onRemoteFrameInitialized(AXRemoteFrame&);
 
@@ -561,13 +561,13 @@ public:
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
 
     static bool accessibilityEnabled();
-    WEBCORE_EXPORT static bool NODELETE accessibilityEnhancedUserInterfaceEnabled();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE accessibilityEnhancedUserInterfaceEnabled();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static bool useAXThreadTextApis() { return !isMainThread(); }
     static bool shouldCreateAXThreadCompatibleMarkers() { return isIsolatedTreeEnabled(); }
 #endif
     static bool isAXTextStitchingEnabled() { return gAccessibilityTextStitchingEnabled; }
-    WEBCORE_EXPORT static bool NODELETE isAXThreadHitTestingEnabled();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isAXThreadHitTestingEnabled();
 
 #if PLATFORM(COCOA)
     static bool shouldRepostNotificationsForTests() { return gShouldRepostNotificationsForTests; }
@@ -577,7 +577,7 @@ public:
 #endif
 
     static bool forceInitialFrameCaching() { return gForceInitialFrameCaching; }
-    WEBCORE_EXPORT static void NODELETE setForceInitialFrameCaching(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setForceInitialFrameCaching(bool);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static bool shouldServeInitialCachedFrame();
 #endif
@@ -690,8 +690,8 @@ public:
 
     WEBCORE_EXPORT static void setAnnouncementTranslationTimeoutForTesting(std::optional<Seconds>);
 
-    void NODELETE setTextSelectionIntent(const AXTextStateChangeIntent&);
-    void NODELETE setIsSynchronizingSelection(bool);
+    void LEGACY_NODELETE setTextSelectionIntent(const AXTextStateChangeIntent&);
+    void LEGACY_NODELETE setIsSynchronizingSelection(bool);
 
     // While non-std::nullopt, a focus change onto the given element will not be surfaced to assistive
     // technology. A null target suppresses a *clearing* of focus instead.
@@ -721,7 +721,7 @@ public:
     Document* document() const;
     FrameIdentifier frameID() const { return m_frameID; }
 
-    RefPtr<Page> NODELETE page() const;
+    RefPtr<Page> LEGACY_NODELETE page() const;
     IntPoint mapScreenPointToPagePoint(const IntPoint&) const;
 
     void objectBecameIgnored(const AccessibilityObject&);
@@ -765,7 +765,7 @@ public:
     void reconcileCount(const AccessibilityObject&, bool wasCounted);
 
 #if PLATFORM(COCOA)
-    static void NODELETE setShouldRepostNotificationsForTests(bool);
+    static void LEGACY_NODELETE setShouldRepostNotificationsForTests(bool);
 #endif
 
     void deferRecomputeIsIgnoredIfNeeded(Element*);
@@ -813,7 +813,7 @@ public:
     inline void willUpdateObjectRegions();
     static bool isIsolatedTreeEnabled() { return accessibilityMode() == AccessibilityMode::AXThread; }
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
-    WEBCORE_EXPORT static bool NODELETE isAXThreadInitialized();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isAXThreadInitialized();
     WEBCORE_EXPORT RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
     void initializeIsolatedTreeGeometry();
 
@@ -881,8 +881,8 @@ protected:
 
     // CharacterOffset functions.
     enum TraverseOption { TraverseOptionDefault = 1 << 0, TraverseOptionToNodeEnd = 1 << 1, TraverseOptionIncludeStart = 1 << 2, TraverseOptionValidateOffset = 1 << 3, TraverseOptionDoNotEnterTextControls = 1 << 4 };
-    Node* NODELETE nextNode(Node*) const;
-    Node* NODELETE previousNode(Node*) const;
+    Node* LEGACY_NODELETE nextNode(Node*) const;
+    Node* LEGACY_NODELETE previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(const SimpleRange&, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
 public:
     VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&, AllowUserSelectNone = AllowUserSelectNone::No);
@@ -937,7 +937,7 @@ private:
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void selectedTextRangeTimerFired();
-    Seconds NODELETE platformSelectedTextRangeDebounceInterval() const;
+    Seconds LEGACY_NODELETE platformSelectedTextRangeDebounceInterval() const;
     void updateTreeSnapshotTimerFired() { processQueuedIsolatedNodeUpdates(); }
     void processQueuedIsolatedNodeUpdates();
 
@@ -999,9 +999,9 @@ private:
 
     // Relationships between objects.
     static Vector<QualifiedName>& relationAttributes();
-    AXRelation NODELETE attributeToRelationType(const QualifiedName&);
+    AXRelation LEGACY_NODELETE attributeToRelationType(const QualifiedName&);
     enum class AddSymmetricRelation : bool { No, Yes };
-    static AXRelation NODELETE symmetricRelation(AXRelation);
+    static AXRelation LEGACY_NODELETE symmetricRelation(AXRelation);
     bool addRelation(Element&, Element&, AXRelation);
     bool addRelation(AccessibilityObject*, AccessibilityObject*, AXRelation, AddSymmetricRelation = AddSymmetricRelation::Yes);
     bool addRelation(Element&, const QualifiedName&);

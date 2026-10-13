@@ -125,7 +125,7 @@ private:
 
     using MarkerMap = HashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
-    bool NODELETE possiblyHasMarkers(OptionSet<DocumentMarkerType>) const;
+    bool LEGACY_NODELETE possiblyHasMarkers(OptionSet<DocumentMarkerType>) const;
     OptionSet<DocumentMarkerType> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarkerType>, NOESCAPE const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
     void forEachOfTypes(OptionSet<DocumentMarkerType>, NOESCAPE const Function<bool(Node&, RenderedDocumentMarker&)>&);

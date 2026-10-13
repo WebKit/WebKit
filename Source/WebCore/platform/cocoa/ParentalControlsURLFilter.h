@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT static void allowURL(const ParentalControlsURLFilterParameters&, CompletionHandler<void(bool)>&&);
     WEBCORE_EXPORT static WorkQueue& workQueueSingleton();
     WEBCORE_EXPORT bool isEnabled() const;
-    void NODELETE resetIsEnabled();
+    void LEGACY_NODELETE resetIsEnabled();
 
     WEBCORE_EXPORT virtual ~ParentalControlsURLFilter();
     virtual bool isEnabledImpl() const;

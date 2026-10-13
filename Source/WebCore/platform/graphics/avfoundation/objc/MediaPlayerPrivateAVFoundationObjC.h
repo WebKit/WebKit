@@ -101,11 +101,11 @@ public:
 #endif
 
     void playerItemStatusDidChange(int);
-    void NODELETE playbackLikelyToKeepUpWillChange();
+    void LEGACY_NODELETE playbackLikelyToKeepUpWillChange();
     void playbackLikelyToKeepUpDidChange(bool);
-    void NODELETE playbackBufferEmptyWillChange();
+    void LEGACY_NODELETE playbackBufferEmptyWillChange();
     void playbackBufferEmptyDidChange(bool);
-    void NODELETE playbackBufferFullWillChange();
+    void LEGACY_NODELETE playbackBufferFullWillChange();
     void playbackBufferFullDidChange(bool);
     void loadedTimeRangesDidChange(RetainPtr<NSArray>&&);
     void seekableTimeRangesDidChange(RetainPtr<NSArray>&&, NSTimeInterval, NSTimeInterval);
@@ -120,8 +120,8 @@ public:
     void metadataDidArrive(const RetainPtr<NSArray>&, const MediaTime&);
     void firstFrameAvailableDidChange(bool);
     void trackEnabledDidChange(bool);
-    void NODELETE canPlayFastReverseDidChange(bool);
-    void NODELETE canPlayFastForwardDidChange(bool);
+    void LEGACY_NODELETE canPlayFastReverseDidChange(bool);
+    void LEGACY_NODELETE canPlayFastForwardDidChange(bool);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void playbackTargetIsWirelessDidChange();

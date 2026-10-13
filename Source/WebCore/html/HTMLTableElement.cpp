@@ -258,7 +258,7 @@ ExceptionOr<void> HTMLTableElement::deleteRow(int index)
     return row->remove();
 }
 
-static inline bool NODELETE isTableCellAncestor(const Element& element)
+static inline bool LEGACY_NODELETE isTableCellAncestor(const Element& element)
 {
     return element.hasTagName(theadTag)
         || element.hasTagName(tbodyTag)

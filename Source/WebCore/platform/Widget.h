@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT explicit Widget(PlatformWidget = nullptr);
     WEBCORE_EXPORT virtual ~Widget();
 
-    WEBCORE_EXPORT PlatformWidget NODELETE platformWidget() const;
+    WEBCORE_EXPORT PlatformWidget LEGACY_NODELETE platformWidget() const;
     WEBCORE_EXPORT void setPlatformWidget(PlatformWidget);
 
     int x() const { return frameRect().x(); }
@@ -139,8 +139,8 @@ public:
 
     WEBCORE_EXPORT void removeFromParent();
     WEBCORE_EXPORT virtual void setParent(ScrollView* view);
-    WEBCORE_EXPORT ScrollView* NODELETE parent() const;
-    WEBCORE_EXPORT FrameView* NODELETE root() const;
+    WEBCORE_EXPORT ScrollView* LEGACY_NODELETE parent() const;
+    WEBCORE_EXPORT FrameView* LEGACY_NODELETE root() const;
 
     virtual void handleEvent(Event&) { }
 

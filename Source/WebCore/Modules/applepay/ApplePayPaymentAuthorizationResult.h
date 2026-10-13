@@ -53,7 +53,7 @@ struct ApplePayPaymentAuthorizationResult {
     std::optional<ApplePayPaymentOrderDetails> orderDetails;
 #endif
 
-    WEBCORE_EXPORT bool NODELETE isFinalState() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isFinalState() const;
 };
 
 }

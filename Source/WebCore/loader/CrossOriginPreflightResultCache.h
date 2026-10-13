@@ -67,7 +67,7 @@ private:
 class CrossOriginPreflightResultCache {
     WTF_MAKE_NONCOPYABLE(CrossOriginPreflightResultCache); WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CrossOriginPreflightResultCache, Loader);
 public:
-    WEBCORE_EXPORT static CrossOriginPreflightResultCache& NODELETE singleton();
+    WEBCORE_EXPORT static CrossOriginPreflightResultCache& LEGACY_NODELETE singleton();
     WEBCORE_EXPORT void appendEntry(PAL::SessionID, const ClientOrigin&, const URL&, std::unique_ptr<CrossOriginPreflightResultCacheItem>);
     WEBCORE_EXPORT bool canSkipPreflight(PAL::SessionID, const ClientOrigin&, const URL&, StoredCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders);
     WEBCORE_EXPORT void clear();

@@ -44,7 +44,7 @@ struct Content {
     void insert(Content&& newContent, size_t lineIndex, size_t boxIndex);
     void remove(size_t firstLineIndex, size_t numberOfLines, size_t firstBoxIndex, size_t numberOfBoxes);
 
-    std::optional<Line::Ellipsis> NODELETE lineEllipsis(size_t) const;
+    std::optional<Line::Ellipsis> LEGACY_NODELETE lineEllipsis(size_t) const;
     void setLineEllipsis(size_t line, Line::Ellipsis&&);
     void setEllipsisOnTrailingLine(Line::Ellipsis&&);
 

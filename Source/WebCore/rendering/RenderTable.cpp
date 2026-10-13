@@ -93,7 +93,7 @@ RenderTable::RenderTable(Type type, Document& document, Style::ComputedStyle&& s
 
 RenderTable::~RenderTable() = default;
 
-RenderTableSection* NODELETE RenderTable::topSection() const
+RenderTableSection* LEGACY_NODELETE RenderTable::topSection() const
 {
     ASSERT(!needsSectionRecalc());
     if (m_head)

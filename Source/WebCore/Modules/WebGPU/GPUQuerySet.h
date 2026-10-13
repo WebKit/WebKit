@@ -45,7 +45,7 @@ public:
         return adoptRef(*new GPUQuerySet(WTF::move(backing), descriptor, device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     void destroy();
@@ -53,8 +53,8 @@ public:
     WebGPU::QuerySet& backing() { return m_backing; }
     const WebGPU::QuerySet& backing() const { return m_backing; }
 
-    GPUQueryType NODELETE type() const;
-    GPUSize32Out NODELETE count() const;
+    GPUQueryType LEGACY_NODELETE type() const;
+    GPUSize32Out LEGACY_NODELETE count() const;
 
     GPUDevice* device() const;
 

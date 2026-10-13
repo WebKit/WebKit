@@ -163,7 +163,7 @@ template<> struct Blending<OffsetPath> {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<OffsetPath> { RefPtr<PathOperation> NODELETE operator()(const OffsetPath&); };
+template<> struct ToPlatform<OffsetPath> { RefPtr<PathOperation> LEGACY_NODELETE operator()(const OffsetPath&); };
 
 // MARK: - Evaluation
 

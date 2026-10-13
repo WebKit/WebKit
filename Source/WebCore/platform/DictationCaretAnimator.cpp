@@ -55,22 +55,22 @@ static constexpr KeyFrame keyframe(size_t i)
     return KeyFrame { Seconds(i * inverseFrameRate), fabs(sinf(std::numbers::pi_v<float> * i * inverseFrameRate)) };
 }
 
-constexpr float NODELETE tailBlurRadius(float cursorHeight)
+constexpr float LEGACY_NODELETE tailBlurRadius(float cursorHeight)
 {
     return (10.f * cursorHeight) / 12.f;
 }
 
-constexpr float NODELETE caretBlurRadius(float cursorHeight)
+constexpr float LEGACY_NODELETE caretBlurRadius(float cursorHeight)
 {
     return (8.f * cursorHeight) / 12.f;
 }
 
-constexpr float NODELETE coneStart(float cursorHeight)
+constexpr float LEGACY_NODELETE coneStart(float cursorHeight)
 {
     return (4.f * cursorHeight) / 38.f;
 }
 
-constexpr float NODELETE coneEnd(float cursorHeight)
+constexpr float LEGACY_NODELETE coneEnd(float cursorHeight)
 {
     return (152.f * cursorHeight) / 38.f;
 }

@@ -45,8 +45,8 @@ enum class GridTrackSizingDirection : bool;
 // Class with all the code related to grid items positions resolution.
 class GridPositionsResolver {
 public:
-    static GridPositionSide NODELETE initialPositionSide(GridTrackSizingDirection);
-    static GridPositionSide NODELETE finalPositionSide(GridTrackSizingDirection);
+    static GridPositionSide LEGACY_NODELETE initialPositionSide(GridTrackSizingDirection);
+    static GridPositionSide LEGACY_NODELETE finalPositionSide(GridTrackSizingDirection);
     static unsigned spanSizeForAutoPlacedItem(const RenderBox&, GridTrackSizingDirection);
     static GridSpan resolveGridPositionsFromStyle(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridCount(const RenderGrid&, GridTrackSizingDirection);

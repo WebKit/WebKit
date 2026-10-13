@@ -76,7 +76,7 @@ public:
     }
 
     void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) final;
-    void NODELETE paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
+    void LEGACY_NODELETE paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t) final;
 
 private:
     friend class DowncastConvertToBackingContext;

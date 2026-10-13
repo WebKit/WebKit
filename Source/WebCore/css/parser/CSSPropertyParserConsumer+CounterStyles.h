@@ -43,7 +43,7 @@ namespace CSSPropertyParserHelpers {
 
 // https://drafts.csswg.org/css-counter-styles-3/
 
-bool NODELETE isPredefinedCounterStyle(CSSValueID);
+bool LEGACY_NODELETE isPredefinedCounterStyle(CSSValueID);
 
 // MARK: <counter-style> consumer
 std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRange&, CSS::PropertyParserState&);

@@ -45,7 +45,7 @@ struct OpacityParameters {
 
     Parameter value;
 
-    static OpacityParameters NODELETE passthroughForInterpolation();
+    static OpacityParameters LEGACY_NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return true; }

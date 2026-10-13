@@ -54,13 +54,13 @@ const double MaxRate = 1024;
 
 // Converts a time to a sample frame, keeping any genuine sub-sample position but snapping values
 // that are only off by floating-point round-off (sampleRate * (k / sampleRate) != k for integer k).
-SUPPRESS_NODELETE static double NODELETE timeToFractionalSampleFrame(double time, double sampleRate)
+SUPPRESS_NODELETE static double LEGACY_NODELETE timeToFractionalSampleFrame(double time, double sampleRate)
 {
     constexpr double oversampleFactor = 1024;
     return std::round(time * sampleRate * oversampleFactor) / oversampleFactor;
 }
 
-static float NODELETE computeSampleUsingLinearInterpolation(std::span<const float> source, unsigned readIndex, unsigned readIndex2, float interpolationFactor)
+static float LEGACY_NODELETE computeSampleUsingLinearInterpolation(std::span<const float> source, unsigned readIndex, unsigned readIndex2, float interpolationFactor)
 {
     if (readIndex == readIndex2 && readIndex >= 1) {
         // We're at the end of the buffer, so just linearly extrapolate from the last two samples.

@@ -79,7 +79,7 @@ public:
         } else
             layer.clearContents();
     }
-    GraphicsLayerCompositingCoordinatesOrientation NODELETE orientation() const final
+    GraphicsLayerCompositingCoordinatesOrientation LEGACY_NODELETE orientation() const final
     {
         return GraphicsLayerCompositingCoordinatesOrientation::TopDown;
     }
@@ -95,11 +95,11 @@ public:
 
         m_displayBuffer = MachSendRight { displayBuffer };
     }
-    void NODELETE setContentsFormat(ContentsFormat contentsFormat)
+    void LEGACY_NODELETE setContentsFormat(ContentsFormat contentsFormat)
     {
         m_contentsFormat = contentsFormat;
     }
-    void NODELETE setOpaque(bool opaque)
+    void LEGACY_NODELETE setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
     }
@@ -133,7 +133,7 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, G
     return context;
 }
 
-static GPUPresentationContextDescriptor NODELETE presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
+static GPUPresentationContextDescriptor LEGACY_NODELETE presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
 {
     return GPUPresentationContextDescriptor {
         compositorIntegration,
@@ -221,7 +221,7 @@ GPUCanvasContextCocoa::~GPUCanvasContextCocoa()
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-static float NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
+static float LEGACY_NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
 {
     if (headroomForHigh <= headroomForLow || limitHigh <= limitLow)
         return headroomForHigh;
@@ -515,7 +515,7 @@ static ColorSpace toWebCoreColorSpace(const PredefinedColorSpace& colorSpace, co
     return ColorSpace::SRGB();
 }
 
-static WebGPU::TextureFormat NODELETE computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
+static WebGPU::TextureFormat LEGACY_NODELETE computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
 {
     // Force Bgra8unorm to both: clamp color values to SDR, and opt out of CALayer HDR.
     if (format == GPUTextureFormat::Rgba16float && toneMappingMode == GPUCanvasToneMappingMode::Standard)
@@ -524,7 +524,7 @@ static WebGPU::TextureFormat NODELETE computeTextureFormat(GPUTextureFormat form
     return WebCore::convertToBacking(format);
 }
 
-static bool NODELETE isSupportedContextFormat(GPUTextureFormat format)
+static bool LEGACY_NODELETE isSupportedContextFormat(GPUTextureFormat format)
 {
     return format == GPUTextureFormat::Bgra8unorm || format == GPUTextureFormat::Rgba8unorm || format == GPUTextureFormat::Rgba16float;
 }

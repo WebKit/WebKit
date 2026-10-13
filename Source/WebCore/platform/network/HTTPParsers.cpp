@@ -75,7 +75,7 @@ static inline bool skipWhiteSpace(const String& str, unsigned& pos)
 // Returns true if the function can match the whole token (case insensitive)
 // incrementing pos on match, otherwise leaving pos unchanged.
 // Note: Might return pos == str.length()
-static inline bool NODELETE skipToken(const String& str, unsigned& pos, ASCIILiteral token)
+static inline bool LEGACY_NODELETE skipToken(const String& str, unsigned& pos, ASCIILiteral token)
 {
     if (token.length() > str.length())
         return false;
@@ -99,7 +99,7 @@ static inline bool skipEquals(const String& str, unsigned &pos)
 
 // True if a value present, incrementing pos to next space or semicolon, if any.
 // Note: might return pos == str.length().
-static inline bool NODELETE skipValue(const String& str, unsigned& pos)
+static inline bool LEGACY_NODELETE skipValue(const String& str, unsigned& pos)
 {
     unsigned start = pos;
     unsigned len = str.length();
@@ -160,7 +160,7 @@ bool isValidAcceptHeaderValue(const String& value)
     return true;
 }
 
-static bool NODELETE containsCORSUnsafeRequestHeaderBytes(const String& value)
+static bool LEGACY_NODELETE containsCORSUnsafeRequestHeaderBytes(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         char16_t c = value[i];
@@ -672,7 +672,7 @@ std::optional<HTTPRange> parseRange(StringView range, RangeAllowWhitespace allow
 }
 
 template<typename CharacterType>
-static inline bool NODELETE isValidHeaderNameCharacter(CharacterType character)
+static inline bool LEGACY_NODELETE isValidHeaderNameCharacter(CharacterType character)
 {
     // https://tools.ietf.org/html/rfc7230#section-3.2
     // A header name should only contain one or more of

@@ -59,7 +59,7 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     const AtomString& formControlType() const final;
-    bool NODELETE isEnumeratable() const final { return true; }
+    bool LEGACY_NODELETE isEnumeratable() const final { return true; }
     bool isLabelable() const final { return true; }
     bool supportsFocus() const final;
     void reset() final;

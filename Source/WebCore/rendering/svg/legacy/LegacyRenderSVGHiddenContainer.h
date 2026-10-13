@@ -39,10 +39,10 @@ protected:
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
-    void NODELETE paint(PaintInfo&, const LayoutPoint&) final;
+    void LEGACY_NODELETE paint(PaintInfo&, const LayoutPoint&) final;
 
-    LayoutRect NODELETE clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const final;
-    void NODELETE absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
+    LayoutRect LEGACY_NODELETE clippedOverflowRect(const RenderLayerModelObject*, const VisibleRectContext&) const final;
+    void LEGACY_NODELETE absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) final;
 };

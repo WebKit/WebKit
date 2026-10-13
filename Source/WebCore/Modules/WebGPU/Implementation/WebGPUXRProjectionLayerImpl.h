@@ -62,22 +62,22 @@ private:
     XRProjectionLayerImpl& operator=(const XRProjectionLayerImpl&) = delete;
     XRProjectionLayerImpl& operator=(XRProjectionLayerImpl&&) = delete;
 
-    uint32_t NODELETE colorTextureWidth() const final;
-    uint32_t NODELETE colorTextureHeight() const final;
-    uint32_t NODELETE colorTextureArrayLength() const final;
+    uint32_t LEGACY_NODELETE colorTextureWidth() const final;
+    uint32_t LEGACY_NODELETE colorTextureHeight() const final;
+    uint32_t LEGACY_NODELETE colorTextureArrayLength() const final;
 
     bool allColorTexturesAreBound() const final;
 
-    bool NODELETE ignoreDepthValues() const final;
-    std::optional<float> NODELETE fixedFoveation() const final;
-    void NODELETE setFixedFoveation(std::optional<float>) final;
-    WebXRRigidTransform* NODELETE deltaPose() const final;
-    void NODELETE setDeltaPose(WebXRRigidTransform*) final;
+    bool LEGACY_NODELETE ignoreDepthValues() const final;
+    std::optional<float> LEGACY_NODELETE fixedFoveation() const final;
+    void LEGACY_NODELETE setFixedFoveation(std::optional<float>) final;
+    WebXRRigidTransform* LEGACY_NODELETE deltaPose() const final;
+    void LEGACY_NODELETE setDeltaPose(WebXRRigidTransform*) final;
 
     // WebXRLayer
 #if PLATFORM(COCOA)
-    void NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
-    void NODELETE endFrame() final;
+    void LEGACY_NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&&) final;
+    void LEGACY_NODELETE endFrame() final;
 #endif
 
     WebGPUPtr<WGPUXRProjectionLayer> m_backing;

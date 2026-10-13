@@ -79,7 +79,7 @@ public:
     static Ref<FileChooser> create(FileChooserClient&, const FileChooserSettings&);
     WEBCORE_EXPORT ~FileChooser();
 
-    void NODELETE invalidate();
+    void LEGACY_NODELETE invalidate();
 
     WEBCORE_EXPORT void chooseFile(const String& path);
     WEBCORE_EXPORT void chooseFiles(const Vector<String>& paths, const Vector<String>& replacementPaths = { });

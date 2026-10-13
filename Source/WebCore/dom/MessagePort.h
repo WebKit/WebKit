@@ -93,7 +93,7 @@ public:
     // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
     // This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership
     // of the remote port (since it may live cross-process) - those platforms may always return null.
-    MessagePort* NODELETE locallyEntangledPort() const;
+    MessagePort* LEGACY_NODELETE locallyEntangledPort() const;
 
     const MessagePortIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
     const MessagePortIdentifier& remoteIdentifier() const LIFETIME_BOUND { return m_remoteIdentifier; }
@@ -114,7 +114,7 @@ public:
 
     // Short-circuits message delivery for same-context ports. Should only be used for
     // ports that have never been shippped, to avoid potential message reordering.
-    static void NODELETE entangleLocally(MessagePort&, MessagePort&);
+    static void LEGACY_NODELETE entangleLocally(MessagePort&, MessagePort&);
 
 private:
     MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
@@ -146,7 +146,7 @@ private:
     unsigned m_newLocalMessages { 0 };
 };
 
-WebCoreOpaqueRoot NODELETE root(MessagePort*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(MessagePort*);
 
 } // namespace WebCore
 

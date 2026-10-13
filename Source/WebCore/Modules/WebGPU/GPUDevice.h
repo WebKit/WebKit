@@ -97,8 +97,8 @@ class GPUDevice : public RefCounted<GPUDevice>, public ActiveDOMObject, public E
 public:
     static Ref<GPUDevice> create(ScriptExecutionContext*, Ref<WebGPU::Device>&&, String&& queueLabel, GPUAdapterInfo&);
 
-    static HashSet<GPUDevice*>& NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static HashSet<GPUDevice*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
+    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
     virtual ~GPUDevice();
 
@@ -111,13 +111,13 @@ public:
     void contextDestroyed() final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
-    Ref<GPUSupportedFeatures> NODELETE features() const;
-    Ref<GPUSupportedLimits> NODELETE limits() const;
+    Ref<GPUSupportedFeatures> LEGACY_NODELETE features() const;
+    Ref<GPUSupportedLimits> LEGACY_NODELETE limits() const;
 
-    Ref<GPUQueue> NODELETE queue() const;
+    Ref<GPUQueue> LEGACY_NODELETE queue() const;
 
     void destroy(ScriptExecutionContext&);
 
@@ -156,14 +156,14 @@ public:
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() LIFETIME_BOUND;
 
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     WebGPU::Device& backing() { return m_backing; }
     const WebGPU::Device& backing() const { return m_backing; }
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
-    Ref<GPUAdapterInfo> NODELETE adapterInfo() const;
-    size_t NODELETE memoryCost() const;
+    Ref<GPUAdapterInfo> LEGACY_NODELETE adapterInfo() const;
+    size_t LEGACY_NODELETE memoryCost() const;
 
 #if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);

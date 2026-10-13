@@ -63,10 +63,10 @@ public:
     // FIXME: This is a hack so we can easily delete databases from the UI process in WebKit2.
     WEBCORE_EXPORT static std::unique_ptr<DatabaseTracker> trackerWithDatabasePath(const String& databasePath);
 
-    static void NODELETE initializeTracker(const String& databasePath);
+    static void LEGACY_NODELETE initializeTracker(const String& databasePath);
 
-    WEBCORE_EXPORT static DatabaseTracker& NODELETE singleton();
-    WEBCORE_EXPORT static bool NODELETE isInitialized();
+    WEBCORE_EXPORT static DatabaseTracker& LEGACY_NODELETE singleton();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isInitialized();
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
     // m_databaseGuard before quotaManager if both locks are needed.
@@ -116,7 +116,7 @@ public:
     WEBCORE_EXPORT static void emptyDatabaseFilesRemovalTaskDidFinish();
 #endif
     
-    void NODELETE setClient(DatabaseManagerClient*);
+    void LEGACY_NODELETE setClient(DatabaseManagerClient*);
 
     // From a secondary thread, must be thread safe with its data
     void scheduleNotifyDatabaseChanged(const SecurityOriginData&, const String& name);

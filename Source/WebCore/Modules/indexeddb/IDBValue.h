@@ -66,7 +66,7 @@ public:
 
     WEBCORE_EXPORT void attachStorageKeepAlive(RefPtr<FileSystemHandleStorageKeepAlive>&&) const;
 
-    size_t NODELETE size() const;
+    size_t LEGACY_NODELETE size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;

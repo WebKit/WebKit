@@ -201,7 +201,7 @@ public:
     bool isWeekField() const { return m_type == Type::Week; }
 
     bool isTextButton() const { return textButtonTypes.contains(m_type); }
-    bool NODELETE isTextField() const { return textFieldTypes.contains(m_type); }
+    bool LEGACY_NODELETE isTextField() const { return textFieldTypes.contains(m_type); }
     bool isTextType() const { return textTypes.contains(m_type); }
 
     bool isCheckable() const { return checkableTypes.contains(m_type); }
@@ -210,9 +210,9 @@ public:
 
     Type type() const { return m_type; }
 
-    bool NODELETE isInteractiveContent() const;
-    bool NODELETE isLabelable() const;
-    bool NODELETE isEnumeratable() const;
+    bool LEGACY_NODELETE isInteractiveContent() const;
+    bool LEGACY_NODELETE isLabelable() const;
+    bool LEGACY_NODELETE isEnumeratable() const;
     bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type) || isSwitch(); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
@@ -222,7 +222,7 @@ public:
 
     // Form value functions.
 
-    virtual bool NODELETE shouldSaveAndRestoreFormControlState() const;
+    virtual bool LEGACY_NODELETE shouldSaveAndRestoreFormControlState() const;
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&);
     virtual bool isFormDataAppendable() const;
@@ -243,7 +243,7 @@ public:
 
     virtual String validationMessage() const;
     virtual bool typeMismatchFor(StringView) const { return false; }
-    virtual bool NODELETE supportsRequired() const;
+    virtual bool LEGACY_NODELETE supportsRequired() const;
     virtual bool valueMissing(StringView) const { return false; }
     virtual bool hasBadInput() const { return false; }
     virtual bool patternMismatch(StringView) const { return false; }
@@ -264,7 +264,7 @@ public:
     virtual String badInputText() const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
-    virtual bool NODELETE canSetStringValue() const;
+    virtual bool LEGACY_NODELETE canSetStringValue() const;
     virtual String localizeValue(const String&) const;
     virtual String visibleValue() const;
     virtual bool isEmptyValue() const;
@@ -290,7 +290,7 @@ public:
     virtual void handleDOMActivateEvent(Event&) { }
     virtual void handleAccessibilityActivation() { }
 
-    virtual bool NODELETE allowsShowPickerAcrossFrames();
+    virtual bool LEGACY_NODELETE allowsShowPickerAcrossFrames();
     virtual void showPicker();
 
     enum ShouldCallBaseEventHandler : bool { No, Yes };
@@ -308,14 +308,14 @@ public:
     // Helpers for event handlers.
 
     virtual bool shouldSubmitImplicitly(Event&);
-    virtual bool NODELETE hasCustomFocusLogic() const;
+    virtual bool LEGACY_NODELETE hasCustomFocusLogic() const;
     virtual bool isKeyboardFocusable(const FocusEventData&) const;
     virtual bool isMouseFocusable() const;
-    virtual bool NODELETE shouldUseInputMethod() const;
+    virtual bool LEGACY_NODELETE shouldUseInputMethod() const;
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection);
     virtual void handleBlurEvent();
     virtual bool accessKeyAction(bool sendMouseEvents);
-    virtual bool NODELETE canBeSuccessfulSubmitButton();
+    virtual bool LEGACY_NODELETE canBeSuccessfulSubmitButton();
     virtual void subtreeHasChanged();
     virtual void blur();
 
@@ -336,27 +336,27 @@ public:
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }
     virtual HTMLElement* sliderTrackElement() const { return nullptr; }
-    virtual HTMLElement* NODELETE placeholderElement() const;
+    virtual HTMLElement* LEGACY_NODELETE placeholderElement() const;
     virtual HTMLElement* dataListButtonElement() const { return nullptr; }
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded();
 
     // Miscellaneous functions.
 
-    virtual bool NODELETE rendererIsNeeded();
+    virtual bool LEGACY_NODELETE rendererIsNeeded();
     virtual RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&);
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();
-    virtual bool NODELETE shouldRespectAlignAttribute();
-    virtual Icon* NODELETE icon() const;
-    virtual bool NODELETE shouldSendChangeEventAfterCheckedChanged();
-    virtual bool NODELETE storesValueSeparateFromAttribute();
+    virtual bool LEGACY_NODELETE shouldRespectAlignAttribute();
+    virtual Icon* LEGACY_NODELETE icon() const;
+    virtual bool LEGACY_NODELETE shouldSendChangeEventAfterCheckedChanged();
+    virtual bool LEGACY_NODELETE storesValueSeparateFromAttribute();
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
-    virtual bool NODELETE shouldResetOnDocumentActivation();
+    virtual bool LEGACY_NODELETE shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute() { return false; }
-    virtual bool NODELETE shouldRespectHeightAndWidthAttributes();
-    virtual bool NODELETE supportsPlaceholder() const;
-    virtual bool NODELETE supportsReadOnly() const;
+    virtual bool LEGACY_NODELETE shouldRespectHeightAndWidthAttributes();
+    virtual bool LEGACY_NODELETE supportsPlaceholder() const;
+    virtual bool LEGACY_NODELETE supportsReadOnly() const;
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
     virtual void attributeChanged(const QualifiedName&) { }
@@ -367,9 +367,9 @@ public:
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
-    virtual bool NODELETE isPresentingAttachedView() const;
-    virtual bool NODELETE supportsSelectionAPI() const;
-    virtual bool NODELETE dirAutoUsesValue() const;
+    virtual bool LEGACY_NODELETE isPresentingAttachedView() const;
+    virtual bool LEGACY_NODELETE supportsSelectionAPI() const;
+    virtual bool LEGACY_NODELETE dirAutoUsesValue() const;
     virtual bool isFocusingWithDataListDropdown() const { return false; };
     virtual void willUpdateCheckedness(bool /*nowChecked*/, WasSetByJavaScript) { }
 
@@ -400,9 +400,9 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
-    virtual DateComponentsType NODELETE dateType() const;
+    virtual DateComponentsType LEGACY_NODELETE dateType() const;
 
-    virtual String NODELETE displayString() const;
+    virtual String LEGACY_NODELETE displayString() const;
 
     virtual String resultForDialogSubmit() const;
 
@@ -414,7 +414,7 @@ protected:
     }
 
     HTMLInputElement* element() const { return m_element; }
-    Chrome* NODELETE chrome() const;
+    Chrome* LEGACY_NODELETE chrome() const;
     Decimal parseToNumberOrNaN(StringView) const;
     Decimal extractStepRangeBound(const QualifiedName& attributeName, const Decimal& defaultValue, RangeLimitations&) const;
 

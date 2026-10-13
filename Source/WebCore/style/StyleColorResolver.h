@@ -71,7 +71,7 @@ public:
     WebCore::Color visitedLinkColorResolvingCurrentColor(const Style::Color&) const;
     WebCore::Color visitedLinkColorResolvingCurrentColorApplyingColorFilter(const Style::Color&) const;
 
-    bool NODELETE visitedDependentShouldReturnUnvisitedLinkColor(OptionSet<PaintBehavior>) const;
+    bool LEGACY_NODELETE visitedDependentShouldReturnUnvisitedLinkColor(OptionSet<PaintBehavior>) const;
 
 protected:
     const CheckedRef<const ComputedStyleProperties> m_style;

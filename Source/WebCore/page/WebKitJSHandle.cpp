@@ -93,7 +93,7 @@ JSC::JSObject* WebKitJSHandle::objectForIdentifier(JSHandleIdentifier identifier
     return global->jsHandle(identifier);
 }
 
-static Markable<FrameIdentifier> NODELETE windowFrameIdentifier(JSC::JSObject* object)
+static Markable<FrameIdentifier> LEGACY_NODELETE windowFrameIdentifier(JSC::JSObject* object)
 {
     if (auto* window = dynamicDowncast<WebCore::JSWindowProxy>(object)) {
         if (auto* frame = window->wrapped().frame())

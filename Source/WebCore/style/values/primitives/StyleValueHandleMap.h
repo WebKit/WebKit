@@ -35,7 +35,7 @@ namespace Style {
 // what lets it stay packed. Each value type gets its own map.
 template<typename ValueType> class ValueHandleMap {
 public:
-    static ValueHandleMap& NODELETE singleton()
+    static ValueHandleMap& LEGACY_NODELETE singleton()
     {
         static NeverDestroyed<ValueHandleMap> map;
         return map;
@@ -45,7 +45,7 @@ public:
     void ref(unsigned handle);
     void deref(unsigned handle);
 
-    ValueType& NODELETE get(unsigned handle) const;
+    ValueType& LEGACY_NODELETE get(unsigned handle) const;
 
 private:
     friend NeverDestroyed<ValueHandleMap>;
@@ -81,7 +81,7 @@ template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<Valu
 }
 
 // HashMap lookups are not modeled by NoDeleteChecker but cannot destroy anything.
-template<typename ValueType> SUPPRESS_NODELETE ValueType& NODELETE ValueHandleMap<ValueType>::get(unsigned handle) const
+template<typename ValueType> SUPPRESS_NODELETE ValueType& LEGACY_NODELETE ValueHandleMap<ValueType>::get(unsigned handle) const
 {
     auto entry = m_map.find(handle);
     ASSERT(entry != m_map.end());

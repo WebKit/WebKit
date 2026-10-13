@@ -48,8 +48,8 @@ public:
     RefPtr<AudioTrack> getTrackById(TrackID) const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_inbandTracks.size(); }
-    AudioTrack& NODELETE item(unsigned index) const;
-    AudioTrack* NODELETE itemForBindings(unsigned index) const;
+    AudioTrack& LEGACY_NODELETE item(unsigned index) const;
+    AudioTrack* LEGACY_NODELETE itemForBindings(unsigned index) const;
     AudioTrack& lastItem() const { return item(length() - 1); }
     AudioTrack* firstEnabled() const;
     void append(Ref<AudioTrack>&&);

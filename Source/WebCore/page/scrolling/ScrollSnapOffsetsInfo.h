@@ -118,7 +118,7 @@ WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOf
 // Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the StyleComputedStyle
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
-bool NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
+bool LEGACY_NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const Style::ComputedStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element* focusedElement, Element* targetElement);
 // Adjust the scroll-into-view alignment of each axis to honor the target's scroll-snap-align. Only axes
 // without an author-specified alignment (adjustX / adjustY) are adjusted, per the CSSOM View rule that an

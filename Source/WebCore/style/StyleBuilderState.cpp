@@ -340,7 +340,7 @@ double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& k
 
 // MARK: - Tree Counting Functions
 
-static void NODELETE markTreeCountingFunctionUsed(const Element& element, ComputedStyle& style)
+static void LEGACY_NODELETE markTreeCountingFunctionUsed(const Element& element, ComputedStyle& style)
 {
     style.setUsesTreeCountingFunctions();
 

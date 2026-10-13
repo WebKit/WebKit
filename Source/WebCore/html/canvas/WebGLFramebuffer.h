@@ -89,7 +89,7 @@ public:
     // Set draw buffers for this framebuffer. ANGLE handles filtering internally.
     void drawBuffers(const Vector<GCGLenum>& bufs);
 
-    GCGLenum NODELETE getDrawBuffer(GCGLenum);
+    GCGLenum LEGACY_NODELETE getDrawBuffer(GCGLenum);
 
     const Vector<GCGLenum>& getDrawBuffers() const { return m_drawBuffers; }
 
@@ -128,7 +128,7 @@ private:
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
 
     // Check if the framebuffer is currently bound to the given target.
-    bool NODELETE isBound(GCGLenum target) const;
+    bool LEGACY_NODELETE isBound(GCGLenum target) const;
 
     void setAttachmentInternal(GCGLenum attachment, AttachmentEntry);
     // If a given attachment point for the currently bound framebuffer is not

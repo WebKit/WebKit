@@ -49,7 +49,7 @@ template<> constexpr bool IsRepeatingGradient<CSSValueID::RepeatingRadialGradien
 template<> constexpr bool IsRepeatingGradient<CSSValueID::WebkitRepeatingRadialGradient> = true;
 template<> constexpr bool IsRepeatingGradient<CSSValueID::RepeatingConicGradient> = true;
 
-template<CSSValueID Name, typename T> static constexpr bool NODELETE isRepeating(const FunctionNotation<Name, T>&)
+template<CSSValueID Name, typename T> static constexpr bool LEGACY_NODELETE isRepeating(const FunctionNotation<Name, T>&)
 {
     return IsRepeatingGradient<Name>;
 }
@@ -162,7 +162,7 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
     );
 }
 
-static float NODELETE resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position, ZoomFactor)
+static float LEGACY_NODELETE resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position, ZoomFactor)
 {
     return narrowPrecisionToFloat(position.value.value);
 }
@@ -171,8 +171,8 @@ struct ResolvedGradientStop {
     WebCore::Color color;
     std::optional<float> offset;
 
-    bool NODELETE isSpecified() const { return offset.has_value(); }
-    bool NODELETE isMidpoint() const { return !color.isValid(); }
+    bool LEGACY_NODELETE isSpecified() const { return offset.has_value(); }
+    bool LEGACY_NODELETE isMidpoint() const { return !color.isValid(); }
 };
 
 class LinearGradientAdapter {
@@ -182,13 +182,13 @@ public:
     {
     }
 
-    float NODELETE gradientLength() const
+    float LEGACY_NODELETE gradientLength() const
     {
         auto gradientSize = m_data.point0 - m_data.point1;
         return gradientSize.diagonalLength();
     }
 
-    static constexpr float NODELETE maxExtent(float) { return 1; }
+    static constexpr float LEGACY_NODELETE maxExtent(float) { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, WebCore::ColorInterpolationMethod)
     {
@@ -225,7 +225,7 @@ public:
     {
     }
 
-    float NODELETE gradientLength() const { return m_data.endRadius; }
+    float LEGACY_NODELETE gradientLength() const { return m_data.endRadius; }
 
     // Radial gradients may need to extend further than the endpoints, because they have
     // to repeat out to the corners of the box.
@@ -289,8 +289,8 @@ private:
 
 class ConicGradientAdapter {
 public:
-    static constexpr float NODELETE gradientLength() { return 1; }
-    static constexpr float NODELETE maxExtent(float) { return 1; }
+    static constexpr float LEGACY_NODELETE gradientLength() { return 1; }
+    static constexpr float LEGACY_NODELETE maxExtent(float) { return 1; }
 
     void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, WebCore::ColorInterpolationMethod colorInterpolationMethod)
     {
@@ -669,7 +669,7 @@ template<typename Position> static inline FloatPoint computeEndPoint(const Posit
 }
 
 // Compute the endpoints so that a gradient of the given angle covers a box of the given size.
-static std::pair<FloatPoint, FloatPoint> NODELETE endPointsFromAngle(float angleDeg, const FloatSize& size)
+static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE endPointsFromAngle(float angleDeg, const FloatSize& size)
 {
     angleDeg = toPositiveAngle(angleDeg);
 
@@ -719,7 +719,7 @@ static std::pair<FloatPoint, FloatPoint> NODELETE endPointsFromAngle(float angle
     return { FloatPoint(halfWidth - endX, halfHeight + endY), FloatPoint(halfWidth + endX, halfHeight - endY) };
 }
 
-static std::pair<FloatPoint, FloatPoint> NODELETE endPointsFromAngleForPrefixedVariants(float angleDeg, const FloatSize& size)
+static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE endPointsFromAngleForPrefixedVariants(float angleDeg, const FloatSize& size)
 {
     // Prefixed gradients use "polar coordinate" angles, rather than "bearing" angles.
     return endPointsFromAngle(90 - angleDeg, size);
@@ -730,7 +730,7 @@ struct DistanceToCorner {
     FloatPoint corner;
 };
 
-static DistanceToCorner NODELETE findDistanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
+static DistanceToCorner LEGACY_NODELETE findDistanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -764,7 +764,7 @@ static DistanceToCorner NODELETE findDistanceToClosestCorner(const FloatPoint& p
     return { minDistance, corner };
 }
 
-static DistanceToCorner NODELETE findDistanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
+static DistanceToCorner LEGACY_NODELETE findDistanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
     float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
@@ -801,7 +801,7 @@ static DistanceToCorner NODELETE findDistanceToFarthestCorner(const FloatPoint& 
 
 // Compute horizontal radius of ellipse with center at 0,0 which passes through p, and has
 // width/height given by aspectRatio.
-static inline float NODELETE horizontalEllipseRadius(const FloatSize& p, float aspectRatio)
+static inline float LEGACY_NODELETE horizontalEllipseRadius(const FloatSize& p, float aspectRatio)
 {
     // x^2/a^2 + y^2/b^2 = 1
     // a/b = aspectRatio, b = a/aspectRatio

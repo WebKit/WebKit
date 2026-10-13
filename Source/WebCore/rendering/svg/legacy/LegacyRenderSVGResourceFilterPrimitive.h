@@ -38,7 +38,7 @@ class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHidde
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceFilterPrimitive);
 public:
     LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, Style::ComputedStyle&&);
-    SVGFilterPrimitiveStandardAttributes& NODELETE filterPrimitiveElement() const;
+    SVGFilterPrimitiveStandardAttributes& LEGACY_NODELETE filterPrimitiveElement() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 

@@ -97,7 +97,7 @@ static void scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices,
     slices.left()   *= sliceScaleFactor;
 }
 
-static bool NODELETE isEmptyPieceRect(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
+static bool LEGACY_NODELETE isEmptyPieceRect(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
 {
     return destinationRects[piece].isEmpty() || sourceRects[piece].isEmpty();
 }
@@ -138,7 +138,7 @@ static NinePieceRects computeNineRects(const FloatRect& outer, const LayoutBoxEx
     return rects;
 }
 
-static FloatSize NODELETE computeSideTileScale(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
+static FloatSize LEGACY_NODELETE computeSideTileScale(ImagePiece piece, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects)
 {
     ASSERT(!isCornerPiece(piece) && piece != ImagePiece::Middle);
     if (isEmptyPieceRect(piece, destinationRects, sourceRects))
@@ -153,7 +153,7 @@ static FloatSize NODELETE computeSideTileScale(ImagePiece piece, const NinePiece
     return FloatSize(scale, scale);
 }
 
-static FloatSize NODELETE computeMiddleTileScale(const NinePieceScales& scales, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
+static FloatSize LEGACY_NODELETE computeMiddleTileScale(const NinePieceScales& scales, const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
 {
     using enum ImagePiece;
 

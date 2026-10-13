@@ -51,7 +51,7 @@ public:
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
-    const RealtimeMediaSourceSettings& NODELETE settings() final;
+    const RealtimeMediaSourceSettings& LEGACY_NODELETE settings() final;
 
     const String& deviceId() const LIFETIME_BOUND { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }

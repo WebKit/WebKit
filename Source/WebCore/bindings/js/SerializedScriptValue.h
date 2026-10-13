@@ -128,7 +128,7 @@ public:
     WEBCORE_EXPORT ~SerializedScriptValue();
 
     enum class DeserializationBehavior : uint8_t { Fail, Succeed, LegacyMapToNull, LegacyMapToUndefined, LegacyMapToEmptyObject };
-    WEBCORE_EXPORT static DeserializationBehavior NODELETE deserializationBehavior(JSC::JSObject&);
+    WEBCORE_EXPORT static DeserializationBehavior LEGACY_NODELETE deserializationBehavior(JSC::JSObject&);
 
     WEBCORE_EXPORT Ref<SerializedScriptValue> clone() const;
 

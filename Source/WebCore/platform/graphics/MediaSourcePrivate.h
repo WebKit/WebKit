@@ -109,7 +109,7 @@ public:
     // ranges change so a single algorithm produces the value.
     WEBCORE_EXPORT static PlatformTimeRanges computeBufferedRanges(const Vector<PlatformTimeRanges>& activeRanges, bool ended);
 
-    MediaPlayer::ReadyState NODELETE mediaPlayerReadyState() const;
+    MediaPlayer::ReadyState LEGACY_NODELETE mediaPlayerReadyState() const;
     void setMediaPlayerReadyState(MediaPlayer::ReadyState);
     virtual void markEndOfStream(EndOfStreamStatus);
     virtual void unmarkEndOfStream() { m_isEnded = false; }
@@ -178,8 +178,8 @@ public:
     bool hasFutureTime(const MediaTime& currentTime) const;
     static constexpr MediaTime futureDataThreshold() { return MediaTime { 1001, 24000 }; }
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& threshold) const;
-    bool NODELETE hasAudio() const;
-    bool NODELETE hasVideo() const;
+    bool LEGACY_NODELETE hasAudio() const;
+    bool LEGACY_NODELETE hasVideo() const;
     using TracksType = OptionSet<TrackInfoTrackType>;
     void tracksTypeChanged(SourceBufferPrivate&, TracksType);
     virtual bool supportsTracksTypeChanged() const { return false; }

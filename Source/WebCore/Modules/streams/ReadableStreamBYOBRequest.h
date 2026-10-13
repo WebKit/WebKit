@@ -43,7 +43,7 @@ class ReadableStreamBYOBRequest : public RefCounted<ReadableStreamBYOBRequest> {
 public:
     static Ref<ReadableStreamBYOBRequest> create(ReadableByteStreamController&, Ref<JSC::ArrayBufferView>&&);
 
-    JSC::ArrayBufferView* NODELETE view() const;
+    JSC::ArrayBufferView* LEGACY_NODELETE view() const;
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
 

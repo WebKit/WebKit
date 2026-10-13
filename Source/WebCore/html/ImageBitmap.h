@@ -146,7 +146,7 @@ public:
 
     ~ImageBitmap();
 
-    ImageBuffer* NODELETE buffer() const;
+    ImageBuffer* LEGACY_NODELETE buffer() const;
 
     RefPtr<ImageBuffer> takeImageBuffer();
 
@@ -164,7 +164,7 @@ public:
     bool isDetached() const { return !m_bitmap; }
     void close();
 
-    size_t NODELETE memoryCost() const;
+    size_t LEGACY_NODELETE memoryCost() const;
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;

@@ -44,7 +44,7 @@ public:
         return adoptRef(*new GPURenderBundle(WTF::move(backing), renderBundleEncoder));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     WebGPU::RenderBundle& backing() { return m_backing; }

@@ -43,14 +43,14 @@ public:
 
     WEBCORE_EXPORT virtual void updateFromEvent(const PlatformWheelEvent&) = 0;
 
-    WEBCORE_EXPORT PlatformWheelEvent NODELETE eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
-    WEBCORE_EXPORT PlatformWheelEvent NODELETE eventCopyWithVelocity(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT PlatformWheelEvent LEGACY_NODELETE eventCopyWithFilteredDeltas(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT PlatformWheelEvent LEGACY_NODELETE eventCopyWithVelocity(const PlatformWheelEvent&) const;
 
-    WEBCORE_EXPORT FloatSize NODELETE filteredVelocity() const;
-    WEBCORE_EXPORT FloatSize NODELETE filteredDelta() const;
+    WEBCORE_EXPORT FloatSize LEGACY_NODELETE filteredVelocity() const;
+    WEBCORE_EXPORT FloatSize LEGACY_NODELETE filteredDelta() const;
 
-    WEBCORE_EXPORT static bool NODELETE shouldApplyFilteringForEvent(const PlatformWheelEvent&);
-    WEBCORE_EXPORT static bool NODELETE shouldIncludeVelocityForEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE shouldApplyFilteringForEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE shouldIncludeVelocityForEvent(const PlatformWheelEvent&);
 
 protected:
     FloatSize m_currentFilteredDelta;
@@ -64,7 +64,7 @@ public:
     void updateFromEvent(const PlatformWheelEvent&) final;
 
 private:
-    std::optional<ScrollEventAxis> NODELETE dominantAxis() const;
+    std::optional<ScrollEventAxis> LEGACY_NODELETE dominantAxis() const;
 
     void reset();
     void updateWithDelta(FloatSize);

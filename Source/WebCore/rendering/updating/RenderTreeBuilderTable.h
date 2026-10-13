@@ -51,7 +51,7 @@ public:
     void attach(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void attach(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
-    bool NODELETE childRequiresTable(const RenderElement& parent, const RenderObject& child);
+    bool LEGACY_NODELETE childRequiresTable(const RenderElement& parent, const RenderObject& child);
 
     void collapseAndDestroyAnonymousSiblingCells(const RenderTableCell& willBeDestroyed);
     void collapseAndDestroyAnonymousSiblingRows(const RenderTableRow& willBeDestroyed);

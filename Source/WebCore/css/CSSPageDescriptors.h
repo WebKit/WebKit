@@ -58,7 +58,7 @@ public:
 private:
     CSSPageDescriptors(MutableStyleProperties&, CSSPageRule&);
 
-    StyleRuleType NODELETE ruleType() const final;
+    StyleRuleType LEGACY_NODELETE ruleType() const final;
 };
 
 } // namespace WebCore

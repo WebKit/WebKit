@@ -45,7 +45,7 @@ public:
     };
     static Ref<MediaStreamTrackEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    MediaStreamTrack& NODELETE track() const;
+    MediaStreamTrack& LEGACY_NODELETE track() const;
 
 private:
     MediaStreamTrackEvent(const AtomString& type, CanBubble, IsCancelable, Ref<MediaStreamTrack>&&);

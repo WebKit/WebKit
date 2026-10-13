@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MathMLScriptsElement);
 
 using namespace MathMLNames;
 
-static MathMLScriptsElement::ScriptType NODELETE scriptTypeOf(const QualifiedName& tagName)
+static MathMLScriptsElement::ScriptType LEGACY_NODELETE scriptTypeOf(const QualifiedName& tagName)
 {
     if (tagName.matches(msubTag))
         return MathMLScriptsElement::ScriptType::Sub;

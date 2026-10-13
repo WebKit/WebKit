@@ -63,10 +63,10 @@ public:
     bool hasAuthorCounterStyles() const { return !m_authorCounterStyles.isEmpty(); }
     void clearAuthorCounterStyles();
 
-    bool NODELETE operator==(const CSSCounterStyleRegistry&) const;
+    bool LEGACY_NODELETE operator==(const CSSCounterStyleRegistry&) const;
 
 private:
-    static NamedCounterStyleMap& NODELETE userAgentCounterStyles();
+    static NamedCounterStyleMap& LEGACY_NODELETE userAgentCounterStyles();
 
     // If no map is passed on, user-agent counter styles map will be used
     static void resolveFallbackReference(CSSRegisteredCounterStyle&, NamedCounterStyleMap* = nullptr);
@@ -75,7 +75,7 @@ private:
 
     static Ref<CSSRegisteredCounterStyle> counterStyle(const AtomString&, NamedCounterStyleMap* = nullptr);
 
-    void NODELETE invalidate();
+    void LEGACY_NODELETE invalidate();
 
     NamedCounterStyleMap m_authorCounterStyles;
     SymbolsFunctionCounterStyleMap m_symbolsFunctionCounterStyles;

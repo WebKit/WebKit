@@ -195,7 +195,7 @@ bool Navigation::canGoForward() const
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#getting-the-navigation-api-entry-index
-static std::optional<size_t> NODELETE getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item)
+static std::optional<size_t> LEGACY_NODELETE getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item)
 {
     // FIXME: We could have a more efficient solution than iterating through a list.
     for (size_t index = 0; index < entries.size(); index++) {

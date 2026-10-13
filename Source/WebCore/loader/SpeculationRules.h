@@ -83,7 +83,7 @@ public:
         DocumentPredicate(DocumentPredicate&&) = default;
         DocumentPredicate& operator=(DocumentPredicate&&) = default;
 
-        const PredicateVariant& NODELETE value() const;
+        const PredicateVariant& LEGACY_NODELETE value() const;
 
     private:
         PredicateVariant m_value;
@@ -110,7 +110,7 @@ public:
 
     const WeakHashMap<Node, Vector<Rule>, WeakPtrImplWithEventTargetData>& prefetchRules() const LIFETIME_BOUND { return m_prefetchRulesByNode; }
 
-    bool NODELETE hasNonConservativePrefetchRules() const;
+    bool LEGACY_NODELETE hasNonConservativePrefetchRules() const;
 
 private:
     SpeculationRules() = default;

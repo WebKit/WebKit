@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGLengthValue);
 
-static inline SVGLengthType NODELETE cssLengthUnitToSVGLengthType(CSS::LengthPercentageUnit unit)
+static inline SVGLengthType LEGACY_NODELETE cssLengthUnitToSVGLengthType(CSS::LengthPercentageUnit unit)
 {
     switch (unit) {
     case CSS::LengthPercentageUnit::Px:                 return SVGLengthType::Pixels;
@@ -62,7 +62,7 @@ static inline SVGLengthType NODELETE cssLengthUnitToSVGLengthType(CSS::LengthPer
     }
 }
 
-static inline CSS::LengthPercentageUnit NODELETE svgLengthTypeToCSSLengthUnit(SVGLengthType type)
+static inline CSS::LengthPercentageUnit LEGACY_NODELETE svgLengthTypeToCSSLengthUnit(SVGLengthType type)
 {
     switch (type) {
     case SVGLengthType::Number:       return CSS::LengthPercentageUnit::Px;

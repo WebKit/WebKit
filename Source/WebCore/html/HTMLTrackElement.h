@@ -52,20 +52,20 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     const AtomString& kind();
-    bool NODELETE isDefault() const;
+    bool LEGACY_NODELETE isDefault() const;
 
     enum ReadyState { NONE = 0, LOADING = 1, LOADED = 2, TRACK_ERROR = 3 };
-    ReadyState NODELETE readyState() const;
+    ReadyState LEGACY_NODELETE readyState() const;
     void setReadyState(ReadyState);
 
-    TextTrack& NODELETE track();
+    TextTrack& LEGACY_NODELETE track();
 
     void scheduleLoad();
 
     enum LoadStatus { Failure, Success };
     void didCompleteLoad(LoadStatus);
 
-    RefPtr<HTMLMediaElement> NODELETE mediaElement() const;
+    RefPtr<HTMLMediaElement> LEGACY_NODELETE mediaElement() const;
     const AtomString& mediaElementCrossOriginAttribute() const;
 
     void scheduleTask(Function<void(HTMLTrackElement&)>&&);
@@ -83,7 +83,7 @@ private:
     void removingSteps(RemovalType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
 
     // EventTarget.
     void eventListenersDidChange() final;

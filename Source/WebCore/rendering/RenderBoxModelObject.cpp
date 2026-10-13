@@ -119,7 +119,7 @@ LayoutUnit paddingTop(const RenderBoxModelObject& renderer)
 
 using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderTextFragment>>;
 
-static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
+static FirstLetterRemainingTextMap& LEGACY_NODELETE firstLetterRemainingTextMap()
 {
     static NeverDestroyed<FirstLetterRemainingTextMap> map;
     return map;
@@ -252,7 +252,7 @@ void RenderBoxModelObject::updateFromStyle()
         view().frameView().setHasFlippedBlockRenderers(true);
 }
 
-static inline bool NODELETE isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelObject& child)
+static inline bool LEGACY_NODELETE isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelObject& child)
 {
     return child.isOutOfFlowPositioned() && !child.style().logicalTop().isAuto() && !child.style().logicalBottom().isAuto();
 }

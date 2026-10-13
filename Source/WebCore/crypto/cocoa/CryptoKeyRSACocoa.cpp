@@ -259,7 +259,7 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
     }
 }
 
-static bool NODELETE bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& result)
+static bool LEGACY_NODELETE bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& result)
 {
     result = 0;
     for (size_t i = 0; i + 4 < bigInteger.size(); ++i) {

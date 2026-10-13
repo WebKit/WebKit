@@ -39,7 +39,7 @@ LocalDOMWindowProperty::LocalDOMWindowProperty(LocalDOMWindow* window)
 
 LocalFrame* LocalDOMWindowProperty::frame() const
 {
-    // FIXME: LocalDOMWindow::frame() is marked as NODELETE but it is not taking effect
+    // FIXME: LocalDOMWindow::frame() is marked as LEGACY_NODELETE but it is not taking effect
     // due to also being WEBCORE_EXPORT.
     SUPPRESS_UNCOUNTED_ARG return m_window ? window()->frame() : nullptr;
 }

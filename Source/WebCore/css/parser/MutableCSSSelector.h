@@ -84,7 +84,7 @@ public:
 
     CSSSelector::PseudoClass pseudoClass() const { return m_selector.pseudoClass(); }
 
-    bool NODELETE matchesPseudoElement() const;
+    bool LEGACY_NODELETE matchesPseudoElement() const;
 
     bool isHostPseudoClass() const { return m_selector.isHostPseudoClass(); }
 
@@ -98,9 +98,9 @@ public:
     bool needsImplicitShadowCombinatorForMatching() const;
 
     MutableCSSSelector* precedingInComplexSelector() const LIFETIME_BOUND { return m_precedingInComplexSelector.get(); }
-    MutableCSSSelector* NODELETE leftmostSimpleSelector();
-    const MutableCSSSelector* NODELETE leftmostSimpleSelector() const;
-    bool NODELETE startsWithExplicitCombinator() const;
+    MutableCSSSelector* LEGACY_NODELETE leftmostSimpleSelector();
+    const MutableCSSSelector* LEGACY_NODELETE leftmostSimpleSelector() const;
+    bool LEGACY_NODELETE startsWithExplicitCombinator() const;
     void setPrecedingInComplexSelector(std::unique_ptr<MutableCSSSelector> selector) { m_precedingInComplexSelector = WTF::move(selector); }
     void prependInComplexSelector(CSSSelector::Relation, std::unique_ptr<MutableCSSSelector>);
     void prependInComplexSelectorAsRelative(std::unique_ptr<MutableCSSSelector>);

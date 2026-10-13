@@ -45,7 +45,7 @@ static constexpr size_t counterSize = 16;
 static constexpr uint64_t allBitsSet = ~(uint64_t)0;
 }
 
-static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESCTR(CryptoKeyUsageBitmap usages)
+static inline bool LEGACY_NODELETE usagesAreInvalidForCryptoAlgorithmAESCTR(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }

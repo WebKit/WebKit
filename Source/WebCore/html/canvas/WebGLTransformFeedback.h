@@ -65,7 +65,7 @@ public:
     bool getBoundIndexedTransformFeedbackBuffer(GCGLuint index, RefPtr<WebGLBuffer>& outBuffer);
     bool hasBoundIndexedTransformFeedbackBuffer(const WebGLBuffer* buffer) { return m_boundIndexedTransformFeedbackBuffers.contains(buffer); }
 
-    bool NODELETE validateProgramForResume(WebGLProgram*) const;
+    bool LEGACY_NODELETE validateProgramForResume(WebGLProgram*) const;
 
     void didBind() { m_hasEverBeenBound = true; }
 
@@ -74,7 +74,7 @@ public:
 
     void unbindBuffer(const AbstractLocker&, WebGLBuffer&);
 
-    bool NODELETE hasEnoughBuffers(GCGLuint numRequired) const;
+    bool LEGACY_NODELETE hasEnoughBuffers(GCGLuint numRequired) const;
 
     void addMembersToOpaqueRoots(const AbstractLocker&, JSC::AbstractSlotVisitor&);
 

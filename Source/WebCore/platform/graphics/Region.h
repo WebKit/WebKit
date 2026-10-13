@@ -59,12 +59,12 @@ public:
     WEBCORE_EXPORT void intersect(const Region&);
     WEBCORE_EXPORT void subtract(const Region&);
 
-    WEBCORE_EXPORT void NODELETE translate(const IntSize&);
+    WEBCORE_EXPORT void LEGACY_NODELETE translate(const IntSize&);
 
     // Returns true if the query region is a subset of this region.
     WEBCORE_EXPORT bool contains(const Region&) const;
 
-    WEBCORE_EXPORT bool NODELETE contains(const IntPoint&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE contains(const IntPoint&) const;
 
     // Returns true if the query region intersects any part of this region.
     WEBCORE_EXPORT bool intersects(const Region&) const;
@@ -86,13 +86,13 @@ public:
         Shape() = default;
         WEBCORE_EXPORT Shape(const IntRect&);
 
-        IntRect NODELETE bounds() const;
+        IntRect LEGACY_NODELETE bounds() const;
         bool isEmpty() const { return m_spans.isEmpty(); }
         bool isRect() const { return m_spans.size() <= 2 && m_segments.size() <= 2; }
         unsigned gridSize() const { return m_spans.size() * m_segments.size(); }
 
         std::span<const Span> spans() const LIFETIME_BOUND { return m_spans.span(); }
-        std::span<const int> NODELETE segments(std::span<const Span>) const LIFETIME_BOUND;
+        std::span<const int> LEGACY_NODELETE segments(std::span<const Span>) const LIFETIME_BOUND;
 
         static Shape unionShapes(const Shape& shape1, const Shape& shape2);
         static Shape intersectShapes(const Shape& shape1, const Shape& shape2);
@@ -104,9 +104,9 @@ public:
         struct CompareIntersectsOperation;
 
         template<typename CompareOperation>
-        static bool NODELETE compareShapes(const Shape& shape1, const Shape& shape2);
+        static bool LEGACY_NODELETE compareShapes(const Shape& shape1, const Shape& shape2);
 
-        WEBCORE_EXPORT static bool NODELETE isValidShape(std::span<const int> segments, std::span<const Span> spans);
+        WEBCORE_EXPORT static bool LEGACY_NODELETE isValidShape(std::span<const int> segments, std::span<const Span> spans);
 
         static Shape createForTesting(Vector<int, 32>&& segments, Vector<Span, 16>&& spans) { return Shape { WTF::move(segments), WTF::move(spans) }; }
         std::pair<Vector<int, 32>, Vector<Span, 16>> dataForTesting() const { return { m_segments, m_spans }; }

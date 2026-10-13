@@ -36,7 +36,7 @@ namespace WebCore {
 //
 // When src_size is empty we can normally exit performing compression, but during the flush
 // step we may have data buffered and will need to continue to keep flushing out the rest.
-bool NODELETE CompressionStreamEncoder::didDeflateFinishAppleCompressionFramework(int result)
+bool LEGACY_NODELETE CompressionStreamEncoder::didDeflateFinishAppleCompressionFramework(int result)
 {
     return !m_compressionStream.getPlatformStream().src_size && (!m_didFinish || (m_didFinish && result == COMPRESSION_STATUS_END));
 }

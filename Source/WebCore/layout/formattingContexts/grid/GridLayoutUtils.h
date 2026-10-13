@@ -66,7 +66,7 @@ struct BaselineSharingGroup {
 
 namespace GridLayoutUtils {
 
-LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
+LayoutUnit LEGACY_NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 
 // https://drafts.csswg.org/css-grid-1/#track-sizes
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);

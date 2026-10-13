@@ -124,7 +124,7 @@ String animatedPropertyIDAsString(AnimatedProperty property)
 }
 
 using RepaintMap = HashMap<const GraphicsLayer*, Vector<FloatRect>>;
-static RepaintMap& NODELETE repaintRectMap()
+static RepaintMap& LEGACY_NODELETE repaintRectMap()
 {
     static NeverDestroyed<RepaintMap> map;
     return map;
@@ -166,7 +166,7 @@ public:
     static EmptyGraphicsLayerClient& singleton();
 };
 
-EmptyGraphicsLayerClient& NODELETE EmptyGraphicsLayerClient::singleton()
+EmptyGraphicsLayerClient& LEGACY_NODELETE EmptyGraphicsLayerClient::singleton()
 {
     static NeverDestroyed<EmptyGraphicsLayerClient> client;
     return client;
@@ -799,7 +799,7 @@ void GraphicsLayer::setZPosition(float position)
     m_zPosition = position;
 }
 
-static inline const FilterOperations& NODELETE filterOperationsAt(const GraphicsLayerKeyframeValueList& valueList, size_t index)
+static inline const FilterOperations& LEGACY_NODELETE filterOperationsAt(const GraphicsLayerKeyframeValueList& valueList, size_t index)
 {
     return downcast<GraphicsLayerFilterAnimationValue>(valueList.at(index)).value();
 }

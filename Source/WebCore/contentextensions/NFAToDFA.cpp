@@ -95,12 +95,12 @@ static ALWAYS_INLINE void extendSetWithClosure(const NFANodeClosures& nfaNodeClo
 }
 
 struct UniqueNodeIdSetImpl {
-    std::span<unsigned> NODELETE buffer()
+    std::span<unsigned> LEGACY_NODELETE buffer()
     {
         return unsafeMakeSpan(m_buffer, m_size);
     }
 
-    std::span<const unsigned> NODELETE buffer() const
+    std::span<const unsigned> LEGACY_NODELETE buffer() const
     {
         return unsafeMakeSpan(m_buffer, m_size);
     }
@@ -150,7 +150,7 @@ public:
         other.m_uniqueNodeIdSetBuffer = nullptr;
     }
 
-    UniqueNodeIdSet& NODELETE operator=(UniqueNodeIdSet&& other)
+    UniqueNodeIdSet& LEGACY_NODELETE operator=(UniqueNodeIdSet&& other)
     {
         m_uniqueNodeIdSetBuffer = other.m_uniqueNodeIdSetBuffer;
         other.m_uniqueNodeIdSetBuffer = nullptr;
@@ -162,9 +162,9 @@ public:
         fastFree(m_uniqueNodeIdSetBuffer);
     }
 
-    friend bool NODELETE operator==(const UniqueNodeIdSet&, const UniqueNodeIdSet&) = default;
+    friend bool LEGACY_NODELETE operator==(const UniqueNodeIdSet&, const UniqueNodeIdSet&) = default;
 
-    bool NODELETE operator==(const NodeIdSet& other) const
+    bool LEGACY_NODELETE operator==(const NodeIdSet& other) const
     {
         if (m_uniqueNodeIdSetBuffer->m_size != static_cast<unsigned>(other.size()))
             return false;
@@ -176,23 +176,23 @@ public:
         return true;
     }
 
-    UniqueNodeIdSetImpl* NODELETE impl() const { return m_uniqueNodeIdSetBuffer; }
+    UniqueNodeIdSetImpl* LEGACY_NODELETE impl() const { return m_uniqueNodeIdSetBuffer; }
 
-    unsigned NODELETE hash() const { return m_uniqueNodeIdSetBuffer->m_hash; }
-    bool NODELETE isEmptyValue() const { return !m_uniqueNodeIdSetBuffer; }
-    bool NODELETE isDeletedValue() const { return m_uniqueNodeIdSetBuffer == reinterpret_cast<UniqueNodeIdSetImpl*>(-1); }
+    unsigned LEGACY_NODELETE hash() const { return m_uniqueNodeIdSetBuffer->m_hash; }
+    bool LEGACY_NODELETE isEmptyValue() const { return !m_uniqueNodeIdSetBuffer; }
+    bool LEGACY_NODELETE isDeletedValue() const { return m_uniqueNodeIdSetBuffer == reinterpret_cast<UniqueNodeIdSetImpl*>(-1); }
 
 private:
     UniqueNodeIdSetImpl* m_uniqueNodeIdSetBuffer = nullptr;
 };
 
 struct UniqueNodeIdSetHash {
-    static unsigned NODELETE hash(const UniqueNodeIdSet& p)
+    static unsigned LEGACY_NODELETE hash(const UniqueNodeIdSet& p)
     {
         return p.hash();
     }
 
-    static bool NODELETE equal(const UniqueNodeIdSet& a, const UniqueNodeIdSet& b)
+    static bool LEGACY_NODELETE equal(const UniqueNodeIdSet& a, const UniqueNodeIdSet& b)
     {
         return a == b;
     }
@@ -228,12 +228,12 @@ struct NodeIdSetToUniqueNodeIdSetSource {
 };
 
 struct NodeIdSetToUniqueNodeIdSetTranslator {
-    static unsigned NODELETE hash(const NodeIdSetToUniqueNodeIdSetSource& source)
+    static unsigned LEGACY_NODELETE hash(const NodeIdSetToUniqueNodeIdSetSource& source)
     {
         return source.hash;
     }
 
-    static inline bool NODELETE equal(const UniqueNodeIdSet& a, const NodeIdSetToUniqueNodeIdSetSource& b)
+    static inline bool LEGACY_NODELETE equal(const UniqueNodeIdSet& a, const NodeIdSetToUniqueNodeIdSetSource& b)
     {
         return a == b.nodeIdSet;
     }

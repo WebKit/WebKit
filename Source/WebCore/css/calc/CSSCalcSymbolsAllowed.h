@@ -43,8 +43,8 @@ public:
     CSSCalcSymbolsAllowed& operator=(CSSCalcSymbolsAllowed&&) = default;
     CSSCalcSymbolsAllowed(CSSCalcSymbolsAllowed&&) = default;
 
-    std::optional<CSSUnitType> NODELETE get(CSSValueID) const;
-    bool NODELETE contains(CSSValueID) const;
+    std::optional<CSSUnitType> LEGACY_NODELETE get(CSSValueID) const;
+    bool LEGACY_NODELETE contains(CSSValueID) const;
 
 private:
     // FIXME: A HashMap here is not ideal, as these tables are always constant expressions

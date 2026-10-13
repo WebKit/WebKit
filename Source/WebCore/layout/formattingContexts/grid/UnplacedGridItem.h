@@ -83,10 +83,10 @@ private:
 public:
     UnplacedGridItem(const ElementBox&, Style::GridPosition columnStart, Style::GridPosition columnEnd, Style::GridPosition rowStart, Style::GridPosition rowEnd, size_t explicitColumnCount, size_t explicitRowCount, size_t leadingImplicitColumnsCount, size_t leadingImplicitRowsCount);
 
-    bool NODELETE hasDefiniteRowPosition() const;
-    bool NODELETE hasDefiniteColumnPosition() const;
-    bool NODELETE hasAutoColumnPosition() const;
-    bool NODELETE hasAutoRowPosition() const;
+    bool LEGACY_NODELETE hasDefiniteRowPosition() const;
+    bool LEGACY_NODELETE hasDefiniteColumnPosition() const;
+    bool LEGACY_NODELETE hasAutoColumnPosition() const;
+    bool LEGACY_NODELETE hasAutoRowPosition() const;
     size_t columnSpanSize() const;
     size_t rowSpanSize() const;
 

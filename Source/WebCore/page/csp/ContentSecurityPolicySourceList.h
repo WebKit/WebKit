@@ -83,8 +83,8 @@ private:
     bool isValidSourceForExtensionMode(const ContentSecurityPolicySourceList::Source&);
     template<typename CharacterType> void parse(StringParsingBuffer<CharacterType>);
     template<typename CharacterType> std::optional<Source> parseSource(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> StringView NODELETE parseScheme(StringParsingBuffer<CharacterType>);
-    template<typename CharacterType> std::optional<Host> NODELETE parseHost(std::span<const CharacterType>);
+    template<typename CharacterType> StringView LEGACY_NODELETE parseScheme(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<Host> LEGACY_NODELETE parseHost(std::span<const CharacterType>);
     template<typename CharacterType> std::optional<Port> parsePort(std::span<const CharacterType>);
     template<typename CharacterType> String parsePath(std::span<const CharacterType>);
     template<typename CharacterType> bool parseNonceSource(StringParsingBuffer<CharacterType>);

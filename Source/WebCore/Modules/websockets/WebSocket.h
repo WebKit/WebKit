@@ -68,8 +68,8 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    static HashSet<CheckedPtr<WebSocket>>& NODELETE allActiveWebSockets() WTF_REQUIRES_LOCK(s_allActiveWebSocketsLock);
-    static Lock& NODELETE allActiveWebSocketsLock() WTF_RETURNS_LOCK(s_allActiveWebSocketsLock);
+    static HashSet<CheckedPtr<WebSocket>>& LEGACY_NODELETE allActiveWebSockets() WTF_REQUIRES_LOCK(s_allActiveWebSocketsLock);
+    static Lock& LEGACY_NODELETE allActiveWebSocketsLock() WTF_RETURNS_LOCK(s_allActiveWebSocketsLock);
 
     enum State {
         CONNECTING = 0,
@@ -89,20 +89,20 @@ public:
 
     ExceptionOr<void> close(std::optional<unsigned short> code, const String& reason);
 
-    RefPtr<ThreadableWebSocketChannel> NODELETE channel() const;
+    RefPtr<ThreadableWebSocketChannel> LEGACY_NODELETE channel() const;
 
-    const URL& NODELETE url() const;
-    State NODELETE readyState() const;
-    uint64_t NODELETE bufferedAmount() const;
+    const URL& LEGACY_NODELETE url() const;
+    State LEGACY_NODELETE readyState() const;
+    uint64_t LEGACY_NODELETE bufferedAmount() const;
 
-    String NODELETE protocol() const;
-    String NODELETE extensions() const;
+    String LEGACY_NODELETE protocol() const;
+    String LEGACY_NODELETE extensions() const;
 
     enum class BinaryType : bool { Blob, Arraybuffer };
     BinaryType binaryType() const { return m_binaryType; }
-    void NODELETE setBinaryType(BinaryType);
+    void LEGACY_NODELETE setBinaryType(BinaryType);
 
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
 private:
     explicit WebSocket(ScriptExecutionContext&);
@@ -125,12 +125,12 @@ private:
     void didReceiveMessage(String&& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
     void didReceiveMessageError(String&& reason) final;
-    void NODELETE didUpdateBufferedAmount(uint64_t bufferedAmount) final;
+    void LEGACY_NODELETE didUpdateBufferedAmount(uint64_t bufferedAmount) final;
     void didStartClosingHandshake() final;
     void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
     void didUpgradeURL() final;
 
-    size_t NODELETE getFramingOverhead(size_t payloadSize);
+    size_t LEGACY_NODELETE getFramingOverhead(size_t payloadSize);
 
     void failAsynchronously();
 

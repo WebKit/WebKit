@@ -68,7 +68,7 @@ public:
     DragController(Page&, std::unique_ptr<DragClient>&&);
     ~DragController();
 
-    static DragOperation NODELETE platformGenericDragOperation();
+    static DragOperation LEGACY_NODELETE platformGenericDragOperation();
 
     WEBCORE_EXPORT Variant<std::optional<DragOperation>, RemoteUserInputEventData> dragEnteredOrUpdated(LocalFrame&, DragData&&);
     WEBCORE_EXPORT void dragExited(LocalFrame&, DragData&&);
@@ -106,7 +106,7 @@ public:
 
     void prepareForDragStart(LocalFrame& sourceFrame, OptionSet<DragSourceAction>, Element& sourceElement, DataTransfer&, const IntPoint& dragOrigin) const;
     bool startDrag(LocalFrame& src, const DragState&, OptionSet<DragOperation>, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData, const std::optional<FrameIdentifier>& rootFrameID);
-    static const IntSize& NODELETE maxDragImageSize();
+    static const IntSize& LEGACY_NODELETE maxDragImageSize();
 
     static const int MaxOriginalImageArea;
     static const int DragIconRightInset;
@@ -124,7 +124,7 @@ private:
     std::optional<DragOperation> dragOperation(const DragData&);
     void clearDragCaret();
     bool dragIsMove(FrameSelection&, const DragData&);
-    bool NODELETE isCopyKeyDown(const DragData&);
+    bool LEGACY_NODELETE isCopyKeyDown(const DragData&);
 
     void mouseMovedIntoDocument(RefPtr<Document>&&);
     bool shouldUseCachedImageForDragImage(const Image&) const;

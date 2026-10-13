@@ -127,7 +127,7 @@ public:
     uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceMac"_s; };
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
     // CheckedPtr interface

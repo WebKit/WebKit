@@ -60,7 +60,7 @@ public:
 
     void appendQueuedReportIfCorrectType(const Ref<Report>&);
 
-    ReportingObserverCallback& NODELETE callbackConcurrently();
+    ReportingObserverCallback& LEGACY_NODELETE callbackConcurrently();
 
     bool virtualHasPendingActivity() const final;
 

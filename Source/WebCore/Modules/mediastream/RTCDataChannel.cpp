@@ -123,13 +123,13 @@ void RTCDataChannel::setBinaryType(BinaryType binaryType)
     m_binaryType = binaryType;
 }
 
-static size_t NODELETE maxSctpSendQueueSize()
+static size_t LEGACY_NODELETE maxSctpSendQueueSize()
 {
     // This mirrors webrtc::DataChannelInterface::MaxSendQueueSize()
     return 16 * 1024 * 1024;
 }
 
-static std::optional<size_t> NODELETE computeNewBufferedAmount(size_t bufferedAmount, size_t dataSize)
+static std::optional<size_t> LEGACY_NODELETE computeNewBufferedAmount(size_t bufferedAmount, size_t dataSize)
 {
     if (!WTF::safeAdd(bufferedAmount, dataSize, bufferedAmount))
         return { };
@@ -307,7 +307,7 @@ void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)
 }
 
 static Lock s_rtcDataChannelLocalMapLock;
-static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& NODELETE rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
+static HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>& LEGACY_NODELETE rtcDataChannelLocalMap() WTF_REQUIRES_LOCK(s_rtcDataChannelLocalMapLock)
 {
     ASSERT(s_rtcDataChannelLocalMapLock.isHeld());
     static NeverDestroyed<HashMap<RTCDataChannelLocalIdentifier, std::unique_ptr<RTCDataChannelHandler>>> map;

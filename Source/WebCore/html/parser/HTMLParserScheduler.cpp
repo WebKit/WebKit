@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLParserScheduler);
 
-static Seconds NODELETE parserTimeLimit(Page* page)
+static Seconds LEGACY_NODELETE parserTimeLimit(Page* page)
 {
     // Always yield after exceeding this.
     constexpr auto defaultParserTimeLimit = 500_ms;
@@ -119,7 +119,7 @@ void HTMLParserScheduler::continueNextChunkTimerFired()
     Ref { *m_parser }->resumeParsingAfterYield();
 }
 
-static bool NODELETE parsingProgressedSinceLastYield(PumpSession& session)
+static bool LEGACY_NODELETE parsingProgressedSinceLastYield(PumpSession& session)
 {
     // Only yield if there has been progress since last yield.
     if (session.processedTokens > session.processedTokensOnLastYieldBeforeScript) {

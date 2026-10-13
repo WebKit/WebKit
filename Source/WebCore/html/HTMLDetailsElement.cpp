@@ -64,7 +64,7 @@ static const AtomString& summarySlotName()
 class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
-    const AtomString& NODELETE slotNameForHostChild(const Node&) const override;
+    const AtomString& LEGACY_NODELETE slotNameForHostChild(const Node&) const override;
 };
 
 void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
@@ -82,7 +82,7 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
 }
 
-SUPPRESS_NODELETE const AtomString& NODELETE DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
+SUPPRESS_NODELETE const AtomString& LEGACY_NODELETE DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
 {
     Ref details = downcast<HTMLDetailsElement>(*child.parentNode());
 

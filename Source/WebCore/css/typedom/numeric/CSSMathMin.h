@@ -37,7 +37,7 @@ class CSSMathMin final : public CSSMathValue {
 public:
     static ExceptionOr<Ref<CSSMathMin>> create(FixedVector<CSSNumberish>&&);
     static ExceptionOr<Ref<CSSMathMin>> create(Vector<Ref<CSSNumericValue>>&&);
-    const CSSNumericArray& NODELETE values() const;
+    const CSSNumericArray& LEGACY_NODELETE values() const;
 
     std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 

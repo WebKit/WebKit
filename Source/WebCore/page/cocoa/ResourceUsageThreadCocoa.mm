@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static unsigned NODELETE categoryForVMTag(unsigned tag)
+static unsigned LEGACY_NODELETE categoryForVMTag(unsigned tag)
 {
     switch (tag) {
     case VM_MEMORY_IOKIT:

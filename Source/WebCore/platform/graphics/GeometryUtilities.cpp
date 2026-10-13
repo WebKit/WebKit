@@ -260,7 +260,7 @@ float signedDistanceToLine(const FloatPoint& point, const FloatPoint& lineStart,
     return dotProduct(point - lineStart, (lineEnd - lineStart).perpendicular());
 }
 
-static float NODELETE angleBetweenVectors(const FloatSize& u, const FloatSize& v)
+static float LEGACY_NODELETE angleBetweenVectors(const FloatSize& u, const FloatSize& v)
 {
     auto magnitudes = u.diagonalLength() * v.diagonalLength();
     return magnitudes ? acos(clampTo<float>(dotProduct(u, v) / magnitudes, -1, 1)) : 0;
@@ -397,7 +397,7 @@ double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, con
 }
 
 // Get the side of box the ray intersects with
-static BoxSide NODELETE intersectionSide(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
+static BoxSide LEGACY_NODELETE intersectionSide(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray)
 {
     auto position = ray.first;
     auto angleInRadians = deg2rad(ray.second);

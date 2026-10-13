@@ -193,7 +193,7 @@ AtomString StyleProperties::asTextAtom(const CSS::SerializationContext& context)
     return asTextInternal(context).toAtomString();
 }
 
-static constexpr bool NODELETE canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
+static constexpr bool LEGACY_NODELETE canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSPropertyID longhandID)
 {
     ASSERT(isShorthand(shorthandID));
     ASSERT(isLonghand(longhandID));

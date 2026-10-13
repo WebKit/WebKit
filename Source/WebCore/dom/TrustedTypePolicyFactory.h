@@ -51,9 +51,9 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
-    bool NODELETE isHTML(JSC::JSValue) const;
-    bool NODELETE isScript(JSC::JSValue) const;
-    bool NODELETE isScriptURL(JSC::JSValue) const;
+    bool LEGACY_NODELETE isHTML(JSC::JSValue) const;
+    bool LEGACY_NODELETE isScript(JSC::JSValue) const;
+    bool LEGACY_NODELETE isScriptURL(JSC::JSValue) const;
     Ref<TrustedHTML> emptyHTML() const;
     Ref<TrustedScript> emptyScript() const;
 

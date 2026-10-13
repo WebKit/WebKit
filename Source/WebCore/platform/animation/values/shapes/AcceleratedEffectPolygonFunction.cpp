@@ -45,7 +45,7 @@ static WindRule windRule(const AcceleratedEffectPolygonFunction& value)
 
 struct AcceleratedEffectPolygonPathPolicy : TinyLRUCachePolicy<Vector<FloatPoint>, WebCore::Path> {
 public:
-    static bool NODELETE isKeyNull(const Vector<FloatPoint>& points)
+    static bool LEGACY_NODELETE isKeyNull(const Vector<FloatPoint>& points)
     {
         return !points.size();
     }

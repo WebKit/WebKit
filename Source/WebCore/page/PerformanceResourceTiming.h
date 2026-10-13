@@ -48,7 +48,7 @@ public:
 
     const String& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
     String deliveryType() const { return m_resourceTiming.deliveryType(); }
-    const String& NODELETE nextHopProtocol() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE nextHopProtocol() const LIFETIME_BOUND;
 
     double workerStart() const;
     double redirectStart() const;
@@ -64,13 +64,13 @@ public:
     double firstInterimResponseStart() const;
     double responseStart() const;
     double responseEnd() const;
-    uint64_t NODELETE transferSize() const;
-    uint64_t NODELETE encodedBodySize() const;
-    uint64_t NODELETE decodedBodySize() const;
+    uint64_t LEGACY_NODELETE transferSize() const;
+    uint64_t LEGACY_NODELETE encodedBodySize() const;
+    uint64_t LEGACY_NODELETE decodedBodySize() const;
     double workerRouterEvaluationStart() const;
     double workerCacheLookupStart() const;
-    const String& NODELETE workerMatchedRouterSource() const LIFETIME_BOUND;
-    const String& NODELETE workerFinalRouterSource() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE workerMatchedRouterSource() const LIFETIME_BOUND;
+    const String& LEGACY_NODELETE workerFinalRouterSource() const LIFETIME_BOUND;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const LIFETIME_BOUND { return m_serverTiming; }
     ResourceTiming& resourceTiming() LIFETIME_BOUND { return m_resourceTiming; }
@@ -85,7 +85,7 @@ protected:
     bool isLoadedFromServiceWorker() const { return m_resourceTiming.isLoadedFromServiceWorker(); }
 
     // Navigation timing exposes redirect timing under a different condition than the TAO check.
-    virtual bool NODELETE shouldExposeRedirectTiming() const;
+    virtual bool LEGACY_NODELETE shouldExposeRedirectTiming() const;
 
     MonotonicTime m_timeOrigin;
     ResourceTiming m_resourceTiming;

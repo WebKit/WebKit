@@ -35,7 +35,7 @@ namespace MockAudioCaptureUnit {
 void enable();
 void disable();
 CoreAudioCaptureUnit& singleton();
-void NODELETE increaseBufferSize();
+void LEGACY_NODELETE increaseBufferSize();
 
 }
 

@@ -61,8 +61,8 @@ public:
     WEBCORE_EXPORT static void resetFactories();
     WEBCORE_EXPORT static void installFactory(MediaEngineFactory&&);
 
-    WEBCORE_EXPORT static void NODELETE enableMock();
-    WEBCORE_EXPORT static void NODELETE disableMock();
+    WEBCORE_EXPORT static void LEGACY_NODELETE enableMock();
+    WEBCORE_EXPORT static void LEGACY_NODELETE disableMock();
 
     using MediaSessionManagerProvider = Function<RefPtr<MediaSessionManagerInterface> (PageIdentifier)>;
     WEBCORE_EXPORT static void setMediaSessionManagerProvider(MediaSessionManagerProvider&&);

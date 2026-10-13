@@ -47,7 +47,7 @@ public:
 
     DocumentFragment& fragmentForInsertion() const;
     DocumentFragment& content() const;
-    DocumentFragment* NODELETE contentIfAvailable() const;
+    DocumentFragment* LEGACY_NODELETE contentIfAvailable() const;
 
     const AtomString& shadowRootMode() const;
     const AtomString& shadowRootSlotAssignment() const;

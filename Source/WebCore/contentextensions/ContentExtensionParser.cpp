@@ -41,7 +41,7 @@
 
 namespace WebCore::ContentExtensions {
     
-static bool NODELETE containsOnlyASCIIWithNoUppercase(const String& domain)
+static bool LEGACY_NODELETE containsOnlyASCIIWithNoUppercase(const String& domain)
 {
     for (auto character : StringView { domain }.codeUnits()) {
         if (!isASCII(character) || isASCIIUpper(character))

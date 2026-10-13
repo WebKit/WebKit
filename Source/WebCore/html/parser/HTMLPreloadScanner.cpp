@@ -207,7 +207,7 @@ public:
         return m_tagId == TagId::Img && HTMLImageElement::hasLazyLoadableAttributeValue(m_lazyloadAttribute);
     }
 
-    static bool NODELETE match(const AtomString& name, const QualifiedName& qName)
+    static bool LEGACY_NODELETE match(const AtomString& name, const QualifiedName& qName)
     {
         ASSERT(isMainThread());
         return qName.localName() == name;
@@ -375,7 +375,7 @@ private:
         }
     }
 
-    static bool NODELETE relAttributeIsStyleSheet(const LinkRelAttribute& parsedAttribute)
+    static bool LEGACY_NODELETE relAttributeIsStyleSheet(const LinkRelAttribute& parsedAttribute)
     {
         return parsedAttribute.isStyleSheet && !parsedAttribute.isAlternate && !parsedAttribute.iconType && !parsedAttribute.isDNSPrefetch;
     }
@@ -397,7 +397,7 @@ private:
         m_urlToLoad = trimmedURL.toString();
     }
 
-    const String& NODELETE charset() const
+    const String& LEGACY_NODELETE charset() const
     {
         return m_charset;
     }

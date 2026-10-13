@@ -133,7 +133,7 @@ public:
     bool overlayScrollbarsEnabled() const { return m_overlayScrollbarsEnabled; }
     WEBCORE_EXPORT void setOverlayScrollbarsEnabled(bool);
 
-    WEBCORE_EXPORT bool NODELETE isMainFrame() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isMainFrame() const;
     
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 

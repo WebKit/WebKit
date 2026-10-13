@@ -39,7 +39,7 @@ public:
         return adoptRef(*new GamepadButton);
     }
 
-    bool NODELETE pressed() const;
+    bool LEGACY_NODELETE pressed() const;
     double value() const { return m_value; }
     void setValue(double value) { m_value = value; }
 

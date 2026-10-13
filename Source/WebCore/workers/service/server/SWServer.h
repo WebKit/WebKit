@@ -283,7 +283,7 @@ public:
     enum class ShouldDelayRemoval : bool { No, Yes };
     ShouldDelayRemoval removeContextConnectionIfPossible(const RegistrableDomain&);
 
-    std::optional<ServiceWorkerRegistrationIdentifier> NODELETE clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
+    std::optional<ServiceWorkerRegistrationIdentifier> LEGACY_NODELETE clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
     WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(ServiceWorkerClientData&)>&);
     void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(const ServiceWorkerClientData&)>&) const;
 
@@ -324,7 +324,7 @@ public:
 private:
     SWServer(SWServerDelegate&, UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable);
 
-    unsigned NODELETE maxRegistrationCount();
+    unsigned LEGACY_NODELETE maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);
     void validateRegistrationDomain(RegistrableDomain, ServiceWorkerJobType, bool, CompletionHandler<void(bool)>&&);
 
@@ -350,7 +350,7 @@ private:
     void tryInstallContextData(const std::optional<ProcessIdentifier>&, ServiceWorkerContextData&&);
     void installContextData(const ServiceWorkerContextData&);
 
-    SWServerRegistration* NODELETE registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
+    SWServerRegistration* LEGACY_NODELETE registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
 
     void performGetOriginsWithRegistrationsCallbacks();
     HashSet<ClientOrigin> allClientOrigins() const;

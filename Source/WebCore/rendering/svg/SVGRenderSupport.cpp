@@ -270,7 +270,7 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
         invalidateResourcesOfChildren(child);
 }
 
-static inline bool NODELETE layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
+static inline bool LEGACY_NODELETE layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
     for (auto* start = &renderer; start; start = start->parent()) {
         if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(*start))

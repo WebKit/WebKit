@@ -587,16 +587,16 @@ private:
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
 
-    static InstrumentingAgents& NODELETE instrumentingAgents(Page&);
-    static InstrumentingAgents& NODELETE instrumentingAgents(const LocalFrame&);
-    static InstrumentingAgents& NODELETE instrumentingAgents(const LocalFrameView&);
-    static InstrumentingAgents& NODELETE instrumentingAgents(WorkerOrWorkletGlobalScope&);
-    static InstrumentingAgents& NODELETE instrumentingAgents(ServiceWorkerGlobalScope&);
-    static InstrumentingAgents& NODELETE instrumentingAgents(const RenderObject&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(Page&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(const LocalFrame&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(const LocalFrameView&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(WorkerOrWorkletGlobalScope&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(ServiceWorkerGlobalScope&);
+    static InstrumentingAgents& LEGACY_NODELETE instrumentingAgents(const RenderObject&);
 
     static InstrumentingAgents* instrumentingAgents(const LocalFrame*);
     static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext&);
-    static InstrumentingAgents* NODELETE instrumentingAgents(Document&);
+    static InstrumentingAgents* LEGACY_NODELETE instrumentingAgents(Document&);
     static InstrumentingAgents* instrumentingAgents(Document*);
     static InstrumentingAgents* instrumentingAgents(WorkerOrWorkletGlobalScope*);
 };

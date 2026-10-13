@@ -164,7 +164,7 @@ FOR_EACH_MASK_LAYER_SHORTHAND(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_S
 // MARK: - Blending
 
 template<> struct Blending<MaskLayer> {
-    bool NODELETE canBlend(const MaskLayer&, const MaskLayer&);
+    bool LEGACY_NODELETE canBlend(const MaskLayer&, const MaskLayer&);
 };
 
 // MARK: - Logging

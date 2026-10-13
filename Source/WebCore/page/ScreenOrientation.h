@@ -60,8 +60,8 @@ public:
 private:
     ScreenOrientation(Document*);
 
-    Document* NODELETE document() const;
-    ScreenOrientationManager* NODELETE manager() const;
+    Document* LEGACY_NODELETE document() const;
+    ScreenOrientationManager* LEGACY_NODELETE manager() const;
 
     bool shouldListenForChangeNotification() const;
 
@@ -73,13 +73,13 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::ScreenOrientation; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
     void eventListenersDidChange() final;
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
     void stop() final;

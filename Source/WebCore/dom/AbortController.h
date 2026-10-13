@@ -48,7 +48,7 @@ public:
     AbortSignal& signal() { return m_signal; }
     void abort(JSC::JSValue reason);
 
-    WebCoreOpaqueRoot NODELETE opaqueRoot();
+    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot();
 
 private:
     explicit AbortController(ScriptExecutionContext&);

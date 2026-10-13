@@ -38,7 +38,7 @@ public:
     static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);
 
     String cssText() const override;
-    unsigned short NODELETE cssValueType() const override;
+    unsigned short LEGACY_NODELETE cssValueType() const override;
     bool isValueList() const override { return true; }
 
     size_t length() const { return m_values.size(); }

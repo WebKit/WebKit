@@ -59,7 +59,7 @@ public:
 
     bool canUseExistingLayers() const;
 
-    bool NODELETE paintsContent() const final;
+    bool LEGACY_NODELETE paintsContent() const final;
 
     bool isRootElementCapture() const { return m_isRootElementCapture; }
 

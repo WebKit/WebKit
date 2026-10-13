@@ -79,7 +79,7 @@ public:
 
     RenderSVGResourceType resourceType() const override { return FilterResourceType; }
 
-    FloatRect NODELETE drawingRegion(RenderObject&) const;
+    FloatRect LEGACY_NODELETE drawingRegion(RenderObject&) const;
 
 private:
     void element() const = delete;

@@ -49,7 +49,7 @@ private:
     }
 
     // Ignore all data.
-    void NODELETE appendBytes(DocumentWriter&, std::span<const uint8_t>) override
+    void LEGACY_NODELETE appendBytes(DocumentWriter&, std::span<const uint8_t>) override
     {
     }
 };

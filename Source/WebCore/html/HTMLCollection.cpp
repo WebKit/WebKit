@@ -71,7 +71,7 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
     return HTMLCollection::RootType::AtNode;
 }
 
-static NodeListInvalidationType NODELETE invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
+static NodeListInvalidationType LEGACY_NODELETE invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
 {
     switch (type) {
     case CollectionType::ByTag:

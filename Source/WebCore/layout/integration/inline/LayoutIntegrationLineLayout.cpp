@@ -251,7 +251,7 @@ LineLayout::~LineLayout()
     SUPPRESS_UNCOUNTED_ARG BoxTreeUpdater { rootRenderer, *m_document }.tearDown();
 }
 
-static inline bool NODELETE isContentRenderer(const RenderObject& renderer)
+static inline bool LEGACY_NODELETE isContentRenderer(const RenderObject& renderer)
 {
     // FIXME: These fake renderers have their parent set but are not actually in the tree.
     return !renderer.isRenderReplica() && !renderer.isRenderScrollbarPart();
@@ -462,7 +462,7 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
     return { };
 }
 
-static inline Layout::BlockLayoutState::TextBoxTrim NODELETE textBoxTrim(const RenderBlockFlow& rootRenderer)
+static inline Layout::BlockLayoutState::TextBoxTrim LEGACY_NODELETE textBoxTrim(const RenderBlockFlow& rootRenderer)
 {
     auto textBoxTrim = rootRenderer.view().frameView().layoutContext().textBoxTrim();
     if (!textBoxTrim)
@@ -1431,7 +1431,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderBoxModelObject& 
     return result;
 }
 
-static LayoutPoint NODELETE flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
+static LayoutPoint LEGACY_NODELETE flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
     if (root.writingMode().isBlockFlipped())
         return root.flipForWritingModeForChild(childRenderer, contentOffset);

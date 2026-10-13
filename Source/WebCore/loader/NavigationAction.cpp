@@ -83,7 +83,7 @@ static std::optional<NavigationAction::MouseEventData> mouseEventDataForFirstMou
     return { };
 }
 
-static NavigationType NODELETE navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)
+static NavigationType LEGACY_NODELETE navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)
 {
     if (isFormSubmission)
         return NavigationType::FormSubmitted;

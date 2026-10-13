@@ -90,7 +90,7 @@ public:
     const String& evalDisabledErrorMessage() const LIFETIME_BOUND { return m_evalDisabledErrorMessage; }
     const String& webAssemblyDisabledErrorMessage() const LIFETIME_BOUND { return m_webAssemblyDisabledErrorMessage; }
     bool isReportOnly() const { return m_reportOnly; }
-    bool NODELETE shouldReportSample(const String&) const;
+    bool LEGACY_NODELETE shouldReportSample(const String&) const;
     HashAlgorithmSet reportHash() const;
     const Vector<String>& reportToTokens() const LIFETIME_BOUND { return m_reportToTokens; }
     const Vector<String>& reportURIs() const LIFETIME_BOUND { return m_reportURIs; }

@@ -65,7 +65,7 @@ public:
 
     uint32_t sampleCapacity() const { return m_sampleCapacity; }
     uint32_t sampleCount() const { return m_sampleCount; }
-    void NODELETE setSampleCount(size_t);
+    void LEGACY_NODELETE setSampleCount(size_t);
 
     uint64_t timestamp() const { return m_timestamp; }
     double hostTime() const { return m_hostTime; }

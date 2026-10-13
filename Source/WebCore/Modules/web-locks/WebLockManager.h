@@ -73,7 +73,7 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
 
     class MainThreadBridge;

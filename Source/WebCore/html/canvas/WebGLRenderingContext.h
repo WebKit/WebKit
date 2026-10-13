@@ -64,7 +64,7 @@ private:
     void detachAndRemoveAllObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 };
 
-WebCoreOpaqueRoot NODELETE root(const WebGLExtension<WebGLRenderingContext>*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(const WebGLExtension<WebGLRenderingContext>*);
 
 } // namespace WebCore
 

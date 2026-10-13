@@ -63,19 +63,19 @@ static const WeakStyleable& originatingStyleable(const Ref<ScrollTimeline>& time
     return timeline->sourceStyleable();
 }
 
-static Element* NODELETE originatingElement(const Ref<ScrollTimeline>& timeline)
+static Element* LEGACY_NODELETE originatingElement(const Ref<ScrollTimeline>& timeline)
 {
     return originatingStyleable(timeline).element().get();
 }
 
-static Element* NODELETE originatingElementIncludingTimelineScope(const Ref<ScrollTimeline>& timeline)
+static Element* LEGACY_NODELETE originatingElementIncludingTimelineScope(const Ref<ScrollTimeline>& timeline)
 {
     if (auto* timelineScopeElement = timeline->timelineScopeDeclaredElement())
         return timelineScopeElement;
     return originatingElement(timeline);
 }
 
-static Element* NODELETE originatingElementExcludingTimelineScope(const Ref<ScrollTimeline>& timeline)
+static Element* LEGACY_NODELETE originatingElementExcludingTimelineScope(const Ref<ScrollTimeline>& timeline)
 {
     return timeline->timelineScopeDeclaredElement() ? nullptr : originatingElement(timeline);
 }

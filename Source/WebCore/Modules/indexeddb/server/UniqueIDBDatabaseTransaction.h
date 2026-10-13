@@ -62,13 +62,13 @@ public:
 
     WEBCORE_EXPORT ~UniqueIDBDatabaseTransaction();
 
-    WEBCORE_EXPORT UniqueIDBDatabaseConnection* NODELETE databaseConnection() const;
-    UniqueIDBDatabase* NODELETE database() const;
+    WEBCORE_EXPORT UniqueIDBDatabaseConnection* LEGACY_NODELETE databaseConnection() const;
+    UniqueIDBDatabase* LEGACY_NODELETE database() const;
     const IDBTransactionInfo& info() const LIFETIME_BOUND { return m_transactionInfo; }
-    WEBCORE_EXPORT bool NODELETE isVersionChange() const;
-    bool NODELETE isReadOnly() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isVersionChange() const;
+    bool LEGACY_NODELETE isReadOnly() const;
 
-    IDBDatabaseInfo* NODELETE originalDatabaseInfo() const;
+    IDBDatabaseInfo* LEGACY_NODELETE originalDatabaseInfo() const;
 
     WEBCORE_EXPORT void abort();
     WEBCORE_EXPORT void abortWithoutCallback();

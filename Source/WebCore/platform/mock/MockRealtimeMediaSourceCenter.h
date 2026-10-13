@@ -38,10 +38,10 @@ namespace WebCore {
 
 class MockRealtimeMediaSourceCenter {
 public:
-    WEBCORE_EXPORT static MockRealtimeMediaSourceCenter& NODELETE singleton();
+    WEBCORE_EXPORT static MockRealtimeMediaSourceCenter& LEGACY_NODELETE singleton();
 
     WEBCORE_EXPORT static void setMockRealtimeMediaSourceCenterEnabled(bool);
-    WEBCORE_EXPORT static bool NODELETE mockRealtimeMediaSourceCenterEnabled();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE mockRealtimeMediaSourceCenterEnabled();
 
     WEBCORE_EXPORT static void setDevices(Vector<MockMediaDevice>&&);
     WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
@@ -74,8 +74,8 @@ private:
     friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
 
     AudioCaptureFactory& audioCaptureFactory();
-    VideoCaptureFactory& NODELETE videoCaptureFactory();
-    DisplayCaptureFactory& NODELETE displayCaptureFactory();
+    VideoCaptureFactory& LEGACY_NODELETE videoCaptureFactory();
+    DisplayCaptureFactory& LEGACY_NODELETE displayCaptureFactory();
 
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:

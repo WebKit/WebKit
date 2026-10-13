@@ -51,7 +51,7 @@ public:
 
     ~ReadableStreamDefaultReader();
 
-    DOMPromise& NODELETE closedPromise() const;
+    DOMPromise& LEGACY_NODELETE closedPromise() const;
     void readForBindings(JSDOMGlobalObject&, Ref<DeferredPromise>&&);
     void read(JSDOMGlobalObject&, Ref<ReadableStreamReadRequest>&&);
 
@@ -73,7 +73,7 @@ public:
     void onClosedPromiseRejection(ClosedRejectionCallback&&);
     void onClosedPromiseResolution(Function<void()>&&);
 
-    bool NODELETE isReachableFromOpaqueRoots() const;
+    bool LEGACY_NODELETE isReachableFromOpaqueRoots() const;
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 
     ReadableStream* stream();
@@ -96,6 +96,6 @@ private:
     Function<void()> m_closedResolutionCallback;
 };
 
-WebCoreOpaqueRoot NODELETE root(ReadableStreamDefaultReader*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(ReadableStreamDefaultReader*);
 
 } // namespace WebCore

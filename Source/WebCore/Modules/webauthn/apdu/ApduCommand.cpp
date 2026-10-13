@@ -37,7 +37,7 @@ namespace apdu {
 namespace {
 
 // APDU command data length is 2 bytes encoded in big endian order.
-uint16_t NODELETE parseMessageLength(const Vector<uint8_t>& message, size_t offset)
+uint16_t LEGACY_NODELETE parseMessageLength(const Vector<uint8_t>& message, size_t offset)
 {
     ASSERT(message.size() >= offset + 2);
     return (message[offset] << 8) | message[offset + 1];

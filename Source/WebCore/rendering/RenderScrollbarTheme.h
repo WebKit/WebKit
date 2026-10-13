@@ -57,7 +57,7 @@ public:
 
     void buttonSizesAlongTrackAxis(Scrollbar&, int& beforeSize, int& afterSize);
     
-    static RenderScrollbarTheme* NODELETE renderScrollbarTheme();
+    static RenderScrollbarTheme* LEGACY_NODELETE renderScrollbarTheme();
 
 private:
     bool hasButtons(Scrollbar&) override;

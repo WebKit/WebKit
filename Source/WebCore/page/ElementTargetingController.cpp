@@ -98,33 +98,33 @@ static constexpr auto minimumAreaRatioForElementToCoverViewport = 0.95;
 static constexpr auto minimumAreaForInterpolation = 200000;
 static constexpr auto maximumAreaForInterpolation = 800000;
 
-static float NODELETE linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
+static float LEGACY_NODELETE linearlyInterpolatedViewportRatio(float viewportArea, float minimumValue, float maximumValue)
 {
     auto areaRatio = (viewportArea - minimumAreaForInterpolation) / (maximumAreaForInterpolation - minimumAreaForInterpolation);
     return clampTo(maximumValue - areaRatio * (maximumValue - minimumValue), minimumValue, maximumValue);
 }
 
-static float NODELETE maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
+static float LEGACY_NODELETE maximumAreaRatioForAbsolutelyPositionedContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.75, 1);
 }
 
-static float NODELETE maximumAreaRatioForInFlowContent(float viewportArea)
+static float LEGACY_NODELETE maximumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.5, 1);
 }
 
-static float NODELETE maximumAreaRatioForNearbyTargets(float viewportArea)
+static float LEGACY_NODELETE maximumAreaRatioForNearbyTargets(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.5);
 }
 
-static float NODELETE minimumAreaRatioForInFlowContent(float viewportArea)
+static float LEGACY_NODELETE minimumAreaRatioForInFlowContent(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.005, 0.01);
 }
 
-static float NODELETE maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
+static float LEGACY_NODELETE maximumAreaRatioForTrackingAdjustmentAreas(float viewportArea)
 {
     return linearlyInterpolatedViewportRatio(viewportArea, 0.25, 0.3);
 }
@@ -568,7 +568,7 @@ TargetedElementSelectors ElementTargetingController::selectorsForElement(Element
     });
 }
 
-static inline RectEdges<bool> NODELETE computeOffsetEdges(const Style::ComputedStyle& style)
+static inline RectEdges<bool> LEGACY_NODELETE computeOffsetEdges(const Style::ComputedStyle& style)
 {
     return {
         style.top().isSpecified(),
@@ -861,7 +861,7 @@ static inline std::optional<IntRect> inflatedClientRectForAdjustmentRegionTracki
     return { inflatedClientRect };
 }
 
-static bool NODELETE shouldIgnoreExistingVisibilityAdjustments(const TargetedElementRequest& request)
+static bool LEGACY_NODELETE shouldIgnoreExistingVisibilityAdjustments(const TargetedElementRequest& request)
 {
     return std::holds_alternative<String>(request.data) || std::holds_alternative<TargetedElementSelectors>(request.data);
 }
@@ -1430,7 +1430,7 @@ static inline Ref<Element> elementToAdjust(Element& element)
     return element;
 }
 
-static inline VisibilityAdjustment NODELETE adjustmentToApply(Element& element)
+static inline VisibilityAdjustment LEGACY_NODELETE adjustmentToApply(Element& element)
 {
     if (element.isAfterPseudoElement())
         return VisibilityAdjustment::AfterPseudo;

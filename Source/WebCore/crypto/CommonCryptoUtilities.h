@@ -33,6 +33,6 @@
 
 namespace WebCore {
 
-bool NODELETE getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
+bool LEGACY_NODELETE getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
 
 } // namespace WebCore

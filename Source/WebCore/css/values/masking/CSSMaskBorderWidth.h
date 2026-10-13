@@ -62,7 +62,7 @@ struct MaskBorderWidth {
 
     Edges values;
 
-    bool NODELETE isInitialValue() const;
+    bool LEGACY_NODELETE isInitialValue() const;
 
     bool operator==(const MaskBorderWidth&) const = default;
 };

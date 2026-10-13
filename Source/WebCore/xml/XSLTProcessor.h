@@ -66,7 +66,7 @@ public:
 #else
     static void parseErrorFunc(void* userData, xmlError*);
 #endif
-    static void NODELETE genericErrorFunc(void* userData, const char* msg, ...);
+    static void LEGACY_NODELETE genericErrorFunc(void* userData, const char* msg, ...);
     
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }

@@ -52,9 +52,9 @@ public:
     bool hasSetType() const { return m_type.contains(Type::Set); }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
-    RenderElement& NODELETE owner() const;
-    void NODELETE addRenderer(RenderCounter&);
-    void NODELETE removeRenderer(RenderCounter&);
+    RenderElement& LEGACY_NODELETE owner() const;
+    void LEGACY_NODELETE addRenderer(RenderCounter&);
+    void LEGACY_NODELETE removeRenderer(RenderCounter&);
 
     // Invalidates the text in the renderers of this counter, if any.
     void resetRenderers();
@@ -64,10 +64,10 @@ public:
     CounterNode* nextSibling() const { return const_cast<CounterNode*>(m_nextSibling.get()); }
     CounterNode* firstChild() const { return const_cast<CounterNode*>(m_firstChild.get()); }
     CounterNode* lastChild() const { return const_cast<CounterNode*>(m_lastChild.get()); }
-    CounterNode* NODELETE lastDescendant() const;
-    CounterNode* NODELETE previousInPreOrder() const;
-    CounterNode* NODELETE nextInPreOrder(const CounterNode* stayWithin = nullptr) const;
-    CounterNode* NODELETE nextInPreOrderAfterChildren(const CounterNode* stayWithin = nullptr) const;
+    CounterNode* LEGACY_NODELETE lastDescendant() const;
+    CounterNode* LEGACY_NODELETE previousInPreOrder() const;
+    CounterNode* LEGACY_NODELETE nextInPreOrder(const CounterNode* stayWithin = nullptr) const;
+    CounterNode* LEGACY_NODELETE nextInPreOrderAfterChildren(const CounterNode* stayWithin = nullptr) const;
 
     void insertAfter(CounterNode& newChild, CounterNode* beforeChild, const AtomString& identifier);
     // identifier must match the identifier of this counter.
@@ -75,7 +75,7 @@ public:
 
 private:
     CounterNode(RenderElement&, OptionSet<Type>, int value);
-    int NODELETE computeCountInParent() const;
+    int LEGACY_NODELETE computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
     void resetThisAndDescendantsRenderers();

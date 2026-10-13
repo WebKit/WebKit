@@ -266,7 +266,7 @@ CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
     return m_documentResources.get(url.string()).get();
 }
 
-LocalFrame* NODELETE CachedResourceLoader::frame() const
+LocalFrame* LEGACY_NODELETE CachedResourceLoader::frame() const
 {
     return m_documentLoader ? m_documentLoader->frame() : nullptr;
 }
@@ -447,7 +447,7 @@ ResourceErrorOr<Ref<CachedRawResource>> CachedResourceLoader::requestModelResour
 }
 #endif
 
-static MixedContentChecker::IsUpgradable NODELETE isUpgradableTypeFromResourceType(CachedResource::Type type)
+static MixedContentChecker::IsUpgradable LEGACY_NODELETE isUpgradableTypeFromResourceType(CachedResource::Type type)
 {
     // https://www.w3.org/TR/mixed-content/#category-upgradeable
     // Editor’s Draft, 23 February 2023
@@ -945,7 +945,7 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
     return false;
 }
 
-static inline bool NODELETE isResourceSuitableForDirectReuse(const CachedResource& resource, const CachedResourceRequest& request)
+static inline bool LEGACY_NODELETE isResourceSuitableForDirectReuse(const CachedResource& resource, const CachedResourceRequest& request)
 {
     // FIXME: For being loaded requests, the response tainting may not be correctly computed if the fetch mode is not the same.
     // Even if the fetch mode is the same, we are not sure that the resource can be reused (Vary: Origin header for instance).
@@ -1052,7 +1052,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     request.updateAcceptEncodingHeader();
 }
 
-static FetchOptions::Destination NODELETE destinationForType(CachedResource::Type type, LocalFrame& frame)
+static FetchOptions::Destination LEGACY_NODELETE destinationForType(CachedResource::Type type, LocalFrame& frame)
 {
     switch (type) {
     case CachedResource::Type::MainResource:
@@ -1113,7 +1113,7 @@ static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
     return cachedImage ? dynamicDowncast<SVGImage>(cachedImage->image()) : nullptr;
 }
 
-static bool NODELETE computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)
+static bool LEGACY_NODELETE computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)
 {
     return !existingResource || !existingResource->isPreloaded() || newRequest.options().serviceWorkersMode != ServiceWorkersMode::None || existingResource->options().serviceWorkersMode == ServiceWorkersMode::None;
 }
@@ -1503,7 +1503,7 @@ Ref<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type
     return resource;
 }
 
-static inline bool NODELETE mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
+static inline bool LEGACY_NODELETE mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
 {
     if (cachedOptions.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch)
         return false;

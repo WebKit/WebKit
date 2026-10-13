@@ -680,7 +680,7 @@ enum class BreakBetween : uint8_t {
     RectoPage,
     VersoPage
 };
-bool NODELETE alwaysPageBreak(BreakBetween);
+bool LEGACY_NODELETE alwaysPageBreak(BreakBetween);
     
 enum class BreakInside : uint8_t {
     Auto,
@@ -1165,7 +1165,7 @@ enum class MaskType : uint8_t {
     Alpha
 };
 
-CSSBoxType NODELETE transformBoxToCSSBoxType(TransformBox);
+CSSBoxType LEGACY_NODELETE transformBoxToCSSBoxType(TransformBox);
 
 constexpr float defaultMiterLimit = 4;
 

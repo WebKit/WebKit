@@ -355,7 +355,7 @@ static String toEncodingMimeType(const String& mimeType)
     return mimeType.convertToASCIILowercase();
 }
 
-static std::optional<double> NODELETE qualityFromDouble(double qualityNumber)
+static std::optional<double> LEGACY_NODELETE qualityFromDouble(double qualityNumber)
 {
     if (!(qualityNumber >= 0 && qualityNumber <= 1))
         return std::nullopt;

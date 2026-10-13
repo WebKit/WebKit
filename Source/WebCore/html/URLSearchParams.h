@@ -49,9 +49,9 @@ public:
 
     void append(const String& name, const String& value);
     void remove(const String& name, const String& value = { });
-    String NODELETE get(const String& name) const;
+    String LEGACY_NODELETE get(const String& name) const;
     Vector<String> getAll(const String& name) const;
-    bool NODELETE has(const String& name, const String& value = { }) const;
+    bool LEGACY_NODELETE has(const String& name, const String& value = { }) const;
     void set(const String& name, const String& value);
     String toString() const;
     void updateFromAssociatedURL();
@@ -60,7 +60,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(URLSearchParams&);
-        std::optional<KeyValuePair<String, String>> NODELETE next();
+        std::optional<KeyValuePair<String, String>> LEGACY_NODELETE next();
 
     private:
         const Ref<URLSearchParams> m_target;

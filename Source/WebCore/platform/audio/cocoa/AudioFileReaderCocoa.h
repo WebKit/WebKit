@@ -70,13 +70,13 @@ public:
 private:
 
 #if ENABLE(MEDIA_SOURCE)
-    bool NODELETE isMaybeWebM(std::span<const uint8_t>) const;
+    bool LEGACY_NODELETE isMaybeWebM(std::span<const uint8_t>) const;
     std::unique_ptr<AudioFileReaderData> demuxWebMData(std::span<const uint8_t>) const;
 #endif
     std::optional<size_t> decodeData(AudioBufferList&, size_t numberOfFrames, const AudioStreamBasicDescription& inFormat, const AudioStreamBasicDescription& outFormat) const;
     std::unique_ptr<AudioFileReaderData> demuxAVFData(std::span<const uint8_t>) const;
     std::optional<AudioStreamBasicDescription> fileDataFormat() const;
-    AudioStreamBasicDescription NODELETE clientDataFormat(const AudioStreamBasicDescription& inFormat, float sampleRate) const;
+    AudioStreamBasicDescription LEGACY_NODELETE clientDataFormat(const AudioStreamBasicDescription& inFormat, float sampleRate) const;
 
     std::span<const uint8_t> m_data;
 

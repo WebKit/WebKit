@@ -121,13 +121,13 @@ bool canScrollInDirection(const ContainerNode&, FocusDirection);
 bool canScrollInDirection(const LocalFrame*, FocusDirection);
 bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
 bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCandidate& secondCandidate);
-bool NODELETE isValidCandidate(FocusDirection, const FocusCandidate&, FocusCandidate&);
+bool LEGACY_NODELETE isValidCandidate(FocusDirection, const FocusCandidate&, FocusCandidate&);
 void distanceDataForNode(FocusDirection, const FocusCandidate& current, FocusCandidate& candidate);
 ContainerNode* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, ContainerNode&);
 LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode&, bool ignoreBorder = false);
 LayoutRect frameRectInAbsoluteCoordinates(LocalFrame*);
-LayoutRect NODELETE virtualRectForDirection(FocusDirection, const LayoutRect& startingRect, LayoutUnit width = 0_lu);
+LayoutRect LEGACY_NODELETE virtualRectForDirection(FocusDirection, const LayoutRect& startingRect, LayoutUnit width = 0_lu);
 LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirection);
-HTMLFrameOwnerElement* NODELETE frameOwnerElement(FocusCandidate&);
+HTMLFrameOwnerElement* LEGACY_NODELETE frameOwnerElement(FocusCandidate&);
 
 } // namespace WebCore

@@ -49,7 +49,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<E
     return createWrapper<EventTarget>(globalObject, WTF::move(value));
 }
 
-EventTarget* NODELETE JSEventTarget::toWrapped(VM&, JSValue value)
+EventTarget* LEGACY_NODELETE JSEventTarget::toWrapped(VM&, JSValue value)
 {
     if (auto* windowProxy = dynamicDowncast<JSWindowProxy>(value))
         return &windowProxy->wrapped();

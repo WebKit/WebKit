@@ -331,7 +331,7 @@ double MouseRelatedEvent::pageY() const
     return std::floor(m_pageLocation.y());
 }
 
-static double NODELETE finiteValue(double value)
+static double LEGACY_NODELETE finiteValue(double value)
 {
     return std::isfinite(value) ? value : 0;
 }

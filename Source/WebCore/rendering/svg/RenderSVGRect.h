@@ -41,7 +41,7 @@ public:
     RenderSVGRect(SVGRectElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGRect();
 
-    SVGRectElement& NODELETE rectElement() const;
+    SVGRectElement& LEGACY_NODELETE rectElement() const;
 
 private:
     void graphicsElement() const = delete;
@@ -57,8 +57,8 @@ private:
     bool shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
 
 private:
-    bool NODELETE definitelyHasSimpleStroke() const;
-    bool NODELETE canUseStrokeHitTestFastPath() const;
+    bool LEGACY_NODELETE definitelyHasSimpleStroke() const;
+    bool LEGACY_NODELETE canUseStrokeHitTestFastPath() const;
 };
 
 } // namespace WebCore

@@ -43,7 +43,7 @@ public:
     CSSKeywordValue* modifier() const { return m_modifier.get(); }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }
 
-    bool NODELETE isInitialValue() const;
+    bool LEGACY_NODELETE isInitialValue() const;
 
     bool equals(const CSSOffsetRotateValue&) const;
 

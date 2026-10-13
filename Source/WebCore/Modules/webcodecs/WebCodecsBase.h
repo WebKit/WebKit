@@ -46,7 +46,7 @@ public:
 protected:
     using WebCodecsControlMessageQueue::WebCodecsControlMessageQueue;
 
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     void queueCodecControlMessageAndProcess(WebCodecsControlMessage&&);
     void clearControlMessageQueueAndMaybeScheduleDequeueEvent();

@@ -59,7 +59,7 @@ public:
     void readForBindings(JSDOMGlobalObject&, JSC::ArrayBufferView&, ReadOptions, Ref<DeferredPromise>&&);
     void releaseLock(JSDOMGlobalObject&);
 
-    DOMPromise& NODELETE closedPromise();
+    DOMPromise& LEGACY_NODELETE closedPromise();
 
     Ref<DOMPromise> cancel(JSDOMGlobalObject&, JSC::JSValue);
 
@@ -98,6 +98,6 @@ private:
     ClosedCallback m_closedCallback;
 };
 
-WebCoreOpaqueRoot NODELETE root(ReadableStreamBYOBReader*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(ReadableStreamBYOBReader*);
 
 } // namespace WebCore

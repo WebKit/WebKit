@@ -40,9 +40,9 @@ class DeprecatedFlexibleBoxData : public RefCounted<DeprecatedFlexibleBoxData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DeprecatedFlexibleBoxData, DeprecatedFlexibleBoxData);
 public:
     static Ref<DeprecatedFlexibleBoxData> create() { return adoptRef(*new DeprecatedFlexibleBoxData); }
-    Ref<DeprecatedFlexibleBoxData> NODELETE copy() const;
+    Ref<DeprecatedFlexibleBoxData> LEGACY_NODELETE copy() const;
 
-    bool NODELETE operator==(const DeprecatedFlexibleBoxData&) const;
+    bool LEGACY_NODELETE operator==(const DeprecatedFlexibleBoxData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const DeprecatedFlexibleBoxData&) const;

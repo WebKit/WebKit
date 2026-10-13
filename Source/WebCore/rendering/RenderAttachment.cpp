@@ -59,7 +59,7 @@ RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, Style::Comput
 
 RenderAttachment::~RenderAttachment() = default;
 
-HTMLAttachmentElement& NODELETE RenderAttachment::attachmentElement() const
+HTMLAttachmentElement& LEGACY_NODELETE RenderAttachment::attachmentElement() const
 {
     return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());
 }

@@ -34,7 +34,7 @@ class CSSValue;
 
 enum class CompositeOperation : uint8_t { Replace, Add, Accumulate };
 
-std::optional<CompositeOperation> NODELETE toCompositeOperation(const CSSValue&);
+std::optional<CompositeOperation> LEGACY_NODELETE toCompositeOperation(const CSSValue&);
 
 // MARK: - Logging
 

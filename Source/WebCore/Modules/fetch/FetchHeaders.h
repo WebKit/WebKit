@@ -50,7 +50,7 @@ public:
     ExceptionOr<void> append(const String& name, const String& value);
     ExceptionOr<void> remove(const String&);
     ExceptionOr<String> get(const String&) const;
-    const Vector<String>& NODELETE getSetCookie() const;
+    const Vector<String>& LEGACY_NODELETE getSetCookie() const;
     ExceptionOr<bool> has(const String&) const;
     ExceptionOr<void> set(const String& name, const String& value);
 

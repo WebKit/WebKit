@@ -131,7 +131,7 @@ public:
 
     WEBCORE_EXPORT TransformationMatrix(const AffineTransform&);
 
-    WEBCORE_EXPORT static TransformationMatrix NODELETE fromQuaternion(const Quaternion&);
+    WEBCORE_EXPORT static TransformationMatrix LEGACY_NODELETE fromQuaternion(const Quaternion&);
 
     // Field of view in radians
     static TransformationMatrix fromProjection(double fovUp, double fovDown, double fovLeft, double fovRight, double depthNear, double depthFar);
@@ -174,10 +174,10 @@ public:
 
     // This form preserves the double math from input to output.
     void map(double x, double y, double& x2, double& y2) const { multVecMatrix(x, y, x2, y2); }
-    void NODELETE map4ComponentPoint(double& x, double& y, double& z, double& w) const;
+    void LEGACY_NODELETE map4ComponentPoint(double& x, double& y, double& z, double& w) const;
 
     // Maps a 3D point through the transform, returning a 3D point.
-    WEBCORE_EXPORT FloatPoint3D NODELETE mapPoint(const FloatPoint3D&) const;
+    WEBCORE_EXPORT FloatPoint3D LEGACY_NODELETE mapPoint(const FloatPoint3D&) const;
 
     // Maps a 2D point through the transform, returning a 2D point.
     // Note that this ignores the z component, effectively projecting the point into the z=0 plane.
@@ -200,14 +200,14 @@ public:
 
     // If the matrix has 3D components, the z component of the result is
     // dropped, effectively projecting the quad into the z=0 plane.
-    WEBCORE_EXPORT FloatQuad NODELETE mapQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT FloatQuad LEGACY_NODELETE mapQuad(const FloatQuad&) const;
 
     // Maps a point on the z=0 plane into a point on the plane with with the transform applied, by
     // extending a ray perpendicular to the source plane and computing the local x,y position of
     // the point where that ray intersects with the destination plane.
-    FloatPoint NODELETE projectPoint(const FloatPoint&, bool* clamped = nullptr) const;
+    FloatPoint LEGACY_NODELETE projectPoint(const FloatPoint&, bool* clamped = nullptr) const;
     // Projects the four corners of the quad.
-    FloatQuad NODELETE projectQuad(const FloatQuad&,  bool* clamped = nullptr) const;
+    FloatQuad LEGACY_NODELETE projectQuad(const FloatQuad&,  bool* clamped = nullptr) const;
     // Projects the four corners of the quad and takes a bounding box, clipping the
     // quad to the part in front of the eye first. Empty when nothing is in front.
     WEBCORE_EXPORT LayoutRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
@@ -268,9 +268,9 @@ public:
     // Identical to multiply(TransformationMatrix&), but saving a AffineTransform -> TransformationMatrix roundtrip for identity or translation matrices.
     TransformationMatrix& multiplyAffineTransform(const AffineTransform&);
 
-    WEBCORE_EXPORT TransformationMatrix& NODELETE scale(double);
-    WEBCORE_EXPORT TransformationMatrix& NODELETE scaleNonUniform(double sx, double sy);
-    TransformationMatrix& NODELETE scale3d(double sx, double sy, double sz);
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE scale(double);
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE scaleNonUniform(double sx, double sy);
+    TransformationMatrix& LEGACY_NODELETE scale3d(double sx, double sy, double sz);
 
     enum class RotationSnapping {
         None,
@@ -286,15 +286,15 @@ public:
     // The vector (x,y,z) is normalized if it's not already. A vector of (0,0,0) uses a vector of (0,0,1).
     TransformationMatrix& rotate3d(double x, double y, double z, double angle, RotationSnapping = RotationSnapping::Snap90degRotations);
 
-    WEBCORE_EXPORT TransformationMatrix& NODELETE translate(double tx, double ty);
-    WEBCORE_EXPORT TransformationMatrix& NODELETE translate3d(double tx, double ty, double tz);
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE translate(double tx, double ty);
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE translate3d(double tx, double ty, double tz);
 
     // translation added with a post-multiply
-    TransformationMatrix& NODELETE translateRight(double tx, double ty);
-    WEBCORE_EXPORT TransformationMatrix& NODELETE translateRight3d(double tx, double ty, double tz);
+    TransformationMatrix& LEGACY_NODELETE translateRight(double tx, double ty);
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE translateRight3d(double tx, double ty, double tz);
     
-    WEBCORE_EXPORT TransformationMatrix& NODELETE flipX();
-    WEBCORE_EXPORT TransformationMatrix& NODELETE flipY();
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE flipX();
+    WEBCORE_EXPORT TransformationMatrix& LEGACY_NODELETE flipY();
     WEBCORE_EXPORT TransformationMatrix& skew(double angleX, double angleY);
     TransformationMatrix& skewX(double angle) { return skew(angle, 0); }
     TransformationMatrix& skewY(double angle) { return skew(0, angle); }
@@ -303,7 +303,7 @@ public:
     bool hasPerspective() const { return m_matrix[0][3] != 0.0f || m_matrix[1][3] != 0.0f || m_matrix[2][3] != 0.0f || m_matrix[3][3] != 1.0f; }
 
     // Returns a transformation that maps a rect to a rect.
-    WEBCORE_EXPORT static TransformationMatrix NODELETE rectToRect(const FloatRect&, const FloatRect&);
+    WEBCORE_EXPORT static TransformationMatrix LEGACY_NODELETE rectToRect(const FloatRect&, const FloatRect&);
 
     // Changes the transform to:
     //
@@ -313,10 +313,10 @@ public:
     //
     //     new_mat * (scale3d(z, z, z) * x) == scale3d(z, z, z) * (mat * x)
     //
-    TransformationMatrix& NODELETE zoom(double zoomFactor);
-    TransformationMatrix& NODELETE unzoom(double zoomFactor);
+    TransformationMatrix& LEGACY_NODELETE zoom(double zoomFactor);
+    TransformationMatrix& LEGACY_NODELETE unzoom(double zoomFactor);
 
-    WEBCORE_EXPORT bool NODELETE isInvertible() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isInvertible() const;
     WEBCORE_EXPORT std::optional<TransformationMatrix> inverse() const;
 
     // Decompose the matrix into its component parts.
@@ -356,14 +356,14 @@ public:
     }
 
     // Throw away the non-affine parts of the matrix (lossy!).
-    WEBCORE_EXPORT void NODELETE makeAffine();
+    WEBCORE_EXPORT void LEGACY_NODELETE makeAffine();
 
     // Sets the 3rd row and column to (0, 0, 1, 0).
     // Should produce the same results as mapping points into 2d before
     // applying the next matrix.
-    WEBCORE_EXPORT void NODELETE flatten();
+    WEBCORE_EXPORT void LEGACY_NODELETE flatten();
 
-    WEBCORE_EXPORT AffineTransform NODELETE toAffineTransform() const;
+    WEBCORE_EXPORT AffineTransform LEGACY_NODELETE toAffineTransform() const;
 
     struct Translation2DIPCData {
         double m41 { 0 };
@@ -432,27 +432,27 @@ public:
             && m_matrix[3][3] == 1;
     }
 
-    bool NODELETE isIntegerTranslation() const;
+    bool LEGACY_NODELETE isIntegerTranslation() const;
 
-    bool NODELETE containsOnlyFiniteValues() const;
+    bool LEGACY_NODELETE containsOnlyFiniteValues() const;
 
     // Returns the matrix without 3D components.
-    TransformationMatrix NODELETE to2dTransform() const;
+    TransformationMatrix LEGACY_NODELETE to2dTransform() const;
     
     using FloatMatrix4 = std::array<float, 16>;
-    WEBCORE_EXPORT FloatMatrix4 NODELETE toColumnMajorFloatArray() const;
+    WEBCORE_EXPORT FloatMatrix4 LEGACY_NODELETE toColumnMajorFloatArray() const;
 
     // A local-space layer is implicitly defined at the z = 0 plane, with its front side
     // facing the positive z-axis (i.e. a camera looking along the negative z-axis sees
     // the front side of the layer). This function checks if the transformed layer's back
     // face would be visible to a camera looking along the negative z-axis in the target space.
-    bool NODELETE isBackFaceVisible() const;
+    bool LEGACY_NODELETE isBackFaceVisible() const;
 
-    TransformationMatrix NODELETE transpose() const;
+    TransformationMatrix LEGACY_NODELETE transpose() const;
 
 private:
     // multiply passed 2D point by matrix (assume z=0)
-    WEBCORE_EXPORT void NODELETE multVecMatrix(double x, double y, double& dstX, double& dstY) const;
+    WEBCORE_EXPORT void LEGACY_NODELETE multVecMatrix(double x, double y, double& dstX, double& dstY) const;
     FloatPoint internalMapPoint(const FloatPoint& sourcePoint) const
     {
         double resultX;

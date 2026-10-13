@@ -46,8 +46,8 @@ public:
 #if ENABLE(DECLARATIVE_WEB_PUSH) && ENABLE(NOTIFICATIONS)
     static Ref<PushEvent> create(const AtomString&, ExtendableEventInit&&, Ref<Notification>, std::optional<uint64_t> appBadge, IsTrusted);
 
-    Notification* NODELETE notification();
-    std::optional<uint64_t> NODELETE appBadge();
+    Notification* LEGACY_NODELETE notification();
+    std::optional<uint64_t> LEGACY_NODELETE appBadge();
 
     Notification* proposedNotification() const { return m_proposedNotification.get(); }
     std::optional<uint64_t> proposedAppBadge() const { return m_proposedAppBadge; }

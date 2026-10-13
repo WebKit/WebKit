@@ -72,7 +72,7 @@ public:
     ExceptionOr<void> setWidth(double);
 
     unsigned lines() const { return m_lines; }
-    void NODELETE setLines(unsigned);
+    void LEGACY_NODELETE setLines(unsigned);
 
     double regionAnchorX() const { return m_regionAnchor.x(); }
     ExceptionOr<void> setRegionAnchorX(double);
@@ -88,9 +88,9 @@ public:
 
     enum class ScrollSetting : bool { EmptyString, Up };
     ScrollSetting scroll() const { return m_scroll; }
-    void NODELETE setScroll(const ScrollSetting);
+    void LEGACY_NODELETE setScroll(const ScrollSetting);
 
-    void NODELETE updateParametersFromRegion(const VTTRegion&);
+    void LEGACY_NODELETE updateParametersFromRegion(const VTTRegion&);
 
     const String& regionSettings() const LIFETIME_BOUND { return m_settings; }
     void setRegionSettings(const String&);
@@ -130,13 +130,13 @@ private:
         Scroll
     };
 
-    RegionSetting NODELETE scanSettingName(VTTScanner&);
+    RegionSetting LEGACY_NODELETE scanSettingName(VTTScanner&);
 
     void parseSettingValue(RegionSetting, VTTScanner&);
 
     static const AtomString& textTrackCueContainerScrollingClass();
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     String m_id;
     String m_settings;

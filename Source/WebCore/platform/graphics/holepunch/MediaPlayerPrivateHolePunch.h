@@ -64,7 +64,7 @@ public:
     void pause() final { };
 
 #if USE(COORDINATED_GRAPHICS)
-    PlatformLayer* NODELETE platformLayer() final { return nullptr; }
+    PlatformLayer* LEGACY_NODELETE platformLayer() final { return nullptr; }
     void setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&&) final;
     RefPtr<CoordinatedPlatformLayerBufferProxy> platformLayerBufferProxy() const final;
 #endif

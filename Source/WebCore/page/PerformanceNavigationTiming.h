@@ -62,10 +62,10 @@ public:
     double domComplete() const;
     double loadEventStart() const;
     double loadEventEnd() const;
-    NavigationType NODELETE type() const;
-    unsigned short NODELETE redirectCount() const;
+    NavigationType LEGACY_NODELETE type() const;
+    unsigned short LEGACY_NODELETE redirectCount() const;
 
-    double NODELETE startTime() const final;
+    double LEGACY_NODELETE startTime() const final;
     double duration() const final;
 
     DocumentEventTiming& documentEventTiming() LIFETIME_BOUND { return m_documentEventTiming; }
@@ -76,8 +76,8 @@ private:
     PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&, const DocumentEventTiming&, const SecurityOrigin&, WebCore::NavigationType);
 
     double millisecondsSinceOrigin(MonotonicTime) const;
-    bool NODELETE sameOriginCheckFails() const;
-    bool NODELETE shouldExposeRedirectTiming() const final;
+    bool LEGACY_NODELETE sameOriginCheckFails() const;
+    bool LEGACY_NODELETE shouldExposeRedirectTiming() const final;
 
     DocumentEventTiming m_documentEventTiming;
     DocumentLoadTiming m_documentLoadTiming;

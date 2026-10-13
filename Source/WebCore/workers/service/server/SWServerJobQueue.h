@@ -63,7 +63,7 @@ public:
     void cancelJobsFromConnection(SWServerConnectionIdentifier);
     void cancelJobsFromServiceWorker(ServiceWorkerIdentifier);
 
-    bool NODELETE isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier&) const;
+    bool LEGACY_NODELETE isCurrentlyProcessingJob(const ServiceWorkerJobDataIdentifier&) const;
 
 private:
     void jobTimerFired();

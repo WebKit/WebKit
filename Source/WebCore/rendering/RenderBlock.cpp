@@ -239,7 +239,7 @@ public:
             m_containerMap.remove(renderer);
     }
     
-    TrackedRendererListHashSet* NODELETE positionedRenderers(const RenderBlock& containingBlock) const
+    TrackedRendererListHashSet* LEGACY_NODELETE positionedRenderers(const RenderBlock& containingBlock) const
     {
         return m_descendantsMap.get(containingBlock);
     }
@@ -252,7 +252,7 @@ private:
     ContainerMap m_containerMap;
 };
 
-static OutOfFlowDescendantsMap& NODELETE outOfFlowDescendantsMap()
+static OutOfFlowDescendantsMap& LEGACY_NODELETE outOfFlowDescendantsMap()
 {
     static NeverDestroyed<OutOfFlowDescendantsMap> mapForOutOfFlowDescendants;
     return mapForOutOfFlowDescendants;
@@ -506,7 +506,7 @@ void RenderBlock::endAndCommitUpdateScrollInfoAfterLayoutTransaction()
     }
 }
 
-static inline bool NODELETE isDelayingUpdateScrollInfoAfterLayout(const RenderBlock& renderer)
+static inline bool LEGACY_NODELETE isDelayingUpdateScrollInfoAfterLayout(const RenderBlock& renderer)
 {
     auto* transaction = renderer.view().frameView().layoutContext().updateScrollInfoAfterLayoutTransactionIfExists();
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=97937
@@ -1607,7 +1607,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
     return result;
 }
 
-GapRects NODELETE RenderBlock::inlineSelectionGaps(RenderBlock&, const LayoutPoint&, const LayoutSize&, LayoutUnit&, LayoutUnit&, LayoutUnit&, const LogicalSelectionOffsetCaches&, const PaintInfo*)
+GapRects LEGACY_NODELETE RenderBlock::inlineSelectionGaps(RenderBlock&, const LayoutPoint&, const LayoutSize&, LayoutUnit&, LayoutUnit&, LayoutUnit&, const LogicalSelectionOffsetCaches&, const PaintInfo*)
 {
     ASSERT_NOT_REACHED();
     return GapRects();
@@ -2195,7 +2195,7 @@ PositionWithAffinity RenderBlock::positionForPointWithInlineChildren(const Layou
     return PositionWithAffinity();
 }
 
-static inline bool NODELETE isChildHitTestCandidate(const RenderBox& box, HitTestSource source)
+static inline bool LEGACY_NODELETE isChildHitTestCandidate(const RenderBox& box, HitTestSource source)
 {
     auto isVisible = source == HitTestSource::Script ? box.style().visibility() == Visibility::Visible : box.usedStyle().visibility() == UsedVisibility::Visible;
     return box.borderBoxHeight() && isVisible && !box.isOutOfFlowPositioned() && !box.isRenderFragmentedFlow();
@@ -2581,7 +2581,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
     return lastInFlowBaseline();
 }
 
-static inline bool NODELETE isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
+static inline bool LEGACY_NODELETE isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
 {
     // We include isRenderButton in this check because buttons are implemented
     // using flex box but should still support first-line|first-letter.

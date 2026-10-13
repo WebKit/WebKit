@@ -42,7 +42,7 @@ QualifiedName::QualifiedNameImpl::QualifiedNameImpl(const AtomString& prefix, co
     ASSERT(!namespaceURI.isEmpty() || namespaceURI.isNull());
 }
 
-static QualifiedNameComponents NODELETE makeComponents(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
+static QualifiedNameComponents LEGACY_NODELETE makeComponents(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
 {
     return { prefix.impl(), localName.impl(), namespaceURI.isEmpty() ? nullptr : namespaceURI.impl() };
 }

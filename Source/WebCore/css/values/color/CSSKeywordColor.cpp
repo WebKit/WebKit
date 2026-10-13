@@ -42,14 +42,14 @@
 namespace WebCore {
 namespace CSS {
 
-static bool NODELETE isVGAPaletteColor(CSSValueID id)
+static bool LEGACY_NODELETE isVGAPaletteColor(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#named-colors
     // "16 of CSS’s named colors come from the VGA palette originally, and were then adopted into HTML"
     return id >= CSSValueID::Aqua && id <= CSSValueID::Grey;
 }
 
-static bool NODELETE isNonVGANamedColor(CSSValueID id)
+static bool LEGACY_NODELETE isNonVGANamedColor(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#named-colors
     return id >= CSSValueID::Aliceblue && id <= CSSValueID::Yellowgreen;

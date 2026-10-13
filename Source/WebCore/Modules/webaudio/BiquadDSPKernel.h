@@ -51,12 +51,12 @@ public:
     // set of frequencies (in Hz). The phase response is in radians.
     void getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
 
-    double NODELETE tailTime() const override;
-    double NODELETE latencyTime() const override;
+    double LEGACY_NODELETE tailTime() const override;
+    double LEGACY_NODELETE latencyTime() const override;
 
     void updateCoefficients(size_t numberOfFrames, std::span<const float> cutoffFrequency, std::span<const float> q, std::span<const float> gain, std::span<const float> detune);
 
-    bool NODELETE requiresTailProcessing() const final;
+    bool LEGACY_NODELETE requiresTailProcessing() const final;
 
 private:
     Biquad m_biquad;

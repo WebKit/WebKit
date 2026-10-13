@@ -39,7 +39,7 @@ template<typename> class ExceptionOr;
 
 class CSSPrimitiveValue final : public CSSValue {
 public:
-    // FIXME: Some of these use primitiveUnitType() and some use NODELETE primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
+    // FIXME: Some of these use primitiveUnitType() and some use LEGACY_NODELETE primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
 
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
@@ -59,7 +59,7 @@ public:
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
-    static Ref<CSSPrimitiveValue> NODELETE createInteger(double);
+    static Ref<CSSPrimitiveValue> LEGACY_NODELETE createInteger(double);
     static Ref<CSSPrimitiveValue> create(CSS::UnevaluatedCalcBase);
 
     ~CSSPrimitiveValue();
@@ -80,10 +80,10 @@ public:
     std::optional<Raw> raw() const { return !isCalculated() ? std::optional { Raw { primitiveUnitType(), m_value.number } } : std::nullopt; }
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
-    std::optional<bool> NODELETE isZero() const;
-    std::optional<bool> NODELETE isOne() const;
-    std::optional<bool> NODELETE isPositive() const;
-    std::optional<bool> NODELETE isNegative() const;
+    std::optional<bool> LEGACY_NODELETE isZero() const;
+    std::optional<bool> LEGACY_NODELETE isOne() const;
+    std::optional<bool> LEGACY_NODELETE isPositive() const;
+    std::optional<bool> LEGACY_NODELETE isNegative() const;
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPrimitiveValue&) const;
@@ -105,7 +105,7 @@ private:
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = std::to_underlying(type); }
 
-    bool NODELETE addDerivedHash(Hasher&) const;
+    bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
 
     ALWAYS_INLINE String serializeInternal(const CSS::SerializationContext&) const;
     NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;

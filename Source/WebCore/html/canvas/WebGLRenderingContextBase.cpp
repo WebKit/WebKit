@@ -207,7 +207,7 @@ static IntRect texImageSourceSize(NativeImage& source)
 
 // Return true if a character belongs to the ASCII subset as defined in
 // GLSL ES 1.0 spec section 3.1.
-static bool NODELETE validateCharacter(unsigned char c)
+static bool LEGACY_NODELETE validateCharacter(unsigned char c)
 {
     // Printing characters are valid except " $ ` @ \ ' DEL.
     if (c >= 32 && c <= 126
@@ -375,7 +375,7 @@ static constexpr ASCIILiteral errorCodeToString(GCGLErrorCode error)
     return "INVALID_OPERATION"_s;
 }
 
-static constexpr GCGLenum NODELETE errorCodeToGLenum(GCGLErrorCode error)
+static constexpr GCGLenum LEGACY_NODELETE errorCodeToGLenum(GCGLErrorCode error)
 {
     switch (error) {
     case GCGLErrorCode::InvalidEnum:
@@ -395,7 +395,7 @@ static constexpr GCGLenum NODELETE errorCodeToGLenum(GCGLErrorCode error)
     return GraphicsContextGL::INVALID_OPERATION;
 }
 
-static constexpr GCGLErrorCode NODELETE glEnumToErrorCode(GCGLenum error)
+static constexpr GCGLErrorCode LEGACY_NODELETE glEnumToErrorCode(GCGLenum error)
 {
     switch (error) {
     case GraphicsContextGL::INVALID_ENUM:
@@ -425,7 +425,7 @@ static String toNonNullString(const UTF8CString& text)
     return text;
 }
 
-static GraphicsContextGL::SurfaceBuffer NODELETE toGCGLSurfaceBuffer(CanvasRenderingContext::SurfaceBuffer buffer)
+static GraphicsContextGL::SurfaceBuffer LEGACY_NODELETE toGCGLSurfaceBuffer(CanvasRenderingContext::SurfaceBuffer buffer)
 {
     return buffer == CanvasRenderingContext::SurfaceBuffer::DrawingBuffer ? GraphicsContextGL::SurfaceBuffer::DrawingBuffer : GraphicsContextGL::SurfaceBuffer::DisplayBuffer;
 }
@@ -3344,7 +3344,7 @@ IntRect WebGLRenderingContextBase::getImageDataSize(ImageData* pixels)
 }
 
 #if ENABLE(WEB_CODECS)
-static bool NODELETE isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame)
+static bool LEGACY_NODELETE isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame)
 {
 #if PLATFORM(COCOA)
     // FIXME: We should be able to remove the YUV restriction, see https://bugs.webkit.org/show_bug.cgi?id=251234.

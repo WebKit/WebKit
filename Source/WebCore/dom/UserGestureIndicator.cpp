@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UserGestureIndicator);
 
-static UserGestureToken* NODELETE currentToken(JSC::VM& vm)
+static UserGestureToken* LEGACY_NODELETE currentToken(JSC::VM& vm)
 {
     ASSERT(isMainThread());
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<UserGestureToken*>(vm.crossTaskToken());

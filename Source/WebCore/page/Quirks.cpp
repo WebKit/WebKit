@@ -121,7 +121,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Quirks);
 
-static inline OptionSet<AutoplayQuirk> NODELETE allowedAutoplayQuirks(Document& document)
+static inline OptionSet<AutoplayQuirk> LEGACY_NODELETE allowedAutoplayQuirks(Document& document)
 {
     auto* loader = document.loader();
     if (!loader)
@@ -130,14 +130,14 @@ static inline OptionSet<AutoplayQuirk> NODELETE allowedAutoplayQuirks(Document& 
     return loader->allowedAutoplayQuirks();
 }
 
-static inline OptionSet<AutoplayQuirk> NODELETE allowedAutoplayQuirks(Document* document)
+static inline OptionSet<AutoplayQuirk> LEGACY_NODELETE allowedAutoplayQuirks(Document* document)
 {
     if (!document)
         return { };
     return allowedAutoplayQuirks(*document);
 }
 
-static HashMap<RegistrableDomain, String>& NODELETE updatableStorageAccessUserAgentStringQuirks()
+static HashMap<RegistrableDomain, String>& LEGACY_NODELETE updatableStorageAccessUserAgentStringQuirks()
 {
     // FIXME: Make this a member of Quirks.
     static MainThreadNeverDestroyed<HashMap<RegistrableDomain, String>> map;
@@ -147,13 +147,13 @@ static HashMap<RegistrableDomain, String>& NODELETE updatableStorageAccessUserAg
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/QuirksAdditions.cpp>
 #else
-static inline bool NODELETE needsDesktopUserAgentInternal(const URL&) { return false; }
-static inline bool NODELETE shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
-static inline bool NODELETE shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
-static inline bool NODELETE shouldDisableBlobFileAccessEnforcementInternal() { return false; }
-static inline bool NODELETE needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE needsDesktopUserAgentInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE shouldNotAutoUpgradeToHTTPSNavigationInternal(const URL&) { return false; }
+static inline bool LEGACY_NODELETE shouldDisableBlobFileAccessEnforcementInternal() { return false; }
+static inline bool LEGACY_NODELETE needsConsistentQueryParameterFilteringInternal(const URL&) { return false; }
 #if PLATFORM(COCOA)
-static inline String NODELETE standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
+static inline String LEGACY_NODELETE standardUserAgentWithApplicationNameIncludingCompatOverridesInternal(const String&, const String&, UserAgentType) { return { }; }
 #endif
 #endif
 

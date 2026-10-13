@@ -74,10 +74,10 @@ private:
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }
     RenderBlock& rootRenderer() { return m_rootRenderer; }
 
-    const Layout::ElementBox& NODELETE rootLayoutBox() const;
+    const Layout::ElementBox& LEGACY_NODELETE rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
 
-    Layout::InitialContainingBlock& NODELETE initialContainingBlock();
+    Layout::InitialContainingBlock& LEGACY_NODELETE initialContainingBlock();
 
     static UniqueRef<Layout::Box> createLayoutBox(RenderObject&);
 

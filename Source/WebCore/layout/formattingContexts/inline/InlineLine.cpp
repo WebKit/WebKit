@@ -818,7 +818,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::removePartiallyTrimmableContent
     return remove();
 }
 
-inline static Line::Run::Type NODELETE toLineRunType(const InlineItem& inlineItem)
+inline static Line::Run::Type LEGACY_NODELETE toLineRunType(const InlineItem& inlineItem)
 {
     switch (inlineItem.type()) {
     case InlineItem::Type::HardLineBreak:

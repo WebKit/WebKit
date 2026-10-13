@@ -1089,7 +1089,7 @@ bool AccessibilityNodeObject::hasElementDescendant() const
     return element && childrenOfType<Element>(*element).first();
 }
 
-static bool NODELETE isFlowContent(Node& node)
+static bool LEGACY_NODELETE isFlowContent(Node& node)
 {
     if (auto* element = dynamicDowncast<HTMLElement>(node)) {
         // https://html.spec.whatwg.org/#flow-content
@@ -1625,7 +1625,7 @@ bool AccessibilityNodeObject::isHiddenUntilFoundContainer() const
     return element && element->isHiddenUntilFound();
 }
 
-static bool NODELETE isDateFieldWithStandardFocus(HTMLInputElement& input)
+static bool LEGACY_NODELETE isDateFieldWithStandardFocus(HTMLInputElement& input)
 {
     return (input.isDateField() || input.isDateTimeLocalField()) && !input.hasCustomFocusLogic();
 }
@@ -3920,7 +3920,7 @@ static void appendNameToStringBuilder(StringBuilder& builder, String&& text, boo
 }
 
 
-static bool NODELETE displayNeedsSpace(Style::Display display)
+static bool LEGACY_NODELETE displayNeedsSpace(Style::Display display)
 {
     return display == Style::DisplayType::BlockFlow
         || display == Style::DisplayType::InlineFlowRoot

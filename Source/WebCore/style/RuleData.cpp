@@ -64,7 +64,7 @@ struct SameSizeAsRuleData {
 
 static_assert(sizeof(RuleData) == sizeof(SameSizeAsRuleData), "RuleData should stay small");
 
-static inline MatchBasedOnRuleHash NODELETE computeMatchBasedOnRuleHash(const CSSSelector& selector)
+static inline MatchBasedOnRuleHash LEGACY_NODELETE computeMatchBasedOnRuleHash(const CSSSelector& selector)
 {
     if (selector.precedingInComplexSelector())
         return MatchBasedOnRuleHash::None;

@@ -211,7 +211,7 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
     m_layoutAttributes = newLayoutAttributes;
 }
 
-static inline void NODELETE checkLayoutAttributesConsistency(RenderSVGText* text, Vector<SVGTextLayoutAttributes*>& expectedLayoutAttributes)
+static inline void LEGACY_NODELETE checkLayoutAttributesConsistency(RenderSVGText* text, Vector<SVGTextLayoutAttributes*>& expectedLayoutAttributes)
 {
 #ifndef NDEBUG
     Vector<SVGTextLayoutAttributes*> newLayoutAttributes;

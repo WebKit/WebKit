@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, ClientCreator&&, FrameIdentifier, Frame& parent, Frame* opener, std::optional<LayerHostingContextIdentifier>, Ref<FrameTreeSyncData>&&, AddToFrameTree);
     ~RemoteFrame();
 
-    RemoteDOMWindow& NODELETE window() const;
+    RemoteDOMWindow& LEGACY_NODELETE window() const;
 
     const RemoteFrameClient& client() const LIFETIME_BOUND { return m_client.get(); }
     RemoteFrameClient& client() LIFETIME_BOUND { return m_client.get(); }
@@ -86,24 +86,24 @@ public:
     void unbindRemoteAccessibilityFrames(int);
 
     void setCustomUserAgent(String&& customUserAgent) { m_customUserAgent = WTF::move(customUserAgent); }
-    String NODELETE customUserAgent() const final;
+    String LEGACY_NODELETE customUserAgent() const final;
     void setCustomUserAgentAsSiteSpecificQuirks(String&& customUserAgentAsSiteSpecificQuirks) { m_customUserAgentAsSiteSpecificQuirks = WTF::move(customUserAgentAsSiteSpecificQuirks); }
-    String NODELETE customUserAgentAsSiteSpecificQuirks() const final;
+    String LEGACY_NODELETE customUserAgentAsSiteSpecificQuirks() const final;
 
     void setCustomNavigatorPlatform(String&& customNavigatorPlatform) { m_customNavigatorPlatform = WTF::move(customNavigatorPlatform); }
-    String NODELETE customNavigatorPlatform() const final;
+    String LEGACY_NODELETE customNavigatorPlatform() const final;
 
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
-    OptionSet<AdvancedPrivacyProtections> NODELETE advancedPrivacyProtections() const final;
+    OptionSet<AdvancedPrivacyProtections> LEGACY_NODELETE advancedPrivacyProtections() const final;
 
     void setAllowPrivacyProxy(bool allowPrivacyProxy) { m_allowPrivacyProxy = allowPrivacyProxy; }
-    bool NODELETE allowPrivacyProxy() const final;
+    bool LEGACY_NODELETE allowPrivacyProxy() const final;
 
     void setAutoplayPolicy(AutoplayPolicy autoplayPolicy) { m_autoplayPolicy = autoplayPolicy; }
-    AutoplayPolicy NODELETE autoplayPolicy() const final;
+    AutoplayPolicy LEGACY_NODELETE autoplayPolicy() const final;
 
     void setColorSchemePreference(ColorSchemePreference colorSchemePreference) { m_colorSchemePreference = colorSchemePreference; }
-    ColorSchemePreference NODELETE colorSchemePreference() const final;
+    ColorSchemePreference LEGACY_NODELETE colorSchemePreference() const final;
 
     void updateScrollingMode() final;
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
@@ -117,22 +117,22 @@ private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
     void frameDetached() final;
-    bool NODELETE preventsParentFromBeingComplete() const final;
+    bool LEGACY_NODELETE preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void loadFrameRequest(FrameLoadRequest&&, Event*) final;
     void didFinishLoadInAnotherProcess() final;
     bool isRootFrame() const final { return false; }
     URL urlForConsoleLog() const final;
-    SecurityOrigin* NODELETE frameDocumentSecurityOrigin() const final;
-    std::optional<DocumentSecurityPolicy> NODELETE frameDocumentSecurityPolicy() const final;
-    std::optional<AgentClusterIdentifier> NODELETE frameAgentClusterIdentifier() const final;
-    String NODELETE frameURLProtocol() const final;
+    SecurityOrigin* LEGACY_NODELETE frameDocumentSecurityOrigin() const final;
+    std::optional<DocumentSecurityPolicy> LEGACY_NODELETE frameDocumentSecurityPolicy() const final;
+    std::optional<AgentClusterIdentifier> LEGACY_NODELETE frameAgentClusterIdentifier() const final;
+    String LEGACY_NODELETE frameURLProtocol() const final;
     float frameScaleFactorForChild(const Frame&) const final;
 
-    FrameView* NODELETE virtualView() const final;
+    FrameView* LEGACY_NODELETE virtualView() const final;
     void disconnectView() final;
-    DOMWindow* NODELETE virtualWindow() const final;
-    FrameLoaderClient& NODELETE loaderClient() LIFETIME_BOUND final;
+    DOMWindow* LEGACY_NODELETE virtualWindow() const final;
+    FrameLoaderClient& LEGACY_NODELETE loaderClient() LIFETIME_BOUND final;
     void reinitializeDocumentSecurityContext() final { }
     void detachLocalDescendants();
 

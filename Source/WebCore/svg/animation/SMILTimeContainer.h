@@ -51,12 +51,12 @@ public:
     void unschedule(SVGSMILElement*, SVGElement*, const QualifiedName&);
     void notifyIntervalsChanged();
 
-    WEBCORE_EXPORT Seconds NODELETE animationFrameDelay() const;
+    WEBCORE_EXPORT Seconds LEGACY_NODELETE animationFrameDelay() const;
 
     SMILTime elapsed() const;
 
-    bool NODELETE isActive() const;
-    bool NODELETE isPaused() const;
+    bool LEGACY_NODELETE isActive() const;
+    bool LEGACY_NODELETE isPaused() const;
     bool hasAnimations() const;
 
     void begin();
@@ -69,7 +69,7 @@ public:
 private:
     SMILTimeContainer(SVGSVGElement& owner);
 
-    bool NODELETE isStarted() const;
+    bool LEGACY_NODELETE isStarted() const;
     void timerFired();
     void startTimer(SMILTime elapsed, SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);

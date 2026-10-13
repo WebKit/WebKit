@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-String NODELETE logLevelString()
+String LEGACY_NODELETE logLevelString()
 {
 #if !LOG_DISABLED
     static NSString * const defaultsDomain = @"WebCoreLogging";

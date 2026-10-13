@@ -84,13 +84,13 @@ FloatShapeInterval OffsetPolygonEdge::clippedEdgeXRange(float y1, float y2) cons
     return FloatShapeInterval(std::min(xForY1, xForY2), std::max(xForY1, xForY2));
 }
 
-static float NODELETE circleXIntercept(float y, float radius)
+static float LEGACY_NODELETE circleXIntercept(float y, float radius)
 {
     ASSERT(radius > 0);
     return radius * sqrt(1 - (y * y) / (radius * radius));
 }
 
-static FloatShapeInterval NODELETE clippedCircleXRange(const FloatPoint& center, float radius, float y1, float y2)
+static FloatShapeInterval LEGACY_NODELETE clippedCircleXRange(const FloatPoint& center, float radius, float y1, float y2)
 {
     if (y1 >= center.y() + radius || y2 <= center.y() - radius)
         return FloatShapeInterval();

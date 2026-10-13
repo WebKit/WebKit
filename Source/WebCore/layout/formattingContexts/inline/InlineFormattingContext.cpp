@@ -67,7 +67,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineContentCache);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineFormattingContext);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineLayoutResult);
 
-static std::optional<InlineItemRange> NODELETE partialRangeForDamage(const InlineItemList& inlineItemList, const InlineDamage& lineDamage)
+static std::optional<InlineItemRange> LEGACY_NODELETE partialRangeForDamage(const InlineItemList& inlineItemList, const InlineDamage& lineDamage)
 {
     auto layoutStartPosition = lineDamage.layoutStartPosition()->inlineItemPosition;
     if (layoutStartPosition.index >= inlineItemList.size()) {
@@ -82,7 +82,7 @@ static std::optional<InlineItemRange> NODELETE partialRangeForDamage(const Inlin
     return InlineItemRange { layoutStartPosition, { inlineItemList.size(), 0 } };
 }
 
-static bool NODELETE isEmptyInlineContent(const InlineItemList& inlineItemList)
+static bool LEGACY_NODELETE isEmptyInlineContent(const InlineItemList& inlineItemList)
 {
     if (inlineItemList.isEmpty())
         return true;

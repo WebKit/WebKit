@@ -82,7 +82,7 @@ public:
     ShadowType type() const { return m_type; }
 
 private:
-    void NODELETE updateShadowBlurValues();
+    void LEGACY_NODELETE updateShadowBlurValues();
 
     void drawShadowBuffer(GraphicsContext&, ImageBuffer&, const FloatPoint&, const FloatSize&);
 

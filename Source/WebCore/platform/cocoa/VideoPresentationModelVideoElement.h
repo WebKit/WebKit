@@ -94,7 +94,7 @@ public:
     WEBCORE_EXPORT uint64_t logIdentifier() const final;
     WEBCORE_EXPORT uint64_t nextChildIdentifier() const final;
     ASCIILiteral logClassName() const { return "VideoPresentationModelVideoElement"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
 protected:

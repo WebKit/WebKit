@@ -116,7 +116,7 @@ public:
 #endif
     WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
-    void NODELETE initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
+    void LEGACY_NODELETE initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
 
     RefPtr<NativeImage> copyNativeImage() const;
     const PlatformVideoColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }

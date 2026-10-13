@@ -74,7 +74,7 @@ bool Shape::operator==(const Shape&) const = default;
 
 // MARK: - Control Point Evaluation
 
-template<typename ControlPoint> static ControlPointAnchor NODELETE evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
+template<typename ControlPoint> static ControlPointAnchor LEGACY_NODELETE evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
 {
     if (value.anchor)
         return *value.anchor;
@@ -323,10 +323,10 @@ public:
     {
     }
 
-    const std::optional<Position>& NODELETE initialMove() const { return m_initialMove; }
+    const std::optional<Position>& LEGACY_NODELETE initialMove() const { return m_initialMove; }
 
 private:
-    static Position NODELETE toPosition(FloatPoint p)
+    static Position LEGACY_NODELETE toPosition(FloatPoint p)
     {
         return { p };
     }
@@ -336,7 +336,7 @@ private:
         return { CoordinatePair::value_type::Dimension { p.x() }, CoordinatePair::value_type::Dimension { p.y() } };
     }
 
-    static Position NODELETE absoluteOffsetPoint(FloatPoint p)
+    static Position LEGACY_NODELETE absoluteOffsetPoint(FloatPoint p)
     {
         return toPosition(p);
     }
@@ -368,7 +368,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static AbsoluteControlPoint NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
+    static AbsoluteControlPoint LEGACY_NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
     {
         return { toPosition(controlPoint), std::nullopt };
     }

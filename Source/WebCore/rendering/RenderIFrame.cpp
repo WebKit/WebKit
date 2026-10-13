@@ -53,7 +53,7 @@ RenderIFrame::RenderIFrame(HTMLIFrameElement& element, Style::ComputedStyle&& st
 
 RenderIFrame::~RenderIFrame() = default;
 
-HTMLIFrameElement& NODELETE RenderIFrame::iframeElement() const
+HTMLIFrameElement& LEGACY_NODELETE RenderIFrame::iframeElement() const
 {
     return downcast<HTMLIFrameElement>(RenderFrameBase::frameOwnerElement());
 }

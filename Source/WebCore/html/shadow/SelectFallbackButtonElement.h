@@ -38,7 +38,7 @@ class SelectFallbackButtonElement final : public HTMLDivElement {
 public:
     static Ref<SelectFallbackButtonElement> create(Document&);
 
-    HTMLSelectElement& NODELETE selectElement() const;
+    HTMLSelectElement& LEGACY_NODELETE selectElement() const;
     void updateText(HTMLOptionElement* = nullptr, int optionIndex = -1);
 
 private:

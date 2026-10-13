@@ -50,7 +50,7 @@ private:
     void calculateRadiiAndCenter();
 
 private:
-    bool NODELETE canUseStrokeHitTestFastPath() const;
+    bool LEGACY_NODELETE canUseStrokeHitTestFastPath() const;
 
     FloatPoint m_center;
     FloatSize m_radii;

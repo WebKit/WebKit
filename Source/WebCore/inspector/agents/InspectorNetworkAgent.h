@@ -110,7 +110,7 @@ public:
 #endif
 
     // InspectorInstrumentation
-    void NODELETE willRecalculateStyle();
+    void LEGACY_NODELETE willRecalculateStyle();
     void didRecalculateStyle();
     void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*) override;
     void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType) override;
@@ -120,8 +120,8 @@ public:
     void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&) override;
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&) override;
     void didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier, DocumentThreadableLoader&) override;
-    void NODELETE willLoadXHRSynchronously();
-    void NODELETE didLoadXHRSynchronously();
+    void LEGACY_NODELETE willLoadXHRSynchronously();
+    void LEGACY_NODELETE didLoadXHRSynchronously();
     void didReceiveScriptResponse(ResourceLoaderIdentifier) override;
     void willDestroyCachedResource(CachedResource&) override;
     void didCreateWebSocket(WebSocketChannelIdentifier, const URL& requestURL);

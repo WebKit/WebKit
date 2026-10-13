@@ -76,15 +76,15 @@ public:
 
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     // InspectorOverlayOwner. Anchors on the frame, which owns this controller and so the overlay.
-    void NODELETE overlayOwnerRef() const final { ref(); }
+    void LEGACY_NODELETE overlayOwnerRef() const final { ref(); }
     void overlayOwnerDeref() const final { deref(); }
-    Page* NODELETE overlayOwnerPage() const final;
-    LocalFrame* NODELETE overlayOwnerFrame() const final;
-    InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final;
+    Page* LEGACY_NODELETE overlayOwnerPage() const final;
+    LocalFrame* LEGACY_NODELETE overlayOwnerFrame() const final;
+    InspectorBackendClient* LEGACY_NODELETE overlayOwnerBackendClient() const final;
     Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;

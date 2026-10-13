@@ -59,7 +59,7 @@ class CustomFunctionRegistry : public CanMakeCheckedPtr<CustomFunctionRegistry> 
 public:
     CustomFunctionRegistry() = default;
 
-    const CustomFunction* NODELETE functionForName(const AtomString&) const;
+    const CustomFunction* LEGACY_NODELETE functionForName(const AtomString&) const;
     void registerFunction(const StyleRuleFunction&, CustomFunction::DeclarationsBlocks&&);
 
 private:

@@ -69,9 +69,9 @@ public:
     virtual ~RegionOverlay();
 
     void recomputeRegion();
-    PageOverlay& NODELETE overlay() { return *m_overlay; }
+    PageOverlay& LEGACY_NODELETE overlay() { return *m_overlay; }
 
-    void NODELETE setRegionChanged() { m_regionChanged = true; }
+    void LEGACY_NODELETE setRegionChanged() { m_regionChanged = true; }
 
     virtual bool shouldPaintOverlayIntoLayer() const { return true; }
 
@@ -365,7 +365,7 @@ std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay:
     return { { *layer, *graphicsLayer } };
 }
 
-std::optional<InteractionRegion> NODELETE InteractionRegionOverlay::activeRegion() const
+std::optional<InteractionRegion> LEGACY_NODELETE InteractionRegionOverlay::activeRegion() const
 {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     RefPtr page = m_page;
@@ -764,7 +764,7 @@ void RegionOverlay::willMoveToPage(PageOverlay&, Page* page)
         m_overlay = nullptr;
 }
 
-void NODELETE RegionOverlay::didMoveToPage(PageOverlay&, Page* page)
+void LEGACY_NODELETE RegionOverlay::didMoveToPage(PageOverlay&, Page* page)
 {
     if (page)
         setRegionChanged();
@@ -790,12 +790,12 @@ void RegionOverlay::drawRegion(GraphicsContext& context, const Region& region, c
     }
 }
 
-bool NODELETE RegionOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
+bool LEGACY_NODELETE RegionOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent&)
 {
     return false;
 }
 
-void NODELETE RegionOverlay::didScrollFrame(PageOverlay&, LocalFrame&)
+void LEGACY_NODELETE RegionOverlay::didScrollFrame(PageOverlay&, LocalFrame&)
 {
 }
 
@@ -822,7 +822,7 @@ DebugPageOverlays& DebugPageOverlays::singleton()
     return *sharedDebugOverlays;
 }
 
-static inline size_t NODELETE indexOf(DebugPageOverlays::RegionType regionType)
+static inline size_t LEGACY_NODELETE indexOf(DebugPageOverlays::RegionType regionType)
 {
     return static_cast<size_t>(regionType);
 }

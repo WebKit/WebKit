@@ -43,7 +43,7 @@ public:
     // AudioNode   
     void process(size_t) final { } // we're pulled by hardware so this is never called
 
-    float NODELETE sampleRate() const final { return m_sampleRate; }
+    float LEGACY_NODELETE sampleRate() const final { return m_sampleRate; }
 
     size_t currentSampleFrame() const { return m_currentSampleFrame; }
     double currentTime() const { return currentSampleFrame() / static_cast<double>(m_sampleRate); }

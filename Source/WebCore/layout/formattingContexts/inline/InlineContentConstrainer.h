@@ -63,7 +63,7 @@ private:
 
     void initialize();
     void updateCachedWidths();
-    void NODELETE checkCanConstrainInlineItems();
+    void LEGACY_NODELETE checkCanConstrainInlineItems();
     EntryPretty layoutSingleLineForPretty(InlineItemRange layoutRange, InlineLayoutUnit idealLineWidth, EntryPretty lastValidEntry, size_t previousBreakIndex);
 
     std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
@@ -99,7 +99,7 @@ private:
 
 struct SlidingWidth {
     SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);
-    InlineLayoutUnit NODELETE width();
+    InlineLayoutUnit LEGACY_NODELETE width();
     void advanceStart();
     void advanceStartTo(size_t newStart);
     void advanceEnd();

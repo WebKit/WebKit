@@ -123,19 +123,19 @@ public:
     //
     // Note: This method exists only to support backwards compatibility
     //       with older versions of WebKit.
-    void NODELETE grantLoadLocalResources();
+    void LEGACY_NODELETE grantLoadLocalResources();
 
     // Explicitly grant the ability to access very other SecurityOrigin.
     //
     // WARNING: This is an extremely powerful ability. Use with caution!
-    WEBCORE_EXPORT void NODELETE grantUniversalAccess();
+    WEBCORE_EXPORT void LEGACY_NODELETE grantUniversalAccess();
     bool hasUniversalAccess() const { return m_universalAccess; }
 
-    void NODELETE grantStorageAccessFromFileURLsQuirk();
+    void LEGACY_NODELETE grantStorageAccessFromFileURLsQuirk();
     bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
 
     WEBCORE_EXPORT String domainForCachePartition() const;
-    Policy NODELETE canShowNotifications() const;
+    Policy LEGACY_NODELETE canShowNotifications() const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
     // The local SecurityOrigin can script any document, navigate to local
@@ -153,7 +153,7 @@ public:
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
     // still can have other privileges that can be remembered, thereby not making them unique.
-    void NODELETE setEnforcesFilePathSeparation();
+    void LEGACY_NODELETE setEnforcesFilePathSeparation();
     bool enforcesFilePathSeparation() const { return m_enforcesFilePathSeparation; }
 
     // Convert this SecurityOrigin into a string. The string
@@ -216,7 +216,7 @@ private:
     explicit SecurityOrigin(SecurityOriginData&&);
     void initializeShared(const URL&);
 
-    bool NODELETE hasLocalUnseparatedPath(const SecurityOrigin&) const;
+    bool LEGACY_NODELETE hasLocalUnseparatedPath(const SecurityOrigin&) const;
 
     enum class ShouldAllowFromThirdParty : uint8_t { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = ShouldAllowFromThirdParty::MaybeAllowFromThirdParty) const;

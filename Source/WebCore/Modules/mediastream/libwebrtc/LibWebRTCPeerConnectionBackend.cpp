@@ -112,7 +112,7 @@ bool LibWebRTCPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
     return m_endpoint->isNegotiationNeeded(eventId);
 }
 
-static inline webrtc::PeerConnectionInterface::BundlePolicy NODELETE bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+static inline webrtc::PeerConnectionInterface::BundlePolicy LEGACY_NODELETE bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.bundlePolicy) {
     case RTCBundlePolicy::MaxCompat:
@@ -127,7 +127,7 @@ static inline webrtc::PeerConnectionInterface::BundlePolicy NODELETE bundlePolic
     return webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 }
 
-static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy NODELETE rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy LEGACY_NODELETE rtcpMuxPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.rtcpMuxPolicy) {
     case RTCPMuxPolicy::Negotiate:
@@ -140,7 +140,7 @@ static inline webrtc::PeerConnectionInterface::RtcpMuxPolicy NODELETE rtcpMuxPol
     return webrtc::PeerConnectionInterface::kRtcpMuxPolicyRequire;
 }
 
-static inline webrtc::PeerConnectionInterface::IceTransportsType NODELETE iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
+static inline webrtc::PeerConnectionInterface::IceTransportsType LEGACY_NODELETE iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.iceTransportPolicy) {
     case RTCIceTransportPolicy::Relay:
@@ -203,7 +203,7 @@ void LibWebRTCPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
     m_endpoint->getStats(WTF::move(promise));
 }
 
-static inline LibWebRTCRtpSenderBackend& NODELETE backendFromRTPSender(RTCRtpSender& sender)
+static inline LibWebRTCRtpSenderBackend& LEGACY_NODELETE backendFromRTPSender(RTCRtpSender& sender)
 {
     return downcast<LibWebRTCRtpSenderBackend>(sender.backend());
 }

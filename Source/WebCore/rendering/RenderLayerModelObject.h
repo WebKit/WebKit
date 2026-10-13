@@ -69,7 +69,7 @@ public:
 
     void destroyLayer();
 
-    bool NODELETE hasSelfPaintingLayer() const;
+    bool LEGACY_NODELETE hasSelfPaintingLayer() const;
     RenderLayer* layer() const LIFETIME_BOUND { return m_layer.get(); }
 
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
@@ -84,7 +84,7 @@ public:
 
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
-    bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const;
+    bool LEGACY_NODELETE shouldPlaceVerticalScrollbarOnLeft() const;
 
     bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&) override;
     void animationPaused(double timeOffset, const BlendingKeyframes&) override;
@@ -145,7 +145,7 @@ public:
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
     void paintSVGEventRegion(PaintInfo&, const LayoutPoint& paintOffset);
 
-    TransformationMatrix* NODELETE layerTransform() const;
+    TransformationMatrix* LEGACY_NODELETE layerTransform() const;
 
     virtual void updateLayerTransform();
     virtual void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const = 0;
@@ -204,7 +204,7 @@ private:
 };
 
 // Pixel-snapping (== 'device pixel alignment') helpers.
-bool NODELETE rendererNeedsPixelSnapping(const RenderLayerModelObject&);
+bool LEGACY_NODELETE rendererNeedsPixelSnapping(const RenderLayerModelObject&);
 FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect&, const RenderLayerModelObject&);
 FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect&, const RenderLayerModelObject&);
 

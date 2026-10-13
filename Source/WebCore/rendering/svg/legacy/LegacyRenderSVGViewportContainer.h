@@ -35,7 +35,7 @@ public:
     LegacyRenderSVGViewportContainer(SVGSVGElement&, Style::ComputedStyle&&);
     virtual ~LegacyRenderSVGViewportContainer();
 
-    SVGSVGElement& NODELETE svgSVGElement() const;
+    SVGSVGElement& LEGACY_NODELETE svgSVGElement() const;
 
     FloatRect viewport() const { return m_viewport; }
 

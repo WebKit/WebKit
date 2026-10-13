@@ -52,12 +52,12 @@ public:
     ExceptionOr<RefPtr<Uint8Array>> flush();
 
 private:
-    bool NODELETE didDeflateFinish(int) const;
+    bool LEGACY_NODELETE didDeflateFinish(int) const;
 
     ExceptionOr<Ref<JSC::ArrayBuffer>> compress(std::span<const uint8_t>);
     ExceptionOr<Ref<JSC::ArrayBuffer>> compressZlib(std::span<const uint8_t>);
 #if PLATFORM(COCOA)
-    bool NODELETE didDeflateFinishAppleCompressionFramework(int);
+    bool LEGACY_NODELETE didDeflateFinishAppleCompressionFramework(int);
     ExceptionOr<Ref<JSC::ArrayBuffer>> compressAppleCompressionFramework(std::span<const uint8_t>);
 #endif
 

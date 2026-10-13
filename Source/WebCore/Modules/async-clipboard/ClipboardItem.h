@@ -67,8 +67,8 @@ public:
     void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&);
 
     PresentationStyle presentationStyle() const { return m_presentationStyle; };
-    Navigator* NODELETE navigator();
-    Clipboard* NODELETE clipboard();
+    Navigator* LEGACY_NODELETE navigator();
+    Clipboard* LEGACY_NODELETE clipboard();
 
 private:
     ClipboardItem(Vector<KeyValuePair<String, Ref<DOMPromise>>>&&, const Options&);

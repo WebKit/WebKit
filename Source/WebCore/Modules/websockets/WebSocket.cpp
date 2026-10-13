@@ -86,7 +86,7 @@ Lock WebSocket::s_allActiveWebSocketsLock;
 
 const size_t maxReasonSizeInBytes = 123;
 
-static inline bool NODELETE isValidProtocolCharacter(char16_t character)
+static inline bool LEGACY_NODELETE isValidProtocolCharacter(char16_t character)
 {
     // Hybi-10 says "(Subprotocol string must consist of) characters in the range U+0021 to U+007E not including
     // separator characters as defined in [RFC2616]."
@@ -99,7 +99,7 @@ static inline bool NODELETE isValidProtocolCharacter(char16_t character)
         && character != '{' && character != '}';
 }
 
-static bool NODELETE isValidProtocolString(StringView protocol)
+static bool LEGACY_NODELETE isValidProtocolString(StringView protocol)
 {
     if (protocol.isEmpty())
         return false;
@@ -138,7 +138,7 @@ static String joinStrings(const Vector<String>& strings, ASCIILiteral separator)
 // bufferedAmount is only ever added to while the socket is closing or closed, so it accumulates without
 // anything draining it. No single payload comes close to overflowing, but repeated sends do, and the
 // attribute has no value to report past its own range, so it stops there.
-static uint64_t NODELETE saturateAdd(uint64_t a, uint64_t b)
+static uint64_t LEGACY_NODELETE saturateAdd(uint64_t a, uint64_t b)
 {
     if (std::numeric_limits<uint64_t>::max() - a < b)
         return std::numeric_limits<uint64_t>::max();

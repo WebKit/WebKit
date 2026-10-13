@@ -52,13 +52,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MessagePort);
 
 static Lock allMessagePortsLock;
-static HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& NODELETE allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
+static HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& LEGACY_NODELETE allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
 {
     static NeverDestroyed<HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>> map;
     return map;
 }
 
-static HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& NODELETE portToContextIdentifier() WTF_REQUIRES_LOCK(allMessagePortsLock)
+static HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& LEGACY_NODELETE portToContextIdentifier() WTF_REQUIRES_LOCK(allMessagePortsLock)
 {
     static NeverDestroyed<HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>> map;
     return map;
@@ -493,7 +493,7 @@ SUPPRESS_NODELETE void MessagePort::entangleLocally(MessagePort& port1, MessageP
     ASSERT(port1.scriptExecutionContext() == port2.scriptExecutionContext());
     ASSERT(port2.identifier() == port1.m_remoteIdentifier);
     ASSERT(port1.identifier() == port2.m_remoteIdentifier);
-    // Assertions ensure the assignment doesn't violate NODELETE.
+    // Assertions ensure the assignment doesn't violate LEGACY_NODELETE.
     ASSERT(!port1.m_localPartner.get());
     ASSERT(!port2.m_localPartner.get());
     port1.m_localPartner = port2;

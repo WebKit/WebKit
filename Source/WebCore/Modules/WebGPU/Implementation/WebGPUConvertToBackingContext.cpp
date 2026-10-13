@@ -790,7 +790,7 @@ WGPUVertexStepMode ConvertToBackingContext::convertToBacking(VertexStepMode vert
     }
 }
 
-static constexpr bool NODELETE compare(BufferUsage a, unsigned b)
+static constexpr bool LEGACY_NODELETE compare(BufferUsage a, unsigned b)
 {
     return static_cast<unsigned>(a) == b;
 }
@@ -812,7 +812,7 @@ WGPUBufferUsage ConvertToBackingContext::convertBufferUsageFlagsToBacking(Buffer
     return static_cast<WGPUBufferUsage>(bufferUsageFlags);
 }
 
-static constexpr bool NODELETE compare(auto a, auto b)
+static constexpr bool LEGACY_NODELETE compare(auto a, auto b)
 {
     return static_cast<unsigned>(a) == static_cast<unsigned>(b);
 }

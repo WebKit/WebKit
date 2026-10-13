@@ -61,7 +61,7 @@ private:
     void processCurve2x(std::span<const float> source, std::span<float> destination);
     void processCurve4x(std::span<const float> source, std::span<float> destination);
 
-    bool NODELETE requiresTailProcessing() const final;
+    bool LEGACY_NODELETE requiresTailProcessing() const final;
 
     WaveShaperProcessor* waveShaperProcessor() { return downcast<WaveShaperProcessor>(processor()); }
     const WaveShaperProcessor* waveShaperProcessor() const { return downcast<WaveShaperProcessor>(processor()); }

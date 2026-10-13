@@ -224,7 +224,7 @@ public:
     virtual void setScrollbarOpacity(ScrollableArea&) { }
 #endif
 
-    FrameIdentifier NODELETE mainFrameIdentifier() const;
+    FrameIdentifier LEGACY_NODELETE mainFrameIdentifier() const;
 
 protected:
     explicit ScrollingCoordinator(Page*);
@@ -240,7 +240,7 @@ protected:
 
     virtual void willCommitTree(FrameIdentifier) { }
 
-    WEBCORE_EXPORT Page* NODELETE page() const;
+    WEBCORE_EXPORT Page* LEGACY_NODELETE page() const;
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;

@@ -77,7 +77,7 @@ void RuleSet::addToRuleSet(const AtomString& key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-static unsigned NODELETE rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomString& name)
+static unsigned LEGACY_NODELETE rulesCountForName(const RuleSet::AtomRuleMap& map, const AtomString& name)
 {
     if (const auto* rules = map.get(name))
         return rules->size();

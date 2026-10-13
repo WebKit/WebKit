@@ -54,7 +54,7 @@ private:
     ScrollingTreeFrameHostingNode(ScrollingTree&, ScrollingNodeID);
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) final;
-    void NODELETE applyLayerPositions() final;
+    void LEGACY_NODELETE applyLayerPositions() final;
 
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 

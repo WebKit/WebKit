@@ -37,7 +37,7 @@ namespace Style {
 
 using DisplayOutsideInsideToDisplayTypeMap = EnumeratedArray<CSSPropertyParserHelpers::DisplayOutside, EnumeratedArray<CSSPropertyParserHelpers::DisplayInside, std::optional<DisplayType>>>;
 
-consteval DisplayOutsideInsideToDisplayTypeMap NODELETE makeDisplayOutsideInsideToDisplayTypeMap()
+consteval DisplayOutsideInsideToDisplayTypeMap LEGACY_NODELETE makeDisplayOutsideInsideToDisplayTypeMap()
 {
     using enum CSSPropertyParserHelpers::DisplayOutside;
     using enum CSSPropertyParserHelpers::DisplayInside;
@@ -78,7 +78,7 @@ consteval DisplayOutsideInsideToDisplayTypeMap NODELETE makeDisplayOutsideInside
 constexpr auto displayOutsideInsideToDisplayTypeMap = makeDisplayOutsideInsideToDisplayTypeMap();
 
 template<CSSPropertyParserHelpers::DisplayOutside outside, CSSPropertyParserHelpers::DisplayInside inside>
-consteval DisplayType NODELETE mappedDisplayType()
+consteval DisplayType LEGACY_NODELETE mappedDisplayType()
 {
     return *displayOutsideInsideToDisplayTypeMap[outside][inside];
 }

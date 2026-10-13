@@ -162,7 +162,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static Node* NODELETE nodeForRenderer(RenderObject& renderer)
+static Node* LEGACY_NODELETE nodeForRenderer(RenderObject& renderer)
 {
     if (!renderer.isRenderView()) [[likely]]
         return renderer.node();
@@ -986,7 +986,7 @@ AccessibilityObject* AccessibilityRenderObject::containingTree() const
     });
 }
 
-static AccessibilityObjectInclusion NODELETE objectInclusionFromAltText(const String& altText)
+static AccessibilityObjectInclusion LEGACY_NODELETE objectInclusionFromAltText(const String& altText)
 {
     // Don't ignore an image that has alt text.
     if (!altText.containsOnly<isASCIIWhitespace>())
@@ -1805,7 +1805,7 @@ int AccessibilityRenderObject::insertionPointLineNumber() const
     return lineForPosition(makeDeprecatedLegacyPosition(selectedTextRange->start));
 }
 
-static void NODELETE setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
+static void LEGACY_NODELETE setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType type)
 {
     if (!cache)
         return;
@@ -1814,7 +1814,7 @@ static void NODELETE setTextSelectionIntent(AXObjectCache* cache, AXTextStateCha
     cache->setIsSynchronizingSelection(true);
 }
 
-static void NODELETE clearTextSelectionIntent(AXObjectCache* cache)
+static void LEGACY_NODELETE clearTextSelectionIntent(AXObjectCache* cache)
 {
     if (!cache)
         return;

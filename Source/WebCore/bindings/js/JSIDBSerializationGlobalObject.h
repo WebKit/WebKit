@@ -42,7 +42,7 @@ public:
             return nullptr;
         return subspaceForImpl(vm);
     }
-    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(JSC::VM&);
 
     DECLARE_INFO;
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSValue prototype);

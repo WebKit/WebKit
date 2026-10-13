@@ -46,7 +46,7 @@ public:
     bool tryAccess(const String& host, ContinuousApproximateTime);
     void clearAllData();
 
-    void NODELETE setCountPerDuration(size_t count, Seconds duration);
+    void LEGACY_NODELETE setCountPerDuration(size_t count, Seconds duration);
 
     static constexpr size_t defaultThrottleAccessCount = 5;
     static constexpr Seconds defaultThrottleDuration = 24_h;
@@ -65,8 +65,8 @@ private:
         AccessThrottler() = default;
 
         bool tryAccessAndUpdateHistory(ContinuousApproximateTime, const Config&);
-        bool NODELETE tryExpire(ContinuousApproximateTime, const Config&);
-        ContinuousApproximateTime NODELETE oldestAccessTime() const;
+        bool LEGACY_NODELETE tryExpire(ContinuousApproximateTime, const Config&);
+        ContinuousApproximateTime LEGACY_NODELETE oldestAccessTime() const;
         ContinuousApproximateTime newestAccessTime() const { return m_newestAccessTime; }
 
     private:

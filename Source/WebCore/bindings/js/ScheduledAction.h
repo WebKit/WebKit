@@ -47,7 +47,7 @@ public:
     void addArguments(FixedVector<JSC::Strong<JSC::Unknown>>&&);
 
     enum class Type { Code, Function };
-    Type NODELETE type() const;
+    Type LEGACY_NODELETE type() const;
 
     StringView code() const { return m_code; }
 

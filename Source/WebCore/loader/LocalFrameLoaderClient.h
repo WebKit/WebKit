@@ -123,7 +123,7 @@ class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
 public:
     ~LocalFrameLoaderClient();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     virtual bool isWebLocalFrameLoaderClient() const { return false; }

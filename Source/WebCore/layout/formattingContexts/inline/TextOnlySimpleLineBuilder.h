@@ -41,7 +41,7 @@ public:
     TextOnlySimpleLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLine) final;
 
-    static bool NODELETE isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const InlineLayoutState&);
+    static bool LEGACY_NODELETE isEligibleForSimplifiedTextOnlyInlineLayoutByContent(const InlineContentCache::InlineItems&, const InlineLayoutState&);
     static bool isEligibleForSimplifiedInlineLayoutByStyle(const Box&);
     static bool isEligibleForSimplifiedDisplayBuild(const ElementBox& rootBlockContainer);
 
@@ -59,7 +59,7 @@ private:
     void handleLineEnding(const Style::ComputedStyle&, InlineItemPosition, size_t layoutRangeEndIndex);
     size_t revertToTrailingItem(const Style::ComputedStyle&, const InlineItemRange&, const InlineTextItem&);
     size_t revertToLastNonOverflowingItem(const Style::ComputedStyle&, const InlineItemRange&);
-    InlineLayoutUnit NODELETE availableWidth() const;
+    InlineLayoutUnit LEGACY_NODELETE availableWidth() const;
 
 private:
     InlineLayoutUnit m_trimmedTrailingWhitespaceWidth { 0.f };

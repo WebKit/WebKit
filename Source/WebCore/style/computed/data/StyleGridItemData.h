@@ -45,7 +45,7 @@ public:
     static Ref<GridItemData> create() { return adoptRef(*new GridItemData); }
     Ref<GridItemData> copy() const;
 
-    bool NODELETE operator==(const GridItemData&) const;
+    bool LEGACY_NODELETE operator==(const GridItemData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const GridItemData&) const;

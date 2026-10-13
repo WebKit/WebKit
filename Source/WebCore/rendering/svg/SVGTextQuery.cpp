@@ -207,7 +207,7 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, c
 }
 
 // Identity for lengthAdjust="spacing", which widens the gaps rather than the glyphs.
-static inline float NODELETE lengthAdjustInlineScale(const SVGTextQuery::Data& queryData, const SVGTextFragment& fragment)
+static inline float LEGACY_NODELETE lengthAdjustInlineScale(const SVGTextQuery::Data& queryData, const SVGTextFragment& fragment)
 {
     if (fragment.lengthAdjustTransform.isIdentity())
         return 1;

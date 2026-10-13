@@ -47,9 +47,9 @@ public:
 
     CSSStyleSheet* namedItem(const AtomString&) const;
     bool isSupportedPropertyName(const AtomString&) const;
-    Vector<AtomString> NODELETE supportedPropertyNames();
+    Vector<AtomString> LEGACY_NODELETE supportedPropertyNames();
 
-    Node* NODELETE ownerNode() const;
+    Node* LEGACY_NODELETE ownerNode() const;
 
     void detach();
 

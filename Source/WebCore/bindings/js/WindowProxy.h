@@ -43,7 +43,7 @@ public:
     static Ref<WindowProxy> create(Frame&);
     WEBCORE_EXPORT ~WindowProxy();
 
-    WEBCORE_EXPORT Frame* NODELETE frame() const;
+    WEBCORE_EXPORT Frame* LEGACY_NODELETE frame() const;
     void detachFromFrame();
     void replaceFrame(Frame&);
 

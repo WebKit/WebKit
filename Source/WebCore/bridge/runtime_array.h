@@ -66,8 +66,8 @@ public:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
     
-    static bool NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
-    static bool NODELETE deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
+    static bool LEGACY_NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    static bool LEGACY_NODELETE deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned propertyName);
     
     unsigned getLength() const { return m_array->getLength(); }
     
@@ -89,7 +89,7 @@ private:
     RuntimeArray(VM&, Structure*);
     void finishCreation(VM&, Bindings::Array*);
 
-    static JSC::GCClient::IsoSubspace* NODELETE subspaceForImpl(JSC::VM&);
+    static JSC::GCClient::IsoSubspace* LEGACY_NODELETE subspaceForImpl(JSC::VM&);
 
     BindingsArray* m_array;
 };

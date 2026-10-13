@@ -91,7 +91,7 @@ const TransformationMatrix TransformationMatrix::identity { };
 //
 //  calculate the determinant of a 2x2 matrix.
 
-static double NODELETE determinant2x2(double a, double b, double c, double d)
+static double LEGACY_NODELETE determinant2x2(double a, double b, double c, double d)
 {
     return a * d - b * c;
 }
@@ -105,7 +105,7 @@ static double NODELETE determinant2x2(double a, double b, double c, double d)
 //      | a2,  b2,  c2 |
 //      | a3,  b3,  c3 |
 
-static double NODELETE determinant3x3(double a1, double a2, double a3, double b1, double b2, double b3, double c1, double c2, double c3)
+static double LEGACY_NODELETE determinant3x3(double a1, double a2, double a3, double b1, double b2, double b3, double c1, double c2, double c3)
 {
     return a1 * determinant2x2(b2, b3, c2, c3)
          - b1 * determinant2x2(a2, a3, c2, c3)
@@ -116,7 +116,7 @@ static double NODELETE determinant3x3(double a1, double a2, double a3, double b1
 //
 //  calculate the determinant of a 4x4 matrix.
 
-static double NODELETE determinant4x4(const TransformationMatrix::Matrix4& m)
+static double LEGACY_NODELETE determinant4x4(const TransformationMatrix::Matrix4& m)
 {
     // Assign to individual variable names to aid selecting
     // correct elements
@@ -164,7 +164,7 @@ static double NODELETE determinant4x4(const TransformationMatrix::Matrix4& m)
 //  The matrix B = (b  ) is the adjoint of A
 //                   ij
 
-[[maybe_unused]] static inline void NODELETE adjoint(const TransformationMatrix::Matrix4& matrix, TransformationMatrix::Matrix4& result)
+[[maybe_unused]] static inline void LEGACY_NODELETE adjoint(const TransformationMatrix::Matrix4& matrix, TransformationMatrix::Matrix4& result)
 {
     // Assign to individual variable names to aid
     // selecting correct values
@@ -355,7 +355,7 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
 // From Graphics Gems: unmatrix.c
 
 // Transpose rotation portion of matrix a, return b
-static void NODELETE transposeMatrix4(const TransformationMatrix::Matrix4& a, TransformationMatrix::Matrix4& b)
+static void LEGACY_NODELETE transposeMatrix4(const TransformationMatrix::Matrix4& a, TransformationMatrix::Matrix4& b)
 {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
@@ -363,7 +363,7 @@ static void NODELETE transposeMatrix4(const TransformationMatrix::Matrix4& a, Tr
 }
 
 // Multiply a homogeneous point by a matrix and return the transformed point
-static void NODELETE v4MulPointByMatrix(const Vector4& p, const TransformationMatrix::Matrix4& m, Vector4& result)
+static void LEGACY_NODELETE v4MulPointByMatrix(const Vector4& p, const TransformationMatrix::Matrix4& m, Vector4& result)
 {
     result[0] = (p[0] * m[0][0]) + (p[1] * m[1][0]) +
                 (p[2] * m[2][0]) + (p[3] * m[3][0]);
@@ -375,12 +375,12 @@ static void NODELETE v4MulPointByMatrix(const Vector4& p, const TransformationMa
                 (p[2] * m[2][3]) + (p[3] * m[3][3]);
 }
 
-static double NODELETE v3Length(const Vector3& a)
+static double LEGACY_NODELETE v3Length(const Vector3& a)
 {
     return std::hypot(a[0], a[1], a[2]);
 }
 
-static void NODELETE v3Scale(Vector3& v, double desiredLength)
+static void LEGACY_NODELETE v3Scale(Vector3& v, double desiredLength)
 {
     double len = v3Length(v);
     if (len != 0) {
@@ -391,14 +391,14 @@ static void NODELETE v3Scale(Vector3& v, double desiredLength)
     }
 }
 
-static double NODELETE v3Dot(const Vector3& a, const Vector3& b)
+static double LEGACY_NODELETE v3Dot(const Vector3& a, const Vector3& b)
 {
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
 
 // Make a linear combination of two vectors and return the result.
 // result = (a * ascl) + (b * bscl)
-static void NODELETE v3Combine(const Vector3& a, const Vector3& b, Vector3& result, double ascl, double bscl)
+static void LEGACY_NODELETE v3Combine(const Vector3& a, const Vector3& b, Vector3& result, double ascl, double bscl)
 {
     result[0] = (ascl * a[0]) + (bscl * b[0]);
     result[1] = (ascl * a[1]) + (bscl * b[1]);
@@ -406,7 +406,7 @@ static void NODELETE v3Combine(const Vector3& a, const Vector3& b, Vector3& resu
 }
 
 // Return the cross product result = a cross b */
-static void NODELETE v3Cross(const Vector3& a, const Vector3& b, Vector3& result)
+static void LEGACY_NODELETE v3Cross(const Vector3& a, const Vector3& b, Vector3& result)
 {
     result[0] = (a[1] * b[2]) - (a[2] * b[1]);
     result[1] = (a[2] * b[0]) - (a[0] * b[2]);
@@ -1048,7 +1048,7 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
     return *this;
 }
 
-static double NODELETE roundEpsilonToZero(double val)
+static double LEGACY_NODELETE roundEpsilonToZero(double val)
 {
     if (-DBL_EPSILON < val && val < DBL_EPSILON)
         return 0.0;
@@ -1887,7 +1887,7 @@ TransformationMatrix TransformationMatrix::fromIPCData(IPCData&& data)
         });
 }
 
-static inline void NODELETE blendFloat(double& from, double to, double progress, CompositeOperation compositeOperation)
+static inline void LEGACY_NODELETE blendFloat(double& from, double to, double progress, CompositeOperation compositeOperation)
 {
     switch (compositeOperation) {
     case CompositeOperation::Replace:

@@ -43,18 +43,18 @@ class MediaSourceHandle
     : public RefCounted<MediaSourceHandle> {
     WTF_MAKE_TZONE_ALLOCATED(MediaSourceHandle);
 public:
-    static Ref<MediaSourceHandle> NODELETE create(Ref<MediaSourceHandle>&&);
+    static Ref<MediaSourceHandle> LEGACY_NODELETE create(Ref<MediaSourceHandle>&&);
     Ref<MediaSourceHandle> detach();
 
     virtual ~MediaSourceHandle();
 
     bool isDetached() const { return m_detached; }
-    bool NODELETE canDetach() const;
+    bool LEGACY_NODELETE canDetach() const;
     bool detachable() const { return m_detachable; }
 
-    void NODELETE setHasEverBeenAssignedAsSrcObject();
-    bool NODELETE hasEverBeenAssignedAsSrcObject() const;
-    bool NODELETE isManaged() const;
+    void LEGACY_NODELETE setHasEverBeenAssignedAsSrcObject();
+    bool LEGACY_NODELETE hasEverBeenAssignedAsSrcObject() const;
+    bool LEGACY_NODELETE isManaged() const;
 
     using TaskType = Function<void(MediaSource&)>;
     void ensureOnDispatcher(TaskType&&, bool forceRun = false) const;

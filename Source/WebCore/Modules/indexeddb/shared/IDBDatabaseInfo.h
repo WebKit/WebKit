@@ -50,10 +50,10 @@ public:
     void setVersion(uint64_t version) { m_version = version; }
     uint64_t version() const { return m_version; }
 
-    bool NODELETE hasObjectStore(const String& name) const;
+    bool LEGACY_NODELETE hasObjectStore(const String& name) const;
     IDBObjectStoreInfo createNewObjectStore(const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
-    IDBObjectStoreInfo* NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
+    IDBObjectStoreInfo* LEGACY_NODELETE infoForExistingObjectStore(IDBObjectStoreIdentifier);
     IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);
     const IDBObjectStoreInfo* infoForExistingObjectStore(IDBObjectStoreIdentifier) const;
     const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
@@ -66,7 +66,7 @@ public:
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(IDBObjectStoreIdentifier);
 
-    void NODELETE setMaxIndexID(uint64_t maxIndexID);
+    void LEGACY_NODELETE setMaxIndexID(uint64_t maxIndexID);
     IDBIndexIdentifier generateNextIndexID() { return IDBIndexIdentifier { ++m_maxIndexID }; }
 
 #if !LOG_DISABLED
@@ -75,7 +75,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBDatabaseInfo>;
-    IDBObjectStoreInfo* NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
+    IDBObjectStoreInfo* LEGACY_NODELETE getInfoForExistingObjectStore(const String& objectStoreName);
     IDBObjectStoreInfo* getInfoForExistingObjectStore(IDBObjectStoreIdentifier);
 
     String m_name;

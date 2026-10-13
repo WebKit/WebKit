@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-bool NODELETE isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
-bool NODELETE verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
+bool LEGACY_NODELETE isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
+bool LEGACY_NODELETE verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
-size_t NODELETE videoPixelFormatToPlaneCount(VideoPixelFormat);
-size_t NODELETE videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat);
-size_t NODELETE videoPixelFormatToHorizontalSubSampling(VideoPixelFormat, size_t);
-size_t NODELETE videoPixelFormatToVerticalSubSampling(VideoPixelFormat, size_t);
+size_t LEGACY_NODELETE videoPixelFormatToPlaneCount(VideoPixelFormat);
+size_t LEGACY_NODELETE videoPixelFormatToSampleByteSizePerPlane(VideoPixelFormat);
+size_t LEGACY_NODELETE videoPixelFormatToHorizontalSubSampling(VideoPixelFormat, size_t);
+size_t LEGACY_NODELETE videoPixelFormatToVerticalSubSampling(VideoPixelFormat, size_t);
 
 struct CombinedPlaneLayout {
     size_t allocationSize { 0 };
@@ -48,11 +48,11 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
 
 ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVideoFrame&, const WebCodecsVideoFrame::CopyToOptions&);
 
-void NODELETE initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
+void LEGACY_NODELETE initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
 
-VideoColorSpaceInit NODELETE videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
+VideoColorSpaceInit LEGACY_NODELETE videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
 
-bool NODELETE validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
+bool LEGACY_NODELETE validateVideoFrameInit(const WebCodecsVideoFrame::Init&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
 
 }
 

@@ -38,9 +38,9 @@ public:
 
     Type type() const final { return Type::HashMap; }
     RefPtr<CSSValue> propertyValue(CSSPropertyID) const final;
-    String NODELETE shorthandPropertySerialization(CSSPropertyID) const final;
-    RefPtr<CSSValue> NODELETE customPropertyValue(const AtomString& property) const final;
-    unsigned NODELETE size() const final;
+    String LEGACY_NODELETE shorthandPropertySerialization(CSSPropertyID) const final;
+    RefPtr<CSSValue> LEGACY_NODELETE customPropertyValue(const AtomString& property) const final;
+    unsigned LEGACY_NODELETE size() const final;
     Vector<StylePropertyMapEntry> entries(ScriptExecutionContext*) const final;
 
 private:

@@ -77,14 +77,14 @@ public:
     WEBCORE_EXPORT AffineTransform(const SkMatrix&);
 #endif
 
-    void NODELETE setMatrix(double a, double b, double c, double d, double e, double f);
+    void LEGACY_NODELETE setMatrix(double a, double b, double c, double d, double e, double f);
 
-    void NODELETE map(double x, double y, double& x2, double& y2) const;
+    void LEGACY_NODELETE map(double x, double y, double& x2, double& y2) const;
 
     // Rounds the mapped point to the nearest integer value.
     WEBCORE_EXPORT IntPoint mapPoint(const IntPoint&) const;
 
-    WEBCORE_EXPORT FloatPoint NODELETE mapPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE mapPoint(const FloatPoint&) const;
 
     WEBCORE_EXPORT IntSize mapSize(const IntSize&) const;
 
@@ -95,11 +95,11 @@ public:
     WEBCORE_EXPORT IntRect mapRect(const IntRect&) const;
 
     WEBCORE_EXPORT FloatRect mapRect(const FloatRect&) const;
-    WEBCORE_EXPORT FloatQuad NODELETE mapQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT FloatQuad LEGACY_NODELETE mapQuad(const FloatQuad&) const;
 
     WEBCORE_EXPORT Region mapRegion(const Region&) const;
 
-    WEBCORE_EXPORT bool NODELETE isIdentity() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isIdentity() const;
 
     double a() const { return m_transform[0]; }
     void setA(double a) { m_transform[0] = a; }
@@ -114,22 +114,22 @@ public:
     double f() const { return m_transform[5]; }
     void setF(double f) { m_transform[5] = f; }
 
-    WEBCORE_EXPORT void NODELETE makeIdentity();
+    WEBCORE_EXPORT void LEGACY_NODELETE makeIdentity();
 
-    WEBCORE_EXPORT AffineTransform& NODELETE multiply(const AffineTransform& other);
-    WEBCORE_EXPORT AffineTransform& NODELETE scale(double);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE multiply(const AffineTransform& other);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(double);
     WEBCORE_EXPORT AffineTransform& scale(double sx, double sy);
-    WEBCORE_EXPORT AffineTransform& NODELETE scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
     WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& rotate(double);
     WEBCORE_EXPORT AffineTransform& rotateRadians(double);
     AffineTransform& rotateFromVector(double x, double y);
-    WEBCORE_EXPORT AffineTransform& NODELETE translate(double tx, double ty);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(double tx, double ty);
     WEBCORE_EXPORT AffineTransform& translate(const FloatPoint&);
     WEBCORE_EXPORT AffineTransform& translate(const FloatSize&);
-    WEBCORE_EXPORT AffineTransform& NODELETE shear(double sx, double sy);
-    WEBCORE_EXPORT AffineTransform& NODELETE flipX();
-    WEBCORE_EXPORT AffineTransform& NODELETE flipY();
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE shear(double sx, double sy);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipX();
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipY();
     WEBCORE_EXPORT AffineTransform& skew(double angleX, double angleY);
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
@@ -139,12 +139,12 @@ public:
     WEBCORE_EXPORT double xScale() const;
     WEBCORE_EXPORT double yScale() const;
 
-    bool NODELETE isInvertible() const; // If you call this, you're probably doing it wrong.
-    WEBCORE_EXPORT std::optional<AffineTransform> NODELETE inverse() const;
+    bool LEGACY_NODELETE isInvertible() const; // If you call this, you're probably doing it wrong.
+    WEBCORE_EXPORT std::optional<AffineTransform> LEGACY_NODELETE inverse() const;
 
     WEBCORE_EXPORT void blend(const AffineTransform& from, double progress, CompositeOperation = CompositeOperation::Replace);
 
-    WEBCORE_EXPORT TransformationMatrix NODELETE toTransformationMatrix() const;
+    WEBCORE_EXPORT TransformationMatrix LEGACY_NODELETE toTransformationMatrix() const;
 
     bool isIdentityOrTranslation() const
     {
@@ -230,7 +230,7 @@ private:
     std::array<double, 6> m_transform;
 };
 
-WEBCORE_EXPORT AffineTransform NODELETE makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
+WEBCORE_EXPORT AffineTransform LEGACY_NODELETE makeMapBetweenRects(const FloatRect& source, const FloatRect& dest);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const AffineTransform&);
 

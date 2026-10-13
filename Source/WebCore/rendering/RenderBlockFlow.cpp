@@ -2227,7 +2227,7 @@ static inline bool needsAppleMailPaginationQuirk(const RenderBlockFlow& renderer
     return false;
 }
 
-static void NODELETE clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlow)
+static void LEGACY_NODELETE clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlow)
 {
     if (!blockFlow.shouldBreakAtLineToAvoidWidow())
         return;
@@ -3218,7 +3218,7 @@ std::optional<LayoutUnit> RenderBlockFlow::lowestInitialLetterLogicalBottom() co
     return lowestFloatBottom;
 }
 
-static RenderLayer* NODELETE enclosingFloatPaintingLayer(const RenderBox& renderer)
+static RenderLayer* LEGACY_NODELETE enclosingFloatPaintingLayer(const RenderBox& renderer)
 {
     for (auto& box : lineageOfType<RenderBox>(renderer)) {
         if (box.layer() && box.layer()->isSelfPaintingLayer())
@@ -4307,7 +4307,7 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
     return true;
 }
 
-static bool NODELETE hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const Style::ComputedStyle& rootStyle)
+static bool LEGACY_NODELETE hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenByStyle(const Style::ComputedStyle& rootStyle)
 {
     if (rootStyle.textAlign() != Style::TextAlign::Start)
         return false;
@@ -4316,7 +4316,7 @@ static bool NODELETE hasSimpleStaticPositionForInlineLevelOutOfFlowChildrenBySty
     return true;
 }
 
-static void NODELETE setFullRepaintOnParentInlineBoxLayerIfNeeded(const RenderText& renderer)
+static void LEGACY_NODELETE setFullRepaintOnParentInlineBoxLayerIfNeeded(const RenderText& renderer)
 {
     // Repaints (on self) are normally issued either during layout using LayoutRepainter inside ::layout() functions (#1)
     // or after layout, while recursing the layer tree (#2).
@@ -4646,7 +4646,7 @@ static inline bool isVisibleRenderText(const RenderObject& renderer)
     return !renderText->linesBoundingBox().isEmpty() && !renderText->text().containsOnly<isASCIIWhitespace>();
 }
 
-static inline bool NODELETE resizeTextPermitted(const RenderObject& renderer)
+static inline bool LEGACY_NODELETE resizeTextPermitted(const RenderObject& renderer)
 {
     // We disallow resizing for text input fields and textarea to address <rdar://problem/5792987> and <rdar://problem/8021123>
     for (auto* ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
@@ -4657,7 +4657,7 @@ static inline bool NODELETE resizeTextPermitted(const RenderObject& renderer)
     return true;
 }
 
-static bool NODELETE isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
+static bool LEGACY_NODELETE isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
 {
     if (!renderer.isRenderBlock())
         return true;
@@ -4915,7 +4915,7 @@ struct InlineMinMaxIterator {
         }
 
     RenderObject* next();
-    bool NODELETE isEndOfInline() const { return m_isEndOfInline; }
+    bool LEGACY_NODELETE isEndOfInline() const { return m_isEndOfInline; }
 
 private:
     const RenderBlockFlow& m_blockContainer;

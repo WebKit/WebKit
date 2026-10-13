@@ -71,7 +71,7 @@ private:
     Ref<MediaSample> createNonDisplayingCopy() const override;
     Ref<MediaSample> createCopyWithAdjustedStartTime(const MediaTime& offset) const override;
 
-    unsigned NODELETE generation() const { return m_box.generation(); }
+    unsigned LEGACY_NODELETE generation() const { return m_box.generation(); }
 
     MockSampleBox m_box;
     TrackID m_id;

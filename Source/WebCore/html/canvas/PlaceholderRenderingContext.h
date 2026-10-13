@@ -90,8 +90,8 @@ public:
 
     ~PlaceholderRenderingContext();
 
-    HTMLCanvasElement& NODELETE canvas() const;
-    IntSize NODELETE size() const;
+    HTMLCanvasElement& LEGACY_NODELETE canvas() const;
+    IntSize LEGACY_NODELETE size() const;
     void setPlaceholderBuffer(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
     // A frame from a source in another process, whose buffer nothing will draw into again.
     void setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);

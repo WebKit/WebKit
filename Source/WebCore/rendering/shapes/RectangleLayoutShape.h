@@ -52,7 +52,7 @@ public:
     void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
-    FloatRect NODELETE shapeMarginBounds() const;
+    FloatRect LEGACY_NODELETE shapeMarginBounds() const;
 
     float rx() const { return m_radii.width(); }
     float ry() const { return m_radii.height(); }

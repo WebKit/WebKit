@@ -149,7 +149,7 @@ AdapterImpl::AdapterImpl(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingConte
 
 AdapterImpl::~AdapterImpl() = default;
 
-static bool NODELETE setMaxIntegerValue(uint32_t& limitValue, uint64_t i)
+static bool LEGACY_NODELETE setMaxIntegerValue(uint32_t& limitValue, uint64_t i)
 {
     CheckedUint32 narrowed = i;
     if (narrowed.hasOverflowed())
@@ -161,7 +161,7 @@ static bool NODELETE setMaxIntegerValue(uint32_t& limitValue, uint64_t i)
     return true;
 }
 
-static bool NODELETE setMaxIntegerValue(uint64_t& limitValue, uint64_t i)
+static bool LEGACY_NODELETE setMaxIntegerValue(uint64_t& limitValue, uint64_t i)
 {
     if (i > limitValue)
         limitValue = i;
@@ -169,7 +169,7 @@ static bool NODELETE setMaxIntegerValue(uint64_t& limitValue, uint64_t i)
     return true;
 }
 
-static bool NODELETE setAlignmentIntegerValue(uint32_t& limitValue, uint64_t i, uint32_t supportedAlignment)
+static bool LEGACY_NODELETE setAlignmentIntegerValue(uint32_t& limitValue, uint64_t i, uint32_t supportedAlignment)
 {
     CheckedUint32 narrowed = i;
     if (narrowed.hasOverflowed())

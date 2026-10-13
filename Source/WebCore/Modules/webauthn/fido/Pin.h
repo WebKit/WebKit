@@ -140,7 +140,7 @@ struct SetPinRequest {
 public:
     const WebCore::CryptoKeyAES& sharedKey() const { return m_sharedKey.get(); }
     WEBCORE_EXPORT static std::optional<SetPinRequest> tryCreate(PINUVAuthProtocol, const String& newPin, const WebCore::CryptoKeyEC&);
-    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE pinAuth() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& LEGACY_NODELETE pinAuth() const;
 
     friend Vector<uint8_t> encodeAsCBOR(const SetPinRequest&);
 
@@ -190,7 +190,7 @@ public:
     // client-data hash.
     WEBCORE_EXPORT Vector<uint8_t> pinAuth(PINUVAuthProtocol, const Vector<uint8_t>& clientDataHash) const;
 
-    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE token() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& LEGACY_NODELETE token() const;
 
 private:
     explicit TokenResponse(Ref<WebCore::CryptoKeyHMAC>&&);
@@ -231,7 +231,7 @@ class HmacSecretResponse {
 public:
     WEBCORE_EXPORT static std::optional<HmacSecretResponse> parse(PINUVAuthProtocol, const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& encryptedOutput);
 
-    WEBCORE_EXPORT const Vector<uint8_t>& NODELETE output() const;
+    WEBCORE_EXPORT const Vector<uint8_t>& LEGACY_NODELETE output() const;
 
 private:
     explicit HmacSecretResponse(Vector<uint8_t>&& decryptedOutput);

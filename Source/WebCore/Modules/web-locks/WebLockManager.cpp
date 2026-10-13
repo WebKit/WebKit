@@ -70,7 +70,7 @@ struct WebLockManager::LockRequest {
     RefPtr<AbortSignal> signal;
     std::optional<uint32_t> signalAlgorithmIdentifier;
 
-    bool NODELETE isValid() const { return !!lockIdentifier; }
+    bool LEGACY_NODELETE isValid() const { return !!lockIdentifier; }
 
     void removeSignalAlgorithm()
     {

@@ -56,7 +56,7 @@ public:
     virtual ~CSSFontFaceSource();
 
     // FontLoadRequestClient.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 
     //                      => Success
@@ -80,14 +80,14 @@ public:
     FontLoadRequest* fontLoadRequest() const { return m_fontRequest.get(); }
     bool requiresExternalResource() const { return m_fontRequest.get(); }
 
-    bool NODELETE isSVGFontFaceSource() const;
+    bool LEGACY_NODELETE isSVGFontFaceSource() const;
 
 private:
-    bool NODELETE shouldIgnoreFontLoadCompletions() const;
+    bool LEGACY_NODELETE shouldIgnoreFontLoadCompletions() const;
 
     void fontLoaded(FontLoadRequest&) override;
 
-    void NODELETE setStatus(Status);
+    void LEGACY_NODELETE setStatus(Status);
 
     CSSFontFace& cssFontFace() const { return m_owningCSSFontFace.get(); }
 

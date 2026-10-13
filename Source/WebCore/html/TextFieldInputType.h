@@ -64,12 +64,12 @@ protected:
     void handleKeydownEventForSpinButton(KeyboardEvent&);
     void handleClickEvent(MouseEvent&) final;
 
-    HTMLElement* NODELETE containerElement() const final;
-    HTMLElement* NODELETE innerBlockElement() const final;
+    HTMLElement* LEGACY_NODELETE containerElement() const final;
+    HTMLElement* LEGACY_NODELETE innerBlockElement() const final;
     RefPtr<TextControlInnerTextElement> innerTextElement() const final;
-    HTMLElement* NODELETE innerSpinButtonElement() const final;
-    HTMLElement* NODELETE autoFillButtonElement() const final;
-    HTMLElement* NODELETE dataListButtonElement() const final;
+    HTMLElement* LEGACY_NODELETE innerSpinButtonElement() const final;
+    HTMLElement* LEGACY_NODELETE autoFillButtonElement() const final;
+    HTMLElement* LEGACY_NODELETE dataListButtonElement() const final;
 
     virtual bool needsContainer() const { return false; }
     void createShadowSubtree() override;
@@ -97,7 +97,7 @@ private:
     RenderPtr<RenderElement> createInputRenderer(Style::ComputedStyle&&) override;
     bool shouldUseInputMethod() const override { return true; }
     bool shouldRespectListAttribute() override;
-    HTMLElement* NODELETE placeholderElement() const final;
+    HTMLElement* LEGACY_NODELETE placeholderElement() const final;
     void updatePlaceholderText() final;
     bool appendFormData(DOMFormData&) const final;
     void subtreeHasChanged() final;

@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Style {
 
-static inline bool NODELETE comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
+static inline bool LEGACY_NODELETE comparePageRules(const StyleRulePage* r1, const StyleRulePage* r2)
 {
     return r1->selector().specificityForPage() < r2->selector().specificityForPage();
 }
@@ -91,7 +91,7 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
     });
 }
 
-static bool NODELETE checkPageSelectorComponents(const CSSSelector& selector, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
+static bool LEGACY_NODELETE checkPageSelectorComponents(const CSSSelector& selector, bool isLeftPage, bool isFirstPage, const WTF::String& pageName)
 {
     for (const CSSSelector* component = &selector; component; component = component->precedingInComplexSelector()) {
         if (component->match() == CSSSelector::Match::Tag) {

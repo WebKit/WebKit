@@ -83,7 +83,7 @@ template<> struct CSSValueCreation<MaskBorderSource> { auto operator()(CSSValueP
 // MARK: - Blending
 
 template<> struct Blending<MaskBorderSource> {
-    bool NODELETE canBlend(const MaskBorderSource&, const MaskBorderSource&);
+    bool LEGACY_NODELETE canBlend(const MaskBorderSource&, const MaskBorderSource&);
     auto blend(const MaskBorderSource&, const MaskBorderSource&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> MaskBorderSource;
 };
 

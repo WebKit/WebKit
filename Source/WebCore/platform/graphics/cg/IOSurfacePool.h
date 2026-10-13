@@ -88,7 +88,7 @@ private:
     static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
 
-    bool NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
+    bool LEGACY_NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
     void didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
@@ -109,7 +109,7 @@ private:
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
-    String NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
+    String LEGACY_NODELETE poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);

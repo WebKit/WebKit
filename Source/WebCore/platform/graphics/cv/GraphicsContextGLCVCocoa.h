@@ -83,7 +83,7 @@ private:
         FlipY unpackFlipY { FlipY::No };
         ImageOrientation orientation;
 
-        friend bool NODELETE operator==(const TextureContent&, const TextureContent&) = default;
+        friend bool LEGACY_NODELETE operator==(const TextureContent&, const TextureContent&) = default;
     };
     using TextureContentMap = HashMap<GCGLuint, TextureContent, IntHash<GCGLuint>, WTF::UnsignedWithZeroKeyHashTraits<GCGLuint>>;
     TextureContentMap m_knownContent;

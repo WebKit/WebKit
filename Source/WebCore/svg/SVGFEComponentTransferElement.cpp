@@ -82,7 +82,7 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const Fil
     return FEComponentTransfer::create(WTF::move(functions));
 }
 
-static bool NODELETE isRelevantTransferFunctionElement(const Element& child)
+static bool LEGACY_NODELETE isRelevantTransferFunctionElement(const Element& child)
 {
     auto name = child.elementName();
 

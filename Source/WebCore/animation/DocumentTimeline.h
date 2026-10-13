@@ -80,12 +80,12 @@ public:
     WEBCORE_EXPORT Seconds animationInterval() const;
     void suspendAnimations() override;
     void resumeAnimations() override;
-    WEBCORE_EXPORT unsigned NODELETE numberOfActiveAnimationsForTesting() const;
-    WEBCORE_EXPORT unsigned NODELETE numberOfAnimationTimelineInvalidationsForTesting() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE numberOfActiveAnimationsForTesting() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE numberOfAnimationTimelineInvalidationsForTesting() const;
 
-    Seconds NODELETE convertTimelineTimeToOriginRelativeTime(Seconds) const;
+    Seconds LEGACY_NODELETE convertTimelineTimeToOriginRelativeTime(Seconds) const;
 
-    std::optional<FramesPerSecond> NODELETE maximumFrameRate() const;
+    std::optional<FramesPerSecond> LEGACY_NODELETE maximumFrameRate() const;
 
 #if ENABLE(THREADED_ANIMATIONS)
     void scheduleAcceleratedEffectStackUpdate();

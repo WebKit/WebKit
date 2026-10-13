@@ -129,7 +129,7 @@ TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 
 #endif
 
-inline static bool NODELETE rangesIntersect(LayoutUnit floatTop, LayoutUnit floatBottom, LayoutUnit objectTop, LayoutUnit objectBottom)
+inline static bool LEGACY_NODELETE rangesIntersect(LayoutUnit floatTop, LayoutUnit floatBottom, LayoutUnit objectTop, LayoutUnit objectBottom)
 {
     if (objectTop >= floatBottom || objectBottom < floatTop)
         return false;
@@ -165,11 +165,11 @@ public:
 
     virtual ~ComputeFloatOffsetAdapter() = default;
 
-    LayoutUnit NODELETE lowValue() const { return m_lineTop; }
-    LayoutUnit NODELETE highValue() const { return m_lineBottom; }
+    LayoutUnit LEGACY_NODELETE lowValue() const { return m_lineTop; }
+    LayoutUnit LEGACY_NODELETE highValue() const { return m_lineBottom; }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit NODELETE offset() const { return m_offset; }
+    LayoutUnit LEGACY_NODELETE offset() const { return m_offset; }
 
 protected:
     virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
@@ -221,12 +221,12 @@ public:
     {
     }
 
-    LayoutUnit NODELETE lowValue() const { return m_belowLogicalHeight; }
-    LayoutUnit NODELETE highValue() const { return LayoutUnit::max(); }
+    LayoutUnit LEGACY_NODELETE lowValue() const { return m_belowLogicalHeight; }
+    LayoutUnit LEGACY_NODELETE highValue() const { return LayoutUnit::max(); }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit NODELETE nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
-    LayoutUnit NODELETE nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
+    LayoutUnit LEGACY_NODELETE nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
+    LayoutUnit LEGACY_NODELETE nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;

@@ -43,7 +43,7 @@ class Image;
 
 class CSSImageValue final : public CSSValue {
 public:
-    static Ref<CSSImageValue> NODELETE create();
+    static Ref<CSSImageValue> LEGACY_NODELETE create();
     static Ref<CSSImageValue> create(CSS::URL, AtomString initiatorType = { });
     static Ref<CSSImageValue> create(WTF::URL, AtomString initiatorType = { });
     static Ref<CSSImageValue> create(CachedImage&);
@@ -51,7 +51,7 @@ public:
 
     Ref<CSSImageValue> copyForComputedStyle(const CSS::URL& resolvedURL) const;
 
-    bool NODELETE isPending() const;
+    bool LEGACY_NODELETE isPending() const;
     CachedImage* loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);
     CachedImage* cachedImage() const { return m_cachedImage ? m_cachedImage.value().get() : nullptr; }
 
@@ -69,7 +69,7 @@ public:
 
     RefPtr<Style::Image> createStyleImage(const Style::BuilderState&) const;
 
-    bool NODELETE isLoadedFromOpaqueSource() const;
+    bool LEGACY_NODELETE isLoadedFromOpaqueSource() const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {

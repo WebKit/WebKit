@@ -66,7 +66,7 @@ public:
         return WTF::move(m_result);
     }
 
-    bool NODELETE error() const
+    bool LEGACY_NODELETE error() const
     {
         return m_error;
     }
@@ -110,7 +110,7 @@ private:
         {
         }
 
-        void NODELETE populate()
+        void LEGACY_NODELETE populate()
         {
             ASSERT(m_active);
             size_t delta = m_converter->m_result.size() - m_baseOfOffset;
@@ -176,7 +176,7 @@ private:
         m_result.grow(m_result.size() + delta);
     }
 
-    void NODELETE overwrite32(unsigned location, uint32_t value)
+    void LEGACY_NODELETE overwrite32(unsigned location, uint32_t value)
     {
         ASSERT(m_result.size() >= location + 4);
         m_result[location] = value >> 24;
@@ -185,7 +185,7 @@ private:
         m_result[location + 3] = value;
     }
 
-    void NODELETE overwrite16(unsigned location, uint16_t value)
+    void LEGACY_NODELETE overwrite16(unsigned location, uint16_t value)
     {
         ASSERT(m_result.size() >= location + 2);
         m_result[location] = value >> 8;
@@ -195,7 +195,7 @@ private:
     static const size_t headerSize = 12;
     static const size_t directoryEntrySize = 16;
 
-    uint32_t NODELETE calculateChecksum(size_t startingOffset, size_t endingOffset) const;
+    uint32_t LEGACY_NODELETE calculateChecksum(size_t startingOffset, size_t endingOffset) const;
 
     void processGlyphElement(const SVGElement& glyphOrMissingGlyphElement, const SVGElement* glyphElement, float defaultHorizontalAdvance, float defaultVerticalAdvance, const String& codepoints, std::optional<FloatRect>& boundingBox);
 
@@ -236,9 +236,9 @@ private:
     void appendArabicReplacementSubtable(size_t subtableRecordLocation, ASCIILiteral arabicForm);
     void appendScriptSubtable(unsigned featureCount);
     Vector<Glyph, 1> glyphsForCodepoint(char32_t) const;
-    Glyph NODELETE firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
+    Glyph LEGACY_NODELETE firstGlyph(const Vector<Glyph, 1>&, char32_t) const;
 
-    template<typename T> T NODELETE scaleUnitsPerEm(T value) const
+    template<typename T> T LEGACY_NODELETE scaleUnitsPerEm(T value) const
     {
         return value * s_outputUnitsPerEm / m_inputUnitsPerEm;
     }
@@ -270,7 +270,7 @@ private:
     bool m_error { false };
 };
 
-static uint16_t NODELETE roundDownToPowerOfTwo(uint16_t x)
+static uint16_t LEGACY_NODELETE roundDownToPowerOfTwo(uint16_t x)
 {
     x |= x >> 1;
     x |= x >> 2;
@@ -279,7 +279,7 @@ static uint16_t NODELETE roundDownToPowerOfTwo(uint16_t x)
     return (x >> 1) + 1;
 }
 
-static uint16_t NODELETE integralLog2(uint16_t x)
+static uint16_t LEGACY_NODELETE integralLog2(uint16_t x)
 {
     uint16_t result = 0;
     while (x >>= 1)
@@ -567,7 +567,7 @@ void SVGToOTFFontConverter::appendPOSTTable()
     append32(0); // "Maximum memory usage when a TrueType font is downloaded as a Type 1 font"
 }
 
-static bool NODELETE isValidStringForCFF(const String& string)
+static bool LEGACY_NODELETE isValidStringForCFF(const String& string)
 {
     for (auto c : StringView(string).codeUnits()) {
         if (c < 33 || c > 126)
@@ -1137,7 +1137,7 @@ public:
         m_cffData.append(rMoveTo);
     }
 
-    std::optional<FloatRect> NODELETE boundingBox() const
+    std::optional<FloatRect> LEGACY_NODELETE boundingBox() const
     {
         return m_boundingBox;
     }
@@ -1481,7 +1481,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
         m_fontFamily = protect(m_fontFaceElement)->fontFamily();
 }
 
-static inline bool NODELETE isFourByteAligned(size_t x)
+static inline bool LEGACY_NODELETE isFourByteAligned(size_t x)
 {
     return !(x & 3);
 }

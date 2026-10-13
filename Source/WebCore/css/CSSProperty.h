@@ -141,7 +141,7 @@ public:
 
     // Properties that apply to the highlight pseudo-elements.
     // https://drafts.csswg.org/css-pseudo-4/#highlight-styling
-    static bool NODELETE appliesToHighlightPseudoElements(CSSPropertyID);
+    static bool LEGACY_NODELETE appliesToHighlightPseudoElements(CSSPropertyID);
 
     // Returns the valid keyword values for a property from CSSProperties.json.
     // This is used by the Inspector to provide completions for properties

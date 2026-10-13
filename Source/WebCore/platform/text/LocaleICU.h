@@ -58,7 +58,7 @@ public:
     String shortTimeFormat() final;
     String dateTimeFormatWithSeconds() final;
     String dateTimeFormatWithoutSeconds() final;
-    const Vector<String>& NODELETE monthLabels() final;
+    const Vector<String>& LEGACY_NODELETE monthLabels() final;
     const Vector<String>& shortMonthLabels() final;
     const Vector<String>& standAloneMonthLabels() final;
     const Vector<String>& shortStandAloneMonthLabels() final;

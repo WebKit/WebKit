@@ -40,7 +40,7 @@ public:
 
     ~BackgroundFetchUpdateUIEvent();
 
-    void NODELETE updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
+    void LEGACY_NODELETE updateUI(BackgroundFetchUIOptions&&, DOMPromiseDeferred<void>&&);
 
 private:
     BackgroundFetchUpdateUIEvent(const AtomString&, ExtendableEventInit&&, Ref<BackgroundFetchRegistration>&&, IsTrusted);

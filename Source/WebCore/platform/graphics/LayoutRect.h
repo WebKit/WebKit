@@ -98,8 +98,8 @@ public:
         m_location.move(-box.left(), -box.top());
         m_size.expand(box.left() + box.right(), box.top() + box.bottom());
     }
-    void NODELETE expandToInfiniteY();
-    void NODELETE expandToInfiniteX();
+    void LEGACY_NODELETE expandToInfiniteY();
+    void LEGACY_NODELETE expandToInfiniteX();
     template<typename T, typename U> void expand(T dw, U dh) { m_size.expand(dw, dh); }
     void contract(const LayoutSize& size) { m_size -= size; }
     void contract(const LayoutBoxExtent& box)
@@ -176,8 +176,8 @@ public:
         return maxX > LayoutUnit::nearlyMin() && maxX < LayoutUnit::nearlyMax() && maxY > LayoutUnit::nearlyMin() && maxY < LayoutUnit::nearlyMax();
     }
     
-    bool NODELETE intersects(const LayoutRect&) const;
-    WEBCORE_EXPORT bool NODELETE contains(const LayoutRect&) const;
+    bool LEGACY_NODELETE intersects(const LayoutRect&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE contains(const LayoutRect&) const;
     bool containsX(const LayoutRect& other) const { return x() <= other.x() && other.maxX() <= maxX(); }
     bool containsY(const LayoutRect& other) const { return y() <= other.y() && other.maxY() <= maxY(); }
 
@@ -211,7 +211,7 @@ public:
     template<typename T> void inflateY(T dy) { inflateY(LayoutUnit(dy)); }
     template<typename T> void inflate(T d) { inflateX(d); inflateY(d); }
 
-    WEBCORE_EXPORT void NODELETE scale(float);
+    WEBCORE_EXPORT void LEGACY_NODELETE scale(float);
     void scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
@@ -284,7 +284,7 @@ inline IntRect snappedIntRect(LayoutPoint location, LayoutSize size)
     return IntRect(roundedIntPoint(location), snappedIntSize(size, location));
 }
 
-WEBCORE_EXPORT IntRect NODELETE enclosingIntRect(const LayoutRect&);
+WEBCORE_EXPORT IntRect LEGACY_NODELETE enclosingIntRect(const LayoutRect&);
 WEBCORE_EXPORT LayoutRect enclosingLayoutRect(const FloatRect&);
 
 // Device pixel snapping functions.

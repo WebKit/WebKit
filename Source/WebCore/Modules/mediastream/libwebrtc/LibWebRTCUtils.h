@@ -76,13 +76,13 @@ RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDi
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection);
 webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit&, webrtc::MediaType);
 
-ExceptionCode NODELETE toExceptionCode(webrtc::RTCErrorType);
+ExceptionCode LEGACY_NODELETE toExceptionCode(webrtc::RTCErrorType);
 Exception toException(const webrtc::RTCError&);
 RefPtr<RTCError> toRTCError(const webrtc::RTCError&);
 
 RTCPriorityType toRTCPriorityType(webrtc::PriorityValue);
-RTCPriorityType NODELETE toRTCPriorityType(webrtc::Priority);
-webrtc::Priority NODELETE fromRTCPriorityType(RTCPriorityType);
+RTCPriorityType LEGACY_NODELETE toRTCPriorityType(webrtc::Priority);
+webrtc::Priority LEGACY_NODELETE fromRTCPriorityType(RTCPriorityType);
 
 enum class MediaStreamTrackHintValue : uint8_t;
 webrtc::VideoTrackInterface::ContentHint toWebRTCContentHint(MediaStreamTrackHintValue);

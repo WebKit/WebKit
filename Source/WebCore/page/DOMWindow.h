@@ -106,7 +106,7 @@ public:
     virtual ~DOMWindow();
 
     const GlobalWindowIdentifier& identifier() const LIFETIME_BOUND { return m_identifier; }
-    virtual Frame* NODELETE frame() const = 0;
+    virtual Frame* LEGACY_NODELETE frame() const = 0;
 
     enum class DOMWindowType : bool { Local, Remote };
     bool isLocalDOMWindow() const { return m_type == DOMWindowType::Local; }
@@ -118,18 +118,18 @@ public:
     WEBCORE_EXPORT Location& location();
     virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState, CanNavigateState = CanNavigateState::Unchecked) = 0;
 
-    bool NODELETE closed() const;
+    bool LEGACY_NODELETE closed() const;
     WEBCORE_EXPORT void close();
     void close(Document&);
     virtual void closePage() = 0;
 
-    FrameConsoleClient* NODELETE console() const;
+    FrameConsoleClient* LEGACY_NODELETE console() const;
 
     WindowProxy* opener() const;
-    WEBCORE_EXPORT Document* NODELETE documentIfLocal();
+    WEBCORE_EXPORT Document* LEGACY_NODELETE documentIfLocal();
 
-    WindowProxy* NODELETE top() const;
-    WindowProxy* NODELETE parent() const;
+    WindowProxy* LEGACY_NODELETE top() const;
+    WindowProxy* LEGACY_NODELETE parent() const;
     unsigned length() const;
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
@@ -251,7 +251,7 @@ private:
     const DOMWindowType m_type;
 };
 
-WebCoreOpaqueRoot NODELETE root(DOMWindow*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(DOMWindow*);
 
 } // namespace WebCore
 

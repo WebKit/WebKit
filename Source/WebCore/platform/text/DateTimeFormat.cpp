@@ -89,7 +89,7 @@ static constexpr std::array upperCaseToFieldTypeMap {
     DateTimeFormat::FieldTypeRFC822Zone, // Z
 };
 
-static DateTimeFormat::FieldType NODELETE mapCharacterToFieldType(const char16_t ch)
+static DateTimeFormat::FieldType LEGACY_NODELETE mapCharacterToFieldType(const char16_t ch)
 {
     if (isASCIIUpper(ch))
         return upperCaseToFieldTypeMap[ch - 'A'];
@@ -240,7 +240,7 @@ bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
     return false;
 }
 
-static bool NODELETE isASCIIAlphabetOrQuote(char16_t ch)
+static bool LEGACY_NODELETE isASCIIAlphabetOrQuote(char16_t ch)
 {
     return isASCIIAlpha(ch) || ch == '\'';
 }

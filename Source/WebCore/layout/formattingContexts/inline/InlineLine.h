@@ -105,25 +105,25 @@ public:
     Result close(TrailingContentAction hangingTrailingWhitespace = TrailingContentAction::Preserve);
 
     static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&, InlineItemRange, const InlineItemList&);
-    static bool NODELETE hasTrailingForcedLineBreak(const RunList&);
+    static bool LEGACY_NODELETE hasTrailingForcedLineBreak(const RunList&);
 
 private:
     InlineLayoutUnit lastRunLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
 
-    void NODELETE resetTrailingContent();
+    void LEGACY_NODELETE resetTrailingContent();
     void removeHangingTrailingWhitespace();
 
     bool lineHasVisuallyNonEmptyContent() const;
 
     bool isFirstFormattedLine() const { return m_isFirstFormattedLine; }
-    const InlineFormattingContext& NODELETE formattingContext() const LIFETIME_BOUND;
+    const InlineFormattingContext& LEGACY_NODELETE formattingContext() const LIFETIME_BOUND;
     static bool appendTrailingInlineItemAsTrailingRun(RunList&, InlineLayoutUnit trimmedTrailingWhitespaceWidth, InlineItemRange, const InlineItemList&);
 
     struct TrimmableTrailingContent {
         TrimmableTrailingContent(RunList&);
 
-        void NODELETE addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
-        void NODELETE addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
+        void LEGACY_NODELETE addFullyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableContentOffset, InlineLayoutUnit trimmableWidth);
+        void LEGACY_NODELETE addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth);
         InlineLayoutUnit remove();
         InlineLayoutUnit removePartiallyTrimmableContent();
 

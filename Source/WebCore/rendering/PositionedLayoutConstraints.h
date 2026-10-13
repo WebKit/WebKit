@@ -58,11 +58,11 @@ public:
     WritingMode containingWritingMode() const { return m_containingWritingMode; }
     WritingMode selfWritingMode() const { return m_writingMode; }
 
-    bool NODELETE needsAnchor() const;
+    bool LEGACY_NODELETE needsAnchor() const;
     const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
     const StyleSelfAlignmentData& alignment() const LIFETIME_BOUND { return m_alignment; }
     ItemPosition resolveAlignmentValue() const; // Convert auto/normal as necessary.
-    bool NODELETE alignmentAppliesStretch(ItemPosition normalAlignment) const;
+    bool LEGACY_NODELETE alignmentAppliesStretch(ItemPosition normalAlignment) const;
 
     bool isOrthogonal() const { return m_containingWritingMode.isOrthogonal(m_writingMode); }
     inline bool isOpposing() const;
@@ -93,12 +93,12 @@ public:
     LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
 
     void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
-    void NODELETE adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
+    void LEGACY_NODELETE adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
 
     LayoutUnit computedInlineStaticDistance() const;
 
 private:
-    bool NODELETE containingCoordsAreFlipped() const;
+    bool LEGACY_NODELETE containingCoordsAreFlipped() const;
     bool isOrthogonalToContainingBlockWithFlippedParent() const;
     bool isParentOpposingContainingBlock() const;
 
@@ -109,7 +109,7 @@ private:
     LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
     std::pair<bool, bool> containerAllowsInfiniteOverflow() const;
 
-    bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
+    bool LEGACY_NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
     std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
     bool shouldAlignStaticPositionInInlineAxis() const;
     void computeStaticPosition();

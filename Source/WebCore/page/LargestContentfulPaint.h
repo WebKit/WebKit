@@ -44,25 +44,25 @@ public:
     ~LargestContentfulPaint();
 
     // PaintTimingMixin
-    DOMHighResTimeStamp NODELETE paintTime() const;
-    std::optional<DOMHighResTimeStamp> NODELETE presentationTime() const;
+    DOMHighResTimeStamp LEGACY_NODELETE paintTime() const;
+    std::optional<DOMHighResTimeStamp> LEGACY_NODELETE presentationTime() const;
 
     // LargestContentfulPaint
-    DOMHighResTimeStamp NODELETE loadTime() const;
-    void NODELETE setLoadTime(DOMHighResTimeStamp);
+    DOMHighResTimeStamp LEGACY_NODELETE loadTime() const;
+    void LEGACY_NODELETE setLoadTime(DOMHighResTimeStamp);
 
-    DOMHighResTimeStamp NODELETE renderTime() const;
-    void NODELETE setRenderTime(DOMHighResTimeStamp);
+    DOMHighResTimeStamp LEGACY_NODELETE renderTime() const;
+    void LEGACY_NODELETE setRenderTime(DOMHighResTimeStamp);
 
-    DOMHighResTimeStamp NODELETE startTime() const final;
+    DOMHighResTimeStamp LEGACY_NODELETE startTime() const final;
 
-    unsigned NODELETE size() const;
-    void NODELETE setSize(unsigned);
+    unsigned LEGACY_NODELETE size() const;
+    void LEGACY_NODELETE setSize(unsigned);
 
-    String NODELETE id() const;
+    String LEGACY_NODELETE id() const;
     void setID(const String&);
 
-    String NODELETE url() const;
+    String LEGACY_NODELETE url() const;
     void setURLString(const String&);
 
     Element* element() const;

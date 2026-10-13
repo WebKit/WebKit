@@ -86,7 +86,7 @@ public:
     virtual const ResourceRequest& iOSOriginalRequest() const { return request(); }
 #endif
 
-    WEBCORE_EXPORT FrameLoader* NODELETE frameLoader() const;
+    WEBCORE_EXPORT FrameLoader* LEGACY_NODELETE frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     const ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }
 
@@ -113,7 +113,7 @@ public:
     const FragmentedSharedBuffer* resourceData() const;
     void clearResourceData();
     
-    virtual bool NODELETE isSubresourceLoader() const;
+    virtual bool LEGACY_NODELETE isSubresourceLoader() const;
 
     virtual void willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& callback);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
@@ -143,7 +143,7 @@ public:
     bool shouldSniffContent() const { return m_options.sniffContent == ContentSniffingPolicy::SniffContent; }
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const { return m_options.contentEncodingSniffingPolicy; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
-    WEBCORE_EXPORT bool NODELETE shouldIncludeCertificateInfo() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE shouldIncludeCertificateInfo() const;
 
     virtual CachedResource* cachedResource() const { return nullptr; }
 
@@ -161,17 +161,17 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE frame() const;
 
     const ResourceLoaderOptions& options() const LIFETIME_BOUND { return m_options; }
 
     const ResourceRequest& deferredRequest() const LIFETIME_BOUND { return m_deferredRequest; }
     ResourceRequest takeDeferredRequest() { return std::exchange(m_deferredRequest, { }); }
 
-    bool NODELETE isPDFJSResourceLoad() const;
+    bool LEGACY_NODELETE isPDFJSResourceLoad() const;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    WEBCORE_EXPORT ResourceMonitor* NODELETE resourceMonitorIfExists();
+    WEBCORE_EXPORT ResourceMonitor* LEGACY_NODELETE resourceMonitorIfExists();
 #endif
 
 protected:

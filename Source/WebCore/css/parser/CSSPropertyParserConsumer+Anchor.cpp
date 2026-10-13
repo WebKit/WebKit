@@ -117,7 +117,7 @@ enum class KeywordType : uint8_t {
     Axisless
 };
 
-static std::optional<KeywordType> NODELETE getKeywordType(CSSValueID id)
+static std::optional<KeywordType> LEGACY_NODELETE getKeywordType(CSSValueID id)
 {
     switch (id) {
     case CSSValueID::Left:
@@ -195,7 +195,7 @@ static std::optional<KeywordType> NODELETE getKeywordType(CSSValueID id)
 
 // Check if the two keyword types are compatible with each other. For example,
 // <physical-area-x> must go with <physical-area-y> or <axisless-keyword>
-static bool NODELETE typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
+static bool LEGACY_NODELETE typesAreCompatible(KeywordType dim1Type, KeywordType dim2Type)
 {
     switch (dim1Type) {
     case KeywordType::PhysicalX:
@@ -231,7 +231,7 @@ static bool NODELETE typesAreCompatible(KeywordType dim1Type, KeywordType dim2Ty
 }
 
 // Check if a keyword type is explicit about its axis.
-static bool NODELETE typeIsAxisExplicit(KeywordType type)
+static bool LEGACY_NODELETE typeIsAxisExplicit(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalX:
@@ -248,7 +248,7 @@ static bool NODELETE typeIsAxisExplicit(KeywordType type)
 }
 
 // Check if a keyword type refers to the X or block axis.
-static bool NODELETE typeIsBlockOrXAxis(KeywordType type)
+static bool LEGACY_NODELETE typeIsBlockOrXAxis(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalX:
@@ -262,7 +262,7 @@ static bool NODELETE typeIsBlockOrXAxis(KeywordType type)
 }
 
 // Check if a keyword type refers to the Y or inline axis.
-static bool NODELETE typeIsInlineOrYAxis(KeywordType type)
+static bool LEGACY_NODELETE typeIsInlineOrYAxis(KeywordType type)
 {
     switch (type) {
     case KeywordType::PhysicalY:
@@ -275,7 +275,7 @@ static bool NODELETE typeIsInlineOrYAxis(KeywordType type)
     }
 }
 
-static CSSValueID NODELETE makeAmbiguous(CSSValueID dim)
+static CSSValueID LEGACY_NODELETE makeAmbiguous(CSSValueID dim)
 {
     switch (dim) {
     case CSSValueID::BlockStart: return CSSValueID::Start;

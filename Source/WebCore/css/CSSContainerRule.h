@@ -47,7 +47,7 @@ public:
     Vector<Condition> conditions() const;
 
 private:
-    const StyleRuleContainer& NODELETE styleRuleContainer() const;
+    const StyleRuleContainer& LEGACY_NODELETE styleRuleContainer() const;
 
     CSSContainerRule(StyleRuleContainer&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Container; }

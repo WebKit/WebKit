@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-static HashMap<const CSSPrimitiveValue*, String>& NODELETE serializedPrimitiveValues()
+static HashMap<const CSSPrimitiveValue*, String>& LEGACY_NODELETE serializedPrimitiveValues()
 {
     static NeverDestroyed<HashMap<const CSSPrimitiveValue*, String>> map;
     return map;

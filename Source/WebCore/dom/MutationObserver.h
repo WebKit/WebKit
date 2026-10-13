@@ -103,7 +103,7 @@ private:
     explicit MutationObserver(Ref<MutationCallback>&&);
     void deliver();
 
-    static bool NODELETE validateOptions(MutationObserverOptions);
+    static bool LEGACY_NODELETE validateOptions(MutationObserverOptions);
 
     const Ref<MutationCallback> m_callback;
     Vector<Ref<MutationRecord>> m_records;

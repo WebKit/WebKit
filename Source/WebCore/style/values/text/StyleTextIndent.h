@@ -92,7 +92,7 @@ template<> struct CSSValueConversion<TextIndent> { auto operator()(BuilderState&
 // MARK: - Blending
 
 template<> struct Blending<TextIndent> {
-    bool NODELETE canBlend(const TextIndent&, const TextIndent&);
+    bool LEGACY_NODELETE canBlend(const TextIndent&, const TextIndent&);
     auto blend(const TextIndent&, const TextIndent&, const BlendingContext&) -> TextIndent;
 };
 

@@ -68,7 +68,7 @@ public:
     StepRange();
     StepRange(const StepRange&);
     StepRange(const Decimal& stepBase, RangeLimitations, const Decimal& minimum, const Decimal& maximum, const Decimal& step, const StepDescription&, IsReversible = IsReversible::No);
-    Decimal NODELETE acceptableError() const;
+    Decimal LEGACY_NODELETE acceptableError() const;
     Decimal alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const;
     Decimal clampValue(const Decimal& value) const;
     bool hasStep() const { return m_hasStep; }

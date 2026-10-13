@@ -169,7 +169,7 @@ static inline String targetReferenceFromResource(SVGElement& element)
     return SVGURIReference::fragmentIdentifierFromIRIString(target, protect(element.document()));
 }
 
-static inline bool NODELETE isChainableResource(const SVGElement& element, const SVGElement& linkedResource)
+static inline bool LEGACY_NODELETE isChainableResource(const SVGElement& element, const SVGElement& linkedResource)
 {
     if (is<SVGPatternElement>(element))
         return is<SVGPatternElement>(linkedResource);

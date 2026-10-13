@@ -108,15 +108,15 @@ class ReplacementFragment {
 public:
     ReplacementFragment(RefPtr<DocumentFragment>&&, const VisibleSelection&);
 
-    DocumentFragment* NODELETE fragment() { return m_fragment.get(); }
+    DocumentFragment* LEGACY_NODELETE fragment() { return m_fragment.get(); }
 
     Node* firstChild() const;
     Node* lastChild() const;
 
     bool isEmpty() const;
     
-    bool NODELETE hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
-    bool NODELETE hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
+    bool LEGACY_NODELETE hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
+    bool LEGACY_NODELETE hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
     
     void removeNode(Node&);
     void removeNodePreservingChildren(Node&);
@@ -137,13 +137,13 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ReplacementFragment);
 
-static bool NODELETE isInterchangeNewlineNode(const Node& node)
+static bool LEGACY_NODELETE isInterchangeNewlineNode(const Node& node)
 {
     auto* br = dynamicDowncast<HTMLBRElement>(node);
     return br && br->attributeWithoutSynchronization(classAttr) == AppleInterchangeNewline;
 }
 
-static bool NODELETE isInterchangeConvertedSpaceSpan(const Node& node)
+static bool LEGACY_NODELETE isInterchangeConvertedSpaceSpan(const Node& node)
 {
     auto* element = dynamicDowncast<HTMLElement>(node);
     return element && element->attributeWithoutSynchronization(classAttr) == AppleConvertedSpace;
@@ -539,7 +539,7 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
         && shouldMerge(endOfInsertedContent, next);
 }
 
-static bool NODELETE isMailPasteAsQuotationNode(const Node& node)
+static bool LEGACY_NODELETE isMailPasteAsQuotationNode(const Node& node)
 {
     return node.hasTagName(blockquoteTag) && downcast<Element>(node).attributeWithoutSynchronization(classAttr) == ApplePasteAsQuotation;
 }
@@ -781,7 +781,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     }
 }
 
-static bool NODELETE isProhibitedParagraphChild(const QualifiedName& name)
+static bool LEGACY_NODELETE isProhibitedParagraphChild(const QualifiedName& name)
 {
     using namespace ElementNames;
 

@@ -212,7 +212,7 @@ void ImageDocument::finishedParsing()
     HTMLDocument::finishedParsing();
 }
 
-inline ImageDocument& NODELETE ImageDocumentParser::document() const
+inline ImageDocument& LEGACY_NODELETE ImageDocumentParser::document() const
 {
     // Only used during parsing, so document is guaranteed to be non-null.
     ASSERT(RawDataDocumentParser::document());

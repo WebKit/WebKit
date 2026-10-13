@@ -49,7 +49,7 @@ static WindRule windRule(const AcceleratedEffectShapeFunction& value)
 
 // MARK: - Path Evaluation
 
-template<typename ControlPoint> static AcceleratedEffectShapeFunction::ControlPointAnchor NODELETE evaluateControlPointAnchoring(const ControlPoint& value, AcceleratedEffectShapeFunction::ControlPointAnchor defaultValue)
+template<typename ControlPoint> static AcceleratedEffectShapeFunction::ControlPointAnchor LEGACY_NODELETE evaluateControlPointAnchoring(const ControlPoint& value, AcceleratedEffectShapeFunction::ControlPointAnchor defaultValue)
 {
     if (value.anchor)
         return *value.anchor;
@@ -297,25 +297,25 @@ public:
     {
     }
 
-    const std::optional<FloatPoint>& NODELETE initialMove() const { return m_initialMove; }
+    const std::optional<FloatPoint>& LEGACY_NODELETE initialMove() const { return m_initialMove; }
 
 private:
-    static FloatPoint NODELETE toPosition(FloatPoint p)
+    static FloatPoint LEGACY_NODELETE toPosition(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint NODELETE toCoordinatePair(FloatPoint p)
+    static FloatPoint LEGACY_NODELETE toCoordinatePair(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint NODELETE absoluteOffsetPoint(FloatPoint p)
+    static FloatPoint LEGACY_NODELETE absoluteOffsetPoint(FloatPoint p)
     {
         return p;
     }
 
-    static FloatPoint NODELETE relativeOffsetPoint(FloatPoint p)
+    static FloatPoint LEGACY_NODELETE relativeOffsetPoint(FloatPoint p)
     {
         return p;
     }
@@ -342,7 +342,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    static AcceleratedEffectShapeFunction::AbsoluteControlPoint NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
+    static AcceleratedEffectShapeFunction::AbsoluteControlPoint LEGACY_NODELETE absoluteControlPoint(const FloatPoint& controlPoint)
     {
         return { toPosition(controlPoint), std::nullopt };
     }

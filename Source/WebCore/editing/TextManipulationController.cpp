@@ -153,17 +153,17 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
     flushPendingItemsForCallback();
 }
 
-static bool NODELETE isInPrivateUseArea(char16_t character)
+static bool LEGACY_NODELETE isInPrivateUseArea(char16_t character)
 {
     return 0xE000 <= character && character <= 0xF8FF;
 }
 
-static bool NODELETE isTokenDelimiter(char16_t character)
+static bool LEGACY_NODELETE isTokenDelimiter(char16_t character)
 {
     return isHTMLLineBreak(character) || isInPrivateUseArea(character);
 }
 
-static bool NODELETE isNotSpace(char16_t character)
+static bool LEGACY_NODELETE isNotSpace(char16_t character)
 {
     if (character == noBreakSpace)
         return false;
@@ -212,7 +212,7 @@ public:
         return content;
     }
 
-    bool NODELETE atEnd() const { return !m_text && m_node == m_pastEndNode; }
+    bool LEGACY_NODELETE atEnd() const { return !m_text && m_node == m_pastEndNode; }
 
 private:
     bool shouldAdvanceIteratorPastCurrentNode() const
@@ -270,7 +270,7 @@ private:
     std::optional<Vector<String>> m_text;
 };
 
-static bool NODELETE shouldExtractValueForTextManipulation(const HTMLInputElement& input)
+static bool LEGACY_NODELETE shouldExtractValueForTextManipulation(const HTMLInputElement& input)
 {
     // FIXME: Consider using `type()` instead of checking the attribute, so that plain text fields
     // with and without an explicit `type="text"` behave consistently.
@@ -280,7 +280,7 @@ static bool NODELETE shouldExtractValueForTextManipulation(const HTMLInputElemen
     return input.isTextButton();
 }
 
-static bool NODELETE isAttributeForTextManipulation(const QualifiedName& nameToCheck)
+static bool LEGACY_NODELETE isAttributeForTextManipulation(const QualifiedName& nameToCheck)
 {
     using namespace HTMLNames;
     static const std::array attributeNames {
@@ -299,7 +299,7 @@ static bool NODELETE isAttributeForTextManipulation(const QualifiedName& nameToC
     return false;
 }
 
-static bool NODELETE canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
+static bool LEGACY_NODELETE canPerformTextManipulationByReplacingEntireTextContent(const Element& element)
 {
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }

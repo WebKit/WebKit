@@ -77,7 +77,7 @@ public:
     void setSpeakAs(CSSCounterStyleDescriptors::SpeakAs speakAs) { m_descriptors.m_speakAs = speakAs; }
     void setFirstSymbolValueForFixedSystem(int firstSymbolValue) { m_descriptors.m_fixedSystemFirstSymbolValue = firstSymbolValue; }
 
-    void NODELETE setFallbackReference(Ref<CSSRegisteredCounterStyle>&&);
+    void LEGACY_NODELETE setFallbackReference(Ref<CSSRegisteredCounterStyle>&&);
     bool isFallbackUnresolved() { return !m_fallbackReference; }
     bool isExtendsUnresolved() { return !m_descriptors.m_isExtendedResolved; };
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
@@ -100,10 +100,10 @@ private:
     CSSRegisteredCounterStyle(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
 
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
-    bool NODELETE isInRange(int) const;
+    bool LEGACY_NODELETE isInRange(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
     bool usesNegativeSign();
-    bool NODELETE shouldApplyNegativeSymbols(int) const;
+    bool LEGACY_NODELETE shouldApplyNegativeSymbols(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
     WeakPtr<CSSRegisteredCounterStyle> fallback() const { return m_fallbackReference; };
     String fallbackText(int, WritingMode);
@@ -113,8 +113,8 @@ private:
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.
     String initialRepresentation(int, WritingMode) const;
 
-    String NODELETE counterForSystemCyclic(int) const;
-    String NODELETE counterForSystemFixed(int) const;
+    String LEGACY_NODELETE counterForSystemCyclic(int) const;
+    String LEGACY_NODELETE counterForSystemFixed(int) const;
     String counterForSystemSymbolic(unsigned) const;
     String counterForSystemAlphabetic(unsigned) const;
     String counterForSystemNumeric(unsigned) const;

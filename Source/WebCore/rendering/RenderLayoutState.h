@@ -71,7 +71,7 @@ public:
 
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
-    LayoutUnit NODELETE pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
+    LayoutUnit LEGACY_NODELETE pageLogicalOffset(RenderBox*, LayoutUnit childLogicalOffset) const;
     
     LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
@@ -93,7 +93,7 @@ public:
     LayoutRect clipRect() const { return m_clipRect; }
     bool isClipped() const { return m_clipped; }
 
-    void NODELETE addLayoutDelta(LayoutSize);
+    void LEGACY_NODELETE addLayoutDelta(LayoutSize);
     LayoutSize layoutDelta() const { return m_layoutDeltaForRepaint; }
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(LayoutSize) const;
@@ -114,7 +114,7 @@ private:
     // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/LocalFrameViewLayoutContext.
     void computePaginationInformation(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
     void propagateLineGridInfo(const RenderLayoutState& ancestor, RenderBox&);
-    void NODELETE establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
+    void LEGACY_NODELETE establishLineGrid(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
     void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
     // Do not add anything apart from bitfields. See https://bugs.webkit.org/show_bug.cgi?id=100173

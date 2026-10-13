@@ -147,7 +147,7 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
     rendererUnit().addSource(m_deviceID, *source);
 }
 
-static unsigned NODELETE pollSamplesCount()
+static unsigned LEGACY_NODELETE pollSamplesCount()
 {
 #if USE(LIBWEBRTC)
     return LibWebRTCAudioModule::PollSamplesCount + 1;

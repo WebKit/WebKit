@@ -111,9 +111,9 @@ public:
     std::unique_ptr<Style::ComputedStyle> styleForPage(int pageIndex);
     std::unique_ptr<Style::ComputedStyle> defaultStyleForElement(const Element*);
 
-    Document& NODELETE document();
-    const Document& NODELETE document() const;
-    const Settings& NODELETE settings() const;
+    Document& LEGACY_NODELETE document();
+    const Document& LEGACY_NODELETE document() const;
+    const Settings& LEGACY_NODELETE settings() const;
 
     ScopeType scopeType() const { return m_scopeType; }
 
@@ -145,16 +145,16 @@ public:
     bool hasSelectorForId(const AtomString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
 
-    bool NODELETE hasViewportDependentMediaQueries() const;
+    bool LEGACY_NODELETE hasViewportDependentMediaQueries() const;
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
-    static KeyframesRuleMap& NODELETE userAgentKeyframes();
+    static KeyframesRuleMap& LEGACY_NODELETE userAgentKeyframes();
     static void addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
     RefPtr<StyleRuleKeyframes> keyframesRuleForName(const AtomString&) const;
     Vector<Ref<StyleRuleKeyframe>> keyframeRulesForName(const AtomString&, const TimingFunction*) const;
 
-    const CustomFunctionRegistry* NODELETE customFunctionRegistry() const;
+    const CustomFunctionRegistry* LEGACY_NODELETE customFunctionRegistry() const;
     CustomFunctionRegistry& ensureCustomFunctionRegistry();
 
     RefPtr<StyleRuleViewTransition> viewTransitionRule() const;
@@ -178,7 +178,7 @@ private:
     class State;
 
     State initializeStateAndStyle(const Element&, const ResolutionContext&, std::unique_ptr<Style::ComputedStyle>&& initialStyle = { });
-    BuilderContext NODELETE builderContext(State&) const;
+    BuilderContext LEGACY_NODELETE builderContext(State&) const;
 
     void applyMatchedProperties(State&, const MatchResult&, PropertyCascade::IncludedProperties&&);
     void setGlobalStateAfterApplyingProperties(const BuilderState&);

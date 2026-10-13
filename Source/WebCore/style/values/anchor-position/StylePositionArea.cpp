@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Style {
 
-[[maybe_unused]] static bool NODELETE axisIsBlockOrX(PositionAreaAxis axis)
+[[maybe_unused]] static bool LEGACY_NODELETE axisIsBlockOrX(PositionAreaAxis axis)
 {
     switch (axis) {
     case PositionAreaAxis::Horizontal:
@@ -49,7 +49,7 @@ namespace Style {
     }
 }
 
-[[maybe_unused]] static bool NODELETE axisIsInlineOrY(PositionAreaAxis axis)
+[[maybe_unused]] static bool LEGACY_NODELETE axisIsInlineOrY(PositionAreaAxis axis)
 {
     switch (axis) {
     case PositionAreaAxis::Vertical:
@@ -111,7 +111,7 @@ PositionAreaTrack PositionAreaValue::coordMatchedTrackForAxis(BoxAxis physicalAx
     return shouldFlip ? flipPositionAreaTrack(track) : track;
 }
 
-static ItemPosition NODELETE flip(ItemPosition alignment)
+static ItemPosition LEGACY_NODELETE flip(ItemPosition alignment)
 {
     return ItemPosition::Start == alignment ? ItemPosition::End : ItemPosition::Start;
 };
@@ -164,7 +164,7 @@ ItemPosition PositionAreaValue::defaultAlignmentForAxis(BoxAxis physicalAxis, Wr
 
 // MARK: - Conversion
 
-static std::optional<PositionAreaAxis> NODELETE positionAreaKeywordToAxis(CSSValueID keyword)
+static std::optional<PositionAreaAxis> LEGACY_NODELETE positionAreaKeywordToAxis(CSSValueID keyword)
 {
     switch (keyword) {
     case CSSValueID::Left:
@@ -237,7 +237,7 @@ static std::optional<PositionAreaAxis> NODELETE positionAreaKeywordToAxis(CSSVal
     }
 }
 
-static PositionAreaTrack NODELETE positionAreaKeywordToTrack(CSSValueID keyword)
+static PositionAreaTrack LEGACY_NODELETE positionAreaKeywordToTrack(CSSValueID keyword)
 {
     switch (keyword) {
     case CSSValueID::Left:
@@ -307,7 +307,7 @@ static PositionAreaTrack NODELETE positionAreaKeywordToTrack(CSSValueID keyword)
     }
 }
 
-static PositionAreaSelf NODELETE positionAreaKeywordToSelf(CSSValueID keyword)
+static PositionAreaSelf LEGACY_NODELETE positionAreaKeywordToSelf(CSSValueID keyword)
 {
     switch (keyword) {
     case CSSValueID::Left:
@@ -371,7 +371,7 @@ static PositionAreaSelf NODELETE positionAreaKeywordToSelf(CSSValueID keyword)
 }
 
 // Expand a one keyword position-area to the equivalent keyword pair value.
-static std::pair<CSSValueID, CSSValueID> NODELETE positionAreaExpandKeyword(CSSValueID dim)
+static std::pair<CSSValueID, CSSValueID> LEGACY_NODELETE positionAreaExpandKeyword(CSSValueID dim)
 {
     auto maybeAxis = positionAreaKeywordToAxis(dim);
     if (maybeAxis) {
@@ -390,7 +390,7 @@ static std::pair<CSSValueID, CSSValueID> NODELETE positionAreaExpandKeyword(CSSV
 }
 
 // Flip a PositionAreaValue across a logical axis (block or inline), given the current writing mode.
-static PositionAreaValue NODELETE flipPositionAreaByLogicalAxis(LogicalBoxAxis flipAxis, PositionAreaValue area, WritingMode writingMode)
+static PositionAreaValue LEGACY_NODELETE flipPositionAreaByLogicalAxis(LogicalBoxAxis flipAxis, PositionAreaValue area, WritingMode writingMode)
 {
     auto blockOrXSpan = area.blockOrXAxis();
     auto inlineOrYSpan = area.inlineOrYAxis();
@@ -413,7 +413,7 @@ static PositionAreaValue NODELETE flipPositionAreaByLogicalAxis(LogicalBoxAxis f
 }
 
 // Flip a PositionAreaValue across a physical axis (x or y), given the current writing mode.
-static PositionAreaValue NODELETE flipPositionAreaByPhysicalAxis(BoxAxis flipAxis, PositionAreaValue area, WritingMode writingMode)
+static PositionAreaValue LEGACY_NODELETE flipPositionAreaByPhysicalAxis(BoxAxis flipAxis, PositionAreaValue area, WritingMode writingMode)
 {
     auto blockOrXSpan = area.blockOrXAxis();
     auto inlineOrYSpan = area.inlineOrYAxis();
@@ -442,7 +442,7 @@ static PositionAreaValue NODELETE flipPositionAreaByPhysicalAxis(BoxAxis flipAxi
 // and self properties intact. Because this turns a block/X span into an inline/Y
 // span and vice versa, this function also swaps the order of the spans, so
 // that the block/X span goes before the inline/Y span.
-static PositionAreaValue NODELETE mirrorPositionAreaAcrossDiagonal(PositionAreaValue area)
+static PositionAreaValue LEGACY_NODELETE mirrorPositionAreaAcrossDiagonal(PositionAreaValue area)
 {
     auto blockOrXSpan = area.blockOrXAxis();
     auto inlineOrYSpan = area.inlineOrYAxis();
@@ -528,7 +528,7 @@ auto CSSValueConversion<PositionArea>::operator()(BuilderState& state, const CSS
     return area;
 }
 
-static CSSValueID NODELETE keywordForPositionAreaSpan(PositionAreaSpan span)
+static CSSValueID LEGACY_NODELETE keywordForPositionAreaSpan(PositionAreaSpan span)
 {
     auto axis = span.axis();
     auto track = span.track();

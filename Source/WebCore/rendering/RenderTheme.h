@@ -145,7 +145,7 @@ public:
 
     // A method for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
-    bool NODELETE isControlContainer(StyleAppearance) const;
+    bool LEGACY_NODELETE isControlContainer(StyleAppearance) const;
 
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderElement&) const { return false; }
@@ -162,7 +162,7 @@ public:
     virtual void adjustRepaintRect(const RenderBox&, FloatRect&) { }
 
     // A method asking if the theme is able to draw the focus ring.
-    virtual bool NODELETE supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const;
+    virtual bool LEGACY_NODELETE supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const;
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover() const { return false; }
@@ -444,18 +444,18 @@ private:
     void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(Style::ComputedStyle&, const Element*) const;
 
 public:
-    bool NODELETE isWindowActive(const RenderElement&) const;
-    bool NODELETE isChecked(const RenderElement&) const;
+    bool LEGACY_NODELETE isWindowActive(const RenderElement&) const;
+    bool LEGACY_NODELETE isChecked(const RenderElement&) const;
     bool isIndeterminate(const RenderElement&) const;
     bool isEnabled(const RenderElement&) const;
     bool isFocused(const RenderElement&) const;
     bool isPressed(const RenderElement&) const;
     bool isSpinUpButtonPartPressed(const RenderElement&) const;
     bool isHovered(const RenderElement&) const;
-    bool NODELETE isSpinUpButtonPartHovered(const RenderElement&) const;
+    bool LEGACY_NODELETE isSpinUpButtonPartHovered(const RenderElement&) const;
     bool isPresenting(const RenderElement&) const;
     bool isReadOnlyControl(const RenderElement&) const;
-    bool NODELETE isDefault(const RenderElement&) const;
+    bool LEGACY_NODELETE isDefault(const RenderElement&) const;
     bool hasListButton(const RenderElement&) const;
     bool hasListButtonPressed(const RenderElement&) const;
 

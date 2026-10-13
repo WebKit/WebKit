@@ -64,7 +64,7 @@ private:
     WGPUDevice backing() const { return m_backing.get(); }
     bool isDeviceImpl() const final { return true; }
 
-    Ref<Queue> NODELETE queue() final;
+    Ref<Queue> LEGACY_NODELETE queue() final;
 
     void destroy() final;
 
@@ -73,7 +73,7 @@ private:
     RefPtr<Texture> createTexture(const TextureDescriptor&) final;
     RefPtr<Sampler> createSampler(const SamplerDescriptor&) final;
     RefPtr<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;
-    void NODELETE updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
+    void LEGACY_NODELETE updateExternalTexture(const WebCore::WebGPU::ExternalTexture&, const WebCore::MediaPlayerIdentifier&) final;
 
     RefPtr<BindGroupLayout> createBindGroupLayout(const BindGroupLayoutDescriptor&) final;
     RefPtr<PipelineLayout> createPipelineLayout(const PipelineLayoutDescriptor&) final;
@@ -100,11 +100,11 @@ private:
     void setLabelInternal(const String&) final;
     void pauseAllErrorReporting(bool pause) final;
 
-    [[noreturn]] Ref<CommandEncoder> NODELETE invalidCommandEncoder() final;
-    [[noreturn]] Ref<CommandBuffer> NODELETE invalidCommandBuffer() final;
-    [[noreturn]] Ref<RenderPassEncoder> NODELETE invalidRenderPassEncoder() final;
-    [[noreturn]] Ref<ComputePassEncoder> NODELETE invalidComputePassEncoder() final;
-    [[noreturn]] Ref<BindGroupLayout> NODELETE emptyBindGroupLayout() const final;
+    [[noreturn]] Ref<CommandEncoder> LEGACY_NODELETE invalidCommandEncoder() final;
+    [[noreturn]] Ref<CommandBuffer> LEGACY_NODELETE invalidCommandBuffer() final;
+    [[noreturn]] Ref<RenderPassEncoder> LEGACY_NODELETE invalidRenderPassEncoder() final;
+    [[noreturn]] Ref<ComputePassEncoder> LEGACY_NODELETE invalidComputePassEncoder() final;
+    [[noreturn]] Ref<BindGroupLayout> LEGACY_NODELETE emptyBindGroupLayout() const final;
 
     WebGPUPtr<WGPUDevice> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;

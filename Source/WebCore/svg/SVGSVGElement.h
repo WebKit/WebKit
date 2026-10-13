@@ -74,7 +74,7 @@ public: // DOM
     void pauseAnimations();
     void unpauseAnimations();
     bool resumePausedAnimationsIfNeeded(const IntRect&);
-    bool NODELETE animationsPaused() const;
+    bool LEGACY_NODELETE animationsPaused() const;
     float getCurrentTime() const;
     void setCurrentTime(float);
     
@@ -161,7 +161,7 @@ private:
     FloatSize computeCurrentViewportSizeExcludingZoom() const;
 
     RefPtr<SVGViewElement> findViewAnchor(StringView fragmentIdentifier) const;
-    SVGSVGElement* NODELETE findRootAnchor(const SVGViewElement*) const;
+    SVGSVGElement* LEGACY_NODELETE findRootAnchor(const SVGViewElement*) const;
     SVGSVGElement* findRootAnchor(StringView) const;
 
     bool m_useCurrentView { false };

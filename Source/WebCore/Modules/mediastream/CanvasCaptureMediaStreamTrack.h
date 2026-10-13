@@ -91,7 +91,7 @@ private:
         void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
         void scheduleCaptureCanvas();
         void captureCanvas();
-        void NODELETE requestFrameTimerFired();
+        void LEGACY_NODELETE requestFrameTimerFired();
         CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Canvas; }
 
         bool m_shouldEmitFrame { true };

@@ -90,7 +90,7 @@ static bool wcrBrowserEngineClientEnabled()
     return [PAL::getWCRBrowserEngineClientClassSingleton() shouldEvaluateURLs];
 }
 
-static RefPtr<ParentalControlsURLFilter>& NODELETE globalFilter()
+static RefPtr<ParentalControlsURLFilter>& LEGACY_NODELETE globalFilter()
 {
     static MainThreadNeverDestroyed<RefPtr<ParentalControlsURLFilter>> filter;
     return filter.get();

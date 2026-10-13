@@ -96,7 +96,7 @@ public:
     void deref() const final { CDMInstance::deref(); }
 
     static bool supportsPersistableState();
-    static bool NODELETE supportsPersistentKeys();
+    static bool LEGACY_NODELETE supportsPersistentKeys();
     static bool supportsMediaCapability(const CDMMediaCapability&);
     static bool mimeTypeIsPlayable(const String&);
 
@@ -247,7 +247,7 @@ private:
     void updateKeyStatuses();
     void nextRequest();
 
-    AVContentKeyRequest* NODELETE lastKeyRequest() const;
+    AVContentKeyRequest* LEGACY_NODELETE lastKeyRequest() const;
     Vector<RetainPtr<AVContentKey>> contentKeys() const;
     Vector<RetainPtr<AVContentKeyRequest>> contentKeyRequests() const;
 

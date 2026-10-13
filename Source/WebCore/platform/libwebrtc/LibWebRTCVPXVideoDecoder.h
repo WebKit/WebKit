@@ -56,7 +56,7 @@ private:
     Ref<DecodePromise> decode(VideoEncodedData&&) final;
     Ref<GenericPromise> flush() final;
     void reset() final;
-    void NODELETE close() final;
+    void LEGACY_NODELETE close() final;
 
     const Ref<LibWebRTCVPXInternalVideoDecoder> m_internalDecoder;
 };

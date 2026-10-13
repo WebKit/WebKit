@@ -38,15 +38,15 @@ public:
 
     const PluginInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    String NODELETE name() const;
-    String NODELETE filename() const;
-    String NODELETE description() const;
+    String LEGACY_NODELETE name() const;
+    String LEGACY_NODELETE filename() const;
+    String LEGACY_NODELETE description() const;
 
-    unsigned NODELETE length() const;
+    unsigned LEGACY_NODELETE length() const;
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_mimeTypes.size(); }
-    RefPtr<DOMMimeType> NODELETE item(unsigned index);
-    RefPtr<DOMMimeType> NODELETE namedItem(const AtomString& propertyName);
+    RefPtr<DOMMimeType> LEGACY_NODELETE item(unsigned index);
+    RefPtr<DOMMimeType> LEGACY_NODELETE namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
     bool isSupportedPropertyName(const AtomString&) const;
 

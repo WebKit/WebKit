@@ -193,17 +193,17 @@ using namespace HTMLNames;
 class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ClipRects);
 public:
-    static Ref<ClipRects> NODELETE create()
+    static Ref<ClipRects> LEGACY_NODELETE create()
     {
         return adoptRef(*new ClipRects);
     }
 
-    static Ref<ClipRects> NODELETE create(const ClipRects& other)
+    static Ref<ClipRects> LEGACY_NODELETE create(const ClipRects& other)
     {
         return adoptRef(*new ClipRects(other));
     }
 
-    void NODELETE reset()
+    void LEGACY_NODELETE reset()
     {
         m_overflowClipRect.reset();
         m_fixedClipRect.reset();
@@ -211,21 +211,21 @@ public:
         m_fixed = false;
     }
 
-    const ClipRect& NODELETE overflowClipRect() const { return m_overflowClipRect; }
-    void NODELETE setOverflowClipRect(const ClipRect& clipRect) { m_overflowClipRect = clipRect; }
+    const ClipRect& LEGACY_NODELETE overflowClipRect() const { return m_overflowClipRect; }
+    void LEGACY_NODELETE setOverflowClipRect(const ClipRect& clipRect) { m_overflowClipRect = clipRect; }
 
-    const ClipRect& NODELETE fixedClipRect() const { return m_fixedClipRect; }
-    void NODELETE setFixedClipRect(const ClipRect& clipRect) { m_fixedClipRect = clipRect; }
+    const ClipRect& LEGACY_NODELETE fixedClipRect() const { return m_fixedClipRect; }
+    void LEGACY_NODELETE setFixedClipRect(const ClipRect& clipRect) { m_fixedClipRect = clipRect; }
 
-    const ClipRect& NODELETE posClipRect() const { return m_posClipRect; }
-    void NODELETE setPosClipRect(const ClipRect& clipRect) { m_posClipRect = clipRect; }
+    const ClipRect& LEGACY_NODELETE posClipRect() const { return m_posClipRect; }
+    void LEGACY_NODELETE setPosClipRect(const ClipRect& clipRect) { m_posClipRect = clipRect; }
 
-    bool NODELETE fixed() const { return m_fixed; }
-    void NODELETE setFixed(bool fixed) { m_fixed = fixed; }
+    bool LEGACY_NODELETE fixed() const { return m_fixed; }
+    void LEGACY_NODELETE setFixed(bool fixed) { m_fixed = fixed; }
 
-    void NODELETE setOverflowClipRectAffectedByRadius() { m_overflowClipRect.setAffectedByRadius(true); }
+    void LEGACY_NODELETE setOverflowClipRectAffectedByRadius() { m_overflowClipRect.setAffectedByRadius(true); }
 
-    bool NODELETE operator==(const ClipRects& other) const
+    bool LEGACY_NODELETE operator==(const ClipRects& other) const
     {
         return m_overflowClipRect == other.overflowClipRect()
             && m_fixedClipRect == other.fixedClipRect()
@@ -233,7 +233,7 @@ public:
             && m_fixed == other.fixed();
     }
 
-    ClipRects& NODELETE operator=(const ClipRects& other)
+    ClipRects& LEGACY_NODELETE operator=(const ClipRects& other)
     {
         m_overflowClipRect = other.overflowClipRect();
         m_fixedClipRect = other.fixedClipRect();
@@ -280,7 +280,7 @@ public:
 
     }
 
-    ClipRects* NODELETE getClipRects(const RenderLayer::ClipRectsContext& context) const
+    ClipRects* LEGACY_NODELETE getClipRects(const RenderLayer::ClipRectsContext& context) const
     {
         return m_clipRects[getIndex(context.clipRectsType, context.respectOverflowClip())].get();
     }
@@ -294,7 +294,7 @@ public:
     std::array<const RenderLayer*, NumCachedClipRectsTypes> m_clipRectsRoot;
 #endif
 private:
-    unsigned NODELETE getIndex(ClipRectsType clipRectsType, bool respectOverflowClip) const
+    unsigned LEGACY_NODELETE getIndex(ClipRectsType clipRectsType, bool respectOverflowClip) const
     {
         unsigned index = static_cast<unsigned>(clipRectsType);
         if (respectOverflowClip)
@@ -326,7 +326,7 @@ static TextStream& operator<<(TextStream& ts, const ClipRects& clipRects)
 
 #endif
 
-static ScrollingScope NODELETE nextScrollingScope()
+static ScrollingScope LEGACY_NODELETE nextScrollingScope()
 {
     static ScrollingScope currentScope = 0;
     return ++currentScope;
@@ -3339,12 +3339,12 @@ static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, cons
     });
 }
 
-static inline bool NODELETE shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflection)
+static inline bool LEGACY_NODELETE shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflection)
 {
     return paintingReflection && !layer->has3DTransform();
 }
 
-static inline bool NODELETE shouldSuppressPaintingLayer(RenderLayer* layer)
+static inline bool LEGACY_NODELETE shouldSuppressPaintingLayer(RenderLayer* layer)
 {
     // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
     // A full repaint will occur in Document::setVisualUpdatesAllowed(bool) if painting is suppressed here.
@@ -3354,7 +3354,7 @@ static inline bool NODELETE shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
-static inline bool NODELETE paintForFixedRootBackground(const RenderLayer* layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags)
+static inline bool LEGACY_NODELETE paintForFixedRootBackground(const RenderLayer* layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags)
 {
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
 }
@@ -5402,7 +5402,7 @@ RefPtr<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRects
     return containerLayer->updateClipRects(clipRectsContext);
 }
 
-static inline ClipRect NODELETE backgroundClipRectForPosition(const ClipRects& parentRects, PositionType position)
+static inline ClipRect LEGACY_NODELETE backgroundClipRectForPosition(const ClipRects& parentRects, PositionType position)
 {
     if (position == PositionType::Fixed)
         return parentRects.fixedClipRect();
@@ -6646,7 +6646,7 @@ void RenderLayer::clearFilters()
         m_filters->clearFilter();
 }
 
-static RenderLayer* NODELETE parentLayerCrossFrame(const RenderLayer& layer)
+static RenderLayer* LEGACY_NODELETE parentLayerCrossFrame(const RenderLayer& layer)
 {
     if (auto* parent = layer.parent())
         return parent;

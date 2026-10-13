@@ -92,7 +92,7 @@ void InbandTextTrack::setMode(Mode mode, ModeChangeType changeType)
     setModeInternal(mode);
 }
 
-static inline InbandTextTrackPrivate::Mode NODELETE toPrivate(TextTrack::Mode mode)
+static inline InbandTextTrackPrivate::Mode LEGACY_NODELETE toPrivate(TextTrack::Mode mode)
 {
     switch (mode) {
     case TextTrack::Mode::Disabled:

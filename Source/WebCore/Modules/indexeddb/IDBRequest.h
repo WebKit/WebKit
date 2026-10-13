@@ -94,8 +94,8 @@ public:
 
     ExceptionOr<DOMException*> error() const;
 
-    IDBTransaction* NODELETE transaction() const;
-    IDBTransaction* NODELETE transactionForBindings() const;
+    IDBTransaction* LEGACY_NODELETE transaction() const;
+    IDBTransaction* LEGACY_NODELETE transactionForBindings() const;
     
     enum class ReadyState { Pending, Done };
     ReadyState readyState() const { return m_readyState; }
@@ -104,10 +104,10 @@ public:
 
     std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
     std::optional<IDBIndexIdentifier> sourceIndexIdentifier() const;
-    IndexedDB::ObjectStoreRecordType NODELETE requestedObjectStoreRecordType() const;
-    IndexedDB::IndexRecordType NODELETE requestedIndexRecordType() const;
+    IndexedDB::ObjectStoreRecordType LEGACY_NODELETE requestedObjectStoreRecordType() const;
+    IndexedDB::IndexRecordType LEGACY_NODELETE requestedIndexRecordType() const;
 
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     // ActiveDOMObject.
     void ref() const final { ThreadSafeRefCounted::ref(); }
@@ -134,7 +134,7 @@ public:
 
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
     bool willAbortTransactionAfterDispatchingEvent() const;
-    void NODELETE transactionTransitionedToFinishing();
+    void LEGACY_NODELETE transactionTransitionedToFinishing();
     bool isEventBeingDispatched() const { return !!m_eventBeingDispatched; }
 
 protected:
@@ -160,7 +160,7 @@ private:
     EventTargetInterfaceType eventTargetInterface() const override;
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void stop() final;
 
     virtual void cancelForStop();
@@ -212,7 +212,7 @@ private:
     RefPtr<Event> m_eventBeingDispatched;
 };
 
-WebCoreOpaqueRoot NODELETE root(IDBRequest*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(IDBRequest*);
 
 } // namespace WebCore
 

@@ -56,7 +56,7 @@ public:
         return adoptRef(*new GPUCommandEncoder(WTF::move(backing), device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     ExceptionOr<Ref<GPURenderPassEncoder>> beginRenderPass(const GPURenderPassDescriptor&);

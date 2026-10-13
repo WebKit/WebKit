@@ -51,12 +51,12 @@ public:
 
     virtual ~IDBIndex();
 
-    const String& NODELETE name() const;
+    const String& LEGACY_NODELETE name() const;
     ExceptionOr<void> setName(const String&);
-    IDBObjectStore& NODELETE objectStore();
-    const IDBKeyPath& NODELETE keyPath() const;
-    bool NODELETE unique() const;
-    bool NODELETE multiEntry() const;
+    IDBObjectStore& LEGACY_NODELETE objectStore();
+    const IDBKeyPath& LEGACY_NODELETE keyPath() const;
+    bool LEGACY_NODELETE unique() const;
+    bool LEGACY_NODELETE multiEntry() const;
 
     void rollbackInfoForVersionChangeAbort();
 
@@ -79,14 +79,14 @@ public:
 
     const IDBIndexInfo& info() const LIFETIME_BOUND { return m_info; }
 
-    void NODELETE markAsDeleted();
+    void LEGACY_NODELETE markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     // ActiveDOMObject.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 
-    WebCoreOpaqueRoot NODELETE opaqueRoot();
+    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot();
 
 private:
     IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
@@ -111,6 +111,6 @@ private:
     const CheckedRef<IDBObjectStore> m_objectStore;
 };
 
-WebCoreOpaqueRoot NODELETE root(IDBIndex*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(IDBIndex*);
 
 } // namespace WebCore

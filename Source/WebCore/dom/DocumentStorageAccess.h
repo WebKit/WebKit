@@ -69,7 +69,7 @@ public:
     explicit DocumentStorageAccess(Document&);
     ~DocumentStorageAccess();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     static void hasStorageAccess(Document&, Ref<DeferredPromise>&&);

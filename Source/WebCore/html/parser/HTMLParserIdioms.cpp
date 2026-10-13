@@ -273,18 +273,18 @@ double parseHTMLFloatingPointNumberValue(StringView input, double fallbackValue)
 }
 
 template<typename CharacterType>
-static inline bool NODELETE isHTMLSpaceOrDelimiter(CharacterType character)
+static inline bool LEGACY_NODELETE isHTMLSpaceOrDelimiter(CharacterType character)
 {
     return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
-static inline bool NODELETE isNumberStart(char16_t character)
+static inline bool LEGACY_NODELETE isNumberStart(char16_t character)
 {
     return isASCIIDigit(character) || character == '.' || character == '-';
 }
 
 template<typename CharacterType>
-static inline bool NODELETE isHTMLSpaceOrDelimiterOrNumberStart(CharacterType character)
+static inline bool LEGACY_NODELETE isHTMLSpaceOrDelimiterOrNumberStart(CharacterType character)
 {
     return isHTMLSpaceOrDelimiter(character) || isNumberStart(character);
 }
@@ -347,13 +347,13 @@ String parseCORSSettingsAttribute(const AtomString& value)
 }
 
 template<typename CharacterType>
-static bool NODELETE isASCIIDigitOrPeriod(CharacterType character)
+static bool LEGACY_NODELETE isASCIIDigitOrPeriod(CharacterType character)
 {
     return isASCIIDigit(character) || character == '.';
 }
 
 template<typename CharacterType>
-static bool NODELETE isSemicolonOrComma(CharacterType character)
+static bool LEGACY_NODELETE isSemicolonOrComma(CharacterType character)
 {
     return character == ';' || character == ',';
 }
@@ -532,7 +532,7 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView multiLengthString)
 }
 
 template<typename CharacterType>
-static unsigned NODELETE countCommas(StringParsingBuffer<CharacterType> rawInput)
+static unsigned LEGACY_NODELETE countCommas(StringParsingBuffer<CharacterType> rawInput)
 {
     unsigned count = 0;
     while (rawInput.hasCharactersRemaining())

@@ -103,9 +103,9 @@ public:
     // Match the character |c| against the character at the input pointer (~lookahead).
     bool match(char c) const { return !isAtEnd() && currentChar() == c; }
     // Scan the character |c|.
-    bool NODELETE scan(char);
+    bool LEGACY_NODELETE scan(char);
     // Scan the first |charactersCount| characters of the string |characters|.
-    bool NODELETE scan(std::span<const Latin1Character> characters);
+    bool LEGACY_NODELETE scan(std::span<const Latin1Character> characters);
 
     // Skip (advance the input pointer) as long as the specified
     // |characterPredicate| returns true, and the input pointer is not passed
@@ -129,10 +129,10 @@ public:
 
     // Scan the string |toMatch|, using the specified |run| as the sequence to
     // match against.
-    bool NODELETE scanRun(const Run&, const String& toMatch);
+    bool LEGACY_NODELETE scanRun(const Run&, const String& toMatch);
 
     // Skip to the end of the specified |run|.
-    void NODELETE skipRun(const Run&);
+    void LEGACY_NODELETE skipRun(const Run&);
 
     // Return the String made up of the characters in |run|, and advance the
     // input pointer to the end of the run.
@@ -152,7 +152,7 @@ public:
     bool scanDouble(double& number, bool* isNegative = nullptr);
 
 protected:
-    Run NODELETE createRun(Position start, Position end) const;
+    Run LEGACY_NODELETE createRun(Position start, Position end) const;
     Position position() const
     {
         if (m_is8Bit)

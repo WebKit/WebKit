@@ -36,7 +36,7 @@ namespace WebCore {
 static const ASCIILiteral X25519 { "X25519"_s };
 static const ASCIILiteral Ed25519 { "Ed25519"_s };
 
-static constexpr size_t NODELETE keySizeInBytesFromNamedCurve(CryptoKeyOKP::NamedCurve curve)
+static constexpr size_t LEGACY_NODELETE keySizeInBytesFromNamedCurve(CryptoKeyOKP::NamedCurve curve)
 {
     switch (curve) {
     case CryptoKeyOKP::NamedCurve::X25519:

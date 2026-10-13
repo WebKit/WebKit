@@ -64,7 +64,7 @@ public:
     // setting for the context has changed).
     void updateTimerIntervalIfNecessary();
 
-    static void NODELETE scriptDidInteractWithPlugin();
+    static void LEGACY_NODELETE scriptDidInteractWithPlugin();
 
     EventLoopTimerHandle timer() const { return m_timer; }
     bool hasReachedMaxNestingLevel() const { return m_hasReachedMaxNestingLevel; }
@@ -75,7 +75,7 @@ private:
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
 
-    bool NODELETE isDOMTimersThrottlingEnabled(const Document&) const;
+    bool LEGACY_NODELETE isDOMTimersThrottlingEnabled(const Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
     void fired();

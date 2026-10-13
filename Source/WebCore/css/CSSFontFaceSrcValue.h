@@ -47,11 +47,11 @@ public:
     bool isEmpty() const { return m_fontFaceName.isEmpty(); }
     const AtomString& fontFaceName() const LIFETIME_BOUND { return m_fontFaceName; }
 
-    SVGFontFaceElement* NODELETE svgFontFaceElement() const;
+    SVGFontFaceElement* LEGACY_NODELETE svgFontFaceElement() const;
     void setSVGFontFaceElement(SVGFontFaceElement&);
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool NODELETE equals(const CSSFontFaceSrcLocalValue&) const;
+    bool LEGACY_NODELETE equals(const CSSFontFaceSrcLocalValue&) const;
 
 private:
     explicit CSSFontFaceSrcLocalValue(AtomString&&);

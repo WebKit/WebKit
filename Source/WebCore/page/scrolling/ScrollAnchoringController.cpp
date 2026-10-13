@@ -63,7 +63,7 @@ ScrollAnchoringController::~ScrollAnchoringController()
     invalidate();
 }
 
-static bool NODELETE hasScrolledFromOriginInBlockDirection(ScrollPosition scrollPosition, WritingMode writingMode)
+static bool LEGACY_NODELETE hasScrolledFromOriginInBlockDirection(ScrollPosition scrollPosition, WritingMode writingMode)
 {
     if (writingMode.isVertical())
         return !!scrollPosition.x();
@@ -71,7 +71,7 @@ static bool NODELETE hasScrolledFromOriginInBlockDirection(ScrollPosition scroll
     return !!scrollPosition.y();
 }
 
-static IntSize NODELETE constrainedToBlockDirection(IntSize scrollDelta, WritingMode writingMode)
+static IntSize LEGACY_NODELETE constrainedToBlockDirection(IntSize scrollDelta, WritingMode writingMode)
 {
     if (writingMode.isVertical())
         return { scrollDelta.width(), 0 };
@@ -79,7 +79,7 @@ static IntSize NODELETE constrainedToBlockDirection(IntSize scrollDelta, Writing
     return { 0, scrollDelta.height() };
 }
 
-static FloatPoint NODELETE inlineAndBlockStartCorner(FloatRect box, WritingMode writingMode)
+static FloatPoint LEGACY_NODELETE inlineAndBlockStartCorner(FloatRect box, WritingMode writingMode)
 {
     switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
@@ -370,7 +370,7 @@ AnchorSearchStatus ScrollAnchoringController::examinePriorityCandidate(RenderEle
     return examineAnchorCandidate(*ancestor);
 }
 
-static bool NODELETE overflowAnchorProhibitsAnchoring(const RenderElement& object, const RenderBox& scrollingAncestor)
+static bool LEGACY_NODELETE overflowAnchorProhibitsAnchoring(const RenderElement& object, const RenderBox& scrollingAncestor)
 {
     for (auto* renderer = &object; renderer; renderer = renderer->parent()) {
         if (renderer->style().overflowAnchor() == OverflowAnchor::None)

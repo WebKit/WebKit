@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static bool NODELETE isCSPDirectiveName(StringView name)
+static bool LEGACY_NODELETE isCSPDirectiveName(StringView name)
 {
     // Called with a source-expression token, not a parsed directive name, so it is not lowercased.
     return equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::baseURI)
@@ -61,22 +61,22 @@ static bool NODELETE isCSPDirectiveName(StringView name)
         || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::styleSrc);
 }
 
-template<typename CharacterType> static bool NODELETE isHostCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isHostCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '-';
 }
 
-template<typename CharacterType> static bool NODELETE isPathComponentCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isPathComponentCharacter(CharacterType c)
 {
     return c != '?' && c != '#';
 }
 
-template<typename CharacterType> static bool NODELETE isSchemeContinuationCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isSchemeContinuationCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '+' || c == '-' || c == '.';
 }
 
-template<typename CharacterType> static bool NODELETE isNotColonOrSlash(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isNotColonOrSlash(CharacterType c)
 {
     return c != ':' && c != '/';
 }
@@ -180,7 +180,7 @@ static bool schemeIsInHttpFamily(StringView scheme)
     return equalLettersIgnoringASCIICase(scheme, "https"_s) || equalLettersIgnoringASCIICase(scheme, "http"_s);
 }
 
-static bool NODELETE isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
+static bool LEGACY_NODELETE isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
 {
     switch (mode) {
     case ContentSecurityPolicyModeForExtension::None:
@@ -226,7 +226,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
     return true;
 }
 
-static bool NODELETE extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
+static bool LEGACY_NODELETE extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
 {
     return mode != ContentSecurityPolicyModeForExtension::ManifestV3 || !isRestrictedDirectiveForMode(directiveName, mode);
 }
@@ -584,7 +584,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
 // Match Blink's behavior of allowing an equal sign to appear anywhere in the value of the nonce
 // even though this does not match the behavior of Content Security Policy Level 3 spec.,
 // <https://w3c.github.io/webappsec-csp/> (29 February 2016).
-template<typename CharacterType> static bool NODELETE isNonceCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isNonceCharacter(CharacterType c)
 {
     return isBase64OrBase64URLCharacter(c) || c == '=';
 }

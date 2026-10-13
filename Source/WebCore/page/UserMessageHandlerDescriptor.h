@@ -46,8 +46,8 @@ class UserMessageHandlerDescriptor : public RefCounted<UserMessageHandlerDescrip
 public:
     WEBCORE_EXPORT virtual ~UserMessageHandlerDescriptor();
 
-    WEBCORE_EXPORT const AtomString& NODELETE name() const;
-    WEBCORE_EXPORT const DOMWrapperWorld& NODELETE world() const;
+    WEBCORE_EXPORT const AtomString& LEGACY_NODELETE name() const;
+    WEBCORE_EXPORT const DOMWrapperWorld& LEGACY_NODELETE world() const;
 
     virtual void didPostMessage(UserMessageHandler&, JSC::JSGlobalObject&, JSC::JSValue, Function<void(JSC::JSValue, const String&)>&&) const = 0;
     virtual JSC::JSValue didPostLegacySynchronousMessage(UserMessageHandler&, JSC::JSGlobalObject&, JSC::JSValue) const = 0;

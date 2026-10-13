@@ -96,7 +96,7 @@ struct NodesInCommonTreeScope {
     SUPPRESS_UNCOUNTED_MEMBER Node* nodeA { nullptr };
     SUPPRESS_UNCOUNTED_MEMBER Node* nodeB { nullptr };
 };
-static NodesInCommonTreeScope NODELETE findNodesInCommonTreeScope(Node*, Node*);
+static NodesInCommonTreeScope LEGACY_NODELETE findNodesInCommonTreeScope(Node*, Node*);
 
 TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document, RefPtr<CustomElementRegistry>&& registry)
     : m_rootNode(shadowRoot)
@@ -525,7 +525,7 @@ bool TreeScope::isMatchingAnchor(HTMLAnchorElement& anchor, StringView name)
     return false;
 }
 
-static Element* NODELETE focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
+static Element* LEGACY_NODELETE focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)
 {
     for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
         if (focusedFrame->tree().parent() == currentFrame)
@@ -561,7 +561,7 @@ Element* TreeScope::pointerLockElement() const
 
 #endif
 
-static ALWAYS_INLINE Node* NODELETE host(TreeScope& treeScope)
+static ALWAYS_INLINE Node* LEGACY_NODELETE host(TreeScope& treeScope)
 {
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope.rootNode()))
         return shadowRoot->host();

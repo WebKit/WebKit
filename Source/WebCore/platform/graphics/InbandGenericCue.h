@@ -64,7 +64,7 @@ struct GenericCueData {
     }
 
     bool isValid() const { return !!m_uniqueId; }
-    bool NODELETE equalNotConsideringTimesOrId(const GenericCueData&) const;
+    bool LEGACY_NODELETE equalNotConsideringTimesOrId(const GenericCueData&) const;
 
     Markable<InbandGenericCueIdentifier> m_uniqueId;
     MediaTime m_startTime;

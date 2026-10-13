@@ -44,7 +44,7 @@ public:
 
     ShadowRealmGlobalScope& wrapped() const { return *m_wrapped; }
 
-    const JSDOMGlobalObject* NODELETE incubatingRealm() const;
+    const JSDOMGlobalObject* LEGACY_NODELETE incubatingRealm() const;
     JSDOMGlobalObject* incubatingRealm();
 
     ScriptExecutionContext* scriptExecutionContext() const;
@@ -73,9 +73,9 @@ inline JSDOMGlobalObject* JSShadowRealmGlobalScopeBase::incubatingRealm()
 }
 
 // Always ignores the execState and passed globalObject, ShadowRealmGlobalScope is itself a globalObject and will always use its own prototype chain.
-JSC::JSValue NODELETE toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, ShadowRealmGlobalScope&);
+JSC::JSValue LEGACY_NODELETE toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, ShadowRealmGlobalScope&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, ShadowRealmGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, globalObject, *scope) : JSC::jsNull(); }
-JSC::JSValue NODELETE toJS(JSC::JSGlobalObject*, ShadowRealmGlobalScope&);
+JSC::JSValue LEGACY_NODELETE toJS(JSC::JSGlobalObject*, ShadowRealmGlobalScope&);
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, ShadowRealmGlobalScope* scope) { return scope ? toJS(lexicalGlobalObject, *scope) : JSC::jsNull(); }
 
 } // namespace WebCore

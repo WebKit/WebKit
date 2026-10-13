@@ -89,7 +89,7 @@ void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedNam
         HTMLPlugInElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-static bool NODELETE hasTypeOrSrc(const HTMLEmbedElement& embed)
+static bool LEGACY_NODELETE hasTypeOrSrc(const HTMLEmbedElement& embed)
 {
     return embed.hasAttributeWithoutSynchronization(typeAttr) || embed.hasAttributeWithoutSynchronization(srcAttr);
 }

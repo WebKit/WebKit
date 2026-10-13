@@ -52,7 +52,7 @@ public:
     virtual ~SpeechSynthesisUtterance();
 
     // ContextDestructionObserver, PlatformSpeechSynthesisUtteranceClient.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
@@ -62,7 +62,7 @@ public:
     const String& lang() const LIFETIME_BOUND { return m_platformUtterance->lang(); }
     void setLang(const String& lang) { m_platformUtterance->setLang(lang); }
 
-    SpeechSynthesisVoice* NODELETE voice() const;
+    SpeechSynthesisVoice* LEGACY_NODELETE voice() const;
     void setVoice(SpeechSynthesisVoice*);
 
     float volume() const { return m_platformUtterance->volume(); }
@@ -89,14 +89,14 @@ private:
     bool isSpeechSynthesisUtterance() const final { return true; }
 
     void dispatchEventAndUpdateState(Event&);
-    void NODELETE incrementActivityCountForEventDispatch();
-    void NODELETE decrementActivityCountForEventDispatch();
+    void LEGACY_NODELETE incrementActivityCountForEventDispatch();
+    void LEGACY_NODELETE decrementActivityCountForEventDispatch();
 
     // ActiveDOMObject
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     EventTargetInterfaceType eventTargetInterface() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

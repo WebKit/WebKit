@@ -143,7 +143,7 @@ void RenderTreeUpdater::GeneratedContent::updateListMarkers()
     m_updater.m_builder.updateListMarkerContents();
 }
 
-static KeyframeEffectStack* NODELETE keyframeEffectStackForPseudoElement(const Element& element, PseudoElementType pseudoElementType)
+static KeyframeEffectStack* LEGACY_NODELETE keyframeEffectStackForPseudoElement(const Element& element, PseudoElementType pseudoElementType)
 {
     if (!element.mayHaveKeyframeEffects())
         return nullptr;

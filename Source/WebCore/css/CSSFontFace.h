@@ -112,7 +112,7 @@ public:
 
     std::span<const UnicodeRange> ranges() const LIFETIME_BOUND { ASSERT(m_status != Status::Failure); return m_ranges.span(); }
 
-    RefPtr<CSSValue> NODELETE familyCSSValue() const;
+    RefPtr<CSSValue> LEGACY_NODELETE familyCSSValue() const;
 
     void setFontSelectionCapabilities(FontSelectionCapabilities capabilities) { m_fontSelectionCapabilities = capabilities; }
     FontSelectionCapabilities fontSelectionCapabilities() const { ASSERT(m_status != Status::Failure); return m_fontSelectionCapabilities.computeFontSelectionCapabilities(); }
@@ -124,7 +124,7 @@ public:
     void addClient(CSSFontFaceClient&);
     void removeClient(CSSFontFaceClient&);
 
-    bool NODELETE computeFailureState() const;
+    bool LEGACY_NODELETE computeFailureState() const;
 
     void opportunisticallyStartFontDataURLLoading(DownloadableBinaryFontTrustedTypes);
 
@@ -140,18 +140,18 @@ public:
 
     static void appendSources(CSSFontFace&, CSSValueList&, ScriptExecutionContext*, bool isInitiatingElementInUserAgentShadowTree);
 
-    bool NODELETE rangesMatchCodePoint(char32_t) const;
+    bool LEGACY_NODELETE rangesMatchCodePoint(char32_t) const;
 
     // We don't guarantee that the FontFace wrapper will be the same every time you ask for it.
     Ref<FontFace> wrapper(ScriptExecutionContext*);
     void setWrapper(FontFace&);
-    FontFace* NODELETE existingWrapper();
+    FontFace* LEGACY_NODELETE existingWrapper();
 
     struct FontLoadTiming {
         Seconds blockPeriod;
         Seconds swapPeriod;
     };
-    FontLoadTiming NODELETE fontLoadTiming() const;
+    FontLoadTiming LEGACY_NODELETE fontLoadTiming() const;
     bool shouldIgnoreFontLoadCompletions() const { return m_shouldIgnoreFontLoadCompletions; }
 
     bool purgeable() const;
@@ -178,7 +178,7 @@ private:
     const StyleProperties& properties() const;
     MutableStyleProperties& mutableProperties();
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     const Variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> m_propertiesOrCSSConnection;
     RefPtr<CSSValue> m_family;

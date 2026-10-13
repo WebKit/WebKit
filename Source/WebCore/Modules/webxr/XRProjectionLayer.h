@@ -60,7 +60,7 @@ public:
 
     std::optional<float> fixedFoveation() const;
     void setFixedFoveation(std::optional<float>);
-    WebXRRigidTransform* NODELETE deltaPose() const;
+    WebXRRigidTransform* LEGACY_NODELETE deltaPose() const;
     void setDeltaPose(WebXRRigidTransform*);
 
     // WebXRLayer

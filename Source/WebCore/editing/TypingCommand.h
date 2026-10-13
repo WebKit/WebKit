@@ -130,7 +130,7 @@ private:
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Document&);
 
-    void NODELETE updatePreservesTypingStyle(Type);
+    void LEGACY_NODELETE updatePreservesTypingStyle(Type);
     bool willAddTypingToOpenCommand(Type, TextGranularity, const String& = emptyString(), const std::optional<SimpleRange>& = { });
     void markMisspellingsAfterTyping(Type);
     void typingAddedToOpenCommand(Type);

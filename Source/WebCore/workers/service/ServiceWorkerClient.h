@@ -59,9 +59,9 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    const URL& NODELETE url() const;
-    FrameType NODELETE frameType() const;
-    Type NODELETE type() const;
+    const URL& LEGACY_NODELETE url() const;
+    FrameType LEGACY_NODELETE frameType() const;
+    Type LEGACY_NODELETE type() const;
     String id() const;
 
     Identifier identifier() const { return m_data.identifier; }

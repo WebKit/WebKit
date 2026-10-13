@@ -85,7 +85,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
 
 typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
-static SpaceSplitStringTable& NODELETE spaceSplitStringTable()
+static SpaceSplitStringTable& LEGACY_NODELETE spaceSplitStringTable()
 {
     static NeverDestroyed<SpaceSplitStringTable> table;
     return table;
@@ -110,7 +110,7 @@ public:
     }
 
     template <typename TokenCharacterType>
-    bool NODELETE processToken(std::span<const TokenCharacterType> characters)
+    bool LEGACY_NODELETE processToken(std::span<const TokenCharacterType> characters)
     {
         if (characters.size() == m_referenceLength && equal(m_referenceCharacters, characters)) {
             m_referenceStringWasFound = true;
@@ -119,7 +119,7 @@ public:
         return true;
     }
 
-    bool NODELETE referenceStringWasFound() const { return m_referenceStringWasFound; }
+    bool LEGACY_NODELETE referenceStringWasFound() const { return m_referenceStringWasFound; }
 
 private:
     const ReferenceCharacterType* m_referenceCharacters;
@@ -128,7 +128,7 @@ private:
 };
 
 template <typename ValueCharacterType>
-static bool NODELETE spaceSplitStringContainsValueInternal(StringView spaceSplitString, StringView value)
+static bool LEGACY_NODELETE spaceSplitStringContainsValueInternal(StringView spaceSplitString, StringView value)
 {
     TokenIsEqualToCharactersTokenProcessor<ValueCharacterType> tokenProcessor(value.span<ValueCharacterType>().data(), value.length());
     tokenizeSpaceSplitString(tokenProcessor, spaceSplitString);
@@ -150,13 +150,13 @@ class TokenCounter {
 public:
     TokenCounter() : m_tokenCount(0) { }
 
-    template<typename CharacterType> bool NODELETE processToken(std::span<const CharacterType>)
+    template<typename CharacterType> bool LEGACY_NODELETE processToken(std::span<const CharacterType>)
     {
         ++m_tokenCount;
         return true;
     }
 
-    unsigned NODELETE tokenCount() const { return m_tokenCount; }
+    unsigned LEGACY_NODELETE tokenCount() const { return m_tokenCount; }
 
 private:
     unsigned m_tokenCount;
@@ -180,7 +180,7 @@ public:
         return true;
     }
 
-    const AtomString* NODELETE nextMemoryBucket() const { return m_memoryBucket.data(); }
+    const AtomString* LEGACY_NODELETE nextMemoryBucket() const { return m_memoryBucket.data(); }
 
 private:
     const AtomString& m_keyString;

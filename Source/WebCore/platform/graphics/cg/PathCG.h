@@ -50,7 +50,7 @@ public:
 
     static PlatformPathPtr emptyPlatformPath();
 
-    PlatformPathPtr NODELETE platformPath() const;
+    PlatformPathPtr LEGACY_NODELETE platformPath() const;
 
     void addPath(const PathCG&, const AffineTransform&);
 

@@ -57,7 +57,7 @@ public:
 
     Ref<PlatformCAAnimation> copy() const override;
 
-    PlatformAnimationRef NODELETE platformAnimation() const;
+    PlatformAnimationRef LEGACY_NODELETE platformAnimation() const;
     
     String keyPath() const override;
     

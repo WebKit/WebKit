@@ -96,7 +96,7 @@ public:
     void setFallback(const String&);
     void setSymbols(const String&);
     void setAdditiveSymbols(const String&);
-    void NODELETE setSpeakAs(const String&);
+    void LEGACY_NODELETE setSpeakAs(const String&);
 
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);

@@ -127,7 +127,7 @@ public:
     using ReadyPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<HTMLModelElement>>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
 
-    WEBCORE_EXPORT RefPtr<Model> NODELETE model() const;
+    WEBCORE_EXPORT RefPtr<Model> LEGACY_NODELETE model() const;
 
 #if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
     const DOMMatrixReadOnly& entityTransform() const;
@@ -181,7 +181,7 @@ public:
     WEBCORE_EXPORT bool supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 
-    WEBCORE_EXPORT bool NODELETE isInteractive() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isInteractive() const;
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
     double playbackRate() const { return m_playbackRate; }
@@ -227,9 +227,9 @@ public:
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
-    size_t NODELETE memoryCost() const;
+    size_t LEGACY_NODELETE memoryCost() const;
 #if ENABLE(RESOURCE_USAGE)
-    size_t NODELETE externalMemoryCost() const;
+    size_t LEGACY_NODELETE externalMemoryCost() const;
 #endif
 
     bool isIntersectingViewport() const { return m_isIntersectingViewport; }
@@ -262,19 +262,19 @@ private:
     void startLoadModelTimer();
     void loadModelTimerFired();
 
-    HTMLModelElement& NODELETE readyPromiseResolve();
+    HTMLModelElement& LEGACY_NODELETE readyPromiseResolve();
 
     CachedResourceRequest createResourceRequest(const URL&, FetchOptions::Destination);
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void resume() final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     // StyledElement
@@ -379,7 +379,7 @@ private:
     void modelResourceFinished();
     void sourceRequestResource();
     bool shouldDeferLoading() const;
-    bool NODELETE isModelDeferred() const;
+    bool LEGACY_NODELETE isModelDeferred() const;
     bool hasLiveModelPlayer() const;
     bool isModelLoading() const;
     bool isModelLoaded() const;
@@ -462,7 +462,7 @@ private:
     bool m_suppressEDR { false };
 #endif
 
-    void NODELETE triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<RefPtr<ModelPlayer>>&&);
+    void LEGACY_NODELETE triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<RefPtr<ModelPlayer>>&&);
 };
 
 } // namespace WebCore

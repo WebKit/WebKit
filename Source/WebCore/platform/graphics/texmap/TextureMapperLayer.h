@@ -194,7 +194,7 @@ private:
     void collectDamageSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&, Damage&);
     void collectDamageSelfChildrenFilterAndMask(TextureMapperPaintOptions&, Damage&);
     void collectDamageFromLayerAboutToBeRemoved(TextureMapperLayer&);
-    ALWAYS_INLINE Damage& NODELETE ensureDamageInLayerCoordinateSpace();
+    ALWAYS_INLINE Damage& LEGACY_NODELETE ensureDamageInLayerCoordinateSpace();
     inline void damageWholeLayer();
     void damageWholeLayerIncludingItsRectFromPreviousFrame();
 #endif

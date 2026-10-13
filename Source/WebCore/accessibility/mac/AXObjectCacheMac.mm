@@ -798,7 +798,7 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
     m_deferredUnsortedObjects.clear();
 }
 
-static bool NODELETE isTestAXClientType(AXClientType client)
+static bool LEGACY_NODELETE isTestAXClientType(AXClientType client)
 {
     return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
 }

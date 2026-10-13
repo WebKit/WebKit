@@ -76,7 +76,7 @@ static std::span<const Latin1Character> findPlainTextInQuotedAttributeValue(std:
     return span.first(it - span.begin());
 }
 
-static inline Latin1Character NODELETE convertASCIIAlphaToLower(char16_t character)
+static inline Latin1Character LEGACY_NODELETE convertASCIIAlphaToLower(char16_t character)
 {
     ASSERT(isASCIIAlpha(character));
     return toASCIILowerUnchecked(character);

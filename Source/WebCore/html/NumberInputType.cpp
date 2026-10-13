@@ -333,32 +333,32 @@ String NumberInputType::serialize(const Decimal& value) const
     return serializeForNumberType(value);
 }
 
-static bool NODELETE isE(char16_t ch)
+static bool LEGACY_NODELETE isE(char16_t ch)
 {
     return ch == 'e' || ch == 'E';
 }
 
-static bool NODELETE isPlusSign(char16_t ch)
+static bool LEGACY_NODELETE isPlusSign(char16_t ch)
 {
     return ch == '+';
 }
 
-static bool NODELETE isSignPrefix(char16_t ch)
+static bool LEGACY_NODELETE isSignPrefix(char16_t ch)
 {
     return ch == '+' || ch == '-';
 }
 
-static bool NODELETE isDigit(char16_t ch)
+static bool LEGACY_NODELETE isDigit(char16_t ch)
 {
     return ch >= '0' && ch <= '9';
 }
 
-static bool NODELETE isDecimalSeparator(char16_t ch)
+static bool LEGACY_NODELETE isDecimalSeparator(char16_t ch)
 {
     return ch == '.';
 }
 
-static bool NODELETE hasTwoSignChars(const String& string)
+static bool LEGACY_NODELETE hasTwoSignChars(const String& string)
 {
     unsigned count = 0;
     for (unsigned i = 0; i < string.length(); ++i) {
@@ -371,12 +371,12 @@ static bool NODELETE hasTwoSignChars(const String& string)
     return false;
 }
 
-static bool NODELETE hasDecimalSeparator(const String& string)
+static bool LEGACY_NODELETE hasDecimalSeparator(const String& string)
 {
     return string.find('.') != notFound;
 }
 
-static bool NODELETE hasSignNotAfterE(const String& string)
+static bool LEGACY_NODELETE hasSignNotAfterE(const String& string)
 {
     for (unsigned i = 0; i < string.length(); ++i) {
         if (isSignPrefix(string[i]))

@@ -42,7 +42,7 @@ class WEBCORE_EXPORT SharedRoutingArbitratorToken : public CanMakeWeakPtr<Shared
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SharedRoutingArbitratorToken, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SharedRoutingArbitratorToken);
 public:
-    static UniqueRef<SharedRoutingArbitratorToken> NODELETE create();
+    static UniqueRef<SharedRoutingArbitratorToken> LEGACY_NODELETE create();
     uint64_t logIdentifier() const;
 private:
     friend UniqueRef<SharedRoutingArbitratorToken> WTF::makeUniqueRefWithoutFastMallocCheck<SharedRoutingArbitratorToken>();
@@ -52,22 +52,22 @@ private:
 
 class WEBCORE_EXPORT SharedRoutingArbitrator {
 public:
-    static SharedRoutingArbitrator& NODELETE sharedInstance();
+    static SharedRoutingArbitrator& LEGACY_NODELETE sharedInstance();
 
     using RoutingArbitrationError = AudioSessionRoutingArbitrationClient::RoutingArbitrationError;
     using DefaultRouteChanged = AudioSessionRoutingArbitrationClient::DefaultRouteChanged;
     using ArbitrationCallback = AudioSessionRoutingArbitrationClient::ArbitrationCallback;
 
-    bool NODELETE isInRoutingArbitrationForToken(const SharedRoutingArbitratorToken&);
+    bool LEGACY_NODELETE isInRoutingArbitrationForToken(const SharedRoutingArbitratorToken&);
     void beginRoutingArbitrationForToken(const SharedRoutingArbitratorToken&, AudioSession::CategoryType, ArbitrationCallback&&);
     void endRoutingArbitrationForToken(const SharedRoutingArbitratorToken&);
 
     void setLogger(const Logger&);
 
 private:
-    const Logger& NODELETE logger();
+    const Logger& LEGACY_NODELETE logger();
     ASCIILiteral logClassName() const { return "SharedRoutingArbitrator"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 
     std::optional<AudioSession::CategoryType> m_currentCategory { AudioSession::CategoryType::None };
     WeakHashSet<SharedRoutingArbitratorToken> m_tokens;

@@ -37,10 +37,10 @@ class UserActivation final : public RefCounted<UserActivation> {
     WTF_MAKE_TZONE_ALLOCATED(UserActivation);
 
 public:
-    static Ref<UserActivation> NODELETE create(Navigator&);
+    static Ref<UserActivation> LEGACY_NODELETE create(Navigator&);
     ~UserActivation();
 
-    Navigator* NODELETE navigator();
+    Navigator* LEGACY_NODELETE navigator();
 
     bool hasBeenActive() const;
     bool isActive() const;
@@ -48,7 +48,7 @@ public:
 private:
     explicit UserActivation(Navigator&);
 
-    LocalDOMWindow* NODELETE window() const;
+    LocalDOMWindow* LEGACY_NODELETE window() const;
 
     WeakPtr<Navigator> m_navigator;
 };

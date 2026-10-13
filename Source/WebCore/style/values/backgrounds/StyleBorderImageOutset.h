@@ -126,8 +126,8 @@ template<> struct CSSValueCreation<BorderImageOutset> { auto operator()(CSSValue
 // MARK: - Blending
 
 template<> struct Blending<BorderImageOutsetValue> {
-    bool NODELETE canBlend(const BorderImageOutsetValue&, const BorderImageOutsetValue&);
-    bool NODELETE requiresInterpolationForAccumulativeIteration(const BorderImageOutsetValue&, const BorderImageOutsetValue&);
+    bool LEGACY_NODELETE canBlend(const BorderImageOutsetValue&, const BorderImageOutsetValue&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const BorderImageOutsetValue&, const BorderImageOutsetValue&);
     auto blend(const BorderImageOutsetValue&, const BorderImageOutsetValue&, const BlendingContext&) -> BorderImageOutsetValue;
 };
 

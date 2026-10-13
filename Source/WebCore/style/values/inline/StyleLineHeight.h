@@ -93,8 +93,8 @@ template<> struct CSSValueConversion<LineHeight> {
 // MARK: - Blending
 
 template<> struct Blending<LineHeight> {
-    bool NODELETE canBlend(const LineHeight&, const LineHeight&);
-    bool NODELETE requiresInterpolationForAccumulativeIteration(const LineHeight&, const LineHeight&);
+    bool LEGACY_NODELETE canBlend(const LineHeight&, const LineHeight&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const LineHeight&, const LineHeight&);
     auto blend(const LineHeight&, const LineHeight&, const BlendingContext&) -> LineHeight;
 };
 

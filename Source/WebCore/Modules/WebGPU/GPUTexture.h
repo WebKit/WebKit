@@ -55,7 +55,7 @@ public:
         return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device, isCanvasBacking));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     ExceptionOr<Ref<GPUTextureView>> createView(const std::optional<GPUTextureViewDescriptor>&) const;
@@ -70,25 +70,25 @@ public:
 
     GPUDevice* device() const;
 
-    GPUIntegerCoordinateOut NODELETE width() const;
-    GPUIntegerCoordinateOut NODELETE height() const;
-    GPUIntegerCoordinateOut NODELETE depthOrArrayLayers() const;
-    GPUIntegerCoordinateOut NODELETE mipLevelCount() const;
-    GPUSize32Out NODELETE sampleCount() const;
-    GPUTextureDimension NODELETE dimension() const;
-    GPUFlagsConstant NODELETE usage() const;
-    JSC::JSValue NODELETE textureBindingViewDimension() const;
-    size_t NODELETE estimatedMemoryCost() const;
+    GPUIntegerCoordinateOut LEGACY_NODELETE width() const;
+    GPUIntegerCoordinateOut LEGACY_NODELETE height() const;
+    GPUIntegerCoordinateOut LEGACY_NODELETE depthOrArrayLayers() const;
+    GPUIntegerCoordinateOut LEGACY_NODELETE mipLevelCount() const;
+    GPUSize32Out LEGACY_NODELETE sampleCount() const;
+    GPUTextureDimension LEGACY_NODELETE dimension() const;
+    GPUFlagsConstant LEGACY_NODELETE usage() const;
+    JSC::JSValue LEGACY_NODELETE textureBindingViewDimension() const;
+    size_t LEGACY_NODELETE estimatedMemoryCost() const;
 
     // The GPU memory to tell the GC about, since it can't otherwise see it. Only a texture the device creates for the page has
     // one; a canvas or XR context owns its textures and makes new ones every frame. May be called from GC threads.
     size_t memoryCost() const { return m_memoryCost.load(std::memory_order_relaxed); }
     void setMemoryCost(size_t memoryCost) { m_memoryCost.store(memoryCost, std::memory_order_relaxed); }
 
-    static GPUTextureFormat NODELETE aspectSpecificFormat(GPUTextureFormat, GPUTextureAspect);
-    static uint32_t NODELETE texelBlockSize(GPUTextureFormat);
-    static uint32_t NODELETE texelBlockWidth(GPUTextureFormat);
-    static uint32_t NODELETE texelBlockHeight(GPUTextureFormat);
+    static GPUTextureFormat LEGACY_NODELETE aspectSpecificFormat(GPUTextureFormat, GPUTextureAspect);
+    static uint32_t LEGACY_NODELETE texelBlockSize(GPUTextureFormat);
+    static uint32_t LEGACY_NODELETE texelBlockWidth(GPUTextureFormat);
+    static uint32_t LEGACY_NODELETE texelBlockHeight(GPUTextureFormat);
 
     virtual ~GPUTexture();
 

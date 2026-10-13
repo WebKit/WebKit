@@ -62,7 +62,7 @@ private:
 
         void writeVideoFrame(VideoFrame&, VideoFrameTimeMetadata);
 
-        void NODELETE setWritable(WritableStream&);
+        void LEGACY_NODELETE setWritable(WritableStream&);
 
     private:
         explicit Source(ScriptExecutionContextIdentifier);

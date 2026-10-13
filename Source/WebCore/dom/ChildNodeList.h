@@ -72,10 +72,10 @@ public:
     void invalidateCache();
 
     // For CollectionIndexCache
-    Node* NODELETE collectionBegin() const;
-    Node* NODELETE collectionLast() const;
-    void NODELETE collectionTraverseForward(Node*&, unsigned count, unsigned& traversedCount) const;
-    void NODELETE collectionTraverseBackward(Node*&, unsigned count) const;
+    Node* LEGACY_NODELETE collectionBegin() const;
+    Node* LEGACY_NODELETE collectionLast() const;
+    void LEGACY_NODELETE collectionTraverseForward(Node*&, unsigned count, unsigned& traversedCount) const;
+    void LEGACY_NODELETE collectionTraverseBackward(Node*&, unsigned count) const;
     bool collectionCanTraverseBackward() const { return true; }
     void willValidateIndexCache() const { }
 

@@ -43,7 +43,7 @@ public:
 private:
     explicit AccessibilitySlider(AXID, RenderObject&, AXObjectCache&);
 
-    HTMLInputElement* NODELETE inputElement() const;
+    HTMLInputElement* LEGACY_NODELETE inputElement() const;
     RefPtr<AccessibilityObject> elementAccessibilityHitTest(const IntPoint&) const final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }

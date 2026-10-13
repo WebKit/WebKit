@@ -75,7 +75,7 @@ public:
 
     void setRequest(IDBRequest& request) { m_request = request; }
     void clearRequest() { m_request.clear(); }
-    void NODELETE clearWrappers();
+    void LEGACY_NODELETE clearWrappers();
     IDBRequest* request() { return m_request.get(); }
 
     bool setGetResult(IDBRequest&, const IDBGetResult&, uint64_t operationID);

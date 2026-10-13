@@ -53,8 +53,8 @@ private:
     RenderBox& getBase() const;
     RenderBox& getIndex() const;
     ASCIILiteral renderName() const final { return "RenderMathMLRoot"_s; }
-    MathMLRootElement& NODELETE element() const;
-    RootType NODELETE rootType() const;
+    MathMLRootElement& LEGACY_NODELETE element() const;
+    RootType LEGACY_NODELETE rootType() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 

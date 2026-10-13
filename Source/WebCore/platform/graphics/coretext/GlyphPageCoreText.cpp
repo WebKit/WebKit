@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool NODELETE shouldFillWithVerticalGlyphs(std::span<const char16_t> buffer, const Font& font)
+static bool LEGACY_NODELETE shouldFillWithVerticalGlyphs(std::span<const char16_t> buffer, const Font& font)
 {
     if (!font.hasVerticalGlyphs())
         return false;

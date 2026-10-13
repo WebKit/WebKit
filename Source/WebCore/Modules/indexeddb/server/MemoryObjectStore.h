@@ -63,10 +63,10 @@ public:
     ~MemoryObjectStore();
 
     void transactionFinished(MemoryBackingStoreTransaction&);
-    void NODELETE writeTransactionStarted(MemoryBackingStoreTransaction&);
+    void LEGACY_NODELETE writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
     void transactionAborted(MemoryBackingStoreTransaction&);
-    MemoryBackingStoreTransaction* NODELETE writeTransaction();
+    MemoryBackingStoreTransaction* LEGACY_NODELETE writeTransaction();
 
     IDBError addIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
     void revertAddIndex(MemoryBackingStoreTransaction&, IDBIndexIdentifier);

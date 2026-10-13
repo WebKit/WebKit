@@ -61,7 +61,7 @@ Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(std::span<const C
     return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, mode));
 }
 
-static auto& NODELETE deduplicationMap()
+static auto& LEGACY_NODELETE deduplicationMap()
 {
     static NeverDestroyed<HashMap<unsigned, Ref<ImmutableStyleProperties>, AlreadyHashed>> map;
     return map.get();

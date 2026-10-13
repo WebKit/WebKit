@@ -45,7 +45,7 @@ static void finishConverting(PKPaymentMethod *paymentMethod, ApplePayPaymentMeth
 #endif
 }
 
-static ApplePayPaymentPass::ActivationState NODELETE convert(PKPaymentPassActivationState paymentPassActivationState)
+static ApplePayPaymentPass::ActivationState LEGACY_NODELETE convert(PKPaymentPassActivationState paymentPassActivationState)
 {
     switch (paymentPassActivationState) {
     case PKPaymentPassActivationStateActivated:
@@ -81,7 +81,7 @@ static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
     return result;
 }
 
-static std::optional<ApplePayPaymentMethod::Type> NODELETE convert(PKPaymentMethodType paymentMethodType)
+static std::optional<ApplePayPaymentMethod::Type> LEGACY_NODELETE convert(PKPaymentMethodType paymentMethodType)
 {
     switch (paymentMethodType) {
     case PKPaymentMethodTypeDebit:

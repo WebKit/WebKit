@@ -47,7 +47,7 @@ namespace WebCore::XPath {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
-static inline bool NODELETE isWhitespace(char16_t c)
+static inline bool LEGACY_NODELETE isWhitespace(char16_t c)
 {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
@@ -301,7 +301,7 @@ inline Interval::Interval(int min, int max)
 {
 }
 
-inline bool NODELETE Interval::contains(int value) const
+inline bool LEGACY_NODELETE Interval::contains(int value) const
 {
     if (m_min == Inf && m_max == Inf)
         return true;
@@ -383,7 +383,7 @@ Value FunId::evaluate() const
     return Value(WTF::move(result));
 }
 
-static inline String NODELETE expandedNameLocalPart(Node& node)
+static inline String LEGACY_NODELETE expandedNameLocalPart(Node& node)
 {
     if (auto* pi = dynamicDowncast<ProcessingInstruction>(node))
         return pi->target();

@@ -46,7 +46,7 @@ public:
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
-    std::optional<size_t> NODELETE estimatedMemoryCost() final;
+    std::optional<size_t> LEGACY_NODELETE estimatedMemoryCost() final;
 
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
@@ -362,10 +362,10 @@ public:
     // Returns columns, rows of executed read on success.
     std::optional<IntSize> readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, GCGLboolean packReverseRowOrder, std::span<uint8_t> data);
 
-    void NODELETE addError(GCGLErrorCode);
+    void LEGACY_NODELETE addError(GCGLErrorCode);
 
-    EnumSet<GCGLExtension> NODELETE knownActiveExtensions() const;
-    EnumSet<GCGLExtension> NODELETE requestableExtensions() const;
+    EnumSet<GCGLExtension> LEGACY_NODELETE knownActiveExtensions() const;
+    EnumSet<GCGLExtension> LEGACY_NODELETE requestableExtensions() const;
 
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
@@ -402,7 +402,7 @@ protected:
 #endif
     virtual bool reshapeDrawingBuffer() = 0;
 
-    static void NODELETE platformReleaseThreadResources();
+    static void LEGACY_NODELETE platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
     bool supportsExtensionImpl(ASCIILiteral) const;
@@ -411,9 +411,9 @@ protected:
     bool isExtensionEnabledImpl(ASCIILiteral) const;
 
     // Only for non-WebGL 2.0 contexts.
-    GCGLenum NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    GCGLenum LEGACY_NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
-    bool NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    bool LEGACY_NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
 
     HashSet<UTF8CString> m_allRequestableExtensions;
     HashSet<UTF8CString> m_allEnabledRequestableExtensions;

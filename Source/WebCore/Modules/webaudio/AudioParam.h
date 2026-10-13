@@ -70,7 +70,7 @@ public:
     float value();
     void setValue(float);
 
-    float NODELETE valueForBindings() const;
+    float LEGACY_NODELETE valueForBindings() const;
     ExceptionOr<void> setValueForBindings(float);
 
     AutomationRate automationRate() const { return m_automationRate; }
@@ -129,7 +129,7 @@ private:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioParam"_s; }
-    WTFLogChannel& NODELETE logChannel() const final;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
 #endif
     
     String m_name;

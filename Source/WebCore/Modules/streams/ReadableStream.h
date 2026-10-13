@@ -111,14 +111,14 @@ public:
     InternalReadableStream* internalReadableStream() { return m_internalReadableStream.get(); }
 
     void setDefaultReader(ReadableStreamDefaultReader*);
-    ReadableStreamDefaultReader* NODELETE defaultReader();
+    ReadableStreamDefaultReader* LEGACY_NODELETE defaultReader();
 
     bool hasByteStreamController() { return !!m_controller; }
     ReadableByteStreamController* controller() { return m_controller.get(); }
     const ReadableByteStreamController* controller() const { return m_controller.get(); }
 
     void setByobReader(ReadableStreamBYOBReader*);
-    ReadableStreamBYOBReader* NODELETE byobReader();
+    ReadableStreamBYOBReader* LEGACY_NODELETE byobReader();
     void fulfillReadIntoRequest(JSDOMGlobalObject&, RefPtr<JSC::ArrayBufferView>&&, bool done);
 
     void fulfillReadRequest(JSDOMGlobalObject&, RefPtr<JSC::ArrayBufferView>&&, bool done);
@@ -128,10 +128,10 @@ public:
     void close();
     JSC::JSValue storedError(JSDOMGlobalObject&) const;
 
-    size_t NODELETE getNumReadRequests() const;
+    size_t LEGACY_NODELETE getNumReadRequests() const;
     void addReadRequest(Ref<ReadableStreamReadRequest>&&);
 
-    size_t NODELETE getNumReadIntoRequests() const;
+    size_t LEGACY_NODELETE getNumReadIntoRequests() const;
     void addReadIntoRequest(Ref<ReadableStreamReadIntoRequest>&&);
 
     void error(JSDOMGlobalObject&, JSC::JSValue);
@@ -142,7 +142,7 @@ public:
     enum class VisitTeedChildren : bool { No, Yes };
     void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&, VisitTeedChildren = VisitTeedChildren::No);
     void setTeedBranches(ReadableStream&, ReadableStream&);
-    void NODELETE setSourceTeedStream(ReadableStream&);
+    void LEGACY_NODELETE setSourceTeedStream(ReadableStream&);
 
     class DependencyToVisit : public AbstractRefCounted {
     public:
@@ -174,7 +174,7 @@ public:
         ~Iterator();
 
         Ref<DOMPromise> next(JSDOMGlobalObject&);
-        bool NODELETE isFinished() const;
+        bool LEGACY_NODELETE isFinished() const;
         Ref<DOMPromise> returnSteps(JSDOMGlobalObject&, JSC::JSValue);
 
     private:
@@ -194,7 +194,7 @@ protected:
 private:
     ExceptionOr<void> setupReadableByteStreamControllerFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue, UnderlyingSource&&, double);
 
-    bool NODELETE isPulling() const;
+    bool LEGACY_NODELETE isPulling() const;
     void teedBranchIsDestroyed(ReadableStream&);
 
     const bool m_isSourceReachableFromOpaqueRoot { false };
@@ -213,6 +213,6 @@ private:
     WeakPtr<ReadableStream> m_sourceTeedStream;
 };
 
-WebCoreOpaqueRoot NODELETE root(ReadableStream*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(ReadableStream*);
 
 } // namespace WebCore

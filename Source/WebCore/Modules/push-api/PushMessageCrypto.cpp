@@ -53,12 +53,12 @@ ClientKeys ClientKeys::generate()
     };
 }
 
-static bool NODELETE areClientKeyLengthsValid(const ClientKeys& clientKeys)
+static bool LEGACY_NODELETE areClientKeyLengthsValid(const ClientKeys& clientKeys)
 {
     return clientKeys.clientP256DHKeyPair.publicKey.size() == p256dhPublicKeyLength && clientKeys.clientP256DHKeyPair.privateKey.size() == p256dhPrivateKeyLength && clientKeys.sharedAuthSecret.size() == sharedAuthSecretLength;
 }
 
-static size_t NODELETE computeAES128GCMPaddingLength(std::span<const uint8_t> data)
+static size_t LEGACY_NODELETE computeAES128GCMPaddingLength(std::span<const uint8_t> data)
 {
     /*
      * Compute padding length as defined in RFC8188 Section 2:

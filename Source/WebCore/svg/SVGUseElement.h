@@ -79,7 +79,7 @@ private:
     bool selfHasRelativeLengths() const override;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
 
-    Document* NODELETE externalDocument() const;
+    Document* LEGACY_NODELETE externalDocument() const;
     void updateExternalDocument();
 
     FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow) final;
@@ -87,7 +87,7 @@ private:
     RefPtr<SVGElement> findTarget(AtomString* targetID = nullptr) const;
 
     void cloneTarget(ContainerNode&, SVGElement& target) const;
-    RefPtr<SVGElement> NODELETE targetClone() const;
+    RefPtr<SVGElement> LEGACY_NODELETE targetClone() const;
 
     void expandUseElementsInShadowTree() const;
     void expandSymbolElementsInShadowTree() const;

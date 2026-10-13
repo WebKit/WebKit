@@ -41,7 +41,7 @@ static constexpr auto ALG256 = "A256CFB8"_s;
 static const size_t IVSIZE = 16;
 }
 
-static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESCFB(CryptoKeyUsageBitmap usages)
+static inline bool LEGACY_NODELETE usagesAreInvalidForCryptoAlgorithmAESCFB(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }

@@ -38,7 +38,7 @@ namespace WebCore {
 
 class CSSGridTemplateAreasValue final : public CSSValue {
 public:
-    static Ref<CSSGridTemplateAreasValue> NODELETE create(CSS::GridTemplateAreas&&);
+    static Ref<CSSGridTemplateAreasValue> LEGACY_NODELETE create(CSS::GridTemplateAreas&&);
     static Ref<CSSGridTemplateAreasValue> create(const CSS::GridTemplateAreas&);
 
     const CSS::GridTemplateAreas& areas() const LIFETIME_BOUND { return m_areas; }

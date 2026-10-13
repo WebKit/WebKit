@@ -114,7 +114,7 @@ private:
 };
 
 using KeyStoreIDType = unsigned;
-KeyStoreIDType NODELETE keyStoreBaseNextID();
+KeyStoreIDType LEGACY_NODELETE keyStoreBaseNextID();
 
 template<typename T>
 class KeyStoreBase {

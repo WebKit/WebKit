@@ -517,7 +517,7 @@ public:
     bool playAtHostTime(const MonotonicTime&);
     bool pauseAtHostTime(const MonotonicTime&);
 
-    bool NODELETE preservesPitch() const;
+    bool LEGACY_NODELETE preservesPitch() const;
     void setPreservesPitch(bool);
 
     void setPitchCorrectionAlgorithm(PitchCorrectionAlgorithm);
@@ -538,11 +538,11 @@ public:
 
     void setVolumeLocked(bool);
 
-    double NODELETE volume() const;
+    double LEGACY_NODELETE volume() const;
     void setVolume(double);
     bool platformVolumeConfigurationRequired() const { return protect(client())->mediaPlayerPlatformVolumeConfigurationRequired(); }
 
-    bool NODELETE muted() const;
+    bool LEGACY_NODELETE muted() const;
     void setMuted(bool);
 
     bool hasClosedCaptions() const;
@@ -569,7 +569,7 @@ public:
     MovieLoadType movieLoadType() const;
 
     using MediaPlayerEnums::Preload;
-    Preload NODELETE preload() const;
+    Preload LEGACY_NODELETE preload() const;
     void setPreload(Preload);
 
     void networkStateChanged();
@@ -717,7 +717,7 @@ public:
     const ContentType& contentType() const LIFETIME_BOUND { return m_loadOptions.contentType; }
     String contentMIMEType() const;
     String contentTypeCodecs() const;
-    bool NODELETE contentMIMETypeWasInferredFromExtension() const;
+    bool LEGACY_NODELETE contentMIMETypeWasInferredFromExtension() const;
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     void setShouldCheckHardwareSupport(bool);
@@ -761,8 +761,8 @@ public:
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;
 
-    const MediaPlayerPrivateInterface* NODELETE playerPrivate() const;
-    MediaPlayerPrivateInterface* NODELETE playerPrivate();
+    const MediaPlayerPrivateInterface* LEGACY_NODELETE playerPrivate() const;
+    MediaPlayerPrivateInterface* LEGACY_NODELETE playerPrivate();
 
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);
@@ -784,7 +784,7 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
-    String NODELETE lastErrorMessage() const;
+    String LEGACY_NODELETE lastErrorMessage() const;
 
     void renderVideoWillBeDestroyed();
 
@@ -812,7 +812,7 @@ public:
     void soundStageSizeDidChange();
 
     void setInFullscreenOrPictureInPicture(bool);
-    bool NODELETE isInFullscreenOrPictureInPicture() const;
+    bool LEGACY_NODELETE isInFullscreenOrPictureInPicture() const;
 
     PlatformVideoTarget videoTarget() const { return protect(client())->mediaPlayerVideoTarget(); }
     MediaPlayerClientIdentifier clientIdentifier() const { return protect(client())->mediaPlayerClientIdentifier(); }
@@ -828,7 +828,7 @@ public:
 #endif
 
     void setMessageClientForTesting(WeakPtr<MessageClientForTesting>);
-    MessageClientForTesting* NODELETE messageClientForTesting() const;
+    MessageClientForTesting* LEGACY_NODELETE messageClientForTesting() const;
 
     void elementIdChanged(const String&) const;
 

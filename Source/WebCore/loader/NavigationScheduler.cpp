@@ -108,17 +108,17 @@ public:
     enum class AccumulateResult : uint8_t { NotHandled, Accumulated, CancelPending };
     virtual AccumulateResult accumulateHistorySteps(Frame& /*frame*/, int /*additionalSteps*/) { return AccumulateResult::NotHandled; }
 
-    double NODELETE delay() const { return m_delay; }
-    LockHistory NODELETE lockHistory() const { return m_lockHistory; }
-    LockBackForwardList NODELETE lockBackForwardList() const { return m_lockBackForwardList; }
-    bool NODELETE wasDuringLoad() const { return m_wasDuringLoad; }
-    bool NODELETE isLocationChange() const { return m_isLocationChange; }
-    UserGestureToken* NODELETE userGestureToForward() const { return m_userGestureToForward.get(); }
+    double LEGACY_NODELETE delay() const { return m_delay; }
+    LockHistory LEGACY_NODELETE lockHistory() const { return m_lockHistory; }
+    LockBackForwardList LEGACY_NODELETE lockBackForwardList() const { return m_lockBackForwardList; }
+    bool LEGACY_NODELETE wasDuringLoad() const { return m_wasDuringLoad; }
+    bool LEGACY_NODELETE isLocationChange() const { return m_isLocationChange; }
+    UserGestureToken* LEGACY_NODELETE userGestureToForward() const { return m_userGestureToForward.get(); }
 
 protected:
     void clearUserGesture() { m_userGestureToForward = nullptr; }
-    ShouldOpenExternalURLsPolicy NODELETE shouldOpenExternalURLs() const { return m_shouldOpenExternalURLsPolicy; }
-    InitiatedByMainFrame NODELETE initiatedByMainFrame() const { return m_initiatedByMainFrame; };
+    ShouldOpenExternalURLsPolicy LEGACY_NODELETE shouldOpenExternalURLs() const { return m_shouldOpenExternalURLsPolicy; }
+    InitiatedByMainFrame LEGACY_NODELETE initiatedByMainFrame() const { return m_initiatedByMainFrame; };
 
 private:
     double m_delay;
@@ -172,10 +172,10 @@ protected:
             localFrame->loader().clientRedirectCancelledOrFinished(newLoadInProgress);
     }
 
-    Document& NODELETE initiatingDocument() const { return m_initiatingDocument.get(); }
-    SecurityOrigin* NODELETE securityOrigin() const { return m_securityOrigin.get(); }
-    const URL& NODELETE url() const { return m_url; }
-    const String& NODELETE referrer() const { return m_referrer; }
+    Document& LEGACY_NODELETE initiatingDocument() const { return m_initiatingDocument.get(); }
+    SecurityOrigin* LEGACY_NODELETE securityOrigin() const { return m_securityOrigin.get(); }
+    const URL& LEGACY_NODELETE url() const { return m_url; }
+    const String& LEGACY_NODELETE referrer() const { return m_referrer; }
 
     bool isSameDocumentNavigation(Frame&) const final { return equalIgnoringFragmentIdentifier(initiatingDocument().url(), url()); }
 

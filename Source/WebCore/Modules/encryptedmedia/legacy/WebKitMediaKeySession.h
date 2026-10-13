@@ -81,16 +81,16 @@ private:
 
     // ActiveDOMObject.
     void stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebKitMediaKeySession; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebKitMediaKeySession"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;

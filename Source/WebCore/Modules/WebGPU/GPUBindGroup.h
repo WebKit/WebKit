@@ -45,7 +45,7 @@ public:
         return adoptRef(*new GPUBindGroup(WTF::move(backing), WTF::move(layout), device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     WebGPU::BindGroup& backing() { return m_backing; }

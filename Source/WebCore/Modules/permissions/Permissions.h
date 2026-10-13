@@ -58,7 +58,7 @@ public:
     static Ref<Permissions> create(NavigatorBase&);
     ~Permissions();
 
-    NavigatorBase* NODELETE navigator();
+    NavigatorBase* LEGACY_NODELETE navigator();
     void query(JSC::Strong<JSC::JSObject>, Ref<DeferredPromise>&&);
     WEBCORE_EXPORT static std::optional<PermissionQuerySource> sourceFromContext(const ScriptExecutionContext&);
     WEBCORE_EXPORT static std::optional<PermissionName> toPermissionName(const String&);

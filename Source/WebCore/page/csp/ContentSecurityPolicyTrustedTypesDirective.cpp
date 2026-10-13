@@ -49,12 +49,12 @@ template<typename CharacterType> static bool isTrustedTypesNone(StringParsingBuf
     return buffer.atEnd();
 }
 
-template<typename CharacterType> static bool NODELETE isTrustedTypeCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isTrustedTypeCharacter(CharacterType c)
 {
     return !isASCIIWhitespace(c);
 }
 
-template<typename CharacterType> static bool NODELETE isPolicyNameCharacter(CharacterType c)
+template<typename CharacterType> static bool LEGACY_NODELETE isPolicyNameCharacter(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '-' || c == '#' || c == '=' || c == '_' || c == '/' || c == '@' || c == '.' || c == '%';
 }

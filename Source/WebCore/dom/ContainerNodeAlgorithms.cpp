@@ -90,13 +90,13 @@ void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, No
         notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange);
 }
 
-inline RemovedSubtreeObservability NODELETE observabilityOfRemovedNode(Node& node)
+inline RemovedSubtreeObservability LEGACY_NODELETE observabilityOfRemovedNode(Node& node)
 {
     bool isRootOfRemovedTree = !node.parentNode();
     return node.refCount() > 1 && !isRootOfRemovedTree ? RemovedSubtreeObservability::MaybeObservableByRefPtr : RemovedSubtreeObservability::NotObservable;
 }
 
-inline void NODELETE updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
+inline void LEGACY_NODELETE updateObservability(RemovedSubtreeObservability& currentObservability, RemovedSubtreeObservability newStatus)
 {
     if (newStatus == RemovedSubtreeObservability::MaybeObservableByRefPtr)
         currentObservability = newStatus;

@@ -41,7 +41,7 @@ public:
     bool operator==(const FEMorphology&) const;
 
     MorphologyOperatorType morphologyOperator() const { return m_type; }
-    bool NODELETE setMorphologyOperator(MorphologyOperatorType);
+    bool LEGACY_NODELETE setMorphologyOperator(MorphologyOperatorType);
 
     float radiusX() const { return m_radiusX; }
     bool setRadiusX(float);

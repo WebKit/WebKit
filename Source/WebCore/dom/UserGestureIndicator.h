@@ -77,8 +77,8 @@ public:
     using GestureScope = WebCore::GestureScope;
 
     static constexpr Seconds maximumIntervalForUserGestureForwarding { 1_s }; // One second matches Gecko.
-    static const Seconds& NODELETE maximumIntervalForUserGestureForwardingForFetch();
-    WEBCORE_EXPORT static void NODELETE setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
+    static const Seconds& LEGACY_NODELETE maximumIntervalForUserGestureForwardingForFetch();
+    WEBCORE_EXPORT static void LEGACY_NODELETE setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds);
 
     static Ref<UserGestureToken> create(IsProcessingUserGesture, UserGestureType, Document*, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation);
 
@@ -134,7 +134,7 @@ public:
 
     bool canRequestDOMPaste() const { return m_data.canRequestDOMPaste == CanRequestDOMPaste::Yes; }
 
-    bool NODELETE isValidForDocument(const Document&) const;
+    bool LEGACY_NODELETE isValidForDocument(const Document&) const;
 
     RefPtr<JSC::MicrotaskDispatcher> createMicrotaskDispatcher(JSC::VM&, JSC::JSGlobalObject*) override;
 

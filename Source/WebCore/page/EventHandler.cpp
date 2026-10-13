@@ -236,7 +236,7 @@ private:
     MonotonicTime m_start;
 };
 
-static UserGestureType NODELETE userGestureTypeForPlatformEvent(const PlatformKeyboardEvent& keyEvent)
+static UserGestureType LEGACY_NODELETE userGestureTypeForPlatformEvent(const PlatformKeyboardEvent& keyEvent)
 {
     // https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event
     // An activation triggering input event is any event whose isTrusted attribute is true and whose type is one of:
@@ -250,7 +250,7 @@ static UserGestureType NODELETE userGestureTypeForPlatformEvent(const PlatformKe
     return UserGestureType::Other;
 }
 
-static UserGestureType NODELETE userGestureTypeForPlatformEvent(const PlatformMouseEvent& mouseEvent)
+static UserGestureType LEGACY_NODELETE userGestureTypeForPlatformEvent(const PlatformMouseEvent& mouseEvent)
 {
     // ...
     // * "mousedown".
@@ -340,7 +340,7 @@ public:
 };
 #endif // ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
 
-static inline ScrollGranularity NODELETE wheelGranularityToScrollGranularity(unsigned deltaMode)
+static inline ScrollGranularity LEGACY_NODELETE wheelGranularityToScrollGranularity(unsigned deltaMode)
 {
     switch (deltaMode) {
     case WheelEvent::DOM_DELTA_PAGE:
@@ -384,7 +384,7 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 // If a mouse event handler changes the input element type to one that has a widget associated,
 // we'd like to EventHandler::handleMousePressEvent to pass the event to the widget and thus the
 // event target node can't still be the shadow node.
-static inline bool NODELETE shouldRefetchEventTarget(const MouseEventWithHitTestResults& mouseEvent)
+static inline bool LEGACY_NODELETE shouldRefetchEventTarget(const MouseEventWithHitTestResults& mouseEvent)
 {
     auto* targetNode = mouseEvent.targetNode();
     ASSERT(targetNode);
@@ -1558,7 +1558,7 @@ RefPtr<Frame> EventHandler::subframeForTargetNode(Node* node)
     return &frameView->frame();
 }
 
-static bool NODELETE isSubmitImage(Node* node)
+static bool LEGACY_NODELETE isSubmitImage(Node* node)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(node);
     return input && input->isImageButton();
@@ -1944,7 +1944,7 @@ static Scrollbar* scrollbarForMouseEvent(const MouseEventWithHitTestResults& mou
 
 }
 
-static LastKnownMousePositionSource NODELETE mousePositionSource(const PlatformMouseEvent& event)
+static LastKnownMousePositionSource LEGACY_NODELETE mousePositionSource(const PlatformMouseEvent& event)
 {
     using enum LastKnownMousePositionSource;
     return event.syntheticClickType() == SyntheticClickType::NoTap ? Mouse : Touch;
@@ -2743,7 +2743,7 @@ bool EventHandler::canDropCurrentlyDraggedImageAsFile() const
     return !sourceOrigin || protect(protect(m_frame->document())->securityOrigin())->canReceiveDragData(*sourceOrigin);
 }
 
-static std::pair<bool, RefPtr<Frame>> NODELETE contentFrameForNode(Node* target)
+static std::pair<bool, RefPtr<Frame>> LEGACY_NODELETE contentFrameForNode(Node* target)
 {
     auto* frameElement = dynamicDowncast<HTMLFrameElementBase>(target);
     if (!frameElement)
@@ -3054,7 +3054,7 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return protect(frame->document())->prepareMouseEvent(request, documentPointForWindowPoint(frame, mouseEvent.position()), mouseEvent);
 }
 
-static bool NODELETE hierarchyHasCapturingEventListeners(Element* element, const AtomString& pointerEventName, const AtomString& compatibilityMouseEventName)
+static bool LEGACY_NODELETE hierarchyHasCapturingEventListeners(Element* element, const AtomString& pointerEventName, const AtomString& compatibilityMouseEventName)
 {
     for (ContainerNode* curr = element; curr; curr = curr->parentInComposedTree()) {
         if (curr->hasCapturingEventListeners(pointerEventName) || curr->hasCapturingEventListeners(compatibilityMouseEventName))
@@ -3564,7 +3564,7 @@ Widget* EventHandler::widgetForEventTarget(Element* eventTarget)
     return renderWidget->widget();
 }
 
-static RefPtr<Widget> NODELETE widgetForElement(const Element& element)
+static RefPtr<Widget> LEGACY_NODELETE widgetForElement(const Element& element)
 {
     auto* renderWidget = dynamicDowncast<RenderWidget>(element.renderer());
     if (!renderWidget || !renderWidget->widget())

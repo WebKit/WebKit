@@ -46,7 +46,7 @@ static size_t bufferLengthForDelay(double maxDelayTime, double sampleRate)
 }
 
 // Returns (a - b) if a is greater than b, 0 otherwise.
-template<typename T> static inline size_t NODELETE positiveSubtract(T a, T b)
+template<typename T> static inline size_t LEGACY_NODELETE positiveSubtract(T a, T b)
 {
     return a <= b ? 0 : static_cast<size_t>(a - b);
 }

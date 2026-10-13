@@ -50,7 +50,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    static std::optional<InterpolationQuality> NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
+    static std::optional<InterpolationQuality> LEGACY_NODELETE interpolationQualityFromStyle(const Style::ComputedStyle&);
     static InterpolationQuality chooseInterpolationQuality(GraphicsContext&, const RenderElement&, Image&, const void* layer, const LayoutSize&);
     static InterpolationQuality chooseInterpolationQualityForBitmapOfSize(GraphicsContext&, const RenderElement&, const IntSize& imageSize, const void* layer, const LayoutSize&);
 

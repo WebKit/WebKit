@@ -64,7 +64,7 @@ private:
     void getMappedRange(Size64 offset, std::optional<Size64>, NOESCAPE const Function<void(std::span<uint8_t>)>&) final;
     std::span<uint8_t> getBufferContents() final;
     void unmap() final;
-    void NODELETE copyFrom(std::span<const uint8_t>, size_t offset) final;
+    void LEGACY_NODELETE copyFrom(std::span<const uint8_t>, size_t offset) final;
 
     void destroy() final;
     void generateAValidationError() final;

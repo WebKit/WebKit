@@ -37,7 +37,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentSharedObjectPool);
 
-static HashMap<SecurityOriginData, size_t>& NODELETE peakSizeInPast()
+static HashMap<SecurityOriginData, size_t>& LEGACY_NODELETE peakSizeInPast()
 {
     static MainThreadNeverDestroyed<HashMap<SecurityOriginData, size_t>> map;
     return map;
@@ -58,7 +58,7 @@ DocumentSharedObjectPool::~DocumentSharedObjectPool()
 }
 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
-    static unsigned NODELETE hash(const Ref<ShareableElementData>& data)
+    static unsigned LEGACY_NODELETE hash(const Ref<ShareableElementData>& data)
     {
         return computeHash(data->attributes());
     }
@@ -73,7 +73,7 @@ struct DocumentSharedObjectPool::ShareableElementDataHash {
 };
 
 struct AttributeSpanTranslator {
-    static unsigned NODELETE hash(std::span<const Attribute> attributes)
+    static unsigned LEGACY_NODELETE hash(std::span<const Attribute> attributes)
     {
         return computeHash(attributes);
     }

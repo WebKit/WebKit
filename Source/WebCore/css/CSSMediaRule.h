@@ -53,7 +53,7 @@ private:
     String cssText(const CSS::SerializationContext&) const final;
     String conditionText() const final;
 
-    const MQ::MediaQueryList& NODELETE mediaQueries() const;
+    const MQ::MediaQueryList& LEGACY_NODELETE mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;

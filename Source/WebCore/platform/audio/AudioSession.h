@@ -80,7 +80,7 @@ public:
     static void setSharedSession(Ref<AudioSession>&&);
     static AudioSession& singleton();
 
-    static bool NODELETE enableMediaPlayback();
+    static bool LEGACY_NODELETE enableMediaPlayback();
 
     using SetActivePromise = GenericPromise;
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;
@@ -146,8 +146,8 @@ public:
 
     void setRoutingArbitrationClient(AudioSessionRoutingArbitrationClient& client) { m_routingArbitrationClient = client; }
 
-    static bool NODELETE shouldManageAudioSessionCategory();
-    static void NODELETE setShouldManageAudioSessionCategory(bool);
+    static bool LEGACY_NODELETE shouldManageAudioSessionCategory();
+    static void LEGACY_NODELETE setShouldManageAudioSessionCategory(bool);
 
     virtual void setHostProcessAttribution(audit_token_t) { };
     virtual void setPresentingProcesses(Vector<audit_token_t>&&) { };
@@ -171,7 +171,7 @@ protected:
 
     Logger& logger();
     ASCIILiteral logClassName() const { return "AudioSession"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
     uint64_t logIdentifier() const { return 0; }
 
     mutable RefPtr<Logger> m_logger;

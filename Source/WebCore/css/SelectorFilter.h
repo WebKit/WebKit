@@ -41,10 +41,10 @@ class SelectorFilter {
 public:
     void pushParent(Element* parent);
     void pushParentInitializingIfNeeded(Element& parent);
-    void NODELETE popParent();
-    void NODELETE popParentsUntil(Element* parent);
+    void LEGACY_NODELETE popParent();
+    void LEGACY_NODELETE popParentsUntil(Element* parent);
     bool parentStackIsEmpty() const { return m_parentStack.isEmpty(); }
-    bool NODELETE parentStackIsConsistent(const ContainerNode* parentNode) const;
+    bool LEGACY_NODELETE parentStackIsConsistent(const ContainerNode* parentNode) const;
     void parentStackReserveInitialCapacity(size_t initialCapacity) { m_parentStack.reserveInitialCapacity(initialCapacity); }
 
     using Hashes = std::array<unsigned, 4>;

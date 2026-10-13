@@ -192,7 +192,7 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
 
 // FloatRect::intersects does not consider horizontal or vertical lines (because of isEmpty()).
 // So special-case handling of such lines.
-static bool NODELETE legacyIntersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
+static bool LEGACY_NODELETE legacyIntersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 {
     if (r.isEmpty() && other.isEmpty())
         return false;
@@ -205,7 +205,7 @@ static bool NODELETE legacyIntersectsAllowingEmpty(const FloatRect& r, const Flo
 
 // One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
 // image, line, path, polygon, polyline, rect, text and use.
-static bool NODELETE legacyIsGraphicsElement(const RenderElement& renderer)
+static bool LEGACY_NODELETE legacyIsGraphicsElement(const RenderElement& renderer)
 {
     return renderer.isLegacyRenderSVGShape() || renderer.isRenderSVGText() || renderer.isLegacyRenderSVGImage() || is<SVGUseElement>(renderer.element());
 }

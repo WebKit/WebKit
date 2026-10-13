@@ -72,7 +72,7 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE, pub
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
-    IOSurface* NODELETE displayBufferSurface();
+    IOSurface* LEGACY_NODELETE displayBufferSurface();
 
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
@@ -125,10 +125,10 @@ protected:
     void invalidateKnownTextureContent(GCGLuint) final;
     bool reshapeDrawingBuffer() final;
 
-    IOSurfacePbuffer& NODELETE drawingBuffer();
-    IOSurfacePbuffer& NODELETE displayBuffer();
-    IOSurfacePbuffer& NODELETE copyBuffer();
-    IOSurfacePbuffer& NODELETE surfaceBuffer(SurfaceBuffer);
+    IOSurfacePbuffer& LEGACY_NODELETE drawingBuffer();
+    IOSurfacePbuffer& LEGACY_NODELETE displayBuffer();
+    IOSurfacePbuffer& LEGACY_NODELETE copyBuffer();
+    IOSurfacePbuffer& LEGACY_NODELETE surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     IOSurfacePbuffer createDrawingBuffer();
     void freeDrawingBuffers();

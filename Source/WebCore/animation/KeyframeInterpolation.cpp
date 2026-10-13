@@ -121,7 +121,7 @@ const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolati
     return { intervalEndpoints, hasImplicitZeroKeyframe, hasImplicitOneKeyframe };
 }
 
-static double NODELETE transformProgressDuration(const WebAnimationTime& duration)
+static double LEGACY_NODELETE transformProgressDuration(const WebAnimationTime& duration)
 {
     if (auto time = duration.time())
         return time->seconds();

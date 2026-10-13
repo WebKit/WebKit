@@ -51,9 +51,9 @@ public:
 
     IndexedDB::GetAllType type() const { return m_type; }
     const std::optional<IDBKeyPath>& keyPath() const LIFETIME_BOUND { return m_keyPath; }
-    WEBCORE_EXPORT const Vector<IDBKeyData>& NODELETE keys() const;
-    WEBCORE_EXPORT const Vector<IDBKeyData>& NODELETE primaryKeys() const;
-    WEBCORE_EXPORT const Vector<IDBValue>& NODELETE values() const;
+    WEBCORE_EXPORT const Vector<IDBKeyData>& LEGACY_NODELETE keys() const;
+    WEBCORE_EXPORT const Vector<IDBKeyData>& LEGACY_NODELETE primaryKeys() const;
+    WEBCORE_EXPORT const Vector<IDBValue>& LEGACY_NODELETE values() const;
 
     void addKey(IDBKeyData&&);
     void addPrimaryKey(IDBKeyData&&);

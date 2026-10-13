@@ -97,6 +97,6 @@ private:
     mutable std::optional<InlineIterator::LeafBoxIterator> m_nextLeafOnLine;
 };
 
-bool NODELETE renderObjectContainsPosition(const RenderObject*, const Position&);
+bool LEGACY_NODELETE renderObjectContainsPosition(const RenderObject*, const Position&);
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ public:
     USING_CAN_MAKE_WEAKPTR(HTMLElement);
 
     void scheduleErrorEvent();
-    void NODELETE cancelPendingErrorEvent();
+    void LEGACY_NODELETE cancelPendingErrorEvent();
 
     const MQ::MediaQueryList& parsedMediaAttribute(Document&) const;
 
@@ -63,8 +63,8 @@ private:
     void movingSteps(MovingType, ContainerNode&) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool NODELETE isURLAttribute(const Attribute&) const final;
-    bool NODELETE attributeContainsURL(const Attribute&) const final;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE attributeContainsURL(const Attribute&) const final;
     Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
     void addCandidateSubresourceURLs(OrderedHashSet<URL>&) const override;
 

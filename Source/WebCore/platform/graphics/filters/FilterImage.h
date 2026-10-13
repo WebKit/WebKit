@@ -62,7 +62,7 @@ public:
 
     // The return values are in user-space coordinates.
     IntRect absoluteImageRect() const { return m_absoluteImageRect; }
-    IntRect NODELETE absoluteImageRectRelativeTo(const FilterImage& origin) const;
+    IntRect LEGACY_NODELETE absoluteImageRectRelativeTo(const FilterImage& origin) const;
     FloatPoint mappedAbsolutePoint(const FloatPoint&) const;
 
     bool isAlphaImage() const { return m_isAlphaImage; }
@@ -77,8 +77,8 @@ public:
     RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<ColorSpace> = std::nullopt);
     bool copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
 
-    void NODELETE correctPremultipliedPixelBuffer();
-    void NODELETE transformToColorSpace(const ColorSpace&);
+    void LEGACY_NODELETE correctPremultipliedPixelBuffer();
+    void LEGACY_NODELETE transformToColorSpace(const ColorSpace&);
 
 #if USE(CORE_IMAGE)
     ImageBuffer* filterResultImageBuffer(const Filter&);
@@ -92,7 +92,7 @@ private:
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const ColorSpace&, ImageBufferAllocator&);
     FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
 
-    RefPtr<PixelBuffer>& NODELETE pixelBufferSlot(AlphaPremultiplication);
+    RefPtr<PixelBuffer>& LEGACY_NODELETE pixelBufferSlot(AlphaPremultiplication);
 
     ImageBuffer* imageBufferFromPixelBuffer();
 

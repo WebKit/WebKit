@@ -70,7 +70,7 @@ public:
     static Ref<DragImageLoader> create(DataTransfer&, const Document&);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
-    void NODELETE moveToDataTransfer(DataTransfer&);
+    void LEGACY_NODELETE moveToDataTransfer(DataTransfer&);
 
     // CachedResourceClient.
     void ref() const final { RefCounted::ref(); }

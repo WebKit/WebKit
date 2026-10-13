@@ -48,7 +48,7 @@ public:
     {
     }
 
-    LayoutUnit NODELETE stackingAxisOffsetForGridItem(const RenderBox&) const;
+    LayoutUnit LEGACY_NODELETE stackingAxisOffsetForGridItem(const RenderBox&) const;
 
     LayoutUnit gridContentSize() const { return m_gridContentSize; }
 
@@ -90,13 +90,13 @@ private:
     LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
     StackingAxisPlacement updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
-    inline Style::GridTrackSizingDirection NODELETE gridAxisDirection() const;
+    inline Style::GridTrackSizingDirection LEGACY_NODELETE gridAxisDirection() const;
 
     unsigned gridAxisTracksCount() const { return static_cast<unsigned>(m_runningPositions.size()); }
 
     bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection gridAxisDirection) const;
     GridArea gridAreaFromGridAxisSpan(const GridSpan&) const;
-    GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
+    GridSpan LEGACY_NODELETE gridAxisSpanFromArea(const GridArea&) const;
 
     Vector<LayoutUnit> m_runningPositions;
     const CheckedRef<RenderGrid> m_renderGrid;

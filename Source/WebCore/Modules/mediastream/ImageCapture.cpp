@@ -111,7 +111,7 @@ void ImageCapture::takePhoto(PhotoSettings&& settings, DOMPromiseDeferred<IDLInt
 }
 
 // FIXME: Move this routine to VideoFrame.
-static ImageOrientation NODELETE videoFrameOrientation(const VideoFrame& videoFrame)
+static ImageOrientation LEGACY_NODELETE videoFrameOrientation(const VideoFrame& videoFrame)
 {
     switch (videoFrame.rotation()) {
     case VideoFrame::Rotation::None:

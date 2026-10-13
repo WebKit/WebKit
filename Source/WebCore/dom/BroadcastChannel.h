@@ -61,7 +61,7 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    BroadcastChannelIdentifier NODELETE identifier() const;
+    BroadcastChannelIdentifier LEGACY_NODELETE identifier() const;
     String name() const;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message);
@@ -78,7 +78,7 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::BroadcastChannel; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void derefEventTarget() final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
     void eventListenersDidChange() final;

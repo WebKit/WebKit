@@ -1006,7 +1006,7 @@ void XMLHttpRequest::didReceiveResponse(ScriptExecutionContextIdentifier, std::o
     m_response = response;
 }
 
-static inline bool NODELETE shouldDecodeResponse(XMLHttpRequest::ResponseType type)
+static inline bool LEGACY_NODELETE shouldDecodeResponse(XMLHttpRequest::ResponseType type)
 {
     switch (type) {
     case XMLHttpRequest::ResponseType::EmptyString:

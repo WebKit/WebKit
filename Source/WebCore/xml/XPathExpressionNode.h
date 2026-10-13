@@ -44,7 +44,7 @@ class Expression {
     WTF_MAKE_TZONE_ALLOCATED(Expression);
     WTF_MAKE_NONCOPYABLE(Expression);
 public:
-    static EvaluationContext& NODELETE evaluationContext();
+    static EvaluationContext& LEGACY_NODELETE evaluationContext();
 
     virtual ~Expression() = default;
 

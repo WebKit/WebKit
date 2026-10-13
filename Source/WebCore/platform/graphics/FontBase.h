@@ -104,7 +104,7 @@ public:
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
-    float NODELETE spaceWidth() const { return m_spaceWidth; }
+    float LEGACY_NODELETE spaceWidth() const { return m_spaceWidth; }
 
     float maxCharWidth() const { return m_maxCharWidth; }
     void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }

@@ -70,7 +70,7 @@ public:
 
     bool isInactiveStyleOriginatedTimeline() const { return m_isInactiveStyleOriginatedTimeline; }
 
-    bool NODELETE matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction&, const Styleable&) const;
+    bool LEGACY_NODELETE matchesAnonymousScrollFunctionForSource(const Style::ScrollFunction&, const Styleable&) const;
 
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     void updateCurrentTimeIfStale();
@@ -79,7 +79,7 @@ public:
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     Style::SingleAnimationRange defaultRange() const override;
-    Element* NODELETE timelineScopeDeclaredElement() const { return m_timelineScopeElement.get(); }
+    Element* LEGACY_NODELETE timelineScopeDeclaredElement() const { return m_timelineScopeElement.get(); }
     void setTimelineScopeElement(const Element&);
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 

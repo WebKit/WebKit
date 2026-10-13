@@ -180,7 +180,7 @@ public:
 
     // https://www.w3.org/TR/css-values-4/#local-urls
     // Empty URLs and fragment-only URLs should not be resolved relative to the base URL.
-    static bool NODELETE isCSSLocalURL(StringView relativeURL);
+    static bool LEGACY_NODELETE isCSSLocalURL(StringView relativeURL);
 
     enum StaticCSSValueTag { StaticCSSValue };
 
@@ -312,8 +312,8 @@ private:
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(NOESCAPE const Visitor&) const;
 
-    static inline bool NODELETE customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&);
-    bool NODELETE addDerivedHash(Hasher&) const;
+    static inline bool LEGACY_NODELETE customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&);
+    bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
 
     mutable unsigned m_refCount { refCountIncrement };
 

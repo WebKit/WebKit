@@ -162,7 +162,7 @@ struct OverrideScreenSize {
     FloatSize size;
 };
 
-static const LocalFrame& NODELETE rootFrame(const LocalFrame& frame, Frame* parent)
+static const LocalFrame& LEGACY_NODELETE rootFrame(const LocalFrame& frame, Frame* parent)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto* localParent = dynamicDowncast<LocalFrame>(parent);
     if (localParent)
@@ -861,7 +861,7 @@ void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserS
     WTFEndSignpost(this, UserScript);
 }
 
-RenderView* NODELETE LocalFrame::contentRenderer() const
+RenderView* LEGACY_NODELETE LocalFrame::contentRenderer() const
 {
     return document() ? document()->renderView() : nullptr;
 }

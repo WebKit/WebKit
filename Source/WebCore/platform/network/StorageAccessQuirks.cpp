@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static HashSet<OrganizationStorageAccessPromptQuirk>& NODELETE updatableStorageAccessPromptQuirks()
+static HashSet<OrganizationStorageAccessPromptQuirk>& LEGACY_NODELETE updatableStorageAccessPromptQuirks()
 {
     ASSERT(RunLoop::isMain());
     // FIXME: Move this isn't an instance of a class, probably as a member of NetworkStorageSession.

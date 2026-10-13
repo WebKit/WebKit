@@ -48,9 +48,9 @@ public:
     bool isEmpty() const { return !length() && m_textItemType == TextItemType::Undefined; }
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isWordSeparator() const { return m_isWordSeparator; }
-    bool NODELETE isZeroWidthSpaceSeparator() const;
-    bool NODELETE isQuirkNonBreakingSpace() const;
-    bool NODELETE isFullyTrimmable() const;
+    bool LEGACY_NODELETE isZeroWidthSpaceSeparator() const;
+    bool LEGACY_NODELETE isQuirkNonBreakingSpace() const;
+    bool LEGACY_NODELETE isFullyTrimmable() const;
     bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
     std::optional<InlineLayoutUnit> width() const { return m_hasWidth ? std::make_optional(m_width) : std::optional<InlineLayoutUnit> { }; }
     std::pair<uint8_t, uint8_t> glyphOverflow() const { return { m_glyphTopOverflow, m_glyphBottomOverflow }; }
@@ -60,16 +60,16 @@ public:
     String content() const { return inlineTextBox().content().substring(start(), length()); }
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
-    InlineTextItem NODELETE left(unsigned length) const;
-    InlineTextItem NODELETE right(unsigned length, std::optional<InlineLayoutUnit> width) const;
+    InlineTextItem LEGACY_NODELETE left(unsigned length) const;
+    InlineTextItem LEGACY_NODELETE right(unsigned length, std::optional<InlineLayoutUnit> width) const;
 
-    static bool NODELETE shouldPreserveSpacesAndTabs(const InlineTextItem&);
+    static bool LEGACY_NODELETE shouldPreserveSpacesAndTabs(const InlineTextItem&);
 
 private:
     friend class InlineItemsBuilder;
     using InlineItem::TextItemType;
 
-    InlineTextItem NODELETE split(size_t leftSideLength);
+    InlineTextItem LEGACY_NODELETE split(size_t leftSideLength);
     void setGlyphOverflow(LayoutUnit top, LayoutUnit bottom);
 
     InlineTextItem(const InlineTextBox&, unsigned start, unsigned length, UBiDiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType);

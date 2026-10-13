@@ -157,7 +157,7 @@ struct VersionAndUseCount {
     size_t useCount { 0 };
 };
 
-static HashMap<DatabaseGUID, VersionAndUseCount>& NODELETE guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
+static HashMap<DatabaseGUID, VersionAndUseCount>& LEGACY_NODELETE guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
 {
     static NeverDestroyed<HashMap<DatabaseGUID, VersionAndUseCount>> map;
     return map;

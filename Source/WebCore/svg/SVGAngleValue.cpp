@@ -95,7 +95,7 @@ String SVGAngleValue::valueAsString() const
     return CSS::formatCSSNumberValue(CSS::SerializableNumber { m_valueInSpecifiedUnits, svgAngleTypeToUnitString(m_unitType) });
 }
 
-static inline SVGAngleValue::Type NODELETE cssAngleUnitToSVGAngleType(CSS::AngleUnit unit)
+static inline SVGAngleValue::Type LEGACY_NODELETE cssAngleUnitToSVGAngleType(CSS::AngleUnit unit)
 {
     switch (unit) {
     case CSS::AngleUnit::Deg:   return SVGAngleValue::SVG_ANGLETYPE_DEG;

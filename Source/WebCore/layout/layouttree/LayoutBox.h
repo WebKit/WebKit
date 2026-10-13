@@ -83,22 +83,22 @@ public:
 
     bool establishesFormattingContext() const;
     bool establishesBlockFormattingContext() const;
-    bool NODELETE establishesInlineFormattingContext() const;
-    bool NODELETE establishesTableFormattingContext() const;
-    bool NODELETE establishesFlexFormattingContext() const;
-    bool NODELETE establishesGridFormattingContext() const;
+    bool LEGACY_NODELETE establishesInlineFormattingContext() const;
+    bool LEGACY_NODELETE establishesTableFormattingContext() const;
+    bool LEGACY_NODELETE establishesFlexFormattingContext() const;
+    bool LEGACY_NODELETE establishesGridFormattingContext() const;
     bool establishesIndependentFormattingContext() const;
 
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
     bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
     bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }
     bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned(); }
-    bool NODELETE isRelativelyPositioned() const;
-    bool NODELETE isStickyPositioned() const;
-    bool NODELETE isAbsolutelyPositioned() const;
-    bool NODELETE isFixedPositioned() const;
-    bool NODELETE isFloatingPositioned() const;
-    bool NODELETE hasFloatClear() const;
+    bool LEGACY_NODELETE isRelativelyPositioned() const;
+    bool LEGACY_NODELETE isStickyPositioned() const;
+    bool LEGACY_NODELETE isAbsolutelyPositioned() const;
+    bool LEGACY_NODELETE isFixedPositioned() const;
+    bool LEGACY_NODELETE isFloatingPositioned() const;
+    bool LEGACY_NODELETE hasFloatClear() const;
     bool isFloatAvoider() const;
 
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
@@ -110,22 +110,22 @@ public:
     bool isAnonymous() const { return m_isAnonymous; }
 
     // Block level elements generate block level boxes.
-    bool NODELETE isBlockLevelBox() const;
+    bool LEGACY_NODELETE isBlockLevelBox() const;
     // A block-level box that is also a block container.
-    bool NODELETE isBlockBox() const;
+    bool LEGACY_NODELETE isBlockBox() const;
     // A block-level box is also a block container box unless it is a table box or the principal box of a replaced element.
-    bool NODELETE isBlockContainer() const;
-    bool NODELETE isInlineLevelBox() const;
-    bool NODELETE isInlineBox() const;
-    bool NODELETE isAtomicInlineBox() const;
-    bool NODELETE isInlineBlockBox() const;
-    bool NODELETE isInlineTableBox() const;
+    bool LEGACY_NODELETE isBlockContainer() const;
+    bool LEGACY_NODELETE isInlineLevelBox() const;
+    bool LEGACY_NODELETE isInlineBox() const;
+    bool LEGACY_NODELETE isAtomicInlineBox() const;
+    bool LEGACY_NODELETE isInlineBlockBox() const;
+    bool LEGACY_NODELETE isInlineTableBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
     bool isLayoutContainmentBox() const;
     bool isSizeContainmentBox() const;
-    bool NODELETE isInternalRubyBox() const;
-    bool NODELETE isRubyAnnotationBox() const;
-    bool NODELETE isInterlinearRubyAnnotationBox() const;
+    bool LEGACY_NODELETE isInternalRubyBox() const;
+    bool LEGACY_NODELETE isRubyAnnotationBox() const;
+    bool LEGACY_NODELETE isInterlinearRubyAnnotationBox() const;
 
     bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
     bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
@@ -137,9 +137,9 @@ public:
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
     bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
-    bool NODELETE isInternalTableBox() const;
-    inline bool NODELETE isRuby() const;
-    bool NODELETE isRubyBase() const;
+    bool LEGACY_NODELETE isInternalTableBox() const;
+    inline bool LEGACY_NODELETE isRuby() const;
+    bool LEGACY_NODELETE isRubyBase() const;
     inline bool isRubyInlineBox() const;
     inline bool isTableCaption() const;
     inline bool isTableHeader() const;
@@ -150,11 +150,11 @@ public:
     inline bool isTableColumn() const;
     inline bool isTableCell() const;
     inline bool isFlexBox() const;
-    bool NODELETE isFlexItem() const;
+    bool LEGACY_NODELETE isFlexItem() const;
     inline bool isGridFormattingContext() const;
     inline bool isGridBox() const;
     inline bool isGridLanesBox() const;
-    bool NODELETE isGridItem() const;
+    bool LEGACY_NODELETE isGridItem() const;
     inline bool isListItem() const;
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
@@ -162,14 +162,14 @@ public:
 
     const ElementBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
-    const Box* NODELETE nextInFlowSibling() const;
-    const Box* NODELETE nextInFlowOrFloatingSibling() const;
-    const Box* NODELETE nextOutOfFlowSibling() const;
+    const Box* LEGACY_NODELETE nextInFlowSibling() const;
+    const Box* LEGACY_NODELETE nextInFlowOrFloatingSibling() const;
+    const Box* LEGACY_NODELETE nextOutOfFlowSibling() const;
     const Box* previousSibling() const { return m_previousSibling.get(); }
-    const Box* NODELETE previousInFlowSibling() const;
-    const Box* NODELETE previousInFlowOrFloatingSibling() const;
-    const Box* NODELETE previousOutOfFlowSibling() const;
-    bool NODELETE isDescendantOf(const Box&) const;
+    const Box* LEGACY_NODELETE previousInFlowSibling() const;
+    const Box* LEGACY_NODELETE previousInFlowOrFloatingSibling() const;
+    const Box* LEGACY_NODELETE previousOutOfFlowSibling() const;
+    bool LEGACY_NODELETE isDescendantOf(const Box&) const;
     bool isDescendantOfWithinFormattingContext(const Box&) const;
     bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
 
@@ -179,12 +179,12 @@ public:
     bool isElementBox() const { return baseTypeFlags().contains(ElementBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
 
-    bool NODELETE isPaddingApplicable() const;
-    bool NODELETE isOverflowVisible() const;
+    bool LEGACY_NODELETE isPaddingApplicable() const;
+    bool LEGACY_NODELETE isOverflowVisible() const;
 
     void updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle);
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    const Style::ComputedStyle& NODELETE firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    const Style::ComputedStyle& LEGACY_NODELETE firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
     WritingMode writingMode() const { return style().writingMode(); }
 
     // FIXME: Find a better place for random DOM things.
@@ -203,7 +203,7 @@ public:
     const LayoutShape* shape() const;
     void setShape(RefPtr<const LayoutShape>);
 
-    const ElementBox* NODELETE associatedRubyAnnotationBox() const;
+    const ElementBox* LEGACY_NODELETE associatedRubyAnnotationBox() const;
 
     RenderObject* rendererForIntegration() const { return m_renderer.get(); }
     void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
@@ -230,7 +230,7 @@ private:
 
     bool hasRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
-    const BoxRareData& NODELETE rareData() const;
+    const BoxRareData& LEGACY_NODELETE rareData() const;
     Box::BoxRareData& rareData();
     BoxRareData& ensureRareData();
     void removeRareData();
@@ -239,7 +239,7 @@ private:
 
     typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
 
-    static RareDataMap& NODELETE rareDataMap();
+    static RareDataMap& LEGACY_NODELETE rareDataMap();
 
     NodeType m_nodeType : 4;
     bool m_isAnonymous : 1;

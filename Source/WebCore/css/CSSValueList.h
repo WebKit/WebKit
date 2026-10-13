@@ -62,7 +62,7 @@ public:
     iterator end() const LIFETIME_BOUND { return { this, size() }; }
 
     bool hasValue(CSSValue&) const;
-    bool NODELETE hasValue(CSSValueID) const;
+    bool LEGACY_NODELETE hasValue(CSSValueID) const;
 
     void serializeItems(StringBuilder&, const CSS::SerializationContext&) const;
     String serializeItems(const CSS::SerializationContext&) const;
@@ -112,7 +112,7 @@ public:
     static Ref<CSSValueList> createCommaSeparated(Ref<CSSValue>); // FIXME: Upgrade callers to not use a list at all.
 
     static Ref<CSSValueList> createSpaceSeparated(CSSValueListBuilder);
-    static Ref<CSSValueList> NODELETE createSpaceSeparated(); // FIXME: Get rid of the caller that needs to create an empty list.
+    static Ref<CSSValueList> LEGACY_NODELETE createSpaceSeparated(); // FIXME: Get rid of the caller that needs to create an empty list.
     static Ref<CSSValueList> createSpaceSeparated(Ref<CSSValue>); // FIXME: Upgrade callers to not use a list at all.
     static Ref<CSSValueList> createSpaceSeparated(Ref<CSSValue>, Ref<CSSValue>);
     static Ref<CSSValueList> createSpaceSeparated(Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);

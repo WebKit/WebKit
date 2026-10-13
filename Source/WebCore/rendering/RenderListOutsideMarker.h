@@ -69,7 +69,7 @@ public:
 
     RenderBlockFlow* contentContainer() const;
 
-    RenderListItem* NODELETE listItem() const;
+    RenderListItem* LEGACY_NODELETE listItem() const;
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
 
@@ -92,7 +92,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
     void imageChanged(WrappedImagePtr, const IntRect*) final;
-    LayoutRect NODELETE selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
+    LayoutRect LEGACY_NODELETE selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
@@ -109,7 +109,7 @@ private:
     void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
-    LayoutRect NODELETE localSelectionRect();
+    LayoutRect LEGACY_NODELETE localSelectionRect();
 
 private:
     SingleThreadWeakPtr<RenderListItem> m_listItem;

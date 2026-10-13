@@ -39,7 +39,7 @@ public:
 
     void appendFragments(std::span<SVGTextFragment>);
 
-    unsigned NODELETE totalCharacters() const;
+    unsigned LEGACY_NODELETE totalCharacters() const;
     float totalLength() const;
     float totalAnchorShift() const;
     void layout() const;

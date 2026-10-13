@@ -47,7 +47,7 @@ public:
     static constexpr std::nullptr_t end() { return nullptr; }
     unsigned size() const { return propertyCount(); }
 
-    int NODELETE findPropertyIndex(CSSPropertyID) const;
+    int LEGACY_NODELETE findPropertyIndex(CSSPropertyID) const;
     int findCustomPropertyIndex(StringView propertyName) const;
 
     static constexpr size_t objectSize(unsigned propertyCount);

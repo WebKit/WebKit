@@ -112,7 +112,7 @@ public:
 
     WEBCORE_EXPORT void setRequestedScrollData(RequestedScrollData&&);
 
-    WEBCORE_EXPORT bool NODELETE hasScrollPositionRequest() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasScrollPositionRequest() const;
 
     bool isMonitoringWheelEvents() const { return m_isMonitoringWheelEvents; }
     WEBCORE_EXPORT void setIsMonitoringWheelEvents(bool);

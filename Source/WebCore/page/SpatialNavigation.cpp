@@ -88,7 +88,7 @@ FocusCandidate::FocusCandidate(Element* element, FocusDirection direction)
     isOffscreenAfterScrolling = hasOffscreenRect(*protectedVisibleNode, direction);
 }
 
-static RectsAlignment NODELETE alignmentForRects(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
+static RectsAlignment LEGACY_NODELETE alignmentForRects(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
 {
     // If we found a node in full alignment, but it is too far away, ignore it.
     if (areRectsMoreThanFullScreenApart(direction, curRect, targetRect, viewSize))
@@ -103,23 +103,23 @@ static RectsAlignment NODELETE alignmentForRects(FocusDirection direction, const
     return RectsAlignment::None;
 }
 
-static inline bool NODELETE isHorizontalMove(FocusDirection direction)
+static inline bool LEGACY_NODELETE isHorizontalMove(FocusDirection direction)
 {
     return direction == FocusDirection::Left || direction == FocusDirection::Right;
 }
 
-static inline LayoutUnit NODELETE start(FocusDirection direction, const LayoutRect& rect)
+static inline LayoutUnit LEGACY_NODELETE start(FocusDirection direction, const LayoutRect& rect)
 {
     return isHorizontalMove(direction) ? rect.y() : rect.x();
 }
 
-static inline LayoutUnit NODELETE middle(FocusDirection direction, const LayoutRect& rect)
+static inline LayoutUnit LEGACY_NODELETE middle(FocusDirection direction, const LayoutRect& rect)
 {
     LayoutPoint center(rect.center());
     return isHorizontalMove(direction) ? center.y(): center.x();
 }
 
-static inline LayoutUnit NODELETE end(FocusDirection direction, const LayoutRect& rect)
+static inline LayoutUnit LEGACY_NODELETE end(FocusDirection direction, const LayoutRect& rect)
 {
     return isHorizontalMove(direction) ? rect.maxY() : rect.maxX();
 }
@@ -131,7 +131,7 @@ static inline LayoutUnit NODELETE end(FocusDirection direction, const LayoutRect
 // operations.
 // * a = Current focused node's rect.
 // * b = Focus candidate node's rect.
-static bool NODELETE areRectsFullyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
+static bool LEGACY_NODELETE areRectsFullyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
 {
     LayoutUnit aStart, bStart, aEnd, bEnd;
 
@@ -203,7 +203,7 @@ static bool NODELETE areRectsFullyAligned(FocusDirection direction, const Layout
 // horizontally or vertically.
 // * a = Current focused node's rect.
 // * b = Focus candidate node's rect.
-static bool NODELETE areRectsPartiallyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
+static bool LEGACY_NODELETE areRectsPartiallyAligned(FocusDirection direction, const LayoutRect& a, const LayoutRect& b)
 {
     LayoutUnit aStart  = start(direction, a);
     LayoutUnit bStart  = start(direction, b);
@@ -231,7 +231,7 @@ static bool NODELETE areRectsPartiallyAligned(FocusDirection direction, const La
             || (bEnd >= aStart && bEnd <= aEnd));
 }
 
-static bool NODELETE areRectsMoreThanFullScreenApart(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
+static bool LEGACY_NODELETE areRectsMoreThanFullScreenApart(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)
 {
     ASSERT(isRectInDirection(direction, curRect, targetRect));
 
@@ -251,18 +251,18 @@ static bool NODELETE areRectsMoreThanFullScreenApart(FocusDirection direction, c
 }
 
 // Return true if rect |a| is below |b|. False otherwise.
-static inline bool NODELETE below(const LayoutRect& a, const LayoutRect& b)
+static inline bool LEGACY_NODELETE below(const LayoutRect& a, const LayoutRect& b)
 {
     return a.y() > b.maxY();
 }
 
 // Return true if rect |a| is on the right of |b|. False otherwise.
-static inline bool NODELETE rightOf(const LayoutRect& a, const LayoutRect& b)
+static inline bool LEGACY_NODELETE rightOf(const LayoutRect& a, const LayoutRect& b)
 {
     return a.x() > b.maxX();
 }
 
-static bool NODELETE isRectInDirection(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect)
+static bool LEGACY_NODELETE isRectInDirection(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect)
 {
     switch (direction) {
     case FocusDirection::Left:

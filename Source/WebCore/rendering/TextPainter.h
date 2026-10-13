@@ -63,7 +63,7 @@ public:
     void setGlyphDisplayListIfNeeded(const InlineDisplay::Box&, const PaintInfo&, const Style::ComputedStyle&, const TextRun&);
 
     static bool shouldUseGlyphDisplayList(const PaintInfo&, const Style::ComputedStyle&);
-    WEBCORE_EXPORT static void NODELETE setForceUseGlyphDisplayListForTesting(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setForceUseGlyphDisplayListForTesting(bool);
     WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
     WEBCORE_EXPORT static void clearGlyphDisplayListCacheForTesting();
 

@@ -65,7 +65,7 @@ public:
     long long totalPageAndResourceBytesToLoad() const { return m_totalPageAndResourceBytesToLoad; }
     long long totalBytesReceived() const { return m_totalBytesReceived; }
 
-    bool NODELETE isMainLoadProgressing() const;
+    bool LEGACY_NODELETE isMainLoadProgressing() const;
 
 private:
     void reset();

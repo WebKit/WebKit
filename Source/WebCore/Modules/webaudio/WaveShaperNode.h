@@ -46,7 +46,7 @@ public:
     RefPtr<Float32Array> curveForBindings();
 
     void setOversampleForBindings(OverSampleType);
-    OverSampleType NODELETE oversampleForBindings() const;
+    OverSampleType LEGACY_NODELETE oversampleForBindings() const;
 
     double latency() const { return latencyTime(); }
 

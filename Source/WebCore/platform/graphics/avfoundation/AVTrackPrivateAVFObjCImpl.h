@@ -87,11 +87,11 @@ public:
 
     PlatformVideoTrackConfiguration videoTrackConfiguration() const;
     using VideoTrackConfigurationObserver = Observer<void()>;
-    void NODELETE setVideoTrackConfigurationObserver(VideoTrackConfigurationObserver&);
+    void LEGACY_NODELETE setVideoTrackConfigurationObserver(VideoTrackConfigurationObserver&);
 
     PlatformAudioTrackConfiguration audioTrackConfiguration() const;
     using AudioTrackConfigurationObserver = Observer<void()>;
-    void NODELETE setAudioTrackConfigurationObserver(AudioTrackConfigurationObserver&);
+    void LEGACY_NODELETE setAudioTrackConfigurationObserver(AudioTrackConfigurationObserver&);
 
 private:
     AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);

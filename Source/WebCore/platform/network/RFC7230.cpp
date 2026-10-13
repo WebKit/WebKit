@@ -51,23 +51,23 @@ bool isDelimiter(char16_t c)
         || c == '}' || c == '"';
 }
 
-static bool NODELETE isVisibleCharacter(char16_t c)
+static bool LEGACY_NODELETE isVisibleCharacter(char16_t c)
 {
     return isTokenCharacter(c) || isDelimiter(c);
 }
 
 template<size_t min, size_t max>
-static bool NODELETE isInRange(char16_t c)
+static bool LEGACY_NODELETE isInRange(char16_t c)
 {
     return c >= min && c <= max;
 }
 
-static bool NODELETE isOBSText(char16_t c)
+static bool LEGACY_NODELETE isOBSText(char16_t c)
 {
     return isInRange<0x80, 0xFF>(c);
 }
 
-static bool NODELETE isQuotedTextCharacter(char16_t c)
+static bool LEGACY_NODELETE isQuotedTextCharacter(char16_t c)
 {
     return isTabOrSpace(c)
         || c == 0x21

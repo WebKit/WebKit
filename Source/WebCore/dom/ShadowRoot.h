@@ -122,7 +122,7 @@ public:
     void removeAllEventListeners() override;
 
     SlotAssignmentMode slotAssignmentMode() const { return m_slotAssignmentMode; }
-    inline HTMLSlotElement* NODELETE findAssignedSlot(const Node&); // Defined in SlotAssignment.h
+    inline HTMLSlotElement* LEGACY_NODELETE findAssignedSlot(const Node&); // Defined in SlotAssignment.h
 
     void renameSlotElement(HTMLSlotElement&, const AtomString& oldName, const AtomString& newName);
     void addSlotElementByName(const AtomString&, HTMLSlotElement&);
@@ -130,8 +130,8 @@ public:
     void slotManualAssignmentDidChange(HTMLSlotElement&, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current);
     void didRemoveManuallyAssignedNode(HTMLSlotElement&, const Node&);
     void slotFallbackDidChange(HTMLSlotElement&);
-    inline void NODELETE resolveSlotsBeforeNodeInsertionOrRemoval(); // Defined in SlotAssignment.h
-    inline void NODELETE willRemoveAllChildren(ContainerNode&); // Defined in SlotAssignment.h
+    inline void LEGACY_NODELETE resolveSlotsBeforeNodeInsertionOrRemoval(); // Defined in SlotAssignment.h
+    inline void LEGACY_NODELETE willRemoveAllChildren(ContainerNode&); // Defined in SlotAssignment.h
     inline void willRemoveAssignedNode(Node&); // Defined in SlotAssignment.h
 
     inline void didRemoveAllChildrenOfShadowHost(); // Defined in SlotAssignment.h

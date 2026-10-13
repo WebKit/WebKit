@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static RetainPtr<CFRunLoopTimerRef>& NODELETE sharedTimer()
+static RetainPtr<CFRunLoopTimerRef>& LEGACY_NODELETE sharedTimer()
 {
     static NeverDestroyed<RetainPtr<CFRunLoopTimerRef>> sharedTimer;
     return sharedTimer;

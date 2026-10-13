@@ -74,7 +74,7 @@ public:
 
     unsigned computeSpecificity() const;
     std::array<uint8_t, 3> computeSpecificityTuple() const;
-    unsigned NODELETE specificityForPage() const;
+    unsigned LEGACY_NODELETE specificityForPage() const;
 
     enum class VisitFunctionalPseudoClasses { No, Yes };
     enum class VisitOnlySubject { No, Yes };
@@ -131,7 +131,7 @@ public:
     enum class AttributeMatchType : uint8_t { Default, CaseInsensitive, CaseSensitive };
 
     // Maps from the selector pseudo-element type to the style type. Only pseudo-elements that are not element-backed have a type in style.
-    static std::optional<PseudoElementType> NODELETE stylePseudoElementTypeFor(PseudoElement);
+    static std::optional<PseudoElementType> LEGACY_NODELETE stylePseudoElementTypeFor(PseudoElement);
     static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElementName(StringView, const CSSSelectorParserContext&);
@@ -150,9 +150,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const CSSSelector* precedingInComplexSelector() const { return m_isFirstInComplexSelector ? nullptr : this + 1; }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    const CSSSelector* NODELETE leftmostInCompound() const;
-    const CSSSelector* NODELETE rightmostInCompound() const;
-    const CSSSelector* NODELETE followingInCompound() const;
+    const CSSSelector* LEGACY_NODELETE leftmostInCompound() const;
+    const CSSSelector* LEGACY_NODELETE rightmostInCompound() const;
+    const CSSSelector* LEGACY_NODELETE followingInCompound() const;
 
     const QualifiedName& tagQName() const LIFETIME_BOUND;
     const AtomString& tagLowercaseLocalName() const LIFETIME_BOUND;
@@ -168,9 +168,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     const CSSSelectorList* selectorList() const LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
     CSSSelectorList* selectorList() LIFETIME_BOUND { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
-    bool NODELETE matchNth(int count) const;
-    int NODELETE nthA() const;
-    int NODELETE nthB() const;
+    bool LEGACY_NODELETE matchNth(int count) const;
+    int LEGACY_NODELETE nthA() const;
+    int LEGACY_NODELETE nthB() const;
 
     bool hasDescendantRelation() const { return relation() == Relation::DescendantSpace; }
     bool hasDescendantOrChildRelation() const { return relation() == Relation::Child || hasDescendantRelation(); }
@@ -188,9 +188,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // Set by the parser, which knows the document mode: in quirks mode the class list is
     // ASCII-lowercased while [class~=] stays case-sensitive.
     bool isEquivalentToClassSelector() const { return m_isEquivalentToClassSelector; }
-    bool NODELETE isHostPseudoClass() const;
-    bool NODELETE isScopePseudoClass() const;
-    bool NODELETE isHasPseudoClass() const;
+    bool LEGACY_NODELETE isHostPseudoClass() const;
+    bool LEGACY_NODELETE isScopePseudoClass() const;
+    bool LEGACY_NODELETE isHasPseudoClass() const;
 
     Relation relation() const { return static_cast<Relation>(m_relation); }
     Match match() const { return static_cast<Match>(m_match); }
@@ -261,7 +261,7 @@ private:
 
         bool equals(const RareData&) const;
 
-        bool NODELETE matchNth(int count);
+        bool LEGACY_NODELETE matchNth(int count);
 
         // For quirks mode, class and id are case-insensitive. In the case where uppercase
         // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
@@ -292,14 +292,14 @@ private:
     } m_data;
 };
 
-bool NODELETE complexSelectorCanMatchPseudoElement(const CSSSelector&);
+bool LEGACY_NODELETE complexSelectorCanMatchPseudoElement(const CSSSelector&);
 bool complexSelectorMatchesElementBackedPseudoElement(const CSSSelector&);
 
 // In the AllowNonElementBackedPseudoElements mode `.foo::before` and `.foo` compare equal.
 enum class ComplexSelectorsEqualMode : bool { Full, IgnoreNonElementBackedPseudoElements };
 bool complexSelectorsEqual(const CSSSelector&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
 
-void NODELETE addComplexSelector(Hasher&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
+void LEGACY_NODELETE addComplexSelector(Hasher&, const CSSSelector&, ComplexSelectorsEqualMode = ComplexSelectorsEqualMode::Full);
 
 inline bool operator==(const PossiblyQuotedIdentifier& a, const AtomString& b) { return a.identifier == b; }
 
@@ -349,7 +349,7 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass
     }
 }
 
-bool NODELETE isElementBackedPseudoElement(CSSSelector::PseudoElement);
+bool LEGACY_NODELETE isElementBackedPseudoElement(CSSSelector::PseudoElement);
 
 inline bool CSSSelector::isSiblingSelector() const
 {

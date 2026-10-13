@@ -52,7 +52,7 @@ public:
     ProofOfPossessionCoordinator(Page&, std::unique_ptr<ProofOfPossessionCoordinatorClient>&&);
     ~ProofOfPossessionCoordinator();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void discoverFromExternalSource(const Document&, ProofOfPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);

@@ -123,6 +123,6 @@ private:
     float m_noiseInjectionMultiplier { 0 };
 };
 
-WebCoreOpaqueRoot NODELETE root(AudioBuffer*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(AudioBuffer*);
 
 } // namespace WebCore

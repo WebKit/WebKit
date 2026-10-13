@@ -61,32 +61,32 @@ CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction& fun
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::JumpStart)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::JumpStart)
 {
     return StepsTimingFunction::StepPosition::JumpStart;
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::JumpEnd)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::JumpEnd)
 {
     return StepsTimingFunction::StepPosition::JumpEnd;
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::JumpBoth)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::JumpBoth)
 {
     return StepsTimingFunction::StepPosition::JumpBoth;
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::Start)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::Start)
 {
     return StepsTimingFunction::StepPosition::Start;
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::End)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::End)
 {
     return StepsTimingFunction::StepPosition::End;
 }
 
-static StepsTimingFunction::StepPosition NODELETE toStepPosition(CSS::Keyword::JumpNone)
+static StepsTimingFunction::StepPosition LEGACY_NODELETE toStepPosition(CSS::Keyword::JumpNone)
 {
     return StepsTimingFunction::StepPosition::JumpNone;
 }

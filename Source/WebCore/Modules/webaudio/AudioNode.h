@@ -127,8 +127,8 @@ public:
     unsigned numberOfInputs() const { return m_inputs.size(); }
     unsigned numberOfOutputs() const { return m_outputs.size(); }
 
-    AudioNodeInput* NODELETE input(unsigned);
-    AudioNodeOutput* NODELETE output(unsigned);
+    AudioNodeInput* LEGACY_NODELETE input(unsigned);
+    AudioNodeOutput* LEGACY_NODELETE output(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
     ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
@@ -182,7 +182,7 @@ public:
     // propagatesSilence() should return true if the node will generate silent output when given silent input. By default, AudioNode
     // will take tailTime() and latencyTime() into account when determining whether the node will propagate silence.
     virtual bool propagatesSilence() const;
-    bool NODELETE inputsAreSilent();
+    bool LEGACY_NODELETE inputsAreSilent();
     void silenceOutputs();
 
     void enableOutputsIfNecessary();
@@ -237,10 +237,10 @@ protected:
     const Logger& logger() const final { return m_logger.get(); }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const final { return "AudioNode"_s; }
-    WTFLogChannel& NODELETE logChannel() const final;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const final;
 #endif
 
-    void NODELETE initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
+    void LEGACY_NODELETE initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
 
     virtual void updatePullStatus() { }
 

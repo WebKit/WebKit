@@ -40,7 +40,7 @@ public:
     RenderButton(HTMLFormControlElement&, Style::ComputedStyle&&);
     virtual ~RenderButton();
 
-    HTMLFormControlElement& NODELETE formControlElement() const;
+    HTMLFormControlElement& LEGACY_NODELETE formControlElement() const;
 
     bool canBeSelectionLeaf() const override;
 
@@ -55,7 +55,7 @@ public:
     void updateAnonymousChildStyle(Style::ComputedStyle&) const override;
 
     void setText(const String&);
-    String NODELETE text() const;
+    String LEGACY_NODELETE text() const;
 
 #if PLATFORM(IOS_FAMILY)
     void layout() override;

@@ -93,7 +93,7 @@ public:
 
     static Color decorationColor(const Style::ComputedStyle&, OptionSet<PaintBehavior> paintBehavior = { });
     static Styles stylesForRenderer(const RenderObject&, Style::TextDecorationLine requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, std::optional<PseudoElementType> = { });
-    static Style::TextDecorationLine NODELETE textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
+    static Style::TextDecorationLine LEGACY_NODELETE textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
 
 private:
     void paintLineThrough(const ForegroundDecorationGeometry&, const Color&, const Styles&);

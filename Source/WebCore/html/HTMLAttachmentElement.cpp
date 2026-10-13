@@ -589,11 +589,11 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 #if ATTACHMENT_LOG_DOCUMENT_TRAFFIC
 class AttachmentEvent {
 public:
-    uintptr_t NODELETE attachment() const { return m_attachment; }
-    uintptr_t NODELETE document() const { return m_document; }
-    String NODELETE uniqueIdentifier() const { return m_uniqueIdentifier; }
-    WTF::MonotonicTime NODELETE time() const { return m_time; }
-    StackTrace& NODELETE stackTrace() const { return *m_stackTrace; }
+    uintptr_t LEGACY_NODELETE attachment() const { return m_attachment; }
+    uintptr_t LEGACY_NODELETE document() const { return m_document; }
+    String LEGACY_NODELETE uniqueIdentifier() const { return m_uniqueIdentifier; }
+    WTF::MonotonicTime LEGACY_NODELETE time() const { return m_time; }
+    StackTrace& LEGACY_NODELETE stackTrace() const { return *m_stackTrace; }
 
     void capture(const HTMLAttachmentElement& a, WTF::MonotonicTime t)
     {
@@ -611,7 +611,7 @@ public:
         m_stackTrace = 0;
     }
 
-    explicit NODELETE operator bool() const
+    explicit LEGACY_NODELETE operator bool() const
     {
         ASSERT(!m_attachment == !m_stackTrace);
         return !!m_attachment;

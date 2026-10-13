@@ -58,7 +58,7 @@ public:
         return adoptRef(*new GPURenderPassEncoder(WTF::move(backing), commandEncoder, canvasColorAttachmentMask));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     void setPipeline(const GPURenderPipeline&);

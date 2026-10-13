@@ -2303,7 +2303,7 @@ void setPropertyIn(AXProperty property, AXPropertyValueVariant&& value, AXProper
         properties.append(std::pair(property, WTF::move(value)));
 }
 
-static bool NODELETE shouldCacheElementName(ElementName name)
+static bool LEGACY_NODELETE shouldCacheElementName(ElementName name)
 {
     switch (name) {
     case ElementName::HTML_area:

@@ -70,7 +70,7 @@ private:
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "CDMSessionAVFoundationObjC"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
     ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;

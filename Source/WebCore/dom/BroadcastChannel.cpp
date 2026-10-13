@@ -51,13 +51,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BroadcastChannel);
 
 static Lock allBroadcastChannelsLock;
-static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& NODELETE allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
+static HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>& LEGACY_NODELETE allBroadcastChannels() WTF_REQUIRES_LOCK(allBroadcastChannelsLock)
 {
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ThreadSafeWeakPtr<BroadcastChannel>>> map;
     return map;
 }
 
-static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& NODELETE channelToContextIdentifier()
+static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& LEGACY_NODELETE channelToContextIdentifier()
 {
     ASSERT(isMainThread());
     static NeverDestroyed<HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>> map;

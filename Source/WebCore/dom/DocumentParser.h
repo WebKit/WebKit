@@ -46,7 +46,7 @@ public:
     virtual HTMLDocumentParser* asHTMLDocumentParser() { return nullptr; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
-    virtual bool NODELETE hasInsertionPoint() { return true; }
+    virtual bool LEGACY_NODELETE hasInsertionPoint() { return true; }
 
     // insert is used by document.write.
     virtual void insert(SegmentedString&&) = 0;
@@ -74,7 +74,7 @@ public:
     bool isDetached() const { return m_state == ParserState::Detached; }
 
     // FIXME: Is this necessary? Does XMLDocumentParserLibxml2 really need to set this?
-    virtual void NODELETE startParsing();
+    virtual void LEGACY_NODELETE startParsing();
 
     // prepareToStop() is used when the EOF token is encountered and parsing is to be
     // stopped normally.

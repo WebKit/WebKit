@@ -176,7 +176,7 @@ private:
     void setIntrinsicPaddingAfter(LayoutUnit p) { m_intrinsicPaddingAfter = p; }
     void setIntrinsicPadding(LayoutUnit before, LayoutUnit after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
 
-    bool NODELETE hasStartBorderAdjoiningTable() const;
+    bool LEGACY_NODELETE hasStartBorderAdjoiningTable() const;
     bool hasEndBorderAdjoiningTable() const;
 
     CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

@@ -50,7 +50,7 @@ public:
     void addDeviceEventListener(LocalDOMWindow&);
     void removeDeviceEventListener(LocalDOMWindow&);
     void removeAllDeviceEventListeners(LocalDOMWindow&);
-    bool NODELETE hasDeviceEventListener(LocalDOMWindow&) const;
+    bool LEGACY_NODELETE hasDeviceEventListener(LocalDOMWindow&) const;
 
     void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }

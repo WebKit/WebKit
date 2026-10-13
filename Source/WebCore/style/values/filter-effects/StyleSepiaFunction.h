@@ -45,7 +45,7 @@ struct Sepia {
 
     Parameter value;
 
-    static Sepia NODELETE passthroughForInterpolation();
+    static Sepia LEGACY_NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }

@@ -40,7 +40,7 @@ static constexpr auto ALG384 = "HS384"_s;
 static constexpr auto ALG512 = "HS512"_s;
 }
 
-static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsageBitmap usages)
+static inline bool LEGACY_NODELETE usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey);
 }

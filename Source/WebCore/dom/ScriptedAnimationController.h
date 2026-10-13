@@ -54,10 +54,10 @@ public:
     WEBCORE_EXPORT ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
 
-    WEBCORE_EXPORT Seconds NODELETE interval() const;
-    WEBCORE_EXPORT OptionSet<ThrottlingReason> NODELETE throttlingReasons() const;
+    WEBCORE_EXPORT Seconds LEGACY_NODELETE interval() const;
+    WEBCORE_EXPORT OptionSet<ThrottlingReason> LEGACY_NODELETE throttlingReasons() const;
 
-    void NODELETE suspend();
+    void LEGACY_NODELETE suspend();
     void resume();
 
     void addThrottlingReason(ThrottlingReason reason) { m_throttlingReasons.add(reason); }
@@ -71,8 +71,8 @@ public:
 private:
     ScriptedAnimationController(Document&);
 
-    Page* NODELETE page() const;
-    Seconds NODELETE preferredScriptedAnimationInterval() const;
+    Page* LEGACY_NODELETE page() const;
+    Seconds LEGACY_NODELETE preferredScriptedAnimationInterval() const;
     bool isThrottledRelativeToPage() const;
     bool shouldRescheduleRequestAnimationFrame(ReducedResolutionSeconds) const;
     void scheduleAnimation();

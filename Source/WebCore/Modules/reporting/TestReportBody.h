@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT static Ref<TestReportBody> create(String&& message);
 
     WEBCORE_EXPORT const String& type() const final;
-    WEBCORE_EXPORT const String& NODELETE message() const;
+    WEBCORE_EXPORT const String& LEGACY_NODELETE message() const;
 
 private:
     TestReportBody(String&& message);

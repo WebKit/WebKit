@@ -85,7 +85,7 @@ private:
         int endY;
     };
 
-    static long NODELETE random(long& seed);
+    static long LEGACY_NODELETE random(long& seed);
 
     static inline float smoothCurve(float t) { return t * t * (3 - 2 * t); }
 

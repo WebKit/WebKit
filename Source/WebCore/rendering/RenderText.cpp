@@ -125,7 +125,7 @@ private:
 
 using SecureTextTimerMap = SingleThreadWeakHashMap<RenderText, std::unique_ptr<SecureTextTimer>>;
 
-static SecureTextTimerMap& NODELETE secureTextTimers()
+static SecureTextTimerMap& LEGACY_NODELETE secureTextTimers()
 {
     static NeverDestroyed<SecureTextTimerMap> map;
     return map.get();
@@ -142,7 +142,7 @@ inline void SecureTextTimer::restart(unsigned offsetAfterLastTypedCharacter)
     startOneShot(1_s * m_renderer.settings().passwordEchoDurationInSeconds());
 }
 
-inline unsigned NODELETE SecureTextTimer::takeOffsetAfterLastTypedCharacter()
+inline unsigned LEGACY_NODELETE SecureTextTimer::takeOffsetAfterLastTypedCharacter()
 {
     unsigned offset = m_offsetAfterLastTypedCharacter;
     m_offsetAfterLastTypedCharacter = 0;
@@ -156,19 +156,19 @@ void SecureTextTimer::fired()
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, String>& NODELETE originalTextMap()
+static HashMap<SingleThreadWeakRef<const RenderText>, String>& LEGACY_NODELETE originalTextMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& NODELETE inlineWrapperForDisplayContentsMap()
+static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& LEGACY_NODELETE inlineWrapperForDisplayContentsMap()
 {
     static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
     return map;
 }
 
-static constexpr char16_t NODELETE convertNoBreakSpaceToSpace(char16_t character)
+static constexpr char16_t LEGACY_NODELETE convertNoBreakSpaceToSpace(char16_t character)
 {
     return character == noBreakSpace ? ' ' : character;
 }
@@ -461,12 +461,12 @@ RenderText::~RenderText()
     ASSERT(!originalTextMap().contains(this));
 }
 
-Layout::InlineTextBox* NODELETE RenderText::layoutBox()
+Layout::InlineTextBox* LEGACY_NODELETE RenderText::layoutBox()
 {
     return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
 }
 
-const Layout::InlineTextBox* NODELETE RenderText::layoutBox() const
+const Layout::InlineTextBox* LEGACY_NODELETE RenderText::layoutBox() const
 {
     return downcast<Layout::InlineTextBox>(RenderObject::layoutBox());
 }
@@ -476,7 +476,7 @@ ASCIILiteral RenderText::renderName() const
     return "RenderText"_s;
 }
 
-Text* NODELETE RenderText::textNode() const
+Text* LEGACY_NODELETE RenderText::textNode() const
 {
     return downcast<Text>(RenderObject::node());
 }
@@ -1038,7 +1038,7 @@ PositionWithAffinity RenderText::positionForPoint(const LayoutPoint& point, HitT
     return createPositionWithAffinity(0, Affinity::Downstream);
 }
 
-static inline std::optional<float> NODELETE combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const Style::ComputedStyle& style)
+static inline std::optional<float> LEGACY_NODELETE combineTextWidth(const RenderText& renderer, const FontCascade& fontCascade, const Style::ComputedStyle& style)
 {
     if (style.textCombine() == TextCombine::None)
         return { };
@@ -1220,7 +1220,7 @@ RenderText::Widths RenderText::trimmedIntrinsicLogicalWidths(float leadingWidth,
     return widths;
 }
 
-static inline bool NODELETE isSpaceAccordingToStyle(char16_t c, const Style::ComputedStyle& style)
+static inline bool LEGACY_NODELETE isSpaceAccordingToStyle(char16_t c, const Style::ComputedStyle& style)
 {
     return c == ' ' || (c == noBreakSpace && style.nbspMode() == NBSPMode::Space);
 }
@@ -1586,7 +1586,7 @@ bool RenderText::containsOnlyCollapsibleWhitespace() const
 }
 
 // FIXME: merge this with isCSSSpace somehow
-template<typename CharacterType> static inline bool NODELETE containsOnlyPossiblyCollapsibleWhitespace(std::span<const CharacterType> characters)
+template<typename CharacterType> static inline bool LEGACY_NODELETE containsOnlyPossiblyCollapsibleWhitespace(std::span<const CharacterType> characters)
 {
     for (auto character : characters) {
         if (!(character == '\n' || character == ' ' || character == '\t'))
@@ -1648,7 +1648,7 @@ void RenderText::setSelectionState(HighlightState state)
         containingBlock->setSelectionState(state);
 }
 
-static inline bool NODELETE isInlineFlowOrEmptyText(const RenderObject& renderer)
+static inline bool LEGACY_NODELETE isInlineFlowOrEmptyText(const RenderObject& renderer)
 {
     if (renderer.isInlineBox())
         return true;

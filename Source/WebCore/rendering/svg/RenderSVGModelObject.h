@@ -155,7 +155,7 @@ protected:
     void updateLayerTransform() override;
 
 private:
-    LayoutSize NODELETE cachedSizeForOverflowClip() const;
+    LayoutSize LEGACY_NODELETE cachedSizeForOverflowClip() const;
 
     bool isInsideSVGResourceContainer() const;
 

@@ -397,7 +397,7 @@ Node::Node(ClangVTableWorkaroundTag, Document& document)
 {
 }
 
-static HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& NODELETE nodeIdentifiersMap()
+static HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>& LEGACY_NODELETE nodeIdentifiersMap()
 {
     static MainThreadNeverDestroyed<HashMap<WeakPtr<Node, WeakPtrImplWithEventTargetData>, NodeIdentifier>> map;
     return map;
@@ -570,7 +570,7 @@ static HashSet<Ref<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Fixe
     return nodeSet;
 }
 
-static RefPtr<Node> NODELETE firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
+static RefPtr<Node> LEGACY_NODELETE firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.previousSibling(); sibling; sibling = sibling->previousSibling()) {
         if (!nodeSet.contains(*sibling))
@@ -579,7 +579,7 @@ static RefPtr<Node> NODELETE firstPrecedingSiblingNotInNodeSet(Node& context, co
     return nullptr;
 }
 
-static RefPtr<Node> NODELETE firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
+static RefPtr<Node> LEGACY_NODELETE firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<Ref<Node>>& nodeSet)
 {
     for (auto* sibling = context.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (!nodeSet.contains(*sibling))
@@ -847,7 +847,7 @@ void Node::inspect()
         page->inspectorController().inspect(this);
 }
 
-static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Style::ComputedStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
+static Node::Editability LEGACY_NODELETE computeEditabilityFromComputedStyle(const Style::ComputedStyle& style, Node::UserSelectAllTreatment treatment, PageIsEditable pageIsEditable)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
@@ -1028,7 +1028,7 @@ unsigned Node::computeNodeIndex() const
 }
 
 template<unsigned type>
-bool NODELETE shouldInvalidateNodeListCachesForAttr(std::span<const unsigned, numNodeListInvalidationTypes> nodeListCounts, const QualifiedName& attrName)
+bool LEGACY_NODELETE shouldInvalidateNodeListCachesForAttr(std::span<const unsigned, numNodeListInvalidationTypes> nodeListCounts, const QualifiedName& attrName)
 {
     if constexpr (type >= numNodeListInvalidationTypes)
         return false;
@@ -1317,21 +1317,21 @@ bool Node::isClosedShadowHidden(const Node& otherNode) const
     return true;
 }
 
-static inline ShadowRoot* NODELETE parentShadowRoot(const Node& node)
+static inline ShadowRoot* LEGACY_NODELETE parentShadowRoot(const Node& node)
 {
     if (auto* parent = node.parentElement())
         return parent->shadowRoot();
     return nullptr;
 }
 
-HTMLSlotElement* NODELETE Node::assignedSlot() const
+HTMLSlotElement* LEGACY_NODELETE Node::assignedSlot() const
 {
     if (auto* shadowRoot = parentShadowRoot(*this))
         return shadowRoot->findAssignedSlot(*this);
     return nullptr;
 }
 
-HTMLSlotElement* NODELETE Node::assignedSlotForBindings() const
+HTMLSlotElement* LEGACY_NODELETE Node::assignedSlotForBindings() const
 {
     auto* shadowRoot = parentShadowRoot(*this);
     if (shadowRoot && shadowRoot->mode() == ShadowRootMode::Open)
@@ -3044,7 +3044,7 @@ template<> ContainerNode* parent<ComposedTreeIncludingPseudoElements>(const Node
     return node.parentElementInComposedTree();
 }
 
-template<TreeType treeType> size_t NODELETE depth(const Node& node)
+template<TreeType treeType> size_t LEGACY_NODELETE depth(const Node& node)
 {
     size_t depth = 0;
     SUPPRESS_UNCHECKED_LOCAL auto ancestor = &node;
@@ -3099,7 +3099,7 @@ template Node* commonInclusiveAncestor<ComposedTree>(const Node&, const Node&);
 template Node* commonInclusiveAncestor<ShadowIncludingTree>(const Node&, const Node&);
 template Node* commonInclusiveAncestor<ComposedTreeIncludingPseudoElements>(const Node&, const Node&);
 
-template<TreeType treeType> bool NODELETE isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
+template<TreeType treeType> bool LEGACY_NODELETE isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
 {
     ASSERT(&siblingA != &siblingB);
     ASSERT(parent<treeType>(siblingA));

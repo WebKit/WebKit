@@ -102,7 +102,7 @@ static inline uint64_t estimateSize(const IDBObjectStoreInfo& info, const IndexI
     return size;
 }
 
-static inline uint64_t NODELETE estimateSize(const IDBValue& value)
+static inline uint64_t LEGACY_NODELETE estimateSize(const IDBValue& value)
 {
     uint64_t size = 4;
     size += value.data().size();
@@ -1436,7 +1436,7 @@ void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTrans
     transaction.didActivateInBackingStore(error);
 }
 
-template<typename T> bool NODELETE scopesOverlap(const T& aScopes, const Vector<IDBObjectStoreIdentifier>& bScopes)
+template<typename T> bool LEGACY_NODELETE scopesOverlap(const T& aScopes, const Vector<IDBObjectStoreIdentifier>& bScopes)
 {
     for (auto scope : bScopes) {
         if (aScopes.contains(scope))

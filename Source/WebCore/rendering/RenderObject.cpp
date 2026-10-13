@@ -894,7 +894,7 @@ LayoutRect RenderObject::subtreePaintRootRect(LayoutRect& topLevelRect, RespectT
     return result;
 }
 
-static inline bool NODELETE canRelyOnAncestorLayerFullRepaint(const RenderObject& rendererToRepaint, const RenderLayer& ancestorLayer)
+static inline bool LEGACY_NODELETE canRelyOnAncestorLayerFullRepaint(const RenderObject& rendererToRepaint, const RenderLayer& ancestorLayer)
 {
     auto* renderElement = dynamicDowncast<RenderElement>(rendererToRepaint);
     if (!renderElement || !renderElement->hasSelfPaintingLayer())
@@ -2782,7 +2782,7 @@ static void adjustTextDirectionForCoalescedGeometries(const SelectionEndpointDir
     }
 }
 
-static bool NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
+static bool LEGACY_NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* currentRenderer)
 {
     if (!currentRenderer)
         return false;
@@ -2796,7 +2796,7 @@ static bool NODELETE shouldRenderSelectionOnSeparateLine(const RenderObject* cur
     return false;
 }
 
-static bool NODELETE hasAncestorWithSelectionOnSeparateLine(RenderObject* descendant, const RenderObject* stayWithin)
+static bool LEGACY_NODELETE hasAncestorWithSelectionOnSeparateLine(RenderObject* descendant, const RenderObject* stayWithin)
 {
     for (auto* current = descendant; current; current = current->parent()) {
         if (current->isOutOfFlowPositioned())
@@ -2809,7 +2809,7 @@ static bool NODELETE hasAncestorWithSelectionOnSeparateLine(RenderObject* descen
     return false;
 }
 
-static bool NODELETE shouldRenderPreviousSelectionOnSeparateLine(RenderObject* previousRenderer, const RenderObject* stayWithin)
+static bool LEGACY_NODELETE shouldRenderPreviousSelectionOnSeparateLine(RenderObject* previousRenderer, const RenderObject* stayWithin)
 {
     if (!previousRenderer || !stayWithin)
         return false;

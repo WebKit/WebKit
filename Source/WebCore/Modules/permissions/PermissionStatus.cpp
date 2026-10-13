@@ -50,7 +50,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PermissionStatus);
 
-static HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>& NODELETE allMainThreadPermissionObservers()
+static HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>& LEGACY_NODELETE allMainThreadPermissionObservers()
 {
     static MainThreadNeverDestroyed<HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>> map;
     return map;

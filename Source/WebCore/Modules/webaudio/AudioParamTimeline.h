@@ -65,7 +65,7 @@ public:
 
     bool hasValues(size_t startFrame, double sampleRate) const;
 
-    WEBCORE_EXPORT static float NODELETE exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
+    WEBCORE_EXPORT static float LEGACY_NODELETE exponentialRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
 private:
     class ParamEvent {
         WTF_MAKE_TZONE_ALLOCATED(ParamEvent);
@@ -199,10 +199,10 @@ private:
     void removeOldEvents(size_t eventCount) WTF_REQUIRES_LOCK(m_eventsLock);
     ExceptionOr<void> insertEvent(ParamEvent&&) WTF_REQUIRES_LOCK(m_eventsLock);
     float valuesForFrameRangeImpl(size_t startFrame, size_t endFrame, float defaultValue, std::span<float> values, double sampleRate, double controlRate) WTF_REQUIRES_LOCK(m_eventsLock);
-    float NODELETE linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
+    float LEGACY_NODELETE linearRampAtTime(Seconds t, float value1, Seconds time1, float value2, Seconds time2);
     float valueCurveAtTime(Seconds t, Seconds time1, Seconds duration, std::span<const float> curveData, size_t curveLength);
-    void NODELETE handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
-    bool NODELETE isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
+    void LEGACY_NODELETE handleCancelValues(ParamEvent&, ParamEvent* nextEvent, float& value2, Seconds& time2, ParamEvent::Type& nextEventType);
+    bool LEGACY_NODELETE isEventCurrent(const ParamEvent&, const ParamEvent* nextEvent, size_t currentFrame, double sampleRate) const;
 
     void processLinearRamp(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processExponentialRamp(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);

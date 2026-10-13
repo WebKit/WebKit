@@ -45,15 +45,15 @@ struct PathMoveTo {
 
     bool operator==(const PathMoveTo&) const = default;
 
-    FloatPoint NODELETE calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> NODELETE tryGetEndPointWithoutContext() const;
+    FloatPoint LEGACY_NODELETE calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+    std::optional<FloatPoint> LEGACY_NODELETE tryGetEndPointWithoutContext() const;
 
-    void NODELETE extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void NODELETE extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void LEGACY_NODELETE extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void LEGACY_NODELETE extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
 
     void applyElements(NOESCAPE const PathElementApplier&) const;
 
-    void NODELETE transform(const AffineTransform&);
+    void LEGACY_NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathMoveTo&);
@@ -415,7 +415,7 @@ struct PathCloseSubpath {
 
     void applyElements(NOESCAPE const PathElementApplier&) const;
 
-    void NODELETE transform(const AffineTransform&);
+    void LEGACY_NODELETE transform(const AffineTransform&);
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathCloseSubpath&);

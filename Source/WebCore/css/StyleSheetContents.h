@@ -66,7 +66,7 @@ public:
     const CSSParserContext& parserContext() const LIFETIME_BOUND { return m_parserContext; }
     
     const AtomString& defaultNamespace() LIFETIME_BOUND { return m_defaultNamespace; }
-    const AtomString& NODELETE namespaceURIFromPrefix(const AtomString& prefix);
+    const AtomString& LEGACY_NODELETE namespaceURIFromPrefix(const AtomString& prefix);
     const CSSNamespacePrefixMap& namespacePrefixMap() const { return m_namespacePrefixMap; }
 
     bool parseAuthorStyleSheet(const CachedCSSStyleSheet&, const SecurityOrigin*);
@@ -75,16 +75,16 @@ public:
     bool isCacheable() const;
     bool isCacheableWithNoBaseURLDependency() const;
 
-    bool NODELETE isLoading() const;
+    bool LEGACY_NODELETE isLoading() const;
     bool subresourcesAllowReuse(CachePolicy, FrameLoader&) const;
     WEBCORE_EXPORT bool isLoadingSubresources() const;
 
     void checkLoaded();
     void startLoadingDynamicSheet();
 
-    StyleSheetContents* NODELETE rootStyleSheet() const;
-    Node* NODELETE singleOwnerNode() const;
-    Document* NODELETE singleOwnerDocument() const;
+    StyleSheetContents* LEGACY_NODELETE rootStyleSheet() const;
+    Node* LEGACY_NODELETE singleOwnerNode() const;
+    Document* LEGACY_NODELETE singleOwnerDocument() const;
 
     ASCIILiteral charset() const { return m_parserContext.charset; }
 
@@ -115,8 +115,8 @@ public:
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
-    StyleSheetContents* NODELETE parentStyleSheet() const;
-    StyleRuleImport* NODELETE ownerRule() const;
+    StyleSheetContents* LEGACY_NODELETE parentStyleSheet() const;
+    StyleRuleImport* LEGACY_NODELETE ownerRule() const;
     void clearOwnerRule() { m_ownerRule = nullptr; }
     
     // Note that href is the URL that started the redirect chain that led to
@@ -126,12 +126,12 @@ public:
     const URL& baseURL() const LIFETIME_BOUND { return m_parserContext.baseURL; }
 
     bool isEmpty() const { return !ruleCount(); }
-    unsigned NODELETE ruleCount() const;
-    StyleRuleBase* NODELETE ruleAt(unsigned index) const;
+    unsigned LEGACY_NODELETE ruleCount() const;
+    StyleRuleBase* LEGACY_NODELETE ruleAt(unsigned index) const;
 
     bool usesStyleBasedEditability() const { return m_usesStyleBasedEditability; }
 
-    unsigned NODELETE estimatedSizeInBytes() const;
+    unsigned LEGACY_NODELETE estimatedSizeInBytes() const;
     
     bool wrapperInsertRule(Ref<StyleRuleBase>&&, unsigned index);
     bool wrapperDeleteRule(unsigned index);
@@ -150,8 +150,8 @@ public:
     void clearHasNestingRulesCache() { m_hasNestingRulesCache = { }; }
 
     bool isInMemoryCache() const { return m_inMemoryCacheCount; }
-    void NODELETE addedToMemoryCache();
-    void NODELETE removedFromMemoryCache();
+    void LEGACY_NODELETE addedToMemoryCache();
+    void LEGACY_NODELETE removedFromMemoryCache();
 
     void shrinkToFit();
 

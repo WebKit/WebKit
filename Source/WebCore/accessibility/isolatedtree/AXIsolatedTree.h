@@ -504,8 +504,8 @@ public:
     void updateRootScreenRelativePosition();
     void overrideNodeProperties(AXID, AXPropertyVector&&);
 
-    double NODELETE loadingProgress();
-    void NODELETE updateLoadingProgress(double);
+    double LEGACY_NODELETE loadingProgress();
+    void LEGACY_NODELETE updateLoadingProgress(double);
 
 #if ENABLE(WRITING_TOOLS)
     bool writingToolsAvailable() const { return m_writingToolsAvailable; }
@@ -637,7 +637,7 @@ private:
     static std::atomic<bool> s_anyTreeNeedsTearDown;
 
     // rdar://161259641 (Figure out a way to enforce WTF_REQUIRES_LOCK when we might need to access it while already holding the lock)
-    static HashMap<FrameIdentifier, Ref<AXIsolatedTree>>& NODELETE treeFrameCache(); // WTF_REQUIRES_LOCK(s_storeLock);
+    static HashMap<FrameIdentifier, Ref<AXIsolatedTree>>& LEGACY_NODELETE treeFrameCache(); // WTF_REQUIRES_LOCK(s_storeLock);
 
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
@@ -888,7 +888,7 @@ private:
 };
 
 IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>&, Ref<AXIsolatedTree>);
-std::optional<AXPropertyFlag> NODELETE convertToPropertyFlag(AXProperty);
+std::optional<AXPropertyFlag> LEGACY_NODELETE convertToPropertyFlag(AXProperty);
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const
 {

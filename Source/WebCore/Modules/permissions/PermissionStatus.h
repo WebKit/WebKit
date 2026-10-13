@@ -59,10 +59,10 @@ private:
     PermissionStatus(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
 
     // ActiveDOMObject
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::PermissionStatus; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

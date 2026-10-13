@@ -584,7 +584,7 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(VideoPresentationMode mode
     return false;
 }
 
-static inline HTMLMediaElementEnums::VideoFullscreenMode NODELETE toFullscreenMode(HTMLVideoElement::VideoPresentationMode mode)
+static inline HTMLMediaElementEnums::VideoFullscreenMode LEGACY_NODELETE toFullscreenMode(HTMLVideoElement::VideoPresentationMode mode)
 {
     switch (mode) {
     case HTMLVideoElement::VideoPresentationMode::Fullscreen:

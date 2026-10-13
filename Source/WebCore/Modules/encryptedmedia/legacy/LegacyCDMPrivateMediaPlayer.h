@@ -53,7 +53,7 @@ public:
 
     LegacyCDM& cdm() const { return m_cdm; }
 
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 
 private:

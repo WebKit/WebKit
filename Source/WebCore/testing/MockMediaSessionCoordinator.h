@@ -63,7 +63,7 @@ private:
     void trackIdentifierChanged(const String&) final;
 
     ASCIILiteral logClassName() const { return "MockMediaSessionCoordinator"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 
     std::optional<Exception> result() const;
 

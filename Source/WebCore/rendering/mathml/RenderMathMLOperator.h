@@ -43,7 +43,7 @@ public:
     RenderMathMLOperator(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderMathMLOperator();
 
-    MathMLOperatorElement& NODELETE element() const;
+    MathMLOperatorElement& LEGACY_NODELETE element() const;
 
     void stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline);
     void stretchTo(LayoutUnit width);

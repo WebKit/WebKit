@@ -191,19 +191,19 @@ private:
     explicit NullMediaPlayerPrivate(MediaPlayer&) { }
 };
 
-static const Vector<WebCore::ContentType>& NODELETE nullContentTypeVector()
+static const Vector<WebCore::ContentType>& LEGACY_NODELETE nullContentTypeVector()
 {
     static NeverDestroyed<Vector<WebCore::ContentType>> vector;
     return vector;
 }
 
-static const std::optional<Vector<String>>& NODELETE nullOptionalStringVector()
+static const std::optional<Vector<String>>& LEGACY_NODELETE nullOptionalStringVector()
 {
     static NeverDestroyed<std::optional<Vector<String>>> vector;
     return vector;
 }
 
-static const std::optional<Vector<FourCC>>& NODELETE nullOptionalFourCCVector()
+static const std::optional<Vector<FourCC>>& LEGACY_NODELETE nullOptionalFourCCVector()
 {
     static NeverDestroyed<std::optional<Vector<FourCC>>> vector;
     return vector;
@@ -291,13 +291,13 @@ static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
 static Lock mediaEngineVectorLock;
 
-static bool& NODELETE haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
+static bool& LEGACY_NODELETE haveMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
 {
     static bool haveVector;
     return haveVector;
 }
 
-static Vector<std::unique_ptr<MediaPlayerFactory>>& NODELETE mutableInstalledMediaEnginesVector()
+static Vector<std::unique_ptr<MediaPlayerFactory>>& LEGACY_NODELETE mutableInstalledMediaEnginesVector()
 {
     static NeverDestroyed<Vector<std::unique_ptr<MediaPlayerFactory>>> installedEngines;
     return installedEngines;

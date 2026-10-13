@@ -82,7 +82,7 @@ PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef);
 WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
 #endif
 
-WEBCORE_EXPORT FourCC NODELETE computeBoxType(FourCC);
+WEBCORE_EXPORT FourCC LEGACY_NODELETE computeBoxType(FourCC);
 
 WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32);
 // Retrieve channel layout name string for debugging.
@@ -96,7 +96,7 @@ public:
 
     bool isValid() const { return m_isValid; }
     size_t framesInPacket(std::span<const uint8_t>);
-    void NODELETE reset();
+    void LEGACY_NODELETE reset();
 
 private:
     uint32_t m_audioFormatID { 0 };

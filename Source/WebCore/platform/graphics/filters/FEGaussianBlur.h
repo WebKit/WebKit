@@ -38,13 +38,13 @@ public:
     bool operator==(const FEGaussianBlur&) const;
 
     float stdDeviationX() const { return m_stdX; }
-    bool NODELETE setStdDeviationX(float);
+    bool LEGACY_NODELETE setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    bool NODELETE setStdDeviationY(float);
+    bool LEGACY_NODELETE setStdDeviationY(float);
 
     EdgeModeType edgeMode() const { return m_edgeMode; }
-    bool NODELETE setEdgeMode(EdgeModeType);
+    bool LEGACY_NODELETE setEdgeMode(EdgeModeType);
 
     FloatSize effectiveStdDeviation(OptionSet<FilterRenderingOption> = { }) const;
 

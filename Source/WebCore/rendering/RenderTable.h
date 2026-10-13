@@ -100,7 +100,7 @@ public:
     }
 
     // This function returns 0 if the table has no section.
-    RenderTableSection* NODELETE topSection() const;
+    RenderTableSection* LEGACY_NODELETE topSection() const;
     RenderTableSection* bottomSection() const;
 
     // This function returns 0 if the table has no non-empty sections.
@@ -203,7 +203,7 @@ public:
     
     void markForPaginationRelayoutIfNeeded() final;
 
-    void NODELETE willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
+    void LEGACY_NODELETE willInsertTableColumn(RenderTableCol& child, RenderObject* beforeChild);
     void willInsertTableSection(RenderTableSection& child, RenderObject* beforeChild);
 
     LayoutUnit sumCaptionsLogicalHeight() const;
@@ -239,7 +239,7 @@ protected:
     void updateColumnCache() const;
     void invalidateCachedColumns();
 
-    void NODELETE invalidateCachedColumnOffsets();
+    void LEGACY_NODELETE invalidateCachedColumnOffsets();
     
     void updateLogicalWidth() final;
 

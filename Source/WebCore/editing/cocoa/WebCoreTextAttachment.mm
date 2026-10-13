@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static RetainPtr<CocoaImage>& NODELETE webCoreTextAttachmentMissingPlatformImageIfExists()
+static RetainPtr<CocoaImage>& LEGACY_NODELETE webCoreTextAttachmentMissingPlatformImageIfExists()
 {
     static NeverDestroyed<RetainPtr<CocoaImage>> missingImage;
     return missingImage.get();

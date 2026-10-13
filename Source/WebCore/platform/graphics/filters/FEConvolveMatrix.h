@@ -45,28 +45,28 @@ public:
     bool operator==(const FEConvolveMatrix&) const;
 
     IntSize kernelSize() const { return m_kernelSize; }
-    void NODELETE setKernelSize(const IntSize&);
+    void LEGACY_NODELETE setKernelSize(const IntSize&);
 
     const Vector<float>& kernel() const LIFETIME_BOUND { return m_kernelMatrix; }
     void setKernel(const Vector<float>&);
 
     float divisor() const { return m_divisor; }
-    bool NODELETE setDivisor(float);
+    bool LEGACY_NODELETE setDivisor(float);
 
     float bias() const { return m_bias; }
-    bool NODELETE setBias(float);
+    bool LEGACY_NODELETE setBias(float);
 
     IntPoint targetOffset() const { return m_targetOffset; }
-    bool NODELETE setTargetOffset(const IntPoint&);
+    bool LEGACY_NODELETE setTargetOffset(const IntPoint&);
 
     EdgeModeType edgeMode() const { return m_edgeMode; }
-    bool NODELETE setEdgeMode(EdgeModeType);
+    bool LEGACY_NODELETE setEdgeMode(EdgeModeType);
 
     FloatPoint kernelUnitLength() const { return m_kernelUnitLength; }
-    bool NODELETE setKernelUnitLength(const FloatPoint&);
+    bool LEGACY_NODELETE setKernelUnitLength(const FloatPoint&);
 
     bool preserveAlpha() const { return m_preserveAlpha; }
-    bool NODELETE setPreserveAlpha(bool);
+    bool LEGACY_NODELETE setPreserveAlpha(bool);
 
 private:
     FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, ColorSpace);

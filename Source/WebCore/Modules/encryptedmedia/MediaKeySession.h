@@ -77,8 +77,8 @@ public:
 
     bool isClosed() const { return m_closed; }
 
-    const String& NODELETE sessionId() const;
-    double NODELETE expiration() const;
+    const String& LEGACY_NODELETE sessionId() const;
+    double LEGACY_NODELETE expiration() const;
     Ref<MediaKeyStatusMap> keyStatuses() const;
 
     void generateRequest(const AtomString&, const BufferSource&, Ref<DeferredPromise>&&);
@@ -99,10 +99,10 @@ public:
 private:
     MediaKeySession(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     void enqueueMessage(MediaKeyMessageType, const SharedBuffer&);
-    void NODELETE updateExpiration(double);
+    void LEGACY_NODELETE updateExpiration(double);
     void sessionClosed();
     String mediaKeysStorageDirectory() const;
-    CDMKeyGroupingStrategy NODELETE keyGroupingStrategy() const;
+    CDMKeyGroupingStrategy LEGACY_NODELETE keyGroupingStrategy() const;
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
@@ -112,12 +112,12 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const override { return EventTargetInterfaceType::MediaKeySession; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const override;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const override;
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
     // ActiveDOMObject
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void stop() final;
 
     // DisplayChangedObserver
@@ -127,7 +127,7 @@ private:
     // LoggerHelper
     const Logger& logger() const { return m_logger; }
     ASCIILiteral logClassName() const { return "MediaKeySession"_s; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
     uint64_t logIdentifier() const { return m_logIdentifier; }
 
     const Ref<const Logger> m_logger;

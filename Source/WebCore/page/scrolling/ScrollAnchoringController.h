@@ -70,16 +70,16 @@ public:
     void updateBeforeLayout();
     void adjustScrollPositionForAnchoring();
 
-    void NODELETE willDispatchScrollEvent();
-    void NODELETE didDispatchScrollEvent();
+    void LEGACY_NODELETE willDispatchScrollEvent();
+    void LEGACY_NODELETE didDispatchScrollEvent();
 
-    void NODELETE notifyChildHadSuppressingStyleChange(RenderElement&);
+    void LEGACY_NODELETE notifyChildHadSuppressingStyleChange(RenderElement&);
 
     bool hasAnchorElement() const { return !!m_anchorObject; }
 
     // These nest.
-    void NODELETE startSuppressingScrollAnchoring();
-    void NODELETE stopSuppressingScrollAnchoring();
+    void LEGACY_NODELETE startSuppressingScrollAnchoring();
+    void LEGACY_NODELETE stopSuppressingScrollAnchoring();
 
 private:
 
@@ -111,7 +111,7 @@ private:
     AnchorSearchStatus findAnchorInOutOfFlowObjects(RenderObject&);
     AnchorSearchStatus findAnchorRecursive(RenderObject*);
 
-    RenderBox* NODELETE scrollableAreaBox() const;
+    RenderBox* LEGACY_NODELETE scrollableAreaBox() const;
 
     struct Rects {
         FloatRect boundsRelativeToScrolledContent;
@@ -125,7 +125,7 @@ private:
 
     void invalidate();
     void chooseAnchorElement(Document&, RenderBox& scrollerBox);
-    bool NODELETE anchoringSuppressedByStyleChange() const;
+    bool LEGACY_NODELETE anchoringSuppressedByStyleChange() const;
     void updateScrollableAreaRegistration();
 
     CheckedRef<ScrollableArea> m_owningScrollableArea;

@@ -49,20 +49,20 @@ struct KeywordColor {
     bool operator==(const KeywordColor&) const = default;
 };
 
-WEBCORE_EXPORT bool NODELETE isAbsoluteColorKeyword(CSSValueID);
-WEBCORE_EXPORT bool NODELETE isCurrentColorKeyword(CSSValueID);
-WEBCORE_EXPORT bool NODELETE isSystemColorKeyword(CSSValueID);
-WEBCORE_EXPORT bool NODELETE isDeprecatedSystemColorKeyword(CSSValueID);
+WEBCORE_EXPORT bool LEGACY_NODELETE isAbsoluteColorKeyword(CSSValueID);
+WEBCORE_EXPORT bool LEGACY_NODELETE isCurrentColorKeyword(CSSValueID);
+WEBCORE_EXPORT bool LEGACY_NODELETE isSystemColorKeyword(CSSValueID);
+WEBCORE_EXPORT bool LEGACY_NODELETE isDeprecatedSystemColorKeyword(CSSValueID);
 
-bool NODELETE isColorKeyword(CSSValueID);
-bool NODELETE isColorKeyword(CSSValueID, OptionSet<ColorType>);
+bool LEGACY_NODELETE isColorKeyword(CSSValueID);
+bool LEGACY_NODELETE isColorKeyword(CSSValueID, OptionSet<ColorType>);
 
 WebCore::Color colorFromAbsoluteKeyword(CSSValueID);
 WebCore::Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
 
 WebCore::Color createColor(const KeywordColor&, PlatformColorResolutionState&);
-bool NODELETE containsCurrentColor(const KeywordColor&);
-bool NODELETE containsColorSchemeDependentColor(const KeywordColor&);
+bool LEGACY_NODELETE containsCurrentColor(const KeywordColor&);
+bool LEGACY_NODELETE containsColorSchemeDependentColor(const KeywordColor&);
 
 template<> struct Serialize<KeywordColor> { void operator()(StringBuilder&, const SerializationContext&, const KeywordColor&); };
 template<> struct ComputedStyleDependenciesCollector<KeywordColor> { constexpr void operator()(ComputedStyleDependencies&, const KeywordColor&) { } };

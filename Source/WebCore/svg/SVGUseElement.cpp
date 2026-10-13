@@ -221,7 +221,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-static inline bool NODELETE isDisallowedElement(const SVGElement& element)
+static inline bool LEGACY_NODELETE isDisallowedElement(const SVGElement& element)
 {
     using namespace ElementNames;
 
@@ -258,7 +258,7 @@ static inline bool NODELETE isDisallowedElement(const SVGElement& element)
     return true;
 }
 
-static inline bool NODELETE isDisallowedElement(const Element& element)
+static inline bool LEGACY_NODELETE isDisallowedElement(const Element& element)
 {
     auto* svgElement = dynamicDowncast<SVGElement>(element);
     return !svgElement || isDisallowedElement(*svgElement);
@@ -333,7 +333,7 @@ RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Style::ComputedSty
     return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTF::move(style));
 }
 
-static bool NODELETE isDirectReference(const SVGElement& element)
+static bool LEGACY_NODELETE isDirectReference(const SVGElement& element)
 {
     using namespace SVGNames;
     return element.hasTagName(circleTag)

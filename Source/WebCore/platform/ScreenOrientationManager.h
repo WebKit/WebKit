@@ -54,7 +54,7 @@ public:
     virtual void removeObserver(ScreenOrientationManagerObserver&) = 0;
 
     void setLockPromise(ScreenOrientation&, Ref<DeferredPromise>&&);
-    ScreenOrientation* NODELETE lockRequester() const;
+    ScreenOrientation* LEGACY_NODELETE lockRequester() const;
     RefPtr<DeferredPromise> takeLockPromise();
 
 protected:

@@ -117,11 +117,11 @@ public:
     FloatPoint scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod) const;
     float scrollOffsetAdjustedForSnapping(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod) const;
 
-    bool NODELETE activeScrollSnapIndexDidChange() const;
-    std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    bool LEGACY_NODELETE activeScrollSnapIndexDidChange() const;
+    std::optional<unsigned> LEGACY_NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned> index);
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
-    const LayoutScrollSnapOffsetsInfo* NODELETE snapOffsetsInfo() const;
+    const LayoutScrollSnapOffsetsInfo* LEGACY_NODELETE snapOffsetsInfo() const;
     void resnapAfterLayout();
 
     ScrollAnimationStatus serviceScrollAnimation(MonotonicTime);

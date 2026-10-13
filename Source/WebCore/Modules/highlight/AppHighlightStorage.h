@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT void restoreAndScrollToAppHighlight(Ref<SharedBuffer>&&, ScrollToHighlight);
     void restoreUnrestoredAppHighlights();
 
-    bool NODELETE shouldRestoreHighlights(MonotonicTime timestamp);
+    bool LEGACY_NODELETE shouldRestoreHighlights(MonotonicTime timestamp);
 
     bool hasUnrestoredHighlights() const { return m_unrestoredHighlights.size() || m_unrestoredScrollHighlight; }
 

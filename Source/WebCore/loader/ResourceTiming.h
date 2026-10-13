@@ -42,9 +42,9 @@ class SecurityOrigin;
 class ResourceTiming {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceTiming, Loader);
 public:
-    static ResourceTiming NODELETE fromMemoryCache(const URL&, const String& initiator, const ResourceLoadTiming&, const ResourceResponse&, const NetworkLoadMetrics&, const SecurityOrigin&);
+    static ResourceTiming LEGACY_NODELETE fromMemoryCache(const URL&, const String& initiator, const ResourceLoadTiming&, const ResourceResponse&, const NetworkLoadMetrics&, const SecurityOrigin&);
     static ResourceTiming fromLoad(CachedResource&, const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
-    static ResourceTiming NODELETE fromSynchronousLoad(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
+    static ResourceTiming LEGACY_NODELETE fromSynchronousLoad(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
     const String& initiatorType() const LIFETIME_BOUND { return m_initiatorType; }

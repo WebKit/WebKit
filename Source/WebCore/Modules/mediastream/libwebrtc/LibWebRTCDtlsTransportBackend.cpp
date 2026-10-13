@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline RTCDtlsTransportState NODELETE toRTCDtlsTransportState(webrtc::DtlsTransportState state)
+static inline RTCDtlsTransportState LEGACY_NODELETE toRTCDtlsTransportState(webrtc::DtlsTransportState state)
 {
     switch (state) {
     case webrtc::DtlsTransportState::kNew:

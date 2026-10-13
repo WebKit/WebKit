@@ -1599,13 +1599,13 @@ void RenderGrid::setResolvedTrackSizes(Vector<LayoutUnit>&& columnSizes, Vector<
     m_resolvedTrackList.isValid = true;
 }
 
-static const StyleContentAlignmentData& NODELETE contentAlignmentNormalBehaviorGrid()
+static const StyleContentAlignmentData& LEGACY_NODELETE contentAlignmentNormalBehaviorGrid()
 {
     static const StyleContentAlignmentData normalBehavior = {ContentPosition::Normal, ContentDistribution::Stretch};
     return normalBehavior;
 }
 
-static bool NODELETE overrideSizeChanged(const RenderBox& gridItem, Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height)
+static bool LEGACY_NODELETE overrideSizeChanged(const RenderBox& gridItem, Style::GridTrackSizingDirection direction, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height)
 {
     if (direction == Style::GridTrackSizingDirection::Columns) {
         if (auto gridAreaContentLogicalWidth = gridItem.gridAreaContentLogicalWidth())
@@ -1617,7 +1617,7 @@ static bool NODELETE overrideSizeChanged(const RenderBox& gridItem, Style::GridT
     return true;
 }
 
-static bool NODELETE hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& gridItem)
+static bool LEGACY_NODELETE hasRelativeBlockAxisSize(const RenderGrid& grid, const RenderBox& gridItem)
 {
     return GridLayoutFunctions::isOrthogonalGridItem(grid, gridItem) ? gridItem.hasRelativeLogicalWidth() || gridItem.style().logicalWidth().isAuto() : gridItem.hasRelativeLogicalHeight();
 }
@@ -2381,7 +2381,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForInFlowGridItem(
     return { start, end };
 }
 
-std::pair<OverflowAlignment, ContentPosition> static NODELETE resolveContentDistributionFallback(ContentDistribution distribution)
+std::pair<OverflowAlignment, ContentPosition> static LEGACY_NODELETE resolveContentDistributionFallback(ContentDistribution distribution)
 {
     switch (distribution) {
     case ContentDistribution::SpaceBetween:

@@ -62,8 +62,8 @@ public:
         Iterator(IndexValueEntry&, IDBKeyDataSet::iterator);
         Iterator(IndexValueEntry&, IDBKeyDataSet::reverse_iterator);
 
-        bool NODELETE isValid() const;
-        void NODELETE invalidate();
+        bool LEGACY_NODELETE isValid() const;
+        void LEGACY_NODELETE invalidate();
 
         const IDBKeyData& key() const;
         const ThreadSafeDataBuffer& value() const;

@@ -98,16 +98,16 @@ struct GridPosition {
     bool isSpan() const { return m_type == GridPositionType::Span; }
     bool isNamedGridArea() const { return m_type == GridPositionType::NamedGridArea; }
 
-    WEBCORE_EXPORT int NODELETE explicitPosition() const;
-    WEBCORE_EXPORT int NODELETE spanPosition() const;
-    const CustomIdent& NODELETE namedGridLine() const LIFETIME_BOUND;
+    WEBCORE_EXPORT int LEGACY_NODELETE explicitPosition() const;
+    WEBCORE_EXPORT int LEGACY_NODELETE spanPosition() const;
+    const CustomIdent& LEGACY_NODELETE namedGridLine() const LIFETIME_BOUND;
 
     bool shouldBeResolvedAgainstOppositePosition() const { return isAuto() || isSpan(); }
 
     // Note that grid line 1 is internally represented by the index 0, that's why the max value for
     // a position is gridMaxTracks instead of gridMaxTracks + 1.
-    static int NODELETE max();
-    static int NODELETE min();
+    static int LEGACY_NODELETE max();
+    static int LEGACY_NODELETE min();
 
     template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
@@ -128,10 +128,10 @@ struct GridPosition {
 
     bool operator==(const GridPosition&) const = default;
 
-    WEBCORE_EXPORT static void NODELETE setMaxPositionForTesting(unsigned);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setMaxPositionForTesting(unsigned);
 
 private:
-    friend void NODELETE add(Hasher&, const GridPosition&);
+    friend void LEGACY_NODELETE add(Hasher&, const GridPosition&);
 
     enum class GridPositionType : uint8_t {
         Auto,

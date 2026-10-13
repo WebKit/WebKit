@@ -60,7 +60,7 @@
 
 namespace WebCore {
 
-static HashMap<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<SharedWorkerThreadProxy>>& NODELETE allSharedWorkerThreadProxies()
+static HashMap<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<SharedWorkerThreadProxy>>& LEGACY_NODELETE allSharedWorkerThreadProxies()
 {
     static MainThreadNeverDestroyed<HashMap<ScriptExecutionContextIdentifier, ThreadSafeWeakPtr<SharedWorkerThreadProxy>>> map;
     return map;

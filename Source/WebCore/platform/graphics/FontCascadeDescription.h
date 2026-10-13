@@ -72,7 +72,7 @@ public:
     const FontFamily& familyAt(unsigned i) const { return m_families.get()[i]; }
     RefCountedFixedVector<FontFamily>& families() const { return m_families.get(); }
 
-    static bool NODELETE familyNamesAreEqual(const AtomString&, const AtomString&);
+    static bool LEGACY_NODELETE familyNamesAreEqual(const AtomString&, const AtomString&);
     static unsigned familyNameHash(const AtomString&);
     static String foldedFamilyName(const String&);
 
@@ -98,7 +98,7 @@ public:
         return identifier;
     }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
-    FontSmoothingMode NODELETE usedFontSmoothing() const;
+    FontSmoothingMode LEGACY_NODELETE usedFontSmoothing() const;
     // Used by RenderText::computeUseBackslashAsYenSymbol. In Japanese encodings
     // (EUC-JP, Shift_JIS, etc.), the backslash byte (0x5C) maps to the yen sign.
     // When the CSS author (or canvas font string) explicitly chose a non-generic
@@ -131,7 +131,7 @@ public:
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setHasAuthorSpecifiedNonGenericPrimaryFont(bool value) { m_hasAuthorSpecifiedNonGenericPrimaryFont = value; }
 
-    bool NODELETE familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
+    bool LEGACY_NODELETE familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
 
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const
     {
@@ -141,7 +141,7 @@ public:
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 
-    WEBCORE_EXPORT void NODELETE resolveFontSizeAdjustFromFontIfNeeded(const Font&);
+    WEBCORE_EXPORT void LEGACY_NODELETE resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
 private:
     Ref<RefCountedFixedVector<FontFamily>> m_families;

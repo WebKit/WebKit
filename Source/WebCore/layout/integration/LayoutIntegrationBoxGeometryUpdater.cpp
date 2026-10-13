@@ -94,7 +94,7 @@ static inline LayoutUnit intrinsicBorder(const RenderBoxModelObject& renderer)
     return { };
 }
 
-static inline Layout::BoxGeometry::VerticalEdges NODELETE intrinsicPaddingForTableCell(const RenderBox& renderer)
+static inline Layout::BoxGeometry::VerticalEdges LEGACY_NODELETE intrinsicPaddingForTableCell(const RenderBox& renderer)
 {
     if (auto* tableCell = dynamicDowncast<RenderTableCell>(renderer))
         return { tableCell->intrinsicPaddingBefore(), tableCell->intrinsicPaddingAfter() };

@@ -191,7 +191,7 @@ void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
     uninstallPageOverlayIfNeeded();
 }
 
-bool NODELETE ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
+bool LEGACY_NODELETE ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
 {
     return !!m_activeDataDetectorHighlight;
 }

@@ -291,8 +291,8 @@ public:
     ScrollOffset minimumScrollOffset() const { return { }; }
     ScrollOffset maximumScrollOffset() const;
 
-    WEBCORE_EXPORT ScrollPosition NODELETE scrollPositionFromOffset(ScrollOffset) const;
-    WEBCORE_EXPORT ScrollOffset NODELETE scrollOffsetFromPosition(ScrollPosition) const;
+    WEBCORE_EXPORT ScrollPosition LEGACY_NODELETE scrollPositionFromOffset(ScrollOffset) const;
+    WEBCORE_EXPORT ScrollOffset LEGACY_NODELETE scrollOffsetFromPosition(ScrollPosition) const;
 
     template<typename PositionType, typename SizeType>
     static PositionType scrollPositionFromOffset(PositionType offset, SizeType scrollOrigin)
@@ -396,9 +396,9 @@ public:
 
     // Computes the double value for the scrollbar's current position and the current overhang amount.
     // This function is static so that it can be called from the main thread or the scrolling thread.
-    WEBCORE_EXPORT static void NODELETE computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& scrollbarValue, float& overhangAmount);
+    WEBCORE_EXPORT static void LEGACY_NODELETE computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& scrollbarValue, float& overhangAmount);
 
-    WEBCORE_EXPORT static std::optional<BoxSide> NODELETE targetSideForScrollDelta(FloatSize, ScrollEventAxis);
+    WEBCORE_EXPORT static std::optional<BoxSide> LEGACY_NODELETE targetSideForScrollDelta(FloatSize, ScrollEventAxis);
 
     // "Pinned" means scrolled at or beyond the edge.
     WEBCORE_EXPORT bool isPinnedOnSide(BoxSide) const;
@@ -570,7 +570,7 @@ public:
     WEBCORE_EXPORT ScrollTypeScope(ScrollableArea&, ScrollType);
     WEBCORE_EXPORT ~ScrollTypeScope();
 
-    void NODELETE restore();
+    void LEGACY_NODELETE restore();
 
 private:
     WeakRef<ScrollableArea> m_scrollableArea;

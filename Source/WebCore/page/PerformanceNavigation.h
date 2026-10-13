@@ -47,8 +47,8 @@ public:
         TYPE_RESERVED = 255
     };
 
-    unsigned short NODELETE type() const;
-    unsigned short NODELETE redirectCount() const;
+    unsigned short LEGACY_NODELETE type() const;
+    unsigned short LEGACY_NODELETE redirectCount() const;
 
 private:
     explicit PerformanceNavigation(LocalDOMWindow*);

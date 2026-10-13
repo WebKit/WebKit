@@ -90,7 +90,7 @@ struct SelectorSpecificity {
     SelectorSpecificity(SelectorSpecificityIncrement);
     SelectorSpecificity& operator+=(SelectorSpecificity);
 
-    std::array<uint8_t, 3> NODELETE specificityTuple() const
+    std::array<uint8_t, 3> LEGACY_NODELETE specificityTuple() const
     {
         uint8_t a = specificity >> 16;
         uint8_t b = specificity >> 8;
@@ -1062,7 +1062,7 @@ bool isElementBackedPseudoElement(CSSSelector::PseudoElement pseudoElement)
     }
 }
 
-static bool NODELETE shouldSkipForEqualMode(const CSSSelector& simpleSelector, ComplexSelectorsEqualMode mode)
+static bool LEGACY_NODELETE shouldSkipForEqualMode(const CSSSelector& simpleSelector, ComplexSelectorsEqualMode mode)
 {
     if (mode == ComplexSelectorsEqualMode::IgnoreNonElementBackedPseudoElements)
         return simpleSelector.matchesPseudoElement() && !isElementBackedPseudoElement(simpleSelector.pseudoElement());
@@ -1095,7 +1095,7 @@ bool complexSelectorsEqual(const CSSSelector& complexA, const CSSSelector& compl
     return true;
 }
 
-static void NODELETE addSimpleSelector(Hasher& hasher, const CSSSelector& simpleSelector)
+static void LEGACY_NODELETE addSimpleSelector(Hasher& hasher, const CSSSelector& simpleSelector)
 {
     // This hash does try to include every possible thing in a selector.
     add(hasher, simpleSelector.match());

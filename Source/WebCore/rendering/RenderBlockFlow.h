@@ -278,22 +278,22 @@ public:
     bool childrenPreventSelfCollapsing() const final;
 
     bool shouldBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_lineBreakToAvoidWidow >= 0; }
-    void NODELETE clearShouldBreakAtLineToAvoidWidow() const;
+    void LEGACY_NODELETE clearShouldBreakAtLineToAvoidWidow() const;
     int lineBreakToAvoidWidow() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineBreakToAvoidWidow : -1; }
     void setBreakAtLineToAvoidWidow(int);
-    void NODELETE clearDidBreakAtLineToAvoidWidow();
-    void NODELETE setDidBreakAtLineToAvoidWidow();
+    void LEGACY_NODELETE clearDidBreakAtLineToAvoidWidow();
+    void LEGACY_NODELETE setDidBreakAtLineToAvoidWidow();
     bool didBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_didBreakAtLineToAvoidWidow; }
 
     RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? multiColumnFlowSlowCase() : nullptr; }
-    RenderMultiColumnFlow* NODELETE multiColumnFlowSlowCase() const;
+    RenderMultiColumnFlow* LEGACY_NODELETE multiColumnFlowSlowCase() const;
     void setMultiColumnFlow(RenderMultiColumnFlow&);
-    void NODELETE clearMultiColumnFlow();
+    void LEGACY_NODELETE clearMultiColumnFlow();
     bool willCreateColumns() const;
     virtual bool requiresFragmentedFlow() const;
 
     bool containsFloats() const override;
-    bool NODELETE containsFloat(const RenderBox&) const;
+    bool LEGACY_NODELETE containsFloat(const RenderBox&) const;
     bool subtreeContainsFloats() const;
     bool subtreeContainsFloat(const RenderBox&) const;
 
@@ -325,7 +325,7 @@ public:
     inline void setLogicalWidthForFloat(FloatingObject&, LayoutUnit logicalWidth); // Defined in RenderBlockFlowInlines.h
     inline void setLogicalMarginsForFloat(FloatingObject&, LayoutUnit logicalLeftMargin, LayoutUnit logicalBeforeMargin); // Defined in RenderBlockFlowInlines.h
 
-    LayoutPoint NODELETE flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
+    LayoutPoint LEGACY_NODELETE flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
     void setChildrenInline(bool) final;
 
@@ -339,7 +339,7 @@ public:
         ContentChange       // existing renderer gets changed (text content only atm)
     };
     void invalidateLineLayout(InvalidationReason);
-    void NODELETE computeAndSetLineLayoutPath();
+    void LEGACY_NODELETE computeAndSetLineLayoutPath();
 
     enum LineLayoutPath { UndeterminedPath = 0, InlinePath };
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
@@ -367,7 +367,7 @@ public:
     LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
     LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
-    LayoutUnit NODELETE logicalHeightForChildForFragmentation(const RenderBox& child) const;
+    LayoutUnit LEGACY_NODELETE logicalHeightForChildForFragmentation(const RenderBox& child) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
     void updateColumnProgressionFromStyle(const Style::ComputedStyle&);
@@ -433,10 +433,10 @@ protected:
 
     void createFloatingObjects();
 
-    void NODELETE setComputedColumnCountAndWidth(int, LayoutUnit);
+    void LEGACY_NODELETE setComputedColumnCountAndWidth(int, LayoutUnit);
 
     LayoutUnit computedColumnWidth() const;
-    unsigned NODELETE computedColumnCount() const;
+    unsigned LEGACY_NODELETE computedColumnCount() const;
     
     LayoutOptionalOutsets allowedLayoutOverflow() const override;
 
@@ -483,7 +483,7 @@ private:
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;
     
     LayoutUnit addOverhangingFloats(RenderBlockFlow& child, bool makeChildPaintOtherFloats);
-    bool NODELETE hasOverhangingFloat(RenderBox&);
+    bool LEGACY_NODELETE hasOverhangingFloat(RenderBox&);
     void addIntrudingFloats(RenderBlockFlow* prev, RenderBlockFlow* container, LayoutUnit xoffset, LayoutUnit yoffset);
     inline bool hasOverhangingFloats() const;
     LayoutUnit computedClearDeltaForChild(RenderBox& child, LayoutUnit yPos);

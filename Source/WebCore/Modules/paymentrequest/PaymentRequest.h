@@ -71,10 +71,10 @@ public:
     void abort(AbortPromise&&);
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
-    const String& NODELETE id() const;
+    const String& LEGACY_NODELETE id() const;
     PaymentAddress* shippingAddress() const { return m_shippingAddress.get(); }
     const String& shippingOption() const LIFETIME_BOUND { return m_shippingOption; }
-    std::optional<PaymentShippingType> NODELETE shippingType() const;
+    std::optional<PaymentShippingType> LEGACY_NODELETE shippingType() const;
 
     enum class State {
         Created,
@@ -136,7 +136,7 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::PaymentRequest; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     bool isPaymentRequest() const final { return true; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }

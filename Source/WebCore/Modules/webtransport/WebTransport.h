@@ -85,25 +85,25 @@ public:
 
     void getStats(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     void exportKeyingMaterial(ScriptExecutionContext&, BufferSource&& label, BufferSource&& context, uint32_t outputLength, Ref<DeferredPromise>&&);
-    DOMPromise& NODELETE ready();
-    WebTransportReliabilityMode NODELETE reliability();
-    WebTransportCongestionControl NODELETE congestionControl();
-    std::optional<uint16_t> NODELETE anticipatedConcurrentIncomingUnidirectionalStreams();
-    void NODELETE setAnticipatedConcurrentIncomingUnidirectionalStreams(std::optional<uint16_t>);
-    std::optional<uint16_t> NODELETE anticipatedConcurrentIncomingBidirectionalStreams();
-    void NODELETE setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
-    String& NODELETE protocol();
-    FetchHeaders* NODELETE responseHeaders();
-    DOMPromise& NODELETE closed();
-    DOMPromise& NODELETE draining();
+    DOMPromise& LEGACY_NODELETE ready();
+    WebTransportReliabilityMode LEGACY_NODELETE reliability();
+    WebTransportCongestionControl LEGACY_NODELETE congestionControl();
+    std::optional<uint16_t> LEGACY_NODELETE anticipatedConcurrentIncomingUnidirectionalStreams();
+    void LEGACY_NODELETE setAnticipatedConcurrentIncomingUnidirectionalStreams(std::optional<uint16_t>);
+    std::optional<uint16_t> LEGACY_NODELETE anticipatedConcurrentIncomingBidirectionalStreams();
+    void LEGACY_NODELETE setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
+    String& LEGACY_NODELETE protocol();
+    FetchHeaders* LEGACY_NODELETE responseHeaders();
+    DOMPromise& LEGACY_NODELETE closed();
+    DOMPromise& LEGACY_NODELETE draining();
     void close(WebTransportCloseInfo&&);
-    WebTransportDatagramDuplexStream& NODELETE datagrams();
+    WebTransportDatagramDuplexStream& LEGACY_NODELETE datagrams();
     void createBidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
-    ReadableStream& NODELETE incomingBidirectionalStreams();
+    ReadableStream& LEGACY_NODELETE incomingBidirectionalStreams();
     void createUnidirectionalStream(ScriptExecutionContext&, WebTransportSendStreamOptions&&, Ref<DeferredPromise>&&);
-    ReadableStream& NODELETE incomingUnidirectionalStreams();
+    ReadableStream& LEGACY_NODELETE incomingUnidirectionalStreams();
     Ref<WebTransportSendGroup> createSendGroup();
-    static bool NODELETE supportsReliableOnly();
+    static bool LEGACY_NODELETE supportsReliableOnly();
 
     const Ref<WebTransportSession>& session() const { return m_session; };
     void datagramsWritableCreated(WebTransportDatagramsWritable&);
@@ -119,7 +119,7 @@ private:
     void cleanupWithSessionError();
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
 
     void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;

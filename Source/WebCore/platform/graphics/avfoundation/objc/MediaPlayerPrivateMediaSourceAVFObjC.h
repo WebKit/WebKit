@@ -101,7 +101,7 @@ public:
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
-    void NODELETE setLoadingProgresssed(bool);
+    void LEGACY_NODELETE setLoadingProgresssed(bool);
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
     void durationChanged();
@@ -173,7 +173,7 @@ public:
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
-    bool NODELETE supportsLimitedMatroska() const;
+    bool LEGACY_NODELETE supportsLimitedMatroska() const;
 
 private:
     // MediaPlayerPrivateInterface
@@ -248,7 +248,7 @@ private:
 
     void setPresentationSize(const IntSize&) final;
 
-    Ref<AudioVideoRenderer> NODELETE audioVideoRenderer() const;
+    Ref<AudioVideoRenderer> LEGACY_NODELETE audioVideoRenderer() const;
 
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by

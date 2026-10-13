@@ -62,7 +62,7 @@ public:
 
     // bus() will contain the rendered audio after pull() is called for each rendering time quantum.
     // Called from context's audio thread.
-    AudioBus& NODELETE bus() const LIFETIME_BOUND;
+    AudioBus& LEGACY_NODELETE bus() const LIFETIME_BOUND;
 
     // renderingFanOutCount() is the number of AudioNodeInputs that we're connected to during rendering.
     // Unlike fanOutCount() it will not change during the course of a render quantum.
@@ -113,12 +113,12 @@ private:
     // fanOutCount() is the number of AudioNodeInputs that we're connected to.
     // This method should not be called in audio thread rendering code, instead renderingFanOutCount() should be used.
     // It must be called with the context's graph lock.
-    unsigned NODELETE fanOutCount();
+    unsigned LEGACY_NODELETE fanOutCount();
 
     // Similar to fanOutCount(), paramFanOutCount() is the number of AudioParams that we're connected to.
     // This method should not be called in audio thread rendering code, instead renderingParamFanOutCount() should be used.
     // It must be called with the context's graph lock.
-    unsigned NODELETE paramFanOutCount();
+    unsigned LEGACY_NODELETE paramFanOutCount();
 
     // Must be called with the context's graph lock.
     void disconnectAllInputs();

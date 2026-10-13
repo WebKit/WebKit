@@ -137,8 +137,8 @@ template<> struct CSSValueCreation<MaskBorderOutset> { auto operator()(CSSValueP
 // MARK: - Blending
 
 template<> struct Blending<MaskBorderOutsetValue> {
-    bool NODELETE canBlend(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
-    bool NODELETE requiresInterpolationForAccumulativeIteration(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
+    bool LEGACY_NODELETE canBlend(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
     auto blend(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&, const BlendingContext&) -> MaskBorderOutsetValue;
 };
 

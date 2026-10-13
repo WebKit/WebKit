@@ -48,7 +48,7 @@ Ref<Blob> ClipboardItem::blobFromString(ScriptExecutionContext* context, const S
     return Blob::create(context, Vector(byteCast<uint8_t>(stringData.utf8().span())), Blob::normalizedContentType(type));
 }
 
-static ClipboardItem::PresentationStyle NODELETE clipboardItemPresentationStyle(const PasteboardItemInfo& info)
+static ClipboardItem::PresentationStyle LEGACY_NODELETE clipboardItemPresentationStyle(const PasteboardItemInfo& info)
 {
     switch (info.preferredPresentationStyle) {
     case PasteboardItemPresentationStyle::Unspecified:

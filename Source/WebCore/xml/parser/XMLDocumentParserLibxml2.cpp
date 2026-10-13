@@ -257,7 +257,7 @@ public:
         callback->call(parser);
     }
 
-    bool NODELETE isEmpty() const { return m_callbacks.isEmpty(); }
+    bool LEGACY_NODELETE isEmpty() const { return m_callbacks.isEmpty(); }
 
 private:
     struct PendingCallback {
@@ -558,7 +558,7 @@ static int readFunc(void* context, char* buffer, int len)
     return data->readOutBytes(unsafeMakeSpan(buffer, len));
 }
 
-static int NODELETE writeFunc(void*, const char*, int)
+static int LEGACY_NODELETE writeFunc(void*, const char*, int)
 {
     // Always just do 0-byte writes
     return 0;
@@ -574,7 +574,7 @@ static int closeFunc(void* context)
 }
 
 #if ENABLE(XSLT)
-static void NODELETE errorFunc(void*, const char*, ...)
+static void LEGACY_NODELETE errorFunc(void*, const char*, ...)
 {
     // FIXME: It would be nice to display error messages somewhere.
 }
@@ -1187,7 +1187,7 @@ void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* exter
         document->parserAppendChild(DocumentType::create(*document, toString(name), toString(externalID), toString(systemID)));
 }
 
-static inline XMLDocumentParser* NODELETE getParser(void* closure)
+static inline XMLDocumentParser* LEGACY_NODELETE getParser(void* closure)
 {
     xmlParserCtxtPtr ctxt = static_cast<xmlParserCtxtPtr>(closure);
     return static_cast<XMLDocumentParser*>(ctxt->_private);
@@ -1261,7 +1261,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // if libxml implementation details were to change
 static std::array<xmlChar, 9> sharedXHTMLEntityResult = { };
 
-static xmlEntityPtr NODELETE sharedXHTMLEntity()
+static xmlEntityPtr LEGACY_NODELETE sharedXHTMLEntity()
 {
     static xmlEntity entity;
     if (!entity.type) {
@@ -1499,7 +1499,7 @@ static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* 
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 
-static void NODELETE ignorableWhitespaceHandler(void*, const xmlChar*, int)
+static void LEGACY_NODELETE ignorableWhitespaceHandler(void*, const xmlChar*, int)
 {
     // nothing to do, but we need this to work around a crasher
     // http://bugzilla.gnome.org/show_bug.cgi?id=172255
@@ -1584,7 +1584,7 @@ void XMLDocumentParser::doEnd()
 }
 
 #if ENABLE(XSLT)
-static inline const char* NODELETE nativeEndianUTF16Encoding()
+static inline const char* LEGACY_NODELETE nativeEndianUTF16Encoding()
 {
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&byteOrderMark);
     return BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE";

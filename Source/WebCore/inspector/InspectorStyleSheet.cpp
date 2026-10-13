@@ -93,7 +93,7 @@ enum class RuleFlatteningStrategy {
     CommitSelfThenChildren,
 };
 
-static RuleFlatteningStrategy NODELETE flatteningStrategyForStyleRuleType(StyleRuleType styleRuleType)
+static RuleFlatteningStrategy LEGACY_NODELETE flatteningStrategyForStyleRuleType(StyleRuleType styleRuleType)
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
@@ -222,7 +222,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
     }
 }
 
-static std::optional<Inspector::Protocol::CSS::Grouping::Type> NODELETE protocolGroupingTypeForStyleRuleType(StyleRuleType styleRuleType)
+static std::optional<Inspector::Protocol::CSS::Grouping::Type> LEGACY_NODELETE protocolGroupingTypeForStyleRuleType(StyleRuleType styleRuleType)
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
@@ -291,7 +291,7 @@ void ParsedStyleSheet::setSourceData(std::unique_ptr<RuleSourceDataList> sourceD
     flattenSourceData(*sourceData, *m_sourceData);
 }
 
-WebCore::CSSRuleSourceData* NODELETE ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
+WebCore::CSSRuleSourceData* LEGACY_NODELETE ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
 {
     if (!hasSourceData() || index >= m_sourceData->size())
         return nullptr;
@@ -343,7 +343,7 @@ void StyleSheetHandler::startRuleHeader(StyleRuleType type, unsigned offset)
     m_currentRuleDataStack.append(WTF::move(data));
 }
 
-template <typename CharacterType> inline void NODELETE StyleSheetHandler::setRuleHeaderEnd(std::span<const CharacterType> data)
+template <typename CharacterType> inline void LEGACY_NODELETE StyleSheetHandler::setRuleHeaderEnd(std::span<const CharacterType> data)
 {
     while (data.size() > m_currentRuleDataStack.last()->ruleHeaderRange.start) {
         if (isASCIIWhitespace<CharacterType>(data[data.size() - 1]))

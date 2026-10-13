@@ -61,7 +61,7 @@ template<> struct Serialize<FontVariationSettings> { void operator()(StringBuild
 // MARK: - Blending
 
 template<> struct Blending<FontVariationSettings> {
-    bool NODELETE canBlend(const FontVariationSettings&, const FontVariationSettings&);
+    bool LEGACY_NODELETE canBlend(const FontVariationSettings&, const FontVariationSettings&);
     auto blend(const FontVariationSettings&, const FontVariationSettings&, const BlendingContext&) -> FontVariationSettings;
 };
 

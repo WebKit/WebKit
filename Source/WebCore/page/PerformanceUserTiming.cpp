@@ -242,7 +242,7 @@ ExceptionOr<Ref<PerformanceMeasure>> PerformanceUserTiming::measure(JSC::JSGloba
     return measure.releaseReturnValue();
 }
 
-static bool NODELETE isEmptyDictionary(const PerformanceMeasureOptions& measureOptions)
+static bool LEGACY_NODELETE isEmptyDictionary(const PerformanceMeasureOptions& measureOptions)
 {
     return measureOptions.detail.isUndefined()
         && !measureOptions.start

@@ -73,7 +73,7 @@ public:
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>);
 
-    bool NODELETE scrollAnimatorEnabled() const;
+    bool LEGACY_NODELETE scrollAnimatorEnabled() const;
 
     virtual void hasNodeWithAnimatedScrollChanged(bool) { };
 
@@ -204,7 +204,7 @@ private:
     WEBCORE_EXPORT void setScrollbarEnabled(Scrollbar&) override;
     WEBCORE_EXPORT void setScrollbarWidth(ScrollableArea&, ScrollbarWidth) override;
 
-    void NODELETE hysterisisTimerFired(PAL::HysteresisState);
+    void LEGACY_NODELETE hysterisisTimerFired(PAL::HysteresisState);
 
     SmallMap<FrameIdentifier, UniqueRef<ScrollingStateTree>> m_scrollingStateTrees;
     RefPtr<ScrollingTree> m_scrollingTree;

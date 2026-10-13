@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT void setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&&);
     ~AuthenticatorCoordinator();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     // The following methods implement static methods of PublicKeyCredential.

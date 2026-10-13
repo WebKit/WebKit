@@ -241,7 +241,7 @@ String Locale::convertToLocalizedNumber(const String& input)
     return builder.toString();
 }
 
-static bool NODELETE matches(const String& text, unsigned position, const String& part)
+static bool LEGACY_NODELETE matches(const String& text, unsigned position, const String& part)
 {
     if (part.isEmpty())
         return true;

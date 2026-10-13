@@ -58,7 +58,7 @@ SVGPathBlender::SVGPathBlender(SVGPathSource& fromSource, SVGPathSource& toSourc
 }
 
 // Helper functions
-static inline FloatPoint NODELETE blendFloatPoint(const FloatPoint& a, const FloatPoint& b, float progress)
+static inline FloatPoint LEGACY_NODELETE blendFloatPoint(const FloatPoint& a, const FloatPoint& b, float progress)
 {
     BlendingContext context { progress };
     return FloatPoint(blend(a.x(), b.x(), context), blend(a.y(), b.y(), context));
@@ -330,7 +330,7 @@ bool SVGPathBlender::blendArcToSegment(float progress)
     return true;
 }
 
-static inline PathCoordinateMode NODELETE coordinateModeOfCommand(const SVGPathSegType& type)
+static inline PathCoordinateMode LEGACY_NODELETE coordinateModeOfCommand(const SVGPathSegType& type)
 {
     if (type < SVGPathSegType::MoveToAbs)
         return AbsoluteCoordinates;
@@ -342,7 +342,7 @@ static inline PathCoordinateMode NODELETE coordinateModeOfCommand(const SVGPathS
     return AbsoluteCoordinates;
 }
 
-static inline bool NODELETE isSegmentEqual(const SVGPathSegType& fromType, const SVGPathSegType& toType, const PathCoordinateMode& fromMode, const PathCoordinateMode& toMode)
+static inline bool LEGACY_NODELETE isSegmentEqual(const SVGPathSegType& fromType, const SVGPathSegType& toType, const PathCoordinateMode& fromMode, const PathCoordinateMode& toMode)
 {
     if (fromType == toType && (fromType == SVGPathSegType::Unknown || fromType == SVGPathSegType::ClosePath))
         return true;

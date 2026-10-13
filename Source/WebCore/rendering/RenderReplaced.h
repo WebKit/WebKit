@@ -94,7 +94,7 @@ protected:
 
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
-    bool NODELETE isSelected() const;
+    bool LEGACY_NODELETE isSelected() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
@@ -105,7 +105,7 @@ protected:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool shouldPaint(PaintInfo&, const LayoutPoint&);
-    LayoutRect NODELETE localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
+    LayoutRect LEGACY_NODELETE localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
     virtual void layoutShadowContent(const LayoutSize&);
 
@@ -144,7 +144,7 @@ private:
     virtual bool shouldDrawSelectionTint() const;
     
     Color calculateHighlightColor() const;
-    bool NODELETE isHighlighted(HighlightState, const RenderHighlight&) const;
+    bool LEGACY_NODELETE isHighlighted(HighlightState, const RenderHighlight&) const;
 
     bool hasReplacedLogicalHeight() const;
 

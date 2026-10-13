@@ -39,10 +39,10 @@ public:
     double animationProgress() const;
     MonotonicTime animationStartTime() const { return m_animationStartTime; }
 
-    bool NODELETE isDeterminate() const;
+    bool LEGACY_NODELETE isDeterminate() const;
     void updateFromElement() override;
 
-    HTMLProgressElement* NODELETE progressElement() const;
+    HTMLProgressElement* LEGACY_NODELETE progressElement() const;
 
 private:
     ASCIILiteral renderName() const override { return "RenderProgress"_s; }

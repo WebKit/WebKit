@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Layout {
 
-static inline bool NODELETE hasLeadingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline bool LEGACY_NODELETE hasLeadingTextContent(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     for (auto& run : continuousContent.runs()) {
         auto& inlineItem = run.inlineItem;
@@ -49,7 +49,7 @@ static inline bool NODELETE hasLeadingTextContent(const InlineContentBreaker::Co
     return false;
 }
 
-static inline std::optional<size_t> NODELETE nextTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t startIndex)
+static inline std::optional<size_t> LEGACY_NODELETE nextTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t startIndex)
 {
     for (auto index = startIndex + 1; index < runs.size(); ++index) {
         if (runs[index].inlineItem.isText())
@@ -80,7 +80,7 @@ static inline bool isWhitespaceOnlyContent(const InlineContentBreaker::Continuou
     return hasWhitespace;
 }
 
-static inline bool NODELETE isNonContentRunsOnly(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline bool LEGACY_NODELETE isNonContentRunsOnly(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // <span></span> <- non content runs.
     for (auto& run : continuousContent.runs()) {
@@ -94,7 +94,7 @@ static inline bool NODELETE isNonContentRunsOnly(const InlineContentBreaker::Con
     return true;
 }
 
-static inline std::optional<size_t> NODELETE firstTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& continuousContentRuns)
+static inline std::optional<size_t> LEGACY_NODELETE firstTextRunIndex(const InlineContentBreaker::ContinuousContent::RunList& continuousContentRuns)
 {
     for (size_t index = 0; index < continuousContentRuns.size(); ++index) {
         if (continuousContentRuns[index].inlineItem.isText())
@@ -352,7 +352,7 @@ std::optional<InlineContentBreaker::Result> InlineContentBreaker::simplifiedMini
     return Result { !lineStatus.trailingSoftHyphenWidth ? Result::Action::Wrap : Result::Action::RevertToLastNonOverflowingWrapOpportunity, IsEndOfLine::Yes };
 }
 
-static std::optional<size_t> NODELETE findTrailingRunIndexBeforeBreakableRun(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
+static std::optional<size_t> LEGACY_NODELETE findTrailingRunIndexBeforeBreakableRun(const InlineContentBreaker::ContinuousContent::RunList& runs, size_t breakableRunIndex)
 {
     // When the breaking position is at the beginning of the run, the trailing run is the previous one.
     if (!breakableRunIndex)
@@ -375,7 +375,7 @@ static std::optional<size_t> NODELETE findTrailingRunIndexBeforeBreakableRun(con
     return { };
 }
 
-static bool NODELETE isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
+static bool LEGACY_NODELETE isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
 {
     if (!run.inlineItem.isText()) {
         // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
@@ -454,22 +454,22 @@ static std::optional<TextUtil::WordBreakLeft> midWordBreak(const InlineContentBr
     return TextUtil::WordBreakLeft { right - left, TextUtil::width(inlineTextItem, textRun.style.fontCascade(), left, right, runLogicalLeft) };
 }
 
-static size_t NODELETE limitBeforeValue(const Style::ComputedStyle& style)
+static size_t LEGACY_NODELETE limitBeforeValue(const Style::ComputedStyle& style)
 {
     return style.hyphenateLimitBefore().tryValue().value_or(0).value;
 }
 
-static size_t NODELETE limitAfterValue(const Style::ComputedStyle& style)
+static size_t LEGACY_NODELETE limitAfterValue(const Style::ComputedStyle& style)
 {
     return style.hyphenateLimitAfter().tryValue().value_or(0).value;
 }
 
-static size_t NODELETE limitWordValue(const Style::ComputedStyle& style)
+static size_t LEGACY_NODELETE limitWordValue(const Style::ComputedStyle& style)
 {
     return style.internalHyphenateLimitCharsWord().tryValue().value_or(0).value;
 }
 
-static inline bool NODELETE hasEnoughContentForHyphenation(size_t contentLength, const Style::ComputedStyle& style)
+static inline bool LEGACY_NODELETE hasEnoughContentForHyphenation(size_t contentLength, const Style::ComputedStyle& style)
 {
     return limitBeforeValue(style) + limitAfterValue(style) <= contentLength && limitWordValue(style) <= contentLength;
 }

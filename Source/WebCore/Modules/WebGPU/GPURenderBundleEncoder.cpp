@@ -147,7 +147,7 @@ void GPURenderBundleEncoder::insertDebugMarker(String&& markerLabel)
     m_backing->insertDebugMarker(WTF::move(markerLabel));
 }
 
-static WebGPU::RenderBundleDescriptor NODELETE convertToBacking(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
+static WebGPU::RenderBundleDescriptor LEGACY_NODELETE convertToBacking(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
 {
     if (!renderBundleDescriptor)
         return { };

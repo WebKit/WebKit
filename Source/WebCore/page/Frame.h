@@ -83,7 +83,7 @@ public:
 
     DOMWindow* window() const { return virtualWindow(); }
     FrameTree& tree() const LIFETIME_BOUND { return m_treeNode; }
-    WEBCORE_EXPORT std::optional<uint64_t> NODELETE indexInFrameTreeSiblings() const;
+    WEBCORE_EXPORT std::optional<uint64_t> LEGACY_NODELETE indexInFrameTreeSiblings() const;
     WEBCORE_EXPORT Vector<uint64_t> pathToFrame() const;
     FrameIdentifier frameID() const { return m_frameID; }
     WEBCORE_EXPORT SecurityOrigin& topOrigin() const;
@@ -98,7 +98,7 @@ public:
     WEBCORE_EXPORT void setOpenerForWebKitLegacy(Frame*);
     const Frame* opener() const { return m_opener.get(); }
     Frame* opener() { return m_opener.get(); }
-    bool NODELETE hasOpenedFrames() const;
+    bool LEGACY_NODELETE hasOpenedFrames() const;
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
     virtual bool isRootFrame() const = 0;
 #if ASSERT_ENABLED
@@ -136,7 +136,7 @@ public:
     virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);
     virtual void updateReferrerPolicy(ReferrerPolicy) { }
 
-    WEBCORE_EXPORT RenderWidget* NODELETE ownerRenderer() const; // Renderer for the element that contains this frame.
+    WEBCORE_EXPORT RenderWidget* LEGACY_NODELETE ownerRenderer() const; // Renderer for the element that contains this frame.
 
     WEBCORE_EXPORT void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&&);
     WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
@@ -171,8 +171,8 @@ public:
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 
-    bool NODELETE isPrinting() const { return m_isPrinting; }
-    WEBCORE_EXPORT RefPtr<Frame> NODELETE parent() const;
+    bool LEGACY_NODELETE isPrinting() const { return m_isPrinting; }
+    WEBCORE_EXPORT RefPtr<Frame> LEGACY_NODELETE parent() const;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);

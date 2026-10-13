@@ -47,8 +47,8 @@ public:
     IDBConnectionToClient& connection() { return m_connection; }
     const IDBOpenRequestData& requestData() const LIFETIME_BOUND { return m_requestData; }
 
-    bool NODELETE isOpenRequest() const;
-    bool NODELETE isDeleteRequest() const;
+    bool LEGACY_NODELETE isOpenRequest() const;
+    bool LEGACY_NODELETE isDeleteRequest() const;
 
     void maybeNotifyRequestBlocked(uint64_t currentVersion);
 

@@ -173,7 +173,7 @@ private:
     const Parent* boxGeneratingParent() const LIFETIME_BOUND;
     const Style::ComputedStyle* parentBoxStyle() const LIFETIME_BOUND;
     const Style::ComputedStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
-    const Style::ComputedStyle* NODELETE documentElementStyle() const;
+    const Style::ComputedStyle* LEGACY_NODELETE documentElementStyle() const;
 
     LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*);
 
@@ -247,7 +247,7 @@ private:
         bool chosen { false };
         bool isFirstTry { true };
 
-        const Style::ComputedStyle& NODELETE originalStyle() const;
+        const Style::ComputedStyle& LEGACY_NODELETE originalStyle() const;
         std::unique_ptr<Style::ComputedStyle> currentOption() const;
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;
@@ -260,7 +260,7 @@ private:
 
 // Integrate with the HTML5 event loop instead, see EventLoop.cpp and consumers.
 void deprecatedQueuePostResolutionCallback(Function<void()>&&);
-bool NODELETE postResolutionCallbacksAreSuspended();
+bool LEGACY_NODELETE postResolutionCallbacksAreSuspended();
 
 class PostResolutionCallbackDisabler {
 public:

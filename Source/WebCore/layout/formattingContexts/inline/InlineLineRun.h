@@ -109,8 +109,8 @@ struct LineRun {
     GlyphOverflow glyphOverflow() const { return m_glyphOverflow; }
 
     inline TextDirection inlineDirection() const;
-    InlineLayoutUnit NODELETE letterSpacing() const;
-    bool NODELETE hasTextCombine() const;
+    InlineLayoutUnit LEGACY_NODELETE letterSpacing() const;
+    bool LEGACY_NODELETE hasTextCombine() const;
     InlineLayoutUnit textSpacingAdjustment() const { return m_textSpacingAdjustment; }
 
     UBiDiLevel bidiLevel() const { return m_bidiLevel; }
@@ -154,14 +154,14 @@ private:
     };
     bool hasCollapsibleTrailingWhitespace() const { return hasTrailingWhitespace() && (m_trailingWhitespace.type == TrailingWhitespace::Type::Collapsible || hasCollapsedTrailingWhitespace()); }
     bool hasCollapsedTrailingWhitespace() const { return hasTrailingWhitespace() && m_trailingWhitespace.type == TrailingWhitespace::Type::Collapsed; }
-    static std::optional<TrailingWhitespace::Type> NODELETE trailingWhitespaceType(const InlineTextItem&);
+    static std::optional<TrailingWhitespace::Type> LEGACY_NODELETE trailingWhitespaceType(const InlineTextItem&);
     InlineLayoutUnit removeTrailingWhitespace();
 
-    std::optional<LineRun> NODELETE detachTrailingWhitespace();
+    std::optional<LineRun> LEGACY_NODELETE detachTrailingWhitespace();
 
-    bool NODELETE hasTrailingLetterSpacing() const;
-    InlineLayoutUnit NODELETE trailingLetterSpacing() const;
-    InlineLayoutUnit NODELETE removeTrailingLetterSpacing();
+    bool LEGACY_NODELETE hasTrailingLetterSpacing() const;
+    InlineLayoutUnit LEGACY_NODELETE trailingLetterSpacing() const;
+    InlineLayoutUnit LEGACY_NODELETE removeTrailingLetterSpacing();
 
     // Members are ordered by descending alignment to minimize padding.
     // 8-byte aligned:

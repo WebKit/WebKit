@@ -165,7 +165,7 @@ bool SVGPathParser::parseCurveToCubicSegment()
     return true;
 }
 
-static FloatPoint NODELETE reflectedPoint(const FloatPoint& center, const FloatPoint& point)
+static FloatPoint LEGACY_NODELETE reflectedPoint(const FloatPoint& center, const FloatPoint& point)
 {
     // `center` is the middle point between `point` and `reflectedPoint`.
     return { 2 * center.x() - point.x(), 2 * center.y() - point.y() };

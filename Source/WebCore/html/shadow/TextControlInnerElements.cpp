@@ -87,7 +87,7 @@ RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Style:
     return createRenderer<RenderTextControlInnerContainer>(*this, WTF::move(style));
 }
 
-static inline bool NODELETE isStrongPasswordTextField(const Element* element)
+static inline bool LEGACY_NODELETE isStrongPasswordTextField(const Element* element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
     return inputElement && inputElement->hasAutofillStrongPasswordButton();
@@ -257,7 +257,7 @@ std::optional<Style::UnadjustedStyle> TextControlPlaceholderElement::resolveCust
 
 // MARK: SearchFieldResultsButtonElement
 
-static inline bool NODELETE searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const Style::ComputedStyle& style)
+static inline bool LEGACY_NODELETE searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(const Style::ComputedStyle& style)
 {
     auto appearance = style.appearance();
     return appearance == StyleAppearance::TextField && appearance == style.usedAppearance();

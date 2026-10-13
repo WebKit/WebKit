@@ -70,7 +70,7 @@ public:
 #if HAVE(AVEXPERIENCECONTROLLER)
     virtual WKAVContentSource *contentSource() const;
 #endif
-    PlaybackSessionModel* NODELETE playbackSessionModel() const;
+    PlaybackSessionModel* LEGACY_NODELETE playbackSessionModel() const;
     void durationChanged(double) override = 0;
     void currentTimeChanged(double currentTime, double anchorTime) override = 0;
     void bufferedTimeChanged(double) override = 0;
@@ -85,9 +85,9 @@ public:
     void volumeChanged(double) override = 0;
     void modelDestroyed() override;
 
-    std::optional<MediaPlayerIdentifier> NODELETE playerIdentifier() const;
+    std::optional<MediaPlayerIdentifier> LEGACY_NODELETE playerIdentifier() const;
     virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
-    void NODELETE setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
+    void LEGACY_NODELETE setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS>);
 
     virtual void startObservingNowPlayingMetadata();
     virtual void stopObservingNowPlayingMetadata();
@@ -98,7 +98,7 @@ public:
     uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     virtual ASCIILiteral logClassName() const = 0;
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
 #endif
 
 protected:

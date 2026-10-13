@@ -58,8 +58,8 @@ public:
 
     inline const BorderValue& borderAdjoiningTableStart() const LIFETIME_BOUND;
     inline const BorderValue& borderAdjoiningTableEnd() const LIFETIME_BOUND;
-    const BorderValue& NODELETE borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
-    const BorderValue& NODELETE borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningStartCell(const RenderTableCell&) const LIFETIME_BOUND;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningEndCell(const RenderTableCell&) const LIFETIME_BOUND;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 

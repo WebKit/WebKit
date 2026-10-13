@@ -88,7 +88,7 @@ private:
     void setClient(WeakPtr<AudioSourceProviderClient>&&) override;
     bool isHandlingAVPlayer() const final { return true; }
 
-    static void NODELETE initCallback(MTAudioProcessingTapRef, void*, void**);
+    static void LEGACY_NODELETE initCallback(MTAudioProcessingTapRef, void*, void**);
     static void finalizeCallback(MTAudioProcessingTapRef);
     static void prepareCallback(MTAudioProcessingTapRef, CMItemCount, const AudioStreamBasicDescription*);
     static void unprepareCallback(MTAudioProcessingTapRef);

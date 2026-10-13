@@ -33,19 +33,19 @@ template<typename> class ExceptionOr;
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    WEBCORE_EXPORT static Ref<TimeRanges> NODELETE create();
-    WEBCORE_EXPORT static Ref<TimeRanges> NODELETE create(double start, double end);
-    static Ref<TimeRanges> NODELETE create(const PlatformTimeRanges&);
+    WEBCORE_EXPORT static Ref<TimeRanges> LEGACY_NODELETE create();
+    WEBCORE_EXPORT static Ref<TimeRanges> LEGACY_NODELETE create(double start, double end);
+    static Ref<TimeRanges> LEGACY_NODELETE create(const PlatformTimeRanges&);
 
     WEBCORE_EXPORT ExceptionOr<double> start(unsigned index) const;
     WEBCORE_EXPORT ExceptionOr<double> end(unsigned index) const;
 
-    WEBCORE_EXPORT Ref<TimeRanges> NODELETE copy() const;
+    WEBCORE_EXPORT Ref<TimeRanges> LEGACY_NODELETE copy() const;
     void invert();
     WEBCORE_EXPORT void intersectWith(const TimeRanges&);
     void unionWith(const TimeRanges&);
     
-    WEBCORE_EXPORT unsigned NODELETE length() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE length() const;
 
     WEBCORE_EXPORT void add(double start, double end, AddTimeRangeOption = AddTimeRangeOption::None);
     bool contain(double time) const;

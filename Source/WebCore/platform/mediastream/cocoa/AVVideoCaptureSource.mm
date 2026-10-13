@@ -114,12 +114,12 @@ using namespace WebCore;
 
 namespace WebCore {
 
-static IntSize NODELETE toIntSize(const CMVideoDimensions& dimensions)
+static IntSize LEGACY_NODELETE toIntSize(const CMVideoDimensions& dimensions)
 {
     return { dimensions.width, dimensions.height };
 }
 
-static CMVideoDimensions NODELETE toCMVideoDimensions(const IntSize& size)
+static CMVideoDimensions LEGACY_NODELETE toCMVideoDimensions(const IntSize& size)
 {
     return { size.width(), size.height() };
 }
@@ -130,7 +130,7 @@ static OSObjectPtr<dispatch_queue_t> globaVideoCaptureSerialQueue()
     return globalQueue.get();
 }
 
-static FillLightMode NODELETE toFillLightMode(AVCaptureTorchMode mode)
+static FillLightMode LEGACY_NODELETE toFillLightMode(AVCaptureTorchMode mode)
 {
     switch (mode) {
     case AVCaptureTorchModeOff:
@@ -168,7 +168,7 @@ static AVCaptureFlashMode toAVCaptureFlashMode(FillLightMode mode)
 }
 #endif
 
-static AVCaptureWhiteBalanceMode NODELETE whiteBalanceModeFromMeteringMode(MeteringMode mode)
+static AVCaptureWhiteBalanceMode LEGACY_NODELETE whiteBalanceModeFromMeteringMode(MeteringMode mode)
 {
     switch (mode) {
     case MeteringMode::Manual:
@@ -187,7 +187,7 @@ static AVCaptureWhiteBalanceMode NODELETE whiteBalanceModeFromMeteringMode(Meter
     return AVCaptureWhiteBalanceModeAutoWhiteBalance;
 }
 
-static MeteringMode NODELETE meteringModeFromAVCaptureWhiteBalanceMode(AVCaptureWhiteBalanceMode mode)
+static MeteringMode LEGACY_NODELETE meteringModeFromAVCaptureWhiteBalanceMode(AVCaptureWhiteBalanceMode mode)
 {
     switch (mode) {
     case AVCaptureWhiteBalanceModeLocked:
@@ -1123,7 +1123,7 @@ void AVVideoCaptureSource::setSessionSizeFrameRateAndZoom()
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static inline IntDegrees NODELETE sensorOrientation(AVCaptureVideoOrientation videoOrientation)
+static inline IntDegrees LEGACY_NODELETE sensorOrientation(AVCaptureVideoOrientation videoOrientation)
 {
 #if PLATFORM(IOS_FAMILY)
     switch (videoOrientation) {

@@ -82,13 +82,13 @@ public:
         m_context->setTimerNestingLevel(0);
     }
 
-    const Document* NODELETE contextDocument() const { return m_contextIsDocument ? downcast<Document>(m_context.ptr()) : nullptr; }
+    const Document* LEGACY_NODELETE contextDocument() const { return m_contextIsDocument ? downcast<Document>(m_context.ptr()) : nullptr; }
 
-    void NODELETE setScriptMadeUserObservableChanges() { m_scriptMadeUserObservableChanges = true; }
-    void NODELETE setScriptMadeNonUserObservableChanges() { m_scriptMadeNonUserObservableChanges = true; }
+    void LEGACY_NODELETE setScriptMadeUserObservableChanges() { m_scriptMadeUserObservableChanges = true; }
+    void LEGACY_NODELETE setScriptMadeNonUserObservableChanges() { m_scriptMadeNonUserObservableChanges = true; }
 
-    bool NODELETE scriptMadeNonUserObservableChanges() const { return m_scriptMadeNonUserObservableChanges; }
-    bool NODELETE scriptMadeUserObservableChanges() const
+    bool LEGACY_NODELETE scriptMadeNonUserObservableChanges() const { return m_scriptMadeNonUserObservableChanges; }
+    bool LEGACY_NODELETE scriptMadeUserObservableChanges() const
     {
         if (m_scriptMadeUserObservableChanges)
             return true;
@@ -114,7 +114,7 @@ DOMTimerFireState* DOMTimerFireState::current = nullptr;
 struct NestedTimersMap {
     typedef HashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
 
-    static NestedTimersMap* NODELETE instanceForContext(ScriptExecutionContext& context)
+    static NestedTimersMap* LEGACY_NODELETE instanceForContext(ScriptExecutionContext& context)
     {
         // For worker threads, we don't use NestedTimersMap as doing so would not
         // be thread safe.
@@ -151,10 +151,10 @@ struct NestedTimersMap {
     }
 
     const_iterator begin() const LIFETIME_BOUND { return nestedTimers.begin(); }
-    const_iterator NODELETE end() const LIFETIME_BOUND { return nestedTimers.end(); }
+    const_iterator LEGACY_NODELETE end() const LIFETIME_BOUND { return nestedTimers.end(); }
 
 private:
-    static NestedTimersMap& NODELETE instance()
+    static NestedTimersMap& LEGACY_NODELETE instance()
     {
         static NeverDestroyed<NestedTimersMap> map;
         return map;

@@ -64,7 +64,7 @@ public:
   
     FFTFrame* fftFrame() LIFETIME_BOUND { return m_fftFrame.get(); }
     
-    size_t NODELETE fftSize() const;
+    size_t LEGACY_NODELETE fftSize() const;
     float frameDelay() const { return m_frameDelay; }
 
     float sampleRate() const { return m_sampleRate; }

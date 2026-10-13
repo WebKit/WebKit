@@ -137,22 +137,22 @@ static inline void addStyleRelation(SelectorChecker::CheckingContext& checkingCo
     checkingContext.styleRelations.append({ element, type, value });
 }
 
-static inline bool NODELETE isFirstChildElement(const Element& element)
+static inline bool LEGACY_NODELETE isFirstChildElement(const Element& element)
 {
     return !ElementTraversal::previousSibling(element);
 }
 
-static inline bool NODELETE isLastChildElement(const Element& element)
+static inline bool LEGACY_NODELETE isLastChildElement(const Element& element)
 {
     return !ElementTraversal::nextSibling(element);
 }
 
-static inline bool NODELETE doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const Element& parentElement)
+static inline bool LEGACY_NODELETE doesNotMatchDuringParsing(const SelectorChecker::CheckingContext& checkingContext, const Element& parentElement)
 {
     return checkingContext.resolvingMode != SelectorChecker::Mode::QueryingRules && !parentElement.isFinishedParsingChildren();
 }
 
-static inline bool NODELETE isFirstOfType(const Element& element, const QualifiedName& type)
+static inline bool LEGACY_NODELETE isFirstOfType(const Element& element, const QualifiedName& type)
 {
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         if (sibling->hasTagName(type))
@@ -161,7 +161,7 @@ static inline bool NODELETE isFirstOfType(const Element& element, const Qualifie
     return true;
 }
 
-static inline bool NODELETE isLastOfType(const Element& element, const QualifiedName& type)
+static inline bool LEGACY_NODELETE isLastOfType(const Element& element, const QualifiedName& type)
 {
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
         if (sibling->hasTagName(type))
@@ -170,7 +170,7 @@ static inline bool NODELETE isLastOfType(const Element& element, const Qualified
     return true;
 }
 
-static inline int NODELETE countElementsBefore(const Element& element)
+static inline int LEGACY_NODELETE countElementsBefore(const Element& element)
 {
     int count = 0;
     for (auto* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
@@ -184,7 +184,7 @@ static inline int NODELETE countElementsBefore(const Element& element)
     return count;
 }
 
-static inline int NODELETE countElementsOfTypeBefore(const Element& element, const QualifiedName& type)
+static inline int LEGACY_NODELETE countElementsOfTypeBefore(const Element& element, const QualifiedName& type)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
@@ -194,7 +194,7 @@ static inline int NODELETE countElementsOfTypeBefore(const Element& element, con
     return count;
 }
 
-static inline int NODELETE countElementsAfter(const Element& element)
+static inline int LEGACY_NODELETE countElementsAfter(const Element& element)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling))
@@ -202,7 +202,7 @@ static inline int NODELETE countElementsAfter(const Element& element)
     return count;
 }
 
-static inline int NODELETE countElementsOfTypeAfter(const Element& element, const QualifiedName& type)
+static inline int LEGACY_NODELETE countElementsOfTypeAfter(const Element& element, const QualifiedName& type)
 {
     int count = 0;
     for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
@@ -752,7 +752,7 @@ bool SelectorChecker::attributeSelectorMatches(const Element& element, const Qua
     return attributeValueMatches(Attribute(attributeName, attributeValue), selector.match(), selector.value(), caseSensitive);
 }
 
-static bool NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
+static bool LEGACY_NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContext& context)
 {
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
     // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
@@ -812,7 +812,7 @@ static bool NODELETE canMatchHoverOrActiveInQuirksMode(const SelectorChecker::Lo
     return false;
 }
 
-static inline bool NODELETE tagMatches(const Element& element, const CSSSelector& simpleSelector)
+static inline bool LEGACY_NODELETE tagMatches(const Element& element, const CSSSelector& simpleSelector)
 {
     const QualifiedName& tagQName = simpleSelector.tagQName();
 
@@ -1546,7 +1546,7 @@ bool SelectorChecker::matchSelectorList(CheckingContext& checkingContext, const 
 #if ENABLE(CSS_SELECTOR_JIT)
 static constexpr auto maximumCompiledHasArgumentSelectorsSize = 1024u;
 
-static HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>& NODELETE compiledHasArgumentSelectorsMap()
+static HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>& LEGACY_NODELETE compiledHasArgumentSelectorsMap()
 {
     static NeverDestroyed<HashMap<GenericHashKey<CSSSelectorList>, FixedVector<CompiledSelector>>> map;
     return map;

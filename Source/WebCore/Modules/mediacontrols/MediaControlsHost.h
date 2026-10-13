@@ -69,7 +69,7 @@ public:
     ~MediaControlsHost();
 
 #if ENABLE(MEDIA_SESSION)
-    WEBCORE_EXPORT void NODELETE ref() const final;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const final;
     WEBCORE_EXPORT void deref() const final;
 #else
     WEBCORE_EXPORT void ref() const;
@@ -98,15 +98,15 @@ public:
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
-    TextTrackRepresentation* NODELETE textTrackRepresentation() const;
+    TextTrackRepresentation* LEGACY_NODELETE textTrackRepresentation() const;
     bool allowsInlineMediaPlayback() const;
     bool supportsFullscreen() const;
-    bool NODELETE isVideoLayerInline() const;
-    bool NODELETE isInMediaDocument() const;
+    bool LEGACY_NODELETE isVideoLayerInline() const;
+    bool LEGACY_NODELETE isInMediaDocument() const;
     bool userGestureRequired() const;
     bool shouldForceControlsDisplay() const;
     bool supportsSeeking() const;
-    bool NODELETE inWindowFullscreen() const;
+    bool LEGACY_NODELETE inWindowFullscreen() const;
     bool supportsRewind() const;
     bool needsChromeMediaControlsPseudoElement() const;
     bool isMediaControlsMacInlineSizeSpecsEnabled() const;
@@ -114,7 +114,7 @@ public:
     String spatialVideoProjectionKind() const;
     std::optional<int32_t> spatialVideoHorizontalFieldOfView() const;
     void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
-    bool NODELETE isAVExperienceControllerFullscreenEnabled() const;
+    bool LEGACY_NODELETE isAVExperienceControllerFullscreenEnabled() const;
 
     void captionPreferencesChanged();
     enum class ForceUpdate : bool { No, Yes };
@@ -130,7 +130,7 @@ public:
     enum class DeviceType { None, Airplay, Tvout };
     DeviceType externalDeviceType() const;
 
-    bool NODELETE controlsDependOnPageScaleFactor() const;
+    bool LEGACY_NODELETE controlsDependOnPageScaleFactor() const;
     void setControlsDependOnPageScaleFactor(bool v);
 
     static String generateUUID();

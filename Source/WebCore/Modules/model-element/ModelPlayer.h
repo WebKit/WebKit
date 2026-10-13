@@ -86,22 +86,22 @@ public:
     virtual ~ModelPlayer();
 
     virtual ModelPlayerIdentifier identifier() const = 0;
-    virtual bool NODELETE isPlaceholder() const;
-    virtual bool NODELETE isWebModelPlayerInstance() const;
+    virtual bool LEGACY_NODELETE isPlaceholder() const;
+    virtual bool LEGACY_NODELETE isWebModelPlayerInstance() const;
 
     // Loading.
     virtual void load(NodeIdentifier, Model&, LayoutSize, bool) = 0;
     virtual void unload(NodeIdentifier);
-    virtual void NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&);
+    virtual void LEGACY_NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&);
 
     // Graphics.
     virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
-    virtual void NODELETE adoptContentsDisplayDelegateFrom(ModelPlayer&);
+    virtual void LEGACY_NODELETE adoptContentsDisplayDelegateFrom(ModelPlayer&);
 
     virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const ColorSpace&);
 
     // State changes.
-    virtual void NODELETE visibilityStateDidChange();
+    virtual void LEGACY_NODELETE visibilityStateDidChange();
     virtual void sizeDidChange(LayoutSize) = 0;
 
     // State accessors.
@@ -123,9 +123,9 @@ public:
     virtual void enterFullscreen() = 0;
 
     // Interaction.
-    virtual bool NODELETE supportsMouseInteraction();
-    virtual bool NODELETE supportsDragging();
-    virtual void NODELETE setInteractionEnabled(bool);
+    virtual bool LEGACY_NODELETE supportsMouseInteraction();
+    virtual bool LEGACY_NODELETE supportsDragging();
+    virtual void LEGACY_NODELETE setInteractionEnabled(bool);
     virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
     virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;

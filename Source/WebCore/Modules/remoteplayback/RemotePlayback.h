@@ -63,7 +63,7 @@ public:
     void cancelWatchAvailability(std::optional<int32_t> id, Ref<DeferredPromise>&&);
     void prompt(Ref<DeferredPromise>&&);
 
-    bool NODELETE hasAvailabilityCallbacks() const;
+    bool LEGACY_NODELETE hasAvailabilityCallbacks() const;
     void availabilityChanged(bool);
     void playbackTargetPickerWasDismissed();
     void shouldPlayToRemoteTargetChanged(bool);
@@ -76,21 +76,21 @@ public:
     };
     State state() const { return m_state; }
 
-    void NODELETE invalidate();
+    void LEGACY_NODELETE invalidate();
 
     WebCoreOpaqueRoot opaqueRoot() const final;
-    Node* NODELETE ownerNode() const;
+    Node* LEGACY_NODELETE ownerNode() const;
 
 private:
     explicit RemotePlayback(HTMLMediaElement&);
 
     void setState(State);
-    void NODELETE establishConnection();
+    void LEGACY_NODELETE establishConnection();
     void disconnect();
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RemotePlayback; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
@@ -100,7 +100,7 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger.get(); }
     uint64_t logIdentifier() const { return m_logIdentifier; }
-    WTFLogChannel& NODELETE logChannel() const;
+    WTFLogChannel& LEGACY_NODELETE logChannel() const;
     ASCIILiteral logClassName() const { return "RemotePlayback"_s; }
 
     const Ref<const Logger> m_logger;

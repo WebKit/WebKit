@@ -44,7 +44,7 @@ struct TextOnlyLineBreakResult {
 };
 
 struct CandidateTextContent {
-    void NODELETE append(InlineLayoutUnit contentWidth)
+    void LEGACY_NODELETE append(InlineLayoutUnit contentWidth)
     {
         logicalWidth += contentWidth;
         ++endIndex;
@@ -63,7 +63,7 @@ InlineLayoutUnit TextOnlySimpleLineBuilder::measuredInlineTextItem(const InlineT
     return TextUtil::width(inlineTextItem, style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);
 }
 
-static inline InlineItemPosition NODELETE placedInlineItemEnd(size_t layoutRangeStartIndex, size_t placedInlineItemCount, size_t overflowingContentLength, std::span<const InlineItem> inlineItemList)
+static inline InlineItemPosition LEGACY_NODELETE placedInlineItemEnd(size_t layoutRangeStartIndex, size_t placedInlineItemCount, size_t overflowingContentLength, std::span<const InlineItem> inlineItemList)
 {
     if (!overflowingContentLength)
         return { layoutRangeStartIndex + placedInlineItemCount };
@@ -73,7 +73,7 @@ static inline InlineItemPosition NODELETE placedInlineItemEnd(size_t layoutRange
     return { trailingInlineItemIndex, overflowingInlineTextItemLength - overflowingContentLength };
 }
 
-static inline bool NODELETE isLastLineWithInlineContent(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
+static inline bool LEGACY_NODELETE isLastLineWithInlineContent(InlineItemPosition placedContentEnd, size_t layoutRangeEndIndex)
 {
     return placedContentEnd.index == layoutRangeEndIndex && !placedContentEnd.offset;
 }

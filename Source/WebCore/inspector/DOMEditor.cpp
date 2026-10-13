@@ -207,7 +207,7 @@ public:
     {
     }
 
-    Node* NODELETE newNode() const
+    Node* LEGACY_NODELETE newNode() const
     {
         return m_newNode.get();
     }

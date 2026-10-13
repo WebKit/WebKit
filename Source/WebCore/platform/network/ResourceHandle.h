@@ -122,48 +122,48 @@ public:
     void unschedule(WTF::SchedulePair&);
 #endif
 
-    bool NODELETE shouldContentSniff() const;
+    bool LEGACY_NODELETE shouldContentSniff() const;
     static bool shouldContentSniffURL(const URL&);
 
-    ContentEncodingSniffingPolicy NODELETE contentEncodingSniffingPolicy() const;
+    ContentEncodingSniffingPolicy LEGACY_NODELETE contentEncodingSniffingPolicy() const;
 
-    WEBCORE_EXPORT static void NODELETE forceContentSniffing();
+    WEBCORE_EXPORT static void LEGACY_NODELETE forceContentSniffing();
 
-    bool NODELETE hasAuthenticationChallenge() const;
+    bool LEGACY_NODELETE hasAuthenticationChallenge() const;
     void clearAuthentication();
     WEBCORE_EXPORT virtual void cancel();
 
-    NetworkLoadMetrics* NODELETE networkLoadMetrics();
+    NetworkLoadMetrics* LEGACY_NODELETE networkLoadMetrics();
     void setNetworkLoadMetrics(Box<NetworkLoadMetrics>&&);
 
-    MonotonicTime NODELETE startTimeBeforeRedirects() const;
-    bool NODELETE failsTAOCheck() const;
+    MonotonicTime LEGACY_NODELETE startTimeBeforeRedirects() const;
+    bool LEGACY_NODELETE failsTAOCheck() const;
     void checkTAO(const ResourceResponse&);
-    bool NODELETE hasCrossOriginRedirect() const;
-    void NODELETE markAsHavingCrossOriginRedirect();
-    uint16_t NODELETE redirectCount() const;
-    void NODELETE incrementRedirectCount();
+    bool LEGACY_NODELETE hasCrossOriginRedirect() const;
+    void LEGACY_NODELETE markAsHavingCrossOriginRedirect();
+    uint16_t LEGACY_NODELETE redirectCount() const;
+    void LEGACY_NODELETE incrementRedirectCount();
 
     // The client may be 0, in which case no callbacks will be made.
-    WEBCORE_EXPORT ResourceHandleClient* NODELETE client() const;
-    WEBCORE_EXPORT void NODELETE clearClient();
+    WEBCORE_EXPORT ResourceHandleClient* LEGACY_NODELETE client() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE clearClient();
 
     WEBCORE_EXPORT void setDefersLoading(bool);
 
-    WEBCORE_EXPORT ResourceRequest& NODELETE firstRequest();
+    WEBCORE_EXPORT ResourceRequest& LEGACY_NODELETE firstRequest();
     WEBCORE_EXPORT const ResourceRequest& firstRequest() const;
-    const String& NODELETE lastHTTPMethod() const;
+    const String& LEGACY_NODELETE lastHTTPMethod() const;
 
     void failureTimerFired();
 
-    NetworkingContext* NODELETE context() const;
+    NetworkingContext* LEGACY_NODELETE context() const;
 
     // AuthenticationClient.
     void ref() const override { RefCounted::ref(); }
     void deref() const override { RefCounted::deref(); }
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT static CFStringRef NODELETE synchronousLoadRunLoopMode();
+    WEBCORE_EXPORT static CFStringRef LEGACY_NODELETE synchronousLoadRunLoopMode();
 #endif
 
     typedef Ref<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);

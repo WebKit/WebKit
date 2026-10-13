@@ -165,7 +165,7 @@ static constexpr OptionSet behaviorsForTextExtraction {
     TextIteratorBehavior::TraversesFlatTree
 };
 
-static bool NODELETE hasEnclosingAutoFilledInput(Node& node)
+static bool LEGACY_NODELETE hasEnclosingAutoFilledInput(Node& node)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(node.shadowHost());
     if (!input)
@@ -226,7 +226,7 @@ static inline TextNodesAndText collectText(const SimpleRange& range, IncludeText
     return nodesAndText;
 }
 
-static String NODELETE stringOnlyIfHumanReadable(const String& string)
+static String LEGACY_NODELETE stringOnlyIfHumanReadable(const String& string)
 {
     if (StringEntropyHelpers::isProbablyHumanReadable(string))
         return string;
@@ -319,7 +319,7 @@ struct TraversalContext {
     bool includeAccessibilityAttributes { false };
     unsigned visibleTextLength { 0 };
 
-    inline bool NODELETE shouldIncludeNodeWithRect(const FloatRect& rect) const
+    inline bool LEGACY_NODELETE shouldIncludeNodeWithRect(const FloatRect& rect) const
     {
         return !rectInRootView || rectInRootView->intersects(rect);
     }
@@ -705,7 +705,7 @@ enum class SkipExtraction : bool {
     SelfAndSubtree
 };
 
-static bool NODELETE shouldTreatAsPasswordField(const Element* element)
+static bool LEGACY_NODELETE shouldTreatAsPasswordField(const Element* element)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(element);
     return input && input->hasEverBeenPasswordField();
@@ -1910,7 +1910,7 @@ struct TokenAndBlockOffset {
     int offset { 0 };
 };
 
-static IntSize NODELETE reducePrecision(FloatSize size)
+static IntSize LEGACY_NODELETE reducePrecision(FloatSize size)
 {
     static constexpr auto resolution = 10;
     return {
@@ -2552,7 +2552,7 @@ static SelectOptionResult selectOptionByValue(NodeIdentifier identifier, const S
     return { };
 }
 
-static Element* NODELETE bodyOrDocumentElement(const LocalFrame& frame)
+static Element* LEGACY_NODELETE bodyOrDocumentElement(const LocalFrame& frame)
 {
     if (auto* document = frame.document()) {
         if (auto* body = document->body())
@@ -2564,7 +2564,7 @@ static Element* NODELETE bodyOrDocumentElement(const LocalFrame& frame)
     return nullptr;
 }
 
-static RefPtr<Node> NODELETE resolveNodeWithBodyOrDocumentElementAsFallback(const LocalFrame& frame, std::optional<NodeIdentifier> identifier)
+static RefPtr<Node> LEGACY_NODELETE resolveNodeWithBodyOrDocumentElementAsFallback(const LocalFrame& frame, std::optional<NodeIdentifier> identifier)
 {
     if (identifier)
         return Node::fromIdentifier(WTF::move(*identifier));

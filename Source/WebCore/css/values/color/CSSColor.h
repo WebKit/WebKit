@@ -155,11 +155,11 @@ public:
 
     bool operator==(const Color&) const;
 
-    bool NODELETE isResolved() const;
+    bool LEGACY_NODELETE isResolved() const;
     std::optional<ResolvedColor> resolved() const;
-    bool NODELETE isKeyword() const;
+    bool LEGACY_NODELETE isKeyword() const;
     std::optional<KeywordColor> keyword() const;
-    bool NODELETE isHex() const;
+    bool LEGACY_NODELETE isHex() const;
     std::optional<HexColor> hex() const;
 
     // Return an absolute color if possible, otherwise an invalid color.

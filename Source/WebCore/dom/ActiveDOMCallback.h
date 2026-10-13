@@ -52,10 +52,10 @@ public:
     WEBCORE_EXPORT ActiveDOMCallback(ScriptExecutionContext*);
     WEBCORE_EXPORT virtual ~ActiveDOMCallback();
 
-    WEBCORE_EXPORT bool NODELETE canInvokeCallback() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE canInvokeCallback() const;
 
-    WEBCORE_EXPORT bool NODELETE activeDOMObjectsAreSuspended() const;
-    WEBCORE_EXPORT bool NODELETE activeDOMObjectAreStopped() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE activeDOMObjectsAreSuspended() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE activeDOMObjectAreStopped() const;
     
     virtual void visitJSFunctionInGCThread(JSC::AbstractSlotVisitor&) { }
     virtual void visitJSFunctionInGCThread(JSC::SlotVisitor&) { }

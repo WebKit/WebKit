@@ -53,9 +53,9 @@ public:
 
     virtual ~MediaKeyStatusMap();
 
-    void NODELETE detachSession();
+    void LEGACY_NODELETE detachSession();
 
-    unsigned long NODELETE size();
+    unsigned long LEGACY_NODELETE size();
     bool has(const BufferSource&);
     JSC::JSValue get(JSC::JSGlobalObject&, const BufferSource&);
 

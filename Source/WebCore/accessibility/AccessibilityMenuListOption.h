@@ -46,7 +46,7 @@ private:
     bool canHaveChildren() const final { return false; }
     AccessibilityObject* parentObject() const final { return m_parent.get(); }
 
-    HTMLOptionElement* NODELETE optionElement() const;
+    HTMLOptionElement* LEGACY_NODELETE optionElement() const;
     Element* actionElement() const final;
     bool isEnabled() const final;
     bool isVisible() const final;

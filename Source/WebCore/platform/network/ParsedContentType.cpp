@@ -38,13 +38,13 @@
 
 namespace WebCore {
 
-static void NODELETE skipSpaces(StringView input, unsigned& startIndex)
+static void LEGACY_NODELETE skipSpaces(StringView input, unsigned& startIndex)
 {
     while (startIndex < input.length() && isASCIIWhitespaceWithoutFF(input[startIndex]))
         ++startIndex;
 }
 
-static bool NODELETE isQuotedStringTokenCharacter(char16_t c)
+static bool LEGACY_NODELETE isQuotedStringTokenCharacter(char16_t c)
 {
     return (c >= ' ' && c <= '~') || (c >= 0x80 && c <= 0xFF) || c == '\t';
 }
@@ -72,7 +72,7 @@ static StringView parseToken(StringView input, unsigned& startIndex, CharacterMe
     return input.substring(tokenStart, tokenEnd - tokenStart);
 }
 
-static bool NODELETE isNotQuoteOrBackslash(char16_t ch)
+static bool LEGACY_NODELETE isNotQuoteOrBackslash(char16_t ch)
 {
     return ch != '"' && ch != '\\';
 }
@@ -106,17 +106,17 @@ static String collectHTTPQuotedString(StringView input, unsigned& startIndex)
     return builder.toString();
 }
 
-static bool NODELETE isNotForwardSlash(char16_t ch)
+static bool LEGACY_NODELETE isNotForwardSlash(char16_t ch)
 {
     return ch != '/';
 }
 
-static bool NODELETE isNotSemicolon(char16_t ch)
+static bool LEGACY_NODELETE isNotSemicolon(char16_t ch)
 {
     return ch != ';';
 }
 
-static bool NODELETE isNotSemicolonOrEqualSign(char16_t ch)
+static bool LEGACY_NODELETE isNotSemicolonOrEqualSign(char16_t ch)
 {
     return ch != ';' && ch != '=';
 }
@@ -238,7 +238,7 @@ void ParsedContentType::setContentType(String&& contentRange)
     m_mimeType = StringView(WTF::move(contentRange)).trim(isASCIIWhitespaceWithoutFF<char16_t>).convertToASCIILowercase();
 }
 
-static bool NODELETE containsNonQuoteStringTokenCharacters(const String& input)
+static bool LEGACY_NODELETE containsNonQuoteStringTokenCharacters(const String& input)
 {
     for (unsigned index = 0; index < input.length(); ++index) {
         if (!isQuotedStringTokenCharacter(input[index]))

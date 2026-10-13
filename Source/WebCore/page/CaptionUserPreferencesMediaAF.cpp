@@ -80,13 +80,13 @@ static std::unique_ptr<CaptionPreferencesDelegate>& captionPreferencesDelegate()
     return delegate.get();
 }
 
-static std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>& NODELETE cachedCaptionDisplayMode()
+static std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>& LEGACY_NODELETE cachedCaptionDisplayMode()
 {
     static NeverDestroyed<std::optional<CaptionUserPreferencesMediaAF::CaptionDisplayMode>> captionDisplayMode;
     return captionDisplayMode;
 }
 
-static std::optional<Vector<String>>& NODELETE cachedPreferredLanguages()
+static std::optional<Vector<String>>& LEGACY_NODELETE cachedPreferredLanguages()
 {
     static NeverDestroyed<std::optional<Vector<String>>> preferredLanguages;
     return preferredLanguages;

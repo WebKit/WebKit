@@ -61,7 +61,7 @@ public:
     virtual ~MutationRecord();
 
     virtual const AtomString& type() = 0;
-    virtual Node& NODELETE target() = 0;
+    virtual Node& LEGACY_NODELETE target() = 0;
 
     virtual NodeList& addedNodes() = 0;
     virtual NodeList& removedNodes() = 0;

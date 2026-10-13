@@ -80,7 +80,7 @@ public:
 
     enum class BinaryType : bool { Blob, Arraybuffer };
     BinaryType binaryType() const { return m_binaryType; }
-    void NODELETE setBinaryType(BinaryType);
+    void LEGACY_NODELETE setBinaryType(BinaryType);
 
     ExceptionOr<void> send(const String&);
     ExceptionOr<void> send(JSC::ArrayBuffer&);
@@ -89,7 +89,7 @@ public:
 
     void close();
 
-    bool NODELETE canDetach() const;
+    bool LEGACY_NODELETE canDetach() const;
     std::unique_ptr<DetachedRTCDataChannel> detach();
 
     static void removeDetachedRTCDataChannel(RTCDataChannelIdentifier identifer) { handlerFromIdentifier(identifer.object()); }
@@ -105,14 +105,14 @@ private:
     void removeFromDataChannelLocalMapIfNeeded();
 
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCDataChannel; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject.
     void stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;

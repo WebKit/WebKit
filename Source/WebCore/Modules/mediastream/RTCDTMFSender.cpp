@@ -85,7 +85,7 @@ String RTCDTMFSender::toneBuffer() const
     return m_tones;
 }
 
-static inline bool NODELETE isToneCharacterInvalid(char16_t character)
+static inline bool LEGACY_NODELETE isToneCharacterInvalid(char16_t character)
 {
     if (character >= '0' && character <= '9')
         return false;

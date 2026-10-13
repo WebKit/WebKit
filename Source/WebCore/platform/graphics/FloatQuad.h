@@ -86,24 +86,24 @@ public:
     // that is, if two edges are parallel to the x-axis and the other two
     // are parallel to the y-axis. If this method returns true, the
     // corresponding FloatRect can be retrieved with boundingBox().
-    WEBCORE_EXPORT bool NODELETE isRectilinear() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isRectilinear() const;
 
     // Tests whether the given point is inside, or on an edge or corner of this quad.
-    WEBCORE_EXPORT bool NODELETE containsPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE containsPoint(const FloatPoint&) const;
 
     // Tests whether the four corners of other are inside, or coincident with the sides of this quad.
     // Note that this only works for convex quads, but that includes all quads that originate
     // from transformed rects.
-    WEBCORE_EXPORT bool NODELETE containsQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE containsQuad(const FloatQuad&) const;
 
     // Tests whether any part of the rectangle intersects with this quad.
     // This only works for convex quads.
-    bool NODELETE intersectsRect(const FloatRect&) const;
+    bool LEGACY_NODELETE intersectsRect(const FloatRect&) const;
 
     // Test whether any part of the circle/ellipse intersects with this quad.
     // Note that these two functions only work for convex quads.
-    bool NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
-    bool NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
+    bool LEGACY_NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
+    bool LEGACY_NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
 
     WEBCORE_EXPORT bool intersectsQuad(const FloatQuad&) const;
 
@@ -151,7 +151,7 @@ public:
 
     // Tests whether points are in clock-wise, or counter clock-wise order.
     // Note that output is undefined when all points are colinear.
-    bool NODELETE isCounterclockwise() const;
+    bool LEGACY_NODELETE isCounterclockwise() const;
 
     friend bool operator==(const FloatQuad&, const FloatQuad&) = default;
 

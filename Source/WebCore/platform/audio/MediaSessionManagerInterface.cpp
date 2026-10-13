@@ -62,7 +62,7 @@ MediaSessionManagerInterface::~MediaSessionManagerInterface()
     m_taskGroup.cancel();
 }
 
-static inline unsigned NODELETE indexFromMediaType(PlatformMediaSession::MediaType type)
+static inline unsigned LEGACY_NODELETE indexFromMediaType(PlatformMediaSession::MediaType type)
 {
     return static_cast<unsigned>(type);
 }

@@ -36,18 +36,18 @@
 
 namespace RFC8941 {
 
-template<typename CharacterType> constexpr bool NODELETE isEndOfToken(CharacterType character)
+template<typename CharacterType> constexpr bool LEGACY_NODELETE isEndOfToken(CharacterType character)
 {
     return !RFC7230::isTokenCharacter(character) && character != ':' && character != '/';
 }
 
-template<typename CharacterType> constexpr bool NODELETE isEndOfKey(CharacterType character)
+template<typename CharacterType> constexpr bool LEGACY_NODELETE isEndOfKey(CharacterType character)
 {
     return !isASCIILower(character) && !isASCIIDigit(character) && character != '_' && character != '-' && character != '.' && character != '*';
 }
 
 // Parsing a key (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3.3).
-template<typename CharType> static StringView NODELETE parseKey(StringParsingBuffer<CharType>& buffer LIFETIME_BOUND)
+template<typename CharType> static StringView LEGACY_NODELETE parseKey(StringParsingBuffer<CharType>& buffer LIFETIME_BOUND)
 {
     if (buffer.atEnd() || (!isASCIILower(*buffer) && *buffer != '*'))
         return { };
@@ -155,7 +155,7 @@ template<typename CharType> static std::optional<Vector<uint8_t>> parseByteSeque
 }
 
 // Parsing a Boolean (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.8).
-template<typename CharType> static std::optional<bool> NODELETE parseBoolean(StringParsingBuffer<CharType>& buffer)
+template<typename CharType> static std::optional<bool> LEGACY_NODELETE parseBoolean(StringParsingBuffer<CharType>& buffer)
 {
     if (!skipExactly(buffer, '?'))
         return std::nullopt;

@@ -50,9 +50,9 @@ public:
     enum class Type : bool { OneShot, Repeating };
     static Ref<EventLoopTimer> create(Type type, std::unique_ptr<EventLoopTask>&& task) { return adoptRef(*new EventLoopTimer(type, WTF::move(task))); }
 
-    Type NODELETE type() const { return m_type; }
-    EventLoopTaskGroup* NODELETE group() const { return m_task ? m_task->group() : nullptr; }
-    bool NODELETE isSuspended() const { return m_suspended; }
+    Type LEGACY_NODELETE type() const { return m_type; }
+    EventLoopTaskGroup* LEGACY_NODELETE group() const { return m_task ? m_task->group() : nullptr; }
+    bool LEGACY_NODELETE isSuspended() const { return m_suspended; }
 
     void stop()
     {

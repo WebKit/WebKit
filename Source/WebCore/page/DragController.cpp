@@ -237,7 +237,7 @@ void DragController::dragExited(LocalFrame& frame, DragData&& dragData)
         fileInput->setCanReceiveDroppedFiles(false);
 }
 
-inline static bool NODELETE dragIsHandledByDocument(DragHandlingMethod dragHandlingMethod)
+inline static bool LEGACY_NODELETE dragIsHandledByDocument(DragHandlingMethod dragHandlingMethod)
 {
     return dragHandlingMethod != DragHandlingMethod::None && dragHandlingMethod != DragHandlingMethod::PageLoad;
 }
@@ -390,13 +390,13 @@ static RefPtr<HTMLInputElement> asFileInput(Node& node)
     return inputElement && inputElement->isFileUpload() ? inputElement : nullptr;
 }
 
-static bool NODELETE isEnabledColorInput(Node& node)
+static bool LEGACY_NODELETE isEnabledColorInput(Node& node)
 {
     auto* input = dynamicDowncast<HTMLInputElement>(node);
     return input && input->isColorControl() && !input->isDisabledFormControl();
 }
 
-static bool NODELETE isInShadowTreeOfEnabledColorInput(Node& node)
+static bool LEGACY_NODELETE isInShadowTreeOfEnabledColorInput(Node& node)
 {
     auto* host = node.shadowHost();
     return host && isEnabledColorInput(*host);
@@ -913,7 +913,7 @@ static void selectElement(Element& element)
     }
 }
 
-static IntPoint NODELETE dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
+static IntPoint LEGACY_NODELETE dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
 {
     // dragImageOffset is the cursor position relative to the lower-left corner of the image.
 #if PLATFORM(MAC)
@@ -1419,7 +1419,7 @@ void DragController::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPo
     client().beginDrag(WTF::move(dragItem), frame, mouseDownPointInRootViewCoordinates, mouseDraggedPointInRootViewCoordinates, dataTransfer, dragSourceAction);
 }
 
-static RefPtr<Element> NODELETE containingLinkElement(Element& element)
+static RefPtr<Element> LEGACY_NODELETE containingLinkElement(Element& element)
 {
     for (auto& currentElement : lineageOfType<Element>(element)) {
         if (currentElement.isLink())

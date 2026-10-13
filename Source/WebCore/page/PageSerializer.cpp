@@ -94,7 +94,7 @@ static bool shouldIgnoreElement(const Element& element)
     return element.hasTagName(HTMLNames::scriptTag) || element.hasTagName(HTMLNames::noscriptTag) || isCharsetSpecifyingNode(element);
 }
 
-static const QualifiedName& NODELETE frameOwnerURLAttributeName(const HTMLFrameOwnerElement& frameOwner)
+static const QualifiedName& LEGACY_NODELETE frameOwnerURLAttributeName(const HTMLFrameOwnerElement& frameOwner)
 {
     // FIXME: We should support all frame owners including applets.
     return is<HTMLObjectElement>(frameOwner) ? HTMLNames::dataAttr : HTMLNames::srcAttr;

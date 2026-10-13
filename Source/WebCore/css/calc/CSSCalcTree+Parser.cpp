@@ -93,7 +93,7 @@ struct ParserState {
 
 } // namespace (anonymous)
 
-static ParseStatus NODELETE checkDepth(int depth)
+static ParseStatus LEGACY_NODELETE checkDepth(int depth)
 {
     if (depth > maxExpressionDepth)
         return ParseStatus::TooDeep;
@@ -1130,7 +1130,7 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     return TypedChild { makeChild(WTF::move(anchor), type), type };
 }
 
-static std::optional<Style::AnchorSizeDimension> NODELETE cssValueIDToAnchorSizeDimension(CSSValueID value)
+static std::optional<Style::AnchorSizeDimension> LEGACY_NODELETE cssValueIDToAnchorSizeDimension(CSSValueID value)
 {
     switch (value) {
     case CSSValueID::Width:

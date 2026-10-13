@@ -64,7 +64,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTextAreaElement);
 
 using namespace HTMLNames;
 
-static inline unsigned NODELETE computeLengthForAPIValue(StringView text)
+static inline unsigned LEGACY_NODELETE computeLengthForAPIValue(StringView text)
 {
     unsigned length = text.length();
     unsigned crlfCount = 0;

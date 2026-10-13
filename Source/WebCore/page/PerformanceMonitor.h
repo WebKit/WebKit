@@ -40,7 +40,7 @@ class PerformanceMonitor : public CanMakeWeakPtr<PerformanceMonitor> {
 public:
     explicit PerformanceMonitor(Page&);
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void didStartProvisionalLoad();

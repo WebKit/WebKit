@@ -43,8 +43,8 @@ public:
 
     Type unitType() const { return m_unitType; }
 
-    void NODELETE setValue(float);
-    float NODELETE value() const;
+    void LEGACY_NODELETE setValue(float);
+    float LEGACY_NODELETE value() const;
 
     void setValueInSpecifiedUnits(float valueInSpecifiedUnits) { m_valueInSpecifiedUnits = valueInSpecifiedUnits; }
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }

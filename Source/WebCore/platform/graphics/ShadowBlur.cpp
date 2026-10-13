@@ -55,7 +55,7 @@ enum {
 };
 
 #if USE(CG)
-static inline int NODELETE roundUpToMultipleOf32(int d)
+static inline int LEGACY_NODELETE roundUpToMultipleOf32(int d)
 {
     return (1 + (d >> 5)) << 5;
 }
@@ -127,7 +127,7 @@ public:
     }
 
     static ScratchBuffer& singleton() WTF_REQUIRES_LOCK(lock());
-    static Lock& NODELETE lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
+    static Lock& LEGACY_NODELETE lock() WTF_RETURNS_LOCK(s_lock) { return s_lock; }
 
 private:
     void scheduleScratchBufferPurge()
@@ -185,7 +185,7 @@ ScratchBuffer& ScratchBuffer::singleton()
     return scratchBuffer;
 }
 
-static float NODELETE radiusToLegacyRadius(float radius)
+static float LEGACY_NODELETE radiusToLegacyRadius(float radius)
 {
     return radius > 8 ? 8 + 4 * sqrt((radius - 8) / 2) : radius;
 }

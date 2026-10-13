@@ -159,7 +159,7 @@ public:
 
     virtual String userAgent(const URL&) const = 0;
 
-    virtual const SettingsValues& NODELETE settingsValues() const = 0;
+    virtual const SettingsValues& LEGACY_NODELETE settingsValues() const = 0;
 
     virtual const NetworkLoadPolicy& networkLoadPolicy() const = 0;
 
@@ -211,7 +211,7 @@ public:
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
 
-    JSC::ScriptExecutionStatus NODELETE jscScriptExecutionStatus() const;
+    JSC::ScriptExecutionStatus LEGACY_NODELETE jscScriptExecutionStatus() const;
 
     enum class CallStackPosition : bool { BottomMost, TopMost };
     URL currentSourceURL(CallStackPosition = CallStackPosition::BottomMost) const;
@@ -239,13 +239,13 @@ public:
     virtual RefPtr<FontLoadRequest> fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
-    WEBCORE_EXPORT static void NODELETE setCrossOriginMode(CrossOriginMode);
-    static CrossOriginMode NODELETE crossOriginMode();
+    WEBCORE_EXPORT static void LEGACY_NODELETE setCrossOriginMode(CrossOriginMode);
+    static CrossOriginMode LEGACY_NODELETE crossOriginMode();
 
     virtual bool crossOriginIsolated() const { return false; }
     virtual String agentClusterID() const = 0;
 
-    WEBCORE_EXPORT void NODELETE ref();
+    WEBCORE_EXPORT void LEGACY_NODELETE ref();
     WEBCORE_EXPORT void deref();
 
     uint32_t checkedPtrCount() const final { return CanMakeThreadSafeCheckedPtr::checkedPtrCount(); }
@@ -300,7 +300,7 @@ public:
     void postTaskToResponsibleDocument(Function<void(Document&)>&&);
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
-    int NODELETE circularSequentialID();
+    int LEGACY_NODELETE circularSequentialID();
 
     inline bool addTimeout(int timeoutId, DOMTimer&); // Defined in ScriptExecutionContextInlines.h
     inline RefPtr<DOMTimer> takeTimeout(int timeoutId); // Defined in ScriptExecutionContextInlines.h
@@ -439,7 +439,7 @@ private:
 
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
-    void NODELETE checkConsistency() const;
+    void LEGACY_NODELETE checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
 
     WeakHashSet<MessagePort, WeakPtrImplWithEventTargetData> m_messagePorts;
@@ -490,6 +490,6 @@ private:
     std::unique_ptr<JSC::WeakGCSet<JSC::JSGlobalObject, DefaultHash<JSC::JSGlobalObject*>, HashTraits<JSC::JSGlobalObject*>>> m_microtaskGlobalObjects;
 };
 
-WebCoreOpaqueRoot NODELETE root(ScriptExecutionContext*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(ScriptExecutionContext*);
 
 } // namespace WebCore

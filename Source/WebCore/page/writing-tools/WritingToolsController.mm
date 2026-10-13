@@ -116,7 +116,7 @@ String WritingToolsController::plainText(const SimpleRange& range)
 
 #pragma mark - Static utility helper methods.
 
-static bool NODELETE isZeroToOneCompositionType(WritingTools::Session::CompositionType type)
+static bool LEGACY_NODELETE isZeroToOneCompositionType(WritingTools::Session::CompositionType type)
 {
     switch (type) {
     case WritingTools::Session::CompositionType::Compose:

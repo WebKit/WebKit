@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace Style {
 
-static bool NODELETE isSiblingOrSubject(MatchElement::Relation relation)
+static bool LEGACY_NODELETE isSiblingOrSubject(MatchElement::Relation relation)
 {
     switch (relation) {
     case MatchElement::Relation::Subject:

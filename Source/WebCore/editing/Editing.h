@@ -64,11 +64,11 @@ Element* deprecatedEnclosingBlockFlowElement(Node*); // Use enclosingBlock inste
 RefPtr<Element> enclosingBlock(RefPtr<Node>, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 RefPtr<Element> enclosingTableCell(const Position&);
 RefPtr<Node> enclosingEmptyListItem(const VisiblePosition&);
-RefPtr<Element> NODELETE enclosingAnchorElement(const Position&);
+RefPtr<Element> LEGACY_NODELETE enclosingAnchorElement(const Position&);
 RefPtr<Element> enclosingElementWithTag(const Position&, const QualifiedName&);
 RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
-HTMLSpanElement* NODELETE tabSpanNode(Node*);
-HTMLSpanElement* NODELETE parentTabSpanNode(Node*);
+HTMLSpanElement* LEGACY_NODELETE tabSpanNode(Node*);
+HTMLSpanElement* LEGACY_NODELETE parentTabSpanNode(Node*);
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 RefPtr<Element> isFirstPositionAfterTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
 
@@ -94,18 +94,18 @@ bool editingIgnoresContent(const Node&);
 bool canHaveChildrenForEditing(const Node&);
 bool isAtomicNode(const Node*);
 
-bool NODELETE isBlock(const Node&);
-bool NODELETE isBlockFlowElement(const Node&);
-bool NODELETE isInline(const Node&);
+bool LEGACY_NODELETE isBlock(const Node&);
+bool LEGACY_NODELETE isBlockFlowElement(const Node&);
+bool LEGACY_NODELETE isInline(const Node&);
 bool isMailBlockquote(const Node&);
-bool NODELETE isRenderedTable(const Node*);
-bool NODELETE isTableCell(const Node&);
+bool LEGACY_NODELETE isRenderedTable(const Node*);
+bool LEGACY_NODELETE isTableCell(const Node&);
 bool isEmptyTableCell(const Node*);
-bool NODELETE isTableStructureNode(const Node&);
-bool NODELETE isListHTMLElement(Node*);
-bool NODELETE isListItem(const Node&);
+bool LEGACY_NODELETE isTableStructureNode(const Node&);
+bool LEGACY_NODELETE isListHTMLElement(Node*);
+bool LEGACY_NODELETE isListItem(const Node&);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
-bool NODELETE isNonTableCellHTMLBlockElement(const Node*);
+bool LEGACY_NODELETE isNonTableCellHTMLBlockElement(const Node*);
 
 bool isNodeVisiblyContainedWithin(Node&, const SimpleRange&);
 
@@ -224,7 +224,7 @@ bool deprecatedIsEditingWhitespace(char16_t);
 // FIXME: Can't answer this question correctly without being passed the white-space mode.
 bool deprecatedIsCollapsibleWhitespace(char16_t);
 
-bool NODELETE isAmbiguousBoundaryCharacter(char16_t);
+bool LEGACY_NODELETE isAmbiguousBoundaryCharacter(char16_t);
 
 String stringWithRebalancedWhitespace(const String&, bool startIsStartOfParagraph, bool shouldEmitNBSPbeforeEnd);
 const String& nonBreakingSpaceString();

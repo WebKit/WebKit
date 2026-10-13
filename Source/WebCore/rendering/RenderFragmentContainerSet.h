@@ -53,7 +53,7 @@ protected:
     virtual ~RenderFragmentContainerSet();
 
 private:
-    void NODELETE installFragmentedFlow() final;
+    void LEGACY_NODELETE installFragmentedFlow() final;
 
     ASCIILiteral renderName() const override = 0;
     

@@ -72,7 +72,7 @@ constexpr AlphaFormat toAlphaFormat(AlphaPremultiplication alphaFormat, PixelFor
 
 }
 
-static bool NODELETE isSupportedConversionFormat(PixelFormat pixelFormat)
+static bool LEGACY_NODELETE isSupportedConversionFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBX8:
@@ -155,7 +155,7 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
 }
 
 template<typename View>
-static vImage_Buffer NODELETE makeVImageBuffer(const View& view, const IntSize& size)
+static vImage_Buffer LEGACY_NODELETE makeVImageBuffer(const View& view, const IntSize& size)
 {
     vImage_Buffer result;
 
@@ -397,20 +397,20 @@ static bool convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
 #error "PixelFormat::RGBA16 unimplemented."
 #endif
 
-static constexpr uint8_t NODELETE premultiply(uint8_t unpremultiplied, uint8_t alpha)
+static constexpr uint8_t LEGACY_NODELETE premultiply(uint8_t unpremultiplied, uint8_t alpha)
 {
     // Same as vImagePremultiplyData_ARGB8888: (src * alpha + 127) / 255
     return (unpremultiplied * alpha + 127) / 255;
 }
 
-static constexpr uint8_t NODELETE unpremultiply(uint8_t premultiplied, uint8_t alpha)
+static constexpr uint8_t LEGACY_NODELETE unpremultiply(uint8_t premultiplied, uint8_t alpha)
 {
     // Same as vImageUnpremultiplyData_RGBA8888: (MIN(src_color, alpha) * 255 + alpha/2) / alpha
     return (std::min(premultiplied, alpha) * 255 + alpha / 2) / alpha;
 }
 
 template <AlphaFormat sourceAlphaFormat, AlphaFormat destinationAlphaFormat, bool swapComponentOrder>
-static bool NODELETE convertImagePixelsUnacceleratedFunction(const ConstPixelBufferConversionView& sourceView, const PixelBufferConversionView& destinationView, const IntSize& destinationSize)
+static bool LEGACY_NODELETE convertImagePixelsUnacceleratedFunction(const ConstPixelBufferConversionView& sourceView, const PixelBufferConversionView& destinationView, const IntSize& destinationSize)
 {
     // The caller has established that both formats are 8 bits per component, 4 bytes per pixel, with
     // the alpha (or the ignored component that takes its place) in the last byte.
@@ -563,7 +563,7 @@ static bool platformConvertImagePixels(const ConstPixelBufferConversionView& sou
 
 // The rows the conversion reads and writes have to be inside the buffer the view describes.
 template<typename View>
-static bool NODELETE hasEnoughBytesForConversion(const View& view, const IntSize& destinationSize)
+static bool LEGACY_NODELETE hasEnoughBytesForConversion(const View& view, const IntSize& destinationSize)
 {
     if (destinationSize.width() <= 0 || destinationSize.height() <= 0)
         return true;

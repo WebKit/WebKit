@@ -83,7 +83,7 @@ public:
     void unregisterAsTouchEventListenerForScrolling();
 #endif
 
-    void NODELETE setPostLayoutScrollPosition(std::optional<ScrollPosition>);
+    void LEGACY_NODELETE setPostLayoutScrollPosition(std::optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
     bool hasPostLayoutScrollPosition() { return !!m_postLayoutScrollPosition; }
 
@@ -107,7 +107,7 @@ public:
     void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
     void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollPositionChangeOptions::createProgrammaticUnclamped()); }
 
-    bool NODELETE scrollsOverflow() const;
+    bool LEGACY_NODELETE scrollsOverflow() const;
     bool hasScrollableHorizontalOverflow() const;
     bool hasScrollableVerticalOverflow() const;
     bool hasScrollbars() const { return horizontalScrollbar() || verticalScrollbar(); }
@@ -116,27 +116,27 @@ public:
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 
-    OverscrollBehavior NODELETE horizontalOverscrollBehavior() const final;
-    OverscrollBehavior NODELETE verticalOverscrollBehavior() const final;
+    OverscrollBehavior LEGACY_NODELETE horizontalOverscrollBehavior() const final;
+    OverscrollBehavior LEGACY_NODELETE verticalOverscrollBehavior() const final;
 
     Color scrollbarThumbColorStyle() const final;
     Color scrollbarTrackColorStyle() const final;
-    Style::ScrollbarGutter NODELETE scrollbarGutterStyle() const final;
-    ScrollbarWidth NODELETE scrollbarWidthStyle() const final;
+    Style::ScrollbarGutter LEGACY_NODELETE scrollbarGutterStyle() const final;
+    ScrollbarWidth LEGACY_NODELETE scrollbarWidthStyle() const final;
     std::optional<ScrollbarColor> scrollbarColorStyle() const final;
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
 
     // Returns true when the layer could do touch scrolling, but doesn't look at whether there is actually scrollable overflow.
-    bool NODELETE canUseCompositedScrolling() const;
+    bool LEGACY_NODELETE canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
 
-    bool NODELETE hasOverflowControls() const;
+    bool LEGACY_NODELETE hasOverflowControls() const;
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     bool hitTestResizerInFragments(const LayerFragments&, const HitTestLocation&, LayoutPoint& pointInFragment) const;
 
@@ -181,19 +181,19 @@ public:
     void didUpdateScroll() final;
 #endif
 
-    GraphicsLayer* NODELETE layerForHorizontalScrollbar() const final;
-    GraphicsLayer* NODELETE layerForVerticalScrollbar() const final;
-    GraphicsLayer* NODELETE layerForScrollCorner() const final;
+    GraphicsLayer* LEGACY_NODELETE layerForHorizontalScrollbar() const final;
+    GraphicsLayer* LEGACY_NODELETE layerForVerticalScrollbar() const final;
+    GraphicsLayer* LEGACY_NODELETE layerForScrollCorner() const final;
 
     bool usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
 
-    bool NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
+    bool LEGACY_NODELETE shouldPlaceVerticalScrollbarOnLeft() const final;
 
     bool isRenderLayer() const final { return true; }
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     void invalidateScrollCornerRect(const IntRect&) final;
-    bool NODELETE isActive() const final;
+    bool LEGACY_NODELETE isActive() const final;
     bool isScrollCornerVisible() const final;
     IntRect scrollCornerRect() const final;
     IntRect convertFromScrollbarToContainingView(const Scrollbar&, const IntRect&) const final;
@@ -206,15 +206,15 @@ public:
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
     IntSize overhangAmount() const final;
     IntPoint lastKnownMousePositionInView() const final;
-    bool NODELETE isHandlingWheelEvent() const final;
+    bool LEGACY_NODELETE isHandlingWheelEvent() const final;
     bool shouldSuspendScrollAnimations() const final;
     IntRect scrollableAreaBoundingBox(bool* isInsideFixed = nullptr) const final;
     bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
-    bool NODELETE forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
+    bool LEGACY_NODELETE forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool isScrollSnapInProgress() const final;
-    bool NODELETE scrollAnimatorEnabled() const final;
-    bool NODELETE mockScrollbarsControllerEnabled() const final;
+    bool LEGACY_NODELETE scrollAnimatorEnabled() const final;
+    bool LEGACY_NODELETE mockScrollbarsControllerEnabled() const final;
     void logMockScrollbarsControllerMessage(const String&) const final;
 
     String debugDescription() const final;
@@ -265,7 +265,7 @@ public:
 
     void createScrollbarsController() final;
 
-    std::optional<FrameIdentifier> NODELETE rootFrameID() const final;
+    std::optional<FrameIdentifier> LEGACY_NODELETE rootFrameID() const final;
 
     void scrollbarWidthChanged(ScrollbarWidth) override;
 
@@ -277,7 +277,7 @@ private:
     bool hasHorizontalOverflow() const;
     bool hasVerticalOverflow() const;
 
-    bool NODELETE showsOverflowControls() const;
+    bool LEGACY_NODELETE showsOverflowControls() const;
 
     ScrollOffset clampScrollOffset(const ScrollOffset&) const;
 

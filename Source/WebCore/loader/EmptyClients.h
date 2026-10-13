@@ -147,13 +147,13 @@ class EmptyChromeClient : public ChromeClient {
 
     RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
 
-    void NODELETE setTextIndicator(RefPtr<TextIndicator>&&) const final;
-    void NODELETE updateTextIndicator(RefPtr<TextIndicator>&&) const final;
+    void LEGACY_NODELETE setTextIndicator(RefPtr<TextIndicator>&&) const final;
+    void LEGACY_NODELETE updateTextIndicator(RefPtr<TextIndicator>&&) const final;
 
-    DisplayRefreshMonitorFactory* NODELETE displayRefreshMonitorFactory() const final;
+    DisplayRefreshMonitorFactory* LEGACY_NODELETE displayRefreshMonitorFactory() const final;
 
-    void NODELETE runOpenPanel(LocalFrame&, FileChooser&) final;
-    void NODELETE showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
+    void LEGACY_NODELETE runOpenPanel(LocalFrame&, FileChooser&) final;
+    void LEGACY_NODELETE showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
     void elementDidFocus(Element&, const FocusOptions&) final { }
@@ -228,7 +228,7 @@ class EmptyChromeClient : public ChromeClient {
 };
 
 WEBCORE_EXPORT Ref<SocketProvider> emptySocketProvider();
-DiagnosticLoggingClient& NODELETE emptyDiagnosticLoggingClient();
+DiagnosticLoggingClient& LEGACY_NODELETE emptyDiagnosticLoggingClient();
 WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
 
 class EmptyCryptoClient: public CryptoClient {

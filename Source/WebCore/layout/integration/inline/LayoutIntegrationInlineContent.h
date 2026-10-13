@@ -69,8 +69,8 @@ public:
 
     InlineDisplay::Content& displayContent()  LIFETIME_BOUND { return m_displayContent; }
     const InlineDisplay::Content& displayContent() const LIFETIME_BOUND { return m_displayContent; }
-    bool NODELETE hasContentfulInFlowBox() const;
-    bool NODELETE hasContentfulInlineLevelBox() const;
+    bool LEGACY_NODELETE hasContentfulInFlowBox() const;
+    bool LEGACY_NODELETE hasContentfulInlineLevelBox() const;
 
     FloatRect scrollableOverflow() const { return m_scrollableOverflow; }
     FloatRect inkOverflow() const { return m_inkOverflow; }
@@ -87,19 +87,19 @@ public:
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
 
     const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const LIFETIME_BOUND { return displayContent().lines[box.lineIndex()]; }
-    size_t NODELETE indexForBox(const InlineDisplay::Box&) const;
+    size_t LEGACY_NODELETE indexForBox(const InlineDisplay::Box&) const;
     const InlineDisplay::Box* firstBoxForLayoutBox(const Layout::Box&) const LIFETIME_BOUND;
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
 
     // Returns a block level box if the line is for block-in-inline.
-    const InlineDisplay::Box* NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const LIFETIME_BOUND;
-    bool NODELETE isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
+    const InlineDisplay::Box* LEGACY_NODELETE blockLevelBoxForLine(const InlineDisplay::Line&) const LIFETIME_BOUND;
+    bool LEGACY_NODELETE isInlineBoxWrapperForBlockLevelBox(const InlineDisplay::Box&) const;
 
     template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, NOESCAPE const Function&);
 
-    const RenderBlockFlow& NODELETE formattingContextRoot() const;
+    const RenderBlockFlow& LEGACY_NODELETE formattingContextRoot() const;
 
-    const Vector<SVGTextFragment>& NODELETE svgTextFragments(size_t boxIndex) const LIFETIME_BOUND;
+    const Vector<SVGTextFragment>& LEGACY_NODELETE svgTextFragments(size_t boxIndex) const LIFETIME_BOUND;
     Vector<Vector<SVGTextFragment>>& svgTextFragmentsForBoxes() LIFETIME_BOUND { return m_svgTextFragmentsForBoxes; }
 
     void shrinkToFit();

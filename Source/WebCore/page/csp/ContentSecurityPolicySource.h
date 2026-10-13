@@ -50,10 +50,10 @@ public:
 
 private:
     SchemeMatchResult schemeMatches(const URL&) const;
-    bool NODELETE hostMatches(const URL&) const;
+    bool LEGACY_NODELETE hostMatches(const URL&) const;
     bool pathMatches(const URL&) const;
     bool portMatches(const URL&, ShouldUpgradePorts) const;
-    bool NODELETE isSchemeOnly() const;
+    bool LEGACY_NODELETE isSchemeOnly() const;
 
     const CheckedRef<const ContentSecurityPolicy> m_policy;
     String m_scheme;

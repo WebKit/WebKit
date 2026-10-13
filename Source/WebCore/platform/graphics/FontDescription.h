@@ -50,7 +50,7 @@ public:
     float usedZoomFactor() const { return m_usedZoomFactor; }
     float unzoomedUsedSize() const { return m_usedSize / m_usedZoomFactor; }
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
-    float NODELETE adjustedSizeForFontFace(float) const;
+    float LEGACY_NODELETE adjustedSizeForFontFace(float) const;
     std::optional<FontSelectionValue> fontStyleSlope() const { return m_fontSelectionRequest.slope; }
     FontSelectionValue width() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
@@ -96,9 +96,9 @@ public:
     FontVariantEastAsianWidth variantEastAsianWidth() const { return static_cast<FontVariantEastAsianWidth>(m_variantEastAsianWidth); }
     FontVariantEastAsianRuby variantEastAsianRuby() const { return static_cast<FontVariantEastAsianRuby>(m_variantEastAsianRuby); }
     FontVariantEmoji variantEmoji() const { return static_cast<FontVariantEmoji>(m_variantEmoji); }
-    FontVariantEastAsianValues NODELETE variantEastAsian() const;
-    FontVariantNumericValues NODELETE variantNumeric() const;
-    FontVariantLigaturesValues NODELETE variantLigatures() const;
+    FontVariantEastAsianValues LEGACY_NODELETE variantEastAsian() const;
+    FontVariantNumericValues LEGACY_NODELETE variantNumeric() const;
+    FontVariantLigaturesValues LEGACY_NODELETE variantLigatures() const;
     FontVariantSettings variantSettings() const;
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return m_fontSelectionRequest.slopeAxis; }
@@ -142,9 +142,9 @@ public:
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = std::to_underlying(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = std::to_underlying(variant); }
     void setVariantEmoji(FontVariantEmoji variant) { m_variantEmoji = std::to_underlying(variant); }
-    void NODELETE setVariantEastAsian(FontVariantEastAsianValues);
-    void NODELETE setVariantNumeric(FontVariantNumericValues);
-    void NODELETE setVariantLigatures(FontVariantLigaturesValues);
+    void LEGACY_NODELETE setVariantEastAsian(FontVariantEastAsianValues);
+    void LEGACY_NODELETE setVariantNumeric(FontVariantNumericValues);
+    void LEGACY_NODELETE setVariantLigatures(FontVariantLigaturesValues);
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = std::to_underlying(sizing); }
     void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = std::to_underlying(shouldAllowUserInstalledFonts); }
     void setShouldDisableLigaturesForSpacing(bool shouldDisableLigaturesForSpacing) { m_shouldDisableLigaturesForSpacing = shouldDisableLigaturesForSpacing; }

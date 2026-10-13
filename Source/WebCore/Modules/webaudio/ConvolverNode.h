@@ -43,10 +43,10 @@ public:
     virtual ~ConvolverNode();
     
     ExceptionOr<void> setBufferForBindings(RefPtr<AudioBuffer>&&);
-    AudioBuffer* NODELETE bufferForBindings(); // Only safe to call on the main thread.
+    AudioBuffer* LEGACY_NODELETE bufferForBindings(); // Only safe to call on the main thread.
 
     bool normalizeForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_normalize; }
-    void NODELETE setNormalizeForBindings(bool);
+    void LEGACY_NODELETE setNormalizeForBindings(bool);
 
     ExceptionOr<void> setChannelCount(unsigned) final;
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
@@ -56,7 +56,7 @@ private:
 
     double tailTime() const final;
     double latencyTime() const final;
-    bool NODELETE requiresTailProcessing() const final;
+    bool LEGACY_NODELETE requiresTailProcessing() const final;
 
     void process(size_t framesToProcess) final;
     void checkNumberOfChannelsForInput(AudioNodeInput*) final;

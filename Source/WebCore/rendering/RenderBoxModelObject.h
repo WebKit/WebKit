@@ -73,7 +73,7 @@ public:
     LayoutSize relativePositionOffset() const;
 
     FloatRect constrainingRectForStickyPosition() const;
-    std::pair<const RenderBox&, const RenderLayer*> NODELETE enclosingClippingBoxForStickyPosition() const;
+    std::pair<const RenderBox&, const RenderLayer*> LEGACY_NODELETE enclosingClippingBoxForStickyPosition() const;
     void computeStickyPositionConstraints(StickyPositionViewportConstraints&, const FloatRect& constrainingRect) const;
     LayoutSize stickyPositionOffset() const;
 
@@ -198,13 +198,13 @@ public:
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
-    bool NODELETE fixedBackgroundPaintsInLocalCoordinates() const;
+    bool LEGACY_NODELETE fixedBackgroundPaintsInLocalCoordinates() const;
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
 
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 
     // For RenderBlocks and RenderInlines with m_style->pseudoElementType() == PseudoElementType::FirstLetter, this tracks their remaining text fragments
-    RenderTextFragment* NODELETE firstLetterRemainingText() const;
+    RenderTextFragment* LEGACY_NODELETE firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderTextFragment&);
     void clearFirstLetterRemainingText();
 

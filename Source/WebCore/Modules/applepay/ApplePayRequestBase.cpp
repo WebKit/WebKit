@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static bool NODELETE requiresSupportedNetworks(unsigned version, const ApplePayRequestBase& request)
+static bool LEGACY_NODELETE requiresSupportedNetworks(unsigned version, const ApplePayRequestBase& request)
 {
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     return version < 8 || !request.installmentConfiguration;

@@ -67,7 +67,7 @@ public:
 
     void respondPendingPullIntosOnClose(JSDOMGlobalObject&);
 
-    ReadableStream& NODELETE stream();
+    ReadableStream& LEGACY_NODELETE stream();
 
     void pullInto(JSDOMGlobalObject&, JSC::ArrayBufferView&, uint64_t, Ref<ReadableStreamReadIntoRequest>&&);
 
@@ -76,7 +76,7 @@ public:
     void runReleaseSteps();
 
     void storeError(JSDOMGlobalObject&, JSC::JSValue);
-    JSC::JSValue NODELETE storedError() const;
+    JSC::JSValue LEGACY_NODELETE storedError() const;
 
     ExceptionOr<void> respond(JSDOMGlobalObject&, size_t);
     ExceptionOr<void> respondWithNewView(JSDOMGlobalObject&, JSC::ArrayBufferView&);
@@ -85,7 +85,7 @@ public:
 
     bool hasPendingPullIntos() const { return !m_pendingPullIntos.isEmpty(); }
 
-    void NODELETE ref();
+    void LEGACY_NODELETE ref();
     void deref();
     void stop();
 
@@ -149,7 +149,7 @@ private:
     bool shouldCallPull();
     bool fillPullIntoDescriptorFromQueue(PullIntoDescriptor&);
     RefPtr<JSC::ArrayBufferView> convertPullIntoDescriptor(JSC::VM&, PullIntoDescriptor&);
-    void NODELETE fillHeadPullIntoDescriptor(size_t, PullIntoDescriptor&);
+    void LEGACY_NODELETE fillHeadPullIntoDescriptor(size_t, PullIntoDescriptor&);
     void commitPullIntoDescriptor(JSDOMGlobalObject&, PullIntoDescriptor&);
 
     void clearAlgorithms();

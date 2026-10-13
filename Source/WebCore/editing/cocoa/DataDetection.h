@@ -91,7 +91,7 @@ public:
 
     static const String& dataDetectorURLProtocol();
     static bool isDataDetectorURL(const URL&);
-    static bool NODELETE isDataDetectorAttribute(const QualifiedName&);
+    static bool LEGACY_NODELETE isDataDetectorAttribute(const QualifiedName&);
     static bool isDataDetectorElement(const Element&);
 };
 

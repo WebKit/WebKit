@@ -55,7 +55,7 @@ public:
     bool currentFrameIsComplete() const;
 
     static std::pair<WeakPtr<BitmapImage>, float> brokenImage(float deviceScaleFactor); // Returns an image and the image's resolution scale factor.
-    bool NODELETE willPaintBrokenImage() const;
+    bool LEGACY_NODELETE willPaintBrokenImage() const;
 
     bool canRender() const { return !errorOccurred() && m_image && protect(m_image)->hasSomethingToDraw(); }
 
@@ -73,9 +73,9 @@ public:
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
     void load(CachedResourceLoader&) override;
 
-    bool NODELETE isOriginClean(SecurityOrigin*);
+    bool LEGACY_NODELETE isOriginClean(SecurityOrigin*);
 
-    bool NODELETE isClientWaitingForAsyncDecoding(const CachedImageClient&) const;
+    bool LEGACY_NODELETE isClientWaitingForAsyncDecoding(const CachedImageClient&) const;
     void addClientWaitingForAsyncDecoding(CachedImageClient&);
     void removeAllClientsWaitingForAsyncDecoding();
 

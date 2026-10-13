@@ -38,7 +38,7 @@ public:
     RenderIFrame(HTMLIFrameElement&, Style::ComputedStyle&&);
     virtual ~RenderIFrame();
 
-    HTMLIFrameElement& NODELETE iframeElement() const;
+    HTMLIFrameElement& LEGACY_NODELETE iframeElement() const;
 
 private:
     void frameOwnerElement() const = delete;
@@ -49,7 +49,7 @@ private:
 
     bool requiresLayer() const override;
 
-    bool NODELETE isFullScreenIFrame() const;
+    bool LEGACY_NODELETE isFullScreenIFrame() const;
 };
 
 } // namespace WebCore

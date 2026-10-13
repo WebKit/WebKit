@@ -52,7 +52,7 @@ public:
     double maxMessageSize() const { return m_maxMessageSize.value_or(std::numeric_limits<double>::infinity()); }
     std::optional<unsigned short>  maxChannels() const { return m_maxChannels; }
 
-    void NODELETE updateMaxMessageSize(std::optional<double>);
+    void LEGACY_NODELETE updateMaxMessageSize(std::optional<double>);
 
     const RTCSctpTransportBackend& backend() const { return m_backend.get(); }
 
@@ -61,13 +61,13 @@ private:
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::RTCSctpTransport; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     // ActiveDOMObject
-    void NODELETE stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    void LEGACY_NODELETE stop() final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // RTCSctpTransport::Client
     void onStateChanged(RTCSctpTransportState, std::optional<double>, std::optional<unsigned short>) final;

@@ -42,7 +42,7 @@ struct AcceleratedEffectTransformOrigin {
 // MARK: - Blending
 
 constexpr bool canBlend(const AcceleratedEffectTransformOrigin&, const AcceleratedEffectTransformOrigin&) { return true; }
-AcceleratedEffectTransformOrigin NODELETE blend(const AcceleratedEffectTransformOrigin&, const AcceleratedEffectTransformOrigin&, const BlendingContext&);
+AcceleratedEffectTransformOrigin LEGACY_NODELETE blend(const AcceleratedEffectTransformOrigin&, const AcceleratedEffectTransformOrigin&, const BlendingContext&);
 
 } // namespace WebCore
 

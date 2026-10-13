@@ -118,7 +118,7 @@ public:
     bool openedByDOMWithOpener() const { return m_openedByDOMWithOpener; }
     void setOpenedByDOMWithOpener() { m_openedByDOMWithOpener = true; }
 
-    void NODELETE setSourceBackForwardItem(HistoryItem*);
+    void LEGACY_NODELETE setSourceBackForwardItem(HistoryItem*);
     const std::optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const LIFETIME_BOUND { return m_sourceBackForwardItemIdentifier; }
 
     const std::optional<PrivateClickMeasurement>& privateClickMeasurement() const { return m_privateClickMeasurement; };

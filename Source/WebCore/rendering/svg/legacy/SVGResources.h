@@ -85,15 +85,15 @@ private:
     friend class SVGResourcesCycleSolver;
 
     // Only used by SVGResourcesCache cycle detection logic
-    void NODELETE resetClipper();
-    void NODELETE resetFilter();
-    void NODELETE resetMarkerStart();
-    void NODELETE resetMarkerMid();
-    void NODELETE resetMarkerEnd();
-    void NODELETE resetMasker();
-    void NODELETE resetFill();
-    void NODELETE resetStroke();
-    void NODELETE resetLinkedResource();
+    void LEGACY_NODELETE resetClipper();
+    void LEGACY_NODELETE resetFilter();
+    void LEGACY_NODELETE resetMarkerStart();
+    void LEGACY_NODELETE resetMarkerMid();
+    void LEGACY_NODELETE resetMarkerEnd();
+    void LEGACY_NODELETE resetMasker();
+    void LEGACY_NODELETE resetFill();
+    void LEGACY_NODELETE resetStroke();
+    void LEGACY_NODELETE resetLinkedResource();
 
 private:
     bool setClipper(LegacyRenderSVGResourceClipper*);
@@ -104,7 +104,7 @@ private:
     bool setMasker(LegacyRenderSVGResourceMasker*);
     bool setFill(LegacyRenderSVGResourceContainer*);
     bool setStroke(LegacyRenderSVGResourceContainer*);
-    bool NODELETE setLinkedResource(LegacyRenderSVGResourceContainer*);
+    bool LEGACY_NODELETE setLinkedResource(LegacyRenderSVGResourceContainer*);
 
     bool isEmpty() const { return !m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource; }
 

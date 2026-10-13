@@ -118,7 +118,7 @@ private:
     bool m_isMediaControls : 1 { false };
 };
 
-DOMWrapperWorld& NODELETE normalWorld(JSC::VM&);
+DOMWrapperWorld& LEGACY_NODELETE normalWorld(JSC::VM&);
 WEBCORE_EXPORT DOMWrapperWorld& mainThreadNormalWorldSingleton();
 
 inline DOMWrapperWorld& debuggerWorldSingleton() { return mainThreadNormalWorldSingleton(); }

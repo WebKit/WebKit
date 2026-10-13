@@ -293,7 +293,7 @@ bool Range::intersectsNode(Node& node) const
     return intersects(makeSimpleRange(*this), node);
 }
 
-static inline Node* NODELETE highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)
+static inline Node* LEGACY_NODELETE highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)
 {
     if (node == commonRoot)
         return 0;
@@ -306,7 +306,7 @@ static inline Node* NODELETE highestAncestorUnderCommonRoot(Node* node, Node* co
     return node;
 }
 
-static inline Node* NODELETE childOfCommonRootBeforeOffset(Node* container, unsigned offset, Node* commonRoot)
+static inline Node* LEGACY_NODELETE childOfCommonRootBeforeOffset(Node* container, unsigned offset, Node* commonRoot)
 {
     ASSERT(container);
     ASSERT(commonRoot);
@@ -926,7 +926,7 @@ String Range::debugDescription() const
 }
 #endif
 
-static inline void NODELETE boundaryNodeChildrenChanged(Locker<Lock>&, RangeBoundaryPoint& boundary, ContainerNode& container)
+static inline void LEGACY_NODELETE boundaryNodeChildrenChanged(Locker<Lock>&, RangeBoundaryPoint& boundary, ContainerNode& container)
 {
     if (boundary.childBefore() && &boundary.container() == &container)
         boundary.invalidateOffset();
@@ -989,7 +989,7 @@ void Range::updateRangeForParentlessNodeMovedToNewDocument(Node& node)
     protect(m_ownerDocument)->attachRange(*this);
 }
 
-static inline void NODELETE boundaryTextInserted(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+static inline void LEGACY_NODELETE boundaryTextInserted(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
 {
     if (&boundary.container() != &text)
         return;
@@ -1008,7 +1008,7 @@ void Range::textInserted(Node& text, unsigned offset, unsigned length)
     m_didChangeForHighlight = true;
 }
 
-static inline void NODELETE boundaryTextRemoved(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+static inline void LEGACY_NODELETE boundaryTextRemoved(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
 {
     if (&boundary.container() != &text)
         return;

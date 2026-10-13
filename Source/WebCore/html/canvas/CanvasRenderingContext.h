@@ -60,10 +60,10 @@ class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<Can
 public:
     virtual ~CanvasRenderingContext();
 
-    static HashSet<CanvasRenderingContext*>& NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static HashSet<CanvasRenderingContext*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
+    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
-    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     CanvasBase& canvasBase() const { return m_canvas; }
@@ -130,7 +130,7 @@ public:
     virtual PixelFormat pixelFormat() const;
     virtual ColorSpace colorSpace() const;
     virtual bool isOpaque() const;
-    virtual bool NODELETE willReadFrequently() const;
+    virtual bool LEGACY_NODELETE willReadFrequently() const;
     virtual std::optional<RenderingMode> renderingModeForTesting() const { return std::nullopt; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -143,9 +143,9 @@ public:
     bool isInPreparationForDisplayOrFlush() const { return m_isInPreparationForDisplayOrFlush; }
 
     void updateMemoryCost(size_t newMemoryCost) const;
-    size_t NODELETE memoryCost() const;
+    size_t LEGACY_NODELETE memoryCost() const;
 #if ENABLE(RESOURCE_USAGE)
-    size_t NODELETE externalMemoryCost() const;
+    size_t LEGACY_NODELETE externalMemoryCost() const;
 #endif
     uint32_t owningThreadUID() const { return m_owningThreadUID; }
     bool isContextThread() const { return m_owningThreadUID == currentThreadID(); }
@@ -163,7 +163,7 @@ protected:
     };
 
     explicit CanvasRenderingContext(CanvasBase&, Type);
-    bool NODELETE taintsOrigin(const CanvasPattern*);
+    bool LEGACY_NODELETE taintsOrigin(const CanvasPattern*);
     bool taintsOrigin(const CanvasBase*);
     bool taintsOrigin(const HTMLImageElement*);
     bool taintsOrigin(const SVGImageElement*);
@@ -177,7 +177,7 @@ protected:
             m_canvas->setOriginTainted();
     }
     void checkOrigin(const URL&);
-    void NODELETE checkOrigin(const CSSStyleImageValue&);
+    void LEGACY_NODELETE checkOrigin(const CSSStyleImageValue&);
 
     mutable std::atomic<size_t> m_memoryCost { 0 };
 

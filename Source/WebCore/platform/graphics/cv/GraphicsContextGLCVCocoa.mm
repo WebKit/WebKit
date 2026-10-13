@@ -107,7 +107,7 @@ enum class TransferFunctionCV {
     kITU_R_2020,
 };
 
-static PixelRange NODELETE pixelRangeFromPixelFormat(OSType pixelFormat)
+static PixelRange LEGACY_NODELETE pixelRangeFromPixelFormat(OSType pixelFormat)
 {
     switch (pixelFormat) {
     case kCVPixelFormatType_4444AYpCbCr8:
@@ -180,12 +180,12 @@ struct GLfloatColor {
     {
     }
 
-    static constexpr GLfloat NODELETE abs(GLfloat value)
+    static constexpr GLfloat LEGACY_NODELETE abs(GLfloat value)
     {
         return value >= 0 ? value : -value;
     }
 
-    constexpr bool NODELETE isApproximatelyEqualTo(const GLfloatColor& color, GLfloat maxDelta) const
+    constexpr bool LEGACY_NODELETE isApproximatelyEqualTo(const GLfloatColor& color, GLfloat maxDelta) const
     {
         return abs(rgb.r - color.rgb.r) < abs(maxDelta)
             && abs(rgb.g - color.rgb.g) < abs(maxDelta)

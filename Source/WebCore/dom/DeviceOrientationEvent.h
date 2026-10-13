@@ -50,9 +50,9 @@ public:
 
     virtual ~DeviceOrientationEvent();
 
-    std::optional<double> NODELETE alpha() const;
-    std::optional<double> NODELETE beta() const;
-    std::optional<double> NODELETE gamma() const;
+    std::optional<double> LEGACY_NODELETE alpha() const;
+    std::optional<double> LEGACY_NODELETE beta() const;
+    std::optional<double> LEGACY_NODELETE gamma() const;
 
 #if PLATFORM(IOS_FAMILY)
     std::optional<double> compassHeading() const;
@@ -60,7 +60,7 @@ public:
 
     void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy);
 #else
-    std::optional<bool> NODELETE absolute() const;
+    std::optional<bool> LEGACY_NODELETE absolute() const;
 
     void initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute);
 #endif

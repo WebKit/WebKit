@@ -44,9 +44,9 @@ public:
     Node* node() const { return m_anchorNode.get(); }
     int offsetInLeafNode() const { return m_offsetInAnchor; }
 
-    bool NODELETE atStart() const;
+    bool LEGACY_NODELETE atStart() const;
     bool atEnd() const;
-    bool NODELETE atStartOfNode() const;
+    bool LEGACY_NODELETE atStartOfNode() const;
     bool atEndOfNode() const;
     bool isCandidate(AllowUserSelectNone = AllowUserSelectNone::No) const;
 

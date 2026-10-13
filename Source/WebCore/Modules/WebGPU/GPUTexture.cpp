@@ -98,7 +98,7 @@ void GPUTexture::setLabel(String&& label)
     m_backing->setLabel(WTF::move(label));
 }
 
-static std::optional<WebGPU::TextureViewDescriptor> NODELETE convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
+static std::optional<WebGPU::TextureViewDescriptor> LEGACY_NODELETE convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
 {
     if (!textureViewDescriptor)
         return WebGPU::TextureViewDescriptor { };
@@ -174,7 +174,7 @@ JSC::JSValue GPUTexture::textureBindingViewDimension() const
     return JSC::jsUndefined();
 }
 
-static GPUTextureFormat NODELETE depthSpecificFormat(GPUTextureFormat textureFormat)
+static GPUTextureFormat LEGACY_NODELETE depthSpecificFormat(GPUTextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -188,7 +188,7 @@ static GPUTextureFormat NODELETE depthSpecificFormat(GPUTextureFormat textureFor
     }
 }
 
-static GPUTextureFormat NODELETE stencilSpecificFormat(GPUTextureFormat textureFormat)
+static GPUTextureFormat LEGACY_NODELETE stencilSpecificFormat(GPUTextureFormat textureFormat)
 {
     // https://gpuweb.github.io/gpuweb/#aspect-specific-format
 
@@ -581,13 +581,13 @@ uint32_t GPUTexture::texelBlockHeight(GPUTextureFormat format)
     return 0;
 }
 
-static uint32_t NODELETE texelBlockCount(uint32_t size, uint32_t blockSize)
+static uint32_t LEGACY_NODELETE texelBlockCount(uint32_t size, uint32_t blockSize)
 {
     return size / blockSize + !!(size % blockSize);
 }
 
 // The most mip levels a texture this size can have.
-static uint32_t NODELETE maxMipLevelCount(GPUTextureDimension dimension, uint32_t width, uint32_t height, uint32_t depthOrArrayLayers)
+static uint32_t LEGACY_NODELETE maxMipLevelCount(GPUTextureDimension dimension, uint32_t width, uint32_t height, uint32_t depthOrArrayLayers)
 {
     switch (dimension) {
     case GPUTextureDimension::_1d:

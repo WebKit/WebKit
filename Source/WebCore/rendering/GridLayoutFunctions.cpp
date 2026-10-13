@@ -39,12 +39,12 @@ namespace WebCore {
 
 namespace GridLayoutFunctions {
 
-static inline bool NODELETE marginStartIsAuto(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+static inline bool LEGACY_NODELETE marginStartIsAuto(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
     return direction == Style::GridTrackSizingDirection::Columns ? gridItem.style().marginStart().isAuto() : gridItem.style().marginBefore().isAuto();
 }
 
-static inline bool NODELETE marginEndIsAuto(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
+static inline bool LEGACY_NODELETE marginEndIsAuto(const RenderBox& gridItem, Style::GridTrackSizingDirection direction)
 {
     return direction == Style::GridTrackSizingDirection::Columns ? gridItem.style().marginEnd().isAuto() : gridItem.style().marginAfter().isAuto();
 }

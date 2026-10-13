@@ -110,7 +110,7 @@ public:
     WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy.get(); }
 
     // Number of active worker threads.
-    WEBCORE_EXPORT static unsigned NODELETE workerThreadCount();
+    WEBCORE_EXPORT static unsigned LEGACY_NODELETE workerThreadCount();
 
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
     bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
@@ -130,7 +130,7 @@ protected:
     // Factory method for creating a new worker context for the thread.
     virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const WorkerParameters&, Ref<SecurityOrigin>&&, Ref<SecurityOrigin>&& topOrigin) = 0;
 
-    WorkerGlobalScope* NODELETE globalScope();
+    WorkerGlobalScope* LEGACY_NODELETE globalScope();
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() { return m_idbConnectionProxy.get(); }
     SocketProvider* socketProvider() { return m_socketProvider.get(); }

@@ -45,7 +45,7 @@ public:
 
     WEBCORE_EXPORT virtual ~DeprecatedCSSOMValue();
 
-    WEBCORE_EXPORT virtual unsigned short NODELETE cssValueType() const = 0;
+    WEBCORE_EXPORT virtual unsigned short LEGACY_NODELETE cssValueType() const = 0;
     WEBCORE_EXPORT virtual String cssText() const = 0;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
 

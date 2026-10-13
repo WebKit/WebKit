@@ -155,7 +155,7 @@ enum class ViewportDimension : uint8_t {
 };
 
 template<LogicalBoxAxis axis>
-static double NODELETE resolveViewportLogicalAxis(const FloatSize& size, const ComputedStyle& style)
+static double LEGACY_NODELETE resolveViewportLogicalAxis(const FloatSize& size, const ComputedStyle& style)
 {
     switch (mapAxisLogicalToPhysical(style.writingMode(), axis)) {
     case BoxAxis::Horizontal:

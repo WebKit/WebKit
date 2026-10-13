@@ -35,7 +35,7 @@
 
 namespace WebCore::WebGPU {
 
-static TextureFormat NODELETE fromBacking(WGPUTextureFormat textureFormat)
+static TextureFormat LEGACY_NODELETE fromBacking(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case WGPUTextureFormat_R8Unorm:

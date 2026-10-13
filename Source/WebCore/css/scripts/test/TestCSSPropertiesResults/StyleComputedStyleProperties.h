@@ -10,8 +10,8 @@ namespace Style {
 class ComputedStyleProperties : public ComputedStyleBase {
 public:
     // 'test-color'
-    inline const Style::Color& NODELETE testColor() const;
-    const Style::Color& NODELETE testColorOutOfLine() const;
+    inline const Style::Color& LEGACY_NODELETE testColor() const;
+    const Style::Color& LEGACY_NODELETE testColorOutOfLine() const;
     inline void setTestColor(Style::Color&&);
     static inline Style::Color initialTestColor();
     inline decltype(auto) testColorResolver() const;
@@ -21,8 +21,8 @@ public:
     WebCore::Color visitedDependentTestColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // 'test-color-allows-types-absolute'
-    inline const Style::Color& NODELETE testColorAllowsTypesAbsolute() const;
-    const Style::Color& NODELETE testColorAllowsTypesAbsoluteOutOfLine() const;
+    inline const Style::Color& LEGACY_NODELETE testColorAllowsTypesAbsolute() const;
+    const Style::Color& LEGACY_NODELETE testColorAllowsTypesAbsoluteOutOfLine() const;
     inline void setTestColorAllowsTypesAbsolute(Style::Color&&);
     static inline Style::Color initialTestColorAllowsTypesAbsolute();
     inline decltype(auto) testColorAllowsTypesAbsoluteResolver() const;
@@ -32,8 +32,8 @@ public:
     WebCore::Color visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
     // 'test-color-property-with-visited-link-support'
-    inline const Style::Color& NODELETE testColorPropertyWithVisitedLinkSupport() const;
-    const Style::Color& NODELETE testColorPropertyWithVisitedLinkSupportOutOfLine() const;
+    inline const Style::Color& LEGACY_NODELETE testColorPropertyWithVisitedLinkSupport() const;
+    const Style::Color& LEGACY_NODELETE testColorPropertyWithVisitedLinkSupportOutOfLine() const;
     inline void setTestColorPropertyWithVisitedLinkSupport(Style::Color&&);
     static inline Style::Color initialTestColorPropertyWithVisitedLinkSupport();
     inline const Style::Color& visitedLinkTestColorPropertyWithVisitedLinkSupport() const;
@@ -53,86 +53,86 @@ public:
     static constexpr Style::TestEnumeration initialTestRenderStyleGetterNodeleteFalse();
 
     // 'test-render-style-has-explicitly-set-policy-all-author-origin'
-    inline Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
-    Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyAllAuthorOriginOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
+    Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyAllAuthorOriginOutOfLine() const;
     inline void setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<>);
     static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
     inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const;
     inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(bool);
 
     // 'test-render-style-has-explicitly-set-policy-all-border-radius'
-    inline Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
-    Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyAllBorderRadiusOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
+    Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyAllBorderRadiusOutOfLine() const;
     inline void setTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(Style::Number<>);
     static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyAllBorderRadius();
     inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius() const;
     inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllBorderRadius(bool);
 
     // 'test-render-style-has-explicitly-set-policy-value-only'
-    inline Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyValueOnly() const;
-    Style::Number<> NODELETE testRenderStyleHasExplicitlySetPolicyValueOnlyOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyValueOnly() const;
+    Style::Number<> LEGACY_NODELETE testRenderStyleHasExplicitlySetPolicyValueOnlyOutOfLine() const;
     inline void setTestRenderStyleHasExplicitlySetPolicyValueOnly(Style::Number<>);
     static inline Style::Number<> initialTestRenderStyleHasExplicitlySetPolicyValueOnly();
     inline bool hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly() const;
     inline void setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyValueOnly(bool);
 
     // 'test-render-style-storage-one-level-enum'
-    inline Style::TestEnumeration NODELETE testRenderStyleStorageOneLevelEnum() const;
-    Style::TestEnumeration NODELETE testRenderStyleStorageOneLevelEnumOutOfLine() const;
+    inline Style::TestEnumeration LEGACY_NODELETE testRenderStyleStorageOneLevelEnum() const;
+    Style::TestEnumeration LEGACY_NODELETE testRenderStyleStorageOneLevelEnumOutOfLine() const;
     inline void setTestRenderStyleStorageOneLevelEnum(Style::TestEnumeration);
     static constexpr Style::TestEnumeration initialTestRenderStyleStorageOneLevelEnum();
 
     // 'test-render-style-storage-one-level-raw'
-    inline Style::TestRaw NODELETE testRenderStyleStorageOneLevelRaw() const;
-    Style::TestRaw NODELETE testRenderStyleStorageOneLevelRawOutOfLine() const;
+    inline Style::TestRaw LEGACY_NODELETE testRenderStyleStorageOneLevelRaw() const;
+    Style::TestRaw LEGACY_NODELETE testRenderStyleStorageOneLevelRawOutOfLine() const;
     inline void setTestRenderStyleStorageOneLevelRaw(Style::TestRaw);
     static constexpr Style::TestRaw initialTestRenderStyleStorageOneLevelRaw();
 
     // 'test-render-style-storage-one-level-reference'
-    inline const Style::Number<>& NODELETE testRenderStyleStorageOneLevelReference() const;
-    const Style::Number<>& NODELETE testRenderStyleStorageOneLevelReferenceOutOfLine() const;
+    inline const Style::Number<>& LEGACY_NODELETE testRenderStyleStorageOneLevelReference() const;
+    const Style::Number<>& LEGACY_NODELETE testRenderStyleStorageOneLevelReferenceOutOfLine() const;
     inline void setTestRenderStyleStorageOneLevelReference(Style::Number<>&&);
     static inline Style::Number<> initialTestRenderStyleStorageOneLevelReference();
 
     // 'test-render-style-storage-one-level-value'
-    inline Style::Number<> NODELETE testRenderStyleStorageOneLevelValue() const;
-    WEBCORE_EXPORT Style::Number<> NODELETE testRenderStyleStorageOneLevelValueOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelValue() const;
+    WEBCORE_EXPORT Style::Number<> LEGACY_NODELETE testRenderStyleStorageOneLevelValueOutOfLine() const;
     inline void setTestRenderStyleStorageOneLevelValue(Style::Number<>);
     static inline Style::Number<> initialTestRenderStyleStorageOneLevelValue();
 
     // 'test-render-style-storage-two-level-enum'
-    inline Style::TestEnumeration NODELETE testRenderStyleStorageTwoLevelEnum() const;
-    Style::TestEnumeration NODELETE testRenderStyleStorageTwoLevelEnumOutOfLine() const;
+    inline Style::TestEnumeration LEGACY_NODELETE testRenderStyleStorageTwoLevelEnum() const;
+    Style::TestEnumeration LEGACY_NODELETE testRenderStyleStorageTwoLevelEnumOutOfLine() const;
     inline void setTestRenderStyleStorageTwoLevelEnum(Style::TestEnumeration);
     static constexpr Style::TestEnumeration initialTestRenderStyleStorageTwoLevelEnum();
 
     // 'test-render-style-storage-two-level-raw'
-    inline Style::TestRaw NODELETE testRenderStyleStorageTwoLevelRaw() const;
-    Style::TestRaw NODELETE testRenderStyleStorageTwoLevelRawOutOfLine() const;
+    inline Style::TestRaw LEGACY_NODELETE testRenderStyleStorageTwoLevelRaw() const;
+    Style::TestRaw LEGACY_NODELETE testRenderStyleStorageTwoLevelRawOutOfLine() const;
     inline void setTestRenderStyleStorageTwoLevelRaw(Style::TestRaw);
     static constexpr Style::TestRaw initialTestRenderStyleStorageTwoLevelRaw();
 
     // 'test-render-style-storage-two-level-reference'
-    inline const Style::Number<>& NODELETE testRenderStyleStorageTwoLevelReference() const;
-    const Style::Number<>& NODELETE testRenderStyleStorageTwoLevelReferenceOutOfLine() const;
+    inline const Style::Number<>& LEGACY_NODELETE testRenderStyleStorageTwoLevelReference() const;
+    const Style::Number<>& LEGACY_NODELETE testRenderStyleStorageTwoLevelReferenceOutOfLine() const;
     inline void setTestRenderStyleStorageTwoLevelReference(Style::Number<>&&);
     static inline Style::Number<> initialTestRenderStyleStorageTwoLevelReference();
 
     // 'test-render-style-storage-two-level-value'
-    inline Style::Number<> NODELETE testRenderStyleStorageTwoLevelValue() const;
-    Style::Number<> NODELETE testRenderStyleStorageTwoLevelValueOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testRenderStyleStorageTwoLevelValue() const;
+    Style::Number<> LEGACY_NODELETE testRenderStyleStorageTwoLevelValueOutOfLine() const;
     inline void setTestRenderStyleStorageTwoLevelValue(Style::Number<>);
     static inline Style::Number<> initialTestRenderStyleStorageTwoLevelValue();
 
     // 'test-logical-property-group-physical-horizontal'
-    inline Style::Number<> NODELETE testLogicalPropertyGroupPhysicalHorizontal() const;
-    Style::Number<> NODELETE testLogicalPropertyGroupPhysicalHorizontalOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testLogicalPropertyGroupPhysicalHorizontal() const;
+    Style::Number<> LEGACY_NODELETE testLogicalPropertyGroupPhysicalHorizontalOutOfLine() const;
     inline void setTestLogicalPropertyGroupPhysicalHorizontal(Style::Number<>);
     static inline Style::Number<> initialTestLogicalPropertyGroupPhysicalHorizontal();
 
     // 'test-logical-property-group-physical-vertical'
-    inline Style::Number<> NODELETE testLogicalPropertyGroupPhysicalVertical() const;
-    Style::Number<> NODELETE testLogicalPropertyGroupPhysicalVerticalOutOfLine() const;
+    inline Style::Number<> LEGACY_NODELETE testLogicalPropertyGroupPhysicalVertical() const;
+    Style::Number<> LEGACY_NODELETE testLogicalPropertyGroupPhysicalVerticalOutOfLine() const;
     inline void setTestLogicalPropertyGroupPhysicalVertical(Style::Number<>);
     static inline Style::Number<> initialTestLogicalPropertyGroupPhysicalVertical();
 

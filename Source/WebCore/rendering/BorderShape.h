@@ -78,8 +78,8 @@ public:
     // Takes `closedEdges` into account.
     const RectEdges<LayoutUnit>& borderWidths() const LIFETIME_BOUND { return m_borderWidths; }
 
-    LayoutRoundedRect NODELETE deprecatedRoundedRect() const;
-    LayoutRoundedRect NODELETE deprecatedInnerRoundedRect() const;
+    LayoutRoundedRect LEGACY_NODELETE deprecatedRoundedRect() const;
+    LayoutRoundedRect LEGACY_NODELETE deprecatedInnerRoundedRect() const;
     FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
@@ -117,14 +117,14 @@ public:
 
     bool hasNonZeroRadii() const { return m_borderRect.hasNonZeroRadii(); }
 
-    bool NODELETE outerShapeIsRectangular() const;
-    bool NODELETE innerShapeIsRectangular() const;
+    bool LEGACY_NODELETE outerShapeIsRectangular() const;
+    bool LEGACY_NODELETE innerShapeIsRectangular() const;
 
-    bool NODELETE hasNonRoundCornerShape() const;
+    bool LEGACY_NODELETE hasNonRoundCornerShape() const;
 
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
-    void NODELETE move(LayoutSize);
+    void LEGACY_NODELETE move(LayoutSize);
 
     // This will inflate the m_borderRect, and scale the radii up accordingly. Note that this changes the meaning of "inner shape" which will no longer correspond to the padding box.
     void inflate(LayoutUnit);

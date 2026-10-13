@@ -82,8 +82,8 @@ private:
     bool canStartSelection() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
-    bool NODELETE isURLAttribute(const Attribute&) const final;
-    bool NODELETE allowsHref() const;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE allowsHref() const;
     bool supportsFocus() const final;
     int defaultTabIndex() const final;
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;

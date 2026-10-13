@@ -55,7 +55,7 @@ protected:
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 
 private:
-    ScrollingTreeScrollingNodeDelegateMac& NODELETE delegate() const;
+    ScrollingTreeScrollingNodeDelegateMac& LEGACY_NODELETE delegate() const;
 
     void willBeDestroyed() final;
 };

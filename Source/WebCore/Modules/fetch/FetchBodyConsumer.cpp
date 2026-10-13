@@ -55,7 +55,7 @@ static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uin
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
-static bool NODELETE isHTTPQuotedStringTokenCodePoint(char16_t c)
+static bool LEGACY_NODELETE isHTTPQuotedStringTokenCodePoint(char16_t c)
 {
     return c == 0x09
         || (c >= 0x20 && c <= 0x7E)

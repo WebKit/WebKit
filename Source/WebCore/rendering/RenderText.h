@@ -56,10 +56,10 @@ public:
 
     virtual ~RenderText();
 
-    Layout::InlineTextBox* NODELETE layoutBox();
-    const Layout::InlineTextBox* NODELETE layoutBox() const;
+    Layout::InlineTextBox* LEGACY_NODELETE layoutBox();
+    const Layout::InlineTextBox* LEGACY_NODELETE layoutBox() const;
 
-    WEBCORE_EXPORT Text* NODELETE textNode() const;
+    WEBCORE_EXPORT Text* LEGACY_NODELETE textNode() const;
 
     const Style::ComputedStyle& style() const LIFETIME_BOUND;
 
@@ -122,9 +122,9 @@ public:
 
     float hangablePunctuationStartWidth(unsigned index) const;
     float hangablePunctuationEndWidth(unsigned index) const;
-    unsigned NODELETE firstCharacterIndexStrippingSpaces() const;
-    unsigned NODELETE lastCharacterIndexStrippingSpaces() const;
-    static bool NODELETE isHangableStopOrComma(char16_t);
+    unsigned LEGACY_NODELETE firstCharacterIndexStrippingSpaces() const;
+    unsigned LEGACY_NODELETE lastCharacterIndexStrippingSpaces() const;
+    static bool LEGACY_NODELETE isHangableStopOrComma(char16_t);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
@@ -156,7 +156,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    bool NODELETE containsOnlyCollapsibleWhitespace() const;
+    bool LEGACY_NODELETE containsOnlyCollapsibleWhitespace() const;
 
     FontCascade::CodePath fontCodePath() const { return m_fontCodePath; }
     bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
@@ -167,14 +167,14 @@ public:
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 
-    StringView NODELETE stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
+    StringView LEGACY_NODELETE stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
-    bool NODELETE containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
+    bool LEGACY_NODELETE containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
     Vector<std::pair<unsigned, unsigned>> contentRangesBetweenOffsetsForType(const DocumentMarkerType, unsigned startOffset, unsigned endOffset) const;
 
     bool hasInlineWrapperForDisplayContents() const { return m_hasInlineWrapperForDisplayContents; }
-    RenderInline* NODELETE inlineWrapperForDisplayContents();
+    RenderInline* LEGACY_NODELETE inlineWrapperForDisplayContents();
     void setInlineWrapperForDisplayContents(RenderInline*);
 
     template <typename MeasureTextCallback>
@@ -267,8 +267,8 @@ String applyTextTransform(const Style::ComputedStyle&, const String&);
 String capitalize(const String&, char32_t previousCharacter, const AtomString& locale);
 String capitalize(const String&, const AtomString& locale);
 bool isDutchLocale(const AtomString&);
-TextBreakIterator::LineMode::Behavior NODELETE mapLineBreakToIteratorMode(LineBreak);
-TextBreakIterator::ContentAnalysis NODELETE mapWordBreakToContentAnalysis(WordBreak);
+TextBreakIterator::LineMode::Behavior LEGACY_NODELETE mapLineBreakToIteratorMode(LineBreak);
+TextBreakIterator::ContentAnalysis LEGACY_NODELETE mapWordBreakToContentAnalysis(WordBreak);
 
 inline char16_t RenderText::characterAt(unsigned i) const
 {

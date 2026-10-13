@@ -96,7 +96,7 @@ public:
     DOMHighResTimeStamp timeStampForBindings(ScriptExecutionContext&) const;
     MonotonicTime timeStamp() const { return m_createTime; }
 
-    void NODELETE setEventPath(const EventPath&);
+    void LEGACY_NODELETE setEventPath(const EventPath&);
     Vector<Ref<EventTarget>> composedPath(JSC::JSGlobalObject&) const;
 
     void stopPropagation() { m_propagationStopped = true; }
@@ -117,7 +117,7 @@ public:
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
-    void NODELETE resetBeforeDispatch();
+    void LEGACY_NODELETE resetBeforeDispatch();
     void resetAfterDispatch();
 
     bool defaultPrevented() const { return m_wasCanceled; }

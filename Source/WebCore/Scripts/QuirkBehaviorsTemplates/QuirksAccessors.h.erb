@@ -54,7 +54,7 @@ protected:
     explicit QuirksAccessors(Document&);
     ~QuirksAccessors();
 
-    bool NODELETE needsQuirks() const;
+    bool LEGACY_NODELETE needsQuirks() const;
     bool behaviorAppliesToNode(QuirkBehaviorID, const Node*) const;
     bool behaviorAppliesToDocument(QuirkBehaviorID) const;
     RefPtr<Element> elementMatchingDocumentSelectorCondition(QuirkBehaviorID) const;

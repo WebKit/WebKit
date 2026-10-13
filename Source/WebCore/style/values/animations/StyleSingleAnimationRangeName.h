@@ -44,8 +44,8 @@ namespace Style {
 
 enum class SingleAnimationRangeName : uint8_t { Normal, Omitted, Cover, Contain, Entry, Exit, EntryCrossing, ExitCrossing, Scroll };
 
-CSSValueID NODELETE convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName);
-SingleAnimationRangeName NODELETE convertCSSValueIDToSingleAnimationRangeName(CSSValueID);
+CSSValueID LEGACY_NODELETE convertSingleAnimationRangeNameToCSSValueID(SingleAnimationRangeName);
+SingleAnimationRangeName LEGACY_NODELETE convertCSSValueIDToSingleAnimationRangeName(CSSValueID);
 
 WTF::String convertSingleAnimationRangeNameToRangeString(SingleAnimationRangeName);
 SingleAnimationRangeName convertRangeStringToSingleTimelineRangeName(const WTF::String&);

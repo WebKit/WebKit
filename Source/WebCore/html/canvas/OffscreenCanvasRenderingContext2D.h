@@ -44,7 +44,7 @@ public:
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
 
     void setFont(const String&);
-    CanvasDirection NODELETE direction() const;
+    CanvasDirection LEGACY_NODELETE direction() const;
     void fillText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     void strokeText(const String& text, double x, double y, std::optional<double> maxWidth = std::nullopt);
     Ref<TextMetrics> measureText(const String& text);

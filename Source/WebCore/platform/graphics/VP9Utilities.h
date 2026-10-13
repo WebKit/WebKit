@@ -135,12 +135,12 @@ WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(
 std::optional<VPCodecConfigurationRecord> parseVPCodecParametersIgnoringColorFields(StringView codecString);
 WEBCORE_EXPORT String createVPCodecParametersString(const VPCodecConfigurationRecord&);
 std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVPCC(std::span<const uint8_t>);
-void NODELETE setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
+void LEGACY_NODELETE setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
 
 enum class VPXCodec : uint8_t { Vp8, Vp9 };
 std::optional<VPCodecConfigurationRecord> vpCodecConfigurationRecordFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
 Vector<uint8_t> vpcCFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
 
-PlatformVideoColorSpace NODELETE colorSpaceFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
+PlatformVideoColorSpace LEGACY_NODELETE colorSpaceFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
 
 }

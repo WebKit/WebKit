@@ -472,7 +472,7 @@ void RenderVideo::styleDidChange(Style::Difference difference, const Style::Comp
     }
 }
 
-HTMLVideoElement& NODELETE RenderVideo::videoElement() const
+HTMLVideoElement& LEGACY_NODELETE RenderVideo::videoElement() const
 {
     return downcast<HTMLVideoElement>(RenderMedia::mediaElement());
 }

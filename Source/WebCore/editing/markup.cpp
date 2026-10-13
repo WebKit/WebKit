@@ -484,8 +484,8 @@ public:
     void wrapWithStyleNode(StyleProperties*, bool isBlock = false);
     String takeResults();
     
-    bool NODELETE needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
-    bool NODELETE needClearingDiv() const { return m_needClearingDiv; }
+    bool LEGACY_NODELETE needRelativeStyleWrapper() const { return m_needRelativeStyleWrapper; }
+    bool LEGACY_NODELETE needClearingDiv() const { return m_needClearingDiv; }
 
     using MarkupAccumulator::append;
 
@@ -596,7 +596,7 @@ private:
         return node.hasChildNodes();
     }
 
-    bool NODELETE isDescendantOf(Node& node, Node& possibleAncestor)
+    bool LEGACY_NODELETE isDescendantOf(Node& node, Node& possibleAncestor)
     {
         if (m_useComposedTree) [[unlikely]]
             return node.isShadowIncludingDescendantOf(&possibleAncestor);
@@ -608,12 +608,12 @@ private:
 
     bool appendNodeToPreserveMSOList(Node&);
 
-    bool NODELETE shouldAnnotate()
+    bool LEGACY_NODELETE shouldAnnotate()
     {
         return m_annotate == AnnotateForInterchange::Yes;
     }
 
-    bool NODELETE shouldApplyWrappingStyle(const Node& node) const
+    bool LEGACY_NODELETE shouldApplyWrappingStyle(const Node& node) const
     {
         return m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode() == node.parentNode() && m_wrappingStyle && m_wrappingStyle->style();
     }
@@ -695,7 +695,7 @@ const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
     return isBlock ? divClose : styleSpanClose;
 }
 
-bool NODELETE StyledMarkupAccumulator::containsOnlyASCII() const
+bool LEGACY_NODELETE StyledMarkupAccumulator::containsOnlyASCII() const
 {
     for (auto& preceding : m_reversedPrecedingMarkup) {
         if (!preceding.containsOnlyASCII())
@@ -1115,7 +1115,7 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
     return false;
 }
 
-static Node* NODELETE ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
+static Node* LEGACY_NODELETE ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
 {
     if (!commonAncestorBlock)
         return nullptr;
@@ -1166,7 +1166,7 @@ static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
     return style;
 }
 
-static bool NODELETE isElementPresentational(const Node& node)
+static bool LEGACY_NODELETE isElementPresentational(const Node& node)
 {
     return node.hasTagName(uTag) || node.hasTagName(sTag) || node.hasTagName(strikeTag)
         || node.hasTagName(iTag) || node.hasTagName(emTag) || node.hasTagName(bTag) || node.hasTagName(strongTag);
@@ -1739,7 +1739,7 @@ ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, co
     return fragment;
 }
 
-static inline RefPtr<Text> NODELETE singleTextChild(ContainerNode& node)
+static inline RefPtr<Text> LEGACY_NODELETE singleTextChild(ContainerNode& node)
 {
     return node.hasOneChild() ? dynamicDowncast<Text>(node.firstChild()) : nullptr;
 }

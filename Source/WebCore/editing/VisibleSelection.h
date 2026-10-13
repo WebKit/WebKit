@@ -42,7 +42,7 @@ class VisibleSelection {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VisibleSelection);
 public:
     WEBCORE_EXPORT VisibleSelection();
-    static const VisibleSelection& NODELETE emptySelection();
+    static const VisibleSelection& LEGACY_NODELETE emptySelection();
 
     static constexpr auto defaultAffinity = VisiblePosition::defaultAffinity;
 
@@ -70,8 +70,8 @@ public:
     // These functions return the values that were passed in, without the canonicalization done by VisiblePosition.
     // FIXME: When we expand granularity, we canonicalize as a side effect, so expanded values have been made canonical.
     // FIXME: Replace start/range/base/end/firstRange with these, renaming these to the shorter names.
-    const Position& NODELETE uncanonicalizedStart() const LIFETIME_BOUND;
-    const Position& NODELETE uncanonicalizedEnd() const LIFETIME_BOUND;
+    const Position& LEGACY_NODELETE uncanonicalizedStart() const LIFETIME_BOUND;
+    const Position& LEGACY_NODELETE uncanonicalizedEnd() const LIFETIME_BOUND;
     const Position& anchor() const LIFETIME_BOUND { return m_anchor; }
     const Position& focus() const LIFETIME_BOUND { return m_focus; }
     WEBCORE_EXPORT std::optional<SimpleRange> range() const;
@@ -98,9 +98,9 @@ public:
     bool isCaretOrRange() const { return !isNone(); }
     bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
     bool isNoneOrOrphaned() const { return isNone() || start().isOrphan() || end().isOrphan(); }
-    bool NODELETE isOrphan() const;
+    bool LEGACY_NODELETE isOrphan() const;
 
-    RefPtr<Document> NODELETE document() const;
+    RefPtr<Document> LEGACY_NODELETE document() const;
 
     bool isBaseFirst() const { return m_anchorIsFirst; }
 
@@ -133,7 +133,7 @@ public:
 
     // Returns a shadow tree node for legacy shadow trees, a child of the
     // ShadowRoot node for new shadow trees, or 0 for non-shadow trees.
-    Node* NODELETE nonBoundaryShadowTreeRootNode() const;
+    Node* LEGACY_NODELETE nonBoundaryShadowTreeRootNode() const;
 
     WEBCORE_EXPORT bool isInPasswordField() const;
     WEBCORE_EXPORT bool isInAutoFilledAndViewableField() const;

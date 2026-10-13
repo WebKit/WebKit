@@ -181,7 +181,7 @@ struct FontVariantAlternatesValues {
     String annotation;
     bool historicalForms = false;
 
-    friend void NODELETE add(Hasher&, const FontVariantAlternatesValues&);
+    friend void LEGACY_NODELETE add(Hasher&, const FontVariantAlternatesValues&);
 
     bool operator==(const FontVariantAlternatesValues&) const = default;
 

@@ -1164,7 +1164,7 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot, bool wa
         endingTextControl->didEditInnerTextValue(wasUserEdit);
 }
 
-static inline bool NODELETE shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
+static inline bool LEGACY_NODELETE shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
     bool shouldRemoveIndicator = shouldConsiderApplyingAutocorrection && !autocorrectionWasApplied;
@@ -1210,7 +1210,7 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
 #endif
 }
 
-static inline void NODELETE adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarkerType>& markerTypes)
+static inline void LEGACY_NODELETE adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarkerType>& markerTypes)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
     markerTypes.remove(DocumentMarkerType::CorrectionIndicator);
@@ -3357,7 +3357,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
 #endif
 }
 
-static bool NODELETE isAutomaticTextReplacementType(TextCheckingType type)
+static bool LEGACY_NODELETE isAutomaticTextReplacementType(TextCheckingType type)
 {
     switch (type) {
     case TextCheckingType::None:
@@ -4151,12 +4151,12 @@ std::optional<SimpleRange> Editor::findString(const String& target, FindOptions 
     return resultRange;
 }
 
-template<typename T> static auto& NODELETE start(T& range, FindOptions options)
+template<typename T> static auto& LEGACY_NODELETE start(T& range, FindOptions options)
 {
     return options.contains(FindOption::Backwards) ? range.end : range.start;
 }
 
-template<typename T> static auto& NODELETE end(T& range, FindOptions options)
+template<typename T> static auto& LEGACY_NODELETE end(T& range, FindOptions options)
 {
     return options.contains(FindOption::Backwards) ? range.start : range.end;
 }

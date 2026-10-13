@@ -79,7 +79,7 @@ public:
     ~LocalFrameViewLayoutContext();
 
     WEBCORE_EXPORT void layout(bool canDeferUpdateLayerPositions = false);
-    bool NODELETE needsLayout(OptionSet<LayoutOptions> layoutOptions = { }) const;
+    bool LEGACY_NODELETE needsLayout(OptionSet<LayoutOptions> layoutOptions = { }) const;
 
     void interleavedLayout();
 
@@ -91,8 +91,8 @@ public:
     void scheduleSubtreeLayout(RenderElement& layoutRoot);
     void unscheduleLayout();
 
-    void NODELETE disableSetNeedsLayout();
-    void NODELETE enableSetNeedsLayout();
+    void LEGACY_NODELETE disableSetNeedsLayout();
+    void LEGACY_NODELETE enableSetNeedsLayout();
 
     enum class LayoutPhase : uint8_t {
         OutsideLayout,
@@ -111,9 +111,9 @@ public:
     bool isSkippedContentForLayout(const RenderElement&) const;
     bool isSkippedContentRootForLayout(const RenderBox&) const;
 
-    bool NODELETE isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
-    bool NODELETE isInOrthogonalIntrinsicContributionLayout(const RenderBox&) const;
-    bool NODELETE isComputingIntrinsicLogicalWidthFor(const RenderBox&) const;
+    bool LEGACY_NODELETE isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
+    bool LEGACY_NODELETE isInOrthogonalIntrinsicContributionLayout(const RenderBox&) const;
+    bool LEGACY_NODELETE isComputingIntrinsicLogicalWidthFor(const RenderBox&) const;
 
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
@@ -122,7 +122,7 @@ public:
     std::optional<TextBoxTrim> textBoxTrim() const { return m_textBoxTrim; }
     void setTextBoxTrim(std::optional<TextBoxTrim> textBoxTrim) { m_textBoxTrim = textBoxTrim; }
 
-    RenderElement* NODELETE subtreeLayoutRoot() const;
+    RenderElement* LEGACY_NODELETE subtreeLayoutRoot() const;
     void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot.clear(); }
     void convertSubtreeLayoutToFullLayout();
 
@@ -136,7 +136,7 @@ public:
     void flushPostLayoutTasks();
     void didLayout(bool canDeferUpdateLayerPositions);
 
-    void NODELETE requestUpdateLayerPositions(bool needsFullRepaint = false);
+    void LEGACY_NODELETE requestUpdateLayerPositions(bool needsFullRepaint = false);
     void flushUpdateLayerPositions();
     void markForUpdateLayerPositionsAfterSVGTransformChange();
 
@@ -150,7 +150,7 @@ public:
     // Returns true if a pending compositing layer update was done.
     bool updateCompositingLayersAfterLayoutIfNeeded();
 
-    RenderLayoutState* NODELETE layoutState() const LIFETIME_BOUND PURE_FUNCTION;
+    RenderLayoutState* LEGACY_NODELETE layoutState() const LIFETIME_BOUND PURE_FUNCTION;
     // Returns true if layoutState should be used for its cached offset and clip.
     bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && layoutState(); }
 #ifndef NDEBUG
@@ -159,8 +159,8 @@ public:
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
-    LayoutSize NODELETE layoutDelta() const;
-    void NODELETE addLayoutDelta(const LayoutSize& delta);
+    LayoutSize LEGACY_NODELETE layoutDelta() const;
+    void LEGACY_NODELETE addLayoutDelta(const LayoutSize& delta);
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
@@ -174,7 +174,7 @@ public:
     void setSubtreeScrollbarChangesState(std::optional<SubtreeScrollbarChangesState>);
 
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction() LIFETIME_BOUND;
-    UpdateScrollInfoAfterLayoutTransaction* NODELETE updateScrollInfoAfterLayoutTransactionIfExists() LIFETIME_BOUND { return m_updateScrollInfoAfterLayoutTransaction.get(); }
+    UpdateScrollInfoAfterLayoutTransaction* LEGACY_NODELETE updateScrollInfoAfterLayoutTransactionIfExists() LIFETIME_BOUND { return m_updateScrollInfoAfterLayoutTransaction.get(); }
     void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
     Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
@@ -214,10 +214,10 @@ private:
     friend class ContentVisibilityOverrideScope;
     friend class RepaintBlocker;
 
-    bool NODELETE needsLayoutInternal() const;
+    bool LEGACY_NODELETE needsLayoutInternal() const;
 
     void performLayout(bool canDeferUpdateLayerPositions);
-    bool NODELETE canPerformLayout() const;
+    bool LEGACY_NODELETE canPerformLayout() const;
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
 
     bool hasPendingUpdateLayerPositions() const { return !!m_pendingUpdateLayerPositions; }
@@ -227,7 +227,7 @@ private:
     void runOrScheduleAsynchronousTasks(bool canDeferUpdateLayerPositions);
     bool inAsynchronousTasks() const { return m_inAsynchronousTasks; }
 
-    void NODELETE setSubtreeLayoutRoot(RenderElement&);
+    void LEGACY_NODELETE setSubtreeLayoutRoot(RenderElement&);
 
     void applyTextSizingIfNeeded(RenderElement& layoutRoot);
 
@@ -268,10 +268,10 @@ private:
     void allowRepaints() { m_repaintsBlocked = false; }
     void blockRepaints() { m_repaintsBlocked = true; }
 
-    LocalFrame& NODELETE frame() const;
-    LocalFrameView& NODELETE view() const;
-    RenderView* NODELETE renderView() const;
-    Document* NODELETE document() const;
+    LocalFrame& LEGACY_NODELETE frame() const;
+    LocalFrameView& LEGACY_NODELETE view() const;
+    RenderView* LEGACY_NODELETE renderView() const;
+    Document* LEGACY_NODELETE document() const;
 
     SingleThreadWeakRef<LocalFrameView> m_frameView;
     Timer m_layoutTimer;

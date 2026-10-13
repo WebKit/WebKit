@@ -73,7 +73,7 @@ private:
     RefPtr<XRProjectionLayer> createProjectionLayer(const XRProjectionLayerInit&) final;
     RefPtr<XRSubImage> getSubImage(XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<XREye>/* = "none"*/) final;
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&) final;
-    TextureFormat NODELETE getPreferredColorFormat() final;
+    TextureFormat LEGACY_NODELETE getPreferredColorFormat() final;
 
     WebGPUPtr<WGPUXRBinding> m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;

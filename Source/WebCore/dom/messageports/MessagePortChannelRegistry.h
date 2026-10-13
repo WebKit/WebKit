@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight = { });
     WEBCORE_EXPORT void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
 
-    WEBCORE_EXPORT MessagePortChannel* NODELETE existingChannelContainingPort(const MessagePortIdentifier&);
+    WEBCORE_EXPORT MessagePortChannel* LEGACY_NODELETE existingChannelContainingPort(const MessagePortIdentifier&);
 
     WEBCORE_EXPORT void messagePortChannelCreated(MessagePortChannel&);
     WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);

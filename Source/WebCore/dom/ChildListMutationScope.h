@@ -58,9 +58,9 @@ private:
     ChildListMutationAccumulator(ContainerNode&, std::unique_ptr<MutationObserverInterestGroup>);
 
     void enqueueMutationRecord();
-    bool NODELETE isEmpty();
-    bool NODELETE isAddedNodeInOrder(Node&);
-    bool NODELETE isRemovedNodeInOrder(Node&);
+    bool LEGACY_NODELETE isEmpty();
+    bool LEGACY_NODELETE isAddedNodeInOrder(Node&);
+    bool LEGACY_NODELETE isRemovedNodeInOrder(Node&);
 
     const Ref<ContainerNode> m_target;
 

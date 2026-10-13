@@ -95,7 +95,7 @@ template<typename Op> static std::optional<double> executeVariadicMathOperationA
     return result;
 }
 
-std::optional<CSS::Keyword::None> NODELETE evaluate(const CSS::Keyword::None& none, const EvaluationOptions&)
+std::optional<CSS::Keyword::None> LEGACY_NODELETE evaluate(const CSS::Keyword::None& none, const EvaluationOptions&)
 {
     return none;
 }
@@ -123,17 +123,17 @@ std::optional<std::optional<double>> evaluate(const std::optional<Child>& root, 
     return std::optional<double> { std::nullopt };
 }
 
-std::optional<double> NODELETE evaluate(const Number& number, const EvaluationOptions&)
+std::optional<double> LEGACY_NODELETE evaluate(const Number& number, const EvaluationOptions&)
 {
     return number.value;
 }
 
-std::optional<double> NODELETE evaluate(const Percentage& percentage, const EvaluationOptions&)
+std::optional<double> LEGACY_NODELETE evaluate(const Percentage& percentage, const EvaluationOptions&)
 {
     return percentage.value;
 }
 
-std::optional<double> NODELETE evaluate(const CanonicalDimension& root, const EvaluationOptions&)
+std::optional<double> LEGACY_NODELETE evaluate(const CanonicalDimension& root, const EvaluationOptions&)
 {
     return root.value;
 }

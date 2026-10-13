@@ -70,7 +70,7 @@ public:
 
     enum class ExcludeOptGroup : bool { No, Yes };
     enum class OptionScrollMode : uint8_t { Nearest, AlignTop, AlignBottom };
-    static HTMLSelectElement* NODELETE findOwnerSelect(ContainerNode*, ExcludeOptGroup);
+    static HTMLSelectElement* LEGACY_NODELETE findOwnerSelect(ContainerNode*, ExcludeOptGroup);
 
     WEBCORE_EXPORT int selectedIndex() const;
     HTMLOptionElement* selectedOption();
@@ -85,18 +85,18 @@ public:
     WEBCORE_EXPORT unsigned length() const;
 
     unsigned size() const { return m_size; }
-    unsigned NODELETE preferredSize() const;
-    bool NODELETE supportsPickerPseudoElement() const;
+    unsigned LEGACY_NODELETE preferredSize() const;
+    bool LEGACY_NODELETE supportsPickerPseudoElement() const;
     bool multiple() const { return m_multiple; }
 
     // Without a style these read the one already committed, which is stale during style resolution.
     enum class BoxType : bool { DropdownBox, ListBox };
-    BoxType NODELETE boxType(const Style::ComputedStyle* = nullptr) const;
-    bool NODELETE isDropdownBox(const Style::ComputedStyle* = nullptr) const;
-    bool NODELETE isBaseListBox(const Style::ComputedStyle* = nullptr) const;
+    BoxType LEGACY_NODELETE boxType(const Style::ComputedStyle* = nullptr) const;
+    bool LEGACY_NODELETE isDropdownBox(const Style::ComputedStyle* = nullptr) const;
+    bool LEGACY_NODELETE isBaseListBox(const Style::ComputedStyle* = nullptr) const;
 
-    bool NODELETE usesMenuList() const;
-    bool NODELETE isSingleSelectDropdownBox() const;
+    bool LEGACY_NODELETE usesMenuList() const;
+    bool LEGACY_NODELETE isSingleSelectDropdownBox() const;
 
     using OptionOrOptGroupElement = Variant<Ref<HTMLOptionElement>, Ref<HTMLOptGroupElement>>;
     using HTMLElementOrInt = Variant<Ref<HTMLElement>, int>;
@@ -140,7 +140,7 @@ public:
     WEBCORE_EXPORT void setPopupIsVisible(bool);
     std::optional<FloatPoint> lastPopupLocationForTesting() const { return m_lastPopupLocationForTesting; }
 
-    WEBCORE_EXPORT bool NODELETE isOpen() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isOpen() const;
 
     void didUpdateActiveOption(int optionIndex);
 
@@ -187,7 +187,7 @@ public:
     int optionToListIndex(int optionIndex) const;
     int activeSelectionStartListIndex() const;
     int activeSelectionEndListIndex() const;
-    void NODELETE setActiveSelectionEndIndex(int);
+    void LEGACY_NODELETE setActiveSelectionEndIndex(int);
     void updateListBoxSelection(bool deselectOtherOptions);
     bool updateListBoxSelectionForDrag(int listIndex);
     void handleListBoxMouseRelease();
@@ -210,15 +210,15 @@ public:
     void resetSelectedness(HTMLOptionElement* oldSelectedOption);
     bool updatesSelectedContent() const;
 
-    void NODELETE registerSelectedContentElement();
-    void NODELETE unregisterSelectedContentElement();
+    void LEGACY_NODELETE registerSelectedContentElement();
+    void LEGACY_NODELETE unregisterSelectedContentElement();
     bool hasSelectedContentDescendants() const { return m_selectedContentDescendantCount; }
 
     bool usesBaseAppearancePicker() const;
     WEBCORE_EXPORT bool optionsAreRenderedWithBaseAppearance() const;
-    Element* NODELETE optionContainer() const;
-    SelectPopoverElement* NODELETE pickerPopoverElement() const;
-    Element* NODELETE buttonElement() const;
+    Element* LEGACY_NODELETE optionContainer() const;
+    SelectPopoverElement* LEGACY_NODELETE pickerPopoverElement() const;
+    Element* LEGACY_NODELETE buttonElement() const;
     String buttonLabelText(StringView selectedContentText) const;
     enum class ForAccessibility : bool { No, Yes };
     String buttonText(ForAccessibility, HTMLOptionElement* selectedOption = nullptr, int optionIndex = -1) const;
@@ -249,14 +249,14 @@ private:
     int defaultTabIndex() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
     bool isMouseFocusable() const final;
-    bool NODELETE hasCustomFocusLogic() const final { return true; }
+    bool LEGACY_NODELETE hasCustomFocusLogic() const final { return true; }
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     
     bool canStartSelection() const final { return false; }
 
-    bool NODELETE isEnumeratable() const final { return true; }
+    bool LEGACY_NODELETE isEnumeratable() const final { return true; }
     bool isLabelable() const final { return true; }
 
     bool isInteractiveContent() const final { return true; }
@@ -271,7 +271,7 @@ private:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
 
     bool childShouldCreateRenderer(const Node&) const final;
-    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
+    bool LEGACY_NODELETE supportsBaseAppearance(StyleAppearance) const final;
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
     bool appendFormData(DOMFormData&) final;
 
@@ -290,8 +290,8 @@ private:
     void typeAheadFind(KeyboardEvent&);
     void saveLastSelection();
 
-    bool NODELETE isOptionalFormControl() const final { return !isRequiredFormControl(); }
-    bool NODELETE isRequiredFormControl() const final;
+    bool LEGACY_NODELETE isOptionalFormControl() const final { return !isRequiredFormControl(); }
+    bool LEGACY_NODELETE isRequiredFormControl() const final;
 
     bool hasPlaceholderLabelOption() const;
 
@@ -344,10 +344,10 @@ private:
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void showPickerInternal();
-    bool NODELETE pickerPopoverIsShowing() const;
-    static unsigned NODELETE preferredSize(unsigned size, bool multiple);
-    bool NODELETE supportsBaseAppearancePicker() const { return supportsBaseAppearancePicker(m_size, m_multiple); }
-    bool NODELETE supportsBaseAppearancePicker(unsigned size, bool multiple) const;
+    bool LEGACY_NODELETE pickerPopoverIsShowing() const;
+    static unsigned LEGACY_NODELETE preferredSize(unsigned size, bool multiple);
+    bool LEGACY_NODELETE supportsBaseAppearancePicker() const { return supportsBaseAppearancePicker(m_size, m_multiple); }
+    bool LEGACY_NODELETE supportsBaseAppearancePicker(unsigned size, bool multiple) const;
 
     // TypeAheadDataSource functions.
     int indexOfSelectedOption() const final;

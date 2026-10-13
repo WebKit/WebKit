@@ -189,7 +189,7 @@ public:
     GstElement* pipeline() const { return m_pipeline.get(); }
 
 #if USE(COORDINATED_GRAPHICS)
-    PlatformLayer* NODELETE platformLayer() override { return nullptr; }
+    PlatformLayer* LEGACY_NODELETE platformLayer() override { return nullptr; }
     bool supportsAcceleratedRendering() const override { return true; }
     void setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&&) override;
     RefPtr<CoordinatedPlatformLayerBufferProxy> platformLayerBufferProxy() const override;

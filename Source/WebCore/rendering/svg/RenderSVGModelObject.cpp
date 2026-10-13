@@ -313,7 +313,7 @@ void RenderSVGModelObject::addFocusRingRects(Vector<LayoutRect>& rects, const La
 
 // FloatRect::intersects does not consider horizontal or vertical lines (because of isEmpty()).
 // So special-case handling of such lines.
-static bool NODELETE intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
+static bool LEGACY_NODELETE intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 {
     if (r.isEmpty() && other.isEmpty())
         return false;
@@ -326,7 +326,7 @@ static bool NODELETE intersectsAllowingEmpty(const FloatRect& r, const FloatRect
 
 // One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
 // image, line, path, polygon, polyline, rect, text and use.
-static bool NODELETE isGraphicsElement(const RenderElement& renderer)
+static bool LEGACY_NODELETE isGraphicsElement(const RenderElement& renderer)
 {
     return renderer.isRenderSVGShape() || renderer.isRenderSVGText() || renderer.isRenderSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }

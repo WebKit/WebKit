@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT ~UnevaluatedCalculationBase();
 
     Calculation::Value& calculation() const { return m_calc; }
-    [[nodiscard]] Calculation::Value& NODELETE leakRef();
+    [[nodiscard]] Calculation::Value& LEGACY_NODELETE leakRef();
 
     bool equal(const UnevaluatedCalculationBase&) const;
 

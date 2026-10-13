@@ -64,7 +64,7 @@ public:
     bool isOrderedList() const final;
     bool isDescriptionList() const final;
     bool isMultiSelectable() const override;
-    bool NODELETE isNativeImage() const;
+    bool LEGACY_NODELETE isNativeImage() const;
     bool isSecureField() const final;
     bool isSearchField() const final;
 
@@ -84,7 +84,7 @@ public:
     bool canSetSelectedAttribute() const override;
     void setSelected(bool) final;
 
-    Node* NODELETE node() const final { return m_node.get(); }
+    Node* LEGACY_NODELETE node() const final { return m_node.get(); }
     Document* document() const override;
     LocalFrameView* documentFrameView() const override;
 
@@ -149,8 +149,8 @@ public:
     String axColumnIndexText() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
-    void NODELETE incrementEffectiveRowSpan();
-    void NODELETE resetEffectiveRowSpan();
+    void LEGACY_NODELETE incrementEffectiveRowSpan();
+    void LEGACY_NODELETE resetEffectiveRowSpan();
     void setAXColIndexFromRow(int);
     void setColumnIndex(unsigned);
 #if USE(ATSPI)

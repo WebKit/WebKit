@@ -45,7 +45,7 @@ public:
 private:
     BidiContext(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
-    static Ref<BidiContext> NODELETE createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
+    static Ref<BidiContext> LEGACY_NODELETE createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
     unsigned m_level : 6; // The maximium bidi level is 62: http://unicode.org/reports/tr9/#Explicit_Levels_and_Directions
     unsigned m_direction : 5; // Direction
@@ -64,6 +64,6 @@ inline unsigned char nextGreaterEvenLevel(unsigned char level)
     return (level + 2) & ~1;
 }
 
-bool NODELETE operator==(const BidiContext&, const BidiContext&);
+bool LEGACY_NODELETE operator==(const BidiContext&, const BidiContext&);
 
 } // namespace WebCore

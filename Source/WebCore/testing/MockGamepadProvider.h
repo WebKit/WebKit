@@ -40,7 +40,7 @@ class MockGamepadProvider : public GamepadProvider {
     WTF_MAKE_NONCOPYABLE(MockGamepadProvider);
     friend class NeverDestroyed<MockGamepadProvider>;
 public:
-    WEBCORE_TESTSUPPORT_EXPORT static MockGamepadProvider& NODELETE singleton();
+    WEBCORE_TESTSUPPORT_EXPORT static MockGamepadProvider& LEGACY_NODELETE singleton();
 
     WEBCORE_TESTSUPPORT_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_TESTSUPPORT_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;

@@ -53,7 +53,7 @@ private:
     void forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final;
     void forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final;
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
+    void LEGACY_NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final;
 #endif
     bool hasBuffersForWorld(const DOMWrapperWorld&) const override { return false; }
     WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const override { return nullptr; }

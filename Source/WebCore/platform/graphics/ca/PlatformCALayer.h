@@ -165,7 +165,7 @@ public:
 
     LayerType layerType() const { return m_layerType; }
     
-    bool NODELETE canHaveBackingStore() const;
+    bool LEGACY_NODELETE canHaveBackingStore() const;
 
     virtual PlatformCALayer* superlayer() const = 0;
     virtual void removeFromSuperlayer() = 0;
@@ -193,7 +193,7 @@ public:
 #endif
 
     virtual void setMaskLayer(RefPtr<PlatformCALayer>&&);
-    PlatformCALayer* NODELETE maskLayer() const;
+    PlatformCALayer* LEGACY_NODELETE maskLayer() const;
 
     virtual bool isOpaque() const = 0;
     virtual void setOpaque(bool) = 0;

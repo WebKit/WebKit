@@ -89,7 +89,7 @@ Vector<MimeClassInfo> PluginData::webVisibleMimeTypes() const
     return result;
 }
 
-static bool NODELETE supportsMimeTypeForPlugins(const String& mimeType, const PluginData::AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
+static bool LEGACY_NODELETE supportsMimeTypeForPlugins(const String& mimeType, const PluginData::AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
 {
     for (auto& plugin : plugins) {
         for (auto& type : plugin.mimes) {

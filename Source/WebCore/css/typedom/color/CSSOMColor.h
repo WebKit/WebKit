@@ -34,8 +34,8 @@ class CSSOMColor final : public CSSOMColorValue {
 public:
     template<typename... Args> static Ref<CSSOMColor> create(Args&&... args) { return adoptRef(*new CSSOMColor(std::forward<Args>(args)...)); }
 
-    std::optional<CSSOMKeywordish> NODELETE colorSpace() const;
-    void NODELETE setColorSpace(std::optional<CSSOMKeywordish>);
+    std::optional<CSSOMKeywordish> LEGACY_NODELETE colorSpace() const;
+    void LEGACY_NODELETE setColorSpace(std::optional<CSSOMKeywordish>);
 
     const CSSNumberish& alpha() const LIFETIME_BOUND { return m_alpha; }
     void setAlpha(CSSNumberish alpha) { m_alpha = WTF::move(alpha); }

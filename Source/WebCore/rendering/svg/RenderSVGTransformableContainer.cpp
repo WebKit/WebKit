@@ -49,7 +49,7 @@ SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
     return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
 }
 
-inline SVGUseElement* NODELETE associatedUseElement(SVGGraphicsElement& element)
+inline SVGUseElement* LEGACY_NODELETE associatedUseElement(SVGGraphicsElement& element)
 {
     // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
     // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers

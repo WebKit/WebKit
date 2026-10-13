@@ -69,7 +69,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     bool isScoped() const { return !m_window; }
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     static CustomElementRegistry* registryForElement(const Element& element)
     {
@@ -120,7 +120,7 @@ private:
     CustomElementRegistry(ScriptExecutionContext&, LocalDOMWindow&);
     CustomElementRegistry(ScriptExecutionContext&);
 
-    static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& NODELETE scopedCustomElementRegistryMap();
+    static WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& LEGACY_NODELETE scopedCustomElementRegistryMap();
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;

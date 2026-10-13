@@ -42,8 +42,8 @@ public:
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const;
-    TextTrackCue* NODELETE item(unsigned index) const;
-    TextTrackCue* NODELETE getCueById(const String&) const;
+    TextTrackCue* LEGACY_NODELETE item(unsigned index) const;
+    TextTrackCue* LEGACY_NODELETE getCueById(const String&) const;
 
     unsigned cueIndex(const TextTrackCue&) const;
 

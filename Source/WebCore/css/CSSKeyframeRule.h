@@ -38,7 +38,7 @@ class StyleRuleCSSStyleProperties;
 
 class StyleRuleKeyframe final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframe> NODELETE create(Ref<StyleProperties>&&);
+    static Ref<StyleRuleKeyframe> LEGACY_NODELETE create(Ref<StyleProperties>&&);
     static Ref<StyleRuleKeyframe> create(Vector<std::pair<CSSValueID, CSS::Percentage<>>>&& keys, Ref<StyleProperties>&&);
     ~StyleRuleKeyframe();
 
@@ -81,7 +81,7 @@ public:
     virtual ~CSSKeyframeRule();
 
     String cssText() const final { return m_keyframe->cssText(); }
-    void NODELETE reattach(StyleRuleBase&) final;
+    void LEGACY_NODELETE reattach(StyleRuleBase&) final;
 
     String keyText() const { return m_keyframe->keyText(); }
     void setKeyText(const String&);

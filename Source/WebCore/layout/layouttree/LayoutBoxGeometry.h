@@ -126,10 +126,10 @@ public:
 
     bool hasMarginBorderOrPadding() const { return horizontalMarginBorderAndPadding() || verticalMarginBorderAndPadding(); }
 
-    Rect NODELETE marginBox() const;
-    Rect NODELETE borderBox() const;
-    Rect NODELETE paddingBox() const;
-    Rect NODELETE contentBox() const;
+    Rect LEGACY_NODELETE marginBox() const;
+    Rect LEGACY_NODELETE borderBox() const;
+    Rect LEGACY_NODELETE paddingBox() const;
+    Rect LEGACY_NODELETE contentBox() const;
 
 #if ASSERT_ENABLED
     void setHasPrecomputedMarginBefore() { m_hasPrecomputedMarginBefore = true; }
@@ -165,7 +165,7 @@ public:
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
     void setSpaceForScrollbar(LayoutSize);
 
-    void NODELETE reset();
+    void LEGACY_NODELETE reset();
 
 private:
     LayoutUnit top() const;

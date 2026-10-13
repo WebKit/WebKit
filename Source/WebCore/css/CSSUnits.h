@@ -155,11 +155,11 @@ enum class CSSUnitCategory : uint8_t {
     Other
 };
 
-CSSUnitCategory NODELETE unitCategory(CSSUnitType);
-CSSUnitType NODELETE canonicalUnitTypeForCategory(CSSUnitCategory);
-CSSUnitType NODELETE canonicalUnitTypeForUnitType(CSSUnitType);
-std::optional<double> NODELETE conversionToCanonicalUnitsScaleFactor(CSSUnitType);
-bool NODELETE conversionToCanonicalUnitRequiresConversionData(CSSUnitType);
+CSSUnitCategory LEGACY_NODELETE unitCategory(CSSUnitType);
+CSSUnitType LEGACY_NODELETE canonicalUnitTypeForCategory(CSSUnitCategory);
+CSSUnitType LEGACY_NODELETE canonicalUnitTypeForUnitType(CSSUnitType);
+std::optional<double> LEGACY_NODELETE conversionToCanonicalUnitsScaleFactor(CSSUnitType);
+bool LEGACY_NODELETE conversionToCanonicalUnitRequiresConversionData(CSSUnitType);
 ASCIILiteral unitTypeString(CSSUnitType);
 
 WTF::TextStream& operator<<(WTF::TextStream&, CSSUnitCategory);

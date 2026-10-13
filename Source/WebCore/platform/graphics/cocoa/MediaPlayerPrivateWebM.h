@@ -92,7 +92,7 @@ private:
     void setPreload(MediaPlayer::Preload) final;
     void doPreload();
     void load(const URL&, const LoadOptions&) final;
-    bool NODELETE needsResourceClient() const;
+    bool LEGACY_NODELETE needsResourceClient() const;
     bool createResourceClientIfNeeded();
 
 #if ENABLE(MEDIA_SOURCE)
@@ -284,12 +284,12 @@ private:
 #endif
 
     using TrackIdentifier = TracksRendererManager::TrackIdentifier;
-    TrackIdentifier NODELETE trackIdentifierFor(TrackID) const;
-    std::optional<TrackIdentifier> NODELETE maybeTrackIdentifierFor(TrackID) const;
+    TrackIdentifier LEGACY_NODELETE trackIdentifierFor(TrackID) const;
+    std::optional<TrackIdentifier> LEGACY_NODELETE maybeTrackIdentifierFor(TrackID) const;
 
     void setLayerRequiresFlush();
-    void NODELETE setAllTracksForReenqueuing();
-    void NODELETE setTrackForReenqueuing(TrackID);
+    void LEGACY_NODELETE setAllTracksForReenqueuing();
+    void LEGACY_NODELETE setTrackForReenqueuing(TrackID);
 
     // Remote layer support
     WebCore::HostingContext hostingContext() const final;
@@ -353,8 +353,8 @@ private:
     MediaTime m_durationMainThread WTF_GUARDED_BY_CAPABILITY(mainThread) { MediaTime::indefiniteTime() };
     double m_rate WTF_GUARDED_BY_CAPABILITY(mainThread) { 1 };
 
-    bool NODELETE isEnabledVideoTrackID(TrackID) const;
-    bool NODELETE hasSelectedVideo() const;
+    bool LEGACY_NODELETE isEnabledVideoTrackID(TrackID) const;
+    bool LEGACY_NODELETE hasSelectedVideo() const;
     std::optional<TrackID> m_enabledVideoTrackID WTF_GUARDED_BY_CAPABILITY(runningQueue());
     size_t m_contentLength WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
     size_t m_contentReceived WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
@@ -390,7 +390,7 @@ private:
     // WorkQueue on which the player is running.
     WorkQueue& runningQueue() const { return m_runningQueue.get(); }
     void ensureOnRunningQueue(Function<void()>&&);
-    MediaTime NODELETE durationOnRunningQueue() const;
+    MediaTime LEGACY_NODELETE durationOnRunningQueue() const;
 
     Timer m_seekTimer WTF_GUARDED_BY_CAPABILITY(mainThread);
     MediaTime m_lastSeekTime WTF_GUARDED_BY_CAPABILITY(runningQueue());

@@ -44,7 +44,7 @@ public:
 
     virtual ~PluginDocument();
 
-    WEBCORE_EXPORT PluginViewBase* NODELETE pluginWidget();
+    WEBCORE_EXPORT PluginViewBase* LEGACY_NODELETE pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 
     void setPluginElement(HTMLPlugInElement&);

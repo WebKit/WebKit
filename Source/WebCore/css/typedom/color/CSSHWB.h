@@ -34,7 +34,7 @@ class CSSHWB final : public CSSOMColorValue {
 public:
     static ExceptionOr<Ref<CSSHWB>> create(Ref<CSSNumericValue>&& hue, CSSNumberish&& whiteness, CSSNumberish&& blackness, CSSNumberish&& alpha);
 
-    CSSNumericValue& NODELETE h() const;
+    CSSNumericValue& LEGACY_NODELETE h() const;
     ExceptionOr<void> setH(Ref<CSSNumericValue>&&);
     CSSNumberish w() const;
     ExceptionOr<void> setW(CSSNumberish&&);

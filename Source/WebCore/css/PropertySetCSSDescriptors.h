@@ -54,7 +54,7 @@ protected:
     PropertySetCSSDescriptors(MutableStyleProperties&, CSSRule&);
 
     CSSStyleSheet* parentStyleSheet() const final;
-    CSSRule* NODELETE parentRule() const final;
+    CSSRule* LEGACY_NODELETE parentRule() const final;
     // FIXME: To implement.
     CSSRuleList* cssRules() const override { return nullptr; }
     unsigned length() const final;

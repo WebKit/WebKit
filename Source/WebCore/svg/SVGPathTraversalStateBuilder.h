@@ -33,8 +33,8 @@ public:
     SVGPathTraversalStateBuilder(PathTraversalState&, float desiredLength = 0);
 
     unsigned pathSegmentIndex() const { return m_segmentIndex; }
-    float NODELETE totalLength() const;
-    FloatPoint NODELETE currentPoint() const;
+    float LEGACY_NODELETE totalLength() const;
+    FloatPoint LEGACY_NODELETE currentPoint() const;
 
     void incrementPathSegmentCount() final { ++m_segmentIndex; }
     bool continueConsuming() final;

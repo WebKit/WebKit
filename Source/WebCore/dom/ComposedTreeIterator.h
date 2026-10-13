@@ -257,7 +257,7 @@ inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
     return node.nextSibling();
 }
 
-inline ContainerNode* NODELETE parentInComposedTreeIgnoringUserAgentShadow(Node& node)
+inline ContainerNode* LEGACY_NODELETE parentInComposedTreeIgnoringUserAgentShadow(Node& node)
 {
     if (auto* slot = node.assignedSlot()) {
         if (auto* shadowRoot = slot->containingShadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)

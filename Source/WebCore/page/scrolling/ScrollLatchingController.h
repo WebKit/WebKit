@@ -56,7 +56,7 @@ public:
 
     void clear();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     void receivedWheelEvent(const PlatformWheelEvent&);
@@ -66,7 +66,7 @@ public:
     LocalFrame* latchedFrame() const;
 
     // Returns true if no frame is latched, or latching is in the given frame (in which case latchedScroller will be non-null).
-    bool NODELETE latchingAllowsScrollingInFrame(const LocalFrame&, WeakPtr<ScrollableArea>& latchedScroller) const;
+    bool LEGACY_NODELETE latchingAllowsScrollingInFrame(const LocalFrame&, WeakPtr<ScrollableArea>& latchedScroller) const;
 
     void updateAndFetchLatchingStateForFrame(LocalFrame&, const PlatformWheelEvent&, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>&, bool& isOverWidget);
 
@@ -86,9 +86,9 @@ private:
     void clearOrScheduleClearIfNeeded(const PlatformWheelEvent&);
     void clearTimerFired();
 
-    bool NODELETE hasStateForFrame(const LocalFrame&) const;
-    FrameState* NODELETE stateForFrame(const LocalFrame&);
-    const FrameState* NODELETE stateForFrame(const LocalFrame&) const;
+    bool LEGACY_NODELETE hasStateForFrame(const LocalFrame&) const;
+    FrameState* LEGACY_NODELETE stateForFrame(const LocalFrame&);
+    const FrameState* LEGACY_NODELETE stateForFrame(const LocalFrame&) const;
 
     bool shouldLatchToScrollableArea(const LocalFrame&, ScrollableArea*, FloatSize) const;
 

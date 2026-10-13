@@ -44,7 +44,7 @@ public:
     static void adjustAnnotationContentWithAlignmentOffset(std::span<InlineDisplay::Box>, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
 private:
-    static InlineLayoutUnit NODELETE applyExpansionOnRange(std::span<LineRun>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
+    static InlineLayoutUnit LEGACY_NODELETE applyExpansionOnRange(std::span<LineRun>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
 };
 
 }

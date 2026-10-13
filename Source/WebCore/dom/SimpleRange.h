@@ -86,7 +86,7 @@ WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
 template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
 
-template<TreeType = Tree> bool NODELETE contains(const SimpleRange&, const BoundaryPoint&);
+template<TreeType = Tree> bool LEGACY_NODELETE contains(const SimpleRange&, const BoundaryPoint&);
 template<TreeType = Tree> bool contains(const SimpleRange&, const std::optional<BoundaryPoint>&);
 template<TreeType = Tree> bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
 template<TreeType = Tree> bool contains(const SimpleRange&, const Node&);
@@ -111,7 +111,7 @@ struct OffsetRange {
     unsigned start { 0 };
     unsigned end { 0 };
 };
-OffsetRange NODELETE characterDataOffsetRange(const SimpleRange&, const Node&);
+OffsetRange LEGACY_NODELETE characterDataOffsetRange(const SimpleRange&, const Node&);
 
 // FIXME: Start of functions that are deprecated since they silently default to ComposedTree.
 

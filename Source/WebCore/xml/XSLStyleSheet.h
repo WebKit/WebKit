@@ -78,7 +78,7 @@ public:
 
     Document* ownerDocument();
     XSLStyleSheet* parentStyleSheet() const override { return m_parentStyleSheet.get(); }
-    void NODELETE setParentStyleSheet(XSLStyleSheet* parent);
+    void LEGACY_NODELETE setParentStyleSheet(XSLStyleSheet* parent);
 
     xmlDocPtr document();
     xsltStylesheetPtr compileStyleSheet();
@@ -86,7 +86,7 @@ public:
 
     void clearDocuments();
 
-    void NODELETE markAsProcessed();
+    void LEGACY_NODELETE markAsProcessed();
     bool processed() const { return m_processed; }
     
     String type() const override { return "text/xml"_s; }

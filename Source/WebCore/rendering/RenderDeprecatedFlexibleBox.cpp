@@ -74,7 +74,7 @@ public:
         reset();
     }
 
-    void NODELETE reset()
+    void LEGACY_NODELETE reset()
     {
         m_currentChild = nullptr;
         m_ordinalIteration = std::numeric_limits<unsigned>::max();
@@ -118,7 +118,7 @@ public:
     }
 
 private:
-    bool NODELETE notFirstOrdinalValue()
+    bool LEGACY_NODELETE notFirstOrdinalValue()
     {
         unsigned int firstOrdinalValue = m_forward ? 1 : m_largestOrdinal;
         return m_currentOrdinal == firstOrdinalValue && m_currentChild->style().boxOrdinalGroup() != firstOrdinalValue;
@@ -143,7 +143,7 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Style
 
 RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox() = default;
 
-static LayoutUnit NODELETE marginWidthForChild(RenderBox* child)
+static LayoutUnit LEGACY_NODELETE marginWidthForChild(RenderBox* child)
 {
     // A margin basically has three types: fixed, percentage, and auto (variable).
     // Auto and percentage margins simply become 0 when computing min/max width.
@@ -157,20 +157,20 @@ static LayoutUnit NODELETE marginWidthForChild(RenderBox* child)
     return margin;
 }
 
-static bool NODELETE childDoesNotAffectWidthOrFlexing(RenderObject* child)
+static bool LEGACY_NODELETE childDoesNotAffectWidthOrFlexing(RenderObject* child)
 {
     // Positioned children don't affect the min/max width.
     return child->isOutOfFlowPositioned();
 }
 
-static LayoutUnit NODELETE widthForChild(RenderBox* child)
+static LayoutUnit LEGACY_NODELETE widthForChild(RenderBox* child)
 {
     if (auto overridingLogicalWidth = child->overridingBorderBoxLogicalWidth())
         return *overridingLogicalWidth;
     return child->logicalWidth();
 }
 
-static LayoutUnit NODELETE heightForChild(RenderBox* child)
+static LayoutUnit LEGACY_NODELETE heightForChild(RenderBox* child)
 {
     if (auto overridingLogicalHeight = child->overridingBorderBoxLogicalHeight())
         return *overridingLogicalHeight;

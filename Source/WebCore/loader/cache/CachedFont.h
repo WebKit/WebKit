@@ -76,7 +76,7 @@ private:
     String calculateItemInCollection() const;
 
     void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) override;
-    bool NODELETE mayTryReplaceEncodedData() const override;
+    bool LEGACY_NODELETE mayTryReplaceEncodedData() const override;
 
     void load(CachedResourceLoader&) override;
     NO_RETURN_DUE_TO_ASSERT void setBodyDataFrom(const CachedResource&) final { ASSERT_NOT_REACHED(); }

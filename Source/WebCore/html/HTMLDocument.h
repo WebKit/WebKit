@@ -37,7 +37,7 @@ public:
     
     std::optional<Variant<Ref<WindowProxy>, Ref<Element>, Ref<HTMLCollection>>> namedItem(const AtomString&);
     Vector<AtomString> supportedPropertyNames() const;
-    bool NODELETE isSupportedPropertyName(const AtomString&) const;
+    bool LEGACY_NODELETE isSupportedPropertyName(const AtomString&) const;
 
     RefPtr<Element> documentNamedItem(const AtomString& name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, *this); }
     bool hasDocumentNamedItem(const AtomString& name) const { return m_documentNamedItem.contains(name); }

@@ -46,7 +46,7 @@ public:
 private:
     void updateAnimationProperties() final;
     void start() final;
-    FloatRect NODELETE tailRect() const;
+    FloatRect LEGACY_NODELETE tailRect() const;
 
     String debugDescription() const final;
 
@@ -65,8 +65,8 @@ private:
 
     void stop(CaretAnimatorStopReason) final;
 
-    Seconds NODELETE keyframeTimeDelta() const;
-    size_t NODELETE keyframeCount() const;
+    Seconds LEGACY_NODELETE keyframeTimeDelta() const;
+    size_t LEGACY_NODELETE keyframeCount() const;
     void updateGlowTail(float caretPosition, Seconds elapsedTime);
     void resetGlowTail(FloatRect);
     void updateGlowTail(Seconds elapsedTime);
@@ -76,7 +76,7 @@ private:
     void fillCaretTail(const FloatRect&, GraphicsContext&, const Color&) const;
 
     FloatRect computeTailRect() const;
-    bool NODELETE isLeftToRightLayout() const;
+    bool LEGACY_NODELETE isLeftToRightLayout() const;
     FloatRoundedRect expandedCaretRect(const FloatRect&, bool fillTail) const;
     int computeScrollLeft() const;
 

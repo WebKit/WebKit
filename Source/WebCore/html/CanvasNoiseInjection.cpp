@@ -44,7 +44,7 @@ void CanvasNoiseInjection::clearDirtyRect()
     m_postProcessDirtyRect = { };
 }
 
-static inline bool NODELETE isIndexInBounds(int size, int index)
+static inline bool LEGACY_NODELETE isIndexInBounds(int size, int index)
 {
     ASSERT(index <= size);
     return index < size;
@@ -208,7 +208,7 @@ void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer
     m_postProcessDirtyRect = { };
 }
 
-static std::pair<int, int> NODELETE lowerAndUpperBound(int component1, int component2, int component3)
+static std::pair<int, int> LEGACY_NODELETE lowerAndUpperBound(int component1, int component2, int component3)
 {
     if (component1 <= component3) {
         if (component1 == component2 || component2 == component3)
@@ -230,7 +230,7 @@ static std::pair<int, int> NODELETE lowerAndUpperBound(int component1, int compo
     return { component2, component2 };
 }
 
-static void NODELETE adjustNeighborColorBounds(std::array<int, 4>& neighborColor1, const std::array<int, 4>& color, std::array<int, 4>& neighborColor2)
+static void LEGACY_NODELETE adjustNeighborColorBounds(std::array<int, 4>& neighborColor1, const std::array<int, 4>& color, std::array<int, 4>& neighborColor2)
 {
     auto [redLowerBound, redUpperBound] = lowerAndUpperBound(neighborColor1[0], color[0], neighborColor2[0]);
     auto [greenLowerBound, greenUpperBound] = lowerAndUpperBound(neighborColor1[1], color[1], neighborColor2[1]);

@@ -571,7 +571,7 @@ public:
     DrawDisplayList(Ref<const DisplayList>&&);
     ~DrawDisplayList();
 
-    Ref<const DisplayList> NODELETE displayList() const;
+    Ref<const DisplayList> LEGACY_NODELETE displayList() const;
 
     void apply(GraphicsContext&, ControlFactory&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
@@ -588,7 +588,7 @@ public:
     ~DrawPlaceholder();
 
     void apply(GraphicsContext&) const;
-    void NODELETE dump(TextStream&, OptionSet<AsTextFlag>) const;
+    void LEGACY_NODELETE dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
     using FunctionHolder = Box<Function<void(GraphicsContext&)>>;

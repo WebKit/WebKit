@@ -111,17 +111,17 @@ void Gradient::addColorStop(GradientColorStop&& stop)
     stopsChanged();
 }
 
-static void NODELETE add(Hasher& hasher, const Gradient::LinearData& data)
+static void LEGACY_NODELETE add(Hasher& hasher, const Gradient::LinearData& data)
 {
     add(hasher, data.point0, data.point1);
 }
 
-static void NODELETE add(Hasher& hasher, const Gradient::RadialData& data)
+static void LEGACY_NODELETE add(Hasher& hasher, const Gradient::RadialData& data)
 {
     add(hasher, data.point0, data.point1, data.startRadius, data.endRadius, data.aspectRatio);
 }
 
-static void NODELETE add(Hasher& hasher, const Gradient::ConicData& data)
+static void LEGACY_NODELETE add(Hasher& hasher, const Gradient::ConicData& data)
 {
     add(hasher, data.point0, data.angleRadians);
 }

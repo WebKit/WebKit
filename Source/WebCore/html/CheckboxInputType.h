@@ -57,9 +57,9 @@ public:
 
     bool valueMissing(StringView) const final;
     float switchAnimationVisuallyOnProgress() const;
-    bool NODELETE isSwitchVisuallyOn() const;
+    bool LEGACY_NODELETE isSwitchVisuallyOn() const;
     float switchAnimationHeldProgress() const;
-    bool NODELETE isSwitchHeld() const;
+    bool LEGACY_NODELETE isSwitchHeld() const;
 
 private:
     explicit CheckboxInputType(HTMLInputElement& element)
@@ -81,19 +81,19 @@ private:
 #endif
     void startSwitchPointerTracking(LayoutPoint);
     void stopSwitchPointerTracking();
-    bool NODELETE isSwitchPointerTracking() const;
+    bool LEGACY_NODELETE isSwitchPointerTracking() const;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
     void willUpdateCheckedness(bool /* nowChecked */, WasSetByJavaScript);
     void disabledStateChanged() final;
-    Seconds NODELETE switchAnimationStartTime(SwitchAnimationType) const;
-    void NODELETE setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
-    bool NODELETE isSwitchAnimating(SwitchAnimationType) const;
+    Seconds LEGACY_NODELETE switchAnimationStartTime(SwitchAnimationType) const;
+    void LEGACY_NODELETE setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
+    bool LEGACY_NODELETE isSwitchAnimating(SwitchAnimationType) const;
     void performSwitchAnimation(SwitchAnimationType);
     void performSwitchVisuallyOnAnimation(SwitchTrigger);
     void setIsSwitchHeld(bool /* isHeld */);
-    void NODELETE stopSwitchAnimation(SwitchAnimationType);
+    void LEGACY_NODELETE stopSwitchAnimation(SwitchAnimationType);
     float switchAnimationProgress(SwitchAnimationType) const;
     void updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint);
     void switchAnimationTimerFired();

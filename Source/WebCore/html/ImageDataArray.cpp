@@ -105,7 +105,7 @@ struct TypedArrayItemConverter;
 
 template <>
 struct TypedArrayItemConverter<JSC::Uint8ClampedArray, JSC::Float16Array> {
-    static constexpr JSC::Float16Adaptor::Type NODELETE convert(JSC::Uint8ClampedAdaptor::Type value)
+    static constexpr JSC::Float16Adaptor::Type LEGACY_NODELETE convert(JSC::Uint8ClampedAdaptor::Type value)
     {
         return double(value) / 255.0;
     }
@@ -113,7 +113,7 @@ struct TypedArrayItemConverter<JSC::Uint8ClampedArray, JSC::Float16Array> {
 
 template <>
 struct TypedArrayItemConverter<JSC::Float16Array, JSC::Uint8ClampedArray> {
-    static constexpr JSC::Uint8ClampedAdaptor::Type NODELETE convert(JSC::Float16Adaptor::Type value)
+    static constexpr JSC::Uint8ClampedAdaptor::Type LEGACY_NODELETE convert(JSC::Float16Adaptor::Type value)
     {
         auto d = double(value);
         if (d <= 0)

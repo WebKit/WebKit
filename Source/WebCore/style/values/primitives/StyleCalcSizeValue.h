@@ -65,12 +65,12 @@ public:
     bool basisHasPercentage() const { return m_basisHasPercentage; }
 
     // True if a percentage appears anywhere, including in a nested function's calculation.
-    bool NODELETE hasPercentage() const { return m_hasPercentage; }
+    bool LEGACY_NODELETE hasPercentage() const { return m_hasPercentage; }
     const Calculation::Tree& calculation() const LIFETIME_BOUND { return m_calculation; }
 
     // The keyword the value behaves as, or CSSValueID::Invalid for a <calc-sum> or `any` basis, which
     // behave as an ordinary length.
-    WEBCORE_EXPORT CSSValueID NODELETE basisKeyword() const;
+    WEBCORE_EXPORT CSSValueID LEGACY_NODELETE basisKeyword() const;
 
     WEBCORE_EXPORT Ref<CalcSizeValue> copy() const;
 

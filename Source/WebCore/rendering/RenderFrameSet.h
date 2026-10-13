@@ -61,14 +61,14 @@ public:
     RenderFrameSet(HTMLFrameSetElement&, Style::ComputedStyle&&);
     virtual ~RenderFrameSet();
 
-    HTMLFrameSetElement& NODELETE frameSetElement() const;
+    HTMLFrameSetElement& LEGACY_NODELETE frameSetElement() const;
 
     FrameEdgeInfo edgeInfo() const;
 
     bool userResize(MouseEvent&);
 
-    bool NODELETE canResizeRow(const IntPoint&) const;
-    bool NODELETE canResizeColumn(const IntPoint&) const;
+    bool LEGACY_NODELETE canResizeRow(const IntPoint&) const;
+    bool LEGACY_NODELETE canResizeColumn(const IntPoint&) const;
 
     void notifyFrameEdgeInfoChanged();
 
@@ -104,13 +104,13 @@ private:
 
     void layOutAxis(GridAxis&, std::span<const HTMLDimensionsListValue>, int availableSpace);
     void computeEdgeInfo();
-    void NODELETE fillFromEdgeInfo(const FrameEdgeInfo&, int r, int c);
+    void LEGACY_NODELETE fillFromEdgeInfo(const FrameEdgeInfo&, int r, int c);
     void positionFrames();
 
-    int NODELETE splitPosition(const GridAxis&, int split) const;
-    int NODELETE hitTestSplit(const GridAxis&, int position) const;
+    int LEGACY_NODELETE splitPosition(const GridAxis&, int split) const;
+    int LEGACY_NODELETE hitTestSplit(const GridAxis&, int position) const;
 
-    void NODELETE startResizing(GridAxis&, int position);
+    void LEGACY_NODELETE startResizing(GridAxis&, int position);
     void continueResizing(GridAxis&, int position);
 
     void paintRowBorder(const PaintInfo&, const IntRect&);

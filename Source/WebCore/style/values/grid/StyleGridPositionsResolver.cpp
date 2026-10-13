@@ -54,8 +54,8 @@ class NamedLineCollectionBase {
 public:
     NamedLineCollectionBase(const RenderGrid&, const CustomIdent& name, GridPositionSide, bool nameIsAreaName);
 
-    bool NODELETE hasNamedLines() const;
-    bool NODELETE hasExplicitNamedLines() const;
+    bool LEGACY_NODELETE hasNamedLines() const;
+    bool LEGACY_NODELETE hasExplicitNamedLines() const;
     bool contains(unsigned line) const;
 protected:
 
@@ -82,20 +82,20 @@ public:
 
     int firstPosition() const;
 
-    unsigned NODELETE lastLine() const;
+    unsigned LEGACY_NODELETE lastLine() const;
 
 private:
-    int NODELETE firstExplicitPosition() const;
+    int LEGACY_NODELETE firstExplicitPosition() const;
 };
 
 } // namespace (anonymous)
 
-static inline bool NODELETE isStartSide(GridPositionSide side)
+static inline bool LEGACY_NODELETE isStartSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::RowStartSide;
 }
 
-static inline GridTrackSizingDirection NODELETE directionFromSide(GridPositionSide side)
+static inline GridTrackSizingDirection LEGACY_NODELETE directionFromSide(GridPositionSide side)
 {
     return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::Columns : GridTrackSizingDirection::Rows;
 }
@@ -110,7 +110,7 @@ static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPos
     return GridPositionsResolver::explicitGridCount(gridContainer, directionFromSide(side));
 }
 
-static inline GridPositionSide NODELETE transposedSide(GridPositionSide side)
+static inline GridPositionSide LEGACY_NODELETE transposedSide(GridPositionSide side)
 {
     switch (side) {
     case GridPositionSide::ColumnStartSide: return GridPositionSide::RowStartSide;
@@ -394,7 +394,7 @@ int NamedLineCollection::firstPosition() const
 }
 
 // https://drafts.csswg.org/css-grid-2/#indefinite-grid-span
-static bool NODELETE isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
+static bool LEGACY_NODELETE isIndefiniteSpan(const GridPosition& initialPosition, const GridPosition& finalPosition)
 {
     if (initialPosition.isAuto())
         return !finalPosition.isSpan();

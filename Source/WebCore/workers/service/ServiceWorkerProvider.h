@@ -37,8 +37,8 @@ class WEBCORE_EXPORT ServiceWorkerProvider {
 public:
     virtual ~ServiceWorkerProvider();
 
-    static ServiceWorkerProvider& NODELETE singleton();
-    static void NODELETE setSharedProvider(ServiceWorkerProvider&);
+    static ServiceWorkerProvider& LEGACY_NODELETE singleton();
+    static void LEGACY_NODELETE setSharedProvider(ServiceWorkerProvider&);
 
     virtual SWClientConnection& serviceWorkerConnection() = 0;
     virtual SWClientConnection* existingServiceWorkerConnection() = 0;

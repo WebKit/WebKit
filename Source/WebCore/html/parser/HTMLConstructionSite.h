@@ -141,10 +141,10 @@ public:
 
     HTMLStackItem createElementFromSavedToken(const HTMLStackItem&);
 
-    bool NODELETE shouldFosterParent() const;
+    bool LEGACY_NODELETE shouldFosterParent() const;
     void fosterParent(Ref<Node>&&);
 
-    std::optional<unsigned> NODELETE indexOfFirstUnopenFormattingElement() const;
+    std::optional<unsigned> LEGACY_NODELETE indexOfFirstUnopenFormattingElement() const;
     void reconstructTheActiveFormattingElements();
 
     void generateImpliedEndTags();
@@ -173,7 +173,7 @@ public:
 
     void setForm(HTMLFormElement*);
     HTMLFormElement* form() const { return m_form.get(); }
-    RefPtr<HTMLFormElement> NODELETE takeForm();
+    RefPtr<HTMLFormElement> LEGACY_NODELETE takeForm();
 
     OptionSet<ParserContentPolicy> parserContentPolicy() { return m_parserContentPolicy; }
 
@@ -192,7 +192,7 @@ public:
         SetForScope<bool> m_redirectAttachToFosterParentChange;
     };
 
-    static bool NODELETE isFormattingTag(TagName);
+    static bool LEGACY_NODELETE isFormattingTag(TagName);
 
 private:
     Document& document() const { return m_document; }

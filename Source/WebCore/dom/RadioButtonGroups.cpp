@@ -37,20 +37,20 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioButtonGroups);
 class RadioButtonGroup {
     WTF_MAKE_TZONE_ALLOCATED(RadioButtonGroup);
 public:
-    bool NODELETE isEmpty() const { return m_members.isEmptyIgnoringNullReferences(); }
-    bool NODELETE isRequired() const { return m_requiredCount; }
-    RefPtr<HTMLInputElement> NODELETE checkedButton() const { return m_checkedButton; }
+    bool LEGACY_NODELETE isEmpty() const { return m_members.isEmptyIgnoringNullReferences(); }
+    bool LEGACY_NODELETE isRequired() const { return m_requiredCount; }
+    RefPtr<HTMLInputElement> LEGACY_NODELETE checkedButton() const { return m_checkedButton; }
     void add(HTMLInputElement&);
     void updateCheckedState(HTMLInputElement&);
     void requiredStateChanged(HTMLInputElement&);
     void remove(HTMLInputElement&);
-    bool NODELETE contains(HTMLInputElement&) const;
+    bool LEGACY_NODELETE contains(HTMLInputElement&) const;
     Vector<Ref<HTMLInputElement>> members() const;
 
 private:
     void setNeedsStyleRecalcForAllButtons();
     void updateValidityForAllButtons();
-    bool NODELETE isValid() const;
+    bool LEGACY_NODELETE isValid() const;
     void setCheckedButton(HTMLInputElement*);
 
     WeakHashSet<HTMLInputElement, WeakPtrImplWithEventTargetData> m_members;
@@ -60,7 +60,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RadioButtonGroup);
 
-inline bool NODELETE RadioButtonGroup::isValid() const
+inline bool LEGACY_NODELETE RadioButtonGroup::isValid() const
 {
     return !isRequired() || m_checkedButton;
 }
@@ -191,7 +191,7 @@ void RadioButtonGroup::updateValidityForAllButtons()
     }
 }
 
-bool NODELETE RadioButtonGroup::contains(HTMLInputElement& button) const
+bool LEGACY_NODELETE RadioButtonGroup::contains(HTMLInputElement& button) const
 {
     return m_members.contains(button);
 }

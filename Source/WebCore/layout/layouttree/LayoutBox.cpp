@@ -233,7 +233,7 @@ bool Box::isInlineTableBox() const
     return m_style.display() == Style::DisplayType::InlineTable;
 }
 
-static bool NODELETE isInsideTable(const Box& box)
+static bool LEGACY_NODELETE isInsideTable(const Box& box)
 {
     auto& parent = box.parent();
     return parent.isTableBox() || parent.isTableWrapperBox() || parent.style().display().isInternalTableBox();

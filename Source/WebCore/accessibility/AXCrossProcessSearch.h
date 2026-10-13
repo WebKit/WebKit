@@ -176,12 +176,12 @@ WEBCORE_EXPORT AccessibilitySearchResults performSearchWithParentCoordination(AX
 // specific. If the test infrastructure is updated to avoid blocking the UI process
 // main thread during accessibility searches, this mock can be removed and tests
 // can rely on real cross-process parent search results instead.
-WEBCORE_EXPORT void NODELETE setShouldMockParentSearchResultsForTesting(bool);
-WEBCORE_EXPORT bool NODELETE shouldMockParentSearchResultsForTesting();
+WEBCORE_EXPORT void LEGACY_NODELETE setShouldMockParentSearchResultsForTesting(bool);
+WEBCORE_EXPORT bool LEGACY_NODELETE shouldMockParentSearchResultsForTesting();
 
 // Same as above but for child frame (remote frame) search. When enabled,
 // dispatchRemoteFrameSearch injects a mock result instead of sending IPC.
-WEBCORE_EXPORT void NODELETE setShouldMockChildFrameSearchResultsForTesting(bool);
-WEBCORE_EXPORT bool NODELETE shouldMockChildFrameSearchResultsForTesting();
+WEBCORE_EXPORT void LEGACY_NODELETE setShouldMockChildFrameSearchResultsForTesting(bool);
+WEBCORE_EXPORT bool LEGACY_NODELETE shouldMockChildFrameSearchResultsForTesting();
 
 } // namespace WebCore

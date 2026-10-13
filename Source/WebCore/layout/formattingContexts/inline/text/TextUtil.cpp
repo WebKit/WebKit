@@ -536,7 +536,7 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
 // `Bidi_Class` of `ch` isn't `R`, `AL`, nor Bidi controls.
 // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=%5B%5B%3Abc%3DR%3A%5D%5B%3Abc%3DAL%3A%5D%5D&g=bc
 // https://util.unicode.org/UnicodeJsps/list-unicodeset.jsp?a=[:Bidi_C:]
-static ALWAYS_INLINE bool NODELETE mayBeBidiRTL(char32_t ch)
+static ALWAYS_INLINE bool LEGACY_NODELETE mayBeBidiRTL(char32_t ch)
 {
     if (ch < 0x0590)
         return false;
@@ -676,7 +676,7 @@ InlineLayoutUnit TextUtil::hyphenWidth(const Style::ComputedStyle& style)
     return std::max(0.f, protect(style.fontCascade())->width(StringView { style.hyphenString() }));
 }
 
-static bool NODELETE isASCIIHangableQuote(char32_t character)
+static bool LEGACY_NODELETE isASCIIHangableQuote(char32_t character)
 {
     return character == quotationMark || character == apostrophe;
 }

@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-static GraphicsContextGL::DataFormat NODELETE getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
+static GraphicsContextGL::DataFormat LEGACY_NODELETE getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
 {
     switch (destinationType) {
     case GraphicsContextGL::BYTE:

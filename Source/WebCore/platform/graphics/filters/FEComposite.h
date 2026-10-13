@@ -47,19 +47,19 @@ public:
     bool operator==(const FEComposite&) const;
 
     CompositeOperationType operation() const { return m_type; }
-    bool NODELETE setOperation(CompositeOperationType);
+    bool LEGACY_NODELETE setOperation(CompositeOperationType);
 
     float k1() const { return m_k1; }
-    bool NODELETE setK1(float);
+    bool LEGACY_NODELETE setK1(float);
 
     float k2() const { return m_k2; }
-    bool NODELETE setK2(float);
+    bool LEGACY_NODELETE setK2(float);
 
     float k3() const { return m_k3; }
-    bool NODELETE setK3(float);
+    bool LEGACY_NODELETE setK3(float);
 
     float k4() const { return m_k4; }
-    bool NODELETE setK4(float);
+    bool LEGACY_NODELETE setK4(float);
 
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4, ColorSpace);

@@ -416,7 +416,7 @@ enum class CryptoAlgorithmIdentifierTag {
 
 const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 23;
 
-static unsigned NODELETE countUsages(CryptoKeyUsageBitmap usages)
+static unsigned LEGACY_NODELETE countUsages(CryptoKeyUsageBitmap usages)
 {
     // Fast bit count algorithm for sparse bit maps.
     unsigned count = 0;
@@ -2078,7 +2078,7 @@ private:
 
     using Base::read;
 
-    std::optional<uint32_t> NODELETE readImageDataIndex()
+    std::optional<uint32_t> LEGACY_NODELETE readImageDataIndex()
     {
         return readConstantPoolIndex(m_imageDataPool);
     }
@@ -2130,7 +2130,7 @@ private:
         return true;
     }
 
-    bool NODELETE read(PredefinedColorSpace& result)
+    bool LEGACY_NODELETE read(PredefinedColorSpace& result)
     {
         uint8_t tag;
         if (!read(tag))
@@ -2156,7 +2156,7 @@ private:
         }
     }
 
-    bool NODELETE read(ColorSpaceTag& tag)
+    bool LEGACY_NODELETE read(ColorSpaceTag& tag)
     {
         if (m_data.empty())
             return false;
@@ -2241,7 +2241,7 @@ private:
         return false;
     }
 
-    bool NODELETE read(CryptoKeyOKP::NamedCurve& result)
+    bool LEGACY_NODELETE read(CryptoKeyOKP::NamedCurve& result)
     {
         uint8_t nameTag;
         if (!read(nameTag))
@@ -2261,7 +2261,7 @@ private:
         return true;
     }
 
-    bool NODELETE read(CryptoAlgorithmIdentifier& result)
+    bool LEGACY_NODELETE read(CryptoAlgorithmIdentifier& result)
     {
         uint8_t algorithmTag;
         if (!read(algorithmTag))
@@ -2336,7 +2336,7 @@ private:
         return true;
     }
 
-    bool NODELETE read(CryptoKeyClassSubtag& result)
+    bool LEGACY_NODELETE read(CryptoKeyClassSubtag& result)
     {
         uint8_t tag;
         if (!read(tag))
@@ -2347,7 +2347,7 @@ private:
         return true;
     }
 
-    bool NODELETE read(CryptoKeyUsageTag& result)
+    bool LEGACY_NODELETE read(CryptoKeyUsageTag& result)
     {
         uint8_t tag;
         if (!read(tag))
@@ -2358,7 +2358,7 @@ private:
         return true;
     }
 
-    bool NODELETE read(CryptoKeyAsymmetricTypeSubtag& result)
+    bool LEGACY_NODELETE read(CryptoKeyAsymmetricTypeSubtag& result)
     {
         uint8_t tag;
         if (!read(tag))
@@ -2755,7 +2755,7 @@ private:
         return toJSNewlyCreated(m_lexicalGlobalObject, downcast<JSDOMGlobalObject>(m_globalObject), T::create(x, y, width, height));
     }
 
-    std::optional<DOMPointInit> NODELETE readDOMPointInit()
+    std::optional<DOMPointInit> LEGACY_NODELETE readDOMPointInit()
     {
         DOMPointInit point;
         if (!read(point.x))
@@ -3573,7 +3573,7 @@ private:
     Vector<RefPtr<MediaStreamTrackHandle>> m_mediaStreamTrackHandles;
 #endif
 
-    String NODELETE blobFilePathForBlobURL(const String& blobURL)
+    String LEGACY_NODELETE blobFilePathForBlobURL(const String& blobURL)
     {
         size_t i = 0;
         for (; i < m_blobURLs.size(); ++i) {

@@ -100,7 +100,7 @@ public:
     void getNotifications(const URL&, const String&, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&&);
 #endif
 
-    ServiceWorkerJob* NODELETE job(ServiceWorkerJobIdentifier);
+    ServiceWorkerJob* LEGACY_NODELETE job(ServiceWorkerJobIdentifier);
 
     void startMessages();
 

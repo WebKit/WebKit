@@ -105,7 +105,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<SVGPaintOrder> { SVGPaintOrder NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<SVGPaintOrder> { SVGPaintOrder LEGACY_NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

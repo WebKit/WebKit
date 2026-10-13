@@ -39,7 +39,7 @@ public:
     RenderSVGImage(SVGImageElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGImage();
 
-    SVGImageElement& NODELETE imageElement() const;
+    SVGImageElement& LEGACY_NODELETE imageElement() const;
 
     RenderImageResource& imageResource() { return m_imageResource; }
     const RenderImageResource& imageResource() const { return m_imageResource; }

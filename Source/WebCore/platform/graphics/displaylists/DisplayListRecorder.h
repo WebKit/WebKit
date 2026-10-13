@@ -85,11 +85,11 @@ protected:
         // GraphicsContextState properties to sync after restore().
         GraphicsContextState::ChangeFlags committedChanges;
 
-        void NODELETE translate(float x, float y);
+        void LEGACY_NODELETE translate(float x, float y);
         void rotate(float angleInRadians);
         void scale(const FloatSize&);
-        void NODELETE concatCTM(const AffineTransform&);
-        void NODELETE setCTM(const AffineTransform&);
+        void LEGACY_NODELETE concatCTM(const AffineTransform&);
+        void LEGACY_NODELETE setCTM(const AffineTransform&);
     };
 
     const Vector<ContextState, 4>& stateStack() const LIFETIME_BOUND { return m_stateStack; }
@@ -100,11 +100,11 @@ protected:
 protected:
     WEBCORE_EXPORT void updateStateForSave(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestore(GraphicsContextState::Purpose);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForTranslate(float x, float y);
+    [[nodiscard]] WEBCORE_EXPORT bool LEGACY_NODELETE updateStateForTranslate(float x, float y);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForConcatCTM(const AffineTransform&);
-    WEBCORE_EXPORT void NODELETE updateStateForSetCTM(const AffineTransform&);
+    [[nodiscard]] WEBCORE_EXPORT bool LEGACY_NODELETE updateStateForConcatCTM(const AffineTransform&);
+    WEBCORE_EXPORT void LEGACY_NODELETE updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForEndTransparencyLayer();
@@ -147,7 +147,7 @@ private:
 
     void pushStateForTransparencyLayer();
 
-    const AffineTransform& NODELETE ctm() const;
+    const AffineTransform& LEGACY_NODELETE ctm() const;
 
     Vector<ContextState, 4> m_stateStack;
     // The state the committed to the recording.

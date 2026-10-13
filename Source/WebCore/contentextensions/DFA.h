@@ -40,8 +40,8 @@ struct WEBCORE_EXPORT DFA {
     static DFA empty();
 
     void minimize();
-    unsigned NODELETE graphSize() const;
-    size_t NODELETE memoryUsed() const;
+    unsigned LEGACY_NODELETE graphSize() const;
+    size_t LEGACY_NODELETE memoryUsed() const;
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;

@@ -52,7 +52,7 @@ public:
 private:
     FileSystemDirectoryReader(ScriptExecutionContext&, FileSystemDirectoryEntry&);
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     const Ref<FileSystemDirectoryEntry> m_directory;
     std::optional<Exception> m_error;

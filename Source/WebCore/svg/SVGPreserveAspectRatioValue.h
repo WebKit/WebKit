@@ -68,7 +68,7 @@ public:
     ExceptionOr<void> setMeetOrSlice(unsigned short);
     unsigned short meetOrSlice() const { return m_meetOrSlice; }
 
-    void NODELETE transformRect(FloatRect& destRect, FloatRect& srcRect) const;
+    void LEGACY_NODELETE transformRect(FloatRect& destRect, FloatRect& srcRect) const;
 
     AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
 

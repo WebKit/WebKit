@@ -61,7 +61,7 @@ void AudioSession::setShouldManageAudioSessionCategory(bool flag)
     s_shouldManageAudioSessionCategory.store(flag);
 }
 
-static RefPtr<AudioSession>& NODELETE sharedAudioSession()
+static RefPtr<AudioSession>& LEGACY_NODELETE sharedAudioSession()
 {
     static NeverDestroyed<RefPtr<AudioSession>> session;
     return session.get();
@@ -73,7 +73,7 @@ static Ref<AudioSession>& dummyAudioSession()
     return dummySession.get();
 }
 
-static WeakHashSet<AudioSession::ChangedObserver>& NODELETE audioSessionChangedObservers()
+static WeakHashSet<AudioSession::ChangedObserver>& LEGACY_NODELETE audioSessionChangedObservers()
 {
     static NeverDestroyed<WeakHashSet<AudioSession::ChangedObserver>> observers;
     return observers;
@@ -168,7 +168,7 @@ void AudioSession::setActive(bool active)
     m_active = active;
 }
 
-static WeakHashSet<AudioSessionInterruptionObserver>& NODELETE audioSessionInterruptionObserversSingleton()
+static WeakHashSet<AudioSessionInterruptionObserver>& LEGACY_NODELETE audioSessionInterruptionObserversSingleton()
 {
     static NeverDestroyed<WeakHashSet<AudioSessionInterruptionObserver>> audioSessionInterruptionObservers;
     return audioSessionInterruptionObservers.get();

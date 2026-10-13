@@ -3433,7 +3433,7 @@ sub GenerateHeader
     }
     
     if ($interface->extendedAttributes->{CustomPreventExtensions}) {
-        push(@headerContent, "    static bool NODELETE preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static bool LEGACY_NODELETE preventExtensions(JSC::JSObject*, JSC::JSGlobalObject*);\n");
     }
 
     if (InstanceNeedsEstimatedSize($interface)) {

@@ -207,7 +207,7 @@ public:
     
     // Sync objects
     RefPtr<WebGLSync> fenceSync(GCGLenum condition, GCGLbitfield flags);
-    GCGLboolean NODELETE isSync(WebGLSync*);
+    GCGLboolean LEGACY_NODELETE isSync(WebGLSync*);
     void deleteSync(WebGLSync*);
     GCGLenum clientWaitSync(WebGLSync&, GCGLbitfield flags, GCGLuint64 timeout);
     void waitSync(WebGLSync&, GCGLbitfield flags, GCGLint64 timeout);
@@ -251,13 +251,13 @@ public:
     void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset);
     void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, uint64_t dstOffset);
 
-    GCGLuint NODELETE maxTransformFeedbackSeparateAttribs() const;
+    GCGLuint LEGACY_NODELETE maxTransformFeedbackSeparateAttribs() const;
 
     bool checkAndTranslateAttachments(ASCIILiteral functionName, GCGLenum, Vector<GCGLenum>&);
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) override;
 
-    bool NODELETE isTransformFeedbackActiveAndNotPaused();
+    bool LEGACY_NODELETE isTransformFeedbackActiveAndNotPaused();
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
@@ -293,7 +293,7 @@ private:
 
     bool setIndexedBufferBinding(ASCIILiteral functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
 
-    IntRect NODELETE getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
+    IntRect LEGACY_NODELETE getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
 
     RefPtr<WebGLTexture> validateTexImageBinding(TexImageFunctionID, GCGLenum) final;
 
@@ -318,7 +318,7 @@ private:
         ClearBufferfv,
         ClearBufferfi
     };
-    void NODELETE updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
+    void LEGACY_NODELETE updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
 
     WebGLBindingPoint<WebGLFramebuffer> m_readFramebufferBinding;
     WebGLBindingPoint<WebGLTransformFeedback> m_boundTransformFeedback;

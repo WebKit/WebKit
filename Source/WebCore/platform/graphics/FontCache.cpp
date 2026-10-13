@@ -77,11 +77,11 @@ inline void add(Hasher& hasher, const FontPlatformDataCacheKey& key)
 
 struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPlatformDataCacheKey> {
     static constexpr bool emptyValueIsZero = false;
-    static void NODELETE constructDeletedValue(FontPlatformDataCacheKey& slot)
+    static void LEGACY_NODELETE constructDeletedValue(FontPlatformDataCacheKey& slot)
     {
         new (NotNull, &slot.descriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue);
     }
-    static bool NODELETE isDeletedValue(const FontPlatformDataCacheKey& key)
+    static bool LEGACY_NODELETE isDeletedValue(const FontPlatformDataCacheKey& key)
     {
         return key.descriptionKey.isHashTableDeletedValue();
     }
@@ -99,7 +99,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     {
         new (NotNull, &slot) FontPlatformData(WTF::HashTableDeletedValue);
     }
-    static bool NODELETE isDeletedValue(const FontPlatformData& value)
+    static bool LEGACY_NODELETE isDeletedValue(const FontPlatformData& value)
     {
         return value.isHashTableDeletedValue();
     }

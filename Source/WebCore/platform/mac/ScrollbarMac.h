@@ -39,7 +39,7 @@ public:
     ScrollbarMac(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth);
     ~ScrollbarMac() { }
 
-    NSScrollerImp* NODELETE scrollerImp() const;
+    NSScrollerImp* LEGACY_NODELETE scrollerImp() const;
     void createScrollerImp(NSScrollerImp* oldScrollerImp = nullptr);
     bool isMacScrollbar() const override { return true; }
 

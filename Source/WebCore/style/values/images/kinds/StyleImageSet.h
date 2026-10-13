@@ -49,7 +49,7 @@ private:
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
 
     ImageWithScale bestImageForScaleFactor();
-    void NODELETE updateDeviceScaleFactor(const Document&);
+    void LEGACY_NODELETE updateDeviceScaleFactor(const Document&);
 
     bool m_accessedBestFitImage { false };
     ImageWithScale m_bestFitImage;

@@ -112,7 +112,7 @@ public:
     
     String dump(unsigned) const;
 
-    const RenderLayer& NODELETE scopeLayer() const { return m_scopeLayer.get(); }
+    const RenderLayer& LEGACY_NODELETE scopeLayer() const { return m_scopeLayer.get(); }
 
 private:
     struct ClippingScope {
@@ -127,7 +127,7 @@ private:
         {
         }
 
-        ClippingScope* NODELETE childWithLayer(const RenderLayer& layer) const
+        ClippingScope* LEGACY_NODELETE childWithLayer(const RenderLayer& layer) const
         {
             for (auto& child : children) {
                 if (&child.layer.get() == &layer)
@@ -160,7 +160,7 @@ private:
         RectList rectList;
     };
 
-    static ClippingScope* NODELETE clippingScopeContainingLayerChildRecursive(const ClippingScope& currNode, const RenderLayer& layer)
+    static ClippingScope* LEGACY_NODELETE clippingScopeContainingLayerChildRecursive(const ClippingScope& currNode, const RenderLayer& layer)
     {
         for (auto& child : currNode.children) {
             if (&layer == &child.layer.get())
@@ -173,7 +173,7 @@ private:
         return nullptr;
     }
 
-    ClippingScope* NODELETE scopeContainingLayer(const RenderLayer& layer) const
+    ClippingScope* LEGACY_NODELETE scopeContainingLayer(const RenderLayer& layer) const
     {
         return clippingScopeContainingLayerChildRecursive(m_rootScope, layer);
     }
@@ -185,14 +185,14 @@ private:
 
     void recursiveOutputToStream(TextStream&, const ClippingScope&, unsigned depth) const;
 
-    const ClippingScope& NODELETE rootScope() const { return m_rootScope; }
-    ClippingScope& NODELETE rootScope() { return m_rootScope; }
+    const ClippingScope& LEGACY_NODELETE rootScope() const { return m_rootScope; }
+    ClippingScope& LEGACY_NODELETE rootScope() { return m_rootScope; }
 
     ClippingScope m_rootScope;
     const CheckedRef<const RenderLayer> m_scopeLayer;
 };
 
-bool NODELETE OverlapMapContainer::isEmpty() const
+bool LEGACY_NODELETE OverlapMapContainer::isEmpty() const
 {
     return m_rootScope.rectList.rects.isEmpty() && m_rootScope.children.isEmpty();
 }
@@ -273,7 +273,7 @@ bool OverlapMapContainer::isCoveredByRecentRects(const LayoutRect& bounds, const
     return clippingScope->rectList.isAlreadyCovered(bounds);
 }
 
-OverlapMapContainer::ClippingScope* NODELETE OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
+OverlapMapContainer::ClippingScope* LEGACY_NODELETE OverlapMapContainer::findClippingScopeForLayers(const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const
 {
     ASSERT(enclosingClippingLayers.size());
     ASSERT(enclosingClippingLayers[0].layer->isRenderViewLayer());

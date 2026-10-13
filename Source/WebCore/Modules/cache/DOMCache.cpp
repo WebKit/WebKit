@@ -230,7 +230,7 @@ public:
         record.responseBody = WTF::move(data);
     }
 
-    bool NODELETE isDone() const { return !m_callback; }
+    bool LEGACY_NODELETE isDone() const { return !m_callback; }
 
     void error(Exception&& exception)
     {

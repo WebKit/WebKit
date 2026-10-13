@@ -86,7 +86,7 @@ template<> struct CSSValueConversion<VerticalAlign> { auto operator()(BuilderSta
 // MARK: - Blending
 
 template<> struct Blending<VerticalAlign> {
-    bool NODELETE canBlend(const VerticalAlign&, const VerticalAlign&);
+    bool LEGACY_NODELETE canBlend(const VerticalAlign&, const VerticalAlign&);
     auto requiresInterpolationForAccumulativeIteration(const VerticalAlign&, const VerticalAlign&) -> bool;
     auto blend(const VerticalAlign&, const VerticalAlign&, const BlendingContext&) -> VerticalAlign;
 };

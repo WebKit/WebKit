@@ -84,7 +84,7 @@ public:
 
     // Must resolve Auto before calling. Normal treated as Start.
     // Returns position adjustment from container's start edge.
-    static LayoutUnit NODELETE adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode);
+    static LayoutUnit LEGACY_NODELETE adjustmentFromStartEdge(LayoutUnit extraSpace, ItemPosition alignmentPosition, LogicalBoxAxis containerAxis, WritingMode containerWritingMode, WritingMode selfWritingMode);
 
     friend bool operator==(const StyleSelfAlignmentData&, const StyleSelfAlignmentData&) = default;
 

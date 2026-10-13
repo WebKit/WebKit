@@ -187,7 +187,7 @@ RefPtr<WebCore::CachedResource> WEBCORE_EXPORT cachedResource(const WebCore::Loc
 Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(WebCore::CachedResource::Type);
 Inspector::ResourceType WEBCORE_EXPORT inspectorResourceType(const WebCore::CachedResource&);
 
-Inspector::Protocol::Page::ResourceType NODELETE resourceTypeToProtocol(Inspector::ResourceType);
+Inspector::Protocol::Page::ResourceType LEGACY_NODELETE resourceTypeToProtocol(Inspector::ResourceType);
 Inspector::Protocol::Page::ResourceType cachedResourceTypeToProtocol(const WebCore::CachedResource&);
 WebCore::LocalFrame* findFrameWithSecurityOrigin(WebCore::Page&, const String& originRawString);
 WebCore::DocumentLoader* assertDocumentLoader(Inspector::Protocol::ErrorString&, WebCore::LocalFrame*);

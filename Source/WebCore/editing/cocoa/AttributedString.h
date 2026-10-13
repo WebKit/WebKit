@@ -248,10 +248,10 @@ struct WEBCORE_EXPORT AttributedString {
 
     static AttributedString fromNSAttributedStringAndDocumentAttributes(RetainPtr<NSAttributedString>&&, RetainPtr<NSDictionary>&& documentAttributes);
     static AttributedString fromNSAttributedString(RetainPtr<NSAttributedString>&&);
-    static bool NODELETE rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
+    static bool LEGACY_NODELETE rangesAreSafe(const String&, const Vector<std::pair<Range, HashMap<String, AttributeValue>>>&);
     RetainPtr<NSDictionary> documentAttributesAsNSDictionary() const;
     RetainPtr<NSAttributedString> nsAttributedString() const;
-    bool NODELETE isNull() const;
+    bool LEGACY_NODELETE isNull() const;
     void truncate(uint64_t length);
 
     WEBCORE_EXPORT static unsigned encodeFontCacheMissesForTesting();

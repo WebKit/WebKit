@@ -57,7 +57,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSHTMLAllCollection, (JSGlobalObject* lexicalGlobal
     RELEASE_AND_RETURN(scope, JSValue::encode(toJS<IDLNullable<IDLUnion<IDLInterface<HTMLCollection>, IDLInterface<Element>>>>(*lexicalGlobalObject, *castedThis->realm(), impl.namedOrIndexedItemOrItems(WTF::move(nameOrIndex)))));
 }
 
-CallData NODELETE JSHTMLAllCollection::getCallData(JSCell*)
+CallData LEGACY_NODELETE JSHTMLAllCollection::getCallData(JSCell*)
 {
     CallData callData;
     callData.type = CallData::Type::Native;

@@ -84,7 +84,7 @@ static inline void setAttributes(Element& element, AtomHTMLToken& token, OptionS
     setAttributes(element, token.attributes(), token.hasDuplicateAttribute() ? HasDuplicateAttribute::Yes : HasDuplicateAttribute::No, parserContentPolicy);
 }
 
-static bool NODELETE hasImpliedEndTag(const HTMLStackItem& item)
+static bool LEGACY_NODELETE hasImpliedEndTag(const HTMLStackItem& item)
 {
     switch (item.elementName()) {
     case HTML::dd:
@@ -103,7 +103,7 @@ static bool NODELETE hasImpliedEndTag(const HTMLStackItem& item)
     }
 }
 
-static bool NODELETE shouldUseLengthLimit(const ContainerNode& node)
+static bool LEGACY_NODELETE shouldUseLengthLimit(const ContainerNode& node)
 {
     auto* element = dynamicDowncast<Element>(node);
     if (!element)
@@ -119,7 +119,7 @@ static bool NODELETE shouldUseLengthLimit(const ContainerNode& node)
     }
 }
 
-static inline bool NODELETE causesFosterParenting(const HTMLStackItem& item)
+static inline bool LEGACY_NODELETE causesFosterParenting(const HTMLStackItem& item)
 {
     switch (item.elementName()) {
     case HTML::table:

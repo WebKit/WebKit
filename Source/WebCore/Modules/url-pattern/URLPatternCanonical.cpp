@@ -37,7 +37,7 @@ namespace WebCore {
 
 static constexpr auto dummyURLCharacters { "https://w/"_s };
 
-static bool NODELETE isValidIPv6HostCodePoint(auto codepoint)
+static bool LEGACY_NODELETE isValidIPv6HostCodePoint(auto codepoint)
 {
     static constexpr std::array validSpecialCodepoints { '[', ']', ':' };
     return isASCIIHexDigit(codepoint) || std::ranges::find(validSpecialCodepoints, codepoint) != validSpecialCodepoints.end();

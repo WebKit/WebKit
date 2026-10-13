@@ -375,7 +375,7 @@ void PushDatabase::dispatchOnWorkQueue(Function<void()>&& function)
     m_queue->dispatch(WTF::move(function));
 }
 
-static std::span<const uint8_t> NODELETE uuidToSpan(const std::optional<WTF::UUID>& uuid)
+static std::span<const uint8_t> LEGACY_NODELETE uuidToSpan(const std::optional<WTF::UUID>& uuid)
 {
     if (!uuid) {
         // We store a null UUID as a zero-length blob rather than a SQL NULL. This is because the

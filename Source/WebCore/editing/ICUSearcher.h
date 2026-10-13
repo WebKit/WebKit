@@ -47,8 +47,8 @@ public:
 private:
     UStringSearch* searcher();
     void reset();
-    void NODELETE lock();
-    void NODELETE unlock();
+    void LEGACY_NODELETE lock();
+    void LEGACY_NODELETE unlock();
 };
 
 bool isBadMatch(std::span<const char16_t> match, std::span<const char16_t> normalizedTarget, Vector<char16_t>& scratchBuffer);

@@ -79,10 +79,10 @@ private:
     void openAndScheduleManager();
     void closeAndUnscheduleManager();
 
-    void NODELETE initialGamepadsConnectedTimerFired();
+    void LEGACY_NODELETE initialGamepadsConnectedTimerFired();
     void inputNotificationTimerFired();
 
-    unsigned NODELETE indexForNewlyConnectedDevice();
+    unsigned LEGACY_NODELETE indexForNewlyConnectedDevice();
 
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
     HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;

@@ -40,7 +40,7 @@ class RenderBox;
 // flex/grid to query a box's baseline outside any alignment context. They keep no per-context state, so
 // they live apart from the BaselineAlignmentState grouping machinery.
 struct BaselineAlignment {
-    static FontBaseline NODELETE dominantBaseline(WritingMode);
+    static FontBaseline LEGACY_NODELETE dominantBaseline(WritingMode);
     static WritingMode usedWritingModeForBaselineAlignment(LogicalBoxAxis alignmentContextAxis, WritingMode alignmentContainerWritingMode, WritingMode alignmentSubjectWritingMode);
     static LayoutUnit synthesizedBaseline(const RenderBox&, FontBaseline baselineType, WritingMode writingModeForSynthesis, BoxAxis lineDirection, BaselineSynthesisEdge);
 };
@@ -68,16 +68,16 @@ public:
 
     // Determines whether a baseline-sharing group is compatible with an alignment subject,
     // based on its 'block-flow' and 'baseline-preference'
-    bool NODELETE isCompatible(FlowDirection, ItemPosition) const;
+    bool LEGACY_NODELETE isCompatible(FlowDirection, ItemPosition) const;
 
 private:
     // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
     // alignment subject's writing-mode.
-    bool NODELETE isOppositeBlockFlow(FlowDirection) const;
+    bool LEGACY_NODELETE isOppositeBlockFlow(FlowDirection) const;
 
     // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
     // to particular alignment subject's writing-mode.
-    bool NODELETE isOrthogonalBlockFlow(FlowDirection) const;
+    bool LEGACY_NODELETE isOrthogonalBlockFlow(FlowDirection) const;
 
     FlowDirection m_blockFlow;
     ItemPosition m_preference;

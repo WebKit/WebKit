@@ -49,7 +49,7 @@ public:
 
     WEBCORE_EXPORT static CaptionDisplayMode platformCaptionDisplayMode();
     WEBCORE_EXPORT static void platformSetCaptionDisplayMode(CaptionDisplayMode);
-    WEBCORE_EXPORT static void NODELETE setCachedCaptionDisplayMode(CaptionDisplayMode);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setCachedCaptionDisplayMode(CaptionDisplayMode);
 
     WEBCORE_EXPORT static Vector<String> platformProfileIDs();
     WEBCORE_EXPORT static String platformActiveProfileID();

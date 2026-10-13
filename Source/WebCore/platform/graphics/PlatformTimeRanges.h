@@ -54,15 +54,15 @@ public:
     PlatformTimeRanges copyWithEpsilon(const MediaTime&) const;
 
     static const PlatformTimeRanges& emptyRanges();
-    static MediaTime NODELETE timeFudgeFactor();
+    static MediaTime LEGACY_NODELETE timeFudgeFactor();
 
-    MediaTime NODELETE start(unsigned index) const;
+    MediaTime LEGACY_NODELETE start(unsigned index) const;
     MediaTime start(unsigned index, bool& valid) const;
-    MediaTime NODELETE end(unsigned index) const;
+    MediaTime LEGACY_NODELETE end(unsigned index) const;
     MediaTime end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
-    MediaTime NODELETE maximumBufferedTime() const;
-    MediaTime NODELETE minimumBufferedTime() const;
+    MediaTime LEGACY_NODELETE maximumBufferedTime() const;
+    MediaTime LEGACY_NODELETE minimumBufferedTime() const;
 
     void invert();
     void intersectWith(const PlatformTimeRanges&);

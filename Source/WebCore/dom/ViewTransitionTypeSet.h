@@ -49,7 +49,7 @@ public:
     void addToSetLike(const AtomString&);
     bool removeFromSetLike(const AtomString&);
 
-    bool NODELETE hasType(const AtomString&) const;
+    bool LEGACY_NODELETE hasType(const AtomString&) const;
 
 private:
     ViewTransitionTypeSet(Document&, Vector<AtomString>&&);

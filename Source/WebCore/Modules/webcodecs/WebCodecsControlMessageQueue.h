@@ -53,7 +53,7 @@ public:
     // ActiveDOMObject.
     void ref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
     void deref() const override { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
 protected:
     WebCodecsControlMessageQueue(ScriptExecutionContext&);
@@ -64,14 +64,14 @@ protected:
     void queueControlMessageAndProcess(WebCodecsControlMessage&&);
     void queueCodecControlMessageAndProcess(WebCodecsControlMessage&&);
     void processControlMessageQueue();
-    void NODELETE blockControlMessageQueue();
+    void LEGACY_NODELETE blockControlMessageQueue();
     void unblockControlMessageQueue();
 
     // Equivalent to spec's "Increment [[encodeQueueSize]]." or "Increment [[decodeQueueSize]]"
-    void NODELETE incrementCodecQueueSize();
+    void LEGACY_NODELETE incrementCodecQueueSize();
     // Equivalent to spec's "Decrement [[encodeQueueSize]] or "Decrement [[decodeQueueSize]]"
-    void NODELETE decrementCodecQueueSize();
-    void NODELETE resetCodecQueueSize();
+    void LEGACY_NODELETE decrementCodecQueueSize();
+    void LEGACY_NODELETE resetCodecQueueSize();
     void clearControlMessageQueue();
 
     virtual size_t maximumCodecOperationsEnqueued() const { return 1; }

@@ -36,7 +36,7 @@ namespace Style {
 class BuilderState;
 class ComputedStyle;
 
-CSS::SpringEasingFunction NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const Style::ComputedStyle&);
+CSS::SpringEasingFunction LEGACY_NODELETE toCSSSpringEasingFunction(const SpringTimingFunction&, const Style::ComputedStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::SpringEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::SpringEasingFunction&);

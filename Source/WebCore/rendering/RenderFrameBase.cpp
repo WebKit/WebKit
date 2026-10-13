@@ -65,7 +65,7 @@ void RenderFrameBase::styleDidChange(Style::Difference diff, const Style::Comput
     }
 }
 
-inline bool NODELETE shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixedWidth, bool hasFixedHeight)
+inline bool LEGACY_NODELETE shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixedWidth, bool hasFixedHeight)
 {
     // If the size computed to zero never expand.
     if (!width || !height)

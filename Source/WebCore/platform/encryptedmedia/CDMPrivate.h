@@ -95,7 +95,7 @@ public:
 
 protected:
     WEBCORE_EXPORT CDMPrivate();
-    static bool NODELETE isPersistentType(CDMSessionType);
+    static bool LEGACY_NODELETE isPersistentType(CDMSessionType);
 
     enum class ConfigurationStatus {
         Supported,

@@ -875,7 +875,7 @@ void CompositeEditCommand::insertNodeAtTabSpanPosition(Ref<Node>&& node, const P
     insertNodeAt(WTF::move(node), positionOutsideTabSpan(pos));
 }
 
-static EditAction NODELETE deleteSelectionEditingActionForEditingAction(EditAction editingAction)
+static EditAction LEGACY_NODELETE deleteSelectionEditingActionForEditingAction(EditAction editingAction)
 {
     switch (editingAction) {
     case EditAction::Cut:
@@ -907,7 +907,7 @@ void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedNam
     applyCommandToComposite(SetNodeAttributeCommand::create(element, attribute, value));
 }
 
-static inline bool NODELETE containsOnlyDeprecatedEditingWhitespace(const String& text)
+static inline bool LEGACY_NODELETE containsOnlyDeprecatedEditingWhitespace(const String& text)
 {
     for (unsigned i = 0; i < text.length(); ++i) {
         if (!deprecatedIsEditingWhitespace(text[i]))
@@ -960,7 +960,7 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     rebalanceWhitespaceOnTextSubstring(*textNode, position.offsetInContainerNode(), position.offsetInContainerNode());
 }
 
-static bool NODELETE isWhitespaceForRebalance(Text& textNode, char16_t character)
+static bool LEGACY_NODELETE isWhitespaceForRebalance(Text& textNode, char16_t character)
 {
     return deprecatedIsEditingWhitespace(character) && (character != '\n' || !textNode.renderer() || !textNode.renderer()->style().preserveNewline());
 }

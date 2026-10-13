@@ -148,7 +148,7 @@ public:
     explicit ScrollingEffectsController(ScrollingEffectsControllerClient&);
     virtual ~ScrollingEffectsController();
 
-    bool NODELETE usesScrollSnap() const;
+    bool LEGACY_NODELETE usesScrollSnap() const;
     void stopAllTimers();
     void scrollPositionChanged();
 
@@ -178,12 +178,12 @@ public:
     void contentsSizeChanged();
 
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
-    const LayoutScrollSnapOffsetsInfo* NODELETE snapOffsetsInfo() const;
+    const LayoutScrollSnapOffsetsInfo* LEGACY_NODELETE snapOffsetsInfo() const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned>);
     void updateActiveScrollSnapIndexForClientOffset();
     void resnapAfterLayout();
 
-    std::optional<unsigned> NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    std::optional<unsigned> LEGACY_NODELETE activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest) const;
 
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
@@ -194,11 +194,11 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 
     bool isScrollSnapInProgress() const;
-    bool NODELETE isUserScrollInProgress() const;
+    bool LEGACY_NODELETE isUserScrollInProgress() const;
 
 #if PLATFORM(MAC)
-    static FloatSize NODELETE wheelDeltaBiasingTowardsVertical(const FloatSize&);
-    static bool NODELETE isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
+    static FloatSize LEGACY_NODELETE wheelDeltaBiasingTowardsVertical(const FloatSize&);
+    static bool LEGACY_NODELETE isScrollDeltaOpposingStretch(IntSize stretch, ScrollEventAxis, float delta);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
@@ -206,19 +206,19 @@ public:
     void stopRubberBanding();
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
-    bool NODELETE isRubberBandInProgress() const;
+    bool LEGACY_NODELETE isRubberBandInProgress() const;
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
 
     std::optional<RubberbandingState> captureRubberbandingState() const;
     bool restoreRubberbandingState(const RubberbandingState&);
-    bool NODELETE shouldAttemptRubberbandingRestoration(const RubberbandingState&);
+    bool LEGACY_NODELETE shouldAttemptRubberbandingRestoration(const RubberbandingState&);
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    FloatSize NODELETE computeDampedStretchDelta(FloatSize delta, bool horizontalDeltaOpposesStretch, bool verticalDeltaOpposesStretch);
-    float NODELETE deltaAdjustedForRefreshController(float generalDampedHeight, float verticalDelta, float verticalStretch, bool verticalDeltaOpposesStretch);
+    FloatSize LEGACY_NODELETE computeDampedStretchDelta(FloatSize delta, bool horizontalDeltaOpposesStretch, bool verticalDeltaOpposesStretch);
+    float LEGACY_NODELETE deltaAdjustedForRefreshController(float generalDampedHeight, float verticalDelta, float verticalStretch, bool verticalDeltaOpposesStretch);
 
     float rubberbandHyperbolicCoefficientForTesting() const { return m_rubberbandHyperbolicCoefficient; }
 #else
-    FloatSize NODELETE deltaAdjustedForRefreshController(const FloatSize& adjustedDelta, bool);
+    FloatSize LEGACY_NODELETE deltaAdjustedForRefreshController(const FloatSize& adjustedDelta, bool);
 #endif
 #endif
 
@@ -233,7 +233,7 @@ private:
     void stopScrollSnapAnimation();
 
 #if PLATFORM(MAC)
-    bool NODELETE shouldOverrideMomentumScrolling() const;
+    bool LEGACY_NODELETE shouldOverrideMomentumScrolling() const;
     void discreteSnapTransitionTimerFired();
     void scheduleDiscreteScrollSnap(const FloatSize& delta);
     void scrollendTimerFired();
@@ -256,7 +256,7 @@ private:
     bool shouldRubberBandOnSide(BoxSide, FloatSize) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
-    void NODELETE updateRubberBandingEdges(IntSize clientStretch);
+    void LEGACY_NODELETE updateRubberBandingEdges(IntSize clientStretch);
 #endif
 
     void startOrStopAnimationCallbacks();

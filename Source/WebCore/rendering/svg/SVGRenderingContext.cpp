@@ -53,7 +53,7 @@
 
 namespace WebCore {
 
-static inline bool NODELETE isRenderingMaskImage(const RenderObject& object)
+static inline bool LEGACY_NODELETE isRenderingMaskImage(const RenderObject& object)
 {
     return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 }
@@ -202,7 +202,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     m_renderingFlags |= RenderingPrepared;
 }
 
-static AffineTransform& NODELETE currentContentTransformation()
+static AffineTransform& LEGACY_NODELETE currentContentTransformation()
 {
     static NeverDestroyed<AffineTransform> s_currentContentTransformation;
     return s_currentContentTransformation;

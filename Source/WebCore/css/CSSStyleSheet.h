@@ -75,9 +75,9 @@ public:
     virtual ~CSSStyleSheet();
 
     CSSStyleSheet* parentStyleSheet() const final;
-    Node* NODELETE ownerNode() const final;
+    Node* LEGACY_NODELETE ownerNode() const final;
     MediaList* media() const final;
-    String NODELETE href() const final;
+    String LEGACY_NODELETE href() const final;
     String title() const final { return !m_title.isEmpty() ? m_title : String(); }
     bool disabled() const final { return m_isDisabled; }
     void setDisabled(bool) final;
@@ -97,15 +97,15 @@ public:
 
     bool wasMutated() const { return m_wasMutated; }
     bool wasConstructedByJS() const { return m_wasConstructedByJS; }
-    Document* NODELETE constructorDocument() const;
+    Document* LEGACY_NODELETE constructorDocument() const;
 
     // For CSSRuleList.
-    unsigned NODELETE length() const;
+    unsigned LEGACY_NODELETE length() const;
     CSSRule* item(unsigned index);
 
     void clearOwnerNode() final;
-    WEBCORE_EXPORT CSSImportRule* NODELETE ownerRule() const final;
-    URL NODELETE baseURL() const final;
+    WEBCORE_EXPORT CSSImportRule* LEGACY_NODELETE ownerRule() const final;
+    URL LEGACY_NODELETE baseURL() const final;
     bool isLoading() const final;
 
     void clearOwnerRule();
@@ -117,7 +117,7 @@ public:
     Document* ownerDocument() const;
     Ref<CSSStyleSheet> rootStyleSheet();
     Ref<const CSSStyleSheet> rootStyleSheet() const;
-    Style::Scope* NODELETE styleScope();
+    Style::Scope* LEGACY_NODELETE styleScope();
 
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&&);
@@ -166,7 +166,7 @@ public:
 
     WebCoreOpaqueRoot opaqueRootForGCThread() override;
 
-    bool NODELETE isDetached() const;
+    bool LEGACY_NODELETE isDetached() const;
 
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule, std::optional<bool> isOriginClean);

@@ -66,7 +66,7 @@ public:
     // Returns the scalar multiplier to the oscillator frequency to calculate wave table phase increment.
     float rateScale() const { return m_rateScale; }
 
-    unsigned NODELETE periodicWaveSize() const;
+    unsigned LEGACY_NODELETE periodicWaveSize() const;
     float sampleRate() const { return m_sampleRate; }
 
 private:
@@ -94,9 +94,9 @@ private:
     unsigned numberOfRanges() const { return m_numberOfRanges; }
 
     // Maximum possible number of partials (before culling).
-    unsigned NODELETE maxNumberOfPartials() const;
+    unsigned LEGACY_NODELETE maxNumberOfPartials() const;
 
-    unsigned NODELETE numberOfPartialsForRange(unsigned rangeIndex) const;
+    unsigned LEGACY_NODELETE numberOfPartialsForRange(unsigned rangeIndex) const;
 
     // Creates tables based on numberOfComponents Fourier coefficients.
     void createBandLimitedTables(std::span<const float> real, std::span<const float> imag, ShouldDisableNormalization = ShouldDisableNormalization::No);

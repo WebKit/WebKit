@@ -129,8 +129,8 @@ public:
     bool isDetached() const { return m_isDetached; }
     RefPtr<VideoFrame> internalFrame() const { return m_data.internalFrame; }
 
-    void NODELETE setDisplaySize(size_t, size_t);
-    void NODELETE setVisibleRect(const DOMRectInit&);
+    void LEGACY_NODELETE setDisplaySize(size_t, size_t);
+    void LEGACY_NODELETE setVisibleRect(const DOMRectInit&);
     bool shoudlDiscardAlpha() const { return m_data.format && (*m_data.format == VideoPixelFormat::RGBX || *m_data.format == VideoPixelFormat::BGRX); }
 
     const WebCodecsVideoFrameData& data() const LIFETIME_BOUND { return m_data; }

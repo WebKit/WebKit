@@ -34,8 +34,8 @@ class LocalFrame;
 
 class LocalDOMWindowProperty {
 public:
-    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
-    LocalDOMWindow* NODELETE window() const;
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE frame() const;
+    LocalDOMWindow* LEGACY_NODELETE window() const;
 
 protected:
     explicit LocalDOMWindowProperty(LocalDOMWindow*);

@@ -119,15 +119,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyCryptoClient);
 class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
-    void NODELETE addItem(Ref<HistoryItem>&&) final { }
-    void NODELETE setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&) final { }
-    void NODELETE goToItem(HistoryItem&) final { }
-    Vector<Ref<HistoryItem>> NODELETE allItems(FrameIdentifier) { return { }; }
+    void LEGACY_NODELETE addItem(Ref<HistoryItem>&&) final { }
+    void LEGACY_NODELETE setChildItem(BackForwardFrameItemIdentifier, Ref<HistoryItem>&&) final { }
+    void LEGACY_NODELETE goToItem(HistoryItem&) final { }
+    Vector<Ref<HistoryItem>> LEGACY_NODELETE allItems(FrameIdentifier) { return { }; }
     RefPtr<HistoryItem> itemAtIndex(int, FrameIdentifier) final { return nullptr; }
-    unsigned NODELETE backListCount() const final { return 0; }
-    unsigned NODELETE forwardListCount() const final { return 0; }
-    bool NODELETE containsItem(const HistoryItem&) const final { return false; }
-    void NODELETE close() final { }
+    unsigned LEGACY_NODELETE backListCount() const final { return 0; }
+    unsigned LEGACY_NODELETE forwardListCount() const final { return 0; }
+    bool LEGACY_NODELETE containsItem(const HistoryItem&) const final { return false; }
+    void LEGACY_NODELETE close() final { }
 };
 
 #if ENABLE(CONTEXT_MENUS)
@@ -135,15 +135,15 @@ class EmptyBackForwardClient final : public BackForwardClient {
 class EmptyContextMenuClient final : public ContextMenuClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyContextMenuClient);
 
-    void NODELETE downloadURL(const URL&) final { }
-    void NODELETE searchWithGoogle(const LocalFrame*) final { }
-    void NODELETE lookUpInDictionary(LocalFrame*) final { }
-    bool NODELETE isSpeaking() const final { return false; }
-    void NODELETE speak(const String&) final { }
-    void NODELETE stopSpeaking() final { }
+    void LEGACY_NODELETE downloadURL(const URL&) final { }
+    void LEGACY_NODELETE searchWithGoogle(const LocalFrame*) final { }
+    void LEGACY_NODELETE lookUpInDictionary(LocalFrame*) final { }
+    bool LEGACY_NODELETE isSpeaking() const final { return false; }
+    void LEGACY_NODELETE speak(const String&) final { }
+    void LEGACY_NODELETE stopSpeaking() final { }
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    void NODELETE handleTranslation(const TranslationContextMenuInfo&) final { }
+    void LEGACY_NODELETE handleTranslation(const TranslationContextMenuInfo&) final { }
 #endif
 
 #if PLATFORM(GTK)
@@ -151,15 +151,15 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-    void NODELETE showContextMenu() final { }
+    void LEGACY_NODELETE showContextMenu() final { }
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    bool NODELETE supportsLookUpInImages() final { return false; }
+    bool LEGACY_NODELETE supportsLookUpInImages() final { return false; }
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    bool NODELETE supportsCopySubject() final { return false; }
+    bool LEGACY_NODELETE supportsCopySubject() final { return false; }
 #endif
 };
 
@@ -174,12 +174,12 @@ public:
         return adoptRef(*new EmptyDisplayRefreshMonitor(displayID));
     }
 
-    void NODELETE displayLinkFired(const DisplayUpdate&) final { }
-    bool NODELETE requestRefreshCallback() final { return false; }
-    void NODELETE stop() final { }
+    void LEGACY_NODELETE displayLinkFired(const DisplayUpdate&) final { }
+    bool LEGACY_NODELETE requestRefreshCallback() final { return false; }
+    void LEGACY_NODELETE stop() final { }
 
-    bool NODELETE startNotificationMechanism() final { return true; }
-    void NODELETE stopNotificationMechanism() final { }
+    bool LEGACY_NODELETE startNotificationMechanism() final { return true; }
+    void LEGACY_NODELETE stopNotificationMechanism() final { }
 
 private:
     explicit EmptyDisplayRefreshMonitor(PlatformDisplayID displayID)
@@ -190,7 +190,7 @@ private:
 
 class EmptyDisplayRefreshMonitorFactory final : public DisplayRefreshMonitorFactory {
 public:
-    static DisplayRefreshMonitorFactory* NODELETE sharedEmptyDisplayRefreshMonitorFactory()
+    static DisplayRefreshMonitorFactory* LEGACY_NODELETE sharedEmptyDisplayRefreshMonitorFactory()
     {
         static NeverDestroyed<EmptyDisplayRefreshMonitorFactory> emptyFactory;
         return &emptyFactory.get();
@@ -207,37 +207,37 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate, public RefCounted<EmptyIDBConnectionToServerDeletegate> {
         static Ref<EmptyIDBConnectionToServerDeletegate> create() { return adoptRef(*new EmptyIDBConnectionToServerDeletegate); }
 
-        void NODELETE ref() const final { RefCounted::ref(); }
+        void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
 
-        std::optional<IDBConnectionIdentifier> NODELETE identifier() const final { return std::nullopt; }
-        void NODELETE deleteDatabase(const IDBOpenRequestData&) final { }
-        void NODELETE openDatabase(const IDBOpenRequestData&) final { }
-        void NODELETE abortTransaction(const IDBResourceIdentifier&) final { }
-        void NODELETE commitTransaction(const IDBResourceIdentifier&, uint64_t) final { }
-        void NODELETE didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&) final { }
-        void NODELETE createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final { }
-        void NODELETE deleteObjectStore(const IDBRequestData&, const String&) final { }
-        void NODELETE renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
-        void NODELETE clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier) final { }
-        void NODELETE createIndex(const IDBRequestData&, const IDBIndexInfo&) final { }
-        void NODELETE deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
-        void NODELETE renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String&) final { }
-        void NODELETE putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode) final { }
-        void NODELETE getRecord(const IDBRequestData&, const IDBGetRecordData&) final { }
-        void NODELETE getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) final { }
-        void NODELETE getCount(const IDBRequestData&, const IDBKeyRangeData&) final { }
-        void NODELETE deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final { }
-        void NODELETE openCursor(const IDBRequestData&, const IDBCursorInfo&) final { }
-        void NODELETE iterateCursor(const IDBRequestData&, const IDBIterateCursorData&) final { }
-        void NODELETE establishTransaction(IDBDatabaseConnectionIdentifier, const IDBTransactionInfo&) final { }
-        void NODELETE databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier) final { }
-        void NODELETE databaseConnectionClosed(IDBDatabaseConnectionIdentifier) final { }
-        void NODELETE abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>&) final { }
-        void NODELETE didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
-        void NODELETE openDBRequestCancelled(const IDBOpenRequestData&) final { }
-        void NODELETE getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) final { }
-        void NODELETE didGenerateIndexKeyForRecord(const IDBResourceIdentifier&, const IDBResourceIdentifier&, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&, std::optional<int64_t>) { }
+        std::optional<IDBConnectionIdentifier> LEGACY_NODELETE identifier() const final { return std::nullopt; }
+        void LEGACY_NODELETE deleteDatabase(const IDBOpenRequestData&) final { }
+        void LEGACY_NODELETE openDatabase(const IDBOpenRequestData&) final { }
+        void LEGACY_NODELETE abortTransaction(const IDBResourceIdentifier&) final { }
+        void LEGACY_NODELETE commitTransaction(const IDBResourceIdentifier&, uint64_t) final { }
+        void LEGACY_NODELETE didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&) final { }
+        void LEGACY_NODELETE createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final { }
+        void LEGACY_NODELETE deleteObjectStore(const IDBRequestData&, const String&) final { }
+        void LEGACY_NODELETE renameObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
+        void LEGACY_NODELETE clearObjectStore(const IDBRequestData&, IDBObjectStoreIdentifier) final { }
+        void LEGACY_NODELETE createIndex(const IDBRequestData&, const IDBIndexInfo&) final { }
+        void LEGACY_NODELETE deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String&) final { }
+        void LEGACY_NODELETE renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String&) final { }
+        void LEGACY_NODELETE putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode) final { }
+        void LEGACY_NODELETE getRecord(const IDBRequestData&, const IDBGetRecordData&) final { }
+        void LEGACY_NODELETE getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) final { }
+        void LEGACY_NODELETE getCount(const IDBRequestData&, const IDBKeyRangeData&) final { }
+        void LEGACY_NODELETE deleteRecord(const IDBRequestData&, const IDBKeyRangeData&) final { }
+        void LEGACY_NODELETE openCursor(const IDBRequestData&, const IDBCursorInfo&) final { }
+        void LEGACY_NODELETE iterateCursor(const IDBRequestData&, const IDBIterateCursorData&) final { }
+        void LEGACY_NODELETE establishTransaction(IDBDatabaseConnectionIdentifier, const IDBTransactionInfo&) final { }
+        void LEGACY_NODELETE databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier) final { }
+        void LEGACY_NODELETE databaseConnectionClosed(IDBDatabaseConnectionIdentifier) final { }
+        void LEGACY_NODELETE abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>&) final { }
+        void LEGACY_NODELETE didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier, const IDBResourceIdentifier&, const IndexedDB::ConnectionClosedOnBehalfOfServer) final { }
+        void LEGACY_NODELETE openDBRequestCancelled(const IDBOpenRequestData&) final { }
+        void LEGACY_NODELETE getAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, const ClientOrigin&) final { }
+        void LEGACY_NODELETE didGenerateIndexKeyForRecord(const IDBResourceIdentifier&, const IDBResourceIdentifier&, const IDBIndexInfo&, const IDBKeyData&, const IndexKey&, std::optional<int64_t>) { }
     private:
         EmptyIDBConnectionToServerDeletegate() = default;
     };
@@ -254,12 +254,12 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyDiagnosticLoggingClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyDiagnosticLoggingClient);
 
-    void NODELETE logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
-    void NODELETE logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
+    void LEGACY_NODELETE logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
+    void LEGACY_NODELETE logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
     void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
-    void NODELETE logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
-    void NODELETE logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
-    void NODELETE logDiagnosticMessageWithDomain(const String&, DiagnosticLoggingDomain) final { };
+    void LEGACY_NODELETE logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
+    void LEGACY_NODELETE logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
+    void LEGACY_NODELETE logDiagnosticMessageWithDomain(const String&, DiagnosticLoggingDomain) final { };
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDiagnosticLoggingClient);
@@ -267,8 +267,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyDiagnosticLoggingClient);
 #if ENABLE(DRAG_SUPPORT)
 
 class EmptyDragClient final : public DragClient {
-    void NODELETE willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
-    void NODELETE willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
+    void LEGACY_NODELETE willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
+    void LEGACY_NODELETE willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
     OptionSet<DragSourceAction> dragSourceActionMaskForPoint(const IntPoint&) final { return { }; }
     void startDrag(DragItem, DataTransfer&, Frame&, const std::optional<NodeIdentifier>&) final { }
 };
@@ -279,68 +279,68 @@ class EmptyEditorClient final : public EditorClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyEditorClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyEditorClient);
 private:
-    bool NODELETE shouldDeleteRange(const std::optional<SimpleRange>&) final { return false; }
-    bool NODELETE smartInsertDeleteEnabled() final { return false; }
-    bool NODELETE isSelectTrailingWhitespaceEnabled() const final { return false; }
-    bool NODELETE isContinuousSpellCheckingEnabled() final { return false; }
-    void NODELETE toggleContinuousSpellChecking() final { }
-    bool NODELETE isGrammarCheckingEnabled() final { return false; }
-    void NODELETE toggleGrammarChecking() final { }
-    int NODELETE spellCheckerDocumentTag() final { return -1; }
+    bool LEGACY_NODELETE shouldDeleteRange(const std::optional<SimpleRange>&) final { return false; }
+    bool LEGACY_NODELETE smartInsertDeleteEnabled() final { return false; }
+    bool LEGACY_NODELETE isSelectTrailingWhitespaceEnabled() const final { return false; }
+    bool LEGACY_NODELETE isContinuousSpellCheckingEnabled() final { return false; }
+    void LEGACY_NODELETE toggleContinuousSpellChecking() final { }
+    bool LEGACY_NODELETE isGrammarCheckingEnabled() final { return false; }
+    void LEGACY_NODELETE toggleGrammarChecking() final { }
+    int LEGACY_NODELETE spellCheckerDocumentTag() final { return -1; }
 
-    bool NODELETE shouldBeginEditing(const SimpleRange&) final { return false; }
-    bool NODELETE shouldEndEditing(const SimpleRange&) final { return false; }
-    bool NODELETE shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
-    bool NODELETE shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
-    bool NODELETE shouldChangeSelectedRange(const std::optional<SimpleRange>&, const std::optional<SimpleRange>&, Affinity, bool) final { return false; }
+    bool LEGACY_NODELETE shouldBeginEditing(const SimpleRange&) final { return false; }
+    bool LEGACY_NODELETE shouldEndEditing(const SimpleRange&) final { return false; }
+    bool LEGACY_NODELETE shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
+    bool LEGACY_NODELETE shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
+    bool LEGACY_NODELETE shouldChangeSelectedRange(const std::optional<SimpleRange>&, const std::optional<SimpleRange>&, Affinity, bool) final { return false; }
 
-    bool NODELETE shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) final { return false; }
-    void NODELETE didApplyStyle() final { }
-    bool NODELETE shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) final { return false; }
+    bool LEGACY_NODELETE shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) final { return false; }
+    void LEGACY_NODELETE didApplyStyle() final { }
+    bool LEGACY_NODELETE shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) final { return false; }
 
-    void NODELETE didBeginEditing() final { }
-    void NODELETE respondToChangedContents() final { }
-    void NODELETE respondToChangedSelection(LocalFrame*) final { }
-    void NODELETE updateEditorStateAfterLayoutIfEditabilityChanged() final { }
-    void NODELETE discardedComposition(const Document&) final { }
-    void NODELETE canceledComposition() final { }
-    void NODELETE didUpdateComposition() final { }
-    void NODELETE didEndEditing() final { }
-    void NODELETE didEndUserTriggeredSelectionChanges() final { }
-    void NODELETE willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) final { }
-    void NODELETE didWriteSelectionToPasteboard() final { }
-    void NODELETE getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<SharedBuffer>>>&) final { }
-    void NODELETE requestCandidatesForSelection(const VisibleSelection&) final { }
-    void NODELETE handleAcceptedCandidateWithSoftSpaces(const TextCheckingResult&) final { }
+    void LEGACY_NODELETE didBeginEditing() final { }
+    void LEGACY_NODELETE respondToChangedContents() final { }
+    void LEGACY_NODELETE respondToChangedSelection(LocalFrame*) final { }
+    void LEGACY_NODELETE updateEditorStateAfterLayoutIfEditabilityChanged() final { }
+    void LEGACY_NODELETE discardedComposition(const Document&) final { }
+    void LEGACY_NODELETE canceledComposition() final { }
+    void LEGACY_NODELETE didUpdateComposition() final { }
+    void LEGACY_NODELETE didEndEditing() final { }
+    void LEGACY_NODELETE didEndUserTriggeredSelectionChanges() final { }
+    void LEGACY_NODELETE willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) final { }
+    void LEGACY_NODELETE didWriteSelectionToPasteboard() final { }
+    void LEGACY_NODELETE getClientPasteboardData(const std::optional<SimpleRange>&, Vector<std::pair<String, RefPtr<SharedBuffer>>>&) final { }
+    void LEGACY_NODELETE requestCandidatesForSelection(const VisibleSelection&) final { }
+    void LEGACY_NODELETE handleAcceptedCandidateWithSoftSpaces(const TextCheckingResult&) final { }
 
     void registerUndoStep(UndoStep&) final;
     void registerRedoStep(UndoStep&) final;
-    void NODELETE clearUndoRedoOperations() final { }
+    void LEGACY_NODELETE clearUndoRedoOperations() final { }
 
-    DOMPasteAccessResponse NODELETE requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
+    DOMPasteAccessResponse LEGACY_NODELETE requestDOMPasteAccess(DOMPasteAccessCategory, FrameIdentifier, const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
 #if PLATFORM(COCOA)
     HashMap<FrameIdentifier, AttributedString> collectAttributedStringsForRemoteFrames(FrameIdentifier, const Vector<FrameIdentifier>&) final { return { }; }
 #endif
 
-    bool NODELETE canCopyCut(LocalFrame*, bool defaultValue) const final { return defaultValue; }
-    bool NODELETE canPaste(LocalFrame*, bool defaultValue) const final { return defaultValue; }
-    bool NODELETE canUndo() const final { return false; }
-    bool NODELETE canRedo() const final { return false; }
+    bool LEGACY_NODELETE canCopyCut(LocalFrame*, bool defaultValue) const final { return defaultValue; }
+    bool LEGACY_NODELETE canPaste(LocalFrame*, bool defaultValue) const final { return defaultValue; }
+    bool LEGACY_NODELETE canUndo() const final { return false; }
+    bool LEGACY_NODELETE canRedo() const final { return false; }
 
-    void NODELETE undo() final { }
-    void NODELETE redo() final { }
+    void LEGACY_NODELETE undo() final { }
+    void LEGACY_NODELETE redo() final { }
 
-    void NODELETE handleKeyboardEvent(KeyboardEvent&) final { }
-    void NODELETE handleInputMethodKeydown(KeyboardEvent&) final { }
+    void LEGACY_NODELETE handleKeyboardEvent(KeyboardEvent&) final { }
+    void LEGACY_NODELETE handleInputMethodKeydown(KeyboardEvent&) final { }
 
-    void NODELETE textFieldDidBeginEditing(Element&) final { }
-    void NODELETE textFieldDidEndEditing(Element&) final { }
-    void NODELETE textDidChangeInTextField(Element&) final { }
-    bool NODELETE doTextFieldCommandFromEvent(Element&, KeyboardEvent*) final { return false; }
-    void NODELETE textWillBeDeletedInTextField(Element&) final { }
-    void NODELETE textDidChangeInTextArea(Element&) final { }
-    void NODELETE overflowScrollPositionChanged() final { }
-    void NODELETE subFrameScrollPositionChanged() final { }
+    void LEGACY_NODELETE textFieldDidBeginEditing(Element&) final { }
+    void LEGACY_NODELETE textFieldDidEndEditing(Element&) final { }
+    void LEGACY_NODELETE textDidChangeInTextField(Element&) final { }
+    bool LEGACY_NODELETE doTextFieldCommandFromEvent(Element&, KeyboardEvent*) final { return false; }
+    void LEGACY_NODELETE textWillBeDeletedInTextField(Element&) final { }
+    void LEGACY_NODELETE textDidChangeInTextArea(Element&) final { }
+    void LEGACY_NODELETE overflowScrollPositionChanged() final { }
+    void LEGACY_NODELETE subFrameScrollPositionChanged() final { }
 
 #if PLATFORM(IOS_FAMILY)
     void startDelayingAndCoalescingContentChangeNotifications() final { }
@@ -352,66 +352,66 @@ private:
     void updateStringForFind(const String&) final { }
 #endif
 
-    bool NODELETE performTwoStepDrop(DocumentFragment&, const SimpleRange&, bool) final { return false; }
+    bool LEGACY_NODELETE performTwoStepDrop(DocumentFragment&, const SimpleRange&, bool) final { return false; }
 
 #if PLATFORM(COCOA)
-    void NODELETE setInsertionPasteboard(const String&) final { };
+    void LEGACY_NODELETE setInsertionPasteboard(const String&) final { };
 #endif
 
 #if USE(APPKIT)
-    void NODELETE uppercaseWord() final { }
-    void NODELETE lowercaseWord() final { }
-    void NODELETE capitalizeWord() final { }
-    bool NODELETE canApplyCaseTransformations(const String&) final { return true; }
-    bool NODELETE canConvertToTraditionalChinese(const String&) final { return false; }
-    bool NODELETE canConvertToSimplifiedChinese(const String&) final { return false; }
-    void NODELETE convertToTraditionalChinese() final { }
-    void NODELETE convertToSimplifiedChinese() final { }
+    void LEGACY_NODELETE uppercaseWord() final { }
+    void LEGACY_NODELETE lowercaseWord() final { }
+    void LEGACY_NODELETE capitalizeWord() final { }
+    bool LEGACY_NODELETE canApplyCaseTransformations(const String&) final { return true; }
+    bool LEGACY_NODELETE canConvertToTraditionalChinese(const String&) final { return false; }
+    bool LEGACY_NODELETE canConvertToSimplifiedChinese(const String&) final { return false; }
+    void LEGACY_NODELETE convertToTraditionalChinese() final { }
+    void LEGACY_NODELETE convertToSimplifiedChinese() final { }
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    void NODELETE showSubstitutionsPanel(bool) final { }
-    bool NODELETE substitutionsPanelIsShowing() final { return false; }
-    void NODELETE toggleSmartInsertDelete() final { }
-    bool NODELETE isAutomaticQuoteSubstitutionEnabled() final { return false; }
-    void NODELETE toggleAutomaticQuoteSubstitution() final { }
-    bool NODELETE isAutomaticLinkDetectionEnabled() final { return false; }
-    void NODELETE toggleAutomaticLinkDetection() final { }
-    bool NODELETE isAutomaticDashSubstitutionEnabled() final { return false; }
-    void NODELETE toggleAutomaticDashSubstitution() final { }
-    bool NODELETE isAutomaticTextReplacementEnabled() final { return false; }
-    void NODELETE toggleAutomaticTextReplacement() final { }
-    bool NODELETE isAutomaticSpellingCorrectionEnabled() final { return false; }
-    void NODELETE toggleAutomaticSpellingCorrection() final { }
-    bool NODELETE isSmartListsEnabled() final { return false; }
-    void NODELETE toggleSmartLists() { }
+    void LEGACY_NODELETE showSubstitutionsPanel(bool) final { }
+    bool LEGACY_NODELETE substitutionsPanelIsShowing() final { return false; }
+    void LEGACY_NODELETE toggleSmartInsertDelete() final { }
+    bool LEGACY_NODELETE isAutomaticQuoteSubstitutionEnabled() final { return false; }
+    void LEGACY_NODELETE toggleAutomaticQuoteSubstitution() final { }
+    bool LEGACY_NODELETE isAutomaticLinkDetectionEnabled() final { return false; }
+    void LEGACY_NODELETE toggleAutomaticLinkDetection() final { }
+    bool LEGACY_NODELETE isAutomaticDashSubstitutionEnabled() final { return false; }
+    void LEGACY_NODELETE toggleAutomaticDashSubstitution() final { }
+    bool LEGACY_NODELETE isAutomaticTextReplacementEnabled() final { return false; }
+    void LEGACY_NODELETE toggleAutomaticTextReplacement() final { }
+    bool LEGACY_NODELETE isAutomaticSpellingCorrectionEnabled() final { return false; }
+    void LEGACY_NODELETE toggleAutomaticSpellingCorrection() final { }
+    bool LEGACY_NODELETE isSmartListsEnabled() final { return false; }
+    void LEGACY_NODELETE toggleSmartLists() { }
 #endif
 
 #if PLATFORM(GTK)
     bool shouldShowUnicodeMenu() final { return false; }
 #endif
 
-    TextCheckerClient* NODELETE textChecker() final { return &m_textCheckerClient; }
+    TextCheckerClient* LEGACY_NODELETE textChecker() final { return &m_textCheckerClient; }
 
-    void NODELETE updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) final { }
-    void NODELETE updateSpellingUIWithMisspelledWord(const String&) final { }
-    void NODELETE showSpellingUI(bool) final { }
-    bool NODELETE spellingUIIsShowing() final { return false; }
+    void LEGACY_NODELETE updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) final { }
+    void LEGACY_NODELETE updateSpellingUIWithMisspelledWord(const String&) final { }
+    void LEGACY_NODELETE showSpellingUI(bool) final { }
+    bool LEGACY_NODELETE spellingUIIsShowing() final { return false; }
 
-    void NODELETE setInputMethodState(Element*) final { }
+    void LEGACY_NODELETE setInputMethodState(Element*) final { }
 
     class EmptyTextCheckerClient final : public TextCheckerClient {
-        bool NODELETE shouldEraseMarkersAfterChangeSelection(TextCheckingType) const final { return true; }
-        void NODELETE ignoreWordInSpellDocument(const String&) final { }
-        void NODELETE learnWord(const String&) final { }
-        void NODELETE checkSpellingOfString(StringView, int*, int*) final { }
-        void NODELETE checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
+        bool LEGACY_NODELETE shouldEraseMarkersAfterChangeSelection(TextCheckingType) const final { return true; }
+        void LEGACY_NODELETE ignoreWordInSpellDocument(const String&) final { }
+        void LEGACY_NODELETE learnWord(const String&) final { }
+        void LEGACY_NODELETE checkSpellingOfString(StringView, int*, int*) final { }
+        void LEGACY_NODELETE checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-        Vector<TextCheckingResult> NODELETE checkTextOfParagraph(StringView, OptionSet<TextCheckingType>, const VisibleSelection&) final { return { }; }
+        Vector<TextCheckingResult> LEGACY_NODELETE checkTextOfParagraph(StringView, OptionSet<TextCheckingType>, const VisibleSelection&) final { return { }; }
 #endif
 
-        void NODELETE getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) final { }
+        void LEGACY_NODELETE getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) final { }
         void requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&) final;
         void requestExtendedCheckingOfString(TextCheckingRequest&, const VisibleSelection&) final;
     };
@@ -428,12 +428,12 @@ public:
 private:
     EmptyFrameNetworkingContext();
 
-    bool NODELETE shouldClearReferrerOnHTTPSToHTTPRedirect() const { return true; }
-    CookieStorageSession* NODELETE storageSession() const final { return nullptr; }
+    bool LEGACY_NODELETE shouldClearReferrerOnHTTPSToHTTPRedirect() const { return true; }
+    CookieStorageSession* LEGACY_NODELETE storageSession() const final { return nullptr; }
 
 #if PLATFORM(COCOA)
-    bool NODELETE localFileContentSniffingEnabled() const { return false; }
-    SchedulePairHashSet* NODELETE scheduledRunLoopPairs() const { return nullptr; }
+    bool LEGACY_NODELETE localFileContentSniffingEnabled() const { return false; }
+    SchedulePairHashSet* LEGACY_NODELETE scheduledRunLoopPairs() const { return nullptr; }
     RetainPtr<CFDataRef> sourceApplicationAuditData() const { return nullptr; };
 #endif
 
@@ -444,11 +444,11 @@ private:
 
 class EmptyInspectorBackendClient final : public InspectorBackendClient {
     WTF_MAKE_TZONE_ALLOCATED(EmptyInspectorBackendClient);
-    void NODELETE inspectedPageDestroyed() final { }
-    Inspector::FrontendChannel* NODELETE openLocalFrontend(PageInspectorController*) final { return nullptr; }
-    void NODELETE bringFrontendToFront() final { }
-    void NODELETE highlight() final { }
-    void NODELETE hideHighlight() final { }
+    void LEGACY_NODELETE inspectedPageDestroyed() final { }
+    Inspector::FrontendChannel* LEGACY_NODELETE openLocalFrontend(PageInspectorController*) final { return nullptr; }
+    void LEGACY_NODELETE bringFrontendToFront() final { }
+    void LEGACY_NODELETE highlight() final { }
+    void LEGACY_NODELETE hideHighlight() final { }
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyInspectorBackendClient);
@@ -463,27 +463,27 @@ public:
         return adoptRef(*new EmptyPaymentCoordinatorClient);
     }
 
-    void NODELETE ref() const final { RefCounted::ref(); }
+    void LEGACY_NODELETE ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
 private:
     EmptyPaymentCoordinatorClient() = default;
 
-    std::optional<String> NODELETE validatedPaymentNetwork(const String&) const final { return std::nullopt; }
-    bool NODELETE canMakePayments() final { return false; }
+    std::optional<String> LEGACY_NODELETE validatedPaymentNetwork(const String&) const final { return std::nullopt; }
+    bool LEGACY_NODELETE canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTF::move(completionHandler)]() mutable { completionHandler(false); }); }
-    bool NODELETE showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
-    void NODELETE completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void NODELETE completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final { }
-    void NODELETE completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final { }
-    void NODELETE completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final { }
+    bool LEGACY_NODELETE showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
+    void LEGACY_NODELETE completeMerchantValidation(const PaymentMerchantSession&) final { }
+    void LEGACY_NODELETE completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final { }
+    void LEGACY_NODELETE completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final { }
+    void LEGACY_NODELETE completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final { }
 #if ENABLE(APPLE_PAY_COUPON_CODE)
-    void NODELETE completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final { }
+    void LEGACY_NODELETE completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final { }
 #endif
-    void NODELETE completePaymentSession(ApplePayPaymentAuthorizationResult&&) final { }
-    void NODELETE cancelPaymentSession() final { }
-    void NODELETE abortPaymentSession() final { }
+    void LEGACY_NODELETE completePaymentSession(ApplePayPaymentAuthorizationResult&&) final { }
+    void LEGACY_NODELETE cancelPaymentSession() final { }
+    void LEGACY_NODELETE abortPaymentSession() final { }
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyPaymentCoordinatorClient);
@@ -525,25 +525,25 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(EmptyCredentialRequestCoordinatorClient);
 #endif
 
 class EmptyPluginInfoProvider final : public PluginInfoProvider {
-    void NODELETE refreshPlugins() final { };
-    Vector<PluginInfo> NODELETE pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
-    Vector<PluginInfo> NODELETE webVisiblePluginInfo(Page&, const URL&) final { return { }; }
+    void LEGACY_NODELETE refreshPlugins() final { };
+    Vector<PluginInfo> LEGACY_NODELETE pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
+    Vector<PluginInfo> LEGACY_NODELETE webVisiblePluginInfo(Page&, const URL&) final { return { }; }
 };
 
 class EmptyPopupMenu : public PopupMenu {
 private:
-    void NODELETE show(const IntRect&, LocalFrameView&, int) final { }
-    void NODELETE hide() final { }
-    void NODELETE updateFromElement() final { }
-    void NODELETE disconnectClient() final { }
+    void LEGACY_NODELETE show(const IntRect&, LocalFrameView&, int) final { }
+    void LEGACY_NODELETE hide() final { }
+    void LEGACY_NODELETE updateFromElement() final { }
+    void LEGACY_NODELETE disconnectClient() final { }
 };
 
 class EmptyProgressTrackerClient final : public ProgressTrackerClient {
-    void NODELETE willChangeEstimatedProgress() final { }
-    void NODELETE didChangeEstimatedProgress() final { }
-    void NODELETE progressStarted(LocalFrame&) final { }
-    void NODELETE progressEstimateChanged(LocalFrame&) final { }
-    void NODELETE progressFinished(LocalFrame&) final { }
+    void LEGACY_NODELETE willChangeEstimatedProgress() final { }
+    void LEGACY_NODELETE didChangeEstimatedProgress() final { }
+    void LEGACY_NODELETE progressStarted(LocalFrame&) final { }
+    void LEGACY_NODELETE progressEstimateChanged(LocalFrame&) final { }
+    void LEGACY_NODELETE progressFinished(LocalFrame&) final { }
 };
 
 class EmptySearchPopupMenu : public SearchPopupMenu {
@@ -554,25 +554,25 @@ public:
     }
 
 private:
-    PopupMenu* NODELETE popupMenu() final { return m_popup.ptr(); }
-    void NODELETE saveRecentSearches(const AtomString&, const Vector<RecentSearch>&) final { }
-    void NODELETE loadRecentSearches(const AtomString&, Vector<RecentSearch>&) final { }
-    bool NODELETE enabled() final { return false; }
+    PopupMenu* LEGACY_NODELETE popupMenu() final { return m_popup.ptr(); }
+    void LEGACY_NODELETE saveRecentSearches(const AtomString&, const Vector<RecentSearch>&) final { }
+    void LEGACY_NODELETE loadRecentSearches(const AtomString&, Vector<RecentSearch>&) final { }
+    bool LEGACY_NODELETE enabled() final { return false; }
 
     const Ref<EmptyPopupMenu> m_popup;
 };
 
 class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     struct EmptyStorageArea : public StorageArea {
-        unsigned NODELETE length() final { return 0; }
-        String NODELETE key(unsigned) final { return { }; }
-        String NODELETE item(const String&) final { return { }; }
-        void NODELETE setItem(LocalFrame&, const String&, const String&, bool&) final { }
-        void NODELETE removeItem(LocalFrame&, const String&) final { }
-        void NODELETE clear(LocalFrame&) final { }
-        bool NODELETE contains(const String&) final { return false; }
-        StorageType NODELETE storageType() const final { return StorageType::Local; }
-        size_t NODELETE memoryBytesUsedByCache() final { return 0; }
+        unsigned LEGACY_NODELETE length() final { return 0; }
+        String LEGACY_NODELETE key(unsigned) final { return { }; }
+        String LEGACY_NODELETE item(const String&) final { return { }; }
+        void LEGACY_NODELETE setItem(LocalFrame&, const String&, const String&, bool&) final { }
+        void LEGACY_NODELETE removeItem(LocalFrame&, const String&) final { }
+        void LEGACY_NODELETE clear(LocalFrame&) final { }
+        bool LEGACY_NODELETE contains(const String&) final { return false; }
+        StorageType LEGACY_NODELETE storageType() const final { return StorageType::Local; }
+        size_t LEGACY_NODELETE memoryBytesUsedByCache() final { return 0; }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {
@@ -581,13 +581,13 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         {
         }
 
-        const SecurityOrigin* NODELETE topLevelOrigin() const final { return nullptr; };
+        const SecurityOrigin* LEGACY_NODELETE topLevelOrigin() const final { return nullptr; };
 
     private:
         Ref<StorageArea> storageArea(const SecurityOrigin&) final { return adoptRef(*new EmptyStorageArea); }
         Ref<StorageNamespace> copy(Page&) final { return adoptRef(*new EmptyStorageNamespace { m_sessionID }); }
-        PAL::SessionID NODELETE sessionID() const final { return m_sessionID; }
-        void NODELETE setSessionIDForTesting(PAL::SessionID sessionID) final { m_sessionID = sessionID; };
+        PAL::SessionID LEGACY_NODELETE sessionID() const final { return m_sessionID; }
+        void LEGACY_NODELETE setSessionIDForTesting(PAL::SessionID sessionID) final { m_sessionID = sessionID; };
 
         PAL::SessionID m_sessionID;
     };
@@ -598,21 +598,21 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
 };
 
 class EmptyUserContentProvider final : public UserContentProvider {
-    void NODELETE forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final { }
-    void NODELETE forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final { }
+    void LEGACY_NODELETE forEachUserScript(NOESCAPE const Function<void(DOMWrapperWorld&, const UserScript&)>&) const final { }
+    void LEGACY_NODELETE forEachUserStyleSheet(NOESCAPE const Function<void(const UserStyleSheet&)>&) const final { }
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    void NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final { }
+    void LEGACY_NODELETE forEachUserMessageHandler(NOESCAPE const Function<void(const UserMessageHandlerDescriptor&)>&) const final { }
 #endif
-    bool NODELETE hasBuffersForWorld(const DOMWrapperWorld&) const final { return false; }
-    WebKitBuffer* NODELETE buffer(const DOMWrapperWorld&, const String&) const final { return nullptr; }
+    bool LEGACY_NODELETE hasBuffersForWorld(const DOMWrapperWorld&) const final { return false; }
+    WebKitBuffer* LEGACY_NODELETE buffer(const DOMWrapperWorld&, const String&) const final { return nullptr; }
 #if ENABLE(CONTENT_EXTENSIONS)
-    const ContentExtensions::ContentExtensionsBackend& NODELETE userContentExtensionBackend() const final { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
+    const ContentExtensions::ContentExtensionsBackend& LEGACY_NODELETE userContentExtensionBackend() const final { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
 #endif
 };
 
 class EmptyVisitedLinkStore final : public VisitedLinkStore {
-    bool NODELETE isLinkVisited(Page&, SharedStringHash, const URL&, const AtomString&) final { return false; }
-    void NODELETE addVisitedLink(Page&, SharedStringHash) final { }
+    bool LEGACY_NODELETE isLinkVisited(Page&, SharedStringHash, const URL&, const AtomString&) final { return false; }
+    void LEGACY_NODELETE addVisitedLink(Page&, SharedStringHash) final { }
 };
 
 RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&)
@@ -1188,19 +1188,19 @@ void EmptyFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(s
     completionHandler(makeUnexpected(internalError(url)));
 }
 
-void NODELETE EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
+void LEGACY_NODELETE EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }
 
-void NODELETE EmptyEditorClient::EmptyTextCheckerClient::requestExtendedCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
+void LEGACY_NODELETE EmptyEditorClient::EmptyTextCheckerClient::requestExtendedCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }
 
-void NODELETE EmptyEditorClient::registerUndoStep(UndoStep&)
+void LEGACY_NODELETE EmptyEditorClient::registerUndoStep(UndoStep&)
 {
 }
 
-void NODELETE EmptyEditorClient::registerRedoStep(UndoStep&)
+void LEGACY_NODELETE EmptyEditorClient::registerRedoStep(UndoStep&)
 {
 }
 
@@ -1220,7 +1220,7 @@ Ref<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorage
 }
 
 class EmptyStorageSessionProvider final : public StorageSessionProvider {
-    CookieStorageSession* NODELETE storageSession() const final { return nullptr; }
+    CookieStorageSession* LEGACY_NODELETE storageSession() const final { return nullptr; }
 };
 
 class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {
@@ -1232,9 +1232,9 @@ public:
 private:
     EmptyBroadcastChannelRegistry() = default;
 
-    void NODELETE registerChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    void NODELETE unregisterChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    void NODELETE postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
+    void LEGACY_NODELETE registerChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void LEGACY_NODELETE unregisterChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void LEGACY_NODELETE postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
 class EmptyWebTransportSession final : public WebTransportSession, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EmptyWebTransportSession> {
@@ -1279,8 +1279,8 @@ class EmptyHistoryItemClient final : public HistoryItemClient {
 public:
     static Ref<EmptyHistoryItemClient> create() { return adoptRef(*new EmptyHistoryItemClient); }
 private:
-    void NODELETE historyItemChanged(const HistoryItem&) { }
-    void NODELETE clearChildren(const HistoryItem&) const { }
+    void LEGACY_NODELETE historyItemChanged(const HistoryItem&) { }
+    void LEGACY_NODELETE clearChildren(const HistoryItem&) const { }
 };
 
 PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier> identifier, PAL::SessionID sessionID)

@@ -78,20 +78,20 @@ public:
     bool ignoreForRequestCount() const { return m_ignoreForRequestCount; }
     void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
 
-    void NODELETE setDestinationIfNotSet(FetchOptions::Destination);
+    void LEGACY_NODELETE setDestinationIfNotSet(FetchOptions::Destination);
 
     void updateForAccessControl(Document&);
 
-    void NODELETE updateReferrerPolicy(ReferrerPolicy);
+    void LEGACY_NODELETE updateReferrerPolicy(ReferrerPolicy);
     void updateReferrerAndOriginHeaders(FrameLoader&);
     void updateUserAgentHeader(FrameLoader&);
     void upgradeInsecureRequestIfNeeded(Document&, ContentSecurityPolicy::AlwaysUpgradeRequest = ContentSecurityPolicy::AlwaysUpgradeRequest::No);
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
     void updateAcceptEncodingHeader();
-    void NODELETE updateCacheModeIfNeeded(CachePolicy);
+    void LEGACY_NODELETE updateCacheModeIfNeeded(CachePolicy);
 
-    void NODELETE disableCachingIfNeeded();
+    void LEGACY_NODELETE disableCachingIfNeeded();
 
     void removeFragmentIdentifierIfNeeded();
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -114,9 +114,9 @@ public:
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
     static String acceptHeaderValueFromType(CachedResource::Type, bool usingSecureProtocol);
 
-    void NODELETE setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
-    void NODELETE setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
-    void NODELETE setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
+    void LEGACY_NODELETE setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
+    void LEGACY_NODELETE setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
+    void LEGACY_NODELETE setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 
 private:
     ResourceRequest m_resourceRequest;

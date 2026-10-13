@@ -69,7 +69,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Builder);
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(std::to_underlying(lastHighPriorityProperty) + 1);
 
-inline bool NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
+inline bool LEGACY_NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
     case CSSPropertyID::BackgroundColor:
@@ -96,7 +96,7 @@ inline bool NODELETE isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-static const StyleProperties* NODELETE positionTryFallbackProperties(const BuilderContext& context)
+static const StyleProperties* LEGACY_NODELETE positionTryFallbackProperties(const BuilderContext& context)
 {
     return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
 }

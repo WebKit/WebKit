@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT void deny(const String& errorMessage = emptyString());
 
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
-    WEBCORE_EXPORT Document* NODELETE document() const;
+    WEBCORE_EXPORT Document* LEGACY_NODELETE document() const;
 
     const String keySystem() const { return m_keySystem; }
 

@@ -37,7 +37,7 @@ public:
     bool operator==(const FEBlend&) const;
 
     BlendMode blendMode() const { return m_mode; }
-    bool NODELETE setBlendMode(BlendMode);
+    bool LEGACY_NODELETE setBlendMode(BlendMode);
 
 private:
     FEBlend(BlendMode, ColorSpace);

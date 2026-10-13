@@ -43,7 +43,7 @@ public:
     RenderSVGRoot(SVGSVGElement&, Style::ComputedStyle&&);
     virtual ~RenderSVGRoot();
 
-    SVGSVGElement& NODELETE svgSVGElement() const;
+    SVGSVGElement& LEGACY_NODELETE svgSVGElement() const;
     FloatSize computeViewportSize() const;
 
     bool isEmbeddedThroughSVGImage() const;
@@ -60,9 +60,9 @@ public:
     IntSize containerSize() const { return m_containerSize; }
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
-    bool NODELETE hasRelativeDimensions() const final;
+    bool LEGACY_NODELETE hasRelativeDimensions() const final;
 
-    bool NODELETE shouldApplyViewportClip() const;
+    bool LEGACY_NODELETE shouldApplyViewportClip() const;
 
     FloatRect objectBoundingBox() const final
     {
@@ -102,7 +102,7 @@ private:
     bool paintingAffectedByExternalOffset() const;
 
     // To prevent certain legacy code paths to hit assertions in debug builds, when switching off LBSE (during the teardown of the LBSE tree).
-    std::optional<FloatRect> NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
+    std::optional<FloatRect> LEGACY_NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, const VisibleRectContext&, VisibleRectState) const final;
 
     LayoutUnit computeReplacedLogicalWidth(IsComputingIntrinsicSize  = IsComputingIntrinsicSize::No) const final;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const final;

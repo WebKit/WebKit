@@ -44,6 +44,6 @@ RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData&);
 
 FormData* httpBodyFromStream(CFReadStreamRef);
 
-CFStringRef NODELETE formDataStreamLengthPropertyNameSingleton();
+CFStringRef LEGACY_NODELETE formDataStreamLengthPropertyNameSingleton();
 
 } // namespace WebCore

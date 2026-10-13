@@ -47,7 +47,7 @@ namespace Style {
 static std::optional<int> maxPositionForTesting;
 static constexpr auto gridMaxPosition = 1000000;
 
-static int NODELETE clampGridIntegerPosition(int integerPosition)
+static int LEGACY_NODELETE clampGridIntegerPosition(int integerPosition)
 {
     return clampTo(integerPosition, GridPosition::min(), GridPosition::max());
 }

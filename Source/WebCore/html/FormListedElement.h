@@ -48,8 +48,8 @@ public:
 
     ValidityState& validity();
 
-    virtual bool NODELETE isValidatedFormListedElement() const = 0;
-    virtual bool NODELETE isEnumeratable() const = 0;
+    virtual bool LEGACY_NODELETE isValidatedFormListedElement() const = 0;
+    virtual bool LEGACY_NODELETE isEnumeratable() const = 0;
 
     // Returns the 'name' attribute value. If this element has no name
     // attribute, it returns an empty string instead of null string.
@@ -68,7 +68,7 @@ public:
 
     // ValidityState attribute implementations
     bool badInput() const { return hasBadInput(); }
-    virtual bool NODELETE customError() const;
+    virtual bool LEGACY_NODELETE customError() const;
 
     // Implementations of patternMismatch, rangeOverflow, rangerUnderflow, stepMismatch, tooShort, tooLong and valueMissing must call willValidate.
     virtual bool hasBadInput() const;
@@ -106,7 +106,7 @@ protected:
     virtual void willChangeForm();
     virtual void didChangeForm();
 
-    String NODELETE customValidationMessage() const;
+    String LEGACY_NODELETE customValidationMessage() const;
 
 private:
     void setFormInternal(RefPtr<HTMLFormElement>&&) final;

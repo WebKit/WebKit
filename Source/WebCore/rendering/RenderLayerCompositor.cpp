@@ -148,7 +148,7 @@ struct RenderLayerCompositor::OverlapExtent {
     bool animationCausesExtentUncertainty { false };
     bool clippingScopesComputed { false };
 
-    bool NODELETE knownToBeHaveExtentUncertainty() const { return extentComputed && animationCausesExtentUncertainty; }
+    bool LEGACY_NODELETE knownToBeHaveExtentUncertainty() const { return extentComputed && animationCausesExtentUncertainty; }
 };
 
 struct RenderLayerCompositor::CompositingState {
@@ -158,7 +158,7 @@ struct RenderLayerCompositor::CompositingState {
     {
     }
     
-    CompositingState NODELETE stateForPaintOrderChildren(RenderLayer& layer) const
+    CompositingState LEGACY_NODELETE stateForPaintOrderChildren(RenderLayer& layer) const
     {
         UNUSED_PARAM(layer);
         CompositingState childState(compositingAncestor);
@@ -227,7 +227,7 @@ struct RenderLayerCompositor::CompositingState {
 #endif
     }
 
-    bool NODELETE hasNonRootCompositedAncestor() const
+    bool LEGACY_NODELETE hasNonRootCompositedAncestor() const
     {
         return compositingAncestor && !compositingAncestor->isRenderViewLayer();
     }
@@ -257,7 +257,7 @@ struct RenderLayerCompositor::UpdateBackingTraversalState {
     {
     }
 
-    UpdateBackingTraversalState NODELETE stateForDescendants() const
+    UpdateBackingTraversalState LEGACY_NODELETE stateForDescendants() const
     {
         UpdateBackingTraversalState state(compositingAncestor, layersClippedByScrollers, overflowScrollLayers);
 #if !LOG_DISABLED
@@ -329,17 +329,17 @@ public:
         LayoutRect absoluteBounds;
     };
 
-    auto& NODELETE backingProviderCandidates() { return m_backingProviderCandidates; }
+    auto& LEGACY_NODELETE backingProviderCandidates() { return m_backingProviderCandidates; }
 
-    const RenderLayer* NODELETE firstProviderCandidateLayer() const
+    const RenderLayer* LEGACY_NODELETE firstProviderCandidateLayer() const
     {
         return !m_backingProviderCandidates.isEmpty() ? m_backingProviderCandidates.first().providerLayer.get() : nullptr;
     }
 
-    RenderLayer* NODELETE backingSharingStackingContext() const { return m_backingSharingStackingContext; }
+    RenderLayer* LEGACY_NODELETE backingSharingStackingContext() const { return m_backingSharingStackingContext; }
 
     Provider* backingProviderCandidateForLayer(const RenderLayer&, const RenderLayerCompositor&, LayerOverlapMap&, OverlapExtent&);
-    Provider* NODELETE existingBackingProviderCandidateForLayer(const RenderLayer&);
+    Provider* LEGACY_NODELETE existingBackingProviderCandidateForLayer(const RenderLayer&);
     Provider* backingProviderForLayer(const RenderLayer&);
 
     // Add a layer that would repaint into a layer in m_backingSharingLayers.
@@ -354,13 +354,13 @@ public:
     void startBackingSharingSequence(RenderLayer& candidateLayer, LayoutRect candidateAbsoluteBounds, RenderLayer& candidateStackingContext);
     void endBackingSharingSequence(RenderLayer&);
 
-    std::optional<BackingSharingSnapshot> NODELETE snapshot() const
+    std::optional<BackingSharingSnapshot> LEGACY_NODELETE snapshot() const
     {
         if (!m_backingSharingStackingContext)
             return std::nullopt;
         return BackingSharingSnapshot { m_sequenceIdentifier, m_backingProviderCandidates.size() };
     }
-    BackingSharingSequenceIdentifier NODELETE sequenceIdentifier() const { return m_sequenceIdentifier; }
+    BackingSharingSequenceIdentifier LEGACY_NODELETE sequenceIdentifier() const { return m_sequenceIdentifier; }
 
 private:
     void layerWillBeComposited(RenderLayer&);
@@ -791,7 +791,7 @@ void RenderLayerCompositor::scheduleRenderingUpdate()
     protect(page())->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
-static inline ScrollableArea::VisibleContentRectIncludesScrollbars NODELETE scrollbarInclusionForVisibleRect()
+static inline ScrollableArea::VisibleContentRectIncludesScrollbars LEGACY_NODELETE scrollbarInclusionForVisibleRect()
 {
 #if USE(COORDINATED_GRAPHICS)
     return ScrollableArea::VisibleContentRectIncludesScrollbars::Yes;
@@ -2154,7 +2154,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, ASCIILiteral 
 }
 #endif
 
-static bool NODELETE clippingChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static bool LEGACY_NODELETE clippingChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.overflowX() != newStyle.overflowX()
         || oldStyle.overflowY() != newStyle.overflowY()
@@ -2192,7 +2192,7 @@ static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& 
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
 }
 
-static bool NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static bool LEGACY_NODELETE recompositeChangeRequiresChildrenGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.perspective().isNone() != newStyle.perspective().isNone()
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D();
@@ -2371,7 +2371,7 @@ void RenderLayerCompositor::clearBackingProviderSequencesInStackingContextOfLaye
 }
 
 // FIXME: remove and never ask questions about reflection layers.
-static RenderLayerModelObject& NODELETE rendererForCompositingTests(const RenderLayer& layer)
+static RenderLayerModelObject& LEGACY_NODELETE rendererForCompositingTests(const RenderLayer& layer)
 {
     auto* renderer = &layer.renderer();
 
@@ -5592,7 +5592,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     return constraints;
 }
 
-static inline ScrollCoordinationRole NODELETE scrollCoordinationRoleForNodeType(ScrollingNodeType nodeType)
+static inline ScrollCoordinationRole LEGACY_NODELETE scrollCoordinationRoleForNodeType(ScrollingNodeType nodeType)
 {
     switch (nodeType) {
     case ScrollingNodeType::MainFrame:

@@ -47,7 +47,7 @@ struct Blur {
 
     Parameter value;
 
-    static Blur NODELETE passthroughForInterpolation();
+    static Blur LEGACY_NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return true; }
@@ -57,7 +57,7 @@ struct Blur {
 
     IntOutsets calculateOutsets(ZoomFactor) const;
 
-    bool NODELETE operator==(const Blur&) const = default;
+    bool LEGACY_NODELETE operator==(const Blur&) const = default;
 };
 using BlurFunction = FunctionNotation<CSSValueID::Blur, Blur>;
 DEFINE_TYPE_WRAPPER_GET(Blur, value);

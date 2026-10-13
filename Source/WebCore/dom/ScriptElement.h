@@ -115,7 +115,7 @@ protected:
     void childrenChanged(const ContainerNode::ChildChange&);
     void finishParsingChildren();
     void handleSourceAttribute(const String& sourceURL);
-    void NODELETE handleAsyncAttribute();
+    void LEGACY_NODELETE handleAsyncAttribute();
 
     void setTrustedScriptText(const String&);
 
@@ -126,7 +126,7 @@ private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
     std::optional<ScriptType> determineScriptType() const;
-    bool NODELETE ignoresLoadRequest() const;
+    bool LEGACY_NODELETE ignoresLoadRequest() const;
     void dispatchLoadEventRespectingUserGestureIndicator();
 
     bool requestClassicScript(const String& sourceURL);
@@ -174,7 +174,7 @@ private:
 };
 
 // FIXME: replace with is/downcast<ScriptElement>.
-bool NODELETE isScriptElement(Node&);
-ScriptElement* NODELETE dynamicDowncastScriptElement(Element&);
+bool LEGACY_NODELETE isScriptElement(Node&);
+ScriptElement* LEGACY_NODELETE dynamicDowncastScriptElement(Element&);
 
 }

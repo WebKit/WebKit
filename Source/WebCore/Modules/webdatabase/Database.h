@@ -79,7 +79,7 @@ public:
     void didCommitWriteTransaction();
     bool didExceedQuota();
 
-    SQLTransactionCoordinator& NODELETE transactionCoordinator();
+    SQLTransactionCoordinator& LEGACY_NODELETE transactionCoordinator();
 
     // Direct support for the DOM API
     String version() const;
@@ -91,22 +91,22 @@ public:
     String stringIdentifierIsolatedCopy() const;
     String displayNameIsolatedCopy() const;
     String expectedVersionIsolatedCopy() const;
-    unsigned long long NODELETE estimatedSize() const;
+    unsigned long long LEGACY_NODELETE estimatedSize() const;
     String fileNameIsolatedCopy() const;
     DatabaseDetails details() const;
     SQLiteDatabase& sqliteDatabase() { return m_sqliteDatabase; }
 
-    void NODELETE disableAuthorizer();
-    void NODELETE enableAuthorizer();
-    void NODELETE setAuthorizerPermissions(int);
-    bool NODELETE lastActionChangedDatabase();
-    bool NODELETE lastActionWasInsert();
-    void NODELETE resetDeletes();
-    bool NODELETE hadDeletes();
-    void NODELETE resetAuthorizer();
+    void LEGACY_NODELETE disableAuthorizer();
+    void LEGACY_NODELETE enableAuthorizer();
+    void LEGACY_NODELETE setAuthorizerPermissions(int);
+    bool LEGACY_NODELETE lastActionChangedDatabase();
+    bool LEGACY_NODELETE lastActionWasInsert();
+    void LEGACY_NODELETE resetDeletes();
+    bool LEGACY_NODELETE hadDeletes();
+    void LEGACY_NODELETE resetAuthorizer();
 
     DatabaseContext& databaseContext() { return m_databaseContext; }
-    DatabaseThread& NODELETE databaseThread();
+    DatabaseThread& LEGACY_NODELETE databaseThread();
     Document& document() { return m_document; }
     void logErrorMessage(const String& message);
 

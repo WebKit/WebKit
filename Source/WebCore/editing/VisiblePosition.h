@@ -90,7 +90,7 @@ public:
 
     // This is a tentative enhancement of operator== to account for affinity.
     // FIXME: Combine this function with operator==.
-    bool NODELETE equals(const VisiblePosition&) const;
+    bool LEGACY_NODELETE equals(const VisiblePosition&) const;
 
 #if ENABLE(TREE_DEBUGGING)
     void debugPosition(ASCIILiteral msg = ""_s) const;
@@ -120,7 +120,7 @@ WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
-bool NODELETE areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePosition&);
+bool LEGACY_NODELETE areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePosition&);
 
 Node* commonInclusiveAncestor(const VisiblePosition&, const VisiblePosition&);
 

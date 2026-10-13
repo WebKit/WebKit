@@ -131,7 +131,7 @@ void QueueImpl::writeTexture(
 }
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
-static WGPUVideoFrameRotation NODELETE convertToVideoFrameRotation(VideoFrameRotation rotation)
+static WGPUVideoFrameRotation LEGACY_NODELETE convertToVideoFrameRotation(VideoFrameRotation rotation)
 {
     switch (rotation) {
     case VideoFrameRotation::None:
@@ -157,7 +157,7 @@ struct SourceTextureFormat {
     bool hasAlpha;
 };
 
-static std::optional<SourceTextureFormat> NODELETE sourceTextureFormat(PixelFormat pixelFormat)
+static std::optional<SourceTextureFormat> LEGACY_NODELETE sourceTextureFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
     case PixelFormat::RGBA8:

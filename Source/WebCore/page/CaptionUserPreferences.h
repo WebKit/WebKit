@@ -112,20 +112,20 @@ public:
     virtual bool testingMode() const { return m_testingModeCount; }
 
     friend class CaptionUserPreferencesTestingModeToken;
-    WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> NODELETE createTestingModeToken();
+    WEBCORE_EXPORT UniqueRef<CaptionUserPreferencesTestingModeToken> LEGACY_NODELETE createTestingModeToken();
 
     virtual String captionPreviewTitle() const;
     virtual String captionPreviewProfileID() const { return emptyString(); }
     virtual void setCaptionPreviewProfileID(const String&) { }
 
-    PageGroup& NODELETE pageGroup() const;
+    PageGroup& LEGACY_NODELETE pageGroup() const;
 
 protected:
     explicit CaptionUserPreferences(PageGroup&);
 
     void updateCaptionStyleSheetOverride();
-    void NODELETE beginBlockingNotifications();
-    void NODELETE endBlockingNotifications();
+    void LEGACY_NODELETE beginBlockingNotifications();
+    void LEGACY_NODELETE endBlockingNotifications();
 
 private:
     void incrementTestingModeCount() { ++m_testingModeCount; }
@@ -138,7 +138,7 @@ private:
 
     void timerFired();
     void notify();
-    RefPtr<Page> NODELETE currentPage() const;
+    RefPtr<Page> LEGACY_NODELETE currentPage() const;
 
     WeakRef<PageGroup> m_pageGroup;
     mutable CaptionDisplayMode m_displayMode;

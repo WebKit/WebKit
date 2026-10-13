@@ -92,8 +92,8 @@ public:
     void setHasActiveInspectorCanvasCallTracer(bool);
 
     void resetRecordingData();
-    bool NODELETE hasRecordingData() const;
-    bool NODELETE currentFrameHasData() const;
+    bool LEGACY_NODELETE hasRecordingData() const;
+    bool LEGACY_NODELETE currentFrameHasData() const;
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
@@ -107,11 +107,11 @@ public:
     void setRecordingName(const String& name) { m_recordingName = name; }
 
     void setBufferLimit(long);
-    bool NODELETE hasBufferSpace() const;
+    bool LEGACY_NODELETE hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
 
     void setFrameCount(long);
-    bool NODELETE overFrameCount() const;
+    bool LEGACY_NODELETE overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
     Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();

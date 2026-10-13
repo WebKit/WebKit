@@ -46,7 +46,7 @@ unsigned CSSParserObserverWrapper::previousTokenStartOffset(const CSSParserToken
     return m_tokenOffsets[range.begin() - m_firstParserToken - 1];
 }
 
-unsigned NODELETE CSSParserObserverWrapper::endOffset(const CSSParserTokenRange& range)
+unsigned LEGACY_NODELETE CSSParserObserverWrapper::endOffset(const CSSParserTokenRange& range)
 {
     return m_tokenOffsets[range.end() - m_firstParserToken];
 }

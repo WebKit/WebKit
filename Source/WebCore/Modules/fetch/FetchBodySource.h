@@ -52,8 +52,8 @@ public:
     void close();
     void error(const Exception&);
 
-    bool NODELETE isPulling() const;
-    bool NODELETE isCancelling() const { return m_isCancelling; }
+    bool LEGACY_NODELETE isPulling() const;
+    bool LEGACY_NODELETE isCancelling() const { return m_isCancelling; }
 
     void resolvePullPromise();
     void detach();

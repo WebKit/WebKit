@@ -253,7 +253,7 @@ public:
 
     ScrollPosition scrollPosition() const;
     ScrollPosition constrainedScrollPosition() const;
-    LayoutSize NODELETE cachedSizeForOverflowClip() const;
+    LayoutSize LEGACY_NODELETE cachedSizeForOverflowClip() const;
 
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
     WEBCORE_EXPORT virtual int horizontalScrollbarHeight() const;
@@ -414,8 +414,8 @@ public:
     virtual LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const;
     virtual LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const;
 
-    std::optional<LayoutUnit> NODELETE overridingBorderBoxLogicalWidth() const;
-    std::optional<LayoutUnit> NODELETE overridingBorderBoxLogicalHeight() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE overridingBorderBoxLogicalWidth() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE overridingBorderBoxLogicalHeight() const;
     void setOverridingBorderBoxLogicalHeight(LayoutUnit);
     void setOverridingBorderBoxLogicalWidth(LayoutUnit);
     void clearOverridingBorderBoxLogicalHeight();
@@ -424,10 +424,10 @@ public:
 
     // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
     using GridAreaSize = std::optional<LayoutUnit>;
-    std::optional<GridAreaSize> NODELETE gridAreaContentWidth(WritingMode) const;
-    std::optional<GridAreaSize> NODELETE gridAreaContentHeight(WritingMode) const;
-    std::optional<GridAreaSize> NODELETE gridAreaContentLogicalWidth() const;
-    std::optional<GridAreaSize> NODELETE gridAreaContentLogicalHeight() const;
+    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentWidth(WritingMode) const;
+    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentHeight(WritingMode) const;
+    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentLogicalWidth() const;
+    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentLogicalHeight() const;
     void setGridAreaContentLogicalWidth(GridAreaSize);
     void setGridAreaContentLogicalHeight(GridAreaSize);
     void clearGridAreaContentSize();
@@ -436,8 +436,8 @@ public:
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
     // the initial main size of the flex item before the free space is distributed.
-    std::optional<Style::PreferredSize> NODELETE overridingLogicalHeightForFlexBasisComputation() const;
-    std::optional<Style::PreferredSize> NODELETE overridingLogicalWidthForFlexBasisComputation() const;
+    std::optional<Style::PreferredSize> LEGACY_NODELETE overridingLogicalHeightForFlexBasisComputation() const;
+    std::optional<Style::PreferredSize> LEGACY_NODELETE overridingLogicalWidthForFlexBasisComputation() const;
     void setOverridingBorderBoxLogicalHeightForFlexBasisComputation(const Style::PreferredSize&);
     void setOverridingBorderBoxLogicalWidthForFlexBasisComputation(const Style::PreferredSize&);
     void clearOverridingLogicalHeightForFlexBasisComputation();
@@ -448,8 +448,8 @@ public:
     bool shouldComputeLogicalHeightFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatio() const;
     bool hasFullyConstrainedLogicalHeight() const;
-    bool NODELETE shouldIgnoreLogicalMinMaxWidthSizes() const;
-    bool NODELETE shouldIgnoreLogicalMinMaxHeightSizes() const;
+    bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxWidthSizes() const;
+    bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxHeightSizes() const;
 
     // The explicit intrinsic inner size of contain-intrinsic-size
     std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
@@ -465,9 +465,9 @@ public:
 
     virtual bool shouldInvalidateContentWidths() const;
 
-    virtual bool NODELETE hasRelativeDimensions() const;
-    virtual bool NODELETE hasRelativeLogicalHeight() const;
-    virtual bool NODELETE hasRelativeLogicalWidth() const;
+    virtual bool LEGACY_NODELETE hasRelativeDimensions() const;
+    virtual bool LEGACY_NODELETE hasRelativeLogicalHeight() const;
+    virtual bool LEGACY_NODELETE hasRelativeLogicalWidth() const;
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy) const { return overflowClipRect(location, relevancy); }
@@ -495,7 +495,7 @@ public:
     // The query rect is given in local coordinate system.
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const;
     inline bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
-    void NODELETE invalidateAncestorBackgroundObscurationStatus();
+    void LEGACY_NODELETE invalidateAncestorBackgroundObscurationStatus();
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     bool hitTestVisualOverflow(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
@@ -508,10 +508,10 @@ public:
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutRect firstFragmentBorderBoxRect() const override;
 
-    LayoutPoint NODELETE flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
-    LayoutUnit NODELETE flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
-    LayoutPoint NODELETE flipForWritingMode(const LayoutPoint&) const;
-    LayoutSize NODELETE flipForWritingMode(const LayoutSize&) const;
+    LayoutPoint LEGACY_NODELETE flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
+    LayoutUnit LEGACY_NODELETE flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
+    LayoutPoint LEGACY_NODELETE flipForWritingMode(const LayoutPoint&) const;
+    LayoutSize LEGACY_NODELETE flipForWritingMode(const LayoutSize&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
 
     void flipForWritingMode(LayoutRect&) const;
@@ -524,7 +524,7 @@ public:
     LayoutSize topLeftLocationOffset() const; // Defined in RenderBoxInlines.h
 
     LayoutRect applyPaintGeometryTransformToRect(LayoutRect) const;
-    LayoutRect NODELETE convertRectToParentWritingMode(LayoutRect, const WritingMode parentWritingMode) const;
+    LayoutRect LEGACY_NODELETE convertRectToParentWritingMode(LayoutRect, const WritingMode parentWritingMode) const;
 
     // Bounds of the outline box in absolute coords. Respects transforms
     LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap* = nullptr) const final;
@@ -551,7 +551,7 @@ public:
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
-    RenderBoxFragmentInfo* NODELETE renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
+    RenderBoxFragmentInfo* LEGACY_NODELETE renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
 
     // True if this box can have a range in an outside fragmentation context.
     bool canHaveOutsideFragmentRange() const { return !isRenderFragmentedFlow(); }
@@ -595,14 +595,14 @@ public:
     inline bool isColumnSpanner() const;
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
-    bool NODELETE computeHasTransformRelatedProperty(const Style::ComputedStyle&) const;
+    bool LEGACY_NODELETE computeHasTransformRelatedProperty(const Style::ComputedStyle&) const;
 
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
     ShapeOutsideInfo* shapeOutsideInfo() const LIFETIME_BOUND;
 
     bool requiresLayer() const override;
-    bool NODELETE requiresLayerWithScrollableArea() const;
+    bool LEGACY_NODELETE requiresLayerWithScrollableArea() const;
 
 protected:
     RenderBox(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
@@ -614,8 +614,8 @@ protected:
 
     void willBeDestroyed() override;
 
-    virtual bool NODELETE shouldResetLogicalHeightBeforeLayout() const;
-    void NODELETE resetLogicalHeightBeforeLayoutIfNeeded();
+    virtual bool LEGACY_NODELETE shouldResetLogicalHeightBeforeLayout() const;
+    void LEGACY_NODELETE resetLogicalHeightBeforeLayoutIfNeeded();
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
     bool getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect&) const;
@@ -644,7 +644,7 @@ protected:
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
     void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
-    bool NODELETE shouldIgnoreAspectRatio() const;
+    bool LEGACY_NODELETE shouldIgnoreAspectRatio() const;
     // -webkit-fill-available always resolves through the containing-block chain (walking up to the
     // viewport if needed), so it is considered resolvable regardless of whether the immediate CB has
     // a definite block size. Only the spec stretch keyword is gated on `isBlockSizeResolvableForStretch`.

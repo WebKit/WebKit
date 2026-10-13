@@ -73,7 +73,7 @@ public:
     bool nodeOnlyContainsUserSelectNone(Node& node) { return computeState(node) == State::OnlyUserSelectNone; }
 
 private:
-    ContainerNode* NODELETE parentNode(Node&);
+    ContainerNode* LEGACY_NODELETE parentNode(Node&);
     Node* firstChild(Node&);
     Node* nextSibling(Node&);
 

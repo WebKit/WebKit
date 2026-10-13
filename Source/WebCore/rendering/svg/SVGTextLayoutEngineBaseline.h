@@ -46,7 +46,7 @@ public:
     float calculateGlyphAdvanceAndOrientation(bool isVerticalText, const SVGTextMetrics&, float angle, float& xOrientationShift, float& yOrientationShift) const;
 
 private:
-    AlignmentBaseline NODELETE dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const;
+    AlignmentBaseline LEGACY_NODELETE dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const;
 
     CheckedRef<const FontCascade> m_font;
 };

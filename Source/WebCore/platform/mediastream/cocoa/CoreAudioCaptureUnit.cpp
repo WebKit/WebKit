@@ -224,7 +224,7 @@ Ref<CoreAudioCaptureUnit> CoreAudioCaptureUnit::createNonVPIOUnit()
     return adoptRef(*new CoreAudioCaptureUnit(CanEnableEchoCancellation::No));
 }
 
-static WeakHashSet<CoreAudioCaptureUnit>& NODELETE allCoreAudioCaptureUnits()
+static WeakHashSet<CoreAudioCaptureUnit>& LEGACY_NODELETE allCoreAudioCaptureUnits()
 {
     ASSERT(isMainThread());
 

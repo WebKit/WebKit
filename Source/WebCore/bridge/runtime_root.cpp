@@ -47,7 +47,7 @@ namespace JSC::Bindings {
 
 using RootObjectSet = HashSet<RootObject*>;
 
-static RootObjectSet& NODELETE rootObjectSet()
+static RootObjectSet& LEGACY_NODELETE rootObjectSet()
 {
     static NeverDestroyed<RootObjectSet> staticRootObjectSet;
     return staticRootObjectSet;

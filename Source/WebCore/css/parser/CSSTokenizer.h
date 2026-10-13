@@ -51,10 +51,10 @@ public:
     WEBCORE_EXPORT explicit CSSTokenizer(StringView string LIFETIME_BOUND);
     CSSTokenizer(StringView string LIFETIME_BOUND, CSSParserObserverWrapper&); // For the inspector
 
-    WEBCORE_EXPORT CSSParserTokenRange NODELETE tokenRange() const LIFETIME_BOUND;
-    unsigned NODELETE tokenCount() const;
+    WEBCORE_EXPORT CSSParserTokenRange LEGACY_NODELETE tokenRange() const LIFETIME_BOUND;
+    unsigned LEGACY_NODELETE tokenCount() const;
 
-    static bool NODELETE isWhitespace(CSSParserTokenType);
+    static bool LEGACY_NODELETE isWhitespace(CSSParserTokenType);
 
     Vector<String>&& escapedStringsForAdoption() { return WTF::move(m_stringPool); }
 
@@ -63,8 +63,8 @@ private:
 
     CSSParserToken nextToken();
 
-    char16_t NODELETE consume();
-    void NODELETE reconsume(char16_t);
+    char16_t LEGACY_NODELETE consume();
+    void LEGACY_NODELETE reconsume(char16_t);
 
     StringView preprocessString(StringView);
 
@@ -75,18 +75,18 @@ private:
     CSSParserToken consumeURLToken();
 
     void consumeBadUrlRemnants();
-    void NODELETE consumeSingleWhitespaceIfNext();
-    void NODELETE consumeUntilCommentEndFound();
+    void LEGACY_NODELETE consumeSingleWhitespaceIfNext();
+    void LEGACY_NODELETE consumeUntilCommentEndFound();
 
-    bool NODELETE consumeIfNext(char16_t);
+    bool LEGACY_NODELETE consumeIfNext(char16_t);
     StringView consumeName();
     char32_t consumeEscape();
 
-    bool NODELETE nextTwoCharsAreValidEscape();
-    bool NODELETE nextCharsAreNumber(char16_t);
-    bool NODELETE nextCharsAreNumber();
-    bool NODELETE nextCharsAreIdentifier(char16_t);
-    bool NODELETE nextCharsAreIdentifier();
+    bool LEGACY_NODELETE nextTwoCharsAreValidEscape();
+    bool LEGACY_NODELETE nextCharsAreNumber(char16_t);
+    bool LEGACY_NODELETE nextCharsAreNumber();
+    bool LEGACY_NODELETE nextCharsAreIdentifier(char16_t);
+    bool LEGACY_NODELETE nextCharsAreIdentifier();
 
     CSSParserToken blockStart(CSSParserTokenType);
     CSSParserToken blockStart(CSSParserTokenType blockType, CSSParserTokenType, StringView);

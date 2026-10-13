@@ -125,7 +125,7 @@ static Uint8Array* keyRequest()
     return request->ptr();
 }
 
-static String NODELETE generateSessionId()
+static String LEGACY_NODELETE generateSessionId()
 {
     static int monotonicallyIncreasingSessionId = 0;
     return String::number(monotonicallyIncreasingSessionId++);

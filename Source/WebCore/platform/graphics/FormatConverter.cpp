@@ -52,19 +52,19 @@ constexpr float MaxUInt16Value = UINT16_MAX;
 constexpr double MaxInt32Value = INT32_MAX;
 constexpr double MaxUInt32Value = UINT32_MAX;
 
-int8_t NODELETE clampMin(int8_t value)
+int8_t LEGACY_NODELETE clampMin(int8_t value)
 {
     constexpr int8_t MinInt8Value = INT8_MIN + 1;
     return value < MinInt8Value ? MinInt8Value : value;
 }
 
-int16_t NODELETE clampMin(int16_t value)
+int16_t LEGACY_NODELETE clampMin(int16_t value)
 {
     constexpr int16_t MinInt16Value = INT16_MIN + 1;
     return value < MinInt16Value ? MinInt16Value : value;
 }
 
-int32_t NODELETE clampMin(int32_t value)
+int32_t LEGACY_NODELETE clampMin(int32_t value)
 {
     constexpr int32_t MinInt32Value = INT32_MIN + 1;
     return value < MinInt32Value ? MinInt32Value : value;
@@ -187,7 +187,7 @@ static constexpr std::array<uint8_t, 512> shiftTable {
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     13
 };
 
-inline uint16_t NODELETE convertFloatToHalfFloat(float f)
+inline uint16_t LEGACY_NODELETE convertFloatToHalfFloat(float f)
 {
     uint32_t temp = std::bit_cast<uint32_t>(f);
     unsigned signexp = (temp >> 23) & 0x1ff;
@@ -208,7 +208,7 @@ ALWAYS_INLINE void unpack(std::span<const SourceType>, std::span<DstType>, unsig
     ASSERT_NOT_REACHED();
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[1];
@@ -220,7 +220,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ARG
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
@@ -247,7 +247,7 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGBA5551, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGBA5551, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGBA5551ToRGBA8(source, destination, pixelsPerRow);
@@ -266,7 +266,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGBA4444, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGBA4444, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGBA4444ToRGBA8(source, destination, pixelsPerRow);
@@ -286,7 +286,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -298,7 +298,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RA8
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::AR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::AR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[1];
@@ -310,7 +310,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::AR8
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGBA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGBA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
@@ -323,7 +323,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow && source.size() >= 4 && destination.size() >= 4; ++i) {
@@ -336,7 +336,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::BGR
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
@@ -349,7 +349,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ABG
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
@@ -362,7 +362,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::ARG
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RA32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RA32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -374,7 +374,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RA3
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, uint32_t, float>(std::span<const uint32_t> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, uint32_t, float>(std::span<const uint32_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float rgbScaleFactor = 1.0f / 1023.0f;
     const float alphaScaleFactor = 1.0f / 3.0f;
@@ -392,7 +392,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
 // Unpacking routines needed by various WebKit ports, for example to
 // handle the internal representations of grayscale PNGs.
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::R8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::R8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -404,7 +404,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::R8,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::A8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::A8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0x0;
@@ -416,7 +416,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::A8,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::R32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::R32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -428,7 +428,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::R32
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::A32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::A32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0;
@@ -440,7 +440,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::A32
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -452,7 +452,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::BGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::BGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[2];
@@ -464,7 +464,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::BGR
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB565, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGB565, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGB565ToRGBA8(source, destination, pixelsPerRow);
@@ -483,7 +483,7 @@ template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE unpack<GraphicsContextGL::DataFormat::RGB32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::RGB32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -505,7 +505,7 @@ ALWAYS_INLINE void pack(std::span<const SourceType>, std::span<DstType>, unsigne
     ASSERT_NOT_REACHED();
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::A8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
@@ -514,7 +514,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A8, G
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -523,7 +523,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, G
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -535,7 +535,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, G
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -546,7 +546,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R8, G
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -556,7 +556,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, 
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -569,7 +569,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, 
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -581,7 +581,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA8, 
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -592,7 +592,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -608,7 +608,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8,
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -624,7 +624,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB8,
 }
 
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -641,7 +641,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -657,7 +657,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort4444(source, destination, pixelsPerRow);
@@ -672,7 +672,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -689,7 +689,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -705,7 +705,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA4
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort5551(source, destination, pixelsPerRow);
@@ -720,7 +720,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -737,7 +737,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -753,7 +753,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA5
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort565(source, destination, pixelsPerRow);
@@ -767,7 +767,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB56
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -783,7 +783,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB56
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -798,7 +798,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB56
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -809,7 +809,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -821,7 +821,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -833,7 +833,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB32
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -846,7 +846,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA3
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -859,7 +859,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA3
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::A32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
@@ -868,7 +868,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A32F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -877,7 +877,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -887,7 +887,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -897,7 +897,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R32F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
@@ -907,7 +907,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -918,7 +918,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -929,7 +929,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA32F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
@@ -941,7 +941,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA1
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -954,7 +954,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA1
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -967,7 +967,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGBA1
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
@@ -978,7 +978,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -990,7 +990,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -1002,7 +1002,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RGB16
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
@@ -1012,7 +1012,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -1023,7 +1023,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -1034,7 +1034,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::RA16F
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
@@ -1043,7 +1043,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -1053,7 +1053,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -1063,7 +1063,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::R16F,
     }
 }
 
-template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::A16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[3]);
@@ -1073,7 +1073,7 @@ template<> ALWAYS_INLINE void NODELETE pack<GraphicsContextGL::DataFormat::A16F,
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::AlphaOp::DoPremultiply, int8_t, int8_t>(std::span<const int8_t> source, std::span<int8_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::AlphaOp::DoPremultiply, int8_t, int8_t>(std::span<const int8_t> source, std::span<int8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1087,7 +1087,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::Al
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::AlphaOp::DoPremultiply, uint16_t, uint16_t>(std::span<const uint16_t> source, std::span<uint16_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::AlphaOp::DoPremultiply, uint16_t, uint16_t>(std::span<const uint16_t> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = static_cast<float>(source[3]) / MaxUInt16Value;
@@ -1101,7 +1101,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::Alp
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::AlphaOp::DoPremultiply, int16_t, int16_t>(std::span<const int16_t> source, std::span<int16_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::AlphaOp::DoPremultiply, int16_t, int16_t>(std::span<const int16_t> source, std::span<int16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1115,7 +1115,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::A
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoPremultiply, uint32_t, uint32_t>(std::span<const uint32_t> source, std::span<uint32_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoPremultiply, uint32_t, uint32_t>(std::span<const uint32_t> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         double scaleFactor = static_cast<double>(source[3]) / MaxUInt32Value;
@@ -1129,7 +1129,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::Alp
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::DoPremultiply, int32_t, int32_t>(std::span<const int32_t> source, std::span<int32_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::DoPremultiply, int32_t, int32_t>(std::span<const int32_t> source, std::span<int32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1143,7 +1143,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::A
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoNothing, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoNothing, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         uint32_t r = truncateFloatToUint32(source[0] * 1023.0f);
@@ -1157,7 +1157,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContex
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         uint32_t r = truncateFloatToUint32(source[0] * source[3] * 1023.0f);
@@ -1171,7 +1171,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContex
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1023.0f / source[3] : 1023.0f;
@@ -1186,7 +1186,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContex
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = source[0];
@@ -1197,7 +1197,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaO
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = static_cast<float>(source[3]) / MaxUInt8Value;
@@ -1210,7 +1210,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaO
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? MaxUInt8Value / static_cast<float>(source[3]) : 1.0f;
@@ -1222,7 +1222,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaO
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
@@ -1233,7 +1233,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::Alph
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3];
@@ -1246,7 +1246,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::Alph
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -1258,7 +1258,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::Alph
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = source[0];
@@ -1269,7 +1269,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::Alph
 }
 
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3];
@@ -1282,7 +1282,7 @@ void NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::Alph
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
+void LEGACY_NODELETE pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;

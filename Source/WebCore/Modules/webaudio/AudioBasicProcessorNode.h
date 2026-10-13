@@ -52,7 +52,7 @@ public:
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
     // Returns the number of channels for both the input and the output.
-    unsigned NODELETE numberOfChannels();
+    unsigned LEGACY_NODELETE numberOfChannels();
 
 protected:
     double tailTime() const override;

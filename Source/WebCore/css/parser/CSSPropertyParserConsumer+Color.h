@@ -54,7 +54,7 @@ struct CSSColorParsingOptions {
 };
 
 // MARK: Mode specific color settings.
-bool NODELETE isColorKeywordAllowed(CSSValueID, const CSSParserContext&);
+bool LEGACY_NODELETE isColorKeywordAllowed(CSSValueID, const CSSParserContext&);
 
 // MARK: <color> consuming (unresolved)
 std::optional<CSS::Color> consumeUnresolvedColor(CSSParserTokenRange&, CSS::PropertyParserState&, const CSSColorParsingOptions& = { });

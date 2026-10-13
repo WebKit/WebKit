@@ -48,7 +48,7 @@ public:
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
     bool isLoadedFromOpaqueSource() const { return m_cssValue->isLoadedFromOpaqueSource(); }
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
     
     CSSStyleValueType styleValueType() const final { return CSSStyleValueType::CSSStyleImageValue; }
     

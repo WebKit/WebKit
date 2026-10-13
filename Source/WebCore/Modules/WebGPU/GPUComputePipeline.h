@@ -49,11 +49,11 @@ public:
 
     ~GPUComputePipeline();
 
-    static HashMap<GPUComputePipeline*, GPUDevice*>& NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
-    static Lock& NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
+    static HashMap<GPUComputePipeline*, GPUDevice*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
+    static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
     static void willDestroyDevice(GPUDevice&);
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);

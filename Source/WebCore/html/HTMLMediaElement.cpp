@@ -464,7 +464,7 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
     return { };
 }
 
-static bool NODELETE preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
+static bool LEGACY_NODELETE preferMediaControlsForCandidateSessionOverOtherCandidateSession(const MediaElementSessionInfo& session, const MediaElementSessionInfo& otherSession)
 {
     MediaElementSession::PlaybackControlsPurpose purpose = session.purpose;
     ASSERT(purpose == otherSession.purpose);
@@ -488,7 +488,7 @@ static bool NODELETE preferMediaControlsForCandidateSessionOverOtherCandidateSes
     return session.timeOfLastUserInteraction.value_or(MonotonicTime { }) > otherSession.timeOfLastUserInteraction.value_or(MonotonicTime { });
 }
 
-static bool NODELETE mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
+static bool LEGACY_NODELETE mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
 {
     if (purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession)
         return false;
@@ -507,7 +507,7 @@ static bool NODELETE mediaSessionMayBeConfusedWithMainContent(const MediaElement
     return true;
 }
 
-SUPPRESS_NODELETE static bool NODELETE defaultVolumeLocked()
+SUPPRESS_NODELETE static bool LEGACY_NODELETE defaultVolumeLocked()
 {
 #if PLATFORM(IOS)
     return PAL::currentUserInterfaceIdiomIsSmallScreen();
@@ -516,7 +516,7 @@ SUPPRESS_NODELETE static bool NODELETE defaultVolumeLocked()
 #endif
 }
 
-static bool NODELETE isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
+static bool LEGACY_NODELETE isInWindowOrStandardFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
 }
@@ -8457,7 +8457,7 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
         protect(document())->decrementLoadEventDelayCount();
 }
 
-static String& NODELETE sharedMediaCacheDirectory()
+static String& LEGACY_NODELETE sharedMediaCacheDirectory()
 {
     static NeverDestroyed<String> sharedMediaCacheDirectory;
     return sharedMediaCacheDirectory;
@@ -8978,7 +8978,7 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
     return frame->loader().userAgent(m_currentSrc);
 }
 
-static inline PlatformTextTrackData::TrackKind NODELETE toPlatform(TextTrack::Kind kind)
+static inline PlatformTextTrackData::TrackKind LEGACY_NODELETE toPlatform(TextTrack::Kind kind)
 {
     switch (kind) {
     case TextTrack::Kind::Captions:
@@ -8998,7 +8998,7 @@ static inline PlatformTextTrackData::TrackKind NODELETE toPlatform(TextTrack::Ki
     return PlatformTextTrackData::TrackKind::Caption;
 }
 
-static inline PlatformTextTrackData::TrackMode NODELETE toPlatform(TextTrack::Mode mode)
+static inline PlatformTextTrackData::TrackMode LEGACY_NODELETE toPlatform(TextTrack::Mode mode)
 {
     switch (mode) {
     case TextTrack::Mode::Disabled:

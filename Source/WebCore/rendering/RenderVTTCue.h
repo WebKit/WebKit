@@ -56,13 +56,13 @@ private:
     RenderVTTCue* overlappingObjectForRect(const FloatRect&) const;
     bool shouldSwitchDirection(const InlineIterator::InlineBox&, LayoutUnit) const;
 
-    void NODELETE moveBoxesByStep(LayoutUnit);
-    bool NODELETE switchDirection(bool&, LayoutUnit&);
+    void LEGACY_NODELETE moveBoxesByStep(LayoutUnit);
+    bool LEGACY_NODELETE switchDirection(bool&, LayoutUnit&);
     void moveIfNecessaryToKeepWithinContainer();
     bool findNonOverlappingPosition(float& x, float& y) const;
 
     bool initializeLayoutParameters(LayoutUnit&, LayoutUnit&);
-    void NODELETE placeBoxInDefaultPosition(LayoutUnit, bool&);
+    void LEGACY_NODELETE placeBoxInDefaultPosition(LayoutUnit, bool&);
     void repositionCueSnapToLinesSet();
     void repositionCueSnapToLinesNotSet();
     void repositionGenericCue();

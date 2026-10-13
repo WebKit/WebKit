@@ -71,7 +71,7 @@ public:
     virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)
     virtual void enableMockMediaSource();
-    bool NODELETE mockMediaSourceEnabled() const;
+    bool LEGACY_NODELETE mockMediaSourceEnabled() const;
     static void addMockMediaSourceEngine();
 #endif
 

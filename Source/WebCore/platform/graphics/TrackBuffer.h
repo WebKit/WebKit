@@ -58,7 +58,7 @@ public:
 
     static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, IsAcceptableEnqueueGapFn&& = nullptr);
 
-    MediaTime NODELETE maximumBufferedTime() const;
+    MediaTime LEGACY_NODELETE maximumBufferedTime() const;
     void addBufferedRange(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);
     void addSample(MediaSample&);
     // Replace an already-buffered sample with a copy whose presentation and
@@ -76,8 +76,8 @@ public:
     RefPtr<MediaSample> nextSample();
     size_t remainingSamples() const { return decodeQueue().size(); }
 
-    void NODELETE resetTimestampOffset();
-    void NODELETE reset();
+    void LEGACY_NODELETE resetTimestampOffset();
+    void LEGACY_NODELETE reset();
     void clearSamples();
 
     const MediaTime& lastDecodeTimestamp() const LIFETIME_BOUND { return m_lastDecodeTimestamp; }

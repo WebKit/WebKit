@@ -89,7 +89,7 @@ FloatRect selectionRectForTextFragment(const RenderSVGInlineText& renderer, Text
     return snappedSelectionRect;
 }
 
-static inline bool NODELETE textShouldBePainted(const RenderSVGInlineText& textRenderer)
+static inline bool LEGACY_NODELETE textShouldBePainted(const RenderSVGInlineText& textRenderer)
 {
     return textRenderer.scaledFont().size() >= 0.5;
 }
@@ -373,7 +373,7 @@ bool mapStartEndPositionsIntoFragmentCoordinates(unsigned textBoxStart, const SV
     return true;
 }
 
-static inline float NODELETE positionOffsetForDecoration(Style::TextDecorationLine decoration, const FontMetrics& fontMetrics, float thickness)
+static inline float LEGACY_NODELETE positionOffsetForDecoration(Style::TextDecorationLine decoration, const FontMetrics& fontMetrics, float thickness)
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera.
@@ -389,7 +389,7 @@ static inline float NODELETE positionOffsetForDecoration(Style::TextDecorationLi
     return 0.0f;
 }
 
-static inline float NODELETE thicknessForDecoration(Style::TextDecorationLine, const FontCascade& font)
+static inline float LEGACY_NODELETE thicknessForDecoration(Style::TextDecorationLine, const FontCascade& font)
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera

@@ -107,7 +107,7 @@ private:
     void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long = 0) final { }
     void logExceptionToConsole(const String&, const String&, int, int, RefPtr<Inspector::ScriptCallStack>&&) final { }
 
-    const SettingsValues& NODELETE settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
+    const SettingsValues& LEGACY_NODELETE settingsValues() const LIFETIME_BOUND final { return m_settingsValues; }
     const NetworkLoadPolicy& networkLoadPolicy() const final { return NetworkLoadPolicy::unrestricted(); }
 
 #if ENABLE(NOTIFICATIONS)

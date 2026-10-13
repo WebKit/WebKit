@@ -56,7 +56,7 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
-    StylePropertyMap& NODELETE styleMap();
+    StylePropertyMap& LEGACY_NODELETE styleMap();
 
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);

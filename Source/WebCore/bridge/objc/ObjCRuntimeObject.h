@@ -44,7 +44,7 @@ public:
         return object;
     }
 
-    ObjcInstance* NODELETE getInternalObjCInstance() const;
+    ObjcInstance* LEGACY_NODELETE getInternalObjCInstance() const;
 
     DECLARE_INFO;
 

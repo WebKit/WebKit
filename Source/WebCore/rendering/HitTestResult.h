@@ -68,7 +68,7 @@ public:
     void setInnerNonSharedNode(Node*);
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
 
-    WEBCORE_EXPORT Element* NODELETE innerNonSharedElement() const;
+    WEBCORE_EXPORT Element* LEGACY_NODELETE innerNonSharedElement() const;
 
     void setURLElement(Element*);
     Element* URLElement() const { return m_innerURLElement.get(); }
@@ -79,7 +79,7 @@ public:
     bool isOverWidget() const { return m_isOverWidget; }
     void setIsOverWidget(bool isOverWidget) { m_isOverWidget = isOverWidget; }
 
-    std::optional<Style::PseudoElementIdentifier> NODELETE pseudoElementIdentifier() const;
+    std::optional<Style::PseudoElementIdentifier> LEGACY_NODELETE pseudoElementIdentifier() const;
     void setPseudoElementIdentifier(std::optional<Style::PseudoElementIdentifier>);
 
     WEBCORE_EXPORT String linkSuggestedFilename() const;
@@ -95,17 +95,17 @@ public:
     const LayoutPoint pointInInnerNodeFrame() const { return LayoutPoint(m_doublePointInInnerNodeFrame); }
     const DoublePoint& doublePointInInnerNodeFrame() const LIFETIME_BOUND { return m_doublePointInInnerNodeFrame; }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
-    WEBCORE_EXPORT LocalFrame* NODELETE innerNodeFrame() const;
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE innerNodeFrame() const;
 
     // The hit-tested point in the coordinates of the inner node.
     const LayoutPoint& localPoint() const LIFETIME_BOUND { return m_localPoint; }
-    void NODELETE setLocalPoint(const LayoutPoint&);
+    void LEGACY_NODELETE setLocalPoint(const LayoutPoint&);
 
     WEBCORE_EXPORT void setToNonUserAgentShadowAncestor();
 
     const HitTestLocation& hitTestLocation() const LIFETIME_BOUND { return m_hitTestLocation; }
 
-    WEBCORE_EXPORT LocalFrame* NODELETE frame() const;
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE frame() const;
     WEBCORE_EXPORT RefPtr<Frame> targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT bool allowsFollowingLink() const;
@@ -127,29 +127,29 @@ public:
     WEBCORE_EXPORT URL absoluteLinkURL() const;
     WEBCORE_EXPORT bool hasLocalDataForLinkURL() const;
     WEBCORE_EXPORT String textContent() const;
-    WEBCORE_EXPORT bool NODELETE isOverLink() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isOverLink() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
     void toggleMediaLoopPlayback() const;
     void toggleShowMediaStats() const;
     WEBCORE_EXPORT bool mediaIsInFullscreen() const;
-    bool NODELETE mediaIsInVideoViewer() const;
+    bool LEGACY_NODELETE mediaIsInVideoViewer() const;
     void toggleVideoViewer() const;
     void toggleMediaFullscreenState() const;
     void enterFullscreenForVideo() const;
     bool mediaControlsEnabled() const;
-    bool NODELETE mediaLoopEnabled() const;
-    bool NODELETE mediaStatsShowing() const;
+    bool LEGACY_NODELETE mediaLoopEnabled() const;
+    bool LEGACY_NODELETE mediaStatsShowing() const;
     bool mediaPlaying() const;
     bool mediaSupportsFullscreen() const;
     void toggleMediaPlayState() const;
-    WEBCORE_EXPORT bool NODELETE hasMediaElement() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasMediaElement() const;
     WEBCORE_EXPORT bool mediaHasAudio() const;
-    WEBCORE_EXPORT bool NODELETE mediaIsVideo() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE mediaIsVideo() const;
     bool mediaMuted() const;
     void toggleMediaMuteState() const;
     bool mediaSupportsPictureInPicture() const;
-    bool NODELETE mediaIsInPictureInPicture() const;
+    bool LEGACY_NODELETE mediaIsInPictureInPicture() const;
     void togglePictureInPictureForVideo() const;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -173,7 +173,7 @@ public:
     Vector<String> dictationAlternatives() const;
 
     Node* targetNode() const { return innerNode(); }
-    WEBCORE_EXPORT Element* NODELETE targetElement() const;
+    WEBCORE_EXPORT Element* LEGACY_NODELETE targetElement() const;
 
 private:
     NodeSet& mutableListBasedTestResult() LIFETIME_BOUND; // See above.
@@ -184,11 +184,11 @@ private:
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void setAllowsAnimation(bool /* allowAnimation */) const;
-    HTMLImageElement* NODELETE imageElement() const;
+    HTMLImageElement* LEGACY_NODELETE imageElement() const;
 #endif
 
 #if ENABLE(VIDEO)
-    HTMLMediaElement* NODELETE mediaElement() const;
+    HTMLMediaElement* LEGACY_NODELETE mediaElement() const;
 #endif
     HitTestLocation m_hitTestLocation;
 

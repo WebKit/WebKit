@@ -52,7 +52,7 @@ public:
     static Ref<MediaStreamTrackHandle> create(ScriptExecutionContextIdentifier, WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData>&&, Ref<MediaStreamTrack::Keeper>&&, Ref<MediaStreamTrackPrivateSourceObserver>&&);
 
     bool isDetached() const { return m_isDetached; }
-    UniqueRef<DataHolder> NODELETE detach();
+    UniqueRef<DataHolder> LEGACY_NODELETE detach();
 
     ScriptExecutionContextIdentifier trackContextIdentifier() const { return m_contextIdentifier; }
     WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData> track() const { return m_track; }

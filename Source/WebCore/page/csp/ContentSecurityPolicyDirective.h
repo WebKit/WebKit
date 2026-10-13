@@ -52,7 +52,7 @@ public:
 
     const ContentSecurityPolicyDirectiveList& directiveList() const LIFETIME_BOUND { return m_directiveList; }
 
-    bool NODELETE isDefaultSrc() const;
+    bool LEGACY_NODELETE isDefaultSrc() const;
 
 private:
     String m_name;

@@ -115,7 +115,7 @@ public:
     // This asserts that URL argument is a JavaScript URL.
     void executeJavaScriptURL(const URL&, const NavigationAction&, bool& didReplaceDocument);
 
-    static uint64_t NODELETE scriptExecutionCount();
+    static uint64_t LEGACY_NODELETE scriptExecutionCount();
 
     static void initializeMainThread();
 
@@ -191,7 +191,7 @@ private:
 
     void disconnectPlatformScriptObjects();
 
-    WEBCORE_EXPORT WindowProxy& NODELETE windowProxy();
+    WEBCORE_EXPORT WindowProxy& LEGACY_NODELETE windowProxy();
     WEBCORE_EXPORT JSWindowProxy& jsWindowProxy(DOMWrapperWorld&);
 
     WeakRef<LocalFrame> m_frame;

@@ -218,13 +218,13 @@ static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>& NODELETE attrNodeListMap()
+static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>& LEGACY_NODELETE attrNodeListMap()
 {
     static NeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<Ref<Attr>>>> map;
     return map;
 }
 
-static Vector<Ref<Attr>>* NODELETE attrNodeListForElement(Element& element)
+static Vector<Ref<Attr>>* LEGACY_NODELETE attrNodeListForElement(Element& element)
 {
     if (!element.hasSyntheticAttrChildNodes())
         return nullptr;
@@ -251,7 +251,7 @@ static void removeAttrNodeListForElement(Element& element)
     element.setHasSyntheticAttrChildNodes(false);
 }
 
-static Attr* NODELETE findAttrNodeInList(Vector<Ref<Attr>>& attrNodeList, const QualifiedName& name)
+static Attr* LEGACY_NODELETE findAttrNodeInList(Vector<Ref<Attr>>& attrNodeList, const QualifiedName& name)
 {
     for (auto& node : attrNodeList) {
         if (node->qualifiedName().matches(name))
@@ -485,7 +485,7 @@ bool Element::shouldUseInputMethod()
     return computeEditability(UserSelectAllTreatment::NotEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
-static bool NODELETE isForceEvent(const PlatformMouseEvent& platformEvent)
+static bool LEGACY_NODELETE isForceEvent(const PlatformMouseEvent& platformEvent)
 {
     return platformEvent.type() == PlatformEvent::Type::MouseForceChanged || platformEvent.type() == PlatformEvent::Type::MouseForceDown || platformEvent.type() == PlatformEvent::Type::MouseForceUp;
 }
@@ -1147,7 +1147,7 @@ void Element::setBeingDragged(bool value)
     document().userActionElements().setBeingDragged(*this, value);
 }
 
-inline ScrollAlignment NODELETE toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
+inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForInlineDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
     switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
@@ -1190,7 +1190,7 @@ inline ScrollAlignment NODELETE toScrollAlignmentForInlineDirection(std::optiona
     }
 }
 
-inline ScrollAlignment NODELETE toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
+inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForBlockDirection(std::optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
     switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
@@ -1497,7 +1497,7 @@ void Element::scrollTo(double x, double y)
     scrollTo(ScrollToOptions { { ScrollBehavior::Auto }, x, y });
 }
 
-static double NODELETE localZoomForRenderer(const RenderElement& renderer)
+static double LEGACY_NODELETE localZoomForRenderer(const RenderElement& renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
     // other out, but the alternative is that we'd have to crawl up the whole render tree every
@@ -1947,7 +1947,7 @@ inline bool isInNonRenderedSVGSubtree(const Element& element)
     return false;
 }
 
-inline bool NODELETE shouldObtainBoundsFromBoxModel(const Element* element)
+inline bool LEGACY_NODELETE shouldObtainBoundsFromBoxModel(const Element* element)
 {
     ASSERT(element);
     if (!element->renderer())
@@ -4797,7 +4797,7 @@ void Element::removeFromTopLayer()
         renderer->establishesTopLayerDidChange();
 }
 
-static PseudoElement* NODELETE beforeOrAfterPseudoElement(const Element& host, PseudoElementType pseudoElementSpecifier)
+static PseudoElement* LEGACY_NODELETE beforeOrAfterPseudoElement(const Element& host, PseudoElementType pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {
     case PseudoElementType::Before:

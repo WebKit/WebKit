@@ -70,12 +70,12 @@
 
 namespace WebCore {
 
-static MediaTime NODELETE timestampToMediaTime(int64_t timestamp)
+static MediaTime LEGACY_NODELETE timestampToMediaTime(int64_t timestamp)
 {
     return MediaTime::createWithDouble(Seconds::fromMicroseconds(timestamp).value());
 }
 
-static int64_t NODELETE mediaTimeToTimestamp(MediaTime mediaTime)
+static int64_t LEGACY_NODELETE mediaTimeToTimestamp(MediaTime mediaTime)
 {
     return Seconds(mediaTime.toDouble()).microseconds();
 }
@@ -378,7 +378,7 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(ScriptExecutionContext& con
     return result;
 }
 
-static VideoPixelFormat NODELETE computeVideoPixelFormat(VideoPixelFormat baseFormat, bool shouldDiscardAlpha)
+static VideoPixelFormat LEGACY_NODELETE computeVideoPixelFormat(VideoPixelFormat baseFormat, bool shouldDiscardAlpha)
 {
     if (!shouldDiscardAlpha)
         return baseFormat;

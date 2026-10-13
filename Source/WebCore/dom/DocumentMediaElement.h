@@ -59,7 +59,7 @@ private:
     bool isDocumentMediaElement() const final { return true; }
     static ASCIILiteral supplementName();
 
-    Document& NODELETE document() const;
+    Document& LEGACY_NODELETE document() const;
 
     DOMWrapperWorld& ensureIsolatedWorld();
     bool ensureMediaControlsScript();

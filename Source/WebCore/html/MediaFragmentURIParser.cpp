@@ -54,7 +54,7 @@ static String collectDigits(std::span<const Latin1Character> input, unsigned& po
     return digits.toString();
 }
 
-static StringView NODELETE collectFraction(std::span<const Latin1Character> input, unsigned& position)
+static StringView LEGACY_NODELETE collectFraction(std::span<const Latin1Character> input, unsigned& position)
 {
     // http://www.ietf.org/rfc/rfc2326.txt
     // [ "." *DIGIT ]

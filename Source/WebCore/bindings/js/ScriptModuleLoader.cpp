@@ -97,7 +97,7 @@ UniqueRef<ScriptModuleLoader> ScriptModuleLoader::shadowRealmLoader(JSC::JSGloba
     return loader;
 }
 
-static bool NODELETE isRootModule(JSC::JSValue importerModuleKey)
+static bool LEGACY_NODELETE isRootModule(JSC::JSValue importerModuleKey)
 {
     return importerModuleKey.isSymbol() || importerModuleKey.isUndefined();
 }

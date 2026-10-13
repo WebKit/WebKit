@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT void stop();
     WEBCORE_EXPORT void prepareForDestruction();
 
-    WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier NODELETE clientIdentifier() const;
+    WEBCORE_EXPORT SpeechRecognitionConnectionClientIdentifier LEGACY_NODELETE clientIdentifier() const;
     SpeechRecognitionCaptureSource* source() LIFETIME_BOUND { return m_source.get(); }
 
     void setInactive() { m_state = State::Inactive; }

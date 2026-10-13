@@ -57,17 +57,17 @@ public:
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBRequestData(const IDBRequestData&, IsolatedCopyTag);
-    WEBCORE_EXPORT IDBRequestData NODELETE isolatedCopy() const;
+    WEBCORE_EXPORT IDBRequestData LEGACY_NODELETE isolatedCopy() const;
 
-    IDBConnectionIdentifier NODELETE serverConnectionIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier NODELETE requestIdentifier() const;
-    WEBCORE_EXPORT IDBResourceIdentifier NODELETE transactionIdentifier() const;
-    IDBObjectStoreIdentifier NODELETE objectStoreIdentifier() const;
-    std::optional<IDBIndexIdentifier> NODELETE indexIdentifier() const;
-    IndexedDB::IndexRecordType NODELETE indexRecordType() const;
-    IDBResourceIdentifier NODELETE cursorIdentifier() const;
-    uint64_t NODELETE requestedVersion() const;
-    IDBRequestData NODELETE isolatedCopy();
+    IDBConnectionIdentifier LEGACY_NODELETE serverConnectionIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier LEGACY_NODELETE requestIdentifier() const;
+    WEBCORE_EXPORT IDBResourceIdentifier LEGACY_NODELETE transactionIdentifier() const;
+    IDBObjectStoreIdentifier LEGACY_NODELETE objectStoreIdentifier() const;
+    std::optional<IDBIndexIdentifier> LEGACY_NODELETE indexIdentifier() const;
+    IndexedDB::IndexRecordType LEGACY_NODELETE indexRecordType() const;
+    IDBResourceIdentifier LEGACY_NODELETE cursorIdentifier() const;
+    uint64_t LEGACY_NODELETE requestedVersion() const;
+    IDBRequestData LEGACY_NODELETE isolatedCopy();
 
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData>;

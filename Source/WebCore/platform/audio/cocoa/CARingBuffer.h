@@ -58,7 +58,7 @@ public:
         uint64_t writeAhead { 0 };
         bool operator<=>(const TimeBounds&) const = default;
     };
-    WEBCORE_EXPORT TimeBounds NODELETE getStoreTimeBounds();
+    WEBCORE_EXPORT TimeBounds LEGACY_NODELETE getStoreTimeBounds();
     WEBCORE_EXPORT Error store(const AudioBufferList*, size_t frameCount, uint64_t startFrame, uint64_t writeAhead = 0);
 
     enum FetchMode { Copy, MixInt16, MixInt32, MixFloat32, MixFloat64 };
@@ -77,8 +77,8 @@ protected:
     WEBCORE_EXPORT CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
     WEBCORE_EXPORT void initialize();
 
-    WEBCORE_EXPORT static CheckedSize NODELETE computeCapacityBytes(size_t bytesPerFrame, size_t frameCount);
-    WEBCORE_EXPORT static CheckedSize NODELETE computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
+    WEBCORE_EXPORT static CheckedSize LEGACY_NODELETE computeCapacityBytes(size_t bytesPerFrame, size_t frameCount);
+    WEBCORE_EXPORT static CheckedSize LEGACY_NODELETE computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
 
     virtual void* data() LIFETIME_BOUND = 0;
     std::span<uint8_t> span() LIFETIME_BOUND { return unsafeMakeSpan(static_cast<uint8_t*>(data()), m_channelCount * m_capacityBytes); }

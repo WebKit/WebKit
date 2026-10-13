@@ -39,13 +39,13 @@ public:
     FECompositeSoftwareArithmeticApplier(const FEComposite&);
 
 private:
-    static uint8_t NODELETE clampByte(int);
+    static uint8_t LEGACY_NODELETE clampByte(int);
 
     template <int b1, int b4>
-    static inline void NODELETE computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
+    static inline void LEGACY_NODELETE computePixels(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
 
     template <int b1, int b4>
-    static inline void NODELETE computePixelsUnclamped(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
+    static inline void LEGACY_NODELETE computePixelsUnclamped(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
 
     static inline void applyPlatform(std::span<unsigned char> source, std::span<unsigned char> destination, int pixelArrayLength, float k1, float k2, float k3, float k4);
 

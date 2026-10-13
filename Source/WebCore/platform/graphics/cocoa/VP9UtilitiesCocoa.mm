@@ -132,7 +132,7 @@ enum class ResolutionCategory : uint8_t {
     R_12K,
 };
 
-static ResolutionCategory NODELETE resolutionCategory(const FloatSize& size)
+static ResolutionCategory LEGACY_NODELETE resolutionCategory(const FloatSize& size)
 {
     auto pixels = size.area();
     if (pixels > 7680 * 4320)
@@ -441,7 +441,7 @@ std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformM
     return info;
 }
 
-static uint8_t NODELETE convertToColorPrimaries(const Primaries& coefficients)
+static uint8_t LEGACY_NODELETE convertToColorPrimaries(const Primaries& coefficients)
 {
     switch (coefficients) {
     case Primaries::kBt709:
@@ -471,7 +471,7 @@ static uint8_t NODELETE convertToColorPrimaries(const Primaries& coefficients)
     }
 }
 
-static uint8_t NODELETE convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
+static uint8_t LEGACY_NODELETE convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
 {
     switch (characteristics) {
     case TransferCharacteristics::kBt709:
@@ -511,7 +511,7 @@ static uint8_t NODELETE convertToTransferCharacteristics(const TransferCharacter
     }
 }
 
-static uint8_t NODELETE convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
+static uint8_t LEGACY_NODELETE convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
 {
     switch (coefficients) {
     case MatrixCoefficients::kRgb:
@@ -536,7 +536,7 @@ static uint8_t NODELETE convertToMatrixCoefficients(const MatrixCoefficients& co
         return VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance;
     }
 }
-static uint8_t NODELETE convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
+static uint8_t LEGACY_NODELETE convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
 {
     if (x & y)
         return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;

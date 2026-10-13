@@ -130,8 +130,8 @@ public:
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
-    WEBCORE_EXPORT Document& NODELETE requester() const;
-    const SecurityOrigin& NODELETE requesterSecurityOrigin() const;
+    WEBCORE_EXPORT Document& LEGACY_NODELETE requester() const;
+    const SecurityOrigin& LEGACY_NODELETE requesterSecurityOrigin() const;
 
     ResourceRequest& resourceRequest() LIFETIME_BOUND { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const LIFETIME_BOUND { return m_resourceRequest; }

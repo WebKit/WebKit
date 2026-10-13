@@ -39,7 +39,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 namespace WebRTC {
 
-static inline bool NODELETE isStunMessage(uint16_t messageType)
+static inline bool LEGACY_NODELETE isStunMessage(uint16_t messageType)
 {
     // https://tools.ietf.org/html/rfc5389#section-6 for STUN messages.
     // TURN messages start by the channel number which is constrained by https://tools.ietf.org/html/rfc5766#section-11.

@@ -48,13 +48,13 @@ class DatabaseManager {
     WTF_MAKE_NONCOPYABLE(DatabaseManager);
     friend class WTF::NeverDestroyed<DatabaseManager>;
 public:
-    WEBCORE_EXPORT static DatabaseManager& NODELETE singleton();
+    WEBCORE_EXPORT static DatabaseManager& LEGACY_NODELETE singleton();
 
     WEBCORE_EXPORT void initialize(const String& databasePath);
-    WEBCORE_EXPORT void NODELETE setClient(DatabaseManagerClient*);
+    WEBCORE_EXPORT void LEGACY_NODELETE setClient(DatabaseManagerClient*);
 
-    bool NODELETE isAvailable();
-    WEBCORE_EXPORT void NODELETE setIsAvailable(bool);
+    bool LEGACY_NODELETE isAvailable();
+    WEBCORE_EXPORT void LEGACY_NODELETE setIsAvailable(bool);
 
     // This gets a DatabaseContext for the specified Document.
     // If one doesn't already exist, it will create a new one.
@@ -62,7 +62,7 @@ public:
 
     ExceptionOr<Ref<Database>> openDatabase(Document&, const String& name, const String& expectedVersion, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&&);
 
-    WEBCORE_EXPORT bool NODELETE hasOpenDatabases(Document&);
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasOpenDatabases(Document&);
     void stopDatabases(Document&, DatabaseTaskSynchronizer*);
 
     WEBCORE_EXPORT String fullPathForDatabase(SecurityOrigin&, const String& name, bool createIfDoesNotExist = true);

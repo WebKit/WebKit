@@ -51,7 +51,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const String&);
 
 // MARK: - Hashing
 
-void NODELETE add(Hasher&, const String&);
+void LEGACY_NODELETE add(Hasher&, const String&);
 
 } // namespace CSS
 } // namespace WebCore

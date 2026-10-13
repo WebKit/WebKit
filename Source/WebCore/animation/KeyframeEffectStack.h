@@ -65,7 +65,7 @@ public:
     bool allowsAcceleration() const;
 
     void clearInvalidCSSAnimationNames();
-    bool NODELETE hasInvalidCSSAnimationNames() const;
+    bool LEGACY_NODELETE hasInvalidCSSAnimationNames() const;
     bool containsInvalidCSSAnimationName(const String&) const;
     void addInvalidCSSAnimationName(const String&);
 

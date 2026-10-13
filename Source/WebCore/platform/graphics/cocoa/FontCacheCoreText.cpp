@@ -115,7 +115,7 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
     return result;
 }
 
-static std::optional<bool>& NODELETE overrideEnhanceTextLegibility()
+static std::optional<bool>& LEGACY_NODELETE overrideEnhanceTextLegibility()
 {
     static NeverDestroyed<std::optional<bool>> overrideEnhanceTextLegibility;
     return overrideEnhanceTextLegibility.get();
@@ -220,7 +220,7 @@ Vector<String> FontCache::systemFontFamilies()
     return fontFamilies;
 }
 
-static inline bool NODELETE isSystemFont(const String& family)
+static inline bool LEGACY_NODELETE isSystemFont(const String& family)
 {
     // String's operator[] handles out-of-bounds by returning 0.
     return family[0] == '.';
@@ -231,7 +231,7 @@ bool FontCache::isSystemFontForbiddenForEditing(const String& fontFamily)
     return isSystemFont(fontFamily);
 }
 
-static CTFontSymbolicTraits NODELETE computeTraits(const FontDescription& fontDescription)
+static CTFontSymbolicTraits LEGACY_NODELETE computeTraits(const FontDescription& fontDescription)
 {
     CTFontSymbolicTraits traits = 0;
     if (fontDescription.fontStyleSlope())
@@ -273,7 +273,7 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
 
 class FontCacheAllowlist {
 public:
-    static FontCacheAllowlist& NODELETE singleton() WTF_REQUIRES_LOCK(lock)
+    static FontCacheAllowlist& LEGACY_NODELETE singleton() WTF_REQUIRES_LOCK(lock)
     {
         static NeverDestroyed<FontCacheAllowlist> allowlist;
         return allowlist;

@@ -52,7 +52,7 @@ class Filter : public FilterFunction {
     using FilterFunction::createFilterStyles;
 
 public:
-    RenderingMode NODELETE renderingMode() const;
+    RenderingMode LEGACY_NODELETE renderingMode() const;
 
     OptionSet<FilterRenderingMode> filterRenderingModes() const { return m_filterRenderingModes; }
     WEBCORE_EXPORT void setFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes);
@@ -73,7 +73,7 @@ public:
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
     virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
 
-    FloatPoint NODELETE scaledByFilterScale(const FloatPoint&) const;
+    FloatPoint LEGACY_NODELETE scaledByFilterScale(const FloatPoint&) const;
     FloatSize scaledByFilterScale(const FloatSize&) const;
     FloatRect scaledByFilterScale(const FloatRect&) const;
 
@@ -87,8 +87,8 @@ public:
     FloatRect enclosingFilterRegion() const { return m_enclosingFilterRegion; }
     void setEnclosingFilterRegion(const FloatRect& rect) { m_enclosingFilterRegion = rect; }
 
-    FloatRect NODELETE absoluteEnclosingFilterRegion() const;
-    FloatRect NODELETE flippedRectRelativeToAbsoluteEnclosingFilterRegion(const FloatRect&) const;
+    FloatRect LEGACY_NODELETE absoluteEnclosingFilterRegion() const;
+    FloatRect LEGACY_NODELETE flippedRectRelativeToAbsoluteEnclosingFilterRegion(const FloatRect&) const;
 #endif
 
     virtual FilterEffectVector effectsOfType(FilterFunction::Type) const = 0;

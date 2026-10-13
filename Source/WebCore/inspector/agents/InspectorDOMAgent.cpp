@@ -596,7 +596,7 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
-static RefPtr<Element> NODELETE elementToPushForStyleable(const Styleable& styleable)
+static RefPtr<Element> LEGACY_NODELETE elementToPushForStyleable(const Styleable& styleable)
 {
     auto& element = styleable.element;
     // FIXME: We want to get rid of PseudoElement.
@@ -1918,7 +1918,7 @@ String InspectorDOMAgent::documentBaseURLString(Document* document)
     return document->encodingParseURL(emptyString()).string();
 }
 
-static bool NODELETE pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
+static bool LEGACY_NODELETE pseudoElementType(PseudoElementType pseudoElementType, Inspector::Protocol::DOM::PseudoType* type)
 {
     switch (pseudoElementType) {
     case PseudoElementType::Before:
@@ -1932,7 +1932,7 @@ static bool NODELETE pseudoElementType(PseudoElementType pseudoElementType, Insp
     }
 }
 
-static Inspector::Protocol::DOM::ShadowRootType NODELETE shadowRootType(ShadowRootMode mode)
+static Inspector::Protocol::DOM::ShadowRootType LEGACY_NODELETE shadowRootType(ShadowRootMode mode)
 {
     switch (mode) {
     case ShadowRootMode::UserAgent:
@@ -1947,7 +1947,7 @@ static Inspector::Protocol::DOM::ShadowRootType NODELETE shadowRootType(ShadowRo
     return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
 }
 
-static Inspector::Protocol::DOM::CustomElementState NODELETE customElementState(const Element& element)
+static Inspector::Protocol::DOM::CustomElementState LEGACY_NODELETE customElementState(const Element& element)
 {
     if (element.isDefinedCustomElement())
         return Inspector::Protocol::DOM::CustomElementState::Custom;
@@ -2564,7 +2564,7 @@ Ref<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildO
     return value;
 }
 
-static bool NODELETE containsOnlyASCIIWhitespace(Node* node)
+static bool LEGACY_NODELETE containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
     // This static is invoked during node deletion so cannot use RefPtr.
@@ -3158,7 +3158,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::setAllowEditingUserA
 }
 
 #if ENABLE(VIDEO)
-static Inspector::Protocol::DOM::VideoProjectionMetadataKind NODELETE videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
+static Inspector::Protocol::DOM::VideoProjectionMetadataKind LEGACY_NODELETE videoProjectionMetadataKind(VideoProjectionMetadataKind kind)
 {
     switch (kind) {
     case VideoProjectionMetadataKind::Unknown:

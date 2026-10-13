@@ -46,7 +46,7 @@ public:
 
     WebTransportStreamIdentifier identifier() const { return m_identifier; }
     void setStream(WritableStream& stream) { m_stream = stream; }
-    RefPtr<WritableStream> NODELETE stream() const;
+    RefPtr<WritableStream> LEGACY_NODELETE stream() const;
     void sendError(JSDOMGlobalObject&, JSC::JSValue error);
 
 private:

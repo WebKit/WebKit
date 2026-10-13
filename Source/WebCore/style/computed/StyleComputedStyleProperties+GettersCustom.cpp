@@ -32,7 +32,7 @@
 namespace WebCore {
 namespace Style {
 
-const WebCore::Color& NODELETE ComputedStyleProperties::color() const
+const WebCore::Color& LEGACY_NODELETE ComputedStyleProperties::color() const
 {
     return m_inheritedData->color;
 }

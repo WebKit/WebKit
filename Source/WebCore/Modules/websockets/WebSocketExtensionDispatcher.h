@@ -47,7 +47,7 @@ public:
 
     bool processHeaderValue(const String&);
     String acceptedExtensions() const;
-    String NODELETE failureReason() const;
+    String LEGACY_NODELETE failureReason() const;
 
 private:
     void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);

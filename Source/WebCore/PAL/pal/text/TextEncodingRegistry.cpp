@@ -55,7 +55,7 @@ constexpr size_t maxEncodingNameLength = 63;
 
 // Hash for all-ASCII strings that does case folding.
 struct TextEncodingNameHash {
-    static bool NODELETE equal(std::span<const Latin1Character> s1, std::span<const Latin1Character> s2)
+    static bool LEGACY_NODELETE equal(std::span<const Latin1Character> s1, std::span<const Latin1Character> s2)
     {
         if (s1.size() != s2.size())
             return false;
@@ -68,7 +68,7 @@ struct TextEncodingNameHash {
         return true;
     }
 
-    static bool NODELETE equal(ASCIILiteral s1, ASCIILiteral s2)
+    static bool LEGACY_NODELETE equal(ASCIILiteral s1, ASCIILiteral s2)
     {
         return equal(s1.span8(), s2.span8());
     }
@@ -76,7 +76,7 @@ struct TextEncodingNameHash {
     // This algorithm is the one-at-a-time hash from:
     // http://burtleburtle.net/bob/hash/hashfaq.html
     // http://burtleburtle.net/bob/hash/doobs.html
-    static unsigned NODELETE hash(std::span<const Latin1Character> s)
+    static unsigned LEGACY_NODELETE hash(std::span<const Latin1Character> s)
     {
         unsigned h = WTF::stringHashingStartValue;
         for (char c : s) {
@@ -90,7 +90,7 @@ struct TextEncodingNameHash {
         return h;
     }
 
-    static unsigned NODELETE hash(ASCIILiteral s)
+    static unsigned LEGACY_NODELETE hash(ASCIILiteral s)
     {
         return hash(s.span8());
     }
@@ -99,12 +99,12 @@ struct TextEncodingNameHash {
 };
 
 struct HashTranslatorTextEncodingName {
-    static unsigned NODELETE hash(std::span<const Latin1Character> literal)
+    static unsigned LEGACY_NODELETE hash(std::span<const Latin1Character> literal)
     {
         return TextEncodingNameHash::hash(literal);
     }
 
-    static bool NODELETE equal(const ASCIILiteral& a, std::span<const Latin1Character> b)
+    static bool LEGACY_NODELETE equal(const ASCIILiteral& a, std::span<const Latin1Character> b)
     {
         return TextEncodingNameHash::equal(a.span8(), b);
     }
@@ -115,25 +115,25 @@ using TextCodecMap = HashMap<ASCIILiteral, NewTextCodecFunction>;
 
 static Lock encodingRegistryLock;
 
-static TextEncodingNameMap& NODELETE textEncodingNameMap() WTF_REQUIRES_LOCK(encodingRegistryLock)
+static TextEncodingNameMap& LEGACY_NODELETE textEncodingNameMap() WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     static NeverDestroyed<TextEncodingNameMap> textEncodingNameMap;
     return textEncodingNameMap;
 }
-static TextCodecMap& NODELETE textCodecMap() WTF_REQUIRES_LOCK(encodingRegistryLock)
+static TextCodecMap& LEGACY_NODELETE textCodecMap() WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     static NeverDestroyed<TextCodecMap> textCodecMap;
     return textCodecMap;
 }
 static bool didExtendTextCodecMaps;
 
-static HashSet<ASCIILiteral>& NODELETE japaneseEncodings()
+static HashSet<ASCIILiteral>& LEGACY_NODELETE japaneseEncodings()
 {
     static NeverDestroyed<HashSet<ASCIILiteral>> japaneseEncodings;
     return japaneseEncodings;
 }
 
-static HashSet<ASCIILiteral>& NODELETE nonBackslashEncodings()
+static HashSet<ASCIILiteral>& LEGACY_NODELETE nonBackslashEncodings()
 {
     static NeverDestroyed<HashSet<ASCIILiteral>> nonBackslashEncodings;
     return nonBackslashEncodings;

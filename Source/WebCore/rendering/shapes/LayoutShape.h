@@ -93,7 +93,7 @@ public:
 protected:
     float shapeMargin() const { return m_margin; }
     WritingMode writingMode() const { return m_writingMode; }
-    static bool NODELETE shouldFlipStartAndEndPoints(WritingMode);
+    static bool LEGACY_NODELETE shouldFlipStartAndEndPoints(WritingMode);
 
 private:
     static Ref<const LayoutShape> createRasterShapeImpl(float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode, float logicalMargin, NOESCAPE auto&& rasterizeFunctor);

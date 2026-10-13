@@ -61,8 +61,8 @@ public:
     static void adjustAnnotationContentWithAlignmentOffset(std::span<InlineDisplay::Box>, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
     // Miscellaneous helpers
-    static bool NODELETE hasInterlinearAnnotation(const Box& rubyBaseLayoutBox);
-    static bool NODELETE hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox);
+    static bool LEGACY_NODELETE hasInterlinearAnnotation(const Box& rubyBaseLayoutBox);
+    static bool LEGACY_NODELETE hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox);
 
 private:
     using MaximumLayoutBoundsStretchMap = HashMap<const InlineLevelBox*, InlineLevelBox::AscentAndDescent>;

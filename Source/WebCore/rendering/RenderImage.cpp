@@ -607,7 +607,7 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
     context.drawRect(snapRectToDevicePixels(LayoutRect({ paintOffset.x() + borderWidths.left() + padding.left(), paintOffset.y() + borderWidths.top() + padding.top() }, contentSize), protect(document())->deviceScaleFactor()), borderWidth);
 }
 
-static bool NODELETE isDeferredImage(Element* element)
+static bool LEGACY_NODELETE isDeferredImage(Element* element)
 {
     auto* image = dynamicDowncast<HTMLImageElement>(element);
     return image && image->isDeferred();

@@ -212,20 +212,20 @@ bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, s
     return false;
 }
 
-static bool NODELETE shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate, bool shouldPreferPowerEfficiency)
+static bool LEGACY_NODELETE shouldUsePreset(const VideoPreset& current, const VideoPreset& candidate, bool shouldPreferPowerEfficiency)
 {
     if (shouldPreferPowerEfficiency && candidate.isEfficient() && !current.isEfficient())
         return true;
     return candidate.size().width() <= current.size().width() && candidate.size().height() <= current.size().height() && candidate.isEfficient();
 }
 
-static bool NODELETE isPresetEfficient(const std::optional<VideoPreset>& preset)
+static bool LEGACY_NODELETE isPresetEfficient(const std::optional<VideoPreset>& preset)
 {
     return preset && preset->isEfficient();
 }
 
 enum PresetToUse : uint8_t { Exact, AspectRatio, Resize };
-static PresetToUse NODELETE computePresetToUse(const std::optional<VideoPreset>& exactSizePreset, const std::optional<VideoPreset>& aspectRatioPreset, const std::optional<VideoPreset>& resizePreset, bool shouldPreferPowerEfficiency)
+static PresetToUse LEGACY_NODELETE computePresetToUse(const std::optional<VideoPreset>& exactSizePreset, const std::optional<VideoPreset>& aspectRatioPreset, const std::optional<VideoPreset>& resizePreset, bool shouldPreferPowerEfficiency)
 {
     if (exactSizePreset && (!shouldPreferPowerEfficiency || exactSizePreset->isEfficient() || (!isPresetEfficient(aspectRatioPreset) && !isPresetEfficient(resizePreset))))
         return PresetToUse::Exact;
@@ -234,14 +234,14 @@ static PresetToUse NODELETE computePresetToUse(const std::optional<VideoPreset>&
     return PresetToUse::Resize;
 }
 
-static inline double NODELETE frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
+static inline double LEGACY_NODELETE frameRateFromPreset(const VideoPreset& preset, double currentFrameRate)
 {
     auto minFrameRate = preset.minFrameRate();
     auto maxFrameRate = preset.maxFrameRate();
     return currentFrameRate >= minFrameRate && currentFrameRate <= maxFrameRate ? currentFrameRate : maxFrameRate;
 }
 
-static inline double NODELETE zoomFromPreset(const VideoPreset& preset, double currentZoom)
+static inline double LEGACY_NODELETE zoomFromPreset(const VideoPreset& preset, double currentZoom)
 {
     if (currentZoom < preset.minZoom())
         return preset.minZoom();

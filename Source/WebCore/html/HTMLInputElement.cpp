@@ -1446,12 +1446,12 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     return { };
 }
 
-static inline bool NODELETE isRFC2616TokenCharacter(char16_t ch)
+static inline bool LEGACY_NODELETE isRFC2616TokenCharacter(char16_t ch)
 {
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
 
-static bool NODELETE isValidMIMEType(StringView type)
+static bool LEGACY_NODELETE isValidMIMEType(StringView type)
 {
     size_t slashPosition = type.find('/');
     if (slashPosition == notFound || !slashPosition || slashPosition == type.length() - 1)
@@ -1463,7 +1463,7 @@ static bool NODELETE isValidMIMEType(StringView type)
     return true;
 }
 
-static bool NODELETE isValidFileExtension(StringView type)
+static bool LEGACY_NODELETE isValidFileExtension(StringView type)
 {
     if (type.length() < 2)
         return false;
@@ -1950,7 +1950,7 @@ RefPtr<InputType> HTMLInputElement::inputType() const
     return m_inputType;
 }
 
-bool NODELETE HTMLInputElement::isSteppable() const
+bool LEGACY_NODELETE HTMLInputElement::isSteppable() const
 {
     return m_inputType->isSteppable();
 }

@@ -213,7 +213,7 @@ void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface, IOSurfacePool* 
 
 // MARK: -
 
-static OSType NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Format format, UseLosslessCompression useLosslessCompression)
+static OSType LEGACY_NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Format format, UseLosslessCompression useLosslessCompression)
 {
     switch (format) {
     case IOSurface::Format::BGRX:
@@ -529,7 +529,7 @@ IOSurface::IOSurface(IOSurfaceRef surface, std::optional<ColorSpace>&& colorSpac
 
 IOSurface::~IOSurface() = default;
 
-static constexpr IntSize NODELETE fallbackMaxSurfaceDimension()
+static constexpr IntSize LEGACY_NODELETE fallbackMaxSurfaceDimension()
 {
     // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
 #if PLATFORM(WATCHOS)
@@ -556,7 +556,7 @@ static IntSize computeMaximumSurfaceSize()
     return maxSize;
 }
 
-static WTF::Atomic<IntSize>& NODELETE surfaceMaximumSize()
+static WTF::Atomic<IntSize>& LEGACY_NODELETE surfaceMaximumSize()
 {
     static WTF::Atomic<IntSize> maximumSize;
     return maximumSize;
@@ -579,7 +579,7 @@ IntSize IOSurface::maximumSize()
     return size;
 }
 
-static WTF::Atomic<size_t>& NODELETE surfaceBytesPerRowAlignment()
+static WTF::Atomic<size_t>& LEGACY_NODELETE surfaceBytesPerRowAlignment()
 {
     static WTF::Atomic<size_t> alignment = 0;
     return alignment;

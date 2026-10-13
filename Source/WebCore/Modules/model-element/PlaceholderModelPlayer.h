@@ -44,8 +44,8 @@ private:
     bool isPlaceholder() const final { return true; }
     std::optional<ModelPlayerAnimationState> currentAnimationState(NodeIdentifier) const final;
     std::optional<std::unique_ptr<ModelPlayerTransformState>> currentTransformState(NodeIdentifier) const final;
-    void NODELETE load(NodeIdentifier, Model&, LayoutSize, bool) final;
-    void NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&) final;
+    void LEGACY_NODELETE load(NodeIdentifier, Model&, LayoutSize, bool) final;
+    void LEGACY_NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&) final;
 
 #if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
     std::optional<FloatPoint3D> boundingBoxCenter(NodeIdentifier) const final;
@@ -83,12 +83,12 @@ private:
 #endif
 
     // Empty implementation
-    void NODELETE configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) final;
-    void NODELETE sizeDidChange(LayoutSize) final;
-    void NODELETE enterFullscreen() final;
-    void NODELETE handleMouseDown(const LayoutPoint&, MonotonicTime) final;
-    void NODELETE handleMouseMove(const LayoutPoint&, MonotonicTime) final;
-    void NODELETE handleMouseUp(const LayoutPoint&, MonotonicTime) final;
+    void LEGACY_NODELETE configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) final;
+    void LEGACY_NODELETE sizeDidChange(LayoutSize) final;
+    void LEGACY_NODELETE enterFullscreen() final;
+    void LEGACY_NODELETE handleMouseDown(const LayoutPoint&, MonotonicTime) final;
+    void LEGACY_NODELETE handleMouseMove(const LayoutPoint&, MonotonicTime) final;
+    void LEGACY_NODELETE handleMouseUp(const LayoutPoint&, MonotonicTime) final;
 
     void getCamera(CompletionHandler<void(std::optional<WebCore::HTMLModelElementCamera>&&)>&&) final;
     void setCamera(WebCore::HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) final;

@@ -55,7 +55,7 @@ public:
     virtual ~ImageLoader();
 
     // CachedResourceClient.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 
     // This function should be called when the element is attached to a document; starts
@@ -119,7 +119,7 @@ private:
     void dispatchPendingLoadEvent();
     void dispatchPendingErrorEvent();
 
-    RenderImageResource* NODELETE renderImageResource();
+    RenderImageResource* LEGACY_NODELETE renderImageResource();
     void updateRenderer();
 
     void clearImageWithoutConsideringPendingLoadEvent();

@@ -105,7 +105,7 @@ public:
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
     void nodeWillBeRemoved(Node&);
-    bool NODELETE parentlessNodeMovedToNewDocumentAffectsRange(Node&);
+    bool LEGACY_NODELETE parentlessNodeMovedToNewDocumentAffectsRange(Node&);
     void updateRangeForParentlessNodeMovedToNewDocument(Node&);
 
     void textInserted(Node&, unsigned offset, unsigned length);
@@ -124,7 +124,7 @@ public:
     }
 
     // For use by garbage collection. Returns nullptr for ranges not assocated with selection.
-    LocalDOMWindow* NODELETE window() const;
+    LocalDOMWindow* LEGACY_NODELETE window() const;
 
     static ExceptionOr<RefPtr<Node>> checkNodeOffsetPair(Node&, unsigned offset);
 

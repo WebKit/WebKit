@@ -53,7 +53,7 @@ public:
         return context ? downcast<JSDOMGlobalObject>(context->globalObject()): nullptr;
     }
 
-    ScriptExecutionContext* NODELETE context() const { return m_context.get(); }
+    ScriptExecutionContext* LEGACY_NODELETE context() const { return m_context.get(); }
 
 private:
     SinkReadRequest(ReadableStreamToSharedBufferSink& sink, ScriptExecutionContext& context)

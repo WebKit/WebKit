@@ -81,7 +81,7 @@ static AtomString computeSpecializedChineseLocale()
     return "zh-hans"_s; // We have no signal. Pick one option arbitrarily.
 }
 
-static AtomString& NODELETE cachedSpecializedChineseLocale()
+static AtomString& LEGACY_NODELETE cachedSpecializedChineseLocale()
 {
     static MainThreadNeverDestroyed<AtomString> specializedChineseLocale;
     return specializedChineseLocale.get();

@@ -48,7 +48,7 @@ class ApplePayPaymentHandler final : public PaymentHandler, public PaymentSessio
 public:
     static ExceptionOr<void> validateData(Document&, JSC::JSValue);
     static bool handlesIdentifier(const PaymentRequest::MethodIdentifier&);
-    static bool NODELETE hasActiveSession(Document&);
+    static bool LEGACY_NODELETE hasActiveSession(Document&);
 
     // ContextDestructionObserver.
     void ref() const final { PaymentHandler::ref(); }
@@ -58,8 +58,8 @@ private:
     friend class PaymentHandler;
     explicit ApplePayPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);
 
-    Document& NODELETE document() const;
-    PaymentCoordinator& NODELETE paymentCoordinator() const;
+    Document& LEGACY_NODELETE document() const;
+    PaymentCoordinator& LEGACY_NODELETE paymentCoordinator() const;
 
     ExceptionOr<Vector<ApplePayShippingMethod>> computeShippingMethods() const;
     ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> computeTotalAndLineItems() const;
@@ -86,7 +86,7 @@ private:
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     // PaymentSession
-    unsigned NODELETE version() const final;
+    unsigned LEGACY_NODELETE version() const final;
     void validateMerchant(URL&&) final;
     void didAuthorizePayment(const Payment&) final;
     void didSelectShippingMethod(const ApplePayShippingMethod&) final;

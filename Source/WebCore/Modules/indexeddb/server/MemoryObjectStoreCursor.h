@@ -41,7 +41,7 @@ class MemoryObjectStoreCursor : public MemoryCursor {
 public:
     static Ref<MemoryObjectStoreCursor> create(MemoryObjectStore&, const IDBCursorInfo&, MemoryBackingStoreTransaction&);
 
-    void NODELETE objectStoreCleared();
+    void LEGACY_NODELETE objectStoreCleared();
     void keyDeleted(const IDBKeyData&);
     void keyAdded(IDBKeyDataSet::iterator);
 

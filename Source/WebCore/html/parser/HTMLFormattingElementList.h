@@ -99,7 +99,7 @@ public:
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_entries.size(); }
 
-    Element* NODELETE closestElementInScopeWithName(ElementName);
+    Element* LEGACY_NODELETE closestElementInScopeWithName(ElementName);
 
     Entry* find(Element&) LIFETIME_BOUND;
     bool contains(Element&);

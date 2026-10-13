@@ -38,7 +38,7 @@ enum class LayerTreeAsTextOptions : uint16_t;
 class MockPageOverlayClient final : public PageOverlayClient {
     friend class NeverDestroyed<MockPageOverlayClient>;
 public:
-    static MockPageOverlayClient& NODELETE singleton();
+    static MockPageOverlayClient& LEGACY_NODELETE singleton();
 
     explicit MockPageOverlayClient();
 
@@ -58,7 +58,7 @@ private:
 
     bool copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&) override;
     bool copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&) override;
-    Vector<String> NODELETE copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
+    Vector<String> LEGACY_NODELETE copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */) override;
 
     HashSet<Ref<MockPageOverlay>> m_overlays;
 };

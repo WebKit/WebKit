@@ -61,7 +61,7 @@ public:
 
     void displayDidRefresh(PlatformDisplayID) override;
 
-    void NODELETE didScheduleRenderingUpdate();
+    void LEGACY_NODELETE didScheduleRenderingUpdate();
     void willStartRenderingUpdate();
     virtual void didCompleteRenderingUpdate();
 
@@ -117,14 +117,14 @@ private:
     void displayDidRefreshOnScrollingThread();
     void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_treeLock);
 
-    bool NODELETE canUpdateLayersOnScrollingThread() const WTF_REQUIRES_LOCK(m_treeLock);
+    bool LEGACY_NODELETE canUpdateLayersOnScrollingThread() const WTF_REQUIRES_LOCK(m_treeLock);
 
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds) WTF_REQUIRES_LOCK(m_treeLock);
     void delayedRenderingUpdateDetectionTimerFired();
 
     void hasNodeWithAnimatedScrollChanged(bool) override;
 
-    bool NODELETE isScrollingSynchronizedWithMainThread() final WTF_REQUIRES_LOCK(m_treeLock);
+    bool LEGACY_NODELETE isScrollingSynchronizedWithMainThread() final WTF_REQUIRES_LOCK(m_treeLock);
 
     void receivedWheelEventWithPhases(PlatformWheelEventPhase, PlatformWheelEventPhase) final;
     void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) final;

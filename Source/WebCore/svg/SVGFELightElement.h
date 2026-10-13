@@ -34,7 +34,7 @@ class SVGFELightElement : public SVGElement {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGFELightElement);
 public:
     virtual Ref<LightSource> lightSource() const = 0;
-    static SVGFELightElement* NODELETE findLightElement(const SVGElement*);
+    static SVGFELightElement* LEGACY_NODELETE findLightElement(const SVGElement*);
 
     float azimuth() const { return m_azimuth->currentValue(); }
     float elevation() const { return m_elevation->currentValue(); }

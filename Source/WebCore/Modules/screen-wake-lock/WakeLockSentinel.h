@@ -60,11 +60,11 @@ private:
     WakeLockSentinel(Document&, WakeLockType);
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WakeLockSentinel; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
     void eventListenersDidChange() final;

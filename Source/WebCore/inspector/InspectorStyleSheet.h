@@ -63,12 +63,12 @@ class ParsedStyleSheet {
 public:
     ParsedStyleSheet();
 
-    const String& NODELETE text() const { ASSERT(m_hasText); return m_text; }
+    const String& LEGACY_NODELETE text() const { ASSERT(m_hasText); return m_text; }
     void setText(const String&);
-    bool NODELETE hasText() const { return m_hasText; }
-    RuleSourceDataList* NODELETE sourceData() const { return m_sourceData.get(); }
+    bool LEGACY_NODELETE hasText() const { return m_hasText; }
+    RuleSourceDataList* LEGACY_NODELETE sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
-    bool NODELETE hasSourceData() const { return m_sourceData != nullptr; }
+    bool LEGACY_NODELETE hasSourceData() const { return m_sourceData != nullptr; }
     CSSRuleSourceData* ruleSourceDataAt(unsigned) const;
 
 private:
@@ -192,7 +192,7 @@ public:
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
     static Ref<InspectorStyleSheet> create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
-    static String NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
+    static String LEGACY_NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();
 
@@ -497,7 +497,7 @@ public:
     {
     }
 
-    InspectorCSSId NODELETE newRuleId() const { return m_newId; }
+    InspectorCSSId LEGACY_NODELETE newRuleId() const { return m_newId; }
 
 private:
     ExceptionOr<void> perform() final

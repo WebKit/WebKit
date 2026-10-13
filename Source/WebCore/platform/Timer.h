@@ -58,7 +58,7 @@ public:
     WEBCORE_EXPORT virtual ~TimerBase();
 
     TimerBase(TimerBase&&) = delete;
-    TimerBase& NODELETE operator=(TimerBase&&) = delete;
+    TimerBase& LEGACY_NODELETE operator=(TimerBase&&) = delete;
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
 
@@ -102,14 +102,14 @@ private:
 
     WEBCORE_EXPORT void stopSlowCase();
 
-    void NODELETE checkConsistency() const;
-    void NODELETE checkHeapIndex() const;
+    void LEGACY_NODELETE checkConsistency() const;
+    void LEGACY_NODELETE checkHeapIndex() const;
 
     void setNextFireTime(MonotonicTime);
 
     bool inHeap() const { return m_heapItemWithBitfields.pointer() && m_heapItemWithBitfields.pointer()->isInHeap(); }
 
-    bool NODELETE hasValidHeapPosition() const;
+    bool LEGACY_NODELETE hasValidHeapPosition() const;
     void updateHeapIfNeeded(MonotonicTime oldTime);
 
     void heapDecreaseKey();

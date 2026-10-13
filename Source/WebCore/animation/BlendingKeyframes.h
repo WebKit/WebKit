@@ -94,7 +94,7 @@ public:
     const Offset& specifiedOffset() const LIFETIME_BOUND { return m_specifiedOffset; }
     void setComputedOffset(double offset) { m_computedOffset = offset; }
 
-    bool NODELETE usesRangeOffset() const;
+    bool LEGACY_NODELETE usesRangeOffset() const;
 
     const Style::ComputedStyle* style() const LIFETIME_BOUND { return m_style.get(); }
     void setStyle(std::unique_ptr<Style::ComputedStyle>&& style) { m_style = WTF::move(style); }
@@ -146,7 +146,7 @@ public:
     const HashSet<AnimatableCSSProperty>& properties() const LIFETIME_BOUND { return m_properties; }
 
     bool containsAnimatableCSSProperty() const;
-    bool NODELETE containsDirectionAwareProperty() const;
+    bool LEGACY_NODELETE containsDirectionAwareProperty() const;
 
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
@@ -161,14 +161,14 @@ public:
     auto begin() const LIFETIME_BOUND { return m_keyframes.begin(); }
     auto end() const LIFETIME_BOUND { return m_keyframes.end(); }
 
-    bool NODELETE usesContainerUnits() const;
+    bool LEGACY_NODELETE usesContainerUnits() const;
     bool usesViewportUnits() const;
-    bool NODELETE usesTreeCountingFunctions() const;
+    bool LEGACY_NODELETE usesTreeCountingFunctions() const;
     bool usesRelativeFontWeight() const { return m_usesRelativeFontWeight; }
     bool hasSubstitutionFunctions() const { return m_containsSubstitutionFunctions; }
     bool hasColorSetToCurrentColor() const;
-    bool NODELETE hasPropertySetToCurrentColor() const;
-    const HashSet<AnimatableCSSProperty>& NODELETE propertiesSetToInherit() const LIFETIME_BOUND;
+    bool LEGACY_NODELETE hasPropertySetToCurrentColor() const;
+    const HashSet<AnimatableCSSProperty>& LEGACY_NODELETE propertiesSetToInherit() const LIFETIME_BOUND;
     bool hasPropertiesWithRevertRuleOrLayer() const { return m_hasPropertiesWithRevertRuleOrLayer; }
 
     void updatePropertiesMetadata(const StyleProperties&);

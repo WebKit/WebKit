@@ -47,7 +47,7 @@ FEComponentTransferCoreImageApplier::FEComponentTransferCoreImageApplier(const F
 }
 
 template<ComponentTransferType... Types>
-static bool NODELETE isType(const ComponentTransferFunction& function)
+static bool LEGACY_NODELETE isType(const ComponentTransferFunction& function)
 {
     return ((function.type == Types) || ...);
 }

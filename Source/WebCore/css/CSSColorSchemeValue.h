@@ -36,7 +36,7 @@ public:
     static Ref<CSSColorSchemeValue> create(CSS::ColorScheme);
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool NODELETE equals(const CSSColorSchemeValue&) const;
+    bool LEGACY_NODELETE equals(const CSSColorSchemeValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     const CSS::ColorScheme& colorScheme() const LIFETIME_BOUND { return m_colorScheme; }

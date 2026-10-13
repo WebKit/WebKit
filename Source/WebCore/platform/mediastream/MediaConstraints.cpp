@@ -756,7 +756,7 @@ MediaConstraints MediaConstraints::isolatedCopy() const
     return { crossThreadCopy(mandatoryConstraints), crossThreadCopy(advancedConstraints), isValid };
 }
 
-static bool NODELETE isAllowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType deviceType, MediaConstraintType type)
+static bool LEGACY_NODELETE isAllowedRequiredConstraintForDeviceSelection(MediaConstraints::DeviceType deviceType, MediaConstraintType type)
 {
     // https://w3c.github.io/mediacapture-main/#dfn-allowed-required-constraints-for-device-selection
     if (type <= MediaConstraintType::GroupId)

@@ -55,7 +55,7 @@ public:
     ElementType& get() { return *m_current; }
 
 private:
-    static ElementType* NODELETE traverseParent(const Node*);
+    static ElementType* LEGACY_NODELETE traverseParent(const Node*);
 
     CheckedPtr<ElementType> m_current;
 };

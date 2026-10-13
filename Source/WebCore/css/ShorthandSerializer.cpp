@@ -74,36 +74,36 @@ private:
         Ref<CSSValue> value;
     };
     struct LonghandIteratorBase {
-        void NODELETE operator++() { ++index; }
-        bool NODELETE operator==(std::nullptr_t) const { return index >= serializer.length(); }
+        void LEGACY_NODELETE operator++() { ++index; }
+        bool LEGACY_NODELETE operator==(std::nullptr_t) const { return index >= serializer.length(); }
         const ShorthandSerializer& serializer;
         unsigned index { 0 };
     };
     struct LonghandIterator : LonghandIteratorBase {
-        Longhand NODELETE operator*() const { return { serializer.longhand(index) }; }
+        Longhand LEGACY_NODELETE operator*() const { return { serializer.longhand(index) }; }
     };
     struct LonghandValueIterator : LonghandIteratorBase {
-        CSSValue& NODELETE operator*() const { return { serializer.longhandValue(index) }; }
+        CSSValue& LEGACY_NODELETE operator*() const { return { serializer.longhandValue(index) }; }
     };
     template<typename IteratorType> struct LonghandRange {
-        IteratorType NODELETE begin() const { return { { serializer } }; }
-        static constexpr std::nullptr_t NODELETE end() { return nullptr; }
-        unsigned NODELETE size() const { return serializer.length(); }
+        IteratorType LEGACY_NODELETE begin() const { return { { serializer } }; }
+        static constexpr std::nullptr_t LEGACY_NODELETE end() { return nullptr; }
+        unsigned LEGACY_NODELETE size() const { return serializer.length(); }
         const ShorthandSerializer& serializer;
     };
 
     static bool isInitialValue(Longhand);
     String serializeValue(Longhand) const;
 
-    unsigned NODELETE length() const { return m_shorthand.length(); }
-    Longhand NODELETE longhand(unsigned index) const { return { longhandProperty(index), longhandValue(index) }; }
+    unsigned LEGACY_NODELETE length() const { return m_shorthand.length(); }
+    Longhand LEGACY_NODELETE longhand(unsigned index) const { return { longhandProperty(index), longhandValue(index) }; }
     CSSPropertyID longhandProperty(unsigned index) const;
     CSSValue& longhandValue(unsigned index) const;
 
     unsigned longhandIndex(unsigned index, CSSPropertyID) const;
 
-    LonghandRange<LonghandIterator> NODELETE longhands() const { return { *this }; }
-    LonghandRange<LonghandValueIterator> NODELETE longhandValues() const { return { *this }; }
+    LonghandRange<LonghandIterator> LEGACY_NODELETE longhands() const { return { *this }; }
+    LonghandRange<LonghandValueIterator> LEGACY_NODELETE longhandValues() const { return { *this }; }
 
     CSSValueID longhandValueID(unsigned index) const;
     bool isLonghandValueID(unsigned index, CSSValueID valueID) const { return longhandValueID(index) == valueID; }
@@ -175,12 +175,12 @@ inline ShorthandSerializer::ShorthandSerializer(const CSS::SerializationContext&
 {
 }
 
-inline CSSPropertyID NODELETE ShorthandSerializer::longhandProperty(unsigned index) const
+inline CSSPropertyID LEGACY_NODELETE ShorthandSerializer::longhandProperty(unsigned index) const
 {
     return m_shorthand.properties()[index];
 }
 
-inline CSSValue& NODELETE ShorthandSerializer::longhandValue(unsigned index) const
+inline CSSValue& LEGACY_NODELETE ShorthandSerializer::longhandValue(unsigned index) const
 {
     return *m_longhandValues[index];
 }
@@ -195,7 +195,7 @@ inline bool ShorthandSerializer::isInitialValue(Longhand longhand)
     return isInitialValueForLonghand(longhand.property, protect(longhand.value));
 }
 
-inline unsigned NODELETE ShorthandSerializer::longhandIndex(unsigned index, CSSPropertyID longhand) const
+inline unsigned LEGACY_NODELETE ShorthandSerializer::longhandIndex(unsigned index, CSSPropertyID longhand) const
 {
     ASSERT_UNUSED(longhand, longhandProperty(index) == longhand);
     return index;
@@ -701,7 +701,7 @@ public:
         m_values[index] = value;
     }
 
-    bool& NODELETE skip(unsigned index)
+    bool& LEGACY_NODELETE skip(unsigned index)
     {
         ASSERT(index < m_shorthand.length());
         return m_skipSerializing[index];
@@ -732,7 +732,7 @@ public:
         return result && *result != CSSValueID::Invalid;
     }
 
-    bool NODELETE isPair(unsigned index) const
+    bool LEGACY_NODELETE isPair(unsigned index) const
     {
         // This returns false for implicit initial values that are pairs, which is OK for now.
         ASSERT(index < m_shorthand.length());
@@ -1183,7 +1183,7 @@ String ShorthandSerializer::serializeColumnBreak() const
     }
 }
 
-static std::optional<CSSValueID> NODELETE fontWidthKeyword(double value)
+static std::optional<CSSValueID> LEGACY_NODELETE fontWidthKeyword(double value)
 {
     // If the numeric value does not fit in the fixed point FontSelectionValue, don't convert it to a keyword even if it rounds to a keyword value.
     float valueAsFloat = value;
@@ -1335,7 +1335,7 @@ String ShorthandSerializer::serializeFontVariant() const
     return result.isEmpty() ? nameString(CSSValueID::Normal) : result.toString();
 }
 
-static bool NODELETE gridTemplateListIsNone(const CSSValue& value)
+static bool LEGACY_NODELETE gridTemplateListIsNone(const CSSValue& value)
 {
     if (auto* list = dynamicDowncast<CSSGridTemplateListValue>(value))
         return list->list().isNone();
@@ -1354,7 +1354,7 @@ static bool gridTrackSizesIsAuto(const CSSValue& value)
     return isValueID(value, CSSValueID::Auto);
 }
 
-static bool NODELETE gridAutoFlowIsRow(CSSValue& value)
+static bool LEGACY_NODELETE gridAutoFlowIsRow(CSSValue& value)
 {
     if (auto* autoFlowValue = dynamicDowncast<CSSGridAutoFlowValue>(value))
         return autoFlowValue->autoFlow().isRow() && autoFlowValue->autoFlow().isSparse();
@@ -1371,7 +1371,7 @@ static bool NODELETE gridAutoFlowIsRow(CSSValue& value)
     return isValueID(value, CSSValueID::Row);
 }
 
-static bool NODELETE gridAutoFlowContains(CSSValue& value, CSSValueID id)
+static bool LEGACY_NODELETE gridAutoFlowContains(CSSValue& value, CSSValueID id)
 {
     if (auto* autoFlowValue = dynamicDowncast<CSSGridAutoFlowValue>(value)) {
         switch (id) {

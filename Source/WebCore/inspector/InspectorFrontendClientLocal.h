@@ -107,7 +107,7 @@ public:
     String backendCommandsURL() const final { return String(); };
 
     InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
-    WEBCORE_EXPORT Page* NODELETE frontendPage() final;
+    WEBCORE_EXPORT Page* LEGACY_NODELETE frontendPage() final;
     
     WEBCORE_EXPORT bool canAttachWindow();
     WEBCORE_EXPORT void setDockingUnavailable(bool);
@@ -134,7 +134,7 @@ public:
 
     WEBCORE_EXPORT void setAttachedWindow(DockSide);
 
-    WEBCORE_EXPORT Page* NODELETE inspectedPage() const;
+    WEBCORE_EXPORT Page* LEGACY_NODELETE inspectedPage() const;
 
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
@@ -147,7 +147,7 @@ private:
     friend class FrontendMenuProvider;
     std::optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
 
-    PageInspectorController* NODELETE inspectedPageController() const;
+    PageInspectorController* LEGACY_NODELETE inspectedPageController() const;
 
     WeakPtr<PageInspectorController> m_inspectedPageController;
     WeakPtr<Page> m_frontendPage;

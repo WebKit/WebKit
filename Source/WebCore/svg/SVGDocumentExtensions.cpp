@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGDocumentExtensions);
 
-static bool NODELETE animationsPausedForDocument(Document& document)
+static bool LEGACY_NODELETE animationsPausedForDocument(Document& document)
 {
     return !document.page() || !document.page()->isVisible() || !document.page()->imageAnimationEnabled();
 }

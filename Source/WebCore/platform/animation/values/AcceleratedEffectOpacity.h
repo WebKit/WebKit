@@ -38,7 +38,7 @@ struct AcceleratedEffectOpacity {
 };
 
 constexpr bool canBlend(const AcceleratedEffectOpacity&, const AcceleratedEffectOpacity&) { return true; }
-AcceleratedEffectOpacity NODELETE blend(const AcceleratedEffectOpacity&, const AcceleratedEffectOpacity&, const BlendingContext&);
+AcceleratedEffectOpacity LEGACY_NODELETE blend(const AcceleratedEffectOpacity&, const AcceleratedEffectOpacity&, const BlendingContext&);
 
 } // namespace WebCore
 

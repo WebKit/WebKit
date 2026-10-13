@@ -60,7 +60,7 @@ enum class AppleVisualEffect : uint8_t {
     VibrancySeparator,
 };
 
-inline bool NODELETE appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
+inline bool LEGACY_NODELETE appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
 {
     switch (effect) {
     case AppleVisualEffect::BlurUltraThinMaterial:
@@ -92,9 +92,9 @@ inline bool NODELETE appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
     return false;
 }
 
-WEBCORE_EXPORT bool NODELETE appleVisualEffectAppliesFilter(AppleVisualEffect);
+WEBCORE_EXPORT bool LEGACY_NODELETE appleVisualEffectAppliesFilter(AppleVisualEffect);
 #if HAVE(MATERIAL_HOSTING)
-WEBCORE_EXPORT bool NODELETE appleVisualEffectIsHostedMaterial(AppleVisualEffect);
+WEBCORE_EXPORT bool LEGACY_NODELETE appleVisualEffectIsHostedMaterial(AppleVisualEffect);
 #endif
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, AppleVisualEffect);

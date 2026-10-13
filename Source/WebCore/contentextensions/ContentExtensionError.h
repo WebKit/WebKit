@@ -91,7 +91,7 @@ enum class ContentExtensionError {
 
 extern ASCIILiteral WebKitContentBlockerDomain;
     
-WEBCORE_EXPORT const std::error_category& NODELETE contentExtensionErrorCategory();
+WEBCORE_EXPORT const std::error_category& LEGACY_NODELETE contentExtensionErrorCategory();
 
 inline std::error_code make_error_code(ContentExtensionError error)
 {

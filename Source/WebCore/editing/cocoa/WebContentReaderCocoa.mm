@@ -223,7 +223,7 @@ static bool shouldReplaceSubresourceURLWithBlobDuringSanitization(const URL& url
     return !url.protocolIsData() && !url.protocolIsInHTTPFamily();
 }
 
-static bool NODELETE shouldReplaceRichContentWithAttachments()
+static bool LEGACY_NODELETE shouldReplaceRichContentWithAttachments()
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     return DeprecatedGlobalSettings::attachmentElementEnabled();

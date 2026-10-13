@@ -768,7 +768,7 @@ std::optional<LinkIconType> HTMLLinkElement::iconType() const
     return m_relAttribute.iconType;
 }
 
-static bool NODELETE mayFetchResource(LinkRelAttribute relAttribute)
+static bool LEGACY_NODELETE mayFetchResource(LinkRelAttribute relAttribute)
 {
     // https://html.spec.whatwg.org/multipage/links.html#linkTypes
     return relAttribute.isStyleSheet

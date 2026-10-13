@@ -63,9 +63,9 @@ public:
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
     static const Style::ComputedStyle& firstNonAnonymousAncestorStyle(const Box&);
 
-    static BlockLayoutState::MarginState NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);
+    static BlockLayoutState::MarginState LEGACY_NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);
     static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);
-    static std::pair<LayoutRect, LayoutRect> NODELETE toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
+    static std::pair<LayoutRect, LayoutRect> LEGACY_NODELETE toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
 
 private:
     const CheckedRef<const LayoutState> m_globalLayoutState;

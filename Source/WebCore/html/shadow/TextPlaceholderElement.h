@@ -40,7 +40,7 @@ public:
 private:
     explicit TextPlaceholderElement(Document&, const LayoutSize&);
 
-    bool NODELETE isTextPlaceholderElement() const final { return true; }
+    bool LEGACY_NODELETE isTextPlaceholderElement() const final { return true; }
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;

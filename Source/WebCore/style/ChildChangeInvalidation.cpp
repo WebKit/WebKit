@@ -270,7 +270,7 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
     invalidateForHasSiblings(matchingHasSelectors, MutationPhase::After);
 }
 
-static bool NODELETE needsDescendantTraversal(const RuleFeatureSet& features)
+static bool LEGACY_NODELETE needsDescendantTraversal(const RuleFeatureSet& features)
 {
     // With the bundled MatchElement representation, any :has() with hasRelation=Descendant or SiblingDescendant
     // needs descendant traversal. Since we don't have per-value tracking for hasRelation,

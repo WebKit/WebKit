@@ -109,7 +109,7 @@ private:
 
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
-    bool NODELETE promptingInProgress() const;
+    bool LEGACY_NODELETE promptingInProgress() const;
 
     void cleanupSessionSource(ScreenCaptureSessionSource&);
 

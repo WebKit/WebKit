@@ -83,7 +83,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FocusController);
 
 using namespace HTMLNames;
 
-static HTMLElement* NODELETE invokerForOpenPopoverIgnoringCycles(const HTMLElement& popover)
+static HTMLElement* LEGACY_NODELETE invokerForOpenPopoverIgnoringCycles(const HTMLElement& popover)
 {
     if (!popover.isPopoverShowing())
         return nullptr;
@@ -98,7 +98,7 @@ static HTMLElement* NODELETE invokerForOpenPopoverIgnoringCycles(const HTMLEleme
     return invoker;
 }
 
-static bool NODELETE invokerChainReachesPopover(const HTMLElement& popover, const HTMLElement& invoker)
+static bool LEGACY_NODELETE invokerChainReachesPopover(const HTMLElement& popover, const HTMLElement& invoker)
 {
     auto remainingSteps = popover.document().topLayerElements().size();
     for (const HTMLElement* current = &invoker; current && remainingSteps; --remainingSteps) {
@@ -120,7 +120,7 @@ static bool NODELETE invokerChainReachesPopover(const HTMLElement& popover, cons
     return false;
 }
 
-static HTMLElement* NODELETE invokerForOpenPopover(const Node* candidatePopover)
+static HTMLElement* LEGACY_NODELETE invokerForOpenPopover(const Node* candidatePopover)
 {
     auto* popover = dynamicDowncast<HTMLElement>(candidatePopover);
     if (!popover)
@@ -131,7 +131,7 @@ static HTMLElement* NODELETE invokerForOpenPopover(const Node* candidatePopover)
     return invoker;
 }
 
-static RefPtr<Element> NODELETE openPopoverForInvoker(const Node* candidateInvoker)
+static RefPtr<Element> LEGACY_NODELETE openPopoverForInvoker(const Node* candidateInvoker)
 {
     auto* invoker = dynamicDowncast<HTMLElement>(candidateInvoker);
     if (!invoker)
@@ -142,13 +142,13 @@ static RefPtr<Element> NODELETE openPopoverForInvoker(const Node* candidateInvok
     return nullptr;
 }
 
-static inline bool NODELETE hasCustomFocusLogic(const Element& element)
+static inline bool LEGACY_NODELETE hasCustomFocusLogic(const Element& element)
 {
     auto* htmlElement = dynamicDowncast<HTMLElement>(element);
     return htmlElement && htmlElement->hasCustomFocusLogic();
 }
 
-static inline bool NODELETE isFocusScopeOwner(const Element& element)
+static inline bool LEGACY_NODELETE isFocusScopeOwner(const Element& element)
 {
     if (element.shadowRoot() && !hasCustomFocusLogic(element))
         return true;
@@ -207,23 +207,23 @@ public:
     Variant<RefPtr<Element>, RefPtr<Frame>> owner() const;
     WEBCORE_EXPORT static FocusNavigationScope scopeOf(Node&);
     static FocusNavigationScope scopeOwnedByScopeOwner(Element&);
-    static FocusNavigationScope NODELETE scopeOwnedByIFrame(HTMLFrameOwnerElement&);
+    static FocusNavigationScope LEGACY_NODELETE scopeOwnedByIFrame(HTMLFrameOwnerElement&);
 
     Node* firstNodeInScope() const;
     Node* lastNodeInScope() const;
-    Node* NODELETE nextInScope(const Node*) const;
+    Node* LEGACY_NODELETE nextInScope(const Node*) const;
     Node* previousInScope(const Node*) const;
-    Node* NODELETE lastChildInScope(const Node&) const;
+    Node* LEGACY_NODELETE lastChildInScope(const Node&) const;
 
 private:
     enum class SlotKind : uint8_t { Assigned, Fallback };
 
-    Node* NODELETE firstChildInScope(const Node&) const;
+    Node* LEGACY_NODELETE firstChildInScope(const Node&) const;
 
-    Node* NODELETE parentInScope(const Node&) const;
+    Node* LEGACY_NODELETE parentInScope(const Node&) const;
 
-    Node* NODELETE nextSiblingInScope(const Node&) const;
-    Node* NODELETE previousSiblingInScope(const Node&) const;
+    Node* LEGACY_NODELETE nextSiblingInScope(const Node&) const;
+    Node* LEGACY_NODELETE previousSiblingInScope(const Node&) const;
 
     explicit FocusNavigationScope(TreeScope&);
     explicit FocusNavigationScope(HTMLSlotElement&, SlotKind);

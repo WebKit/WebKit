@@ -196,11 +196,11 @@ protected:
     bool supportsFocusRing(const RenderElement&, const Style::ComputedStyle&) const override;
 
 #if ENABLE(FORM_CONTROL_REFRESH)
-    bool NODELETE inflateRectForControlRendererForVectorBasedControls(const RenderElement& renderer, FloatRect&) const;
+    bool LEGACY_NODELETE inflateRectForControlRendererForVectorBasedControls(const RenderElement& renderer, FloatRect&) const;
 
-    bool NODELETE canCreateControlPartForRendererForVectorBasedControls(const RenderElement&) const;
-    bool NODELETE canCreateControlPartForBorderOnlyForVectorBasedControls(const RenderElement&) const;
-    bool NODELETE canCreateControlPartForDecorationsForVectorBasedControls(const RenderElement&) const;
+    bool LEGACY_NODELETE canCreateControlPartForRendererForVectorBasedControls(const RenderElement&) const;
+    bool LEGACY_NODELETE canCreateControlPartForBorderOnlyForVectorBasedControls(const RenderElement&) const;
+    bool LEGACY_NODELETE canCreateControlPartForDecorationsForVectorBasedControls(const RenderElement&) const;
 
     Color checkboxRadioBackgroundColorForVectorBasedControls(const Style::ComputedStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>) const;
 
@@ -215,8 +215,8 @@ protected:
     bool paintColorWellForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool paintColorWellDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustColorWellSwatchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
-    bool NODELETE adjustColorWellSwatchOverlayStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustColorWellSwatchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustColorWellSwatchOverlayStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool adjustColorWellSwatchWrapperStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintColorWellSwatchForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
@@ -225,30 +225,30 @@ protected:
 
     bool adjustTextFieldStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintTextFieldForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
-    bool NODELETE paintTextFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
+    bool LEGACY_NODELETE paintTextFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
     bool adjustTextAreaStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintTextAreaForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
-    bool NODELETE paintTextAreaDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
+    bool LEGACY_NODELETE paintTextAreaDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
     bool adjustMenuListStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMenuListForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
-    bool NODELETE paintMenuListDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
+    bool LEGACY_NODELETE paintMenuListDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool adjustMenuListButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMenuListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
     bool paintMenuListButtonDecorationsForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustMeterStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustMeterStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintMeterForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool adjustListButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintListButtonForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustProgressBarStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustProgressBarStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintProgressBarForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
-    bool NODELETE adjustSliderTrackStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustSliderTrackStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSliderTrackForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
 
     bool adjustSliderThumbSizeForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
@@ -257,7 +257,7 @@ protected:
 
     bool adjustSearchFieldStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldForVectorBasedControls(const RenderElement&, const PaintInfo&, const FloatRect&);
-    bool NODELETE paintSearchFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
+    bool LEGACY_NODELETE paintSearchFieldDecorationsForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
 
     bool adjustSearchFieldCancelButtonStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
     bool paintSearchFieldCancelButtonForVectorBasedControls(const RenderBox&, const PaintInfo&, const FloatRect&);
@@ -274,11 +274,11 @@ protected:
     bool adjustSwitchStyleForVectorBasedControls(Style::ComputedStyle&, const Element*) const;
 
     bool paintPlatformResizerForVectorBasedControls(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
-    bool NODELETE paintPlatformResizerFrameForVectorBasedControls(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
+    bool LEGACY_NODELETE paintPlatformResizerFrameForVectorBasedControls(const RenderLayerModelObject&, GraphicsContext&, const LayoutRect&);
 
-    bool NODELETE supportsFocusRingForVectorBasedControls(const RenderElement&, const Style::ComputedStyle&) const;
+    bool LEGACY_NODELETE supportsFocusRingForVectorBasedControls(const RenderElement&, const Style::ComputedStyle&) const;
 
-    bool NODELETE adjustTextControlInnerContainerStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
+    bool LEGACY_NODELETE adjustTextControlInnerContainerStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
     bool adjustTextControlInnerPlaceholderStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
     bool adjustTextControlInnerTextStyleForVectorBasedControls(Style::ComputedStyle&, const Style::ComputedStyle&, const Element*) const;
 

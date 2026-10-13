@@ -97,7 +97,7 @@ public:
     double m44() const { return m_matrix.m44(); }
 
     bool is2D() const { return m_is2D; }
-    bool NODELETE isIdentity() const;
+    bool LEGACY_NODELETE isIdentity() const;
 
     ExceptionOr<void> setMatrixValue(Document&, const String&);
 

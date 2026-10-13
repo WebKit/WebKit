@@ -92,10 +92,10 @@ public:
     String sizeAdjust() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
-    LoadStatus NODELETE status() const;
+    LoadStatus LEGACY_NODELETE status() const;
 
     using LoadedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<FontFace>>;
-    LoadedPromise& NODELETE loadedForBindings();
+    LoadedPromise& LEGACY_NODELETE loadedForBindings();
     LoadedPromise& loadForBindings();
 
     void adopt(CSSFontFace&);
@@ -109,10 +109,10 @@ private:
     explicit FontFace(ScriptExecutionContext*, CSSFontFace&);
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // Callback for LoadedPromise.
-    FontFace& NODELETE loadedPromiseResolve();
+    FontFace& LEGACY_NODELETE loadedPromiseResolve();
     void setErrorState();
 
     Ref<CSSFontFace> m_backing;

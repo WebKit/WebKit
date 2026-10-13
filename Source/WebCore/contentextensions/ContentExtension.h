@@ -47,7 +47,7 @@ public:
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
     const URL& extensionBaseURL() const LIFETIME_BOUND { return m_extensionBaseURL; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
-    StyleSheetContents* NODELETE globalDisplayNoneStyleSheet();
+    StyleSheetContents* LEGACY_NODELETE globalDisplayNoneStyleSheet();
     const DFABytecodeInterpreter::Actions& topURLActions(const URL& topURL) const;
     const DFABytecodeInterpreter::Actions& frameURLActions(const URL& frameURL) const;
     const Vector<uint64_t>& universalActions() const LIFETIME_BOUND { return m_universalActions; }

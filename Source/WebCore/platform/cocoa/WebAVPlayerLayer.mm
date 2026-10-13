@@ -227,7 +227,7 @@ private:
 // constant value to use for a custom `areEssentiallyEqual` where we will
 // bail out of -resolveBounds if the _targetVideoFrame is essentially equal
 // to the current video frame.
-static bool NODELETE areFramesEssentiallyEqualWithTolerance(const WebCore::FloatRect& a, const WebCore::FloatRect& b)
+static bool LEGACY_NODELETE areFramesEssentiallyEqualWithTolerance(const WebCore::FloatRect& a, const WebCore::FloatRect& b)
 {
     static constexpr double frameValueDeltaTolerance { 0.01 };
     WebCore::FloatRect delta { WebCore::FloatPoint { a.location() - b.location() }, a.size() - b.size() };

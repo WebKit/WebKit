@@ -55,7 +55,7 @@ using CounterMaps = SingleThreadWeakHashMap<RenderElement, std::unique_ptr<Count
 
 static CounterNode* makeCounterNode(RenderElement&, const AtomString& identifier, bool alwaysCreateCounter);
 
-static CounterMaps& NODELETE counterMaps()
+static CounterMaps& LEGACY_NODELETE counterMaps()
 {
     static NeverDestroyed<CounterMaps> staticCounterMaps;
     return staticCounterMaps;
@@ -132,7 +132,7 @@ static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
     return previousSiblingOrParentSkippingAnonymous(renderer);
 }
 
-static inline bool NODELETE areRenderersElementsSiblings(const RenderElement& first, const RenderElement& second)
+static inline bool LEGACY_NODELETE areRenderersElementsSiblings(const RenderElement& first, const RenderElement& second)
 {
     return first.firstNonAnonymousAncestor() == second.firstNonAnonymousAncestor();
 }

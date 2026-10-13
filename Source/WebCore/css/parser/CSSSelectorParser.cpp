@@ -367,7 +367,7 @@ enum class CompoundSelectorFlag {
     HasPseudoElementForRightmostCompound = 1 << 0,
 };
 
-static OptionSet<CompoundSelectorFlag> NODELETE extractCompoundFlags(const MutableCSSSelector& simpleSelector, CSSParserMode parserMode)
+static OptionSet<CompoundSelectorFlag> LEGACY_NODELETE extractCompoundFlags(const MutableCSSSelector& simpleSelector, CSSParserMode parserMode)
 {
     if (simpleSelector.match() != CSSSelector::Match::PseudoElement)
         return { };
@@ -381,7 +381,7 @@ static OptionSet<CompoundSelectorFlag> NODELETE extractCompoundFlags(const Mutab
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
 }
 
-static bool NODELETE isDescendantCombinator(CSSSelector::Relation relation)
+static bool LEGACY_NODELETE isDescendantCombinator(CSSSelector::Relation relation)
 {
     return relation == CSSSelector::Relation::DescendantSpace;
 }
@@ -479,7 +479,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeRelativeNestedSele
     return selector;
 }
 
-static bool NODELETE isScrollbarPseudoClass(CSSSelector::PseudoClass pseudo)
+static bool LEGACY_NODELETE isScrollbarPseudoClass(CSSSelector::PseudoClass pseudo)
 {
     switch (pseudo) {
     case CSSSelector::PseudoClass::Enabled:
@@ -503,7 +503,7 @@ static bool NODELETE isScrollbarPseudoClass(CSSSelector::PseudoClass pseudo)
     }
 }
 
-static bool NODELETE isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
+static bool LEGACY_NODELETE isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
 {
     switch (pseudo) {
     case CSSSelector::PseudoClass::Hover:
@@ -517,7 +517,7 @@ static bool NODELETE isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
     }
 }
 
-static bool NODELETE isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudoClass, CSSSelector::PseudoElement compoundPseudoElement)
+static bool LEGACY_NODELETE isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudoClass, CSSSelector::PseudoElement compoundPseudoElement)
 {
     // FIXME: https://drafts.csswg.org/selectors-4/#pseudo-element-states states all pseudo-elements
     // can be followed by isUserActionPseudoClass().
@@ -596,7 +596,7 @@ static bool isSimpleSelectorValidAfterPseudoElement(const MutableCSSSelector& si
     return isPseudoClassValidAfterPseudoElement(simpleSelector.pseudoClass(), compoundPseudoElement.pseudoElement());
 }
 
-static bool NODELETE atEndIgnoringWhitespace(CSSParserTokenRange range)
+static bool LEGACY_NODELETE atEndIgnoringWhitespace(CSSParserTokenRange range)
 {
     range.consumeWhitespace();
     return range.atEnd();
@@ -1514,7 +1514,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
     return CSSSelectorList { WTF::move(result) };
 }
 
-static std::optional<Style::PseudoElementIdentifier> NODELETE pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
+static std::optional<Style::PseudoElementIdentifier> LEGACY_NODELETE pseudoElementIdentifierFor(CSSSelectorPseudoElement selectorPseudoElement)
 {
     auto type = CSSSelector::stylePseudoElementTypeFor(selectorPseudoElement);
     if (!type)

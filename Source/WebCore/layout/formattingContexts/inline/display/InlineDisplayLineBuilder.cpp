@@ -35,7 +35,7 @@
 namespace WebCore {
 namespace Layout {
 
-static InlineRect NODELETE mapLineRectLogicalToVisual(const InlineRect& lineLogicalRect, const LayoutSize formattingRootBorderBoxSize, WritingMode writingMode)
+static InlineRect LEGACY_NODELETE mapLineRectLogicalToVisual(const InlineRect& lineLogicalRect, const LayoutSize formattingRootBorderBoxSize, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
         return lineLogicalRect;
@@ -357,7 +357,7 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     return FloatRect { rootInlineBox.left(), ellipsisStart, rootInlineBox.width(), ellipsisWidth };
 }
 
-static inline bool NODELETE isEligibleForLinkBoxLineClamp(auto& displayBoxes)
+static inline bool LEGACY_NODELETE isEligibleForLinkBoxLineClamp(auto& displayBoxes)
 {
     if (displayBoxes.size() < 3) {
         // We need at least 3 display boxes to generate content with link ([root inline box][inline box][content])
@@ -405,7 +405,7 @@ static inline void makeRoomForLinkBoxOnClampedLineIfNeeded(auto& content, auto c
     clampedLine.setHasEllipsis();
 }
 
-static inline void NODELETE moveDisplayBoxToClampedLine(auto& content, auto clampedLineIndex, auto& displayBox, auto horizontalOffset)
+static inline void LEGACY_NODELETE moveDisplayBoxToClampedLine(auto& content, auto clampedLineIndex, auto& displayBox, auto horizontalOffset)
 {
     auto& clampedLine = content.lines[clampedLineIndex];
     displayBox.setLeft(content.lineEllipsis(clampedLineIndex)->visualRect.maxX() + horizontalOffset + legacyMatchingLinkBoxOffset);

@@ -76,7 +76,7 @@ void SVGTextLayoutAttributesBuilder::rebuildMetricsForSubtree(RenderSVGText& tex
     m_metricsBuilder.measureTextRenderer(text, nullptr);
 }
 
-static inline void NODELETE processRenderSVGInlineText(const RenderSVGInlineText& text, unsigned& atCharacter, bool& lastCharacterWasSpace)
+static inline void LEGACY_NODELETE processRenderSVGInlineText(const RenderSVGInlineText& text, unsigned& atCharacter, bool& lastCharacterWasSpace)
 {
     auto& string = text.text();
     auto length = string.length();

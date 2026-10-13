@@ -56,17 +56,17 @@ public:
     };
 
     std::optional<BoxSizes> elementSizeChanged() const;
-    void NODELETE updateObservationSize(const BoxSizes&);
-    void NODELETE resetObservationSize();
+    void LEGACY_NODELETE updateObservationSize(const BoxSizes&);
+    void LEGACY_NODELETE resetObservationSize();
 
     FloatRect computeContentRect() const;
-    FloatSize NODELETE borderBoxSize() const;
-    FloatSize NODELETE contentBoxSize() const;
-    FloatSize NODELETE snappedContentBoxSize() const;
+    FloatSize LEGACY_NODELETE borderBoxSize() const;
+    FloatSize LEGACY_NODELETE contentBoxSize() const;
+    FloatSize LEGACY_NODELETE snappedContentBoxSize() const;
 
     Element* target() const { return m_target.get(); }
     ResizeObserverBoxOptions observedBox() const { return m_observedBox; }
-    size_t NODELETE targetElementDepth() const;
+    size_t LEGACY_NODELETE targetElementDepth() const;
 
 private:
     ResizeObservation(Element&, ResizeObserverBoxOptions);

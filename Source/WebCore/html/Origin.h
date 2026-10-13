@@ -45,7 +45,7 @@ public:
 
     static ExceptionOr<Ref<Origin>> from(ScriptExecutionContext&, JSC::JSValue);
 
-    bool NODELETE opaque() const;
+    bool LEGACY_NODELETE opaque() const;
 
     bool isSameOrigin(const Origin&) const;
     bool isSameSite(const Origin&) const;

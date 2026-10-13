@@ -116,7 +116,7 @@ private:
     bool m_isDependent { false };
 };
 
-WebCoreOpaqueRoot NODELETE root(AbortSignal*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(AbortSignal*);
 
 } // namespace WebCore
 

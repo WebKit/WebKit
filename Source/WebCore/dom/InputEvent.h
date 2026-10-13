@@ -56,7 +56,7 @@ public:
 
     const String& inputType() const LIFETIME_BOUND { return m_inputType; }
     const String& data() const LIFETIME_BOUND { return m_data; }
-    DataTransfer* NODELETE dataTransfer() const;
+    DataTransfer* LEGACY_NODELETE dataTransfer() const;
     const Vector<Ref<StaticRange>>& getTargetRanges() LIFETIME_BOUND { return m_targetRanges; }
     bool isInputMethodComposing() const { return m_isInputMethodComposing; }
 

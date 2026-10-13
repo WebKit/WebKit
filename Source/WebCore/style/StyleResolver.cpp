@@ -137,10 +137,10 @@ public:
             m_rootElementStyle = document.initialContainingBlockStyle();
     }
 
-    const Element* NODELETE element() const { return m_element; }
+    const Element* LEGACY_NODELETE element() const { return m_element; }
 
     void setStyle(std::unique_ptr<Style::ComputedStyle> style) { m_style = WTF::move(style); }
-    Style::ComputedStyle* NODELETE style() const { return m_style.get(); }
+    Style::ComputedStyle* LEGACY_NODELETE style() const { return m_style.get(); }
     std::unique_ptr<Style::ComputedStyle> takeStyle() { return WTF::move(m_style); }
 
     void setParentStyle(std::unique_ptr<Style::ComputedStyle> parentStyle)
@@ -148,11 +148,11 @@ public:
         m_ownedParentStyle = WTF::move(parentStyle);
         m_parentStyle = m_ownedParentStyle.get();
     }
-    const Style::ComputedStyle* NODELETE parentStyle() const { return m_parentStyle; }
-    const Style::ComputedStyle* NODELETE parentHighlightStyle() const { return m_parentHighlightStyle; }
-    const Style::ComputedStyle* NODELETE rootElementStyle() const { return m_rootElementStyle; }
+    const Style::ComputedStyle* LEGACY_NODELETE parentStyle() const { return m_parentStyle; }
+    const Style::ComputedStyle* LEGACY_NODELETE parentHighlightStyle() const { return m_parentHighlightStyle; }
+    const Style::ComputedStyle* LEGACY_NODELETE rootElementStyle() const { return m_rootElementStyle; }
 
-    CheckedPtr<TreeResolutionState> NODELETE treeResolutionState() { return m_treeResolutionState; }
+    CheckedPtr<TreeResolutionState> LEGACY_NODELETE treeResolutionState() { return m_treeResolutionState; }
 
 private:
     const Element* m_element { };

@@ -49,7 +49,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PageGroup);
 
-static unsigned NODELETE getUniqueIdentifier()
+static unsigned LEGACY_NODELETE getUniqueIdentifier()
 {
     static unsigned currentIdentifier = 0;
     return ++currentIdentifier;
@@ -83,7 +83,7 @@ PageGroup::~PageGroup() = default;
 
 using PageGroupMap = HashMap<String, UniqueRef<PageGroup>>;
 
-static PageGroupMap& NODELETE pageGroups()
+static PageGroupMap& LEGACY_NODELETE pageGroups()
 {
     static NeverDestroyed<PageGroupMap> pageGroupsMap;
     return pageGroupsMap;

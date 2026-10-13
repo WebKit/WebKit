@@ -254,7 +254,7 @@ bool inlineContributionMayRequireFullSizingAlgorithmForIntrinsicWidth(const Elem
     return false;
 }
 
-static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
+static bool LEGACY_NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
 {
     for (auto trackIndex : std::views::iota(spannedTrackIndexes.begin(), spannedTrackIndexes.end())) {
         if (trackSizingFunctions[trackIndex].min.isAuto())
@@ -263,7 +263,7 @@ static bool NODELETE spansAutoMinTrackSizingFunction(WTF::Range<size_t> spannedT
     return false;
 }
 
-static bool NODELETE spansFlexMaxTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
+static bool LEGACY_NODELETE spansFlexMaxTrackSizingFunction(WTF::Range<size_t> spannedTrackIndexes, const TrackSizingFunctionsList& trackSizingFunctions)
 {
     for (auto trackIndex : std::views::iota(spannedTrackIndexes.begin(), spannedTrackIndexes.end())) {
         if (trackSizingFunctions[trackIndex].max.isFlex())
@@ -310,7 +310,7 @@ static std::optional<BorderBoxSize> inlineSpecifiedSizeSuggestion(const PlacedGr
     return { };
 }
 
-static std::optional<LayoutUnit> NODELETE inlineTransferredSizeSuggestion(const PlacedGridItem&)
+static std::optional<LayoutUnit> LEGACY_NODELETE inlineTransferredSizeSuggestion(const PlacedGridItem&)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
@@ -360,7 +360,7 @@ static std::optional<BorderBoxSize> blockSpecifiedSizeSuggestion(const PlacedGri
     return { };
 }
 
-static std::optional<BorderBoxSize> NODELETE blockTransferredSizeSuggestion(const PlacedGridItem&)
+static std::optional<BorderBoxSize> LEGACY_NODELETE blockTransferredSizeSuggestion(const PlacedGridItem&)
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
@@ -380,7 +380,7 @@ static BorderBoxSize blockContentSizeSuggestion(const PlacedGridItem& gridItem, 
 
 // https://drafts.csswg.org/css-overflow-3/#overflow-properties
 // The scroll, auto, and hidden values are known as the scrollable values of overflow.
-static bool NODELETE hasScrollableInlineComputedOverflowValue(const PlacedGridItem& gridItem)
+static bool LEGACY_NODELETE hasScrollableInlineComputedOverflowValue(const PlacedGridItem& gridItem)
 {
     auto computedOverflow = gridItem.layoutBox().style().overflowX();
     return computedOverflow == Overflow::Hidden || computedOverflow == Overflow::Scroll || computedOverflow == Overflow::Auto;
@@ -388,7 +388,7 @@ static bool NODELETE hasScrollableInlineComputedOverflowValue(const PlacedGridIt
 
 // https://drafts.csswg.org/css-overflow-3/#overflow-properties
 // The scroll, auto, and hidden values are known as the scrollable values of overflow.
-static bool NODELETE hasScrollableBlockComputedOverflowValue(const PlacedGridItem& gridItem)
+static bool LEGACY_NODELETE hasScrollableBlockComputedOverflowValue(const PlacedGridItem& gridItem)
 {
     auto computedOverflow = gridItem.layoutBox().style().overflowY();
     return computedOverflow == Overflow::Hidden || computedOverflow == Overflow::Scroll || computedOverflow == Overflow::Auto;

@@ -106,7 +106,7 @@ private:
     RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
     RefPtr<CompositorIntegration> createCompositorIntegration() final;
-    bool NODELETE isValid(const CompositorIntegration&) const final;
+    bool LEGACY_NODELETE isValid(const CompositorIntegration&) const final;
     bool isValid(const Buffer&) const final;
     bool isValid(const Adapter&) const final;
     bool isValid(const BindGroup&) const final;

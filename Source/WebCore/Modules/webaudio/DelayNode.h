@@ -36,7 +36,7 @@ class DelayNode final : public AudioBasicProcessorNode {
 public:
     static ExceptionOr<Ref<DelayNode>> create(BaseAudioContext&, const DelayOptions&);
 
-    AudioParam& NODELETE delayTime();
+    AudioParam& LEGACY_NODELETE delayTime();
 
 private:
     DelayNode(BaseAudioContext&, double maxDelayTime);

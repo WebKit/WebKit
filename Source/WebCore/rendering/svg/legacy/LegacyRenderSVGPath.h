@@ -49,8 +49,8 @@ private:
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) final;
 
-    bool NODELETE shouldStrokeZeroLengthSubpath() const;
-    FloatRect NODELETE zeroLengthSubpathRect(const FloatPoint&, float) const;
+    bool LEGACY_NODELETE shouldStrokeZeroLengthSubpath() const;
+    FloatRect LEGACY_NODELETE zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;
 

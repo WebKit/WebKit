@@ -51,12 +51,12 @@ Random::Sharing copy(const Random::Sharing& root)
     return root;
 }
 
-CSSValueID NODELETE copy(const CSSValueID& root)
+CSSValueID LEGACY_NODELETE copy(const CSSValueID& root)
 {
     return root;
 }
 
-CSS::Keyword::None NODELETE copy(const CSS::Keyword::None& root)
+CSS::Keyword::None LEGACY_NODELETE copy(const CSS::Keyword::None& root)
 {
     return root;
 }
@@ -93,7 +93,7 @@ Child copy(const Child& root)
     return WTF::switchOn(root, [&](const auto& root) { return copy(root); });
 }
 
-template<Leaf Op> Child NODELETE copy(const Op& root)
+template<Leaf Op> Child LEGACY_NODELETE copy(const Op& root)
 {
     return { root };
 }

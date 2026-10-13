@@ -169,12 +169,12 @@ public:
     RefPtr<DocumentFragment> createCueRenderingTree();
     String textWithoutMarkup();
 
-    void NODELETE notifyRegionWhenRemovingDisplayTree(bool);
+    void LEGACY_NODELETE notifyRegionWhenRemovingDisplayTree(bool);
 
-    VTTRegion* NODELETE region();
+    VTTRegion* LEGACY_NODELETE region();
     void setRegion(VTTRegion*);
 
-    const String& NODELETE regionId() LIFETIME_BOUND;
+    const String& LEGACY_NODELETE regionId() LIFETIME_BOUND;
 
     void setIsActive(bool) override;
 
@@ -193,10 +193,10 @@ public:
     using DisplayPosition = std::pair<std::optional<double>, std::optional<double>>;
     const DisplayPosition& getCSSPosition() const LIFETIME_BOUND { return m_displayPosition; };
 
-    CSSValueID NODELETE getCSSAlignment() const;
-    int NODELETE getCSSSize() const;
-    CSSValueID NODELETE getCSSWritingDirection() const;
-    CSSValueID NODELETE getCSSWritingMode() const;
+    CSSValueID LEGACY_NODELETE getCSSAlignment() const;
+    int LEGACY_NODELETE getCSSSize() const;
+    CSSValueID LEGACY_NODELETE getCSSWritingDirection() const;
+    CSSValueID LEGACY_NODELETE getCSSWritingMode() const;
 
     void recalculateStyles() final { m_displayTreeShouldChange = true; }
     void setFontSize(int, bool important) override;
@@ -208,9 +208,9 @@ public:
 
     void didChange(bool = false) final;
 
-    double NODELETE calculateComputedTextPosition() const;
-    PositionAlignSetting NODELETE calculateComputedPositionAlignment() const;
-    double NODELETE calculateMaximumSize() const;
+    double LEGACY_NODELETE calculateComputedTextPosition() const;
+    PositionAlignSetting LEGACY_NODELETE calculateComputedPositionAlignment() const;
+    double LEGACY_NODELETE calculateMaximumSize() const;
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisUtterance* speechUtterance() const { return m_speechUtterance.get(); }
@@ -252,7 +252,7 @@ private:
         Align,
         Region
     };
-    CueSetting NODELETE settingName(VTTScanner&);
+    CueSetting LEGACY_NODELETE settingName(VTTScanner&);
 
     void prepareToSpeak(SpeechSynthesis&, double, double, SpeakCueCompletionHandler&&) final;
     void beginSpeaking() final;

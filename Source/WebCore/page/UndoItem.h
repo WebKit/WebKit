@@ -54,9 +54,9 @@ public:
     bool isValid() const { return !!m_undoManager; }
     void invalidate();
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
-    UndoManager* NODELETE undoManager() const;
+    UndoManager* LEGACY_NODELETE undoManager() const;
     void setUndoManager(UndoManager*);
 
     const String& label() const LIFETIME_BOUND { return m_label; }

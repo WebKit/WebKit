@@ -72,10 +72,10 @@ public:
     GridTrack() = default;
 
     LayoutUnit baseSize() const;
-    LayoutUnit NODELETE unclampedBaseSize() const;
+    LayoutUnit LEGACY_NODELETE unclampedBaseSize() const;
     void setBaseSize(LayoutUnit);
 
-    const LayoutUnit& NODELETE growthLimit() const LIFETIME_BOUND;
+    const LayoutUnit& LEGACY_NODELETE growthLimit() const LIFETIME_BOUND;
     bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
     void setGrowthLimit(LayoutUnit);
 
@@ -86,16 +86,16 @@ public:
     void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
 
     const LayoutUnit& tempSize() const LIFETIME_BOUND { return m_tempSize; }
-    void NODELETE setTempSize(const LayoutUnit&);
-    void NODELETE growTempSize(const LayoutUnit&);
+    void LEGACY_NODELETE setTempSize(const LayoutUnit&);
+    void LEGACY_NODELETE growTempSize(const LayoutUnit&);
 
     bool infinitelyGrowable() const { return m_infinitelyGrowable; }
     void setInfinitelyGrowable(bool infinitelyGrowable) { m_infinitelyGrowable = infinitelyGrowable; }
 
-    void NODELETE setGrowthLimitCap(std::optional<LayoutUnit>);
+    void LEGACY_NODELETE setGrowthLimitCap(std::optional<LayoutUnit>);
     std::optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
-    const Style::ZoomResolvable<Style::GridTrackSize>& NODELETE cachedTrackSize() const LIFETIME_BOUND;
+    const Style::ZoomResolvable<Style::GridTrackSize>& LEGACY_NODELETE cachedTrackSize() const LIFETIME_BOUND;
     void setCachedTrackSize(const Style::ZoomResolvable<Style::GridTrackSize>&);
 
 private:
@@ -146,10 +146,10 @@ public:
     const Vector<UniqueRef<GridTrack>>& tracks(Style::GridTrackSizingDirection direction) const LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? m_columns : m_rows; }
 
     std::optional<LayoutUnit> freeSpace(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_freeSpaceColumns : m_freeSpaceRows; }
-    void NODELETE setFreeSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);
+    void LEGACY_NODELETE setFreeSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);
 
     std::optional<LayoutUnit> availableSpace(Style::GridTrackSizingDirection direction) const { return direction == Style::GridTrackSizingDirection::Columns ? m_availableSpaceColumns : m_availableSpaceRows; }
-    void NODELETE setAvailableSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);
+    void LEGACY_NODELETE setAvailableSpace(Style::GridTrackSizingDirection, std::optional<LayoutUnit>);
 
     LayoutUnit computeTrackBasedSize() const;
 
@@ -177,7 +177,7 @@ private:
         GridSpan gridSpan;
     };
 
-    std::optional<LayoutUnit> NODELETE availableSpace() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE availableSpace() const;
     Style::ZoomResolvable<Style::GridTrackSize> calculateGridTrackSize(Style::GridTrackSizingDirection, unsigned translatedIndex) const;
 
     // Helper methods for step 1. initializeTrackSizes().
@@ -188,7 +188,7 @@ private:
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);
     void sizeTrackToFitSingleSpanGridLanesGroup(const GridSpan&, GridLanesMinMaxTrackSize&, GridTrack&);
 
-    bool NODELETE spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
+    bool LEGACY_NODELETE spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
 
     using GridItemsSpanGroupRange = std::span<GridItemWithSpan>;
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void increaseSizesToAccommodateSpanningItems(GridItemsSpanGroupRange gridItemsWithSpan, RenderGridLayoutState&);
@@ -230,7 +230,7 @@ private:
     void convertIndefiniteItemsToDefiniteGridLanes(const StdMap<SpanLength, GridLanesMinMaxTrackSize>& gridTrackSpans, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>&, Vector<GridLanesMinMaxTrackSizeWithGridSpan>&);
 
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&, RenderGridLayoutState&) const;
-    LayoutUnit NODELETE itemSizeForTrackSizeComputationPhaseGridLanes(TrackSizeComputationPhase, const GridLanesMinMaxTrackSize&) const;
+    LayoutUnit LEGACY_NODELETE itemSizeForTrackSizeComputationPhaseGridLanes(TrackSizeComputationPhase, const GridLanesMinMaxTrackSize&) const;
 
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<CheckedRef<GridTrack>>& tracks, Vector<CheckedRef<GridTrack>>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
 
@@ -285,7 +285,7 @@ private:
 
     // State machine.
     void advanceNextState();
-    bool NODELETE isValidTransition() const;
+    bool LEGACY_NODELETE isValidTransition() const;
 
     bool isDirectionInStackingAxis() const;
 

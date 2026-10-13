@@ -118,8 +118,8 @@ public:
 
     FlowDirection crossAxisDirection() const;
     FlowDirection transformedBlockFlowDirection() const;
-    static bool NODELETE isHorizontalFlow(const RenderFlexibleBox&);
-    static bool NODELETE isColumnFlow(const RenderFlexibleBox&);
+    static bool LEGACY_NODELETE isHorizontalFlow(const RenderFlexibleBox&);
+    static bool LEGACY_NODELETE isColumnFlow(const RenderFlexibleBox&);
     bool isColumnOrRowReverse() const;
     static bool isWrapReverse(const RenderFlexibleBox&);
     static bool isMultiline(const RenderFlexibleBox&);

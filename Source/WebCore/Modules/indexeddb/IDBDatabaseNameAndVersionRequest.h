@@ -65,8 +65,8 @@ private:
     // ActiveDOMObject.
     // Exported because x86_64 emits this class's vtable in WebKitLegacy, which
     // then needs both overrides out of line; arm64 happens not to.
-    WEBCORE_EXPORT bool NODELETE virtualHasPendingActivity() const final;
-    WEBCORE_EXPORT void NODELETE stop() final;
+    WEBCORE_EXPORT bool LEGACY_NODELETE virtualHasPendingActivity() const final;
+    WEBCORE_EXPORT void LEGACY_NODELETE stop() final;
 
     const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBResourceIdentifier m_resourceIdentifier;

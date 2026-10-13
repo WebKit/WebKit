@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-static Style::Scope& NODELETE styleScopeFor(ContainerNode& treeScope)
+static Style::Scope& LEGACY_NODELETE styleScopeFor(ContainerNode& treeScope)
 {
     ASSERT(is<Document>(treeScope) || is<ShadowRoot>(treeScope));
     if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope))
@@ -67,13 +67,13 @@ public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
 private:
-    void NODELETE ref() const final { m_styleSheet->ref(); }
+    void LEGACY_NODELETE ref() const final { m_styleSheet->ref(); }
     void deref() const final { m_styleSheet->deref(); }
 
     unsigned length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return protect(m_styleSheet)->item(index); }
 
-    CSSStyleSheet* NODELETE styleSheet() const final { return m_styleSheet.get(); }
+    CSSStyleSheet* LEGACY_NODELETE styleSheet() const final { return m_styleSheet.get(); }
 
     SingleThreadWeakPtr<CSSStyleSheet> m_styleSheet;
 };

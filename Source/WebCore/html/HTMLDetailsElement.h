@@ -41,7 +41,7 @@ public:
 
     void queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState);
 
-    bool NODELETE isOpen() const;
+    bool LEGACY_NODELETE isOpen() const;
 
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);

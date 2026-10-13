@@ -99,7 +99,7 @@ RefPtr<Float32Array> WaveShaperNode::curveForBindings()
     return Float32Array::create(curve.span());
 }
 
-static inline WaveShaperProcessor::OverSampleType NODELETE processorType(OverSampleType type)
+static inline WaveShaperProcessor::OverSampleType LEGACY_NODELETE processorType(OverSampleType type)
 {
     switch (type) {
     case OverSampleType::None:

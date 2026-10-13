@@ -30,11 +30,11 @@
 
 namespace RFC7230 {
 
-bool NODELETE isTokenCharacter(char16_t);
-bool NODELETE isCommentText(char16_t);
-bool NODELETE isQuotedPairSecondOctet(char16_t);
-bool NODELETE isDelimiter(char16_t);
-bool NODELETE isValidName(StringView);
-bool NODELETE isValidValue(StringView);
+bool LEGACY_NODELETE isTokenCharacter(char16_t);
+bool LEGACY_NODELETE isCommentText(char16_t);
+bool LEGACY_NODELETE isQuotedPairSecondOctet(char16_t);
+bool LEGACY_NODELETE isDelimiter(char16_t);
+bool LEGACY_NODELETE isValidName(StringView);
+bool LEGACY_NODELETE isValidValue(StringView);
 
 } // namespace RFC7230

@@ -340,7 +340,7 @@ static inline bool checkSpeakerAccess(const Document& document)
         && isFeaturePolicyAllowingSpeakerSelection(document);
 }
 
-static inline bool NODELETE exposeSpeakersWithoutMicrophoneAccess(const Document& document)
+static inline bool LEGACY_NODELETE exposeSpeakersWithoutMicrophoneAccess(const Document& document)
 {
     return document.frame() && document.frame()->settings().exposeSpeakersWithoutMicrophoneEnabled();
 }

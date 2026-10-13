@@ -51,13 +51,13 @@ public:
     static enum Type judge(std::span<const uint8_t>);
     static constexpr int ESC = 0x1b;
     static const std::array<uint8_t, 256> sjisMap;
-    static int NODELETE ISkanji(int code)
+    static int LEGACY_NODELETE ISkanji(int code)
     {
         if (code >= 0x100)
             return 0;
         return sjisMap[code & 0xff] & 1;
     }
-    static int NODELETE ISkana(int code)
+    static int LEGACY_NODELETE ISkana(int code)
     {
         if (code >= 0x100)
             return 0;

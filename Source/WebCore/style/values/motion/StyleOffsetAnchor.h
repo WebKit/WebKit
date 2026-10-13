@@ -77,7 +77,7 @@ template<> struct CSSValueConversion<OffsetAnchor> { auto operator()(BuilderStat
 // MARK: - Blending
 
 template<> struct Blending<OffsetAnchor> {
-    bool NODELETE canBlend(const OffsetAnchor&, const OffsetAnchor&);
+    bool LEGACY_NODELETE canBlend(const OffsetAnchor&, const OffsetAnchor&);
     auto requiresInterpolationForAccumulativeIteration(const OffsetAnchor&, const OffsetAnchor&) -> bool;
     auto blend(const OffsetAnchor&, const OffsetAnchor&, const BlendingContext&) -> OffsetAnchor;
 };

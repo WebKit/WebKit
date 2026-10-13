@@ -72,12 +72,12 @@ public:
     static UniqueRef<IDBObjectStore> create(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
     ~IDBObjectStore();
 
-    const String& NODELETE name() const;
+    const String& LEGACY_NODELETE name() const;
     ExceptionOr<void> setName(const String&);
-    const std::optional<IDBKeyPath>& NODELETE keyPath() const;
+    const std::optional<IDBKeyPath>& LEGACY_NODELETE keyPath() const;
     Ref<DOMStringList> indexNames() const;
-    IDBTransaction& NODELETE transaction();
-    bool NODELETE autoIncrement() const;
+    IDBTransaction& LEGACY_NODELETE transaction();
+    bool LEGACY_NODELETE autoIncrement() const;
 
     struct IndexParameters {
         bool unique;
@@ -108,7 +108,7 @@ public:
 
     ExceptionOr<Ref<IDBRequest>> putForCursorUpdate(JSC::JSGlobalObject&, JSC::JSValue, RefPtr<IDBKey>&&, RefPtr<SerializedScriptValue>&&);
 
-    void NODELETE markAsDeleted();
+    void LEGACY_NODELETE markAsDeleted();
     bool isDeleted() const { return m_deleted; }
 
     const IDBObjectStoreInfo& info() const LIFETIME_BOUND { return m_info; }
@@ -116,7 +116,7 @@ public:
     void rollbackForVersionChangeAbort();
 
     // ActiveDOMObject.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 
     template<typename Visitor> void visitReferencedIndexesInGCThread(Visitor&) const;
@@ -150,6 +150,6 @@ private:
     HashMap<IDBIndexIdentifier, std::unique_ptr<IDBIndex>> m_deletedIndexes WTF_GUARDED_BY_LOCK(m_referencedIndexLock);
 };
 
-WebCoreOpaqueRoot NODELETE root(IDBObjectStore*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(IDBObjectStore*);
 
 } // namespace WebCore

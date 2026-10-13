@@ -40,7 +40,7 @@ public:
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);
     WEBCORE_EXPORT HitTestLocation(const HitTestLocation&);
     WEBCORE_EXPORT ~HitTestLocation();
-    HitTestLocation& NODELETE operator=(const HitTestLocation&);
+    HitTestLocation& LEGACY_NODELETE operator=(const HitTestLocation&);
 
     const LayoutPoint& point() const LIFETIME_BOUND { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
@@ -50,7 +50,7 @@ public:
     bool isRectilinear() const { return m_isRectilinear; }
     LayoutRect boundingBox() const { return m_boundingBox; }
 
-    WEBCORE_EXPORT bool NODELETE intersects(const LayoutRect&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE intersects(const LayoutRect&) const;
     bool intersects(const FloatRect&) const;
     bool intersects(const LayoutRoundedRect&) const;
 
@@ -58,7 +58,7 @@ public:
     const FloatQuad& transformedRect() const LIFETIME_BOUND { return m_transformedRect; }
 
 private:
-    template<typename RectType> bool NODELETE intersectsRect(const RectType&) const;
+    template<typename RectType> bool LEGACY_NODELETE intersectsRect(const RectType&) const;
 
     void move(const LayoutSize&);
 

@@ -64,7 +64,7 @@ namespace WebCore {
 // List of displays ever instantiated from EGL. When terminating all EGL resources, we need to
 // terminate all displays. However, we cannot ask EGL all the displays it has created.
 // We must know all the displays via this set.
-static HashSet<GCGLDisplay>& NODELETE usedDisplays()
+static HashSet<GCGLDisplay>& LEGACY_NODELETE usedDisplays()
 {
     static NeverDestroyed<HashSet<GCGLDisplay>> s_usedDisplays;
     return s_usedDisplays;
@@ -151,7 +151,7 @@ static constexpr SortedArrayMap extensionsMapping { WTF::toArray<std::pair<Compa
     { "GL_QCOM_render_shared_exponent"_s, GCGLExtension::QCOM_render_shared_exponent },
 }) };
 
-static ASCIILiteral NODELETE extensionName(GCGLExtension extension)
+static ASCIILiteral LEGACY_NODELETE extensionName(GCGLExtension extension)
 {
     size_t index = static_cast<size_t>(extension);
     std::span mapping { extensionsMapping.array() };

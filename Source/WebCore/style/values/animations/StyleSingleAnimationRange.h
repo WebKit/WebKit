@@ -134,7 +134,7 @@ struct SingleAnimationRangeEdge {
     Name name() const { return m_name; }
     const Offset& offset() const LIFETIME_BOUND { return m_offset; }
 
-    static Offset NODELETE defaultOffset();
+    static Offset LEGACY_NODELETE defaultOffset();
     bool hasDefaultOffset() const { return m_offset == defaultOffset(); }
 
     bool operator==(const SingleAnimationRangeEdge&) const = default;
@@ -173,8 +173,8 @@ struct SingleAnimationRange {
 
     bool operator==(const SingleAnimationRange&) const = default;
 
-    static SingleAnimationRange NODELETE defaultForScrollTimeline();
-    static SingleAnimationRange NODELETE defaultForViewTimeline();
+    static SingleAnimationRange LEGACY_NODELETE defaultForScrollTimeline();
+    static SingleAnimationRange LEGACY_NODELETE defaultForViewTimeline();
 
     bool isDefault() const { return start.isNormal() && end.isNormal(); }
 };

@@ -127,7 +127,7 @@ private:
     DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const final;
     std::optional<DecodingDestination> compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     bool isLargeForDecoding() const final;
-    bool NODELETE isDecodingWorkQueueIdle() const;
+    bool LEGACY_NODELETE isDecodingWorkQueueIdle() const;
     void stopDecodingWorkQueue() final;
     void decode(Function<void(DecodingStatus)>&& decodeCallback) final;
     void callDecodeCallbacks(DecodingStatus);

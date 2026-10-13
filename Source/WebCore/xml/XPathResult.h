@@ -53,14 +53,14 @@ public:
 
     ExceptionOr<void> convertTo(unsigned short type);
 
-    WEBCORE_EXPORT unsigned short NODELETE resultType() const;
+    WEBCORE_EXPORT unsigned short LEGACY_NODELETE resultType() const;
 
     WEBCORE_EXPORT ExceptionOr<double> numberValue() const;
     WEBCORE_EXPORT ExceptionOr<String> stringValue() const;
     WEBCORE_EXPORT ExceptionOr<bool> booleanValue() const;
     WEBCORE_EXPORT ExceptionOr<Node*> singleNodeValue() const;
 
-    WEBCORE_EXPORT bool NODELETE invalidIteratorState() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE invalidIteratorState() const;
     WEBCORE_EXPORT ExceptionOr<unsigned> snapshotLength() const;
     WEBCORE_EXPORT ExceptionOr<Node*> iterateNext();
     WEBCORE_EXPORT ExceptionOr<Node*> snapshotItem(unsigned index);

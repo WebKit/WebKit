@@ -209,14 +209,14 @@ public:
         AsQuotation = 1 << 2,
     };
 
-    WEBCORE_EXPORT EditorClient* NODELETE client() const;
+    WEBCORE_EXPORT EditorClient* LEGACY_NODELETE client() const;
     WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
-    Document& NODELETE document() const;
+    Document& LEGACY_NODELETE document() const;
 
-    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     void handleKeyboardEvent(KeyboardEvent&);
@@ -237,7 +237,7 @@ public:
     WEBCORE_EXPORT bool canCopy() const;
     WEBCORE_EXPORT bool canDelete() const;
     WEBCORE_EXPORT bool canSmartCopyOrDelete();
-    bool NODELETE shouldSmartDelete();
+    bool LEGACY_NODELETE shouldSmartDelete();
     bool canCopyFont() const;
 
     enum class FromMenuOrKeyBinding : bool { No, Yes };
@@ -475,7 +475,7 @@ public:
     PAL::KillRing& killRing() const LIFETIME_BOUND { return m_killRing; }
     SpellChecker& spellChecker() const { return m_spellChecker; }
 
-    EditingBehavior NODELETE behavior() const;
+    EditingBehavior LEGACY_NODELETE behavior() const;
 
     WEBCORE_EXPORT std::optional<SimpleRange> selectedRange();
 
@@ -614,7 +614,7 @@ public:
     static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
     static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 
-    static bool NODELETE writingSuggestionsSupportsSuffix();
+    static bool LEGACY_NODELETE writingSuggestionsSupportsSuffix();
 #endif
 
 #if PLATFORM(MAC)
@@ -671,8 +671,8 @@ public:
     WritingSuggestionData* writingSuggestionData() const LIFETIME_BOUND { return m_writingSuggestionData.get(); }
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 
-    RenderBoxModelObject* NODELETE writingSuggestionRenderer() const;
-    void NODELETE setWritingSuggestionRenderer(RenderBoxModelObject&);
+    RenderBoxModelObject* LEGACY_NODELETE writingSuggestionRenderer() const;
+    void LEGACY_NODELETE setWritingSuggestionRenderer(RenderBoxModelObject&);
 
     WEBCORE_EXPORT void closeTyping();
 

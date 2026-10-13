@@ -55,7 +55,7 @@ private:
     void finishParsingChildren() final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool LEGACY_NODELETE isURLAttribute(const Attribute&) const final;
     void addSubresourceAttributeURLs(OrderedHashSet<URL>&) const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) const final;

@@ -49,7 +49,7 @@ public:
     void process(AudioSourceProvider*, AudioBus& destinationBus, size_t framesToProcess);
 
     // Resets the processing state.
-    void NODELETE reset();
+    void LEGACY_NODELETE reset();
 
     void configureChannels(unsigned numberOfChannels);
 

@@ -91,7 +91,7 @@ struct RuleAndSelector {
     uint16_t selectorIndex; // Keep in sync with RuleData's selectorIndex size.
     uint16_t selectorListIndex; // Keep in sync with RuleData's selectorListIndex size.
 
-    const CSSSelector& NODELETE selector() const;
+    const CSSSelector& LEGACY_NODELETE selector() const;
 };
 
 struct RuleFeature : public RuleAndSelector {
@@ -172,7 +172,7 @@ private:
     struct RecursiveCollectionContext;
     void collectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = { MatchElement::Relation::Subject, { } });
     void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, const RecursiveCollectionContext&);
-    void NODELETE collectPseudoElementFeatures(const RuleData&);
+    void LEGACY_NODELETE collectPseudoElementFeatures(const RuleData&);
 };
 
 MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector&);
@@ -180,7 +180,7 @@ MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector&);
 enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Attribute, Tag };
 PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
 
-bool NODELETE unlikelyToHaveSelectorForAttribute(const AtomString&);
+bool LEGACY_NODELETE unlikelyToHaveSelectorForAttribute(const AtomString&);
 
 inline bool isUniversalInvalidation(const PseudoClassInvalidationKey& key)
 {

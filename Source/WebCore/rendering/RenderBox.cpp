@@ -260,7 +260,7 @@ bool RenderBox::hasFragmentRangeInFragmentedFlow() const
     return false;
 }
 
-static RenderBlockFlow* NODELETE outermostBlockContainingFloatingObject(RenderBox& box)
+static RenderBlockFlow* LEGACY_NODELETE outermostBlockContainingFloatingObject(RenderBox& box)
 {
     ASSERT(box.isFloating());
     RenderBlockFlow* parentBlock = nullptr;
@@ -587,7 +587,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
 #endif
 }
 
-static bool NODELETE hasEquivalentGridPositioningStyle(const Style::ComputedStyle& style, const Style::ComputedStyle& oldStyle)
+static bool LEGACY_NODELETE hasEquivalentGridPositioningStyle(const Style::ComputedStyle& style, const Style::ComputedStyle& oldStyle)
 {
     return oldStyle.gridItemColumnStart() == style.gridItemColumnStart()
         && oldStyle.gridItemColumnEnd() == style.gridItemColumnEnd()
@@ -2704,7 +2704,7 @@ static LayoutUnit inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, L
     return LayoutUnit((blockSize - borderPaddingBlockSum) * aspectRatioValue) + borderPaddingInlineSum;
 }
 
-static bool NODELETE shouldMarginInlineEndContributeToScrollableOverflow(auto& renderer)
+static bool LEGACY_NODELETE shouldMarginInlineEndContributeToScrollableOverflow(auto& renderer)
 {
     auto isSupportedContent = renderer.isGridItem() || renderer.isFlexItemIncludingDeprecated() || (renderer.isInFlow() && renderer.parent()->isBlockContainer());
     if (!isSupportedContent)
@@ -2900,7 +2900,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBox::computeIntrinsicKeywordLogicalWidth
     return computeIntrinsicKeywordLogicalWidths();
 }
 
-static inline bool NODELETE isOrthogonal(const RenderBox& renderer, const RenderElement& ancestor)
+static inline bool LEGACY_NODELETE isOrthogonal(const RenderBox& renderer, const RenderElement& ancestor)
 {
     return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
 }
@@ -3285,7 +3285,7 @@ RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer*
     return nullptr;
 }
 
-static bool NODELETE shouldFlipBeforeAfterMargins(WritingMode containingBlockWritingMode, WritingMode childWritingMode)
+static bool LEGACY_NODELETE shouldFlipBeforeAfterMargins(WritingMode containingBlockWritingMode, WritingMode childWritingMode)
 {
     ASSERT(containingBlockWritingMode.isOrthogonal(childWritingMode));
     auto childBlockFlowDirection = childWritingMode.blockDirection();
@@ -3920,7 +3920,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
     return document().inQuirksMode() && shouldSkipContainingBlockInQuirksMode();
 }
 
-static bool NODELETE tableCellShouldHaveZeroInitialSize(const RenderTableCell& tableCell, const RenderBox& child, bool scrollsOverflowY)
+static bool LEGACY_NODELETE tableCellShouldHaveZeroInitialSize(const RenderTableCell& tableCell, const RenderBox& child, bool scrollsOverflowY)
 {
     // Normally we would let the cell size intrinsically, but scrolling overflow has to be
     // treated differently, since WinIE lets scrolled overflow fragments shrink as needed.
@@ -4748,7 +4748,7 @@ void RenderBox::addVisualEffectOverflow()
 }
 
 template<typename T>
-static void NODELETE convertOutsetsToOverflowCoordinates(RectEdges<T>& outsets, WritingMode writingMode)
+static void LEGACY_NODELETE convertOutsetsToOverflowCoordinates(RectEdges<T>& outsets, WritingMode writingMode)
 {
     switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
@@ -5703,7 +5703,7 @@ void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()
 }
 
 using ShapeOutsideInfoMap = SingleThreadWeakHashMap<const RenderBox, std::unique_ptr<ShapeOutsideInfo>>;
-static ShapeOutsideInfoMap& NODELETE shapeOutsideInfoMap()
+static ShapeOutsideInfoMap& LEGACY_NODELETE shapeOutsideInfoMap()
 {
     static NeverDestroyed<ShapeOutsideInfoMap> staticInfoMap;
     return staticInfoMap;

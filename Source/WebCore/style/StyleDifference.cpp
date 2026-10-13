@@ -43,7 +43,7 @@ class DifferenceFunctions final {
 public:
     // MARK: DifferenceResult::Layout
 
-    static bool NODELETE positionChangeIsMovementOnly(const InsetBox& a, const InsetBox& b, const PreferredSize& width)
+    static bool LEGACY_NODELETE positionChangeIsMovementOnly(const InsetBox& a, const InsetBox& b, const PreferredSize& width)
     {
         // If any unit types are different, then we can't guarantee
         // that this was just a movement.
@@ -664,7 +664,7 @@ public:
 
     // MARK: DifferenceResult::Repaint
 
-    static bool NODELETE requiresPainting(const Style::ComputedStyle& style)
+    static bool LEGACY_NODELETE requiresPainting(const Style::ComputedStyle& style)
     {
         if (visibilityIncludingForceHidden(style) == Visibility::Hidden)
             return false;

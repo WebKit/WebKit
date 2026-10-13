@@ -59,11 +59,11 @@ public:
         return ContentPosition::Normal == static_cast<ContentPosition>(m_position)
         && ContentDistribution::Default == static_cast<ContentDistribution>(m_distribution);
     }
-    bool NODELETE isStartward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
-    bool NODELETE isEndward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    bool LEGACY_NODELETE isStartward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
+    bool LEGACY_NODELETE isEndward(std::optional<TextDirection> leftRightAxisDirection = std::nullopt, bool isFlexReverse = false) const;
     // leftRightAxisDirection is only needed for justify-content (invalid for align-content).
     // Pass std::nullopt if neither the inline axis nor the physical left-right axis matches the justify-content axis (e.g. in flexbox).
-    bool NODELETE isCentered() const;
+    bool LEGACY_NODELETE isCentered() const;
 
     friend bool operator==(const StyleContentAlignmentData&, const StyleContentAlignmentData&) = default;
 

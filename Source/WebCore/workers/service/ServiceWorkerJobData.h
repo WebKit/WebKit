@@ -44,7 +44,7 @@ struct ServiceWorkerJobData {
 
     SWServerConnectionIdentifier connectionIdentifier() const { return m_identifier.connectionIdentifier; }
 
-    bool NODELETE isEquivalent(const ServiceWorkerJobData&) const;
+    bool LEGACY_NODELETE isEquivalent(const ServiceWorkerJobData&) const;
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 
     URL scriptURL;

@@ -79,11 +79,11 @@ private:
 
     // ActiveDOMObject
     void stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final;
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;

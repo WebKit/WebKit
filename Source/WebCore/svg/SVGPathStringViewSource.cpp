@@ -50,7 +50,7 @@ bool SVGPathStringViewSource::moveToNextToken()
     return skipOptionalSVGSpaces(m_buffer16);
 }
 
-template <typename CharacterType> static std::optional<SVGPathSegType> NODELETE nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
+template <typename CharacterType> static std::optional<SVGPathSegType> LEGACY_NODELETE nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
 {
     // Check for remaining coordinates in the current command.
     if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))

@@ -113,7 +113,7 @@ using namespace Inspector;
 static std::atomic<CrossOriginMode> globalCrossOriginMode { CrossOriginMode::Shared };
 
 static Lock allScriptExecutionContextsMapLock;
-static HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutionContext>>& NODELETE allScriptExecutionContextsMap() WTF_REQUIRES_LOCK(allScriptExecutionContextsMapLock)
+static HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutionContext>>& LEGACY_NODELETE allScriptExecutionContextsMap() WTF_REQUIRES_LOCK(allScriptExecutionContextsMapLock)
 {
     static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakRef<ScriptExecutionContext>>> contexts;
     ASSERT(allScriptExecutionContextsMapLock.isLocked());
@@ -943,7 +943,7 @@ ClientOrigin ScriptExecutionContext::storageClientOrigin() const
     return { storageTopOrigin().data(), securityOrigin()->data() };
 }
 
-static bool NODELETE isOriginEquivalentToLocal(const SecurityOrigin& origin)
+static bool LEGACY_NODELETE isOriginEquivalentToLocal(const SecurityOrigin& origin)
 {
     return origin.isLocal() && !origin.needsStorageAccessFromFileURLsQuirk() && !origin.hasUniversalAccess();
 }

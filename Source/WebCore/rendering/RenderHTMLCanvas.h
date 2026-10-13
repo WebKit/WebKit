@@ -46,7 +46,7 @@ public:
     RenderHTMLCanvas(HTMLCanvasElement&, Style::ComputedStyle&&);
     virtual ~RenderHTMLCanvas();
 
-    HTMLCanvasElement& NODELETE canvasElement() const;
+    HTMLCanvasElement& LEGACY_NODELETE canvasElement() const;
 
     void canvasSizeChanged();
 

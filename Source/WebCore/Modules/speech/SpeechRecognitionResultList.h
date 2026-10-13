@@ -39,7 +39,7 @@ public:
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     size_t length() const { return m_list.size(); }
-    SpeechRecognitionResult* NODELETE item(uint64_t index) const;
+    SpeechRecognitionResult* LEGACY_NODELETE item(uint64_t index) const;
 
     void add(SpeechRecognitionResult&);
 

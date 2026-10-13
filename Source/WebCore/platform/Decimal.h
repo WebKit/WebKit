@@ -71,7 +71,7 @@ public:
         friend bool operator==(const EncodedData&, const EncodedData&) = default;
 
         uint64_t coefficient() const { return m_coefficient; }
-        int NODELETE countDigits() const;
+        int LEGACY_NODELETE countDigits() const;
         int exponent() const { return m_exponent; }
         bool isFinite() const { return !isSpecial(); }
         bool isInfinity() const { return m_formatClass == ClassInfinity; }
@@ -103,15 +103,15 @@ public:
 
     Decimal& operator+=(const Decimal&);
     Decimal& operator-=(const Decimal&);
-    Decimal& NODELETE operator*=(const Decimal&);
-    Decimal& NODELETE operator/=(const Decimal&);
+    Decimal& LEGACY_NODELETE operator*=(const Decimal&);
+    Decimal& LEGACY_NODELETE operator/=(const Decimal&);
 
-    Decimal NODELETE operator-() const;
+    Decimal LEGACY_NODELETE operator-() const;
 
     Decimal operator+(const Decimal&) const;
     Decimal operator-(const Decimal&) const;
-    Decimal NODELETE operator*(const Decimal&) const;
-    Decimal NODELETE operator/(const Decimal&) const;
+    Decimal LEGACY_NODELETE operator*(const Decimal&) const;
+    Decimal LEGACY_NODELETE operator/(const Decimal&) const;
 
     int exponent() const
     {
@@ -127,11 +127,11 @@ public:
     bool isSpecial() const { return m_data.isSpecial(); }
     bool isZero() const { return m_data.isZero(); }
 
-    Decimal NODELETE abs() const;
-    Decimal NODELETE ceil() const;
-    Decimal NODELETE floor() const;
+    Decimal LEGACY_NODELETE abs() const;
+    Decimal LEGACY_NODELETE ceil() const;
+    Decimal LEGACY_NODELETE floor() const;
     Decimal remainder(const Decimal&) const;
-    Decimal NODELETE round() const;
+    Decimal LEGACY_NODELETE round() const;
 
     double toDouble() const;
     // Note: toString method supports infinity and nan but fromString not.
@@ -158,7 +158,7 @@ public:
     {
     }
 
-    const EncodedData& NODELETE value() const LIFETIME_BOUND { return m_data; }
+    const EncodedData& LEGACY_NODELETE value() const LIFETIME_BOUND { return m_data; }
 
     friend bool operator==(const Decimal&, const Decimal&);
     friend bool operator!=(const Decimal&, const Decimal&);

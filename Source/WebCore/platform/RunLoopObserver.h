@@ -86,7 +86,7 @@ public:
     static constexpr OptionSet defaultActivities = { Activity::BeforeWaiting, Activity::Exit };
     WEBCORE_EXPORT void schedule(PlatformRunLoop = nullptr, OptionSet<Activity> = defaultActivities);
     WEBCORE_EXPORT void invalidate();
-    WEBCORE_EXPORT bool NODELETE isScheduled() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isScheduled() const;
 
     bool isRepeating() const { return m_type == Type::Repeating; }
 

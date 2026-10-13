@@ -548,12 +548,12 @@ private:
         m_items.clear();
     }
 
-    ContextMenuContext::Type NODELETE contextMenuContextType() override
+    ContextMenuContext::Type LEGACY_NODELETE contextMenuContextType() override
     {
         return ContextMenuContext::Type::MediaControls;
     }
 
-    void NODELETE prepareContext(ContextMenuContext& context) override
+    void LEGACY_NODELETE prepareContext(ContextMenuContext& context) override
     {
         context.setMediaElementIdentifier(m_identifier);
     }

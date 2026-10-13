@@ -60,7 +60,7 @@ enum class BoundaryPointIsAtEnd : bool { No, Yes };
 enum class WordBounded : bool { No, Yes };
 
 // https://wicg.github.io/scroll-to-text-fragment/#search-invisible
-static bool NODELETE isSearchInvisible(const Node& node)
+static bool LEGACY_NODELETE isSearchInvisible(const Node& node)
 {
     // display:contents has no RenderStyle but its subtree is rendered; the element type checks below still apply.
     auto* element = dynamicDowncast<Element>(node);
@@ -87,7 +87,7 @@ static bool NODELETE isSearchInvisible(const Node& node)
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#non-searchable-subtree
-static bool NODELETE isNonSearchableSubtree(const Node& node)
+static bool LEGACY_NODELETE isNonSearchableSubtree(const Node& node)
 {
     const Node* traversingNode = &node;
     while (traversingNode) {
@@ -122,14 +122,14 @@ static bool indexIsAtWordBoundary(const String& string, unsigned index)
 }
 
 // https://wicg.github.io/scroll-to-text-fragment/#visible-text-node
-static bool NODELETE isVisibleTextNode(const Node& node)
+static bool LEGACY_NODELETE isVisibleTextNode(const Node& node)
 {
     if (auto* renderText = dynamicDowncast<RenderText>(node.renderer()))
         return renderText->style().visibility() == Visibility::Visible;
     return false;
 }
 
-static bool NODELETE isVisibleTextNode(const Text& node)
+static bool LEGACY_NODELETE isVisibleTextNode(const Text& node)
 {
     return node.renderer() && node.renderer()->style().visibility() == Visibility::Visible;
 }

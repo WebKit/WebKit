@@ -50,14 +50,14 @@ public:
     bool initialize(const ImageBackingStore&);
     bool initialize(const IntSize&, bool premultiplyAlpha);
 
-    void NODELETE setDecodingStatus(DecodingStatus);
-    DecodingStatus NODELETE decodingStatus() const;
+    void LEGACY_NODELETE setDecodingStatus(DecodingStatus);
+    DecodingStatus LEGACY_NODELETE decodingStatus() const;
 
     bool isInvalid() const { return m_decodingStatus == DecodingStatus::Invalid; }
     bool isPartial() const { return m_decodingStatus == DecodingStatus::Partial; }
     bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
-    IntSize NODELETE size() const;
+    IntSize LEGACY_NODELETE size() const;
 
     enum class DisposalMethod { Unspecified, DoNotDispose, RestoreToBackground, RestoreToPrevious };
     void setDisposalMethod(DisposalMethod method) { m_disposalMethod = method; }

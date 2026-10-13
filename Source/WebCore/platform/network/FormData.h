@@ -154,7 +154,7 @@ public:
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
     WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistryImpl* = nullptr);
-    bool NODELETE containsBlobElement() const;
+    bool LEGACY_NODELETE containsBlobElement() const;
 
     WEBCORE_EXPORT bool isPendingStream() const;
     WEBCORE_EXPORT void setPendingStreamState(Ref<PendingStreamState>&&);

@@ -40,10 +40,10 @@ public:
     void positionChildrenRelativeToContainer();
 
     static void verifyLayoutLocationConsistency(const RenderLayerModelObject&);
-    static bool NODELETE transformToRootChanged(const RenderObject* ancestor);
+    static bool LEGACY_NODELETE transformToRootChanged(const RenderObject* ancestor);
 
 private:
-    bool NODELETE layoutSizeOfNearestViewportChanged() const;
+    bool LEGACY_NODELETE layoutSizeOfNearestViewportChanged() const;
 
     SingleThreadWeakRef<RenderLayerModelObject> m_container;
     Vector<std::reference_wrapper<RenderLayerModelObject>> m_positionedChildren;

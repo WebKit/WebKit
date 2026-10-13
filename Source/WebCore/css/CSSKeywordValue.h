@@ -31,8 +31,8 @@ namespace WebCore {
 
 class CSSKeywordValue final : public CSSValue {
 public:
-    static inline Ref<CSSKeywordValue> NODELETE create(CSS::Keyword); // Defined in CSSValuePool.h
-    static inline Ref<CSSKeywordValue> NODELETE create(CSSValueID); // Defined in CSSValuePool.h
+    static inline Ref<CSSKeywordValue> LEGACY_NODELETE create(CSS::Keyword); // Defined in CSSValuePool.h
+    static inline Ref<CSSKeywordValue> LEGACY_NODELETE create(CSSValueID); // Defined in CSSValuePool.h
     static inline CSSKeywordValue& implicitInitialValue(); // Defined in CSSValuePool.h
 
     const CSS::Keyword& keyword() const LIFETIME_BOUND { return m_keyword; }
@@ -41,7 +41,7 @@ public:
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSKeywordValue&) const;
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
-    bool NODELETE addDerivedHash(Hasher&) const;
+    bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 

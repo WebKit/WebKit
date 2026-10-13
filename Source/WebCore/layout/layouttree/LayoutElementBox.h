@@ -59,13 +59,13 @@ public:
     ~ElementBox();
 
     const Box* firstChild() const { return m_firstChild.get(); }
-    const Box* NODELETE firstInFlowChild() const;
-    const Box* NODELETE firstInFlowOrFloatingChild() const;
-    const Box* NODELETE firstOutOfFlowChild() const;
+    const Box* LEGACY_NODELETE firstInFlowChild() const;
+    const Box* LEGACY_NODELETE firstInFlowOrFloatingChild() const;
+    const Box* LEGACY_NODELETE firstOutOfFlowChild() const;
     const Box* lastChild() const { return m_lastChild.get(); }
-    const Box* NODELETE lastInFlowChild() const;
-    const Box* NODELETE lastInFlowOrFloatingChild() const;
-    const Box* NODELETE lastOutOfFlowChild() const;
+    const Box* LEGACY_NODELETE lastInFlowChild() const;
+    const Box* LEGACY_NODELETE lastInFlowOrFloatingChild() const;
+    const Box* LEGACY_NODELETE lastOutOfFlowChild() const;
 
     // FIXME: This is currently needed for style updates.
     Box* firstChild() { return m_firstChild.get(); }
@@ -73,7 +73,7 @@ public:
     bool hasChild() const { return firstChild(); }
     bool hasInFlowChild() const { return firstInFlowChild(); }
     bool hasInFlowOrFloatingChild() const { return firstInFlowOrFloatingChild(); }
-    bool NODELETE hasOutOfFlowChild() const;
+    bool LEGACY_NODELETE hasOutOfFlowChild() const;
 
     void appendChild(UniqueRef<Box>);
     void insertChild(UniqueRef<Box>, Box* beforeChild = nullptr);
@@ -82,17 +82,17 @@ public:
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
 
-    bool NODELETE hasIntrinsicWidth() const;
-    bool NODELETE hasIntrinsicHeight() const;
-    bool NODELETE hasIntrinsicRatio() const;
-    bool NODELETE hasNaturalWidth() const;
-    bool NODELETE hasNaturalHeight() const;
-    LayoutUnit NODELETE naturalWidth() const;
-    LayoutUnit NODELETE naturalHeight() const;
-    LayoutUnit NODELETE intrinsicWidth() const;
-    LayoutUnit NODELETE intrinsicHeight() const;
-    LayoutUnit NODELETE intrinsicRatio() const;
-    bool NODELETE hasAspectRatio() const;
+    bool LEGACY_NODELETE hasIntrinsicWidth() const;
+    bool LEGACY_NODELETE hasIntrinsicHeight() const;
+    bool LEGACY_NODELETE hasIntrinsicRatio() const;
+    bool LEGACY_NODELETE hasNaturalWidth() const;
+    bool LEGACY_NODELETE hasNaturalHeight() const;
+    LayoutUnit LEGACY_NODELETE naturalWidth() const;
+    LayoutUnit LEGACY_NODELETE naturalHeight() const;
+    LayoutUnit LEGACY_NODELETE intrinsicWidth() const;
+    LayoutUnit LEGACY_NODELETE intrinsicHeight() const;
+    LayoutUnit LEGACY_NODELETE intrinsicRatio() const;
+    bool LEGACY_NODELETE hasAspectRatio() const;
 
     void setIsListMarkerImage(IsListMarkerImage isListMarkerImage) { m_replacedData->isListMarkerImage = isListMarkerImage == IsListMarkerImage::Yes; }
 
@@ -105,7 +105,7 @@ public:
     // FIXME: This doesn't belong.
     CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
 
-    RenderElement* NODELETE rendererForIntegration() const;
+    RenderElement* LEGACY_NODELETE rendererForIntegration() const;
 
 private:
     friend class Box;

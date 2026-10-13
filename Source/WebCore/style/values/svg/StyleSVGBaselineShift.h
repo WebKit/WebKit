@@ -79,7 +79,7 @@ template<> struct CSSValueConversion<SVGBaselineShift> { auto operator()(Builder
 // MARK: - Blending
 
 template<> struct Blending<SVGBaselineShift> {
-    bool NODELETE canBlend(const SVGBaselineShift&, const SVGBaselineShift&);
+    bool LEGACY_NODELETE canBlend(const SVGBaselineShift&, const SVGBaselineShift&);
     auto requiresInterpolationForAccumulativeIteration(const SVGBaselineShift&, const SVGBaselineShift&) -> bool;
     auto blend(const SVGBaselineShift&, const SVGBaselineShift&, const BlendingContext&) -> SVGBaselineShift;
 };

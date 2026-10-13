@@ -59,7 +59,7 @@ public:
     void willDoProgrammaticScroll(const FloatPoint&);
     void currentScrollPositionChanged();
 
-    bool NODELETE isRubberBandInProgress() const;
+    bool LEGACY_NODELETE isRubberBandInProgress() const;
     void startRubberBandSnapBack();
     void rubberBandTargetOffsetDidChange();
 

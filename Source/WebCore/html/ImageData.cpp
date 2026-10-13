@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static CheckedUint32 NODELETE computeDataSize(const IntSize& size, ImageDataPixelFormat pixelFormat)
+static CheckedUint32 LEGACY_NODELETE computeDataSize(const IntSize& size, ImageDataPixelFormat pixelFormat)
 {
     return PixelBuffer::computePixelComponentCount(toPixelFormat(pixelFormat), size);
 }
@@ -49,7 +49,7 @@ PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSetting
     return defaultColorSpace;
 }
 
-static ImageDataPixelFormat NODELETE computePixelFormat(std::optional<ImageDataSettings> settings, ImageDataPixelFormat defaultPixelFormat = ImageDataPixelFormat::RgbaUnorm8)
+static ImageDataPixelFormat LEGACY_NODELETE computePixelFormat(std::optional<ImageDataSettings> settings, ImageDataPixelFormat defaultPixelFormat = ImageDataPixelFormat::RgbaUnorm8)
 {
     return settings ? settings->pixelFormat : defaultPixelFormat;
 }

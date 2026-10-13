@@ -78,7 +78,7 @@ protected:
     double m_w;
 };
 
-WebCoreOpaqueRoot NODELETE root(DOMPointReadOnly*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(DOMPointReadOnly*);
 
 } // namespace WebCore
 

@@ -153,7 +153,7 @@ static inline void destroyAudioBufferList(AudioBufferList* bufferList)
     fastFree(bufferList);
 }
 
-static bool NODELETE validateAudioBufferList(AudioBufferList* bufferList)
+static bool LEGACY_NODELETE validateAudioBufferList(AudioBufferList* bufferList)
 {
     if (!bufferList)
         return false;
@@ -191,7 +191,7 @@ static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount,
     return noErr;
 }
 
-static SInt64 NODELETE getSizeProc(void* clientData)
+static SInt64 LEGACY_NODELETE getSizeProc(void* clientData)
 {
     return static_cast<std::span<const uint8_t>*>(clientData)->size();
 }
@@ -277,10 +277,10 @@ public:
     }
 
     explicit operator bool() const { return !!m_bufferList; }
-    AudioBufferList* NODELETE operator->() const { return m_bufferList; }
+    AudioBufferList* LEGACY_NODELETE operator->() const { return m_bufferList; }
     operator AudioBufferList*() const { return m_bufferList; }
-    AudioBufferList& NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
-    bool NODELETE isValid() const { return validateAudioBufferList(m_bufferList); }
+    AudioBufferList& LEGACY_NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
+    bool LEGACY_NODELETE isValid() const { return validateAudioBufferList(m_bufferList); }
 private:
     AudioBufferList* m_bufferList;
 };
@@ -594,7 +594,7 @@ static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataP
     return noErr;
 }
 
-static UInt32 NODELETE SMPTEEquivalentLayout(UInt32 layout)
+static UInt32 LEGACY_NODELETE SMPTEEquivalentLayout(UInt32 layout)
 {
     // https://webaudio.github.io/web-audio-api/#ChannelOrdering
     // WebAudio API requires SMPTE channel ordering. However webkit has been returning

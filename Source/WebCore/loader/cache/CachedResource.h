@@ -134,7 +134,7 @@ public:
     virtual void error(CachedResource::Status);
 
     void setResourceError(const ResourceError& error) { mutableResponseData().m_error = error; }
-    const ResourceError& NODELETE resourceError() const;
+    const ResourceError& LEGACY_NODELETE resourceError() const;
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
@@ -150,7 +150,7 @@ public:
     static bool shouldUsePingLoad(Type type) { return type == Type::Beacon || type == Type::Ping; }
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
-    void NODELETE setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
+    void LEGACY_NODELETE setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
@@ -181,8 +181,8 @@ public:
     }
 
     unsigned size() const { return encodedSize() + decodedSize() + overheadSize(); }
-    WEBCORE_EXPORT unsigned NODELETE encodedSize() const;
-    unsigned NODELETE decodedSize() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE encodedSize() const;
+    unsigned LEGACY_NODELETE decodedSize() const;
     unsigned overheadSize() const;
 
     bool isLoaded() const { return !m_loading; } // FIXME. Method name is inaccurate. Loading might not have started yet.
@@ -217,7 +217,7 @@ public:
 
     // Computes the status of an object after loading.
     // Updates the expire date on the cache entry file
-    void NODELETE finish();
+    void LEGACY_NODELETE finish();
 
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself
@@ -237,10 +237,10 @@ public:
     WEBCORE_EXPORT const ResourceResponse& response() const;
     Box<NetworkLoadMetrics> takeNetworkLoadMetrics() { return mutableResponse().takeNetworkLoadMetrics(); }
 
-    void NODELETE setCrossOrigin();
-    bool NODELETE isCrossOrigin() const;
-    bool NODELETE isCORSCrossOrigin() const;
-    bool NODELETE isCORSSameOrigin() const;
+    void LEGACY_NODELETE setCrossOrigin();
+    bool LEGACY_NODELETE isCrossOrigin() const;
+    bool LEGACY_NODELETE isCORSCrossOrigin() const;
+    bool LEGACY_NODELETE isCORSSameOrigin() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
     void loadFrom(const CachedResource&);
@@ -252,9 +252,9 @@ public:
     bool isExpired() const;
 
     void cancelLoad(LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No);
-    bool NODELETE wasCanceled() const;
+    bool LEGACY_NODELETE wasCanceled() const;
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
-    bool NODELETE loadFailedOrCanceled() const;
+    bool LEGACY_NODELETE loadFailedOrCanceled() const;
 
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }

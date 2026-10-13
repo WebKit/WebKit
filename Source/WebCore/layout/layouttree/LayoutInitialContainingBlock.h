@@ -49,7 +49,7 @@ private:
     Box* nextSibling() = delete;
 };
 
-const InitialContainingBlock& NODELETE initialContainingBlock(const Box&);
+const InitialContainingBlock& LEGACY_NODELETE initialContainingBlock(const Box&);
 
 }
 }

@@ -42,7 +42,7 @@ enum class ImageOrientation : bool {
 
 // MARK: - Platform
 
-template<> struct ToPlatform<ImageOrientation> { WebCore::ImageOrientation NODELETE operator()(ImageOrientation); };
+template<> struct ToPlatform<ImageOrientation> { WebCore::ImageOrientation LEGACY_NODELETE operator()(ImageOrientation); };
 
 } // namespace Style
 } // namespace WebCore

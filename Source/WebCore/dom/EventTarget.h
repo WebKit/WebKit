@@ -89,12 +89,12 @@ public:
     inline void ref(); // Defined in EventTargetInlines.h.
     inline void deref(); // Defined in EventTargetInlines.h.
 
-    virtual enum EventTargetInterfaceType NODELETE eventTargetInterface() const = 0;
+    virtual enum EventTargetInterfaceType LEGACY_NODELETE eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    virtual WebCoreOpaqueRoot NODELETE opaqueRoot() const;
+    virtual WebCoreOpaqueRoot LEGACY_NODELETE opaqueRoot() const;
 
-    virtual bool NODELETE isPaymentRequest() const;
+    virtual bool LEGACY_NODELETE isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = Variant<AddEventListenerOptions, bool>;
     void addEventListenerForBindings(const AtomString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
@@ -122,10 +122,10 @@ public:
     inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
     bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
     inline bool hasCapturingEventListeners(const AtomString& eventType); // Defined in EventTargetInlines.h
-    bool NODELETE hasActiveEventListeners(const AtomString& eventType) const;
+    bool LEGACY_NODELETE hasActiveEventListeners(const AtomString& eventType) const;
 
     Vector<AtomString> eventTypes() const;
-    const EventListenerVector& NODELETE eventListeners(const AtomString& eventType);
+    const EventListenerVector& LEGACY_NODELETE eventListeners(const AtomString& eventType);
 
     enum class EventInvokePhase { Capturing, Bubbling };
     void fireEventListeners(Event&, EventInvokePhase);

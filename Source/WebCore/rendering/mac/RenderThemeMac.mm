@@ -830,7 +830,7 @@ bool RenderThemeMac::isControlStyled(const Style::ComputedStyle& style) const
     return RenderTheme::isControlStyled(style);
 }
 
-static FloatRect NODELETE inflateRect(const FloatRect& rect, const IntSize& size, std::span<const int, 4> margins, float zoomLevel)
+static FloatRect LEGACY_NODELETE inflateRect(const FloatRect& rect, const IntSize& size, std::span<const int, 4> margins, float zoomLevel)
 {
     // Only do the inflation if the available width/height are too small. Otherwise try to
     // fit the glow/check space into the available box's width/height.
@@ -901,7 +901,7 @@ static Style::PreferredSizePair sizeFromFont(const FontCascade& font, const Styl
 
 // Popup button
 
-static std::span<const int, 4> NODELETE popupButtonMargins(NSControlSize size)
+static std::span<const int, 4> LEGACY_NODELETE popupButtonMargins(NSControlSize size)
 {
     static constexpr std::array margins {
         std::array { 0, 3, 1, 3 },
@@ -912,7 +912,7 @@ static std::span<const int, 4> NODELETE popupButtonMargins(NSControlSize size)
     return margins[size];
 }
 
-static std::span<const IntSize, 4> NODELETE popupButtonSizes()
+static std::span<const IntSize, 4> LEGACY_NODELETE popupButtonSizes()
 {
     static constexpr std::array sizes {
         IntSize { 0, 21 },
@@ -923,7 +923,7 @@ static std::span<const IntSize, 4> NODELETE popupButtonSizes()
     return sizes;
 }
 
-static std::span<const int, 4> NODELETE popupButtonPadding(NSControlSize size)
+static std::span<const int, 4> LEGACY_NODELETE popupButtonPadding(NSControlSize size)
 {
     static constexpr std::array padding {
         std::array { 2, 26, 3, 8 },
@@ -936,7 +936,7 @@ static std::span<const int, 4> NODELETE popupButtonPadding(NSControlSize size)
 
 // Checkboxes and radio buttons
 
-static const std::span<const IntSize, 4> NODELETE checkboxSizes()
+static const std::span<const IntSize, 4> LEGACY_NODELETE checkboxSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 14, 14 },
@@ -947,7 +947,7 @@ static const std::span<const IntSize, 4> NODELETE checkboxSizes()
     return sizes;
 }
 
-static std::span<const int, 4> NODELETE checkboxMargins(NSControlSize controlSize)
+static std::span<const int, 4> LEGACY_NODELETE checkboxMargins(NSControlSize controlSize)
 {
     static constexpr std::array margins {
         // top right bottom left
@@ -980,7 +980,7 @@ static const std::span<const IntSize, 4> radioSizes()
     return sizes;
 }
 
-static std::span<const int, 4> NODELETE radioMargins(NSControlSize controlSize)
+static std::span<const int, 4> LEGACY_NODELETE radioMargins(NSControlSize controlSize)
 {
     static constexpr std::array margins {
         // top right bottom left
@@ -1004,7 +1004,7 @@ static Style::PreferredSizePair radioSize(const Style::PreferredSizePair& zoomed
 // Buttons
 
 // Buttons really only constrain height. They respect width.
-static const std::span<const IntSize, 4> NODELETE buttonSizes()
+static const std::span<const IntSize, 4> LEGACY_NODELETE buttonSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 0, 20 },
@@ -1015,7 +1015,7 @@ static const std::span<const IntSize, 4> NODELETE buttonSizes()
     return sizes;
 }
 
-static std::span<const int, 4> NODELETE buttonMargins(NSControlSize controlSize)
+static std::span<const int, 4> LEGACY_NODELETE buttonMargins(NSControlSize controlSize)
 {
     // FIXME: These values may need to be reevaluated. They appear to have been originally chosen
     // to reflect the size of shadows around native form controls on macOS, but as of macOS 10.15,
@@ -1031,7 +1031,7 @@ static std::span<const int, 4> NODELETE buttonMargins(NSControlSize controlSize)
 
 // Stepper
 
-static const std::span<const IntSize, 4> NODELETE stepperSizes()
+static const std::span<const IntSize, 4> LEGACY_NODELETE stepperSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 19, 27 },
@@ -1058,7 +1058,7 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 
 // Switch
 
-static const std::span<const IntSize, 4> NODELETE switchSizes()
+static const std::span<const IntSize, 4> LEGACY_NODELETE switchSizes()
 {
     static constexpr std::array sizes = {
         IntSize { 38, 22 },
@@ -1069,7 +1069,7 @@ static const std::span<const IntSize, 4> NODELETE switchSizes()
     return sizes;
 }
 
-static std::span<const int, 4> NODELETE visualSwitchMargins(NSControlSize controlSize, bool isVertical)
+static std::span<const int, 4> LEGACY_NODELETE visualSwitchMargins(NSControlSize controlSize, bool isVertical)
 {
     static constexpr std::array switchMarginsNonMini { 2, 2, 1, 2 };
     static constexpr std::array switchMarginsMini { 1, 1, 0, 1 };
@@ -1354,7 +1354,7 @@ const int styledPopupPaddingLeft = 8;
 const int styledPopupPaddingTop = 1;
 const int styledPopupPaddingBottom = 2;
 
-static std::span<const IntSize, 4> NODELETE menuListButtonSizes()
+static std::span<const IntSize, 4> LEGACY_NODELETE menuListButtonSizes()
 {
     static constexpr std::array sizes { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 28) };
     return sizes;
@@ -1394,7 +1394,7 @@ void RenderThemeMac::adjustMenuListStyle(Style::ComputedStyle& style, const Elem
     style.setBoxShadow(CSS::Keyword::None { });
 }
 
-static Style::PaddingEdge NODELETE toTruncatedPaddingEdge(auto value)
+static Style::PaddingEdge LEGACY_NODELETE toTruncatedPaddingEdge(auto value)
 {
     return Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(value)) };
 }

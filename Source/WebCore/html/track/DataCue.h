@@ -71,7 +71,7 @@ private:
     DataCue(Document&, const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformDataCue>&&, const String&);
     DataCue(Document&, const MediaTime& start, const MediaTime& end, JSC::JSValue, const String&);
 
-    JSC::JSValue NODELETE valueOrNull() const;
+    JSC::JSValue LEGACY_NODELETE valueOrNull() const;
     CueType cueType() const final { return Data; }
     bool cueContentsMatch(const TextTrackCue&) const final;
     void toJSON(JSON::Object&) const final;

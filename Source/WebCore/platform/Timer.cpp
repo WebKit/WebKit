@@ -91,7 +91,7 @@ public:
     { }
 
     TimerHeapReference operator*() const;
-    Ref<ThreadTimerHeapItem>& NODELETE operator->() const { return *m_pointer; }
+    Ref<ThreadTimerHeapItem>& LEGACY_NODELETE operator->() const { return *m_pointer; }
 private:
     Ref<ThreadTimerHeapItem>* m_pointer;
 };
@@ -107,7 +107,7 @@ public:
     { }
 
     operator Ref<ThreadTimerHeapItem>&() const { return m_reference; }
-    TimerHeapPointer NODELETE operator&() const { return &m_reference; }
+    TimerHeapPointer LEGACY_NODELETE operator&() const { return &m_reference; }
     TimerHeapReference& operator=(TimerHeapReference&&);
     TimerHeapReference& operator=(Ref<ThreadTimerHeapItem>&&);
 
@@ -140,21 +140,21 @@ inline TimerHeapReference& TimerHeapReference::operator=(Ref<ThreadTimerHeapItem
     return *this;
 }
 
-inline void NODELETE TimerHeapReference::swap(TimerHeapReference& other)
+inline void LEGACY_NODELETE TimerHeapReference::swap(TimerHeapReference& other)
 {
     m_reference.swap(other.m_reference);
     updateHeapIndex();
     other.updateHeapIndex();
 }
 
-inline void NODELETE TimerHeapReference::updateHeapIndex()
+inline void LEGACY_NODELETE TimerHeapReference::updateHeapIndex()
 {
     auto& heap = m_reference->timerHeap();
     if (&m_reference >= heap.begin() && &m_reference < heap.end())
         m_reference->setHeapIndex(&m_reference - heap.begin());
 }
 
-inline void NODELETE swap(TimerHeapReference a, TimerHeapReference b)
+inline void LEGACY_NODELETE swap(TimerHeapReference a, TimerHeapReference b)
 {
     a.swap(b);
 }
@@ -178,22 +178,22 @@ public:
         ASSERT(m_index <= m_container.size());
     }
 
-    TimerHeapIterator& NODELETE operator++() { ++m_index; return *this; }
-    TimerHeapIterator NODELETE operator++(int) { return TimerHeapIterator(m_container, m_index++); }
+    TimerHeapIterator& LEGACY_NODELETE operator++() { ++m_index; return *this; }
+    TimerHeapIterator LEGACY_NODELETE operator++(int) { return TimerHeapIterator(m_container, m_index++); }
 
-    TimerHeapIterator& NODELETE operator--() { --m_index; return *this; }
-    TimerHeapIterator NODELETE operator--(int) { return TimerHeapIterator(m_container, m_index--); }
+    TimerHeapIterator& LEGACY_NODELETE operator--() { --m_index; return *this; }
+    TimerHeapIterator LEGACY_NODELETE operator--(int) { return TimerHeapIterator(m_container, m_index--); }
 
-    TimerHeapIterator& NODELETE operator+=(ptrdiff_t i) { m_index += i; return *this; }
-    TimerHeapIterator& NODELETE operator-=(ptrdiff_t i) { m_index -= i; return *this; }
+    TimerHeapIterator& LEGACY_NODELETE operator+=(ptrdiff_t i) { m_index += i; return *this; }
+    TimerHeapIterator& LEGACY_NODELETE operator-=(ptrdiff_t i) { m_index -= i; return *this; }
 
-    TimerHeapReference NODELETE operator[](ptrdiff_t i) const { return TimerHeapReference(m_container[m_index + i]); }
+    TimerHeapReference LEGACY_NODELETE operator[](ptrdiff_t i) const { return TimerHeapReference(m_container[m_index + i]); }
 
-    TimerHeapReference NODELETE operator*() const { return TimerHeapReference(m_container[m_index]); }
-    Ref<ThreadTimerHeapItem>& NODELETE operator->() const { return m_container[m_index]; }
+    TimerHeapReference LEGACY_NODELETE operator*() const { return TimerHeapReference(m_container[m_index]); }
+    Ref<ThreadTimerHeapItem>& LEGACY_NODELETE operator->() const { return m_container[m_index]; }
 
     auto operator<=>(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index <=> other.m_index; }
-    bool NODELETE operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
+    bool LEGACY_NODELETE operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
 
 #if ASSERT_ENABLED
     bool hasSameContainerAs(TimerHeapIterator other) const
@@ -215,22 +215,22 @@ private:
     size_t m_index;
 };
 
-inline TimerHeapIterator NODELETE operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index + b); }
-inline TimerHeapIterator NODELETE operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(b.m_container, a + b.m_index); }
+inline TimerHeapIterator LEGACY_NODELETE operator+(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index + b); }
+inline TimerHeapIterator LEGACY_NODELETE operator+(size_t a, TimerHeapIterator b) { return TimerHeapIterator(b.m_container, a + b.m_index); }
 
-inline TimerHeapIterator NODELETE operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index - b); }
-inline ptrdiff_t NODELETE operator-(TimerHeapIterator a, TimerHeapIterator b) { ASSERT(a.hasSameContainerAs(b)); return static_cast<ptrdiff_t>(a.m_index) - static_cast<ptrdiff_t>(b.m_index); }
+inline TimerHeapIterator LEGACY_NODELETE operator-(TimerHeapIterator a, size_t b) { return TimerHeapIterator(a.m_container, a.m_index - b); }
+inline ptrdiff_t LEGACY_NODELETE operator-(TimerHeapIterator a, TimerHeapIterator b) { ASSERT(a.hasSameContainerAs(b)); return static_cast<ptrdiff_t>(a.m_index) - static_cast<ptrdiff_t>(b.m_index); }
 
 // ----------------
 
 class TimerHeapLessThanFunction {
 public:
-    static bool NODELETE compare(const TimerBase& a, const Ref<ThreadTimerHeapItem>& b)
+    static bool LEGACY_NODELETE compare(const TimerBase& a, const Ref<ThreadTimerHeapItem>& b)
     {
         return compare(a.m_heapItemWithBitfields.pointer()->time, a.m_heapItemWithBitfields.pointer()->insertionOrder, b->time, b->insertionOrder);
     }
 
-    static bool NODELETE compare(const Ref<ThreadTimerHeapItem>& a, const TimerBase& b)
+    static bool LEGACY_NODELETE compare(const Ref<ThreadTimerHeapItem>& a, const TimerBase& b)
     {
         return compare(a->time, a->insertionOrder, b.m_heapItemWithBitfields.pointer()->time, b.m_heapItemWithBitfields.pointer()->insertionOrder);
     }
@@ -241,7 +241,7 @@ public:
     }
 
 private:
-    static bool NODELETE compare(MonotonicTime aTime, unsigned aOrder, MonotonicTime bTime, unsigned bOrder)
+    static bool LEGACY_NODELETE compare(MonotonicTime aTime, unsigned aOrder, MonotonicTime bTime, unsigned bOrder)
     {
         // The comparisons below are "backwards" because the heap puts the largest
         // element first and we want the lowest time to be the first one in the heap.
@@ -444,7 +444,7 @@ void TimerBase::heapDeleteNullMin(ThreadTimerHeap& heap)
     heap.removeLast();
 }
 
-static inline bool NODELETE parentHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned currentIndex)
+static inline bool LEGACY_NODELETE parentHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned currentIndex)
 {
     if (!currentIndex)
         return true;
@@ -452,7 +452,7 @@ static inline bool NODELETE parentHeapPropertyHolds(const TimerBase* current, co
     return TimerHeapLessThanFunction::compare(*current, heap[parentIndex]);
 }
 
-static inline bool NODELETE childHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned childIndex)
+static inline bool LEGACY_NODELETE childHeapPropertyHolds(const TimerBase* current, const ThreadTimerHeap& heap, unsigned childIndex)
 {
     if (childIndex >= heap.size())
         return true;

@@ -37,8 +37,8 @@ class MathMLUnderOverElement final : public MathMLScriptsElement {
 public:
     static Ref<MathMLUnderOverElement> create(const QualifiedName& tagName, Document&);
     
-    const BooleanValue& NODELETE accent() LIFETIME_BOUND;
-    const BooleanValue& NODELETE accentUnder() LIFETIME_BOUND;
+    const BooleanValue& LEGACY_NODELETE accent() LIFETIME_BOUND;
+    const BooleanValue& LEGACY_NODELETE accentUnder() LIFETIME_BOUND;
 
 private:
     MathMLUnderOverElement(const QualifiedName& tagName, Document&);

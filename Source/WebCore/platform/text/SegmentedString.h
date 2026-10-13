@@ -40,7 +40,7 @@ public:
     SegmentedString& operator=(const SegmentedString&) = default;
 
     void clear();
-    void NODELETE close();
+    void LEGACY_NODELETE close();
 
     void append(SegmentedString&&);
     void append(const SegmentedString&);
@@ -50,10 +50,10 @@ public:
 
     void pushBack(String&&);
 
-    void NODELETE setExcludeLineNumbers();
+    void LEGACY_NODELETE setExcludeLineNumbers();
 
     bool isEmpty() const { return !m_currentSubstring.length(); }
-    unsigned NODELETE length() const;
+    unsigned LEGACY_NODELETE length() const;
 
     bool isClosed() const { return m_isClosed; }
 
@@ -74,12 +74,12 @@ public:
 
     char16_t currentCharacter() const { return m_currentCharacter; }
 
-    OrdinalNumber NODELETE currentColumn() const;
-    OrdinalNumber NODELETE currentLine() const;
+    OrdinalNumber LEGACY_NODELETE currentColumn() const;
+    OrdinalNumber LEGACY_NODELETE currentLine() const;
 
     // Sets value of line/column variables. Column is specified indirectly by a parameter columnAfterProlog
     // which is a value of column that we should get after a prolog (first prologLength characters) has been consumed.
-    void NODELETE setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAfterProlog, int prologLength);
+    void LEGACY_NODELETE setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAfterProlog, int prologLength);
 
 private:
     struct Substring {
@@ -121,15 +121,15 @@ private:
     void startNewLine();
 
     void advanceWithoutUpdatingLineNumber();
-    void NODELETE advanceWithoutUpdatingLineNumber16();
-    void NODELETE advanceAndUpdateLineNumber16();
+    void LEGACY_NODELETE advanceWithoutUpdatingLineNumber16();
+    void LEGACY_NODELETE advanceAndUpdateLineNumber16();
     void advancePastSingleCharacterSubstringWithoutUpdatingLineNumber();
     void advancePastSingleCharacterSubstring();
-    void NODELETE advanceEmpty();
+    void LEGACY_NODELETE advanceEmpty();
 
     void updateAdvanceFunctionPointers();
-    void NODELETE updateAdvanceFunctionPointersForEmptyString();
-    void NODELETE updateAdvanceFunctionPointersForSingleCharacterSubstring();
+    void LEGACY_NODELETE updateAdvanceFunctionPointersForEmptyString();
+    void LEGACY_NODELETE updateAdvanceFunctionPointersForSingleCharacterSubstring();
 
     void updateAdvanceFunctionPointersIfNecessary();
 

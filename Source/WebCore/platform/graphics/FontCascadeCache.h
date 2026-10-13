@@ -208,14 +208,14 @@ class FontFamilyName {
 public:
     FontFamilyName();
     FontFamilyName(const AtomString&);
-    const AtomString& NODELETE string() const;
+    const AtomString& LEGACY_NODELETE string() const;
     friend void add(Hasher&, const FontFamilyName&);
 
 private:
     AtomString m_name;
 };
 
-bool NODELETE operator==(const FontFamilyName&, const FontFamilyName&);
+bool LEGACY_NODELETE operator==(const FontFamilyName&, const FontFamilyName&);
 
 struct FontCascadeCacheKey {
     FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)

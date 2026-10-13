@@ -82,13 +82,13 @@ public:
         m_data.fill(0);
     }
 
-    void NODELETE append(T v)
+    void LEGACY_NODELETE append(T v)
     {
         m_data[m_current] = WTF::move(v);
         incrementIndex(m_current);
     }
 
-    T& NODELETE last()
+    T& LEGACY_NODELETE last()
     {
         unsigned index = m_current;
         decrementIndex(index);
@@ -105,13 +105,13 @@ public:
     }
 
 private:
-    static void NODELETE incrementIndex(unsigned& index)
+    static void LEGACY_NODELETE incrementIndex(unsigned& index)
     {
         if (++index == size)
             index = 0;
     }
 
-    static void NODELETE decrementIndex(unsigned& index)
+    static void LEGACY_NODELETE decrementIndex(unsigned& index)
     {
         if (index)
             --index;

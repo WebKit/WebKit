@@ -141,7 +141,7 @@ public:
     WEBCORE_EXPORT static PlatformTimeRanges computeBufferedRanges(const Vector<PlatformTimeRanges>& trackBufferedRanges, bool mediaSourceEnded);
 
     // Methods used by MediaSourcePrivate
-    bool NODELETE hasReceivedFirstInitializationSegment() const;
+    bool LEGACY_NODELETE hasReceivedFirstInitializationSegment() const;
 
     // Returns true if this SourceBuffer has an audio track whose buffered
     // ranges include `time`. If `excluded` is set, the track with that ID is
@@ -264,7 +264,7 @@ private:
     using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivate&)>&&);
-    MediaPromise& NODELETE currentAppendProcessing() const;
+    MediaPromise& LEGACY_NODELETE currentAppendProcessing() const;
 
     bool m_hasAudio WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };
     bool m_hasVideo WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()) { false };

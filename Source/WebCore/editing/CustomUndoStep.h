@@ -50,7 +50,7 @@ private:
     String label() const final;
 
     void didRemoveFromUndoManager() final;
-    bool NODELETE isValid() const;
+    bool LEGACY_NODELETE isValid() const;
 
     WeakPtr<UndoItem> m_undoItem;
 };

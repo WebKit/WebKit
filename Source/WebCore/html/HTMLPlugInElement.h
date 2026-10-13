@@ -74,9 +74,9 @@ public:
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     WEBCORE_EXPORT void pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&&);
-    WEBCORE_EXPORT RefPtr<VoidCallback> NODELETE takePendingPDFTestCallback();
+    WEBCORE_EXPORT RefPtr<VoidCallback> LEGACY_NODELETE takePendingPDFTestCallback();
 
-    RenderEmbeddedObject* NODELETE renderEmbeddedObject() const;
+    RenderEmbeddedObject* LEGACY_NODELETE renderEmbeddedObject() const;
 
     virtual void updateWidget(CreatePlugins) = 0;
 

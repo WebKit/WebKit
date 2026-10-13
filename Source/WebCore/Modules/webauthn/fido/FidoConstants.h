@@ -49,7 +49,7 @@ enum class ProtocolVersion {
     kUnknown,
 };
 
-WEBCORE_EXPORT bool NODELETE isCtap2Protocol(ProtocolVersion);
+WEBCORE_EXPORT bool LEGACY_NODELETE isCtap2Protocol(ProtocolVersion);
 
 WEBCORE_EXPORT String toString(ProtocolVersion);
 
@@ -119,7 +119,7 @@ enum class CtapDeviceResponseCode : uint8_t {
     kCtap2ErrVendorLast = 0xFF
 };
 
-bool NODELETE isCtapDeviceResponseCode(CtapDeviceResponseCode);
+bool LEGACY_NODELETE isCtapDeviceResponseCode(CtapDeviceResponseCode);
 
 constexpr size_t kResponseCodeLength = 1;
 
@@ -137,7 +137,7 @@ enum class FidoHidDeviceCommand : uint8_t {
     kLock = 0x04,
 };
 
-bool NODELETE isFidoHidDeviceCommand(FidoHidDeviceCommand);
+bool LEGACY_NODELETE isFidoHidDeviceCommand(FidoHidDeviceCommand);
 
 // Parameters for fake U2F registration used to check for user presence.
 constexpr std::array<uint8_t, 32> kBogusAppParam {
@@ -235,7 +235,7 @@ constexpr auto kAuthDataKey = "authData"_s;
 // https://w3c.github.io/webauthn/#credentialType
 constexpr auto kPublicKey = "public-key"_s;
 
-ASCIILiteral NODELETE publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
+ASCIILiteral LEGACY_NODELETE publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
 
 // FIXME: Add url to the official spec once it's standardized.
 constexpr auto kCtap2Version = "FIDO_2_0"_s;

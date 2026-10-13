@@ -73,7 +73,7 @@ TextStream& operator<<(TextStream&, const CustomIdent&);
 
 // MARK: - Hashing
 
-void NODELETE add(Hasher&, const CustomIdent&);
+void LEGACY_NODELETE add(Hasher&, const CustomIdent&);
 
 } // namespace Style
 } // namespace WebCore

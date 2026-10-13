@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT ~UnevaluatedCalcSize();
 
     CalcSizeValue& calcSize() const { return m_calcSize; }
-    [[nodiscard]] CalcSizeValue& NODELETE leakRef();
+    [[nodiscard]] CalcSizeValue& LEGACY_NODELETE leakRef();
 
     // CSSValueID::Invalid for a <calc-sum> or `any` basis, which behave as an ordinary length.
     WEBCORE_EXPORT CSSValueID basisKeyword() const;
@@ -81,9 +81,9 @@ WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalcSize&);
 
 // Queries on the value itself, for headers that only have it forward declared. Taking it by
 // reference keeps the predicates free of the Ref that constructing an UnevaluatedCalcSize would
-// bring, whose destructor is not allowed in the NODELETE callers that ask these questions.
-WEBCORE_EXPORT CSSValueID NODELETE calcSizeBasisKeyword(const CalcSizeValue&);
-WEBCORE_EXPORT bool NODELETE calcSizeHasPercentage(const CalcSizeValue&);
+// bring, whose destructor is not allowed in the LEGACY_NODELETE callers that ask these questions.
+WEBCORE_EXPORT CSSValueID LEGACY_NODELETE calcSizeBasisKeyword(const CalcSizeValue&);
+WEBCORE_EXPORT bool LEGACY_NODELETE calcSizeHasPercentage(const CalcSizeValue&);
 
 } // namespace Style
 } // namespace WebCore

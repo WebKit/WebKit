@@ -196,7 +196,7 @@ void ScrollLatchingController::removeLatchingStateForFrame(const LocalFrame& fra
         clear();
 }
 
-static bool NODELETE scrollDeltaIsPredominantlyVertical(FloatSize delta)
+static bool LEGACY_NODELETE scrollDeltaIsPredominantlyVertical(FloatSize delta)
 {
     return std::abs(delta.height()) > std::abs(delta.width());
 }

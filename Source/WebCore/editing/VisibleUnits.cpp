@@ -1481,7 +1481,7 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
     return direction == TextDirection::LTR ? logicalEndOfLine(c, reachedBoundary) : logicalStartOfLine(c, reachedBoundary);
 }
 
-static bool NODELETE directionIsDownstream(SelectionDirection direction)
+static bool LEGACY_NODELETE directionIsDownstream(SelectionDirection direction)
 {
     if (direction == SelectionDirection::Backward)
         return false;

@@ -62,7 +62,7 @@ public:
     bool operator==(const Image&) const final;
     bool equals(const CachedImage&) const;
 
-    WebCore::CachedImage* NODELETE cachedImage() const final;
+    WebCore::CachedImage* LEGACY_NODELETE cachedImage() const final;
 
     WrappedImagePtr data() const final { return m_cachedImage.get(); }
 

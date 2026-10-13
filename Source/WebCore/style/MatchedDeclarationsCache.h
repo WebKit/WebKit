@@ -69,7 +69,7 @@ public:
     void invalidate();
     void clearEntriesAffectedByViewportUnits();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
 private:

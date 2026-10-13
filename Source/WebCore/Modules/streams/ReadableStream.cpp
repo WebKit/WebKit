@@ -178,7 +178,7 @@ class AsyncIteratorSource : public ReadableStreamSource, public RefCountedAndCan
 public:
     static Ref<AsyncIteratorSource> create(Ref<DOMAsyncIterator>&& iterator) { return adoptRef(*new AsyncIteratorSource(WTF::move(iterator))); }
 
-    void NODELETE ref() const { return RefCounted::ref(); }
+    void LEGACY_NODELETE ref() const { return RefCounted::ref(); }
     void deref() const { return RefCounted::deref(); }
 
 private:
@@ -187,8 +187,8 @@ private:
     {
     }
 
-    void NODELETE setActive() final { }
-    void NODELETE setInactive() final { }
+    void LEGACY_NODELETE setActive() final { }
+    void LEGACY_NODELETE setInactive() final { }
 
     void doStart() final { startFinished(); }
 

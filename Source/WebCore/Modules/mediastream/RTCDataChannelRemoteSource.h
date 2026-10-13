@@ -59,7 +59,7 @@ private:
     void didReceiveRawData(std::span<const uint8_t>) final;
     void didDetectError(Ref<RTCError>&&) final;
     void bufferedAmountIsDecreasing(size_t) final;
-    size_t NODELETE bufferedAmount() const final;
+    size_t LEGACY_NODELETE bufferedAmount() const final;
     void peerConnectionIsClosing() final;
 
     const RTCDataChannelIdentifier m_remoteIdentifier;

@@ -195,7 +195,7 @@ public:
     }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    void NODELETE setDetectsHDRContent()
+    void LEGACY_NODELETE setDetectsHDRContent()
     {
         m_hdrContent = RequestState::Unknown;
         m_rendererHDRContent = RequestState::Unknown;
@@ -210,7 +210,7 @@ public:
     }
 
 
-    bool NODELETE isPaintsContentSatisfied() const
+    bool LEGACY_NODELETE isPaintsContentSatisfied() const
     {
 #if HAVE(SUPPORT_HDR_DISPLAY)
         if (m_hdrContent == RequestState::Unknown)
@@ -234,7 +234,7 @@ public:
     }
 #endif
 
-    bool NODELETE isContentsTypeSatisfied() const
+    bool LEGACY_NODELETE isContentsTypeSatisfied() const
     {
 #if HAVE(SUPPORT_HDR_DISPLAY)
         if (m_rendererHDRContent == RequestState::Unknown)
@@ -1072,7 +1072,7 @@ void RenderLayerBacking::updateAppleVisualEffect(const Style::ComputedStyle& sty
 }
 #endif
 
-static bool NODELETE layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
+static bool LEGACY_NODELETE layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (auto* curr = &layer; curr; curr = curr->parent()) {
         if (curr->isTransformed() || curr->hasCompositedScrollableOverflow())
@@ -1104,7 +1104,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     return true;
 }
 
-static bool NODELETE hasNonZeroTransformOrigin(const RenderLayerModelObject& renderer)
+static bool LEGACY_NODELETE hasNonZeroTransformOrigin(const RenderLayerModelObject& renderer)
 {
     auto& style = renderer.style();
     auto fixedTransformOriginX = style.transformOriginX().tryFixed();
@@ -2981,7 +2981,7 @@ void RenderLayerBacking::positionOverflowControlsLayers()
     }
 }
 
-static bool NODELETE ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)
+static bool LEGACY_NODELETE ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)
 {
     if (!compositingAncestor)
         return false;
@@ -3502,7 +3502,7 @@ static bool hasPaintedBoxDecorationsOrBackgroundImage(const RenderElement& rende
     return !canDirectlyCompositeBackgroundBackgroundImage(renderer);
 }
 
-static inline bool NODELETE hasPerspectiveOrPreserves3D(const Style::ComputedStyle& style)
+static inline bool LEGACY_NODELETE hasPerspectiveOrPreserves3D(const Style::ComputedStyle& style)
 {
     return !style.perspective().isNone() || style.usedTransformStyle3D() == TransformStyle3D::Preserve3D;
 }

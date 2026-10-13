@@ -125,8 +125,8 @@ struct CSSCounterStyleDescriptors {
             && m_explicitlySetDescriptors == other.m_explicitlySetDescriptors;
     }
     void setExplicitlySetDescriptors(const StyleProperties&);
-    bool NODELETE isValid() const;
-    WEBCORE_EXPORT static bool NODELETE areSymbolsValidForSystem(System, size_t symbolsCount, size_t additiveSymbolsCount);
+    bool LEGACY_NODELETE isValid() const;
+    WEBCORE_EXPORT static bool LEGACY_NODELETE areSymbolsValidForSystem(System, size_t symbolsCount, size_t additiveSymbolsCount);
 
     void setName(Name);
     void setSystem(System);
@@ -140,7 +140,7 @@ struct CSSCounterStyleDescriptors {
     void setSymbols(Vector<Symbol>);
     void setAdditiveSymbols(AdditiveSymbols);
 
-    String NODELETE nameCSSText() const;
+    String LEGACY_NODELETE nameCSSText() const;
     String systemCSSText() const;
     String negativeCSSText() const;
     String prefixCSSText() const;

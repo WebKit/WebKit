@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static inline bool NODELETE lengthIsValid(size_t length)
+static inline bool LEGACY_NODELETE lengthIsValid(size_t length)
 {
     return (length == CryptoKeyAES::s_length128) || (length == CryptoKeyAES::s_length192) || (length == CryptoKeyAES::s_length256);
 }

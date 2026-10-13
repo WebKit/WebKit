@@ -100,7 +100,7 @@ private:
     WebCodecsImageDecoder(ScriptExecutionContext&, Init&&, const WebCodecsTransferList&);
 
     // ActiveDOMObject.
-    void NODELETE suspend(ReasonForSuspension) final;
+    void LEGACY_NODELETE suspend(ReasonForSuspension) final;
     void stop() final;
 
     void sinkStreamToInternalDecoder(const Ref<ReadableStream>&);

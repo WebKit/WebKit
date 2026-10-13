@@ -48,7 +48,7 @@ public:
 
 protected:
     bool shouldSanitize() const;
-    MSOListQuirks NODELETE msoListQuirksForMarkup() const;
+    MSOListQuirks LEGACY_NODELETE msoListQuirksForMarkup() const;
 
 private:
     WeakRef<LocalFrame> m_frame;

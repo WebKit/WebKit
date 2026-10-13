@@ -103,7 +103,7 @@ void SVGTextMetricsBuilder::advanceIterator(ComplexTextController& complexTextCo
     m_totalWidth = m_complexStartToCurrentMetrics.width();
 }
 
-static inline bool NODELETE shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& scaledFont)
+static inline bool LEGACY_NODELETE shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& scaledFont)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     if (codePathToUse != FontCascade::CodePath::Complex && scaledFont.shouldUseComplexTextControllerForSimpleText())

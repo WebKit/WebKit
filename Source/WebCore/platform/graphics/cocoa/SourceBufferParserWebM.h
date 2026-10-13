@@ -288,7 +288,7 @@ public:
 
     void allowLimitedMatroska() { m_allowLimitedMatroska = true; }
 private:
-    TrackData* NODELETE trackDataForTrackNumber(uint64_t);
+    TrackData* LEGACY_NODELETE trackDataForTrackNumber(uint64_t);
     bool isSupportedVideoCodec(StringView);
     bool isSupportedAudioCodec(StringView);
     void flushPendingVideoSamples();
@@ -353,7 +353,7 @@ public:
 
     ~SourceBufferParserWebM();
 
-    static bool NODELETE isAvailable();
+    static bool LEGACY_NODELETE isAvailable();
 
     Type type() const { return Type::WebM; }
     WEBCORE_EXPORT std::expected<void, PlatformMediaError> appendData(Ref<const SharedBuffer>&&, AppendFlags = AppendFlags::None) final;

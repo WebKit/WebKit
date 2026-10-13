@@ -47,12 +47,12 @@ static const uint64_t PlainTextMaxLength = 549755813632ULL; // 2^39 - 256
 static constexpr std::array<uint8_t, 7> validTagLengths { 32, 64, 96, 104, 112, 120, 128 };
 }
 
-static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESGCM(CryptoKeyUsageBitmap usages)
+static inline bool LEGACY_NODELETE usagesAreInvalidForCryptoAlgorithmAESGCM(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits);
 }
 
-static inline bool NODELETE tagLengthIsValid(uint8_t tagLength)
+static inline bool LEGACY_NODELETE tagLengthIsValid(uint8_t tagLength)
 {
     using namespace CryptoAlgorithmAESGCMInternal;
     return std::ranges::find(validTagLengths, tagLength) != std::ranges::end(validTagLengths);

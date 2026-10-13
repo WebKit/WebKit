@@ -65,7 +65,7 @@ public:
 
     using CreatorFunction = ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> (*)(MediaStreamPrivate&, const Options&);
 
-    WEBCORE_EXPORT static void NODELETE setCustomPrivateRecorderCreator(CreatorFunction);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setCustomPrivateRecorderCreator(CreatorFunction);
 
     RecordingState state() const { return m_state; }
     const String& mimeType() const LIFETIME_BOUND { return m_options.mimeType; }
@@ -88,18 +88,18 @@ private:
 
     static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createMediaRecorderPrivate(MediaStreamPrivate&, const Options&);
     
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaRecorder; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
     void stop() final;
-    bool NODELETE virtualHasPendingActivity() const final;
+    bool LEGACY_NODELETE virtualHasPendingActivity() const final;
     
     void stopRecordingInternal(CompletionHandler<void()>&& = [] { });
     void dispatchError(Exception&&);

@@ -38,7 +38,7 @@ static constexpr auto ALG192 = "A192KW"_s;
 static constexpr auto ALG256 = "A256KW"_s;
 }
 
-static inline bool NODELETE usagesAreInvalidForCryptoAlgorithmAESKW(CryptoKeyUsageBitmap usages)
+static inline bool LEGACY_NODELETE usagesAreInvalidForCryptoAlgorithmAESKW(CryptoKeyUsageBitmap usages)
 {
     return usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt);
 }

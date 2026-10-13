@@ -37,13 +37,13 @@ class SelectPopoverElement final : public HTMLDivElement {
 public:
     static Ref<SelectPopoverElement> create(Document&);
 
-    HTMLSelectElement* NODELETE selectElement() const;
+    HTMLSelectElement* LEGACY_NODELETE selectElement() const;
 
 private:
     explicit SelectPopoverElement(Document&);
 
     bool isSelectPopoverElement() const final { return true; }
-    bool NODELETE supportsBaseAppearance(StyleAppearance) const final;
+    bool LEGACY_NODELETE supportsBaseAppearance(StyleAppearance) const final;
 
     void didAttachRenderers() final;
     void setPopoverVisibilityState(PopoverVisibilityState) final;

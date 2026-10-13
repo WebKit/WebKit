@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSScale);
 
-static bool NODELETE isValidScaleCoord(const CSSNumericValue& coord)
+static bool LEGACY_NODELETE isValidScaleCoord(const CSSNumericValue& coord)
 {
     return coord.type().matchesNumber();
 }

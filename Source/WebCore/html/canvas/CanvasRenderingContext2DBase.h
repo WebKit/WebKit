@@ -260,7 +260,7 @@ public:
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
         const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
-        const FontCascadeDescription& NODELETE fontDescription() const LIFETIME_BOUND;
+        const FontCascadeDescription& LEGACY_NODELETE fontDescription() const LIFETIME_BOUND;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
 
@@ -324,10 +324,10 @@ public:
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
-        CanvasLineCap NODELETE canvasLineCap() const;
-        CanvasLineJoin NODELETE canvasLineJoin() const;
-        CanvasTextAlign NODELETE canvasTextAlign() const;
-        CanvasTextBaseline NODELETE canvasTextBaseline() const;
+        CanvasLineCap LEGACY_NODELETE canvasLineCap() const;
+        CanvasLineJoin LEGACY_NODELETE canvasLineJoin() const;
+        CanvasTextAlign LEGACY_NODELETE canvasTextAlign() const;
+        CanvasTextBaseline LEGACY_NODELETE canvasTextBaseline() const;
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
@@ -390,7 +390,7 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
-    void NODELETE updateStateTransform(const AffineTransform&);
+    void LEGACY_NODELETE updateStateTransform(const AffineTransform&);
 
     RefPtr<ImageBuffer> allocateImageBuffer() const;
     RefPtr<ImageBuffer> createCompatibleImageBuffer(GraphicsContext&, const FloatSize&) const;
@@ -415,14 +415,14 @@ private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
-    bool NODELETE shouldDrawShadows() const;
+    bool LEGACY_NODELETE shouldDrawShadows() const;
 
     bool delegatesDisplay() const final;
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 
     void clearAccumulatedDirtyRect() final;
-    bool NODELETE isEntireBackingStoreDirty() const;
+    bool LEGACY_NODELETE isEntireBackingStoreDirty() const;
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     PixelFormat pixelFormat() const final;

@@ -40,41 +40,41 @@ public:
     WEBCORE_EXPORT WebAnimationTime(const ReducedResolutionSeconds&);
     WebAnimationTime(const CSSNumberish&);
 
-    static WebAnimationTime NODELETE fromMilliseconds(double);
-    WEBCORE_EXPORT static WebAnimationTime NODELETE fromPercentage(double);
+    static WebAnimationTime LEGACY_NODELETE fromMilliseconds(double);
+    WEBCORE_EXPORT static WebAnimationTime LEGACY_NODELETE fromPercentage(double);
 
-    WEBCORE_EXPORT std::optional<Seconds> NODELETE time() const;
-    WEBCORE_EXPORT std::optional<double> NODELETE percentage() const;
+    WEBCORE_EXPORT std::optional<Seconds> LEGACY_NODELETE time() const;
+    WEBCORE_EXPORT std::optional<double> LEGACY_NODELETE percentage() const;
 
-    bool NODELETE isValid() const;
-    bool NODELETE isInfinity() const;
-    bool NODELETE isZero() const;
-    bool NODELETE isNaN() const;
+    bool LEGACY_NODELETE isValid() const;
+    bool LEGACY_NODELETE isInfinity() const;
+    bool LEGACY_NODELETE isZero() const;
+    bool LEGACY_NODELETE isNaN() const;
 
-    WebAnimationTime NODELETE matchingZero() const;
-    WebAnimationTime NODELETE matchingEpsilon() const;
-    WebAnimationTime NODELETE matchingInfinity() const;
+    WebAnimationTime LEGACY_NODELETE matchingZero() const;
+    WebAnimationTime LEGACY_NODELETE matchingEpsilon() const;
+    WebAnimationTime LEGACY_NODELETE matchingInfinity() const;
 
-    bool NODELETE approximatelyEqualTo(const WebAnimationTime&) const;
-    bool NODELETE approximatelyLessThan(const WebAnimationTime&) const;
-    bool NODELETE approximatelyGreaterThan(const WebAnimationTime&) const;
+    bool LEGACY_NODELETE approximatelyEqualTo(const WebAnimationTime&) const;
+    bool LEGACY_NODELETE approximatelyLessThan(const WebAnimationTime&) const;
+    bool LEGACY_NODELETE approximatelyGreaterThan(const WebAnimationTime&) const;
 
-    WebAnimationTime NODELETE operator+(const WebAnimationTime&) const;
-    WebAnimationTime NODELETE operator-(const WebAnimationTime&) const;
-    double NODELETE operator/(const WebAnimationTime&) const;
-    WebAnimationTime& NODELETE operator+=(const WebAnimationTime&);
-    WebAnimationTime& NODELETE operator-=(const WebAnimationTime&);
+    WebAnimationTime LEGACY_NODELETE operator+(const WebAnimationTime&) const;
+    WebAnimationTime LEGACY_NODELETE operator-(const WebAnimationTime&) const;
+    double LEGACY_NODELETE operator/(const WebAnimationTime&) const;
+    WebAnimationTime& LEGACY_NODELETE operator+=(const WebAnimationTime&);
+    WebAnimationTime& LEGACY_NODELETE operator-=(const WebAnimationTime&);
 
     friend bool operator==(const WebAnimationTime&, const WebAnimationTime&) = default;
-    friend std::partial_ordering NODELETE operator<=>(const WebAnimationTime&, const WebAnimationTime&);
-    friend std::partial_ordering NODELETE operator<=>(const WebAnimationTime&, Seconds);
+    friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, const WebAnimationTime&);
+    friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, Seconds);
 
     WebAnimationTime operator+(const Seconds&) const;
     WebAnimationTime operator-(const Seconds&) const;
-    bool NODELETE operator==(const Seconds&) const;
+    bool LEGACY_NODELETE operator==(const Seconds&) const;
 
-    WebAnimationTime NODELETE operator*(double) const;
-    WebAnimationTime NODELETE operator/(double) const;
+    WebAnimationTime LEGACY_NODELETE operator*(double) const;
+    WebAnimationTime LEGACY_NODELETE operator/(double) const;
 
     WEBCORE_EXPORT operator Seconds() const;
     operator CSSNumberish() const;

@@ -67,9 +67,9 @@ public:
     LayerAncestorClippingStack(Vector<CompositedClipData>&&);
     ~LayerAncestorClippingStack() = default;
 
-    bool NODELETE hasAnyScrollingLayers() const;
+    bool LEGACY_NODELETE hasAnyScrollingLayers() const;
     
-    bool NODELETE equalToClipData(const Vector<CompositedClipData>&) const;
+    bool LEGACY_NODELETE equalToClipData(const Vector<CompositedClipData>&) const;
     bool updateWithClipData(RenderLayerCompositor&, Vector<CompositedClipData>&&);
     
     Vector<CompositedClipData> compositedClipData() const;
@@ -79,8 +79,8 @@ public:
 
     void updateScrollingNodeLayers(ScrollingCoordinator&);
 
-    GraphicsLayer* NODELETE firstLayer() const;
-    GraphicsLayer* NODELETE lastLayer() const;
+    GraphicsLayer* LEGACY_NODELETE firstLayer() const;
+    GraphicsLayer* LEGACY_NODELETE lastLayer() const;
     std::optional<ScrollingNodeID> lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {

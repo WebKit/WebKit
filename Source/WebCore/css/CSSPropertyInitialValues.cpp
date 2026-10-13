@@ -51,13 +51,13 @@
 
 namespace WebCore {
 
-static bool NODELETE isValueIDPair(const CSSValue& value, CSSValueID valueID)
+static bool LEGACY_NODELETE isValueIDPair(const CSSValue& value, CSSValueID valueID)
 {
     return value.isPair() && isValueID(value.first(), valueID) && isValueID(value.second(), valueID);
 }
 
 // FIXME: SUPPRESS_NODELETE shouldn't be necessary.
-SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
+SUPPRESS_NODELETE static bool LEGACY_NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
 {
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc&) {
@@ -69,12 +69,12 @@ SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, 
     );
 }
 
-static bool NODELETE isNumber(const CSSPrimitiveValue* value, auto number)
+static bool LEGACY_NODELETE isNumber(const CSSPrimitiveValue* value, auto number)
 {
     return value && isNumber(*value, number);
 }
 
-static bool NODELETE isNumber(const CSSValue& value, auto number)
+static bool LEGACY_NODELETE isNumber(const CSSValue& value, auto number)
 {
     return isNumber(dynamicDowncast<CSSPrimitiveValue>(value), number);
 }

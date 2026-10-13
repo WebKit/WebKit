@@ -869,7 +869,7 @@ static double findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availab
 
 // "... if the flexible track's flex factor is greater than one,
 // the result of dividing the track's base size by its flex factor; otherwise, the track's base size."
-static double NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
+static double LEGACY_NODELETE flexFractionFromTrackBaseSize(const FlexTrack& flexTrack)
 {
     if (flexTrack.flexFactor.value > 1.0)
         return flexTrack.baseSize / flexTrack.flexFactor.value;

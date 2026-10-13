@@ -48,7 +48,7 @@ public:
     void clearFromSetLike();
     void initializeSetLike(DOMSetAdapter&) { };
 
-    bool NODELETE has(const AtomString&) const;
+    bool LEGACY_NODELETE has(const AtomString&) const;
 
 private:
     explicit CustomStateSet(Element& element)

@@ -65,8 +65,8 @@ public:
 
     void setPaintCharacteristicsForScrollbar(Scrollbar&);
 
-    static bool NODELETE isCurrentlyDrawingIntoLayer();
-    static void NODELETE setIsCurrentlyDrawingIntoLayer(bool);
+    static bool LEGACY_NODELETE isCurrentlyDrawingIntoLayer();
+    static void LEGACY_NODELETE setIsCurrentlyDrawingIntoLayer(bool);
 
     void didCreateScrollerImp(Scrollbar&) override;
     bool isLayoutDirectionRTL(Scrollbar&);
@@ -91,7 +91,7 @@ protected:
     
     ScrollbarButtonPressAction handleMousePressEvent(Scrollbar&, const PlatformMouseEvent&, ScrollbarPart) override;
     bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
-    int NODELETE scrollbarPartToHIPressedState(ScrollbarPart);
+    int LEGACY_NODELETE scrollbarPartToHIPressedState(ScrollbarPart);
 };
 
 }

@@ -92,7 +92,7 @@ bool DecompressionStreamDecoder::didInflateFinish(int result) const
 }
 
 // See https://www.zlib.net/manual.html#Constants
-static bool NODELETE didInflateFail(int result)
+static bool LEGACY_NODELETE didInflateFail(int result)
 {
     return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
 }
@@ -102,12 +102,12 @@ bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
     return result == Z_STREAM_END && m_zstream.getPlatformStream().avail_in;
 }
 
-static bool NODELETE didInflateIncompleteInput(int result, bool didFinish)
+static bool LEGACY_NODELETE didInflateIncompleteInput(int result, bool didFinish)
 {
     return result == Z_BUF_ERROR && didFinish;
 }
 
-static ZStream::Algorithm NODELETE decompressionAlgorithm(Formats::CompressionFormat format)
+static ZStream::Algorithm LEGACY_NODELETE decompressionAlgorithm(Formats::CompressionFormat format)
 {
     switch (format) {
     case Formats::CompressionFormat::Brotli:

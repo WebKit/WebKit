@@ -49,7 +49,7 @@ CharacterData::~CharacterData()
     willBeDeletedFrom(Ref<Document> { document() });
 }
 
-static bool NODELETE canUseSetDataOptimization(const CharacterData& node)
+static bool LEGACY_NODELETE canUseSetDataOptimization(const CharacterData& node)
 {
     auto& document = node.document();
     return !document.hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
@@ -81,14 +81,14 @@ ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count
     return m_data.substring(offset, count);
 }
 
-static ContainerNode::ChildChange::Type NODELETE textChildChangeType(unsigned oldLength, bool toEmpty)
+static ContainerNode::ChildChange::Type LEGACY_NODELETE textChildChangeType(unsigned oldLength, bool toEmpty)
 {
     if (oldLength && !toEmpty)
         return ContainerNode::ChildChange::Type::TextChanged;
     return toEmpty ? ContainerNode::ChildChange::Type::TextRemoved : ContainerNode::ChildChange::Type::TextInserted;
 }
 
-static ContainerNode::ChildChange NODELETE makeChildChange(CharacterData& characterData, bool toEmpty, ContainerNode::ChildChange::Source source)
+static ContainerNode::ChildChange LEGACY_NODELETE makeChildChange(CharacterData& characterData, bool toEmpty, ContainerNode::ChildChange::Source source)
 {
     return {
         textChildChangeType(characterData.length(), toEmpty),

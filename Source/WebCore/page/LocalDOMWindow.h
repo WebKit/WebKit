@@ -115,7 +115,7 @@ public:
     void suspendForBackForwardCache();
     void resumeFromBackForwardCache();
 
-    WEBCORE_EXPORT LocalFrame* NODELETE frame() const final;
+    WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE frame() const final;
 
     RefPtr<WebCore::MediaQueryList> matchMedia(const String&);
 
@@ -129,7 +129,7 @@ public:
     bool allowPopUp(); // Call on first window, not target window.
     static bool allowPopUp(LocalFrame& firstFrame);
     static bool canShowModalDialog(const LocalFrame&);
-    WEBCORE_EXPORT void NODELETE setCanShowModalDialogOverride(bool);
+    WEBCORE_EXPORT void LEGACY_NODELETE setCanShowModalDialogOverride(bool);
 
     Screen& screen();
     WEBCORE_EXPORT History& history();
@@ -143,7 +143,7 @@ public:
     WEBCORE_EXPORT Navigator& navigator();
     Navigator* optionalNavigator() const { return m_navigator.get(); }
 
-    WEBCORE_EXPORT static void NODELETE overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
+    WEBCORE_EXPORT static void LEGACY_NODELETE overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     // If forcedActivationToken is set, the activation was granted by the forced user gesture (e.g. evaluateJavaScript:)
     // with that token, and is taken back once that gesture ends.
     WEBCORE_EXPORT void updateActivation(MonotonicTime activationTime, std::optional<UserGestureTokenIdentifier> forcedActivationToken = std::nullopt);
@@ -155,20 +155,20 @@ public:
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
-    WEBCORE_EXPORT bool NODELETE hasHistoryActionActivation() const;
-    WEBCORE_EXPORT bool NODELETE consumeHistoryActionUserActivation();
-    WEBCORE_EXPORT static Seconds NODELETE transientActivationDuration();
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasHistoryActionActivation() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE consumeHistoryActionUserActivation();
+    WEBCORE_EXPORT static Seconds LEGACY_NODELETE transientActivationDuration();
 
     struct ClickEventData {
         MonotonicTime time;
         OptionSet<PlatformEventModifier> modifiers;
     };
     void updateLastUserClickEvent(OptionSet<PlatformEventModifier>);
-    WEBCORE_EXPORT std::optional<ClickEventData> NODELETE consumeLastUserClickEvent();
+    WEBCORE_EXPORT std::optional<ClickEventData> LEGACY_NODELETE consumeLastUserClickEvent();
 
     DOMSelection* getSelection();
 
-    HTMLFrameOwnerElement* NODELETE frameElement() const;
+    HTMLFrameOwnerElement* LEGACY_NODELETE frameElement() const;
 
     WEBCORE_EXPORT void focus(bool allowFocus = false);
     void focus(LocalDOMWindow& incumbentWindow);
@@ -189,7 +189,7 @@ public:
 
     bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
 
-    bool NODELETE offscreenBuffering() const;
+    bool LEGACY_NODELETE offscreenBuffering() const;
 
     int outerHeight() const;
     int outerWidth() const;
@@ -204,7 +204,7 @@ public:
 
     unsigned length() const;
 
-    AtomString NODELETE name() const;
+    AtomString LEGACY_NODELETE name() const;
     void setName(const AtomString&);
 
     String status() const;
@@ -217,7 +217,7 @@ public:
 
     // DOM Level 2 AbstractView Interface
 
-    WEBCORE_EXPORT Document* NODELETE document() const;
+    WEBCORE_EXPORT Document* LEGACY_NODELETE document() const;
 
     // CSSOM View Module
 
@@ -288,8 +288,8 @@ public:
 
     void dispatchLoadEvent();
 
-    void NODELETE captureEvents();
-    void NODELETE releaseEvents();
+    void LEGACY_NODELETE captureEvents();
+    void LEGACY_NODELETE releaseEvents();
 
     void finishedLoading();
 
@@ -327,7 +327,7 @@ public:
 
     WEBCORE_EXPORT ReducedResolutionSeconds nowTimestamp() const;
     void freezeNowTimestamp();
-    void NODELETE unfreezeNowTimestamp();
+    void LEGACY_NODELETE unfreezeNowTimestamp();
     ReducedResolutionSeconds frozenNowTimestamp() const;
 
 #if PLATFORM(IOS_FAMILY)
@@ -361,7 +361,7 @@ public:
 #endif
 
     // Navigation API
-    WEBCORE_EXPORT Navigation& NODELETE navigation();
+    WEBCORE_EXPORT Navigation& LEGACY_NODELETE navigation();
 
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
@@ -381,7 +381,7 @@ public:
     void setMayReuseForNavigation(bool mayReuseForNavigation) { m_mayReuseForNavigation = mayReuseForNavigation; }
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
-    Page* NODELETE page() const;
+    Page* LEGACY_NODELETE page() const;
 
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(NOESCAPE const Function<void(LocalDOMWindow&)>&);
 
@@ -396,13 +396,13 @@ public:
 private:
     explicit LocalDOMWindow(Document&);
 
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
     void closePage() final;
     void eventListenersDidChange() final;
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking, CanNavigateState) final;
 
-    bool NODELETE allowedToChangeWindowGeometry() const;
+    bool LEGACY_NODELETE allowedToChangeWindowGeometry() const;
 
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
 

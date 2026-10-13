@@ -32,17 +32,17 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: - Comma
 // FIXME: Rename to `consumeComma`.
-bool NODELETE consumeCommaIncludingWhitespace(CSSParserTokenRange&);
+bool LEGACY_NODELETE consumeCommaIncludingWhitespace(CSSParserTokenRange&);
 
 // MARK: - Slash
 // FIXME: Rename to `consumeSlash`.
-bool NODELETE consumeSlashIncludingWhitespace(CSSParserTokenRange&);
+bool LEGACY_NODELETE consumeSlashIncludingWhitespace(CSSParserTokenRange&);
 
 // MARK: - Function
 // NOTE: consumeFunction expects the range starts with a FunctionToken.
-CSSParserTokenRange NODELETE consumeFunction(CSSParserTokenRange&);
+CSSParserTokenRange LEGACY_NODELETE consumeFunction(CSSParserTokenRange&);
 
-std::optional<CSSParserTokenRange> NODELETE consumeArgument(CSSParserTokenRange&, unsigned index);
+std::optional<CSSParserTokenRange> LEGACY_NODELETE consumeArgument(CSSParserTokenRange&, unsigned index);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

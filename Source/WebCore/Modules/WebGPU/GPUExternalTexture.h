@@ -43,7 +43,7 @@ public:
         return adoptRef(*new GPUExternalTexture(WTF::move(backing), device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     WebGPU::ExternalTexture& backing() { return m_backing; }

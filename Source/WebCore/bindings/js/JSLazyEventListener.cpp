@@ -61,7 +61,7 @@ static const String& functionParameters(bool shouldUseSVGEventName)
     return shouldUseSVGEventName ? evtString : eventString;
 }
 
-static TextPosition NODELETE convertZeroToOne(const TextPosition& position)
+static TextPosition LEGACY_NODELETE convertZeroToOne(const TextPosition& position)
 {
     // A JSLazyEventListener can be created with a line number of zero when it is created with
     // a setAttribute call from JavaScript, so make the line number 1 in that case.

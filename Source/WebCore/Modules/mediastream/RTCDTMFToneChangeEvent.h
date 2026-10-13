@@ -45,7 +45,7 @@ public:
 
     static Ref<RTCDTMFToneChangeEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
 
-    const String& NODELETE tone() const;
+    const String& LEGACY_NODELETE tone() const;
 
 private:
     RTCDTMFToneChangeEvent(const String& tone);

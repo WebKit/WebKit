@@ -50,7 +50,7 @@ public:
     explicit ScriptRunner(Document&);
     ~ScriptRunner();
 
-    void NODELETE ref() const;
+    void LEGACY_NODELETE ref() const;
     void deref() const;
 
     // CheckedPtr interface

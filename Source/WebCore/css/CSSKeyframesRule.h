@@ -39,10 +39,10 @@ class StyleRuleKeyframe;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframes> NODELETE create(const AtomString& name);
+    static Ref<StyleRuleKeyframes> LEGACY_NODELETE create(const AtomString& name);
     ~StyleRuleKeyframes();
     
-    const Vector<Ref<StyleRuleKeyframe>>& NODELETE keyframes() const;
+    const Vector<Ref<StyleRuleKeyframe>>& LEGACY_NODELETE keyframes() const;
 
     void parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&&);
     void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
@@ -87,7 +87,7 @@ public:
     CSSKeyframeRule* findRule(const String& key);
 
     // For IndexedGetter and CSSRuleList.
-    unsigned NODELETE length() const;
+    unsigned LEGACY_NODELETE length() const;
     CSSKeyframeRule* item(unsigned index) const;
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 

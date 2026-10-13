@@ -79,7 +79,7 @@ template<typename... F> static decltype(auto) switchTogether(const Child& a, con
 
 // MARK: Predicate: percentageResolveToDimension
 
-static bool NODELETE percentageResolveToDimension(const SimplificationOptions& options)
+static bool LEGACY_NODELETE percentageResolveToDimension(const SimplificationOptions& options)
 {
     switch (options.category) {
     case CSS::Category::Integer:
@@ -104,66 +104,66 @@ static bool NODELETE percentageResolveToDimension(const SimplificationOptions& o
 
 // MARK: Predicate: unitsMatch
 
-constexpr bool NODELETE unitsMatch(const Number&, const Number&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE unitsMatch(const Number&, const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool NODELETE unitsMatch(const Percentage&, const Percentage&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE unitsMatch(const Percentage&, const Percentage&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool NODELETE unitsMatch(const CanonicalDimension& a, const CanonicalDimension& b, const SimplificationOptions&)
+static bool LEGACY_NODELETE unitsMatch(const CanonicalDimension& a, const CanonicalDimension& b, const SimplificationOptions&)
 {
     return a.dimension == b.dimension;
 }
 
-static bool NODELETE unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions&)
+static bool LEGACY_NODELETE unitsMatch(const NonCanonicalDimension& a, const NonCanonicalDimension& b, const SimplificationOptions&)
 {
     return a.unit == b.unit;
 }
 
 // MARK: Predicate: magnitudeComparable
 
-constexpr bool NODELETE magnitudeComparable(const Number&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE magnitudeComparable(const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool NODELETE magnitudeComparable(const Percentage&, const SimplificationOptions& options)
+static bool LEGACY_NODELETE magnitudeComparable(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
 
-constexpr bool NODELETE magnitudeComparable(const CanonicalDimension&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE magnitudeComparable(const CanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool NODELETE magnitudeComparable(const NonCanonicalDimension&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE magnitudeComparable(const NonCanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
 // MARK: Predicate: fullyResolved
 
-constexpr bool NODELETE fullyResolved(const Number&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE fullyResolved(const Number&, const SimplificationOptions&)
 {
     return true;
 }
 
-static bool NODELETE fullyResolved(const Percentage&, const SimplificationOptions& options)
+static bool LEGACY_NODELETE fullyResolved(const Percentage&, const SimplificationOptions& options)
 {
     return !percentageResolveToDimension(options);
 }
 
-constexpr bool NODELETE fullyResolved(const CanonicalDimension&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE fullyResolved(const CanonicalDimension&, const SimplificationOptions&)
 {
     return true;
 }
 
-constexpr bool NODELETE fullyResolved(const NonCanonicalDimension&, const SimplificationOptions&)
+constexpr bool LEGACY_NODELETE fullyResolved(const NonCanonicalDimension&, const SimplificationOptions&)
 {
     return false;
 }
@@ -1685,7 +1685,7 @@ Vector<CalcMix::Item> copyAndSimplify(const Vector<CalcMix::Item>& items, const 
     return WTF::map(items, [&](auto& item) { return copyAndSimplify(item, options); });
 }
 
-CSS::Keyword::None NODELETE copyAndSimplify(const CSS::Keyword::None& root, const SimplificationOptions&)
+CSS::Keyword::None LEGACY_NODELETE copyAndSimplify(const CSS::Keyword::None& root, const SimplificationOptions&)
 {
     return root;
 }

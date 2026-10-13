@@ -69,7 +69,7 @@ public:
     void deref() const final { RefCounted::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
-    Document* NODELETE document() const;
+    Document* LEGACY_NODELETE document() const;
 
     using Promise = DOMPromiseDeferred<IDLInterface<MediaStream>>;
     using EnumerateDevicesPromise = DOMPromiseDeferred<IDLSequence<IDLUnion<IDLInterface<MediaDeviceInfo>, IDLInterface<InputDeviceInfo>>>>;
@@ -94,7 +94,7 @@ public:
     void getDisplayMedia(DisplayMediaStreamConstraints&&, Promise&&);
 
     void enumerateDevices(EnumerateDevicesPromise&&);
-    MediaTrackSupportedConstraints NODELETE getSupportedConstraints();
+    MediaTrackSupportedConstraints LEGACY_NODELETE getSupportedConstraints();
 
     String deviceIdToPersistentId(const String&) const;
 
@@ -118,7 +118,7 @@ private:
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaDevices; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

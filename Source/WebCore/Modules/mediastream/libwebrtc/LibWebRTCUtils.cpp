@@ -92,7 +92,7 @@ RTCPriorityType toRTCPriorityType(webrtc::Priority priority)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline double NODELETE toWebRTCBitRatePriority(RTCPriorityType priority)
+static inline double LEGACY_NODELETE toWebRTCBitRatePriority(RTCPriorityType priority)
 {
     switch (priority) {
     case RTCPriorityType::VeryLow:
@@ -108,7 +108,7 @@ static inline double NODELETE toWebRTCBitRatePriority(RTCPriorityType priority)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static inline RTCPriorityType NODELETE fromWebRTCBitRatePriority(double priority)
+static inline RTCPriorityType LEGACY_NODELETE fromWebRTCBitRatePriority(double priority)
 {
     if (priority < 0.7)
         return RTCPriorityType::VeryLow;
@@ -437,7 +437,7 @@ Exception toException(const webrtc::RTCError& error)
     return Exception { toExceptionCode(error.type()), String::fromLatin1(error.message()) };
 }
 
-static inline RTCIceComponent NODELETE toRTCIceComponent(int component)
+static inline RTCIceComponent LEGACY_NODELETE toRTCIceComponent(int component)
 {
     return component == webrtc::ICE_CANDIDATE_COMPONENT_RTP ? RTCIceComponent::Rtp : RTCIceComponent::Rtcp;
 }

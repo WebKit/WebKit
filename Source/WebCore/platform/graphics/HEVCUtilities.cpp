@@ -322,7 +322,7 @@ static std::optional<uint16_t> profileIDForAlphabeticDoViProfile(StringView prof
     return makeOptionalFromPointer(profilesMap.tryGet(profile));
 }
 
-static bool NODELETE isValidDoViProfileID(uint16_t profileID)
+static bool LEGACY_NODELETE isValidDoViProfileID(uint16_t profileID)
 {
     switch (profileID) {
     case 4:
@@ -336,7 +336,7 @@ static bool NODELETE isValidDoViProfileID(uint16_t profileID)
     }
 }
 
-static std::optional<uint16_t> NODELETE maximumLevelIDForDoViProfileID(uint16_t profileID)
+static std::optional<uint16_t> LEGACY_NODELETE maximumLevelIDForDoViProfileID(uint16_t profileID)
 {
     // See Section 4.1 of "Dolby Vision Profiles and Levels Version 1.3.2"
     switch (profileID) {
@@ -349,7 +349,7 @@ static std::optional<uint16_t> NODELETE maximumLevelIDForDoViProfileID(uint16_t 
     }
 }
 
-static bool NODELETE isValidProfileIDForCodec(uint16_t profileID, DoViParameters::Codec codec)
+static bool LEGACY_NODELETE isValidProfileIDForCodec(uint16_t profileID, DoViParameters::Codec codec)
 {
     if (profileID == 9)
         return codec == DoViParameters::Codec::AVC1 || codec == DoViParameters::Codec::AVC3;

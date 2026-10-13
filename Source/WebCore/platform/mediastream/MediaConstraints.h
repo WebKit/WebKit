@@ -389,7 +389,7 @@ public:
     {
     }
 
-    void NODELETE merge(const IntConstraint& other)
+    void LEGACY_NODELETE merge(const IntConstraint& other)
     {
         NumericConstraint::innerMerge(other);
     }

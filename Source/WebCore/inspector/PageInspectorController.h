@@ -78,24 +78,24 @@ public:
 
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void LEGACY_NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
 
     // InspectorOverlayOwner. Reports no frame, so the overlay uses the local main frame as before.
-    void NODELETE overlayOwnerRef() const final { ref(); }
+    void LEGACY_NODELETE overlayOwnerRef() const final { ref(); }
     void overlayOwnerDeref() const final { deref(); }
-    Page* NODELETE overlayOwnerPage() const final;
-    InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final { return m_inspectorBackendClient.get(); }
+    Page* LEGACY_NODELETE overlayOwnerPage() const final;
+    InspectorBackendClient* LEGACY_NODELETE overlayOwnerBackendClient() const final { return m_inspectorBackendClient.get(); }
     Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
 
     void inspectedPageDestroyed();
 
     WEBCORE_EXPORT bool enabled() const;
-    Page& NODELETE inspectedPage() const;
+    Page& LEGACY_NODELETE inspectedPage() const;
 
     WEBCORE_EXPORT void show();
 
-    WEBCORE_EXPORT void NODELETE setInspectorFrontendClient(InspectorFrontendClient*);
+    WEBCORE_EXPORT void LEGACY_NODELETE setInspectorFrontendClient(InspectorFrontendClient*);
     unsigned inspectionLevel() const;
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
 
@@ -112,11 +112,11 @@ public:
     WEBCORE_EXPORT void disconnectRemoteInstrumentation();
 
     void inspect(Node*);
-    WEBCORE_EXPORT bool NODELETE shouldShowOverlay() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE shouldShowOverlay() const;
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
     WEBCORE_EXPORT void getHighlight(InspectorOverlay::Highlight&, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
-    Node* NODELETE highlightedNode() const;
+    Node* LEGACY_NODELETE highlightedNode() const;
 
     WEBCORE_EXPORT void setIndicating(bool);
 
@@ -127,8 +127,8 @@ public:
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
-    WEBCORE_EXPORT unsigned NODELETE gridOverlayCount() const;
-    WEBCORE_EXPORT unsigned NODELETE flexOverlayCount() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE gridOverlayCount() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE flexOverlayCount() const;
     WEBCORE_EXPORT unsigned paintRectCount() const;
 
     InspectorBackendClient* inspectorBackendClient() const LIFETIME_BOUND { return m_inspectorBackendClient.get(); }
@@ -153,7 +153,7 @@ public:
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override;
-    WEBCORE_EXPORT WTF::Stopwatch& NODELETE executionStopwatch() const final;
+    WEBCORE_EXPORT WTF::Stopwatch& LEGACY_NODELETE executionStopwatch() const final;
     JSC::Debugger* debugger() override;
     void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>&) override;
     JSC::VM& vm() override;

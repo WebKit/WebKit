@@ -123,9 +123,9 @@ public:
 #endif
 
     bool requiresFullscreenForVideoPlayback() const;
-    WEBCORE_EXPORT bool NODELETE allowsPictureInPicture() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE allowsPictureInPicture() const;
     MediaPlayer::Preload effectivePreloadForElement() const;
-    bool NODELETE allowsAutomaticMediaDataLoading() const;
+    bool LEGACY_NODELETE allowsAutomaticMediaDataLoading() const;
 
     void mediaEngineUpdated();
 
@@ -134,7 +134,7 @@ public:
 
     void suspendBuffering() override;
     void resumeBuffering() override;
-    bool NODELETE bufferingSuspended() const;
+    bool LEGACY_NODELETE bufferingSuspended() const;
     void updateBufferingPolicy() { scheduleClientDataBufferingCheck(); }
 
     // Restrictions to modify default behaviors.
@@ -182,9 +182,9 @@ public:
     bool isLargeEnoughForMainContent() const final { return isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls); }
     bool isLongEnoughForMainContent() const final;
     bool isMainContentForPurposesOfAutoplayEvents() const;
-    Markable<MonotonicTime> NODELETE mostRecentUserInteractionTime() const final;
+    Markable<MonotonicTime> LEGACY_NODELETE mostRecentUserInteractionTime() const final;
 
-    bool NODELETE allowsPlaybackControlsForAutoplayingAudio() const;
+    bool LEGACY_NODELETE allowsPlaybackControlsForAutoplayingAudio() const;
 
     static bool isMediaElementSessionMediaType(MediaType type)
     {
@@ -210,7 +210,7 @@ public:
 #endif
     void metadataChanged(const RefPtr<MediaMetadata>&);
     void positionStateChanged(const std::optional<MediaPositionState>&);
-    void NODELETE playbackStateChanged(MediaSessionPlaybackState);
+    void LEGACY_NODELETE playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
     MediaSession* mediaSession() const;

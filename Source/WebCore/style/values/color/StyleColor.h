@@ -151,13 +151,13 @@ public:
     static const Color& currentColor();
 
     bool containsCurrentColor() const;
-    bool NODELETE isCurrentColor() const;
-    bool NODELETE isColorMix() const;
-    bool NODELETE isContrastColor() const;
-    bool NODELETE isRelativeAlphaColor() const;
-    bool NODELETE isRelativeColor() const;
+    bool LEGACY_NODELETE isCurrentColor() const;
+    bool LEGACY_NODELETE isColorMix() const;
+    bool LEGACY_NODELETE isContrastColor() const;
+    bool LEGACY_NODELETE isRelativeAlphaColor() const;
+    bool LEGACY_NODELETE isRelativeColor() const;
 
-    bool NODELETE isResolvedColor() const;
+    bool LEGACY_NODELETE isResolvedColor() const;
     const WebCore::Color& resolvedColor() const;
 
     WEBCORE_EXPORT WebCore::Color resolveColor(const ResolvedColors&) const;
@@ -219,7 +219,7 @@ template<> struct DeprecatedCSSOMValueCreation<Color> {
 
 template<> struct Blending<Color> {
     auto equals(const Color&, const Color&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    bool NODELETE canBlend(const Color&, const Color&);
+    bool LEGACY_NODELETE canBlend(const Color&, const Color&);
     constexpr auto requiresInterpolationForAccumulativeIteration(const Color&, const Color&) -> bool { return true; }
     auto blend(const Color&, const Color&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> Color;
 };

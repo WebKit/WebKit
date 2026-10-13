@@ -152,7 +152,7 @@ struct ViewportArguments {
 WEBCORE_EXPORT ViewportAttributes computeViewportAttributes(const ViewportArguments&, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
 
 WEBCORE_EXPORT void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
-WEBCORE_EXPORT void NODELETE restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
+WEBCORE_EXPORT void LEGACY_NODELETE restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
 WEBCORE_EXPORT float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
 
 typedef Function<void(ViewportErrorCode, const String&)> ViewportErrorHandler;

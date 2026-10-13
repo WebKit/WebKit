@@ -41,9 +41,9 @@ private:
 
     void defaultEventHandler(Event&) final;
 
-    bool NODELETE hasCustomFocusLogic() const final { return true; }
+    bool LEGACY_NODELETE hasCustomFocusLogic() const final { return true; }
 
-    RefPtr<HTMLDetailsElement> NODELETE detailsElement() const;
+    RefPtr<HTMLDetailsElement> LEGACY_NODELETE detailsElement() const;
 
     int defaultTabIndex() const final;
     bool supportsFocus() const final;

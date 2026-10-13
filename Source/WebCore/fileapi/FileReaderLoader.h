@@ -94,7 +94,7 @@ public:
 
     const URL& url() LIFETIME_BOUND { return m_urlForReading; }
 
-    bool NODELETE isCompleted() const;
+    bool LEGACY_NODELETE isCompleted() const;
 
 private:
     // If client is given, do the loading asynchronously. Otherwise, load synchronously.
@@ -107,8 +107,8 @@ private:
     void convertToDataURL();
     bool processResponse(const ResourceResponse&);
 
-    static ExceptionCode NODELETE httpStatusCodeToErrorCode(int);
-    static ExceptionCode NODELETE toErrorCode(BlobResourceHandle::Error);
+    static ExceptionCode LEGACY_NODELETE httpStatusCodeToErrorCode(int);
+    static ExceptionCode LEGACY_NODELETE toErrorCode(BlobResourceHandle::Error);
 
     ReadType m_readType;
     WeakPtr<FileReaderLoaderClient> m_client;

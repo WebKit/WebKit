@@ -67,14 +67,14 @@ public:
     // Calling updateStyleIfNeeded() might delete |this|.
     void updateStyleIfNeeded();
 
-    bool NODELETE hasFace(const CSSFontFace&) const;
+    bool LEGACY_NODELETE hasFace(const CSSFontFace&) const;
     size_t faceCount() const { return m_faces.size(); }
     void add(CSSFontFace&);
     void remove(const CSSFontFace&);
     void purge();
     void emptyCaches();
     void clear();
-    CSSFontFace& NODELETE operator[](size_t i);
+    CSSFontFace& LEGACY_NODELETE operator[](size_t i);
 
     CSSFontFace* lookUpByCSSConnection(StyleRuleFontFace&);
 

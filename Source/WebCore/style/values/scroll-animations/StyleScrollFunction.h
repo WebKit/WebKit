@@ -40,7 +40,7 @@ struct ScrollFunctionParameters {
     Scroller scroller;
     ScrollAxis axis;
 
-    bool NODELETE operator==(const ScrollFunctionParameters&) const = default;
+    bool LEGACY_NODELETE operator==(const ScrollFunctionParameters&) const = default;
 };
 using ScrollFunction = FunctionNotation<CSSValueID::Scroll, ScrollFunctionParameters>;
 

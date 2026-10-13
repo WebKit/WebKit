@@ -42,11 +42,11 @@ public:
 
     virtual ~CSSImportRule();
 
-    WEBCORE_EXPORT String NODELETE href() const;
+    WEBCORE_EXPORT String LEGACY_NODELETE href() const;
     WEBCORE_EXPORT MediaList& media() const;
     WEBCORE_EXPORT CSSStyleSheet* styleSheet() const;
     String layerName() const;
-    String NODELETE supportsText() const;
+    String LEGACY_NODELETE supportsText() const;
 
 private:
     friend class MediaList;
@@ -56,11 +56,11 @@ private:
     StyleRuleType styleRuleType() const final { return StyleRuleType::Import; }
     String cssText() const final;
     String cssText(const CSS::SerializationContext&) const final;
-    void NODELETE reattach(StyleRuleBase&) final;
+    void LEGACY_NODELETE reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&) final;
 
     String cssTextInternal(const String& urlString, const CSS::SerializationContext&) const;
-    const MQ::MediaQueryList& NODELETE mediaQueries() const;
+    const MQ::MediaQueryList& LEGACY_NODELETE mediaQueries() const;
     void setMediaQueries(MQ::MediaQueryList&&);
 
     const Ref<StyleRuleImport> m_importRule;

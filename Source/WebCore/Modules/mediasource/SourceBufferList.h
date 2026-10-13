@@ -73,7 +73,7 @@ public:
 
     // EventTarget interface
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::SourceBufferList; }
-    ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
+    ScriptExecutionContext* LEGACY_NODELETE scriptExecutionContext() const final;
 
 private:
     explicit SourceBufferList(ScriptExecutionContext*);
@@ -86,7 +86,7 @@ private:
     Vector<Ref<SourceBuffer>> m_list;
 };
 
-WebCoreOpaqueRoot NODELETE root(SourceBufferList*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(SourceBufferList*);
 
 } // namespace WebCore
 

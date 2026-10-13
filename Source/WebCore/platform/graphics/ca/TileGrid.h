@@ -92,7 +92,7 @@ public:
 
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const;
 
-    IntRect NODELETE tileCoverageRect() const;
+    IntRect LEGACY_NODELETE tileCoverageRect() const;
     IntRect extent() const;
     
     IntSize tileSize() const { return m_tileSize; }
@@ -145,10 +145,10 @@ private:
 
     void scheduleCohortRemoval();
     void cohortRemovalTimerFired();
-    TileCohort NODELETE nextTileCohort() const;
+    TileCohort LEGACY_NODELETE nextTileCohort() const;
     void startedNewCohort(TileCohort);
-    TileCohort NODELETE newestTileCohort() const;
-    TileCohort NODELETE oldestTileCohort() const;
+    TileCohort LEGACY_NODELETE newestTileCohort() const;
+    TileCohort LEGACY_NODELETE oldestTileCohort() const;
 
     void removeTiles(const Vector<TileIndex>& toRemove);
 

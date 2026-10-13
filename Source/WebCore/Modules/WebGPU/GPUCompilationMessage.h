@@ -41,12 +41,12 @@ public:
         return adoptRef(*new GPUCompilationMessage(backing));
     }
 
-    const String& NODELETE message() const LIFETIME_BOUND;
-    GPUCompilationMessageType NODELETE type() const;
-    uint64_t NODELETE lineNum() const;
-    uint64_t NODELETE linePos() const;
-    uint64_t NODELETE offset() const;
-    uint64_t NODELETE length() const;
+    const String& LEGACY_NODELETE message() const LIFETIME_BOUND;
+    GPUCompilationMessageType LEGACY_NODELETE type() const;
+    uint64_t LEGACY_NODELETE lineNum() const;
+    uint64_t LEGACY_NODELETE linePos() const;
+    uint64_t LEGACY_NODELETE offset() const;
+    uint64_t LEGACY_NODELETE length() const;
 
     WebGPU::CompilationMessage& backing() LIFETIME_BOUND { return m_backing; }
     const WebGPU::CompilationMessage& backing() const LIFETIME_BOUND { return m_backing; }

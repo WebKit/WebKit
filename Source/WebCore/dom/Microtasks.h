@@ -49,7 +49,7 @@ public:
         return currentRunnability() == JSC::QueuedTask::Result::Executed;
     }
 
-    JSC::QueuedTask::Result NODELETE currentRunnability() const;
+    JSC::QueuedTask::Result LEGACY_NODELETE currentRunnability() const;
 
 private:
     WeakPtr<EventLoopTaskGroup> m_group;

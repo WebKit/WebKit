@@ -247,7 +247,7 @@ using WebCore::PlaybackSessionInterfaceMac;
         model->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-static AVTouchBarMediaSelectionOptionType NODELETE toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::LegibleType type)
+static AVTouchBarMediaSelectionOptionType LEGACY_NODELETE toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::LegibleType type)
 {
     switch (type) {
     case MediaSelectionOption::LegibleType::LegibleOn:

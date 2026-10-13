@@ -55,11 +55,11 @@ public:
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
     ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
-    static std::optional<NamedCurve> NODELETE namedCurveFromString(const String&);
+    static std::optional<NamedCurve> LEGACY_NODELETE namedCurveFromString(const String&);
     NamedCurve namedCurve() const { return m_curve; }
     String namedCurveString() const;
 
-    static bool NODELETE isValidOKPAlgorithm(CryptoAlgorithmIdentifier);
+    static bool LEGACY_NODELETE isValidOKPAlgorithm(CryptoAlgorithmIdentifier);
 
     size_t keySizeInBits() const { return platformKey().size() * 8; }
     size_t keySizeInBytes() const { return platformKey().size(); }
@@ -75,7 +75,7 @@ private:
     String generateJwkD() const;
     String generateJwkX() const;
 
-    static bool NODELETE supportsNamedCurve();
+    static bool LEGACY_NODELETE supportsNamedCurve();
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
     static bool platformCheckPairedKeys(CryptoAlgorithmIdentifier, NamedCurve, const Vector<uint8_t>&, const Vector<uint8_t>&);
     Vector<uint8_t> platformExportRaw() const;

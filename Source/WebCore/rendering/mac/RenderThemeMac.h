@@ -75,8 +75,8 @@ public:
 
     void adjustSliderThumbSize(Style::ComputedStyle&, const Element*) const final;
 
-    IntSize NODELETE sliderTickSize() const final;
-    int NODELETE sliderTickOffsetFromTrackCenter() const final;
+    IntSize LEGACY_NODELETE sliderTickSize() const final;
+    int LEGACY_NODELETE sliderTickOffsetFromTrackCenter() const final;
 
     Style::PaddingBox platformPopupInternalPaddingBox(const Style::ComputedStyle&) const final;
     PopupMenuStyle::Size popupMenuSize(const Style::ComputedStyle&, IntRect&) const final;
@@ -86,12 +86,12 @@ public:
     Style::PreferredSizePair controlSize(StyleAppearance, const FontCascade&, const Style::PreferredSizePair&, float zoomFactor) const final;
     Style::MinimumSizePair minimumControlSize(StyleAppearance, const FontCascade&, const Style::MinimumSizePair&, float zoomFactor) const final;
     Style::LineWidthBox controlBorder(StyleAppearance, const FontCascade&, const Style::LineWidthBox&, float zoomFactor, const Element*) const final;
-    bool NODELETE controlRequiresPreWhiteSpace(StyleAppearance) const final;
+    bool LEGACY_NODELETE controlRequiresPreWhiteSpace(StyleAppearance) const final;
 
     bool popsMenuByArrowKeys() const final { return true; }
 
     FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const final;
-    bool NODELETE supportsMeter(StyleAppearance) const final;
+    bool LEGACY_NODELETE supportsMeter(StyleAppearance) const final;
 
     void createColorWellSwatchSubtree(HTMLElement&) final;
     void setColorWellSwatchBackground(HTMLElement&, Color) final;
@@ -99,7 +99,7 @@ public:
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
 
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
-    bool NODELETE usesTestModeFocusRingColor() const;
+    bool LEGACY_NODELETE usesTestModeFocusRingColor() const;
 
     WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
     WEBCORE_EXPORT Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
@@ -107,9 +107,9 @@ public:
     bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
 
     bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const final;
-    bool NODELETE canCreateControlPartForRenderer(const RenderElement&) const final;
-    bool NODELETE canCreateControlPartForBorderOnly(const RenderElement&) const final;
-    bool NODELETE canCreateControlPartForDecorations(const RenderElement&) const final;
+    bool LEGACY_NODELETE canCreateControlPartForRenderer(const RenderElement&) const final;
+    bool LEGACY_NODELETE canCreateControlPartForBorderOnly(const RenderElement&) const final;
+    bool LEGACY_NODELETE canCreateControlPartForDecorations(const RenderElement&) const final;
 
     int baselinePosition(const RenderBox&) const final;
 
@@ -146,7 +146,7 @@ public:
 
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
 
-    bool NODELETE searchFieldShouldAppearAsTextField(const Style::ComputedStyle&, const Settings&) const final;
+    bool LEGACY_NODELETE searchFieldShouldAppearAsTextField(const Style::ComputedStyle&, const Settings&) const final;
 
 #if ENABLE(SERVICE_CONTROLS)
     IntSize imageControlsButtonSize() const final;
@@ -156,10 +156,10 @@ public:
 private:
     RenderThemeMac();
 
-    std::span<const IntSize, 4> NODELETE menuListSizes() const;
-    std::span<const IntSize, 4> NODELETE searchFieldSizes() const;
-    std::span<const IntSize, 4> NODELETE cancelButtonSizes() const;
-    std::span<const IntSize, 4> NODELETE resultsButtonSizes() const;
+    std::span<const IntSize, 4> LEGACY_NODELETE menuListSizes() const;
+    std::span<const IntSize, 4> LEGACY_NODELETE searchFieldSizes() const;
+    std::span<const IntSize, 4> LEGACY_NODELETE cancelButtonSizes() const;
+    std::span<const IntSize, 4> LEGACY_NODELETE resultsButtonSizes() const;
     void setSearchFieldSize(Style::ComputedStyle&) const;
 
 

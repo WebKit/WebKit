@@ -42,7 +42,7 @@ public:
         bool conditionMatches { true };
     };
 
-    static Ref<StyleRuleImport> NODELETE create(const String& href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
+    static Ref<StyleRuleImport> LEGACY_NODELETE create(const String& href, MQ::MediaQueryList&&, std::optional<CascadeLayerName>&&, SupportsCondition&&);
     ~StyleRuleImport();
 
     Ref<StyleRuleImport> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
@@ -55,7 +55,7 @@ public:
     String href() const { return m_strHref; }
     StyleSheetContents* styleSheet() const { return m_styleSheet.get(); }
 
-    bool NODELETE isLoading() const;
+    bool LEGACY_NODELETE isLoading() const;
     
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTF::move(queries); }

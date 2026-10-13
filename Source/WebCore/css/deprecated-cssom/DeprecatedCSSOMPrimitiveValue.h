@@ -99,7 +99,7 @@ public:
     ~DeprecatedCSSOMPrimitiveValue();
 
     String cssText() const override;
-    unsigned short NODELETE cssValueType() const override;
+    unsigned short LEGACY_NODELETE cssValueType() const override;
     bool isPrimitiveValue() const override { return true; }
 
     WEBCORE_EXPORT unsigned short primitiveType() const;

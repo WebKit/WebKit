@@ -68,10 +68,10 @@ private:
     LayoutUnit logicalAscentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
     LayoutUnit ascentForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType, ItemPosition) const;
     LayoutUnit descentForGridItem(const RenderBox&, LayoutUnit, Style::GridTrackSizingDirection alignmentContextType, ExtraMarginsFromSubgrids) const;
-    bool NODELETE isDescentBaselineForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
-    bool NODELETE isVerticalAlignmentContext(Style::GridTrackSizingDirection alignmentContextType) const;
-    bool NODELETE isOrthogonalGridItemForBaseline(const RenderBox&) const;
-    bool NODELETE isParallelToAlignmentAxisForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool LEGACY_NODELETE isDescentBaselineForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
+    bool LEGACY_NODELETE isVerticalAlignmentContext(Style::GridTrackSizingDirection alignmentContextType) const;
+    bool LEGACY_NODELETE isOrthogonalGridItemForBaseline(const RenderBox&) const;
+    bool LEGACY_NODELETE isParallelToAlignmentAxisForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
     // Per baseline alignment-context: the baseline-sharing groups plus this context's max ascent per group,
     // indexed by the group index returned from BaselineAlignmentState::sharedGroupIndex.

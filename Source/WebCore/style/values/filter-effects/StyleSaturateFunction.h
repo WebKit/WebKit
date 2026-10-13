@@ -45,7 +45,7 @@ struct Saturate {
 
     Parameter value;
 
-    static Saturate NODELETE passthroughForInterpolation();
+    static Saturate LEGACY_NODELETE passthroughForInterpolation();
 
     constexpr bool requiresRepaintForCurrentColorChange() const { return false; }
     constexpr bool affectsOpacity() const { return false; }

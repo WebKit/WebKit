@@ -39,7 +39,7 @@ enum class PositionTryOrder : uint8_t {
     MostInlineSize
 };
 
-LogicalBoxAxis NODELETE selfAxisForPositionTryOrder(PositionTryOrder, WritingMode selfWritingMode, WritingMode containingBlockWritingMode);
+LogicalBoxAxis LEGACY_NODELETE selfAxisForPositionTryOrder(PositionTryOrder, WritingMode selfWritingMode, WritingMode containingBlockWritingMode);
 
 WTF::TextStream& operator<<(WTF::TextStream&, PositionTryOrder);
 

@@ -1225,12 +1225,12 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     }
 }
 
-static bool NODELETE rendererIsFlexboxItem(RenderObject& renderer)
+static bool LEGACY_NODELETE rendererIsFlexboxItem(RenderObject& renderer)
 {
     return is<RenderFlexibleBox>(renderer.parent()) && !renderer.isOutOfFlowPositioned() && !renderer.isExcludedFromNormalLayout();
 }
 
-static bool NODELETE rendererIsGridItem(RenderObject& renderer)
+static bool LEGACY_NODELETE rendererIsGridItem(RenderObject& renderer)
 {
     if (is<RenderGrid>(renderer.parent()))
         return !renderer.isOutOfFlowPositioned() && !renderer.isExcludedFromNormalLayout();

@@ -113,7 +113,7 @@ class SampleMap {
 public:
     SampleMap() = default;
 
-    WEBCORE_EXPORT bool NODELETE empty() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE empty() const;
     size_t size() const { return m_decodeOrder.m_samples.size(); }
     WEBCORE_EXPORT void clear();
     WEBCORE_EXPORT void addSample(Ref<MediaSample>&&);

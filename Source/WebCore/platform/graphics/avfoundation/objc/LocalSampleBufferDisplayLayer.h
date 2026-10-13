@@ -63,7 +63,7 @@ public:
     CGRect sampleLayerBoundsForTesting() const;
     void setVideoFrameRotationForTesting(WebCore::VideoFrameRotation);
 
-    PlatformLayer* NODELETE displayLayer();
+    PlatformLayer* LEGACY_NODELETE displayLayer();
 
     void updateSampleLayerBoundsAndPosition(std::optional<CGRect>);
 

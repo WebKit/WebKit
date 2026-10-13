@@ -58,9 +58,9 @@ public:
     AudioBufferList* list() const LIFETIME_BOUND { return m_list.get(); }
     operator AudioBufferList&() const { return *m_list; }
 
-    uint32_t NODELETE bufferCount() const;
+    uint32_t LEGACY_NODELETE bufferCount() const;
     uint32_t channelCount() const { return m_channelCount; }
-    ::AudioBuffer* NODELETE buffer(uint32_t index) const;
+    ::AudioBuffer* LEGACY_NODELETE buffer(uint32_t index) const;
 
     template <typename T = uint8_t>
     std::span<T> bufferAsSpan(uint32_t index) const
@@ -72,7 +72,7 @@ public:
         return { };
     }
 
-    IteratorRange<::AudioBuffer*> NODELETE buffers() const;
+    IteratorRange<::AudioBuffer*> LEGACY_NODELETE buffers() const;
 
     WEBCORE_EXPORT static bool isSupportedDescription(const CAAudioStreamDescription&, size_t sampleCount);
 

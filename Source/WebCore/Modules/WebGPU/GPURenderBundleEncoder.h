@@ -54,7 +54,7 @@ public:
         return adoptRef(*new GPURenderBundleEncoder(WTF::move(backing), device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     void setPipeline(const GPURenderPipeline&);

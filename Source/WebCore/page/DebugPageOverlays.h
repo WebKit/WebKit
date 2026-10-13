@@ -40,7 +40,7 @@ class RegionOverlay;
 
 class DebugPageOverlays {
 public:
-    static DebugPageOverlays& NODELETE singleton();
+    static DebugPageOverlays& LEGACY_NODELETE singleton();
 
     enum class RegionType : uint8_t {
         WheelEventHandlers,
@@ -67,15 +67,15 @@ private:
 
     void updateRegionIfNecessary(Page&, RegionType);
 
-    void NODELETE regionChanged(LocalFrame&, RegionType);
+    void LEGACY_NODELETE regionChanged(LocalFrame&, RegionType);
 
-    bool NODELETE hasOverlaysForPage(Page&) const;
+    bool LEGACY_NODELETE hasOverlaysForPage(Page&) const;
     
     void updateOverlayRegionVisibility(Page&, OptionSet<DebugOverlayRegions>);
 
     bool shouldPaintOverlayIntoLayer(Page&, RegionType) const;
 
-    RegionOverlay* NODELETE regionOverlayForPage(Page&, RegionType) const;
+    RegionOverlay* LEGACY_NODELETE regionOverlayForPage(Page&, RegionType) const;
     Ref<RegionOverlay> ensureRegionOverlayForPage(Page&, RegionType);
 
     WeakHashMap<Page, Vector<RefPtr<RegionOverlay>>> m_pageRegionOverlays;

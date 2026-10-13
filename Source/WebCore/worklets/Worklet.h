@@ -52,7 +52,7 @@ public:
     virtual void addModule(const String& moduleURL, WorkletOptions&&, DOMPromiseDeferred<void>&&);
 
     void finishPendingTasks(WorkletPendingTasks&);
-    Document* NODELETE document();
+    Document* LEGACY_NODELETE document();
 
     const Vector<Ref<WorkletGlobalScopeProxy>>& proxies() const LIFETIME_BOUND { return m_proxies; }
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }

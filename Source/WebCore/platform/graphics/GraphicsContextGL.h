@@ -1235,7 +1235,7 @@ public:
 
     void setClient(Client* client) { m_client = client; }
 
-    virtual std::optional<size_t> NODELETE estimatedMemoryCost() = 0;
+    virtual std::optional<size_t> LEGACY_NODELETE estimatedMemoryCost() = 0;
 
     // ========== WebGL 1 entry points.
     virtual void activeTexture(GCGLenum texture) = 0;
@@ -1698,7 +1698,7 @@ public:
 
     // Computes the bytes per image element for a format and type.
     // Returns zero if format or type is an invalid enum.
-    WEBCORE_EXPORT static unsigned NODELETE computeBytesPerGroup(GCGLenum format, GCGLenum type);
+    WEBCORE_EXPORT static unsigned LEGACY_NODELETE computeBytesPerGroup(GCGLenum format, GCGLenum type);
 
 
     struct PixelRectangleSizes {
@@ -1709,7 +1709,7 @@ public:
     };
     // Returns nullopt if width/height is negative or overflow happens or if format and type are invalid.
     // Also validates total bytes (imageBytes + initialSkipBytes)
-    static std::optional<PixelRectangleSizes> NODELETE computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
+    static std::optional<PixelRectangleSizes> LEGACY_NODELETE computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
 
     // Extracts the contents of the given PixelBuffer into the passed Vector,
     // packing the pixel data according to the given format and type,

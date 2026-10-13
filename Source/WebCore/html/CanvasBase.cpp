@@ -116,7 +116,7 @@ RefPtr<NativeImage> CanvasBase::copyNativeImage() const
     return ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
 }
 
-static inline size_t NODELETE maxCanvasArea()
+static inline size_t LEGACY_NODELETE maxCanvasArea()
 {
     if (maxCanvasAreaForTesting)
         return *maxCanvasAreaForTesting;

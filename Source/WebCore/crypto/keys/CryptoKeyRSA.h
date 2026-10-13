@@ -73,7 +73,7 @@ public:
     static RefPtr<CryptoKeyRSA> create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyRSAComponents&, bool extractable, CryptoKeyUsageBitmap);
     virtual ~CryptoKeyRSA() = default;
 
-    bool NODELETE isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
+    bool LEGACY_NODELETE isRestrictedToHash(CryptoAlgorithmIdentifier&) const;
 
     size_t keySizeInBits() const;
 

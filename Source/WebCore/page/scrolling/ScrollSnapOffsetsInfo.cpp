@@ -45,7 +45,7 @@
 namespace WebCore {
 
 template <typename UnitType, typename RectType>
-static std::pair<UnitType, UnitType> NODELETE rangeForAxis(RectType rect, ScrollEventAxis axis)
+static std::pair<UnitType, UnitType> LEGACY_NODELETE rangeForAxis(RectType rect, ScrollEventAxis axis)
 {
     return axis == ScrollEventAxis::Horizontal ? std::make_pair(rect.x(), rect.maxX()) : std::make_pair(rect.y(), rect.maxY());
 }
@@ -118,13 +118,13 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
 }
 
 template <typename UnitType, typename PointType>
-static UnitType NODELETE componentForAxis(PointType point, ScrollEventAxis axis)
+static UnitType LEGACY_NODELETE componentForAxis(PointType point, ScrollEventAxis axis)
 {
     return axis == ScrollEventAxis::Horizontal ? point.x() : point.y();
 }
 
 template <typename InfoType, typename UnitType, typename SizeType>
-static bool NODELETE offsetHasVisibleSnapArea(const InfoType& info, const SnapOffset<UnitType>& snapOffset, const SnapOffset<UnitType>& snapOffsetOther, ScrollEventAxis axis, const SizeType& viewportSize)
+static bool LEGACY_NODELETE offsetHasVisibleSnapArea(const InfoType& info, const SnapOffset<UnitType>& snapOffset, const SnapOffset<UnitType>& snapOffsetOther, ScrollEventAxis axis, const SizeType& viewportSize)
 {
     auto otherAxis = axis == ScrollEventAxis::Horizontal ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
     auto viewportLengthInOtherAxis = axis == ScrollEventAxis::Horizontal ? viewportSize.height() : viewportSize.width();
@@ -296,14 +296,14 @@ static LayoutRect computeScrollSnapPortRect(const Style::ComputedStyle& style, c
     return result;
 }
 
-static LayoutRect NODELETE computeScrollSnapAreaRect(const Style::ComputedStyle& style, const LayoutRect& rect)
+static LayoutRect LEGACY_NODELETE computeScrollSnapAreaRect(const Style::ComputedStyle& style, const LayoutRect& rect)
 {
     auto result = rect;
     result.expand(Style::extentForRect(style.scrollMarginBox(), rect, style.usedZoomForLength()));
     return result;
 }
 
-static LayoutUnit NODELETE computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
+static LayoutUnit LEGACY_NODELETE computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
 {
     switch (alignment) {
     case ScrollSnapAxisAlignType::Start:
@@ -552,7 +552,7 @@ static float convertOffsetUnit(LayoutUnit input, float deviceScaleFactor)
     return roundToDevicePixel(input, deviceScaleFactor, false);
 }
 
-static LayoutUnit NODELETE convertOffsetUnit(float input, float /* scaleFactor */)
+static LayoutUnit LEGACY_NODELETE convertOffsetUnit(float input, float /* scaleFactor */)
 {
     return LayoutUnit(input);
 }

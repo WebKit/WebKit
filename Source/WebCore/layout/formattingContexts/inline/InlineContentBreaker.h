@@ -100,7 +100,7 @@ public:
         void append(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         void appendTextContent(const InlineTextItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
-        void NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit);
+        void LEGACY_NODELETE setTrailingSoftHyphenWidth(InlineLayoutUnit);
         void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void setHasShapedContent() { m_hasShapedContent = true; }
         bool hasShapedContent() const { return m_hasShapedContent; }
@@ -131,7 +131,7 @@ public:
 
     private:
         void appendToRunList(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
-        void NODELETE resetTrailingTrimmableContent();
+        void LEGACY_NODELETE resetTrailingTrimmableContent();
 
         RunList m_runs;
         InlineLayoutUnit m_logicalWidth { 0.f };

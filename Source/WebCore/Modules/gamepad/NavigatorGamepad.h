@@ -64,8 +64,8 @@ public:
 
     Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
 
-    WEBCORE_EXPORT static void NODELETE setGamepadsRecentlyAccessedThreshold(Seconds);
-    static Seconds NODELETE gamepadsRecentlyAccessedThreshold();
+    WEBCORE_EXPORT static void LEGACY_NODELETE setGamepadsRecentlyAccessedThreshold(Seconds);
+    static Seconds LEGACY_NODELETE gamepadsRecentlyAccessedThreshold();
 
 private:
     static ASCIILiteral supplementName() { return "NavigatorGamepad"_s; }

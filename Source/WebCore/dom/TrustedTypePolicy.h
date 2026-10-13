@@ -68,6 +68,6 @@ private:
     const TrustedTypePolicyOptions m_options;
 };
 
-WebCoreOpaqueRoot NODELETE root(TrustedTypePolicy*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(TrustedTypePolicy*);
 
 } // namespace WebCore

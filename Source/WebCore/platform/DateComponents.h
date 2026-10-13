@@ -115,13 +115,13 @@ public:
     static std::optional<DateComponents> fromMonthsSinceEpoch(double months);
 
     // Returns the number of milliseconds from 1970-01-01 00:00:00 UTC.
-    // For a DateComponents initialized with NODELETE parseDateTimeLocal(),
+    // For a DateComponents initialized with LEGACY_NODELETE parseDateTimeLocal(),
     // millisecondsSinceEpoch() returns a value for UTC timezone.
     double millisecondsSinceEpoch() const;
 
     // Returns the number of months from 1970-01.
     // Do not call this for types other than Month.
-    double NODELETE monthsSinceEpoch() const;
+    double LEGACY_NODELETE monthsSinceEpoch() const;
 
     static inline double invalidMilliseconds() { return std::numeric_limits<double>::quiet_NaN(); }
 
@@ -147,12 +147,12 @@ public:
     static constexpr inline int maximumYear() { return 275760; }
 
 private:
-    template<typename CharacterType> bool NODELETE parseYear(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool LEGACY_NODELETE parseYear(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool parseTimeZone(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool NODELETE parseMonth(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool NODELETE parseDate(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool NODELETE parseWeek(StringParsingBuffer<CharacterType>&);
-    template<typename CharacterType> bool NODELETE parseTime(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool LEGACY_NODELETE parseMonth(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool LEGACY_NODELETE parseDate(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool LEGACY_NODELETE parseWeek(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool LEGACY_NODELETE parseTime(StringParsingBuffer<CharacterType>&);
     template<typename CharacterType> bool parseDateTimeLocal(StringParsingBuffer<CharacterType>&);
 
     // The following setMillisecondsSinceEpochFor*() functions take
@@ -171,13 +171,13 @@ private:
 
     // Returns the maximum week number in this DateComponents's year.
     // The result is either of 52 and 53.
-    int NODELETE maxWeekNumberInYear() const;
+    int LEGACY_NODELETE maxWeekNumberInYear() const;
 
-    bool NODELETE addDay(int);
-    bool NODELETE addMinute(int);
+    bool LEGACY_NODELETE addDay(int);
+    bool LEGACY_NODELETE addMinute(int);
 
     // Helper for millisecondsSinceEpoch().
-    double NODELETE millisecondsSinceEpochForTime() const;
+    double LEGACY_NODELETE millisecondsSinceEpochForTime() const;
 
     // Helper for toString().
     String toStringForTime(SecondFormat) const;

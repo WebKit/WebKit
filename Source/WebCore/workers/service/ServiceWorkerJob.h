@@ -65,7 +65,7 @@ public:
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
 
     const ServiceWorkerJobData& data() const LIFETIME_BOUND { return m_jobData; }
-    Ref<DeferredPromise> NODELETE takePromise();
+    Ref<DeferredPromise> LEGACY_NODELETE takePromise();
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
@@ -75,7 +75,7 @@ public:
 
     WEBCORE_EXPORT static ResourceError validateServiceWorkerResponse(const ServiceWorkerJobData&, const ResourceResponse&);
 
-    bool NODELETE isRegistering() const;
+    bool LEGACY_NODELETE isRegistering() const;
 
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);

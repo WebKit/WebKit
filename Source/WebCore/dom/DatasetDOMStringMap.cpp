@@ -72,7 +72,7 @@ static String convertAttributeNameToPropertyName(const String& name)
     return stringBuilder.toString();
 }
 
-static bool NODELETE isValidPropertyName(const String& name)
+static bool LEGACY_NODELETE isValidPropertyName(const String& name)
 {
     unsigned length = name.length();
     for (unsigned i = 0; i < length; ++i) {

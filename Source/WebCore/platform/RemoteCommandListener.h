@@ -52,13 +52,13 @@ public:
 
     using RemoteCommandsSet = PlatformMediaSessionRemoteCommandsSet;
     void setSupportedCommands(const RemoteCommandsSet&);
-    const RemoteCommandsSet& NODELETE supportedCommands() const;
+    const RemoteCommandsSet& LEGACY_NODELETE supportedCommands() const;
 
     virtual void updateSupportedCommands();
     void scheduleSupportedCommandsUpdate();
 
     void setSupportsSeeking(bool);
-    bool NODELETE supportsSeeking() const;
+    bool LEGACY_NODELETE supportsSeeking() const;
 
     RemoteCommandListenerClient& client() const { return m_client; }
 

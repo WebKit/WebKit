@@ -93,7 +93,7 @@ private:
     mutable std::optional<int> m_value;
 };
 
-bool NODELETE isHTMLListElement(const Node&);
+bool LEGACY_NODELETE isHTMLListElement(const Node&);
 
 inline int RenderListItem::value() const
 {

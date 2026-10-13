@@ -68,7 +68,7 @@ public:
 
 #if PLATFORM(MAC)
     // DataDetectorHighlightClient.
-    void NODELETE ref() const final;
+    void LEGACY_NODELETE ref() const final;
     void deref() const final;
 #else
     void ref() const;
@@ -76,7 +76,7 @@ public:
 #endif
 
 #if ENABLE(DATA_DETECTION)
-    WEBCORE_EXPORT bool NODELETE hasActiveDataDetectorHighlightForTesting() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasActiveDataDetectorHighlightForTesting() const;
     void textRecognitionResultsChanged(HTMLElement&);
 #endif
 
@@ -88,7 +88,7 @@ private:
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent& event) final { return platformHandleMouseEvent(event); }
 
-    bool NODELETE shouldUsePageOverlayToPaintSelection(const RenderElement&);
+    bool LEGACY_NODELETE shouldUsePageOverlayToPaintSelection(const RenderElement&);
 
     PageOverlay& installPageOverlayIfNeeded();
     void uninstallPageOverlayIfNeeded();

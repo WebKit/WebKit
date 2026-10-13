@@ -238,7 +238,7 @@ void SMILTimeContainer::updateDocumentOrderIndexes()
 
 struct PriorityCompare {
     PriorityCompare(SMILTime elapsed) : m_elapsed(elapsed) {}
-    bool NODELETE operator()(auto& a, auto& b)
+    bool LEGACY_NODELETE operator()(auto& a, auto& b)
     {
         // FIXME: This should also consider possible timing relations between the elements.
         SMILTime aBegin = a->intervalBegin();

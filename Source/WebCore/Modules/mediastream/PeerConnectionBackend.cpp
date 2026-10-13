@@ -352,7 +352,7 @@ static void setAssociatedRemoteStreams(RTCRtpReceiver& receiver, const PeerConne
     receiver.setAssociatedStreams(WTF::map(state.receiverStreams, [](auto& stream) { return WeakPtr { stream.get() }; }));
 }
 
-static bool NODELETE isDirectionReceiving(RTCRtpTransceiverDirection direction)
+static bool LEGACY_NODELETE isDirectionReceiving(RTCRtpTransceiverDirection direction)
 {
     return direction == RTCRtpTransceiverDirection::Sendrecv || direction == RTCRtpTransceiverDirection::Recvonly;
 }

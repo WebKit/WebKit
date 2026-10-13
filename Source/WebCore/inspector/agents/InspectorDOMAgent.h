@@ -104,11 +104,11 @@ public:
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
-    static Node* NODELETE innerFirstChild(Node*);
-    static Node* NODELETE innerNextSibling(Node*);
-    static Node* NODELETE innerPreviousSibling(Node*);
+    static Node* LEGACY_NODELETE innerFirstChild(Node*);
+    static Node* LEGACY_NODELETE innerNextSibling(Node*);
+    static Node* LEGACY_NODELETE innerPreviousSibling(Node*);
     static unsigned innerChildNodeCount(Node*);
-    static Node* NODELETE innerParentNode(Node*);
+    static Node* LEGACY_NODELETE innerParentNode(Node*);
 
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::JSGlobalObject&, Node*);
@@ -190,7 +190,7 @@ public:
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
     void willDestroyDOMNode(Node&);
-    void NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void LEGACY_NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);

@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT ~ImageData();
 
-    static PredefinedColorSpace NODELETE computeColorSpace(std::optional<ImageDataSettings>, PredefinedColorSpace defaultColorSpace = PredefinedColorSpace::SRGB);
+    static PredefinedColorSpace LEGACY_NODELETE computeColorSpace(std::optional<ImageDataSettings>, PredefinedColorSpace defaultColorSpace = PredefinedColorSpace::SRGB);
 
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
 

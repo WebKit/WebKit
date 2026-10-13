@@ -47,7 +47,7 @@
 
 using namespace WebCore;
 
-static bool NODELETE scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashSet>& pairs)
+static bool LEGACY_NODELETE scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashSet>& pairs)
 {
     if (!pairs)
         return false;

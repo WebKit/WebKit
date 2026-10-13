@@ -86,7 +86,7 @@ private:
 
     ReducedResolutionSeconds liveCurrentTime() const;
     void cacheCurrentTime(ReducedResolutionSeconds);
-    void NODELETE clearCachedCurrentTime();
+    void LEGACY_NODELETE clearCachedCurrentTime();
     void processPendingAnimations();
     bool isPendingTimelineAttachment(const WebAnimation&) const;
 

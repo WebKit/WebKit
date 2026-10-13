@@ -57,7 +57,7 @@ public:
         return adoptRef(*new GPUQueue(WTF::move(backing), device));
     }
 
-    String NODELETE label() const;
+    String LEGACY_NODELETE label() const;
     void setLabel(String&&);
 
     void submit(Vector<Ref<GPUCommandBuffer>>&&);

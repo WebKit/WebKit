@@ -50,7 +50,7 @@ public:
         return m_gridItems | std::views::transform([](auto& item) -> RenderBox& { return item.gridItem.get(); });
     }
 
-    bool NODELETE shouldSkipChild(const RenderObject&) const;
+    bool LEGACY_NODELETE shouldSkipChild(const RenderObject&) const;
 
     // shrink(0) rather than clear(), which would free the buffer and make every relayout reallocate it.
     void clear()

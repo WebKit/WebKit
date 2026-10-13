@@ -401,7 +401,7 @@ PermissionsPolicy::PolicyDirective PermissionsPolicy::processPermissionsPolicyAt
 }
 
 // https://w3c.github.io/webappsec-permissions-policy/#algo-get-feature-value-for-origin
-static bool NODELETE featureValueForOrigin(PermissionsPolicy::Feature feature, const PermissionsPolicy& documentPermissionsPolicy, const SecurityOriginData&)
+static bool LEGACY_NODELETE featureValueForOrigin(PermissionsPolicy::Feature feature, const PermissionsPolicy& documentPermissionsPolicy, const SecurityOriginData&)
 {
     // Declared policy is not implemented yet, so origin is unused.
     return documentPermissionsPolicy.inheritedPolicyValueForFeature(feature);

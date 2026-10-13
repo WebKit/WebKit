@@ -410,7 +410,7 @@ void normalizeCharacters(const char16_t* characters, unsigned length, Vector<cha
     ASSERT(U_SUCCESS(status));
 }
 
-char16_t NODELETE foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
+char16_t LEGACY_NODELETE foldQuoteMarkAndReplaceNoBreakSpace(char16_t c)
 {
     switch (c) {
     case hebrewPunctuationGershayim:
@@ -479,7 +479,7 @@ bool isSeparator(char32_t character)
     return isNonLatin1Separator(character);
 }
 
-bool NODELETE containsKanaLetters(const String& pattern)
+bool LEGACY_NODELETE containsKanaLetters(const String& pattern)
 {
     if (pattern.is8Bit())
         return false;
@@ -539,7 +539,7 @@ String foldQuoteMarks(const String& stringToFold)
 
 // We refer to the above technique as the "kana workaround". The next few
 // functions are helper functinos for the kana workaround.
-static bool NODELETE isKanaLetter(char16_t character)
+static bool LEGACY_NODELETE isKanaLetter(char16_t character)
 {
     // Hiragana letters.
     if (character >= 0x3041 && character <= 0x3096)
@@ -558,7 +558,7 @@ static bool NODELETE isKanaLetter(char16_t character)
     return false;
 }
 
-static bool NODELETE isSmallKanaLetter(char16_t character)
+static bool LEGACY_NODELETE isSmallKanaLetter(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -617,7 +617,7 @@ static bool NODELETE isSmallKanaLetter(char16_t character)
     return false;
 }
 
-static VoicedSoundMarkType NODELETE composedVoicedSoundMark(char16_t character)
+static VoicedSoundMarkType LEGACY_NODELETE composedVoicedSoundMark(char16_t character)
 {
     ASSERT(isKanaLetter(character));
 
@@ -684,7 +684,7 @@ static VoicedSoundMarkType NODELETE composedVoicedSoundMark(char16_t character)
     return VoicedSoundMarkType::NoVoicedSoundMark;
 }
 
-static bool NODELETE isCombiningVoicedSoundMark(char16_t character)
+static bool LEGACY_NODELETE isCombiningVoicedSoundMark(char16_t character)
 {
     switch (character) {
     case 0x3099: // COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK

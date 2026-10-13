@@ -76,17 +76,17 @@ template<> struct CSSValueConversion<ScrollMarginEdge> { ScrollMarginEdge operat
 // MARK: - Evaluation
 
 template<> struct Evaluation<ScrollMarginEdge, LayoutUnit> {
-    LayoutUnit NODELETE operator()(const ScrollMarginEdge&, LayoutUnit referenceLength, ZoomFactor);
-    LayoutUnit NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
+    LayoutUnit LEGACY_NODELETE operator()(const ScrollMarginEdge&, LayoutUnit referenceLength, ZoomFactor);
+    LayoutUnit LEGACY_NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
 };
 template<> struct Evaluation<ScrollMarginEdge, float> {
-    float NODELETE operator()(const ScrollMarginEdge&, float referenceLength, ZoomFactor);
-    float NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
+    float LEGACY_NODELETE operator()(const ScrollMarginEdge&, float referenceLength, ZoomFactor);
+    float LEGACY_NODELETE operator()(const ScrollMarginEdge&, ZoomFactor);
 };
 
 // MARK: - Extent
 
-LayoutBoxExtent NODELETE extentForRect(const ScrollMarginBox&, const LayoutRect&, ZoomFactor);
+LayoutBoxExtent LEGACY_NODELETE extentForRect(const ScrollMarginBox&, const LayoutRect&, ZoomFactor);
 
 } // namespace Style
 } // namespace WebCore

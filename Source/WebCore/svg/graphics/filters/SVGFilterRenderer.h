@@ -58,11 +58,11 @@ public:
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
 
-    static FloatSize NODELETE calculateResolvedSize(const FloatSize&, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
+    static FloatSize LEGACY_NODELETE calculateResolvedSize(const FloatSize&, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
-    WEBCORE_EXPORT static bool NODELETE isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
 private:
     SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);
     SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);

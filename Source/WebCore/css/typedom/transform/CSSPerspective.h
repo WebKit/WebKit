@@ -57,7 +57,7 @@ public:
 private:
     explicit CSSPerspective(CSSPerspectiveValue);
 
-    void NODELETE setIs2D(bool);
+    void LEGACY_NODELETE setIs2D(bool);
 
     CSSPerspectiveValue m_length;
 };

@@ -121,8 +121,8 @@ public:
     WEBCORE_EXPORT void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
 
-    WEBCORE_EXPORT static SWServerWorker* NODELETE existingWorkerForIdentifier(ServiceWorkerIdentifier);
-    static HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& NODELETE allWorkers();
+    WEBCORE_EXPORT static SWServerWorker* LEGACY_NODELETE existingWorkerForIdentifier(ServiceWorkerIdentifier);
+    static HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& LEGACY_NODELETE allWorkers();
 
     const ServiceWorkerData& data() const LIFETIME_BOUND { return m_data; }
     ServiceWorkerContextData contextData() const;
@@ -131,7 +131,7 @@ public:
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     const RegistrableDomain& topRegistrableDomain() const LIFETIME_BOUND { return m_topSite.domain(); }
     const Site& topSite() const LIFETIME_BOUND { return m_topSite; }
-    WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> NODELETE serviceWorkerPageIdentifier() const;
+    WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> LEGACY_NODELETE serviceWorkerPageIdentifier() const;
 
     bool shouldPersistToDisk() const;
 
@@ -142,14 +142,14 @@ public:
     WEBCORE_EXPORT std::optional<RouterSource> getRouterSource(const FetchOptions&, const ResourceRequest&) const;
     WEBCORE_EXPORT RouterSource defaultRouterSource() const;
 
-    WEBCORE_EXPORT SWServerRegistration* NODELETE registration() const;
+    WEBCORE_EXPORT SWServerRegistration* LEGACY_NODELETE registration() const;
 
     void setHasTimedOutAnyFetchTasks() { m_hasTimedOutAnyFetchTasks = true; }
     bool hasTimedOutAnyFetchTasks() const { return m_hasTimedOutAnyFetchTasks; }
     void didFailHeartBeatCheck();
     void updateAppInitiatedValue(LastNavigationWasAppInitiated);
 
-    WorkerThreadMode NODELETE workerThreadMode() const;
+    WorkerThreadMode LEGACY_NODELETE workerThreadMode() const;
 
     void incrementFunctionalEventCounter() { ++m_functionalEventCounter; }
     void decrementFunctionalEventCounter();

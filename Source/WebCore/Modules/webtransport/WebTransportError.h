@@ -36,8 +36,8 @@ class WebTransportError : public DOMException {
 public:
     static Ref<WebTransportError> create(WebTransportErrorOptions&&);
     static Ref<WebTransportError> create(String&&, WebTransportErrorOptions&&);
-    WebTransportErrorSource NODELETE source();
-    std::optional<uint32_t> NODELETE streamErrorCode();
+    WebTransportErrorSource LEGACY_NODELETE source();
+    std::optional<uint32_t> LEGACY_NODELETE streamErrorCode();
 private:
     WebTransportError(String&&, WebTransportErrorOptions&&);
 

@@ -191,20 +191,20 @@ static bool isSecureFieldOrContainedBySecureField(AccessibilityObject& object)
 
 #endif // PLATFORM(COCOA)
 
-static bool NODELETE rendererNeedsDeferredUpdate(const RenderObject& renderer)
+static bool LEGACY_NODELETE rendererNeedsDeferredUpdate(const RenderObject& renderer)
 {
     AX_ASSERT(!renderer.beingDestroyed());
     auto& document = renderer.document();
     return renderer.needsLayout() || document.needsStyleRecalc() || document.inRenderTreeUpdate() || (document.view() && document.view()->layoutContext().isInRenderTreeLayout());
 }
 
-static bool NODELETE nodeRendererIsValid(Node& node)
+static bool LEGACY_NODELETE nodeRendererIsValid(Node& node)
 {
     auto* renderer = node.renderer();
     return renderer && !renderer->beingDestroyed();
 }
 
-static bool NODELETE nodeAndRendererAreValid(Node* node)
+static bool LEGACY_NODELETE nodeAndRendererAreValid(Node* node)
 {
     return node ? nodeRendererIsValid(*node) : false;
 }
@@ -3085,7 +3085,7 @@ void AXObjectCache::handleRemoteFrameGainedFocus(RemoteFrame& remoteFrame, Eleme
     recomputeIsIgnored(oldFocusedElement);
 }
 
-static bool NODELETE isContentVisibilityHidden(const Style::ComputedStyle& style)
+static bool LEGACY_NODELETE isContentVisibilityHidden(const Style::ComputedStyle& style)
 {
     return style.usedContentVisibility() == ContentVisibility::Hidden;
 }
@@ -4777,7 +4777,7 @@ void AXObjectCache::updateCachedTextOfAssociatedObjects(AccessibilityObject& obj
 #endif
 }
 
-static bool NODELETE hasAnyARIALabelling(Element& element)
+static bool LEGACY_NODELETE hasAnyARIALabelling(Element& element)
 {
     return element.hasAttributeWithoutSynchronization(aria_labelAttr)
         || element.hasAttributeWithoutSynchronization(aria_labelledbyAttr)
@@ -5703,7 +5703,7 @@ char32_t AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
     return characterForCharacterOffset(characterOffset);
 }
 
-static bool NODELETE characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
+static bool LEGACY_NODELETE characterOffsetNodeIsBR(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull())
         return false;
@@ -7328,14 +7328,14 @@ AXRelation AXObjectCache::attributeToRelationType(const QualifiedName& attribute
     return AXRelation::None;
 }
 
-static bool NODELETE validRelation(void* origin, void* target, AXRelation relation)
+static bool LEGACY_NODELETE validRelation(void* origin, void* target, AXRelation relation)
 {
     if (!origin || !target || relation == AXRelation::None)
         return false;
     return origin != target || relation == AXRelation::LabeledBy;
 }
 
-static bool NODELETE validRelation(Element& origin, Element& target, AXRelation relation)
+static bool LEGACY_NODELETE validRelation(Element& origin, Element& target, AXRelation relation)
 {
     if (relation == AXRelation::None)
         return false;
@@ -7361,7 +7361,7 @@ bool AXObjectCache::addRelation(Element& origin, Element& target, AXRelation rel
     return addRelation(RefPtr { getOrCreate(origin, IsPartOfRelation::Yes) }.get(), RefPtr { getOrCreate(target, IsPartOfRelation::Yes) }.get(), relation);
 }
 
-static bool NODELETE canHaveRelations(Element& element)
+static bool LEGACY_NODELETE canHaveRelations(Element& element)
 {
     auto elementName = element.elementName();
     return !(elementName == ElementName::HTML_meta || elementName == ElementName::HTML_head || elementName == ElementName::HTML_script || elementName == ElementName::HTML_html || elementName == ElementName::HTML_style);

@@ -53,9 +53,9 @@ public:
     WEBCORE_EXPORT ~SharedWorkerThreadProxy();
 
     static RefPtr<SharedWorkerThreadProxy> byIdentifier(ScriptExecutionContextIdentifier);
-    WEBCORE_EXPORT static bool NODELETE hasInstances();
+    WEBCORE_EXPORT static bool LEGACY_NODELETE hasInstances();
 
-    SharedWorkerIdentifier NODELETE identifier() const;
+    SharedWorkerIdentifier LEGACY_NODELETE identifier() const;
     SharedWorkerThread& thread() { return m_workerThread; }
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }

@@ -93,7 +93,7 @@
 
 namespace WebCore {
 
-static RetainPtr<NSEvent>& NODELETE currentNSEventSlot()
+static RetainPtr<NSEvent>& LEGACY_NODELETE currentNSEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -104,7 +104,7 @@ NSEvent *EventHandler::currentNSEvent()
     return currentNSEventSlot().get();
 }
 
-static RetainPtr<NSEvent>& NODELETE correspondingPressureEventSlot()
+static RetainPtr<NSEvent>& LEGACY_NODELETE correspondingPressureEventSlot()
 {
     static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
@@ -459,7 +459,7 @@ static IMP originalNSScrollViewScrollWheel;
 static bool _nsScrollViewScrollWheelShouldRetainSelf;
 static void selfRetainingNSScrollViewScrollWheel(NSScrollView *, SEL, NSEvent *);
 
-static bool NODELETE nsScrollViewScrollWheelShouldRetainSelf()
+static bool LEGACY_NODELETE nsScrollViewScrollWheelShouldRetainSelf()
 {
     ASSERT(isMainThread());
 
@@ -751,12 +751,12 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     return PlatformEventFactory::createPlatformMouseEvent(protect(currentNSEvent()), protect(correspondingPressureEvent()), windowView);
 }
 
-bool NODELETE EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
+bool LEGACY_NODELETE EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
     return m_activationEventNumber == event.eventNumber();
 }
 
-bool NODELETE EventHandler::needsKeyboardEventDisambiguationQuirks() const
+bool LEGACY_NODELETE EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
     return m_frame->settings().needsKeyboardEventDisambiguationQuirks();
 }
@@ -772,7 +772,7 @@ OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
     return { PlatformEvent::Modifier::ControlKey, PlatformEvent::Modifier::AltKey };
 }
 
-static ScrollableArea* NODELETE scrollableAreaForBox(RenderBox& box)
+static ScrollableArea* LEGACY_NODELETE scrollableAreaForBox(RenderBox& box)
 {
     if (auto* listBox = dynamicDowncast<RenderListBox>(box))
         return listBox;
@@ -816,7 +816,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
     return nullptr;
 }
 
-static WeakPtr<ScrollableArea> NODELETE scrollableAreaForEventTarget(Element* eventTarget)
+static WeakPtr<ScrollableArea> LEGACY_NODELETE scrollableAreaForEventTarget(Element* eventTarget)
 {
     return dynamicDowncast<ScrollView>(EventHandler::widgetForEventTarget(eventTarget));
 }
@@ -827,7 +827,7 @@ static bool eventTargetIsPlatformWidget(Element* eventTarget)
     return widget && widget->platformWidget();
 }
 
-static WeakPtr<ScrollableArea> NODELETE scrollableAreaForContainerNode(ContainerNode& container)
+static WeakPtr<ScrollableArea> LEGACY_NODELETE scrollableAreaForContainerNode(ContainerNode& container)
 {
     auto* box = container.renderBox();
     if (!box)

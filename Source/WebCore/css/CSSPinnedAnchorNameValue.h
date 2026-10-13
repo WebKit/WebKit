@@ -44,7 +44,7 @@ public:
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSPinnedAnchorNameValue&) const;
-    bool NODELETE addDerivedHash(Hasher&) const;
+    bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
 
 private:
     CSSPinnedAnchorNameValue(CSS::CustomIdent&&, CSS::CustomIdent&&);

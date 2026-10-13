@@ -40,149 +40,149 @@ private:
     Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&) override;
     Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) override;
 
-    bool NODELETE hasWebView() const final;
+    bool LEGACY_NODELETE hasWebView() const final;
 
-    void NODELETE makeRepresentation(DocumentLoader*) final;
+    void LEGACY_NODELETE makeRepresentation(DocumentLoader*) final;
 
 #if PLATFORM(IOS_FAMILY)
     bool forceLayoutOnRestoreFromBackForwardCache() final;
 #endif
 
-    void NODELETE forceLayoutForNonHTML() final;
+    void LEGACY_NODELETE forceLayoutForNonHTML() final;
 
-    void NODELETE setCopiesOnScroll() final;
+    void LEGACY_NODELETE setCopiesOnScroll() final;
 
-    void NODELETE detachedFromParent2() final;
-    void NODELETE detachedFromParent3() final;
+    void LEGACY_NODELETE detachedFromParent2() final;
+    void LEGACY_NODELETE detachedFromParent3() final;
 
-    void NODELETE convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final;
+    void LEGACY_NODELETE convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final;
 
-    void NODELETE assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) final;
-    bool NODELETE shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) override;
-    void NODELETE dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&) final;
-    void NODELETE dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) final;
+    void LEGACY_NODELETE assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) final;
+    bool LEGACY_NODELETE shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) override;
+    void LEGACY_NODELETE dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&) final;
+    void LEGACY_NODELETE dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    bool NODELETE canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&) final;
+    bool LEGACY_NODELETE canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&) final;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, ResourceLoaderIdentifier) final;
 #endif
 
-    void NODELETE dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) final;
-    void NODELETE dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int) final;
-    void NODELETE dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) final;
+    void LEGACY_NODELETE dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void LEGACY_NODELETE dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int) final;
+    void LEGACY_NODELETE dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) final;
 #if ENABLE(DATA_DETECTION)
-    void NODELETE dispatchDidFinishDataDetection(NSArray *) final;
+    void LEGACY_NODELETE dispatchDidFinishDataDetection(NSArray *) final;
 #endif
-    void NODELETE dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) final;
-    bool NODELETE dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final;
+    void LEGACY_NODELETE dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) final;
+    bool LEGACY_NODELETE dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final;
 
-    void NODELETE dispatchDidDispatchOnloadEvents() final;
-    void NODELETE dispatchDidReceiveServerRedirectForProvisionalLoad() final;
-    void NODELETE dispatchDidCancelClientRedirect() final;
+    void LEGACY_NODELETE dispatchDidDispatchOnloadEvents() final;
+    void LEGACY_NODELETE dispatchDidReceiveServerRedirectForProvisionalLoad() final;
+    void LEGACY_NODELETE dispatchDidCancelClientRedirect() final;
     void dispatchWillPerformClientRedirect(const URL&, double, WallTime, LockBackForwardList) final;
-    void NODELETE dispatchDidChangeLocationWithinPage() final;
-    void NODELETE dispatchDidPushStateWithinPage() final;
-    void NODELETE dispatchDidReplaceStateWithinPage() final;
-    void NODELETE dispatchDidPopStateWithinPage() final;
-    void NODELETE dispatchWillClose() final;
-    void NODELETE dispatchDidStartProvisionalLoad() final;
-    void NODELETE dispatchDidReceiveTitle(const StringWithDirection&) final;
-    void NODELETE dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&) final;
-    void NODELETE dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) final;
-    void NODELETE dispatchDidFailLoad(const ResourceError&) final;
-    void NODELETE dispatchDidFinishDocumentLoad() final;
-    void NODELETE dispatchDidFinishLoad() final;
-    void NODELETE dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) final;
-    void NODELETE dispatchDidReachVisuallyNonEmptyState() final;
+    void LEGACY_NODELETE dispatchDidChangeLocationWithinPage() final;
+    void LEGACY_NODELETE dispatchDidPushStateWithinPage() final;
+    void LEGACY_NODELETE dispatchDidReplaceStateWithinPage() final;
+    void LEGACY_NODELETE dispatchDidPopStateWithinPage() final;
+    void LEGACY_NODELETE dispatchWillClose() final;
+    void LEGACY_NODELETE dispatchDidStartProvisionalLoad() final;
+    void LEGACY_NODELETE dispatchDidReceiveTitle(const StringWithDirection&) final;
+    void LEGACY_NODELETE dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&) final;
+    void LEGACY_NODELETE dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) final;
+    void LEGACY_NODELETE dispatchDidFailLoad(const ResourceError&) final;
+    void LEGACY_NODELETE dispatchDidFinishDocumentLoad() final;
+    void LEGACY_NODELETE dispatchDidFinishLoad() final;
+    void LEGACY_NODELETE dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) final;
+    void LEGACY_NODELETE dispatchDidReachVisuallyNonEmptyState() final;
 
-    LocalFrame* NODELETE dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String&) final;
-    void NODELETE dispatchShow() final;
+    LocalFrame* LEGACY_NODELETE dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String&) final;
+    void LEGACY_NODELETE dispatchShow() final;
 
-    void NODELETE dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String&, FramePolicyFunction&&) final;
-    void NODELETE dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&&) final;
-    void NODELETE dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
-    void NODELETE updateSandboxFlags(SandboxFlags) final;
-    void NODELETE updateOpener(std::optional<FrameIdentifier>) final;
+    void LEGACY_NODELETE dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String&, FramePolicyFunction&&) final;
+    void LEGACY_NODELETE dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&&) final;
+    void LEGACY_NODELETE dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, const String&, std::optional<NavigationIdentifier>, std::optional<HitTestResult>&&, bool, NavigationUpgradeToHTTPSBehavior, SandboxFlags, PolicyDecisionMode, FramePolicyFunction&&) final;
+    void LEGACY_NODELETE updateSandboxFlags(SandboxFlags) final;
+    void LEGACY_NODELETE updateOpener(std::optional<FrameIdentifier>) final;
     void setPrinting(bool, FloatSize, FloatSize, float, AdjustViewSize) final;
-    void NODELETE cancelPolicyCheck() final;
+    void LEGACY_NODELETE cancelPolicyCheck() final;
 
-    void NODELETE dispatchUnableToImplementPolicy(const ResourceError&) final;
+    void LEGACY_NODELETE dispatchUnableToImplementPolicy(const ResourceError&) final;
 
-    void NODELETE dispatchWillSendSubmitEvent(Ref<FormState>&&) final;
+    void LEGACY_NODELETE dispatchWillSendSubmitEvent(Ref<FormState>&&) final;
     void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) final;
 
-    void NODELETE revertToProvisionalState(DocumentLoader*) final;
-    void NODELETE setMainDocumentError(DocumentLoader*, const ResourceError&) final;
+    void LEGACY_NODELETE revertToProvisionalState(DocumentLoader*) final;
+    void LEGACY_NODELETE setMainDocumentError(DocumentLoader*, const ResourceError&) final;
 
-    void NODELETE setMainFrameDocumentReady(bool) final;
+    void LEGACY_NODELETE setMainFrameDocumentReady(bool) final;
 
-    void NODELETE startDownload(const ResourceRequest&, const String&, FromDownloadAttribute = FromDownloadAttribute::No) final;
+    void LEGACY_NODELETE startDownload(const ResourceRequest&, const String&, FromDownloadAttribute = FromDownloadAttribute::No) final;
 
-    void NODELETE willChangeTitle(DocumentLoader*) final;
-    void NODELETE didChangeTitle(DocumentLoader*) final;
+    void LEGACY_NODELETE willChangeTitle(DocumentLoader*) final;
+    void LEGACY_NODELETE didChangeTitle(DocumentLoader*) final;
 
-    void NODELETE willReplaceMultipartContent() final;
-    void NODELETE didReplaceMultipartContent() final;
+    void LEGACY_NODELETE willReplaceMultipartContent() final;
+    void LEGACY_NODELETE didReplaceMultipartContent() final;
 
-    void NODELETE committedLoad(DocumentLoader*, const SharedBuffer&) final;
-    void NODELETE finishedLoading(DocumentLoader*) final;
+    void LEGACY_NODELETE committedLoad(DocumentLoader*, const SharedBuffer&) final;
+    void LEGACY_NODELETE finishedLoading(DocumentLoader*) final;
 
-    void NODELETE loadStorageAccessQuirksIfNeeded() final;
+    void LEGACY_NODELETE loadStorageAccessQuirksIfNeeded() final;
 
-    bool NODELETE shouldFallBack(const ResourceError&) const final;
+    bool LEGACY_NODELETE shouldFallBack(const ResourceError&) const final;
 
-    bool NODELETE canHandleRequest(const ResourceRequest&) const final;
-    bool NODELETE canShowMIMEType(const String&) const final;
-    bool NODELETE canShowMIMETypeAsHTML(const String&) const final;
-    bool NODELETE representationExistsForURLScheme(StringView) const final;
-    String NODELETE generatedMIMETypeForURLScheme(StringView) const final;
+    bool LEGACY_NODELETE canHandleRequest(const ResourceRequest&) const final;
+    bool LEGACY_NODELETE canShowMIMEType(const String&) const final;
+    bool LEGACY_NODELETE canShowMIMETypeAsHTML(const String&) const final;
+    bool LEGACY_NODELETE representationExistsForURLScheme(StringView) const final;
+    String LEGACY_NODELETE generatedMIMETypeForURLScheme(StringView) const final;
 
-    void NODELETE frameLoadCompleted() final;
-    void NODELETE restoreViewState() final;
-    void NODELETE provisionalLoadStarted() final;
-    void NODELETE didFinishLoad() final;
-    void NODELETE prepareForDataSourceReplacement() final;
+    void LEGACY_NODELETE frameLoadCompleted() final;
+    void LEGACY_NODELETE restoreViewState() final;
+    void LEGACY_NODELETE provisionalLoadStarted() final;
+    void LEGACY_NODELETE didFinishLoad() final;
+    void LEGACY_NODELETE prepareForDataSourceReplacement() final;
 
-    void NODELETE updateCachedDocumentLoader(DocumentLoader&) final;
-    void NODELETE setTitle(const StringWithDirection&, const URL&) final;
+    void LEGACY_NODELETE updateCachedDocumentLoader(DocumentLoader&) final;
+    void LEGACY_NODELETE setTitle(const StringWithDirection&, const URL&) final;
 
-    String NODELETE userAgent(const URL&) const override;
+    String LEGACY_NODELETE userAgent(const URL&) const override;
 
-    void NODELETE savePlatformDataToCachedFrame(CachedFrame*) final;
-    void NODELETE transitionToCommittedFromCachedFrame(CachedFrame*) final;
+    void LEGACY_NODELETE savePlatformDataToCachedFrame(CachedFrame*) final;
+    void LEGACY_NODELETE transitionToCommittedFromCachedFrame(CachedFrame*) final;
 #if PLATFORM(IOS_FAMILY)
     void didRestoreFrameHierarchyForCachedFrame() final;
 #endif
-    void NODELETE transitionToCommittedForNewPage(InitializingIframe) final;
+    void LEGACY_NODELETE transitionToCommittedForNewPage(InitializingIframe) final;
 
-    void NODELETE didRestoreFromBackForwardCache() final;
+    void LEGACY_NODELETE didRestoreFromBackForwardCache() final;
 
-    void NODELETE updateGlobalHistory() final;
-    void NODELETE updateGlobalHistoryRedirectLinks() final;
-    ShouldGoToHistoryItem NODELETE shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const final;
-    bool NODELETE supportsAsyncShouldGoToHistoryItem() const final;
-    void NODELETE shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const final;
-    void NODELETE dispatchGoToBackForwardItemAtIndex(int steps) final;
-    void NODELETE dispatchEnqueueHistoryTraversalDelta(int delta) final;
+    void LEGACY_NODELETE updateGlobalHistory() final;
+    void LEGACY_NODELETE updateGlobalHistoryRedirectLinks() final;
+    ShouldGoToHistoryItem LEGACY_NODELETE shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const final;
+    bool LEGACY_NODELETE supportsAsyncShouldGoToHistoryItem() const final;
+    void LEGACY_NODELETE shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const final;
+    void LEGACY_NODELETE dispatchGoToBackForwardItemAtIndex(int steps) final;
+    void LEGACY_NODELETE dispatchEnqueueHistoryTraversalDelta(int delta) final;
 
-    void NODELETE saveViewStateToItem(HistoryItem&) final;
-    bool NODELETE canCachePage() const final;
+    void LEGACY_NODELETE saveViewStateToItem(HistoryItem&) final;
+    bool LEGACY_NODELETE canCachePage() const final;
     RefPtr<LocalFrame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
     RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
-    ObjectContentType NODELETE objectContentType(const URL&, const String&) final;
-    AtomString NODELETE overrideMediaType() const final;
+    ObjectContentType LEGACY_NODELETE objectContentType(const URL&, const String&) final;
+    AtomString LEGACY_NODELETE overrideMediaType() const final;
 
-    void NODELETE redirectDataToPlugin(Widget&) final;
-    void NODELETE dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final;
+    void LEGACY_NODELETE redirectDataToPlugin(Widget&) final;
+    void LEGACY_NODELETE dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final;
 
 #if PLATFORM(COCOA)
-    RemoteAXObjectRef NODELETE accessibilityRemoteObject() final;
-    IntPoint NODELETE accessibilityRemoteFrameOffset() final;
+    RemoteAXObjectRef LEGACY_NODELETE accessibilityRemoteObject() final;
+    IntPoint LEGACY_NODELETE accessibilityRemoteFrameOffset() final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void NODELETE setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final;
+    void LEGACY_NODELETE setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) final;
     RefPtr<WebCore::AXIsolatedTree> isolatedTree() const final;
 #endif
     void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
@@ -190,18 +190,18 @@ private:
 
     Ref<FrameNetworkingContext> createNetworkingContext() final;
 
-    bool NODELETE isEmptyFrameLoaderClient() const override;
-    void NODELETE prefetchDNS(const String&) final;
+    bool LEGACY_NODELETE isEmptyFrameLoaderClient() const override;
+    void LEGACY_NODELETE prefetchDNS(const String&) final;
     void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&&) final;
 
 #if USE(QUICK_LOOK)
     RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final;
 #endif
 
-    bool NODELETE hasFrameSpecificStorageAccess() final;
-    void NODELETE revokeFrameSpecificStorageAccess() final;
+    bool LEGACY_NODELETE hasFrameSpecificStorageAccess() final;
+    void LEGACY_NODELETE revokeFrameSpecificStorageAccess() final;
 
-    void NODELETE dispatchLoadEventToOwnerElementInAnotherProcess() final;
+    void LEGACY_NODELETE dispatchLoadEventToOwnerElementInAnotherProcess() final;
 
     RefPtr<HistoryItem> createHistoryItemTree(bool, BackForwardItemIdentifier) const final;
 };

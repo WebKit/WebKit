@@ -71,8 +71,8 @@ bool isRendererReplacedElement(RenderObject*, TextIteratorBehaviors = { });
 class BitStack {
 public:
     void push(bool);
-    void NODELETE pop();
-    bool NODELETE top() const;
+    void LEGACY_NODELETE pop();
+    bool LEGACY_NODELETE top() const;
 
 private:
     unsigned m_size { 0 };
@@ -107,7 +107,7 @@ struct TextIteratorPosition {
 // at points where replaced elements break up the text flow. The text is delivered in
 // the chunks it's already stored in, to avoid copying any text.
 
-bool NODELETE shouldEmitNewlinesBeforeAndAfterNode(Node&, bool emitsNewlinesPerInnerTextSpec = false);
+bool LEGACY_NODELETE shouldEmitNewlinesBeforeAndAfterNode(Node&, bool emitsNewlinesPerInnerTextSpec = false);
 
 class TextIterator {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIterator, WEBCORE_EXPORT);
@@ -139,7 +139,7 @@ private:
     void init();
     void exitNode(Node*);
     bool shouldRepresentNodeOffsetZero();
-    bool NODELETE shouldEmitSpaceBeforeAndAfterNode(Node&);
+    bool LEGACY_NODELETE shouldEmitSpaceBeforeAndAfterNode(Node&);
     void representNodeOffsetZero();
     bool handleTextNode();
     bool handleReplacedElement();
@@ -275,7 +275,7 @@ public:
     StringView text() const LIFETIME_BOUND { return m_underlyingIterator.text().substring(m_runOffset); }
     WEBCORE_EXPORT SimpleRange range() const;
 
-    bool NODELETE atBreak() const { return m_atBreak; }
+    bool LEGACY_NODELETE atBreak() const { return m_atBreak; }
     unsigned characterOffset() const { return m_offset; }
 
 private:
@@ -313,7 +313,7 @@ public:
     bool atEnd() const { return !m_didLookAhead && m_underlyingIterator.atEnd(); }
     void advance();
 
-    StringView NODELETE text() const LIFETIME_BOUND;
+    StringView LEGACY_NODELETE text() const LIFETIME_BOUND;
 
 private:
     TextIterator m_underlyingIterator;

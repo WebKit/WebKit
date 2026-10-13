@@ -115,11 +115,11 @@ public:
     Element* target() const { return m_target.get(); }
     void setTarget(RefPtr<Element>&&);
 
-    bool NODELETE targetsPseudoElement() const;
+    bool LEGACY_NODELETE targetsPseudoElement() const;
     const String pseudoElement() const;
     ExceptionOr<void> setPseudoElement(const String&);
 
-    const std::optional<const Styleable> NODELETE targetStyleable() const;
+    const std::optional<const Styleable> LEGACY_NODELETE targetStyleable() const;
 
     Vector<ComputedKeyframe> getKeyframes();
     ExceptionOr<void> setBindingsKeyframes(JSC::JSGlobalObject&, Document&, JSC::Strong<JSC::JSObject>&&);
@@ -173,7 +173,7 @@ public:
     bool isRunningAcceleratedTransformRelatedAnimation() const;
     bool isRunningOrAboutToRunAcceleratedTransformRelatedAnimation() const;
 
-    bool NODELETE requiresPseudoElement() const;
+    bool LEGACY_NODELETE requiresPseudoElement() const;
 
     void customPropertyRegistrationDidChange(const AtomString&);
 

@@ -71,8 +71,8 @@ public:
 
     WEBCORE_EXPORT ~ShareableResource();
 
-    unsigned NODELETE size() const;
-    std::span<const uint8_t> NODELETE span() const LIFETIME_BOUND;
+    unsigned LEGACY_NODELETE size() const;
+    std::span<const uint8_t> LEGACY_NODELETE span() const LIFETIME_BOUND;
 
 private:
     friend class ShareableResourceHandle;

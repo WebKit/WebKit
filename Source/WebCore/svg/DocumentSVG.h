@@ -34,7 +34,7 @@ class SVGSVGElement;
 
 class DocumentSVG final {
 public:
-    static RefPtr<SVGSVGElement> NODELETE rootElement(const Document&);
+    static RefPtr<SVGSVGElement> LEGACY_NODELETE rootElement(const Document&);
 };
 
 }

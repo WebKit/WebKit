@@ -110,7 +110,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<FontVariantLigatures> { FontVariantLigatures NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<FontVariantLigatures> { FontVariantLigatures LEGACY_NODELETE operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

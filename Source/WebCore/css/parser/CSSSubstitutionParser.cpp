@@ -56,7 +56,7 @@ bool CSSSubstitutionParser::isValidCustomPropertyName(const CSSParserToken& toke
     return isCustomPropertyName(token.value());
 }
 
-static bool NODELETE isValidEnvVariableName(const CSSParserToken& token)
+static bool LEGACY_NODELETE isValidEnvVariableName(const CSSParserToken& token)
 {
     return token.type() == IdentToken;
 }

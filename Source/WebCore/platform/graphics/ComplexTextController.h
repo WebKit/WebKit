@@ -110,7 +110,7 @@ public:
         std::span<const char16_t> characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_characters.size(); }
-        ALWAYS_INLINE unsigned NODELETE indexAt(unsigned) const;
+        ALWAYS_INLINE unsigned LEGACY_NODELETE indexAt(unsigned) const;
         unsigned indexBegin() const { return m_indexBegin; }
         unsigned indexEnd() const { return m_indexEnd; }
         unsigned endOffsetAt(unsigned i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
@@ -165,10 +165,10 @@ private:
     void collectComplexTextRunsForCharacters(std::span<const char16_t>, unsigned stringLocation, const Font*);
     void adjustGlyphsAndAdvances();
 
-    unsigned NODELETE indexOfCurrentRun(unsigned& leftmostGlyph);
-    unsigned NODELETE incrementCurrentRun(unsigned& leftmostGlyph);
+    unsigned LEGACY_NODELETE indexOfCurrentRun(unsigned& leftmostGlyph);
+    unsigned LEGACY_NODELETE incrementCurrentRun(unsigned& leftmostGlyph);
 
-    float NODELETE runWidthSoFarFraction(unsigned glyphStartOffset, unsigned glyphEndOffset, unsigned oldCharacterInCurrentGlyph, GlyphIterationStyle) const;
+    float LEGACY_NODELETE runWidthSoFarFraction(unsigned glyphStartOffset, unsigned glyphEndOffset, unsigned oldCharacterInCurrentGlyph, GlyphIterationStyle) const;
 
     FloatPoint glyphOrigin(unsigned index) const { return index < m_glyphOrigins.size() ? m_glyphOrigins[index] : FloatPoint(); }
 

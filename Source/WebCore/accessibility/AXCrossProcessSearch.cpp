@@ -79,7 +79,7 @@ bool shouldMockChildFrameSearchResultsForTesting()
     return s_shouldMockChildFrameSearchResults;
 }
 
-static bool NODELETE canDoRemoteSearch(const std::optional<AXTreeID>& treeID)
+static bool LEGACY_NODELETE canDoRemoteSearch(const std::optional<AXTreeID>& treeID)
 {
 #if PLATFORM_SUPPORTS_REMOTE_SEARCH
     return treeID.has_value();
@@ -405,8 +405,8 @@ public:
     void cancel() { m_cancelled.store(true, std::memory_order_release); }
     bool isCancelled() const { return m_cancelled.load(std::memory_order_acquire); }
 
-    void NODELETE markParentDispatched() { m_dispatchedParent.store(true, std::memory_order_release); }
-    bool NODELETE didDispatchParent() const { return m_dispatchedParent.load(std::memory_order_acquire); }
+    void LEGACY_NODELETE markParentDispatched() { m_dispatchedParent.store(true, std::memory_order_release); }
+    bool LEGACY_NODELETE didDispatchParent() const { return m_dispatchedParent.load(std::memory_order_acquire); }
 
     void setParentTokens(Vector<AccessibilityRemoteToken>&& tokens)
     {

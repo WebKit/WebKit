@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static TextBoxTrim NODELETE textBoxTrim(const RenderBlockFlow& textBoxTrimRoot)
+static TextBoxTrim LEGACY_NODELETE textBoxTrim(const RenderBlockFlow& textBoxTrimRoot)
 {
     if (auto* multiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(textBoxTrimRoot))
         return multiColumnFlow->multiColumnBlockFlow()->style().textBoxTrim();

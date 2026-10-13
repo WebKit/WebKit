@@ -50,17 +50,17 @@ public:
     bool isTableColumn() const { return style().display() == Style::DisplayType::TableColumn; }
     bool isTableColumnGroup() const { return style().display() == Style::DisplayType::TableColumnGroup; }
 
-    RenderTableCol* NODELETE enclosingColumnGroup() const;
+    RenderTableCol* LEGACY_NODELETE enclosingColumnGroup() const;
     RenderTableCol* enclosingColumnGroupIfAdjacentBefore() const;
     RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const;
 
     // Returns the next column or column-group.
     RenderTableCol* nextColumn() const;
 
-    const BorderValue& NODELETE borderAdjoiningCellStartBorder() const;
-    const BorderValue& NODELETE borderAdjoiningCellEndBorder() const;
-    const BorderValue& NODELETE borderAdjoiningCellBefore(const RenderTableCell&) const;
-    const BorderValue& NODELETE borderAdjoiningCellAfter(const RenderTableCell&) const;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningCellStartBorder() const;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningCellEndBorder() const;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningCellBefore(const RenderTableCell&) const;
+    const BorderValue& LEGACY_NODELETE borderAdjoiningCellAfter(const RenderTableCell&) const;
 
     LayoutUnit offsetLeft() const override;
     LayoutUnit offsetTop() const override;
@@ -88,7 +88,7 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }
 
-    RenderTable* NODELETE table() const;
+    RenderTable* LEGACY_NODELETE table() const;
 
     unsigned m_span { 1 };
 };

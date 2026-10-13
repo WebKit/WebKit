@@ -52,8 +52,8 @@ public:
     static constexpr float emptyValue() { return std::numeric_limits<float>::quiet_NaN(); }
     static bool isEmptyValue(float value) { return std::isnan(value); }
 
-    RenderSVGInlineText& NODELETE context();
-    const RenderSVGInlineText& NODELETE context() const;
+    RenderSVGInlineText& LEGACY_NODELETE context();
+    const RenderSVGInlineText& LEGACY_NODELETE context() const;
     
     SVGCharacterDataMap& characterDataMap() LIFETIME_BOUND { return m_characterDataMap; }
     const SVGCharacterDataMap& characterDataMap() const LIFETIME_BOUND { return m_characterDataMap; }

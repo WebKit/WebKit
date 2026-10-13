@@ -44,8 +44,8 @@ struct BlockStepSize : ValueOrKeyword<Length<CSS::Nonnegative, float>, CSS::Keyw
 // MARK: - Blending
 
 template<> struct Blending<BlockStepSize> {
-    bool NODELETE canBlend(const BlockStepSize&, const BlockStepSize&);
-    bool NODELETE requiresInterpolationForAccumulativeIteration(const BlockStepSize&, const BlockStepSize&);
+    bool LEGACY_NODELETE canBlend(const BlockStepSize&, const BlockStepSize&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const BlockStepSize&, const BlockStepSize&);
     auto blend(const BlockStepSize&, const BlockStepSize&, const BlendingContext&) -> BlockStepSize;
 };
 

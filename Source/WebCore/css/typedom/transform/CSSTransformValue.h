@@ -47,7 +47,7 @@ public:
 
     size_t length() const { return m_components.size(); }
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_components.size(); }
-    RefPtr<CSSTransformComponent> NODELETE item(size_t);
+    RefPtr<CSSTransformComponent> LEGACY_NODELETE item(size_t);
     ExceptionOr<Ref<CSSTransformComponent>> setItem(size_t, Ref<CSSTransformComponent>&&);
     
     bool is2D() const;

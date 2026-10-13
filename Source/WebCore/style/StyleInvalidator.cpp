@@ -47,7 +47,7 @@
 namespace WebCore {
 namespace Style {
 
-static bool NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
+static bool LEGACY_NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (auto* styleRuleMedia = dynamicDowncast<StyleRuleMedia>(rule.get())) {
@@ -67,7 +67,7 @@ static bool NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules
     return false;
 }
 
-static bool NODELETE shouldDirtyAllStyle(const StyleSheetContents& sheet)
+static bool LEGACY_NODELETE shouldDirtyAllStyle(const StyleSheetContents& sheet)
 {
     for (auto& import : sheet.importRules()) {
         if (!import->styleSheet())
@@ -80,7 +80,7 @@ static bool NODELETE shouldDirtyAllStyle(const StyleSheetContents& sheet)
     return false;
 }
 
-static bool NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleSheetContents>>& sheets)
+static bool LEGACY_NODELETE shouldDirtyAllStyle(const Vector<Ref<StyleSheetContents>>& sheets)
 {
     for (auto& sheet : sheets) {
         if (shouldDirtyAllStyle(sheet))

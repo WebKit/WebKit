@@ -300,7 +300,7 @@ std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSess
     return m_videoDecoderVTB;
 }
 
-static bool NODELETE isNonRecoverableError(OSStatus status)
+static bool LEGACY_NODELETE isNonRecoverableError(OSStatus status)
 {
     return status != noErr && status != kVTVideoDecoderReferenceMissingErr;
 }
@@ -322,7 +322,7 @@ static RetainPtr<CFDictionaryRef> cfDictionaryCreateCombined(CFDictionaryRef a, 
 }
 #endif
 
-static RetainPtr<CMFormatDescriptionRef> NODELETE copyDescriptionExtensionValuesIfNeeded(RetainPtr<CMFormatDescriptionRef>&& description, const CMVideoFormatDescriptionRef originalDescription, const CMTaggedBufferGroupRef group)
+static RetainPtr<CMFormatDescriptionRef> LEGACY_NODELETE copyDescriptionExtensionValuesIfNeeded(RetainPtr<CMFormatDescriptionRef>&& description, const CMVideoFormatDescriptionRef originalDescription, const CMTaggedBufferGroupRef group)
 {
 #if PLATFORM(VISION)
     RetainPtr metadata = extractImmersiveVideoMetadata(originalDescription);

@@ -57,8 +57,8 @@ public:
     WEBCORE_EXPORT void setExtensions(AuthenticationExtensionsClientOutputs&&);
     WEBCORE_EXPORT AuthenticationExtensionsClientOutputs extensions() const;
     WEBCORE_EXPORT void setClientDataJSON(Ref<ArrayBuffer>&&);
-    ArrayBuffer* NODELETE clientDataJSON() const;
-    WEBCORE_EXPORT AuthenticatorAttachment NODELETE attachment() const;
+    ArrayBuffer* LEGACY_NODELETE clientDataJSON() const;
+    WEBCORE_EXPORT AuthenticatorAttachment LEGACY_NODELETE attachment() const;
 
 protected:
     AuthenticatorResponse(Ref<ArrayBuffer>&&, AuthenticatorAttachment);

@@ -40,7 +40,7 @@ public:
     static Ref<WebGLTexture> createLost();
     static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
 
-    void NODELETE didBind(GCGLenum);
+    void LEGACY_NODELETE didBind(GCGLenum);
     GCGLenum getTarget() const { return m_target; }
 
     static GCGLint computeLevelCount(GCGLsizei width, GCGLsizei height);

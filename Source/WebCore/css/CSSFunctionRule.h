@@ -41,14 +41,14 @@ public:
         std::optional<String> defaultValue;
     };
 
-    String NODELETE name() const;
+    String LEGACY_NODELETE name() const;
     Vector<FunctionParameter> getParameters() const;
     String returnType() const;
 
     String cssText() const final;
 
 private:
-    const StyleRuleFunction& NODELETE styleRuleFunction() const;
+    const StyleRuleFunction& LEGACY_NODELETE styleRuleFunction() const;
 
     CSSFunctionRule(StyleRuleFunction&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Function; }
