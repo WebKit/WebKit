@@ -112,7 +112,7 @@ class SingleTestRunnerTest(unittest.TestCase):
         if with_reference:
             reference_files = [('==', self.port.host.filesystem.join(self.port.layout_tests_dir(), 'known/test-expected.html'))]
         self.driver = SkippingDriver(self.port.host, crash=crash, timeout=timeout)
-        test = Test('known/test.html', expected_text_path=expected_text_path, reference_files=reference_files, is_wpt_crash_test=is_wpt_crash_test)
+        test = Test('known/test.html', expected_text_path=expected_text_path, reference_files=reference_files, is_crash_test=is_wpt_crash_test)
         return SingleTestRunner(self.port, self.port._options, 'layout-test-results', '', self.driver, TestInput(test, timeout='30000'), False).run()
 
     def _assert_skipped_after_one_run(self, result):

@@ -70,6 +70,7 @@ class LayoutTestFinder(object):
             self._port.host.filesystem,
             self._port.layout_tests_dir(),
             self._port.baseline_search_path(device_type),
+            test_routes=self._port.test_routes(),
         )
 
     def find_tests(self, options, args, device_type=None, with_expectations=False):

@@ -58,6 +58,7 @@ class LayoutTestFinderTestsBase(object):
             self.port.host.filesystem,
             self.port.layout_tests_dir(),
             self.port.baseline_search_path(),
+            test_routes=self.port.test_routes(),
         )
 
     def tearDown(self):
@@ -68,6 +69,12 @@ class LayoutTestFinderTestsBase(object):
         self.assertEqual(self.fs.os, self.fs_os)
         expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
         self.assertEqual(self.port.host.filesystem.sep, expected_sep)
+
+    def test_test_routes_prefixes_use_forward_slashes(self):
+        # test_file_dir is compared as a string against "/"-separated test
+        # names, so it must not use the host separator.
+        for route in self.port.test_routes():
+            self.assertNotIn("\\", route.test_file_dir)
 
     def test_split_glob(self):
         v = list(self.finder._split_glob("a"))

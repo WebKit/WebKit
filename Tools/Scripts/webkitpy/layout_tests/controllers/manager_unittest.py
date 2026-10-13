@@ -39,6 +39,7 @@ import unittest
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.server_routing import ServerType
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
@@ -182,8 +183,8 @@ passes/text.html                       ['PASS']
         self.assertEqual(exit_code, 0)
 
     def test_collect_tests_skips_wpt_print_reftests_in_dump_render_tree(self):
-        print_reftest = Test('passes/image.html', is_wpt_test=True, is_wpt_print_reftest=True)
-        other_test = Test('passes/text.html', is_wpt_test=True)
+        print_reftest = Test('passes/image.html', served_by=ServerType.WPT, is_wpt_print_reftest=True)
+        other_test = Test('passes/text.html', served_by=ServerType.WPT)
 
         def collect_tests(driver_name):
             host = MockHost()
