@@ -2,6 +2,12 @@ Ensure a source map loads for resources with sourceMappingURLs.
 
 
 == Running test suite: Network.SourceMap
+-- Running test case: Network.SourceMap.OriginalContent
+PASS: A missing original source should return a loading error.
+PASS: A missing original source should be marked as failed.
+PASS: An inline original source should preserve its content.
+PASS: An inline original source should have a successful status.
+
 -- Running test case: Network.SourceMap.Stylesheet
 PASS: Stylesheet Resource should be created.
 PASS: Resource should have loaded 1 SourceMap.
