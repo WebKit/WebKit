@@ -68,8 +68,11 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
             return false;
 
         function resolveSourceCode(sourceCode) {
-            if (sourceCode instanceof WI.Script)
-                return sourceCode.resource;
+            if (sourceCode instanceof WI.Script) {
+                let resource = sourceCode.resource;
+                if (resource)
+                    return resource;
+            }
             return sourceCode;
         }
         let thisSourceCode = resolveSourceCode(this.sourceCode);
