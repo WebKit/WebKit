@@ -128,7 +128,7 @@ static const struct wl_data_device_listener wlDataDeviceListener = {
         priv->offer = offer;
         wl_data_offer_add_listener(priv->offer, &wlDataOfferListener, data);
 
-        priv->formats = adoptGRef(g_ptr_array_new());
+        priv->formats = adoptGRef(g_ptr_array_new_null_terminated(3, nullptr, TRUE));
     },
     // enter
     [](void*, wl_data_device*, uint32_t /*serial*/, wl_surface*, wl_fixed_t /*x*/, wl_fixed_t /*y*/, wl_data_offer*) {
@@ -226,7 +226,7 @@ static void wpeClipboardWaylandChanged(WPEClipboard* clipboard, GPtrArray* forma
         wl_data_source_add_listener(priv->source, &wlDataSourceListener, clipboard);
 
         if (formats) {
-            for (const char* format : span(reinterpret_cast<char**>(formats->pdata)))
+            for (const char* format : span<const char*>(formats))
                 wl_data_source_offer(priv->source, format);
         }
 

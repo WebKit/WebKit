@@ -268,7 +268,7 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
 
     GRefPtr<GPtrArray> formats;
     if (content) {
-        formats = adoptGRef(g_ptr_array_new());
+        formats = adoptGRef(g_ptr_array_new_null_terminated(3, nullptr, TRUE));
         if (content->text) {
             g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain"))));
             g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(g_intern_static_string("text/plain;charset=utf-8"))));
@@ -277,7 +277,6 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
             for (const auto* format : content->buffers->keys())
                 g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(format)));
         }
-        g_ptr_array_add(formats.get(), nullptr);
     }
 
     WPE_CLIPBOARD_GET_CLASS(clipboard)->changed(clipboard, formats.get(), TRUE, content);
