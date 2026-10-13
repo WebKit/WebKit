@@ -89,6 +89,7 @@
 #include "ObjectConstructor.h"
 #include "OpcodeInlines.h"
 #include "PreciseJumpTargets.h"
+#include "PreciseJumpTargetsInlines.h"
 #include "PrivateFieldPutKind.h"
 #include "PropertyInlineCache.h"
 #include "PutByIdFlags.h"
@@ -8869,6 +8870,27 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_instanceof: {
             auto bytecode = currentInstruction->as<OpInstanceof>();
 
+            // If a jtrue / jfalse on the result follows, each arm branches by itself instead of
+            // joining at a boolean Phi, so an arm whose result is or folds to a constant keeps it.
+            const JSInstruction* fusedBranch = nullptr;
+            unsigned fusedTaken = 0;
+            unsigned fusedNotTaken = 0;
+            unsigned fusedFallThrough = 0;
+            BytecodeIndex branchIndex = nextOpcodeIndex();
+            if (branchIndex.offset() < limit) {
+                auto next = instructions.at(branchIndex);
+                fusedFallThrough = branchIndex.offset() + next->size();
+                if (next->is<OpJtrue>() && next->as<OpJtrue>().m_condition == bytecode.m_dst) {
+                    fusedBranch = next.ptr();
+                    fusedTaken = branchIndex.offset() + jumpTargetForInstruction<OpJtrue>(codeBlock, next);
+                    fusedNotTaken = fusedFallThrough;
+                } else if (next->is<OpJfalse>() && next->as<OpJfalse>().m_condition == bytecode.m_dst) {
+                    fusedBranch = next.ptr();
+                    fusedTaken = fusedFallThrough;
+                    fusedNotTaken = branchIndex.offset() + jumpTargetForInstruction<OpJfalse>(codeBlock, next);
+                }
+            }
+
             BytecodeIndex startIndex = m_currentIndex;
             BytecodeIndex itermediateIndex = m_currentIndex;
             BasicBlock* constructorIsObjectBlock = allocateUntargetableBlock();
@@ -8877,7 +8899,25 @@ void ByteCodeParser::parseBlock(unsigned limit)
             BasicBlock* valueIsNotObjectBlock = allocateUntargetableBlock();
             BasicBlock* isCustomBlock = allocateUntargetableBlock();
             BasicBlock* isNotCustomBlock = allocateUntargetableBlock();
-            BasicBlock* continuation = allocateUntargetableBlock();
+            BasicBlock* continuation = fusedBranch ? nullptr : allocateUntargetableBlock();
+
+            auto finishArm = [&] {
+                m_currentIndex = nextOpcodeIndex();
+                m_exitOK = true;
+                processSetLocalQueue();
+
+                if (!fusedBranch) {
+                    addToGraph(Jump, OpInfo(continuation));
+                    return;
+                }
+                // The fused jump is never visited by the parse loop, so count it here.
+                if (m_graph.compilation()) [[unlikely]] {
+                    addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
+                        Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
+                }
+                addToGraph(Branch, OpInfo(branchData(fusedTaken, fusedNotTaken)), get(bytecode.m_dst));
+                m_inlineStackTop->m_unlinkedBlocks.append(m_currentBlock);
+            };
 
             // 1. Get hasInstance
             // 1.1 Check whether the constructor is an object.
@@ -8933,11 +8973,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 set(bytecode.m_dst, addToGraph(InstanceOfCustom, get(bytecode.m_value), get(bytecode.m_constructor), get(bytecode.m_hasInstanceOrPrototype)));
 
-                m_currentIndex = nextOpcodeIndex();
-                m_exitOK = true;
-                processSetLocalQueue();
-
-                addToGraph(Jump, OpInfo(continuation));
+                finishArm();
             }
 
             m_currentIndex = itermediateIndex;
@@ -8961,11 +8997,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 set(bytecode.m_dst, jsConstant(jsBoolean(false)));
 
-                m_currentIndex = nextOpcodeIndex();
-                m_exitOK = true;
-                processSetLocalQueue();
-
-                addToGraph(Jump, OpInfo(continuation));
+                finishArm();
             }
 
             m_currentIndex = itermediateIndex;
@@ -9033,11 +9065,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     set(bytecode.m_dst, addToGraph(op, value, prototype));
                 })();
 
-                m_currentIndex = nextOpcodeIndex();
-                m_exitOK = true;
-                processSetLocalQueue();
+                finishArm();
+            }
 
-                addToGraph(Jump, OpInfo(continuation));
+            if (fusedBranch) {
+                m_currentIndex = BytecodeIndex(fusedFallThrough);
+                m_exitOK = false;
+                return;
             }
 
             m_currentIndex = startIndex;
