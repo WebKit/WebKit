@@ -293,6 +293,26 @@ placeholder;
         self.verify_conversion_happened(converted)
         self.verify_reference_relative_paths(converted, test_reference_support_info)
 
+    def test_convert_leaves_fuzzy_reference_keys_alone(self):
+        """ A fuzzy key names a reference the manifest declares, so renaming the reference on import must not rewrite it """
+
+        test_html = """<html>
+<head>
+<link rel="match" href="foo-ref.html">
+<meta name=fuzzy content="foo-ref.html:0-100;0-980">
+</head>
+</html>
+"""
+        renames = [{'src': 'foo-ref.html', 'dest': 'foo-expected.html'}]
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None, renames)
+
+        with OutputCapture():
+            converter.feed(test_html)
+            converter.close()
+            converted = converter.output()
+
+        self.assertIsNone(converted)
+
     def test_convert_style_multiple_url(self):
         """ Tests convert_attributes_if_needed() using a reference file that has several relative URL paths in the style """
 
