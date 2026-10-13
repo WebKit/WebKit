@@ -147,6 +147,7 @@ public:
     void commitProvisionalFrame();
     void destroyProvisionalFrame();
     void updateSandboxFlags(WebCore::SandboxFlags);
+    void didAddHistoryItemToBackForwardItem(WebCore::BackForwardFrameItemIdentifier, WebCore::BackForwardItemIdentifier);
     void loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier>);
     WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
