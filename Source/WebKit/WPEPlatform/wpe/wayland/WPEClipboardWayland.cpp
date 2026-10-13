@@ -225,7 +225,7 @@ static void wpeClipboardWaylandChanged(WPEClipboard* clipboard, GPtrArray* forma
         wl_data_source_add_listener(priv->source, &wlDataSourceListener, clipboard);
 
         if (formats) {
-            for (unsigned i = 0; formats->pdata[i]; ++i)
+            for (unsigned i = 0; i < formats->len; ++i)
                 wl_data_source_offer(priv->source, static_cast<const char*>(formats->pdata[i]));
         }
 

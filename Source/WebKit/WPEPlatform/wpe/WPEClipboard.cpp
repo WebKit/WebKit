@@ -240,7 +240,6 @@ void wpe_clipboard_set_content(WPEClipboard* clipboard, WPEClipboardContent* con
             for (const auto* format : content->buffers->keys())
                 g_ptr_array_add(formats.get(), static_cast<gpointer>(const_cast<char*>(format)));
         }
-        g_ptr_array_add(formats.get(), nullptr);
     }
 
     WPE_CLIPBOARD_GET_CLASS(clipboard)->changed(clipboard, formats.get(), TRUE, content);
