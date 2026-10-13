@@ -855,8 +855,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-005.html [ Pass
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
 # Needs rebasing and testing
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/registration-script-module.https.html [ Failure ]
 
 imported/w3c/web-platform-tests/content-security-policy/font-src/font-match-allowed.sub.html [ Pass ]
 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub.html [ Pass ]
@@ -2488,7 +2486,6 @@ webkit.org/b/305747 [ Release ] http/wpt/service-workers/online.https.html [ Fai
 
 webkit.org/b/296469 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Failure ]
 
-webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 
 webkit.org/b/217267 http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Timeout Pass ]
 webkit.org/b/305350 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Timeout Pass Failure ]
@@ -2649,7 +2646,6 @@ webkit.org/b/222753 fast/text/multi-code-unit-simple-path.html [ ImageOnlyFailur
 
 webkit.org/b/223416 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
-fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 
 # Slightly different results, even if hyphenation happens, it probably needs to be checked.
 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]
@@ -3069,7 +3065,6 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 
 # For simulcast outbound streams webrtcbin currently returns the stats for the merged stream.
 # Instead it should create one outbound-rtp stat structure per configured rid.
-imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
 
 # Legacy Offer options are enabled by default in WPE and GTK ports.
 imported/w3c/web-platform-tests/webrtc/legacy/RTCPeerConnection-createOffer-offerToReceive.optional.html [ Pass ]
@@ -3152,10 +3147,8 @@ webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
 # newly imported CSP tests failing on GTK and/or WPE.
-imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-same-self-block.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html [ Failure ]
 
 webkit.org/b/231083 imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Failure Pass ]
 
@@ -4079,30 +4072,11 @@ imported/w3c/web-platform-tests/fetch/http-cache/partial.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.serviceworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/audioworklet.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-frame.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-iframe.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-img.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-input-image.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-picture.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-script.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-script.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/fetch-via-serviceworker.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/fetch.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/fetch.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-dynamic.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-dynamic.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-static.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-module-import-static.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/svg-image.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-constructor.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-importscripts.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-importscripts.sub.html [ Failure ]
 
 webkit.org/b/234529 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
@@ -4650,8 +4624,6 @@ webkit.org/b/213783 webanimations/accelerated-animation-with-easing.html [ Pass 
 
 webkit.org/b/285921 media/media-source/media-source-seek-past-end.html [ Failure Crash Pass ]
 
-imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/img-tag.https.html [ Failure ]
-imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/img-tag.https.html [ Failure ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation/image-orientation.html [ Failure ]
@@ -4832,7 +4804,6 @@ imported/w3c/web-platform-tests/cookiestore/encoding.https.any.serviceworker.htm
 imported/w3c/web-platform-tests/cookiestore/httponly_cookies.https.window.html [ Skip ]
 
 fast/text/emphasis-overlap.html [ Failure ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/invalid-content-type.any.sharedworker.html [ Failure ]
 
 # Assertion failure if ASSERT_ENABLED
 webkit.org/b/298433 [ Debug ] imported/w3c/web-platform-tests/selection/caret/move-around-generated-content.html [ Skip ]
@@ -5146,7 +5117,6 @@ webkit.org/b/314643 media/media-source/media-source-duration-truncation-ended.ht
 
 webkit.org/b/314809 fast/repaint/table-row-move-after-content-change.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/315517 imported/w3c/web-platform-tests/css/css-values/attr-pseudo-elem-invalidation-2.html [ Failure ]
 
 webkit.org/b/315756 fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass ]
 

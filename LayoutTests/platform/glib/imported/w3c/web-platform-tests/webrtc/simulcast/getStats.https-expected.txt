@@ -1,3 +1,0 @@
-
-PASS Simulcast getStats results
-
