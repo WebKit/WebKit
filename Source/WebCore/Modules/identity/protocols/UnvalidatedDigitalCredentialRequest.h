@@ -28,6 +28,9 @@
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/OpenID4VPMultisignedRequest.h>
 #include <WebCore/OpenID4VPSignedRequest.h>
+#include <WebCore/OpenID4VPUnsignedRequest.h>
+#include <optional>
+#include <wtf/JSONValues.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -36,7 +39,40 @@ namespace WebCore {
 using UnvalidatedDigitalCredentialRequest = Variant<
     MobileDocumentRequest,
     OpenID4VPSignedRequest,
-    OpenID4VPMultisignedRequest
+    OpenID4VPMultisignedRequest,
+    OpenID4VPUnsignedRequest
 >;
+
+inline std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> openID4VPRequestJSON(const UnvalidatedDigitalCredentialRequest& request)
+{
+    using enum DigitalCredentialPresentationProtocol;
+
+    return WTF::switchOn(request,
+        [](const OpenID4VPSignedRequest& signedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+            Ref object = JSON::Object::create();
+            object->setString("request"_s, signedRequest.request);
+            return std::make_pair(Openid4vpV1Signed, object->toJSONString());
+        },
+        [](const OpenID4VPMultisignedRequest& multisignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+            Ref signatures = JSON::Array::create();
+            for (auto& signature : multisignedRequest.signatures) {
+                Ref signatureObject = JSON::Object::create();
+                signatureObject->setString("protected"_s, signature.protectedHeader);
+                signatureObject->setString("signature"_s, signature.signature);
+                signatures->pushObject(WTF::move(signatureObject));
+            }
+
+            Ref object = JSON::Object::create();
+            object->setString("payload"_s, multisignedRequest.payload);
+            object->setArray("signatures"_s, WTF::move(signatures));
+            return std::make_pair(Openid4vpV1Multisigned, object->toJSONString());
+        },
+        [](const OpenID4VPUnsignedRequest& unsignedRequest) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+            return std::make_pair(Openid4vpV1Unsigned, unsignedRequest.requestJSON);
+        },
+        [](const MobileDocumentRequest&) -> std::optional<std::pair<DigitalCredentialPresentationProtocol, String>> {
+            return std::nullopt;
+        });
+}
 
 } // namespace WebCore

@@ -12605,6 +12605,14 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
                 completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials feature is disabled by preference."_s }))
             );
 
+            if constexpr (std::is_same_v<std::remove_cvref_t<decltype(requestData)>, WebCore::DigitalCredentialsOpenID4VPRequestData>) {
+                MESSAGE_CHECK_COMPLETION_BASE(
+                    protect(preferences())->digitalCredentialsOpenID4VPEnabled(),
+                    connection,
+                    completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "OpenID4VP for the Digital Credentials API is disabled by preference."_s }))
+                );
+            }
+
 #if ENABLE(WEBDRIVER_BIDI)
             if (isControlledByAutomation()) {
                 if (RefPtr automationSession = configuration().processPool().automationSession()) {
@@ -12734,9 +12742,11 @@ void WebPageProxy::setVirtualWalletBehaviorForTesting(const String& action, cons
 
     settlePendingTestingDigitalCredentialHandler("Virtual wallet behavior replaced."_s);
 
-    auto parsedProtocol = WebCore::digitalCredentialPresentationProtocolFromString(protocol).value_or(WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc);
+    auto parsedProtocol = WebCore::digitalCredentialPresentationProtocolFromString(protocol);
+    if (!parsedProtocol)
+        LOG_WITH_STREAM(DigitalCredentials, stream << "WebPageProxy::setVirtualWalletBehaviorForTesting() - unrecognized protocol '"_s << protocol << "'; the virtual wallet will report org-iso-mdoc."_s);
 
-    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, parsedProtocol, responseJSON };
+    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, parsedProtocol.value_or(WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc), responseJSON };
 }
 #endif
 

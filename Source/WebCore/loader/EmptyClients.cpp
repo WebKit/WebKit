@@ -513,7 +513,7 @@ public:
         });
     }
 
-    ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+    ExceptionOr<Vector<std::optional<ValidatedDigitalCredentialRequest>>> validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
     {
         return Exception { ExceptionCode::InvalidStateError };
     }

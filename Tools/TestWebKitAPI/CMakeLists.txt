@@ -283,6 +283,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/DFACombiner.cpp
         Tests/WebCore/DFAMinimizer.cpp
         Tests/WebCore/Decimal.cpp
+        Tests/WebCore/DigitalCredentialsRequestDataBuilder.cpp
         Tests/WebCore/DisplayListRecorderTests.cpp
         Tests/WebCore/DocumentOrder.cpp
         Tests/WebCore/FidoHidMessageTest.cpp

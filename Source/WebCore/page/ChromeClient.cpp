@@ -120,7 +120,7 @@ RefPtr<NativePromise<Ref<NativeImage>, void>> ChromeClient::createDisplayOnlyIma
 }
 
 #if ENABLE(WEB_AUTHN)
-ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> ChromeClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+ExceptionOr<Vector<std::optional<ValidatedDigitalCredentialRequest>>> ChromeClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
 {
     return Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s };
 };

@@ -774,6 +774,7 @@ set(WebKitSwift_SOURCES
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentController.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift
+    ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentOpenID4VPRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentRawRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentResponse.swift
@@ -816,12 +817,22 @@ set_target_properties(WebKitSwift PROPERTIES
 # the derived sources directory for the Xcode build; do the same here, or the
 # declarations they implement compile but have no implementation at runtime.
 if (USE_APPLE_INTERNAL_SDK)
-    foreach (_additions_swift_source
+    set(_additions_swift_sources
         AppKitGesturesExtras
         TestWebKitAPILibraryAdditions
         UIWindowScene+Extras
         WKSExperienceController+Transitions
         WKWebView+SystemTextExtraction)
+
+    # WebKitAdditions may predate DigitalCredentialsExtras.swift.in; its call sites are behind
+    # HAVE(DIGITAL_CREDENTIALS_OPENID4VP), which the same WebKitAdditions defines.
+    set(_digital_credentials_extras_available OFF)
+    if (EXISTS "${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitAdditions/Additions/DigitalCredentialsExtras.swift.in")
+        set(_digital_credentials_extras_available ON)
+        list(APPEND _additions_swift_sources DigitalCredentialsExtras)
+    endif ()
+
+    foreach (_additions_swift_source ${_additions_swift_sources})
         add_custom_command(
             OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -845,6 +856,9 @@ if (USE_APPLE_INTERNAL_SDK)
     target_sources(WebKitSwift PRIVATE
         ${WebKit_DERIVED_SOURCES_DIR}/WKSExperienceController+Transitions.swift
     )
+    if (_digital_credentials_extras_available)
+        target_sources(WebKitSwift PRIVATE ${WebKit_DERIVED_SOURCES_DIR}/DigitalCredentialsExtras.swift)
+    endif ()
 endif ()
 
 target_include_directories(WebKitSwift PRIVATE

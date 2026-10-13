@@ -25,21 +25,18 @@
 
 #pragma once
 
-#include "DigitalCredentialsRequestData.h"
-#include "Document.h"
-#include "ExceptionOr.h"
-#include "ISO18013DocumentRequest.h"
-
-#include "SecurityOriginData.h"
-#include "ValidatedMobileDocumentRequest.h"
-#include <wtf/text/WTFString.h>
+#include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/ExceptionOr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class Document;
 
 class DigitalCredentialsRequestDataBuilder {
 
 public:
-    static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<ValidatedMobileDocumentRequest>, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
+    WEBCORE_EXPORT static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<std::optional<ValidatedDigitalCredentialRequest>>&&, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
 };
 
 } // namespace WebCore
