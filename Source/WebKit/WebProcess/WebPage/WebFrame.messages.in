@@ -30,6 +30,7 @@ messages -> WebFrame {
     DestroyProvisionalFrame();
     StopLoadingDueToProcessSwap(WebCore::NavigationIdentifier navigationID)
     UpdateSandboxFlags(WebCore::SandboxFlags sandboxFlags)
+    DidAddHistoryItemToBackForwardItem(WebCore::BackForwardFrameItemIdentifier frameItemID, WebCore::BackForwardItemIdentifier itemID)
     FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
     TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);

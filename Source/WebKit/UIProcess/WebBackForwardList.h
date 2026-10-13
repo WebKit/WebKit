@@ -126,7 +126,7 @@ private:
     unsigned LEGACY_NODELETE rawForwardListEntryCount() const;
 
     void addItem(Ref<WebBackForwardListItem>&&);
-    void addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
+    std::optional<WebCore::BackForwardItemIdentifier> addChildItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void didRemoveItem(WebBackForwardListItem&);
     const BackForwardListItemVector& entries() const LIFETIME_BOUND { return m_entries; }
     WebBackForwardListCounts LEGACY_NODELETE rawCounts() const;
