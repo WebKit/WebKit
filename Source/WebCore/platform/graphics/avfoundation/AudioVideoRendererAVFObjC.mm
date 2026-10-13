@@ -316,7 +316,7 @@ void AudioVideoRendererAVFObjC::enqueueSample(TrackIdentifier trackId, Ref<Media
             videoRenderer->enqueueSample(sample, minimumUpcomingTime);
             if (!m_hasEverSubmittedVideoSample) {
                 m_hasEverSubmittedVideoSample = true;
-                m_previousRendererConfiguration.isRenderingCompressedVideo = !isUsingDecompressionSession();
+                m_previousRendererConfiguration.isRenderingCompressedVideo = isRenderingCompressedVideo(!!videoRenderer->renderer());
             }
         }
         break;
@@ -1815,6 +1815,13 @@ bool AudioVideoRendererAVFObjC::willUseDecompressionSessionIfNeeded() const
     return m_preferences.contains(VideoRendererPreference::PrefersDecompressionSession) || m_hasAvailableVideoFrameCallback;
 }
 
+bool AudioVideoRendererAVFObjC::isRenderingCompressedVideo(bool hasRenderer) const
+{
+    // A VideoMediaSampleRenderer keeps its decompression session for its whole lifetime, across
+    // renderer and preference changes, so account for it as well as for whether one will be used.
+    return hasRenderer && !isUsingDecompressionSession() && !willUseDecompressionSessionIfNeeded();
+}
+
 Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBufferVideoRendering *renderer)
 {
     ASSERT(m_videoRenderer);
@@ -1822,7 +1829,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     RefPtr videoRenderer = m_videoRenderer;
 
     RendererConfiguration newConfiguration {
-        .isRenderingCompressedVideo = !!renderer && !willUseDecompressionSessionIfNeeded() && m_hasEverSubmittedVideoSample
+        .isRenderingCompressedVideo = isRenderingCompressedVideo(!!renderer) && m_hasEverSubmittedVideoSample
     };
     if (renderer == videoRenderer->renderer()) {
         if (std::exchange(m_previousRendererConfiguration, newConfiguration) != newConfiguration && renderer)
