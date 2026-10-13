@@ -605,6 +605,28 @@ TEST(KeyboardInputTests, IsSingleLineDocument)
     EXPECT_FALSE([webView effectiveTextInputTraits].isSingleLineDocument);
 }
 
+TEST(KeyboardInputTests, SecureTextEntryAfterChangingInputTypeFromPassword)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate];
+
+    [webView synchronouslyLoadHTMLString:@"<body><input id='first' type='password'><input id='second' type='text'></body>"];
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('first').focus()"];
+    EXPECT_TRUE([webView effectiveTextInputTraits].secureTextEntry);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('first').blur()"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"let first = document.getElementById('first'); first.type = 'text'; first.focus()"];
+    EXPECT_TRUE([webView effectiveTextInputTraits].secureTextEntry);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('second').focus()"];
+    EXPECT_FALSE([webView effectiveTextInputTraits].secureTextEntry);
+}
+
 TEST(KeyboardInputTests, KeyboardTypeForInput)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

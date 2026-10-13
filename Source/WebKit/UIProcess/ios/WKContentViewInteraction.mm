@@ -7401,7 +7401,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
 - (void)_updateTextInputTraits:(id<UITextInputTraits>)traits
 {
-    traits.secureTextEntry = _focusedElementInformation.elementType == WebKit::InputType::Password || [_formInputSession forceSecureTextEntry];
+    traits.secureTextEntry = _focusedElementInformation.elementType == WebKit::InputType::Password || _focusedElementInformation.hasEverBeenPasswordField || [_formInputSession forceSecureTextEntry];
 
     switch (_focusedElementInformation.enterKeyHint) {
     case WebCore::EnterKeyHint::Enter:
