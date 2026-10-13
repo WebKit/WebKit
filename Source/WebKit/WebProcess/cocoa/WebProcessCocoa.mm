@@ -1198,10 +1198,10 @@ void WebProcess::scrollerStylePreferenceChanged(bool useOverlayScrollbars)
         RefPtr corePage = page->corePage();
         if (!corePage)
             continue;
-        for (Ref rootFrame : copyToVectorOf<Ref<LocalFrame>>(corePage->rootFrames())) {
-            if (RefPtr frameView = rootFrame->view())
+        corePage->forEachLocalFrame([](LocalFrame& frame) {
+            if (RefPtr frameView = frame.view())
                 frameView->scrollbarStyleDidChange();
-        }
+        });
     }
 
     NSScrollerStyle style = useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
