@@ -184,6 +184,9 @@ public:
 
     WTF_EXPORT_PRIVATE std::optional<char32_t> LEGACY_NODELETE convertToSingleCodePoint() const;
 
+    // The single code point that a string of more than one code point normalizes to under NFC, if there is one.
+    WTF_EXPORT_PRIVATE std::optional<char32_t> precomposedCharacter() const;
+
     bool LEGACY_NODELETE contains(char16_t) const;
     template<typename CodeUnitMatchFunction>
         requires (std::is_invocable_r_v<bool, CodeUnitMatchFunction, char16_t>)

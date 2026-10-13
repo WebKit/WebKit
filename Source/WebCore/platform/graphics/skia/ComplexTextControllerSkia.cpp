@@ -204,8 +204,9 @@ static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
     return HB_SCRIPT_INVALID;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
+void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font, std::span<const char16_t>, std::span<const unsigned>)
 {
+    // HarfBuzz composes a cluster when it shapes, so the shaping text and indices for a precomposed cluster are not needed.
     ASSERT(!characters.empty());
 
     if (!font) {
