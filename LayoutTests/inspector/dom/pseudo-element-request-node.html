@@ -30,12 +30,13 @@ function test()
                 let pseudoElement = WI.domManager.nodeForId(nodeId);
 
                 InspectorTest.expectEqual(pseudoElement.pseudoType(), type, "The requested node should be the rendered pseudo element.");
-                InspectorTest.expectEqual(pseudoElement.parentNode?.getAttribute("id"), `${type}-target`, "Requesting a pseudo element should also expose its host.");
-                InspectorTest.expectEqual(pseudoElement.parentNode?.pseudoElements().get(type), pseudoElement, "The host should reference the same pseudo element.");
+                InspectorTest.expectEqual(pseudoElement.parentNode.getAttribute("id"), `${type}-target`, "Requesting a pseudo element should also expose its host.");
+                InspectorTest.expectEqual(pseudoElement.parentNode.pseudoElements().get(type), pseudoElement, "The host should reference the same pseudo element.");
 
-                let removed = WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved);
-                await InspectorTest.evaluateInPage(`hidePseudoElement("${type}")`);
-                await removed;
+                await Promise.all([
+                    pseudoElement.awaitEvent(WI.DOMNode.Event.Removed),
+                    InspectorTest.evaluateInPage(`hidePseudoElement("${type}")`),
+                ]);
                 InspectorTest.expectEqual(pseudoElement.parentNode, null, "Removing the pseudo element should clear its frontend parent.");
                 InspectorTest.expectFalse(WI.domManager.nodeForId(nodeId), "Removing the pseudo element should discard its binding.");
 

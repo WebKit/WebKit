@@ -182,8 +182,8 @@ WI.DOMManager = class DOMManager extends WI.Object
                 node._children = [frameDocument];
                 node._renumber();
 
-                this.dispatchEventToListeners(WI.DOMManager.Event.ChildNodeCountUpdated, node);
-                this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node: frameDocument, parent: node});
+                node.dispatchEventToListeners(WI.DOMNode.Event.ChildNodeCountUpdated);
+                frameDocument.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
                 return true;
             }
         }
@@ -227,7 +227,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             if (iframeElement._children && iframeElement._children.includes(frameDocument))
                 iframeElement._children = iframeElement._children.filter((child) => child !== frameDocument);
             frameDocument.parentNode = null;
-            this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: frameDocument, parent: iframeElement});
+            frameDocument.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent: iframeElement});
         }
 
         this._unsplicedFrameDocuments = this._unsplicedFrameDocuments.filter((doc) => doc !== frameDocument);
@@ -303,7 +303,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._setAttribute(name, value);
-        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name});
     }
 
@@ -314,7 +313,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._removeAttribute(name);
-        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeRemoved, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeRemoved, {name});
     }
 
@@ -358,7 +356,6 @@ WI.DOMManager = class DOMManager extends WI.Object
                     return;
 
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name: "style"});
                 node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
             });
         }
@@ -371,7 +368,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._nodeValue = newValue;
-        this.dispatchEventToListeners(WI.DOMManager.Event.CharacterDataModified, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.CharacterDataModified);
     }
 
     _frameTargetChildNodeCountUpdated(target, nodeId, newValue)
@@ -381,7 +378,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node.childNodeCount = newValue;
-        this.dispatchEventToListeners(WI.DOMManager.Event.ChildNodeCountUpdated, node);
+        node.dispatchEventToListeners(WI.DOMNode.Event.ChildNodeCountUpdated);
     }
 
     _frameTargetChildNodeInserted(target, parentId, prevId, payload)
@@ -393,7 +390,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         let prev = prevId ? this.nodeForIdInFrameTarget(prevId, target) : null;
         let node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
 
         // A new iframe element may have been inserted — try to splice pending frame documents.
         this._trySpliceUnsplicedFrameDocuments();
@@ -408,7 +405,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         parent._removeChild(node);
         this._frameTargetUnbind(node);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent});
     }
 
     _frameTargetShadowRootPushed(target, hostId, payload)
@@ -421,7 +418,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         // `_childNodeInserted(hostId, 0, root)`; `_insertChild` scopes the node to this target.
         let node = host._insertChild(null, payload);
         this._idToDOMNode[node.id] = node;
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent: host});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
 
         // A shadow subtree may contain an iframe element.
         this._trySpliceUnsplicedFrameDocuments();
@@ -436,7 +433,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         host._removeChild(root);
         this._frameTargetUnbind(root);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: root, parent: host});
+        root.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent: host});
     }
 
     _frameTargetWillDestroyDOMNode(target, nodeId)
@@ -447,7 +444,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         node.markDestroyed();
         delete this._idToDOMNode[node.id];
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Removed);
     }
 
     _frameTargetCustomElementStateChanged(target, nodeId, newState)
@@ -457,7 +454,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._customElementState = newState;
-        this.dispatchEventToListeners(WI.DOMManager.Event.CustomElementStateChanged, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.CustomElementStateChanged);
     }
 
     _frameTargetPseudoElementAdded(target, parentId, pseudoElement)
@@ -471,7 +468,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._idToDOMNode[node.id] = node;
         console.assert(!parent.pseudoElements().get(node.pseudoType()));
         parent.pseudoElements().set(node.pseudoType(), node);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
     }
 
     _frameTargetPseudoElementRemoved(target, parentId, pseudoElementId)
@@ -488,7 +485,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         parent._removeChild(pseudoElement);
         this._frameTargetUnbind(pseudoElement);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: pseudoElement, parent});
+        pseudoElement.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent});
     }
 
     transitionPageTarget()
@@ -828,7 +825,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         node.markDestroyed();
         delete this._idToDOMNode[nodeId];
 
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Removed);
     }
 
     didAddEventListener(nodeId)
@@ -953,7 +950,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._setAttribute(name, value);
-        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name});
     }
 
@@ -964,7 +960,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         node._removeAttribute(name);
-        this.dispatchEventToListeners(WI.DOMManager.Event.AttributeRemoved, {node, name});
         node.dispatchEventToListeners(WI.DOMNode.Event.AttributeRemoved, {name});
     }
 
@@ -988,7 +983,6 @@ WI.DOMManager = class DOMManager extends WI.Object
             var node = this._idToDOMNode[nodeId];
             if (node) {
                 node._setAttributesPayload(attributes);
-                this.dispatchEventToListeners(WI.DOMManager.Event.AttributeModified, {node, name: "style"});
                 node.dispatchEventToListeners(WI.DOMNode.Event.AttributeModified, {name: "style"});
             }
         }
@@ -1010,7 +1004,7 @@ WI.DOMManager = class DOMManager extends WI.Object
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
-        this.dispatchEventToListeners(WI.DOMManager.Event.CharacterDataModified, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.CharacterDataModified);
     }
 
     nodeForId(nodeId)
@@ -1072,13 +1066,13 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         if (parent.children) {
             for (let node of parent.children)
-                this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
+                node.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent});
         }
 
         parent._setChildrenPayload(payloads);
 
         for (let node of parent.children)
-            this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+            node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
 
         // New iframe elements may have been loaded — try to splice pending frame documents.
         this._trySpliceUnsplicedFrameDocuments();
@@ -1090,7 +1084,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!node)
             return;
         node.childNodeCount = newValue;
-        this.dispatchEventToListeners(WI.DOMManager.Event.ChildNodeCountUpdated, node);
+        node.dispatchEventToListeners(WI.DOMNode.Event.ChildNodeCountUpdated);
     }
 
     _childNodeInserted(parentId, prevId, payload)
@@ -1101,7 +1095,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
         this._idToDOMNode[node.id] = node;
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
 
         // A new iframe element may have been inserted — try to splice pending frame documents.
         this._trySpliceUnsplicedFrameDocuments();
@@ -1115,14 +1109,14 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
         parent._removeChild(node);
         this._unbind(node);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent});
     }
 
     _customElementStateChanged(elementId, newState)
     {
         const node = this._idToDOMNode[elementId];
         node._customElementState = newState;
-        this.dispatchEventToListeners(WI.DOMManager.Event.CustomElementStateChanged, {node});
+        node.dispatchEventToListeners(WI.DOMNode.Event.CustomElementStateChanged);
     }
 
     _pseudoElementAdded(parentId, pseudoElement)
@@ -1136,7 +1130,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._idToDOMNode[node.id] = node;
         console.assert(!parent.pseudoElements().get(node.pseudoType()));
         parent.pseudoElements().set(node.pseudoType(), node);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
+        node.dispatchEventToListeners(WI.DOMNode.Event.Inserted);
     }
 
     _pseudoElementRemoved(parentId, pseudoElementId)
@@ -1153,7 +1147,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         parent._removeChild(pseudoElement);
         this._unbind(pseudoElement);
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node: pseudoElement, parent});
+        pseudoElement.dispatchEventToListeners(WI.DOMNode.Event.Removed, {parent});
     }
 
     _unbind(node)
@@ -1558,16 +1552,9 @@ WI.DOMManager = class DOMManager extends WI.Object
 };
 
 WI.DOMManager.Event = {
-    AttributeModified: "dom-manager-attribute-modified",
-    AttributeRemoved: "dom-manager-attribute-removed",
-    CharacterDataModified: "dom-manager-character-data-modified",
-    NodeInserted: "dom-manager-node-inserted",
-    NodeRemoved: "dom-manager-node-removed",
-    CustomElementStateChanged: "dom-manager-custom-element-state-changed",
     DocumentUpdated: "dom-manager-document-updated",
-    ChildNodeCountUpdated: "dom-manager-child-node-count-updated",
     DOMNodeWasInspected: "dom-manager-dom-node-was-inspected",
-    InspectModeStateChanged: "dom-manager-inspect-mode-state-changed",
     FrameDocumentAvailable: "dom-manager-frame-document-available",
     InspectedNodeChanged: "dom-manager-inspected-node-changed",
+    InspectModeStateChanged: "dom-manager-inspect-mode-state-changed",
 };

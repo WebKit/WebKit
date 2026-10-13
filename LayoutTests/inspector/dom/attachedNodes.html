@@ -85,7 +85,7 @@ function test()
             InspectorTest.log("Attaching node to DOM tree...");
             await Promise.all([
                 InspectorTest.evaluateInPage(`insertDetachedNode()`),
-                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.Inserted),
             ]);
             InspectorTest.log("DOM node attached to tree.");
 
@@ -94,7 +94,7 @@ function test()
             InspectorTest.log("Detaching node from DOM tree...");
             await Promise.all([
                 InspectorTest.evaluateInPage(`removePreviouslyDetachedNode()`),
-                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeRemoved),
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.Removed),
             ]);
             InspectorTest.log("DOM node detached from tree.");
 

@@ -32,12 +32,12 @@ function test() {
 
     function awaitShadowRootPushedOn(target) {
         return new Promise((resolve) => {
-            WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function listener(event) {
-                let node = event.data.node;
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.Inserted, function listener(event) {
+                let node = event.target;
                 if (!node || node.owningTarget !== target || !node.isShadowRoot())
                     return;
-                WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, listener, null);
-                resolve(event.data);
+                WI.DOMNode.removeEventListener(WI.DOMNode.Event.Inserted, listener, null);
+                resolve(node);
             });
         });
     }
@@ -70,8 +70,8 @@ function test() {
             childTarget.RuntimeAgent.evaluate.invoke({expression: "attachShadowToChildHost()", objectGroup: "test"});
             grandchildTarget.RuntimeAgent.evaluate.invoke({expression: "attachShadowToGrandchildHost()", objectGroup: "test"});
 
-            let childShadow = (await childPushPromise).node;
-            let grandchildShadow = (await grandchildPushPromise).node;
+            let childShadow = await childPushPromise;
+            let grandchildShadow = await grandchildPushPromise;
 
             InspectorTest.expectEqual(childShadow.owningTarget, childTarget, "Child shadow root should be owned by the child target.");
             InspectorTest.expectEqual(grandchildShadow.owningTarget, grandchildTarget, "Grandchild shadow root should be owned by the grandchild target.");
@@ -95,3 +95,4 @@ function test() {
 <iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/shadow-root-child-frame.html"></iframe>
 </body>
 </html>
+
