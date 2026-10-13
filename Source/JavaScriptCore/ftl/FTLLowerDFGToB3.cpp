@@ -27906,9 +27906,10 @@ IGNORE_CLANG_WARNINGS_END
     LValue toIntegerOrInfinity(LValue doubleValue)
     {
         // https://tc39.es/ecma262/#sec-tointegerorinfinity
-        // 1. If value is either of +0, -0, or NaN, return +0
-        // 2. Otherwise, return trunc(value)
-        return m_out.select(m_out.doubleNotEqualAndOrdered(doubleValue, m_out.doubleZero), m_out.doubleTrunc(doubleValue), m_out.doubleZero);
+        // 1. If value is NaN, return +0
+        // 2. Let integer be truncate(value). If integer is -0, return +0. Otherwise, return integer
+        LValue truncated = m_out.doubleTrunc(doubleValue);
+        return m_out.select(m_out.doubleNotEqualAndOrdered(truncated, m_out.doubleZero), truncated, m_out.doubleZero);
     }
 
     void addWeakReference(JSCell* target)
