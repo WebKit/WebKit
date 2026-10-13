@@ -345,6 +345,51 @@ list(REMOVE_ITEM JSC_CORE_SOURCES
     ${JSC_DIR}/llint/LLIntOffsetsExtractor.cpp
     ${JSC_DIR}/llint/LLIntSettingsExtractor.cpp
 )
+
+# JavaScript Inspector is portable enough to use with the CLoop interpreter,
+# but its protocol/agent sources must be compiled explicitly in this standalone
+# target. Read the canonical JSC source list instead of globbing inspector/
+# (which would accidentally pick up the separate remote-inspector transport).
+if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
+    file(STRINGS "${JSC_DIR}/Sources.txt" _WKC_JSC_SOURCE_LINES)
+    set(_WKC_JSC_INSPECTOR_SOURCES)
+    set(_WKC_JSC_INSPECTOR_MISSING_SOURCES)
+    foreach (_source_line IN LISTS _WKC_JSC_SOURCE_LINES)
+        string(STRIP "${_source_line}" _source_entry)
+        if (_source_entry STREQUAL "" OR _source_entry MATCHES "^//")
+            continue()
+        endif ()
+        string(REGEX REPLACE "[ \\t]+@.*$" "" _source_entry "${_source_entry}")
+        string(STRIP "${_source_entry}" _source_entry)
+        if (NOT _source_entry MATCHES "^inspector/.*\\.cpp$")
+            continue()
+        endif ()
+
+        if (EXISTS "${JSC_DIR}/${_source_entry}")
+            list(APPEND _WKC_JSC_INSPECTOR_SOURCES "${JSC_DIR}/${_source_entry}")
+        else ()
+            # The protocol generator writes these derived C++ files into the
+            # JavaScriptCore forwarding directory as part of the CI build.
+            get_filename_component(_inspector_basename "${_source_entry}" NAME)
+            set(_generated_inspector_source "${JSC_DIR}/JavaScriptCore/${_inspector_basename}")
+            if (EXISTS "${_generated_inspector_source}")
+                list(APPEND _WKC_JSC_INSPECTOR_SOURCES "${_generated_inspector_source}")
+            else ()
+                list(APPEND _WKC_JSC_INSPECTOR_MISSING_SOURCES "${_source_entry}")
+            endif ()
+        endif ()
+    endforeach ()
+
+    if (_WKC_JSC_INSPECTOR_MISSING_SOURCES)
+        string(JOIN "\\n" _WKC_JSC_INSPECTOR_MISSING_REPORT ${_WKC_JSC_INSPECTOR_MISSING_SOURCES})
+        message(FATAL_ERROR "JavaScript Inspector was enabled, but generated/source files are missing:\\n${_WKC_JSC_INSPECTOR_MISSING_REPORT}")
+    endif ()
+
+    list(APPEND JSC_CORE_SOURCES ${_WKC_JSC_INSPECTOR_SOURCES})
+    list(LENGTH _WKC_JSC_INSPECTOR_SOURCES _WKC_JSC_INSPECTOR_COUNT)
+    message(STATUS "WKC Inspector: ${_WKC_JSC_INSPECTOR_COUNT} portable inspector/agent sources selected")
+endif ()
+
 list(LENGTH JSC_CORE_SOURCES JSC_CORE_COUNT)
 message(STATUS "JSC core: ${JSC_CORE_COUNT} source files selected (CLoop, no JIT)")
 
