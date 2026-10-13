@@ -268,7 +268,7 @@ static bool hasTransparentContainerStyle(const Style::ComputedStyle& style)
         && !style.hasExplicitlySetBorderRadius()
         // No visible borders or borders that do not create a complete box.
         && (!style.border().hasVisibleBorder()
-            || !(style.usedBorderTopWidth() && style.usedBorderRightWidth() && style.usedBorderBottomWidth() && style.usedBorderLeftWidth()));
+            || !(Style::effectiveBorderWidths(style).top() && Style::effectiveBorderWidths(style).right() && Style::effectiveBorderWidths(style).bottom() && Style::effectiveBorderWidths(style).left()));
 }
 
 static bool canTweakShapeForStyle(const Style::ComputedStyle& style)

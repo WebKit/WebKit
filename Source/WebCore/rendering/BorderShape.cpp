@@ -105,7 +105,7 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
 {
     auto zoom = style.usedZoomForLength();
     auto deviceScaleFactor = style.deviceScaleFactor();
-    auto borderWidths = RectEdges<LayoutUnit>::map(style.usedBorderWidths(), [&](auto width) {
+    auto borderWidths = RectEdges<LayoutUnit>::map(Style::effectiveBorderWidths(style), [&](auto width) {
         return Style::evaluate<LayoutUnit>(width, zoom, deviceScaleFactor);
     });
     return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);

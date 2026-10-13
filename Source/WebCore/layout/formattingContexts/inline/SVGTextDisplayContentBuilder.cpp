@@ -65,7 +65,8 @@ static bool hasInlineDirectionMarginBorderOrPadding(const Style::ComputedStyle& 
         return true;
     if (!style.paddingStart().isKnownZero() || !style.paddingEnd().isKnownZero())
         return true;
-    return !style.usedBorderWidthStart().isZero() || !style.usedBorderWidthEnd().isZero();
+    auto borderWidths = Style::effectiveBorderWidths(style);
+    return !borderWidths.start(style.writingMode()).isZero() || !borderWidths.end(style.writingMode()).isZero();
 }
 
 // Produces the same boxes as InlineFormattingContext for single line, non-wrapping, left-to-right content, including

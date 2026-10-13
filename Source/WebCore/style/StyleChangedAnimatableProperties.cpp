@@ -57,13 +57,13 @@ void conservativelyCollectChangedAnimatableProperties(const Style::ComputedStyle
 
     if (quirks.contains(AnimatablePropertiesCollectionQuirks::ComparareUsedValuesForBorderWidth)) {
         // Don't transition if the used value does not change. This is also affected by `border-*-style`.
-        if (a.usedBorderTopWidth() == b.usedBorderTopWidth())
+        if (Style::effectiveBorderWidths(a).top() == Style::effectiveBorderWidths(b).top())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderTopWidth));
-        if (a.usedBorderRightWidth() == b.usedBorderRightWidth())
+        if (Style::effectiveBorderWidths(a).right() == Style::effectiveBorderWidths(b).right())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderRightWidth));
-        if (a.usedBorderBottomWidth() == b.usedBorderBottomWidth())
+        if (Style::effectiveBorderWidths(a).bottom() == Style::effectiveBorderWidths(b).bottom())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderBottomWidth));
-        if (a.usedBorderLeftWidth() == b.usedBorderLeftWidth())
+        if (Style::effectiveBorderWidths(a).left() == Style::effectiveBorderWidths(b).left())
             changingProperties.m_properties.clear(std::to_underlying(CSSPropertyID::BorderLeftWidth));
     }
 }

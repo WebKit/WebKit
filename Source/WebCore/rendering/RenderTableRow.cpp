@@ -81,10 +81,10 @@ void RenderTableRow::willBeRemovedFromTree()
 
 static bool borderWidthChanged(const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
 {
-    return oldStyle->usedBorderLeftWidth() != newStyle->usedBorderLeftWidth()
-        || oldStyle->usedBorderTopWidth() != newStyle->usedBorderTopWidth()
-        || oldStyle->usedBorderRightWidth() != newStyle->usedBorderRightWidth()
-        || oldStyle->usedBorderBottomWidth() != newStyle->usedBorderBottomWidth();
+    return Style::effectiveBorderWidths(*oldStyle).left() != Style::effectiveBorderWidths(*newStyle).left()
+        || Style::effectiveBorderWidths(*oldStyle).top() != Style::effectiveBorderWidths(*newStyle).top()
+        || Style::effectiveBorderWidths(*oldStyle).right() != Style::effectiveBorderWidths(*newStyle).right()
+        || Style::effectiveBorderWidths(*oldStyle).bottom() != Style::effectiveBorderWidths(*newStyle).bottom();
 }
 
 void RenderTableRow::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

@@ -174,23 +174,6 @@ public:
     Style::LineWidth usedOutlineWidth() const;
     float usedOutlineSize(Style::ZoomFactor, float deviceScaleFactor) const; // used value combining `outline-width` and `outline-offset`
 
-    inline decltype(auto) usedBorderWidths() const;
-    inline Style::LineWidth usedBorderBottomWidth() const;
-    inline Style::LineWidth usedBorderLeftWidth() const;
-    inline Style::LineWidth usedBorderRightWidth() const;
-    inline Style::LineWidth usedBorderTopWidth() const;
-    inline Style::LineWidth usedBorderWidthStart(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthEnd(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthBefore(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthAfter(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthLogicalLeft(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthLogicalRight(WritingMode) const;
-    inline Style::LineWidth usedBorderWidthStart() const;
-    inline Style::LineWidth usedBorderWidthEnd() const;
-    inline Style::LineWidth usedBorderWidthBefore() const;
-    inline Style::LineWidth usedBorderWidthAfter() const;
-    inline Style::LineWidth usedBorderWidthLogicalLeft() const;
-    inline Style::LineWidth usedBorderWidthLogicalRight() const;
 
     // MARK: - has*()
 

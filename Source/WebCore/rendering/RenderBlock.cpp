@@ -319,15 +319,15 @@ bool RenderBlock::scrollbarWidthDidChange(const Style::ComputedStyle& oldStyle, 
 bool RenderBlock::contentBoxLogicalWidthChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     if (newStyle.writingMode().isHorizontal()) {
-        return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth()
-            || oldStyle.usedBorderRightWidth() != newStyle.usedBorderRightWidth()
+        return Style::effectiveBorderWidths(oldStyle).left() != Style::effectiveBorderWidths(newStyle).left()
+            || Style::effectiveBorderWidths(oldStyle).right() != Style::effectiveBorderWidths(newStyle).right()
             || oldStyle.paddingLeft() != newStyle.paddingLeft()
             || oldStyle.paddingRight() != newStyle.paddingRight()
             || scrollbarWidthDidChange(oldStyle, newStyle, ScrollbarOrientation::Vertical);
     }
 
-    return oldStyle.usedBorderTopWidth() != newStyle.usedBorderTopWidth()
-        || oldStyle.usedBorderBottomWidth() != newStyle.usedBorderBottomWidth()
+    return Style::effectiveBorderWidths(oldStyle).top() != Style::effectiveBorderWidths(newStyle).top()
+        || Style::effectiveBorderWidths(oldStyle).bottom() != Style::effectiveBorderWidths(newStyle).bottom()
         || oldStyle.paddingTop() != newStyle.paddingTop()
         || oldStyle.paddingBottom() != newStyle.paddingBottom()
         || scrollbarWidthDidChange(oldStyle, newStyle, ScrollbarOrientation::Horizontal);
@@ -339,8 +339,8 @@ bool RenderBlock::paddingBoxLogicalHeightChanged(const Style::ComputedStyle& old
         return (orientation == ScrollbarOrientation::Vertical ? includeVerticalScrollbarSize() : includeHorizontalScrollbarSize()) && oldStyle.scrollbarWidth() != newStyle.scrollbarWidth();
     };
     if (newStyle.writingMode().isHorizontal())
-        return oldStyle.usedBorderTopWidth() != newStyle.usedBorderTopWidth() || oldStyle.usedBorderBottomWidth() != newStyle.usedBorderBottomWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
-    return oldStyle.usedBorderLeftWidth() != newStyle.usedBorderLeftWidth() || oldStyle.usedBorderRightWidth() != newStyle.usedBorderRightWidth() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
+        return Style::effectiveBorderWidths(oldStyle).top() != Style::effectiveBorderWidths(newStyle).top() || Style::effectiveBorderWidths(oldStyle).bottom() != Style::effectiveBorderWidths(newStyle).bottom() || scrollbarHeightDidChange(ScrollbarOrientation::Horizontal);
+    return Style::effectiveBorderWidths(oldStyle).left() != Style::effectiveBorderWidths(newStyle).left() || Style::effectiveBorderWidths(oldStyle).right() != Style::effectiveBorderWidths(newStyle).right() || scrollbarHeightDidChange(ScrollbarOrientation::Vertical);
 }
 
 void RenderBlock::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)

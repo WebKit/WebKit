@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/StyleComputedStyle+GettersInlines.h>
+#include <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
 #include <WebCore/UsedStyleProperties.h>
 
 namespace WebCore {
@@ -60,8 +61,23 @@ public:
 
     inline UsedVisibility visibility() const;
 
+    // The box's own border widths, zoomed and snapped to device pixels. Formatting-context
+    // adjustments, like collapsed table borders, are applied by RenderBoxModelObject::borderTop()
+    // and friends.
+    template<typename T = LayoutUnit> RectEdges<T> borderWidths() const;
+    LayoutUnit borderTopWidth() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).top()); }
+    LayoutUnit borderRightWidth() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).right()); }
+    LayoutUnit borderBottomWidth() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).bottom()); }
+    LayoutUnit borderLeftWidth() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).left()); }
+    LayoutUnit borderWidthStart() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).start(computedStyle().writingMode())); }
+    LayoutUnit borderWidthEnd() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).end(computedStyle().writingMode())); }
+    LayoutUnit borderWidthBefore() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).before(computedStyle().writingMode())); }
+    LayoutUnit borderWidthAfter() const { return evaluateBorderWidth(Style::effectiveBorderWidths(computedStyle()).after(computedStyle().writingMode())); }
+
 private:
     friend class RenderElement;
+
+    LayoutUnit evaluateBorderWidth(const Style::LineWidth& width) const { return Style::evaluate<LayoutUnit>(width, computedStyle().usedZoomForLength(), computedStyle().deviceScaleFactor()); }
 
     // The style must belong to the renderer, as returned by RenderElement::firstLineStyle().
     UsedStyle(const RenderElement& renderer LIFETIME_BOUND, const Style::ComputedStyle& pseudoElementStyle LIFETIME_BOUND)
@@ -69,6 +85,15 @@ private:
     {
     }
 };
+
+template<typename T> RectEdges<T> UsedStyle::borderWidths() const
+{
+    auto zoom = computedStyle().usedZoomForLength();
+    auto deviceScaleFactor = computedStyle().deviceScaleFactor();
+    return RectEdges<T>::map(Style::effectiveBorderWidths(computedStyle()), [&](const auto& width) {
+        return Style::evaluate<T>(width, zoom, deviceScaleFactor);
+    });
+}
 
 inline UsedVisibility UsedStyle::visibility() const
 {

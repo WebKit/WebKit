@@ -398,7 +398,7 @@ Style::PaddingBox RenderThemeIOS::platformPopupInternalPaddingBox(const Style::C
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
         // FIXME: Reduce code duplication with toTruncatedPaddingEdge.
-        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(style.usedBorderTopWidth(), style.usedZoomForLength(), style.deviceScaleFactor()))) / style.usedZoom() };
+        auto value = Style::PaddingEdge::Fixed { static_cast<float>(std::trunc(padding + Style::evaluate<float>(Style::effectiveBorderWidths(style).top(), style.usedZoomForLength(), style.deviceScaleFactor()))) / style.usedZoom() };
 
         // Return in horizontal-tb LTR; popupInternalPaddingBox() handles conversion.
         // The chevron is always on the logical end, so pad the end to prevent text from overlapping with it.
@@ -637,9 +637,9 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphBlockSize / 2.0f);
     if (!style->writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
+        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(Style::effectiveBorderWidths(style.get()).end(style->writingMode()), zoom, deviceScaleFactor) - Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(Style::effectiveBorderWidths(style.get()).end(style->writingMode()), zoom, deviceScaleFactor) + Style::evaluate<float>(style->paddingEnd(), logicalRect.width(), zoom));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();

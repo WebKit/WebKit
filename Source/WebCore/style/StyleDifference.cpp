@@ -442,10 +442,10 @@ public:
                     return true;
 
                 // If our border widths change, then we need to layout. Other changes to borders only necessitate a repaint.
-                if (a.usedBorderLeftWidth() != b.usedBorderLeftWidth()
-                    || a.usedBorderTopWidth() != b.usedBorderTopWidth()
-                    || a.usedBorderBottomWidth() != b.usedBorderBottomWidth()
-                    || a.usedBorderRightWidth() != b.usedBorderRightWidth())
+                if (Style::effectiveBorderWidths(a).left() != Style::effectiveBorderWidths(b).left()
+                    || Style::effectiveBorderWidths(a).top() != Style::effectiveBorderWidths(b).top()
+                    || Style::effectiveBorderWidths(a).bottom() != Style::effectiveBorderWidths(b).bottom()
+                    || Style::effectiveBorderWidths(a).right() != Style::effectiveBorderWidths(b).right())
                     return true;
 
                 if (a.position() != PositionType::Static) {

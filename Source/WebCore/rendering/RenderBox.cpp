@@ -1037,15 +1037,13 @@ IntRect absoluteInteractionBounds(const RenderObject& renderer)
         return box->localToAbsoluteQuad(rect).enclosingBoundingBox();
     }
 
-    auto& style = renderer.style();
-    auto zoom = style.usedZoomForLength();
-    auto deviceScaleFactor = style.deviceScaleFactor();
+    auto borderWidths = renderer.usedStyle().borderWidths<float>();
 
     FloatRect boundingBox = renderer.absoluteBoundingBoxRect(true /* use transforms*/);
     // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
-    boundingBox.move(Style::evaluate<float>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor), Style::evaluate<float>(style.usedBorderTopWidth(), zoom, deviceScaleFactor));
-    boundingBox.setWidth(boundingBox.width() - Style::evaluate<float>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor) - Style::evaluate<float>(style.usedBorderRightWidth(), zoom, deviceScaleFactor));
-    boundingBox.setHeight(boundingBox.height() - Style::evaluate<float>(style.usedBorderBottomWidth(), zoom, deviceScaleFactor) - Style::evaluate<float>(style.usedBorderTopWidth(), zoom, deviceScaleFactor));
+    boundingBox.move(borderWidths.left(), borderWidths.top());
+    boundingBox.setWidth(boundingBox.width() - borderWidths.left() - borderWidths.right());
+    boundingBox.setHeight(boundingBox.height() - borderWidths.bottom() - borderWidths.top());
     return enclosingIntRect(boundingBox);
 }
 

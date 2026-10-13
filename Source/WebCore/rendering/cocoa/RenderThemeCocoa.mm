@@ -3499,9 +3499,9 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
     }
 
     if (!style->writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) - glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.maxX() - glyphInlineSize - Style::evaluate<float>(Style::effectiveBorderWidths(style.get()).end(style->writingMode()), zoom, deviceScaleFactor) - glyphPaddingEnd);
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(style->usedBorderWidthEnd(), zoom, deviceScaleFactor) + glyphPaddingEnd);
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate<float>(Style::effectiveBorderWidths(style.get()).end(style->writingMode()), zoom, deviceScaleFactor) + glyphPaddingEnd);
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();

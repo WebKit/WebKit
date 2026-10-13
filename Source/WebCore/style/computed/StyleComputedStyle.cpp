@@ -634,12 +634,12 @@ static LayoutBoxExtent computeOutsets(const auto& outsets, const auto& borderWid
 
 LayoutBoxExtent ComputedStyle::imageOutsets(const Style::BorderImage& image, float deviceScaleFactor) const
 {
-    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
+    return computeOutsets(image.outset().values, Style::effectiveBorderWidths(*this), usedZoomForLength(), deviceScaleFactor);
 }
 
 LayoutBoxExtent ComputedStyle::imageOutsets(const Style::MaskBorder& image, float deviceScaleFactor) const
 {
-    return computeOutsets(image.outset().values, usedBorderWidths(), usedZoomForLength(), deviceScaleFactor);
+    return computeOutsets(image.outset().values, Style::effectiveBorderWidths(*this), usedZoomForLength(), deviceScaleFactor);
 }
 
 LayoutBoxExtent ComputedStyle::borderImageOutsets(float deviceScaleFactor) const

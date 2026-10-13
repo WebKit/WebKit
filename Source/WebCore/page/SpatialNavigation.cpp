@@ -43,6 +43,7 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -525,19 +526,10 @@ LayoutRect nodeRectInAbsoluteCoordinates(const ContainerNode& containerNode, boo
         // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating
         // the rect of the focused element.
         if (ignoreBorder) {
-            CheckedRef style = renderer->style();
-
-            auto zoom = style->usedZoomForLength();
-            auto deviceScaleFactor = style->deviceScaleFactor();
-
-            auto borderTop = Style::evaluate<LayoutUnit>(style->usedBorderTopWidth(), zoom, deviceScaleFactor);
-            auto borderRight = Style::evaluate<LayoutUnit>(style->usedBorderRightWidth(), zoom, deviceScaleFactor);
-            auto borderBottom = Style::evaluate<LayoutUnit>(style->usedBorderBottomWidth(), zoom, deviceScaleFactor);
-            auto borderLeft = Style::evaluate<LayoutUnit>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor);
-
-            rect.move(borderLeft, borderTop);
-            rect.setWidth(rect.width() - borderLeft - borderRight);
-            rect.setHeight(rect.height() - borderTop - borderBottom);
+            auto borderWidths = renderer->usedStyle().borderWidths();
+            rect.move(borderWidths.left(), borderWidths.top());
+            rect.setWidth(rect.width() - borderWidths.left() - borderWidths.right());
+            rect.setHeight(rect.height() - borderWidths.top() - borderWidths.bottom());
         }
         return rect;
     }

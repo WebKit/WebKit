@@ -842,28 +842,28 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyID::PaddingLeft> {
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::BorderTopWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
-        return functor(state.style->usedBorderTopWidth());
+        return functor(Style::effectiveBorderWidths(state.style.get()).top());
     }
 };
 
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::BorderRightWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
-        return functor(state.style->usedBorderRightWidth());
+        return functor(Style::effectiveBorderWidths(state.style.get()).right());
     }
 };
 
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::BorderBottomWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
-        return functor(state.style->usedBorderBottomWidth());
+        return functor(Style::effectiveBorderWidths(state.style.get()).bottom());
     }
 };
 
 template<> struct PropertyExtractorAdaptor<CSSPropertyID::BorderLeftWidth> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, NOESCAPE const F& functor) const
     {
-        return functor(state.style->usedBorderLeftWidth());
+        return functor(Style::effectiveBorderWidths(state.style.get()).left());
     }
 };
 

@@ -1090,7 +1090,7 @@ static bool areSameOrigin(Document& document, Document& other)
 
 static bool hasVisuallyDistinctStyling(const Style::ComputedStyle& style)
 {
-    bool hasEnclosingBorder = style.border().hasVisibleBorder() && style.usedBorderTopWidth() && style.usedBorderRightWidth() && style.usedBorderBottomWidth() && style.usedBorderLeftWidth();
+    bool hasEnclosingBorder = style.border().hasVisibleBorder() && Style::effectiveBorderWidths(style).top() && Style::effectiveBorderWidths(style).right() && Style::effectiveBorderWidths(style).bottom() && Style::effectiveBorderWidths(style).left();
     return style.hasBackground() || style.hasOutline() || !style.boxShadow().isNone() || style.hasExplicitlySetBorderRadius() || hasEnclosingBorder;
 }
 

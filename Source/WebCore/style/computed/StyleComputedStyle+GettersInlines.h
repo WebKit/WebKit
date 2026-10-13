@@ -153,91 +153,14 @@ template<BoxSide side> struct UsedBorderWidthsAccessor {
     }
 };
 
-inline decltype(auto) ComputedStyle::usedBorderWidths() const
+// The border widths after the used-value rules: zero for border style none or hidden (css-backgrounds-3),
+// and the fixed -webkit-border-image width when it overrides the border width. Unzoomed style values.
+// Code with a renderer reads the resolved widths through UsedStyle.
+inline decltype(auto) effectiveBorderWidths(const ComputedStyle& style)
 {
-    return RectEdgesView<true, BorderData, UsedBorderWidthsAccessor, Style::LineWidth> {
-        .data = border()
+    return RectEdgesView<true, BorderData, UsedBorderWidthsAccessor, LineWidth> {
+        .data = style.border()
     };
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderBottomWidth() const
-{
-    return usedBorderWidths().bottom();
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderLeftWidth() const
-{
-    return usedBorderWidths().left();
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderRightWidth() const
-{
-    return usedBorderWidths().right();
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderTopWidth() const
-{
-    return usedBorderWidths().top();
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthStart(WritingMode writingMode) const
-{
-    return usedBorderWidths().start(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthStart() const
-{
-    return usedBorderWidthStart(writingMode());
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthEnd(WritingMode writingMode) const
-{
-    return usedBorderWidths().end(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthEnd() const
-{
-    return usedBorderWidthEnd(writingMode());
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthBefore(WritingMode writingMode) const
-{
-    return usedBorderWidths().before(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthBefore() const
-{
-    return usedBorderWidthBefore(writingMode());
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthAfter(WritingMode writingMode) const
-{
-    return usedBorderWidths().after(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthAfter() const
-{
-    return usedBorderWidthAfter(writingMode());
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthLogicalLeft(WritingMode writingMode) const
-{
-    return usedBorderWidths().logicalLeft(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthLogicalLeft() const
-{
-    return usedBorderWidthLogicalLeft(writingMode());
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthLogicalRight(WritingMode writingMode) const
-{
-    return usedBorderWidths().logicalRight(writingMode);
-}
-
-inline Style::LineWidth ComputedStyle::usedBorderWidthLogicalRight() const
-{
-    return usedBorderWidthLogicalRight(writingMode());
 }
 
 // MARK: - Other Predicates

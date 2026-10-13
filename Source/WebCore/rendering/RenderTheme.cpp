@@ -840,7 +840,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderElement& re
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorApplyingColorFilter(),
-        Style::evaluate<FloatBoxExtent>(style->usedBorderWidths().to<Style::LineWidthBox>(), style->usedZoomForLength(), style->deviceScaleFactor())
+        Style::evaluate<FloatBoxExtent>(Style::effectiveBorderWidths(style.get()).to<Style::LineWidthBox>(), style->usedZoomForLength(), style->deviceScaleFactor())
     };
 }
 
@@ -1380,7 +1380,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     auto appearance = style.usedAppearance();
     CheckedRef fontCascade = style.fontCascade();
 
-    auto borderBox = controlBorder(appearance, fontCascade.get(), style.usedBorderWidths().to<Style::LineWidthBox>(), style.usedZoom(), element);
+    auto borderBox = controlBorder(appearance, fontCascade.get(), Style::effectiveBorderWidths(style).to<Style::LineWidthBox>(), style.usedZoom(), element);
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
@@ -1396,25 +1396,25 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     auto zoom = style.usedZoomForLength();
     auto deviceScaleFactor = style.deviceScaleFactor();
 
-    if (Style::evaluate<float>(borderBox.top(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderTopWidth(), zoom, deviceScaleFactor)) {
+    if (Style::evaluate<float>(borderBox.top(), zoom, deviceScaleFactor) != Style::evaluate<int>(Style::effectiveBorderWidths(style).top(), zoom, deviceScaleFactor)) {
         if (!borderBox.top().isZero())
             style.setBorderTopWidth(Style::LineWidth { borderBox.top() });
         else
             style.resetBorderTop();
     }
-    if (Style::evaluate<float>(borderBox.right(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderRightWidth(), zoom, deviceScaleFactor)) {
+    if (Style::evaluate<float>(borderBox.right(), zoom, deviceScaleFactor) != Style::evaluate<int>(Style::effectiveBorderWidths(style).right(), zoom, deviceScaleFactor)) {
         if (!borderBox.right().isZero())
             style.setBorderRightWidth(Style::LineWidth { borderBox.right() });
         else
             style.resetBorderRight();
     }
-    if (Style::evaluate<float>(borderBox.bottom(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderBottomWidth(), zoom, deviceScaleFactor)) {
+    if (Style::evaluate<float>(borderBox.bottom(), zoom, deviceScaleFactor) != Style::evaluate<int>(Style::effectiveBorderWidths(style).bottom(), zoom, deviceScaleFactor)) {
         if (!borderBox.bottom().isZero())
             style.setBorderBottomWidth(Style::LineWidth { borderBox.bottom() });
         else
             style.resetBorderBottom();
     }
-    if (Style::evaluate<float>(borderBox.left(), zoom, deviceScaleFactor) != Style::evaluate<int>(style.usedBorderLeftWidth(), zoom, deviceScaleFactor)) {
+    if (Style::evaluate<float>(borderBox.left(), zoom, deviceScaleFactor) != Style::evaluate<int>(Style::effectiveBorderWidths(style).left(), zoom, deviceScaleFactor)) {
         if (!borderBox.left().isZero())
             style.setBorderLeftWidth(Style::LineWidth { borderBox.left() });
         else

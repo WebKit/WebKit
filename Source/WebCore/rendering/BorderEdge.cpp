@@ -58,10 +58,10 @@ BorderEdges borderEdges(const Style::ComputedStyle& style, float deviceScaleFact
     };
 
     return {
-        constructBorderEdge.template operator()<CSSPropertyID::BorderTopColor>(style, style.usedBorderTopWidth(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopColor().isKnownTransparent(), closedEdges.top()),
-        constructBorderEdge.template operator()<CSSPropertyID::BorderRightColor>(style, style.usedBorderRightWidth(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightColor().isKnownTransparent(), closedEdges.right()),
-        constructBorderEdge.template operator()<CSSPropertyID::BorderBottomColor>(style, style.usedBorderBottomWidth(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomColor().isKnownTransparent(), closedEdges.bottom()),
-        constructBorderEdge.template operator()<CSSPropertyID::BorderLeftColor>(style, style.usedBorderLeftWidth(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftColor().isKnownTransparent(), closedEdges.left())
+        constructBorderEdge.template operator()<CSSPropertyID::BorderTopColor>(style, Style::effectiveBorderWidths(style).top(), inflation.height().toFloat(), style.borderTopStyle(), style.borderTopColor().isKnownTransparent(), closedEdges.top()),
+        constructBorderEdge.template operator()<CSSPropertyID::BorderRightColor>(style, Style::effectiveBorderWidths(style).right(), inflation.width().toFloat(), style.borderRightStyle(), style.borderRightColor().isKnownTransparent(), closedEdges.right()),
+        constructBorderEdge.template operator()<CSSPropertyID::BorderBottomColor>(style, Style::effectiveBorderWidths(style).bottom(), inflation.height().toFloat(), style.borderBottomStyle(), style.borderBottomColor().isKnownTransparent(), closedEdges.bottom()),
+        constructBorderEdge.template operator()<CSSPropertyID::BorderLeftColor>(style, Style::effectiveBorderWidths(style).left(), inflation.width().toFloat(), style.borderLeftStyle(), style.borderLeftColor().isKnownTransparent(), closedEdges.left())
     };
 }
 

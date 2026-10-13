@@ -64,6 +64,7 @@
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
 #import <WebCore/Range.h>
+#import <WebCore/RenderElementInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderView.h>
@@ -449,20 +450,12 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     if (!renderer)
         return zeroQuad();
 
-    CheckedRef style = renderer->style();
-
-    auto zoom = style->usedZoomForLength();
-    auto deviceScaleFactor = style->deviceScaleFactor();
-
-    auto borderTop = WebCore::Style::evaluate<float>(style->usedBorderTopWidth(), zoom, deviceScaleFactor);
-    auto borderRight = WebCore::Style::evaluate<float>(style->usedBorderRightWidth(), zoom, deviceScaleFactor);
-    auto borderBottom = WebCore::Style::evaluate<float>(style->usedBorderBottomWidth(), zoom, deviceScaleFactor);
-    auto borderLeft = WebCore::Style::evaluate<float>(style->usedBorderLeftWidth(), zoom, deviceScaleFactor);
+    auto borderWidths = renderer->usedStyle().borderWidths<float>();
 
     WebCore::IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
-    boundingBox.move(borderLeft, borderTop);
-    boundingBox.setWidth(boundingBox.width() - borderLeft - borderRight);
-    boundingBox.setHeight(boundingBox.height() - borderBottom - borderTop);
+    boundingBox.move(borderWidths.left(), borderWidths.top());
+    boundingBox.setWidth(boundingBox.width() - borderWidths.left() - borderWidths.right());
+    boundingBox.setHeight(boundingBox.height() - borderWidths.bottom() - borderWidths.top());
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(WebCore::FloatQuad(boundingBox));

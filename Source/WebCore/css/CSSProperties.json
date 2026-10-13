@@ -3053,6 +3053,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "bottom"
@@ -3650,6 +3651,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "left"
@@ -3781,6 +3783,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "right"
@@ -4017,6 +4020,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "logical-property-group": {
                     "name": "border-width",
                     "resolver": "top"
