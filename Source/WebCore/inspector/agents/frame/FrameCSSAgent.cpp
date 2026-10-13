@@ -266,6 +266,15 @@ Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<In
     return { { styleSheet->buildObjectForStyle(protect(styledElement->cssomStyle()).ptr()), buildObjectForAttributesStyle(*styledElement) } };
 }
 
+static std::optional<Inspector::Protocol::CSS::PseudoId> toProtocolForUserAgentPartName(const AtomString& partName)
+{
+    if (partName == "placeholder"_s)
+        return Inspector::Protocol::CSS::PseudoId::Placeholder;
+    if (partName == "file-selector-button"_s)
+        return Inspector::Protocol::CSS::PseudoId::FileSelectorButton;
+    return std::nullopt;
+}
+
 Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>> FrameCSSAgent::getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId nodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes)
 {
     Inspector::Protocol::ErrorString errorString;
@@ -319,6 +328,33 @@ Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMa
                         }
                         pseudoElements->addItem(WTF::move(matches));
                     }
+                }
+            }
+
+            if (RefPtr userAgentShadowRoot = element->userAgentShadowRoot()) {
+                HashSet<AtomString> seenUserAgentParts;
+                for (Ref descendant : descendantsOfType<Element>(*userAgentShadowRoot)) {
+                    auto& partName = descendant->userAgentPart();
+                    if (partName.isEmpty() || !seenUserAgentParts.add(partName).isNewEntry)
+                        continue;
+
+                    auto protocolPseudoId = toProtocolForUserAgentPartName(partName);
+                    if (!protocolPseudoId)
+                        continue;
+
+                    Ref descendantStyleResolver = descendant->styleResolver();
+                    if (auto* extensionStyleSheets = descendantStyleResolver->document().extensionStyleSheetsIfExists())
+                        descendantStyleResolver->inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
+                    descendantStyleResolver->inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*element));
+                    auto partMatchedRules = descendantStyleResolver->styleRulesForElement(descendant.ptr(), Style::Resolver::AllCSSRules);
+                    if (partMatchedRules.isEmpty())
+                        continue;
+
+                    auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
+                        .setPseudoId(*protocolPseudoId)
+                        .setMatches(buildArrayForMatchedRuleList(partMatchedRules, descendantStyleResolver, descendant.get(), { }))
+                        .release();
+                    pseudoElements->addItem(WTF::move(matches));
                 }
             }
         }
