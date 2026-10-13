@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Specialized operator source ranges, cascade, and fallback</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+#t0, #t1, #t2, #t3, #t6, #t8, #t12, #fallback { color:blue; } #t9, #t10, #t11 { color:transparent; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t0">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t1">-</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t2">  −  </mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t3">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t4">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t5">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t6">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t7">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t8">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t9">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t10">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t11">−</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="t12">−̸</mo></math></div>
+<div class="cell"><math><mo lspace="0" rspace="0" id="fallback"><span>−</span></mo></math></div>
+
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const tokens = [...document.querySelectorAll("mo")];
+    tokens[3].replaceChildren(document.createTextNode(" "), document.createComment("split"), document.createTextNode(""), document.createTextNode("−"), document.createTextNode(" "));
+    const probe = new Highlight();
+    probe.add(rangeFor(tokens[0].firstChild));
+    probe.add(rangeFor(tokens[1]));
+    const mixed = new Range(); mixed.setStart(tokens[2].firstChild, 1); mixed.setEnd(tokens[2].firstChild, 3); probe.add(mixed);
+    probe.add(rangeFor(tokens[3]));
+    const whitespace = new Range(); whitespace.setStart(tokens[2].firstChild, 0); whitespace.setEnd(tokens[2].firstChild, 2);
+    // The whitespace-only range is on a separate token.
+    tokens[4].textContent = "  −  "; whitespace.setStart(tokens[4].firstChild, 0); whitespace.setEnd(tokens[4].firstChild, 2); probe.add(whitespace);
+    const collapsed = new Range(); collapsed.setStart(tokens[5].firstChild, 0); collapsed.collapse(true); probe.add(collapsed);
+    probe.add(new StaticRange({ startContainer: tokens[6].firstChild, startOffset: 0, endContainer: tokens[6].firstChild, endOffset: 1 }));
+    probe.add(new StaticRange({ startContainer: tokens[7].firstChild, startOffset: 0, endContainer: tokens[7].firstChild, endOffset: 2 }));
+    probe.add(rangeFor(tokens[8].parentNode));
+    probe.add(rangeFor(tokens[12].firstChild));
+    probe.add(rangeFor(tokens[13].firstChild.firstChild));
+    const bg = new Highlight(rangeFor(tokens[9]), rangeFor(tokens[9].firstChild));
+    const lower = new Highlight(rangeFor(tokens[10]), rangeFor(tokens[11]));
+    const upper = new Highlight(rangeFor(tokens[10]), rangeFor(tokens[11])); upper.priority = 2;
+    if (reference) {
+        background(tokens[9],20,20);
+        for (const i of [10,11]) { background(tokens[i],20,20,"rgba(255,0,0,.5)"); background(tokens[i],20,20); }
+    } else {
+        CSS.highlights.set("upper", upper); CSS.highlights.set("lower", lower);
+        CSS.highlights.set("background", bg); CSS.highlights.set("probe", probe);
+    }
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

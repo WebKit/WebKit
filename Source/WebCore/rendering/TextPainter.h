@@ -28,6 +28,7 @@
 #include "RotationDirection.h"
 #include "TextFlags.h"
 #include "TextPaintStyle.h"
+#include <wtf/Function.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ class FontCascade;
 class RenderCombineText;
 class TextRun;
 class Text;
+struct GlyphData;
 
 struct TextPaintStyle;
 
@@ -58,6 +60,9 @@ class TextPainter {
 public:
     TextPainter(GraphicsContext&, const FontCascade&, const Style::ComputedStyle&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const AtomString& emphasisMark, float emphasisMarkOffset, const RenderCombineText*);
 
+    // Apply text effects without shaping or changing an already chosen glyph.
+    void paintGlyph(const GlyphData&, const FloatRect& boxRect, const FloatPoint& textOrigin);
+    void paintGlyphs(const FloatRect&, const FloatPoint&, NOESCAPE const Function<void(const FloatPoint&)>&);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     void setGlyphDisplayListIfNeeded(const InlineDisplay::Box&, const PaintInfo&, const Style::ComputedStyle&, const TextRun&);
@@ -70,6 +75,8 @@ public:
 private:
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
+    template<typename Paint> void paintWithShadows(const Style::TextShadows*, const Style::AppleColorFilter&, const FloatRect&, const FloatPoint&, bool stroked, const Paint&, bool drawTextWithLastShadow = true);
+    template<typename Paint> void paintWithPaintOrder(const FloatRect&, const FloatPoint&, const TextPaintStyle&, const Style::TextShadows&, const Style::AppleColorFilter&, const Paint&, bool drawTextWithLastShadow = true);
     void paintTextWithShadows(const Style::TextShadows*, const Style::AppleColorFilter&, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
         unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked);
     void paintTextAndEmphasisMarksIfNeeded(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,

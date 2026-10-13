@@ -52,6 +52,9 @@
 #include "RenderCombineText.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#if ENABLE(MATHML)
+#include "RenderMathMLToken.h"
+#endif
 #include "RenderObjectInlines.h"
 #include "RenderTextInlines.h"
 #include "RenderSVGInlineText.h"
@@ -2056,6 +2059,17 @@ IntRect RenderText::linesBoundingBox() const
 auto RenderText::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRects
 {
     LayoutRect overflowRect = linesBoundingBox();
+#if ENABLE(MATHML)
+    if (CheckedPtr block = containingBlock()) {
+        if (CheckedPtr token = dynamicDowncast<RenderMathMLToken>(block->parent())) {
+            if (auto rect = token->specializedGlyphRepaintRect(*this, 0, text().length())) {
+                token->invalidateHighlightOverflow(*rect);
+                rect->move(-block->x(), -block->y());
+                overflowRect.unite(*rect);
+            }
+        }
+    }
+#endif
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     overflowRect.move(view().frameView().layoutContext().layoutDelta());
@@ -2091,6 +2105,18 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     if (startOffset == endOffset)
         return IntRect();
+
+#if ENABLE(MATHML)
+    if (CheckedPtr token = dynamicDowncast<RenderMathMLToken>(containingBlock()->parent())) {
+        if (auto rect = token->specializedGlyphSelectionRect(*this, startOffset, endOffset)) {
+            auto quad = token->localToContainerQuad(FloatRect { *rect }, repaintContainer);
+            if (quads)
+                quads->append(quad);
+            auto repaintRect = token->specializedGlyphRepaintRect(*this, startOffset, endOffset).value_or(*rect);
+            return clipToVisibleContent ? token->computeRectForRepaint(repaintRect, repaintContainer) : enclosingLayoutRect(token->localToContainerQuad(FloatRect { repaintRect }, repaintContainer).enclosingBoundingBox());
+        }
+    }
+#endif
 
     LayoutRect resultRect;
 

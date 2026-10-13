@@ -60,6 +60,7 @@ public:
     virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
 
 protected:
+    void layout() override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     inline LayoutUnit ruleThicknessFallback() const;

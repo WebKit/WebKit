@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Decorations preserve the resolved mathematical glyph stroke color</title>
+
+<style>
+@font-face { font-family: Glyph; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 140px; height: 100px; padding: 20px; vertical-align: top; }
+math, .glyph { font: 40px Glyph; }
+.glyph { position: absolute; line-height: 40px; color: blue; }
+::highlight(probe) { color: blue; stroke-color: red; stroke-width: 2px; text-decoration: underline overline; text-decoration-color: green; text-decoration-thickness: 2px; text-decoration-skip-ink: none; }
+.wavy mi::highlight(probe), .wavy mo::highlight(probe), .wavy .glyph::highlight(probe) { text-decoration-style: wavy; }
+</style><body>
+<div class="cell"><math><mi>A</mi></math></div><div class="cell wavy"><math><mi>A</mi></math></div>
+<script>
+const reference = true;
+document.fonts.ready.then(() => requestAnimationFrame(() => {
+    const tokens = [...document.querySelectorAll("mi, mo")];
+    const ranges = [];
+    if (reference) {
+        for (const token of tokens) {
+            const cell = token.closest(".cell");
+            const rect = token.getBoundingClientRect();
+            const parent = cell.getBoundingClientRect();
+            const glyph = document.createElement("span");
+            glyph.className = "glyph";
+            glyph.textContent = "\u{1D434}";
+            glyph.style.left = `${rect.left - parent.left}px`;
+            glyph.style.top = `${Math.round(rect.top + 38) - 40 - parent.top}px`;
+            token.style.visibility = "hidden";
+            cell.append(glyph);
+            const range = new Range(); range.selectNodeContents(glyph); ranges.push(range);
+        }
+    } else {
+        ranges.push(...tokens.map(token => { const range = new Range(); range.selectNodeContents(token); return range; }));
+    }
+    CSS.highlights.set("probe", new Highlight(...ranges));
+    document.documentElement.classList.remove("reftest-wait");
+}));
+</script></body></html>

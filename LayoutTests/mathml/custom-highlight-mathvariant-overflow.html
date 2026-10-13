@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Dynamic variant highlights paint outside the original MathML bounds</title>
+<link rel="match" href="custom-highlight-mathvariant-overflow-expected.html">
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+math { position: absolute; left: -120px; top: 40px; font: 40px Variant; }
+::highlight(probe) { color: transparent; text-shadow: 200px 0 red; }
+</style>
+<math><mi>A</mi></math>
+<script>
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    await nextFrame();
+    await nextFrame();
+    // Registration must update paint geometry even though layout is already clean.
+    const range = new Range();
+    range.selectNodeContents(document.querySelector("mi"));
+    CSS.highlights.set("probe", new Highlight(range));
+    await nextFrame();
+    await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></html>

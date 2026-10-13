@@ -1,0 +1,103 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait">
+<meta charset="utf-8">
+<title>Custom highlights on legacy MathML variant glyphs</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+.cell { position: relative; display: inline-block; width: 140px; height: 55px; padding: 15px; vertical-align: top; }
+math { font: 40px Variant; }
+::highlight(test) { color: blue; background-color: rgba(0, 255, 0, 0.5); }
+::highlight(top) { background-color: yellow; }
+mi::selection, mtext::selection { color: purple; background-color: orange; }
+.background { position: absolute; width: 100px; height: 40px; z-index: -1; }
+</style>
+<body>
+<script>
+const reference = true;
+const cells = [
+    ["mi", "A", "text"],
+    ["mtext", "A", "element"],
+    ["mi", "  A  ", "trimmed"],
+    ["mi", "A", "split"],
+    ["mi", "A", "overlap"],
+    ["mi", "A", "priority"],
+    ["mi", "A", "collapsed"],
+    ["mi", "A", "static"],
+    ["mi", "A", "invalid"],
+    ["mi", "A", "outer"],
+    ["mi", "A", "rtl"],
+    ["mi", "  A  ", "space"],
+];
+const ranges = [];
+let topRange;
+for (const [tag, text, kind] of cells) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    const math = document.createElementNS("http://www.w3.org/1998/Math/MathML", "math");
+    const token = document.createElementNS(math.namespaceURI, tag);
+    token.setAttribute("mathvariant", "italic");
+    token.textContent = text;
+    if (kind === "split") {
+        token.replaceChildren(document.createTextNode("  "), document.createComment("split"), document.createTextNode("A"), document.createTextNode(""), document.createTextNode("  "));
+    }
+    if (kind === "rtl")
+        math.setAttribute("dir", "rtl");
+    math.append(token);
+    cell.append(math);
+    document.body.append(cell);
+    const range = document.createRange();
+    if (kind === "element")
+        range.selectNodeContents(token);
+    else {
+        const node = kind === "split" ? token.childNodes[2] : token.firstChild;
+        const start = kind === "trimmed" ? 2 : 0;
+        range.setStart(node, start);
+        range.setEnd(node, kind === "collapsed" ? start : kind === "space" ? 1 : start + 1);
+    }
+    if (kind === "static")
+        ranges.push(new StaticRange({ startContainer: token.firstChild, startOffset: 0, endContainer: token.firstChild, endOffset: 1 }));
+    else if (kind === "invalid")
+        ranges.push(new StaticRange({ startContainer: token.firstChild, startOffset: 2, endContainer: token.firstChild, endOffset: 3 }));
+    else if (kind === "outer") {
+        const outer = new Range();
+        outer.selectNode(math);
+        ranges.push(outer);
+    } else
+        ranges.push(range);
+    if (kind === "overlap")
+        ranges.push(range.cloneRange());
+    if (kind === "priority")
+        topRange = range.cloneRange();
+    if (reference && kind !== "collapsed" && kind !== "space" && kind !== "invalid") {
+        token.style.color = "blue";
+        const background = document.createElement("div");
+        background.className = "background";
+        background.style.backgroundColor = kind === "priority" ? "yellow" : "rgba(0, 255, 0, 0.5)";
+        cell.prepend(background);
+    }
+}
+if (!reference) {
+    const top = new Highlight(topRange);
+    top.priority = 1;
+    CSS.highlights.set("top", top);
+    CSS.highlights.set("test", new Highlight(...ranges));
+}
+document.fonts.ready.then(() => requestAnimationFrame(() => {
+    if (reference) {
+        for (const cell of document.querySelectorAll(".cell")) {
+            const background = cell.querySelector(".background");
+            if (!background)
+                continue;
+            const rect = cell.querySelector("mi, mtext").getBoundingClientRect();
+            const parent = cell.getBoundingClientRect();
+            // The test font has a 2.5em advance, .95em glyph ascent, and a 1em font ascent.
+            background.style.left = `${rect.left - parent.left}px`;
+            background.style.top = `${Math.round(rect.top + 38) - 40 - parent.top}px`;
+        }
+    }
+    document.documentElement.classList.remove("reftest-wait");
+}));
+</script>
+</body>
+</html>

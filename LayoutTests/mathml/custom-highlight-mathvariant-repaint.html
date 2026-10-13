@@ -1,0 +1,72 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<meta charset="utf-8">
+<title>Repainting the full mapped glyph highlight and selection</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 20px; }
+math { font: 40px Variant; }
+mi::highlight(probe) { color: blue; background: lime; }
+mi.changed::highlight(probe) { color: red; background: yellow; }
+mi.effects::highlight(probe) { text-shadow: -8px -8px red, 8px 8px lime; }
+mi::selection { color: purple; background: orange; }
+</style>
+<math><mi id="token">A</mi></math>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    await nextFrame();
+    await nextFrame();
+    const token = document.getElementById("token");
+    const range = new Range();
+    range.selectNodeContents(token.firstChild);
+    const highlight = new Highlight(range);
+    const rect = token.getBoundingClientRect();
+    // Independent expected geometry: the font's advance is 2.5em, ascent 1em,
+    // and mapped glyph ascent .95em. MathML uses the glyph ascent as its baseline.
+    let expected = { x: rect.left, y: Math.round(rect.top + 38) - 40, width: 100, height: 40 };
+    const results = [];
+    const contains = (rect) => rect.x <= expected.x && rect.y <= expected.y && rect.x + rect.width >= expected.x + expected.width && rect.y + rect.height >= expected.y + expected.height;
+    async function checkRepaint(name, mutate) {
+        internals.startTrackingRepaints();
+        mutate();
+        // Selection appearance is deferred; flush it before collecting dirty rectangles.
+        internals.selectionBounds();
+        const text = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        const rects = [...text.matchAll(/\(rect ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+)\)/g)].map(match => ({ x: +match[1], y: +match[2], width: +match[3], height: +match[4] }));
+        results.push(`${rects.some(contains) ? "PASS" : "FAIL"}: ${name} repaints the glyph em box`);
+        await nextFrame();
+        await nextFrame();
+    }
+    await checkRepaint("registration", () => CSS.highlights.set("probe", highlight));
+    await checkRepaint("style change", () => token.classList.add("changed"));
+    await checkRepaint("range removal", () => highlight.delete(range));
+    await checkRepaint("range addition", () => highlight.add(range));
+    await checkRepaint("selection", () => getSelection().addRange(range));
+    results.push(`${contains(internals.selectionBounds()) ? "PASS" : "FAIL"}: selection bounds cover the glyph em box`);
+    await checkRepaint("selection clear", () => getSelection().removeAllRanges());
+    await checkRepaint("registry deletion", () => CSS.highlights.delete("probe"));
+    token.classList.add("effects");
+    await nextFrame();
+    await nextFrame();
+    // Glyph ink is [14, 98] x [2, 38] relative to the em box. Union its two
+    // translated shadow bounds with that box; the background itself casts no shadow.
+    expected = { x: expected.x, y: expected.y - 6, width: 106, height: 52 };
+    await checkRepaint("effect registration", () => CSS.highlights.set("probe", highlight));
+    await checkRepaint("effect style removal", () => token.classList.remove("effects"));
+    token.classList.add("effects");
+    await nextFrame();
+    await nextFrame();
+    await checkRepaint("effect removal", () => CSS.highlights.delete("probe"));
+    const output = document.createElement("pre");
+    output.textContent = results.join("\n");
+    document.body.replaceChildren(output);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

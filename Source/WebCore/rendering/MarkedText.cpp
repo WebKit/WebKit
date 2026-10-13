@@ -106,7 +106,8 @@ Vector<MarkedText> MarkedText::subdivide(const Vector<MarkedText>& markedTexts, 
     return result;
 }
 
-Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
+template<typename RangeForHighlight>
+static Vector<MarkedText> collectForHighlights(const RenderText& renderer, MarkedText::PaintPhase phase, const RangeForHighlight& rangeForHighlight)
 {
     Vector<MarkedText> markedTexts;
     RenderHighlight renderHighlight;
@@ -116,7 +117,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
             CheckedPtr renderStyle = parentRenderer.lazyPseudoElementStyle({ PseudoElementType::Highlight, highlightName });
             if (!renderStyle)
                 continue;
-            if (renderStyle->textDecorationLineInEffect().isNone() && phase == PaintPhase::Decoration)
+            if (renderStyle->textDecorationLineInEffect().isNone() && phase == MarkedText::PaintPhase::Decoration)
                 continue;
             for (auto& highlightRange : highlightRegistry->map().get(highlightName)->highlightRanges()) {
                 if (!renderHighlight.setRenderRange(highlightRange))
@@ -136,7 +137,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 if (!hasRenderer)
                     continue;
 
-                auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
+                auto [highlightStart, highlightEnd] = rangeForHighlight(renderHighlight);
 
                 if (highlightStart < highlightEnd) {
                     int currentPriority = highlightRegistry->map().get(highlightName)->priority();
@@ -164,7 +165,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 if (!renderHighlight.setRenderRange(highlightRange))
                     continue;
 
-                auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
+                auto [highlightStart, highlightEnd] = rangeForHighlight(renderHighlight);
                 if (highlightStart < highlightEnd)
                     markedTexts.append({ highlightStart, highlightEnd, markedTextType });
             }
@@ -184,6 +185,18 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
         appendMarkedTextHighlights(*registry, MarkedText::Type::AppHighlight);
 #endif
     return markedTexts;
+}
+
+Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)
+{
+    return WebCore::collectForHighlights(renderer, phase, [&](RenderHighlight& highlight) {
+        return highlight.rangeForTextBox(renderer, selectableRange);
+    });
+}
+
+Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, PaintPhase phase, NOESCAPE const Function<std::pair<unsigned, unsigned>(RenderHighlight&)>& rangeForHighlight)
+{
+    return WebCore::collectForHighlights(renderer, phase, rangeForHighlight);
 }
 
 Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& renderer, const TextBoxSelectableRange& selectableRange, PaintPhase phase)

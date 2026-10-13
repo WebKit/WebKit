@@ -72,6 +72,12 @@ protected:
     virtual bool useMathOperator() const;
 
 private:
+    std::optional<std::pair<unsigned, unsigned>> specializedGlyphSourceRange() const final;
+    std::optional<LayoutRect> specializedGlyphRect() const final;
+    LayoutRect specializedGlyphInkRect(float strokeOutset = 0) const final;
+    LayoutUnit specializedGlyphBaseline() const final;
+    LayoutPoint operatorTopLeft() const;
+
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
     void computeIntrinsicLogicalWidthContributions() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;

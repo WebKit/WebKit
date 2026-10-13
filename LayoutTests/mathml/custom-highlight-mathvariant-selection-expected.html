@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Native selection paints above a legacy variant highlight</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+.cell { position: relative; display: inline-block; width: 170px; height: 90px; padding: 15px; vertical-align: top; }
+.glyph { position: absolute; left: 15px; top: 13px; font: 40px/40px Variant; }
+::highlight(probe) { color: blue; background: lime; }
+.glyph::selection { color: purple; background: orange; }
+</style>
+<body><div class="cell"><span class="glyph">&#x1D434;</span></div>
+<script>
+// Ordinary text independently supplies WebKit's platform selection-color adjustment.
+const range = new Range();
+range.selectNodeContents(document.querySelector(".glyph"));
+CSS.highlights.set("probe", new Highlight(range));
+getSelection().addRange(range);
+document.fonts.ready.then(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+</script></body></html>

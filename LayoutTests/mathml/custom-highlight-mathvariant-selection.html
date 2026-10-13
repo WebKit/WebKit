@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Native selection paints above a legacy variant highlight</title>
+<link rel="match" href="custom-highlight-mathvariant-selection-expected.html">
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+.cell { position: relative; display: inline-block; width: 170px; height: 90px; padding: 15px; vertical-align: top; }
+math, .glyph { font: 40px Variant; }
+.glyph { position: absolute; line-height: 40px; white-space: pre; }
+
+::highlight(probe) { color: blue; background: lime; }
+mi::selection { color: purple; background: orange; }
+.background { position: absolute; width: 100px; height: 40px; background: orange; z-index: -1; }
+</style><body><div class="cell"><math><mi id="token">A</mi></math></div>
+<script>
+const reference = false;
+const token = document.getElementById("token");
+const range = new Range();
+range.selectNodeContents(token);
+if (!reference) {
+    CSS.highlights.set("probe", new Highlight(range));
+    getSelection().addRange(range);
+}
+document.fonts.ready.then(() => requestAnimationFrame(() => {
+    if (reference) {
+        token.style.color = "purple";
+        const rect = token.getBoundingClientRect();
+        const parent = token.closest(".cell").getBoundingClientRect();
+        const background = document.createElement("div");
+        background.className = "background";
+        background.style.left = `${rect.left - parent.left}px`;
+        background.style.top = `${Math.round(rect.top + 38) - 40 - parent.top}px`;
+        token.closest(".cell").prepend(background);
+    }
+    document.documentElement.classList.remove("reftest-wait");
+}));
+</script></body></html>

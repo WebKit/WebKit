@@ -30,11 +30,13 @@
 #include "StyleTextDecorationInset.h"
 #include "StyleTextDecorationThickness.h"
 #include "StyleTextUnderlineOffset.h"
+#include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class FontCascade;
+class GlyphBuffer;
 class RenderObject;
 class TextRun;
 
@@ -80,7 +82,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const Style::ComputedStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
+    void paintBackgroundDecorations(const Style::ComputedStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor, const GlyphBuffer* = nullptr, NOESCAPE const Function<Vector<FloatSegment>(const FloatPoint&, const FloatRect&)>* = nullptr);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;

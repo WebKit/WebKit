@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Assembly seam clips preserve acute miter ink and its shadow</title>
+
+<style>
+@font-face { font-family: Acute; src: url("resources/highlight-acute-assembly.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 160px; height: 160px; padding: 30px; vertical-align: top; }
+math { font: 20px Acute; }
+::highlight(probe) { color: blue; stroke-color: red; stroke-width: 6px; }
+.shadow::highlight(probe) { text-shadow: 60px 0 green; }
+.assembly { position: absolute; width: 20px; height: 120px; }
+.piece { position: absolute; font: 20px/20px Acute; color: blue; stroke-color: red; stroke-width: 6px; }
+.top { top: 20px; clip: rect(-100px, 120px, 19px, -100px); }
+.bottom { top: 100px; clip: rect(-39px, 120px, 200px, -100px); }
+.extender { top: 57px; clip: rect(-18px, 120px, 4px, -100px); }
+.copy .piece { color: green; stroke-color: green; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<div class="cell shadow"><math><mo lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<script>
+const reference = true;
+document.fonts.ready.then(() => requestAnimationFrame(() => {
+    const tokens = [...document.querySelectorAll("mo")];
+    if (reference) {
+        for (const [index, token] of tokens.entries()) {
+            const rect = token.getBoundingClientRect();
+            const parent = token.closest(".cell").getBoundingClientRect();
+            const assembly = document.createElement("div");
+            assembly.className = "assembly";
+            assembly.style.left = `${rect.left - parent.left}px`; assembly.style.top = `${rect.top - parent.top}px`;
+            // Fixed font metrics: 2em top cap, 3em bottom cap, 2em extender.
+            // These clips encode only the original one-pixel mathematical seams.
+            assembly.innerHTML = '<span class="piece top">&#xE001;</span><span class="piece bottom">&#xE000;</span><span class="piece extender">&#xE001;</span>';
+            if (index) {
+                const copy = assembly.cloneNode(true);
+                copy.classList.add("copy");
+                copy.style.left = `${rect.left - parent.left + 60}px`;
+                token.closest(".cell").append(copy);
+            }
+            token.style.visibility = "hidden";
+            token.closest(".cell").append(assembly);
+        }
+    } else CSS.highlights.set("probe", new Highlight(...tokens.map(token => { const range = new Range(); range.selectNodeContents(token); return range; })));
+    document.documentElement.classList.remove("reftest-wait");
+}));
+</script></body></html>

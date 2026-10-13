@@ -31,6 +31,11 @@
 #if ENABLE(MATHML)
 
 #include "FontSelector.h"
+#include "FontCascadeInlines.h"
+#include "GlyphBuffer.h"
+#include "ImageBuffer.h"
+#include "TextPainter.h"
+#include "TextRun.h"
 #include "FontInlines.h"
 #include "MathMLNames.h"
 #include "MathMLOperatorElement.h"
@@ -39,7 +44,10 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderSelection.h"
 #include "RenderText.h"
+#include "RenderView.h"
+#include "TextPaintStyle.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <cmath>
 #include <wtf/MathExtras.h>
@@ -269,6 +277,8 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
         // We then move the children to take spacing into account.
         shiftInFlowChildren(writingMode().isBidiLTR() ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
     }
+    if (useMathOperator())
+        addSpecializedGlyphOverflow();
 }
 
 void RenderMathMLOperator::updateMathOperator()
@@ -310,8 +320,11 @@ bool RenderMathMLOperator::useMathOperator() const
 void RenderMathMLOperator::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
-    m_mathOperator.reset(style());
-    resetStretchSize();
+    // Paint-only style changes must retain the final stretched glyphs and metrics.
+    if (!oldStyle || oldStyle->fontCascade() != style().fontCascade() || oldStyle->writingMode() != style().writingMode() || oldStyle->mathStyle() != style().mathStyle()) {
+        m_mathOperator.reset(style());
+        resetStretchSize();
+    }
 
     // MathML displaystyle can affect isLargeOperatorInDisplayStyle()
     if (oldStyle && style().mathStyle() != oldStyle->mathStyle() && !isAnonymous())
@@ -347,16 +360,131 @@ std::optional<LayoutUnit> RenderMathMLOperator::firstLineBaseline() const
     return RenderMathMLToken::firstLineBaseline();
 }
 
+LayoutPoint RenderMathMLOperator::operatorTopLeft() const
+{
+    return { (writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore() };
+}
+
+std::optional<std::pair<unsigned, unsigned>> RenderMathMLOperator::specializedGlyphSourceRange() const
+{
+    if (!useMathOperator())
+        return RenderMathMLToken::specializedGlyphSourceRange();
+    if (isAnonymous())
+        return std::nullopt;
+    auto text = protect(element())->textContent();
+    StringView view = text;
+    auto trimmed = view.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    unsigned start = 0;
+    while (start < view.length() && isASCIIWhitespaceWithoutFF(view[start]))
+        ++start;
+    // The parser paints only the base character of a base-plus-overlay operator.
+    auto length = trimmed.convertToSingleCodePoint() ? trimmed.length() : 1;
+    return std::pair { start, length };
+}
+
+std::optional<LayoutRect> RenderMathMLOperator::specializedGlyphRect() const
+{
+    if (!useMathOperator())
+        return RenderMathMLToken::specializedGlyphRect();
+    if (isAnonymous())
+        return std::nullopt;
+    return m_mathOperator.selectionRect(style(), operatorTopLeft());
+}
+
+LayoutUnit RenderMathMLOperator::specializedGlyphBaseline() const
+{
+    if (!useMathOperator())
+        return RenderMathMLToken::specializedGlyphBaseline();
+    return operatorTopLeft().y() + m_mathOperator.ascent();
+}
+
+LayoutRect RenderMathMLOperator::specializedGlyphInkRect(float strokeOutset) const
+{
+    if (!useMathOperator())
+        return RenderMathMLToken::specializedGlyphInkRect(strokeOutset);
+    return enclosingLayoutRect(m_mathOperator.glyphsForPainting(style(), operatorTopLeft(), document().deviceScaleFactor()).inkBounds(strokeOutset));
+}
+
 void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
-    RenderMathMLToken::paint(info, paintOffset);
-    if (!useMathOperator())
+    if (!useMathOperator()) {
+        RenderMathMLToken::paint(info, paintOffset);
+        return;
+    }
+    RenderMathMLBlock::paint(info, paintOffset);
+    if (info.context().paintingDisabled() || (info.phase != PaintPhase::Foreground && info.phase != PaintPhase::Selection) || info.paintBehavior.contains(PaintBehavior::ExcludeText) || usedStyle().visibility() != UsedVisibility::Visible)
         return;
 
-    auto operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
-
-    m_mathOperator.paint(usedStyle(), info, operatorTopLeft, protect(document())->deviceScaleFactor());
+    auto topLeft = paintOffset + location() + operatorTopLeft();
+    if (document().printing() || (!document().hasHighlight() && !view().selection().start())) {
+        m_mathOperator.paint(usedStyle(), info, topLeft, document().deviceScaleFactor());
+        return;
+    }
+    auto origin = FloatPoint { topLeft + LayoutPoint { 0_lu, m_mathOperator.ascent() } };
+    std::optional<MathOperator::GlyphPainting> glyphs;
+    auto glyphsForPainting = [&] -> const MathOperator::GlyphPainting& {
+        if (!glyphs)
+            glyphs = m_mathOperator.glyphsForPainting(style(), topLeft, document().deviceScaleFactor());
+        return *glyphs;
+    };
+    Function<Vector<FloatSegment>(const FloatPoint&, const FloatRect&)> intersections = [&](const FloatPoint& textOrigin, const FloatRect& lineBounds) {
+        Vector<FloatSegment> result;
+        auto offset = textOrigin - origin;
+        auto mappedText = String::fromCodePoint(singleCharCodePoint());
+        TextRun run { mappedText };
+        auto& painting = glyphsForPainting();
+        auto sourceLine = lineBounds;
+        sourceLine.move(-offset);
+        sourceLine = painting.transform.inverse().value().mapRect(sourceLine);
+        for (auto& glyph : painting.glyphs) {
+            auto clippedLine = glyph.clip.clip(sourceLine);
+            if (clippedLine.isEmpty())
+                continue;
+            GlyphBuffer buffer;
+            buffer.add(glyph.glyph.glyph, *glyph.glyph.font, makeGlyphBufferAdvance(protect(glyph.glyph.font)->widthForGlyph(glyph.glyph.glyph)), 0);
+            for (auto segment : style().fontCascade().lineSegmentsForIntersectionsWithRect(run, buffer, glyph.origin, clippedLine)) {
+                auto begin = painting.transform.mapPoint(FloatPoint { clippedLine.x() + segment.begin, clippedLine.y() }).x() + offset.width() - lineBounds.x();
+                auto end = painting.transform.mapPoint(FloatPoint { clippedLine.x() + segment.end, clippedLine.y() }).x() + offset.width() - lineBounds.x();
+                result.append({ std::min(begin, end), std::max(begin, end) });
+            }
+        }
+        return result;
+    };
+    GraphicsContextStateSaver saver(info.context());
+    if (paintHighlightedGlyphs(info, paintOffset, origin, singleCharCodePoint(), nullptr, [&](TextPainter& painter, const TextPaintStyle& textStyle, const FloatRect& rect, const FloatPoint& textOrigin) {
+        painter.paintGlyphs(rect, textOrigin, [&](const FloatPoint& effectOrigin) {
+            auto& glyphs = glyphsForPainting();
+            auto offset = effectOrigin - origin;
+            if (!info.context().hasDropShadow() || (glyphs.glyphs.size() == 1 && glyphs.transform.isIdentity())) {
+                MathOperator::paintGlyphs(style(), info.context(), glyphs, offset);
+                return;
+            }
+            // Apply mathematical transforms and assembly clips before shadowing the complete silhouette.
+            auto inkBounds = glyphs.inkBounds(strokeOutsetForTextPaintStyle(textStyle) + 1);
+            auto scale = info.context().scaleFactor();
+            if (scale.isEmpty())
+                return;
+            inkBounds.scale(scale.width(), scale.height());
+            inkBounds = FloatRect { enclosingIntRect(inkBounds) };
+            inkBounds.scale(1 / scale.width(), 1 / scale.height());
+            RefPtr image = info.context().createAlignedImageBuffer(inkBounds);
+            if (!image)
+                return;
+            image->context().mergeAllChanges(info.context().state());
+            image->context().setLineJoin(textStyle.lineJoin);
+            image->context().setLineCap(textStyle.lineCap);
+            image->context().setMiterLimit(textStyle.miterLimit);
+            image->context().clearDropShadow();
+            image->context().setAlpha(1);
+            image->context().setCompositeOperation(CompositeOperator::SourceOver);
+            MathOperator::paintGlyphs(style(), image->context(), glyphs);
+            auto destination = inkBounds;
+            destination.move(offset);
+            info.context().drawImageBuffer(*image, destination);
+        });
+    }, &intersections))
+        return;
+    m_mathOperator.paint(usedStyle(), info, topLeft, document().deviceScaleFactor());
 }
 
 void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

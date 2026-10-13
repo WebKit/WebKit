@@ -28,6 +28,8 @@
 
 #if ENABLE(MATHML)
 
+#include "AffineTransform.h"
+#include "FloatRect.h"
 #include "GlyphPage.h"
 #include "LayoutUnit.h"
 #include "OpenTypeMathData.h"
@@ -60,6 +62,29 @@ public:
 
     void paint(const UsedStyle&, PaintInfo&, const LayoutPoint&, float deviceScaleFactor);
 
+    struct GlyphPaintClip {
+        std::optional<float> top;
+        std::optional<float> bottom;
+        std::optional<float> left;
+        std::optional<float> right;
+
+        FloatRect clip(const FloatRect&) const;
+    };
+    struct GlyphPaintData {
+        GlyphData glyph;
+        LayoutPoint origin;
+        GlyphPaintClip clip;
+    };
+    struct GlyphPainting {
+        Vector<GlyphPaintData, 1> glyphs;
+        AffineTransform transform;
+
+        FloatRect inkBounds(float strokeOutset = 0) const;
+    };
+    GlyphPainting glyphsForPainting(const Style::ComputedStyle&, const LayoutPoint&, float deviceScaleFactor) const;
+    LayoutRect selectionRect(const Style::ComputedStyle&, const LayoutPoint&) const;
+    static void paintGlyphs(const Style::ComputedStyle&, GraphicsContext&, const GlyphPainting&, const FloatSize& offset = { });
+
 private:
     struct GlyphAssemblyData {
         char32_t topOrRightCodePoint { 0 };
@@ -87,7 +112,7 @@ private:
 
     LayoutUnit NODELETE stretchSize() const;
     bool getGlyph(const Style::ComputedStyle&, char32_t character, GlyphData&) const;
-    bool getBaseGlyph(const Style::ComputedStyle&, GlyphData&);
+    bool getBaseGlyph(const Style::ComputedStyle&, GlyphData&) const;
     void setSizeVariant(const GlyphData&);
     void setGlyphAssembly(const Style::ComputedStyle&, const GlyphAssemblyData&);
     void getMathVariantsWithFallback(const Style::ComputedStyle&, bool isVertical, Vector<Glyph>&, Vector<OpenTypeMathData::AssemblyPart>&);
@@ -95,11 +120,16 @@ private:
     void calculateStretchyData(const Style::ComputedStyle&, bool calculateMaxPreferredWidth, LayoutUnit targetSize = 0_lu);
     bool NODELETE calculateGlyphAssemblyFallback(const Vector<OpenTypeMathData::AssemblyPart>&, GlyphAssemblyData&) const;
 
-    LayoutRect paintGlyph(const Style::ComputedStyle&, PaintInfo&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming);
-    void fillWithVerticalExtensionGlyph(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void fillWithHorizontalExtensionGlyph(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
-    void paintVerticalGlyphAssembly(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint&);
-    void paintHorizontalGlyphAssembly(const Style::ComputedStyle&, PaintInfo&, const LayoutPoint&);
+    struct GlyphPaintContext {
+        Vector<GlyphPaintData, 1>& glyphs;
+        GlyphPaintClip clip;
+    };
+    AffineTransform glyphPaintingTransform(const Style::ComputedStyle&, const LayoutPoint&) const;
+    LayoutRect appendGlyph(GlyphPaintContext&, const GlyphData&, const LayoutPoint& origin, GlyphPaintTrimming) const;
+    void fillWithVerticalExtensionGlyph(const Style::ComputedStyle&, GlyphPaintContext&, const LayoutPoint& from, const LayoutPoint& to) const;
+    void fillWithHorizontalExtensionGlyph(const Style::ComputedStyle&, GlyphPaintContext&, const LayoutPoint& from, const LayoutPoint& to) const;
+    void paintVerticalGlyphAssembly(const Style::ComputedStyle&, GlyphPaintContext&, const LayoutPoint&) const;
+    void paintHorizontalGlyphAssembly(const Style::ComputedStyle&, GlyphPaintContext&, const LayoutPoint&) const;
 
     char32_t m_baseCharacter { 0 };
     Type m_operatorType { Type::NormalOperator };
@@ -115,7 +145,7 @@ private:
     LayoutUnit m_italicCorrection { 0 };
     LayoutUnit m_unstretchedSize { 0 };
     float m_radicalVerticalScale { 1 };
-    bool m_baseGlyphMirroredByRTLM { false };
+    mutable bool m_baseGlyphMirroredByRTLM { false };
 };
 
 }
