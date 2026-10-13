@@ -121,6 +121,8 @@ public:
     virtual float refreshControllerSnappingThreshold() const { return 0; }
 #endif
 
+    virtual ScrollAxisLock scrollAxisLock() const = 0;
+
     virtual void deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
     virtual void removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
 
