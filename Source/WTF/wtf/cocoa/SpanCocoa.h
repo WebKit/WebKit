@@ -50,6 +50,16 @@ inline RetainPtr<NSData> toNSDataNoCopy(std::span<const uint8_t> span, FreeWhenD
 {
     return adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(span.data()) length:span.size() freeWhenDone:freeWhenDone == FreeWhenDone::Yes]);
 }
+
+inline RetainPtr<NSData> toNSData(std::span<const Latin1Character> span)
+{
+    return toNSData(byteCast<uint8_t>(span));
+}
+
+inline RetainPtr<NSData> toNSDataNoCopy(std::span<const Latin1Character> span, FreeWhenDone freeWhenDone)
+{
+    return toNSDataNoCopy(byteCast<uint8_t>(span), freeWhenDone);
+}
 #endif // #ifdef __OBJC__
 
 template<typename> class Function;

@@ -198,6 +198,15 @@ template<bool characterPredicate(Latin1Character), typename CharacterType> void 
     skip(data, index);
 }
 
+// For byte buffers being parsed as Latin-1.
+template<bool characterPredicate(Latin1Character), typename CharacterType> void skipWhile(std::span<CharacterType>& data) requires(std::is_same_v<std::remove_const_t<CharacterType>, uint8_t>)
+{
+    size_t index = 0;
+    while (index < data.size() && characterPredicate(data[index]))
+        ++index;
+    skip(data, index);
+}
+
 template<bool characterPredicate(char16_t), typename CharacterType> void skipWhile(std::span<CharacterType>& data) requires(std::is_same_v<std::remove_const_t<CharacterType>, char16_t>)
 {
     size_t index = 0;

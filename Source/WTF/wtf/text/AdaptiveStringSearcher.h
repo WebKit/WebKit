@@ -554,7 +554,7 @@ void AdaptiveStringSearcher<PatternChar, SubjectChar>::populateBoyerMooreHorspoo
     const auto* patternPtr = m_pattern.data();
     for (int i = start; i < patternLength - 1; i++) {
         PatternChar c = patternPtr[i];
-        int bucket = (sizeof(PatternChar) == 1) ? c : c % alphabetSize();
+        int bucket = (sizeof(PatternChar) == 1) ? static_cast<int>(c) : c % alphabetSize();
         badCharOccurrence[bucket] = i;
     }
 }

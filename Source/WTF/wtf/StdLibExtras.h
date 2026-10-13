@@ -50,6 +50,7 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/TypeTraits.h>
 #include <wtf/Variant.h>
+#include <wtf/text/Latin1Character.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -1088,7 +1089,7 @@ template<typename T, typename U>
 concept TriviallyComparableCodeUnits = std::is_same_v<std::remove_const_t<T>, std::remove_const_t<U>> || (!std::is_same_v<std::remove_const_t<T>, char8_t> && !std::is_same_v<std::remove_const_t<U>, char8_t>);
 
 template<typename T>
-concept CanBeConstByteType = sizeof(T) == 1 && ((std::is_integral_v<T> && !std::same_as<T, bool>) || std::same_as<T, std::byte>);
+concept CanBeConstByteType = sizeof(T) == 1 && ((std::is_integral_v<T> && !std::same_as<std::remove_const_t<T>, bool>) || std::same_as<std::remove_const_t<T>, std::byte> || std::same_as<std::remove_const_t<T>, Latin1Character>);
 
 template<typename T, typename U>
 concept TriviallyComparableOneByteCodeUnits = TriviallyComparableCodeUnits<T, U> && CanBeConstByteType<T> && CanBeConstByteType<U>;

@@ -70,7 +70,7 @@ TEST(WebKitLegacy, SubstituteDataDocumentCanLoadLocalResource)
 
     auto [tempFilePath, tempFileHandle] = FileSystem::openTemporaryFile("SubstituteDataLocalResourceAccess"_s, ".js"_s);
     ASCIILiteral scriptContents = "window.testResult = 'local file contents'"_s;
-    tempFileHandle.write(scriptContents.span8());
+    tempFileHandle.write(byteCast<uint8_t>(scriptContents.span8()));
     tempFileHandle = { };
 
     URL tempFileURL = URL::fileURLWithFileSystemPath(tempFilePath);

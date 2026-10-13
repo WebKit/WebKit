@@ -612,7 +612,7 @@ ALWAYS_INLINE T Lexer<T>::peek(int offset) const
 {
     ASSERT(offset > 0 && offset < 5);
     const T* code = m_code + offset;
-    return (code < m_codeEnd) ? *code : 0;
+    return (code < m_codeEnd) ? *code : T { };
 }
 
 struct ParsedUnicodeEscapeValue {
@@ -990,7 +990,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<Latin1Cha
 
     auto* found = SIMD::find(std::span { currentSourcePtr(), m_codeEnd }, vectorMatch, scalarMatch);
     m_code = found;
-    m_current = (found < m_codeEnd) ? *found : 0;
+    m_current = (found < m_codeEnd) ? *found : Latin1Character { };
 
     // Scalar fallback for non-ASCII Latin1 identifier parts
     while (isIdentPart(m_current))

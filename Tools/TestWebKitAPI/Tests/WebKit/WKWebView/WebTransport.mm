@@ -1146,7 +1146,7 @@ TEST(WebTransport, ExportKeyingMaterial)
             Vector<uint8_t> clientKeyingMaterial;
             while (clientKeyingMaterial.size() < keyingMaterialLength)
                 clientKeyingMaterial.appendVector(co_await connection.awaitableReceiveBytes());
-            auto serverKeyingMaterial = group.exportKeyingMaterial(label.span8(), context.span8(), keyingMaterialLength);
+            auto serverKeyingMaterial = group.exportKeyingMaterial(byteCast<uint8_t>(label.span8()), byteCast<uint8_t>(context.span8()), keyingMaterialLength);
             EXPECT_EQ(serverKeyingMaterial.size(), keyingMaterialLength);
             co_await connection.awaitableSend(clientKeyingMaterial == serverKeyingMaterial ? "matches"_str : "differs"_str);
         }, nullptr, protocol);

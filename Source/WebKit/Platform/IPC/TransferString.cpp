@@ -78,7 +78,7 @@ TransferString::TransferString(CFStringRef string)
 
 std::optional<TransferString> TransferString::createCopy(std::span<const Latin1Character> span8)
 {
-    auto handle = WebCore::SharedMemoryHandle::createCopy(span8, WebCore::SharedMemoryProtection::ReadOnly);
+    auto handle = WebCore::SharedMemoryHandle::createCopy(byteCast<uint8_t>(span8), WebCore::SharedMemoryProtection::ReadOnly);
     if (!handle)
         return std::nullopt;
     return std::optional<TransferString> { std::in_place, SharedSpan8 { WTF::move(*handle) } };

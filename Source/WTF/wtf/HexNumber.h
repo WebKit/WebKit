@@ -38,6 +38,13 @@ inline std::span<Latin1Character> appendHex(std::array<Latin1Character, arraySiz
     return appendHex(std::span<Latin1Character> { buffer }, unsignedCast(number), minimumDigits, mode);
 }
 
+template<size_t arraySize>
+inline std::span<Latin1Character> appendHex(std::array<Latin1Character, arraySize>& buffer, Latin1Character character, unsigned minimumDigits, HexConversionMode mode)
+{
+    uint8_t number = character;
+    return appendHex(buffer, number, minimumDigits, mode);
+}
+
 } // namespace Internal
 
 struct HexNumberBuffer {

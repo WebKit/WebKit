@@ -45,6 +45,10 @@ public:
         {
             return unsignedCast(character);
         }
+        static constexpr char16_t convert(Latin1Character character)
+        {
+            return character;
+        }
     };
 
     template<typename T, typename Converter = DefaultConverter>

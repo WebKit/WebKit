@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,92 @@
 
 #pragma once
 
-// A type to hold a single Latin-1 character.
-// This type complements the char16_t type that we get from C++.
-// To parallel that type, we put this one in the global namespace.
-typedef unsigned char Latin1Character;
+#include <compare>
+#include <concepts>
+#include <cstdint>
+
+namespace WTF {
+
+// Single Latin-1 character. Complements char8_t for UTF-8, char16_t for UTF-16, char32_t for UTF-32.
+struct Latin1Character {
+    uint8_t value;
+
+    Latin1Character() = default;
+    constexpr Latin1Character(std::integral auto value) : value { static_cast<uint8_t>(value) } { }
+    constexpr operator std::integral auto() const { return value; }
+    constexpr bool operator!() const { return !value; }
+    constexpr bool operator==(const Latin1Character&) const = default;
+    constexpr auto operator<=>(const Latin1Character&) const = default;
+};
+
+constexpr bool operator==(Latin1Character a, std::integral auto b)
+{
+    return a.value == b;
+}
+
+constexpr auto operator<=>(Latin1Character a, std::integral auto b)
+{
+    return a.value <=> b;
+}
+
+constexpr auto operator+(Latin1Character a, std::integral auto b)
+{
+    return a.value + b;
+}
+
+constexpr auto operator-(Latin1Character a, std::integral auto b)
+{
+    return a.value - b;
+}
+
+constexpr auto operator&(Latin1Character a, std::integral auto b)
+{
+    return a.value & b;
+}
+
+constexpr auto operator|(Latin1Character a, std::integral auto b)
+{
+    return a.value | b;
+}
+
+constexpr auto operator%(Latin1Character a, std::integral auto b)
+{
+    return a.value % b;
+}
+
+constexpr Latin1Character& operator+=(Latin1Character& a, std::integral auto b)
+{
+    a.value += b;
+    return a;
+}
+
+constexpr Latin1Character& operator-=(Latin1Character& a, std::integral auto b)
+{
+    a.value -= b;
+    return a;
+}
+
+constexpr Latin1Character& operator&=(Latin1Character& a, std::integral auto b)
+{
+    a.value &= b;
+    return a;
+}
+
+constexpr Latin1Character& operator|=(Latin1Character& a, std::integral auto b)
+{
+    a.value |= b;
+    return a;
+}
+
+constexpr Latin1Character& operator%=(Latin1Character& a, std::integral auto b)
+{
+    a.value %= b;
+    return a;
+}
+
+template<typename CharacterType>
+concept IsStringStorageCharacter = std::same_as<CharacterType, Latin1Character> || std::same_as<CharacterType, char16_t>;
+
+}
+
+using WTF::Latin1Character;

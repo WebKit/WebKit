@@ -126,7 +126,7 @@ static void urlEncodeIfNeeded(uint8_t byte, StringBuilder& buffer)
         buffer.append(lowerNibbleToASCIIHexDigit(byte));
         return;
     }
-    buffer.append(byte);
+    buffer.append(byteCast<Latin1Character>(byte));
 }
 
 TEST(PermissionsAPI, DataURL)

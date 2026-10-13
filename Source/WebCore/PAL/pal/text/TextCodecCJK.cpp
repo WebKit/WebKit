@@ -328,7 +328,7 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
             }
             if (byte <= 0x7F && byte != 0x0E && byte != 0x0F && byte != 0x1B) {
                 m_iso2022JPOutput = false;
-                result.append(byte);
+                result.append(byteCast<Latin1Character>(byte));
                 break;
             }
             m_iso2022JPOutput = false;
@@ -350,7 +350,7 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
             }
             if (byte <= 0x7F && byte != 0x0E && byte != 0x0F && byte != 0x1B && byte != 0x5C && byte != 0x7E) {
                 m_iso2022JPOutput = false;
-                result.append(byte);
+                result.append(byteCast<Latin1Character>(byte));
                 break;
             }
             m_iso2022JPOutput = false;
@@ -643,7 +643,7 @@ String TextCodecCJK::shiftJISDecode(std::span<const uint8_t> bytes, bool flush, 
             return SawError::Yes;
         }
         if (isASCII(byte) || byte == 0x80) {
-            result.append(byte);
+            result.append(byteCast<Latin1Character>(byte));
             return SawError::No;
         }
         if (byte >= 0xA1 && byte <= 0xDF) {
@@ -766,7 +766,7 @@ String TextCodecCJK::eucKRDecode(std::span<const uint8_t> bytes, bool flush, boo
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(byte);
+            result.append(byteCast<Latin1Character>(byte));
             return SawError::No;
         }
         if (byte >= 0x81 && byte <= 0xFE) {
@@ -1002,7 +1002,7 @@ String TextCodecCJK::gb18030Decode(std::span<const uint8_t> bytes, bool flush, b
             return SawError::Yes;
         }
         if (isASCII(byte)) {
-            result.append(byte);
+            result.append(byteCast<Latin1Character>(byte));
             return SawError::No;
         }
         if (byte == 0x80) {
