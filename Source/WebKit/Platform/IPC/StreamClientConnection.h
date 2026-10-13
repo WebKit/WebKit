@@ -416,7 +416,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
             if (!replySpan)
                 return makeUnexpected(Error::FailedToAcquireReplyBufferSpan);
 
-            auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
+            auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID, T::shouldCopyReplySpans ? Decoder::ShouldCopySpans::Yes : Decoder::ShouldCopySpans::No);
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply || decoder->messageName() == MessageName::CancelSyncMessageReply);
                 return decoder;
@@ -440,7 +440,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    return { { WTF::move(decoder), WTF::move(*replyArguments) } };
+    return { { WTF::move(decoder), unwrapUnsafeArguments(WTF::move(*replyArguments)) } };
 }
 
 inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)

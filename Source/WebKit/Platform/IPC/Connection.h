@@ -36,6 +36,7 @@
 #include "ReceiverMatcher.h"
 #include "SyncRequestID.h"
 #include "Timeout.h"
+#include "UnsafeArgument.h"
 #include <atomic>
 #include <new>
 #include <tuple>
@@ -247,7 +248,7 @@ public:
         ASSERT(value.error() != Error::NoError);
     }
 
-    ConnectionSendSyncResult(UniqueRef<Decoder>&& decoder, typename T::ReplyArguments&& replyArguments)
+    ConnectionSendSyncResult(UniqueRef<Decoder>&& decoder, UnwrappedReplyArguments<T>&& replyArguments)
         : value({ WTF::move(decoder), WTF::move(replyArguments) })
     {
     }
@@ -255,18 +256,18 @@ public:
     bool succeeded() const { return value.has_value(); }
     Error error() const { return value.has_value() ? Error::NoError : value.error(); }
 
-    typename T::ReplyArguments& reply()
+    UnwrappedReplyArguments<T>& reply()
     {
         return value.value().reply;
     }
 
-    typename T::ReplyArguments takeReply()
+    UnwrappedReplyArguments<T> takeReply()
     {
         return WTF::move(value.value().reply);
     }
 
     template<typename... U>
-    typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
+    UnwrappedReplyArguments<T> takeReplyOr(U&&... defaultValues)
     {
         if (!value.has_value())
             return { std::forward<U>(defaultValues)... };
@@ -275,7 +276,7 @@ public:
 private:
     struct ReplyData {
         UniqueRef<Decoder> decoder; // Owns the memory for reply.
-        typename T::ReplyArguments reply;
+        UnwrappedReplyArguments<T> reply;
     };
 
     std::expected<ReplyData, Error> value;
@@ -1013,7 +1014,7 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     decoder.get() >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    return SendSyncResult<T> { WTF::move(decoder), WTF::move(*replyArguments) };
+    return SendSyncResult<T> { WTF::move(decoder), unwrapUnsafeArguments(WTF::move(*replyArguments)) };
 }
 
 template<typename T, typename... Arguments>
@@ -1124,10 +1125,11 @@ Connection::AsyncReplyHandlerWithDispatcher Connection::makeAsyncReplyHandlerWit
                     if constexpr (!std::tuple_size_v<typename T::ReplyArguments>)
                         return { };
                     else if (auto arguments = decoder->decode<typename T::ReplyArguments>()) {
+                        auto unwrappedArguments = unwrapUnsafeArguments(WTF::move(*arguments));
                         if constexpr (std::tuple_size_v<typename T::ReplyArguments> == 1)
-                            return std::get<0>(WTF::move(*arguments));
+                            return std::get<0>(WTF::move(unwrappedArguments));
                         else
-                            return WTF::move(*arguments);
+                            return unwrappedArguments;
                     }
                     ASSERT_NOT_REACHED();
                     return PC::convertError(Error::FailedToDecodeReplyArguments);
@@ -1160,10 +1162,10 @@ template<typename T, typename C>
 void Connection::callReply(Connection* connection, Decoder& decoder, C&& completionHandler)
 {
     if (auto arguments = decoder.decode<typename T::ReplyArguments>()) {
-        if constexpr (CanApply<C, typename T::ReplyArguments>::value)
-            return std::apply(std::forward<C>(completionHandler), WTF::move(*arguments));
+        if constexpr (CanApply<C, UnwrappedReplyArguments<T>>::value)
+            return std::apply(std::forward<C>(completionHandler), unwrapUnsafeArguments(WTF::move(*arguments)));
         else
-            return callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, WTF::move(*arguments));
+            return callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), connection, unwrapUnsafeArguments(WTF::move(*arguments)));
     }
     cancelReply<T>(std::forward<C>(completionHandler));
 }
@@ -1173,10 +1175,10 @@ void Connection::cancelReply(C&& completionHandler)
 {
     auto emptyReplyTuple = []<size_t... Indices>(std::index_sequence<Indices...>)
     {
-        return std::make_tuple(AsyncReplyError<std::tuple_element_t<Indices, typename T::ReplyArguments>>::create()...);
+        return std::make_tuple(AsyncReplyError<std::tuple_element_t<Indices, UnwrappedReplyArguments<T>>>::create()...);
     }(std::make_index_sequence<std::tuple_size_v<typename T::ReplyArguments>> { });
 
-    if constexpr (CanApply<C, typename T::ReplyArguments>::value)
+    if constexpr (CanApply<C, UnwrappedReplyArguments<T>>::value)
         std::apply(std::forward<C>(completionHandler), WTF::move(emptyReplyTuple));
     else
         callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), nullptr, WTF::move(emptyReplyTuple));

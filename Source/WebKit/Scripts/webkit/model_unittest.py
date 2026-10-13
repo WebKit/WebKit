@@ -89,6 +89,59 @@ class ModelCheckTest(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertTrue("attribute mismatch" in errors[0])
 
+    def test_unsafe_span_parameter(self):
+        contents = """
+        [
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo
+        ]
+        messages -> WebPage Stream {
+            SendSpans([UnsafeSpan] std::span<const float> a, [UnsafeSpan] std::span<const double, 6> b, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, float> c, std::span<const float> d, [UnsafeSpan] std::optional<std::span<const float>> f) -> ([UnsafeSpan] std::span<const uint32_t> e) Synchronous
+        }"""
+        receiver = parser.parse(StringIO(contents))
+        message = receiver.messages[0]
+        self.assertEqual([parameter.type for parameter in message.parameters], ['IPC::UnsafeSpan<float>', 'IPC::UnsafeSpan<double, 6>', 'IPC::UnsafeArrayReferenceTuple<int32_t, float>', 'std::span<const float>', 'std::optional<IPC::UnsafeSpan<float>>'])
+        self.assertEqual([parameter.declared_type for parameter in message.parameters], ['std::span<const float>', 'std::span<const double, 6>', 'IPC::ArrayReferenceTuple<int32_t, float>', 'std::span<const float>', 'std::optional<std::span<const float>>'])
+        self.assertEqual(message.reply_parameters[0].type, 'IPC::UnsafeSpan<uint32_t>')
+        self.assertEqual(message.reply_parameters[0].declared_type, 'std::span<const uint32_t>')
+
+        invalid_contents = """
+        [
+            ExceptionForDispatchedFrom,
+            ExceptionForDispatchedTo
+        ]
+        messages -> WebPage Stream {
+            SendVector([UnsafeSpan] Vector<float> a)
+        }"""
+        with self.assertRaises(Exception):
+            parser.parse(StringIO(invalid_contents))
+
+    def test_unsafe_span_reply_value(self):
+        contents = """
+        [
+            DispatchedFrom=WebContent,
+            DispatchedTo=GPU
+        ]
+        messages -> WebPage Stream {
+            GetSpan() -> ([UnsafeSpan] std::span<const uint32_t> e) Synchronous
+        }"""
+        receiver = parser.parse(StringIO(contents))
+        self.assertFalse(receiver.should_copy_reply_spans())
+        with self.assertRaises(Exception):
+            receiver.enforce_unsafe_span_usage()
+
+        reversed_contents = """
+        [
+            DispatchedFrom=GPU,
+            DispatchedTo=WebContent
+        ]
+        messages -> WebPage Stream {
+            GetSpan() -> ([UnsafeSpan] std::span<const uint32_t> e) Synchronous
+        }"""
+        reversed_receiver = parser.parse(StringIO(reversed_contents))
+        self.assertTrue(reversed_receiver.should_copy_reply_spans())
+        reversed_receiver.enforce_unsafe_span_usage()
+
 
 if __name__ == '__main__':
     unittest.main()

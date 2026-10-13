@@ -34,6 +34,7 @@
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
@@ -68,7 +69,8 @@ public:
     static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, Vector<Attachment>&&);
     using BufferDeallocator = Function<void(std::span<const uint8_t>)>;
     static std::unique_ptr<Decoder> create(std::span<const uint8_t> buffer, BufferDeallocator&&, Vector<Attachment>&&);
-    Decoder(std::span<const uint8_t> stream, uint64_t destinationID);
+    enum class ShouldCopySpans : bool { No, Yes };
+    Decoder(std::span<const uint8_t> stream, uint64_t destinationID, ShouldCopySpans = ShouldCopySpans::Yes);
 
     ~Decoder();
 
@@ -112,6 +114,8 @@ public:
     std::span<const uint8_t> span() const { return m_buffer; }
     size_t currentBufferOffset() const { return std::distance(m_buffer.begin(), m_bufferPosition); }
 
+    bool shouldCopySpans() const { return m_shouldCopySpans; }
+
     [[nodiscard]] bool isValid() const { return !!m_buffer.data(); }
     void markInvalid()
     {
@@ -123,6 +127,9 @@ public:
 
     template<typename T>
     [[nodiscard]] std::span<const T> decodeSpan(size_t);
+
+    template<typename T, size_t Extent>
+    [[nodiscard]] std::optional<std::span<const T, Extent>> copySpanIntoOwnedStorage(std::span<const T, Extent>);
 
     template<typename T>
     [[nodiscard]] std::optional<T> decodeObject();
@@ -154,6 +161,9 @@ private:
     std::span<const uint8_t> m_buffer;
     std::span<const uint8_t>::iterator m_bufferPosition;
     BufferDeallocator m_bufferDeallocator;
+    bool m_shouldCopySpans { false };
+
+    Vector<MallocSpan<uint8_t, FastAlignedMalloc>> m_ownedSpanStorage;
 
     Vector<Attachment> m_attachments;
 
@@ -205,6 +215,29 @@ inline std::span<const T> Decoder::decodeSpan(size_t size)
 
     m_bufferPosition = m_buffer.begin() + alignedBufferPosition + bytesNeeded;
     return spanReinterpretCast<const T>(m_buffer.subspan(alignedBufferPosition, bytesNeeded));
+}
+
+template<typename T, size_t Extent>
+inline std::optional<std::span<const T, Extent>> Decoder::copySpanIntoOwnedStorage(std::span<const T, Extent> source)
+{
+    if (source.empty())
+        return source;
+
+    constexpr size_t alignment = std::max(alignof(T), alignof(void*));
+    auto owned = MallocSpan<uint8_t, FastAlignedMalloc>::tryAlignedMalloc(alignment, roundUpToMultipleOf<alignment>(source.size_bytes()));
+    if (!owned.span().data()) [[unlikely]] {
+        markInvalid();
+        return std::nullopt;
+    }
+
+    auto ownedBytes = owned.span().first(source.size_bytes());
+    memcpySpan(owned.mutableSpan(), asBytes(source));
+    auto ownedSpan = spanReinterpretCast<const T>(ownedBytes);
+    m_ownedSpanStorage.append(WTF::move(owned));
+    if constexpr (Extent == std::dynamic_extent)
+        return ownedSpan;
+    else
+        return ownedSpan.template first<Extent>();
 }
 
 template<typename T>

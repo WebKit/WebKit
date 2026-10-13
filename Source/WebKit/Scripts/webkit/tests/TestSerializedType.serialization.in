@@ -101,6 +101,13 @@ class WTF::Seconds {
     float left()
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebKit::UnsafeSpanMembers {
+    [UnsafeSpan] std::span<const double, 6> fixedExtent()
+    [UnsafeSpan] std::span<const float> dynamicExtent()
+    [UnsafeSpan] std::optional<std::span<const float>> optionalDynamicExtent()
+    [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, float> pairs()
+}
+
 struct SoftLinkedMember {
     RetainPtr<DDActionContext> firstMember;
     RetainPtr<DDActionContext> secondMember;

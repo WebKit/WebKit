@@ -161,6 +161,7 @@ enum class MessageName : uint16_t {
     TestWithStream_SendString,
     TestWithStream_SendStringAsync,
     TestWithStream_SendStringAsyncReply,
+    TestWithStream_SendUnsafeSpans,
     TestWithSuperclassAndWantsAsyncDispatch_LoadURL,
     TestWithSuperclassAndWantsDispatch_LoadURL,
     TestWithSuperclass_LoadURL,
@@ -261,6 +262,9 @@ enum class MessageName : uint16_t {
     TestWithStreamSwift_SendStringSync,
 #if PLATFORM(COCOA)
     TestWithStream_ReceiveMachSendRight,
+#endif
+    TestWithStream_ReceiveUnsafeSpan,
+#if PLATFORM(COCOA)
     TestWithStream_SendAndReceiveMachSendRight,
 #endif
     TestWithStream_SendStringSync,

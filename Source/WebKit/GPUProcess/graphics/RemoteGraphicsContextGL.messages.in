@@ -59,18 +59,18 @@ messages -> RemoteGraphicsContextGL Stream {
     void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous
     void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder, WebCore::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
-    void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
-    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
-    void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
-    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
-    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
-    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
-    void DrawBuffers(std::span<const uint32_t> bufs) StreamBatched
-    void DrawBuffersEXT(std::span<const uint32_t> bufs) StreamBatched
-    void InvalidateFramebuffer(uint32_t target, std::span<const uint32_t> attachments)
-    void InvalidateSubFramebuffer(uint32_t target, std::span<const uint32_t> attachments, int32_t x, int32_t y, int32_t width, int32_t height)
+    void MultiDrawArraysANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
+    void MultiDrawArraysInstancedANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
+    void MultiDrawElementsANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
+    void MultiDrawElementsInstancedANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, [UnsafeSpan] IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+    void DrawBuffers([UnsafeSpan] std::span<const uint32_t> bufs) StreamBatched
+    void DrawBuffersEXT([UnsafeSpan] std::span<const uint32_t> bufs) StreamBatched
+    void InvalidateFramebuffer(uint32_t target, [UnsafeSpan] std::span<const uint32_t> attachments)
+    void InvalidateSubFramebuffer(uint32_t target, [UnsafeSpan] std::span<const uint32_t> attachments, int32_t x, int32_t y, int32_t width, int32_t height)
 #if ENABLE(WEBXR)
-    [EnabledBy=WebXREnabled] void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
+    [EnabledBy=WebXREnabled] void FramebufferDiscard(uint32_t target, [UnsafeSpan] std::span<const uint32_t> attachments)
 #endif
     void SetDrawingBufferColorSpace(WebCore::ColorSpace colorSpace)
 
@@ -172,47 +172,47 @@ messages -> RemoteGraphicsContextGL Stream {
     void TexParameterf(uint32_t target, uint32_t pname, float param) StreamBatched
     void TexParameteri(uint32_t target, uint32_t pname, int32_t param) StreamBatched
     void Uniform1f(int32_t location, float x) StreamBatched
-    void Uniform1fv(int32_t location, std::span<const float> v) StreamBatched
+    void Uniform1fv(int32_t location, [UnsafeSpan] std::span<const float> v) StreamBatched
     void Uniform1i(int32_t location, int32_t x) StreamBatched
     void Uniform1iv(int32_t location, std::span<const int32_t> v) StreamBatched
     void Uniform2f(int32_t location, float x, float y) StreamBatched
-    void Uniform2fv(int32_t location, std::span<const float> v) StreamBatched
+    void Uniform2fv(int32_t location, [UnsafeSpan] std::span<const float> v) StreamBatched
     void Uniform2i(int32_t location, int32_t x, int32_t y) StreamBatched
-    void Uniform2iv(int32_t location, std::span<const int32_t> v) StreamBatched
+    void Uniform2iv(int32_t location, [UnsafeSpan] std::span<const int32_t> v) StreamBatched
     void Uniform3f(int32_t location, float x, float y, float z) StreamBatched
-    void Uniform3fv(int32_t location, std::span<const float> v) StreamBatched
+    void Uniform3fv(int32_t location, [UnsafeSpan] std::span<const float> v) StreamBatched
     void Uniform3i(int32_t location, int32_t x, int32_t y, int32_t z) StreamBatched
-    void Uniform3iv(int32_t location, std::span<const int32_t> v) StreamBatched
+    void Uniform3iv(int32_t location, [UnsafeSpan] std::span<const int32_t> v) StreamBatched
     void Uniform4f(int32_t location, float x, float y, float z, float w) StreamBatched
-    void Uniform4fv(int32_t location, std::span<const float> v) StreamBatched
+    void Uniform4fv(int32_t location, [UnsafeSpan] std::span<const float> v) StreamBatched
     void Uniform4i(int32_t location, int32_t x, int32_t y, int32_t z, int32_t w) StreamBatched
-    void Uniform4iv(int32_t location, std::span<const int32_t> v) StreamBatched
-    void UniformMatrix2fv(int32_t location, bool transpose, std::span<const float> value) StreamBatched
-    void UniformMatrix3fv(int32_t location, bool transpose, std::span<const float> value) StreamBatched
-    void UniformMatrix4fv(int32_t location, bool transpose, std::span<const float> value) StreamBatched
+    void Uniform4iv(int32_t location, [UnsafeSpan] std::span<const int32_t> v) StreamBatched
+    void UniformMatrix2fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> value) StreamBatched
+    void UniformMatrix3fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> value) StreamBatched
+    void UniformMatrix4fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> value) StreamBatched
     void UseProgram(uint32_t arg0)
     void ValidateProgram(uint32_t arg0)
     void VertexAttrib1f(uint32_t index, float x) StreamBatched
-    void VertexAttrib1fv(uint32_t index, std::span<const float, 1> values) StreamBatched
+    void VertexAttrib1fv(uint32_t index, [UnsafeSpan] std::span<const float, 1> values) StreamBatched
     void VertexAttrib2f(uint32_t index, float x, float y) StreamBatched
-    void VertexAttrib2fv(uint32_t index, std::span<const float, 2> values) StreamBatched
+    void VertexAttrib2fv(uint32_t index, [UnsafeSpan] std::span<const float, 2> values) StreamBatched
     void VertexAttrib3f(uint32_t index, float x, float y, float z) StreamBatched
-    void VertexAttrib3fv(uint32_t index, std::span<const float, 3> values) StreamBatched
+    void VertexAttrib3fv(uint32_t index, [UnsafeSpan] std::span<const float, 3> values) StreamBatched
     void VertexAttrib4f(uint32_t index, float x, float y, float z, float w) StreamBatched
-    void VertexAttrib4fv(uint32_t index, std::span<const float, 4> values) StreamBatched
+    void VertexAttrib4fv(uint32_t index, [UnsafeSpan] std::span<const float, 4> values) StreamBatched
     void VertexAttribPointer(uint32_t index, int32_t size, uint32_t type, bool normalized, int32_t stride, uint64_t offset) StreamBatched
     void Viewport(int32_t x, int32_t y, int32_t width, int32_t height) StreamBatched
     void BufferData0(uint32_t target, uint64_t arg1, uint32_t usage)
-    void BufferData1(uint32_t target, std::span<const uint8_t> data, uint32_t usage)
-    void BufferSubData(uint32_t target, uint64_t offset, std::span<const uint8_t> data)
+    void BufferData1(uint32_t target, [UnsafeSpan] std::span<const uint8_t> data, uint32_t usage)
+    void BufferSubData(uint32_t target, uint64_t offset, [UnsafeSpan] std::span<const uint8_t> data)
     void ReadPixelsBufferObject(WebCore::IntRect arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength)
-    void TexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t> pixels)
+    void TexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, [UnsafeSpan] std::span<const uint8_t> pixels)
     void TexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
-    void TexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, std::span<const uint8_t> pixels)
+    void TexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, [UnsafeSpan] std::span<const uint8_t> pixels)
     void TexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
-    void CompressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, std::span<const uint8_t> data)
+    void CompressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, [UnsafeSpan] std::span<const uint8_t> data)
     void CompressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset)
-    void CompressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, std::span<const uint8_t> data)
+    void CompressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, [UnsafeSpan] std::span<const uint8_t> data)
     void CompressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset)
     void DrawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount)
     void DrawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
@@ -228,39 +228,39 @@ messages -> RemoteGraphicsContextGL Stream {
     void RenderbufferStorageMultisample(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height) StreamBatched
     void TexStorage2D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height)
     void TexStorage3D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height, int32_t depth)
-    void TexImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t> pixels)
+    void TexImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, [UnsafeSpan] std::span<const uint8_t> pixels)
     void TexImage3D1(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
-    void TexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, std::span<const uint8_t> pixels)
+    void TexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, [UnsafeSpan] std::span<const uint8_t> pixels)
     void TexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, uint64_t offset)
     void CopyTexSubImage3D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t x, int32_t y, int32_t width, int32_t height)
-    void CompressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, std::span<const uint8_t> data)
+    void CompressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, [UnsafeSpan] std::span<const uint8_t> data)
     void CompressedTexImage3D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, uint64_t offset)
-    void CompressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, std::span<const uint8_t> data)
+    void CompressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, [UnsafeSpan] std::span<const uint8_t> data)
     void CompressedTexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, uint64_t offset)
     void GetFragDataLocation(uint32_t program, UTF8CString name) -> (int32_t returnValue) Synchronous
     void Uniform1ui(int32_t location, uint32_t v0) StreamBatched
     void Uniform2ui(int32_t location, uint32_t v0, uint32_t v1) StreamBatched
     void Uniform3ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2) StreamBatched
     void Uniform4ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3) StreamBatched
-    void Uniform1uiv(int32_t location, std::span<const uint32_t> data) StreamBatched
-    void Uniform2uiv(int32_t location, std::span<const uint32_t> data) StreamBatched
-    void Uniform3uiv(int32_t location, std::span<const uint32_t> data) StreamBatched
-    void Uniform4uiv(int32_t location, std::span<const uint32_t> data) StreamBatched
-    void UniformMatrix2x3fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
-    void UniformMatrix3x2fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
-    void UniformMatrix2x4fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
-    void UniformMatrix4x2fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
-    void UniformMatrix3x4fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
-    void UniformMatrix4x3fv(int32_t location, bool transpose, std::span<const float> data) StreamBatched
+    void Uniform1uiv(int32_t location, [UnsafeSpan] std::span<const uint32_t> data) StreamBatched
+    void Uniform2uiv(int32_t location, [UnsafeSpan] std::span<const uint32_t> data) StreamBatched
+    void Uniform3uiv(int32_t location, [UnsafeSpan] std::span<const uint32_t> data) StreamBatched
+    void Uniform4uiv(int32_t location, [UnsafeSpan] std::span<const uint32_t> data) StreamBatched
+    void UniformMatrix2x3fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
+    void UniformMatrix3x2fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
+    void UniformMatrix2x4fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
+    void UniformMatrix4x2fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
+    void UniformMatrix3x4fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
+    void UniformMatrix4x3fv(int32_t location, bool transpose, [UnsafeSpan] std::span<const float> data) StreamBatched
     void VertexAttribI4i(uint32_t index, int32_t x, int32_t y, int32_t z, int32_t w) StreamBatched
-    void VertexAttribI4iv(uint32_t index, std::span<const int32_t, 4> values) StreamBatched
+    void VertexAttribI4iv(uint32_t index, [UnsafeSpan] std::span<const int32_t, 4> values) StreamBatched
     void VertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w) StreamBatched
-    void VertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4> values) StreamBatched
+    void VertexAttribI4uiv(uint32_t index, [UnsafeSpan] std::span<const uint32_t, 4> values) StreamBatched
     void VertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset) StreamBatched
     void DrawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset)
-    void ClearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t> values)
-    void ClearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t> values)
-    void ClearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float> values)
+    void ClearBufferiv(uint32_t buffer, int32_t drawbuffer, [UnsafeSpan] std::span<const int32_t> values)
+    void ClearBufferuiv(uint32_t buffer, int32_t drawbuffer, [UnsafeSpan] std::span<const uint32_t> values)
+    void ClearBufferfv(uint32_t buffer, int32_t drawbuffer, [UnsafeSpan] std::span<const float> values)
     void ClearBufferfi(uint32_t buffer, int32_t drawbuffer, float depth, int32_t stencil)
     void CreateQuery(uint32_t query) StreamBatched
     void DeleteQuery(uint32_t query)
