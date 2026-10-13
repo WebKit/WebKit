@@ -52,7 +52,7 @@ RetainPtr<id> CoreIPCPKDateComponentsRange::toID() const
 
     return adoptNS([[PAL::getPKDateComponentsRangeClassSingleton() alloc]
         initWithStartDateComponents:checked_objc_cast<NSDateComponents>(m_data->startDateComponents.toID().get())
-        endDateComponents:m_data->endDateComponents.toID().get()]);
+        endDateComponents:checked_objc_cast<NSDateComponents>(m_data->endDateComponents.toID().get())]);
 }
 
 } // namespace WebKit
