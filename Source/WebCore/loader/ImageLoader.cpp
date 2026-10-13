@@ -288,6 +288,8 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     }
     ResourceRequest resourceRequest(WTF::move(imageURL));
     resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(element));
+    resourceRequest.setShouldBlockThirdPartyStorage(document->shouldBlockThirdPartyStorage());
+    resourceRequest.setFirstPartyForCookies(document->firstPartyForCookies());
 
     auto request = createPotentialAccessControlRequest(WTF::move(resourceRequest), WTF::move(options), document, crossOriginAttribute);
     request.setInitiator(element);
