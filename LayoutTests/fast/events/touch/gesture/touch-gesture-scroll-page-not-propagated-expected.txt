@@ -1,4 +1,3 @@
-
 This tests that a gesture scroll is not propagated from a div to the page when the div has no remaining scroll offset when the GestureScrollUpdateWithoutPropagation event type is used.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,5 +1,6 @@
 Tiled layer
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 808.00 2121.00)
   (children 1
     (GraphicsLayer
