@@ -2729,7 +2729,7 @@ private:
 
         m_out.appendTo(isObjectCase, scopeCase);
         ValueFromBlock fastResult = m_out.anchor(value);
-        m_out.branch(isType(value, JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) }), unsure(scopeCase), unsure(continuation));
+        m_out.branch(isType(value, JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) }), rarely(scopeCase), usually(continuation));
 
         m_out.appendTo(scopeCase, slowCase);
         ValueFromBlock scopeResult;
@@ -3215,8 +3215,7 @@ private:
                     m_out.notZero32(result), usually(continuation), rarely(slowCase));
 
                 LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
-                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(left, m_out.int32Zero));
-                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(right, m_out.int32Zero));
+                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(m_out.bitOr(left, right), m_out.int32Zero));
                 m_out.jump(continuation);
                 m_out.appendTo(continuation, lastNext);
             }
@@ -3241,8 +3240,7 @@ private:
                     m_out.notZero64(result), usually(continuation), rarely(slowCase));
 
                 LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
-                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(left, m_out.int64Zero));
-                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(right, m_out.int64Zero));
+                speculate(NegativeZero, noValue(), nullptr, m_out.lessThan(m_out.bitOr(left, right), m_out.int64Zero));
                 m_out.jump(continuation);
                 m_out.appendTo(continuation, lastNext);
             }
@@ -3316,8 +3314,7 @@ private:
 
                 LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
                 LValue neg2ToThe31 = m_out.constInt32(-2147483647-1);
-                speculate(Overflow, noValue(), nullptr, m_out.isZero32(denominator));
-                speculate(Overflow, noValue(), nullptr, m_out.equal(numerator, neg2ToThe31));
+                speculate(Overflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(denominator), m_out.equal(numerator, neg2ToThe31)));
                 m_out.jump(continuation);
 
                 m_out.appendTo(continuation, lastNext);
@@ -3445,8 +3442,7 @@ private:
 
                 LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
                 LValue neg2ToThe31 = m_out.constInt32(-2147483647-1);
-                speculate(Overflow, noValue(), nullptr, m_out.isZero32(denominator));
-                speculate(Overflow, noValue(), nullptr, m_out.equal(numerator, neg2ToThe31));
+                speculate(Overflow, noValue(), nullptr, m_out.bitOr(m_out.isZero32(denominator), m_out.equal(numerator, neg2ToThe31)));
                 m_out.jump(continuation);
 
                 m_out.appendTo(continuation, lastNext);
@@ -17859,7 +17855,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 LBasicBlock lastNext = m_out.appendTo(int32Case, notInt32NumberCase);
                 LValue int32Value = unboxInt32(argument);
-                ValueFromBlock fastResult = m_out.anchor(boxInt32(m_out.select(m_out.lessThan(int32Value, m_out.int32Zero), m_out.int32Zero, int32Value)));
+                ValueFromBlock fastResult = m_out.anchor(m_out.select(m_out.lessThan(int32Value, m_out.int32Zero), m_out.constInt64(JSValue::encode(jsNumber(0))), argument));
                 m_out.jump(continuation);
 
                 m_out.appendTo(notInt32NumberCase, continuation);
@@ -20579,9 +20575,7 @@ IGNORE_CLANG_WARNINGS_END
             FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecCellCheck & ~SpecBigInt, isBigInt32(value));
 #endif
 
-            LValue specialResult = m_out.select(
-                m_out.equal(value, m_out.constInt64(JSValue::encode(jsBoolean(true)))),
-                m_out.int32One, m_out.int32Zero);
+            LValue specialResult = m_out.equal(value, m_out.constInt64(JSValue::encode(jsBoolean(true))));
             results.append(m_out.anchor(specialResult));
             m_out.jump(continuation);
         }
@@ -22776,17 +22770,13 @@ IGNORE_CLANG_WARNINGS_END
         speculate(m_node->child1());
         speculate(m_node->child2());
 
-        LBasicBlock leftIsInt = m_out.newBlock();
         LBasicBlock fastPath = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        m_out.branch(isNotInt32(left, provenType(m_node->child1())), rarely(slowPath), usually(leftIsInt));
+        m_out.branch(areNotBothInt32(left, provenType(m_node->child1()), right, provenType(m_node->child2())), rarely(slowPath), usually(fastPath));
 
-        LBasicBlock lastNext = m_out.appendTo(leftIsInt, fastPath);
-        m_out.branch(isNotInt32(right, provenType(m_node->child2())), rarely(slowPath), usually(fastPath));
-
-        m_out.appendTo(fastPath, slowPath);
+        LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
         ValueFromBlock fastResult = m_out.anchor(intFunctor(unboxInt32(left), unboxInt32(right)));
         m_out.jump(continuation);
 
@@ -24797,25 +24787,10 @@ IGNORE_CLANG_WARNINGS_END
             }
 #endif
 
-            LBasicBlock atLeastZero = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
-
-            Vector<ValueFromBlock, 2> intValues;
-            intValues.append(m_out.anchor(m_out.int32Zero));
-            m_out.branch(
+            valueAsInt32 = m_out.select(
                 m_out.lessThan(value, zero),
-                unsure(continuation), unsure(atLeastZero));
-
-            LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
-
-            intValues.append(m_out.anchor(m_out.select(
-                m_out.greaterThan(value, byteMax),
-                m_out.constInt32(255),
-                valueAsInt32)));
-            m_out.jump(continuation);
-
-            m_out.appendTo(continuation, lastNext);
-            valueAsInt32 = m_out.phi(Int32, intValues);
+                m_out.int32Zero,
+                m_out.select(m_out.greaterThan(value, byteMax), m_out.constInt32(255), valueAsInt32));
         }
         return valueAsInt32;
     }
@@ -25728,6 +25703,13 @@ IGNORE_CLANG_WARNINGS_END
             return proven;
         return m_out.below(jsValue, m_numberTag);
     }
+    LValue areNotBothInt32(LValue left, SpeculatedType leftType, LValue right, SpeculatedType rightType)
+    {
+        if (isProvenValue(leftType, ~SpecInt32Only) || isProvenValue(rightType, ~SpecInt32Only))
+            return m_out.bitOr(isNotInt32(left, leftType), isNotInt32(right, rightType));
+        // A boxed int32 has every bit of m_numberTag set, so both are int32 iff their AND does.
+        return m_out.below(m_out.bitAnd(left, right), m_numberTag);
+    }
     LValue unboxInt32(LValue jsValue)
     {
         return m_out.castToInt32(jsValue);
@@ -25783,15 +25765,14 @@ IGNORE_CLANG_WARNINGS_END
         m_out.jump(continuation);
 
         m_out.appendTo(isNotBigInt32Case, isNotCellCase);
-        // FIXME: we should filter the type passed to isCell to account for the previous test that told us we are definitely not a BigInt32.
-        m_out.branch(isCell(jsValue, type), unsure(isCellCase), unsure(isNotCellCase));
+        m_out.branch(isCell(jsValue, type & ~SpecBigInt32), unsure(isCellCase), unsure(isNotCellCase));
 
         m_out.appendTo(isNotCellCase, isCellCase);
         ValueFromBlock returnTrue = m_out.anchor(m_out.booleanTrue);
         m_out.jump(continuation);
 
         m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock returnIsNotHeapBigInt = m_out.anchor(isNotHeapBigInt(jsValue));
+        ValueFromBlock returnIsNotHeapBigInt = m_out.anchor(isNotHeapBigInt(jsValue, type));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -25990,12 +25971,14 @@ IGNORE_CLANG_WARNINGS_END
     }
     LValue unboxBoolean(LValue jsValue)
     {
-        // We want to use a cast that guarantees that B3 knows that even the integer
-        // value is just 0 or 1. But for now we do it the direct way.
-        return m_out.notZero64(m_out.bitAnd(jsValue, m_out.constInt64(1)));
+        // An Int32 BitAnd with 1 is something B3 knows to be 0 or 1, which lets it fold later tests of it.
+        return m_out.bitAnd(m_out.castToInt32(jsValue), m_out.int32One);
     }
     LValue boxBoolean(LValue value)
     {
+        static_assert(JSValue::ValueTrue == JSValue::ValueFalse + 1);
+        if (value->returnsBool())
+            return m_out.add(m_out.zeroExt(value, Int64), m_out.constInt64(JSValue::ValueFalse));
         return m_out.select(
             value, m_out.constInt64(JSValue::ValueTrue), m_out.constInt64(JSValue::ValueFalse));
     }
@@ -26276,7 +26259,7 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock lastNext = m_out.appendTo(isNotInt32, isCellBlock);
         FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullDouble, isNumber(value));
-        m_out.branch(isCell(value, provenType(edge)), unsure(isCellBlock), unsure(continuation));
+        m_out.branch(isCell(value, provenType(edge) & ~SpecFullNumber), unsure(isCellBlock), unsure(continuation));
 
         m_out.appendTo(isCellBlock, continuation);
 
@@ -27057,8 +27040,8 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock lastNext = m_out.appendTo(intOrNaNCase, continuation);
 
         typeCheck(
-            jsValueValue(value), m_node->child1(), SpecBytecodeRealNumber,
-            isNotInt32(value, provenType(m_node->child1()) & ~SpecDoubleReal));
+            jsValueValue(value), edge, SpecBytecodeRealNumber,
+            isNotInt32(value, provenType(edge) & ~SpecDoubleReal));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
