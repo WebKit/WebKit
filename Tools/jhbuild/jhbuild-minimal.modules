@@ -32,11 +32,15 @@
       <dep package="libjxl"/>
       <dep package="libsoup"/>
       <dep package="libvpx"/>
+      <dep package="libwpe"/>
+      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
   <!-- Git repositories. -->
+  <repository type="tarball" name="wpewebkit.org"
+      href="https://wpewebkit.org/releases/"/>
   <repository type="git" name="aomedia.googlesource.com"
       href="https://aomedia.googlesource.com"/>
   <repository type="git" name="chromium.googlesource.com"
@@ -63,6 +67,28 @@
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
 <!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
+
+  <cmake id="libwpe">
+    <pkg-config>wpe-1.0.pc</pkg-config>
+    <branch repo="wpewebkit.org"
+            checkoutdir="libwpe"
+            module="libwpe-${version}.tar.xz"
+            version="1.16.3"
+            hash="sha256:c880fa8d607b2aa6eadde7d6d6302b1396ebc38368fe2332fa20e193c7ee1420"/>
+  </cmake>
+
+  <meson id="wpebackend-fdo">
+    <pkg-config>wpebackend-fdo-1.0.pc</pkg-config>
+    <dependencies>
+      <dep package="libwpe"/>
+    </dependencies>
+    <branch repo="wpewebkit.org"
+            checkoutdir="wpebackend-fdo"
+            module="wpebackend-fdo-${version}.tar.xz"
+            version="1.16.1"
+            hash="sha256:544ae14012f8e7e426b8cb522eb0aaaac831ad7c35601d1cf31d37670e0ebb3b">
+    </branch>
+  </meson>
 
   <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --disable-tests">
      <pkg-config>icu-i18n.pc</pkg-config>
