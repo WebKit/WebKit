@@ -64,15 +64,16 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
-# JavaScript debugging runs on JavaScriptCore's portable CLoop tier (no JIT).
-# The Inspector Protocol backend is connected to WKC's embedder-owned JSON
-# transport. The embedder supplies the frontend and chooses its transport; WKC
-# deliberately does not open an unauthenticated network listener.
-option(WKC_ENABLE_JAVASCRIPT_DEBUGGER "Compile JavaScriptCore Inspector/debugger support" ON)
-if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
-    set(_WKC_JAVASCRIPT_DEBUGGER_DEFINE 1)
+# Use WebKit's existing Web Inspector implementation (Inspector agents and the
+# DevTools Protocol), not a WKC-authored debugger. The legacy ENABLE_JAVASCRIPT_DEBUGGER
+# feature macro gates this port bridge; it does not implement a second debugger.
+# The browser embedder supplies/connects the frontend and chooses the transport.
+# WKC deliberately does not open an unauthenticated network listener.
+option(WKC_ENABLE_WEB_INSPECTOR "Compile WebKit Web Inspector and its WKC bridge" ON)
+if (WKC_ENABLE_WEB_INSPECTOR)
+    set(_WKC_WEB_INSPECTOR_DEFINE 1)
 else ()
-    set(_WKC_JAVASCRIPT_DEBUGGER_DEFINE 0)
+    set(_WKC_WEB_INSPECTOR_DEFINE 0)
 endif ()
 
 # Enable Web Notifications only in the full WebCore profile by default.
@@ -187,7 +188,7 @@ add_definitions(
     -DWTF_USE_BMALLOC=0
     -DUSE_SYSTEM_MALLOC=1
     -DUSE_PTHREADS=1
-    -DENABLE_JAVASCRIPT_DEBUGGER=${_WKC_JAVASCRIPT_DEBUGGER_DEFINE}
+    -DENABLE_JAVASCRIPT_DEBUGGER=${_WKC_WEB_INSPECTOR_DEFINE}
     -DENABLE_WEBGL=1
     -DENABLE_WEB_AUDIO=${_WKC_WEB_AUDIO_DEFINE}
     -DENABLE_MEDIA_STREAM=1
@@ -350,7 +351,7 @@ list(REMOVE_ITEM JSC_CORE_SOURCES
 # but its protocol/agent sources must be compiled explicitly in this standalone
 # target. Read the canonical JSC source list instead of globbing inspector/
 # (which would accidentally pick up the separate remote-inspector transport).
-if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
+if (WKC_ENABLE_WEB_INSPECTOR)
     file(STRINGS "${JSC_DIR}/Sources.txt" _WKC_JSC_SOURCE_LINES)
     set(_WKC_JSC_INSPECTOR_SOURCES)
     set(_WKC_JSC_INSPECTOR_MISSING_SOURCES)
@@ -382,7 +383,7 @@ if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
 
     if (_WKC_JSC_INSPECTOR_MISSING_SOURCES)
         string(JOIN "\\n" _WKC_JSC_INSPECTOR_MISSING_REPORT ${_WKC_JSC_INSPECTOR_MISSING_SOURCES})
-        message(FATAL_ERROR "JavaScript Inspector was enabled, but generated/source files are missing:\\n${_WKC_JSC_INSPECTOR_MISSING_REPORT}")
+        message(FATAL_ERROR "Web Inspector is enabled, but generated/source files are missing:\\n${_WKC_JSC_INSPECTOR_MISSING_REPORT}")
     endif ()
 
     list(APPEND JSC_CORE_SOURCES ${_WKC_JSC_INSPECTOR_SOURCES})
@@ -397,17 +398,17 @@ if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
         "InspectorProtocolObjects.cpp")
         set(_required_inspector_path "${JSC_DIR}/JavaScriptCore/${_required_inspector_source}")
         if (NOT EXISTS "${_required_inspector_path}")
-            message(FATAL_ERROR "JavaScript debugging is enabled but the generated Inspector source is missing: ${_required_inspector_path}")
+            message(FATAL_ERROR "Web Inspector is enabled but the generated Inspector source is missing: ${_required_inspector_path}")
         endif ()
         list(FIND JSC_CORE_SOURCES "${_required_inspector_path}" _required_inspector_source_index)
         if (_required_inspector_source_index EQUAL -1)
-            message(FATAL_ERROR "JavaScript debugging is enabled but the Inspector source is not included in JSC_CORE_SOURCES: ${_required_inspector_path}")
+            message(FATAL_ERROR "Web Inspector is enabled but the Inspector source is not included in JSC_CORE_SOURCES: ${_required_inspector_path}")
         endif ()
     endforeach ()
 
     list(LENGTH _WKC_JSC_INSPECTOR_SOURCES _WKC_JSC_INSPECTOR_COUNT)
     if (_WKC_JSC_INSPECTOR_COUNT LESS 1)
-        message(FATAL_ERROR "JavaScript debugging is enabled but no portable JavaScriptCore Inspector sources were selected")
+        message(FATAL_ERROR "Web Inspector is enabled but no portable JavaScriptCore Inspector sources were selected")
     endif ()
     message(STATUS "WKC Inspector: ${_WKC_JSC_INSPECTOR_COUNT} portable inspector/agent sources selected")
 endif ()
@@ -432,17 +433,17 @@ file(GLOB_RECURSE WKC_WEBKIT_SOURCES
     ${WKC_DIR}/accessor/*.cpp
 )
 
-if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
+if (WKC_ENABLE_WEB_INSPECTOR)
     # InspectorBackendClientWKC is the boundary between WebCore's DevTools
     # Protocol implementation and the public ChromeClientIf message callbacks.
     # Its absence would leave the API looking enabled without a working bridge.
     set(_WKC_INSPECTOR_BACKEND_SOURCE "${WKC_DIR}/WebCoreSupport/InspectorBackendClientWKC.cpp")
     if (NOT EXISTS "${_WKC_INSPECTOR_BACKEND_SOURCE}")
-        message(FATAL_ERROR "JavaScript debugging is enabled but the WKC Inspector bridge is missing: ${_WKC_INSPECTOR_BACKEND_SOURCE}")
+        message(FATAL_ERROR "Web Inspector is enabled but the WKC Inspector bridge is missing: ${_WKC_INSPECTOR_BACKEND_SOURCE}")
     endif ()
     list(FIND WKC_WEBKIT_SOURCES "${_WKC_INSPECTOR_BACKEND_SOURCE}" _WKC_INSPECTOR_BACKEND_SOURCE_INDEX)
     if (_WKC_INSPECTOR_BACKEND_SOURCE_INDEX EQUAL -1)
-        message(FATAL_ERROR "JavaScript debugging is enabled but the WKC Inspector bridge is not included in WKC_WEBKIT_SOURCES")
+        message(FATAL_ERROR "Web Inspector is enabled but the WKC Inspector bridge is not included in WKC_WEBKIT_SOURCES")
     endif ()
     message(STATUS "WKC Inspector bridge: ${_WKC_INSPECTOR_BACKEND_SOURCE}")
 endif ()
