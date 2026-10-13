@@ -73,6 +73,14 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookieNotFound [ Crash ]
 
+# webkit.org/b/327334 [ Tahoe arm64 ] 6x TestWebKitAPI.WKWeb* (api-tests) are constant failures.
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebsiteDataStore.RemoveAndFetchData [ Pass Failure ]
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebsiteDataStore.RemoveDataWaitUntilWebProcessesExit [ Pass Failure ]
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebsiteDataStorePrivate.FetchWithSize [ Pass Failure ]
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebView.ClearStaleAppCache [ Pass Failure ]
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebView.LocalStorageFetchDataRecords [ Pass Failure ]
+[ mac release arm64 Tahoe ] TestWebKitAPI.WKWebView.LocalStorageNoRecordAfterGetItem [ Pass Failure ]
+
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ClientIsA [ Skip ]
 webkit.org/b/246336 TestIPC.ConnectionTest/ConnectionRunLoopTest.RunLoopSendAsyncOnAnotherRunLoopDispatchesOnConnectionRunLoop/ServerIsA [ Skip ]
 rdar://159131152 [ ios ] TestIPC.ConnectionTest/ConnectionRunLoopTest.SendAndInvalidate/ClientIsA [ Skip ]
