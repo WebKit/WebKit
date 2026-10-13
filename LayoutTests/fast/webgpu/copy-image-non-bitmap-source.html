@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone(); }
+
+const sources = [
+    // A single-page PDF, which loads as a PDFDocumentImage: neither BitmapImage nor SVGImage.
+    { name: "PDF", src: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA4IDhdIC9Db250ZW50cyA0IDAgUiAvUmVzb3VyY2VzIDw8ID4+ID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggMzEgPj4Kc3RyZWFtCjEgMCAwIFJHIDEgMCAwIHJnIDAgMCA4IDggcmUgZgplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA1CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxNSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDUgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjI5NQolJUVPRgo=" },
+    // An SVG, to keep the SVGImage path covered.
+    { name: "SVG", src: "data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Crect width=\'8\' height=\'8\' fill=\'blue\'/%3E%3C/svg%3E" },
+    // An 8-bit grayscale PNG, which decodes to fewer than four bytes per pixel.
+    { name: "grayscale PNG", src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAAAAADhZOFXAAAAU0lEQVR4nAFIALf/AAAgQGCAoMDgAAQkRGSEpMTkAAgoSGiIqMjoAAwsTGyMrMzsABAwUHCQsNDwABQ0VHSUtNT0ABg4WHiYuNj4ABw8XHycvNz8FUQfgStz92UAAAAASUVORK5CYII=" },
+    // CoreGraphics decodes both of these with 16 bits per component, so they take the path which
+    // narrows every component to a byte, at one and at three bytes per pixel. ImageIO normalizes
+    // 1-, 2- and 4-bit images to 8 bits per component, so those do not reach it.
+    { name: "16-bit grayscale PNG", src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIEAAAAACx9D0UAAAAZElEQVR42g3MIQEAQQgEwJXIk8iVSCSSKEQhClGIQpT/CTAAQCQKjcHiIBBKSknLyMrh4fHlq9dv3r6DQqmppa2jq/cHJJPF5nB5MBgtraxtbO3gcHp6efv4+iEQjIyKjomN+wA8ACMBSknikgAAAABJRU5ErkJggg==" },
+    { name: "16-bit RGB PNG", src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIEAIAAAAb/fWfAAAAfklEQVR42j3PURGEMAxAQaRESqREClIiJVIi5ZgtRxjeB3RbuK5n7is0tfTW1tHVZwIIIIAAAggggDggvUwggQQSSCCBPKCAsqSAAgoooIA64H/8/e58lp+rdXTfP/MwNLXeZe1uoIE+YIABBphv39bR1WcWWGCB/T6hdXT1B4LuWAEHRRDfAAAAAElFTkSuQmCC" },
+];
+
+async function loadImage(src)
+{
+    const image = document.createElement("img");
+    await new Promise(resolve => {
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = src;
+    });
+    return image;
+}
+
+async function copyImage(device, image, format, flipY)
+{
+    const texture = device.createTexture({
+        size: [8, 8],
+        format: format,
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    device.queue.copyExternalImageToTexture({ source: image, flipY: flipY }, { texture: texture }, [8, 8]);
+    await device.queue.onSubmittedWorkDone();
+    texture.destroy();
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+            console.log("FAIL: No WebGPU adapter available");
+            if (window.testRunner) testRunner.notifyDone();
+            return;
+        }
+        const device = await adapter.requestDevice();
+
+        for (const source of sources) {
+            const image = await loadImage(source.src);
+            for (const format of ["rgba8unorm", "bgra8unorm"]) {
+                for (const flipY of [false, true]) {
+                    // Any validation error is fine here; not crashing is what matters.
+                    device.pushErrorScope("validation");
+                    await copyImage(device, image, format, flipY);
+                    await device.popErrorScope();
+                }
+            }
+            console.log("PASS: copied from " + source.name + " without crashing");
+        }
+    } catch (e) {
+        console.log("FAIL: " + e);
+    }
+
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+This test passes if it does not crash and prints PASS for every source.

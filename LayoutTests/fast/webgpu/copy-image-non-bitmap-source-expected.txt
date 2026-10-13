@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: PASS: copied from PDF without crashing
+CONSOLE MESSAGE: PASS: copied from SVG without crashing
+CONSOLE MESSAGE: PASS: copied from grayscale PNG without crashing
+CONSOLE MESSAGE: PASS: copied from 16-bit grayscale PNG without crashing
+CONSOLE MESSAGE: PASS: copied from 16-bit RGB PNG without crashing
+This test passes if it does not crash and prints PASS for every source.

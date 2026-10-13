@@ -1,0 +1,5 @@
+Tests that GPUQueue.copyExternalImageToTexture copies from an odd width I420 VideoFrame, whose rows are padded once it is conformed to BGRA, with an origin.
+
+PASS the copied frame has more than one colour
+PASS copying with an origin matches the whole frame offset by it
+
