@@ -653,6 +653,18 @@ void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcess
     m_mainFrameSite = mainFrameSite;
 }
 
+void WebProcessProxy::setCOOPCacheOrigin(const SecurityOriginData& origin)
+{
+    m_coopCacheOrigin = origin;
+    m_isCOOPCacheOriginUnconfirmed = false;
+}
+
+void WebProcessProxy::markCOOPCacheOriginAsUnconfirmed()
+{
+    ASSERT(m_coopCacheOrigin);
+    m_isCOOPCacheOriginUnconfirmed = true;
+}
+
 void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setIsInProcessCache(%d)", value);
@@ -661,6 +673,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
         RELEASE_ASSERT(m_suspendedPages.isEmptyIgnoringNullReferences());
         RELEASE_ASSERT(m_provisionalPages.isEmptyIgnoringNullReferences());
         m_previouslyApprovedFilePaths.clear();
+        m_isCOOPCacheOriginUnconfirmed = false;
     }
 
     ASSERT(m_isInProcessCache != value);
@@ -792,6 +805,7 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
     if (m_provisionalPages.isEmptyIgnoringNullReferences()) {
+        m_isCOOPCacheOriginUnconfirmed = false;
         if (RefPtr page = provisionalPage.page())
             reportProcessDisassociatedWithPageIfNecessary(page->identifier());
         maybeShutDown();
@@ -2880,6 +2894,8 @@ void WebProcessProxy::didCommitMainFrameLoad(const URL& url)
         // update path even in the case of a BCG switch (didStartUsingProcessForSiteIsolation).
         updateSiteForMainFrameNavigation(url);
     }
+
+    m_isCOOPCacheOriginUnconfirmed = false;
 
     if (m_coopCacheOrigin && !url.protocolIsAbout() && SecurityOriginData::fromURL(url) != *m_coopCacheOrigin) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSwapping, "didCommitMainFrameLoad: Main frame committed a different origin, process is no longer eligible for the WebProcess cache");

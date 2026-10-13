@@ -11496,13 +11496,14 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
     addAllowedFirstPartyForCookies(process, domain, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
 }
 
-static bool canReuseProvisionalProcessForBrowsingContextGroupSwitch(const ProvisionalPageProxy& provisionalPage, const API::Navigation& navigation, const Site& responseSite, const WebsiteDataStore& websiteDataStore)
+static bool canReuseProvisionalProcessForBrowsingContextGroupSwitch(const ProvisionalPageProxy& provisionalPage, const API::Navigation& navigation, const Site& responseSite, const std::optional<SecurityOriginData>& coopOrigin, const WebsiteDataStore& websiteDataStore)
 {
     if (provisionalPage.navigationID() != navigation.navigationID())
         return false;
 
     Ref process = provisionalPage.process();
-    if (process->hasCommittedAnyProvisionalLoads() || process->isRunningWorkers() || process->crossOriginMode() != CrossOriginMode::Shared)
+    bool isUnconfirmedCOOPProcessForOrigin = coopOrigin && process->isCOOPCacheOriginUnconfirmed() && process->coopCacheOrigin() == coopOrigin;
+    if ((process->hasCommittedAnyProvisionalLoads() && !isUnconfirmedCOOPProcessForOrigin) || process->isRunningWorkers() || process->crossOriginMode() != CrossOriginMode::Shared)
         return false;
 
     if (process->pageCount() || process->provisionalPageCount() != 1 || process->suspendedPageCount() || process->remotePageCount())
@@ -11539,7 +11540,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
     if (auto& url = navigation->currentRequest().url(); url.protocolIsInHTTPFamily() && Site { url } == responseSite)
         coopOrigin = SecurityOriginData::fromURL(url);
 
-    RefPtr reusableProvisionalProcess = crossOriginMode == CrossOriginMode::Shared && provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, protect(websiteDataStore())) ? &provisionalPage->process() : nullptr;
+    RefPtr reusableProvisionalProcess = crossOriginMode == CrossOriginMode::Shared && provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, coopOrigin, protect(websiteDataStore())) ? &provisionalPage->process() : nullptr;
     Ref processForNavigation = protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP, crossOriginMode, coopOrigin, reusableProvisionalProcess.get());
 
     performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));

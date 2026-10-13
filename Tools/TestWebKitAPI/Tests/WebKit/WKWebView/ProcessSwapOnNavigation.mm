@@ -8493,7 +8493,7 @@ static void runUseWebProcessCacheForCOOPSwapFromCrossSitePageTest(UseSiteIsolati
     Util::run(&done);
     navigationDelegate->didStartProvisionalNavigationHandler = nil;
     EXPECT_NE(0, provisionalPID);
-    EXPECT_NE(coopPID, provisionalPID);
+    EXPECT_EQ(coopPID, provisionalPID);
     EXPECT_EQ(coopPID, [webView _webProcessIdentifier]);
     EXPECT_WK_STREQ([webView _committedURL].absoluteString, server.request("/coop.html"_s).URL.absoluteString);
 }
