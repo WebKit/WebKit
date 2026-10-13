@@ -772,7 +772,7 @@ public:
     void LEGACY_NODELETE initializeNodeOwners();
     
     BlockList blocksInPreOrder();
-    BlockList blocksInPostOrder(bool isSafeToValidate = true);
+    BlockList blocksInPostOrder();
     
     class NaturalBlockIterable {
     public:

@@ -1004,14 +1004,14 @@ BlockList Graph::blocksInPreOrder()
     return result;
 }
 
-BlockList Graph::blocksInPostOrder(bool isSafeToValidate)
+BlockList Graph::blocksInPostOrder()
 {
     BlockList result;
     result.reserveInitialCapacity(m_blocks.size());
     CFG cfg(*this);
     appendNodesInOrder(cfg, m_roots, GraphOrder::PostOrder, result);
 
-    if (isSafeToValidate && validationEnabled()) { // There are users of this where we haven't yet built the CFG enough to be able to run dominators.
+    if (validationEnabled()) {
         auto validateResults = [&] (auto& dominators) {
             // When iterating over reverse post order, we should see dominators
             // before things they dominate.
