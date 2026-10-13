@@ -5041,7 +5041,7 @@ private:
         return index;
     }
     
-    NodeOrigin NODELETE originForCheck(unsigned index)
+    NodeOrigin originForCheck(unsigned index)
     {
         return m_block->at(index)->origin.withSemantic(m_currentNode->origin.semantic);
     }

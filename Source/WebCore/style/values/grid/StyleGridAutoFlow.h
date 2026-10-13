@@ -48,7 +48,7 @@ struct GridAutoFlow : CSS::GridAutoFlow {
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<GridAutoFlow> { GridAutoFlow NODELETE operator()(BuilderState&, const CSSValue&); };
+template<> struct CSSValueConversion<GridAutoFlow> { GridAutoFlow operator()(BuilderState&, const CSSValue&); };
 template<> struct CSSValueCreation<GridAutoFlow> { Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const GridAutoFlow&); };
 
 } // namespace Style

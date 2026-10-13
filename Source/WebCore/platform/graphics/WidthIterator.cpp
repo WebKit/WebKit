@@ -183,7 +183,7 @@ bool WidthIterator::hasExtraSpacing() const
     return (m_fontCascade->letterSpacing() || m_fontCascade->wordSpacing() || m_expansion) && !m_run->spacingDisabled();
 }
 
-static void NODELETE resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
+static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset index)
 {
 #if USE(CG)
     ASSERT(index >= 0);

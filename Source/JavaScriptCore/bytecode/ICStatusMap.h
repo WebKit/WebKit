@@ -54,8 +54,8 @@ typedef UncheckedKeyHashMap<CodeOrigin, ICStatus, CodeOriginApproximateHash> ICS
 
 struct ICStatusContext {
     ICStatus get(CodeOrigin) const;
-    bool NODELETE isInlined(CodeOrigin) const;
-    ExitingInlineKind NODELETE inlineKind(CodeOrigin) const;
+    bool isInlined(CodeOrigin) const;
+    ExitingInlineKind inlineKind(CodeOrigin) const;
     
     InlineCallFrame* inlineCallFrame { nullptr };
     CodeBlock* optimizedCodeBlock { nullptr };

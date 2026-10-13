@@ -559,7 +559,7 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             registry.registerFromStylesheet(styleRuleProperty->descriptor());
             continue;
         }
-        if (auto* styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get()))
+        if (RefPtr styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get()))
             m_ruleSet->setViewTransitionRule(*styleRuleViewTransition);
 
         if (RefPtr positionTryRule = dynamicDowncast<StyleRulePositionTry>(rule.get())) {

@@ -47,7 +47,7 @@ public:
     bool NODELETE setDy(float);
 
     const Color& shadowColor() const LIFETIME_BOUND { return m_shadowColor; } 
-    bool NODELETE setShadowColor(const Color&);
+    bool setShadowColor(const Color&);
 
     float shadowOpacity() const { return m_shadowOpacity; }
     bool NODELETE setShadowOpacity(float);

@@ -46,7 +46,7 @@ public:
 private:
     CSSPropertyRule(StyleRuleProperty&, CSSStyleSheet*);
     StyleRuleType styleRuleType() const final { return StyleRuleType::Property; }
-    void NODELETE reattach(StyleRuleBase&) final;
+    void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleProperty> m_propertyRule;
 };

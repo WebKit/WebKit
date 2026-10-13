@@ -164,7 +164,7 @@ public:
     FloatingObject* add(std::unique_ptr<FloatingObject>);
     void remove(FloatingObject*);
     void NODELETE addPlacedObject(FloatingObject*);
-    void NODELETE removePlacedObject(FloatingObject*);
+    void removePlacedObject(FloatingObject*);
     void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 

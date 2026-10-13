@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static std::optional<ViewTransitionNavigation> NODELETE toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
+static std::optional<ViewTransitionNavigation> toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
 {
     RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(navigation);
     if (!keywordValue)

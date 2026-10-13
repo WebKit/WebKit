@@ -76,7 +76,7 @@ Ref<BidiContext> BidiContext::create(unsigned char level, UCharDirection directi
     return *rtlOverrideContext.get();
 }
 
-static inline Ref<BidiContext> NODELETE copyContextAndRebaselineLevel(BidiContext& context, BidiContext* parent)
+static inline Ref<BidiContext> copyContextAndRebaselineLevel(BidiContext& context, BidiContext* parent)
 {
     auto newLevel = parent ? parent->level() : 0;
     if (context.dir() == U_RIGHT_TO_LEFT)
@@ -97,9 +97,9 @@ Ref<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
             contexts.append(ancestor.get());
     }
     ASSERT(contexts.size());
-    auto topContext = copyContextAndRebaselineLevel(*contexts.last(), nullptr);
+    auto topContext = copyContextAndRebaselineLevel(protect(*contexts.last()), nullptr);
     for (unsigned i = contexts.size() - 1; i; --i)
-        topContext = copyContextAndRebaselineLevel(*contexts[i - 1], topContext.ptr());
+        topContext = copyContextAndRebaselineLevel(protect(*contexts[i - 1]), topContext.ptr());
     return topContext;
 }
 
