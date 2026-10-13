@@ -30,3 +30,29 @@ PASS: --color should be used
 -- Running test case: DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityNotUsed
 PASS: --color should not be used
 
+-- Running test case: DOMNodeStyles.usedCSSVariables.PseudoElement
+PASS: Set should contain one used variable
+PASS: --color should be used
+PASS: --color should be available
+PASS: --inherited-color should be available
+PASS: Pseudo element variables should not replace the element's variables
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.Keyframes
+PASS: Set should contain one used variable
+PASS: --color should be used
+PASS: --color should be available
+PASS: --inherited-color should be available
+PASS: Pseudo element variables should not replace the element's variables
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.KeyframesInheritedReference
+PASS: Set should include the animation variable and its inherited dependency
+PASS: --animation-color should be used
+PASS: --inherited-color should be used
+PASS: --animation-color should be available
+PASS: The animation should render the inherited variable value
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.KeyframeDeclaration
+PASS: --keyframe-color should be used
+PASS: --keyframe-color should be available
+PASS: The element should render the variable declared in keyframes
+

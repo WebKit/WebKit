@@ -843,6 +843,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._processKeyframeProperties(this._keyframes);
 
+        this._collectCSSVariables([
+            ...this._keyframes.map((keyframe) => keyframe.style),
+            ...this._orderedStyles,
+        ]);
+
         for (let {uniqueOrderedStyles, keyframes} of this._pseudoElements.values()) {
             this._processStyleProperties(uniqueOrderedStyles);
 
@@ -991,7 +996,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     {
         this._associateRelatedProperties(styles, propertyNameToEffectiveProperty);
         this._markOverriddenProperties(styles, propertyNameToEffectiveProperty);
-        this._collectCSSVariables(styles);
     }
 
     _processKeyframeProperties(keyframes)

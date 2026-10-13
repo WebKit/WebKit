@@ -24,7 +24,7 @@ function test()
 
                 await cssStyles.refreshIfNeeded();
 
-                checkUsedCSSVariables(cssStyles.usedCSSVariables);
+                await checkUsedCSSVariables(cssStyles.usedCSSVariables, cssStyles.allCSSVariables);
             },
         });
     }
@@ -99,6 +99,47 @@ function test()
         },
     });
 
+    for (let [name, selector] of [["PseudoElement", "#used-with-pseudo-element"], ["Keyframes", "#used-with-keyframes"]]) {
+        addTestCase({
+            name: `DOMNodeStyles.usedCSSVariables.${name}`,
+            description: "Processing pseudo elements or keyframes preserves the element's CSS variables",
+            selector,
+            checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+                InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+                InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+                InspectorTest.expectTrue(allCSSVariables.has("--color"), "--color should be available");
+                InspectorTest.expectTrue(allCSSVariables.has("--inherited-color"), "--inherited-color should be available");
+                InspectorTest.expectFalse(allCSSVariables.has("--pseudo-color"), "Pseudo element variables should not replace the element's variables");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.KeyframesInheritedReference",
+        description: "Variables referenced only by an element's keyframes remain used",
+        selector: "#used-only-in-keyframes",
+        async checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 2, "Set should include the animation variable and its inherited dependency");
+            InspectorTest.expectTrue(usedCSSVariables.has("--animation-color"), "--animation-color should be used");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+            InspectorTest.expectTrue(allCSSVariables.has("--animation-color"), "--animation-color should be available");
+            let color = await InspectorTest.evaluateInPage('getComputedStyle(document.getElementById("used-only-in-keyframes")).color');
+            InspectorTest.expectEqual(color, "rgb(0, 128, 0)", "The animation should render the inherited variable value");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.KeyframeDeclaration",
+        description: "A variable declared by an element's keyframes remains available",
+        selector: "#defined-only-in-keyframes",
+        async checkUsedCSSVariables(usedCSSVariables, allCSSVariables) {
+            InspectorTest.expectTrue(usedCSSVariables.has("--keyframe-color"), "--keyframe-color should be used");
+            InspectorTest.expectTrue(allCSSVariables.has("--keyframe-color"), "--keyframe-color should be available");
+            let color = await InspectorTest.evaluateInPage('getComputedStyle(document.getElementById("defined-only-in-keyframes")).color');
+            InspectorTest.expectEqual(color, "rgb(0, 128, 0)", "The element should render the variable declared in keyframes");
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
@@ -106,6 +147,7 @@ function test()
 
 html {
     --inherited-color: green;
+    --animation-color: var(--inherited-color);
 }
 
 div#used-inherited-variable {
@@ -150,6 +192,46 @@ div#unused-higher-specificity-non-inheritable {
     --color: green;
 }
 
+div#used-with-pseudo-element,
+div#used-with-keyframes {
+    --color: green;
+    color: var(--color);
+}
+
+div#used-with-pseudo-element::before {
+    content: "";
+    --pseudo-color: blue;
+    color: var(--pseudo-color);
+}
+
+div#used-with-keyframes {
+    animation: fade 1s infinite;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#used-only-in-keyframes {
+    animation: inherited-variables 1s linear paused;
+}
+
+@keyframes inherited-variables {
+    from { color: var(--animation-color); }
+    to { color: var(--animation-color); }
+}
+
+#defined-only-in-keyframes {
+    animation: keyframe-variable 1s linear paused;
+    color: var(--keyframe-color);
+}
+
+@keyframes keyframe-variable {
+    from { --keyframe-color: green; }
+    to { --keyframe-color: green; }
+}
+
 </style>
 </head>
 <body onload="runTest();">
@@ -159,6 +241,10 @@ div#unused-higher-specificity-non-inheritable {
     <div id="used-referenced-inherited-variable"></div>
     <div id="unused-inherited-variable"></div>
     <div id="used-inherited-variable-function"></div>
+    <div id="used-with-pseudo-element"></div>
+    <div id="used-with-keyframes"></div>
+    <div id="used-only-in-keyframes"></div>
+    <div id="defined-only-in-keyframes"></div>
     <div id="used-higher-specificity" class="used-lower-specificity"></div>
     <div id="used-higher-specificity-inheritable" class="used-lower-specificity-inheritable">
         <p></p>
