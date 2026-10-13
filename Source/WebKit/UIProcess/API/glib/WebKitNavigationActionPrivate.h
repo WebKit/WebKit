@@ -38,6 +38,8 @@ struct _WebKitNavigationAction {
     RefPtr<API::NavigationAction> action;
     GRefPtr<WebKitURIRequest> request;
     std::optional<UTF8CString> frameName;
+    GRefPtr<WebKitFrameInfo> sourceFrame;
+    GRefPtr<WebKitFrameInfo> targetFrame;
 };
 
 WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&&);

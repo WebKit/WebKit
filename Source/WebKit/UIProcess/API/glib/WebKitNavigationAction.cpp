@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitNavigationAction.h"
 
+#include "WebKitFrameInfoPrivate.h"
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
@@ -213,4 +214,45 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
 RefPtr<API::NavigationAction> webkitNavigationActionGetAction(WebKitNavigationAction* navigation)
 {
     return navigation->action;
+}
+
+/**
+ * webkit_navigation_action_get_source_frame_info:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * Gets the frame that requested the navigation.
+ *
+ * Returns: (transfer none) (nullable): a #WebKitFrameInfo or %NULL
+ *
+ * Since: 2.56
+ */
+WebKitFrameInfo* webkit_navigation_action_get_source_frame_info(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->sourceFrame) {
+        if (auto sourceFrame = navigation->action->sourceFrame())
+            navigation->sourceFrame = adoptGRef(webkitFrameInfoCreate(sourceFrame));
+    }
+    return navigation->sourceFrame.get();
+}
+
+/**
+ * webkit_navigation_action_get_target_frame_info:
+ * @navigation: a #WebKitNavigationAction
+ *
+ * Gets the frame in which to display the new content or %NULL
+ * if the target of the navigation is a new window.
+ *
+ * Returns: (transfer none) (nullable): a #WebKitFrameInfo or %NULL
+ *
+ * Since: 2.56
+ */
+WebKitFrameInfo* webkit_navigation_action_get_target_frame_info(WebKitNavigationAction* navigation)
+{
+    g_return_val_if_fail(navigation, nullptr);
+    if (!navigation->targetFrame) {
+        if (auto targetFrame = navigation->action->targetFrame())
+            navigation->targetFrame = adoptGRef(webkitFrameInfoCreate(targetFrame));
+    }
+    return navigation->targetFrame.get();
 }
