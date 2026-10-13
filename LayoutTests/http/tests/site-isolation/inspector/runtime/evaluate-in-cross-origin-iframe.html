@@ -3,6 +3,40 @@
 <script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
 <script>
     var passphrase = "main-page-value";
+    let blobStackWorker = null;
+    let blobStackWorkerURL = null;
+
+    function stackFromDeveloperServer() {
+        return new Error("developer-server-stack").stack;
+    }
+
+    function scheduleDeveloperServerStack() {
+        return new Promise((resolve) => {
+            setTimeout(function developerServerCallback() {
+                resolve(stackFromDeveloperServer());
+            }, 500);
+        });
+    }
+
+    function createBlobWorkerStack() {
+        let source = `
+            function stackFromBlobWorker() {
+                return new Error("blob-worker-stack").stack;
+            }
+            setTimeout(function blobWorkerCallback() {
+                console.log(stackFromBlobWorker());
+            }, 500);
+        `;
+        blobStackWorkerURL = URL.createObjectURL(new Blob([source], {type: "text/javascript"}));
+        blobStackWorker = new Worker(blobStackWorkerURL);
+    }
+
+    function removeBlobWorkerStack() {
+        blobStackWorker?.terminate();
+        URL.revokeObjectURL(blobStackWorkerURL);
+        blobStackWorker = null;
+        blobStackWorkerURL = null;
+    }
 
     function test() {
         let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.CrossOriginEvaluate");
@@ -36,6 +70,51 @@
 
                 InspectorTest.expectNotEqual(passphraseValue, pageResponse.result.value, "Cross-origin frame and main page should have different passphrase values.");
             }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.CrossOrigin.DeveloperServerStack",
+            description: "An actual Error stack from a local developer server should be recognized as a Console stack string.",
+            async test() {
+                let response = await WI.pageTarget.RuntimeAgent.evaluate.invoke({
+                    expression: "scheduleDeveloperServerStack()",
+                    objectGroup: "test",
+                });
+                InspectorTest.assert(!response.wasThrown, "Creating an Error stack in the actual webpage should not throw.");
+                let completed = await WI.pageTarget.RuntimeAgent.awaitPromise.invoke({promiseObjectId: response.result.objectId, returnByValue: true});
+                InspectorTest.assert(!completed.wasThrown, "The page callback should produce its actual Error stack.");
+                let stack = WI.RemoteObject.fromPayload(completed.result, WI.pageTarget);
+                InspectorTest.expectEqual(stack.type, "string", "The actual Error stack should be a string.");
+                InspectorTest.expectTrue(stack.description.includes("stackFromDeveloperServer@http://127.0.0.1:8000/"), "The actual Error stack should contain the developer server port.");
+                InspectorTest.expectTrue(WI.StackTrace.isLikelyStackTrace(stack.description), "The Console string heuristic should recognize the actual developer server stack.");
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Runtime.CrossOrigin.BlobWorkerStack",
+            description: "A real Error stack logged by a Blob-backed worker should be recognized as a Console stack string.",
+            async test() {
+                try {
+                    let [event] = await Promise.all([
+                        WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                        InspectorTest.evaluateInPage("createBlobWorkerStack()"),
+                    ]);
+                    let {message} = event.data;
+                    InspectorTest.expectEqual(message.target.type, WI.TargetType.Worker, "The actual Console stack should come from a worker.");
+                    let stack = message.parameters[0];
+                    InspectorTest.expectEqual(stack.type, "string", "The Blob worker should log its actual Error stack as a string.");
+                    InspectorTest.expectTrue(stack.value.includes("stackFromBlobWorker@blob:http://127.0.0.1:8000/"), "The actual Error stack should contain a Blob URL from the developer server.");
+                    InspectorTest.expectTrue(WI.StackTrace.isLikelyStackTrace(stack.value), "The Console string heuristic should recognize the actual Blob worker stack.");
+
+                    let callFrames = WI.StackTrace._parseStackTrace(stack.value);
+                    InspectorTest.expectEqual(callFrames.length, 2, "The actual Blob worker stack should have two call frames.");
+                    InspectorTest.expectEqual(callFrames[0].functionName, "stackFromBlobWorker", "The parsed stack should preserve the actual worker function name.");
+                    InspectorTest.expectTrue(callFrames[0].url.startsWith("blob:http://127.0.0.1:8000/"), "The parsed stack should preserve the complete Blob source URL.");
+                    InspectorTest.expectTrue(callFrames[0].lineNumber > 0 && callFrames[0].columnNumber > 0, "The parsed stack should preserve actual source line and column numbers.");
+                } finally {
+                    await InspectorTest.evaluateInPage("removeBlobWorkerStack()");
+                }
+            },
         });
 
         suite.addTestCase({

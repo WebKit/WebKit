@@ -12,6 +12,21 @@ PASS: Cross-origin frame should have passphrase 'cross-origin-secret'.
 PASS: Main page should have passphrase 'main-page-value'.
 PASS: Cross-origin frame and main page should have different passphrase values.
 
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.DeveloperServerStack
+PASS: The actual Error stack should be a string.
+PASS: The actual Error stack should contain the developer server port.
+PASS: The Console string heuristic should recognize the actual developer server stack.
+
+-- Running test case: SiteIsolation.Runtime.CrossOrigin.BlobWorkerStack
+PASS: The actual Console stack should come from a worker.
+PASS: The Blob worker should log its actual Error stack as a string.
+PASS: The actual Error stack should contain a Blob URL from the developer server.
+PASS: The Console string heuristic should recognize the actual Blob worker stack.
+PASS: The actual Blob worker stack should have two call frames.
+PASS: The parsed stack should preserve the actual worker function name.
+PASS: The parsed stack should preserve the complete Blob source URL.
+PASS: The parsed stack should preserve actual source line and column numbers.
+
 -- Running test case: SiteIsolation.Runtime.CrossOrigin.EvaluateHostname
 PASS: Cross-origin frame hostname should differ from main page hostname.
 Main page hostname: 127.0.0.1
