@@ -308,7 +308,7 @@ struct FocusOptions;
 struct ImportNodeOptions;
 struct IntersectionObserverData;
 struct OwnerPermissionsPolicyData;
-struct QuerySelectorAllResults;
+struct QuerySelectorResults;
 struct SecurityPolicyViolationEventInit;
 struct StartViewTransitionOptions;
 struct ViewTransitionParams;
@@ -546,9 +546,11 @@ public:
 
     RefPtr<NodeList> resultForSelectorAll(ContainerNode&, const String&);
     void addResultForSelectorAll(ContainerNode&, const String&, NodeList&, const AtomString& classNameToMatch);
-    void invalidateQuerySelectorAllResults(Node&);
-    void invalidateQuerySelectorAllResultsForClassAttributeChange(Node&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    void clearQuerySelectorAllResults();
+    std::optional<Element*> resultForSelector(ContainerNode&, const String&);
+    void addResultForSelector(ContainerNode&, const String&, Element*, const AtomString& classNameToMatch);
+    void invalidateQuerySelectorResults(Node&);
+    void invalidateQuerySelectorResultsForClassAttributeChange(Node&, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
+    void clearQuerySelectorResults();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
 
@@ -2267,6 +2269,9 @@ private:
 
     void styleRecalcTimerFired();
 
+    QuerySelectorResults* querySelectorResults(ContainerNode&);
+    QuerySelectorResults& ensureQuerySelectorResults(ContainerNode&);
+
     void intersectionObserversInitialUpdateTimerFired();
 
     void loadEventDelayTimerFired();
@@ -2564,7 +2569,7 @@ private:
 
     CompletionHandler<void()> m_whenWindowLoadEventOrDestroyed;
 
-    WeakHashMap<Node, std::unique_ptr<QuerySelectorAllResults>, WeakPtrImplWithEventTargetData> m_querySelectorAllResults;
+    WeakHashMap<Node, std::unique_ptr<QuerySelectorResults>, WeakPtrImplWithEventTargetData> m_querySelectorResults;
 
     ViewportArguments m_viewportArguments;
     SafeAreaInsetOptIn m_safeAreaInsetOptIn { SafeAreaInsetOptIn::Undetermined };

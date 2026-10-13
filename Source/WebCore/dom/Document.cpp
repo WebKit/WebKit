@@ -963,6 +963,7 @@ void Document::removedLastRef()
         // stale references in the map.
 
         destroyTreeScopeData();
+        clearQuerySelectorResults();
         removeDetachedChildren();
         RELEASE_ASSERT(m_topLayerElements.isEmpty());
         m_formController = nullptr;
@@ -1318,69 +1319,118 @@ void Document::invalidateAccessKeyCacheSlowCase()
     m_accessKeyCache = std::nullopt;
 }
 
-struct QuerySelectorAllResults {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(QuerySelectorAllResults);
+struct QuerySelectorResults {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(QuerySelectorResults);
 public:
     static constexpr unsigned maxSize = 8;
 
     struct Entry {
         String selector;
-        Ref<NodeList> nodeList;
+        Variant<Ref<NodeList>, RefPtr<Element>> result;
         AtomString classNameToMatch;
     };
+
+    Entry* find(const String& selector)
+    {
+        auto index = entries.findIf([&](auto& entry) {
+            return entry.selector == selector;
+        });
+        return index == notFound ? nullptr : &entries[index];
+    }
+
+    void add(Entry&& entry)
+    {
+        if (entries.size() >= maxSize)
+            entries.removeAt(weakRandomNumber<uint32_t>() % entries.size());
+        entries.append(WTF::move(entry));
+    }
 
     Vector<Entry, maxSize> entries;
 };
 
+QuerySelectorResults* Document::querySelectorResults(ContainerNode& context)
+{
+    ASSERT(context.hasValidQuerySelectorResults() == m_querySelectorResults.contains(context));
+    if (!context.hasValidQuerySelectorResults())
+        return nullptr;
+    return m_querySelectorResults.get(context);
+}
+
+QuerySelectorResults& Document::ensureQuerySelectorResults(ContainerNode& context)
+{
+    return *m_querySelectorResults.ensure(context, [&] {
+        context.setHasValidQuerySelectorResults(true);
+        return makeUnique<QuerySelectorResults>();
+    }).iterator->value;
+}
+
 RefPtr<NodeList> Document::resultForSelectorAll(ContainerNode& context, const String& selectorString)
 {
-    ASSERT(context.hasValidQuerySelectorAllResults() == m_querySelectorAllResults.contains(context));
-    if (!context.hasValidQuerySelectorAllResults())
-        return nullptr;
-    auto* results = m_querySelectorAllResults.get(context);
+    auto* results = querySelectorResults(context);
     if (!results)
         return nullptr;
-    for (auto& entry : results->entries) {
-        if (entry.selector == selectorString)
-            return entry.nodeList.copyRef();
-    }
+    auto* entry = results->find(selectorString);
+    if (!entry)
+        return nullptr;
+    if (auto* nodeList = std::get_if<Ref<NodeList>>(&entry->result))
+        return nodeList->copyRef();
     return nullptr;
 }
 
 void Document::addResultForSelectorAll(ContainerNode& context, const String& selectorString, NodeList& nodeList, const AtomString& classNameToMatch)
 {
-    auto result = m_querySelectorAllResults.ensure(context, [&]() {
-        context.setHasValidQuerySelectorAllResults(true);
-        return makeUnique<QuerySelectorAllResults>();
-    });
-    auto& entries = result.iterator->value->entries;
-    if (entries.size() >= QuerySelectorAllResults::maxSize)
-        entries.removeAt(weakRandomNumber<uint32_t>() % entries.size());
-    entries.append({ selectorString, nodeList, classNameToMatch });
+    auto& results = ensureQuerySelectorResults(context);
+    if (auto* entry = results.find(selectorString)) {
+        entry->result = nodeList;
+        return;
+    }
+    results.add({ selectorString, nodeList, classNameToMatch });
 }
 
-void Document::invalidateQuerySelectorAllResults(Node& startingNode)
+std::optional<Element*> Document::resultForSelector(ContainerNode& context, const String& selectorString)
 {
-    if (m_querySelectorAllResults.isEmptyIgnoringNullReferences())
+    auto* results = querySelectorResults(context);
+    if (!results)
+        return std::nullopt;
+    auto* entry = results->find(selectorString);
+    if (!entry)
+        return std::nullopt;
+    return WTF::switchOn(entry->result, [](const Ref<NodeList>& nodeList) {
+        return downcast<Element>(nodeList->item(0));
+    }, [](const RefPtr<Element>& firstElement) {
+        return firstElement.get();
+    });
+}
+
+void Document::addResultForSelector(ContainerNode& context, const String& selectorString, Element* firstElement, const AtomString& classNameToMatch)
+{
+    auto& results = ensureQuerySelectorResults(context);
+    ASSERT(!results.find(selectorString));
+    results.add({ selectorString, firstElement, classNameToMatch });
+}
+
+void Document::invalidateQuerySelectorResults(Node& startingNode)
+{
+    if (m_querySelectorResults.isEmptyIgnoringNullReferences())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
-        if (!currentNode->hasValidQuerySelectorAllResults())
+        if (!currentNode->hasValidQuerySelectorResults())
             continue;
-        m_querySelectorAllResults.remove(*currentNode);
-        currentNode->setHasValidQuerySelectorAllResults(false);
+        m_querySelectorResults.remove(*currentNode);
+        currentNode->setHasValidQuerySelectorResults(false);
     }
 }
 
-void Document::invalidateQuerySelectorAllResultsForClassAttributeChange(Node& startingNode, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+void Document::invalidateQuerySelectorResultsForClassAttributeChange(Node& startingNode, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
 {
-    if (m_querySelectorAllResults.isEmptyIgnoringNullReferences())
+    if (m_querySelectorResults.isEmptyIgnoringNullReferences())
         return;
     for (RefPtr currentNode = startingNode; currentNode; currentNode = currentNode->parentNode()) {
-        if (!currentNode->hasValidQuerySelectorAllResults())
+        if (!currentNode->hasValidQuerySelectorResults())
             continue;
-        auto it = m_querySelectorAllResults.find(*currentNode);
-        ASSERT(it != m_querySelectorAllResults.end());
-        if (it == m_querySelectorAllResults.end())
+        auto it = m_querySelectorResults.find(*currentNode);
+        ASSERT(it != m_querySelectorResults.end());
+        if (it == m_querySelectorResults.end())
             continue;
         auto& entries = it->value->entries;
         unsigned index = 0;
@@ -1392,20 +1442,20 @@ void Document::invalidateQuerySelectorAllResultsForClassAttributeChange(Node& st
                 ++index;
         }
         if (!entries.size()) {
-            m_querySelectorAllResults.remove(it);
-            currentNode->setHasValidQuerySelectorAllResults(false);
+            m_querySelectorResults.remove(it);
+            currentNode->setHasValidQuerySelectorResults(false);
         }
     }
 }
 
-void Document::clearQuerySelectorAllResults()
+void Document::clearQuerySelectorResults()
 {
     // The map holds only weak references, so its keyed nodes outlive this clear. Reset their per-node flag too, or a
     // surviving node keeps claiming valid cached results after its entry is gone, asserting in the invalidation path
-    // (invalidateQuerySelectorAllResultsForClassAttributeChange) when it looks up an entry the clear already removed.
-    for (auto entry : m_querySelectorAllResults)
-        entry.key.setHasValidQuerySelectorAllResults(false);
-    m_querySelectorAllResults.clear();
+    // (invalidateQuerySelectorResultsForClassAttributeChange) when it looks up an entry the clear already removed.
+    for (auto entry : m_querySelectorResults)
+        entry.key.setHasValidQuerySelectorResults(false);
+    m_querySelectorResults.clear();
 }
 
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)

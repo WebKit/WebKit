@@ -1070,7 +1070,7 @@ void Node::invalidateNodeListAndCollectionCachesInAncestors()
             lists->clearChildNodeListCache();
     }
 
-    SUPPRESS_UNCOUNTED_ARG document().invalidateQuerySelectorAllResults(*this);
+    SUPPRESS_UNCOUNTED_ARG document().invalidateQuerySelectorResults(*this);
 
     if (!document().shouldInvalidateNodeListAndCollectionCaches())
         return;

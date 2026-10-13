@@ -2758,7 +2758,7 @@ void Element::classAttributeChanged(const AtomString& newClassString, AttributeM
     auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
     SpaceSplitString newClassNames(newClassString, shouldFoldCase);
     Style::ClassChangeInvalidation styleInvalidation(*this, elementData()->classNames(), newClassNames);
-    protect(document())->invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
+    protect(document())->invalidateQuerySelectorResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
     protect(m_elementData)->setClassNames(WTF::move(newClassNames));
 }
 

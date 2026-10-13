@@ -1332,10 +1332,17 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
 
 ExceptionOr<Element*> ContainerNode::querySelector(const String& selectors)
 {
-    auto query = protect(document())->selectorQueryForString(selectors);
+    Ref document = this->document();
+    if (auto result = document->resultForSelector(*this, selectors))
+        return *result;
+    auto query = document->selectorQueryForString(selectors);
     if (query.hasException())
         return query.releaseException();
-    return query.releaseReturnValue().queryFirst(*this);
+    auto& selectorQuery = query.releaseReturnValue();
+    RefPtr result = selectorQuery.queryFirst(*this);
+    if (selectorQuery.shouldStoreInDocument())
+        document->addResultForSelector(*this, selectors, result.get(), selectorQuery.classNameToMatch());
+    return result.get();
 }
 
 ExceptionOr<Ref<NodeList>> ContainerNode::querySelectorAll(const String& selectors)

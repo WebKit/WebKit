@@ -148,7 +148,7 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         return document.get();
     });
     for (auto& document : protectedDocuments) {
-        document->clearQuerySelectorAllResults();
+        document->clearQuerySelectorResults();
         document->styleScope().releaseMemory();
         if (RefPtr fontSelector = document->fontSelectorIfExists())
             fontSelector->emptyCaches();

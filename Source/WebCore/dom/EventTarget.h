@@ -150,8 +150,8 @@ public:
     bool isInGCReacheableRefMap() const { return hasEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setEventTargetFlag(EventTargetFlag::IsInGCReachableRefMap, flag); }
 
-    bool hasValidQuerySelectorAllResults() const { return hasEventTargetFlag(EventTargetFlag::HasValidQuerySelectorAllResults); }
-    void setHasValidQuerySelectorAllResults(bool flag) { setEventTargetFlag(EventTargetFlag::HasValidQuerySelectorAllResults, flag); }
+    bool hasValidQuerySelectorResults() const { return hasEventTargetFlag(EventTargetFlag::HasValidQuerySelectorResults); }
+    void setHasValidQuerySelectorResults(bool flag) { setEventTargetFlag(EventTargetFlag::HasValidQuerySelectorResults, flag); }
 
     bool hasInternalTouchEventHandling() const { return hasEventTargetFlag(EventTargetFlag::HasInternalTouchEventHandling); }
     void setHasInternalTouchEventHandling(bool flag) { setEventTargetFlag(EventTargetFlag::HasInternalTouchEventHandling, flag); }
@@ -175,7 +175,7 @@ protected:
         IsConnected = 1 << 3,
         IsInShadowTree = 1 << 4,
         HasBeenInUserAgentShadowTree = 1 << 5,
-        HasValidQuerySelectorAllResults = 1 << 6,
+        HasValidQuerySelectorResults = 1 << 6,
         // Element bits
         HasSyntheticAttrChildNodes = 1 << 7,
         HasDuplicateAttribute = 1 << 8,
