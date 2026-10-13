@@ -177,7 +177,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tenta
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/mimesniff/media/media-sniff.window.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Skip ]
 
 # Ping attribute
@@ -411,7 +410,6 @@ http/tests/security/local-video-src-from-remote.html [ Failure ]
 http/tests/security/module-no-mime-type.html [ Failure ]
 http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
-http/tests/security/xss-DENIED-xsl-external-entity.xml [ Failure ]
 
 Bug(WPE) fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Skip ]
 Bug(WPE) fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]
@@ -598,7 +596,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-021.html 
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-007.html [ ImageOnlyFailure ]
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
-webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html [ Failure ]
 
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.sub.htm [ Skip ]
 webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
@@ -812,9 +809,6 @@ webkit.org/b/273396 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 
 compositing/geometry/composited-in-columns.html [ Failure ]
 compositing/layer-creation/overlap-animation-container.html [ Failure ]
-compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
-compositing/tile-coverage-subpixel-empty-rect.html [ Failure ]
-compositing/tiling/tiled-layers-limit-contents-scale.html [ Failure ]
 webkit.org/b/309572 compositing/video/video-object-fit.html [ Failure Timeout ]
 webkit.org/b/309572 compositing/video/video-object-view-box-dynamic-change.html [ Failure ]
 webkit.org/b/309572 compositing/video/video-object-view-box-no-poster.html [ Failure ]
@@ -825,18 +819,13 @@ compositing/visible-rect/3d-transform-style.html [ Failure ]
 compositing/visible-rect/3d-transformed.html [ Failure ]
 compositing/visible-rect/animated-from-none.html [ Failure ]
 compositing/visible-rect/animated.html [ Failure ]
-compositing/visible-rect/backing-change-height-from-zero.html [ Failure ]
-compositing/visible-rect/clipped-by-viewport.html [ Failure ]
 compositing/visible-rect/clipped-visible-rect.html [ Failure ]
 compositing/visible-rect/coverage-clipped.html [ Failure ]
-compositing/visible-rect/coverage-scrolling.html [ Failure ]
 compositing/visible-rect/flipped-preserve-3d.html [ Failure ]
 compositing/visible-rect/iframe-and-layers.html [ Failure ]
 compositing/visible-rect/iframe-no-layers.html [ Failure ]
-compositing/visible-rect/iframe-with-layers-outside-viewport.html [ Failure ]
 compositing/visible-rect/mask-layer-coverage.html [ Failure ]
 compositing/visible-rect/nested-transform.html [ Failure ]
-compositing/visible-rect/scrolled.html [ Failure ]
 
 media/media-source/media-detachablemse-append.html [ Timeout Pass ]
 

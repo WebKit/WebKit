@@ -747,7 +747,6 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 
 webkit.org/b/183328 fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
 
-webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 
 webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 
@@ -840,7 +839,6 @@ webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]
 
-webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
@@ -887,9 +885,7 @@ webkit.org/b/190991 http/tests/navigation/page-cache-mediakeysession.html [ Skip
 
 webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/text-target.html [ Failure ]
 
-webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
 
-webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
 
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
@@ -949,9 +945,6 @@ webkit.org/b/321074 http/tests/inspector/dom/disconnect-dom-tree-after-main-fram
 # compositor introduced timeouts.
 webkit.org/b/160119 [ Release ] editing/selection/caret-at-bidi-boundary.html [ Failure Pass Timeout ]
 
-webkit.org/b/160119 fast/block/positioning/016.html [ Failure ]
-webkit.org/b/160119 fast/block/positioning/025.html [ Failure ]
-webkit.org/b/160119 fast/block/positioning/fixed-position-stacking-context.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement.
@@ -1050,7 +1043,6 @@ webkit.org/b/278719 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/idlharness.window.html [ Failure ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-globaleventhandler-interface.html [ Failure ]
 
-webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass ]
 
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 
