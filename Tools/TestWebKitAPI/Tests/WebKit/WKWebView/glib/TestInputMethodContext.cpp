@@ -1469,6 +1469,79 @@ static void testWebKitInputMethodContextFocusChange(InputMethodTest* test, gcons
     // This is a gap, not intentional behaviour.
 }
 
+static void testWebKitInputMethodContextFocusBlurRefocus(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(twoFieldsHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->waitForSurroundingText("one");
+
+    // Calling blur() and then focus() on the field in the same task is not a focus change for the embedder.
+    // The second script makes sure that a reset held back until the next run loop iteration, if any,
+    // has reached the UI process before checking the counters.
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("editable.blur(); editable.focus()", nullptr);
+    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->contentTypeNotificationCount(), ==, 0);
+    g_assert_true(test->isInputMethodEnabled());
+
+    // blur() alone still makes the input method context get a focus out.
+    test->clearInputMethodCounters();
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+
+    // Calling blur() on the field and then focus() on another field in the same task is like moving
+    // the focus directly, see focus-change: no focus out/in cycle, only the new surrounding text.
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("editable.blur(); second.focus()", nullptr);
+    test->waitForSurroundingText("two");
+    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->contentTypeNotificationCount(), ==, 0);
+    g_assert_true(test->isInputMethodEnabled());
+}
+
+static void testWebKitInputMethodContextRemoveFocusedElement(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(twoFieldsHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+
+    // Removing the focused field moves the focus to the viewport without a blur event.
+    test->clearInputMethodCounters();
+    test->runJavaScriptAndWaitUntilFinished("editable.remove()", nullptr);
+    test->waitUntilInputMethodDisabled();
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+}
+
+static void testWebKitInputMethodContextBlurRefocusInteraction(InputMethodTest* test, gconstpointer)
+{
+    // The button calls blur() and then focus() on the field from its click handler. It does not take the focus.
+    test->loadHtml("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+        "<input id='editable' style='top:0' spellcheck='false'>"
+        "<button style='top:50px' onmousedown='event.preventDefault()' onclick='editable.blur(); editable.focus()'></button>", nullptr);
+    test->waitUntilLoadFinished();
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+
+    // Focusing again by a user interaction no longer inhibits the on-screen keyboard. The embedder
+    // is told about the change of content type only, not about a new focus.
+    test->clearInputMethodCounters();
+    test->clickMouseButton(20, 65);
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, 0);
+    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_true(test->isInputMethodEnabled());
+}
+
 static const char* navigationPageHTML = "<html><body>"
     "<input id='editable' type='text' spellcheck='false'>"
     "<script>addEventListener('pageshow', event => window.shownFromCache = event.persisted);</script>"
@@ -1888,6 +1961,9 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "preedit-underlines", testWebKitInputMethodContextPreeditUnderlines);
 #endif
     InputMethodTest::add("WebKitInputMethodContext", "focus-change", testWebKitInputMethodContextFocusChange);
+    InputMethodTest::add("WebKitInputMethodContext", "focus-blur-refocus", testWebKitInputMethodContextFocusBlurRefocus);
+    InputMethodTest::add("WebKitInputMethodContext", "remove-focused-element", testWebKitInputMethodContextRemoveFocusedElement);
+    InputMethodTest::add("WebKitInputMethodContext", "blur-refocus-interaction", testWebKitInputMethodContextBlurRefocusInteraction);
     InputMethodTest::add("WebKitInputMethodContext", "focus-back-forward-cache", testWebKitInputMethodContextFocusBackForwardCache);
     InputMethodTest::add("WebKitInputMethodContext", "back-forward-cache-without-focus", testWebKitInputMethodContextBackForwardCacheWithoutFocus);
     InputMethodTest::add("WebKitInputMethodContext", "click-after-script-focus", testWebKitInputMethodContextClickAfterScriptFocus);

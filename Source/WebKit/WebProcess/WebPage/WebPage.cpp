@@ -8169,6 +8169,10 @@ void WebPage::elementDidBlur(WebCore::Element& element)
                 protectedThis->send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
                 protectedThis->send(Messages::WebPageProxy::SetFocusedElementInputType(InputType::None));
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+                // Clear it first so that setInputMethodState() does not hold the reset back again.
+                protectedThis->m_recentlyBlurredElement = nullptr;
+                protectedThis->setInputMethodState(nullptr);
 #endif
             }
             protectedThis->m_recentlyBlurredElement = nullptr;

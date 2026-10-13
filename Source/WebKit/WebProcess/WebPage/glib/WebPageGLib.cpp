@@ -214,6 +214,15 @@ static std::optional<InputMethodState> inputMethodStateForElement(Element* eleme
 
 void WebPage::setInputMethodState(Element* element)
 {
+    // Some pages call blur() and then focus() on the focused element in the same task. Hold the reset
+    // back until the next run loop iteration, like ElementDidBlur on Cocoa, so that the embedder does not
+    // see a focus out and a focus in when the element has the focus again by the end of the task.
+    // See elementDidBlur().
+    // FIXME: With site isolation, the reset can now reach the UI process after the state sent by the
+    // process of a remote frame that got the focus, and the UI process keeps the last state it gets.
+    if (!element && m_recentlyBlurredElement)
+        return;
+
     auto state = inputMethodStateForElement(element);
 
     if (state && !m_userIsInteracting)
