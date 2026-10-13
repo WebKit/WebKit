@@ -331,6 +331,14 @@ public:
 
     void executeScript(const char* script);
 
+    // Explicitly connect an embedder-provided JavaScript Inspector frontend.
+    // Outgoing DevTools Protocol JSON is delivered through ChromeClientIf;
+    // incoming protocol JSON is passed to dispatchInspectorMessageFromFrontend.
+    // These methods do not open a network listener themselves.
+    bool connectInspectorFrontend();
+    void disconnectInspectorFrontend();
+    void dispatchInspectorMessageFromFrontend(const char* message);
+
     bool hasSelection();
     void clearSelection();
     WKCRect selectionBoundingBox(bool textonly, bool useSelectionHeight);
