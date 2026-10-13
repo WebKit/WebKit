@@ -708,6 +708,10 @@ struct LiveResizeSnapshotState {
 - (void)_removeReasonToPreferSolidColorHardPocket:(WebKit::PreferSolidColorHardPocketReason)reason;
 #endif
 
+#if PLATFORM(MAC) && HAVE(LIQUID_GLASS_ADJUSTMENTS)
+- (void)_updateAllowsSeparatorForScrollPocket;
+#endif
+
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
 - (void)_updateAppearanceForSystemBackgroundColorExtensionViews;
 - (CGFloat)_webContentDistanceFromLeftEdge;

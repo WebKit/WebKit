@@ -153,6 +153,7 @@ enum class SDKAlignedBehavior {
     UserSelectSupersedesWebkitUserSelect,
     DeprecatedSystemColorsUseCSSColor4Mappings,
     CheckPageLocationDuringHardPocketEligibilityCheck,
+    HideScrollPocketSeparatorAtTopOfPage,
 
     NumberOfBehaviors
 };
