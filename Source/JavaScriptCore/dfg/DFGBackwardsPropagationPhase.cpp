@@ -219,12 +219,13 @@ private:
                 return true;
             
             Node* shiftAmount = node->child2().node();
-            if (!node->isNumberConstant())
+            if (!shiftAmount->isNumberConstant())
                 return false;
             JSValue immediateValue = shiftAmount->asJSValue();
             if (!immediateValue.isInt32())
                 return false;
-            return immediateValue.asInt32() > 32 - power;
+            // Shifting right by k = (count & 31) leaves |result| < 2^(32 - k), for both >> and >>>.
+            return (immediateValue.asInt32() & 31) > 31 - power;
         }
             
         default:
