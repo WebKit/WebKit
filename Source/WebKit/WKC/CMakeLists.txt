@@ -64,6 +64,17 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
+# JavaScriptCore's interpreter-side debugger support is separate from JIT support.
+# Keep JIT disabled on the Wii U, but compile debugger hooks so the embedder can
+# build toward usable JavaScript debugging. Full Inspector frontend/protocol
+# integration remains a separate task.
+option(WKC_ENABLE_JAVASCRIPT_DEBUGGER "Compile JavaScriptCore debugger support" ON)
+if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
+    set(_WKC_JAVASCRIPT_DEBUGGER_DEFINE 1)
+else ()
+    set(_WKC_JAVASCRIPT_DEBUGGER_DEFINE 0)
+endif ()
+
 # Enable Web Notifications only in the full WebCore profile by default.
 # WebCore owns the JavaScript API; WKC forwards permission and display operations
 # to the embedder so the Wii U application can supply UI and delivery. This does
@@ -176,7 +187,7 @@ add_definitions(
     -DWTF_USE_BMALLOC=0
     -DUSE_SYSTEM_MALLOC=1
     -DUSE_PTHREADS=1
-    -DENABLE_JAVASCRIPT_DEBUGGER=0
+    -DENABLE_JAVASCRIPT_DEBUGGER=${_WKC_JAVASCRIPT_DEBUGGER_DEFINE}
     -DENABLE_WEBGL=1
     -DENABLE_WEB_AUDIO=${_WKC_WEB_AUDIO_DEFINE}
     -DENABLE_MEDIA_STREAM=1
