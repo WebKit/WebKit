@@ -31,4 +31,4 @@ namespace WebCore {
 class TreeWalker;
 }
 
-DOMTreeWalker * NODELETE kit(WebCore::TreeWalker*);
+DOMTreeWalker * LEGACY_NODELETE kit(WebCore::TreeWalker*);

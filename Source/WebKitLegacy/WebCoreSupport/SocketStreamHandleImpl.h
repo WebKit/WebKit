@@ -51,7 +51,7 @@ public:
 
     virtual ~SocketStreamHandleImpl();
 
-    static void NODELETE setLegacyTLSEnabled(bool);
+    static void LEGACY_NODELETE setLegacyTLSEnabled(bool);
 
     void platformSend(std::span<const uint8_t> data, Function<void(bool)>&&) final;
     void platformSendHandshake(std::span<const uint8_t> data, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final;
@@ -70,14 +70,14 @@ private:
     void removePACRunLoopSource();
     RetainPtr<CFRunLoopSourceRef> m_pacRunLoopSource;
     static void pacExecutionCallback(void* client, CFArrayRef proxyList, CFErrorRef);
-    static CFStringRef NODELETE copyPACExecutionDescription(void*);
+    static CFStringRef LEGACY_NODELETE copyPACExecutionDescription(void*);
 
     bool shouldUseSSL() const { return m_url.protocolIs("wss"_s); }
     unsigned short port() const;
 
     void addCONNECTCredentials(CFHTTPMessageRef response);
 
-    static void* NODELETE retainSocketStreamHandle(void*);
+    static void* LEGACY_NODELETE retainSocketStreamHandle(void*);
     static void releaseSocketStreamHandle(void*);
     static CFStringRef copyCFStreamDescription(void*) CF_RETURNS_RETAINED;
     static void readStreamCallback(CFReadStreamRef, CFStreamEventType, void*);

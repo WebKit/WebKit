@@ -30,4 +30,4 @@ namespace WebCore {
 class CSSRuleList;
 }
 
-DOMCSSRuleList * NODELETE kit(WebCore::CSSRuleList*);
+DOMCSSRuleList * LEGACY_NODELETE kit(WebCore::CSSRuleList*);

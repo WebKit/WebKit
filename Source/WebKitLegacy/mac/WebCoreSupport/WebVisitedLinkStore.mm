@@ -38,7 +38,7 @@
 
 static bool s_shouldTrackVisitedLinks;
 
-static HashSet<WeakRef<WebVisitedLinkStore>>& NODELETE visitedLinkStores()
+static HashSet<WeakRef<WebVisitedLinkStore>>& LEGACY_NODELETE visitedLinkStores()
 {
     static NeverDestroyed<HashSet<WeakRef<WebVisitedLinkStore>>> visitedLinkStores;
 

@@ -253,7 +253,7 @@
 @end
 
 #if !PLATFORM(IOS_FAMILY)
-static NSEventPhase NODELETE toNSEventPhase(WebCore::PlatformWheelEventPhase platformPhase)
+static NSEventPhase LEGACY_NODELETE toNSEventPhase(WebCore::PlatformWheelEventPhase platformPhase)
 {
     switch (platformPhase) {
     case WebCore::PlatformWheelEventPhase::None:

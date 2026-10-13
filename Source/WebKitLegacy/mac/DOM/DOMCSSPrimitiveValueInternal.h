@@ -30,4 +30,4 @@ namespace WebCore {
 class DeprecatedCSSOMPrimitiveValue;
 }
 
-DOMCSSPrimitiveValue * NODELETE kit(WebCore::DeprecatedCSSOMPrimitiveValue*);
+DOMCSSPrimitiveValue * LEGACY_NODELETE kit(WebCore::DeprecatedCSSOMPrimitiveValue*);

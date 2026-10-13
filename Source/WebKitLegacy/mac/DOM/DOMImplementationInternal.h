@@ -30,4 +30,4 @@ namespace WebCore {
 class DOMImplementation;
 }
 
-DOMImplementation * NODELETE kit(WebCore::DOMImplementation*);
+DOMImplementation * LEGACY_NODELETE kit(WebCore::DOMImplementation*);

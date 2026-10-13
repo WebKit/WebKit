@@ -30,4 +30,4 @@ namespace WebCore {
 class DeprecatedCSSOMRect;
 }
 
-DOMRect * NODELETE kit(WebCore::DeprecatedCSSOMRect*);
+DOMRect * LEGACY_NODELETE kit(WebCore::DeprecatedCSSOMRect*);

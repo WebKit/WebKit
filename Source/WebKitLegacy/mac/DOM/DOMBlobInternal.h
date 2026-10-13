@@ -30,4 +30,4 @@ namespace WebCore {
 class Blob;
 }
 
-DOMBlob * NODELETE kit(WebCore::Blob*);
+DOMBlob * LEGACY_NODELETE kit(WebCore::Blob*);

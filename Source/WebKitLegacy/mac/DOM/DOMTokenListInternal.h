@@ -31,4 +31,4 @@ namespace WebCore {
 class DOMTokenList;
 }
 
-DOMTokenList * NODELETE kit(WebCore::DOMTokenList*);
+DOMTokenList * LEGACY_NODELETE kit(WebCore::DOMTokenList*);

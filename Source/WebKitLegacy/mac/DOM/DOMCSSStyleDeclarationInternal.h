@@ -31,4 +31,4 @@ class CSSStyleDeclaration;
 }
 
 WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *);
-DOMCSSStyleDeclaration * NODELETE kit(WebCore::CSSStyleDeclaration*);
+DOMCSSStyleDeclaration * LEGACY_NODELETE kit(WebCore::CSSStyleDeclaration*);

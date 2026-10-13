@@ -30,5 +30,5 @@ namespace WebCore {
 class DeprecatedCSSOMValue;
 }
 
-DOMCSSValue * NODELETE kit(WebCore::DeprecatedCSSOMValue*);
+DOMCSSValue * LEGACY_NODELETE kit(WebCore::DeprecatedCSSOMValue*);
 Class kitClass(WebCore::DeprecatedCSSOMValue*);

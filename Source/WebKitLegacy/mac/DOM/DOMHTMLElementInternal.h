@@ -31,4 +31,4 @@ class HTMLElement;
 }
 
 WebCore::HTMLElement* core(DOMHTMLElement *);
-DOMHTMLElement * NODELETE kit(WebCore::HTMLElement*);
+DOMHTMLElement * LEGACY_NODELETE kit(WebCore::HTMLElement*);

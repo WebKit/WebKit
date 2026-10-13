@@ -50,7 +50,7 @@
 #import <wtf/RunLoop.h>
 
 
-static RetainPtr<CFMutableDictionaryRef>& NODELETE lookupTable()
+static RetainPtr<CFMutableDictionaryRef>& LEGACY_NODELETE lookupTable()
 {
     static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> lookupTable;
     return lookupTable;

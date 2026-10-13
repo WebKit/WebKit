@@ -31,4 +31,4 @@ class HTMLOptionElement;
 }
 
 WebCore::HTMLOptionElement* core(DOMHTMLOptionElement *);
-DOMHTMLOptionElement * NODELETE kit(WebCore::HTMLOptionElement*);
+DOMHTMLOptionElement * LEGACY_NODELETE kit(WebCore::HTMLOptionElement*);

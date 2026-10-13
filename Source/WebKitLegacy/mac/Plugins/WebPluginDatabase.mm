@@ -66,7 +66,7 @@ static void checkCandidate(WebBasePluginPackage * __weak *currentPlugin, WebBase
     RetainPtr<NSMutableSet> pluginInstanceViews;
 }
 
-static RetainPtr<WebPluginDatabase>& NODELETE sharedDatabase()
+static RetainPtr<WebPluginDatabase>& LEGACY_NODELETE sharedDatabase()
 {
     static NeverDestroyed<RetainPtr<WebPluginDatabase>> sharedDatabase;
     return sharedDatabase;
@@ -188,7 +188,7 @@ struct PluginPackageCandidates {
     return [protect(plugins) allValues];
 }
 
-static RetainPtr<NSArray>& NODELETE additionalWebPlugInPaths()
+static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 {
     static NeverDestroyed<RetainPtr<NSArray>> _additionalWebPlugInPaths;
     return _additionalWebPlugInPaths;

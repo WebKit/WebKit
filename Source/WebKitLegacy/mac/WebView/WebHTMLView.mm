@@ -245,7 +245,7 @@ const auto WebEventMouseDown = NSEventTypeLeftMouseDown;
 - (void)forwardContextMenuAction:(id)sender;
 @end
 
-static std::optional<WebCore::ContextMenuAction> NODELETE toAction(NSInteger tag)
+static std::optional<WebCore::ContextMenuAction> LEGACY_NODELETE toAction(NSInteger tag)
 {
     using namespace WebCore;
     if (tag >= ContextMenuItemBaseCustomTag && tag <= ContextMenuItemLastCustomTag) {
@@ -430,7 +430,7 @@ static std::optional<WebCore::ContextMenuAction> NODELETE toAction(NSInteger tag
     return std::nullopt;
 }
 
-static std::optional<NSInteger> NODELETE toTag(WebCore::ContextMenuAction action)
+static std::optional<NSInteger> LEGACY_NODELETE toTag(WebCore::ContextMenuAction action)
 {
     using namespace WebCore;
     switch (action) {
@@ -721,7 +721,7 @@ static BOOL forceNSViewHitTest;
 // if YES, do the "top WebHTMLView" hit test (which we'd like to do all the time but can't because of Java requirements [see bug 4349721])
 static BOOL forceWebHTMLViewHitTest;
 
-static RetainPtr<WebHTMLView>& NODELETE lastHitView()
+static RetainPtr<WebHTMLView>& LEGACY_NODELETE lastHitView()
 {
     static NeverDestroyed<RetainPtr<WebHTMLView>> lastHitView;
     return lastHitView;
@@ -1043,7 +1043,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 #if PLATFORM(MAC)
 
-static NSControlStateValue NODELETE kit(TriState state)
+static NSControlStateValue LEGACY_NODELETE kit(TriState state)
 {
     switch (state) {
     case TriState::False:
@@ -4234,7 +4234,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
-static NSDragOperation NODELETE kit(OptionSet<WebCore::DragOperation> operationMask)
+static NSDragOperation LEGACY_NODELETE kit(OptionSet<WebCore::DragOperation> operationMask)
 {
     NSDragOperation result = NSDragOperationNone;
     if (operationMask.contains(WebCore::DragOperation::Copy))

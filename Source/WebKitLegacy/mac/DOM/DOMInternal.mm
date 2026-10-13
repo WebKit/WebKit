@@ -50,7 +50,7 @@
 static Lock wrapperCacheLock;
 static HashMap<void*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 #else
-static HashMap<void*, NSObject *>& NODELETE wrapperCache()
+static HashMap<void*, NSObject *>& LEGACY_NODELETE wrapperCache()
 #endif
 {
     static NeverDestroyed<HashMap<void*, NSObject *>> map;

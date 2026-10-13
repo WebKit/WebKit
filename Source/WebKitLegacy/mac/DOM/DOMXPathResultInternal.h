@@ -31,4 +31,4 @@ class XPathResult;
 }
 
 WebCore::XPathResult* core(DOMXPathResult *);
-DOMXPathResult * NODELETE kit(WebCore::XPathResult*);
+DOMXPathResult * LEGACY_NODELETE kit(WebCore::XPathResult*);

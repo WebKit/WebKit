@@ -250,7 +250,7 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
     return bundleIdentifier == JavaCocoaPluginIdentifier || bundleIdentifier == JavaCarbonPluginIdentifier;
 }
 
-static inline void NODELETE swapIntsInHeader(std::span<uint32_t> rawData)
+static inline void LEGACY_NODELETE swapIntsInHeader(std::span<uint32_t> rawData)
 {
     for (auto& data : rawData)
         data = OSSwapInt32(data);

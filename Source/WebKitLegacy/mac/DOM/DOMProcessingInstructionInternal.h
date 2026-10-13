@@ -31,4 +31,4 @@ class ProcessingInstruction;
 }
 
 WebCore::ProcessingInstruction* core(DOMProcessingInstruction *);
-DOMProcessingInstruction * NODELETE kit(WebCore::ProcessingInstruction*);
+DOMProcessingInstruction * LEGACY_NODELETE kit(WebCore::ProcessingInstruction*);

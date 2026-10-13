@@ -30,4 +30,4 @@ namespace WebCore {
 class Comment;
 }
 
-DOMComment * NODELETE kit(WebCore::Comment*);
+DOMComment * LEGACY_NODELETE kit(WebCore::Comment*);

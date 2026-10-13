@@ -30,4 +30,4 @@ namespace WebCore {
 class NodeList;
 }
 
-DOMNodeList * NODELETE kit(WebCore::NodeList*);
+DOMNodeList * LEGACY_NODELETE kit(WebCore::NodeList*);

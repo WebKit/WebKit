@@ -31,4 +31,4 @@ class HTMLInputElement;
 }
 
 WebCore::HTMLInputElement* core(DOMHTMLInputElement *);
-DOMHTMLInputElement * NODELETE kit(WebCore::HTMLInputElement*);
+DOMHTMLInputElement * LEGACY_NODELETE kit(WebCore::HTMLInputElement*);

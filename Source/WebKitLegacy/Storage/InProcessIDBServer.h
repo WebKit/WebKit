@@ -64,8 +64,8 @@ public:
 
     virtual ~InProcessIDBServer();
 
-    WebCore::IDBClient::IDBConnectionToServer& NODELETE connectionToServer() const;
-    WebCore::IDBServer::IDBConnectionToClient& NODELETE connectionToClient() const;
+    WebCore::IDBClient::IDBConnectionToServer& LEGACY_NODELETE connectionToServer() const;
+    WebCore::IDBServer::IDBConnectionToClient& LEGACY_NODELETE connectionToClient() const;
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }

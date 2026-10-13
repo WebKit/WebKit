@@ -31,4 +31,4 @@ class DocumentFragment;
 }
 
 WebCore::DocumentFragment* core(DOMDocumentFragment *);
-DOMDocumentFragment * NODELETE kit(WebCore::DocumentFragment*);
+DOMDocumentFragment * LEGACY_NODELETE kit(WebCore::DocumentFragment*);

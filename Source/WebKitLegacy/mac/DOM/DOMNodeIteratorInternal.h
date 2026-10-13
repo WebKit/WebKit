@@ -31,4 +31,4 @@ namespace WebCore {
 class NodeIterator;
 }
 
-DOMNodeIterator * NODELETE kit(WebCore::NodeIterator*);
+DOMNodeIterator * LEGACY_NODELETE kit(WebCore::NodeIterator*);

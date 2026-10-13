@@ -70,10 +70,10 @@ enum class WebRangeIsRelativeTo : uint8_t {
     Paragraph,
 };
 
-WebCore::LocalFrame* NODELETE core(WebFrame *);
+WebCore::LocalFrame* LEGACY_NODELETE core(WebFrame *);
 WebFrame *kit(WebCore::LocalFrame *);
 
-WebCore::Page* NODELETE core(WebView *);
+WebCore::Page* LEGACY_NODELETE core(WebView *);
 WebView *kit(WebCore::Page*);
 
 WebCore::EditableLinkBehavior core(WebKitEditableLinkBehavior);

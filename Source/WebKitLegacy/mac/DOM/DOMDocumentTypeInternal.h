@@ -31,4 +31,4 @@ class DocumentType;
 }
 
 WebCore::DocumentType* core(DOMDocumentType *);
-DOMDocumentType * NODELETE kit(WebCore::DocumentType*);
+DOMDocumentType * LEGACY_NODELETE kit(WebCore::DocumentType*);

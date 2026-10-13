@@ -31,4 +31,4 @@ class FileList;
 }
 
 WebCore::FileList* core(DOMFileList *);
-DOMFileList * NODELETE kit(WebCore::FileList*);
+DOMFileList * LEGACY_NODELETE kit(WebCore::FileList*);

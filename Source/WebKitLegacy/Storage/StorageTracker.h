@@ -47,7 +47,7 @@ class StorageTracker {
     WTF_MAKE_NONCOPYABLE(StorageTracker);
     WTF_MAKE_TZONE_ALLOCATED(StorageTracker);
 public:
-    static void NODELETE initializeTracker(const String& storagePath, WebCore::StorageTrackerClient*);
+    static void LEGACY_NODELETE initializeTracker(const String& storagePath, WebCore::StorageTrackerClient*);
     static StorageTracker& tracker();
 
     void setOriginDetails(const String& originIdentifier, const String& databaseFile);
@@ -87,7 +87,7 @@ private:
 
     void originFilePaths(Vector<String>& paths);
     
-    void NODELETE setIsActive(bool);
+    void LEGACY_NODELETE setIsActive(bool);
 
     // Sync to disk on background thread.
     void syncDeleteAllOrigins();

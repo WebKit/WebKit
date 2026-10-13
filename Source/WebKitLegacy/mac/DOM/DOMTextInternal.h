@@ -30,4 +30,4 @@ namespace WebCore {
 class Text;
 }
 
-DOMText * NODELETE kit(WebCore::Text*);
+DOMText * LEGACY_NODELETE kit(WebCore::Text*);

@@ -100,12 +100,12 @@ NSString * const WebHistoryItemChangedNotification = @"WebHistoryItemChangedNoti
 
 using HistoryItemMap = HashMap<WeakRef<WebCore::HistoryItem>, WebHistoryItem*>;
 
-SUPPRESS_NODELETE static inline WebCoreHistoryItem* NODELETE core(WebHistoryItemPrivate* itemPrivate)
+SUPPRESS_NODELETE static inline WebCoreHistoryItem* LEGACY_NODELETE core(WebHistoryItemPrivate* itemPrivate)
 {
     return itemPrivate->_historyItem.get();
 }
 
-static HistoryItemMap& NODELETE historyItemWrappers()
+static HistoryItemMap& LEGACY_NODELETE historyItemWrappers()
 {
     static NeverDestroyed<HistoryItemMap> historyItemWrappers;
     return historyItemWrappers;

@@ -31,4 +31,4 @@ namespace WebCore {
 class MediaList;
 }
 
-DOMMediaList * NODELETE kit(WebCore::MediaList*);
+DOMMediaList * LEGACY_NODELETE kit(WebCore::MediaList*);

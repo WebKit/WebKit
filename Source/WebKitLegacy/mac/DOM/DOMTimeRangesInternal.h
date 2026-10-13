@@ -30,4 +30,4 @@ namespace WebCore {
 class TimeRanges;
 }
 
-DOMTimeRanges * NODELETE kit(WebCore::TimeRanges*);
+DOMTimeRanges * LEGACY_NODELETE kit(WebCore::TimeRanges*);

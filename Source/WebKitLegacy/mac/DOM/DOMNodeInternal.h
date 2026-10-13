@@ -34,6 +34,6 @@ class EventTarget;
 }
 
 WebCore::Node* core(DOMNode *);
-DOMNode * NODELETE kit(WebCore::Node*);
+DOMNode * LEGACY_NODELETE kit(WebCore::Node*);
 Class kitClass(WebCore::Node*);
-id <DOMEventTarget> NODELETE kit(WebCore::EventTarget*);
+id <DOMEventTarget> LEGACY_NODELETE kit(WebCore::EventTarget*);

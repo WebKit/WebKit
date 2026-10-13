@@ -31,4 +31,4 @@ class Attr;
 }
 
 WebCore::Attr* core(DOMAttr *);
-DOMAttr * NODELETE kit(WebCore::Attr*);
+DOMAttr * LEGACY_NODELETE kit(WebCore::Attr*);

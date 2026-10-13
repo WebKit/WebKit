@@ -59,7 +59,7 @@ String WebAlternativeTextClient::dismissAlternativeSoon(WebCore::ReasonForDismis
     return m_correctionPanel.dismiss(reason);
 }
 
-static inline NSCorrectionResponse NODELETE toCorrectionResponse(WebCore::AutocorrectionResponse response)
+static inline NSCorrectionResponse LEGACY_NODELETE toCorrectionResponse(WebCore::AutocorrectionResponse response)
 {
     switch (response) {
     case WebCore::AutocorrectionResponse::Reverted:

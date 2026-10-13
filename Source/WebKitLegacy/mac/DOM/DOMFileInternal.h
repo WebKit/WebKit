@@ -30,4 +30,4 @@ namespace WebCore {
 class File;
 }
 
-DOMFile * NODELETE kit(WebCore::File*);
+DOMFile * LEGACY_NODELETE kit(WebCore::File*);

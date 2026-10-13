@@ -56,7 +56,7 @@ public:
     const String& nameOverride() const LIFETIME_BOUND final { return m_nameOverride; }
     void setNameOverride(const String&);
 
-    void NODELETE detachFromPage();
+    void LEGACY_NODELETE detachFromPage();
 
 private:
     LegacyWebPageDebuggable(LegacyWebPageInspectorController&, WebCore::Page&);

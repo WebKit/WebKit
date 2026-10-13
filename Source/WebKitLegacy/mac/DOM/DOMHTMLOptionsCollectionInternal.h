@@ -30,4 +30,4 @@ namespace WebCore {
 class HTMLOptionsCollection;
 }
 
-DOMHTMLOptionsCollection * NODELETE kit(WebCore::HTMLOptionsCollection*);
+DOMHTMLOptionsCollection * LEGACY_NODELETE kit(WebCore::HTMLOptionsCollection*);

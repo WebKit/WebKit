@@ -74,13 +74,13 @@ NSString * const WebPreferencesCacheModelChangedInternalNotification = @"WebPref
 
 enum { WebPreferencesVersion = 1 };
 
-static RetainPtr<WebPreferences>& NODELETE standardPreferences()
+static RetainPtr<WebPreferences>& LEGACY_NODELETE standardPreferences()
 {
     static NeverDestroyed<RetainPtr<WebPreferences>> standardPreferences;
     return standardPreferences;
 }
 
-static RetainPtr<NSMutableDictionary>& NODELETE webPreferencesInstances()
+static RetainPtr<NSMutableDictionary>& LEGACY_NODELETE webPreferencesInstances()
 {
     static NeverDestroyed<RetainPtr<NSMutableDictionary>> webPreferencesInstances;
     return webPreferencesInstances;
@@ -88,7 +88,7 @@ static RetainPtr<NSMutableDictionary>& NODELETE webPreferencesInstances()
 
 static unsigned webPreferencesInstanceCountWithPrivateBrowsingEnabled;
 
-template<unsigned size> static bool NODELETE contains(const char* const (&array)[size], const char* item)
+template<unsigned size> static bool LEGACY_NODELETE contains(const char* const (&array)[size], const char* item)
 {
     if (!item)
         return false;
@@ -1543,7 +1543,7 @@ public:
         @{ WebKitDefaultTextEncodingNamePreferenceKey: PAL::defaultTextEncodingNameForSystemLanguage().createNSString().get() }];
 }
 
-static RetainPtr<NSString>& NODELETE classIBCreatorID()
+static RetainPtr<NSString>& LEGACY_NODELETE classIBCreatorID()
 {
     static NeverDestroyed<RetainPtr<NSString>> classIBCreatorID;
     return classIBCreatorID;

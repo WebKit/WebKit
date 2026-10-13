@@ -31,4 +31,4 @@ class HTMLTableCaptionElement;
 }
 
 WebCore::HTMLTableCaptionElement* core(DOMHTMLTableCaptionElement *);
-DOMHTMLTableCaptionElement * NODELETE kit(WebCore::HTMLTableCaptionElement*);
+DOMHTMLTableCaptionElement * LEGACY_NODELETE kit(WebCore::HTMLTableCaptionElement*);

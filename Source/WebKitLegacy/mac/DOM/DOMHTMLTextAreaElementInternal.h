@@ -31,4 +31,4 @@ class HTMLTextAreaElement;
 }
 
 WebCore::HTMLTextAreaElement* core(DOMHTMLTextAreaElement *);
-DOMHTMLTextAreaElement * NODELETE kit(WebCore::HTMLTextAreaElement*);
+DOMHTMLTextAreaElement * LEGACY_NODELETE kit(WebCore::HTMLTextAreaElement*);

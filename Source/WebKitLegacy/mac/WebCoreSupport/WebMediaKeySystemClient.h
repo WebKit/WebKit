@@ -31,7 +31,7 @@
 class WebMediaKeySystemClient final : public WebCore::MediaKeySystemClient {
     WTF_MAKE_TZONE_ALLOCATED(WebMediaKeySystemClient);
 public:
-    static WebMediaKeySystemClient& NODELETE singleton();
+    static WebMediaKeySystemClient& LEGACY_NODELETE singleton();
 
     // Do nothing since this is a singleton object.
     void ref() const final { }
