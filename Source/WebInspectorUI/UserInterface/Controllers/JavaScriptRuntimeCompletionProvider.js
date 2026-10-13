@@ -165,7 +165,15 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else {
-            let options = {objectGroup: "completion", includeCommandLineAPI: true, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: false, generatePreview: false, saveResult: false};
+            const options = {
+                objectGroup: "completion",
+                includeCommandLineAPI: true,
+                doNotPauseOnExceptionsAndMuteConsole: true,
+                returnByValue: false,
+                generatePreview: false,
+                saveResult: false,
+                disableAwaitConvenience: true,
+            };
             WI.runtimeManager.evaluateInInspectedWindow(base, options, evaluated.bind(this));
         }
 

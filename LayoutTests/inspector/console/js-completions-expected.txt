@@ -20,6 +20,10 @@ PASS: Completions for a revoked proxy should return an empty array and should no
 PASS: Completions for a BigInt value should include toString.
 PASS: Completions for a BigInt value should include valueOf.
 
+-- Running test case: console.jsCompletions.awaitConvenience
+PASS: An unsupported await base should not provide completions.
+PASS: Completion requests should not log an await result.
+
 -- Running test case: console.jsCompletions.completionOrdering
 Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""}:
 [
