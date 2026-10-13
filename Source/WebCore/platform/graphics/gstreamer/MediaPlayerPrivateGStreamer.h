@@ -500,6 +500,8 @@ private:
 
     ImageOrientation getVideoOrientation(const GstTagList*);
 
+    void maybeNotifyClientOfReadyAndNetworkChanges(MediaPlayerEnums::NetworkState, MediaPlayerEnums::ReadyState);
+
     GstElement* createVideoSink();
     GstElement* createAudioSink();
     GstElement* audioSink() const { return m_audioSink.get(); }
@@ -558,7 +560,9 @@ private:
     void setPlaybinURL(const URL& urlString);
 
     void updateTracks(const GRefPtr<GstObject>& collectionOwner);
-    void updateVideoSizeAndOrientationFromCaps(const GstCaps*);
+    bool updateVideoSizeAndOrientationFromCaps(GstCaps*);
+    bool updateVideoSizeAndOrientationFromCapsAndTags(const GRefPtr<GstCaps>&, const GRefPtr<GstTagList>&);
+    bool updateVideoSizeAndOrientationFromStream(GstStream*);
     bool hasFirstVideoSampleReachedSink() const;
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -708,9 +712,13 @@ private:
     void determineContainerTypeFromCaps(const GstCaps*);
     enum ContainerType {
         Ogg,
+        WebM,
         Other
     };
     ContainerType m_containerType { ContainerType::Other };
+
+    GRefPtr<GstElement> m_parseBin;
+    GRefPtr<GstElement> m_urisourceBin;
 };
 
 } // namespace WebCore
