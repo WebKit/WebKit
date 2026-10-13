@@ -206,3 +206,10 @@ PASS: Setting text should succeed.
 PASS: Text should change.
 PASS: Text should change on the same grouping attached to a different rule.
 
+-- Running test case: CSS.setGroupingHeaderText.FailedEditThenUndo
+PASS: Should produce an exception.
+Error: SyntaxError
+PASS: Undo should restore the rendered property.
+PASS: Undo after an invalid header should require a style refresh.
+PASS: Styles should show the declaration restored by Undo.
+

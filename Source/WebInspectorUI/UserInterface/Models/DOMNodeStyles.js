@@ -476,6 +476,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         function ruleSelectorChanged(error, rulePayload)
         {
             if (error) {
+                this._ignoreNextContentDidChangeForStyleSheet = null;
                 result.reject(error);
                 return;
             }

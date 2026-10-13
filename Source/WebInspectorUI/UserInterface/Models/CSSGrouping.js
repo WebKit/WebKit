@@ -77,6 +77,9 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
         newText ||= "";
 
         this._nodeStyles.ignoreNextContentDidChangeForStyleSheet = this._ownerStyleSheet;
+        using clearIgnoredStyleSheet = new ScopeExit(() => {
+            this._nodeStyles.ignoreNextContentDidChangeForStyleSheet = null;
+        });
 
         let owningTarget = this._nodeStyles.node.owningTarget;
         let target = owningTarget || WI.assumingMainTarget();

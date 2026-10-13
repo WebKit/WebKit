@@ -143,6 +143,38 @@ function test()
         ],
     });
 
+    suite.addTestCase({
+        name: "CSS.setGroupingHeaderText.FailedEditThenUndo",
+        description: "A rejected grouping edit should not hide a later Undo stylesheet change.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let node = WI.domManager.nodeForId(await documentNode.querySelector("#test"));
+            let styles = WI.cssManager.stylesForNode(node);
+            await styles.refresh();
+            let rule = styles.matchedRules.find((rule) => rule.selectorText === ".test");
+            let originalSize = rule.style.propertyForName("font-size").value;
+            let target = node.owningTarget || WI.assumingMainTarget();
+            let styleTextChanged = rule.ownerStyleSheet.awaitEvent(WI.CSSStyleSheet.Event.ContentDidChange);
+            await target.CSSAgent.setStyleText(rule.style.id, "font-size: 24px;");
+            WI.domUndoCoordinator.markUndoableState(target);
+            await styleTextChanged;
+            await styles.refresh();
+
+            let grouping = rule.groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.MediaRule);
+            await InspectorTest.expectException(() => grouping.setText("screen {} @media screen"));
+
+            let changed = rule.ownerStyleSheet.awaitEvent(WI.CSSStyleSheet.Event.ContentDidChange);
+            await WI.domUndoCoordinator.undo();
+            await changed;
+            let renderedSize = await InspectorTest.evaluateInPage(`getComputedStyle(document.getElementById("test")).fontSize`);
+            InspectorTest.expectEqual(renderedSize, originalSize, "Undo should restore the rendered property.");
+            InspectorTest.expectTrue(styles.needsRefresh, "Undo after an invalid header should require a style refresh.");
+            await styles.refreshIfNeeded();
+            let restoredRule = styles.matchedRules.find((rule) => rule.selectorText === ".test");
+            InspectorTest.expectEqual(restoredRule.style.propertyForName("font-size").value, originalSize, "Styles should show the declaration restored by Undo.");
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
@@ -169,6 +201,7 @@ function test()
 
                     .test {
                         color: papayawhip;
+                        font-size: 16px;
                     }
                 }
             }
