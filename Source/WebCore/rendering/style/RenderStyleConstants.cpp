@@ -1411,8 +1411,8 @@ TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsic
 TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
 {
     switch (overflowContinue) {
-    case OverflowContinue::Auto:
-        ts << "auto"_s;
+    case OverflowContinue::Normal:
+        ts << "normal"_s;
         break;
     case OverflowContinue::Discard:
         ts << "discard"_s;

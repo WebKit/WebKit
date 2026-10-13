@@ -3297,7 +3297,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractWebkitLineClampShorthand(Extract
     if (auto maxLines = state.style->maxLines().tryValue()) {
         if (state.style->overflowContinue() == OverflowContinue::WebkitLegacy && state.style->blockEllipsis().isEllipsis())
             return createCSSValue(state.pool, state.style, *maxLines);
-    } else if (state.style->overflowContinue() == OverflowContinue::Auto && state.style->blockEllipsis().isNone())
+    } else if (state.style->overflowContinue() == OverflowContinue::Normal && state.style->blockEllipsis().isNone())
         return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return nullptr;
 }
@@ -3312,7 +3312,7 @@ inline void ExtractorCustom::extractWebkitLineClampShorthandSerialization(Extrac
     if (auto maxLines = state.style->maxLines().tryValue()) {
         if (state.style->overflowContinue() == OverflowContinue::WebkitLegacy && state.style->blockEllipsis().isEllipsis())
             serializationForCSS(builder, context, state.style, *maxLines);
-    } else if (state.style->overflowContinue() == OverflowContinue::Auto && state.style->blockEllipsis().isNone())
+    } else if (state.style->overflowContinue() == OverflowContinue::Normal && state.style->blockEllipsis().isNone())
         serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
 }
 

@@ -432,9 +432,9 @@
         },
         "continue": {
             "animation-type": "discrete",
-            "initial": "auto",
+            "initial": "normal",
             "values": [
-                "auto",
+                "normal",
                 "discard",
                 "collapse",
                 "-webkit-legacy"

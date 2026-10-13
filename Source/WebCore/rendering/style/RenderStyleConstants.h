@@ -809,7 +809,7 @@ enum class TransformBox : uint8_t {
 };
 
 enum class OverflowContinue : uint8_t {
-    Auto,
+    Normal,
     Discard,
     Collapse,
     WebkitLegacy

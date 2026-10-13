@@ -2074,7 +2074,7 @@ bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange& range,
     if (range.peek().id() == CSSValueID::None) {
         // Sets max-lines to none, continue to auto, and block-ellipsis to none.
         result.addPropertyForCurrentShorthand(state, CSSPropertyID::MaxLines, CSSKeywordValue::create(CSSValueID::Auto));
-        result.addPropertyForCurrentShorthand(state, CSSPropertyID::Continue, CSSKeywordValue::create(CSSValueID::Auto));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyID::Continue, CSSKeywordValue::create(CSSValueID::Normal));
         result.addPropertyForCurrentShorthand(state, CSSPropertyID::BlockEllipsis, CSSKeywordValue::create(CSSValueID::NoEllipsis));
         consumeIdent(range);
         return range.atEnd();
