@@ -1480,8 +1480,6 @@ static bool pathIsBlocked(const char* path)
  * add all of `/` is not valid. Since 2.40, adding the user's entire
  * home directory or /home is also not valid.
  *
- * See also webkit_web_context_set_sandbox_enabled()
- *
  * Since: 2.26
  */
 void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const char* path, gboolean readOnly)
