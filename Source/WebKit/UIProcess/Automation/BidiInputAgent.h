@@ -27,17 +27,23 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+#include "SimulatedInputDispatcher.h"
+#endif
 #include "WebDriverBidiBackendDispatchers.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit::BidiInput {
-
-class State;
+namespace WebKit::Automation {
 
 enum class SourceType : uint8_t { None, Key, Pointer, Wheel };
 enum class PointerType : uint8_t { Mouse, Pen, Touch };
@@ -81,18 +87,64 @@ struct Source {
     PointerType pointerType { PointerType::Mouse };
 };
 
-// https://w3c.github.io/webdriver/#dfn-input-state — one per (session, top-level traversable).
-class State {
-    WTF_MAKE_TZONE_ALLOCATED(State);
+// https://w3c.github.io/webdriver/#dfn-actions-queue
+class BidiInputActionsQueue : public RefCountedAndCanMakeWeakPtr<BidiInputActionsQueue> {
+    WTF_MAKE_TZONE_ALLOCATED(BidiInputActionsQueue);
 public:
+    static Ref<BidiInputActionsQueue> create() { return adoptRef(*new BidiInputActionsQueue); }
+
+    struct Command {
+        ASCIILiteral name;
+        Function<void(CompletionHandler<void()>&&)> function;
+    };
+
+    void enqueue(Command&&);
+
+private:
+    BidiInputActionsQueue() = default;
+
+    void runNextCommand();
+
+    Deque<Command> m_commands;
+    ASCIILiteral m_runningCommandName;
+    bool m_isRunningCommand { false };
+    bool m_isPumpingCommands { false };
+    bool m_shouldPumpAgain { false };
+};
+
+// https://w3c.github.io/webdriver/#dfn-input-state — one per (session, top-level traversable).
+class BidiInputState : public RefCounted<BidiInputState> {
+    WTF_MAKE_TZONE_ALLOCATED(BidiInputState);
+public:
+    static Ref<BidiInputState> create() { return adoptRef(*new BidiInputState); }
+
     const Source* find(const String& id) const;
     void add(const String& id, Source);
 
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+    SimulatedInputSource& simulatedSource(const Action&);
+    const HashMap<String, Ref<SimulatedInputSource>>& simulatedSources() const { return m_simulatedSources; }
+#endif
+
+    // https://w3c.github.io/webdriver/#dfn-input-cancel-list
+    Vector<Action>& inputCancelList() { return m_inputCancelList; }
+
+    BidiInputActionsQueue& actionsQueue() { return m_actionsQueue.get(); }
+
+    void reset();
+
 private:
+    BidiInputState() = default;
+
     HashMap<String, Source> m_inputStateMap;
+#if ENABLE(WEBDRIVER_ACTIONS_API)
+    HashMap<String, Ref<SimulatedInputSource>> m_simulatedSources;
+#endif
+    Vector<Action> m_inputCancelList;
+    const Ref<BidiInputActionsQueue> m_actionsQueue { BidiInputActionsQueue::create() };
 };
 
-} // namespace WebKit::BidiInput
+} // namespace WebKit::Automation
 
 namespace WebKit {
 
@@ -108,15 +160,16 @@ public:
     void releaseActions(const String& context, Inspector::CommandCallback<void>&&) override;
     void setFiles(const String& context, Ref<JSON::Object>&& element, Ref<JSON::Array>&& files, Inspector::CommandCallback<void>&&) override;
 
+    void willClosePage(const String& pageHandle);
+
 private:
     // https://w3c.github.io/webdriver/#dfn-get-the-input-state — keyed by top-level context handle.
-    BidiInput::State& inputStateForTopLevelContext(const String& pageHandle);
-    // https://w3c.github.io/webdriver/#dfn-reset-the-input-state
-    void resetInputState(const String& pageHandle);
+    Automation::BidiInputState& inputStateForTopLevelContext(const String& pageHandle);
 
     WeakPtr<WebAutomationSession> m_session;
     Ref<Inspector::BidiInputBackendDispatcher> m_inputDomainDispatcher;
-    HashMap<String, std::unique_ptr<BidiInput::State>> m_inputStates;
+    // Queued commands and in-flight dispatches also hold a Ref, so a state can outlive its entry here after willClosePage().
+    HashMap<String, Ref<Automation::BidiInputState>> m_inputStates;
 };
 
 } // namespace WebKit
