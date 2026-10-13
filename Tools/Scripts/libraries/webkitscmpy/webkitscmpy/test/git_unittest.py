@@ -432,6 +432,26 @@ CommitDate: {time_c}
                 self.assertEqual(repo.cache.to_identifier(hash='badc0dd1f'), None)
                 self.assertEqual(repo.cache.to_hash(identifier='6@main'), None)
 
+    def test_cache_branch_moved_backwards(self):
+        with mocks.local.Git(self.path) as mock, MockTime, LoggerCapture():
+            repo = local.Git(self.path)
+            repo.cache.populate(branch='main')
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c'), '5@main')
+
+            # Equivalent to `git reset --hard HEAD~1` on main
+            mock.commits['main'].pop()
+            mock.head = mock.commits['main'][-1]
+            repo.cache._last_populated = {}
+            repo.cache.populate(branch='main')
+
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c', populate=False), None)
+            self.assertEqual(repo.cache.to_hash(identifier='5@main', populate=False), None)
+            self.assertEqual(repo.cache.to_identifier(hash='bae5d1e9', populate=False), '4@main')
+
+            repo = local.Git(self.path)
+            self.assertEqual(repo.cache.to_identifier(hash='d8bce26fa65c', populate=False), None)
+            self.assertEqual(repo.cache.to_hash(identifier='5@main', populate=False), None)
+
     def test_revision_cache(self):
         with mocks.local.Git(self.path, git_svn=True), OutputCapture():
             repo = local.Git(self.path, cached=True)
