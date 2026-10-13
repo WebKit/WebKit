@@ -213,6 +213,47 @@ static TrackSizingFunctionsList trackSizingFunctions(size_t totalTracksCount, si
     return trackSizingFunctions;
 }
 
+// https://drafts.csswg.org/css-grid-1/#valdef-repeat-auto-fit
+static BitVector collapsedTracksList(WTF::Range<size_t> autoFitTracksIndexes, size_t leadingImplicitTracksCount, const PlacedGridItemSpanList& gridItemSpans)
+{
+    ASSERT(autoFitTracksIndexes);
+
+    // The auto-fit tracks are indexed within the explicit grid, which starts after the leading implicit tracks.
+    auto firstAutoFitTrackIndex = leadingImplicitTracksCount + autoFitTracksIndexes.begin();
+    auto lastAutoFitTrackIndex = leadingImplicitTracksCount + autoFitTracksIndexes.end() - 1;
+
+    // "...after grid item placement any empty repeated tracks are collapsed. An empty track is one with no
+    // in-flow grid items placed into or spanning across it."
+    BitVector collapsedTracks;
+    collapsedTracks.ensureSize(lastAutoFitTrackIndex + 1);
+    for (auto trackIndex = firstAutoFitTrackIndex; trackIndex <= lastAutoFitTrackIndex; ++trackIndex) {
+        bool isEmptyTrack = std::ranges::none_of(gridItemSpans, [&](auto& gridItemSpan) {
+            return gridItemSpan.contains(trackIndex);
+        });
+        if (isEmptyTrack)
+            collapsedTracks.quickSet(trackIndex);
+    }
+    return collapsedTracks;
+}
+
+static BitVector collapsedColumnTracksList(const ExplicitGridTrackSizes& explicitGridTrackSizes, LeadingImplicitTracks leadingImplicitTracks, const GridAreas& gridAreas)
+{
+    ASSERT(explicitGridTrackSizes.columnAutoRepeatTracksIndexes);
+    auto columnSpans = gridAreas.map([](auto& gridArea) {
+        return WTF::Range<size_t> { gridArea.second.columnStartLine, gridArea.second.columnEndLine };
+    });
+    return collapsedTracksList(explicitGridTrackSizes.columnAutoRepeatTracksIndexes, leadingImplicitTracks.columnsCount, columnSpans);
+}
+
+static BitVector collapsedRowTracksList(const ExplicitGridTrackSizes& explicitGridTrackSizes, LeadingImplicitTracks leadingImplicitTracks, const GridAreas& gridAreas)
+{
+    ASSERT(explicitGridTrackSizes.rowAutoRepeatTracksIndexes);
+    auto rowSpans = gridAreas.map([](auto& gridArea) {
+        return WTF::Range<size_t> { gridArea.second.rowStartLine, gridArea.second.rowEndLine };
+    });
+    return collapsedTracksList(explicitGridTrackSizes.rowAutoRepeatTracksIndexes, leadingImplicitTracks.rowsCount, rowSpans);
+}
+
 GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto logicalGridItems = constructLogicalGridItems(root());
@@ -250,13 +291,16 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
 
-    GridLayoutState layoutState { layoutConstraints, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
-
     // https://drafts.csswg.org/css-grid-1/#layout-algorithm
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
     auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount());
 
-    auto placedGridItems = constructPlacedGridItems(gridItemPlacementResult.gridAreas);
+    auto& gridAreas = gridItemPlacementResult.gridAreas;
+    auto collapsedColumnTracks = gridStyle->gridTemplateColumns().autoRepeatType == AutoRepeatType::Fit ? collapsedColumnTracksList(gridDefinition.explicitGridTrackSizes, leadingImplicitTracks, gridAreas) : BitVector { };
+    auto collapsedRowTracks = gridStyle->gridTemplateRows().autoRepeatType == AutoRepeatType::Fit ? collapsedRowTracksList(gridDefinition.explicitGridTrackSizes, leadingImplicitTracks, gridAreas) : BitVector { };
+    GridLayoutState layoutState { layoutConstraints, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap, WTF::move(collapsedColumnTracks), WTF::move(collapsedRowTracks) };
+
+    auto placedGridItems = constructPlacedGridItems(gridAreas);
     auto columnTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.columnsCount, leadingImplicitTracks.columnsCount, gridDefinition.explicitGridTrackSizes.columnTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
     auto rowTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.rowsCount, leadingImplicitTracks.rowsCount, gridDefinition.explicitGridTrackSizes.rowTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
 
@@ -402,15 +446,18 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
     // The placement does not depend on the axis constraints, so it is shared by both intrinsic sizing scenarios.
     auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount());
+    auto& gridAreas = gridItemPlacementResult.gridAreas;
+    auto collapsedColumnTracks = gridStyle->gridTemplateColumns().autoRepeatType == AutoRepeatType::Fit ? collapsedColumnTracksList(gridDefinition.explicitGridTrackSizes, leadingImplicitTracks, gridAreas) : BitVector { };
+    auto collapsedRowTracks = gridStyle->gridTemplateRows().autoRepeatType == AutoRepeatType::Fit ? collapsedRowTracksList(gridDefinition.explicitGridTrackSizes, leadingImplicitTracks, gridAreas) : BitVector { };
 
     auto columnSizesForConstraint = [&](AxisConstraint intrinsicConstraint) -> TrackSizes {
         GridLayoutConstraints layoutConstraints {
             .inlineAxis = intrinsicConstraint,
             .blockAxis = intrinsicConstraint
         };
-        GridLayoutState layoutState { layoutConstraints, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
+        GridLayoutState layoutState { layoutConstraints, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap, collapsedColumnTracks, collapsedRowTracks };
 
-        auto placedGridItems = constructPlacedGridItems(gridItemPlacementResult.gridAreas);
+        auto placedGridItems = constructPlacedGridItems(gridAreas);
         auto columnTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.columnsCount, leadingImplicitTracks.columnsCount, gridDefinition.explicitGridTrackSizes.columnTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
         auto rowTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.rowsCount, leadingImplicitTracks.rowsCount, gridDefinition.explicitGridTrackSizes.rowTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
 

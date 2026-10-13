@@ -37,6 +37,8 @@ struct GridLayoutState {
     const StyleContentAlignmentData usedAlignContent;
     const LayoutUnit usedColumnGap;
     const LayoutUnit usedRowGap;
+    const BitVector collapsedColumnTracksList;
+    const BitVector collapsedRowTracksList;
 };
 
 } // namespace Layout

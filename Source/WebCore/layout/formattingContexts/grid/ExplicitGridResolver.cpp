@@ -63,7 +63,7 @@ static Vector<Style::GridTrackSize> trackSizesWithAutoRepetitions(const Style::G
 ExplicitGridResolver::ResolveTrackSizesResult ExplicitGridResolver::resolveTrackSizes(const Style::GridTemplateList& gridTemplateList, const AutoRepeatConstraint& autoRepeatConstraint, LayoutUnit usedGap, Style::ZoomFactor zoom)
 {
     auto& autoRepeatSizes = gridTemplateList.autoRepeatSizes;
-    if (gridTemplateList.autoRepeatType != AutoRepeatType::Fill || autoRepeatSizes.isEmpty())
+    if (gridTemplateList.autoRepeatType == AutoRepeatType::None || autoRepeatSizes.isEmpty())
         return { gridTemplateList.sizes, { } };
 
     auto repetitionCount = AutoRepeatResolver::resolveRepetitions(gridTemplateList, autoRepeatConstraint, usedGap, zoom);
