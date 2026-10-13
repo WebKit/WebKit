@@ -318,7 +318,6 @@ private:
     Vector<LayoutUnit> m_rowPositions;
     ContentAlignmentData m_offsetBetweenColumns;
     ContentAlignmentData m_offsetBetweenRows;
-    LayoutUnit m_gridLanesContentSizeForWebInspectorOverlay;
 
     // Cached resolved value of grid-template-columns / grid-template-rows (see computeResolvedTrackList).
     // Invalidated when a full (non-simplified) layout begins and repopulated at the end of that layout,
@@ -343,6 +342,7 @@ private:
 
     bool layoutUsingGridFormattingContext();
 
+    LayoutUnit m_gridLanesContentSizeForWebInspectorOverlay;
     std::optional<bool> m_hasGridFormattingContextLayout;
 
     mutable bool m_isComputingTrackSizes { false };
