@@ -61,7 +61,6 @@
 
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/Allowlist.h>
-#include <WebCore/BidiContext.h>
 #include <WebCore/BoundaryPoint.h>
 #include <WebCore/CSSCalcSymbolTable.h>
 #include <WebCore/CSSGridAutoFlow.h>

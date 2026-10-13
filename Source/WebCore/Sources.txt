@@ -3001,7 +3001,6 @@ platform/sql/SQLiteFileSystem.cpp
 platform/sql/SQLiteStatement.cpp
 platform/sql/SQLiteStatementAutoResetScope.cpp
 platform/sql/SQLiteTransaction.cpp
-platform/text/BidiContext.cpp
 platform/text/DateTimeFormat.cpp
 platform/text/LocaleToScriptMapping.cpp
 platform/text/PlatformLocale.cpp
