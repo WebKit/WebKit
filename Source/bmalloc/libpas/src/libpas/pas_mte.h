@@ -860,12 +860,25 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
 // we don't have an equivalent for realloc yet, we do our own malloc + copy +
 // free sequence instead.
 
+inline __attribute__((always_inline)) bool pas_mte_system_heap_round_up_size_for_alignment(size_t alignment, size_t* size)
+{
+    if (!alignment)
+        return true;
+    if (*size > SIZE_MAX - (alignment - 1))
+        return false;
+    *size = pas_round_up_to_power_of_2(*size, alignment);
+    return true;
+}
+
 // Allowed argument values (as dictated by malloc_zone_malloc_with_options_np):
 //  - alignment: 0 for unaligned, or a power of 2 >= sizeof(void*).
-//  - size: any if alignment == 0, a multiple of the alignment otherwise.
-
+//  - size: any
+// If the size is not a multiple of the alignment as expected by
+// malloc_zone_malloc_with_options_np, we round up the size to make it happy.
 inline __attribute__((always_inline)) void* pas_mte_system_heap_malloc_zero_tagged(malloc_zone_t* zone, size_t alignment, size_t size)
 {
+    if (!pas_mte_system_heap_round_up_size_for_alignment(alignment, &size))
+        return NULL;
 PAS_IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     return malloc_zone_malloc_with_options_np(zone, alignment, size, MALLOC_NP_OPTION_CANONICAL_TAG);
 PAS_IGNORE_WARNINGS_END
@@ -873,6 +886,8 @@ PAS_IGNORE_WARNINGS_END
 
 inline __attribute__((always_inline)) void* pas_mte_system_heap_zeroed_malloc_zero_tagged(malloc_zone_t* zone, size_t alignment, size_t size)
 {
+    if (!pas_mte_system_heap_round_up_size_for_alignment(alignment, &size))
+        return NULL;
 PAS_IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     return malloc_zone_malloc_with_options_np(zone, alignment, size, (malloc_options_np_t)(MALLOC_NP_OPTION_CANONICAL_TAG | MALLOC_NP_OPTION_CLEAR));
 PAS_IGNORE_WARNINGS_END
