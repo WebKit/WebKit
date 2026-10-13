@@ -9,3 +9,14 @@ PASS: Normal snapshot title should not be set.
 PASS: Imported snapshot is imported.
 PASS: Imported snapshot title should be set.
 
+-- Running test case: HeapSnapshot.imported.TimelineExport
+PASS: An imported snapshot should serialize without an inspected target.
+PASS: Export should preserve the original imported snapshot title.
+PASS: An unknown snapshot timestamp should serialize as null.
+PASS: Export should preserve the original snapshot data.
+PASS: The snapshot should still be imported after a recording round trip.
+PASS: The imported record should restore its unknown timestamp.
+PASS: Import should preserve the original snapshot title.
+PASS: Repeated export should not add another Imported Snapshot prefix.
+PASS: Repeated export should preserve snapshot data.
+

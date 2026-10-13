@@ -29,8 +29,8 @@ WI.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends W
     {
         super(WI.TimelineRecord.Type.HeapAllocations, timestamp, timestamp);
 
-        console.assert(typeof timestamp === "number");
-        console.assert(heapSnapshot instanceof WI.HeapSnapshotProxy);
+        console.assert(typeof timestamp === "number", timestamp);
+        console.assert(heapSnapshot instanceof WI.HeapSnapshotProxy, heapSnapshot);
 
         this._timestamp = timestamp;
         this._heapSnapshot = heapSnapshot;
@@ -51,7 +51,7 @@ WI.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends W
             workerProxy.createImportedSnapshot(snapshotStringData, title, ({objectId, snapshot: serializedSnapshot}) => {
                 let snapshot = WI.HeapSnapshotProxy.deserialize(target ? WI.ImportedTarget.import(target) : null, objectId, serializedSnapshot);
                 snapshot.snapshotStringData = snapshotStringData;
-                resolve(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
+                resolve(new WI.HeapAllocationsTimelineRecord(timestamp ?? NaN, snapshot));
             });
         });
     }
@@ -59,10 +59,10 @@ WI.HeapAllocationsTimelineRecord = class HeapAllocationsTimelineRecord extends W
     toJSON()
     {
         return {
-            target: this._heapSnapshot.target.exportData(),
+            target: this._heapSnapshot.target?.exportData(),
             type: this.type,
             timestamp: this._timestamp,
-            title: WI.TimelineTabContentView.displayNameForRecord(this),
+            title: this._heapSnapshot.imported ? this._heapSnapshot.title : WI.TimelineTabContentView.displayNameForRecord(this),
             snapshotStringData: this._heapSnapshot.snapshotStringData,
         };
     }

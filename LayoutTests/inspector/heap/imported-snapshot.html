@@ -6,6 +6,7 @@
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("HeapSnapshot.imported");
+    let importedSnapshot;
 
     suite.addTestCase({
         name: "HeapSnapshot.imported",
@@ -21,7 +22,7 @@ function test()
                     snapshot.snapshotStringData = snapshotStringData;
                     workerProxy.createImportedSnapshot(snapshotStringData, importedTitle, ({objectId, snapshot: serializedSnapshot}) => {
                         const target = null;
-                        let importedSnapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+                        importedSnapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
                         importedSnapshot.snapshotStringData = snapshotStringData;
 
                         InspectorTest.expectFalse(snapshot.imported, "Normal snapshot is not imported.");
@@ -33,6 +34,26 @@ function test()
                 });
             });
         }
+    });
+
+    suite.addTestCase({
+        name: "HeapSnapshot.imported.TimelineExport",
+        async test() {
+            let record = new WI.HeapAllocationsTimelineRecord(NaN, importedSnapshot);
+            let exported = JSON.parse(JSON.stringify(record));
+            InspectorTest.expectFalse("target" in exported, "An imported snapshot should serialize without an inspected target.");
+            InspectorTest.expectEqual(exported.title, importedSnapshot.title, "Export should preserve the original imported snapshot title.");
+            InspectorTest.expectNull(exported.timestamp, "An unknown snapshot timestamp should serialize as null.");
+            InspectorTest.expectTrue(exported.snapshotStringData === importedSnapshot.snapshotStringData, "Export should preserve the original snapshot data.");
+
+            let importedRecord = await WI.HeapAllocationsTimelineRecord.fromJSON(exported);
+            InspectorTest.expectTrue(importedRecord.heapSnapshot.imported, "The snapshot should still be imported after a recording round trip.");
+            InspectorTest.expectTrue(Number.isNaN(importedRecord.timestamp), "The imported record should restore its unknown timestamp.");
+            InspectorTest.expectEqual(importedRecord.heapSnapshot.title, importedSnapshot.title, "Import should preserve the original snapshot title.");
+            let secondExport = JSON.parse(JSON.stringify(importedRecord));
+            InspectorTest.expectEqual(secondExport.title, exported.title, "Repeated export should not add another Imported Snapshot prefix.");
+            InspectorTest.expectTrue(secondExport.snapshotStringData === exported.snapshotStringData, "Repeated export should preserve snapshot data.");
+        },
     });
 
     suite.runTestCasesAndFinish();
