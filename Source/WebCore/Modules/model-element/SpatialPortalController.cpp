@@ -528,8 +528,7 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
 #endif
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    if (m_presentationMode == ModelPresentationMode::Volumetric)
-        page->chrome().client().reconnectVolumetricSceneForElement(*element);
+    m_needsVolumetricSceneReconnection = m_presentationMode == ModelPresentationMode::Volumetric;
 #endif
 
     return m_modelPlayer.get();
@@ -817,6 +816,9 @@ void SpatialPortalController::deleteModelPlayer()
 
     m_lastPushedContentSize = std::nullopt;
     m_resolvedPortalTransform = std::nullopt;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    m_needsVolumetricSceneReconnection = false;
+#endif
 }
 
 void SpatialPortalController::unloadChildModel(NodeIdentifier nodeID)
@@ -938,7 +940,7 @@ void SpatialPortalController::sizeMayHaveChanged()
     player->sizeDidChange(size);
 }
 
-void SpatialPortalController::modelDidFinishLoading(ModelPlayer&, NodeIdentifier nodeID)
+void SpatialPortalController::modelDidFinishLoading(ModelPlayer& player, NodeIdentifier nodeID)
 {
     RefPtr child = hostedModelElement(nodeID);
     if (!child)
@@ -947,6 +949,26 @@ void SpatialPortalController::modelDidFinishLoading(ModelPlayer&, NodeIdentifier
     child->didFinishLoadingInsidePortal();
 
     reconfigurePortalLayer();
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (&player != m_modelPlayer)
+        return;
+
+    if (!std::exchange(m_needsVolumetricSceneReconnection, false))
+        return;
+
+    if (m_presentationMode != ModelPresentationMode::Volumetric)
+        return;
+
+    RefPtr element = m_portalElement.get();
+    if (!element)
+        return;
+
+    if (RefPtr page = element->document().page())
+        page->chrome().client().reconnectVolumetricSceneForElement(*element);
+#else
+    UNUSED_PARAM(player);
+#endif
 }
 
 void SpatialPortalController::modelDidFailLoading(ModelPlayer&, NodeIdentifier nodeID, const ResourceError& error)

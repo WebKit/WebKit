@@ -225,6 +225,7 @@ private:
 #endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     ModelPresentationMode m_presentationMode { ModelPresentationMode::Inline };
+    bool m_needsVolumetricSceneReconnection { false };
 #endif
     bool m_anchorUpdateScheduled { false };
     bool m_handlesGesture { false };
