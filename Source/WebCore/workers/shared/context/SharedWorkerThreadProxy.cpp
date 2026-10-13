@@ -74,6 +74,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         document.url(),
         workerOptions.name,
         makeString("sharedworker:"_s, Inspector::IdentifiersFactory::createIdentifier()),
+        { }, // inspectorBootstrapScript
         WTF::move(initializationData.userAgent),
         platformStrategies()->loaderStrategy()->isOnLine(),
         workerFetchResult.contentSecurityPolicy,

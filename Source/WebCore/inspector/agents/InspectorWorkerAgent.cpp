@@ -85,6 +85,13 @@ Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
     return { };
 }
 
+Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::setBootstrapScript(const String& source)
+{
+    m_bootstrapScript = source;
+
+    return { };
+}
+
 Inspector::Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
 {
     RefPtr proxy = m_connectedProxies.get(workerId);

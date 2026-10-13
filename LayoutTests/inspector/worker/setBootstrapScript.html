@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/worker-utilities.js"></script>
+<script>
+let existingWorker = new Worker("resources/bootstrap-worker.js", {name: "existing-bootstrap-worker"});
+
+function requestWorkerValues(type, depth, useExistingWorker)
+{
+    let worker = useExistingWorker ? existingWorker : new Worker(type === "module" ? "resources/bootstrap-worker-module.js" : "resources/bootstrap-worker.js", {type});
+    worker.addEventListener("message", (event) => {
+        if (!useExistingWorker)
+            worker.terminate();
+        TestPage.dispatchEventToFrontend("TestPage-bootstrapWorkerValues", event.data);
+    }, {once: true});
+    worker.postMessage({type, depth});
+}
+
+async function test()
+{
+    let existingWorkerTarget = await window.awaitTarget((target) => target instanceof WI.WorkerTarget && target.displayName === "existing-bootstrap-worker");
+    let suite = InspectorTest.createAsyncSuite("Worker.setBootstrapScript");
+
+    function bootstrapScriptSource(value)
+    {
+        return `self.valueFromBootstrapScript = ${value}; self.bootstrapScriptExecutionCount = (self.bootstrapScriptExecutionCount || 0) + 1;`;
+    }
+
+    async function checkWorkers(type, depth, expectedValues, useExistingWorker = false)
+    {
+        let [event] = await Promise.all([
+            InspectorTest.awaitEvent("TestPage-bootstrapWorkerValues"),
+            InspectorTest.evaluateInPage(`requestWorkerValues(${JSON.stringify(type)}, ${depth}, ${useExistingWorker})`),
+        ]);
+
+        InspectorTest.expectEqual(event.data.length, expectedValues.length, "Should report each worker.");
+        for (let index = 0; index < expectedValues.length; ++index) {
+            let values = event.data[index];
+            let expectedValue = expectedValues[index];
+            InspectorTest.expectEqual(values?.valueFromBootstrapScript, expectedValue, `Worker ${index} should observe bootstrap value ${expectedValue} before its script runs.`);
+            InspectorTest.expectEqual(values?.executionCount, expectedValue === undefined ? 0 : 1, `Worker ${index} should run the bootstrap script ${expectedValue === undefined ? "zero times" : "exactly once"}.`);
+        }
+    }
+
+    suite.addTestCase({
+        name: "Page.setBootstrapScript.ClassicWorker",
+        description: "The bootstrap script runs before the main script of a classic worker.",
+        async test() {
+            InspectorTest.assert(!WI.networkManager.bootstrapScript, "Should not already have a bootstrap script.");
+            await WI.networkManager.createBootstrapScript(bootstrapScriptSource(42));
+            WI.networkManager.bootstrapScriptEnabled = true;
+
+            await checkWorkers("classic", 0, [42]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.setBootstrapScript.ModuleWorker",
+        description: "The bootstrap script runs before an imported module of a module worker.",
+        async test() {
+            await checkWorkers("module", 0, [42]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.NestedClassicWorkers",
+        description: "The bootstrap script runs in each level of nested classic workers.",
+        async test() {
+            await checkWorkers("classic", 2, [42, 42, 42]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.NestedModuleWorkers",
+        description: "The bootstrap script runs in each level of nested module workers.",
+        async test() {
+            await checkWorkers("module", 2, [42, 42, 42]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.ExistingWorker",
+        description: "Setting a bootstrap script affects future children, not the existing worker.",
+        async test() {
+            await existingWorkerTarget.WorkerAgent.setBootstrapScript(bootstrapScriptSource(84));
+            let {result} = await existingWorkerTarget.RuntimeAgent.evaluate("self.valueFromBootstrapScript");
+            InspectorTest.expectEqual(result.type, "undefined", "Setting a bootstrap script should not execute it in an existing worker.");
+
+            await checkWorkers("classic", 1, [undefined, 84], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.EmptySource",
+        description: "An empty source stops injection into future child workers.",
+        async test() {
+            await existingWorkerTarget.WorkerAgent.setBootstrapScript("");
+            await checkWorkers("classic", 1, [undefined, undefined], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.Cleared",
+        description: "Omitting the source stops injection into future child workers.",
+        async test() {
+            await existingWorkerTarget.WorkerAgent.setBootstrapScript(bootstrapScriptSource(84));
+            await existingWorkerTarget.WorkerAgent.setBootstrapScript();
+            await checkWorkers("classic", 1, [undefined, undefined], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.ContentChanged",
+        description: "Editing the bootstrap script updates new workers and children of existing workers.",
+        async test() {
+            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(bootstrapScriptSource(84));
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+
+            await checkWorkers("classic", 2, [84, 84, 84]);
+            await checkWorkers("classic", 1, [undefined, 84], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.Disabled",
+        description: "Disabling the bootstrap script stops injection into new and nested workers.",
+        async test() {
+            WI.networkManager.bootstrapScriptEnabled = false;
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+
+            await checkWorkers("classic", 0, [undefined]);
+            await checkWorkers("classic", 2, [undefined, undefined, undefined], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.Enabled",
+        description: "Enabling the bootstrap script restores injection into nested workers.",
+        async test() {
+            WI.networkManager.bootstrapScriptEnabled = true;
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+
+            await checkWorkers("module", 2, [84, 84, 84]);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.EmptyContent",
+        description: "Emptying the bootstrap script stops injection into new and nested workers.",
+        async test() {
+            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent("");
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+
+            await checkWorkers("module", 0, [undefined]);
+            await checkWorkers("classic", 2, [undefined, undefined, undefined], true);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Worker.setBootstrapScript.Destroyed",
+        description: "Removing the bootstrap script stops injection into new and nested workers.",
+        async test() {
+            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(bootstrapScriptSource(126));
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+            WI.networkManager.destroyBootstrapScript();
+            await existingWorkerTarget.RuntimeAgent.evaluate("void 0");
+
+            await checkWorkers("classic", 0, [undefined]);
+            await checkWorkers("module", 2, [undefined, undefined, undefined], true);
+            await InspectorTest.evaluateInPage("existingWorker.terminate()");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Inspector Bootstrap Scripts in dedicated workers.</p>
+</body>
+</html>
