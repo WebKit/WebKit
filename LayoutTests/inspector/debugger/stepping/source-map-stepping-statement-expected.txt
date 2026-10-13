@@ -1,0 +1,60 @@
+Checking that debugger stepping distinguishes original statements from original lines when following source maps.
+
+
+== Running test suite: Debugger.SourceMapStepping.Statement
+-- Running test case: Debugger.SourceMapStepping.Statement.TwoStatementsOneLine
+PAUSE AT twoStatementsOneLine:8:5
+      4        return 2;
+      5    }
+      6    function twoStatementsOneLine() {
+ ->   7        |debugger;
+      8        a(); b();
+      9    }
+     10    function oneStatementOneLine() {
+
+ACTION: step-next
+PAUSE AT twoStatementsOneLine:9:5
+      5    }
+      6    function twoStatementsOneLine() {
+      7        debugger;
+ ->   8        |a(); b();
+      9    }
+     10    function oneStatementOneLine() {
+     11        debugger;
+
+ACTION: step-next
+PAUSE AT twoStatementsOneLine:9:10
+      5    }
+      6    function twoStatementsOneLine() {
+      7        debugger;
+ ->   8        a(); |b();
+      9    }
+     10    function oneStatementOneLine() {
+     11        debugger;
+
+ACTION: step-next
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Statement.OneStatementOneLine
+PAUSE AT oneStatementOneLine:12:5
+      8        a(); b();
+      9    }
+     10    function oneStatementOneLine() {
+ ->  11        |debugger;
+     12        a() + b();
+     13    }
+     14    window.twoStatementsOneLine = twoStatementsOneLine;
+
+ACTION: step-next
+PAUSE AT oneStatementOneLine:13:5
+      9    }
+     10    function oneStatementOneLine() {
+     11        debugger;
+ ->  12        |a() + b();
+     13    }
+     14    window.twoStatementsOneLine = twoStatementsOneLine;
+     15    window.oneStatementOneLine = oneStatementOneLine;
+
+ACTION: step-next
+RESUMED
+

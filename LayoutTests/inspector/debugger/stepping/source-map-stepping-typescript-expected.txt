@@ -1,0 +1,153 @@
+Checking source map stepping through a non-JavaScript (TypeScript) original, which coalesces by original line since it cannot be parsed into statements.
+
+
+== Running test suite: Debugger.SourceMapStepping.TypeScript
+-- Running test case: Debugger.SourceMapStepping.TypeScript.Coalesce.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT compute:2:5
+      0    function compute(value: number): number {
+ ->   1        |debugger;
+      2        log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+
+ACTION: step-over
+PAUSE AT compute:3:5
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        |log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: step-over
+PAUSE AT compute:3:5
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        |log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: step-over
+PAUSE AT compute:3:17
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        log(value); |log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: step-over
+PAUSE AT compute:4:12
+      0    function compute(value: number): number {
+      1        debugger;
+      2        log(value); log(value + 1);
+ ->   3        return |value * 2;
+      4    }
+      5
+      6    function log(value: number): void {
+
+ACTION: step-over
+PAUSE AT compute:7:1
+      3        return value * 2;
+      4    }
+      5
+ ->   6    |function log(value: number): void {
+      7        (self as any).sink = value;
+      8    }
+      9
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:28
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.TypeScript.Coalesce.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT compute:2:5
+      0    function compute(value: number): number {
+ ->   1        |debugger;
+      2        log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+
+ACTION: step-over
+PAUSE AT compute:3:5
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        |log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: step-over
+PAUSE AT compute:4:12
+      0    function compute(value: number): number {
+      1        debugger;
+      2        log(value); log(value + 1);
+ ->   3        return |value * 2;
+      4    }
+      5
+      6    function log(value: number): void {
+
+ACTION: step-over
+PAUSE AT compute:7:1
+      3        return value * 2;
+      4    }
+      5
+ ->   6    |function log(value: number): void {
+      7        (self as any).sink = value;
+      8    }
+      9
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:28
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+PASS: Each original line should be surfaced at most once.
+
+-- Running test case: Debugger.SourceMapStepping.TypeScript.StepInto
+SOURCE MAP STEPPING: enabled
+PAUSE AT compute:2:5
+      0    function compute(value: number): number {
+ ->   1        |debugger;
+      2        log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+
+ACTION: step-over
+PAUSE AT compute:3:5
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        |log(value); log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: step-in
+PAUSE AT log:8:6
+      4    }
+      5
+      6    function log(value: number): void {
+ ->   7        (|self as any).sink = value;
+      8    }
+      9
+     10    (self as any).compute = compute;
+
+ACTION: step-out
+PAUSE AT compute:3:17
+      0    function compute(value: number): number {
+      1        debugger;
+ ->   2        log(value); |log(value + 1);
+      3        return value * 2;
+      4    }
+      5
+
+ACTION: resume
+RESUMED
+

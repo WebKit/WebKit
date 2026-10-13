@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["minified.js"],
+  "sourcesContent": ["const RATE = 10;\n\nfunction helper(v) {\n    return v + 1;\n}\n\nfunction inlined(n) {\n    debugger;\n    let a = helper(n);\n    let b = helper(a);\n    return a + b;\n}\n\nfunction constants(n) {\n    debugger;\n    let scaled = n * RATE;\n    return scaled;\n}\n\nfunction sequencing(n) {\n    debugger;\n    step(n);\n    step(n);\n    step(n);\n}\n\nfunction conditional(n) {\n    debugger;\n    if (n) step(n);\n    return n;\n}\n\nfunction step(v) { window.sink = v; }\n\nglobalThis.inlined = inlined;\nglobalThis.constants = constants;\nglobalThis.sequencing = sequencing;\nglobalThis.conditional = conditional;\n"],
+  "mappings": "AAAA,MAAM,KAAO,GAEb,SAAS,OAAOA,EAAG,CACf,OAAOA,EAAI,CACf,CAEA,SAAS,QAAQ,EAAG,CAChB,SACA,IAAIC,EAAI,OAAO,CAAC,EACZC,EAAI,OAAOD,CAAC,EAChB,OAAOA,EAAIC,CACf,CAEA,SAAS,UAAU,EAAG,CAClB,SAEA,OADa,EAAI,EAErB,CAEA,SAAS,WAAW,EAAG,CACnB,SACA,KAAK,CAAC,EACN,KAAK,CAAC,EACN,KAAK,CAAC,CACV,CAEA,SAAS,YAAY,EAAG,CACpB,SACA,OAAI,GAAG,KAAK,CAAC,EACN,CACX,CAEA,SAAS,KAAKF,EAAG,CAAE,OAAO,KAAOA,CAAG,CAEpC,WAAW,QAAU,QACrB,WAAW,UAAY,UACvB,WAAW,WAAa,WACxB,WAAW,YAAc",
+  "names": ["v", "a", "b"]
+}

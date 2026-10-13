@@ -35,6 +35,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         this._sourceMap = sourceMap;
         this._inlineContent = inlineContent || null;
         this._ignored = ignored || false;
+        this._statementBoundaryPositions = null;
 
         var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WI.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
@@ -204,5 +205,51 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         var startSourceCodeLocation = this.createSourceCodeLocation(textRange.startLine, textRange.startColumn);
         var endSourceCodeLocation = this.createSourceCodeLocation(textRange.endLine, textRange.endColumn);
         return new WI.SourceCodeTextRange(this._sourceMap.originalSourceCode, startSourceCodeLocation, endSourceCodeLocation);
+    }
+
+    get statementBoundaryPositions()
+    {
+        return this._statementBoundaryPositions;
+    }
+
+    updateStatementBoundaryPositionsIfNeeded()
+    {
+        if (this._statementBoundaryPositions)
+            return;
+
+        this._statementBoundaryPositions = [];
+
+        if (this.mimeType !== "text/javascript" && this.mimeType !== "text/jsx")
+            return;
+
+        this.requestScriptSyntaxTree((syntaxTree) => {
+            if (!syntaxTree?.parsedSuccessfully)
+                return;
+
+            let boundaries = [];
+            syntaxTree.forEachNode((node) => {
+                if (!WI.ScriptSyntaxTree.BoundaryNodeTypes.has(node.type))
+                    return;
+
+                let position = node.startPosition;
+                if (!position)
+                    return;
+
+                let index = insertionIndexForObjectInListSortedByFunction(position, boundaries, WI.SourceCodePosition.compare);
+                if (index >= boundaries.length || !position.equals(boundaries[index]))
+                    boundaries.splice(index, 0, position);
+            });
+            this._statementBoundaryPositions = boundaries;
+        });
+    }
+
+    // Protected
+
+    sourceTypeForScriptSyntaxTree()
+    {
+        // Most tools that produce source maps almost always use modules,
+        // which are (mostly) a superset of classic-script parsing,
+        // so maximize the chance the original content parses successfully.
+        return WI.Script.SourceType.Module;
     }
 };
