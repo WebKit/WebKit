@@ -29,6 +29,7 @@
 #include <WebCore/JSNode.h>
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
 
@@ -50,6 +51,12 @@ enum {
 
 static std::array<unsigned, LAST_SIGNAL> signals;
 
+#if ENABLE(FUTURE_GLIB_API)
+struct _WebKitWebFormManagerPrivate {
+};
+
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebFormManager, webkit_web_form_manager, G_TYPE_OBJECT, GObject)
+#else
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
 G_DEFINE_TYPE(WebKitWebFormManager, webkit_web_form_manager, G_TYPE_OBJECT)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -57,6 +64,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 static void webkit_web_form_manager_init(WebKitWebFormManager*)
 {
 }
+#endif
 
 static void webkit_web_form_manager_class_init(WebKitWebFormManagerClass* klass)
 {

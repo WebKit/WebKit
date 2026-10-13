@@ -120,6 +120,7 @@ WEBKIT_OPTION_DEFINE(USE_SKIA_OPENTYPE_SVG "Whether to use the Skia built-in sup
 WEBKIT_OPTION_DEFINE(USE_VULKAN "Whether to build support to use Vulkan." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 
 # Private options specific to the WPE port.
+WEBKIT_OPTION_DEFINE(ENABLE_FUTURE_GLIB_API "Whether to build public API changes intended for a future API version." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_EXTERNAL_HOLEPUNCH "Whether to enable external holepunch" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_OPENSSL "Whether to use OpenSSL instead of libgcrypt as the crypto backend." PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_SPIEL "Whether to enable usage of LibSpiel for speech synthesis." PRIVATE OFF)

@@ -63,6 +63,7 @@ GENERATE_GLIB_API_HEADERS(JavaScriptCore JavaScriptCore_HEADER_TEMPLATES
     ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc
     JavaScriptCore_INSTALLED_HEADERS
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
+    "-DENABLE_FUTURE_GLIB_API=$<BOOL:${ENABLE_FUTURE_GLIB_API}>"
 )
 
 configure_file(API/glib/JSCVersion.h.in ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h)

@@ -29,6 +29,10 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_FORM_MANAGER            (webkit_web_form_manager_get_type())
+
+#if ENABLE(FUTURE_GLIB_API)
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebFormManager, webkit_web_form_manager, WEBKIT, WEB_FORM_MANAGER, GObject)
+#else
 #define WEBKIT_WEB_FORM_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_FORM_MANAGER, WebKitWebFormManager))
 #define WEBKIT_IS_WEB_FORM_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_FORM_MANAGER))
 #define WEBKIT_WEB_FORM_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_FORM_MANAGER, WebKitWebFormManagerClass))
@@ -48,6 +52,7 @@ struct _WebKitWebFormManagerClass {
 
 WEBKIT_API GType
 webkit_web_form_manager_get_type                     (void);
+#endif
 
 WEBKIT_API gboolean
 webkit_web_form_manager_input_element_is_user_edited (JSCValue             *element);
