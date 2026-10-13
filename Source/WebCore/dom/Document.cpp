@@ -3489,6 +3489,7 @@ void Document::fontsNeedUpdate(FontSelector&)
 {
     ASSERT(!deletionHasBegun());
     invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+    InspectorInstrumentation::fontDataChanged(*this);
 }
 
 void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()

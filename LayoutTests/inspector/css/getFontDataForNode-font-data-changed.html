@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let inMemoryFontFace;
+
+async function prepareInMemoryFont(eventName)
+{
+    let inMemoryFontData = await fetch("../../resources/Ahem.otf").then((response) => response.arrayBuffer());
+    inMemoryFontFace = new FontFace("InspectorInMemory", inMemoryFontData);
+    await inMemoryFontFace.load();
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function activateInMemoryFont(eventName)
+{
+    document.fonts.add(inMemoryFontFace);
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getFontDataForNode.FontDataChanged");
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.FontDataChanged.InMemoryFontActivation",
+        description: "Activating an in-memory FontFace should invalidate cached font data without a Resource loading event.",
+        async test() {
+            const preparedEventName = "TestPage-InMemoryFontPrepared";
+            await Promise.all([
+                InspectorTest.awaitEvent(preparedEventName),
+                InspectorTest.evaluateInPage(`prepareInMemoryFont("${preparedEventName}")`),
+            ]);
+
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#in-memory-font");
+            let node = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(node, "Should find #in-memory-font.");
+
+            let nodeStyles = WI.cssManager.stylesForNode(node);
+            await nodeStyles.refresh({includeFontData: true});
+            InspectorTest.expectFalse(nodeStyles.renderedFonts.some((font) => font.name === "Ahem"), "The in-memory font should not be active initially.");
+
+            let needsRefreshPromise = nodeStyles.awaitEvent(WI.DOMNodeStyles.Event.NeedsRefresh);
+            const activatedEventName = "TestPage-InMemoryFontActivated";
+            await Promise.all([
+                needsRefreshPromise,
+                InspectorTest.awaitEvent(activatedEventName),
+                InspectorTest.evaluateInPage(`activateInMemoryFont("${activatedEventName}")`),
+            ]);
+            InspectorTest.expectTrue(nodeStyles.needsRefresh, "CSS.fontDataChanged should invalidate cached font data.");
+
+            await nodeStyles.refresh({includeFontData: true});
+            InspectorTest.expectTrue(nodeStyles.renderedFonts.some((font) => font.name === "Ahem"), "Refreshing should report the activated in-memory font.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.FontDataChanged.DescendantTextMutations",
+        description: "Text and child mutations should invalidate rendered font data even when the changed descendants are not requested.",
+        async test() {
+            await InspectorTest.evaluateInPage(`
+                let container = document.createElement("div");
+                container.id = "nested-font";
+                container.innerHTML = "<span>A</span><span>B</span>";
+                container.style.font = "20px/1 InspectorInMemory, system-ui";
+                document.body.appendChild(container);
+            `);
+
+            try {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector("#nested-font");
+                let node = WI.domManager.nodeForId(nodeId);
+                let nodeStyles = WI.cssManager.stylesForNode(node);
+                await nodeStyles.refresh({includeFontData: true});
+                InspectorTest.expectFalse(node.children, "The nested descendants should not be requested.");
+                InspectorTest.expectEqual(renderedCharacters(), "65,66", "The cached font data should contain the original text.");
+
+                function renderedCharacters() {
+                    let characters = new Set;
+                    for (let font of nodeStyles.renderedFonts) {
+                        for (let {start, end} of font.characterRanges) {
+                            for (let character = start; character <= end; ++character)
+                                characters.add(character);
+                        }
+                    }
+                    return Array.from(characters).sort((a, b) => a - b).join(",");
+                }
+
+                async function mutateText(expression) {
+                    const eventName = "TestPage-DescendantTextMutated";
+                    await Promise.all([
+                        InspectorTest.awaitEvent(eventName),
+                        InspectorTest.evaluateInPage(`${expression}; TestPage.dispatchEventToFrontend("${eventName}")`),
+                    ]);
+                    InspectorTest.expectTrue(nodeStyles.needsRefresh, "A descendant text mutation should invalidate cached font data.");
+                    await nodeStyles.refresh({includeFontData: true});
+                }
+
+                await mutateText(`document.getElementById("nested-font").firstChild.firstChild.data = "C"`);
+                InspectorTest.expectEqual(renderedCharacters(), "66,67", "Refreshing should report the changed text.");
+
+                await mutateText(`document.getElementById("nested-font").firstChild.appendChild(document.createTextNode("D"))`);
+                InspectorTest.expectEqual(renderedCharacters(), "66,67,68", "Refreshing should report the inserted text.");
+
+                await mutateText(`document.getElementById("nested-font").firstChild.lastChild.remove()`);
+                InspectorTest.expectEqual(renderedCharacters(), "66,67", "Refreshing should omit the removed text.");
+            } finally {
+                await InspectorTest.evaluateInPage(`document.getElementById("nested-font").remove()`);
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#in-memory-font {
+    font: 20px/1 InspectorInMemory, system-ui;
+}
+</style>
+</head>
+<body onload="runTest();">
+<p>Test target-wide font-data invalidation after in-memory font activation.</p>
+<span id="in-memory-font">A</span>
+</body>
+</html>
+
