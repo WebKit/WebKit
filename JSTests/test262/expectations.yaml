@@ -159,9 +159,6 @@ test/staging/sm/class/superPropOrdering.js:
   strict mode: 3
 test/staging/sm/eval/redeclared-arguments-in-param-expression-eval.js:
   default: 3
-test/staging/sm/expressions/exponentiation-unparenthesised-unary.js:
-  default: 3
-  strict mode: 3
 test/staging/sm/expressions/object-literal-computed-property-evaluation.js:
   default: 3
   strict mode: 3
@@ -170,8 +167,6 @@ test/staging/sm/extensions/function-caller-skips-eval-frames.js:
 test/staging/sm/extensions/new-cross-compartment.js:
   default: 3
   strict mode: 3
-test/staging/sm/fields/await-identifier-module-2.js:
-  module: 3
 test/staging/sm/generators/delegating-yield-1.js:
   default: 3
   strict mode: 3
@@ -196,5 +191,3 @@ test/staging/sm/lexical-environment/for-loop.js:
   strict mode: 3
 test/staging/sm/misc/future-reserved-words.js:
   default: 3
-test/staging/sm/module/await-restricted-nested.js:
-  module: 3
