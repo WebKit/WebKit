@@ -5336,11 +5336,6 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/image-orienta
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-none.html [ ImageOnlyFailure ]
 
-# Crashes
-imported/w3c/web-platform-tests/css/css-images/animation/image-slice-interpolation-math-functions-tentative.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-images/repeating-conic-gradient.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-images/tiled-conic-gradients.html [ Skip ]
-
 # Untriaged counter failures
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list-marker.html [ ImageOnlyFailure ]
