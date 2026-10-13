@@ -27,7 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import re
+
 import attr
+
+_digit_re = re.compile(r"(\d+)")
+
+
+def _natsort_key(string):
+    split = _digit_re.split(string)
+    split[1::2] = [(int(i), i) for i in split[1::2]]
+    return split
 
 
 def test_name_and_variant(test_name):
@@ -40,20 +50,26 @@ def test_name_and_variant(test_name):
     return (test_name[:idx], test_name[idx:])
 
 
+def _file_path_sort_key(test_path):
+    file_path = test_name_and_variant(test_path)[0]
+    dirname, basename = file_path.rsplit('/', 1) if '/' in file_path else ('', file_path)
+    return (_natsort_key(dirname + '/'), _natsort_key(basename))
+
+
 @attr.s(frozen=True, slots=True)
 class Test(object):
     """Data about a test and its expectations.
 
     Note that this is inherently platform specific, as expectations are platform specific."""
-    test_path = attr.ib(type=str)
-    expected_text_path = attr.ib(default=None, type=str)
-    expected_image_path = attr.ib(default=None, type=str)
-    expected_audio_path = attr.ib(default=None, type=str)
-    reference_files = attr.ib(default=None, type=list)
-    is_http_test = attr.ib(default=False, type=bool)
-    is_websocket_test = attr.ib(default=False, type=bool)
-    is_wpt_test = attr.ib(default=False, type=bool)
-    is_wpt_crash_test = attr.ib(default=False, type=bool)
+    test_path = attr.ib(type=str, order=_file_path_sort_key)
+    expected_text_path = attr.ib(default=None, type=str, order=False)
+    expected_image_path = attr.ib(default=None, type=str, order=False)
+    expected_audio_path = attr.ib(default=None, type=str, order=False)
+    reference_files = attr.ib(default=None, type=list, order=False)
+    is_http_test = attr.ib(default=False, type=bool, order=False)
+    is_websocket_test = attr.ib(default=False, type=bool, order=False)
+    is_wpt_test = attr.ib(default=False, type=bool, order=False)
+    is_wpt_crash_test = attr.ib(default=False, type=bool, order=False)
 
     @property
     def file_path(self):

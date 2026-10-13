@@ -283,7 +283,7 @@ class Manager(object):
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
         if self._options.order == 'natural':
-            tests_to_run.sort(key=lambda x: self._port.test_key(x.test_path))
+            tests_to_run.sort()
         elif self._options.order == 'random':
             random.shuffle(tests_to_run)
 
