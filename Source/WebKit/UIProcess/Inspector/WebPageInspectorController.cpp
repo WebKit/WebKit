@@ -497,6 +497,8 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
         // process in didCreateProvisionalFrame -- so the frame's initial Page.frameNavigated
         // is delivered. Re-registering here would double-count the receiver, so we only
         // release the old process. See webkit.org/b/308896.
+        if (oldProcessID != newProcessID)
+            m_pageAgent->frameSwappedOutOfProcess(frameID, oldProcessID);
     }
 }
 

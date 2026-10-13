@@ -76,6 +76,9 @@ public:
     // a WebFrameProxy is destroyed only when the frame is truly removed. See webkit.org/b/308896.
     void frameDestroyed(WebCore::FrameIdentifier);
 
+    // Retires the protocol ID the frame had in the process it left (the hosting process is part of the ID).
+    void frameSwappedOutOfProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier oldProcessID);
+
     // PageBackendDispatcherHandler
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
