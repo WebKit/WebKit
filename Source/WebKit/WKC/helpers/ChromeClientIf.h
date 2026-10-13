@@ -818,6 +818,19 @@ public:
         (void)origin; (void)title;
     }
 
+    // JavaScript Inspector protocol transport. The embedder receives outgoing
+    // DevTools Protocol JSON and can forward it to its own frontend. This bridge
+    // does not start a listener or expose an unauthenticated network endpoint.
+    virtual void sendInspectorMessageToFrontend(const WKC::String& message)
+    {
+        (void)message;
+    }
+    virtual void inspectorFrontendCountChanged(unsigned count)
+    {
+        (void)count;
+    }
+    virtual void bringInspectorFrontendToFront() { }
+
 };
 
 /*@}*/
