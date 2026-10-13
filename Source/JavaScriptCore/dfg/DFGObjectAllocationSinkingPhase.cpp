@@ -160,12 +160,12 @@ public:
     }
 
 
-    const Fields& NODELETE fields() const
+    const Fields& LEGACY_NODELETE fields() const
     {
         return m_fields;
     }
 
-    Fields& NODELETE fields()
+    Fields& LEGACY_NODELETE fields()
     {
         return m_fields;
     }
@@ -192,36 +192,36 @@ public:
         set(descriptor, nullptr);
     }
 
-    IndexingType NODELETE indexingType() const
+    IndexingType LEGACY_NODELETE indexingType() const
     {
         return m_indexingType;
     }
 
-    unsigned NODELETE length() const
+    unsigned LEGACY_NODELETE length() const
     {
         return m_initializedIndices.size();
     }
 
-    bool NODELETE isIndexInitialized(unsigned index) const
+    bool LEGACY_NODELETE isIndexInitialized(unsigned index) const
     {
         ASSERT(index < length());
         return m_initializedIndices[index];
     }
 
-    void NODELETE setIndexInitialized(unsigned index)
+    void LEGACY_NODELETE setIndexInitialized(unsigned index)
     {
         ASSERT(index < length());
         m_initializedIndices[index] = true;
     }
 
-    Allocation& NODELETE mergeInitializedIndices(const Allocation& other)
+    Allocation& LEGACY_NODELETE mergeInitializedIndices(const Allocation& other)
     {
         ASSERT(length() == other.length());
         m_initializedIndices &= other.m_initializedIndices;
         return *this;
     }
 
-    bool NODELETE hasStructures() const
+    bool LEGACY_NODELETE hasStructures() const
     {
         switch (kind()) {
         case Kind::Object:
@@ -258,61 +258,61 @@ public:
         return *this;
     }
 
-    const RegisteredStructureSet& NODELETE structures() const
+    const RegisteredStructureSet& LEGACY_NODELETE structures() const
     {
         return m_structures;
     }
 
-    const RegisteredStructureSet& NODELETE structuresForMaterialization() const
+    const RegisteredStructureSet& LEGACY_NODELETE structuresForMaterialization() const
     {
         return m_structuresForMaterialization;
     }
 
-    Node* NODELETE identifier() const { return m_identifier; }
+    Node* LEGACY_NODELETE identifier() const { return m_identifier; }
 
-    Kind NODELETE kind() const { return m_kind; }
+    Kind LEGACY_NODELETE kind() const { return m_kind; }
 
-    bool NODELETE isEscapedAllocation() const
+    bool LEGACY_NODELETE isEscapedAllocation() const
     {
         return kind() == Kind::Escaped;
     }
 
-    bool NODELETE isArrayAllocation() const
+    bool LEGACY_NODELETE isArrayAllocation() const
     {
         return m_kind == Kind::Array;
     }
 
-    bool NODELETE isObjectAllocation() const
+    bool LEGACY_NODELETE isObjectAllocation() const
     {
         return m_kind == Kind::Object;
     }
 
-    bool NODELETE isActivationAllocation() const
+    bool LEGACY_NODELETE isActivationAllocation() const
     {
         return m_kind == Kind::Activation;
     }
 
-    bool NODELETE isFunctionAllocation() const
+    bool LEGACY_NODELETE isFunctionAllocation() const
     {
         return m_kind == Kind::Function || m_kind == Kind::GeneratorFunction || m_kind == Kind::AsyncFunction || m_kind == Kind::AsyncGeneratorFunction;
     }
 
-    bool NODELETE isInternalFieldObjectAllocation() const
+    bool LEGACY_NODELETE isInternalFieldObjectAllocation() const
     {
         return m_kind == Kind::InternalFieldObject;
     }
 
-    bool NODELETE isRegExpObjectAllocation() const
+    bool LEGACY_NODELETE isRegExpObjectAllocation() const
     {
         return m_kind == Kind::RegExpObject;
     }
 
-    bool NODELETE isPromiseAllocation() const
+    bool LEGACY_NODELETE isPromiseAllocation() const
     {
         return m_kind == Kind::Promise;
     }
 
-    friend bool NODELETE operator==(const Allocation&, const Allocation&) = default;
+    friend bool LEGACY_NODELETE operator==(const Allocation&, const Allocation&) = default;
 
     void dump(PrintStream& out) const
     {
@@ -464,12 +464,12 @@ public:
     // set, the current escapees can be retrieved at any time using
     // takeEscapees(), which will clear the cached set of escapees;
     // otherwise the heap won't remember escaping allocations.
-    void NODELETE setWantEscapees()
+    void LEGACY_NODELETE setWantEscapees()
     {
         m_wantEscapees = true;
     }
 
-    UncheckedKeyHashMap<Node*, Allocation> NODELETE takeEscapees()
+    UncheckedKeyHashMap<Node*, Allocation> LEGACY_NODELETE takeEscapees()
     {
         return WTF::move(m_escapees);
     }
@@ -641,7 +641,7 @@ public:
             && m_pointers == other.m_pointers;
     }
 
-    const UncheckedKeyHashMap<Node*, Allocation>& NODELETE allocations() const
+    const UncheckedKeyHashMap<Node*, Allocation>& LEGACY_NODELETE allocations() const
     {
         return m_allocations;
     }
@@ -661,12 +661,12 @@ public:
         }
     }
 
-    bool NODELETE reached() const
+    bool LEGACY_NODELETE reached() const
     {
         return m_reached;
     }
 
-    void NODELETE setReached()
+    void LEGACY_NODELETE setReached()
     {
         m_reached = true;
     }

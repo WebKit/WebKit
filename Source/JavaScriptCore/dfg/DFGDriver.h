@@ -36,7 +36,7 @@ enum class JITCompilationMode;
 
 namespace DFG {
 
-JS_EXPORT_PRIVATE unsigned NODELETE getNumCompilations();
+JS_EXPORT_PRIVATE unsigned LEGACY_NODELETE getNumCompilations();
 
 // If the worklist is non-null, we do a concurrent compile. Otherwise we do a synchronous
 // compile. Even if we do a synchronous compile, we call the callback with the result.

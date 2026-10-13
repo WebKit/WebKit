@@ -59,7 +59,7 @@ public:
     DECLARE_VISIT_CHILDREN;
 
     uint64_t get(uint32_t) const;
-    v128_t NODELETE getVector(uint32_t) const;
+    v128_t LEGACY_NODELETE getVector(uint32_t) const;
     void set(uint32_t, uint64_t);
     void set(uint32_t, v128_t);
     const Wasm::RTT& structType() const { return gcStructure()->rtt(); }

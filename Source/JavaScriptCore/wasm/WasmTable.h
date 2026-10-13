@@ -64,7 +64,7 @@ public:
 
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Table, m_length); }
 
-    static uint32_t NODELETE allocatedLength(uint32_t length);
+    static uint32_t LEGACY_NODELETE allocatedLength(uint32_t length);
 
     JSWebAssemblyTable* owner() const { return m_owner; }
     void setOwner(JSWebAssemblyTable* owner)
@@ -79,7 +79,7 @@ public:
     bool isFuncrefTable() const { return m_type == TableElementType::Funcref; }
     Type wasmType() const { return m_wasmType; }
     Wasm::AddressType addressType() const { return m_addressType; }
-    FuncRefTable* NODELETE asFuncrefTable();
+    FuncRefTable* LEGACY_NODELETE asFuncrefTable();
 
     static bool isValidLength(uint64_t length) { return length <= maxTableEntries; }
 
@@ -98,10 +98,10 @@ public:
 protected:
     Table(uint32_t initial, std::optional<uint64_t> maximum, Type, Wasm::AddressType, TableElementType = TableElementType::Externref);
 
-    template<typename Visitor> constexpr decltype(auto) NODELETE visitDerived(Visitor&&);
+    template<typename Visitor> constexpr decltype(auto) LEGACY_NODELETE visitDerived(Visitor&&);
     template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
 
-    void NODELETE setLength(uint32_t);
+    void LEGACY_NODELETE setLength(uint32_t);
 
     bool isFixedSized() const { return m_isFixedSized; }
 
@@ -147,7 +147,7 @@ public:
 
     void setFunction(uint32_t, WebAssemblyFunctionBase*);
     void setLazy(uint32_t, JSWebAssemblyInstance* targetInstance, FunctionSpaceIndex);
-    const Function& NODELETE function(uint32_t) const;
+    const Function& LEGACY_NODELETE function(uint32_t) const;
     void copyFunction(FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     static constexpr ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }

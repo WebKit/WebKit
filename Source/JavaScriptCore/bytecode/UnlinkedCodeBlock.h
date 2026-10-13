@@ -218,8 +218,8 @@ public:
     unsigned numberOfConstantIdentifierSets() const { return m_rareData ? m_rareData->m_constantIdentifierSets.size() : 0; }
     const FixedVector<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
 
-    UnlinkedHandlerInfo* NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
-    UnlinkedHandlerInfo* NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
+    UnlinkedHandlerInfo* LEGACY_NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
+    UnlinkedHandlerInfo* LEGACY_NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
 
@@ -227,7 +227,7 @@ public:
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
 
-    const JSInstructionStream& NODELETE instructions() const;
+    const JSInstructionStream& LEGACY_NODELETE instructions() const;
     const JSInstruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
     unsigned bytecodeOffset(const JSInstruction* instruction)
     {
@@ -310,7 +310,7 @@ public:
         return PrivateBrandRequirement::None;
     }
 
-    void NODELETE dump(PrintStream&) const;
+    void LEGACY_NODELETE dump(PrintStream&) const;
 
     BytecodeLivenessAnalysis& livenessAnalysis(CodeBlock* codeBlock)
     {
@@ -356,7 +356,7 @@ public:
     bool hasIdentifier(UniquedStringImpl*);
 #endif
 
-    int32_t NODELETE thresholdForJIT(int32_t threshold);
+    int32_t LEGACY_NODELETE thresholdForJIT(int32_t threshold);
 
 protected:
     UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
@@ -440,7 +440,7 @@ public:
     struct RareData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(RareData, UnlinkedCodeBlock_RareData);
 
-        size_t NODELETE sizeInBytes(const AbstractLocker&) const;
+        size_t LEGACY_NODELETE sizeInBytes(const AbstractLocker&) const;
 
         FixedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
 

@@ -46,7 +46,7 @@ public:
         return scope;
     }
 
-    static bool NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    static bool LEGACY_NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
     

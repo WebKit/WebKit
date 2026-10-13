@@ -59,7 +59,7 @@ public:
     JS_EXPORT_PRIVATE virtual void disconnect();
     JS_EXPORT_PRIVATE virtual void discardInjectedScripts();
 
-    InjectedScriptHost& NODELETE injectedScriptHost();
+    InjectedScriptHost& LEGACY_NODELETE injectedScriptHost();
     InspectorEnvironment& inspectorEnvironment() const { return *m_environment; }
 
     JS_EXPORT_PRIVATE InjectedScript injectedScriptFor(JSC::JSGlobalObject*);

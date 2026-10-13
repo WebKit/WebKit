@@ -572,9 +572,9 @@ public:
     bool multiline() const { return m_flags.contains(Flags::Multiline); }
     bool hasIndices() const { return m_flags.contains(Flags::HasIndices); }
     bool sticky() const { return m_flags.contains(Flags::Sticky); }
-    bool NODELETE unicode() const { return m_flags.contains(Flags::Unicode); }
-    bool NODELETE unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
-    bool NODELETE eitherUnicode() const { return unicode() || unicodeSets(); }
+    bool LEGACY_NODELETE unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool LEGACY_NODELETE unicodeSets() const { return m_flags.contains(Flags::UnicodeSets); }
+    bool LEGACY_NODELETE eitherUnicode() const { return unicode() || unicodeSets(); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     std::unique_ptr<ByteDisjunction> m_body;

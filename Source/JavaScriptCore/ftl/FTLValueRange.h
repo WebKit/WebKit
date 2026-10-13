@@ -50,7 +50,7 @@ public:
     LValue begin() const { return m_begin; }
     LValue end() const { return m_end; }
     
-    void NODELETE decorateInstruction(LValue loadInstruction, unsigned rangeKind) const;
+    void LEGACY_NODELETE decorateInstruction(LValue loadInstruction, unsigned rangeKind) const;
     
 private:
     LValue m_begin;

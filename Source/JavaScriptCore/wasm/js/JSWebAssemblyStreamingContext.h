@@ -63,7 +63,7 @@ public:
 
 private:
     JSWebAssemblyStreamingContext(VM&, Structure*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&);
-    static void NODELETE destroy(JSCell*);
+    static void LEGACY_NODELETE destroy(JSCell*);
 
     WriteBarrier<JSPromise> m_promise;
     WriteBarrier<JSObject> m_importObject;

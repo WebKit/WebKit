@@ -228,12 +228,12 @@ private:
         return isWithinPowerOfTwo<power>(edge.node());
     }
 
-    static bool NODELETE mergeFlags(NodeFlags& flagsRef, NodeFlags newFlags)
+    static bool LEGACY_NODELETE mergeFlags(NodeFlags& flagsRef, NodeFlags newFlags)
     {
         return checkAndSet(flagsRef, flagsRef | newFlags);
     }
 
-    bool NODELETE mergeDefaultFlags(Node* node)
+    bool LEGACY_NODELETE mergeDefaultFlags(Node* node)
     {
         bool changed = false;
         if (node->flags() & NodeHasVarArgs) {

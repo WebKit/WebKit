@@ -135,7 +135,7 @@ public:
         void lastChanceToFinalize();
 
         BlockDirectory* directory() const;
-        Subspace* NODELETE subspace() const;
+        Subspace* LEGACY_NODELETE subspace() const;
         AlignedMemoryAllocator* alignedMemoryAllocator() const;
         JSC::Heap* heap() const;
         inline MarkedSpace* space() const;
@@ -199,7 +199,7 @@ public:
         template <typename Functor> inline IterationStatus forEachDeadCell(NOESCAPE const Functor&);
         template <typename Functor> inline IterationStatus forEachMarkedCell(NOESCAPE const Functor&);
             
-        JS_EXPORT_PRIVATE bool NODELETE areMarksStale();
+        JS_EXPORT_PRIVATE bool LEGACY_NODELETE areMarksStale();
         bool areMarksStaleForSweep();
         
         void assertMarksNotStale();
@@ -210,8 +210,8 @@ public:
         
         void removeFromDirectory();
         
-        void NODELETE didAddToDirectory(BlockDirectory*, unsigned index);
-        void NODELETE didRemoveFromDirectory();
+        void LEGACY_NODELETE didAddToDirectory(BlockDirectory*, unsigned index);
+        void LEGACY_NODELETE didRemoveFromDirectory();
         
         void* start() const LIFETIME_BOUND { return &m_block->atoms()[m_startAtom]; }
         void* end() const LIFETIME_BOUND { return &m_block->atoms()[endAtom]; }
@@ -428,7 +428,7 @@ private:
     Atom* atoms();
         
     JS_EXPORT_PRIVATE void aboutToMarkSlow(HeapVersion markingVersion, HeapCell*);
-    void NODELETE clearHasAnyMarked();
+    void LEGACY_NODELETE clearHasAnyMarked();
     
     JS_EXPORT_PRIVATE void noteMarkedSlow();
     
@@ -438,7 +438,7 @@ private:
     // FIXME: rdar://139998916
     NO_RETURN_DUE_TO_CRASH NEVER_INLINE void analyzeInvalidHandleAndCrash(AbstractLocker&, HeapCell*);
     NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void dumpInfoAndCrashForInvalidHandleV2(HeapCell*, uint64_t cellFirst8Bytes, uint64_t zeroCounts, uint64_t bitfield, uint64_t subspaceHash, VM* blockVM, VM* actualVM);
-    inline void NODELETE setupTestForDumpInfoAndCrash();
+    inline void LEGACY_NODELETE setupTestForDumpInfoAndCrash();
 };
 
 inline MarkedBlock::Header& MarkedBlock::header()

@@ -62,7 +62,7 @@ public:
         ASSERT(!!structure || (strength == WeakValue));
     }
     
-    static FrozenValue* NODELETE emptySingleton();
+    static FrozenValue* LEGACY_NODELETE emptySingleton();
     
     bool operator!() const { return !m_value; }
     

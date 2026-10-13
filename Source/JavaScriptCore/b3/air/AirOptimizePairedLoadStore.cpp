@@ -43,7 +43,7 @@ static constexpr bool verbose = false;
 static constexpr unsigned scanInstructions = 16;
 }
 
-static inline Width NODELETE accessWidth(Opcode opcode)
+static inline Width LEGACY_NODELETE accessWidth(Opcode opcode)
 {
     switch (opcode) {
     case Move:

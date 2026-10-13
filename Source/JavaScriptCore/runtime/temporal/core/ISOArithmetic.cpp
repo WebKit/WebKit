@@ -147,7 +147,7 @@ TemporalResult<ISO8601::PlainDate> isoDateAdd(const ISO8601::PlainDate& plainDat
 
 // CompareISODate — temporal_rs: IsoDate::cmp
 // https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
-int32_t NODELETE isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
+int32_t LEGACY_NODELETE isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
 {
     if (d1.year() > d2.year())
         return 1;
@@ -166,7 +166,7 @@ int32_t NODELETE isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::Pla
 
 // CompareTimeRecord — temporal_rs: IsoTime::cmp (derived Ord, src/iso.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-comparetimerecord
-int32_t NODELETE isoTimeCompare(const ISO8601::PlainTime& t1, const ISO8601::PlainTime& t2)
+int32_t LEGACY_NODELETE isoTimeCompare(const ISO8601::PlainTime& t1, const ISO8601::PlainTime& t2)
 {
     if (t1.hour() != t2.hour())
         return t1.hour() > t2.hour() ? 1 : -1;

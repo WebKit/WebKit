@@ -45,7 +45,7 @@ namespace Inspector {
 static Lock rwiQueueMutex;
 static RemoteTargetQueue* rwiQueue;
 
-static RetainPtr<CFRunLoopSourceRef>& NODELETE rwiRunLoopSource()
+static RetainPtr<CFRunLoopSourceRef>& LEGACY_NODELETE rwiRunLoopSource()
 {
     static NeverDestroyed<RetainPtr<CFRunLoopSourceRef>> source;
     return source.get();

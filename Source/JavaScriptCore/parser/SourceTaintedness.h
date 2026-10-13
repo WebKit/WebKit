@@ -83,7 +83,7 @@ public:
     constexpr SourceTaintedOrigin operator[](SourceTaintKind kind) const { return m_origins[kind]; }
     constexpr SourceTaintedOrigin& operator[](SourceTaintKind kind) LIFETIME_BOUND { return m_origins[kind]; }
 
-    bool NODELETE couldBeTainted() const
+    bool LEGACY_NODELETE couldBeTainted() const
     {
         for (auto origin : m_origins) {
             if (origin != SourceTaintedOrigin::Untainted)
@@ -92,7 +92,7 @@ public:
         return false;
     }
 
-    bool NODELETE isTainted() const
+    bool LEGACY_NODELETE isTainted() const
     {
         for (auto origin : m_origins) {
             if (origin >= SourceTaintedOrigin::IndirectlyTainted)

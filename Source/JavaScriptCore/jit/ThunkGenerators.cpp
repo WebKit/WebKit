@@ -107,7 +107,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 }
 
 template<typename TagType>
-inline void NODELETE emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)
+inline void LEGACY_NODELETE emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)
 {
 #if CPU(ARM64E)
     if (!ASSERT_ENABLED)

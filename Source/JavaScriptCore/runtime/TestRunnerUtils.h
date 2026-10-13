@@ -32,19 +32,19 @@ namespace JSC {
 class CodeBlock;
 class FunctionExecutable;
 
-JS_EXPORT_PRIVATE FunctionExecutable* NODELETE getExecutableForFunction(JSValue theFunctionValue);
+JS_EXPORT_PRIVATE FunctionExecutable* LEGACY_NODELETE getExecutableForFunction(JSValue theFunctionValue);
 JS_EXPORT_PRIVATE CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue);
 
 JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSValue function);
-JS_EXPORT_PRIVATE JSValue NODELETE setNeverInline(JSValue function);
-JS_EXPORT_PRIVATE JSValue NODELETE setNeverOptimize(JSValue function);
+JS_EXPORT_PRIVATE JSValue LEGACY_NODELETE setNeverInline(JSValue function);
+JS_EXPORT_PRIVATE JSValue LEGACY_NODELETE setNeverOptimize(JSValue function);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
 
-JS_EXPORT_PRIVATE JSValue NODELETE failNextNewCodeBlock(JSGlobalObject*);
+JS_EXPORT_PRIVATE JSValue LEGACY_NODELETE failNextNewCodeBlock(JSGlobalObject*);
 JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSGlobalObject*, CallFrame*);
 JS_EXPORT_PRIVATE JSValue setNeverInline(JSGlobalObject*, CallFrame*);
 JS_EXPORT_PRIVATE JSValue setNeverOptimize(JSGlobalObject*, CallFrame*);
-JS_EXPORT_PRIVATE JSValue NODELETE setCannotUseOSRExitFuzzing(JSGlobalObject*, CallFrame*);
+JS_EXPORT_PRIVATE JSValue LEGACY_NODELETE setCannotUseOSRExitFuzzing(JSGlobalObject*, CallFrame*);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSGlobalObject*, CallFrame*);
 
 JS_EXPORT_PRIVATE unsigned numberOfExceptionFuzzChecks();
@@ -52,7 +52,7 @@ JS_EXPORT_PRIVATE unsigned numberOfExecutableAllocationFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfStaticOSRExitFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfOSRExitFuzzChecks();
 
-JS_EXPORT_PRIVATE void NODELETE finalizeStatsAtEndOfTesting();
+JS_EXPORT_PRIVATE void LEGACY_NODELETE finalizeStatsAtEndOfTesting();
 
 JS_EXPORT_PRIVATE void waitForVMDestruction();
 

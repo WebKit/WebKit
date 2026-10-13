@@ -89,7 +89,7 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE bool NODELETE toThisNumber(JSValue thisValue, double& x)
+static ALWAYS_INLINE bool LEGACY_NODELETE toThisNumber(JSValue thisValue, double& x)
 {
     if (thisValue.isInt32()) {
         x = thisValue.asInt32();
@@ -129,7 +129,7 @@ static ALWAYS_INLINE EncodedJSValue throwVMToThisNumberError(JSGlobalObject* glo
 // fo any number of digits an IEEE number may require to represent.
 typedef char RadixBuffer[2180];
 
-static inline char* NODELETE int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
+static inline char* LEGACY_NODELETE int52ToStringWithRadix(char* startOfResultString, int64_t int52Value, unsigned radix)
 {
     bool negative = false;
     uint64_t positiveNumber = int52Value;

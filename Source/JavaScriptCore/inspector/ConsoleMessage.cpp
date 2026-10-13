@@ -185,7 +185,7 @@ void ConsoleMessage::autogenerateMetadata(JSC::JSGlobalObject* globalObject)
     }
 }
 
-static Protocol::Console::ChannelSource NODELETE messageSourceValue(MessageSource source)
+static Protocol::Console::ChannelSource LEGACY_NODELETE messageSourceValue(MessageSource source)
 {
     switch (source) {
     case MessageSource::XML: return Protocol::Console::ChannelSource::XML;
@@ -209,7 +209,7 @@ static Protocol::Console::ChannelSource NODELETE messageSourceValue(MessageSourc
     return Protocol::Console::ChannelSource::Other;
 }
 
-static Protocol::Console::ConsoleMessage::Type NODELETE messageTypeValue(MessageType type)
+static Protocol::Console::ConsoleMessage::Type LEGACY_NODELETE messageTypeValue(MessageType type)
 {
     switch (type) {
     case MessageType::Log: return Protocol::Console::ConsoleMessage::Type::Log;
@@ -230,7 +230,7 @@ static Protocol::Console::ConsoleMessage::Type NODELETE messageTypeValue(Message
     return Protocol::Console::ConsoleMessage::Type::Log;
 }
 
-static Protocol::Console::ConsoleMessage::Level NODELETE messageLevelValue(MessageLevel level)
+static Protocol::Console::ConsoleMessage::Level LEGACY_NODELETE messageLevelValue(MessageLevel level)
 {
     switch (level) {
     case MessageLevel::Log: return Protocol::Console::ConsoleMessage::Level::Log;
@@ -342,7 +342,7 @@ void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& conso
     consoleFrontendDispatcher.messageRepeatCountUpdated(m_repeatCount, timestamp.secondsSinceEpoch().value());
 }
 
-static bool NODELETE isGroupMessage(MessageType type)
+static bool LEGACY_NODELETE isGroupMessage(MessageType type)
 {
     return type == MessageType::StartGroup
         || type == MessageType::StartGroupCollapsed

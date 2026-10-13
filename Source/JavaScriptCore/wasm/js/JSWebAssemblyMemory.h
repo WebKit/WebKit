@@ -59,7 +59,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JS_EXPORT_PRIVATE void NODELETE adopt(Ref<Wasm::Memory>&&);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE adopt(Ref<Wasm::Memory>&&);
     Wasm::Memory& memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(JSGlobalObject*);
     JSArrayBuffer* toFixedLengthBuffer(JSGlobalObject*);

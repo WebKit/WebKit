@@ -82,7 +82,7 @@ private:
     IntlPluralRules(VM&, Structure*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    static Vector<String> NODELETE localeData(const String&, RelevantExtensionKey);
+    static Vector<String> LEGACY_NODELETE localeData(const String&, RelevantExtensionKey);
 
     enum class Type : bool { Cardinal, Ordinal };
 

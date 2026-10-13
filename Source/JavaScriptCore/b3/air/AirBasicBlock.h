@@ -127,7 +127,7 @@ public:
     PredecessorList& predecessors() LIFETIME_BOUND { return m_predecessors; }
 
     bool addPredecessor(BasicBlock*);
-    bool NODELETE removePredecessor(BasicBlock*);
+    bool LEGACY_NODELETE removePredecessor(BasicBlock*);
     bool replacePredecessor(BasicBlock* from, BasicBlock* to);
     bool containsPredecessor(BasicBlock* predecessor) const { return m_predecessors.contains(predecessor); }
 

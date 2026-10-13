@@ -396,7 +396,7 @@ struct AbstractValue {
     void assertIsRegistered(Graph&) const { }
 #endif
 
-    ResultType NODELETE resultType() const;
+    ResultType LEGACY_NODELETE resultType() const;
 
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
@@ -492,13 +492,13 @@ private:
     FiltrationResult fastForwardToAndFilterSlow(Graph&, AbstractValueClobberEpoch, SpeculatedType);
     
     void filterValueByType();
-    void NODELETE filterArrayModesByType();
+    void LEGACY_NODELETE filterArrayModesByType();
 
 #if !defined(NDEBUG)
     JS_EXPORT_PRIVATE void ensureCanInitializeWithZeros();
 #endif
     
-    bool NODELETE shouldBeClear() const;
+    bool LEGACY_NODELETE shouldBeClear() const;
     FiltrationResult normalizeClarity();
     FiltrationResult normalizeClarity(Graph&);
 };

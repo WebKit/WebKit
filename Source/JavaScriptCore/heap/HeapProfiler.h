@@ -42,12 +42,12 @@ public:
 
     VM& vm() const { return m_vm; }
 
-    HeapSnapshot* NODELETE mostRecentSnapshot();
+    HeapSnapshot* LEGACY_NODELETE mostRecentSnapshot();
     void appendSnapshot(std::unique_ptr<HeapSnapshot>);
     void clearSnapshots();
 
     HeapAnalyzer* activeHeapAnalyzer() const { return m_activeAnalyzer; }
-    void NODELETE setActiveHeapAnalyzer(HeapAnalyzer*);
+    void LEGACY_NODELETE setActiveHeapAnalyzer(HeapAnalyzer*);
 
 private:
     VM& m_vm;

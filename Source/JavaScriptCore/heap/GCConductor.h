@@ -37,7 +37,7 @@ enum class GCConductor : uint8_t {
     Collector
 };
 
-const char* NODELETE gcConductorShortName(GCConductor officer);
+const char* LEGACY_NODELETE gcConductorShortName(GCConductor officer);
 
 } // namespace JSC
 

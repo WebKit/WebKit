@@ -217,7 +217,7 @@ public:
     {
     }
     
-    bool NODELETE operator==(const ICEvent& other) const
+    bool LEGACY_NODELETE operator==(const ICEvent& other) const
     {
         return m_kind == other.m_kind
             && m_classInfo == other.m_classInfo
@@ -237,12 +237,12 @@ public:
     Kind kind() const { return m_kind; }
     const ClassInfo* classInfo() const { return m_classInfo; }
     
-    unsigned NODELETE hash() const
+    unsigned LEGACY_NODELETE hash() const
     {
         return static_cast<unsigned>(m_kind) + static_cast<unsigned>(m_propertyLocation) + WTF::PtrHash<const ClassInfo*>::hash(m_classInfo);
     }
     
-    bool NODELETE isHashTableDeletedValue() const
+    bool LEGACY_NODELETE isHashTableDeletedValue() const
     {
         return *this == ICEvent(WTF::HashTableDeletedValue);
     }

@@ -88,7 +88,7 @@ bool StringObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsign
     RELEASE_AND_RETURN(scope, JSObject::putByIndex(cell, globalObject, propertyName, value, shouldThrow));
 }
 
-static bool NODELETE isStringOwnProperty(JSGlobalObject* globalObject, StringObject* object, PropertyName propertyName)
+static bool LEGACY_NODELETE isStringOwnProperty(JSGlobalObject* globalObject, StringObject* object, PropertyName propertyName)
 {
     VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->length)

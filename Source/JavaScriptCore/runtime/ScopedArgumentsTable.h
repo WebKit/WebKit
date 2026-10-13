@@ -79,7 +79,7 @@ public:
     }
     
     ScopedArgumentsTable* trySet(VM&, uint32_t index, ScopeOffset);
-    void NODELETE trySetWatchpointSet(uint32_t index, InlineWatchpointSet* watchpoints);
+    void LEGACY_NODELETE trySetWatchpointSet(uint32_t index, InlineWatchpointSet* watchpoints);
     void clearWatchpointSet(uint32_t index) { m_watchpointSets[index] = nullptr; }
 
     DECLARE_EXPORT_INFO;

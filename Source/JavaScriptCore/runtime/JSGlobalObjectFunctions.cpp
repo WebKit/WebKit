@@ -233,7 +233,7 @@ static JSValue decode(JSGlobalObject* globalObject, JSValue argument, const WTF:
 static const int SizeOfInfinity = 8;
 
 template <typename CharType>
-static bool NODELETE isInfinity(std::span<const CharType> data)
+static bool LEGACY_NODELETE isInfinity(std::span<const CharType> data)
 {
     return data.size() >= SizeOfInfinity
         && data[0] == 'I'
@@ -248,7 +248,7 @@ static bool NODELETE isInfinity(std::span<const CharType> data)
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double NODELETE jsBinaryIntegerLiteral(std::span<const CharType>& data)
+static double LEGACY_NODELETE jsBinaryIntegerLiteral(std::span<const CharType>& data)
 {
     // Binary number.
     skip(data, 2);
@@ -269,7 +269,7 @@ static double NODELETE jsBinaryIntegerLiteral(std::span<const CharType>& data)
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double NODELETE jsOctalIntegerLiteral(std::span<const CharType>& data)
+static double LEGACY_NODELETE jsOctalIntegerLiteral(std::span<const CharType>& data)
 {
     // Octal number.
     skip(data, 2);
@@ -290,7 +290,7 @@ static double NODELETE jsOctalIntegerLiteral(std::span<const CharType>& data)
 
 // See ecma-262 6th 11.8.3
 template <typename CharType>
-static double NODELETE jsHexIntegerLiteral(std::span<const CharType>& data)
+static double LEGACY_NODELETE jsHexIntegerLiteral(std::span<const CharType>& data)
 {
     // Hex number.
     skip(data, 2);
@@ -836,7 +836,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncImportModule, (JSGlobalObject* globalObject, 
     return JSValue::encode(importPromise);
 }
 
-static bool NODELETE canPerformFastPropertyEnumerationForCopyDataProperties(Structure* structure)
+static bool LEGACY_NODELETE canPerformFastPropertyEnumerationForCopyDataProperties(Structure* structure)
 {
     if (!structure->canPerformFastPropertyEnumerationCommon())
         return false;

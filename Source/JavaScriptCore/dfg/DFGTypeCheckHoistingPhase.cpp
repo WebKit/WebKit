@@ -70,7 +70,7 @@ struct CheckData {
     {
     }
 
-    void NODELETE disableCheckArrayHoisting()
+    void LEGACY_NODELETE disableCheckArrayHoisting()
     {
         m_arrayModeIsValid = false;
         m_arrayModeHoistingOkay = false;
@@ -231,7 +231,7 @@ public:
     }
 
 private:
-    void NODELETE clearVariableVotes()
+    void LEGACY_NODELETE clearVariableVotes()
     { 
         for (unsigned i = m_graph.m_variableAccessData.size(); i--;) {
             VariableAccessData* variable = &m_graph.m_variableAccessData[i];
@@ -521,7 +521,7 @@ private:
     }
 
     template <typename TypeCheck>
-    bool NODELETE shouldConsiderForHoisting(VariableAccessData* variable)
+    bool LEGACY_NODELETE shouldConsiderForHoisting(VariableAccessData* variable)
     {
         if (!variable->shouldUnboxIfPossible())
             return false;
@@ -623,12 +623,12 @@ bool performTypeCheckHoisting(Graph& graph)
 }
 
 struct ArrayTypeCheck {
-    static bool NODELETE isValidToHoist(CheckData& checkData)
+    static bool LEGACY_NODELETE isValidToHoist(CheckData& checkData)
     {
         return checkData.m_arrayModeIsValid;
     }
 
-    static void NODELETE disableHoisting(CheckData& checkData)
+    static void LEGACY_NODELETE disableHoisting(CheckData& checkData)
     {
         checkData.disableCheckArrayHoisting();
     }
@@ -639,40 +639,40 @@ struct ArrayTypeCheck {
         return !checkData.m_arrayMode.structureWouldPassArrayModeFiltering(value.asCell()->structure());
     }
 
-    static bool NODELETE hasEnoughVotesToHoist(VariableAccessData* variable)
+    static bool LEGACY_NODELETE hasEnoughVotesToHoist(VariableAccessData* variable)
     {
         return variable->voteRatio() >= Options::checkArrayVoteRatioForHoisting();
     }
 
-    static bool NODELETE hoistingPreviouslyFailed(VariableAccessData* variable)
+    static bool LEGACY_NODELETE hoistingPreviouslyFailed(VariableAccessData* variable)
     {
         return variable->checkArrayHoistingFailed();
     }
 };
 
 struct StructureTypeCheck {
-    static bool NODELETE isValidToHoist(CheckData& checkData)
+    static bool LEGACY_NODELETE isValidToHoist(CheckData& checkData)
     {
         return checkData.m_structure;
     }
 
-    static void NODELETE disableHoisting(CheckData& checkData)
+    static void LEGACY_NODELETE disableHoisting(CheckData& checkData)
     {
         checkData.m_structure = nullptr;
     }
 
-    static bool NODELETE isContravenedByValue(CheckData& checkData, JSValue value)
+    static bool LEGACY_NODELETE isContravenedByValue(CheckData& checkData, JSValue value)
     {
         ASSERT(value.isCell());
         return checkData.m_structure != value.asCell()->structure();
     }
 
-    static bool NODELETE hasEnoughVotesToHoist(VariableAccessData* variable)
+    static bool LEGACY_NODELETE hasEnoughVotesToHoist(VariableAccessData* variable)
     {
         return variable->voteRatio() >= Options::structureCheckVoteRatioForHoisting();
     }
 
-    static bool NODELETE hoistingPreviouslyFailed(VariableAccessData* variable)
+    static bool LEGACY_NODELETE hoistingPreviouslyFailed(VariableAccessData* variable)
     {
         return variable->structureCheckHoistingFailed();
     }

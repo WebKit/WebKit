@@ -38,7 +38,7 @@ struct DumpContext {
     DumpContext();
     ~DumpContext();
     
-    bool NODELETE isEmpty() const;
+    bool LEGACY_NODELETE isEmpty() const;
     
     void dump(PrintStream&, UTF8CStringView prefix = ""_s) const;
     

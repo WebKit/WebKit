@@ -853,8 +853,8 @@ public:
         return static_cast<uint64_t>(ptr | (maskedFieldIndex & 0b1111) | (static_cast<uint64_t>(maskedFieldIndex >> 4) << 48));
     }
 
-    bool NODELETE isSubRTT(const RTT& other) const;
-    bool NODELETE isStrictSubRTT(const RTT& other) const;
+    bool LEGACY_NODELETE isSubRTT(const RTT& other) const;
+    bool LEGACY_NODELETE isStrictSubRTT(const RTT& other) const;
     bool isFinalType() const { return m_isFinalType; }
 
     // Print this RTT for debugging.

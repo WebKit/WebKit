@@ -97,9 +97,9 @@ public:
             ASSERT(isNativeCalleeFrame());
             return m_wasmFunctionIndexOrName;
         }
-        size_t NODELETE wasmFunctionIndex() const;
+        size_t LEGACY_NODELETE wasmFunctionIndex() const;
 
-        CallSiteIndex NODELETE wasmCallSiteIndex() const;
+        CallSiteIndex LEGACY_NODELETE wasmCallSiteIndex() const;
 
         JS_EXPORT_PRIVATE String functionName() const;
         JS_EXPORT_PRIVATE String sourceURL() const;
@@ -108,8 +108,8 @@ public:
 
         JS_EXPORT_PRIVATE SourceID sourceID();
 
-        CodeType NODELETE codeType() const;
-        bool NODELETE hasLineAndColumnInfo() const;
+        CodeType LEGACY_NODELETE codeType() const;
+        bool LEGACY_NODELETE hasLineAndColumnInfo() const;
         JS_EXPORT_PRIVATE LineColumn computeLineAndColumn() const;
 
 #if ENABLE(ASSEMBLER)
@@ -128,7 +128,7 @@ public:
         Frame() { }
         ~Frame() { }
 
-        void NODELETE setToEnd();
+        void LEGACY_NODELETE setToEnd();
 
 #if ENABLE(DFG_JIT)
         InlineCallFrame* m_inlineDFGCallFrame { nullptr };
@@ -189,7 +189,7 @@ private:
 #if ENABLE(DFG_JIT)
     void readInlinedFrame(CallFrame*, CodeOrigin*);
 #endif
-    CallFrame* NODELETE updatePreviousReturnPCIfNecessary(CallFrame*);
+    CallFrame* LEGACY_NODELETE updatePreviousReturnPCIfNecessary(CallFrame*);
 
     Frame m_frame;
     void* m_previousReturnPC { nullptr };

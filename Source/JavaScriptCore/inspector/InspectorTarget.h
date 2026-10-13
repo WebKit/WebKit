@@ -53,7 +53,7 @@ public:
 
     virtual bool isProvisional() const { return false; }
     bool isPaused() const { return m_isPaused; }
-    void NODELETE pause();
+    void LEGACY_NODELETE pause();
     JS_EXPORT_PRIVATE void resume();
     JS_EXPORT_PRIVATE void setResumeCallback(WTF::Function<void()>&&);
 

@@ -46,7 +46,7 @@ public:
         m_counter += count;
     }
 
-    JS_EXPORT_PRIVATE static void NODELETE dump();
+    JS_EXPORT_PRIVATE static void LEGACY_NODELETE dump();
 
     int64_t* addressOfCounter() LIFETIME_BOUND { return &m_counter; }
 

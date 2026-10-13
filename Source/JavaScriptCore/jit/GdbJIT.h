@@ -40,7 +40,7 @@ extern "C" {
 struct JITCodeEntry;
 
 struct GdbJITAddressRegionLess {
-    inline bool NODELETE operator()(const std::span<const uint8_t>& a, const std::span<const uint8_t>& b) const
+    inline bool LEGACY_NODELETE operator()(const std::span<const uint8_t>& a, const std::span<const uint8_t>& b) const
     {
         if (a.data() == b.data()) return a.size() < b.size();
         return a.data() < b.data();

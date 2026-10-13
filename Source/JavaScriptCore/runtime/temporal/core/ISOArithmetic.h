@@ -45,9 +45,9 @@ JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> regulateISODate(int32_t yea
 
 JS_EXPORT_PRIVATE TemporalResult<ISO8601::PlainDate> isoDateAdd(const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 
-JS_EXPORT_PRIVATE int32_t NODELETE isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
+JS_EXPORT_PRIVATE int32_t LEGACY_NODELETE isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
 
-JS_EXPORT_PRIVATE int32_t NODELETE isoTimeCompare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
+JS_EXPORT_PRIVATE int32_t LEGACY_NODELETE isoTimeCompare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
 
 JS_EXPORT_PRIVATE ISO8601::Duration diffISODate(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit);
 

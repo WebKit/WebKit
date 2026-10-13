@@ -139,7 +139,7 @@ public:
     void heapMembershipChanges();
     void testBigInt();
 
-    int NODELETE failed() const { return m_failed; }
+    int LEGACY_NODELETE failed() const { return m_failed; }
 
 private:
 

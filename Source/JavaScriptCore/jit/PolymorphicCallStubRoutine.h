@@ -55,9 +55,9 @@ public:
 
     void unlinkOrUpgradeImpl(VM&, CodeBlock*, CodeBlock*);
 
-    void NODELETE unlinkForcefully();
+    void LEGACY_NODELETE unlinkForcefully();
 
-    PolymorphicCallStubRoutine* NODELETE owner();
+    PolymorphicCallStubRoutine* LEGACY_NODELETE owner();
 
 private:
     uint8_t m_index { 0 };
@@ -91,7 +91,7 @@ public:
     friend class JITStubRoutine;
 
     CallVariantList variants() const;
-    bool NODELETE hasEdges() const;
+    bool LEGACY_NODELETE hasEdges() const;
     CallEdgeList edges() const;
 
     void unlinkForcefully();
@@ -121,7 +121,7 @@ public:
     bool isClosureCall() const { return m_isClosureCall; }
 
 private:
-    void NODELETE markRequiredObjectsImpl(AbstractSlotVisitor&);
+    void LEGACY_NODELETE markRequiredObjectsImpl(AbstractSlotVisitor&);
     void markRequiredObjectsImpl(SlotVisitor&);
 
     bool reconcileWeakReferencesAtGCEndImpl(VM&);

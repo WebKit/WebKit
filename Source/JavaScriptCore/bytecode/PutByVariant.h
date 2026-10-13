@@ -101,7 +101,7 @@ public:
         return oldStructure();
     }
     
-    Structure* NODELETE oldStructureForTransition() const;
+    Structure* LEGACY_NODELETE oldStructureForTransition() const;
     
     Structure* newStructure() const
     {
@@ -111,9 +111,9 @@ public:
     
     void fixTransitionToReplaceIfNecessary();
 
-    bool NODELETE writesStructures() const;
-    bool NODELETE reallocatesStorage() const;
-    bool NODELETE makesCalls() const;
+    bool LEGACY_NODELETE writesStructures() const;
+    bool LEGACY_NODELETE reallocatesStorage() const;
+    bool LEGACY_NODELETE makesCalls() const;
     
     const ObjectPropertyConditionSet& conditionSet() const LIFETIME_BOUND { return m_conditionSet; }
     

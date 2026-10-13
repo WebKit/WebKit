@@ -111,29 +111,29 @@ public:
 
     void run();
 
-    BytecodeGraph& NODELETE graph() { return m_graph; }
+    BytecodeGraph& LEGACY_NODELETE graph() { return m_graph; }
 
-    const Yields& NODELETE yields() const
+    const Yields& LEGACY_NODELETE yields() const
     {
         return m_yields;
     }
 
-    Yields& NODELETE yields()
+    Yields& LEGACY_NODELETE yields()
     {
         return m_yields;
     }
 
-    JSInstructionStream::Ref NODELETE enterPoint() const
+    JSInstructionStream::Ref LEGACY_NODELETE enterPoint() const
     {
         return m_instructions.at(m_enterPoint);
     }
 
-    std::optional<GeneratorFrameData> NODELETE generatorFrameData() const
+    std::optional<GeneratorFrameData> LEGACY_NODELETE generatorFrameData() const
     {
         return m_generatorFrameData;
     }
 
-    const JSInstructionStream& NODELETE instructions() const
+    const JSInstructionStream& LEGACY_NODELETE instructions() const
     {
         return m_instructions;
     }

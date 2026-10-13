@@ -44,7 +44,7 @@ public:
 
     CallSiteIndex addCodeOrigin(CodeOrigin);
     CallSiteIndex addUniqueCallSiteIndex(CodeOrigin);
-    CallSiteIndex NODELETE lastCallSite() const;
+    CallSiteIndex LEGACY_NODELETE lastCallSite() const;
     DisposableCallSiteIndex addDisposableCallSiteIndex(CodeOrigin);
     void removeDisposableCallSiteIndex(DisposableCallSiteIndex);
     void shrinkToFit();

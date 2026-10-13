@@ -65,7 +65,7 @@ public:
     
     // This tells you the registers that were used.
     // NOTE: This will report bogus information if you did proc.setNeedsUsedRegisters(false).
-    const RegisterSet& NODELETE usedRegisters() const;
+    const RegisterSet& LEGACY_NODELETE usedRegisters() const;
 
     // This is a useful helper if you want to do register allocation inside of a patchpoint. The
     // usedRegisters() set is not directly useful for this purpose because:
@@ -101,13 +101,13 @@ public:
     JS_EXPORT_PRIVATE bool fallsThroughToSuccessor(unsigned successorIndex) const;
 
     // These are provided for convenience; they mean that you don't have to capture them if you don't want to.
-    JS_EXPORT_PRIVATE Procedure& NODELETE proc() const;
-    JS_EXPORT_PRIVATE Air::Code& NODELETE code() const;
+    JS_EXPORT_PRIVATE Procedure& LEGACY_NODELETE proc() const;
+    JS_EXPORT_PRIVATE Air::Code& LEGACY_NODELETE code() const;
     
     // The Air::GenerationContext gives you even more power.
     Air::GenerationContext& context() const { return m_context; };
 
-    JS_EXPORT_PRIVATE Origin NODELETE origin() const;
+    JS_EXPORT_PRIVATE Origin LEGACY_NODELETE origin() const;
 
     template<typename Functor>
     void addLatePath(const Functor& functor) const

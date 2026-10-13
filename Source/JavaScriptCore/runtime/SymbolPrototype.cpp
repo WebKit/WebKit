@@ -75,7 +75,7 @@ static const ASCIILiteral SymbolDescriptionTypeError { "Symbol.prototype.descrip
 static const ASCIILiteral SymbolToStringTypeError { "Symbol.prototype.toString requires that |this| be a symbol or a symbol object"_s };
 static const ASCIILiteral SymbolValueOfTypeError { "Symbol.prototype.valueOf requires that |this| be a symbol or a symbol object"_s };
 
-inline Symbol* NODELETE tryExtractSymbol(JSValue thisValue)
+inline Symbol* LEGACY_NODELETE tryExtractSymbol(JSValue thisValue)
 {
     if (thisValue.isSymbol())
         return asSymbol(thisValue);

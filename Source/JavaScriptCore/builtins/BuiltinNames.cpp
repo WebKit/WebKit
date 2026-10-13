@@ -106,12 +106,12 @@ using UTF16Buffer = WTF::HashTranslatorCharBuffer<char16_t>;
 template<typename CharacterType>
 struct CharBufferSeacher {
     using Buffer = WTF::HashTranslatorCharBuffer<CharacterType>;
-    static unsigned NODELETE hash(const Buffer& buf)
+    static unsigned LEGACY_NODELETE hash(const Buffer& buf)
     {
         return buf.hash;
     }
 
-    static bool NODELETE equal(const String& str, const Buffer& buf)
+    static bool LEGACY_NODELETE equal(const String& str, const Buffer& buf)
     {
         return WTF::equal(str.impl(), buf.characters);
     }

@@ -96,7 +96,7 @@ public:
     Workers() = default;
     ~Workers() = default;
 
-    static Workers& NODELETE singleton()
+    static Workers& LEGACY_NODELETE singleton()
     {
         static Workers* workers = new Workers();
         return *workers;
@@ -126,7 +126,7 @@ public:
         remove();
     }
 
-    bool NODELETE isMain() const { return m_isMain; }
+    bool LEGACY_NODELETE isMain() const { return m_isMain; }
 
     static Worker& current()
     {

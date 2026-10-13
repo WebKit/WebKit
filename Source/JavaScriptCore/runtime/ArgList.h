@@ -71,7 +71,7 @@ public:
     bool isEmpty() const { return !m_argCount; }
     size_t size() const { return m_argCount; }
         
-    JS_EXPORT_PRIVATE void NODELETE getSlice(int startIndex, ArgList& result) const;
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE getSlice(int startIndex, ArgList& result) const;
 
     EncodedJSValue* data() const { return m_args; }
 

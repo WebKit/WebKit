@@ -45,17 +45,17 @@ public:
     {
     }
 
-    bool NODELETE isEmpty() const
+    bool LEGACY_NODELETE isEmpty() const
     {
         return blocks.isEmpty();
     }
 
-    size_t NODELETE size() const
+    size_t LEGACY_NODELETE size() const
     {
         return blocks.size();
     }
 
-    BasicBlock* NODELETE pop(IndexSet<BasicBlock*>& done)
+    BasicBlock* LEGACY_NODELETE pop(IndexSet<BasicBlock*>& done)
     {
         if (startNewChain) {
             startNewChain = false;
@@ -65,7 +65,7 @@ public:
         return popChain(done);
     }
 
-    void NODELETE markStartNewChain()
+    void LEGACY_NODELETE markStartNewChain()
     {
         startNewChain = true;
     }
@@ -75,7 +75,7 @@ public:
         blocks.append(block);
     }
 
-    BasicBlock* NODELETE popChain(IndexSet<BasicBlock*>& done)
+    BasicBlock* LEGACY_NODELETE popChain(IndexSet<BasicBlock*>& done)
     {
         // Take the last added successor to continue the chain.
         // This transforms a jump into a fallthrough.
@@ -89,7 +89,7 @@ public:
         return nullptr;
     }
 
-    BasicBlock* NODELETE popNewChain(IndexSet<BasicBlock*>& done)
+    BasicBlock* LEGACY_NODELETE popNewChain(IndexSet<BasicBlock*>& done)
     {
         // Take the oldest added successor to start a new chain.
         // We prefer this,

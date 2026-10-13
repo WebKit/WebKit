@@ -142,7 +142,7 @@ private:
     }
     
     template<typename VariablesVectorType>
-    void NODELETE cleanVariables(VariablesVectorType& variables)
+    void LEGACY_NODELETE cleanVariables(VariablesVectorType& variables)
     {
         for (unsigned i = variables.size(); i--;) {
             Node* node = variables[i];

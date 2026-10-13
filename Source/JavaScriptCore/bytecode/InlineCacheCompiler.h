@@ -170,7 +170,7 @@ inline bool canUseMegamorphicPutById(VM& vm, UniquedStringImpl* uid)
     return !parseIndex(*uid) && uid != vm.propertyNames->underscoreProto;
 }
 
-inline bool NODELETE canUseMegamorphicPutFastPath(Structure* structure)
+inline bool LEGACY_NODELETE canUseMegamorphicPutFastPath(Structure* structure)
 {
     while (true) {
         if (structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())
@@ -182,7 +182,7 @@ inline bool NODELETE canUseMegamorphicPutFastPath(Structure* structure)
     }
 }
 
-bool NODELETE canBeViaGlobalProxy(AccessCase::AccessType);
+bool LEGACY_NODELETE canBeViaGlobalProxy(AccessCase::AccessType);
 
 inline AccessGenerationResult::AccessGenerationResult(Kind kind, Ref<InlineCacheHandler>&& handler)
     : m_kind(kind)
@@ -231,12 +231,12 @@ public:
 
     const ScalarRegisterSet& liveRegistersForCall();
 
-    DisposableCallSiteIndex NODELETE callSiteIndexForExceptionHandling();
+    DisposableCallSiteIndex LEGACY_NODELETE callSiteIndexForExceptionHandling();
 
     const HandlerInfo& originalExceptionHandler();
 
     bool needsToRestoreRegistersIfException() const { return m_needsToRestoreRegistersIfException; }
-    CallSiteIndex NODELETE originalCallSiteIndex() const;
+    CallSiteIndex LEGACY_NODELETE originalCallSiteIndex() const;
 
     void emitExplicitExceptionHandler();
 
@@ -283,15 +283,15 @@ public:
     static MacroAssemblerCodeRef<JITThunkPtrTag> generateSlowPathCode(VM&, AccessType);
     static Ref<InlineCacheHandler> generateSlowPathHandler(VM&, AccessType);
 
-    static void NODELETE emitDataICPrologue(CCallHelpers&);
-    static void NODELETE emitDataICEpilogue(CCallHelpers&);
+    static void LEGACY_NODELETE emitDataICPrologue(CCallHelpers&);
+    static void LEGACY_NODELETE emitDataICEpilogue(CCallHelpers&);
     static void emitDataICPrepareForCall(CCallHelpers&);
     static void emitDataICRestoreAfterCall(CCallHelpers&);
     static CCallHelpers::Jump emitDataICCheckStructure(CCallHelpers&, GPRReg baseGPR, GPRReg scratchGPR);
     static CCallHelpers::JumpList emitDataICCheckUid(CCallHelpers&, bool isSymbol, GPRReg, GPRReg scratchGPR);
     static void emitDataICJumpNextHandler(CCallHelpers&);
 
-    bool NODELETE useHandlerIC() const;
+    bool LEGACY_NODELETE useHandlerIC() const;
 
 private:
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
@@ -437,7 +437,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> deleteByValWithSymbolDeleteMissHandler();
 MacroAssemblerCodeRef<JITThunkPtrTag> checkPrivateBrandHandler();
 MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler();
 
-bool NODELETE doesJSCalls(AccessCase::AccessType);
+bool LEGACY_NODELETE doesJSCalls(AccessCase::AccessType);
 
 #if CPU(X86_64)
 static constexpr size_t prologueSizeInBytesDataIC = 1;

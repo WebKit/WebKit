@@ -34,7 +34,7 @@
 namespace JSC {
 
 static unsigned s_numberOfExceptionFuzzChecks;
-unsigned NODELETE numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
+unsigned LEGACY_NODELETE numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 
 // Call this only if you know that exception fuzzing is enabled.
 void doExceptionFuzzing(JSGlobalObject* globalObject, ThrowScope& scope, ASCIILiteral where, const void* returnPC)

@@ -184,13 +184,13 @@ namespace JSC {
         
         static CompilationResult compileSync(VM&, CodeBlock*, JITCompilationEffort);
 
-        static unsigned NODELETE frameRegisterCountFor(UnlinkedCodeBlock*);
+        static unsigned LEGACY_NODELETE frameRegisterCountFor(UnlinkedCodeBlock*);
         static unsigned frameRegisterCountFor(CodeBlock*);
-        static int NODELETE stackPointerOffsetFor(UnlinkedCodeBlock*);
+        static int LEGACY_NODELETE stackPointerOffsetFor(UnlinkedCodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
         JS_EXPORT_PRIVATE static UncheckedKeyHashMap<ASCIICString, Seconds> compileTimeStats();
-        JS_EXPORT_PRIVATE static Seconds NODELETE totalCompileTime();
+        JS_EXPORT_PRIVATE static Seconds LEGACY_NODELETE totalCompileTime();
 
     private:
         void privateCompileMainPass();
@@ -375,7 +375,7 @@ namespace JSC {
         void emit_op_get_argument(const JSInstruction*);
         void emit_op_argument_count(const JSInstruction*);
         void emit_op_check_tdz(const JSInstruction*);
-        void NODELETE emit_op_identity_with_profile(const JSInstruction*);
+        void LEGACY_NODELETE emit_op_identity_with_profile(const JSInstruction*);
         void emit_op_debug(const JSInstruction*);
         void emit_op_del_by_id(const JSInstruction*);
         void emitSlow_op_del_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -414,7 +414,7 @@ namespace JSC {
 #if USE(BIGINT32)
         void emit_op_is_big_int(const JSInstruction*);
 #else
-        [[noreturn]] void NODELETE emit_op_is_big_int(const JSInstruction*);
+        [[noreturn]] void LEGACY_NODELETE emit_op_is_big_int(const JSInstruction*);
 #endif
         void emit_op_is_object(const JSInstruction*);
         void emit_op_is_cell_with_type(const JSInstruction*);
@@ -448,7 +448,7 @@ namespace JSC {
         void emit_op_jtrue(const JSInstruction*);
         void emit_op_loop_hint(const JSInstruction*);
         void emit_op_check_traps(const JSInstruction*);
-        void NODELETE emit_op_nop(const JSInstruction*);
+        void LEGACY_NODELETE emit_op_nop(const JSInstruction*);
         void emit_op_super_sampler_begin(const JSInstruction*);
         void emit_op_super_sampler_end(const JSInstruction*);
         void emit_op_lshift(const JSInstruction*);

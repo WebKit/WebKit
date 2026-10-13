@@ -45,7 +45,7 @@ class RemoteInspectionTarget : public RemoteControllableTarget {
 public:
     JS_EXPORT_PRIVATE RemoteInspectionTarget();
     JS_EXPORT_PRIVATE ~RemoteInspectionTarget() override;
-    JS_EXPORT_PRIVATE bool NODELETE inspectable() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE inspectable() const;
     JS_EXPORT_PRIVATE void setInspectable(bool);
 
     bool allowsInspectionByPolicy() const;

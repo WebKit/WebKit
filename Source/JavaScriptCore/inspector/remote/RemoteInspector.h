@@ -125,13 +125,13 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    JS_EXPORT_PRIVATE static void NODELETE setNeedMachSandboxExtension(bool needExtension);
+    JS_EXPORT_PRIVATE static void LEGACY_NODELETE setNeedMachSandboxExtension(bool needExtension);
 #endif
 #if USE(GLIB)
     JS_EXPORT_PRIVATE static void setInspectorServerAddress(UTF8CString&&);
     JS_EXPORT_PRIVATE static const UTF8CString& inspectorServerAddress();
 #endif
-    JS_EXPORT_PRIVATE static void NODELETE startDisabled();
+    JS_EXPORT_PRIVATE static void LEGACY_NODELETE startDisabled();
     JS_EXPORT_PRIVATE static RemoteInspector& singleton();
     friend class LazyNeverDestroyed<RemoteInspector>;
 
@@ -225,7 +225,7 @@ private:
 
     void updateTargetListing(const RemoteControllableTarget&);
 
-    void NODELETE updateHasActiveDebugSession();
+    void LEGACY_NODELETE updateHasActiveDebugSession();
     void updateClientCapabilities();
 
     void sendAutomaticInspectionCandidateMessage(TargetID) WTF_REQUIRES_LOCK(m_mutex);
@@ -246,7 +246,7 @@ private:
     void receivedAutomaticInspectionConfigurationMessage(NSDictionary *userInfo) WTF_REQUIRES_LOCK(m_mutex);
     void receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo) WTF_REQUIRES_LOCK(m_mutex);
     void receivedAutomationSessionRequestMessage(NSDictionary *userInfo) WTF_REQUIRES_LOCK(m_mutex);
-    void NODELETE receivedPingSuccessMessage() WTF_REQUIRES_LOCK(m_mutex);
+    void LEGACY_NODELETE receivedPingSuccessMessage() WTF_REQUIRES_LOCK(m_mutex);
 #endif
 #if USE(INSPECTOR_SOCKET_SERVER)
     HashMap<String, CallHandler>& dispatchMap() final;

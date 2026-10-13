@@ -48,7 +48,7 @@ public:
     MarkingConstraintSolver(MarkingConstraintSet&, SlotVisitor& mainVisitor);
     ~MarkingConstraintSolver();
     
-    bool NODELETE didVisitSomething() const;
+    bool LEGACY_NODELETE didVisitSomething() const;
     
     enum SchedulerPreference {
         ParallelWorkFirst,

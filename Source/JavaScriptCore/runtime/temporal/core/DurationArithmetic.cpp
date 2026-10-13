@@ -82,7 +82,7 @@ ISO8601::Duration absDuration(const ISO8601::Duration& d)
 }
 
 // largestSubduration — temporal_rs: Duration::default_largest_unit
-TemporalUnit NODELETE largestSubduration(const ISO8601::Duration& d)
+TemporalUnit LEGACY_NODELETE largestSubduration(const ISO8601::Duration& d)
 {
     uint8_t index = 0;
     while (index < numberOfTemporalUnits - 1 && !d[index])

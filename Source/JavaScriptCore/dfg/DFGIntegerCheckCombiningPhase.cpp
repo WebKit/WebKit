@@ -52,7 +52,7 @@ public:
     };
 
     struct RangeKey {
-        static RangeKey NODELETE addition(Edge edge)
+        static RangeKey LEGACY_NODELETE addition(Edge edge)
         {
             RangeKey result;
             result.m_kind = Addition;
@@ -61,7 +61,7 @@ public:
             return result;
         }
         
-        static RangeKey NODELETE arrayBounds(Edge edge, Node* key)
+        static RangeKey LEGACY_NODELETE arrayBounds(Edge edge, Node* key)
         {
             RangeKey result;
             result.m_kind = ArrayBounds;
@@ -70,14 +70,14 @@ public:
             return result;
         }
         
-        bool NODELETE operator!() const { return m_kind == InvalidRangeKind; }
+        bool LEGACY_NODELETE operator!() const { return m_kind == InvalidRangeKind; }
         
-        unsigned NODELETE hash() const
+        unsigned LEGACY_NODELETE hash() const
         {
             return m_kind + m_source.hash() + PtrHash<Node*>::hash(m_key);
         }
         
-        friend bool NODELETE operator==(const RangeKey&, const RangeKey&) = default;
+        friend bool LEGACY_NODELETE operator==(const RangeKey&, const RangeKey&) = default;
         
         void dump(PrintStream& out) const
         {
@@ -118,7 +118,7 @@ public:
         {
         }
         
-        bool NODELETE operator!() const { return !m_key && !m_addend; }
+        bool LEGACY_NODELETE operator!() const { return !m_key && !m_addend; }
         
         void dump(PrintStream& out) const
         {
@@ -334,7 +334,7 @@ private:
         return RangeKeyAndAddend();
     }
     
-    bool NODELETE isValid(const RangeKey& key, const Range& range)
+    bool LEGACY_NODELETE isValid(const RangeKey& key, const Range& range)
     {
         if (range.m_count < 2)
             return false;

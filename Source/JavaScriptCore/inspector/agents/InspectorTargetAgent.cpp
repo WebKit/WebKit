@@ -95,7 +95,7 @@ void InspectorTargetAgent::sendMessageFromTargetToFrontend(const String& targetI
     m_frontendDispatcher->dispatchMessageFromTarget(targetId, message);
 }
 
-static Protocol::Target::TargetInfo::Type NODELETE targetTypeToProtocolType(InspectorTargetType type)
+static Protocol::Target::TargetInfo::Type LEGACY_NODELETE targetTypeToProtocolType(InspectorTargetType type)
 {
     switch (type) {
     case InspectorTargetType::Page:

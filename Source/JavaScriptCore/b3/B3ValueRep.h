@@ -288,9 +288,9 @@ public:
     }
 
 
-    void NODELETE addUsedRegistersTo(bool isSIMDContext, RegisterSet&) const;
+    void LEGACY_NODELETE addUsedRegistersTo(bool isSIMDContext, RegisterSet&) const;
     
-    RegisterSet NODELETE usedRegisters(bool isSIMDContext) const;
+    RegisterSet LEGACY_NODELETE usedRegisters(bool isSIMDContext) const;
 
     // Get the used registers for a vector of ValueReps.
     template<typename VectorType>

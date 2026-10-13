@@ -82,7 +82,7 @@ SourceCode name##Source();
 
     DECLARE_VISIT_AGGREGATE;
 
-    void NODELETE clear();
+    void LEGACY_NODELETE clear();
 
 private:
     VM& m_vm;

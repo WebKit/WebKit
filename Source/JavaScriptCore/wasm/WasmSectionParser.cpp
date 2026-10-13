@@ -260,7 +260,7 @@ auto SectionParser::parseFunction() -> PartialResult
     return { };
 }
 
-static bool NODELETE limitsFlagIsValid(uint8_t flags)
+static bool LEGACY_NODELETE limitsFlagIsValid(uint8_t flags)
 {
     constexpr uint8_t invalidFlagsMask = ~0x07;
     const uint8_t hasInvalidFlags = flags & invalidFlagsMask;

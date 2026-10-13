@@ -38,7 +38,7 @@
 namespace JSC {
 namespace TemporalCore {
 
-JS_EXPORT_PRIVATE int32_t NODELETE compareISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, ISO8601::PlainDate, ISO8601::PlainTime);
+JS_EXPORT_PRIVATE int32_t LEGACY_NODELETE compareISODateTime(ISO8601::PlainDate, ISO8601::PlainTime, ISO8601::PlainDate, ISO8601::PlainTime);
 
 JS_EXPORT_PRIVATE TemporalResult<ISO8601::InternalDuration> differencePlainDateTimeWithRounding(
     ISO8601::PlainDate thisDate, ISO8601::PlainTime thisTime,

@@ -45,7 +45,7 @@ public:
     Structure* oldStructure() const { return m_oldStructure; }
     Structure* newStructure() const { return m_newStructure; }
 
-    bool NODELETE attemptToMerge(const SetPrivateBrandVariant& other);
+    bool LEGACY_NODELETE attemptToMerge(const SetPrivateBrandVariant& other);
 
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);

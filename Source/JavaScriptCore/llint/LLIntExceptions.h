@@ -45,7 +45,7 @@ namespace LLInt {
 // Gives you a PC that you can tell the interpreter to go to, which when advanced
 // between 1 and 9 slots will give you an "instruction" that threads to the
 // interpreter's exception handler.
-JSInstruction* NODELETE returnToThrow(VM&);
+JSInstruction* LEGACY_NODELETE returnToThrow(VM&);
 
 // A slow path reports a pending exception to its LLInt caller by returning this
 // in the second result register in place of a meaningful second result.

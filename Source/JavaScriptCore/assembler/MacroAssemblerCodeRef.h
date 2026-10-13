@@ -160,7 +160,7 @@ private:
     template<PtrTag> friend class MacroAssemblerCodeRef;
 };
 
-bool NODELETE shouldDumpDisassemblyFor(CodeBlock*);
+bool LEGACY_NODELETE shouldDumpDisassemblyFor(CodeBlock*);
 bool shouldDumpDisassemblyFor(Wasm::CompilationMode);
 
 } // namespace JSC

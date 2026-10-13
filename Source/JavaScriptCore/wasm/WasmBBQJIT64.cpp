@@ -94,7 +94,7 @@ bool Location::isRegister() const
     return isGPR() || isFPR();
 }
 
-uint32_t NODELETE BBQJIT::sizeOfType(TypeKind type)
+uint32_t LEGACY_NODELETE BBQJIT::sizeOfType(TypeKind type)
 {
     switch (type) {
     case TypeKind::I32:
@@ -3589,7 +3589,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     return { };
 }
 
-int NODELETE BBQJIT::alignedFrameSize(int frameSize) const
+int LEGACY_NODELETE BBQJIT::alignedFrameSize(int frameSize) const
 {
     return WTF::roundUpToMultipleOf<stackAlignmentBytes()>(frameSize);
 }
@@ -3619,7 +3619,7 @@ void BBQJIT::restoreWebAssemblyGlobalStateAfterWasmCall()
 
 // SIMD
 
-void NODELETE BBQJIT::notifyFunctionUsesSIMD()
+void LEGACY_NODELETE BBQJIT::notifyFunctionUsesSIMD()
 {
     ASSERT(m_info.usesSIMD(m_functionIndex));
     m_usesSIMD = true;

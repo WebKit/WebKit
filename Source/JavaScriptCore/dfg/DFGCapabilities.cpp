@@ -117,7 +117,7 @@ bool canUseOSRExitFuzzing(CodeBlock* codeBlock)
     return codeBlock->ownerExecutable()->canUseOSRExitFuzzing();
 }
 
-static bool NODELETE verboseCapabilities()
+static bool LEGACY_NODELETE verboseCapabilities()
 {
     return verboseCompilationEnabled() || Options::verboseDFGFailure();
 }

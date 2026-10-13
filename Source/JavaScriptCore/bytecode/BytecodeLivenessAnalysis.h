@@ -95,7 +95,7 @@ private:
     BytecodeGraph m_graph;
 };
 
-WTF::BitSet<maxNumCheckpointTmps> NODELETE tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
+WTF::BitSet<maxNumCheckpointTmps> LEGACY_NODELETE tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
 
 inline bool operandIsAlwaysLive(int operand);
 inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand);

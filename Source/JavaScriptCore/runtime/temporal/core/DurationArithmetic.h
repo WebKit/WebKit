@@ -80,7 +80,7 @@ JS_EXPORT_PRIVATE ISO8601::Duration negateDuration(const ISO8601::Duration&);
 
 JS_EXPORT_PRIVATE ISO8601::Duration absDuration(const ISO8601::Duration&);
 
-JS_EXPORT_PRIVATE TemporalUnit NODELETE largestSubduration(const ISO8601::Duration&);
+JS_EXPORT_PRIVATE TemporalUnit LEGACY_NODELETE largestSubduration(const ISO8601::Duration&);
 
 JS_EXPORT_PRIVATE Int128 timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds);
 

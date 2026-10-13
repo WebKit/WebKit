@@ -113,20 +113,20 @@ Vector<String> IntlNumberFormat::localeData(const String& locale, RelevantExtens
     return numberingSystemsForLocale(locale);
 }
 
-static inline unsigned NODELETE computeCurrencySortKey(const String& currency)
+static inline unsigned LEGACY_NODELETE computeCurrencySortKey(const String& currency)
 {
     ASSERT(currency.length() == 3);
     ASSERT(currency.containsOnly<isASCIIUpper>());
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 
-static inline unsigned NODELETE computeCurrencySortKey(const std::array<const char, 3>& currency)
+static inline unsigned LEGACY_NODELETE computeCurrencySortKey(const std::array<const char, 3>& currency)
 {
     ASSERT(containsOnly<isASCIIUpper>(std::span { currency }));
     return (currency[0] << 16) + (currency[1] << 8) + currency[2];
 }
 
-static unsigned NODELETE extractCurrencySortKey(std::pair<std::array<const char, 3>, unsigned>* currencyMinorUnit)
+static unsigned LEGACY_NODELETE extractCurrencySortKey(std::pair<std::array<const char, 3>, unsigned>* currencyMinorUnit)
 {
     return computeCurrencySortKey(currencyMinorUnit->first);
 }

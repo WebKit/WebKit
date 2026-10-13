@@ -119,9 +119,9 @@ public:
     ObjectPropertyCondition forObject(JSObject*) const;
     ObjectPropertyCondition forConditionKind(PropertyCondition::Kind) const;
 
-    unsigned NODELETE numberOfConditionsWithKind(PropertyCondition::Kind) const;
+    unsigned LEGACY_NODELETE numberOfConditionsWithKind(PropertyCondition::Kind) const;
 
-    bool NODELETE hasOneSlotBaseCondition() const;
+    bool LEGACY_NODELETE hasOneSlotBaseCondition() const;
     
     // If this is a condition set for a prototype hit, then this is guaranteed to return the
     // condition on the prototype itself. This allows you to get the object, offset, and

@@ -159,7 +159,7 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
 }
 
 template<typename EnumType1, typename EnumType2>
-constexpr bool NODELETE enumValuesEqualAsIntegral(EnumType1 v1, EnumType2 v2)
+constexpr bool LEGACY_NODELETE enumValuesEqualAsIntegral(EnumType1 v1, EnumType2 v2)
 {
     using IntType1 = typename std::underlying_type<EnumType1>::type;
     using IntType2 = typename std::underlying_type<EnumType2>::type;

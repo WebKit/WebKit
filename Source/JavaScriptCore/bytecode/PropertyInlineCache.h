@@ -134,8 +134,8 @@ public:
     ~PropertyInlineCache();
 
     void initGetByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset);
-    void NODELETE initArrayLength(const ConcurrentJSLockerBase&);
-    void NODELETE initStringLength(const ConcurrentJSLockerBase&);
+    void LEGACY_NODELETE initArrayLength(const ConcurrentJSLockerBase&);
+    void LEGACY_NODELETE initStringLength(const ConcurrentJSLockerBase&);
     void initPutByIdReplace(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset);
     void initInByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* inlineAccessBaseStructure, PropertyOffset);
 
@@ -161,7 +161,7 @@ public:
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
-    bool NODELETE containsPC(void* pc) const;
+    bool LEGACY_NODELETE containsPC(void* pc) const;
 
     bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis || accessType == AccessType::GetByValWithThis; }
 

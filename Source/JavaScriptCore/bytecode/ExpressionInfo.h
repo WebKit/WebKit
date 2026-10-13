@@ -59,7 +59,7 @@ public:
     };
 
     struct Entry {
-        void NODELETE reset()
+        void LEGACY_NODELETE reset()
         {
             instPC = 0;
             divot = 0;
@@ -74,8 +74,8 @@ public:
     };
 
     struct EncodedInfo {
-        bool NODELETE isAbsInstPC() const;
-        bool NODELETE isExtension() const;
+        bool LEGACY_NODELETE isAbsInstPC() const;
+        bool LEGACY_NODELETE isExtension() const;
         unsigned value;
     };
 
@@ -106,17 +106,17 @@ public:
             SortOrder order { SortOrder::Multi };
         };
 
-        static EncodedInfo NODELETE encodeAbsInstPC(InstPC absInstPC);
-        static EncodedInfo NODELETE encodeExtension(unsigned offset);
-        static constexpr EncodedInfo NODELETE encodeExtensionEnd();
-        static EncodedInfo NODELETE encodeSingle(FieldID, unsigned);
-        static EncodedInfo NODELETE encodeDuo(FieldID, unsigned value1, FieldID, unsigned value2);
-        static EncodedInfo NODELETE encodeMultiHeader(unsigned numWides, Wide*);
-        static EncodedInfo NODELETE encodeBasic(const Diff&);
+        static EncodedInfo LEGACY_NODELETE encodeAbsInstPC(InstPC absInstPC);
+        static EncodedInfo LEGACY_NODELETE encodeExtension(unsigned offset);
+        static constexpr EncodedInfo LEGACY_NODELETE encodeExtensionEnd();
+        static EncodedInfo LEGACY_NODELETE encodeSingle(FieldID, unsigned);
+        static EncodedInfo LEGACY_NODELETE encodeDuo(FieldID, unsigned value1, FieldID, unsigned value2);
+        static EncodedInfo LEGACY_NODELETE encodeMultiHeader(unsigned numWides, Wide*);
+        static EncodedInfo LEGACY_NODELETE encodeBasic(const Diff&);
 
         void adjustInstPC(unsigned infoIndex, unsigned instPCDelta);
 
-        template<unsigned bitCount> bool NODELETE fits(Wide);
+        template<unsigned bitCount> bool LEGACY_NODELETE fits(Wide);
         template<typename T, unsigned bitCount> bool fits(T);
 
         Entry m_entry;
@@ -133,9 +133,9 @@ public:
         Decoder(const ExpressionInfo&);
         Decoder(Vector<ExpressionInfo::EncodedInfo>&);
 
-        IterationStatus NODELETE decode(std::optional<InstPC> targetInstPC = std::nullopt);
+        IterationStatus LEGACY_NODELETE decode(std::optional<InstPC> targetInstPC = std::nullopt);
 
-        void NODELETE recacheInfo(Vector<ExpressionInfo::EncodedInfo>&);
+        void LEGACY_NODELETE recacheInfo(Vector<ExpressionInfo::EncodedInfo>&);
         EncodedInfo* currentInfo() const { return m_currentInfo; }
 
         // This is meant to be used to jump to the start of a chapter, where the encoder
@@ -183,7 +183,7 @@ public:
     Entry entryForInstPC(const ConcurrentJSLocker&, InstPC);
 
     bool isEmpty() const { return !m_numberOfEncodedInfo; };
-    size_t NODELETE byteSize() const;
+    size_t LEGACY_NODELETE byteSize() const;
 
     template<unsigned bitCount>
     static void print(PrintStream&, FieldID, unsigned value);
@@ -193,10 +193,10 @@ private:
     ExpressionInfo(unsigned numberOfChapters, unsigned numberOfEncodedInfo, unsigned numberOfEncodedInfoExtensions);
     ExpressionInfo(Vector<Chapter>&&, Vector<EncodedInfo>&&, unsigned numberOfEncodedInfoExtensions);
 
-    template<typename T, unsigned bitCount> static T NODELETE cast(unsigned);
+    template<typename T, unsigned bitCount> static T LEGACY_NODELETE cast(unsigned);
 
-    static bool NODELETE isSpecial(unsigned);
-    static bool NODELETE isWideOrSpecial(unsigned);
+    static bool LEGACY_NODELETE isSpecial(unsigned);
+    static bool LEGACY_NODELETE isWideOrSpecial(unsigned);
 
     static size_t payloadSizeInBytes(size_t numChapters, size_t numberOfEncodedInfo, size_t numberOfEncodedInfoExtensions)
     {
@@ -209,8 +209,8 @@ private:
         return sizeof(ExpressionInfo) + payloadSizeInBytes(numChapters, numberOfEncodedInfo, numberOfEncodedInfoExtensions);
     }
 
-    EncodedInfo* NODELETE findChapterEncodedInfoJustBelow(InstPC) const;
-    Entry NODELETE decodeEntryForInstPC(InstPC);
+    EncodedInfo* LEGACY_NODELETE findChapterEncodedInfoJustBelow(InstPC) const;
+    Entry LEGACY_NODELETE decodeEntryForInstPC(InstPC);
 
     Chapter* chapters() const
     {

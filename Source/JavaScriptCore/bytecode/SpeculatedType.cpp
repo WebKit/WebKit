@@ -368,7 +368,7 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
 
 // We don't expose this because we don't want anyone relying on the fact that this method currently
 // just returns string constants.
-static const char* NODELETE speculationToAbbreviatedString(SpeculatedType prediction)
+static const char* LEGACY_NODELETE speculationToAbbreviatedString(SpeculatedType prediction)
 {
     if (isFinalObjectSpeculation(prediction))
         return "<Final>";
@@ -801,7 +801,7 @@ SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType ty
     return type;
 }
 
-static inline SpeculatedType NODELETE leastUpperBoundOfEquivalentSpeculations(SpeculatedType type)
+static inline SpeculatedType LEGACY_NODELETE leastUpperBoundOfEquivalentSpeculations(SpeculatedType type)
 {
     type = leastUpperBoundOfStrictlyEquivalentSpeculations(type);
 
@@ -838,7 +838,7 @@ bool valuesCouldBeEqual(SpeculatedType a, SpeculatedType b)
     return !!(a & b);
 }
 
-static SpeculatedType NODELETE typeOfDoubleSumOrDifferenceOrProduct(SpeculatedType a, SpeculatedType b)
+static SpeculatedType LEGACY_NODELETE typeOfDoubleSumOrDifferenceOrProduct(SpeculatedType a, SpeculatedType b)
 {
     SpeculatedType result = a | b;
 
@@ -885,7 +885,7 @@ SpeculatedType typeOfDoubleProduct(SpeculatedType a, SpeculatedType b)
     return typeOfDoubleSumOrDifferenceOrProduct(a, b);
 }
 
-static SpeculatedType NODELETE polluteDouble(SpeculatedType value)
+static SpeculatedType LEGACY_NODELETE polluteDouble(SpeculatedType value)
 {
     // Impure NaN could become pure NaN because the operation could clear some bits.
     if (value & SpecDoubleImpureNaN)

@@ -69,7 +69,7 @@ protected:
 
     bool hasAccessToInspectedScriptState() const;
 
-    JSC::JSObject* NODELETE injectedScriptObject() const;
+    JSC::JSObject* LEGACY_NODELETE injectedScriptObject() const;
     std::expected<JSC::JSValue, NakedPtr<JSC::Exception>> callFunctionWithEvalEnabled(ScriptFunctionCall&) const;
     Ref<JSON::Value> makeCall(ScriptFunctionCall&);
     void makeEvalCall(Protocol::ErrorString&, ScriptFunctionCall&, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);

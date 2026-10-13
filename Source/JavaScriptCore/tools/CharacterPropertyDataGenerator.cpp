@@ -76,7 +76,7 @@ private:
     //   Explorer).
     // Please refer to <https://bugs.webkit.org/show_bug.cgi?id=37698> for line
     // breaking matrixes of different browsers and the ICU standard.
-    void NODELETE fillASCII()
+    void LEGACY_NODELETE fillASCII()
     {
 #define ALL_CHAR '!', 0x7F
         setPairValue(ALL_CHAR, ALL_CHAR, false);
@@ -199,7 +199,7 @@ private:
         dataLogLn("} // namespace WebCore");
     }
 
-    void NODELETE setPairValue(char16_t ch1Min, char16_t ch1Max, char16_t ch2Min, char16_t ch2Max, bool value)
+    void LEGACY_NODELETE setPairValue(char16_t ch1Min, char16_t ch1Max, char16_t ch2Min, char16_t ch2Max, bool value)
     {
         for (char16_t ch1 = ch1Min; ch1 <= ch1Max; ++ch1) {
             for (char16_t ch2 = ch2Min; ch2 <= ch2Max; ++ch2)
@@ -208,7 +208,7 @@ private:
     }
 
     // Set the breakability between `ch1` and `ch2`.
-    void NODELETE setPairValue(char16_t ch1, char16_t ch2, bool value)
+    void LEGACY_NODELETE setPairValue(char16_t ch1, char16_t ch2, bool value)
     {
         RELEASE_ASSERT(ch1 >= minChar);
         RELEASE_ASSERT(ch1 <= maxChar);

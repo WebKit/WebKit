@@ -144,7 +144,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncWithResolvers, (JSGlobalObject* g
     return JSValue::encode(JSPromise::createNewPromiseCapability(globalObject, thisValue));
 }
 
-static bool NODELETE isFastPromiseConstructor(JSGlobalObject* globalObject, JSValue value)
+static bool LEGACY_NODELETE isFastPromiseConstructor(JSGlobalObject* globalObject, JSValue value)
 {
     if (value != globalObject->promiseConstructor()) [[unlikely]]
         return false;

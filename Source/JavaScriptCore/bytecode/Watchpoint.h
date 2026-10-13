@@ -206,7 +206,7 @@ public:
     // As a convenience, this will ignore 0. That's because code paths in the DFG
     // that create speculation watchpoints may choose to bail out if speculation
     // had already been terminated.
-    void NODELETE add(Watchpoint*);
+    void LEGACY_NODELETE add(Watchpoint*);
     
     // Force the watchpoint set to behave as if it was being watched even if no
     // watchpoints have been installed. This will result in invalidation if the
@@ -272,7 +272,7 @@ protected:
 
 private:
     void fireAllWatchpoints(VM&, const FireDetail&);
-    void NODELETE take(WatchpointSet* other);
+    void LEGACY_NODELETE take(WatchpointSet* other);
     
     friend class InlineWatchpointSet;
 
@@ -514,7 +514,7 @@ public:
     {
     }
 
-    JS_EXPORT_PRIVATE void NODELETE takeWatchpointsToFire(WatchpointSet*);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE takeWatchpointsToFire(WatchpointSet*);
 
 protected:
     WatchpointSet& watchpointsToFire() { return m_watchpointsToFire; }

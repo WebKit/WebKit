@@ -34,6 +34,6 @@ namespace JSC {
 // This function provides a centralized place to put these checks so that they will
 // be run once and only once (per process) during initialization before the rest of
 // the system runs.
-void NODELETE assertInvariants();
+void LEGACY_NODELETE assertInvariants();
 
 } // namespace JSC

@@ -44,7 +44,7 @@ public:
 
     void install(VM&);
 
-    static void NODELETE clearLLIntGetByIdCache(GetByIdModeMetadata&);
+    static void LEGACY_NODELETE clearLLIntGetByIdCache(GetByIdModeMetadata&);
 
     const ObjectPropertyCondition& key() const LIFETIME_BOUND { return m_key; }
 

@@ -1073,7 +1073,7 @@ private:
             getLocalPositions.operand(operand) < setLocalPositions.operand(operand));
     }
     
-    void NODELETE reportValidationContext() { }
+    void LEGACY_NODELETE reportValidationContext() { }
 
     void reportValidationContext(Node* node)
     {

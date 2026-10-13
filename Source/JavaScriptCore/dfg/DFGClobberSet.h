@@ -39,7 +39,7 @@ struct Node;
 
 // FIXME: If we ever want to compare if two nodes clobber each other, we should
 // have a SmallClobberSet, which just keeps an array of the AbstractHeaps and
-// satisfies NODELETE overlaps() requests by looping over all of them. This will probably
+// satisfies LEGACY_NODELETE overlaps() requests by looping over all of them. This will probably
 // be faster than a full UncheckedKeyHashMap in a lot of cases. Or, maybe, we could have
 // ClobberSet be smart and use a vector so long as it was small.
 
@@ -64,7 +64,7 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    bool NODELETE contains(AbstractHeap) const;
+    bool LEGACY_NODELETE contains(AbstractHeap) const;
 
     UncheckedKeyHashSet<AbstractHeap> setOf(bool direct) const;
     

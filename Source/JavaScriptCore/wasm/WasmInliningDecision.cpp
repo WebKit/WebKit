@@ -144,7 +144,7 @@ void InliningNode::inlineNode(InliningDecision& decision)
     }
 }
 
-static double NODELETE budgetScaleFactor(const Module& module)
+static double LEGACY_NODELETE budgetScaleFactor(const Module& module)
 {
     // If there are few small functions, that indicates that the toolchain
     // already performed significant inlining, so we reduce the budget

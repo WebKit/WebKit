@@ -320,8 +320,8 @@ public:
         return !!m_polyProtoAccessChain;
     }
 
-    bool NODELETE requiresIdentifierNameMatch() const;
-    bool NODELETE requiresInt32PropertyCheck() const;
+    bool LEGACY_NODELETE requiresIdentifierNameMatch() const;
+    bool LEGACY_NODELETE requiresInt32PropertyCheck() const;
 
     UniquedStringImpl* uid() const { return m_identifier.uid(); }
     CacheableIdentifier identifier() const { return m_identifier; }
@@ -374,7 +374,7 @@ protected:
     JSObject* tryGetAlternateBaseImpl() const;
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
 
-    bool NODELETE guardedByStructureCheckSkippingConstantIdentifierCheck() const;
+    bool LEGACY_NODELETE guardedByStructureCheckSkippingConstantIdentifierCheck() const;
 
 private:
     friend class CodeBlock;

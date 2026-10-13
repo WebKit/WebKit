@@ -47,7 +47,7 @@ public:
         
         ~Result();
         
-        bool NODELETE didGetCancelled();
+        bool LEGACY_NODELETE didGetCancelled();
         
     private:
         friend class Safepoint;
@@ -66,10 +66,10 @@ public:
     template<typename Visitor> void checkLivenessAndVisitChildren(Visitor&);
     template<typename Visitor> bool isKnownToBeLiveDuringGC(Visitor&);
     bool isKnownToBeLiveAfterGC();
-    void NODELETE cancel();
-    bool NODELETE keepDependenciesLive() const;
+    void LEGACY_NODELETE cancel();
+    bool LEGACY_NODELETE keepDependenciesLive() const;
     
-    VM* NODELETE vm() const; // May return null if we've been cancelled.
+    VM* LEGACY_NODELETE vm() const; // May return null if we've been cancelled.
 
 private:
     VM* m_vm;

@@ -64,8 +64,8 @@ class Thunks {
     WTF_MAKE_TZONE_ALLOCATED(Thunks);
     WTF_MAKE_NONCOPYABLE(Thunks);
 public:
-    static void NODELETE initialize();
-    static Thunks& NODELETE singleton();
+    static void LEGACY_NODELETE initialize();
+    static Thunks& LEGACY_NODELETE singleton();
 
     MacroAssemblerCodeRef<JITThunkPtrTag> stub(ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> stub(const AbstractLocker&, ThunkGenerator);

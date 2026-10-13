@@ -128,9 +128,9 @@ public:
 
     JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);
     const Vector<Vector<Type>>& tuples() const { return m_tuples; };
-    bool NODELETE isValidTuple(Type tuple) const;
+    bool LEGACY_NODELETE isValidTuple(Type tuple) const;
     Type extractFromTuple(Type tuple, unsigned index) const;
-    JS_EXPORT_PRIVATE const Vector<Type>& NODELETE tupleForType(Type tuple) const;
+    JS_EXPORT_PRIVATE const Vector<Type>& LEGACY_NODELETE tupleForType(Type tuple) const;
 
     unsigned resultCount(Type type) const { return type.isTuple() ? tupleForType(type).size() : type.isNumeric(); }
     Type typeAtOffset(Type type, unsigned index) const { ASSERT(index < resultCount(type)); return type.isTuple() ? extractFromTuple(type, index) : type; }
@@ -154,7 +154,7 @@ public:
     // Returns null for TriState::Indeterminate.
     Value* addBoolConstant(Origin, TriState);
 
-    void NODELETE resetValueOwners();
+    void LEGACY_NODELETE resetValueOwners();
     JS_EXPORT_PRIVATE void resetReachability();
 
     // This destroys CFG analyses. If we ask for them again, we will recompute them. Usually you
@@ -205,7 +205,7 @@ public:
     JS_EXPORT_PRIVATE BackwardsDominators& backwardsDominators();
 
     void addFastConstant(const ValueKey&);
-    bool NODELETE isFastConstant(const ValueKey&);
+    bool LEGACY_NODELETE isFastConstant(const ValueKey&);
     
     unsigned numEntrypoints() const { return m_numEntrypoints; }
     JS_EXPORT_PRIVATE void setNumEntrypoints(unsigned);
@@ -250,13 +250,13 @@ public:
     const Air::Code& code() const { return *m_code; }
     Air::Code& code() { return *m_code; }
 
-    unsigned NODELETE callArgAreaSizeInBytes() const;
+    unsigned LEGACY_NODELETE callArgAreaSizeInBytes() const;
     void requestCallArgAreaSizeInBytes(unsigned size);
 
     // This tells the register allocators to stay away from this register.
     JS_EXPORT_PRIVATE void pinRegister(Reg);
     
-    JS_EXPORT_PRIVATE void NODELETE setOptLevel(unsigned value);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setOptLevel(unsigned value);
     unsigned optLevel() const { return m_optLevel; }
     
     // You can turn off used registers calculation. This may speed up compilation a bit. But if
@@ -265,7 +265,7 @@ public:
     void setNeedsUsedRegisters(bool value) { m_needsUsedRegisters = value; }
     bool needsUsedRegisters() const { return m_needsUsedRegisters; }
 
-    JS_EXPORT_PRIVATE unsigned NODELETE frameSize() const;
+    JS_EXPORT_PRIVATE unsigned LEGACY_NODELETE frameSize() const;
     JS_EXPORT_PRIVATE RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
 
     PCToOriginMap& pcToOriginMap() LIFETIME_BOUND { return m_pcToOriginMap; }
@@ -285,13 +285,13 @@ public:
 
     JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
 
-    void NODELETE setNeedsPCToOriginMap();
+    void LEGACY_NODELETE setNeedsPCToOriginMap();
     bool needsPCToOriginMap() { return m_needsPCToOriginMap; }
 
     JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
 
     bool shouldDumpIR() const { return m_shouldDumpIR; }
-    JS_EXPORT_PRIVATE void NODELETE setShouldDumpIR();
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setShouldDumpIR();
 
     void setUsesSIMD()
     { 

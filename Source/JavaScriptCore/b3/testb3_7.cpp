@@ -1039,7 +1039,7 @@ void generateLoop(Procedure& proc, NOESCAPE const Func& func)
     end->appendNew<Value>(proc, Return, Origin());
 }
 
-static std::array<int, 100> NODELETE makeArrayForLoops()
+static std::array<int, 100> LEGACY_NODELETE makeArrayForLoops()
 {
     std::array<int, 100> result;
     for (unsigned i = 0; i < result.size(); ++i)
@@ -2045,7 +2045,7 @@ void testWasmAddressWithOffset()
     CHECK_EQ(42U, values[2]);
 }
 
-void NODELETE testFastTLSLoad()
+void LEGACY_NODELETE testFastTLSLoad()
 {
 #if ENABLE(FAST_TLS_JIT)
     _pthread_setspecific_direct(WTF_TESTING_KEY, std::bit_cast<void*>(static_cast<uintptr_t>(0xbeef)));
@@ -2067,7 +2067,7 @@ void NODELETE testFastTLSLoad()
 #endif
 }
 
-void NODELETE testFastTLSStore()
+void LEGACY_NODELETE testFastTLSStore()
 {
 #if ENABLE(FAST_TLS_JIT)
     Procedure proc;
@@ -2092,12 +2092,12 @@ void NODELETE testFastTLSStore()
 #endif
 }
 
-static NEVER_INLINE bool NODELETE doubleEq(double a, double b) { return a == b; }
-static NEVER_INLINE bool NODELETE doubleNeq(double a, double b) { return a != b; }
-static NEVER_INLINE bool NODELETE doubleGt(double a, double b) { return a > b; }
-static NEVER_INLINE bool NODELETE doubleGte(double a, double b) { return a >= b; }
-static NEVER_INLINE bool NODELETE doubleLt(double a, double b) { return a < b; }
-static NEVER_INLINE bool NODELETE doubleLte(double a, double b) { return a <= b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleEq(double a, double b) { return a == b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleNeq(double a, double b) { return a != b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleGt(double a, double b) { return a > b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleGte(double a, double b) { return a >= b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleLt(double a, double b) { return a < b; }
+static NEVER_INLINE bool LEGACY_NODELETE doubleLte(double a, double b) { return a <= b; }
 
 void testDoubleLiteralComparison(double a, double b)
 {

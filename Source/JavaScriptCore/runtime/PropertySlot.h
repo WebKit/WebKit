@@ -139,7 +139,7 @@ public:
 
     JSValue getValue(JSGlobalObject*, PropertyName) const;
     JSValue getValue(JSGlobalObject*, uint64_t propertyName) const;
-    JSValue NODELETE getPureResult() const;
+    JSValue LEGACY_NODELETE getPureResult() const;
 
     bool isCacheable() const { return isUnset() || m_cacheability == CachingAllowed; }
     bool isUnset() const { return m_propertyType == TypeUnset; }

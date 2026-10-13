@@ -295,7 +295,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     
     // Returns true if we need an impure property watchpoint to ensure validity even if
     // isStillValidAccordingToStructure() returned true.
-    bool NODELETE validityRequiresImpurePropertyWatchpoint(Structure*) const;
+    bool LEGACY_NODELETE validityRequiresImpurePropertyWatchpoint(Structure*) const;
     
     // Checks if the condition is still valid right now for the given object and structure.
     // May conservatively return false, if the object and structure alone don't guarantee the
@@ -362,9 +362,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     
     void validateReferences(const TrackedReferences&) const;
 
-    static bool NODELETE isValidValueForAttributes(JSValue, unsigned attributes);
+    static bool LEGACY_NODELETE isValidValueForAttributes(JSValue, unsigned attributes);
 
-    bool NODELETE isValidValueForPresence(JSValue) const;
+    bool LEGACY_NODELETE isValidValueForPresence(JSValue) const;
 
     PropertyCondition attemptToMakeEquivalenceWithoutBarrier(JSObject* base) const;
     PropertyCondition attemptToMakeReplacementWithoutBarrier(JSObject* base) const;

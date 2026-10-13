@@ -127,9 +127,9 @@ public:
         return m_state == LikelyTakesSlowPath || m_state == ObservedTakesSlowPath || m_state == MakesCalls || m_state == ObservedSlowPathAndMakesCalls || m_state == CustomAccessor || m_state == ModuleNamespace || m_state == Megamorphic;
     }
     bool observedPropertyInlineCacheSlowPath() const { return m_state == ObservedTakesSlowPath || m_state == ObservedSlowPathAndMakesCalls; }
-    bool NODELETE makesCalls() const;
+    bool LEGACY_NODELETE makesCalls() const;
     
-    GetByStatus NODELETE slowVersion() const;
+    GetByStatus LEGACY_NODELETE slowVersion() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
@@ -150,7 +150,7 @@ public:
 
     void dump(PrintStream&) const;
 
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier LEGACY_NODELETE singleIdentifier() const;
 
     bool viaGlobalProxy() const
     {
@@ -160,7 +160,7 @@ public:
     }
 
 #if ENABLE(JIT)
-    CacheType NODELETE preferredCacheType() const;
+    CacheType LEGACY_NODELETE preferredCacheType() const;
 #endif
     
 private:

@@ -144,8 +144,8 @@ public:
     }
     bool isPhiIndex(size_t i) const { return i < phis.size(); }
     
-    bool NODELETE isInPhis(Node* node) const;
-    bool NODELETE isInBlock(Node* myNode) const;
+    bool LEGACY_NODELETE isInPhis(Node* node) const;
+    bool LEGACY_NODELETE isInBlock(Node* myNode) const;
     
     BlockNodeList::iterator begin() { return m_nodes.begin(); }
     BlockNodeList::iterator end() { return m_nodes.end(); }
@@ -171,8 +171,8 @@ public:
     BlockIndex index() const { return m_index; }
     void setIndex(BlockIndex index) { m_index = index; }
 
-    void NODELETE removePredecessor(BasicBlock* block);
-    void NODELETE replacePredecessor(BasicBlock* from, BasicBlock* to);
+    void LEGACY_NODELETE removePredecessor(BasicBlock* block);
+    void LEGACY_NODELETE replacePredecessor(BasicBlock* from, BasicBlock* to);
 
     inline Node* cloneAndAppend(Graph&, const Node*);
 

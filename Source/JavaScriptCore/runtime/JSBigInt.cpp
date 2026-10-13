@@ -435,7 +435,7 @@ private:
 };
 
 template<typename D>
-static std::span<D> NODELETE normalize(std::span<D> x)
+static std::span<D> LEGACY_NODELETE normalize(std::span<D> x)
 {
     while (!x.empty() && !x.back())
         x = x.first(x.size() - 1);
@@ -556,7 +556,7 @@ ALWAYS_INLINE JSBigInt::ImplResult::ImplResult(JSValue value)
     : payload(value)
 { }
 
-static ALWAYS_INLINE JSValue NODELETE tryConvertToBigInt32(JSBigInt::ImplResult implResult)
+static ALWAYS_INLINE JSValue LEGACY_NODELETE tryConvertToBigInt32(JSBigInt::ImplResult implResult)
 {
     if (!implResult.payload)
         return JSValue();
@@ -2640,7 +2640,7 @@ public:
     }
 
 private:
-    static ALWAYS_INLINE Digit NODELETE calculateInverse(Digit d)
+    static ALWAYS_INLINE Digit LEGACY_NODELETE calculateInverse(Digit d)
     {
         ASSERT(d & (1ULL << (digitBits - 1))); // d is already normalized.
         TwoDigit limit = ~static_cast<TwoDigit>(0);
@@ -6436,7 +6436,7 @@ uint64_t JSBigInt::toBigUInt64Heap(JSBigInt* bigInt)
     return ~(value - 1); // To avoid undefined behavior, we compute two's compliment by hand in C while this is simply `-value`.
 }
 
-static ALWAYS_INLINE unsigned NODELETE computeHash(JSBigInt::Digit* digits, unsigned length, bool sign)
+static ALWAYS_INLINE unsigned LEGACY_NODELETE computeHash(JSBigInt::Digit* digits, unsigned length, bool sign)
 {
     Hasher hasher;
     WTF::add(hasher, sign);

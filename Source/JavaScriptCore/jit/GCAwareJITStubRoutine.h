@@ -114,10 +114,10 @@ public:
         return m_hash;
     }
 
-    static unsigned NODELETE computeHash(std::span<const Ref<AccessCase>>);
+    static unsigned LEGACY_NODELETE computeHash(std::span<const Ref<AccessCase>>);
 
     void addGCAwareWatchpoint();
-    void NODELETE addedToSharedJITStubSet();
+    void LEGACY_NODELETE addedToSharedJITStubSet();
 
     Watchpoints& watchpoints() LIFETIME_BOUND { return m_watchpoints; }
     WatchpointSet& watchpointSet() { return *m_watchpointSet.get(); }
@@ -174,7 +174,7 @@ public:
     MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, bool isCodeImmutable);
 
     bool reconcileWeakReferencesAtGCEndImpl(VM&);
-    CallLinkInfo* NODELETE callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
+    CallLinkInfo* LEGACY_NODELETE callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
 
 protected:
     template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);

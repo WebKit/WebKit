@@ -59,7 +59,7 @@ public:
     const ASCIICString& abbreviatedName() const LIFETIME_BOUND { return m_abbreviatedName; }
     const ASCIICString& name() const LIFETIME_BOUND { return m_name; }
     
-    void NODELETE resetStats();
+    void LEGACY_NODELETE resetStats();
     
     size_t lastVisitCount() const { return m_lastVisitCount; }
     

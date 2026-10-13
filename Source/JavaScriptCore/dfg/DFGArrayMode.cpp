@@ -189,7 +189,7 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile profile, Array::Action action, bo
     }
 }
 
-static bool NODELETE canBecomeGetArrayLength(Graph& graph, Node* node)
+static bool LEGACY_NODELETE canBecomeGetArrayLength(Graph& graph, Node* node)
 {
     if (node->op() == GetArrayLength)
         return true;

@@ -240,7 +240,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
 }
 
 template<typename Container>
-static inline unsigned NODELETE skipLiteralText(const Container& container, unsigned start, unsigned length)
+static inline unsigned LEGACY_NODELETE skipLiteralText(const Container& container, unsigned start, unsigned length)
 {
     // Skip literal text. We do not recognize '' single quote specially.
     // `'ICU''s change'` is `ICU's change` literal text, but even if we split this text into two literal texts,
@@ -1384,7 +1384,7 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
 // [3]: https://hg.mozilla.org/mozilla-central/rev/40e2c54d5618
 // [4]: https://chromium.googlesource.com/v8/v8/+/bab790f9165f65a44845b4383c8df7c6c32cf4b3
 template<typename Container>
-static void NODELETE replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Container& vector)
+static void LEGACY_NODELETE replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Container& vector)
 {
     // The key of this replacement is that we are not changing size of string.
     // This allows us not to adjust offsets reported from formatToParts / formatRangeToParts

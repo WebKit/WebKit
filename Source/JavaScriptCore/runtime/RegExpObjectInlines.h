@@ -296,7 +296,7 @@ inline uint64_t advanceStringUnicode(StringView s, unsigned length, uint64_t cur
     return currentIndex + 2;
 }
 
-inline uint64_t NODELETE advanceStringIndex(StringView str, unsigned strSize, uint64_t index, bool isUnicode)
+inline uint64_t LEGACY_NODELETE advanceStringIndex(StringView str, unsigned strSize, uint64_t index, bool isUnicode)
 {
     if (!isUnicode)
         return ++index;

@@ -75,7 +75,7 @@ public:
         return m_isProfitableToUnbox;
     }
     
-    bool NODELETE mergeShouldNeverUnbox(bool shouldNeverUnbox);
+    bool LEGACY_NODELETE mergeShouldNeverUnbox(bool shouldNeverUnbox);
     
     // Returns true if it would be unsound to store the value in an unboxed fashion.
     // If this returns false, it simply means that it is sound to unbox; it doesn't
@@ -128,7 +128,7 @@ public:
         return m_isLoadedFrom;
     }
     
-    bool NODELETE predict(SpeculatedType prediction);
+    bool LEGACY_NODELETE predict(SpeculatedType prediction);
     
     SpeculatedType nonUnifiedPrediction()
     {
@@ -145,7 +145,7 @@ public:
         return find()->m_argumentAwarePrediction;
     }
     
-    bool NODELETE mergeArgumentAwarePrediction(SpeculatedType prediction);
+    bool LEGACY_NODELETE mergeArgumentAwarePrediction(SpeculatedType prediction);
     
     void clearVotes()
     {
@@ -166,7 +166,7 @@ public:
         return static_cast<double>(m_votes[1]) / m_votes[0];
     }
     
-    bool NODELETE shouldUseDoubleFormatAccordingToVote();
+    bool LEGACY_NODELETE shouldUseDoubleFormatAccordingToVote();
     
     DoubleFormatState doubleFormatState()
     {
@@ -181,11 +181,11 @@ public:
         return doubleState && isProfitableToUnbox();
     }
     
-    bool NODELETE tallyVotesForShouldUseDoubleFormat();
+    bool LEGACY_NODELETE tallyVotesForShouldUseDoubleFormat();
     
-    bool NODELETE mergeDoubleFormatState(DoubleFormatState);
+    bool LEGACY_NODELETE mergeDoubleFormatState(DoubleFormatState);
     
-    bool NODELETE makePredictionForDoubleFormat();
+    bool LEGACY_NODELETE makePredictionForDoubleFormat();
     
     NodeFlags flags() const { return m_flags; }
     
@@ -194,9 +194,9 @@ public:
         return checkAndSet(m_flags, m_flags | newFlags);
     }
     
-    FlushFormat NODELETE flushFormat();
+    FlushFormat LEGACY_NODELETE flushFormat();
     
-    bool NODELETE couldRepresentInt52();
+    bool LEGACY_NODELETE couldRepresentInt52();
     
     FlushedAt flushedAt()
     {
@@ -204,7 +204,7 @@ public:
     }
 
 private:
-    bool NODELETE couldRepresentInt52Impl();
+    bool LEGACY_NODELETE couldRepresentInt52Impl();
     
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But

@@ -46,7 +46,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView>, public NoVirtualDest
 public:
     TypedArrayType getType() const { return m_type; }
 
-    SUPPRESS_NODELETE bool NODELETE isDetached() const
+    SUPPRESS_NODELETE bool LEGACY_NODELETE isDetached() const
     {
         return !m_buffer || m_buffer->isDetached();
     }
@@ -72,7 +72,7 @@ public:
         return m_buffer->isShared();
     }
 
-    SUPPRESS_NODELETE void* NODELETE baseAddress() const LIFETIME_BOUND
+    SUPPRESS_NODELETE void* LEGACY_NODELETE baseAddress() const LIFETIME_BOUND
     {
         if (isDetached())
             return nullptr;
@@ -108,7 +108,7 @@ public:
 
     size_t byteLengthRaw() const { return m_byteLength; }
 
-    size_t NODELETE byteLength() const
+    size_t LEGACY_NODELETE byteLength() const
     {
         if (isDetached()) [[unlikely]]
             return 0;
@@ -130,7 +130,7 @@ public:
         return roundDownToMultipleOf(JSC::elementSize(m_type), bufferByteLength - byteOffsetStart);
     }
 
-    JS_EXPORT_PRIVATE void NODELETE setDetachable(bool);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setDetachable(bool);
     bool isDetachable() const { return m_isDetachable; }
     bool isResizableOrGrowableShared() const { return m_isResizableNonShared || m_isGrowableShared; }
     bool isResizableNonShared() const { return m_isResizableNonShared; }

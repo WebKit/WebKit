@@ -63,7 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return result.toString();
 }
 
-static inline size_t NODELETE sizetExtractor(const size_t* value)
+static inline size_t LEGACY_NODELETE sizetExtractor(const size_t* value)
 {
     return *value;
 }

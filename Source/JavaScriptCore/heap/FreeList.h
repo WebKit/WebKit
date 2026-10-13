@@ -84,7 +84,7 @@ public:
     FreeList(unsigned cellSize);
     ~FreeList();
     
-    void NODELETE clear();
+    void LEGACY_NODELETE clear();
     
     JS_EXPORT_PRIVATE void initialize(FreeCell* head, uint64_t secret, unsigned bytes);
 

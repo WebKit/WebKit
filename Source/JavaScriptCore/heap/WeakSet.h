@@ -74,7 +74,7 @@ public:
 
 private:
     JS_EXPORT_PRIVATE WeakBlock* findAllocator(CellContainer);
-    WeakBlock* NODELETE tryFindAllocator();
+    WeakBlock* LEGACY_NODELETE tryFindAllocator();
     WeakBlock* addAllocator(CellContainer);
 
     JS_EXPORT_PRIVATE void didBecomeEmpty(WeakBlock*);

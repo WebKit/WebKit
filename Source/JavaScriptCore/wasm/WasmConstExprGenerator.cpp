@@ -277,41 +277,41 @@ private:
             , m_bits(JSValue::encode(value))
         { }
 
-        bool NODELETE isInvalid() const
+        bool LEGACY_NODELETE isInvalid() const
         {
             return m_type == ConstExprValueType::Invalid;
         }
 
-        uint64_t NODELETE getValue() const
+        uint64_t LEGACY_NODELETE getValue() const
         {
             ASSERT(m_type == ConstExprValueType::Numeric || m_type == ConstExprValueType::Ref);
             return m_bits;
         }
 
-        v128_t NODELETE getVector() const
+        v128_t LEGACY_NODELETE getVector() const
         {
             ASSERT(m_type == ConstExprValueType::Vector);
             return m_vector;
         }
 
-        ConstExprValueType NODELETE type() const
+        ConstExprValueType LEGACY_NODELETE type() const
         {
             return m_type;
         }
 
-        ConstExprValue NODELETE operator+(ConstExprValue value) const
+        ConstExprValue LEGACY_NODELETE operator+(ConstExprValue value) const
         {
             ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits + value.getValue());
         }
 
-        ConstExprValue NODELETE operator-(ConstExprValue value) const
+        ConstExprValue LEGACY_NODELETE operator-(ConstExprValue value) const
         {
             ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits - value.getValue());
         }
 
-        ConstExprValue NODELETE operator*(ConstExprValue value) const
+        ConstExprValue LEGACY_NODELETE operator*(ConstExprValue value) const
         {
             ASSERT(m_type == ConstExprValueType::Numeric);
             return ConstExprValue(m_bits * value.getValue());
@@ -470,14 +470,14 @@ public:
     // Structured blocks should not appear in the constant expression except
     // for a dummy top-level block from parseBody() that cannot be jumped to.
     struct ControlData {
-        static bool NODELETE isIf(const ControlData&) { return false; }
-        static bool NODELETE isElse(const ControlData&) { return false; }
-        static bool NODELETE isTry(const ControlData&) { return false; }
-        static bool NODELETE isAnyCatch(const ControlData&) { return false; }
-        static bool NODELETE isCatch(const ControlData&) { return false; }
-        static bool NODELETE isTopLevel(const ControlData&) { return true; }
-        static bool NODELETE isLoop(const ControlData&) { return false; }
-        static bool NODELETE isBlock(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isIf(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isElse(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isTry(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isAnyCatch(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isCatch(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isTopLevel(const ControlData&) { return true; }
+        static bool LEGACY_NODELETE isLoop(const ControlData&) { return false; }
+        static bool LEGACY_NODELETE isBlock(const ControlData&) { return false; }
 
         ControlData()
         { }
@@ -485,9 +485,9 @@ public:
             : m_signature(WTF::move(signature))
         { }
 
-        const BlockSignature& NODELETE signature() const { return m_signature; }
-        FunctionArgCount NODELETE branchTargetArity() const { return 0; }
-        Type NODELETE branchTargetType(unsigned) const { return Types::Void; }
+        const BlockSignature& LEGACY_NODELETE signature() const { return m_signature; }
+        FunctionArgCount LEGACY_NODELETE branchTargetArity() const { return 0; }
+        Type LEGACY_NODELETE branchTargetType(unsigned) const { return Types::Void; }
     private:
         BlockSignature m_signature;
     };
@@ -501,9 +501,9 @@ public:
     using ArgumentList = FunctionParser<ConstExprGenerator>::ArgumentList;
 
     static constexpr bool shouldFuseBranchCompare = false;
-    static constexpr bool NODELETE tierSupportsSIMD() { return true; }
+    static constexpr bool LEGACY_NODELETE tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = false;
-    static ExpressionType NODELETE emptyExpression() { return { }; };
+    static ExpressionType LEGACY_NODELETE emptyExpression() { return { }; };
 
 protected:
     template <typename ...Args>
@@ -525,18 +525,18 @@ public:
     {
     }
 
-    const Vector<FunctionSpaceIndex>& NODELETE declaredFunctions() const { return m_declaredFunctions; }
-    uint32_t NODELETE maxStackHeight() const { return m_maxStackHeight; }
-    void NODELETE setParser(FunctionParser<ConstExprGenerator>* parser) { m_parser = parser; };
+    const Vector<FunctionSpaceIndex>& LEGACY_NODELETE declaredFunctions() const { return m_declaredFunctions; }
+    uint32_t LEGACY_NODELETE maxStackHeight() const { return m_maxStackHeight; }
+    void LEGACY_NODELETE setParser(FunctionParser<ConstExprGenerator>* parser) { m_parser = parser; };
 
-    bool NODELETE addArguments(const RTT&) { RELEASE_ASSERT_NOT_REACHED(); }
+    bool LEGACY_NODELETE addArguments(const RTT&) { RELEASE_ASSERT_NOT_REACHED(); }
 
-    ExpressionType NODELETE addConstant(Type, uint64_t) { return { }; }
+    ExpressionType LEGACY_NODELETE addConstant(Type, uint64_t) { return { }; }
 
 #define CONST_EXPR_STUB { return fail("Invalid instruction for constant expression"); }
 
     PartialResult addDrop(ExpressionType) CONST_EXPR_STUB
-    PartialResult NODELETE addLocal(Type, uint32_t) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult LEGACY_NODELETE addLocal(Type, uint32_t) { RELEASE_ASSERT_NOT_REACHED(); }
     [[nodiscard]] PartialResult addTableGet(unsigned, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addTableSet(unsigned, ExpressionType, ExpressionType) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addTableInit(unsigned, unsigned, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
@@ -804,7 +804,7 @@ public:
         return { };
     }
 
-    ControlData NODELETE addTopLevel(BlockSignature&& signature)
+    ControlData LEGACY_NODELETE addTopLevel(BlockSignature&& signature)
     {
         return ControlData(WTF::move(signature));
     }
@@ -858,8 +858,8 @@ public:
     [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addUnreachable() CONST_EXPR_STUB
     [[nodiscard]] PartialResult addCrash() CONST_EXPR_STUB
-    bool NODELETE usesSIMD() { return false; }
-    void NODELETE notifyFunctionUsesSIMD() { }
+    bool LEGACY_NODELETE usesSIMD() { return false; }
+    void LEGACY_NODELETE notifyFunctionUsesSIMD() { }
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType, uint64_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDStore(ExpressionType, ExpressionType, uint64_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&) CONST_EXPR_STUB
@@ -871,7 +871,7 @@ public:
     [[nodiscard]] PartialResult addSIMDStoreLane(SIMDLaneOperation, ExpressionType, ExpressionType, uint64_t, uint8_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDLoadExtend(SIMDLaneOperation, ExpressionType, uint64_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDLoadPad(SIMDLaneOperation, ExpressionType, uint64_t, ExpressionType&, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] ExpressionType NODELETE addSIMDConstant(v128_t)
+    [[nodiscard]] ExpressionType LEGACY_NODELETE addSIMDConstant(v128_t)
     {
         RELEASE_ASSERT(Options::useWasmSIMD());
         return { };
@@ -887,7 +887,7 @@ public:
     [[nodiscard]] PartialResult addSIMDV_VV(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addSIMDRelaxedFMA(SIMDLaneOperation, SIMDInfo, ExpressionType, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
 
-    void NODELETE dump(const ControlStack&, const Stack*) { }
+    void LEGACY_NODELETE dump(const ControlStack&, const Stack*) { }
     ALWAYS_INLINE void willParseOpcode() { }
     ALWAYS_INLINE void willParseExtendedOpcode() { }
     ALWAYS_INLINE void didParseOpcode() {
@@ -896,8 +896,8 @@ public:
 
         m_maxStackHeight = std::max<uint32_t>(m_maxStackHeight, m_parser->expressionStack().size());
     }
-    void NODELETE didFinishParsingLocals() { }
-    void NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral) { }
+    void LEGACY_NODELETE didFinishParsingLocals() { }
+    void LEGACY_NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral) { }
 
 
 private:

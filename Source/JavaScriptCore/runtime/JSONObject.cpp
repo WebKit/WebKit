@@ -113,9 +113,9 @@ private:
         Holder(JSGlobalObject*, JSObject*, Structure*);
         Holder(RootHolderTag, JSObject*);
 
-        JSObject* NODELETE object() const { return m_object; }
-        bool NODELETE isArray() const { return m_isArray; }
-        bool NODELETE hasFastObjectProperties() const { return m_hasFastObjectProperties; }
+        JSObject* LEGACY_NODELETE object() const { return m_object; }
+        bool LEGACY_NODELETE isArray() const { return m_isArray; }
+        bool LEGACY_NODELETE hasFastObjectProperties() const { return m_hasFastObjectProperties; }
 
         bool appendNextProperty(Stringifier&, StringBuilder&);
 
@@ -144,7 +144,7 @@ private:
     void indent();
     void unindent();
     void startNewLine(StringBuilder&) const;
-    bool NODELETE isCallableReplacer() const { return m_replacerCallData.type != CallData::Type::None; }
+    bool LEGACY_NODELETE isCallableReplacer() const { return m_replacerCallData.type != CallData::Type::None; }
 
     JSGlobalObject* const m_globalObject;
     JSValue m_replacer;
@@ -474,7 +474,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     return StringifySucceeded;
 }
 
-inline bool NODELETE Stringifier::willIndent() const
+inline bool LEGACY_NODELETE Stringifier::willIndent() const
 {
     return !m_gap.isEmpty();
 }
@@ -489,7 +489,7 @@ inline void Stringifier::indent()
     m_indent = StringView { m_repeatedGap }.left(newSize);
 }
 
-inline void NODELETE Stringifier::unindent()
+inline void LEGACY_NODELETE Stringifier::unindent()
 {
     ASSERT(m_indent.length() >= m_gap.length());
     m_indent = StringView { m_repeatedGap }.left(m_indent.length() - m_gap.length());
@@ -724,7 +724,7 @@ private:
     unsigned newLineAndIndentSize() const;
     void appendNewLineAndIndentUnchecked();
     template<typename T> void recordFailure(FailureReason, T&& reason);
-    template<typename T> void NODELETE recordFailure(T&& reason)
+    template<typename T> void LEGACY_NODELETE recordFailure(T&& reason)
     {
         recordFailure(FailureReason::Unknown, std::forward<T>(reason));
     }

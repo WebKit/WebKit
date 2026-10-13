@@ -59,7 +59,7 @@ JSValue LazyJSValue::getValue(VM& vm) const
     return JSValue();
 }
 
-static TriState NODELETE equalToSingleCharacter(JSValue value, char16_t character)
+static TriState LEGACY_NODELETE equalToSingleCharacter(JSValue value, char16_t character)
 {
     if (!value.isString())
         return TriState::False;
@@ -75,7 +75,7 @@ static TriState NODELETE equalToSingleCharacter(JSValue value, char16_t characte
     return triState(string->at(0) == character);
 }
 
-static TriState NODELETE equalToStringImpl(JSValue value, StringImpl* stringImpl)
+static TriState LEGACY_NODELETE equalToStringImpl(JSValue value, StringImpl* stringImpl)
 {
     if (!value.isString())
         return TriState::False;
@@ -113,7 +113,7 @@ struct CrossThreadStringTranslator {
         return impl->concurrentHash();
     }
 
-    static bool NODELETE equal(const String& string, const StringImpl* impl)
+    static bool LEGACY_NODELETE equal(const String& string, const StringImpl* impl)
     {
         return WTF::equal(string.impl(), impl);
     }

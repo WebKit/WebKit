@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IRDumpDebugInfo);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceCodeDumpDebugInfo);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
-static const char* NODELETE profileName(LinkBuffer::Profile profile)
+static const char* LEGACY_NODELETE profileName(LinkBuffer::Profile profile)
 {
 #define RETURN_LINKBUFFER_PROFILE_NAME(name) case LinkBuffer::Profile::name: return #name;
     switch (profile) {
@@ -242,7 +242,7 @@ public:
             BranchCompactionLinkBufferMalloc::free(m_data);
     }
 
-    uint8_t* NODELETE data()
+    uint8_t* LEGACY_NODELETE data()
     {
         return m_data;
     }

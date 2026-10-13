@@ -59,7 +59,7 @@ public:
         inline static Ref<Ticket> create(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
 
         WorkType type() const { return m_type; }
-        inline VM& NODELETE vm();
+        inline VM& LEGACY_NODELETE vm();
         JSObject* target();
         JS_EXPORT_PRIVATE bool isTargetObject();
         inline const FixedVector<JSCell*>& dependencies(bool mayBeCancelled = false);
@@ -88,9 +88,9 @@ public:
     JS_EXPORT_PRIVATE WeakTicket addPendingWork(WorkType, VM&, JSObject* target, Vector<JSCell*>&& dependencies);
     void cancelPendingWork(VM&);
 
-    JS_EXPORT_PRIVATE bool NODELETE hasAnyPendingWork() const;
-    JS_EXPORT_PRIVATE bool NODELETE hasImminentlyScheduledWork() const;
-    bool NODELETE hasPendingWork(Ticket&);
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE hasAnyPendingWork() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE hasImminentlyScheduledWork() const;
+    bool LEGACY_NODELETE hasPendingWork(Ticket&);
     bool hasDependencyInPendingWork(Ticket&, JSCell* dependency);
     bool cancelPendingWork(Ticket&);
     void cancelPendingWorkSafe(JSGlobalObject*);

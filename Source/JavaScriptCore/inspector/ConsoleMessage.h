@@ -81,7 +81,7 @@ public:
     void incrementCount() { ++m_repeatCount; }
 
     ScriptArguments* arguments() const { return m_arguments.get(); }
-    unsigned NODELETE argumentCount() const;
+    unsigned LEGACY_NODELETE argumentCount() const;
 
     bool isEqual(ConsoleMessage* msg) const;
 

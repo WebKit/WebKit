@@ -391,7 +391,7 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     return JSValueMakeNull(context);
 }
 
-static JSValueRef NODELETE MyObject_convertToTypeWrapper(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
+static JSValueRef LEGACY_NODELETE MyObject_convertToTypeWrapper(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(object);
@@ -401,7 +401,7 @@ static JSValueRef NODELETE MyObject_convertToTypeWrapper(JSContextRef context, J
     return 0;
 }
 
-static bool NODELETE MyObject_set_nullGetForwardSet(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+static bool LEGACY_NODELETE MyObject_set_nullGetForwardSet(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     UNUSED_PARAM(ctx);
     UNUSED_PARAM(object);
@@ -762,7 +762,7 @@ static JSValueRef Base_callAsFunction(JSContextRef ctx, JSObjectRef function, JS
     return JSValueMakeNumber(ctx, 1); // distinguish base call from derived call
 }
 
-static JSValueRef NODELETE Base_returnHardNull(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef LEGACY_NODELETE Base_returnHardNull(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(ctx);
     UNUSED_PARAM(function);
@@ -949,7 +949,7 @@ static JSObjectRef myConstructor_callAsConstructor(JSContextRef context, JSObjec
     return result;
 }
 
-static JSObjectRef NODELETE myBadConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSObjectRef LEGACY_NODELETE myBadConstructor_callAsConstructor(JSContextRef context, JSObjectRef constructorObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(constructorObject);
@@ -1179,7 +1179,7 @@ static bool globalContextNameTest(void)
 }
 
 IGNORE_GCC_WARNINGS_BEGIN("unused-but-set-variable")
-static void NODELETE checkConstnessInJSObjectNames(void)
+static void LEGACY_NODELETE checkConstnessInJSObjectNames(void)
 {
     JSStaticFunction fun;
     fun.name = "something";

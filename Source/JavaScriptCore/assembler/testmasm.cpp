@@ -48,7 +48,7 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
-static bool NODELETE hiddenTruthBecauseNoReturnIsStupid() { return true; }
+static bool LEGACY_NODELETE hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
 static void usage()
 {
@@ -190,7 +190,7 @@ Lock crashLock;
 
 typedef WTF::Function<void(CCallHelpers&)> Generator;
 
-template<typename T> T NODELETE nextID(T id) { return static_cast<T>(id + 1); }
+template<typename T> T LEGACY_NODELETE nextID(T id) { return static_cast<T>(id + 1); }
 
 #define TESTWORD64 0x0c0defefebeef000
 #define TESTWORD32 0x0beef000
@@ -219,23 +219,23 @@ template<typename T> T NODELETE nextID(T id) { return static_cast<T>(id + 1); }
         CRASH();                                                        \
     } while (false)
 
-bool NODELETE isPC(MacroAssembler::RegisterID id)
+bool LEGACY_NODELETE isPC(MacroAssembler::RegisterID id)
 {
     UNUSED_PARAM(id);
     return false;
 }
 
-bool NODELETE isSP(MacroAssembler::RegisterID id)
+bool LEGACY_NODELETE isSP(MacroAssembler::RegisterID id)
 {
     return id == MacroAssembler::stackPointerRegister;
 }
 
-bool NODELETE isFP(MacroAssembler::RegisterID id)
+bool LEGACY_NODELETE isFP(MacroAssembler::RegisterID id)
 {
     return id == MacroAssembler::framePointerRegister;
 }
 
-bool NODELETE isSpecialGPR(MacroAssembler::RegisterID id)
+bool LEGACY_NODELETE isSpecialGPR(MacroAssembler::RegisterID id)
 {
     if (isPC(id) || isSP(id) || isFP(id))
         return true;
@@ -5791,7 +5791,7 @@ void testProbeWritesArgumentRegisters()
     CHECK_EQ(probeCallCount, 2);
 }
 
-static NEVER_INLINE NOT_TAIL_CALLED int NODELETE testFunctionToTrashGPRs(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
+static NEVER_INLINE NOT_TAIL_CALLED int LEGACY_NODELETE testFunctionToTrashGPRs(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {
     if (j > 0)
         return testFunctionToTrashGPRs(a + 1, b + a, c + b, d + 5, e - a, f * 1.5, g ^ a, h - b, i, j - 1);
@@ -6435,7 +6435,7 @@ void testMoveDoubleConditionally64()
 
 #if CPU(X86_64) || CPU(ARM64)
 template<typename SelectionType>
-static SelectionType NODELETE expectedResultForRelationalCondition(MacroAssembler::RelationalCondition cond, int32_t a, int32_t b, SelectionType thenValue, SelectionType elseValue)
+static SelectionType LEGACY_NODELETE expectedResultForRelationalCondition(MacroAssembler::RelationalCondition cond, int32_t a, int32_t b, SelectionType thenValue, SelectionType elseValue)
 {
     switch (cond) {
     case MacroAssembler::Equal:
@@ -6463,7 +6463,7 @@ static SelectionType NODELETE expectedResultForRelationalCondition(MacroAssemble
 }
 
 template<typename SelectionType>
-static SelectionType NODELETE expectedResultForResultCondition(MacroAssembler::ResultCondition cond, int32_t testValue, int32_t mask, SelectionType thenValue, SelectionType elseValue)
+static SelectionType LEGACY_NODELETE expectedResultForResultCondition(MacroAssembler::ResultCondition cond, int32_t testValue, int32_t mask, SelectionType thenValue, SelectionType elseValue)
 {
     int32_t result = testValue & mask;
     switch (cond) {

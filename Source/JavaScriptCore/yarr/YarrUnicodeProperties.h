@@ -40,6 +40,6 @@ JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchPropertyVal
 JS_EXPORT_PRIVATE std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String, CompileMode);
 
 std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterClassID);
-JS_EXPORT_PRIVATE bool NODELETE characterClassMayContainStrings(BuiltInCharacterClassID unicodeClassID);
+JS_EXPORT_PRIVATE bool LEGACY_NODELETE characterClassMayContainStrings(BuiltInCharacterClassID unicodeClassID);
 
 } } // namespace JSC::Yarr

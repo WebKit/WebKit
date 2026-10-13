@@ -63,7 +63,7 @@ enum class CollectorPhase : uint8_t {
     End
 };
 
-bool NODELETE worldShouldBeSuspended(CollectorPhase phase);
+bool LEGACY_NODELETE worldShouldBeSuspended(CollectorPhase phase);
 
 } // namespace JSC
 

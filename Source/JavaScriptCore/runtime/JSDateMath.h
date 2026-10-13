@@ -151,7 +151,7 @@ private:
         LocalTimeOffset localTimeOffset(DateCache&, int64_t millisecondsFromEpoch, TimeType);
 
     private:
-        LocalTimeOffsetCache* NODELETE leastRecentlyUsed(LocalTimeOffsetCache* exclude);
+        LocalTimeOffsetCache* LEGACY_NODELETE leastRecentlyUsed(LocalTimeOffsetCache* exclude);
         std::tuple<LocalTimeOffsetCache*, LocalTimeOffsetCache*> probe(int64_t millisecondsFromEpoch);
         void extendTheAfterCache(int64_t millisecondsFromEpoch, LocalTimeOffset);
 

@@ -138,7 +138,7 @@ private:
         bool testAndSetMarked(unsigned atomNumber) { return m_atoms.testAndSet(atomNumber); }
 
         void addMarkerData(unsigned atomNumber, MarkerData&&);
-        const MarkerData* NODELETE markerData(unsigned atomNumber) const;
+        const MarkerData* LEGACY_NODELETE markerData(unsigned atomNumber) const;
 
     private:
         MarkedBlock* m_block { nullptr };

@@ -263,7 +263,7 @@ private:
     State* m_state;
     Stack m_stack;
 
-    friend JS_EXPORT_PRIVATE void* NODELETE probeStateForContext(Context&); // Not for general use. This should only be for writing tests.
+    friend JS_EXPORT_PRIVATE void* LEGACY_NODELETE probeStateForContext(Context&); // Not for general use. This should only be for writing tests.
 };
 
 extern "C" void SYSV_ABI executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTERNAL;

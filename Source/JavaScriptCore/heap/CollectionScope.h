@@ -31,7 +31,7 @@ namespace JSC {
 
 enum class CollectionScope : uint8_t { Eden, Full };
 
-const char* NODELETE collectionScopeName(CollectionScope);
+const char* LEGACY_NODELETE collectionScopeName(CollectionScope);
 
 } // namespace JSC
 

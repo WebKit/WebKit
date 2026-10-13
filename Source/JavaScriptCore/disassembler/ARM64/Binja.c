@@ -47,7 +47,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "binja_impl.c.h"
 
 // Helper function to extract register number from Register enum
-static uint8_t NODELETE extractRegNumber(Register reg)
+static uint8_t LEGACY_NODELETE extractRegNumber(Register reg)
 {
     // W registers: REG_W0 (1) to REG_W30 (31), REG_WZR (32), REG_WSP (33)
     if (reg >= REG_W0 && reg <= REG_W30)
@@ -69,7 +69,7 @@ static uint8_t NODELETE extractRegNumber(Register reg)
 }
 
 // Helper function to check if a register is 64-bit
-static uint8_t NODELETE isReg64Bit(Register reg)
+static uint8_t LEGACY_NODELETE isReg64Bit(Register reg)
 {
     return (reg >= REG_X0 && reg <= REG_XZR) || reg == REG_SP;
 }

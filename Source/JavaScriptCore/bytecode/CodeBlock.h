@@ -184,7 +184,7 @@ public:
     UTF8CString inferredName() const;
     String inferredNameWithHash() const;
     CodeBlockHash hash() const;
-    bool NODELETE hasHash() const;
+    bool LEGACY_NODELETE hasHash() const;
     UTF8CString sourceCodeForTools() const;
     UTF8CString sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.
     void dumpAssumingJITType(PrintStream&, JITType) const;
@@ -236,11 +236,11 @@ public:
     }
 
     CodeBlock* alternativeForJettison();    
-    JS_EXPORT_PRIVATE CodeBlock* NODELETE baselineAlternative();
+    JS_EXPORT_PRIVATE CodeBlock* LEGACY_NODELETE baselineAlternative();
     
     // FIXME: Get rid of this.
     // https://bugs.webkit.org/show_bug.cgi?id=123677
-    CodeBlock* NODELETE baselineVersion();
+    CodeBlock* LEGACY_NODELETE baselineVersion();
 
     DECLARE_VISIT_CHILDREN;
 
@@ -262,7 +262,7 @@ public:
     void printStructures(PrintStream&, const JSInstruction*);
     void printStructure(PrintStream&, const char* name, const JSInstruction*, int operand);
 
-    void NODELETE dumpMathICStats();
+    void LEGACY_NODELETE dumpMathICStats();
 
     bool isConstructor() const { return m_unlinkedCode->isConstructor(); }
     CodeType codeType() const { return m_unlinkedCode->codeType(); }
@@ -278,8 +278,8 @@ public:
         return reg.offset() >= static_cast<int>(m_numVars);
     }
 
-    HandlerInfo* NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
-    HandlerInfo* NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
+    HandlerInfo* LEGACY_NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
+    HandlerInfo* LEGACY_NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
 
     LineColumn lineColumnForBytecodeIndex(BytecodeIndex) const;
@@ -342,7 +342,7 @@ public:
 
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();
-    CodeBlock* NODELETE replacement();
+    CodeBlock* LEGACY_NODELETE replacement();
 
     void setJITCode(Ref<JSC::JITCode>&& code)
     {
@@ -375,9 +375,9 @@ public:
     DFG::CapabilityLevel capabilityLevel();
     DFG::CapabilityLevel capabilityLevelState() { return static_cast<DFG::CapabilityLevel>(m_capabilityLevelState); }
 
-    CodeBlock* NODELETE optimizedReplacement(JITType typeToReplace);
+    CodeBlock* LEGACY_NODELETE optimizedReplacement(JITType typeToReplace);
     CodeBlock* optimizedReplacement(); // the typeToReplace is my JITType
-    bool NODELETE hasOptimizedReplacement(JITType typeToReplace);
+    bool LEGACY_NODELETE hasOptimizedReplacement(JITType typeToReplace);
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
@@ -430,8 +430,8 @@ public:
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset) { return m_metadata->valueProfileForOffset(profileOffset); }
 
-    ValueProfile* NODELETE tryGetValueProfileForBytecodeIndex(BytecodeIndex);
-    ValueProfile& NODELETE valueProfileForBytecodeIndex(BytecodeIndex);
+    ValueProfile* LEGACY_NODELETE tryGetValueProfileForBytecodeIndex(BytecodeIndex);
+    ValueProfile& LEGACY_NODELETE valueProfileForBytecodeIndex(BytecodeIndex);
     SpeculatedType valueProfilePredictionForBytecodeIndex(BytecodeIndex, JSValue* specFailValue = nullptr);
 
     template<typename Functor> void forEachValueProfile(NOESCAPE const Functor&);
@@ -439,14 +439,14 @@ public:
     template<typename Functor> void forEachObjectAllocationProfile(NOESCAPE const Functor&);
     template<typename Functor> void forEachLLIntOrBaselineCallLinkInfo(NOESCAPE const Functor&);
 
-    BinaryArithProfile* NODELETE binaryArithProfileForBytecodeIndex(BytecodeIndex);
-    UnaryArithProfile* NODELETE unaryArithProfileForBytecodeIndex(BytecodeIndex);
-    BinaryArithProfile* NODELETE binaryArithProfileForPC(const JSInstruction*);
-    UnaryArithProfile* NODELETE unaryArithProfileForPC(const JSInstruction*);
+    BinaryArithProfile* LEGACY_NODELETE binaryArithProfileForBytecodeIndex(BytecodeIndex);
+    UnaryArithProfile* LEGACY_NODELETE unaryArithProfileForBytecodeIndex(BytecodeIndex);
+    BinaryArithProfile* LEGACY_NODELETE binaryArithProfileForPC(const JSInstruction*);
+    UnaryArithProfile* LEGACY_NODELETE unaryArithProfileForPC(const JSInstruction*);
 
-    bool NODELETE couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
+    bool LEGACY_NODELETE couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
 
-    ArrayProfile* NODELETE getArrayProfile(BytecodeIndex);
+    ArrayProfile* LEGACY_NODELETE getArrayProfile(BytecodeIndex);
 
     // Exception handling support
 
@@ -515,7 +515,7 @@ public:
     const Vector<WriteBarrier<Unknown>>& constantRegisters() LIFETIME_BOUND { return m_constantRegisters; }
     WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) { return m_constantRegisters[reg.toConstantIndex()]; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
-    bool NODELETE isConstantOwnedByUnlinkedCodeBlock(VirtualRegister) const;
+    bool LEGACY_NODELETE isConstantOwnedByUnlinkedCodeBlock(VirtualRegister) const;
     ALWAYS_INLINE SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const { return m_unlinkedCode->constantSourceCodeRepresentation(reg); }
     ALWAYS_INLINE SourceCodeRepresentation constantSourceCodeRepresentation(unsigned index) const { return m_unlinkedCode->constantSourceCodeRepresentation(index); }
     static constexpr ptrdiff_t offsetOfConstantsVectorBuffer() { return OBJECT_OFFSETOF(CodeBlock, m_constantRegisters) + decltype(m_constantRegisters)::dataMemoryOffset(); }
@@ -641,13 +641,13 @@ public:
     // When we observe a lot of speculation failures, we trigger a
     // reoptimization. But each time, we increase the optimization trigger
     // to avoid thrashing.
-    JS_EXPORT_PRIVATE unsigned NODELETE reoptimizationRetryCounter() const;
-    void NODELETE countReoptimization();
+    JS_EXPORT_PRIVATE unsigned LEGACY_NODELETE reoptimizationRetryCounter() const;
+    void LEGACY_NODELETE countReoptimization();
 
 #if !ENABLE(C_LOOP)
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSet::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters();
-    static size_t NODELETE calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&);
+    static size_t LEGACY_NODELETE calleeSaveSpaceAsVirtualRegisters(const RegisterAtOffsetList&);
 #else
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return 0; }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters() { return 1; };
@@ -655,9 +655,9 @@ public:
 #endif
 
 #if ENABLE(JIT)
-    unsigned NODELETE numberOfDFGCompiles();
+    unsigned LEGACY_NODELETE numberOfDFGCompiles();
 
-    int32_t NODELETE codeTypeThresholdMultiplier() const;
+    int32_t LEGACY_NODELETE codeTypeThresholdMultiplier() const;
 
     int32_t adjustedCounterValue(int32_t desiredThreshold);
 
@@ -719,27 +719,27 @@ public:
 
     void setOptimizationThresholdBasedOnCompilationResult(CompilationResult);
     
-    BytecodeIndex NODELETE bytecodeIndexForExit(BytecodeIndex) const;
+    BytecodeIndex LEGACY_NODELETE bytecodeIndexForExit(BytecodeIndex) const;
     uint32_t osrExitCounter() const { return m_osrExitCounter; }
 
     void countOSRExit() { m_osrExitCounter++; }
 
     static constexpr ptrdiff_t offsetOfOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_osrExitCounter); }
 
-    uint32_t NODELETE adjustedExitCountThreshold(uint32_t desiredThreshold);
-    uint32_t NODELETE exitCountThresholdForReoptimization();
-    uint32_t NODELETE exitCountThresholdForReoptimizationFromLoop();
-    bool NODELETE shouldReoptimizeNow();
-    bool NODELETE shouldReoptimizeFromLoopNow();
+    uint32_t LEGACY_NODELETE adjustedExitCountThreshold(uint32_t desiredThreshold);
+    uint32_t LEGACY_NODELETE exitCountThresholdForReoptimization();
+    uint32_t LEGACY_NODELETE exitCountThresholdForReoptimizationFromLoop();
+    bool LEGACY_NODELETE shouldReoptimizeNow();
+    bool LEGACY_NODELETE shouldReoptimizeFromLoopNow();
 
-    void NODELETE didInstallDFGCode();
-    void NODELETE didDFGJettison(Profiler::JettisonReason);
-    void NODELETE didFailDFGCompilation();
+    void LEGACY_NODELETE didInstallDFGCode();
+    void LEGACY_NODELETE didDFGJettison(Profiler::JettisonReason);
+    void LEGACY_NODELETE didFailDFGCompilation();
 
 #if ENABLE(FTL_JIT)
-    void NODELETE didInstallFTLCode();
-    void NODELETE didFTLJettison(Profiler::JettisonReason);
-    void NODELETE didFailFTLCompilation();
+    void LEGACY_NODELETE didInstallFTLCode();
+    void LEGACY_NODELETE didFTLJettison(Profiler::JettisonReason);
+    void LEGACY_NODELETE didFailFTLCompilation();
 #endif
 
 #else // No JIT

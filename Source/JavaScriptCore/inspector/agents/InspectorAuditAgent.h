@@ -57,7 +57,7 @@ public:
     Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> run(const String& test, std::optional<Protocol::Runtime::ExecutionContextId>&&) final;
     Protocol::ErrorStringOr<void> teardown() final;
 
-    bool NODELETE hasActiveAudit() const;
+    bool LEGACY_NODELETE hasActiveAudit() const;
 
 protected:
     InspectorAuditAgent(AgentContext&);

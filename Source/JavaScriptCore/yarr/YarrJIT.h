@@ -78,7 +78,7 @@ public:
         m_isValid = false;
     }
 
-    bool NODELETE isEmpty() const { return m_characters.isEmpty(); }
+    bool LEGACY_NODELETE isEmpty() const { return m_characters.isEmpty(); }
     unsigned size() const { return m_characters.size(); }
     char32_t at(unsigned index) const { return m_characters.at(index); }
 
@@ -184,7 +184,7 @@ public:
         }
     }
 
-    void NODELETE setAll()
+    void LEGACY_NODELETE setAll()
     {
         m_count = mapSize;
     }

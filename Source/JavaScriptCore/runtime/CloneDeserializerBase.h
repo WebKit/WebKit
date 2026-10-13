@@ -440,7 +440,7 @@ protected:
         appendObjectPoolTag(tag);
     }
 
-    bool NODELETE readArrayBufferViewSubtag(ArrayBufferViewSubtag& tag)
+    bool LEGACY_NODELETE readArrayBufferViewSubtag(ArrayBufferViewSubtag& tag)
     {
         if (m_data.empty())
             return false;

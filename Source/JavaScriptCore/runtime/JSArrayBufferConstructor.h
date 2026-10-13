@@ -41,7 +41,7 @@ public:
     static JSGenericArrayBufferConstructor* create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype)
     {
         JSGenericArrayBufferConstructor* result =
-            new (NotNull, allocateCell<JSGenericArrayBufferConstructor>(vm)) NODELETE JSGenericArrayBufferConstructor(vm, structure);
+            new (NotNull, allocateCell<JSGenericArrayBufferConstructor>(vm)) LEGACY_NODELETE JSGenericArrayBufferConstructor(vm, structure);
         result->finishCreation(vm, prototype);
         return result;
     }
@@ -49,7 +49,7 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
-    static const ClassInfo* NODELETE info();
+    static const ClassInfo* LEGACY_NODELETE info();
 
     static EncodedJSValue constructImpl(JSGlobalObject*, CallFrame*);
 

@@ -43,7 +43,7 @@ public:
         Initializer(VM&, JSGlobalObject*, LazyClassStructure&, const StructureInitializer&);
         
         // This should be called first or not at all.
-        void NODELETE setPrototype(JSObject* prototype);
+        void LEGACY_NODELETE setPrototype(JSObject* prototype);
         
         // If this is called after setPrototype() then it just sets the structure. If this is
         // called first then it sets the prototype by extracting it from the structure.

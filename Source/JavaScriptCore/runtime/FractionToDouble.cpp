@@ -55,7 +55,7 @@ using DD = std::array<double, 2>;
 // calculations follow from the definition of hi and lo: hi is the closest
 // double-precision approximation to the exact value (which itself will be a
 // safe integer) and lo is the error term.
-static DD NODELETE int128ToDD(const Int128& value)
+static DD LEGACY_NODELETE int128ToDD(const Int128& value)
 {
     double hi = static_cast<double>(value);
     double lo = static_cast<double>(value - static_cast<Int128>(hi));
@@ -64,7 +64,7 @@ static DD NODELETE int128ToDD(const Int128& value)
 
 // Computes double-double precision a + b of two doubles a and b. This is the
 // Two-Sum algorithm in theorem 7 of the Shewchuk paper.
-static DD NODELETE ddSum(double a, double b)
+static DD LEGACY_NODELETE ddSum(double a, double b)
 {
     // First compute the double-precision approximation of the sum by regular
     // double addition.

@@ -72,7 +72,7 @@ public:
         m_invertedStrings = false;
     }
 
-    void NODELETE combiningSetOp(CharacterClassSetOp setOp)
+    void LEGACY_NODELETE combiningSetOp(CharacterClassSetOp setOp)
     {
         ASSERT(m_setOp == CharacterClassSetOp::Default || m_setOp == setOp);
         m_setOp = setOp;
@@ -457,12 +457,12 @@ public:
         nonLatin1OpSorted(rhsSortedMatches32, rhsRanges32);
     }
 
-    bool NODELETE hasInvertedStrings()
+    bool LEGACY_NODELETE hasInvertedStrings()
     {
         return m_invertedStrings;
     }
 
-    static ALWAYS_INLINE int NODELETE compareUTF32Strings(const Vector<char32_t>& a, const Vector<char32_t>& b)
+    static ALWAYS_INLINE int LEGACY_NODELETE compareUTF32Strings(const Vector<char32_t>& a, const Vector<char32_t>& b)
     {
         // Longer strings before shorter.
         if (a.size() > b.size())
@@ -511,7 +511,7 @@ public:
         return characterClass;
     }
 
-    void NODELETE setIsCaseInsensitive(bool ignoreCase)
+    void LEGACY_NODELETE setIsCaseInsensitive(bool ignoreCase)
     {
         m_isCaseInsensitive = ignoreCase;
     }
@@ -1157,12 +1157,12 @@ private:
         return widths;
     }
 
-    bool NODELETE anyCharacter()
+    bool LEGACY_NODELETE anyCharacter()
     {
         return m_anyCharacter;
     }
 
-    bool NODELETE isUnionSetOp() { return m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union; }
+    bool LEGACY_NODELETE isUnionSetOp() { return m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union; }
 
     bool m_isCaseInsensitive : 1;
     bool m_anyCharacter : 1;
@@ -1254,12 +1254,12 @@ class YarrPatternConstructor {
             return &m_alternative->m_terms[m_termIndex];
         }
 
-        bool NODELETE hasNamedGroup()
+        bool LEGACY_NODELETE hasNamedGroup()
         {
             return !m_namedGroup.isNull();
         }
 
-        const String NODELETE namedGroup()
+        const String LEGACY_NODELETE namedGroup()
         {
             return m_namedGroup;
         }
@@ -1466,7 +1466,7 @@ public:
         }
     }
 
-    void NODELETE atomCharacterClassBegin(bool invert = false)
+    void LEGACY_NODELETE atomCharacterClassBegin(bool invert = false)
     {
         m_invertCharacterClass = invert;
 
@@ -1519,7 +1519,7 @@ public:
         m_currentCharacterClassConstructor->atomClassStringDisjunction(utf32Strings);
     }
 
-    void NODELETE atomCharacterClassSetOp(CharacterClassSetOp setOp)
+    void LEGACY_NODELETE atomCharacterClassSetOp(CharacterClassSetOp setOp)
     {
         m_currentCharacterClassConstructor->combiningSetOp(setOp);
     }
@@ -1982,12 +1982,12 @@ public:
         m_alternative = m_alternative->m_parent->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
     }
 
-    inline bool NODELETE abortedDueToError() const
+    inline bool LEGACY_NODELETE abortedDueToError() const
     {
         return hasError(m_error);
     }
 
-    inline ErrorCode NODELETE abortErrorCode() const
+    inline ErrorCode LEGACY_NODELETE abortErrorCode() const
     {
         return m_error;
     }
@@ -3001,7 +3001,7 @@ public:
             return;
     }
 
-    ErrorCode NODELETE error() { return m_error; }
+    ErrorCode LEGACY_NODELETE error() { return m_error; }
 
 private:
     class ParenthesisContext {
@@ -3016,7 +3016,7 @@ private:
             {
             }
 
-            void NODELETE restore(bool& isModifier, bool& invert, MatchDirection& matchDirection, OptionSet<Flags>& flags)
+            void LEGACY_NODELETE restore(bool& isModifier, bool& invert, MatchDirection& matchDirection, OptionSet<Flags>& flags)
             {
                 isModifier = m_isModifier;
                 invert = m_invert;
@@ -3047,7 +3047,7 @@ private:
             m_isModifier = false;
         }
 
-        void NODELETE pop()
+        void LEGACY_NODELETE pop()
         {
             ASSERT(m_stackDepth > 0);
 
@@ -3062,17 +3062,17 @@ private:
             }
         }
 
-        void NODELETE setModifier(bool isMod)
+        void LEGACY_NODELETE setModifier(bool isMod)
         {
             m_isModifier = isMod;
         }
 
-        bool NODELETE isModifier() const
+        bool LEGACY_NODELETE isModifier() const
         {
             return m_isModifier;
         }
 
-        void NODELETE setInvert(bool invert)
+        void LEGACY_NODELETE setInvert(bool invert)
         {
             m_invert = invert;
         }
@@ -3092,12 +3092,12 @@ private:
             return m_matchDirection;
         }
 
-        void NODELETE setFlags(OptionSet<Flags> flags)
+        void LEGACY_NODELETE setFlags(OptionSet<Flags> flags)
         {
             m_flags = flags;
         }
 
-        OptionSet<Flags> NODELETE flags() const
+        OptionSet<Flags> LEGACY_NODELETE flags() const
         {
             return m_flags;
         }
@@ -3127,27 +3127,27 @@ private:
         m_parenthesisContext.push();
     }
 
-    void NODELETE popParenthesisContext()
+    void LEGACY_NODELETE popParenthesisContext()
     {
         m_parenthesisContext.pop();
     }
 
-    void NODELETE setParenthesisInvert(bool invert)
+    void LEGACY_NODELETE setParenthesisInvert(bool invert)
     {
         m_parenthesisContext.setInvert(invert);
     }
 
-    bool NODELETE parenthesisInvert() const
+    bool LEGACY_NODELETE parenthesisInvert() const
     {
         return m_parenthesisContext.invert();
     }
 
-    void NODELETE setParenthesisMatchDirection(MatchDirection matchDirection)
+    void LEGACY_NODELETE setParenthesisMatchDirection(MatchDirection matchDirection)
     {
         m_parenthesisContext.setMatchDirection(matchDirection);
     }
 
-    MatchDirection NODELETE parenthesisMatchDirection() const
+    MatchDirection LEGACY_NODELETE parenthesisMatchDirection() const
     {
         return m_parenthesisContext.matchDirection();
     }

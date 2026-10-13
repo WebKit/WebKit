@@ -67,10 +67,10 @@ public:
     {
     }
 
-    void NODELETE get(JSObject*, PropertySlot&) const;
+    void LEGACY_NODELETE get(JSObject*, PropertySlot&) const;
     void get(PropertyDescriptor&) const;
     bool put(JSGlobalObject*, JSValue thisValue, SparseArrayValueMap*, JSValue, bool shouldThrow);
-    JSValue NODELETE getNonSparseMode() const;
+    JSValue LEGACY_NODELETE getNonSparseMode() const;
     JSValue getConcurrently() const;
     JSValue get() const;
 

@@ -51,7 +51,7 @@ public:
 
     // You don't have to worry about using legal offsets unless you've entered quirks mode.
     template<std::signed_integral Int>
-    bool NODELETE isLegalOffset(Int offset) const { return isLegalOffsetImpl(offset); }
+    bool LEGACY_NODELETE isLegalOffset(Int offset) const { return isLegalOffsetImpl(offset); }
 
     // A necessary consequence of MemoryValue having an offset is that it participates in instruction
     // selection. This tells you if this will get lowered to something that requires an offsetless
@@ -80,9 +80,9 @@ public:
     bool hasFence() const { return !!fenceRange(); }
     bool isExotic() const { return hasFence() || isAtom(opcode()); }
 
-    Type NODELETE accessType() const;
-    Bank NODELETE accessBank() const;
-    size_t NODELETE accessByteSize() const;
+    Type LEGACY_NODELETE accessType() const;
+    Bank LEGACY_NODELETE accessBank() const;
+    size_t LEGACY_NODELETE accessByteSize() const;
     
     inline Width accessWidth() const;
 
@@ -106,8 +106,8 @@ private:
     friend class Procedure;
     friend class Value;
 
-    inline bool NODELETE isLegalOffsetImpl(int32_t offset) const;
-    bool NODELETE isLegalOffsetImpl(int64_t offset) const;
+    inline bool LEGACY_NODELETE isLegalOffsetImpl(int32_t offset) const;
+    bool LEGACY_NODELETE isLegalOffsetImpl(int64_t offset) const;
 
     enum MemoryValueLoad { MemoryValueLoadTag };
     enum MemoryValueLoadImplied { MemoryValueLoadImpliedTag };

@@ -45,17 +45,17 @@ public:
     }
 
     void append(ICEvent::Kind kind) { m_chain.append(kind); }
-    bool NODELETE isEmpty() const { return m_chain.isEmpty(); }
-    void NODELETE clear()
+    bool LEGACY_NODELETE isEmpty() const { return m_chain.isEmpty(); }
+    void LEGACY_NODELETE clear()
     {
         m_chain.shrink(0);
         m_totalNumberOfHandlersInChain = 0;
     }
-    unsigned NODELETE size() const { return m_chain.size(); }
+    unsigned LEGACY_NODELETE size() const { return m_chain.size(); }
     ICEvent::Kind operator[](unsigned i) const { return m_chain[i]; }
 
-    void NODELETE setTotalNumberOfHandlersInChain(unsigned length) { m_totalNumberOfHandlersInChain = length; }
-    unsigned NODELETE totalNumberOfHandlersInChain() const { return m_totalNumberOfHandlersInChain; }
+    void LEGACY_NODELETE setTotalNumberOfHandlersInChain(unsigned length) { m_totalNumberOfHandlersInChain = length; }
+    unsigned LEGACY_NODELETE totalNumberOfHandlersInChain() const { return m_totalNumberOfHandlersInChain; }
 
     bool operator==(const ICHandlerChain& other) const
     {
@@ -199,7 +199,7 @@ ICStats::~ICStats()
     m_thread->waitForCompletion();
 }
 
-static bool NODELETE shouldRecord()
+static bool LEGACY_NODELETE shouldRecord()
 {
     constexpr bool shouldMeasureOutsideSignpost = false;
     if (shouldMeasureOutsideSignpost)

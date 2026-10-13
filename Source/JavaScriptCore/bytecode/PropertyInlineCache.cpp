@@ -577,7 +577,7 @@ ALWAYS_INLINE void PropertyInlineCache::setCacheType(const ConcurrentJSLockerBas
     m_cacheType = newCacheType;
 }
 
-static CodePtr<OperationPtrTag> NODELETE slowOperationFromUnlinkedPropertyInlineCache(const UnlinkedPropertyInlineCache& unlinkedPropertyCache)
+static CodePtr<OperationPtrTag> LEGACY_NODELETE slowOperationFromUnlinkedPropertyInlineCache(const UnlinkedPropertyInlineCache& unlinkedPropertyCache)
 {
     switch (unlinkedPropertyCache.accessType) {
     case AccessType::DeleteByValStrict:

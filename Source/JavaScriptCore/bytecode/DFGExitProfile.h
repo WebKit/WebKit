@@ -180,7 +180,7 @@ public:
     // in the compiler. It should be strictly cheaper than building a
     // QueryableExitProfile, if you really expect this to be called infrequently
     // and you believe that there are few exit sites.
-    bool NODELETE hasExitSite(const ConcurrentJSLocker&, const FrequentExitSite&) const;
+    bool LEGACY_NODELETE hasExitSite(const ConcurrentJSLocker&, const FrequentExitSite&) const;
     bool hasExitSite(const ConcurrentJSLocker& locker, ExitKind kind) const
     {
         return hasExitSite(locker, FrequentExitSite(kind));

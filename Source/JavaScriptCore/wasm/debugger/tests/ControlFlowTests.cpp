@@ -391,14 +391,14 @@ static bool testBrOnNonNullOpcode(OpType opcode)
 // Exception handling opcodes require runtime testing because genericUnwind() dynamically
 // computes handler PCs. See runtime tests in JSTests/wasm/debugger/resources/wasm/:
 //   throw-catch.js, throw-catch-all.js, rethrow.js, throw-ref.js, delegate.js, try-table.js
-static bool NODELETE testTryOpcode(OpType) { return true; }
-static bool NODELETE testCatchOpcode(OpType) { return true; }
-static bool NODELETE testThrowOpcode(OpType) { return true; }
-static bool NODELETE testRethrowOpcode(OpType) { return true; }
-static bool NODELETE testThrowRefOpcode(OpType) { return true; }
-static bool NODELETE testDelegateOpcode(OpType) { return true; }
-static bool NODELETE testCatchAllOpcode(OpType) { return true; }
-static bool NODELETE testTryTableOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testTryOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testCatchOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testThrowOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testRethrowOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testThrowRefOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testDelegateOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testCatchAllOpcode(OpType) { return true; }
+static bool LEGACY_NODELETE testTryTableOpcode(OpType) { return true; }
 
 void testAllControlFlowOps()
 {

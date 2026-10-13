@@ -50,7 +50,7 @@ public:
 
     ~CheckValue() final;
 
-    void NODELETE convertToAdd();
+    void LEGACY_NODELETE convertToAdd();
 
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
     

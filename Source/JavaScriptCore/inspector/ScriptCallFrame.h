@@ -54,7 +54,7 @@ public:
     unsigned columnNumber() const { return m_lineColumn.column; }
     JSC::SourceID sourceID() const { return m_sourceID; }
 
-    JS_EXPORT_PRIVATE bool NODELETE isEqual(const ScriptCallFrame&) const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isEqual(const ScriptCallFrame&) const;
     bool isNative() const;
 
     bool operator==(const ScriptCallFrame& other) const { return isEqual(other); }

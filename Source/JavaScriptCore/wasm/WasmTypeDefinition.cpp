@@ -1030,7 +1030,7 @@ size_t TypeInformation::canonicalTypeCount()
     return info.m_canonicalRecursionGroups.size() + info.m_canonicalSingletonGroups.size();
 }
 
-bool NODELETE Type::definitelyIsCellOrNull() const
+bool LEGACY_NODELETE Type::definitelyIsCellOrNull() const
 {
     if (!isRefType(*this))
         return false;

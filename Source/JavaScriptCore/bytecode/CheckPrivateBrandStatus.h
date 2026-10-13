@@ -76,9 +76,9 @@ public:
     bool observedSlowPath() const { return m_state == ObservedTakesSlowPath; }
     bool isSimple() const { return m_state == Simple; }
     const Vector<CheckPrivateBrandVariant, 1>& variants() LIFETIME_BOUND { return m_variants; }
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier LEGACY_NODELETE singleIdentifier() const;
 
-    CheckPrivateBrandStatus NODELETE slowVersion() const;
+    CheckPrivateBrandStatus LEGACY_NODELETE slowVersion() const;
 
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);

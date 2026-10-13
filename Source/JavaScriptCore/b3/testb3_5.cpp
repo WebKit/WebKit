@@ -1763,7 +1763,7 @@ void genericTestCompare(
 }
 
 template<typename InputType>
-InputType NODELETE modelCompare(B3::Opcode opcode, InputType left, InputType right)
+InputType LEGACY_NODELETE modelCompare(B3::Opcode opcode, InputType left, InputType right)
 {
     switch (opcode) {
     case Equal:

@@ -35,12 +35,12 @@ unsigned g_numberOfOSRExitFuzzChecks;
 
 } // namespace DFG
 
-unsigned NODELETE numberOfStaticOSRExitFuzzChecks()
+unsigned LEGACY_NODELETE numberOfStaticOSRExitFuzzChecks()
 {
     return DFG::g_numberOfStaticOSRExitFuzzChecks;
 }
 
-unsigned NODELETE numberOfOSRExitFuzzChecks()
+unsigned LEGACY_NODELETE numberOfOSRExitFuzzChecks()
 {
     return DFG::g_numberOfOSRExitFuzzChecks;
 }

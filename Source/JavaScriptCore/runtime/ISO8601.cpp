@@ -67,7 +67,7 @@ std::optional<TimeZoneID> parseTimeZoneName(StringView string)
 }
 
 template<typename CharType>
-static int32_t NODELETE parseDecimalInt32(std::span<const CharType> characters)
+static int32_t LEGACY_NODELETE parseDecimalInt32(std::span<const CharType> characters)
 {
     int32_t result = 0;
     for (auto character : characters) {
@@ -439,7 +439,7 @@ std::optional<int64_t> parseUTCOffset(StringView string, SubMinutePrecision subM
 }
 
 template<typename CharacterType>
-static std::optional<int64_t> NODELETE parseUTCOffsetInMinutes(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<int64_t> LEGACY_NODELETE parseUTCOffsetInMinutes(StringParsingBuffer<CharacterType>& buffer)
 {
     // UTCOffset :::
     //     TemporalSign Hour
@@ -539,7 +539,7 @@ std::optional<int64_t> parseUTCOffsetInMinutes(StringView string)
 }
 
 template<typename CharacterType>
-static bool NODELETE canBeRFC9557Annotation(const StringParsingBuffer<CharacterType>& buffer)
+static bool LEGACY_NODELETE canBeRFC9557Annotation(const StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#sec-temporal-parseisodatetime
     // Step 4(a)(ii)(2)(a):
@@ -601,7 +601,7 @@ static bool NODELETE canBeRFC9557Annotation(const StringParsingBuffer<CharacterT
 }
 
 template<typename CharacterType>
-static bool NODELETE canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
+static bool LEGACY_NODELETE canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
 {
     switch (static_cast<char16_t>(character)) {
     // UTCDesignator
@@ -899,7 +899,7 @@ parseCalendar(StringParsingBuffer<CharacterType>& buffer)
 // https://tc39.es/proposal-temporal/#prod-Date
 
 template<typename CharacterType>
-static std::optional<int32_t> NODELETE parseDateYear(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<int32_t> LEGACY_NODELETE parseDateYear(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -969,7 +969,7 @@ static std::optional<unsigned> parseDateDay(StringParsingBuffer<CharacterType>& 
 //   DateYear DateSeparator[~Extended] DateMonth DateSeparator[~Extended] DateDay   (YYYYMMDD)
 // Both separators must be the SAME mode (extended-with-hyphen or compact-no-hyphen).
 template<typename CharacterType>
-static std::optional<PlainDate> NODELETE parseDate(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<PlainDate> LEGACY_NODELETE parseDate(StringParsingBuffer<CharacterType>& buffer)
 {
     auto year = parseDateYear(buffer);
     if (!year)
@@ -998,7 +998,7 @@ static std::optional<PlainDate> NODELETE parseDate(StringParsingBuffer<Character
 
 // DateSpecYearMonth ::: DateYear DateSeparator[?Extended] DateMonth   (YYYY-MM or YYYYMM)
 template<typename CharacterType>
-static std::optional<PlainDate> NODELETE parseDateSpecYearMonth(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<PlainDate> LEGACY_NODELETE parseDateSpecYearMonth(StringParsingBuffer<CharacterType>& buffer)
 {
     auto year = parseDateYear(buffer);
     if (!year)
@@ -1015,7 +1015,7 @@ static std::optional<PlainDate> NODELETE parseDateSpecYearMonth(StringParsingBuf
 //   `--`? DateMonth DateSeparator[+Extended] DateDay   (--MM-DD or MM-DD)
 //   `--`? DateMonth DateSeparator[~Extended] DateDay   (--MMDD or MMDD)
 template<typename CharacterType>
-static std::optional<PlainDate> NODELETE parseDateSpecMonthDay(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<PlainDate> LEGACY_NODELETE parseDateSpecMonthDay(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.lengthRemaining() >= 2 && buffer[0] == '-' && buffer[1] == '-')
         buffer.advanceBy(2);
@@ -1249,7 +1249,7 @@ static std::optional<ISO8601ParseTokens> tokenizeTemporalAnnotatedTime(StringPar
 //
 // AnnotatedTime ::: Time DateTimeUTCOffset[~Z]? TimeZoneAnnotation? Annotations?
 template<typename CharacterType>
-static bool NODELETE isAmbiguousAnnotatedTime(StringParsingBuffer<CharacterType>& buffer)
+static bool LEGACY_NODELETE isAmbiguousAnnotatedTime(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!buffer.hasCharactersRemaining())
         return false;
@@ -1980,7 +1980,7 @@ Int128 roundTimeDuration(JSGlobalObject* globalObject, Int128 timeDuration, unsi
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-datedurationsign
-static int32_t NODELETE dateDurationSign(const Duration& d)
+static int32_t LEGACY_NODELETE dateDurationSign(const Duration& d)
 {
     if (d.years() > 0)
         return 1;

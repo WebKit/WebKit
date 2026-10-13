@@ -145,7 +145,7 @@ public:
     CollectionScope collectionScope() const { return m_collectionScope; }
     bool isAnalyzingHeap() const { return m_isAnalyzingHeap; }
 
-    inline void NODELETE didStartMarking(CollectionScope, bool isAnalyzingHeap); // Defined in AbstractSlotVisitorInlines.h
+    inline void LEGACY_NODELETE didStartMarking(CollectionScope, bool isAnalyzingHeap); // Defined in AbstractSlotVisitorInlines.h
 
     virtual void append(const ConservativeRoots&) = 0;
 

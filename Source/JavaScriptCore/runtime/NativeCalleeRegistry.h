@@ -37,8 +37,8 @@ class NativeCalleeRegistry {
     WTF_MAKE_TZONE_ALLOCATED(NativeCalleeRegistry);
     WTF_MAKE_NONCOPYABLE(NativeCalleeRegistry);
 public:
-    static void NODELETE initialize();
-    static NativeCalleeRegistry& NODELETE singleton();
+    static void LEGACY_NODELETE initialize();
+    static NativeCalleeRegistry& LEGACY_NODELETE singleton();
 
     Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 

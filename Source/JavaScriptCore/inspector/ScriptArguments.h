@@ -49,10 +49,10 @@ public:
     JS_EXPORT_PRIVATE static Ref<ScriptArguments> create(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     JS_EXPORT_PRIVATE ~ScriptArguments();
 
-    JS_EXPORT_PRIVATE JSC::JSValue NODELETE argumentAt(size_t) const;
+    JS_EXPORT_PRIVATE JSC::JSValue LEGACY_NODELETE argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
-    JS_EXPORT_PRIVATE JSC::JSGlobalObject* NODELETE globalObject() const;
+    JS_EXPORT_PRIVATE JSC::JSGlobalObject* LEGACY_NODELETE globalObject() const;
 
     JS_EXPORT_PRIVATE bool getFirstArgumentAsString(String& result) const;
     JS_EXPORT_PRIVATE Vector<String> getArgumentsAsStrings() const;

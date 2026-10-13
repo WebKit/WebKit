@@ -40,7 +40,7 @@ public:
     
     void scheduleSoon();
 
-    void NODELETE disable();
+    void LEGACY_NODELETE disable();
 
 private:
     bool m_isDisabled { false };

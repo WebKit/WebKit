@@ -52,7 +52,7 @@ public:
 
     State state();
     void setState(State);
-    void NODELETE clear();
+    void LEGACY_NODELETE clear();
 
     const JSValue& jsValue();
     static constexpr ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }

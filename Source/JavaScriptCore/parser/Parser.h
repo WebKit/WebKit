@@ -1878,8 +1878,8 @@ private:
 
     template <class TreeBuilder> ALWAYS_INLINE bool isSimpleAssignmentTarget(TreeBuilder&, TreeExpression, bool ignoreStrictCheck = false);
 
-    ALWAYS_INLINE int NODELETE isBinaryOperator(JSTokenType);
-    bool NODELETE allowAutomaticSemicolon();
+    ALWAYS_INLINE int LEGACY_NODELETE isBinaryOperator(JSTokenType);
+    bool LEGACY_NODELETE allowAutomaticSemicolon();
     
     bool autoSemiColon()
     {

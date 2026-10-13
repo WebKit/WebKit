@@ -87,7 +87,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewProtoFuncReduceRight, (JSGlobalObject* gl
     CALL_GENERIC_TYPEDARRAY_PROTOTYPE_FUNCTION(genericTypedArrayViewProtoFuncReduceRight);
 }
 
-static inline std::optional<JSType> NODELETE isTypedArrayViewConstructor(JSValue value)
+static inline std::optional<JSType> LEGACY_NODELETE isTypedArrayViewConstructor(JSValue value)
 {
     if (!value.isCell()) [[unlikely]]
         return std::nullopt;

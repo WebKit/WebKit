@@ -203,8 +203,8 @@ public:
         return m_weakRandom.getUint32();
     }
 
-    static constexpr uint32_t NODELETE min() { return std::numeric_limits<uint32_t>::min(); }
-    static constexpr uint32_t NODELETE max() { return std::numeric_limits<uint32_t>::max(); }
+    static constexpr uint32_t LEGACY_NODELETE min() { return std::numeric_limits<uint32_t>::min(); }
+    static constexpr uint32_t LEGACY_NODELETE max() { return std::numeric_limits<uint32_t>::max(); }
 
 private:
     WeakRandom& m_weakRandom;

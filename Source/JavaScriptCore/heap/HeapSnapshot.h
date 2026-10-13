@@ -40,13 +40,13 @@ public:
     HeapSnapshot* previous() const { return m_previous; }
 
     void appendNode(const HeapSnapshotNode&);
-    void NODELETE sweepCell(JSCell*);
+    void LEGACY_NODELETE sweepCell(JSCell*);
     void shrinkToFit();
     void finalize();
 
     bool isEmpty() const { return m_nodes.isEmpty(); }
-    std::optional<HeapSnapshotNode> NODELETE nodeForCell(JSCell*);
-    std::optional<HeapSnapshotNode> NODELETE nodeForObjectIdentifier(unsigned objectIdentifier);
+    std::optional<HeapSnapshotNode> LEGACY_NODELETE nodeForCell(JSCell*);
+    std::optional<HeapSnapshotNode> LEGACY_NODELETE nodeForObjectIdentifier(unsigned objectIdentifier);
 
 private:
     friend class HeapSnapshotBuilder;

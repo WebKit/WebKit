@@ -130,15 +130,15 @@ public:
             return false;
         }
     }
-    bool NODELETE makesCalls() const;
-    PutByStatus NODELETE slowVersion() const;
+    bool LEGACY_NODELETE makesCalls() const;
+    PutByStatus LEGACY_NODELETE slowVersion() const;
     bool observedPropertyInlineCacheSlowPath() const { return m_state == ObservedTakesSlowPath || m_state == ObservedSlowPathAndMakesCalls; }
     
     size_t numVariants() const { return m_variants.size(); }
     const Vector<PutByVariant, 1>& variants() const LIFETIME_BOUND { return m_variants; }
     const PutByVariant& at(size_t index) const { return m_variants[index]; }
     const PutByVariant& operator[](size_t index) const { return at(index); }
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier LEGACY_NODELETE singleIdentifier() const;
 
     bool viaGlobalProxy() const
     {

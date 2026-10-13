@@ -52,13 +52,13 @@ struct CachedFunctionExecutableMetadata {
 };
 
 struct CachedFunctionExecutableOffsets {
-    static ptrdiff_t NODELETE codeBlockForCallOffset();
-    static ptrdiff_t NODELETE codeBlockForConstructOffset();
-    static ptrdiff_t NODELETE metadataOffset();
+    static ptrdiff_t LEGACY_NODELETE codeBlockForCallOffset();
+    static ptrdiff_t LEGACY_NODELETE codeBlockForConstructOffset();
+    static ptrdiff_t LEGACY_NODELETE metadataOffset();
 };
 
 struct CachedWriteBarrierOffsets {
-    static ptrdiff_t NODELETE ptrOffset();
+    static ptrdiff_t LEGACY_NODELETE ptrOffset();
 };
 
 struct CachedPtrOffsets {
@@ -85,7 +85,7 @@ public:
 
     ~Decoder();
 
-    VM& NODELETE vm() { return m_vm; }
+    VM& LEGACY_NODELETE vm() { return m_vm; }
     size_t size() const;
 
     ptrdiff_t offsetOf(const void*);
@@ -95,7 +95,7 @@ public:
     CompactTDZEnvironmentMap::Handle handleForTDZEnvironment(CompactTDZEnvironment*) const;
     void setHandleForTDZEnvironment(CompactTDZEnvironment*, const CompactTDZEnvironmentMap::Handle&);
     void addLeafExecutable(const UnlinkedFunctionExecutable*, ptrdiff_t);
-    RefPtr<SourceProvider> NODELETE provider() const;
+    RefPtr<SourceProvider> LEGACY_NODELETE provider() const;
 
     template<typename Functor>
     void addFinalizer(const Functor&);

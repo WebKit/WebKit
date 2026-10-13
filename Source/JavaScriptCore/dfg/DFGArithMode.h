@@ -157,8 +157,8 @@ inline bool shouldCheckNegativeZero(Arith::RoundingMode mode)
     return mode == Arith::RoundingMode::Int32WithNegativeZeroCheck;
 }
 
-Arith::UnaryFunction NODELETE arithUnaryFunction(Arith::UnaryType);
-Arith::UnaryOperation NODELETE arithUnaryOperation(Arith::UnaryType);
+Arith::UnaryFunction LEGACY_NODELETE arithUnaryFunction(Arith::UnaryType);
+Arith::UnaryOperation LEGACY_NODELETE arithUnaryOperation(Arith::UnaryType);
 
 } } // namespace JSC::DFG
 

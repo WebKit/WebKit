@@ -113,7 +113,7 @@ public:
 
     void dump(PrintStream&) const;
 
-    CacheableIdentifier NODELETE singleIdentifier() const;
+    CacheableIdentifier LEGACY_NODELETE singleIdentifier() const;
 
 private:
 #if ENABLE(DFG_JIT)

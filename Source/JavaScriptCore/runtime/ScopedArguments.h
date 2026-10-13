@@ -147,7 +147,7 @@ public:
 
     static JSArray* fastSlice(JSGlobalObject*, ScopedArguments*, uint64_t startIndex, uint64_t count);
 
-    JS_EXPORT_PRIVATE bool NODELETE isIteratorProtocolFastAndNonObservable();
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isIteratorProtocolFastAndNonObservable();
 
     DECLARE_INFO;
     

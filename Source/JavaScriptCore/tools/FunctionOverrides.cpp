@@ -186,7 +186,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     } while (false)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static bool NODELETE hasDisallowedCharacters(const char* str, size_t length)
+static bool LEGACY_NODELETE hasDisallowedCharacters(const char* str, size_t length)
 {
     while (length--) {
         char c = *str++;

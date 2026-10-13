@@ -2495,9 +2495,9 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     ASSERT(loopScope);
 
     struct SymbolTableNoLocks {
-        auto NODELETE begin() const { return symbolTable->begin(NoLockingNecessary); }
-        auto NODELETE end() const { return symbolTable->end(NoLockingNecessary); }
-        size_t NODELETE size() const { return symbolTable->scopeSize(); }
+        auto LEGACY_NODELETE begin() const { return symbolTable->begin(NoLockingNecessary); }
+        auto LEGACY_NODELETE end() const { return symbolTable->end(NoLockingNecessary); }
+        size_t LEGACY_NODELETE size() const { return symbolTable->scopeSize(); }
         SymbolTable* symbolTable;
     } symbolTableWithoutLocks { symbolTable };
 

@@ -41,7 +41,7 @@ using CPUState = Probe::CPUState;
 using RegisterID = MacroAssembler::RegisterID;
 using FPRegisterID = MacroAssembler::FPRegisterID;
 
-template<typename T> T NODELETE nextID(T id) { return static_cast<T>(id + 1); }
+template<typename T> T LEGACY_NODELETE nextID(T id) { return static_cast<T>(id + 1); }
 
 void printAllRegisters(PrintStream& out, Context& context)
 {

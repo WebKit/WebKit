@@ -50,8 +50,8 @@ public:
 
     JS_EXPORT_PRIVATE ~ScriptCallStack();
 
-    JS_EXPORT_PRIVATE const ScriptCallFrame& NODELETE at(size_t) const;
-    JS_EXPORT_PRIVATE size_t NODELETE size() const;
+    JS_EXPORT_PRIVATE const ScriptCallFrame& LEGACY_NODELETE at(size_t) const;
+    JS_EXPORT_PRIVATE size_t LEGACY_NODELETE size() const;
     bool truncated() const { return m_truncated; }
 
     const RefPtr<AsyncStackTrace>& parentStackTrace() const { return m_parentStackTrace; }
@@ -61,7 +61,7 @@ public:
 
     void append(const ScriptCallFrame&);
 
-    JS_EXPORT_PRIVATE bool NODELETE isEqual(ScriptCallStack*) const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isEqual(ScriptCallStack*) const;
 
     Ref<JSON::ArrayOf<Protocol::Console::CallFrame>> buildInspectorArray() const;
     JS_EXPORT_PRIVATE Ref<Protocol::Console::StackTrace> buildInspectorObject() const;

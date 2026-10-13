@@ -35,35 +35,35 @@ namespace JSC { namespace Yarr {
 
 class SyntaxChecker {
 public:
-    void NODELETE assertionBOL() { }
-    void NODELETE assertionEOL() { }
-    void NODELETE assertionBOI() { }
-    void NODELETE assertionEOI(bool) { }
-    void NODELETE assertionWordBoundary(bool) { }
-    void NODELETE atomPatternCharacter(char32_t, bool) { }
-    void NODELETE atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
-    void NODELETE atomCharacterClassBegin(bool = false) { }
-    void NODELETE atomCharacterClassAtom(char16_t) { }
-    void NODELETE atomCharacterClassRange(char16_t, char16_t) { }
-    void NODELETE atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
-    void NODELETE atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
-    void NODELETE atomCharacterClassSetOp(CharacterClassSetOp) { }
-    void NODELETE atomCharacterClassPushNested(bool) { }
-    void NODELETE atomCharacterClassPopNested(bool) { }
-    void NODELETE atomCharacterClassEnd() { }
-    void NODELETE atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
-    void NODELETE atomParentheticalAssertionBegin(bool, MatchDirection) { }
-    void NODELETE atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
-    void NODELETE atomParenthesesEnd() { }
-    void NODELETE atomBackReference(unsigned) { }
-    void NODELETE atomNamedBackReference(const String&) { }
-    void NODELETE atomNamedForwardReference(const String&) { }
-    void NODELETE quantifyAtom(unsigned, unsigned, bool) { }
-    void NODELETE disjunction(CreateDisjunctionPurpose) { }
-    void NODELETE resetForReparsing() { }
+    void LEGACY_NODELETE assertionBOL() { }
+    void LEGACY_NODELETE assertionEOL() { }
+    void LEGACY_NODELETE assertionBOI() { }
+    void LEGACY_NODELETE assertionEOI(bool) { }
+    void LEGACY_NODELETE assertionWordBoundary(bool) { }
+    void LEGACY_NODELETE atomPatternCharacter(char32_t, bool) { }
+    void LEGACY_NODELETE atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
+    void LEGACY_NODELETE atomCharacterClassBegin(bool = false) { }
+    void LEGACY_NODELETE atomCharacterClassAtom(char16_t) { }
+    void LEGACY_NODELETE atomCharacterClassRange(char16_t, char16_t) { }
+    void LEGACY_NODELETE atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
+    void LEGACY_NODELETE atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
+    void LEGACY_NODELETE atomCharacterClassSetOp(CharacterClassSetOp) { }
+    void LEGACY_NODELETE atomCharacterClassPushNested(bool) { }
+    void LEGACY_NODELETE atomCharacterClassPopNested(bool) { }
+    void LEGACY_NODELETE atomCharacterClassEnd() { }
+    void LEGACY_NODELETE atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
+    void LEGACY_NODELETE atomParentheticalAssertionBegin(bool, MatchDirection) { }
+    void LEGACY_NODELETE atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
+    void LEGACY_NODELETE atomParenthesesEnd() { }
+    void LEGACY_NODELETE atomBackReference(unsigned) { }
+    void LEGACY_NODELETE atomNamedBackReference(const String&) { }
+    void LEGACY_NODELETE atomNamedForwardReference(const String&) { }
+    void LEGACY_NODELETE quantifyAtom(unsigned, unsigned, bool) { }
+    void LEGACY_NODELETE disjunction(CreateDisjunctionPurpose) { }
+    void LEGACY_NODELETE resetForReparsing() { }
 
-    constexpr static bool NODELETE abortedDueToError() { return false; }
-    constexpr static ErrorCode NODELETE abortErrorCode() { return ErrorCode::NoError; }
+    constexpr static bool LEGACY_NODELETE abortedDueToError() { return false; }
+    constexpr static ErrorCode LEGACY_NODELETE abortErrorCode() { return ErrorCode::NoError; }
 };
 static_assert(YarrSyntaxCheckable<SyntaxChecker>);
 

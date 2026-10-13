@@ -261,17 +261,17 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorOf, (JSGlobalObject* globalObject, Call
     return JSValue::encode(result);
 }
 
-static ALWAYS_INLINE unsigned NODELETE getArgumentsLength(ScopedArguments* arguments)
+static ALWAYS_INLINE unsigned LEGACY_NODELETE getArgumentsLength(ScopedArguments* arguments)
 {
     return arguments->internalLength();
 }
 
-static ALWAYS_INLINE unsigned NODELETE getArgumentsLength(DirectArguments* arguments)
+static ALWAYS_INLINE unsigned LEGACY_NODELETE getArgumentsLength(DirectArguments* arguments)
 {
     return arguments->internalLength();
 }
 
-static ALWAYS_INLINE unsigned NODELETE getArgumentsLength(ClonedArguments* arguments)
+static ALWAYS_INLINE unsigned LEGACY_NODELETE getArgumentsLength(ClonedArguments* arguments)
 {
     ASSERT(arguments->isIteratorProtocolFastAndNonObservable());
     JSValue lengthValue = arguments->getDirect(clonedArgumentsLengthPropertyOffset);

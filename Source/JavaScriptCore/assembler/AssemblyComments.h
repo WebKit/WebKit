@@ -40,7 +40,7 @@ class AssemblyCommentRegistry {
     WTF_MAKE_TZONE_ALLOCATED(AssemblyCommentRegistry);
     WTF_MAKE_NONCOPYABLE(AssemblyCommentRegistry);
 public:
-    static AssemblyCommentRegistry& NODELETE singleton();
+    static AssemblyCommentRegistry& LEGACY_NODELETE singleton();
     static void initialize();
 
     Lock& getLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_lock) { return m_lock; }

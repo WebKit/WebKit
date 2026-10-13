@@ -47,7 +47,7 @@ struct Type;
 class FunctionCodeIndex;
 
 struct FunctionDebugInfo {
-    JS_EXPORT_PRIVATE UncheckedKeyHashSet<uint32_t>* NODELETE findNextInstructions(uint32_t offset);
+    JS_EXPORT_PRIVATE UncheckedKeyHashSet<uint32_t>* LEGACY_NODELETE findNextInstructions(uint32_t offset);
     void addNextInstruction(uint32_t offset, uint32_t nextInstruction);
     void addInstructionStart(uint32_t offset) { instructionStarts.add(offset); }
     void addLocalType(Type);

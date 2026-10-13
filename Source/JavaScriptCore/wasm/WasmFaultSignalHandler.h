@@ -39,6 +39,6 @@ inline void activateSignalingMemory() { }
 inline void prepareSignalingMemory() { }
 #endif // ENABLE(WEBASSEMBLY)
 
-ptrdiff_t NODELETE maxAcceptableOffsetForNullReference();
+ptrdiff_t LEGACY_NODELETE maxAcceptableOffsetForNullReference();
 
 } } // namespace JSC::Wasm

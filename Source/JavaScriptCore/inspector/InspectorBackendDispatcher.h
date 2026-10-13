@@ -72,7 +72,7 @@ public:
         JS_EXPORT_PRIVATE CallbackBase(Ref<BackendDispatcher>&&, long requestId);
         virtual ~CallbackBase() { }
 
-        JS_EXPORT_PRIVATE bool NODELETE isActive() const;
+        JS_EXPORT_PRIVATE bool LEGACY_NODELETE isActive() const;
         void disable() { m_alreadySent = true; }
 
         JS_EXPORT_PRIVATE void sendSuccess(Ref<JSON::Object>&&);

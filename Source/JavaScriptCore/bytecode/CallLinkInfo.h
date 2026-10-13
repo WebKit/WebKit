@@ -75,7 +75,7 @@ public:
 
     static constexpr uintptr_t polymorphicCalleeMask = 1;
     
-    static CallType NODELETE callTypeFor(OpcodeID opcodeID);
+    static CallType LEGACY_NODELETE callTypeFor(OpcodeID opcodeID);
 
     static bool isVarargsCallType(CallType callType)
     {
@@ -135,15 +135,15 @@ public:
     static void emitTailCallFastPath(CCallHelpers&, CompileTimeCallLinkInfo, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
 #endif
 
-    void NODELETE revertCallToStub();
+    void LEGACY_NODELETE revertCallToStub();
 
     void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, CodePtr<JSEntryPtrTag>);
-    void NODELETE clearCallee();
-    JSObject* NODELETE callee();
+    void LEGACY_NODELETE clearCallee();
+    JSObject* LEGACY_NODELETE callee();
 
     void setLastSeenCallee(VM&, const JSCell* owner, JSObject* callee);
-    JSObject* NODELETE lastSeenCallee() const;
-    bool NODELETE haveLastSeenCallee() const;
+    JSObject* LEGACY_NODELETE lastSeenCallee() const;
+    bool LEGACY_NODELETE haveLastSeenCallee() const;
     
     void setExecutableDuringCompilation(ExecutableBase*);
     ExecutableBase* executable();
@@ -391,7 +391,7 @@ public:
     MacroAssembler::JumpList emitDirectFastPath(CCallHelpers&);
     MacroAssembler::JumpList emitDirectTailCallFastPath(CCallHelpers&, NOESCAPE const ScopedLambda<void()>& prepareForTailCall);
     void setCallTarget(CodeBlock*, CodeLocationLabel<JSEntryPtrTag>);
-    void NODELETE setMaxArgumentCountIncludingThis(unsigned);
+    void LEGACY_NODELETE setMaxArgumentCountIncludingThis(unsigned);
     unsigned maxArgumentCountIncludingThis() const { return m_maxArgumentCountIncludingThis; }
 
     void reset();
@@ -405,7 +405,7 @@ private:
     void initialize();
     void repatchSpeculatively();
 
-    CodeBlock* NODELETE retrieveCodeBlock(FunctionExecutable*);
+    CodeBlock* LEGACY_NODELETE retrieveCodeBlock(FunctionExecutable*);
     CodePtr<JSEntryPtrTag> retrieveCodePtr(const ConcurrentJSLocker&, CodeBlock*);
 
     CallType m_callType : 4;

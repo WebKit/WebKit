@@ -216,9 +216,9 @@ public:
     inline const ClassInfo* classInfoOrNull() const; // Defined in JSCJSValueStructure.h
 
     // Non-inline versions of above for use in header ASSERT macros:
-    JS_EXPORT_PRIVATE bool NODELETE isGetterSetterSlow() const;
-    JS_EXPORT_PRIVATE bool NODELETE isCustomGetterSetterSlow() const;
-    JS_EXPORT_PRIVATE bool NODELETE isStringSlow() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isGetterSetterSlow() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isCustomGetterSetterSlow() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isStringSlow() const;
 
     // Extracting the value.
     inline bool getString(JSGlobalObject*, WTF::String&) const; // Defined in JSCJSValueCell.h
@@ -242,7 +242,7 @@ public:
     inline JSBigInt* asHeapBigInt() const; // Defined in JSCJSValueBigInt.h
 
     // toNumber conversion if it can be done without side effects.
-    std::optional<double> NODELETE toNumberFromPrimitive() const;
+    std::optional<double> LEGACY_NODELETE toNumberFromPrimitive() const;
 
     inline JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string. Defined in JSCJSValuePropertyInlines.h
     inline JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster. Defined in JSCJSValuePropertyInlines.h

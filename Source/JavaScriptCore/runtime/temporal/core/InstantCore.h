@@ -41,7 +41,7 @@ namespace TemporalCore {
 // MaximumTemporalInstantRoundingIncrement — temporal_rs: internal (no single fn; values are hardcoded per spec table)
 // Values from Temporal.Instant.prototype.round steps 15-20 (one per unit).
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
-constexpr double NODELETE maximumInstantIncrement(TemporalUnit smallestUnit)
+constexpr double LEGACY_NODELETE maximumInstantIncrement(TemporalUnit smallestUnit)
 {
     // Maximum increment = how many units of smallestUnit fit in one day.
     return static_cast<double>(static_cast<int64_t>(lengthInNanoseconds(TemporalUnit::Day)))

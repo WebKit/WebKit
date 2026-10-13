@@ -81,7 +81,7 @@ using namespace WTF;
 #if OS(DARWIN) && CPU(ARM64)
 // We already rely on page size being CeilingOnPageSize elsewhere (e.g. MarkedBlock).
 // Just use the constexpr CeilingOnPageSize for better efficiency.
-static inline constexpr size_t NODELETE executablePageSize() { return CeilingOnPageSize; }
+static inline constexpr size_t LEGACY_NODELETE executablePageSize() { return CeilingOnPageSize; }
 #else
 static inline size_t executablePageSize() { return WTF::pageSize(); }
 #endif
@@ -130,7 +130,7 @@ static_assert(fixedExecutableMemoryPoolSize < 4 * GB, "ExecutableMemoryHandle as
 static constexpr WTF::UUID jscJITNamespace = WTF::UUID::createConstant(0x325696c8e7cc11eeULL, 0x9f4e325096b39f47ULL);
 #endif
 
-static bool NODELETE isJITEnabled()
+static bool LEGACY_NODELETE isJITEnabled()
 {
     bool jitEnabled = !g_jscConfig.jitDisabled;
 #if HAVE(IOS_JIT_RESTRICTIONS)
@@ -526,8 +526,8 @@ public:
         m_reservation.deallocate();
     }
 
-    void* NODELETE memoryStart() { return g_jscConfig.startExecutableMemory; }
-    void* NODELETE memoryEnd() { return g_jscConfig.endExecutableMemory; }
+    void* LEGACY_NODELETE memoryStart() { return g_jscConfig.startExecutableMemory; }
+    void* LEGACY_NODELETE memoryEnd() { return g_jscConfig.endExecutableMemory; }
     bool isValid() { return !!m_reservation; }
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
@@ -589,14 +589,14 @@ public:
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
 #if ENABLE(LIBPAS_JIT_HEAP)
-    void NODELETE shrinkBytesAllocated(size_t oldSizeInBytes, size_t newSizeInBytes)
+    void LEGACY_NODELETE shrinkBytesAllocated(size_t oldSizeInBytes, size_t newSizeInBytes)
     {
         m_bytesAllocated.fetch_add(newSizeInBytes - oldSizeInBytes, std::memory_order_relaxed);
     }
 #endif
 
     // Non atomic
-    size_t NODELETE bytesAllocated()
+    size_t LEGACY_NODELETE bytesAllocated()
     {
 #if ENABLE(LIBPAS_JIT_HEAP)
         return m_bytesAllocated.load(std::memory_order_relaxed);
@@ -609,12 +609,12 @@ public:
 #endif
     }
 
-    size_t NODELETE bytesReserved() const
+    size_t LEGACY_NODELETE bytesReserved() const
     {
         return m_bytesReserved;
     }
 
-    size_t NODELETE bytesAvailable()
+    size_t LEGACY_NODELETE bytesAvailable()
     {
         size_t bytesReserved = this->bytesReserved();
 #if ENABLE(LIBPAS_JIT_HEAP)
@@ -899,7 +899,7 @@ private:
             jit_heap_add_fresh_memory(pas_range_create(m_start, m_end));
         }
 
-        bool NODELETE isInAllocatedMemory(const AbstractLocker&, void* address)
+        bool LEGACY_NODELETE isInAllocatedMemory(const AbstractLocker&, void* address)
         {
             uintptr_t addressAsInt = reinterpret_cast<uintptr_t>(address);
             return addressAsInt >= m_start && addressAsInt < m_end;
@@ -957,18 +957,18 @@ private:
         //  | jit allocations -->   <-- islands |
         //  -------------------------------------
 
-        uintptr_t NODELETE start() { return reinterpret_cast<uintptr_t>(m_start); }
-        uintptr_t NODELETE islandBegin() { return reinterpret_cast<uintptr_t>(m_islandBegin); }
-        uintptr_t NODELETE end() { return reinterpret_cast<uintptr_t>(m_end); }
+        uintptr_t LEGACY_NODELETE start() { return reinterpret_cast<uintptr_t>(m_start); }
+        uintptr_t LEGACY_NODELETE islandBegin() { return reinterpret_cast<uintptr_t>(m_islandBegin); }
+        uintptr_t LEGACY_NODELETE end() { return reinterpret_cast<uintptr_t>(m_end); }
 
-        size_t NODELETE maxIslandsInThisRegion() { return (end() - islandBegin()) / islandSizeInBytes; }
+        size_t LEGACY_NODELETE maxIslandsInThisRegion() { return (end() - islandBegin()) / islandSizeInBytes; }
 
-        uintptr_t NODELETE allocatorSize()
+        uintptr_t LEGACY_NODELETE allocatorSize()
         {
             return islandBegin() - start();
         }
 
-        size_t NODELETE islandsPerPage()
+        size_t LEGACY_NODELETE islandsPerPage()
         {
             size_t islandsPerPage = executablePageSize() / islandSizeInBytes;
             ASSERT(islandsPerPage * islandSizeInBytes == executablePageSize());
@@ -1023,7 +1023,7 @@ private:
             CRASH();
         }
 
-        std::optional<size_t> NODELETE islandBit(uintptr_t island)
+        std::optional<size_t> LEGACY_NODELETE islandBit(uintptr_t island)
         {
             uintptr_t end = this->end();
             if (islandBegin() <= island && island < end)
@@ -1031,7 +1031,7 @@ private:
             return std::nullopt;
         }
 
-        void NODELETE freeIsland(uintptr_t island)
+        void LEGACY_NODELETE freeIsland(uintptr_t island)
         {
             RELEASE_ASSERT(islandBegin() <= island && island < end());
             size_t bit = islandBit(island).value();
@@ -1039,7 +1039,7 @@ private:
             islandBits[bit] = false;
         }
 
-        bool NODELETE isInAllocatedMemory(const AbstractLocker& locker, void* address)
+        bool LEGACY_NODELETE isInAllocatedMemory(const AbstractLocker& locker, void* address)
         {
             if (Base::isInAllocatedMemory(locker, address))
                 return true;
@@ -1063,7 +1063,7 @@ private:
 #endif // ENABLE(JUMP_ISLANDS)
 
     template <typename Function>
-    void NODELETE forEachAllocator(Function function)
+    void LEGACY_NODELETE forEachAllocator(Function function)
     {
 #if ENABLE(JUMP_ISLANDS)
         for (RegionAllocator& allocator : m_allocators) {
@@ -1086,7 +1086,7 @@ private:
         WTF_MAKE_TZONE_ALLOCATED(Islands);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Islands);
     public:
-        void* NODELETE key() { return jumpSourceLocation.dataLocation(); }
+        void* LEGACY_NODELETE key() { return jumpSourceLocation.dataLocation(); }
         CodeLocationLabel<ExecutableMemoryPtrTag> jumpSourceLocation;
         Vector<CodeLocationLabel<ExecutableMemoryPtrTag>> jumpIslands;
     };

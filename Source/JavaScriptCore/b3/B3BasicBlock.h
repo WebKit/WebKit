@@ -122,7 +122,7 @@ public:
         return SuccessorCollection<const BasicBlock, const SuccessorList>(successors());
     }
 
-    bool NODELETE replaceSuccessor(BasicBlock* from, BasicBlock* to);
+    bool LEGACY_NODELETE replaceSuccessor(BasicBlock* from, BasicBlock* to);
     
     // This is only valid for Jump and Branch.
     const FrequentedBlock& taken() const;
@@ -142,7 +142,7 @@ public:
     bool containsPredecessor(BasicBlock* block) { return m_predecessors.contains(block); }
 
     bool addPredecessor(BasicBlock*);
-    bool NODELETE removePredecessor(BasicBlock*);
+    bool LEGACY_NODELETE removePredecessor(BasicBlock*);
     bool replacePredecessor(BasicBlock* from, BasicBlock* to);
 
     // Update predecessors starting with the successors of this block.

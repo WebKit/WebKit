@@ -351,7 +351,7 @@ private:
         return std::bit_cast<FatEntry*>(m_bits);
     }
     
-    JS_EXPORT_PRIVATE void NODELETE inflate();
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE inflate();
     
     ALWAYS_INLINE intptr_t bits() const
     {
@@ -671,8 +671,8 @@ public:
 
     void prepareForTypeProfiling(const ConcurrentJSLocker&);
 
-    String NODELETE inferredName();
-    DebuggerLocation NODELETE debuggerLocation();
+    String LEGACY_NODELETE inferredName();
+    DebuggerLocation LEGACY_NODELETE debuggerLocation();
     void collectDebuggerInfo(CodeBlock*);
 
     InferredValue<JSScope>& singleton() LIFETIME_BOUND { return m_singleton; }

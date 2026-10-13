@@ -314,13 +314,13 @@ public:
 
     // Booleans in B3 are Const32(0) or Const32(1). So this is true if the type is Int32 and the only
     // possible return values are 0 or 1. It's OK for this method to conservatively return false.
-    bool NODELETE returnsBool() const;
+    bool LEGACY_NODELETE returnsBool() const;
 
     bool isNegativeZero() const;
 
     bool isRounded() const;
 
-    TriState NODELETE asTriState() const;
+    TriState LEGACY_NODELETE asTriState() const;
     bool isLikeZero() const { return asTriState() == TriState::False; }
     bool isLikeNonZero() const { return asTriState() == TriState::True; }
 
@@ -336,17 +336,17 @@ public:
     // have a non-empty ValueKey. This happens for example with Check operations.
     ValueKey key() const;
     
-    Value* NODELETE foldIdentity() const;
+    Value* LEGACY_NODELETE foldIdentity() const;
 
     // Makes sure that none of the children are Identity's. If a child points to Identity, this will
     // repoint it at the Identity's child. For simplicity, this will follow arbitrarily long chains
     // of Identity's.
-    bool NODELETE performSubstitution();
+    bool LEGACY_NODELETE performSubstitution();
     
     // Free values are those whose presence is guaranteed not to hurt code. We consider constants,
     // Identities, and Nops to be free. Constants are free because we hoist them to an optimal place.
     // Identities and Nops are free because we remove them.
-    bool NODELETE isFree() const;
+    bool LEGACY_NODELETE isFree() const;
 
     // Walk the ancestors of this value (i.e. the graph of things it transitively uses). This
     // either walks phis or not, depending on whether PhiChildren is null. Your callback gets
@@ -927,7 +927,7 @@ protected:
 private:
     friend class CheckValue; // CheckValue::convertToAdd() modifies m_kind.
 
-    static Type NODELETE typeFor(Kind, Value* firstChild, Value* secondChild = nullptr);
+    static Type LEGACY_NODELETE typeFor(Kind, Value* firstChild, Value* secondChild = nullptr);
 
 protected:
     unsigned m_index { UINT_MAX };

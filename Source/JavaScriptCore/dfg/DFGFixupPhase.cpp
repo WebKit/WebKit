@@ -4916,7 +4916,7 @@ private:
         return std::tuple { arrayModes, flags };
     }
 
-    static std::optional<ArrayModes> NODELETE refineArrayModesForMultiPutByVal(Node*, ArrayModes arrayModes)
+    static std::optional<ArrayModes> LEGACY_NODELETE refineArrayModesForMultiPutByVal(Node*, ArrayModes arrayModes)
     {
         constexpr ArrayModes supportedArrays = 0
             | asArrayModesIgnoringTypedArrays(ArrayWithInt32)
@@ -4954,25 +4954,25 @@ private:
         return arrayModes;
     }
 
-    bool NODELETE alwaysUnboxSimplePrimitives()
+    bool LEGACY_NODELETE alwaysUnboxSimplePrimitives()
     {
         return false;
     }
 
     template<UseKind useKind>
-    void NODELETE observeUseKindOnNode(Node* node)
+    void LEGACY_NODELETE observeUseKindOnNode(Node* node)
     {
         if (useKind == UntypedUse)
             return;
         observeUseKindOnNode(node, useKind);
     }
 
-    void NODELETE observeUseKindOnEdge(Edge edge)
+    void LEGACY_NODELETE observeUseKindOnEdge(Edge edge)
     {
         observeUseKindOnNode(edge.node(), edge.useKind());
     }
 
-    void NODELETE observeUseKindOnNode(Node* node, UseKind useKind)
+    void LEGACY_NODELETE observeUseKindOnNode(Node* node, UseKind useKind)
     {
         if (node->op() != GetLocal)
             return;
@@ -5027,13 +5027,13 @@ private:
     }
     
     template<UseKind useKind>
-    void NODELETE fixEdge(Edge& edge)
+    void LEGACY_NODELETE fixEdge(Edge& edge)
     {
         observeUseKindOnNode<useKind>(edge.node());
         edge.setUseKind(useKind);
     }
     
-    unsigned NODELETE indexForChecks()
+    unsigned LEGACY_NODELETE indexForChecks()
     {
         unsigned index = m_indexInBlock;
         while (!m_block->at(index)->origin.exitOK)
@@ -5430,7 +5430,7 @@ private:
         return false;
     }
 
-    void NODELETE fixupCheckJSCast(Node* node)
+    void LEGACY_NODELETE fixupCheckJSCast(Node* node)
     {
         fixEdge<CellUse>(node->child1());
     }

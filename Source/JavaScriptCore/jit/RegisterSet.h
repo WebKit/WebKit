@@ -250,33 +250,33 @@ public:
 
     friend constexpr bool operator==(const RegisterSet&, const RegisterSet&) = default;
 
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE allGPRs();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE allFPRs();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE allRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE allGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE allFPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE allRegisters();
     JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE stackRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE reservedHardwareRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE macroClobberedGPRs();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE macroClobberedFPRs();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE runtimeTagRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE specialRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE calleeSaveRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE vmCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE stackRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE reservedHardwareRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE macroClobberedGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE macroClobberedFPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE runtimeTagRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE specialRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE calleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE vmCalleeSaveRegisters();
     JS_EXPORT_PRIVATE static RegisterAtOffsetList* vmCalleeSaveRegisterOffsets();
     JS_EXPORT_PRIVATE static std::span<const int8_t> vmCalleeSaveBufferSlotsByRegIndex();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE llintBaselineCalleeSaveRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE dfgCalleeSaveRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE ftlCalleeSaveRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE stubUnavailableRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE argumentGPRs();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE argumentFPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE llintBaselineCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE dfgCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE ftlCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE stubUnavailableRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE argumentGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE argumentFPRs();
 #if ENABLE(WEBASSEMBLY)
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE wasmPinnedRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE ipintCalleeSaveRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE bbqCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE wasmPinnedRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE ipintCalleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE bbqCalleeSaveRegisters();
 #endif
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE registersToSaveForJSCall(RegisterSet live);
-    JS_EXPORT_PRIVATE static RegisterSet NODELETE registersToSaveForCCall(RegisterSet live);
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE registersToSaveForJSCall(RegisterSet live);
+    JS_EXPORT_PRIVATE static RegisterSet LEGACY_NODELETE registersToSaveForCCall(RegisterSet live);
 
 private:
     inline constexpr void setAny(Reg reg) { ASSERT_UNDER_CONSTEXPR_CONTEXT(!reg.isFPR()); add(reg, IgnoreVectors); }

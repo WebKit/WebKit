@@ -135,28 +135,28 @@ struct IPIntControlType {
         , m_stackSize(stackSize)
     { }
 
-    static bool NODELETE isIf(const IPIntControlType& control) { return control.blockType() == BlockType::If; }
-    static bool NODELETE isElse(const IPIntControlType& control) { return control.blockType() == BlockType::Else; }
-    static bool NODELETE isTry(const IPIntControlType& control) { return control.blockType() == BlockType::Try; }
-    static bool NODELETE isTryTable(const IPIntControlType& control) { return control.blockType() == BlockType::TryTable; }
-    static bool NODELETE isAnyCatch(const IPIntControlType& control) { return control.blockType() == BlockType::Catch; }
-    static bool NODELETE isTopLevel(const IPIntControlType& control) { return control.blockType() == BlockType::TopLevel; }
-    static bool NODELETE isLoop(const IPIntControlType& control) { return control.blockType() == BlockType::Loop; }
-    static bool NODELETE isBlock(const IPIntControlType& control) { return control.blockType() == BlockType::Block; }
-    static bool NODELETE isCatch(const IPIntControlType& control)
+    static bool LEGACY_NODELETE isIf(const IPIntControlType& control) { return control.blockType() == BlockType::If; }
+    static bool LEGACY_NODELETE isElse(const IPIntControlType& control) { return control.blockType() == BlockType::Else; }
+    static bool LEGACY_NODELETE isTry(const IPIntControlType& control) { return control.blockType() == BlockType::Try; }
+    static bool LEGACY_NODELETE isTryTable(const IPIntControlType& control) { return control.blockType() == BlockType::TryTable; }
+    static bool LEGACY_NODELETE isAnyCatch(const IPIntControlType& control) { return control.blockType() == BlockType::Catch; }
+    static bool LEGACY_NODELETE isTopLevel(const IPIntControlType& control) { return control.blockType() == BlockType::TopLevel; }
+    static bool LEGACY_NODELETE isLoop(const IPIntControlType& control) { return control.blockType() == BlockType::Loop; }
+    static bool LEGACY_NODELETE isBlock(const IPIntControlType& control) { return control.blockType() == BlockType::Block; }
+    static bool LEGACY_NODELETE isCatch(const IPIntControlType& control)
     {
         if (control.blockType() != BlockType::Catch)
             return false;
         return control.catchKind() == CatchKind::Catch;
     }
 
-    void NODELETE dump(PrintStream&) const
+    void LEGACY_NODELETE dump(PrintStream&) const
     { }
 
-    BlockType NODELETE blockType() const { return m_blockType; }
-    CatchKind NODELETE catchKind() const { return m_catchKind; }
-    const BlockSignature& NODELETE signature() const { return m_signature; }
-    unsigned NODELETE stackSize() const { return m_stackSize; }
+    BlockType LEGACY_NODELETE blockType() const { return m_blockType; }
+    CatchKind LEGACY_NODELETE catchKind() const { return m_catchKind; }
+    const BlockSignature& LEGACY_NODELETE signature() const { return m_signature; }
+    unsigned LEGACY_NODELETE stackSize() const { return m_stackSize; }
 
     Type branchTargetType(unsigned i) const
     {
@@ -218,7 +218,7 @@ public:
     using CatchHandler = FunctionParser<IPIntGenerator>::CatchHandler;
     using ArgumentList = FunctionParser<IPIntGenerator>::ArgumentList;
 
-    static ExpressionType NODELETE emptyExpression() { return { }; };
+    static ExpressionType LEGACY_NODELETE emptyExpression() { return { }; };
     [[nodiscard]] PartialResult addDrop(ExpressionType);
 
     template <typename ...Args>
@@ -240,8 +240,8 @@ public:
 
     // SIMD
 
-    bool NODELETE usesSIMD() { return m_usesSIMD; }
-    void NODELETE notifyFunctionUsesSIMD() { ASSERT(Options::useWasmSIMD()); m_usesSIMD = true; }
+    bool LEGACY_NODELETE usesSIMD() { return m_usesSIMD; }
+    void LEGACY_NODELETE notifyFunctionUsesSIMD() { ASSERT(Options::useWasmSIMD()); m_usesSIMD = true; }
     [[nodiscard]] PartialResult addSIMDLoad(ExpressionType, uint64_t, ExpressionType&, uint8_t);
     [[nodiscard]] PartialResult addSIMDStore(ExpressionType, ExpressionType, uint64_t, uint8_t);
     [[nodiscard]] PartialResult addSIMDSplat(SIMDLane, ExpressionType, ExpressionType&);
@@ -522,10 +522,10 @@ public:
     [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>);
 
     // Fused comparison stubs (TODO: make use of these for better codegen)
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
-    [[nodiscard]] PartialResult NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedIfCompare(OpType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
+    [[nodiscard]] PartialResult LEGACY_NODELETE addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature&&, std::span<TypedExpression>, ControlType&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
 
@@ -535,19 +535,19 @@ public:
     [[nodiscard]] PartialResult addUnreachable();
     [[nodiscard]] PartialResult addCrash();
 
-    void NODELETE setParser(FunctionParser<IPIntGenerator>* parser) { m_parser = parser; };
-    size_t NODELETE getCurrentInstructionLength()
+    void LEGACY_NODELETE setParser(FunctionParser<IPIntGenerator>* parser) { m_parser = parser; };
+    size_t LEGACY_NODELETE getCurrentInstructionLength()
     {
         return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
     }
     void addTailCallCommonData(const RTT&, const CallInformation&);
-    void NODELETE didFinishParsingLocals()
+    void LEGACY_NODELETE didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
     }
-    void NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral) { }
-    void NODELETE willParseOpcode() { }
-    void NODELETE willParseExtendedOpcode() { }
+    void LEGACY_NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral) { }
+    void LEGACY_NODELETE willParseOpcode() { }
+    void LEGACY_NODELETE willParseExtendedOpcode() { }
     void didParseOpcode()
     {
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
@@ -625,7 +625,7 @@ public:
         return m_cachedCallInformation;
     }
 
-    static constexpr bool NODELETE tierSupportsSIMD() { return true; }
+    static constexpr bool LEGACY_NODELETE tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
 
 private:
@@ -667,10 +667,10 @@ private:
     // all jumps that go to the top level and return
     Vector<IPIntLocation> m_jumpLocationsAwaitingEnd;
 
-    inline uint32_t NODELETE curPC() { return Checked<uint32_t>(m_parser->currentOpcodeStartingOffset()) - m_metadata->m_bytecodeOffset; }
-    inline uint32_t NODELETE nextPC() { return Checked<uint32_t>(m_parser->offset()) - m_metadata->m_bytecodeOffset; }
+    inline uint32_t LEGACY_NODELETE curPC() { return Checked<uint32_t>(m_parser->currentOpcodeStartingOffset()) - m_metadata->m_bytecodeOffset; }
+    inline uint32_t LEGACY_NODELETE nextPC() { return Checked<uint32_t>(m_parser->offset()) - m_metadata->m_bytecodeOffset; }
     // FIXME: Should return size_t, but BlockMetadata::deltaMC is int32_t and the interpreter loads it with loadpairi.
-    inline uint32_t NODELETE curMC()
+    inline uint32_t LEGACY_NODELETE curMC()
     {
         Checked<uint32_t> size = m_metadata->m_metadata.size();
         return size;

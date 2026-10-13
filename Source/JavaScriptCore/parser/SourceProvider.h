@@ -162,7 +162,7 @@ public:
 
     SourceTaintedness taintedness() const { return m_taintedness; }
     SourceTaintedOrigin sourceTaintedOrigin(SourceTaintKind kind) const { return m_taintedness[kind]; }
-    bool NODELETE couldBeTainted() const { return m_taintedness.couldBeTainted(); }
+    bool LEGACY_NODELETE couldBeTainted() const { return m_taintedness.couldBeTainted(); }
 
     JS_EXPORT_PRIVATE void lockUnderlyingBuffer();
     JS_EXPORT_PRIVATE void unlockUnderlyingBuffer();
@@ -210,7 +210,7 @@ private:
     JS_EXPORT_PRIVATE virtual void lockUnderlyingBufferImpl();
     JS_EXPORT_PRIVATE virtual void unlockUnderlyingBufferImpl();
 
-    JS_EXPORT_PRIVATE void NODELETE getID();
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE getID();
 
     std::atomic<unsigned> m_lockingCount { 0 };
     SourceProviderSourceType m_sourceType;

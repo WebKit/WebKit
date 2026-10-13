@@ -133,7 +133,7 @@ TemporalPlainTime* createTemporalTime(JSGlobalObject* globalObject, ISO8601::Pla
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balancetime
-static ISO8601::Duration NODELETE balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
+static ISO8601::Duration LEGACY_NODELETE balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
 {
     // Steps 1-2: microsecond += floor(nanosecond/1000); nanosecond %= 1000.
     microsecond += nanosecond / 1000;

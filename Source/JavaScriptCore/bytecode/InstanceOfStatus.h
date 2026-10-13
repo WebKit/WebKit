@@ -101,7 +101,7 @@ public:
     bool isMegamorphic() const { return m_state == Megamorphic; }
     bool takesSlowPath() const { return m_state == TakesSlowPath; }
     
-    JSObject* NODELETE commonPrototype() const;
+    JSObject* LEGACY_NODELETE commonPrototype() const;
     
     size_t numVariants() const { return m_variants.size(); }
     const Vector<InstanceOfVariant, 2>& variants() const LIFETIME_BOUND { return m_variants; }

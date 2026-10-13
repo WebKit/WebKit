@@ -49,29 +49,29 @@ public:
         ASSERT(!m_value.isGetterSetterSlow());
         ASSERT(!m_value.isCustomGetterSetterSlow());
     }
-    JS_EXPORT_PRIVATE bool NODELETE writable() const;
-    JS_EXPORT_PRIVATE bool NODELETE enumerable() const;
-    JS_EXPORT_PRIVATE bool NODELETE configurable() const;
-    JS_EXPORT_PRIVATE bool NODELETE isDataDescriptor() const;
-    bool NODELETE isGenericDescriptor() const;
-    JS_EXPORT_PRIVATE bool NODELETE isAccessorDescriptor() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE writable() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE enumerable() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE configurable() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isDataDescriptor() const;
+    bool LEGACY_NODELETE isGenericDescriptor() const;
+    JS_EXPORT_PRIVATE bool LEGACY_NODELETE isAccessorDescriptor() const;
     unsigned attributes() const { return m_attributes; }
     JSValue value() const { return m_value; }
-    GetterSetter* slowGetterSetter(JSGlobalObject*) const; // Be aware that this will lazily allocate a GetterSetter object. It's much better to use NODELETE getter() and setter() individually if possible.
+    GetterSetter* slowGetterSetter(JSGlobalObject*) const; // Be aware that this will lazily allocate a GetterSetter object. It's much better to use LEGACY_NODELETE getter() and setter() individually if possible.
     JS_EXPORT_PRIVATE JSValue getter() const;
     JS_EXPORT_PRIVATE JSValue setter() const;
-    JSObject* NODELETE getterObject() const;
-    JSObject* NODELETE setterObject() const;
-    JS_EXPORT_PRIVATE void NODELETE setUndefined();
-    JS_EXPORT_PRIVATE void NODELETE setDescriptor(JSValue, unsigned attributes);
-    JS_EXPORT_PRIVATE void NODELETE setAccessorDescriptor(unsigned attributes);
+    JSObject* LEGACY_NODELETE getterObject() const;
+    JSObject* LEGACY_NODELETE setterObject() const;
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setUndefined();
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setDescriptor(JSValue, unsigned attributes);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setAccessorDescriptor(unsigned attributes);
     JS_EXPORT_PRIVATE void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
-    JS_EXPORT_PRIVATE void NODELETE setWritable(bool);
-    JS_EXPORT_PRIVATE void NODELETE setEnumerable(bool);
-    JS_EXPORT_PRIVATE void NODELETE setConfigurable(bool);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setWritable(bool);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setEnumerable(bool);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setConfigurable(bool);
     void setValue(JSValue value) { m_value = value; }
-    JS_EXPORT_PRIVATE void NODELETE setSetter(JSValue);
-    JS_EXPORT_PRIVATE void NODELETE setGetter(JSValue);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setSetter(JSValue);
+    JS_EXPORT_PRIVATE void LEGACY_NODELETE setGetter(JSValue);
     bool isEmpty() const { return !(m_value || m_getter || m_setter || m_seenAttributes); }
     bool writablePresent() const { return m_seenAttributes & WritablePresent; }
     bool enumerablePresent() const { return m_seenAttributes & EnumerablePresent; }
@@ -79,8 +79,8 @@ public:
     bool setterPresent() const { return !!m_setter; }
     bool getterPresent() const { return !!m_getter; }
     bool equalTo(JSGlobalObject*, const PropertyDescriptor& other) const;
-    bool NODELETE attributesEqual(const PropertyDescriptor& other) const;
-    unsigned NODELETE attributesOverridingCurrent(const PropertyDescriptor& current) const;
+    bool LEGACY_NODELETE attributesEqual(const PropertyDescriptor& other) const;
+    unsigned LEGACY_NODELETE attributesOverridingCurrent(const PropertyDescriptor& current) const;
 
     JS_EXPORT_PRIVATE bool setPropertySlot(JSGlobalObject*, PropertyName, const PropertySlot&);
 

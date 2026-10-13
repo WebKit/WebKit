@@ -56,7 +56,7 @@ public:
     void trimDeadCells();
     void verify(Phase);
 
-    static const char* NODELETE phaseName(Phase);
+    static const char* LEGACY_NODELETE phaseName(Phase);
     
     // Scans all previously recorded CellLists and checks if the specified
     // cell was in any of those lists.
@@ -106,7 +106,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
-    CellList* NODELETE cellListForGathering(Phase);
+    CellList* LEGACY_NODELETE cellListForGathering(Phase);
     bool verifyCellList(Phase, CellList&);
     static bool validateJSCell(VM* expectedVM, JSCell*, CellProfile*, CellList*, NOESCAPE const ScopedLambda<void()>& printHeaderIfNeeded, const char* prefix = "");
 

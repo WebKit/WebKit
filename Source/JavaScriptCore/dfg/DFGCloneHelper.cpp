@@ -41,7 +41,7 @@ enum class NodeCloneStatus {
     Unsupported // Not yet supported, future work
 };
 
-NodeCloneStatus NODELETE nodeCloneStatusFor(NodeType op)
+NodeCloneStatus LEGACY_NODELETE nodeCloneStatusFor(NodeType op)
 {
     switch (op) {
 #define HANDLE_CASE(op, kind) \

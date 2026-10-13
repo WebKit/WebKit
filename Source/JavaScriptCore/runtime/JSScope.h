@@ -53,27 +53,27 @@ public:
     friend class LLIntOffsetsExtractor;
     static size_t offsetOfNext();
 
-    static JSObject* NODELETE objectAtScope(JSScope*);
+    static JSObject* LEGACY_NODELETE objectAtScope(JSScope*);
 
     static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&);
     static JSValue resolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, const Identifier&);
     static ResolveOp abstractResolve(JSGlobalObject*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
 
     static bool hasConstantScope(ResolveType);
-    static JSScope* NODELETE constantScopeForCodeBlock(ResolveType, CodeBlock*);
+    static JSScope* LEGACY_NODELETE constantScopeForCodeBlock(ResolveType, CodeBlock*);
 
     static void collectClosureVariablesUnderTDZ(JSScope*, TDZEnvironment& result, PrivateNameEnvironment&);
 
     DECLARE_VISIT_CHILDREN;
 
-    bool NODELETE isVarScope();
-    bool NODELETE isLexicalScope();
-    bool NODELETE isModuleScope();
-    bool NODELETE isCatchScope();
-    bool NODELETE isCatchScopeWithSimpleParameter();
-    bool NODELETE isFunctionNameScopeObject();
+    bool LEGACY_NODELETE isVarScope();
+    bool LEGACY_NODELETE isLexicalScope();
+    bool LEGACY_NODELETE isModuleScope();
+    bool LEGACY_NODELETE isCatchScope();
+    bool LEGACY_NODELETE isCatchScopeWithSimpleParameter();
+    bool LEGACY_NODELETE isFunctionNameScopeObject();
 
-    bool NODELETE isNestedLexicalScope();
+    bool LEGACY_NODELETE isNestedLexicalScope();
 
     ScopeChainIterator begin();
     ScopeChainIterator end();
@@ -81,7 +81,7 @@ public:
 
     JSObject* globalThis();
 
-    SymbolTable* NODELETE symbolTable();
+    SymbolTable* LEGACY_NODELETE symbolTable();
 
 protected:
     JSScope(VM&, Structure*, JSScope* next);

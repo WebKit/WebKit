@@ -1019,7 +1019,7 @@ void testBitOrImmBitOrArgImm32(int32_t a, int32_t b, int32_t c)
     CHECK_EQ(compileAndRun<int>(proc, b), (a | (b | c)));
 }
 
-double NODELETE bitOrDouble(double a, double b)
+double LEGACY_NODELETE bitOrDouble(double a, double b)
 {
     return std::bit_cast<double>(std::bit_cast<uint64_t>(a) | std::bit_cast<uint64_t>(b));
 }
@@ -1078,7 +1078,7 @@ void testBitOrImmsDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc), bitOrDouble(a, b)));
 }
 
-float NODELETE bitOrFloat(float a, float b)
+float LEGACY_NODELETE bitOrFloat(float a, float b)
 {
     return std::bit_cast<float>(std::bit_cast<uint32_t>(a) | std::bit_cast<uint32_t>(b));
 }
@@ -1945,7 +1945,7 @@ static void testZShrArgImm32(uint32_t a, uint32_t b)
 }
 
 template<typename IntegerType>
-static unsigned NODELETE countLeadingZero(IntegerType value)
+static unsigned LEGACY_NODELETE countLeadingZero(IntegerType value)
 {
     unsigned bitCount = sizeof(IntegerType) * 8;
     if (!value)
@@ -4479,12 +4479,12 @@ void testMulNegArgArgDoubleAcrossBlocks(bool takeMultiply)
 }
 
 // Make sure the compiler does not try to optimize anything out.
-static NEVER_INLINE double NODELETE zero()
+static NEVER_INLINE double LEGACY_NODELETE zero()
 {
     return 0.;
 }
 
-static double NODELETE negativeZero()
+static double LEGACY_NODELETE negativeZero()
 {
     return -zero();
 }

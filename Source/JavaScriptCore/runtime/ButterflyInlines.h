@@ -38,7 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-inline size_t NODELETE nextLength(size_t length)
+inline size_t LEGACY_NODELETE nextLength(size_t length)
 {
     return length + length / 2;
 }

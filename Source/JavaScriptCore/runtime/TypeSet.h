@@ -56,7 +56,7 @@ public:
 
     static Ref<StructureShape> create() { return adoptRef(*new StructureShape); }
     String propertyHash();
-    void NODELETE markAsFinal();
+    void LEGACY_NODELETE markAsFinal();
     void addProperty(UniquedStringImpl&);
     String stringRepresentation();
     String toJSONString() const;
@@ -64,12 +64,12 @@ public:
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object"_s : name); }
     String constructorName() { return m_constructorName; }
     void setProto(Ref<StructureShape>&& shape) { m_proto = WTF::move(shape); }
-    void NODELETE enterDictionaryMode();
+    void LEGACY_NODELETE enterDictionaryMode();
 
 private:
     static String leastCommonAncestor(const Vector<Ref<StructureShape>>&);
     static Ref<StructureShape> merge(Ref<StructureShape>&&, Ref<StructureShape>&&);
-    bool NODELETE hasSamePrototypeChain(const StructureShape&);
+    bool LEGACY_NODELETE hasSamePrototypeChain(const StructureShape&);
 
     bool m_final;
     bool m_isInDictionaryMode;
@@ -95,7 +95,7 @@ public:
     String leastCommonAncestor() const;
     Ref<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
-    bool NODELETE doesTypeConformTo(RuntimeTypeMask test) const;
+    bool LEGACY_NODELETE doesTypeConformTo(RuntimeTypeMask test) const;
     RuntimeTypeMask seenTypes() const { return m_seenTypes; }
     StructureSet structureSet(const ConcurrentJSLocker&) const { return m_structureSet; }
 

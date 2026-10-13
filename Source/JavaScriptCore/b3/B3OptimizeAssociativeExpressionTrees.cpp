@@ -60,7 +60,7 @@ private:
     static constexpr bool verbose { false };
 };
 
-int64_t NODELETE OptimizeAssociativeExpressionTrees::neutralElement(Opcode op)
+int64_t LEGACY_NODELETE OptimizeAssociativeExpressionTrees::neutralElement(Opcode op)
 {
     switch (op) {
     case Add:
@@ -76,7 +76,7 @@ int64_t NODELETE OptimizeAssociativeExpressionTrees::neutralElement(Opcode op)
     }
 }
 
-bool NODELETE OptimizeAssociativeExpressionTrees::isAbsorbingElement(Opcode op, int64_t constant)
+bool LEGACY_NODELETE OptimizeAssociativeExpressionTrees::isAbsorbingElement(Opcode op, int64_t constant)
 {
     switch (op) {
     case Add:
@@ -92,7 +92,7 @@ bool NODELETE OptimizeAssociativeExpressionTrees::isAbsorbingElement(Opcode op, 
     }
 }
 
-void NODELETE OptimizeAssociativeExpressionTrees::combineConstants(Opcode op, int64_t& const1, int64_t const2)
+void LEGACY_NODELETE OptimizeAssociativeExpressionTrees::combineConstants(Opcode op, int64_t& const1, int64_t const2)
 {
     switch (op) {
     case Add:

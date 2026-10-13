@@ -132,7 +132,7 @@ public:
 
     void didAddBlock(MarkedBlock::Handle*);
     void didConsumeFreeList(MarkedBlock::Handle*);
-    void NODELETE didAllocateInBlock(MarkedBlock::Handle*);
+    void LEGACY_NODELETE didAllocateInBlock(MarkedBlock::Handle*);
 
     // FIXME: rdar://139998916
     MarkedBlock::Handle* findMarkedBlockHandleDebug(MarkedBlock*);
@@ -146,7 +146,7 @@ public:
     void assertNoUnswept();
     size_t objectCount();
     size_t size();
-    size_t NODELETE capacity();
+    size_t LEGACY_NODELETE capacity();
 
     HeapVersion markingVersion() const { return m_markingVersion; }
     HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }
@@ -196,7 +196,7 @@ private:
 
     template<typename Functor> inline void forEachDirectory(NOESCAPE const Functor&);
     
-    void NODELETE addActiveWeakSet(WeakSet*);
+    void LEGACY_NODELETE addActiveWeakSet(WeakSet*);
 
     Vector<Subspace*> m_subspaces;
 

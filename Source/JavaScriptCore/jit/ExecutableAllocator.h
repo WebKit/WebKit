@@ -63,23 +63,23 @@ class ExecutableAllocatorBase {
     WTF_FORBID_HEAP_ALLOCATION;
     WTF_MAKE_NONCOPYABLE(ExecutableAllocatorBase);
 public:
-    bool NODELETE isValid() const { return false; }
+    bool LEGACY_NODELETE isValid() const { return false; }
 
-    static bool NODELETE underMemoryPressure() { return false; }
+    static bool LEGACY_NODELETE underMemoryPressure() { return false; }
 
-    static double NODELETE memoryPressureMultiplier(size_t) { return 1.0; }
+    static double LEGACY_NODELETE memoryPressureMultiplier(size_t) { return 1.0; }
 
     static void dumpProfile() { }
 
     RefPtr<ExecutableMemoryHandle> allocate(size_t, JITCompilationEffort) { return nullptr; }
 
-    static void NODELETE disableJIT() { };
+    static void LEGACY_NODELETE disableJIT() { };
     
     bool isValidExecutableMemory(const AbstractLocker&, void*) { return false; }
 
-    static size_t NODELETE committedByteCount() { return 0; }
+    static size_t LEGACY_NODELETE committedByteCount() { return 0; }
 
-    Lock& NODELETE getLock() const WTF_RETURNS_LOCK(m_lock)
+    Lock& LEGACY_NODELETE getLock() const WTF_RETURNS_LOCK(m_lock)
     {
         return m_lock;
     }
@@ -94,8 +94,8 @@ private:
 
 #if ENABLE(JIT)
 
-JS_EXPORT_PRIVATE void* NODELETE startOfFixedExecutableMemoryPoolImpl();
-JS_EXPORT_PRIVATE void* NODELETE endOfFixedExecutableMemoryPoolImpl();
+JS_EXPORT_PRIVATE void* LEGACY_NODELETE startOfFixedExecutableMemoryPoolImpl();
+JS_EXPORT_PRIVATE void* LEGACY_NODELETE endOfFixedExecutableMemoryPoolImpl();
 
 template<typename T = void*>
 T startOfFixedExecutableMemoryPool()
@@ -325,8 +325,8 @@ class ExecutableAllocator : private ExecutableAllocatorBase {
 public:
     using Base = ExecutableAllocatorBase;
 
-    JS_EXPORT_PRIVATE static ExecutableAllocator& NODELETE singleton();
-    static void NODELETE initialize();
+    JS_EXPORT_PRIVATE static ExecutableAllocator& LEGACY_NODELETE singleton();
+    static void LEGACY_NODELETE initialize();
     static void initializeUnderlyingAllocator();
 
     bool isValid() const;

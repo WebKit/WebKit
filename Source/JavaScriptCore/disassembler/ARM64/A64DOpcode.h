@@ -54,7 +54,7 @@ private:
     void appendPCRelativeOffset(uint32_t* pc, int32_t immediate);
 
     // MoveWide constant tracking across instruction sequences
-    void NODELETE trackMoveWideConstant(int category, int64_t immediate, uint8_t shiftAmount, uint8_t destRegister, uint8_t is64Bit);
+    void LEGACY_NODELETE trackMoveWideConstant(int category, int64_t immediate, uint8_t shiftAmount, uint8_t destRegister, uint8_t is64Bit);
     void maybeAnnotateBuiltConstant();
 
     // JSC pointer analysis

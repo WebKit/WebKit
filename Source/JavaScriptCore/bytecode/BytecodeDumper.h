@@ -125,7 +125,7 @@ public:
 private:
     using BytecodeDumper<Block>::BytecodeDumper;
 
-    ALWAYS_INLINE VM& NODELETE vm() const;
+    ALWAYS_INLINE VM& LEGACY_NODELETE vm() const;
 
     const Identifier& identifier(int index) const;
 };

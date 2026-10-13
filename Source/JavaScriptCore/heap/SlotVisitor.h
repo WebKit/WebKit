@@ -129,8 +129,8 @@ public:
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
-    void NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
-    void NODELETE reset();
+    void LEGACY_NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
+    void LEGACY_NODELETE reset();
     void clearMarkStacks();
 
     size_t bytesVisited() const { return m_bytesVisited; }
@@ -169,13 +169,13 @@ public:
     
     Lock& rightToRun() LIFETIME_BOUND WTF_RETURNS_LOCK(m_rightToRun) { return m_rightToRun; }
     
-    void NODELETE updateMutatorIsStopped(const AbstractLocker&);
+    void LEGACY_NODELETE updateMutatorIsStopped(const AbstractLocker&);
     void updateMutatorIsStopped();
     
-    bool NODELETE hasAcknowledgedThatTheMutatorIsResumed() const;
-    bool NODELETE mutatorIsStoppedIsUpToDate() const;
+    bool LEGACY_NODELETE hasAcknowledgedThatTheMutatorIsResumed() const;
+    bool LEGACY_NODELETE mutatorIsStoppedIsUpToDate() const;
     
-    void NODELETE optimizeForStoppedMutator();
+    void LEGACY_NODELETE optimizeForStoppedMutator();
     
     JS_EXPORT_PRIVATE void didRace(const VisitRaceKey&) final;
     inline void didRace(JSCell* cell, const char* reason); // Defined in SlotVisitorInlines.h
@@ -218,13 +218,13 @@ private:
 
     void donateAll(const AbstractLocker&);
 
-    bool NODELETE hasWork(const AbstractLocker&);
+    bool LEGACY_NODELETE hasWork(const AbstractLocker&);
     bool didReachTermination(const AbstractLocker&);
 
     template<typename Func>
     IterationStatus forEachMarkStack(NOESCAPE const Func&);
 
-    MarkStackArray& NODELETE correspondingGlobalStack(MarkStackArray&);
+    MarkStackArray& LEGACY_NODELETE correspondingGlobalStack(MarkStackArray&);
 
     HeapVersion m_markingVersion;
 
