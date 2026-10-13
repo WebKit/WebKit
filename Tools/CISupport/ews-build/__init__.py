@@ -19,3 +19,16 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import fnmatch
+import os
+
+
+def load_tests(loader, tests, pattern):
+    directory = os.path.dirname(__file__)
+    pattern = pattern or '*_unittest.py'
+    for name in sorted(os.listdir(directory)):
+        if fnmatch.fnmatch(name, pattern) and os.path.isfile(os.path.join(directory, name)):
+            module_name = '{}.{}'.format(__name__, name[:-3])
+            tests.addTests(loader.loadTestsFromName(module_name))
+    return tests

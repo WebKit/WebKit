@@ -23,7 +23,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-import json
 import os
 import unittest
 
@@ -35,11 +34,6 @@ from . import loadConfig
 
 class ConfigDotJSONTest(unittest.TestCase):
     DUPLICATED_TRIGGERS = ['pull_request']
-
-    def get_config(self):
-        cwd = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(cwd, 'config.json'), 'r') as config:
-            return json.load(config)
 
     def get_builder_from_config(self, config, builder_name):
         for builder in config['builders']:
@@ -55,7 +49,7 @@ class ConfigDotJSONTest(unittest.TestCase):
         c = {}
         loadConfig.loadBuilderConfig(c, is_test_mode_enabled=True, master_prefix_path=cwd)
 
-        config = self.get_config()
+        config = loadConfig.render_config()
         builders_with_triggers = [b for b in config['builders'] if b.get('triggers')]
         self.assertTrue(builders_with_triggers,
                         'config.json has no builders with triggers; the force-retry registration is no longer exercised')
@@ -88,11 +82,11 @@ class ConfigDotJSONTest(unittest.TestCase):
 
     def test_tab_character(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(cwd, 'config.json'), 'r') as config:
+        with open(os.path.join(cwd, 'config-template.yaml'), 'r') as config:
             self.assertTrue('\t' not in config.read(), 'Tab character found in config.json, please use spaces instead of tabs.')
 
     def test_builder_keys(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'deployment_target', 'env', 'factory', 'icon', 'locks', 'name',
                               'platform', 'properties', 'rebuild_without_change_on_builder', 'remotes', 'runTests',
@@ -102,7 +96,7 @@ class ConfigDotJSONTest(unittest.TestCase):
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
 
     def test_multiple_scheduers_for_builder(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         builder_to_schduler_map = {}
         triggered_by_schedulers = []
         for builder in config['builders']:
@@ -121,20 +115,20 @@ class ConfigDotJSONTest(unittest.TestCase):
                 builder_to_schduler_map[buildername] = scheduler.get('name')
 
     def test_schduler_contains_valid_builder_name(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         builder_name_list = [builder['name'] for builder in config['builders']]
         for scheduler in config.get('schedulers'):
             for buildername in scheduler.get('builderNames'):
                 self.assertTrue(buildername in builder_name_list, 'builder "{}" in scheduler "{}" is invalid.'.format(buildername, scheduler['name']))
 
     def test_single_builder_for_triggerable_scheduler(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         for scheduler in config['schedulers']:
             if scheduler.get('type') == 'Triggerable':
                 self.assertTrue(len(scheduler.get('builderNames')) == 1, 'scheduler "{}" triggers multiple builders.'.format(scheduler['name']))
 
     def test_incorrect_triggered_by(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         schedulers_to_buildername_map = {}
         for scheduler in config['schedulers']:
             schedulers_to_buildername_map[scheduler['name']] = scheduler['builderNames']
@@ -158,13 +152,13 @@ class ConfigDotJSONTest(unittest.TestCase):
                                     .format(triggered_by, builder['name'], triggering_builder_triggers_buildernames))
 
     def test_rebuild_without_change_only_on_builder_queues(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         for builder in config['builders']:
             if builder.get('rebuild_without_change_on_builder'):
                 self.assertTrue(builder.get('triggers'), f'rebuild_without_change_on_builder should only be set on builders with triggers, but found on: {builder["name"]}')
 
     def test_deployment_target_on_intended_queues(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         for builder in config['builders']:
             if builder.get('deployment_target'):
                 self.assertTrue(builder.get('factory') == 'macOSBuildFactory',

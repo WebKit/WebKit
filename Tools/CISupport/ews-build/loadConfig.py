@@ -25,6 +25,8 @@ import json
 import os
 import re
 
+from webkitcorepy import Config
+
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
 from buildbot.schedulers.forcesched import ChoiceStringParameter, CodebaseParameter, FixedParameter, ForceScheduler, StringParameter
 from buildbot.worker import Worker
@@ -48,9 +50,26 @@ BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
+def render_config(template=None, output=None):
+    template = template or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config-template.yaml')
+    output = output or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
+
+    with open(template) as i_file:
+        config = Config.load(i_file)
+
+    with open(output, 'w') as o_file:
+        config.dump(o_file, mode=Config.Mode.JSON)
+    os.chmod(output, 0o644)
+
+    return config
+
+
 def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True, setup_force_schedulers=True, master_prefix_path=os.path.dirname(os.path.abspath(__file__))):
-    with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
-        config = json.load(config_json)
+    config = render_config(
+        template=os.path.join(master_prefix_path, 'config-template.yaml'),
+        output=os.path.join(master_prefix_path, 'config.json'),
+    )
+
     if is_test_mode_enabled:
         passwords = {}
     else:

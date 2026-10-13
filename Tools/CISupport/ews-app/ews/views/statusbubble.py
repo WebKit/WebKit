@@ -38,7 +38,7 @@ _log = logging.getLogger(__name__)
 
 
 class StatusBubble(View):
-    # These queue names are from shortname in https://github.com/webkit/webkit/blob/main/Tools/CISupport/ews-build/config.json
+    # These queue names are from shortname in https://github.com/webkit/webkit/blob/main/Tools/CISupport/ews-build/config-template.yaml
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-gcc', 'playstation', 'win', 'win-tests',
