@@ -39,9 +39,6 @@
 
 namespace WebKit {
 
-struct WebPageProxyIdentifierType;
-using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
-
 enum class FrameType : bool { Local, Remote };
 
 struct FrameInfoData {
@@ -52,7 +49,6 @@ struct FrameInfoData {
     WebCore::SecurityOriginData securityOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
-    Markable<WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     bool isFocused { false };
     bool errorOccurred { false };

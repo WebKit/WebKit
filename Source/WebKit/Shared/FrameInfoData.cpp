@@ -40,7 +40,6 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
         String { },
         WebCore::generateFrameIdentifier(),
         std::nullopt,
-        std::nullopt,
         isFocused,
         errorOccurred,
         WebFrameMetrics { }

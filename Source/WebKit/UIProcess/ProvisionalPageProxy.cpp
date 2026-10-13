@@ -269,7 +269,6 @@ void ProvisionalPageProxy::cancel()
         SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },
         mainFrame->frameID(),
-        m_page ? std::optional { m_page->identifier() } : std::nullopt,
         std::nullopt,
         mainFrame->isFocused(),
     };

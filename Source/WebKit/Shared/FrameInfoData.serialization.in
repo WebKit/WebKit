@@ -30,7 +30,6 @@ struct WebKit::FrameInfoData {
     WebCore::SecurityOriginData securityOrigin;
     String frameName;
     WebCore::FrameIdentifier frameID;
-    Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     bool isFocused;
     bool errorOccurred;

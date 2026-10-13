@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "FrameInfoData.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class SecurityOriginData;
@@ -75,6 +76,7 @@ private:
         WTF::String title;
         bool isMainFrame { true };
         ProcessID processID { 0 };
+        WeakPtr<WebKit::WebPageProxy> page;
     };
     static StateSnapshot stateSnapshot(WebCore::FrameIdentifier);
 

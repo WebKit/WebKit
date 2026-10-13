@@ -913,15 +913,8 @@ std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData
     if (!frame || !frame->isMainFrame())
         return std::nullopt;
 
-    if (frameInfo.webPageProxyID) {
-        RefPtr processPool = session->processPool();
-        for (Ref process : borrow(processPool->processes()).get()) {
-            for (Ref page : process->pages()) {
-                if (page->identifier() == *frameInfo.webPageProxyID)
-                    return session->handleForWebPageProxy(page);
-            }
-        }
-    }
+    if (RefPtr page = frame->page())
+        return session->handleForWebPageProxy(*page);
 
     return std::nullopt;
 }

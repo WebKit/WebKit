@@ -10599,10 +10599,8 @@ void WebPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection& connect
     if (!frame)
         return completionHandler({ });
     MESSAGE_CHECK_COMPLETION(process, frame->page() == this, completionHandler({ }));
-    MESSAGE_CHECK_COMPLETION(process, !data.frameInfo.webPageProxyID || *data.frameInfo.webPageProxyID == m_identifier, completionHandler({ }));
 
     auto url = data.request.url();
-    MESSAGE_CHECK_COMPLETION(process, (!data.frameInfo.webPageProxyID || process->isAssociatedWithPage(*data.frameInfo.webPageProxyID)), completionHandler({ }));
     decidePolicyForNavigationAction(process.copyRef(), *frame, WTF::move(data), [completionHandler = WTF::move(completionHandler), process, url = WTF::move(url)] (PolicyDecision&& policyDecision) mutable {
         if (policyDecision.policyAction == PolicyAction::Use && url.protocolIsFile())
             process->addPreviouslyApprovedFileURL(url);
@@ -11140,7 +11138,6 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
         MESSAGE_CHECK_COMPLETION_BASE(frame, connection, reply({ }));
     }
     MESSAGE_CHECK_COMPLETION(process, frame->page() == this, reply({ }));
-    MESSAGE_CHECK_COMPLETION(process, !data.frameInfo.webPageProxyID || *data.frameInfo.webPageProxyID == m_identifier, reply({ }));
 
     class PolicyDecisionSender : public RefCounted<PolicyDecisionSender> {
     public:
@@ -11180,7 +11177,6 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
 
     Ref process = WebProcessProxy::fromConnection(connection);
     MESSAGE_CHECK_COMPLETION(process, frame->page() == this, completionHandler({ }));
-    MESSAGE_CHECK_COMPLETION(process, !frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, completionHandler({ }));
     MESSAGE_CHECK_URL_COMPLETION(process, request.url(), completionHandler({ }));
 
     RefPtr<API::FrameInfo> sourceFrameInfo;
@@ -11619,14 +11615,9 @@ void WebPageProxy::willSubmitForm(IPC::Connection& connection, FrameInfoData&& f
 
     Ref process = WebProcessProxy::fromConnection(connection);
     MESSAGE_CHECK_COMPLETION(process, frame->page() == this, completionHandler());
-    MESSAGE_CHECK_COMPLETION(process, !frameInfoData.webPageProxyID || *frameInfoData.webPageProxyID == m_identifier, completionHandler());
-    MESSAGE_CHECK_COMPLETION(process, !frameInfoData.webPageProxyID || process->isAssociatedWithPage(*frameInfoData.webPageProxyID), completionHandler());
 
     // sourceFrame may belong to a different page (form target="_blank") but must be hosted in the sending process.
     MESSAGE_CHECK_COMPLETION(process, &sourceFrame->process() == process.ptr(), completionHandler());
-    if (RefPtr sourceFramePage = sourceFrame->page())
-        MESSAGE_CHECK_COMPLETION(process, !sourceFrameInfoData.webPageProxyID || *sourceFrameInfoData.webPageProxyID == sourceFramePage->identifier(), completionHandler());
-    MESSAGE_CHECK_COMPLETION(process, !sourceFrameInfoData.webPageProxyID || process->isAssociatedWithPage(*sourceFrameInfoData.webPageProxyID), completionHandler());
     MESSAGE_CHECK_URL_COMPLETION(process, requestURL, completionHandler());
 
     for (auto& pair : textFieldValues)
@@ -11800,7 +11791,6 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     RefPtr originatingFrame = WebFrameProxy::webFrame(originatingFrameInfoData.frameID);
     MESSAGE_CHECK_COMPLETION(process, originatingFrame, reply(std::nullopt, std::nullopt));
     MESSAGE_CHECK_COMPLETION(process, originatingFrame->page() == this, reply(std::nullopt, std::nullopt));
-    MESSAGE_CHECK_COMPLETION(process, !originatingFrameInfoData.webPageProxyID || *originatingFrameInfoData.webPageProxyID == m_identifier, reply(std::nullopt, std::nullopt));
 
     if (RefPtr body = request.httpBody()) {
         for (auto& element : body->elements()) {
@@ -11809,8 +11799,6 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         }
     }
 
-    MESSAGE_CHECK_COMPLETION(process, (!navigationActionData.frameInfo.webPageProxyID || process->isAssociatedWithPage(*navigationActionData.frameInfo.webPageProxyID)), reply(std::nullopt, std::nullopt));
-    MESSAGE_CHECK_COMPLETION(process, (!originatingFrameInfoData.webPageProxyID || process->isAssociatedWithPage(*originatingFrameInfoData.webPageProxyID)), reply(std::nullopt, std::nullopt));
     MESSAGE_CHECK_COMPLETION(process, (!navigationActionData.originatingPageID || process->isAssociatedWithPage(*navigationActionData.originatingPageID)), reply(std::nullopt, std::nullopt));
     auto navigationDataForNewProcess = navigationActionData.hasOpener ? nullptr : makeUnique<NavigationActionData>(navigationActionData);
 
@@ -12177,7 +12165,6 @@ void WebPageProxy::runJavaScriptAlert(IPC::Connection& connection, FrameIdentifi
     if (!frame)
         return reply();
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply());
-    MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply());
 
     exitFullscreenImmediately();
 
@@ -12207,7 +12194,6 @@ void WebPageProxy::runJavaScriptConfirm(IPC::Connection& connection, FrameIdenti
     if (!frame)
         return reply(false);
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply(false));
-    MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply(false));
 
     exitFullscreenImmediately();
 
@@ -12237,7 +12223,6 @@ void WebPageProxy::runJavaScriptPrompt(IPC::Connection& connection, FrameIdentif
     if (!frame)
         return reply({ });
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply({ }));
-    MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply({ }));
 
     exitFullscreenImmediately();
 
@@ -12453,7 +12438,6 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(IPC::Connection& connection, Fram
 
     Ref webProcess = WebProcessProxy::fromConnection(connection);
     MESSAGE_CHECK_COMPLETION(webProcess, frame->page() == this, reply(false));
-    MESSAGE_CHECK_COMPLETION(webProcess, !frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, reply(false));
     if (&frame->frameProcess().process() != webProcess.ptr()) {
         reply(true);
         return;
@@ -12541,7 +12525,6 @@ void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier fra
     if (!frame)
         return;
     MESSAGE_CHECK_BASE(frame->page() == this, connection);
-    MESSAGE_CHECK_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection);
 
     Ref parameters = API::OpenPanelParameters::create(settings);
     Ref openPanelResultListener = WebOpenPanelResultListenerProxy::create(this, protect(frame->process()));
@@ -15972,7 +15955,6 @@ void WebPageProxy::requestGeolocationPermissionForFrame(IPC::Connection& connect
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK(process, frame->page() == this);
-    MESSAGE_CHECK(process, !frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier);
 
     if (!frame->url().host().isEmpty())
         frameInfo.securityOrigin = frame->securityOrigin()->data();
@@ -16243,8 +16225,6 @@ void WebPageProxy::requestUserMediaPermissionForFrame(IPC::Connection& connectio
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK(process, frame);
     MESSAGE_CHECK(process, frame->page() == this);
-    MESSAGE_CHECK(process, !frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier);
-    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
 
 #if PLATFORM(MAC)
     CoreAudioCaptureDeviceManager::singleton().setFilterTapEnabledDevices(!protect(preferences())->captureAudioInGPUProcessEnabled());

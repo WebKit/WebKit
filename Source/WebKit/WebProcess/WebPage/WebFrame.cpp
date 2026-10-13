@@ -298,11 +298,9 @@ Awaitable<std::optional<FrameInfoData>> WebFrame::getFrameInfo()
 
 FrameInfoData WebFrame::info() const
 {
-    RefPtr parent = parentFrame();
     RefPtr coreFrame = this->coreFrame();
     RefPtr coreLocalFrame = this->coreLocalFrame();
     RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
-    RefPtr page = m_page.get();
     RefPtr loadingFrame = m_provisionalFrame ? m_provisionalFrame : coreLocalFrame;
 
     WebFrameMetrics metrics;
@@ -326,7 +324,6 @@ FrameInfoData WebFrame::info() const
         coreFrame ? SecurityOriginData::fromFrame(*coreFrame) : SecurityOriginData { },
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
         frameID(),
-        page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
         document ? std::optional { document->identifier() } : std::nullopt,
         isFocused(),
         loadingFrame && loadingFrame->loader().errorOccurredInLoading(),
