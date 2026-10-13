@@ -51,7 +51,7 @@ private:
         {
         }
 
-        ConnectionType connectionType() const final { return ConnectionType::Remote; }
+        Inspector::FrontendChannel::ConnectionType connectionType() const final { return Inspector::FrontendChannel::ConnectionType::Remote; }
         void sendMessageToFrontend(const WTF::String& message) final { m_owner.sendMessageToFrontend(message); }
 
     private:
