@@ -204,7 +204,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         .aligned_allocator = jit_aligned_allocator, \
         .aligned_allocator_talks_to_sharing_pool = true, \
         .deallocator = NULL, \
-        .page_flags = pas_page_flag_client_owns_permissions | pas_page_flag_executable, \
+        .memory_flavor = pas_memory_flavor_rwx, \
         .root_data = &jit_root_data, \
         .prepare_to_enumerate = jit_prepare_to_enumerate, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(jit_heap_config), \

@@ -112,7 +112,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_zeroed_array_by_size_inl
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_try_iso_allocate_array_impl_by_size(heap_ref, size, 1),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_by_size_with_alignment_inline(
@@ -152,7 +152,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_zeroed_array_by_size_inline(
 {
     return (void*)pas_allocation_result_zero(
         bmalloc_iso_allocate_array_impl_by_size(heap_ref, size, 1),
-        size).begin;
+        size, BMALLOC_HEAP_CONFIG.memory_flavor).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_by_size_with_alignment_inline(

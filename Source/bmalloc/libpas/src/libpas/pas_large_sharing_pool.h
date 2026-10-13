@@ -32,8 +32,8 @@
 #include "pas_free_mode.h"
 #include "pas_heap_summary.h"
 #include "pas_large_sharing_pool_epoch_update_mode.h"
+#include "pas_memory_flavor.h"
 #include "pas_min_heap.h"
-#include "pas_page_flags.h"
 #include "pas_page_sharing_participant.h"
 #include "pas_physical_memory_synchronization_style.h"
 #include "pas_range.h"
@@ -63,11 +63,11 @@ struct pas_large_sharing_node {
 
     [[clang::preferred_type(pas_commit_mode)]] unsigned is_committed : 1;
     [[clang::preferred_type(pas_physical_memory_synchronization_style)]] unsigned synchronization_style : 1;
-    [[clang::preferred_type(pas_page_flags)]] unsigned page_flags : 2;
+    [[clang::preferred_type(pas_memory_flavor)]] unsigned memory_flavor : PAS_MEMORY_FLAVOR_NUM_BITS;
 #else
     pas_commit_mode is_committed : 1;
     pas_physical_memory_synchronization_style synchronization_style : 1;
-    unsigned page_flags : 2;
+    unsigned memory_flavor : PAS_MEMORY_FLAVOR_NUM_BITS;
 #endif
 
     unsigned index_in_min_heap : 28; /* it's a one-based index; it's zero to indicate that we're not in
@@ -164,19 +164,19 @@ PAS_API extern pas_large_sharing_pool_epoch_update_mode pas_large_sharing_pool_e
 PAS_API void pas_large_sharing_pool_boot_free(
     pas_range range,
     pas_physical_memory_synchronization_style synchronization_style,
-    pas_page_flags page_flags,
+    pas_memory_flavor flavor,
     pas_commit_mode initial_commit_mode);
 
 PAS_API void pas_large_sharing_pool_free(
     pas_range range,
     pas_physical_memory_synchronization_style synchronization_style,
-    pas_page_flags page_flags);
+    pas_memory_flavor flavor);
 
 PAS_API bool pas_large_sharing_pool_allocate_and_commit(
     pas_range range,
     pas_physical_memory_transaction* transaction,
     pas_physical_memory_synchronization_style synchronization_style,
-    pas_page_flags page_flags);
+    pas_memory_flavor flavor);
 
 /* This doesn't actually decommit the memory. It just tells you about what memory to decommit
    using the decommit_log. It's your job to decommit everything in that log, which you can

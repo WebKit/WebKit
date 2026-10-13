@@ -449,6 +449,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_mar_report_crash.h
     libpas/src/libpas/pas_medium_megapage_cache.h
     libpas/src/libpas/pas_megapage_cache.h
+    libpas/src/libpas/pas_memory_flavor.h
     libpas/src/libpas/pas_min_heap.h
     libpas/src/libpas/pas_monotonic_time.h
     libpas/src/libpas/pas_mte.h
@@ -464,7 +465,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_page_base_inlines.h
     libpas/src/libpas/pas_page_config_kind.h
     libpas/src/libpas/pas_page_config_size_category.h
-    libpas/src/libpas/pas_page_flags.h
     libpas/src/libpas/pas_page_granule_use_count.h
     libpas/src/libpas/pas_page_header_placement_mode.h
     libpas/src/libpas/pas_page_header_table.h

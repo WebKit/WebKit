@@ -149,7 +149,7 @@ static PAS_ALWAYS_INLINE unsigned pas_bitfit_page_allocation_commit_granules_or_
         PAS_ASSERT(view->is_owned);
         pas_lock_assert_held(&view->commit_lock);
         
-        pas_commit_span_construct(&commit_span, page_config.base.heap_config_ptr->page_flags);
+        pas_commit_span_construct(&commit_span, page_config.base.heap_config_ptr->memory_flavor);
         
         for (granule_index = index_of_first_granule;
              granule_index <= index_of_last_granule;

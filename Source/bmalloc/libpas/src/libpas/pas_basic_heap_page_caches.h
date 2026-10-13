@@ -46,16 +46,15 @@ struct pas_basic_heap_page_caches {
                                                  heap. */
 };
 
-/* may_tag selects the page provider for every megapage cache of this heap config:
-   true (only the tagged_bmalloc heap) uses the MTE-capable small/medium bootstrap
-   provider, false uses the plain bootstrap provider. It must be a literal so the
-   static initializer stays a constant expression. */
-#define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(may_tag) \
+/* flavor is the heap config's flavor; every cache of the heap config gets its pages from the
+   bootstrap page provider of that flavor. It must be a constant expression so the static initializer
+   stays one. */
+#define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(flavor) \
     ((pas_basic_heap_page_caches){ \
-        .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
-        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, may_tag), \
-        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, may_tag), \
-        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium, may_tag) \
+        .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER(flavor), \
+        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, flavor), \
+        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, flavor), \
+        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium, flavor) \
     })
 
 PAS_END_EXTERN_C;

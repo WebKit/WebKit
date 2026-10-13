@@ -738,10 +738,12 @@ pas_mte_retag_freed_region_if_tagged(
     uintptr_t tag = begin;
     PAS_MTE_GET_MTAG(tag);
     tag &= PAS_MTE_TAG_MASK;
-    /* libpas ensures that all allocations which reside in pages with
-     * backing tag memory are tagged with a non-zero tag at all points
-     * in time after they've been allocated, so we can use this to see
-     * whether the allocation should be retagged or not.
+    /* libpas ensures that all allocations which reside in pages of page
+     * configs that allow MTE tagging are tagged with a non-zero tag at all
+     * points in time after they've been allocated, so we can use this to see
+     * whether the allocation should be retagged or not. (Large allocations
+     * may also reside in memory with backing tag storage, but are never
+     * tagged, and never come through here.)
      * In the future it would be better to pipe the information through
      * so that we can save the LDG, but that will require moving the
      * source-of-truth out of the local allocator. */
@@ -749,53 +751,6 @@ pas_mte_retag_freed_region_if_tagged(
         begin = pas_mte_generate_tag_and_tag_region(begin, size, homogeneity, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config));
     return begin;
 }
-
-
-/* When zeroing out memory we need to be careful to not clear its tagged status.
-   Neither memset nor mach_vm_behavior_set will do so, but re-mapping the page
-   with mmap or mach_vm_map will do so unless we force it to use PAS_VM_MTE.
-   This has the side effect of making *non*-PAS_MTE pages into tagged memory, but
-   the only side effect of that should be a small hit to performance -- which
-   will have to suffice until we can start using mach_vm_behavior_set. */
-
-#if PAS_OS(DARWIN)
-
-#define PAS_MTE_ZERO_FILL_PAGE(ptr, size, flags, tag) do { \
-        (void)flags; \
-        if (PAS_USE_MTE) { \
-            const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT; \
-            const bool copy = false; \
-            /* FIXME: use mach_vm_behavior_set instead rdar://160813532 */ \
-            kern_return_t vm_map_result = mach_vm_map(mach_task_self(), \
-                (mach_vm_address_t*)&ptr, \
-                (size), \
-                0, \
-                VM_FLAGS_FIXED | VM_FLAGS_OVERWRITE | PAS_VM_MTE | (tag), MEMORY_OBJECT_NULL, \
-                0, \
-                copy, \
-                VM_PROT_DEFAULT, \
-                VM_PROT_ALL, \
-                childProcessInheritance); \
-            if (vm_map_result != KERN_SUCCESS) \
-                errno = 0; \
-            PAS_ASSERT(vm_map_result == KERN_SUCCESS, vm_map_result); \
-            /* Early exit from caller function since we've done the zero-fill ourselves */ \
-            return; \
-        } \
-    } while (false) \
-
-#else
-#define PAS_MTE_ZERO_FILL_PAGE(ptr, size, flags, tag) do { \
-          (void)ptr; \
-          (void)size; \
-          (void)flags; \
-          (void)tag; \
-      } while (false)
-#endif // PAS_OS(DARWIN)
-
-// Used to zero an existing page allocation without clearing the tagged-memory
-// bit in its page-table entries.
-#define PAS_MTE_HANDLE_ZERO_FILL_PAGE(ptr, size, flags, tag) PAS_MTE_ZERO_FILL_PAGE(ptr, size, flags, tag)
 
 // Used to restore the correct tag on the pointer when realloc reuses the existing allocation.
 #define PAS_MTE_HANDLE_REALLOCATE_IN_PLACE(a) PAS_MTE_PURIFY(a)
@@ -966,34 +921,6 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 #define PAS_MTE_HANDLE_SCAVENGER_THREAD_MAIN(data) do { \
         pas_mte_ensure_initialized(); \
     } while (false)
-
-#if PAS_OS(DARWIN)
-#define PAS_MTE_HANDLE_PAGE_ALLOCATION(size, is_mte, tag) do { \
-        pas_mte_ensure_initialized(); \
-        if (PAS_USE_MTE && (is_mte)) { \
-            const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT; \
-            const bool copy = false; \
-            const vm_prot_t protections = VM_PROT_WRITE | VM_PROT_READ; \
-            kern_return_t vm_map_result = mach_vm_map(mach_task_self(), (mach_vm_address_t*)&mmap_result, (size), pas_page_malloc_alignment() - 1, VM_FLAGS_ANYWHERE | PAS_VM_MTE | (tag), MEMORY_OBJECT_NULL, 0, copy, protections, protections, childProcessInheritance); \
-            if (vm_map_result == KERN_SUCCESS) \
-                PAS_RECORD_STAT(page_alloc_counts, size, true); \
-            else { \
-                errno = 0; \
-                if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_PAGE_ALLOC)) \
-                    printf("[MTE]\tFailed to map %zu bytes with VM_FLAGS_MTE.\n", (size_t)(size)); \
-                return NULL; \
-            } \
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_PAGE_ALLOC)) \
-                printf("[MTE]\tMapped %zu bytes from %p to %p with VM_FLAGS_MTE.\n", (size_t)(size), (void*)(mmap_result), (uint8_t*)(mmap_result) + (size)); \
-            return mmap_result; \
-        } \
-    } while (false)
-#else // PAS_OS(DARWIN) -> !PAS_OS(DARWIN)
-#define PAS_MTE_HANDLE_PAGE_ALLOCATION(a, b) do { \
-        (void)(a); \
-        (void)(b); \
-    } while (false)
-#endif // !PAS_OS(DARWIN)
 
 #define PAS_MTE_HANDLE(kind, ...) \
     PAS_MTE_HANDLE_ ## kind(__VA_ARGS__)

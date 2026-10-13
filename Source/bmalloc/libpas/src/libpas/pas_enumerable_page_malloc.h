@@ -29,6 +29,7 @@
 #include "pas_aligned_allocation_result.h"
 #include "pas_alignment.h"
 #include "pas_enumerable_range_list.h"
+#include "pas_memory_flavor.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -37,7 +38,7 @@ PAS_API extern pas_enumerable_range_list pas_enumerable_page_malloc_page_list;
 /* It's assumed that whatever is returned from this is never deallocated, but may be decommitted. */
 PAS_API pas_aligned_allocation_result
 pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment, bool is_mte);
+    size_t size, pas_alignment alignment, pas_memory_flavor flavor);
 
 PAS_END_EXTERN_C;
 

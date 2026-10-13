@@ -27,7 +27,7 @@
 #define PAS_VIRTUAL_RANGE_H
 
 #include "pas_lock.h"
-#include "pas_page_flags.h"
+#include "pas_memory_flavor.h"
 #include "pas_range.h"
 #include "pas_utils.h"
 
@@ -42,25 +42,25 @@ struct pas_virtual_range {
     uintptr_t begin;
     uintptr_t end;
     pas_lock* lock_ptr;
-    pas_page_flags page_flags;
+    pas_memory_flavor memory_flavor;
 };
 
 static inline pas_virtual_range pas_virtual_range_create(uintptr_t begin,
                                                          uintptr_t end,
                                                          pas_lock* lock_ptr,
-                                                         pas_page_flags page_flags)
+                                                         pas_memory_flavor flavor)
 {
     pas_virtual_range result;
     result.begin = begin;
     result.end = end;
     result.lock_ptr = lock_ptr;
-    result.page_flags = page_flags;
+    result.memory_flavor = flavor;
     return result;
 }
 
 static inline pas_virtual_range pas_virtual_range_create_empty(void)
 {
-    return pas_virtual_range_create(0, 0, NULL, pas_page_flags_none);
+    return pas_virtual_range_create(0, 0, NULL, pas_memory_flavor_plain);
 }
 
 static inline pas_range pas_virtual_range_get_range(pas_virtual_range range)

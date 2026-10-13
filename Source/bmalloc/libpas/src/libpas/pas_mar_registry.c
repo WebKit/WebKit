@@ -131,13 +131,13 @@ PAS_PRESERVE_MOST void* pas_mar_did_allocate(pas_mar_registry* registry, void* a
     return pas_mar_record_allocation(registry, address, allocation_size, num_stack_frames, stacktrace);
 }
 
-PAS_PRESERVE_MOST void* pas_mar_did_allocate_and_zero(pas_mar_registry* registry, pas_allocation_result result, size_t allocation_size)
+PAS_PRESERVE_MOST void* pas_mar_did_allocate_and_zero(pas_mar_registry* registry, pas_allocation_result result, size_t allocation_size, pas_memory_flavor flavor)
 {
     void* stacktrace[PAS_MAR_BACKTRACE_MAX_SIZE];
     unsigned num_stack_frames = (unsigned) backtrace(stacktrace, PAS_MAR_BACKTRACE_MAX_SIZE);
 
     pas_mar_record_allocation(registry, (void*)result.begin, allocation_size, num_stack_frames, stacktrace);
-    return (void*)pas_allocation_result_zero(result, allocation_size).begin;
+    return (void*)pas_allocation_result_zero(result, allocation_size, flavor).begin;
 }
 
 void* pas_mar_did_deallocate(pas_mar_registry* registry, void* address)

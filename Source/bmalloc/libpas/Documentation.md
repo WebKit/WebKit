@@ -217,22 +217,25 @@ without having to both store + check per-page metadata. This invariant only appl
 infrastructure can have a distinct mapping type from that of object allocated by the heap, as metadata is already
 segregated from the memory used for backing allocations.
 
-The mapping type used by a heap is determined by two fields:
+The mapping type used by a heap is its `pas_memory_flavor`, stored in the heap config's `memory_flavor` field. The
+flavor is carried along with every range libpas tracks for the heap (`pas_virtual_range`, `pas_large_virtual_range`,
+`pas_commit_span`, and `pas_large_sharing_node`), and ranges of different flavors are never coalesced.
 
-- pas_page_flags
-- allow_mte_tagging
+`pas_memory_flavor.h` also serves as the table of how to map memory of each flavor: whether libpas can create fresh
+mappings of it itself, whether libpas may remap or mprotect it (or whether the client owns its permissions), whether
+it is executable, and whether (re)mapping it needs MTE tag storage. `pas_page_malloc` takes a flavor wherever it maps
+or remaps memory, and there is one bootstrap free heap and page provider per flavor that libpas can map.
 
-The reason for the distinction is that while pas_page_flags statically map to a given mapping-type, allow_mte_tagging
-only implies the use of PAS_VM_MTE if that feature is supported by the OS.
-This is not fundamentally necessary and will be changed at a future date.
+Three flavors are currently in use:
 
-Four mapping types are currently in use:
-
-1. Default data memory: pas_page_flags_none, !allow_mte_tagging
-2. MTE-tagged data memory: pas_page_flags_none, allow_mte_tagging
-3. RWX JIT memory: pas_page_flag_executable, !allow_mte_tagging
-4. Unowned memory: pas_page_flag_client_owns_permissions, * - not strictly a mapping-type but prevents libpas from
-   doing anything fancy to the allocation.
+1. `pas_memory_flavor_plain`: Default data memory.
+2. `pas_memory_flavor_mte`: Data memory mapped with MTE tag storage (PAS_VM_MTE) when MTE is enabled;
+   when MTE is disabled, the underlying mappings are identical to plain memory, but libpas still distinguishes
+   the flavors, routing this flavor to its own bootstrap heap and preventing it from being coalesced with plain.
+   this behaves like plain memory. Used by the tagged_bmalloc heap, including its large allocations.
+3. `pas_memory_flavor_rwx`: Executable JIT memory. This memory is mapped by the client (MAP_JIT can only be mapped once
+   per process) and donated to libpas via `jit_heap_add_fresh_memory`, so libpas never maps it itself and may only
+   madvise it.
 
 ## The Large Heaps
 

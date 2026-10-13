@@ -48,12 +48,14 @@ struct Range {
           uintptr_t end,
           pas_commit_mode isCommitted,
           size_t numLiveBytes,
-          uint64_t epoch)
+          uint64_t epoch,
+          pas_memory_flavor memoryFlavor = pas_memory_flavor_plain)
         : begin(begin)
         , end(end)
         , isCommitted(isCommitted)
         , numLiveBytes(numLiveBytes)
         , epoch(epoch)
+        , memoryFlavor(memoryFlavor)
     {
     }
 
@@ -63,6 +65,7 @@ struct Range {
         , isCommitted(node->is_committed)
         , numLiveBytes(node->num_live_bytes)
         , epoch(node->use_epoch)
+        , memoryFlavor(static_cast<pas_memory_flavor>(node->memory_flavor))
     {
     }
 
@@ -72,7 +75,8 @@ struct Range {
             && end == other.end
             && isCommitted == other.isCommitted
             && numLiveBytes == other.numLiveBytes
-            && epoch == other.epoch;
+            && epoch == other.epoch
+            && memoryFlavor == other.memoryFlavor;
     }
 
     bool operator!=(Range other) const { return !(*this == other); }
@@ -82,13 +86,15 @@ struct Range {
     pas_commit_mode isCommitted;
     size_t numLiveBytes;
     uint64_t epoch;
+    pas_memory_flavor memoryFlavor;
 };
 
 ostream& operator<<(ostream& out, Range range)
 {
     out << reinterpret_cast<void*>(range.begin) << "..." << reinterpret_cast<void*>(range.end)
         << ", " << (range.isCommitted ? "committed" : "decommitted") << ", "
-        << range.numLiveBytes << "/" << (range.end - range.begin) << ", " << range.epoch;
+        << range.numLiveBytes << "/" << (range.end - range.begin) << ", " << range.epoch
+        << ", " << pas_memory_flavor_get_string(range.memoryFlavor);
     return out;
 }
 
@@ -143,7 +149,7 @@ void testGoodCoalesceEpochUpdate()
     pas_large_sharing_pool_boot_free(
         pas_range_create(10 * PG, 20 * PG),
         pas_physical_memory_is_locked_by_virtual_range_common_lock,
-        pas_page_flags_none,
+        pas_memory_flavor_plain,
         pas_committed);
     pas_heap_lock_unlock();
 
@@ -155,7 +161,7 @@ void testGoodCoalesceEpochUpdate()
     pas_large_sharing_pool_boot_free(
         pas_range_create(20 * PG, 30 * PG),
         pas_physical_memory_is_locked_by_virtual_range_common_lock,
-        pas_page_flags_none,
+        pas_memory_flavor_plain,
         pas_committed);
     pas_heap_lock_unlock();
 
@@ -169,13 +175,67 @@ void testGoodCoalesceEpochUpdate()
               pas_range_create(10 * PG, 30 * PG),
               &transaction,
               pas_physical_memory_is_locked_by_virtual_range_common_lock,
-              pas_page_flags_none));
+              pas_memory_flavor_plain));
     pas_heap_lock_unlock();
     
     if (verbose)
         dumpLargeSharingPool();
 
     assertState({ Range(0, END, pas_committed, END, 3) });
+}
+
+void testDifferentFlavorsDoNotCoalesce()
+{
+    pas_physical_memory_transaction transaction;
+
+    pas_scavenger_suspend();
+    pas_physical_memory_transaction_construct(&transaction);
+
+    pas_heap_lock_lock();
+    pas_large_sharing_pool_boot_free(
+        pas_range_create(10 * PG, 20 * PG),
+        pas_physical_memory_is_locked_by_virtual_range_common_lock,
+        pas_memory_flavor_plain,
+        pas_committed);
+    pas_large_sharing_pool_boot_free(
+        pas_range_create(20 * PG, 30 * PG),
+        pas_physical_memory_is_locked_by_virtual_range_common_lock,
+        pas_memory_flavor_mte,
+        pas_committed);
+    pas_heap_lock_unlock();
+
+    assertState({ Range(0, 10 * PG, pas_committed, 10 * PG, 0),
+                  Range(10 * PG, 20 * PG, pas_committed, 0, 1),
+                  Range(20 * PG, 30 * PG, pas_committed, 0, 2, pas_memory_flavor_mte),
+                  Range(30 * PG, END, pas_committed, END - 30 * PG, 0) });
+
+    /* Allocating the plain range makes it fully live, so it coalesces with the plain node to its left,
+       but not with the adjacent mte range. */
+    pas_heap_lock_lock();
+    CHECK(pas_large_sharing_pool_allocate_and_commit(
+              pas_range_create(10 * PG, 20 * PG),
+              &transaction,
+              pas_physical_memory_is_locked_by_virtual_range_common_lock,
+              pas_memory_flavor_plain));
+    pas_heap_lock_unlock();
+
+    assertState({ Range(0, 20 * PG, pas_committed, 20 * PG, 3),
+                  Range(20 * PG, 30 * PG, pas_committed, 0, 2, pas_memory_flavor_mte),
+                  Range(30 * PG, END, pas_committed, END - 30 * PG, 0) });
+
+    /* Once the mte range is fully live too, it is in the same state as both of its neighbors, but it
+       still must not coalesce with either. */
+    pas_heap_lock_lock();
+    CHECK(pas_large_sharing_pool_allocate_and_commit(
+              pas_range_create(20 * PG, 30 * PG),
+              &transaction,
+              pas_physical_memory_is_locked_by_virtual_range_common_lock,
+              pas_memory_flavor_mte));
+    pas_heap_lock_unlock();
+
+    assertState({ Range(0, 20 * PG, pas_committed, 20 * PG, 3),
+                  Range(20 * PG, 30 * PG, pas_committed, 10 * PG, 4, pas_memory_flavor_mte),
+                  Range(30 * PG, END, pas_committed, END - 30 * PG, 0) });
 }
 
 } // anonymous namespace
@@ -188,6 +248,7 @@ void addLargeSharingPoolTests()
     EpochIsCounter epochIsCounter;
     
     ADD_TEST(testGoodCoalesceEpochUpdate());
+    ADD_TEST(testDifferentFlavorsDoNotCoalesce());
 #endif // TLC
 }
 

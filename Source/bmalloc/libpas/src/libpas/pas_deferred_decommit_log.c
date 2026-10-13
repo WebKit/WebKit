@@ -222,7 +222,7 @@ static void decommit_all(pas_deferred_decommit_log* log,
             if (next_range.begin != range.end)
                 break;
 
-            if (next_range.page_flags != range.page_flags)
+            if (next_range.memory_flavor != range.memory_flavor)
                 break;
 
             range.end = next_range.end;
@@ -236,7 +236,7 @@ static void decommit_all(pas_deferred_decommit_log* log,
                         (void*)range.end);
             }
 
-            pas_page_malloc_decommit((void*)range.begin, pas_virtual_range_size(range), range.page_flags);
+            pas_page_malloc_decommit((void*)range.begin, pas_virtual_range_size(range), range.memory_flavor);
         }
         
         PAS_ASSERT(end_index);

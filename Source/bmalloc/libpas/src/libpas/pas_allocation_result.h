@@ -28,6 +28,7 @@
 
 #include <errno.h>
 #include "pas_internal_config.h"
+#include "pas_memory_flavor.h"
 #include "pas_mte.h"
 #include "pas_utils.h"
 #include "pas_zero_memory.h"
@@ -81,11 +82,12 @@ pas_allocation_result_identity(pas_allocation_result result)
     return result;
 }
 
-PAS_API pas_allocation_result pas_allocation_result_zero_large_slow(pas_allocation_result result, size_t size);
+PAS_API pas_allocation_result pas_allocation_result_zero_large_slow(pas_allocation_result result, size_t size, pas_memory_flavor flavor);
 
 static PAS_ALWAYS_INLINE pas_allocation_result
 pas_allocation_result_zero(pas_allocation_result result,
-                           size_t size)
+                           size_t size,
+                           pas_memory_flavor flavor)
 {
     if (PAS_UNLIKELY(!result.did_succeed))
         return result;
@@ -93,7 +95,7 @@ pas_allocation_result_zero(pas_allocation_result result,
         return result;
 
     if (size >= (1ULL << PAS_VA_BASED_ZERO_MEMORY_SHIFT))
-        return pas_allocation_result_zero_large_slow(result, size);
+        return pas_allocation_result_zero_large_slow(result, size, flavor);
 
     void* memory = (void*)result.begin;
     pas_zero_memory(memory, size);

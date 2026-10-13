@@ -40,7 +40,7 @@
 #include "pas_heap_ref.h"
 #include "pas_large_map_variant.h"
 #include "pas_heap_ref_kind.h"
-#include "pas_page_flags.h"
+#include "pas_memory_flavor.h"
 #include "pas_segregated_heap_lookup_kind.h"
 #include "pas_segregated_page_config.h"
 #include "pas_size_lookup_mode.h"
@@ -161,10 +161,10 @@ struct pas_heap_config {
     bool aligned_allocator_talks_to_sharing_pool;
     pas_deallocator deallocator;
 
-    /* Properties of memory managed by this heap (executability, whether libpas may mprotect it, etc.).
-       Carried by pas_virtual_range, pas_large_virtual_range, pas_commit_span, and pas_large_sharing_node
-       for adjacent ranges to be coalesced, the page_flags must match. */
-    pas_page_flags page_flags;
+    /* The flavor of all memory managed by this heap: how libpas maps it, and what libpas may do with it
+       (remap, mprotect, etc.). Carried by pas_virtual_range, pas_large_virtual_range, pas_commit_span, and
+       pas_large_sharing_node; ranges of different flavors are never coalesced. */
+    pas_memory_flavor memory_flavor;
 
     /* This points to things that are necessary for enumeration that are specific to the heap config. */
     void* root_data;
@@ -207,11 +207,8 @@ pas_heap_config_assert_global_invariants(pas_heap_config config)
 {
     pas_heap_lock_assert_held();
 
-    /*
-     * Heaps that want special attributes on their memory cannot
-     * be delegated to the system allocator.
-     */
-    PAS_ASSERT(!pas_page_flags_client_owns_permissions(config.page_flags) || !config.delegate_large_user_allocations);
+    PAS_ASSERT(!pas_memory_flavor_client_owns_permissions(config.memory_flavor) || !config.delegate_large_user_allocations);
+    PAS_ASSERT(!config.allow_mte_tagging || pas_memory_flavor_needs_mte_tag_storage(config.memory_flavor));
 }
 
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \

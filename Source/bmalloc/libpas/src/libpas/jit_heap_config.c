@@ -84,7 +84,7 @@ static pas_allocation_result allocate_from_fresh(size_t size, pas_alignment alig
     initialize_fresh_memory_config(&config);
     result = pas_simple_large_free_heap_try_allocate(&jit_fresh_memory_heap, size, alignment, &config);
     if (result.did_succeed)
-        pas_page_malloc_commit((void*)result.begin, size, jit_heap_config.page_flags);
+        pas_page_malloc_commit((void*)result.begin, size, jit_heap_config.memory_flavor);
     return result;
 }
 

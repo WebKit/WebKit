@@ -140,7 +140,7 @@ static inline void pas_utility_heap_destroy_page_header(
         .aligned_allocator = NULL, \
         .aligned_allocator_talks_to_sharing_pool = false, \
         .deallocator = NULL, \
-        .page_flags = pas_page_flags_none, \
+        .memory_flavor = pas_memory_flavor_plain, \
         .root_data = NULL, \
         .prepare_to_enumerate = NULL, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(pas_utility_heap_config) \

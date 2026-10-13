@@ -41,11 +41,11 @@ invoked.
 #if PAS_OS(DARWIN)
 #define PAS_MAR_SHOULD_LOG(address) (pas_mar_enabled && pas_mar_is_address_in_qualifying_page(address))
 #define PAS_MAR_TRACK_ALLOCATION(address, size) pas_mar_did_allocate(&pas_mar_global_registry, address, size)
-#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(address, size) pas_mar_did_allocate_and_zero(&pas_mar_global_registry, address, size)
+#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(address, size, flavor) pas_mar_did_allocate_and_zero(&pas_mar_global_registry, address, size, flavor)
 #else
 #define PAS_MAR_SHOULD_LOG(address) false
 #define PAS_MAR_TRACK_ALLOCATION(address, size) address
-#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size) ((void*) result.begin)
+#define PAS_MAR_TRACK_ALLOCATION_AND_ZERO(result, size, flavor) ((void*) result.begin)
 #endif
 
 #if PAS_OS(DARWIN)
@@ -179,7 +179,7 @@ struct pas_mar_exported_allocation_record pas_mar_get_allocation_record(pas_mar_
 
 void pas_mar_initialize(void);
 PAS_PRESERVE_MOST void* pas_mar_did_allocate(pas_mar_registry*, void* address, size_t allocation_size);
-PAS_PRESERVE_MOST void* pas_mar_did_allocate_and_zero(pas_mar_registry*, pas_allocation_result, size_t allocation_size);
+PAS_PRESERVE_MOST void* pas_mar_did_allocate_and_zero(pas_mar_registry*, pas_allocation_result, size_t allocation_size, pas_memory_flavor);
 void* pas_mar_did_deallocate(pas_mar_registry*, void* address);
 
 extern bool pas_mar_enabled;

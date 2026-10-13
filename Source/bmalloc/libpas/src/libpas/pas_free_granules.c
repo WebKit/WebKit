@@ -112,7 +112,7 @@ void pas_free_granules_decommit_after_locking_range(pas_free_granules* free_gran
     PAS_ASSERT(num_granules >= 2); /* If there is only one granule then we don't have use counts. */
     PAS_ASSERT(num_granules <= PAS_MAX_GRANULES);
 
-    pas_commit_span_construct(&commit_span, page_config->heap_config_ptr->page_flags);
+    pas_commit_span_construct(&commit_span, page_config->heap_config_ptr->memory_flavor);
 
     for (granule_index = 0; granule_index < num_granules; ++granule_index) {
         if (pas_free_granules_is_free(free_granules, granule_index)) {

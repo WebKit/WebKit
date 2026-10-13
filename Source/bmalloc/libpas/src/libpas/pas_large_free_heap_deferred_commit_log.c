@@ -97,7 +97,7 @@ static void commit(pas_large_virtual_range range)
                (void*)range.end);
     }
 
-    pas_page_malloc_commit((void*)range.begin, pas_large_virtual_range_size(range), range.page_flags);
+    pas_page_malloc_commit((void*)range.begin, pas_large_virtual_range_size(range), range.memory_flavor);
 
     if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT)
         pas_debug_spectrum_add(dump_large_commit, dump_large_commit, pas_large_virtual_range_size(range));
@@ -122,7 +122,7 @@ static void commit_all(
 
         PAS_ASSERT(!pas_large_virtual_range_overlaps(current_range, next_range));
 
-        if (next_range.begin == current_range.end && next_range.page_flags == current_range.page_flags) {
+        if (next_range.begin == current_range.end && next_range.memory_flavor == current_range.memory_flavor) {
             current_range.end = next_range.end;
             continue;
         }

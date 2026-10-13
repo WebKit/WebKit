@@ -582,7 +582,7 @@
 		2C34FFFB27571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */; };
 		2C34FFFC27571D2F005565CB /* pas_segregated_deallocation_logging_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF727571D2F005565CB /* pas_segregated_deallocation_logging_mode.h */; };
 		2C3D0FC7272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */; };
-		2C473152277A540F00B62C49 /* pas_page_flags.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C47314F277A540F00B62C49 /* pas_page_flags.h */; };
+		4C48FC25ED29707081445094 /* pas_memory_flavor.h in Headers */ = {isa = PBXBuildFile; fileRef = 369A24F0D75A7F55115B0558 /* pas_memory_flavor.h */; };
 		2C473153277A540F00B62C49 /* pas_large_virtual_range_min_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */; };
 		2C473154277A540F00B62C49 /* pas_large_virtual_range.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473151277A540F00B62C49 /* pas_large_virtual_range.h */; };
 		2C473162277D4C9E00B62C49 /* TLCDecommitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */; };
@@ -595,6 +595,7 @@
 		2C48132B273F341A006CAB55 /* pas_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481325273F341A006CAB55 /* pas_expendable_memory.h */; };
 		2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */; };
 		2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C734C8F277680EF0017BFFE /* MemalignTests.cpp */; };
+		0DE826A36C2DBF67D89E9A4C /* MemoryFlavorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3560EEC32E7F67CB0D02BC01 /* MemoryFlavorTests.cpp */; };
 		2C8548B127B48FC5001750BB /* pas_thread_suspend_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */; };
 		2C8548B227B48FC5001750BB /* pas_thread_suspend_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */; };
 		2C85DC4127128F0F00367905 /* pas_try_allocate_intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */; };
@@ -1326,7 +1327,7 @@
 		2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h; sourceTree = "<group>"; };
 		2C34FFF727571D2F005565CB /* pas_segregated_deallocation_logging_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_deallocation_logging_mode.h; sourceTree = "<group>"; };
 		2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapRefAllocatorIndexTests.cpp; sourceTree = "<group>"; };
-		2C47314F277A540F00B62C49 /* pas_page_flags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_flags.h; sourceTree = "<group>"; };
+		369A24F0D75A7F55115B0558 /* pas_memory_flavor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_memory_flavor.h; sourceTree = "<group>"; };
 		2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range_min_heap.h; sourceTree = "<group>"; };
 		2C473151277A540F00B62C49 /* pas_large_virtual_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range.h; sourceTree = "<group>"; };
 		2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TLCDecommitTests.cpp; sourceTree = "<group>"; };
@@ -1344,6 +1345,7 @@
 		2C481325273F341A006CAB55 /* pas_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_expendable_memory.h; sourceTree = "<group>"; };
 		2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpendableMemoryTests.cpp; sourceTree = "<group>"; };
 		2C734C8F277680EF0017BFFE /* MemalignTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemalignTests.cpp; sourceTree = "<group>"; };
+		3560EEC32E7F67CB0D02BC01 /* MemoryFlavorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFlavorTests.cpp; sourceTree = "<group>"; };
 		2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_suspend_lock.h; sourceTree = "<group>"; };
 		2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_thread_suspend_lock.c; sourceTree = "<group>"; };
 		2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_intrinsic.h; sourceTree = "<group>"; };
@@ -1499,6 +1501,7 @@
 				F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */,
 				F30C5BE32E8F33E4006CA1F9 /* MTETests.cpp */,
 				2C734C8F277680EF0017BFFE /* MemalignTests.cpp */,
+				3560EEC32E7F67CB0D02BC01 /* MemoryFlavorTests.cpp */,
 				0FD22D0722CD8A7500B21841 /* MinHeapTests.cpp */,
 				2B2A589B2742D815005EE07C /* PGMTests.cpp */,
 				0F5E483923D69F610046DA5C /* RaceTests.cpp */,
@@ -1856,6 +1859,7 @@
 				0F037AF225AEA91A0079B582 /* pas_medium_megapage_cache.h */,
 				0FC6820021210B19003C6A13 /* pas_megapage_cache.c */,
 				0FC681FD21210B18003C6A13 /* pas_megapage_cache.h */,
+				369A24F0D75A7F55115B0558 /* pas_memory_flavor.h */,
 				0FD22CFB22CAF16400B21841 /* pas_min_heap.h */,
 				0FD48B1023A9ABB10026C46D /* pas_monotonic_time.c */,
 				0FD48AFD23A9ABB00026C46D /* pas_monotonic_time.h */,
@@ -1879,7 +1883,6 @@
 				0F9A1CAB2559961200C8D11B /* pas_page_base_config_utils_inlines.h */,
 				0F9A1CAC2559961200C8D11B /* pas_page_base_inlines.h */,
 				0F9A1CC62559961400C8D11B /* pas_page_config_kind.h */,
-				2C47314F277A540F00B62C49 /* pas_page_flags.h */,
 				0F9A1CDA2559961600C8D11B /* pas_page_granule_use_count.h */,
 				0F9A1CD52559961600C8D11B /* pas_page_header_placement_mode.h */,
 				0F9A1CA62559961200C8D11B /* pas_page_header_table.c */,
@@ -2384,6 +2387,7 @@
 				F3EFAABF2E90316400A1EDE0 /* pas_mar_report_crash.h in Headers */,
 				0F037AF425AEA91A0079B582 /* pas_medium_megapage_cache.h in Headers */,
 				0FE7EE2222960142004F4166 /* pas_megapage_cache.h in Headers */,
+				4C48FC25ED29707081445094 /* pas_memory_flavor.h in Headers */,
 				0FD22CFC22CAF16400B21841 /* pas_min_heap.h in Headers */,
 				0FD48B3823A9ABB30026C46D /* pas_monotonic_time.h in Headers */,
 				0F99999D26AAAA0000212121 /* pas_mte.h in Headers */,
@@ -2400,7 +2404,6 @@
 				0F9A1CF72559961700C8D11B /* pas_page_base_config_utils_inlines.h in Headers */,
 				0F9A1CF82559961700C8D11B /* pas_page_base_inlines.h in Headers */,
 				0F9A1D122559961700C8D11B /* pas_page_config_kind.h in Headers */,
-				2C473152277A540F00B62C49 /* pas_page_flags.h in Headers */,
 				0F9A1D252559961700C8D11B /* pas_page_granule_use_count.h in Headers */,
 				0F9A1D202559961700C8D11B /* pas_page_header_placement_mode.h in Headers */,
 				0F9A1D2D2559961700C8D11B /* pas_page_header_table.h in Headers */,
@@ -2817,6 +2820,7 @@
 				F30C5BE42E8F33E4006CA1E9 /* MARTests.cpp in Sources */,
 				F30C5BE42E8F33E4006CA1F9 /* MTETests.cpp in Sources */,
 				2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */,
+				0DE826A36C2DBF67D89E9A4C /* MemoryFlavorTests.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
 				2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */,
 				0F5E483A23D69F610046DA5C /* RaceTests.cpp in Sources */,

@@ -27,7 +27,7 @@
 #define PAS_COMMIT_SPAN_H
 
 #include "pas_lock.h"
-#include "pas_page_flags.h"
+#include "pas_memory_flavor.h"
 
 PAS_BEGIN_EXTERN_C;
 
@@ -44,10 +44,10 @@ struct pas_commit_span {
     uintptr_t index_of_start_of_span;
     bool did_add_first;
     size_t total_bytes;
-    pas_page_flags page_flags;
+    pas_memory_flavor memory_flavor;
 };
 
-PAS_API void pas_commit_span_construct(pas_commit_span* span, pas_page_flags page_flags);
+PAS_API void pas_commit_span_construct(pas_commit_span* span, pas_memory_flavor flavor);
 PAS_API void pas_commit_span_add_to_change(pas_commit_span* span, uintptr_t granule_index);
 PAS_API void pas_commit_span_add_unchanged(pas_commit_span* span,
                                            pas_page_base* page,
