@@ -1042,7 +1042,8 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     if (*requirement == LocalNetworkAccessRequirement::None)
         return finish(std::nullopt);
 
-    networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), clientOrigin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
+    auto initiatorFrameID = isMainResource() && recordMatchesClient ? clientFrameID : std::nullopt;
+    networkSession->requestLocalNetworkAccessPermission(webPageProxyID(), initiatorFrameID, clientOrigin, connectionAddressSpace, [finish = WTF::move(finish), url = request.url()](WebCore::PermissionState state) mutable {
         finish(localNetworkAccessPermissionError(url, state));
     });
 }

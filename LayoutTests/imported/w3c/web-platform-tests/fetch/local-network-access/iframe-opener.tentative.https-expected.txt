@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT LNA Public to loopback navigate iframe from opener with permission Test timed out
-NOTRUN LNA Public to loopback navigate iframe from opener without permission
+PASS LNA Public to loopback navigate iframe from opener with permission
+PASS LNA Public to loopback navigate iframe from opener without permission
 
