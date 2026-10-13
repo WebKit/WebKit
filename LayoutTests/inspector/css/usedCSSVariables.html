@@ -61,6 +61,36 @@ function test()
         },
     });
 
+    for (let [name, selector] of [["InheritedReverseOrder", "#used-reversed-inherited-variable-chain"], ["InheritedDifferentRules", "#used-inherited-variable-chain-across-rules"]]) {
+        addTestCase({
+            name: `DOMNodeStyles.usedCSSVariables.${name}`,
+            description: "Inherited variable dependencies are independent of declaration order",
+            selector,
+            checkUsedCSSVariables(usedCSSVariables) {
+                InspectorTest.expectEqual(usedCSSVariables.size, 3, "The full inherited dependency chain should be used");
+                for (let variableName of ["--theme-button-color", "--theme-accent-color", "--theme-base-color"])
+                    InspectorTest.expectTrue(usedCSSVariables.has(variableName), `${variableName} should be used`);
+                InspectorTest.expectFalse(usedCSSVariables.has("--theme-unused-color"), "The unrelated inherited variable should remain unused");
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUnusedChain",
+        selector: "#unused-reversed-inherited-variable-chain",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 0, "The unused inherited dependency chain should remain unused");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedCyclicChain",
+        selector: "#used-cyclic-inherited-variable-chain",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectShallowEqual([...usedCSSVariables].sort(), ["--theme-cycle-a", "--theme-cycle-b"], "The inherited dependency cycle should include each variable once");
+        },
+    });
+
     addTestCase({
         name: "DOMNodeStyles.usedCSSVariables.InheritedUsedFunction",
         description: "An inherited variable used in a function value is found in the set of used variables",
@@ -159,6 +189,40 @@ div#used-referenced-inherited-variable {
     color: var(--color, red);
 }
 
+#reversed-inherited-variable-chain {
+    --theme-base-color: green;
+    --theme-accent-color: var(--theme-base-color);
+    --theme-button-color: var(--theme-accent-color);
+    --theme-unused-color: red;
+}
+
+#used-reversed-inherited-variable-chain,
+#used-inherited-variable-chain-across-rules {
+    background-color: var(--theme-button-color);
+}
+
+#inherited-variable-chain-across-rules {
+    --theme-base-color: green;
+    --theme-unused-color: red;
+}
+
+div.inherited-chain-middle {
+    --theme-accent-color: var(--theme-base-color);
+}
+
+.inherited-chain-lowest {
+    --theme-button-color: var(--theme-accent-color);
+}
+
+#cyclic-inherited-variable-chain {
+    --theme-cycle-a: var(--theme-cycle-b);
+    --theme-cycle-b: var(--theme-cycle-a);
+}
+
+#used-cyclic-inherited-variable-chain {
+    background-color: var(--theme-cycle-a, green);
+}
+
 div#unused-inherited-variable {
     --color: green;
     color: var(--color, red);
@@ -252,6 +316,16 @@ div#used-with-keyframes {
     <div id="unused-higher-specificity-non-inheritable" class="unused-lower-specificity-non-inheritable">
         <p></p>
     </div>
+</div>
+<div id="reversed-inherited-variable-chain">
+    <div id="used-reversed-inherited-variable-chain"></div>
+    <div id="unused-reversed-inherited-variable-chain"></div>
+</div>
+<div id="inherited-variable-chain-across-rules" class="inherited-chain-middle inherited-chain-lowest">
+    <div id="used-inherited-variable-chain-across-rules"></div>
+</div>
+<div id="cyclic-inherited-variable-chain">
+    <div id="used-cyclic-inherited-variable-chain"></div>
 </div>
 </body>
 </html>

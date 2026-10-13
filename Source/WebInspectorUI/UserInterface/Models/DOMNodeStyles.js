@@ -1091,6 +1091,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._allCSSVariables = new Set;
         this._usedCSSVariables = new Set;
 
+        let dependenciesForInheritedVariable = new Map;
+
         for (let style of styles) {
             for (let property of style.enabledProperties) {
                 if (property.isVariable)
@@ -1110,13 +1112,13 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     continue;
                 }
 
-                // For variables from inherited styles, leverage the fact that styles are already sorted in cascade order to support inherited variables referencing other variables.
-                // If the variable was found to be used before, collect any variables used in its declaration value
-                // (if any variables are found, this isn't the end of the variable reference chain in the inheritance stack).
-                if (property.isVariable && this._usedCSSVariables.has(property.name))
-                    this._usedCSSVariables.addAll(variables);
+                if (property.isVariable && variables.length)
+                    dependenciesForInheritedVariable.getOrInsert(property.name, new Set).addAll(variables);
             }
         }
+
+        for (let variableName of this._usedCSSVariables)
+            this._usedCSSVariables.addAll(dependenciesForInheritedVariable.get(variableName) || []);
     }
 
     _isPropertyFoundInMatchingRules(propertyName)

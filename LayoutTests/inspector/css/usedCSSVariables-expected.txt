@@ -16,6 +16,26 @@ PASS: Set should contain one used variable
 PASS: --color should be used
 PASS: --inherited-color should not be used
 
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedReverseOrder
+PASS: The full inherited dependency chain should be used
+PASS: --theme-button-color should be used
+PASS: --theme-accent-color should be used
+PASS: --theme-base-color should be used
+PASS: The unrelated inherited variable should remain unused
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedDifferentRules
+PASS: The full inherited dependency chain should be used
+PASS: --theme-button-color should be used
+PASS: --theme-accent-color should be used
+PASS: --theme-base-color should be used
+PASS: The unrelated inherited variable should remain unused
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedUnusedChain
+PASS: The unused inherited dependency chain should remain unused
+
+-- Running test case: DOMNodeStyles.usedCSSVariables.InheritedCyclicChain
+PASS: The inherited dependency cycle should include each variable once
+
 -- Running test case: DOMNodeStyles.usedCSSVariables.InheritedUsedFunction
 PASS: Set should contain one used variable
 PASS: --inherited-color should be used
