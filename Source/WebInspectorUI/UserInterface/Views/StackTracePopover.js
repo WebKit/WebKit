@@ -29,6 +29,9 @@ WI.StackTracePopover = class StackTracePopover extends WI.Popover
     {
         super();
 
+        this._targetElement = null;
+        this.windowResizeHandler = this._presentOverTargetElement.bind(this);
+
         const selectable = false;
         this._treeOutline = new WI.TreeOutline(selectable);
         this._treeOutline.disclosureButtons = false;
@@ -49,6 +52,7 @@ WI.StackTracePopover = class StackTracePopover extends WI.Popover
 
     show(stackTrace, targetElement)
     {
+        this._targetElement = targetElement;
         this._treeController.stackTrace = stackTrace;
 
         let content = document.createElement("div");
@@ -56,11 +60,19 @@ WI.StackTracePopover = class StackTracePopover extends WI.Popover
         content.appendChild(this._treeOutline.element);
         this.content = content;
 
-        let targetFrame = WI.Rect.rectFromClientRect(targetElement.getBoundingClientRect());
-        this.present(targetFrame.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+        this._presentOverTargetElement();
     }
 
     // Private
+
+    _presentOverTargetElement()
+    {
+        if (!this._targetElement)
+            return;
+
+        let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
+        this.present(targetFrame.pad(2), [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+    }
 
     _handleTreeOutlineElementClicked(event)
     {
