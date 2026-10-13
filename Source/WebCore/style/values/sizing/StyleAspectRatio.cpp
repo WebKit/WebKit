@@ -63,13 +63,23 @@ auto CSSValueConversion<AspectRatio>::operator()(BuilderState& state, const CSSV
 
 // MARK: - Blending
 
-auto Blending<AspectRatio>::canBlend(const AspectRatio& a, const AspectRatio& b) -> bool
+// Per https://drafts.csswg.org/css-values-4/#combine-ratio, degenerate ratios (those with a zero or
+// infinite term) are not interpolable. Interpolating them in log space would produce NaN or infinity.
+static bool isInterpolable(const AspectRatio& aspectRatio)
 {
-    return (a.isRatio() && b.isRatio())
-        || (a.isAutoAndRatio() && b.isAutoAndRatio());
+    auto width = aspectRatio.width().value;
+    auto height = aspectRatio.height().value;
+    return std::isfinite(width) && std::isfinite(height) && width > 0 && height > 0;
 }
 
-auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> AspectRatio
+auto Blending<AspectRatio>::canBlend(const AspectRatio& a, const AspectRatio& b) -> bool
+{
+    return ((a.isRatio() && b.isRatio()) || (a.isAutoAndRatio() && b.isAutoAndRatio()))
+        && isInterpolable(a)
+        && isInterpolable(b);
+}
+
+auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext& context) -> AspectRatio
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);
@@ -77,7 +87,7 @@ auto Blending<AspectRatio>::blend(const AspectRatio& a, const AspectRatio& b, co
     }
 
     ASSERT(a.m_type == b.m_type);
-    auto blendedRatio = WebCore::blend(std::log(aStyle.logicalAspectRatio()), std::log(bStyle.logicalAspectRatio()), context);
+    auto blendedRatio = WebCore::blend(std::log(a.width().value / a.height().value), std::log(b.width().value / b.height().value), context);
     return AspectRatio { a.m_type, Ratio { .numerator = { std::exp(blendedRatio) }, .denominator = { 1 } } };
 }
 
