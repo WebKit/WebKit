@@ -4,9 +4,23 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 
+function pauseForAwaitContext() {
+    debugger;
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("RuntimeManager");
+    let lastImportCompleted = Promise.withResolvers();
+    let lastImportLogged = false;
+    let importListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+        if (event.data.message.messageText.includes("Cappuccino is Awesome."))
+            lastImportLogged = true;
+        else if (lastImportLogged && event.data.message.messageText === "%o") {
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, importListener);
+            lastImportCompleted.resolve();
+        }
+    });
 
     suite.addTestCase({
         name: "RuntimeManager.prototype.evaluateInInspectedWindow.ImportFromConsole",
@@ -34,6 +48,33 @@ function test()
             })
             .then(resolve);
         }
+    });
+
+    suite.addTestCase({
+        name: "RuntimeManager.AwaitCallFrameScope",
+        description: "Await evaluation preserves this and arguments from a selected call frame.",
+        async test() {
+            await lastImportCompleted.promise;
+            let previousCallFrameUsage = WI.runtimeManager.useActiveCallFrame;
+            WI.runtimeManager.useActiveCallFrame = true;
+            try {
+                let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+                InspectorTest.evaluateInPage("setTimeout(() => pauseForAwaitContext.call({value: 24}, 25))");
+                await paused;
+                let messages = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded);
+                let result = await new Promise((resolve) => {
+                    WI.runtimeManager.evaluateInInspectedWindow("await Promise.resolve(this.value + arguments[0])", {objectGroup: "test"}, resolve);
+                });
+                InspectorTest.expectTrue(result.isUndefined(), "Await evaluation should use the convenience.");
+                await WI.debuggerManager.resume();
+                let {data: {message}} = await messages;
+                InspectorTest.expectEqual(message.parameters[1].value, 49, "Await evaluation should preserve the selected call frame values.");
+            } finally {
+                if (WI.debuggerManager.paused)
+                    await WI.debuggerManager.resume();
+                WI.runtimeManager.useActiveCallFrame = previousCallFrameUsage;
+            }
+        },
     });
 
     suite.runTestCasesAndFinish();

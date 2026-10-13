@@ -326,7 +326,7 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
             internal = `(function(result){ console.info("%o", result); })(${expressionText})`;
         }
         console.assert(internal);
-        return `${external}(async function() { try { ${internal}; } catch (e) { console.error(e); } })(); undefined`;
+        return `${external}(async () => { try { ${internal}; } catch (e) { console.error(e); } })(); undefined`;
     }
 };
 
