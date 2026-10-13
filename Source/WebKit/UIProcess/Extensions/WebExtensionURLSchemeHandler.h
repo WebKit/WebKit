@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkerPool.h>
 
 OBJC_CLASS NSBlockOperation;
 
@@ -55,6 +56,9 @@ private:
     WeakPtr<WebExtensionController> m_webExtensionController;
 #if PLATFORM(COCOA)
     HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
+#else
+    RefPtr<WorkerPool> m_workerPool;
+    HashMap<Ref<WebURLSchemeTask>, GRefPtr<GTask>> m_operations;
 #endif
 }; // class WebExtensionURLSchemeHandler
 

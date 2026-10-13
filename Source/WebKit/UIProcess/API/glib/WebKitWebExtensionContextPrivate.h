@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2026 Igalia S.L.
  *

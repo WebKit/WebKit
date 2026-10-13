@@ -1153,7 +1153,7 @@ WebKitFaviconDatabase* webkit_website_data_manager_get_favicon_database(WebKitWe
 }
 #endif
 
-static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
+OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes types)
 {
     OptionSet<WebsiteDataType> returnValue;
     if (types & WEBKIT_WEBSITE_DATA_MEMORY_CACHE)

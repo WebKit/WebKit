@@ -1346,7 +1346,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             baseExcludeMatchPatternsSet.add(deniedMatchPatternString);
     }
 
+#if PLATFORM(COCOA)
     auto& userContentControllers = this->userContentControllers();
+#endif
 
     for (auto& injectedContentData : injectedContents) {
         HashSet<String> includeMatchPatternsSet;
@@ -1420,8 +1422,10 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             Ref userScript = API::UserScript::create(WebCore::UserScript { WTF::move(scriptString), URL { m_baseURL, scriptPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectionTime, injectedFrames, matchParentFrame }, executionWorld);
             originInjectedScripts.append(userScript);
 
+#if PLATFORM(COCOA)
             for (Ref userContentController : userContentControllers)
                 userContentController->addUserScript(userScript, InjectUserScriptImmediately::Yes);
+#endif
 
             if (isRegisteredScript) {
                 RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
@@ -1429,7 +1433,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!registeredScript)
                     continue;
 
+#if PLATFORM(COCOA)
                 registeredScript->addUserScript(scriptID, userScript);
+#endif
             }
         }
 
@@ -1445,8 +1451,10 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             Ref userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { WTF::move(styleSheetString), URL { m_baseURL, styleSheetPath }, Vector { includeMatchPatterns }, Vector { excludeMatchPatterns }, injectedFrames, matchParentFrame, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
+#if PLATFORM(COCOA)
             for (Ref userContentController : userContentControllers)
                 userContentController->addUserStyleSheet(userStyleSheet);
+#endif
 
             if (isRegisteredScript) {
                 RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
@@ -1454,7 +1462,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!registeredScript)
                     continue;
 
+#if PLATFORM(COCOA)
                 registeredScript->addUserStyleSheet(scriptID, userStyleSheet);
+#endif
             }
         }
     }
@@ -1640,6 +1650,30 @@ void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentContr
         for (Ref controller : extensionController()->allPrivateUserContentControllers())
             controller->addContentRuleList(*ruleList, m_baseURL);
     });
+}
+
+void WebExtensionContext::unloadDeclarativeNetRequestState()
+{
+    removeDeclarativeNetRequestRules();
+
+    m_sessionRulesIDs.clear();
+    m_dynamicRulesIDs.clear();
+    m_matchedRules.clear();
+    m_enabledStaticRulesetIDs.clear();
+
+    m_declarativeNetRequestDynamicRulesStore = nullptr;
+    m_declarativeNetRequestSessionRulesStore = nullptr;
+}
+
+void WebExtensionContext::removeDeclarativeNetRequestRules()
+{
+    if (!isLoaded())
+        return;
+
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
+    for (Ref userContentController : extensionController()->allUserContentControllers())
+        userContentController->removeContentRuleList(uniqueIdentifier());
 }
 
 static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& LEGACY_NODELETE webExtensionContexts()
@@ -1945,6 +1979,15 @@ RefPtr<WebInspectorUIProxy> WebExtensionContext::inspector(const API::InspectorE
     return nullptr;
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
+
+void WebExtensionContext::invalidateStorage()
+{
+    m_registeredContentScriptsStorage = nullptr;
+    m_localStorageStore = nullptr;
+    m_sessionStorageStore = nullptr;
+    m_syncStorageStore = nullptr;
+    m_storageAccessLevels.clear();
+}
 
 size_t WebExtensionContext::quotaForStorageType(WebExtensionDataType storageType)
 {
