@@ -111,6 +111,11 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
     // Not implemented.
     completionHandler();
 }
+
+void NetworkStorageSession::extendLifetimeOfAllowlistedCookies(const RegistrableDomain&)
+{
+    // Not implemented.
+}
 #endif
 
 bool NetworkStorageSession::hasHadUserInteractionAsFirstParty(const RegistrableDomain& registrableDomain) const
@@ -380,6 +385,9 @@ void NetworkStorageSession::removeStorageAccessForFrame(FrameIdentifier frameID,
 
 void NetworkStorageSession::didCommitMainFrameNavigation(WebPageProxyIdentifier webPageProxyID, const RegistrableDomain& committedDomain, const RegistrableDomain& previouslyCommittedDomain, RestoredFromBackForwardCache restoredFromBackForwardCache)
 {
+    if (m_extendAllowlistedCookieLifetime && !committedDomain.isEmpty())
+        extendLifetimeOfAllowlistedCookies(committedDomain);
+
     // A back/forward cache restore brings the previous document and its whole frame tree back to
     // life, so the state below still belongs to a live page and none of this teardown applies.
     if (restoredFromBackForwardCache == RestoredFromBackForwardCache::Yes)
