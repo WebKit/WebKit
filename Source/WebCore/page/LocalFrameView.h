@@ -932,6 +932,7 @@ private:
     void scheduleResizeEventIfNeeded();
     
     RefPtr<Element> rootElementForCustomScrollbarPartStyle() const;
+    bool usesCustomScrollbarStyle() const;
 
     void adjustScrollbarsForLayout(bool firstLayout);
 
