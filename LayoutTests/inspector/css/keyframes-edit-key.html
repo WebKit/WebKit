@@ -38,6 +38,39 @@ function test() {
         },
     });
 
+    suite.addTestCase({
+        name: "CSS.Keyframes.InvalidKeyTextPreservesRule",
+        description: "Invalid keyframe keys should not change the live rule or stylesheet text.",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#target")));
+            await domNodeStyles.refresh();
+
+            let keyframe = domNodeStyles.keyframes[0];
+            let target = keyframe.ownerStyleSheet.owningTarget || WI.assumingMainTarget();
+            let styleSheetId = keyframe.ownerStyleSheet.id;
+            let {text: originalText} = await target.CSSAgent.getStyleSheetText(styleSheetId);
+            let originalKey = keyframe.selectorText;
+
+            for (let invalidKey of ["bad", "-1%", "101%", "0%, bad", "0% trailing", "0% {} 100%"]) {
+                InspectorTest.log(`Setting key to ${JSON.stringify(invalidKey)}.`);
+
+                let didFail = false;
+                await target.CSSAgent.setRuleSelector(keyframe.id, invalidKey).catch(() => {
+                    didFail = true;
+                });
+                InspectorTest.expectTrue(didFail, "Setting an invalid key should fail.");
+
+                let {text} = await target.CSSAgent.getStyleSheetText(styleSheetId);
+                InspectorTest.expectEqual(text, originalText, "Invalid key should not change stylesheet text.");
+
+                await domNodeStyles.refresh();
+                keyframe = domNodeStyles.keyframes[0];
+                InspectorTest.expectEqual(keyframe.selectorText, originalKey, "Invalid key should not change the live rule.");
+            }
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

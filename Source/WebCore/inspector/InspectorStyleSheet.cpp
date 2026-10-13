@@ -40,6 +40,7 @@
 #include "CSSParserObserver.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -215,8 +216,7 @@ static bool isValidRuleHeaderText(const String& headerText, StyleRuleType styleR
     case StyleRuleType::Keyframes:
         return !headerText.isEmpty() && isValidAtRuleHeaderText(makeString(atRuleIdentifierForType(styleRuleType), ' ', headerText, " {}"_s));
     case StyleRuleType::Keyframe:
-        expectedStyleRuleType = StyleRuleType::Keyframes;
-        return !headerText.isEmpty() && isValidAtRuleHeaderText(makeString("@keyframes test { "_s, headerText, " {} }"_s));
+        return !CSSPropertyParserHelpers::parseKeyframeKeyList(headerText, parserContextForDocument(document)).isEmpty();
     default:
         return false;
     }

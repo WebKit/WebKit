@@ -10,3 +10,29 @@ PASS: Editing the key should not associate a sibling rule with the selected elem
 PASS: The replacement key must replace the original source range rather than append to it.
 PASS: Reparsing the edited source should retain both keyframe rules.
 
+-- Running test case: CSS.Keyframes.InvalidKeyTextPreservesRule
+Setting key to "bad".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "-1%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "101%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0%, bad".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0% trailing".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+Setting key to "0% {} 100%".
+PASS: Setting an invalid key should fail.
+PASS: Invalid key should not change stylesheet text.
+PASS: Invalid key should not change the live rule.
+
