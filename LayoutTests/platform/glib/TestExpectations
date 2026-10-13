@@ -284,7 +284,6 @@ http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
 http/tests/cookies/multiple-cookies.https.html [ Skip ]
 
 # Failures from upgrading mixed-content
-imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/video-upgrade.https.sub.html [ Failure ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
@@ -500,7 +499,6 @@ imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after
 imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-disabled-checked.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-radio-disabled-checked.html [ Pass ]
-imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-as-listbox-default-styles.tentative.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/input-text-datalist-removal.html [ Pass ]
@@ -4065,11 +4063,6 @@ imported/w3c/web-platform-tests/fetch/http-cache/partial.any.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.serviceworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/http-cache/partial.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/form-submission.sub.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.html [ Failure ]
 
 webkit.org/b/234529 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/206756 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/diagonal-percentage-vector-background.html [ Pass ]
@@ -4570,7 +4563,6 @@ webkit.org/b/278719 fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/gesture-tap-active-state-iframe.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/gesture/long-press-on-draggable-element-in-iframe-triggers-drag.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/gesture/long-press-on-draggable-element-in-nested-iframes-triggers-drag.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/gesture/pad-gesture-cancel.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-not-propagated.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-propagated.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-div-twice-propagated.html [ Failure ]
@@ -5268,7 +5260,6 @@ webkit.org/b/323309 ipc/getpixelbuffer-layerbacking-heap-disclosure.html [ Pass 
 # Gardening 2026-09-09
 webkit.org/b/323776 http/wpt/webcodecs/configure-encoder-big-frame-size.html [ Failure Pass ]
 
-webkit.org/b/324046 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-20.xml [ Failure ]
 
 # These now pass on the GLib ports; the generic expectations in LayoutTests/TestExpectations still apply elsewhere.
 webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ Pass ]
