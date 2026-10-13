@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true HTMLEnhancedSelectMultipleDropdownBoxEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true HTMLEnhancedSelectMultipleDropdownBoxEnabled=true HTMLEnhancedSelectMultipleSelectedContentEnabled=true ] -->
 <html>
 <head>
 <script src="../../resources/accessibility-helper.js"></script>
@@ -35,6 +35,20 @@
     <option id="baseButtonBanana">Banana</option>
 </select>
 
+<select id="nativeMultipleButton" multiple size="1">
+    <button>Toppings: <selectedcontent></selectedcontent></button>
+    <option id="nativeMultipleButtonCheese" selected>Cheese</option>
+    <option id="nativeMultipleButtonHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
+<select id="baseMultipleButton" class="base" multiple size="1">
+    <button>Toppings: <selectedcontent></selectedcontent></button>
+    <option id="baseMultipleButtonCheese" selected>Cheese</option>
+    <option id="baseMultipleButtonHam">Ham</option>
+    <option selected>Olives</option>
+</select>
+
 <script>
 var output = "This test ensures that the value of a dropdown box is the text its button shows.\n\n";
 
@@ -68,6 +82,16 @@ if (window.accessibilityController) {
             output += await expectAsync("axSelect.stringValue", "'AXValue: Fruit: Banana'");
             document.querySelector(`#${id} > button`).firstChild.data = "Pick: ";
             output += await expectAsync("axSelect.stringValue", "'AXValue: Pick: Banana'");
+        }
+
+        for (const id of ["nativeMultipleButton", "baseMultipleButton"]) {
+            window.axSelect = await waitForElementById(id);
+            output += `${id}:\n`;
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 2 Items'");
+            selectOnly(id, [`${id}Ham`]);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: Ham'");
+            selectOnly(id, []);
+            output += await expectAsync("axSelect.stringValue", "'AXValue: Toppings: 0 Items'");
         }
 
         for (const select of document.querySelectorAll("select"))

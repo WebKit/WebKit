@@ -314,6 +314,7 @@ private:
     void cloneOptionsIntoSelectedContent() const;
     void cloneOptionsIntoSelectedContent(HTMLSelectedContentElement&) const;
     RefPtr<HTMLOptionElement> firstSelectedOption() const;
+    String selectedOptionsText(ForAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const;
     void setSizeAndMultiple(unsigned size, bool multiple);
     enum class PickerCloseReason : bool { Appearance, PickerSupport };
     void queuePickerClose(PickerCloseReason);

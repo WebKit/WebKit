@@ -568,9 +568,18 @@ static size_t selectedOptionCount(const HTMLSelectElement& selectElement)
 
 String HTMLSelectElement::buttonText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
 {
-    if (buttonElement())
-        return buttonLabelText({ });
+    if (!buttonElement())
+        return selectedOptionsText(forAccessibility, selectedOption, optionIndex);
 
+    // Its selectedcontent elements hold a clone of every option, so the text without a button stands in for them.
+    if (m_multiple && updatesSelectedContent())
+        return buttonLabelText(selectedOptionsText(forAccessibility, selectedOption, optionIndex));
+
+    return buttonLabelText({ });
+}
+
+String HTMLSelectElement::selectedOptionsText(ForAccessibility forAccessibility, HTMLOptionElement* selectedOption, int optionIndex) const
+{
     if (m_multiple) {
         size_t count = selectedOptionCount(*this);
         if (count != 1)

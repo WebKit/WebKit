@@ -9,6 +9,10 @@ PASS two.offsetWidth >= twoSelected.offsetWidth is true
 With proportional digits, 10 can be wider than 11.
 PASS eleven.offsetWidth >= tenSelected.offsetWidth is true
 PASS eleven.offsetWidth >= elevenSelected.offsetWidth is true
+
+With a button, the count is shown in place of its selectedcontent element.
+PASS toppings.offsetWidth >= toppingsNoneSelected.offsetWidth is true
+PASS toppings.offsetWidth >= toppingsTwoSelected.offsetWidth is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

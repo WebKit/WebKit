@@ -1,0 +1,62 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleSelectedContentEnabled=true HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<meta charset="utf-8">
+<title>The button text of a select with the multiple attribute has the text for its selected options in place of its selectedcontent elements</title>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+
+<div id="container">
+<form>
+<select multiple size="1">
+  <button>Toppings: <selectedcontent></selectedcontent></button>
+  <option selected>Cheese</option>
+  <option>
+    Green
+    olives
+  </option>
+  <option selected>Pineapple</option>
+</select>
+</form>
+<select multiple size="1">
+  <button>Pick toppings</button>
+  <option selected>Cheese</option>
+  <option>Ham</option>
+</select>
+</div>
+
+<script>
+add_completion_callback(() => document.getElementById("container").remove());
+
+const [select, withoutSelectedContent] = document.querySelectorAll("select");
+
+function buttonText(select) {
+  document.body.offsetTop;
+  return internals.shadowRoot(select).querySelector("slot[name=buttonSlot] + div").textContent.trim();
+}
+
+test(() => {
+  assert_equals(buttonText(select), "Toppings: 2 Items");
+}, "The number of selected options");
+
+test(() => {
+  select.options[0].selected = false;
+  select.options[1].selected = true;
+  select.options[2].selected = false;
+  assert_equals(buttonText(select), "Toppings: Green olives");
+}, "The label of the one selected option");
+
+test(() => {
+  select.selectedIndex = -1;
+  assert_equals(buttonText(select), "Toppings: 0 Items");
+}, "No selected options");
+
+test(() => {
+  document.querySelector("form").reset();
+  assert_equals(buttonText(select), "Toppings: 2 Items");
+}, "Resetting the form");
+
+test(() => {
+  assert_equals(buttonText(withoutSelectedContent), "Pick toppings");
+  withoutSelectedContent.options[1].selected = true;
+  assert_equals(buttonText(withoutSelectedContent), "Pick toppings");
+}, "A button without selectedcontent keeps its text");
+</script>
