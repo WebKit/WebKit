@@ -12,7 +12,7 @@
           (bounds 206.00 126.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (children 1
+          (children 2
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
@@ -28,6 +28,22 @@
                 )
               )
             )
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 204.00 124.00)
+              (children 2
+                (GraphicsLayer
+                  (position 189.00 0.00)
+                  (bounds 15.00 109.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 189.00 109.00)
+                  (bounds 15.00 15.00)
+                  (drawsContent 1)
+                )
+              )
+            )
           )
         )
         (GraphicsLayer
@@ -35,7 +51,7 @@
           (bounds 206.00 126.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (children 1
+          (children 2
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
@@ -47,6 +63,22 @@
                   (scrollOffset (0,50))
                   (anchor 0.00 0.00)
                   (bounds 189.00 263.00)
+                  (drawsContent 1)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 204.00 124.00)
+              (children 2
+                (GraphicsLayer
+                  (position 189.00 0.00)
+                  (bounds 15.00 109.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 189.00 109.00)
+                  (bounds 15.00 15.00)
                   (drawsContent 1)
                 )
               )
