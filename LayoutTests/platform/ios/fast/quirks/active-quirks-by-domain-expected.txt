@@ -27,6 +27,8 @@ https://amazon.design/
     ShouldDispatchSimulatedMouseEventsQuirk
 https://www.apple.com/
     EnsureCaptionVisibilityInFullscreenAndPictureInPicture
+https://as.com/
+    (none)
 https://www.att.com/
     ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk
 https://www.bbc.co.uk/
@@ -54,6 +56,8 @@ https://www.cnn.com/
     NeedsCNNCaptionQuirk
     NeedsFullscreenObjectFitQuirk
     ShouldDisableThreadedAnimationsQuirk
+https://www.digitaltrends.com/
+    (none)
 https://discord.com/
     ShouldUseLayoutViewportForClientRectsQuirk
 https://store.steampowered.com/
@@ -163,7 +167,7 @@ https://www.carrentals.com/
 https://www.cheaptickets.com/
     NeedsExpediaGroupAnimationQuirk
 https://www.chess.com/
-    ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
+    (none)
 https://www.ebookers.de/
     NeedsExpediaGroupAnimationQuirk
 https://www.expedia.com/
@@ -264,7 +268,6 @@ https://www.netflix.com/
 https://www.nba.com/
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
-    ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
 https://www.nfl.com/
     ShouldSuppressHLSSubtitles
 https://www.nhl.com/
