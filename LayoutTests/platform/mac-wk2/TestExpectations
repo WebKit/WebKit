@@ -2601,7 +2601,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] http/tests/media/media-source/media-source-video-fit-fill.html [ Failure ]
 [ GoldenGate Debug ] http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
 [ GoldenGate Debug ] http/wpt/background-fetch/background-fetch-click.window.html [ Failure ]
-[ GoldenGate Debug ] http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-path-ignored.window.html [ Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/css/css-anchor-position/transform-016.html [ Failure ]
@@ -2664,3 +2663,5 @@ webkit.org/b/326899 [ Sequoia+ ] http/tests/cache/cancel-multiple-post-xhrs.html
 
 webkit.org/b/293973 [ Debug ] http/tests/ipc/cocoa/gpu-load-error-empty-user-info-crssh.html [ Skip ]
 [ Debug ] ipc/cocoa/media-containment-bypass-create-player.html [ Crash ]
+
+webkit.org/b/327426 [ Debug arm64 ] http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Pass Failure ]
