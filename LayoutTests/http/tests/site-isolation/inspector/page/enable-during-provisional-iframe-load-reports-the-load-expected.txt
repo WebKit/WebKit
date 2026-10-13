@@ -1,0 +1,17 @@
+Tests that an iframe load which is provisional in another process when Page and Network are enabled is still reported under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.EnableDuringProvisionalIFrameLoad
+-- Running test case: SiteIsolation.Page.EnableDuringProvisionalIFrameLoad.ReportsTheLoad
+PASS: Provisional frame target should be paused.
+PASS: Provisional load should commit.
+PASS: Navigated frame should be attached to the main frame.
+PASS: Document should be listed once.
+PASS: Document should finish loading.
+PASS: Document should carry the request identifier of its load.
+PASS: Document should have a response.
+PASS: Script should be added to the child frame.
+PASS: Script should be listed once.
+PASS: Script should finish loading.
+
