@@ -38,6 +38,7 @@
 #include "TextFlags.h"
 #include "TreeResolutionState.h"
 #include <wtf/BitSet.h>
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -287,7 +288,7 @@ private:
         }
     }
 
-    Style::ComputedStyle& m_style;
+    const CheckedRef<Style::ComputedStyle> m_style;
     BuilderContext m_context;
 
     CSSToLengthConversionData m_cssToLengthConversionData;

@@ -166,12 +166,12 @@ void BuilderState::registerSubstitutionAttribute(const AtomString& attributeLoca
 
 void BuilderState::adjustStyleForInterCharacterRuby()
 {
-    if (!m_style.isInterCharacterRubyPosition() || !element() || !element()->hasTagName(HTMLNames::rtTag))
+    if (!m_style->isInterCharacterRubyPosition() || !element() || !element()->hasTagName(HTMLNames::rtTag))
         return;
 
-    m_style.setTextAlign(TextAlign::Center);
-    if (!m_style.writingMode().isVerticalTypographic())
-        m_style.setWritingMode(StyleWritingMode::VerticalLr);
+    m_style->setTextAlign(TextAlign::Center);
+    if (!m_style->writingMode().isVerticalTypographic())
+        m_style->setWritingMode(StyleWritingMode::VerticalLr);
 }
 
 void BuilderState::updateFont()
@@ -179,7 +179,7 @@ void BuilderState::updateFont()
     Ref fontSelector = const_cast<Document&>(document()).fontSelector();
 
     auto needsUpdate = [&] {
-        return m_fontDirty || !m_style.fontCascade().fonts();
+        return m_fontDirty || !m_style->fontCascade().fonts();
     };
 
     if (!needsUpdate())
@@ -191,37 +191,37 @@ void BuilderState::updateFont()
     updateFontForOrientationChange();
     updateFontForSizeChange();
 
-    m_style.fontCascade().update(fontSelector.ptr());
+    m_style->fontCascade().update(fontSelector.ptr());
 
     m_fontDirty = false;
 }
 
 void BuilderState::updateFontForTextSizeAdjust()
 {
-    if (m_style.textSizeAdjust().isAuto()
+    if (m_style->textSizeAdjust().isAuto()
         || !document().settings().textAutosizingEnabled()
         || (document().settings().textAutosizingUsesIdempotentMode()
-            && !m_style.textSizeAdjust().isNone()
+            && !m_style->textSizeAdjust().isNone()
             && !document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         return;
 
-    auto newFontDescription = m_style.fontDescription();
+    auto newFontDescription = m_style->fontDescription();
     auto baseSize = newFontDescription.computedSize();
-    if (!m_style.textSizeAdjust().isNone())
-        baseSize *= m_style.textSizeAdjust().multiplier();
+    if (!m_style->textSizeAdjust().isNone())
+        baseSize *= m_style->textSizeAdjust().multiplier();
 
-    float zoomFactor = m_style.usedZoom();
-    if (auto* frame = document().frame(); frame && m_style.textZoom() != TextZoom::Reset)
+    float zoomFactor = m_style->usedZoom();
+    if (auto* frame = document().frame(); frame && m_style->textZoom() != TextZoom::Reset)
         zoomFactor *= frame->textZoomFactor();
     newFontDescription.setComputedSize(baseSize);
     newFontDescription.setUsedSize(baseSize * zoomFactor, zoomFactor);
 
-    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
+    m_style->setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 
 void BuilderState::updateFontForZoomChange()
 {
-    if (m_style.usedZoom() == parentStyle().usedZoom() && m_style.textZoom() == parentStyle().textZoom())
+    if (m_style->usedZoom() == parentStyle().usedZoom() && m_style->textZoom() == parentStyle().textZoom())
         return;
 
     // When text-size-adjust has an active percentage, updateFontForTextSizeAdjust() has already
@@ -229,18 +229,18 @@ void BuilderState::updateFontForZoomChange()
     // Skip recalculation here to avoid overwriting that result, which would lose the
     // text-size-adjust multiplier.
     if (document().settings().textAutosizingEnabled()
-        && !m_style.textSizeAdjust().isAuto()
-        && !m_style.textSizeAdjust().isNone()
+        && !m_style->textSizeAdjust().isAuto()
+        && !m_style->textSizeAdjust().isNone()
         && (!document().settings().textAutosizingUsesIdempotentMode()
             || document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         return;
 
-    setFontDescriptionFontSize(m_style.fontDescription().computedSize());
+    setFontDescriptionFontSize(m_style->fontDescription().computedSize());
 }
 
 void BuilderState::updateFontForGenericFamilyChange()
 {
-    const auto& childFont = m_style.fontDescription();
+    const auto& childFont = m_style->fontDescription();
 
     if (childFont.isAbsoluteSize())
         return;
@@ -265,27 +265,27 @@ void BuilderState::updateFontForGenericFamilyChange()
 
     auto newFontDescription = childFont;
     setFontSize(newFontDescription, size);
-    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
+    m_style->setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 
 void BuilderState::updateFontForOrientationChange()
 {
-    auto [fontOrientation, glyphOrientation] = m_style.fontAndGlyphOrientation();
+    auto [fontOrientation, glyphOrientation] = m_style->fontAndGlyphOrientation();
 
-    const auto& fontDescription = m_style.fontDescription();
+    const auto& fontDescription = m_style->fontDescription();
     if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
         return;
 
     auto newFontDescription = fontDescription;
     newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
     newFontDescription.setOrientation(fontOrientation);
-    m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
+    m_style->setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
 
 void BuilderState::updateFontForSizeChange()
 {
-    m_style.synchronizeLetterSpacingWithFontCascadeWithoutUpdate();
-    m_style.synchronizeWordSpacingWithFontCascadeWithoutUpdate();
+    m_style->synchronizeLetterSpacingWithFontCascadeWithoutUpdate();
+    m_style->synchronizeWordSpacingWithFontCascadeWithoutUpdate();
 }
 
 void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float size)
@@ -322,12 +322,12 @@ void BuilderState::setCurrentPropertyInvalidAtComputedValueTime()
 
 void BuilderState::setUsesViewportUnits()
 {
-    m_style.setUsesViewportUnits();
+    m_style->setUsesViewportUnits();
 }
 
 void BuilderState::setIsContainerDependent()
 {
-    m_style.setIsContainerDependent();
+    m_style->setIsContainerDependent();
 }
 
 double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const
