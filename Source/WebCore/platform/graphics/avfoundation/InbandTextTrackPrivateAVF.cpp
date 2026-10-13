@@ -522,7 +522,7 @@ bool InbandTextTrackPrivateAVF::processVTTFileHeader(CMFormatDescriptionRef form
 
 void InbandTextTrackPrivateAVF::processVTTSample(CMSampleBufferRef sampleBuffer, const MediaTime& presentationTime)
 {
-    CMFormatDescriptionRef formatDescription;
+    RetainPtr<CMFormatDescriptionRef> formatDescription;
     if (!readVTTSampleBuffer(sampleBuffer, formatDescription))
         return;
 
@@ -550,7 +550,7 @@ void InbandTextTrackPrivateAVF::processVTTSample(CMSampleBufferRef sampleBuffer,
         }
 
         if (!m_haveReportedVTTHeader && formatDescription)
-            m_haveReportedVTTHeader = processVTTFileHeader(formatDescription);
+            m_haveReportedVTTHeader = processVTTFileHeader(formatDescription.get());
 
         if (type == ISOWebVTTCue::boxTypeName()) {
             ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, PAL::toMediaTime(timingInfo.duration));
@@ -585,7 +585,7 @@ void InbandTextTrackPrivateAVF::processVTTSamples(CFArrayRef nativeSamples, cons
     }
 }
 
-bool InbandTextTrackPrivateAVF::readVTTSampleBuffer(CMSampleBufferRef sampleBuffer, CMFormatDescriptionRef& formatDescription)
+bool InbandTextTrackPrivateAVF::readVTTSampleBuffer(CMSampleBufferRef sampleBuffer, RetainPtr<CMFormatDescriptionRef>& formatDescription)
 {
 #if OS(WINDOWS) && HAVE(AVCFPLAYERITEM_CALLBACK_VERSION_2)
     return false;

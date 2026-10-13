@@ -164,7 +164,8 @@ void BarcodeDetectorImpl::getSupportedFormats(CompletionHandler<void(Vector<Barc
 
     BarcodeFormatSet barcodeFormatsSet;
     barcodeFormatsSet.reserveInitialCapacity([supportedSymbologies count]);
-    for (VNBarcodeSymbology symbology in supportedSymbologies.get())
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL VNBarcodeSymbology symbology in supportedSymbologies.get())
         barcodeFormatsSet.add(convertSymbology(symbology));
 
     auto barcodeFormatsVector = copyToVector(barcodeFormatsSet);
@@ -204,7 +205,8 @@ void BarcodeDetectorImpl::detect(const NativeImage& image, CompletionHandler<voi
     auto imageSize = image.size();
     Vector<DetectedBarcode> results;
     results.reserveInitialCapacity(request.get().results.count);
-    for (VNBarcodeObservation *observation in request.get().results) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL VNBarcodeObservation *observation in request.get().results) {
         results.append({
             convertRectFromVisionToWeb(imageSize, observation.boundingBox),
             observation.payloadStringValue,

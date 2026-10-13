@@ -38,7 +38,8 @@ namespace WebCore {
 
 static bool getDeviceInfo(uint32_t deviceID, CaptureDevice::DeviceType type, String& persistentID, String& label)
 {
-    CFStringRef uniqueID;
+    // This is an out-parameter which is explicitly released below.
+    SUPPRESS_UNRETAINED_LOCAL CFStringRef uniqueID;
     AudioObjectPropertyAddress address {
         kAudioDevicePropertyDeviceUID,
         kAudioDevicePropertyScopeInput,

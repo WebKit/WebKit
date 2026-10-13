@@ -178,7 +178,8 @@ static ScreenProperties collectScreenPropertiesExceptForHDRState()
     ScreenProperties screenProperties;
     bool screenHasInvertedColors = [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldInvertColors];
 
-    for (NSScreen *screen in [NSScreen screens]) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSScreen *screen in [NSScreen screens]) {
         ScreenData screenData;
         auto displayID = WebCore::displayID(screen);
 
@@ -435,7 +436,8 @@ NSScreen *screen(NSWindow *window)
 NSScreen *screen(PlatformDisplayID displayID)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    for (NSScreen *screen in [NSScreen screens]) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSScreen *screen in [NSScreen screens]) {
         if (WebCore::displayID(screen) == displayID)
             return screen;
     }

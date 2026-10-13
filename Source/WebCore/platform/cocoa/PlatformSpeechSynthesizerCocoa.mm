@@ -336,7 +336,8 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer() = default;
 
 void PlatformSpeechSynthesizer::appendVoices(NSArray *voices)
 {
-    for (AVSpeechSynthesisVoice *voice in voices) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL AVSpeechSynthesisVoice *voice in voices) {
         if (voice.isSystemVoice)
             m_voiceList.append(PlatformSpeechSynthesisVoice::create(voice.identifier, voice.name, voice.language, /* localService */ true, /* isDefault */ true));
     }

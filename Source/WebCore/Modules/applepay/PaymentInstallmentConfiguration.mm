@@ -38,6 +38,8 @@
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
+SPECIALIZE_OBJC_TYPE_TRAITS(PKPaymentInstallmentItem, PAL::getPKPaymentInstallmentItemClassSingleton())
+
 namespace WebCore {
 
 static String fromDecimalNumber(NSDecimalNumber *number)
@@ -150,10 +152,10 @@ static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
 
 static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstallmentItem*, id arrayElement)
 {
-    if (![arrayElement isKindOfClass:PAL::getPKPaymentInstallmentItemClassSingleton()])
+    RetainPtr item = dynamic_objc_cast<PKPaymentInstallmentItem>(arrayElement);
+    if (!item)
         return std::nullopt;
 
-    PKPaymentInstallmentItem *item = arrayElement;
     return ApplePayInstallmentItem {
         applePayItemType([item installmentItemType]),
         fromDecimalNumber(retainPtr([item amount]).get()),

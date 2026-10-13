@@ -92,7 +92,8 @@ static RetainPtr<NSDictionary> typeCheckedRecentSearchesRemovingRecentSearchesAd
         return nil;
 
     RetainPtr<NSMutableArray> keysToRemove = adoptNS([[NSMutableArray alloc] init]);
-    for (NSString *key in itemsDictionary) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *key in itemsDictionary) {
         if (![key isKindOfClass:[NSString class]])
             return nil;
 
@@ -101,7 +102,8 @@ static RetainPtr<NSDictionary> typeCheckedRecentSearchesRemovingRecentSearchesAd
             return nil;
 
         RetainPtr<NSMutableArray> entriesToRemove = adoptNS([[NSMutableArray alloc] init]);
-        for (NSDictionary *recentSearch in recentSearches.get()) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *recentSearch in recentSearches.get()) {
             RetainPtr dateAdded = typeCheckedDateInRecentSearch(recentSearch);
             if (!dateAdded)
                 return nil;
@@ -168,7 +170,8 @@ Vector<RecentSearch> loadRecentSearchesFromFile(const String& name, const String
     if (!recentSearches)
         return searchItems;
 
-    for (NSDictionary *item in recentSearches.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *item in recentSearches.get()) {
         RetainPtr date = typeCheckedDateInRecentSearch(item);
         if (!date)
             continue;

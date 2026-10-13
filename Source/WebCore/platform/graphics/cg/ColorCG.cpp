@@ -148,7 +148,7 @@ Color Color::createAndPreserveColorSpace(CGColorRef color, OptionSet<Flags> flag
     return Color(OutOfLineComponents::create({ a, b, c, alpha }), *colorSpace, flags);
 }
 
-static std::pair<CGColorSpaceRef, ColorComponents<float, 4>> convertToCGCompatibleComponents(ColorSpaceName colorSpace, ColorComponents<float, 4> components)
+static std::pair<RetainPtr<CGColorSpaceRef>, ColorComponents<float, 4>> convertToCGCompatibleComponents(ColorSpaceName colorSpace, ColorComponents<float, 4> components)
 {
     // Some CG ports don't support all the color spaces required and return
     // nullptr for unsupported color spaces. In those cases, we eagerly convert
@@ -158,7 +158,7 @@ static std::pair<CGColorSpaceRef, ColorComponents<float, 4>> convertToCGCompatib
     using FallbackColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpaceName::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
 
     if (RetainPtr cgColorSpace = cachedNullableCGColorSpaceSingleton(colorSpace))
-        return { cgColorSpace.get(), components };
+        return { WTF::move(cgColorSpace), components };
 
     auto componentsConvertedToFallbackColorSpace = callWithColorType(components, colorSpace, [] (const auto& color) {
         return asColorComponents(convertColor<FallbackColorType>(color).resolved());
@@ -174,7 +174,7 @@ static RetainPtr<CGColorRef> createCGColor(const Color& color)
     auto [c1, c2, c3, c4] = cgCompatibleComponents;
     std::array<CGFloat, 4> cgFloatComponents { c1, c2, c3, c4 };
 
-    return adoptCF(CGColorCreate(cgColorSpace, cgFloatComponents.data()));
+    return adoptCF(CGColorCreate(cgColorSpace.get(), cgFloatComponents.data()));
 }
 
 RetainPtr<CGColorRef> cachedCGColor(const Color& color)
@@ -261,7 +261,7 @@ ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName inputCol
         transform = adoptCF(CGColorTransformCreate(cachedSpace.get(), nullptr));
     }
 
-    auto result = CGColorTransformConvertColorComponents(transform.get(), cgInputColorSpace, kCGRenderingIntentDefault, sourceComponents.data(), destinationComponents.data());
+    auto result = CGColorTransformConvertColorComponents(transform.get(), cgInputColorSpace.get(), kCGRenderingIntentDefault, sourceComponents.data(), destinationComponents.data());
     ASSERT_UNUSED(result, result);
     // CGColorTransformConvertColorComponents doesn't copy over any alpha component.
     return { static_cast<float>(destinationComponents[0]), static_cast<float>(destinationComponents[1]), static_cast<float>(destinationComponents[2]), static_cast<float>(sourceComponents[3]) };
