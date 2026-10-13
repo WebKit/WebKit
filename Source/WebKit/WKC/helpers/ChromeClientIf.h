@@ -789,6 +789,35 @@ public:
        @endcond
     */
     virtual void needTouchEvents(bool) = 0;
+
+    // Web Notifications API integration hooks.
+    // Permission state values: -1 = default (not decided), 0 = denied, 1 = granted.
+    // Embedders should persist decisions per origin and invoke the callback exactly
+    // once, including when the permission prompt is dismissed.
+    virtual int checkWebNotificationPermission(const WKC::String& origin) const
+    {
+        (void)origin;
+        return -1;
+    }
+    virtual void requestWebNotificationPermission(const WKC::String& origin, void (*completion)(void*, int), void* context)
+    {
+        (void)origin;
+        if (completion)
+            completion(context, 0);
+    }
+    // Return true only when delivery was accepted. An embedder may use a Wii U
+    // system notification facility. This hook does not promise official-inbox
+    // persistence; the platform delivery backend must implement that separately.
+    virtual bool showWebNotification(const WKC::String& origin, const WKC::String& title, const WKC::String& body)
+    {
+        (void)origin; (void)title; (void)body;
+        return false;
+    }
+    virtual void cancelWebNotification(const WKC::String& origin, const WKC::String& title)
+    {
+        (void)origin; (void)title;
+    }
+
 };
 
 /*@}*/

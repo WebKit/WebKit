@@ -41,6 +41,9 @@
 #include "WKCOverlayPrivate.h"
 
 #include "ChromeClientWKC.h"
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationClientWKC.h"
+#endif
 #if ENABLE(CONTEXT_MENUS)
 #include "ContextMenuClientWKC.h"
 #endif
@@ -405,6 +408,7 @@ WKCWebViewPrivate::WKCWebViewPrivate(WKCWebView* parent, WKCClientBuilders& buil
     m_inspector       = nullptr;
     m_dropdownlist    = nullptr;
     m_settings        = nullptr;
+    m_chromeClient    = nullptr;
 
     m_offscreen       = nullptr;
     m_drawContext     = nullptr;
@@ -520,8 +524,11 @@ WKCWebViewPrivate::construct()
     // wrap the returned raw pointers via makeUniqueRefFromNonNullUniquePtr.
     auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
 
+    m_chromeClient = ChromeClientWKC::create(this);
+    if (!m_chromeClient)
+        return false;
     pageConfiguration.chromeClient =
-        WTF::makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<WebCore::ChromeClient>(ChromeClientWKC::create(this)));
+        WTF::makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<WebCore::ChromeClient>(m_chromeClient));
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient =
         WTF::makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<WebCore::ContextMenuClient>(ContextMenuClientWKC::create(this)));
@@ -539,6 +546,13 @@ WKCWebViewPrivate::construct()
     m_corePage = &WebCore::Page::create(WTFMove(pageConfiguration)).leakRef();
 
     m_wkcCorePage = new PagePrivate(m_corePage);
+
+#if ENABLE(NOTIFICATIONS)
+    // Page's controller keeps a non-owning NotificationClient pointer. The
+    // private view retains the bridge until Page teardown has destroyed it.
+    m_notificationClient = std::make_unique<NotificationClientWKC>(*m_chromeClient);
+    WebCore::provideNotification(m_corePage, m_notificationClient.get());
+#endif
 
     // ── Supplement clients (geolocation, device orientation) ───────────────
 #if ENABLE(GEOLOCATION)

@@ -64,6 +64,22 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
+# Enable Web Notifications only in the full WebCore profile by default.
+# WebCore owns the JavaScript API; WKC forwards permission and display operations
+# to the embedder so the Wii U application can supply UI and delivery. This does
+# not by itself add entries to Nintendo's official Notifications inbox.
+if (WKC_ENABLE_FULL_WEBCORE)
+    set(_WKC_NOTIFICATIONS_DEFAULT ON)
+else ()
+    set(_WKC_NOTIFICATIONS_DEFAULT OFF)
+endif ()
+option(WKC_ENABLE_NOTIFICATIONS "Compile the Web Notifications API and WKC embedder bridge" ${_WKC_NOTIFICATIONS_DEFAULT})
+if (WKC_ENABLE_NOTIFICATIONS)
+    set(_WKC_NOTIFICATIONS_DEFINE 1)
+else ()
+    set(_WKC_NOTIFICATIONS_DEFINE 0)
+endif ()
+
 # Enable WebRTC API support in the default full-WebCore Wii U profile.
 # The WebRTC backend still needs final consumer-link and on-console runtime
 # integration, so this option enables the build path rather than claiming RTC
@@ -166,7 +182,7 @@ add_definitions(
     -DENABLE_MEDIA_STREAM=1
     -DENABLE_GAMEPAD=${_WKC_GAMEPAD_DEFINE}
     -DENABLE_WEB_RTC=${_WKC_WEBRTC_API_DEFINE}
-    -DENABLE_NOTIFICATIONS=0
+    -DENABLE_NOTIFICATIONS=${_WKC_NOTIFICATIONS_DEFINE}
     -DENABLE_FULLSCREEN_API=1
     -DENABLE_INDEXED_DATABASE=${_WKC_INDEXED_DATABASE_DEFINE}
     -DENABLE_SVG=1

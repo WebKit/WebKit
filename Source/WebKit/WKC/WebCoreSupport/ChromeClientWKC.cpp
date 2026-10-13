@@ -455,4 +455,48 @@ ChromeClientWKC::exitFullScreenForElement(WebCore::Element*, CompletionHandler<v
 }
 #endif // ENABLE(FULLSCREEN_API)
 
+
+#if ENABLE(NOTIFICATIONS)
+static WKC::String toWKCNotificationString(const WTF::String& value)
+{
+    auto utf8 = value.utf8();
+    return WKC::String::fromUTF8(utf8.data(), utf8.length());
+}
+
+int
+ChromeClientWKC::checkWebNotificationPermission(const WTF::String& origin) const
+{
+    if (!m_appClient)
+        return 0;
+    int state = m_appClient->checkWebNotificationPermission(toWKCNotificationString(origin));
+    return state >= -1 && state <= 1 ? state : 0;
+}
+
+void
+ChromeClientWKC::requestWebNotificationPermission(const WTF::String& origin, void (*completion)(void*, int), void* context)
+{
+    if (!m_appClient) {
+        if (completion)
+            completion(context, 0);
+        return;
+    }
+    m_appClient->requestWebNotificationPermission(toWKCNotificationString(origin), completion, context);
+}
+
+bool
+ChromeClientWKC::showWebNotification(const WTF::String& origin, const WTF::String& title, const WTF::String& body)
+{
+    if (!m_appClient)
+        return false;
+    return m_appClient->showWebNotification(toWKCNotificationString(origin), toWKCNotificationString(title), toWKCNotificationString(body));
+}
+
+void
+ChromeClientWKC::cancelWebNotification(const WTF::String& origin, const WTF::String& title)
+{
+    if (m_appClient)
+        m_appClient->cancelWebNotification(toWKCNotificationString(origin), toWKCNotificationString(title));
+}
+#endif // ENABLE(NOTIFICATIONS)
+
 } // namespace

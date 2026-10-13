@@ -104,6 +104,13 @@ public:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&) const final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
 
+#if ENABLE(NOTIFICATIONS)
+    int checkWebNotificationPermission(const WTF::String& origin) const;
+    void requestWebNotificationPermission(const WTF::String& origin, void (*completion)(void*, int), void* context);
+    bool showWebNotification(const WTF::String& origin, const WTF::String& title, const WTF::String& body);
+    void cancelWebNotification(const WTF::String& origin, const WTF::String& title);
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element&, bool) final;
     void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&, CompletionHandler<bool(bool)>&&) final;
