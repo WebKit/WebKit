@@ -940,12 +940,10 @@ std::optional<Child> simplify(Negate& root, const SimplificationOptions&)
             if (!std::ranges::all_of(a->children, isNumeric))
                 return { };
 
-            for (auto& child : a->children) {
-                WTF::switchOn(child,
-                    [&]<Numeric T>(T& child) { child.value = -child.value; },
-                    [](auto&) { }
-                );
-            }
+            WTF::switchOn(a->children[0],
+                [&]<Numeric T>(T& child) { child.value = -child.value; },
+                [](auto&) { }
+            );
 
             return { Child { WTF::move(a) } };
         },
