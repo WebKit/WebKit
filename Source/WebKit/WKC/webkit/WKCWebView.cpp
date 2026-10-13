@@ -41,6 +41,9 @@
 #include "WKCOverlayPrivate.h"
 
 #include "ChromeClientWKC.h"
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "InspectorBackendClientWKC.h"
+#endif
 #if ENABLE(NOTIFICATIONS)
 #include "NotificationClientWKC.h"
 #endif
@@ -467,6 +470,12 @@ WKCWebViewPrivate::~WKCWebViewPrivate()
         delete m_wkcCorePage;
         m_wkcCorePage = nullptr;
     }
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_inspector) {
+        m_inspector->disconnectFrontend();
+        m_inspector = nullptr;
+    }
+#endif
     if (m_corePage) {
         // Detach main frame before destroying the page
         if (auto* lf = localMainFrame())
@@ -529,6 +538,11 @@ WKCWebViewPrivate::construct()
         return false;
     pageConfiguration.chromeClient =
         WTF::makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<WebCore::ChromeClient>(m_chromeClient));
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    auto inspectorBackendClient = std::make_unique<InspectorBackendClientWKC>(*m_chromeClient);
+    m_inspector = inspectorBackendClient.get();
+    pageConfiguration.inspectorBackendClient = WTFMove(inspectorBackendClient);
+#endif
 #if ENABLE(CONTEXT_MENUS)
     pageConfiguration.contextMenuClient =
         WTF::makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<WebCore::ContextMenuClient>(ContextMenuClientWKC::create(this)));
@@ -544,6 +558,11 @@ WKCWebViewPrivate::construct()
     // WKC owns the page via a manual raw pointer, so leak one ref here and
     // release it with deref() in the destructor.
     m_corePage = &WebCore::Page::create(WTFMove(pageConfiguration)).leakRef();
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_inspector)
+        m_inspector->setPage(*m_corePage);
+#endif
 
     m_wkcCorePage = new PagePrivate(m_corePage);
 
@@ -590,6 +609,11 @@ WKCWebViewPrivate::construct()
     // ── WebCore::Settings defaults ─────────────────────────────────────────
     // Use page.settings() in modern WebKit (returns Settings& not Settings*).
     auto& s = m_corePage->settings();
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    // Inspector protocol access is still opt-in at the WKCWebView API level;
+    // enabling developer extras makes WebCore's Inspector controller functional.
+    s.setDeveloperExtrasEnabled(true);
+#endif
 
     s.setDefaultTextEncodingName("UTF-8"_s);
     s.setSerifFontFamily("Times New Roman"_s);
@@ -675,6 +699,36 @@ WKCWebViewPrivate::localMainFrame() const
     // Modern WebKit has Frame with LocalFrame / RemoteFrame subclasses.
     // For this bare-metal port every frame is local.
     return dynamicDowncast<WebCore::LocalFrame>(f);
+}
+
+bool
+WKCWebViewPrivate::connectInspectorFrontend()
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    return m_inspector && m_inspector->connectFrontend();
+#else
+    return false;
+#endif
+}
+
+void
+WKCWebViewPrivate::disconnectInspectorFrontend()
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_inspector)
+        m_inspector->disconnectFrontend();
+#endif
+}
+
+void
+WKCWebViewPrivate::dispatchInspectorMessageFromFrontend(const WTF::String& message)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (m_inspector)
+        m_inspector->dispatchMessageFromFrontend(message);
+#else
+    (void)message;
+#endif
 }
 
 // ─── Force-terminate notification ────────────────────────────────────────────
@@ -1806,6 +1860,25 @@ void WKCWebView::executeScript(const char* script)
     auto* frame = m_private->localMainFrame();
     if (frame)
         frame->script().executeScriptIgnoringException(WTF::String::fromUTF8(script), JSC::SourceTaintedOrigin::Untainted, true);
+}
+
+bool WKCWebView::connectInspectorFrontend()
+{
+    return m_private && m_private->connectInspectorFrontend();
+}
+
+void WKCWebView::disconnectInspectorFrontend()
+{
+    if (m_private)
+        m_private->disconnectInspectorFrontend();
+}
+
+void WKCWebView::dispatchInspectorMessageFromFrontend(const char* message)
+{
+    if (!m_private || !message)
+        return;
+
+    m_private->dispatchInspectorMessageFromFrontend(WTF::String::fromUTF8(message));
 }
 
 // ─── Selection ────────────────────────────────────────────────────────────────
