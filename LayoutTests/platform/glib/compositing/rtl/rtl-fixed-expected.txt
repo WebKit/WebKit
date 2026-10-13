@@ -1,4 +1,3 @@
-Before (should be empty):
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -6,13 +5,24 @@ Before (should be empty):
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 1
+      (backgroundColor #FF0000)
+      (children 2
         (GraphicsLayer
-          (position 495.00 30.00)
+          (position 50.00 50.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (bounds 300.00 100.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 50.00 50.00)
+          (preserves3D 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 100.00 100.00)
               (contentsOpaque 1)
             )
           )
@@ -21,29 +31,4 @@ Before (should be empty):
     )
   )
 )
-
-After (should not be empty):
-(GraphicsLayer
-  (anchor 0.00 0.00)
-  (bounds 800.00 600.00)
-  (children 1
-    (GraphicsLayer
-      (bounds 800.00 600.00)
-      (contentsOpaque 1)
-      (children 1
-        (GraphicsLayer
-          (position 495.00 30.00)
-          (preserves3D 1)
-          (children 1
-            (GraphicsLayer
-              (bounds 300.00 100.00)
-              (contentsOpaque 1)
-            )
-          )
-        )
-      )
-    )
-  )
-)
-After (should be empty):
 

@@ -1268,7 +1268,6 @@ webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 
 webkit.org/b/133148 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
-webkit.org/b/135530 accessibility/parent-delete.html [ Failure ]
 
 webkit.org/b/137109 accessibility/legend-children-are-visible.html [ Failure ]
 
@@ -1849,7 +1848,6 @@ fast/forms/listbox-typeahead-greek.html [ Failure ]
 fast/forms/select-type-ahead-non-latin.html [ Failure ]
 
 # Some input type=range tests fail because of the size of the slider thumb in Adwaita theme.
-fast/forms/range/slider-mouse-events.html [ Failure ]
 
 # Needs textInputController.setComposition
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
@@ -1858,7 +1856,6 @@ webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-viewable-baseline-alignment.html [ ImageOnlyFailure ]
 
-webkit.org/b/182103 fast/forms/focus-selection-textarea.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Forms-related bugs
@@ -2571,7 +2568,6 @@ webkit.org/b/296727 fast/repaint/fixed-right-bottom-in-page-scale.html [ Skip ]
 webkit.org/b/296727 fast/repaint/fixed-right-in-page-scale.html [ Skip ]
 
 webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
-webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]
 
 webkit.org/b/296730 fast/repaint/no-animation-outside-viewport-subframe.html [ Failure Pass ]
 
@@ -3090,7 +3086,6 @@ webkit.org/b/320603 webrtc/multi-video.html [ Failure Pass ]
 
 webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Failure Pass ]
 
-webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
 
 webkit.org/b/324243 http/tests/websocket/tests/hybi/websocket-samesite-none-sent-cross-site.html [ Failure ]
 
@@ -3148,7 +3143,6 @@ webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 
 # newly imported CSP tests failing on GTK and/or WPE.
 imported/w3c/web-platform-tests/content-security-policy/generic/src-trailing-dot.sub.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html [ Failure ]
 
 webkit.org/b/231083 imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Failure Pass ]
 
@@ -4006,7 +4000,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworke
 # This test requires the ServiceWorkerRegistration.showNotification
 webkit.org/b/175419 http/tests/workers/service/openwindow-from-notification-click.html [ Skip ]
 
-webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 webkit.org/b/176648 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/selectors/040.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
@@ -4138,7 +4131,6 @@ webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout ]
 
-webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 
 # Added in r276357. Also marked as ImageOnlyFailure in iOS TestExpectations.
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
@@ -4292,8 +4284,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.
 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.get.halftransparent.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.dropShadow.tentative.w.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.scaleddashes.worker.html [ Failure ]
 
 # Flakies Aug2023
 webkit.org/b/261024 media/video-playsinline.html [ Failure Timeout Pass ]
@@ -4343,10 +4333,7 @@ webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Fai
 webkit.org/b/169918 compositing/contents-scale/scaled-ancestor.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/simple-scale.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/z-translate.html [ Failure ]
-webkit.org/b/169918 compositing/fixed-image-loading.html [ Failure ]
 webkit.org/b/169918 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/ancestor-overflow-change.html [ Failure ]
-webkit.org/b/169918 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/preserve-3d-switching.html [ Failure ]
@@ -4376,19 +4363,14 @@ compositing/no-compositing-when-full-screen-is-present.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
 webkit.org/b/190706 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/scrolling-without-painting.html [ Failure ]
 webkit.org/b/202744 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/updating-scrolling-content.html [ Failure ]
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
-webkit.org/b/169918 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 webkit.org/b/169918 compositing/repaint/positioned-movement.html [ Failure ]
 webkit.org/b/169918 compositing/repaint/resize-repaint.html [ Failure ]
 webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
 webkit.org/b/305509 compositing/repaint/needs-no-display-volatile-repaint.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
-webkit.org/b/169918 compositing/rtl/rtl-fixed.html [ Failure ]
 webkit.org/b/169918 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
 webkit.org/b/169918 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
 webkit.org/b/169918 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
@@ -4400,7 +4382,6 @@ webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mappin
 webkit.org/b/169918 compositing/tiling/crash-reparent-tiled-layer.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/huge-layer-canvas-resize.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/huge-layer-img-resize.html [ Failure ]
-webkit.org/b/169918 compositing/tiling/huge-layer-img.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/huge-layer-with-layer-children-resize.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/huge-layer-with-layer-children.html [ Failure ]
 webkit.org/b/169918 compositing/tiling/non-active-window-tiles-size.html [ Failure ]
