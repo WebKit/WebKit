@@ -36,6 +36,7 @@ public:
     static Ref<AccessibilityProgressIndicator> create(AXID, Element&, AXObjectCache&);
 
     bool isIndeterminate() const final;
+    bool isAccessibilityProgressIndicatorInstance() const final { return true; }
 
 private:
     explicit AccessibilityProgressIndicator(AXID, RenderObject&, AXObjectCache&);
