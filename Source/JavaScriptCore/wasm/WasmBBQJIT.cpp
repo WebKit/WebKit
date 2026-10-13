@@ -4156,6 +4156,7 @@ void BBQJIT::prepareForExceptions()
 
     const auto& blockSignature = entryData.signature();
     unsigned returnCount = blockSignature.returnCount();
+    auto blockResults = enclosedStack.last(returnCount);
     if (unreachable) {
         // Parser pre-allocated empty result slots at the top of enclosedStack.
         unsigned offset = enclosedStack.size() - returnCount;
@@ -4168,7 +4169,7 @@ void BBQJIT::prepareForExceptions()
 
     switch (entryData.blockType()) {
     case BlockType::TopLevel:
-        entryData.flushAndSingleExit(*this, entryData, enclosedStack, false, true, unreachable);
+        entryData.flushAndSingleExit(*this, entryData, blockResults, false, true, unreachable);
         entryData.linkJumps(&m_jit);
         for (unsigned i = 0; i < returnCount; ++i) {
             // Make sure we expect the stack values in the correct locations.
@@ -4185,19 +4186,19 @@ void BBQJIT::prepareForExceptions()
         return addReturn(entryData, enclosedStack);
     case BlockType::Loop:
         entryData.convertLoopToBlock();
-        entryData.flushAndSingleExit(*this, entryData, enclosedStack, false, true, unreachable);
+        entryData.flushAndSingleExit(*this, entryData, blockResults, false, true, unreachable);
         entryData.linkJumpsTo(entryData.loopLabel(), &m_jit);
         m_outerLoops.takeLast();
         break;
     case BlockType::Try:
     case BlockType::Catch:
         --m_tryCatchDepth;
-        entryData.flushAndSingleExit(*this, entryData, enclosedStack, false, true, unreachable);
+        entryData.flushAndSingleExit(*this, entryData, blockResults, false, true, unreachable);
         entryData.linkJumps(&m_jit);
         break;
     case BlockType::TryTable: {
         // normal execution: jump past the handlers
-        entryData.flushAndSingleExit(*this, entryData, enclosedStack, false, true, unreachable);
+        entryData.flushAndSingleExit(*this, entryData, blockResults, false, true, unreachable);
         entryData.addBranch(m_jit.jump());
         // similar to IPInt, we make a handler section to avoid jumping into random parts of code and not having
         // a real landing pad
@@ -4212,7 +4213,7 @@ void BBQJIT::prepareForExceptions()
         break;
     }
     default:
-        entryData.flushAndSingleExit(*this, entryData, enclosedStack, false, true, unreachable);
+        entryData.flushAndSingleExit(*this, entryData, blockResults, false, true, unreachable);
         entryData.linkJumps(&m_jit);
         break;
     }
