@@ -87,6 +87,7 @@ VENDORED = [
     "src/third_party/volk/**",
     "src/third_party/ceval/**",
     "src/third_party/libXNVCtrl/**",
+    "third_party/zlib/google/compression_utils_portable.*",
     "third_party/VK-GL-CTS/src/framework/**",
     "third_party/VK-GL-CTS/src/execserver/**",
     "third_party/VK-GL-CTS/src/executor/**",
@@ -815,10 +816,20 @@ def phase_bookkeep(ctx):
     diff = git(["diff", "--ignore-submodules=all", "--full-index", "-b",
                 "--ignore-cr-at-eol",
                 target_hash, merged_tree, "--"] + _CHANGES_DIFF_EXCLUDES,
-               cwd=work, check=False)
+               cwd=work, check=False, strip=False)
     with open(os.path.join(merge, "changes.diff"), "w") as f:
         f.write(diff + ("\n" if diff and not diff.endswith("\n") else ""))
     log("Regenerated changes.diff")
+
+    # Fail the run if changes.diff can't be parsed back as a patch.
+    if diff:
+        res = run(["git", "apply", "--stat", os.path.join(merge, "changes.diff")],
+                  cwd=work, check=False, capture=True)
+        if res.returncode != 0:
+            fail("Generated changes.diff is not a valid patch "
+                 "(git apply --stat exit %d):\n%s\n"
+                 "Run `update-angle --abort` before retrying."
+                 % (res.returncode, (res.stderr or "").strip()))
 
     # Commit message draft at the WebKit root (copy it out and delete it).
     upstream_log = git(["log", "--oneline", "%s..%s" % (prev_hash, target_hash),
