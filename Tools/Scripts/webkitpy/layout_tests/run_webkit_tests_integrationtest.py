@@ -870,6 +870,14 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         logging_run(['failures/unexpected/web-process-crash-with-stderr.html'], tests_included=True, host=host)
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), mock_crash_report)
 
+    def test_previous_stats_are_read_before_old_results_are_clobbered(self):
+        host = MockHost()
+        logging_run(['--no-retry-failures', 'passes/text.html'], tests_included=True, host=host)
+        stats_path = next(path for path in host.filesystem.files if path.endswith('/stats.json'))
+        host.filesystem.write_text_file(stats_path, '[]')
+        _, err, _ = logging_run(['--no-retry-failures', '--clobber-old-results', 'passes/text.html'], tests_included=True, host=host)
+        self.assertIn('Could not read test times', err.getvalue())
+
     def test_exit_after_n_failures_upload(self):
         host = MockHost()
         details, regular_output, user = logging_run(

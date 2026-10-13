@@ -48,6 +48,13 @@ class JSONGeneratorTest(unittest.TestCase):
         self._FAILS_count = 0
         self._fixable_count = 0
 
+    def test_convert_trie_to_flat_paths(self):
+        paths = {'fast/dom/a.html': {'results': [0, 1, 2, 3, 4]}, 'fast/b.html': {'results': [5, 6, 7, 8, 9]}, 'c.html': {'results': [1]}}
+        trie = {}
+        for path, value in paths.items():
+            json_results_generator.add_path_to_trie(path, value, trie)
+        self.assertEqual(json_results_generator.convert_trie_to_flat_paths(trie), paths)
+
     def test_load_jsons(self):
         json = '["contents"]'
         self.assertEqual(json_results_generator.load_jsons(json_results_generator._JSON_PREFIX + json + json_results_generator._JSON_SUFFIX), ["contents"])
