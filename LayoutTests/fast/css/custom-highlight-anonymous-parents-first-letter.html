@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>First-letter text uses its boxless originating element's highlight style</title>
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-cascade">
+<link rel="issue" href="https://bugs.webkit.org/show_bug.cgi?id=307455">
+<link rel="match" href="custom-highlight-anonymous-parents-first-letter-expected.html">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+#host::first-letter { color: blue; }
+#host::highlight(probe) { background-color: cyan; color: purple; }
+.origin { display: contents; }
+.origin::highlight(probe) { background-color: lime; color: red; }
+</style>
+<span id="before">x</span><div id="host"><span class="origin">TEXT</span></div><span id="after">y</span>
+<script>
+const range = new Range();
+range.setStart(document.getElementById('before').firstChild, 1);
+range.setEnd(document.getElementById('after').firstChild, 0);
+CSS.highlights.set('probe', new Highlight(range));
+</script>

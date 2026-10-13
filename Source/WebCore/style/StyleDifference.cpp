@@ -1088,6 +1088,11 @@ Difference difference(const Style::ComputedStyle& a, const Style::ComputedStyle&
     return DifferenceFunctions::difference(a, b);
 }
 
+bool highlightPseudoElementStyleChangeRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b)
+{
+    return DifferenceFunctions::highlightPseudoElementStyleChangeRequiresRepaint(a, b);
+}
+
 bool differenceRequiresLayerRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b, bool isComposited)
 {
     return DifferenceFunctions::differenceRequiresLayerRepaint(a, b, isComposited);
