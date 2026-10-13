@@ -261,6 +261,18 @@ PASS: queryString should be: 'key=alpha/beta'
 PASS: fragment should be: 'null'
 PASS: lastPathComponent should be: 'null'
 
+-- Running test case: absoluteURL
+PASS: Resolved URL should match the browser for 'image.png' and 'file:///site/index.html'.
+PASS: Resolved URL should match the browser for '../image.png' and 'file:///site/pages/index.html'.
+PASS: Resolved URL should match the browser for '/images/image.png' and 'file:///site/index.html'.
+PASS: Resolved URL should match the browser for '?mode=1' and 'file:///site/index.html?old=1#old'.
+PASS: Resolved URL should match the browser for '#link' and 'file:///site/index.html?mode=1#old'.
+PASS: Resolved URL should match the browser for '' and 'file:///site/index.html'.
+PASS: Resolved URL should match the browser for 'file:///other/image.png' and 'file:///site/index.html'.
+PASS: Resolved URL should match the browser for 'image.png' and 'file://server/site/index.html'.
+PASS: Resolved URL should match the browser for 'image.png' and 'http://example.com/site/index.html'.
+PASS: Resolved URL should match the browser for 'image.png' and 'https://example.com/site/index.html'.
+
 -- Running test case: parseDataURL
 
 Test Invalid: https://webkit.org

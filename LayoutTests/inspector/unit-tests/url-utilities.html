@@ -313,6 +313,26 @@ function test()
     });
 
     suite.addTestCase({
+        name: "absoluteURL",
+        test() {
+            for (let {partialURL, baseURL} of [
+                {partialURL: "image.png", baseURL: "file:///site/index.html"},
+                {partialURL: "../image.png", baseURL: "file:///site/pages/index.html"},
+                {partialURL: "/images/image.png", baseURL: "file:///site/index.html"},
+                {partialURL: "?mode=1", baseURL: "file:///site/index.html?old=1#old"},
+                {partialURL: "#link", baseURL: "file:///site/index.html?mode=1#old"},
+                {partialURL: "", baseURL: "file:///site/index.html"},
+                {partialURL: "file:///other/image.png", baseURL: "file:///site/index.html"},
+                {partialURL: "image.png", baseURL: "file://server/site/index.html"},
+                {partialURL: "image.png", baseURL: "http://example.com/site/index.html"},
+                {partialURL: "image.png", baseURL: "https://example.com/site/index.html"},
+            ]) {
+                InspectorTest.expectEqual(absoluteURL(partialURL, baseURL), new URL(partialURL, baseURL).href, `Resolved URL should match the browser for '${partialURL}' and '${baseURL}'.`);
+            }
+        },
+    });
+
+    suite.addTestCase({
         name: "parseDataURL",
         test() {
             function testInvalid(url) {
