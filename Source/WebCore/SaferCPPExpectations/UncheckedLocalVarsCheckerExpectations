@@ -1,4 +1,3 @@
-[ macOS ] css/MutableStyleProperties.cpp
 [ macOS ] dom/Document.cpp
 [ macOS ] dom/Position.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
