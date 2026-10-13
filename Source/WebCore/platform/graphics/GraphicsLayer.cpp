@@ -180,6 +180,7 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_preserves3D(type == Type::Structural)
     , m_backfaceVisibility(true)
     , m_masksToBounds(false)
+    , m_masksTopOverflow(false)
     , m_drawsContent(false)
     , m_contentsVisible(true)
     , m_contentsRectClipsDescendants(false)
@@ -420,6 +421,11 @@ void GraphicsLayer::setMasksToBounds(bool b)
 {
     ASSERT_IMPLIES(m_type == Type::Structural, false);
     m_masksToBounds = b;
+}
+
+void GraphicsLayer::setMasksTopOverflow(bool b)
+{
+    m_masksTopOverflow = b;
 }
 
 void GraphicsLayer::setDrawsContent(bool b)

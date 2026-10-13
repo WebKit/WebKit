@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { 
+            margin: 0; padding: 0;
+        }
+
+        body {
+            background-color: gray;
+            background-image: url('resources/bg.png');
+        }
+
+        #shield {
+            position: absolute;
+            top:0px;
+            left:0px;
+            width:100dvw;
+            height:100dvh;
+            display: block;
+            background: red;
+        }
+
+        #top-overflow {
+            top: -100px;
+            height:100px;
+            position: relative;
+            left: 50%;
+            overflow: hidden;
+            background: rgba(255, 255, 0, 0.5);
+            transform: translate(-50%,0);
+            will-change: transform;
+            z-index: 1;
+        }
+    </style>
+</head>
+<script>
+    function runTest() {
+        if (!window.testRunner)
+            return;
+
+        internals.setPageHasBannerViewOverlayForTesting(true);
+        internals.unconstrainedScrollTo(document.documentElement, -150, 0);
+    }
+</script>
+<body onload="runTest()">
+    <!-- When a banner view overlay is installed, you shouldn't see any content
+    above the top of the page during an upper scroll stretch, nor should you
+    see background images extend upward. You should only see the under page
+    background color or the fixed header color. 
+
+    For all other directions, you should see background images extend during
+    scroll stretches. -->
+
+    <div id="top-overflow"></div>
+    <div id="shield"></div>
+</body>
+</html>
