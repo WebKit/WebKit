@@ -624,7 +624,7 @@ private:
             m_silentBuffer = adoptGRef(gst_buffer_new_and_alloc(128 * GST_AUDIO_INFO_BPF(&info)));
             {
                 GstMappedBuffer map(m_silentBuffer.get(), GST_MAP_WRITE);
-                webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
+                gst_audio_format_info_fill_silence(info.finfo, map.data(), map.size());
             }
             gst_buffer_add_audio_meta(m_silentBuffer.get(), &info, 128, nullptr);
         }

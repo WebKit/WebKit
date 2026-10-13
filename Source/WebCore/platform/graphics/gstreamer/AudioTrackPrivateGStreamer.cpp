@@ -128,11 +128,9 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
         setConfiguration(WTF::move(configuration));
     });
 
-#if GST_CHECK_VERSION(1, 20, 0)
     auto mimeCodec = GMallocString::unsafeAdoptFromUTF8(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (mimeCodec)
         configuration.codec = mimeCodec.span();
-#endif
 
     if (areEncryptedCaps(caps.get())) {
         const auto* structure = gst_caps_get_structure(caps.get(), 0);

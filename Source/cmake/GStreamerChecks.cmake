@@ -1,6 +1,6 @@
 if (USE_GSTREAMER)
       if (USE_GSTREAMER_FULL)
-          find_package(GStreamer 1.18.4 REQUIRED COMPONENTS full)
+          find_package(GStreamer 1.20.0 REQUIRED COMPONENTS full)
           if (NOT PC_GSTREAMER_FULL_FOUND)
               message(FATAL_ERROR "GStreamer static library libgstreamer-full-1.0 not found")
           else ()
@@ -16,7 +16,7 @@ if (USE_GSTREAMER)
               list(APPEND GSTREAMER_COMPONENTS audio fft)
           endif ()
 
-          find_package(GStreamer 1.18.4 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+          find_package(GStreamer 1.20.0 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 
           if (ENABLE_WEB_AUDIO)
               if (NOT PC_GSTREAMER_AUDIO_FOUND OR NOT PC_GSTREAMER_FFT_FOUND)
@@ -36,10 +36,6 @@ if (USE_GSTREAMER)
 
           if (USE_GSTREAMER_GL AND NOT PC_GSTREAMER_GL_FOUND)
               message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
-          endif ()
-
-          if (ENABLE_MEDIA_RECORDER AND PC_GSTREAMER_VERSION VERSION_LESS "1.20")
-              message(FATAL_ERROR "GStreamer >= 1.20 is needed for ENABLE_MEDIA_RECORDER.")
           endif ()
       endif ()
 endif ()
