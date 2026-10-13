@@ -2317,15 +2317,18 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                     return;
                 }
             }
-            if (RefPtr entry = targetItem->backForwardCacheEntry()) {
-                if (RefPtr process = entry->process(); process && process->state() != AuxiliaryProcessProxy::State::Terminated && process->crossOriginMode() == crossOriginMode) {
-                    ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-                    prepareProcessForNavigation(process.releaseNonNull(), page, nullptr,
-                        "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
-                        site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
-                        WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler));
-                    return;
-                }
+            RefPtr<WebProcessProxy> backForwardCacheProcess;
+            if (RefPtr entry = targetItem->backForwardCacheEntry())
+                backForwardCacheProcess = entry->process();
+            else if (auto processIdentifier = navigation.backForwardCacheMainFrameProcessIdentifier())
+                backForwardCacheProcess = WebProcessProxy::processForIdentifier(*processIdentifier);
+            if (backForwardCacheProcess && backForwardCacheProcess->state() != AuxiliaryProcessProxy::State::Terminated && backForwardCacheProcess->crossOriginMode() == crossOriginMode) {
+                ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
+                prepareProcessForNavigation(backForwardCacheProcess.releaseNonNull(), page, nullptr,
+                    "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
+                    site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
+                    WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler));
+                return;
             }
         }
     }

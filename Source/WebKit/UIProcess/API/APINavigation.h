@@ -225,6 +225,9 @@ public:
     WebKit::FrameState* backForwardFrameState() const { return m_backForwardFrameState.get(); }
     void setBackForwardFrameState(RefPtr<WebKit::FrameState>&& frameState) { m_backForwardFrameState = WTF::move(frameState); }
 
+    std::optional<WebCore::ProcessIdentifier> backForwardCacheMainFrameProcessIdentifier() const { return m_backForwardCacheMainFrameProcessIdentifier; }
+    void setBackForwardCacheMainFrameProcessIdentifier(WebCore::ProcessIdentifier identifier) { m_backForwardCacheMainFrameProcessIdentifier = identifier; }
+
     static constexpr Seconds navigationActivityTimeout { 30_s };
 
     unsigned processActivityGroupSizeForTesting() const;
@@ -272,6 +275,7 @@ private:
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
     Vector<Function<void()>> m_safeBrowsingCheckCompletionCallbacks;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
+    std::optional<WebCore::ProcessIdentifier> m_backForwardCacheMainFrameProcessIdentifier;
 };
 
 } // namespace API
