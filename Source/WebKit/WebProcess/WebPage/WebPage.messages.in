@@ -716,6 +716,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     PerformHitTestForModifierFlagsChangeOnMouseEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebMouseEvent> event) -> (Variant<WebKit::WebHitTestResultData, WebCore::RemoteUserInputEventData> result, OptionSet<WebKit::WebEventModifier> modifiers)
 
     SetUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
+    SetContentInversion(enum:uint8_t WebKit::ContentInversion contentInversion)
 
 #if HAVE(APP_ACCENT_COLORS)
     SetAccentColor(WebCore::Color color)

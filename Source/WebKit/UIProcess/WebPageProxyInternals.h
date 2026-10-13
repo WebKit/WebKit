@@ -29,6 +29,7 @@
 #include "BidiDigitalCredentialsAgent.h"
 #endif
 #include "Connection.h"
+#include "ContentInversion.h"
 #include "ContextMenuContextData.h"
 #include "EditorState.h"
 #include "EnhancedSecurityTracking.h"
@@ -245,6 +246,7 @@ public:
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingWheelEvents;
     Vector<Function<void()>> callbackHandlersAfterProcessingPendingTouchEvents;
 #endif
+    ContentInversion contentInversion { ContentInversion::System };
     WebCore::FloatSize defaultUnobscuredSize;
     EditorState editorState;
     WebCore::IntSize fixedLayoutSize;
@@ -268,6 +270,7 @@ public:
     WebNotificationManagerMessageHandler notificationManagerMessageHandler;
     OptionSet<WebCore::LayoutMilestone> observedLayoutMilestones;
     WebCore::Color pageExtendedBackgroundColor;
+    EffectivePageAppearance effectivePageAppearance { EffectivePageAppearance::Unknown };
     UserObservablePageCounter::Token pageIsUserObservableCount;
     std::optional<MonotonicTime> pageLoadStart;
     PageLoadState pageLoadState;

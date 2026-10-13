@@ -707,6 +707,8 @@ public:
     virtual void underPageBackgroundColorDidChange() { }
     virtual void sampledPageTopColorWillChange() { }
     virtual void sampledPageTopColorDidChange() { }
+    virtual void effectivePageAppearanceWillChange() { }
+    virtual void effectivePageAppearanceDidChange() { }
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;

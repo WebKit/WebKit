@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentInversion.h"
 #include "DrawingAreaInfo.h"
 #include "FrameTreeCreationParameters.h"
 #include "LayerTreeContext.h"
@@ -203,6 +204,7 @@ struct WebPageCreationParameters {
     bool useElevatedUserInterfaceLevel { false };
     bool allowPostingLegacySynchronousMessages { false };
     bool backgroundTextExtractionEnabled { false };
+    ContentInversion contentInversion { ContentInversion::System };
 
 #if PLATFORM(MAC)
     std::optional<WebCore::ColorSpace> colorSpace { };
