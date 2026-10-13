@@ -10382,3 +10382,5 @@ fast/text-extraction/debug-text-extraction-ignore-autofilled-fields.html [ Pass 
 fast/text-extraction/debug-text-extraction-lightweight-discretionary.html [ Pass Timeout ]
 fast/text-extraction/debug-text-extraction-role-suppression.html [ Pass Timeout ]
 fast/visual-viewport/ios/interactive-widget/overlays-content-orientation-rotations.html  [ Pass Failure ]
+
+webkit.org/b/327433 http/wpt/background-fetch/background-fetch-click.window.html [ Pass Failure ]
