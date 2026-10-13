@@ -50,6 +50,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <WebCore/UserGestureIndicator.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 // FIXME: <https://webkit.org/b/261765> Consider adding support for injectImmediately.
@@ -234,7 +235,7 @@ void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter,
     if (!validateFilter(filter, outExceptionString))
         return;
 
-    auto scriptIDs = makeVector<String>(filter[idsKey]);
+    auto scriptIDs = makeVector<String>(checked_objc_cast<NSArray>(filter[idsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<Vector<WebExtensionRegisteredScriptParameters>, WebExtensionError>&& result) {
         if (!result)
@@ -267,7 +268,7 @@ void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Re
     if (!validateFilter(filter, outExceptionString))
         return;
 
-    auto scriptIDs = makeVector<String>(filter[idsKey]);
+    auto scriptIDs = makeVector<String>(checked_objc_cast<NSArray>(filter[idsKey]));
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTF::move(scriptIDs)), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<void, WebExtensionError>&& result) {
         if (!result)
@@ -413,7 +414,7 @@ bool WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script,
     if (!validateDictionary(script, @"details", requiredKeys, keyTypes, outExceptionString))
         return false;
 
-    if (!parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString))
+    if (!parseTargetInjectionOptions(checked_objc_cast<NSDictionary>(script[targetKey]), parameters, outExceptionString))
         return false;
 
     if (script[functionKey] && script[funcKey]) {
@@ -500,7 +501,7 @@ bool WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
     if (!validateDictionary(cssInfo, @"details", requiredKeys, keyTypes, outExceptionString))
         return false;
 
-    if (!parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString))
+    if (!parseTargetInjectionOptions(checked_objc_cast<NSDictionary>(cssInfo[targetKey]), parameters, outExceptionString))
         return false;
 
     if (cssInfo[cssKey] && cssInfo[filesKey]) {
@@ -566,11 +567,11 @@ bool WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, F
             return false;
         }
 
-        parameters.identifier = script[@"id"];
+        parameters.identifier = scriptID;
 
         NSArray *matchPatterns = script[matchesKey];
         if (firstTimeRegistration == FirstTimeRegistration::Yes && !matchPatterns.count) {
-            *outExceptionString = toErrorString(nullString(), matchesKey, makeString("it must specify at least one match pattern for script with ID '"_s, String(script[@"id"]), "'"_s)).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), matchesKey, makeString("it must specify at least one match pattern for script with ID '"_s, String(scriptID), "'"_s)).createNSString().autorelease();
             return false;
         }
 

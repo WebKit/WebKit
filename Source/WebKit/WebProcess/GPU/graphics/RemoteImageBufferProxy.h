@@ -124,6 +124,7 @@ private:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
 
     void prepareForBackingStoreChange();
+    void flushDrawingContextImpl() const;
     std::optional<WebCore::RenderingMode> getEffectiveRenderingModeForTesting() const final;
 
     void NODELETE assertDispatcherIsCurrent() const;
@@ -136,7 +137,7 @@ private:
     // stands in for a backing store this process cannot map.
     void ensureBackendHandle() const;
 
-    RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
+    mutable RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     mutable RemoteGraphicsContextProxy m_context;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 };

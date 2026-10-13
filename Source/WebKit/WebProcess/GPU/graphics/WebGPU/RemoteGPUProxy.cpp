@@ -252,7 +252,7 @@ RefPtr<WebCore::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationC
 
     // FIXME: This is super yucky. We should solve this a better way. (For both WK1 and WK2.)
     // Maybe PresentationContext needs a present() function?
-    Ref compositorIntegration = const_cast<WebGPU::RemoteCompositorIntegrationProxy&>(m_convertToBackingContext->convertToRawBacking(protect(descriptor.compositorIntegration).get()));
+    Ref compositorIntegration = m_convertToBackingContext->convertToRawBacking(protect(descriptor.compositorIntegration).get());
 
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor)

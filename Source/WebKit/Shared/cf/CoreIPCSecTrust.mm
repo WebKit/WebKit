@@ -96,25 +96,25 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
         case CoreIPCSecTrust::PolicyOptionValueShape::Invalid:
             return makeString("policy shape for key "_s, (String)optionKey, "is invalid"_s);
         case CoreIPCSecTrust::PolicyOptionValueShape::Bool: {
-            if (![optionValue isKindOfClass:NSNumber.class])
+            RetainPtr value = dynamic_objc_cast<NSNumber>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::Bool unexpected type for key "_s, (String)optionKey);
-            RetainPtr<NSNumber> value = optionValue;
             CoreIPCSecTrustData::PolicyVariant v = static_cast<bool>([value boolValue]);
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::String: {
-            if (![optionValue isKindOfClass:NSString.class])
+            RetainPtr value = dynamic_objc_cast<NSString>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::String unexpected type for key "_s, (String)optionKey);
-            RetainPtr<NSString> value = optionValue;
             CoreIPCSecTrustData::PolicyVariant v = CoreIPCString(value.get());
             policyVector.append(std::make_pair(WTF::move(k), WTF::move(v)));
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers: {
-            if (![optionValue isKindOfClass:NSArray.class])
+            RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            RetainPtr<NSArray> value = optionValue;
             if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfNumbers array length 0 for key "_s, (String)optionKey);
             if (!arrayElementsTheSameType(value.get(), NSNumber.class))
@@ -131,9 +131,9 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings: {
-            if (![optionValue isKindOfClass:NSArray.class])
+            RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            RetainPtr<NSArray> value = optionValue;
             if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfStrings array length 0 for key "_s, (String)optionKey);
             if (!arrayElementsTheSameType(value.get(), NSString.class))
@@ -150,9 +150,9 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData: {
-            if (![optionValue isKindOfClass:NSArray.class])
+            RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData unexpected type for key %@ "_s, (String)optionKey, " (expecting NSArray)"_s);
-            RetainPtr<NSArray> value = optionValue;
             if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfData array length 0 for key "_s, (String)optionKey);
             if (!arrayElementsTheSameType(value.get(), NSData.class))
@@ -169,9 +169,9 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber: {
-            if (![optionValue isKindOfClass:NSArray.class])
+            RetainPtr value = dynamic_objc_cast<NSArray>(optionValue);
+            if (!value)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber unexpected type for key "_s, (String)optionKey, " (expecting NSArray)"_s);
-            RetainPtr<NSArray> value = optionValue;
             if (![value count])
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::ArrayOfArrayContainingDateOrNumber array length 0 for key "_s, (String)optionKey);
             if (!arrayElementsTheSameType(value.get(), NSArray.class))
@@ -190,12 +190,10 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
 
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
                 for (SUPPRESS_UNRETAINED_LOCAL id element in secondLevelArray) {
-                    if ([element isKindOfClass:NSNumber.class]) {
-                        RetainPtr<NSNumber> e = element;
+                    if (RetainPtr e = dynamic_objc_cast<NSNumber>(element)) {
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCNumber(e.get());
                         innerVector.append(WTF::move(v));
-                    } else if ([element isKindOfClass:NSDate.class]) {
-                        RetainPtr<NSDate> d = element;
+                    } else if (RetainPtr d = dynamic_objc_cast<NSDate>(element)) {
                         Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate> v = CoreIPCDate(d.get());
                         innerVector.append(WTF::move(v));
                     } else
@@ -208,9 +206,9 @@ static String updatePolicyVector(NSDictionary *policyOption, CoreIPCSecTrustData
             break;
         }
         case CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber: {
-            if (![optionValue isKindOfClass:NSDictionary.class])
+            RetainPtr d = dynamic_objc_cast<NSDictionary>(optionValue);
+            if (!d)
                 return makeString("CoreIPCSecTrust::PolicyOptionValueShape::DictionaryValueIsNumber unexpected type for key "_s, (String)optionKey, " (expecting NSDictionary)"_s);
-            RetainPtr<NSDictionary> d = optionValue;
             CoreIPCSecTrustData::PolicyDictionaryValueIsNumber vector;
             vector.reserveCapacity([d count]);
             // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -246,8 +244,7 @@ static String optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSe
 {
     if (![dict isKindOfClass:NSDictionary.class])
         return makeString("optionalArrayOfDataHelper was called with wrong argument"_s);
-    RetainPtr<NSArray> array = [dict objectForKey:topLevelKey];
-    if ([array isKindOfClass:NSArray.class]) {
+    if (RetainPtr array = dynamic_objc_cast<NSArray>([dict objectForKey:topLevelKey])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([array count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -281,14 +278,13 @@ CoreIPCSecTrust::CoreIPCSecTrust(SecTrustRef trust)
 
     CoreIPCSecTrustData secTrustData { };
 
-    RetainPtr<NSDate> verifyDate = [dict objectForKey:@"verifyDate"];
-    if ([verifyDate isKindOfClass:NSDate.class]) {
+    if (RetainPtr verifyDate = dynamic_objc_cast<NSDate>([dict objectForKey:@"verifyDate"])) {
         CoreIPCDate d { verifyDate.get() };
         secTrustData.verifyDate = WTF::move(d);
     }
 
-    RetainPtr<NSNumber> result = [dict objectForKey:@"result"];
-    if (![result isKindOfClass:NSNumber.class]) {
+    RetainPtr result = dynamic_objc_cast<NSNumber>([dict objectForKey:@"result"]);
+    if (!result) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'result' value is nil or not an NSNumber and not optional");
         return;
     }
@@ -325,15 +321,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return;
     }
 ALLOW_DEPRECATED_DECLARATIONS_END
-    RetainPtr<NSNumber> anchorsOnly = [dict objectForKey:@"anchorsOnly"];
-    if (![anchorsOnly isKindOfClass:NSNumber.class]) {
+    RetainPtr anchorsOnly = dynamic_objc_cast<NSNumber>([dict objectForKey:@"anchorsOnly"]);
+    if (!anchorsOnly) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'anchorsOnly' value is nil or not an NSNumber and not optional");
         return;
     }
     secTrustData.anchorsOnly = [anchorsOnly boolValue];
 
-    RetainPtr<NSArray> certificates = [dict objectForKey:@"certificates"];
-    if ([certificates isKindOfClass:NSArray.class]) {
+    if (RetainPtr certificates = dynamic_objc_cast<NSArray>([dict objectForKey:@"certificates"])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([certificates count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -349,8 +344,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         secTrustData.certificates = WTF::move(vector);
     }
 
-    RetainPtr<NSArray> chain = [dict objectForKey:@"chain"];
-    if ([chain isKindOfClass:NSArray.class]) {
+    if (RetainPtr chain = dynamic_objc_cast<NSArray>([dict objectForKey:@"chain"])) {
         Vector<CoreIPCData> vector;
         vector.reserveCapacity([chain count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -366,8 +360,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         secTrustData.chain = WTF::move(vector);
     }
 
-    RetainPtr<NSArray> details = [dict objectForKey:@"details"];
-    if ([details isKindOfClass:NSArray.class]) {
+    if (RetainPtr details = dynamic_objc_cast<NSArray>([dict objectForKey:@"details"])) {
         Vector<CoreIPCSecTrustData::Detail> vector;
         vector.reserveCapacity([details count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -400,8 +393,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         secTrustData.details = WTF::move(vector);
     }
 
-    RetainPtr<NSDictionary> info = [dict objectForKey:@"info"];
-    if ([info isKindOfClass:NSDictionary.class]) {
+    if (RetainPtr info = dynamic_objc_cast<NSDictionary>([dict objectForKey:@"info"])) {
         CoreIPCSecTrustData::InfoType vector;
         vector.reserveCapacity([info count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -413,16 +405,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
             CoreIPCString k { key };
             id value = [info objectForKey:key];
-            if ([value isKindOfClass:NSDate.class]) {
-                CoreIPCDate date { value };
+            if (RetainPtr dateValue = dynamic_objc_cast<NSDate>(value)) {
+                CoreIPCDate date { dateValue.get() };
                 CoreIPCSecTrustData::InfoOption v = WTF::move(date);
                 vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
-            } else if ([value isKindOfClass:NSString.class]) {
-                CoreIPCString s { value };
+            } else if (RetainPtr stringValue = dynamic_objc_cast<NSString>(value)) {
+                CoreIPCString s { stringValue.get() };
                 CoreIPCSecTrustData::InfoOption v = WTF::move(s);
                 vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
-            } else if ([value isKindOfClass:NSNumber.class]) {
-                RetainPtr<NSNumber> candidateBool = value;
+            } else if (RetainPtr candidateBool = dynamic_objc_cast<NSNumber>(value)) {
                 if ([candidateBool isEqualToNumber:@YES] || [candidateBool isEqualToNumber:@NO]) {
                     bool v = [candidateBool boolValue];
                     vector.append(std::make_pair(WTF::move(k), v));
@@ -431,8 +422,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     ASSERT_NOT_REACHED();
                     return;
                 }
-            } else if ([value isKindOfClass:NSArray.class]) {
-                RetainPtr<NSArray> revocationInfoArray = value;
+            } else if (RetainPtr revocationInfoArray = dynamic_objc_cast<NSArray>(value)) {
                 CoreIPCSecTrustData::RevocationInfoArray revocationInfo;
                 revocationInfo.reserveCapacity([revocationInfoArray count]);
 
@@ -476,8 +466,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                             CoreIPCString subKeyString { subKey };
                             id subValue = [subDict objectForKey:subKey];
 
-                            if ([subValue isKindOfClass:NSNumber.class]) {
-                                RetainPtr<NSNumber> number = subValue;
+                            if (RetainPtr number = dynamic_objc_cast<NSNumber>(subValue)) {
                                 if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
                                     CoreIPCSecTrustData::RevocationInfoSubDictValue v = [number boolValue];
                                     revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
@@ -486,12 +475,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                                     CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(n);
                                     revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
                                 }
-                            } else if ([subValue isKindOfClass:NSData.class]) {
-                                CoreIPCData data { subValue };
+                            } else if (RetainPtr subDataValue = dynamic_objc_cast<NSData>(subValue)) {
+                                CoreIPCData data { subDataValue.get() };
                                 CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(data);
                                 revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
-                            } else if ([subValue isKindOfClass:NSDate.class]) {
-                                CoreIPCDate date { subValue };
+                            } else if (RetainPtr subDateValue = dynamic_objc_cast<NSDate>(subValue)) {
+                                CoreIPCDate date { subDateValue.get() };
                                 CoreIPCSecTrustData::RevocationInfoSubDictValue v = WTF::move(date);
                                 revocationSubDict.append(std::make_pair(WTF::move(subKeyString), WTF::move(v)));
                             } else {
@@ -510,8 +499,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
                 CoreIPCSecTrustData::InfoOption v = WTF::move(revocationInfo);
                 vector.append(std::make_pair(WTF::move(k), WTF::move(v)));
-            } else if ([value isKindOfClass:NSDictionary.class]) {
-                RetainPtr<NSDictionary> subDict = value;
+            } else if (RetainPtr subDict = dynamic_objc_cast<NSDictionary>(value)) {
                 CoreIPCSecTrustData::InfoSubDict infoSubDict;
                 infoSubDict.reserveCapacity([subDict count]);
                 // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -541,15 +529,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         secTrustData.info = WTF::move(vector);
     }
 
-    RetainPtr<NSNumber> keychainsAllowed = [dict objectForKey:@"keychainsAllowed"];
-    if (![keychainsAllowed isKindOfClass:NSNumber.class]) {
+    RetainPtr keychainsAllowed = dynamic_objc_cast<NSNumber>([dict objectForKey:@"keychainsAllowed"]);
+    if (!keychainsAllowed) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust 'keychainsAllowed' value is nil or not an NSNumber and not optional");
         return;
     }
     secTrustData.keychainsAllowed = [keychainsAllowed boolValue];
 
-    RetainPtr<NSArray> policies = [dict objectForKey:@"policies"];
-    if ([policies isKindOfClass:NSArray.class]) {
+    if (RetainPtr policies = dynamic_objc_cast<NSArray>([dict objectForKey:@"policies"])) {
         Vector<CoreIPCSecTrustData::PolicyType> outerVector;
         outerVector.reserveCapacity([policies count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -569,9 +556,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     return;
                 }
                 id value = [policy objectForKey:key];
-                if ([value isKindOfClass:NSString.class]) {
+                if (RetainPtr stringValue = dynamic_objc_cast<NSString>(value)) {
                     CoreIPCString k { key };
-                    CoreIPCSecTrustData::PolicyValue v = CoreIPCString(value);
+                    CoreIPCSecTrustData::PolicyValue v = CoreIPCString(stringValue.get());
                     auto p = std::make_pair(WTF::move(k), WTF::move(v));
                     innerVector.append(WTF::move(p));
                 } else if ([value isKindOfClass:NSDictionary.class]) {
@@ -610,8 +597,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     optionalDataError = optionalArrayOfDataHelper(secTrustData.trustedLogs, dict, @"trustedLogs");
     RETURN_IF_OPTIONAL_ERROR;
 
-    RetainPtr<NSArray> exceptions = [dict objectForKey:@"exceptions"];
-    if ([exceptions isKindOfClass:NSArray.class]) {
+    if (RetainPtr exceptions = dynamic_objc_cast<NSArray>([dict objectForKey:@"exceptions"])) {
         Vector<CoreIPCSecTrustData::ExceptionType> vector;
         vector.reserveCapacity([exceptions count]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
@@ -632,13 +618,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 }
                 CoreIPCString k { key };
                 id value = [exception objectForKey:key];
-                if ([value isKindOfClass:NSData.class]) {
-                    CoreIPCData data { value };
+                if (RetainPtr dataValue = dynamic_objc_cast<NSData>(value)) {
+                    CoreIPCData data { dataValue.get() };
                     Variant<CoreIPCNumber, CoreIPCData, bool> v = WTF::move(data);
                     auto p = std::make_pair(WTF::move(k), WTF::move(v));
                     innerVector.append(WTF::move(p));
-                } else if ([value isKindOfClass:NSNumber.class]) {
-                    RetainPtr<NSNumber> number = value;
+                } else if (RetainPtr number = dynamic_objc_cast<NSNumber>(value)) {
                     if ([number isEqualToNumber:@YES] || [number isEqualToNumber:@NO]) {
                         bool v = [number boolValue];
                         auto p = std::make_pair(WTF::move(k), v);

@@ -269,7 +269,7 @@ public:
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
     RetainPtr<NSObject<NSSecureCoding>> toNSObject();
-    static RefPtr<API::Object> fromNSObject(NSObject<NSSecureCoding> *);
+    static RefPtr<API::Object> fromNSObject(id);
 
     static API::Object& fromWKObjectExtraSpace(id <WKObject>);
 #endif

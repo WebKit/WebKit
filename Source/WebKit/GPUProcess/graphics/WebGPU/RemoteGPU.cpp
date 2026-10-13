@@ -387,7 +387,7 @@ void RemoteGPU::createModelBacking(unsigned width, unsigned height, WebModel::Im
 void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    RefPtr gpu = static_cast<WebCore::WebGPU::GPU*>(m_backing.get());
+    RefPtr gpu = m_backing;
     if (!gpu) {
         completionHandler(false, false);
         return;

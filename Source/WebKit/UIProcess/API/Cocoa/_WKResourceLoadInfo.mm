@@ -32,6 +32,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKResourceLoadInfoInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 static _WKResourceLoadInfoResourceType NODELETE toWKResourceLoadInfoResourceType(WebKit::ResourceLoadInfo::Type type)
 {
@@ -150,49 +151,49 @@ static _WKResourceLoadInfoResourceType NODELETE toWKResourceLoadInfoResourceType
     if (!(self = [super init]))
         return nil;
 
-    RetainPtr<NSNumber> resourceLoadID = [coder decodeObjectOfClass:[NSNumber class] forKey:@"resourceLoadID"];
+    RetainPtr<NSNumber> resourceLoadID = checked_objc_cast<NSNumber>([coder decodeObjectOfClass:[NSNumber class] forKey:@"resourceLoadID"]);
     if (!resourceLoadID) {
         [self release];
         return nil;
     }
 
-    RetainPtr<_WKFrameHandle> frame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"frame"];
+    RetainPtr<_WKFrameHandle> frame = checked_objc_cast<_WKFrameHandle>([coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"frame"]);
     if (!frame) {
         [self release];
         return nil;
     }
 
-    RetainPtr<_WKFrameHandle> parentFrame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"parentFrame"];
+    RetainPtr<_WKFrameHandle> parentFrame = checked_objc_cast<_WKFrameHandle>([coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"parentFrame"]);
     // parentFrame is nullable, so decoding null is ok.
 
-    RetainPtr<NSUUID> documentID = [coder decodeObjectOfClass:NSUUID.class forKey:@"documentID"];
+    RetainPtr<NSUUID> documentID = checked_objc_cast<NSUUID>([coder decodeObjectOfClass:NSUUID.class forKey:@"documentID"]);
     // documentID is nullable, so decoding null is ok.
 
-    RetainPtr<NSURL> originalURL = [coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"];
+    RetainPtr<NSURL> originalURL = checked_objc_cast<NSURL>([coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"]);
     if (!originalURL) {
         [self release];
         return nil;
     }
 
-    RetainPtr<NSString> originalHTTPMethod = [coder decodeObjectOfClass:[NSString class] forKey:@"originalHTTPMethod"];
+    RetainPtr<NSString> originalHTTPMethod = checked_objc_cast<NSString>([coder decodeObjectOfClass:[NSString class] forKey:@"originalHTTPMethod"]);
     if (!originalHTTPMethod) {
         [self release];
         return nil;
     }
 
-    RetainPtr<NSDate> eventTimestamp = [coder decodeObjectOfClass:[NSDate class] forKey:@"eventTimestamp"];
+    RetainPtr<NSDate> eventTimestamp = checked_objc_cast<NSDate>([coder decodeObjectOfClass:[NSDate class] forKey:@"eventTimestamp"]);
     if (!eventTimestamp) {
         [self release];
         return nil;
     }
 
-    RetainPtr<NSNumber> loadedFromCache = [coder decodeObjectOfClass:[NSNumber class] forKey:@"loadedFromCache"];
+    RetainPtr<NSNumber> loadedFromCache = checked_objc_cast<NSNumber>([coder decodeObjectOfClass:[NSNumber class] forKey:@"loadedFromCache"]);
     if (!loadedFromCache) {
         [self release];
         return nil;
     }
 
-    RetainPtr<NSNumber> type = [coder decodeObjectOfClass:[NSNumber class] forKey:@"type"];
+    RetainPtr<NSNumber> type = checked_objc_cast<NSNumber>([coder decodeObjectOfClass:[NSNumber class] forKey:@"type"]);
     if (!type) {
         [self release];
         return nil;

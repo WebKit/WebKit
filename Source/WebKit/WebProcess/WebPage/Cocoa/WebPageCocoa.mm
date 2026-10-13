@@ -160,6 +160,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
@@ -400,7 +401,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-        RetainPtr<NSFont> font = [scaledAttributes objectForKey:NSFontAttributeName];
+        RetainPtr font = dynamic_objc_cast<NSFont>([scaledAttributes objectForKey:NSFontAttributeName]);
         if (font)
             font = [fontManager convertFont:font.get() toSize:font.get().pointSize * pageScaleFactor()];
         if (font)
@@ -676,7 +677,7 @@ void WebPage::resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier fra
     if (RetainPtr coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper:protect(webFrame->coreLocalFrame()).get()]) {
         if (RetainPtr hitTestResult = [coreObject accessibilityHitTest:point]) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            completionHandler([hitTestResult accessibilityAttributeValue:@"AXInfoStringForTesting"]);
+            completionHandler(dynamic_objc_cast<NSString>([hitTestResult accessibilityAttributeValue:@"AXInfoStringForTesting"]));
             ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
@@ -2485,9 +2486,9 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp, bool flushSucceed
 #endif
 }
 
-bool WebPage::isSpeaking() const
+bool WebPage::isSpeaking()
 {
-    auto sendResult = const_cast<WebPage*>(this)->sendSync(Messages::WebPageProxy::GetIsSpeaking());
+    auto sendResult = sendSync(Messages::WebPageProxy::GetIsSpeaking());
     auto [result] = sendResult.takeReplyOr(false);
     return result;
 }

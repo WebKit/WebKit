@@ -999,10 +999,10 @@ WebCore::NowPlayingManager& GPUProcess::nowPlayingManager()
 }
 
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
-RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager() const
+RemoteAudioSessionProxyManager& GPUProcess::audioSessionManager()
 {
     if (!m_audioSessionManager)
-        m_audioSessionManager = RemoteAudioSessionProxyManager::create(const_cast<GPUProcess&>(*this));
+        m_audioSessionManager = RemoteAudioSessionProxyManager::create(*this);
     return *m_audioSessionManager;
 }
 #endif

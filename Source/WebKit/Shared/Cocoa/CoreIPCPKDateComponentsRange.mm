@@ -29,6 +29,8 @@
 #if USE(PASSKIT) && HAVE(WK_SECURE_CODING_PKDATECOMPONENTSRANGE)
 
 #import "ArgumentCodersCocoa.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebKit {
@@ -49,7 +51,7 @@ RetainPtr<id> CoreIPCPKDateComponentsRange::toID() const
         return { };
 
     return adoptNS([[PAL::getPKDateComponentsRangeClassSingleton() alloc]
-        initWithStartDateComponents:m_data->startDateComponents.toID().get()
+        initWithStartDateComponents:checked_objc_cast<NSDateComponents>(m_data->startDateComponents.toID().get())
         endDateComponents:m_data->endDateComponents.toID().get()]);
 }
 

@@ -28,6 +28,7 @@
 
 #import "ArgumentCoders.h"
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLPROTECTIONSPACE)
 
@@ -41,9 +42,8 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCNSURLProtectionSpace);
 
 #define SET_OBJECT(NAME, CLASS, WRAPPER)    \
-    id NAME = dict[@#NAME];                 \
-    if ([NAME isKindOfClass:CLASS.class]) { \
-        auto var = WRAPPER(NAME);           \
+    if (RetainPtr NAME = dynamic_objc_cast<CLASS>(dict[@#NAME])) { \
+        auto var = WRAPPER(NAME.get());     \
         m_data.NAME = WTF::move(var);         \
     }
 

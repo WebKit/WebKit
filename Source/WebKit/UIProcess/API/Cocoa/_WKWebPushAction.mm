@@ -71,20 +71,20 @@ static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
 
 + (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary
 {
-    RetainPtr<NSNumber> version = dictionary[WebKit::WebPushD::pushActionVersionKeySingleton()];
-    if (!version || ![version isKindOfClass:[NSNumber class]])
+    RetainPtr version = dynamic_objc_cast<NSNumber>(dictionary[WebKit::WebPushD::pushActionVersionKeySingleton()]);
+    if (!version)
         return nil;
 
-    RetainPtr<NSString> pushPartition = dictionary[WebKit::WebPushD::pushActionPartitionKeySingleton()];
-    if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
+    RetainPtr pushPartition = dynamic_objc_cast<NSString>(dictionary[WebKit::WebPushD::pushActionPartitionKeySingleton()]);
+    if (!pushPartition)
         return nil;
 
     RetainPtr uuid = uuidFromPushPartition(pushPartition.get());
     if (!uuid)
         return nil;
 
-    RetainPtr<NSString> type = dictionary[WebKit::WebPushD::pushActionTypeKeySingleton()];
-    if (!type || ![type isKindOfClass:[NSString class]])
+    RetainPtr type = dynamic_objc_cast<NSString>(dictionary[WebKit::WebPushD::pushActionTypeKeySingleton()]);
+    if (!type)
         return nil;
 
     RetainPtr result = adoptNS([[_WKWebPushAction alloc] init]);

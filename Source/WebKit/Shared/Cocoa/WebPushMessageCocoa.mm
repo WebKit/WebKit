@@ -27,6 +27,7 @@
 #import "WebPushMessage.h"
 
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -38,8 +39,8 @@ namespace WebKit {
 
 std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dictionary)
 {
-    RetainPtr url = [dictionary objectForKey:WebKitPushRegistrationURLKey];
-    if (!url || ![url isKindOfClass:[NSURL class]])
+    RetainPtr url = dynamic_objc_cast<NSURL>([dictionary objectForKey:WebKitPushRegistrationURLKey]);
+    if (!url)
         return std::nullopt;
 
     RetainPtr<id> pushData = [dictionary objectForKey:WebKitPushDataKey];
@@ -49,20 +50,20 @@ std::optional<WebPushMessage> WebPushMessage::fromDictionary(NSDictionary *dicti
     if (!isNull && !isData)
         return std::nullopt;
 
-    RetainPtr<NSString> pushPartition = [dictionary objectForKey:WebKitPushPartitionKey];
-    if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
+    RetainPtr pushPartition = dynamic_objc_cast<NSString>([dictionary objectForKey:WebKitPushPartitionKey]);
+    if (!pushPartition)
         return std::nullopt;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    RetainPtr<id> payloadDictionary = [dictionary objectForKey:WebKitNotificationPayloadKey];
-    isNull = [payloadDictionary isEqual:[NSNull null]];
-    BOOL isCorrectType = [payloadDictionary isKindOfClass:[NSDictionary class]];
+    RetainPtr<id> payloadObject = [dictionary objectForKey:WebKitNotificationPayloadKey];
+    isNull = [payloadObject isEqual:[NSNull null]];
+    RetainPtr payloadDictionary = dynamic_objc_cast<NSDictionary>(payloadObject);
 
-    if (!isNull && !isCorrectType)
+    if (!isNull && !payloadDictionary)
         return std::nullopt;
 
     std::optional<WebCore::NotificationPayload> payload;
-    if (isCorrectType) {
+    if (payloadDictionary) {
         payload = WebCore::NotificationPayload::fromDictionary(payloadDictionary.get());
         if (!payload)
             return std::nullopt;

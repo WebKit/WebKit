@@ -316,12 +316,12 @@ static void applyVisualStylingToLayer(CALayer *layer, const AppleVisualEffectDat
     // Despite the name, MTVisualStylingCreateDictionaryRepresentation returns an autoreleased object.
     SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr visualStylingDescription = PAL::softLink_CoreMaterial_MTVisualStylingCreateDictionaryRepresentation(recipe.get(), materialVisualStyleCategoryForAppleVisualEffect(effectData.effect), materialVisualStyleForAppleVisualEffect(effectData.effect), nil);
 
-    RetainPtr<NSArray<NSDictionary<NSString *, id> *>> filterDescriptionsArray = [visualStylingDescription objectForKey:@"filters"];
+    RetainPtr<NSArray<NSDictionary<NSString *, id> *>> filterDescriptionsArray = dynamic_objc_cast<NSArray>([visualStylingDescription objectForKey:@"filters"]);
     RetainPtr filterDescription = [filterDescriptionsArray firstObject];
 
     NSArray *filters = nil;
     if (filterDescription) {
-        RetainPtr<NSValue> colorMatrix = [filterDescription objectForKey:kCAFilterInputColorMatrix];
+        RetainPtr colorMatrix = dynamic_objc_cast<NSValue>([filterDescription objectForKey:kCAFilterInputColorMatrix]);
         RetainPtr filter = [CAFilter filterWithType:kCAFilterVibrantColorMatrix];
         [filter setValue:colorMatrix.get() forKey:kCAFilterInputColorMatrix];
         filters = @[ filter.get() ];

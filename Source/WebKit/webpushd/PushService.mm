@@ -41,6 +41,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
@@ -865,8 +866,8 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
 
     @autoreleasepool {
         message.topic = topic;
-        RetainPtr<NSString> contentEncoding = userInfo[@"content_encoding"];
-        RetainPtr<NSString> payloadBase64 = userInfo[@"payload"];
+        RetainPtr contentEncoding = dynamic_objc_cast<NSString>(userInfo[@"content_encoding"]);
+        RetainPtr payloadBase64 = dynamic_objc_cast<NSString>(userInfo[@"payload"]);
 
         if (!contentEncoding.get().length || !payloadBase64.get().length) {
             message.encoding = ContentEncoding::Empty;
@@ -878,8 +879,8 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
         else if ([contentEncoding isEqualToString:@"aesgcm"]) {
             message.encoding = ContentEncoding::AESGCM;
 
-            RetainPtr<NSString> serverPublicKeyBase64URL = userInfo[@"as_publickey"];
-            RetainPtr<NSString> saltBase64URL = userInfo[@"as_salt"];
+            RetainPtr serverPublicKeyBase64URL = dynamic_objc_cast<NSString>(userInfo[@"as_publickey"]);
+            RetainPtr saltBase64URL = dynamic_objc_cast<NSString>(userInfo[@"as_salt"]);
             if (!serverPublicKeyBase64URL || !saltBase64URL) {
                 RELEASE_LOG_ERROR(Push, "Dropping aesgcm-encrypted push without required server key and salt");
                 return std::nullopt;

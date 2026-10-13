@@ -206,7 +206,7 @@ protected:
     ColorSpace colorSpace() override = 0;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override = 0;
     void setPreload(MediaPlayer::Preload) override;
-    PlatformLayer* platformLayer() const override { return 0; }
+    PlatformLayer* platformLayer() override { return 0; }
     bool supportsAcceleratedRendering() const override = 0;
     void acceleratedRenderingStateChanged() override;
     bool shouldMaintainAspectRatio() const { return m_shouldMaintainAspectRatio; }
@@ -277,6 +277,7 @@ protected:
 
     virtual bool hasContextRenderer() const = 0;
     virtual bool hasLayerRenderer() const = 0;
+    virtual bool hasVideoInlineLayer() const = 0;
 
     virtual void updateVideoLayerGravity() = 0;
     virtual void resolvedURLChanged() = 0;

@@ -86,7 +86,7 @@ public:
 private:
     friend class WebExtensionContextProxy;
 
-    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, const String& name)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, const String& name)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(WebExtensionContentWorldType::Main)
         , m_name(name)
@@ -94,7 +94,7 @@ private:
         ASSERT(isQuarantined());
     }
 
-    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -114,7 +114,7 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)
@@ -125,7 +125,7 @@ private:
         add();
     }
 
-    explicit WebExtensionAPIPort(const WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
+    explicit WebExtensionAPIPort(WebExtensionAPIObject& parentObject, WebPageProxyIdentifier owningPageProxyIdentifier, WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters)
         : WebExtensionAPIObject(parentObject)
         , m_targetContentWorldType(targetContentWorldType)
         , m_owningPageProxyIdentifier(owningPageProxyIdentifier)

@@ -276,7 +276,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
     if (!backend)
         return nullptr;
     if (backend->canMapBackingStore()) {
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        flushDrawingContextImpl();
         return ImageBuffer::copyNativeImage();
     }
     RefPtr renderingBackend = m_renderingBackend.get();
@@ -287,7 +287,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
     // This read-back bypasses flushDrawingContext(), so send any buffered line
     // strokes into the stream before the (in-order) CopyNativeImage message.
     sendPendingDrawsIfNecessary();
-    const_cast<RemoteImageBufferProxy*>(this)->send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier()));
+    send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier()));
     return nativeImage;
 }
 
@@ -297,7 +297,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::createNativeImageReference() const
     if (!backend)
         return { };
     if (backend->canMapBackingStore()) {
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
+        flushDrawingContextImpl();
         return ImageBuffer::createNativeImageReference();
     }
     return copyNativeImage();
@@ -349,7 +349,7 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
     // bypasses flushDrawingContext()), so send any buffered line strokes first.
     sendPendingDrawsIfNecessary();
     if (backend->canMapBackingStore()) {
-        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
+        flushDrawingContextImpl();
         return ImageBuffer::getPixelBuffer(destinationFormat, sourceRect, allocator);
     }
     auto pixelBuffer = allocator.createPixelBuffer(destinationFormat, sourceRect.size());
@@ -396,7 +396,7 @@ void RemoteImageBufferProxy::putPixelBuffer(const PixelBufferSourceView& pixelBu
     if (backend->canMapBackingStore()) {
         // Simulate a write so that pending reads migrate the data off of the mapped buffer.
         context().fillRect({ });
-        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
+        flushDrawingContext();
         ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
         return;
     }
@@ -432,6 +432,11 @@ void RemoteImageBufferProxy::transformToColorSpace(const ColorSpace& colorSpace)
 }
 
 void RemoteImageBufferProxy::flushDrawingContext()
+{
+    flushDrawingContextImpl();
+}
+
+void RemoteImageBufferProxy::flushDrawingContextImpl() const
 {
     if (!m_renderingBackend) [[unlikely]]
         return;

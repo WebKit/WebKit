@@ -1035,7 +1035,7 @@ auto WebFrameProxy::traversePrevious(CanWrap canWrap) -> TraversalResult
 
 RefPtr<WebFrameProxy> WebFrameProxy::deepLastChild()
 {
-    auto* result = static_cast<WebFrameProxy*>(this);
+    WebFrameProxy* result = this;
     for (auto* last = lastChild(); last; last = last->lastChild())
         result = last;
     return result;

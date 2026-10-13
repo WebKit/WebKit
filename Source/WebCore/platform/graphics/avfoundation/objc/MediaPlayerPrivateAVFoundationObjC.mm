@@ -577,6 +577,11 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
     return m_haveBeenAskedToCreateLayer;
 }
 
+bool MediaPlayerPrivateAVFoundationObjC::hasVideoInlineLayer() const
+{
+    return !!m_videoLayerManager->videoInlineLayer();
+}
+
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
     return m_videoOutput || m_imageGenerator;
@@ -1316,7 +1321,7 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;
 }
 
-PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
+PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer()
 {
     return m_videoLayerManager->videoInlineLayer();
 }

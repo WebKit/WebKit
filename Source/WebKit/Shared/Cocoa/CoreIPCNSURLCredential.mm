@@ -27,6 +27,7 @@
 #import "CoreIPCNSURLCredential.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSURLCredential(WKSecureCoding)
 - (NSDictionary *)_webKitPropertyListData;
@@ -34,9 +35,8 @@
 @end
 
 #define SET_MDATA(NAME, CLASS, WRAPPER)     \
-    id NAME = dict[@#NAME];                 \
-    if ([NAME isKindOfClass:CLASS.class]) { \
-        auto var = WRAPPER(NAME);           \
+    if (RetainPtr NAME = dynamic_objc_cast<CLASS>(dict[@#NAME])) { \
+        auto var = WRAPPER(NAME.get());     \
         m_data.NAME = WTF::move(var);         \
     }
 
@@ -87,14 +87,14 @@ CoreIPCNSURLCredential::CoreIPCNSURLCredential(NSURLCredential *credential)
                 break;
             }
             std::optional<Variant<CoreIPCNumber, CoreIPCString, CoreIPCDate>> option;
-            if ([value isKindOfClass:NSString.class])
-                option = CoreIPCString(value);
-            if ([value isKindOfClass:NSNumber.class])
-                option = CoreIPCNumber(value);
-            if ([value isKindOfClass:NSDate.class])
-                option = CoreIPCDate(value);
+            if (RetainPtr string = dynamic_objc_cast<NSString>(value))
+                option = CoreIPCString(string.get());
+            if (RetainPtr number = dynamic_objc_cast<NSNumber>(value))
+                option = CoreIPCNumber(number.get());
+            if (RetainPtr date = dynamic_objc_cast<NSDate>(value))
+                option = CoreIPCDate(date.get());
             if (option) {
-                auto k = CoreIPCString(key);
+                auto k = CoreIPCString(checked_objc_cast<NSString>(key));
                 vector.append(std::make_pair(WTF::move(k), WTF::move(*option)));
             }
         }

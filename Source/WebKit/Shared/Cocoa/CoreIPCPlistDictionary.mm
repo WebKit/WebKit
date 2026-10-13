@@ -37,6 +37,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -62,7 +63,7 @@ CoreIPCPlistDictionary::CoreIPCPlistDictionary(NSDictionary *dictionary)
             continue;
         }
 
-        m_keyValuePairs.append({ CoreIPCString(key), CoreIPCPlistObject(value.get()) });
+        m_keyValuePairs.append({ CoreIPCString(checked_objc_cast<NSString>(key)), CoreIPCPlistObject(value.get()) });
     }
 }
 

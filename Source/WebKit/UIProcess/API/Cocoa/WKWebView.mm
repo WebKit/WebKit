@@ -911,7 +911,7 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     if (!(self = [super initWithCoder:coder]))
         return nil;
 
-    RetainPtr configuration = [coder decodeObjectOfClass:[WKWebViewConfiguration class] forKey:@"configuration"];
+    RetainPtr configuration = checked_objc_cast<WKWebViewConfiguration>([coder decodeObjectOfClass:[WKWebViewConfiguration class] forKey:@"configuration"]);
     [self _initializeWithConfiguration:configuration.get()];
 
     self.allowsBackForwardNavigationGestures = [coder decodeBoolForKey:@"allowsBackForwardNavigationGestures"];
@@ -1148,7 +1148,7 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
     RetainPtr dictionary = [unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSArray class], [NSString class], [NSNumber class], [NSData class], [NSURL class], [NSURLRequest class], nil] forKey:@"NSKeyedArchiveRootObjectKey"];
     [unarchiver finishDecoding];
-    RetainPtr path = [dictionary objectForKey:@"NSURLSessionResumeInfoLocalPath"];
+    RetainPtr path = dynamic_objc_cast<NSString>([dictionary objectForKey:@"NSURLSessionResumeInfoLocalPath"]);
 
     if (!path)
         [NSException raise:NSInvalidArgumentException format:@"Invalid resume data"];
@@ -7359,7 +7359,7 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
         WebKit::TextExtractionFilter::singleton().prewarm();
 
     if (filterUsingRules) {
-        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), string = adoptNS([string copy]), completionHandler = makeBlockPtr(completionHandler), options]() mutable {
+        [self _ensureTextExtractionFilterRulesWithCompletionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), string = checked_objc_cast<NSString>(adoptNS([string copy])), completionHandler = makeBlockPtr(completionHandler), options]() mutable {
             RetainPtr strongSelf = weakSelf.get();
             if (!strongSelf)
                 return completionHandler(string.get());

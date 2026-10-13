@@ -358,6 +358,7 @@ private:
     void positionInformationDidChange(const InteractionInformationAtPosition&, std::optional<WebCore::FrameIdentifier>) override;
 
     bool isViewVisible(NSView *, NSWindow *) const final;
+    bool isPageClientImpl() const final { return true; }
 
     WeakObjCPtr<NSView> m_view;
     WeakPtr<WebViewImpl> m_impl;
@@ -369,5 +370,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::PageClientImpl)
+    static bool isType(const WebKit::PageClient& client) { return client.isPageClientImpl(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(MAC)

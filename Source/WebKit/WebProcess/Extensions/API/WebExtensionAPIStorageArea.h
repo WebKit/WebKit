@@ -64,7 +64,7 @@ public:
     WebExtensionAPIEvent& onChanged();
 
 private:
-    explicit WebExtensionAPIStorageArea(const WebExtensionAPIObject& parentObject, WebExtensionDataType type)
+    explicit WebExtensionAPIStorageArea(WebExtensionAPIObject& parentObject, WebExtensionDataType type)
         : WebExtensionAPIObject(parentObject)
         , m_type(type)
     {

@@ -57,6 +57,7 @@
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/XPCExtras.h>
 #import <wtf/text/MakeString.h>
@@ -506,7 +507,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
         if (!obj || ![obj isKindOfClass:[NSDictionary class]])
             return replySender(false);
 
-        daemon.m_pushService->didReceivePushMessage(retainPtr(obj[@"topic"]).get(), retainPtr(obj[@"userInfo"]).get(), [replySender = WTF::move(replySender)]() mutable {
+        daemon.m_pushService->didReceivePushMessage(protect(dynamic_objc_cast<NSString>(obj[@"topic"])), protect(dynamic_objc_cast<NSDictionary>(obj[@"userInfo"])), [replySender = WTF::move(replySender)] mutable {
             replySender(true);
         });
     });

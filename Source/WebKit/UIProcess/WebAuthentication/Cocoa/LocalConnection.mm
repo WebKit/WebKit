@@ -252,7 +252,7 @@ RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
     // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
     SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr nsAttributesArray = bridge_cast(adoptCF(checked_cf_cast<CFArrayRef>(attributesArrayRef)));
     return [nsAttributesArray sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
-        return [retainPtr(b[(id)kSecAttrModificationDate]) compare:retainPtr(a[(id)kSecAttrModificationDate]).get()];
+        return [protect(checked_objc_cast<NSDate>(b[(id)kSecAttrModificationDate])) compare:protect(checked_objc_cast<NSDate>(a[(id)kSecAttrModificationDate]))];
     }];
 }
 

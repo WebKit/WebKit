@@ -99,6 +99,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URLParser.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
@@ -1256,12 +1257,12 @@ void WebExtensionContext::populateWindowsAndTabs()
         THROW_UNLESS([openWindows isKindOfClass:NSArray.class], @"Object returned by webExtensionController:openWindowsForExtensionContext: is not an array");
 
         for (id windowDelegate in openWindows)
-            didOpenWindow(getOrCreateWindow(windowDelegate), UpdateWindowOrder::No, SuppressEvents::Yes);
+            didOpenWindow(getOrCreateWindow(checked_objc_cast<WKWebExtensionWindow>(windowDelegate)), UpdateWindowOrder::No, SuppressEvents::Yes);
     }
 
     if ([delegate respondsToSelector:@selector(webExtensionController:focusedWindowForExtensionContext:)]) {
         id focusedWindow = [delegate webExtensionController:extensionController->wrapper() focusedWindowForExtensionContext:wrapper()];
-        didFocusWindow(focusedWindow ? getOrCreateWindow(focusedWindow).ptr() : nullptr, SuppressEvents::Yes);
+        didFocusWindow(focusedWindow ? getOrCreateWindow(checked_objc_cast<WKWebExtensionWindow>(focusedWindow)).ptr() : nullptr, SuppressEvents::Yes);
     }
 }
 

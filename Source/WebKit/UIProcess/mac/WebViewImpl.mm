@@ -521,13 +521,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
     if (CheckedPtr impl = _impl.get())
-        impl->windowDidBecomeKey(retainPtr([notification object]).get());
+        impl->windowDidBecomeKey(protect(checked_objc_cast<NSWindow>([notification object])));
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification
 {
     if (CheckedPtr impl = _impl.get())
-        impl->windowDidResignKey(retainPtr([notification object]).get());
+        impl->windowDidResignKey(protect(checked_objc_cast<NSWindow>([notification object])));
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
@@ -874,7 +874,7 @@ static const NSUInteger orderedListSegment = 2;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<id> segmentElement = NSAccessibilityUnignoredDescendant(insertListControl.get());
-    RetainPtr<NSArray> segments = [segmentElement accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    RetainPtr segments = dynamic_objc_cast<NSArray>([segmentElement accessibilityAttributeValue:NSAccessibilityChildrenAttribute]);
     ASSERT(segments.get().count == 3);
     [retainPtr(segments.get()[noListSegment]) accessibilitySetOverrideValue:WebCore::insertListTypeNone().createNSString().get() forAttribute:NSAccessibilityDescriptionAttribute];
     [retainPtr(segments.get()[unorderedListSegment]) accessibilitySetOverrideValue:WebCore::insertListTypeBulletedAccessibilityTitle().createNSString().get() forAttribute:NSAccessibilityDescriptionAttribute];
@@ -1353,7 +1353,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
     , m_flagsChangedEventMonitorTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:flagsChangedEventMonitorTrackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
 {
-    static_cast<PageClientImpl&>(m_pageClient.get()).setImpl(*this);
+    downcast<PageClientImpl>(m_pageClient.get()).setImpl(*this);
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelectionSingleton() returnTypes:PasteboardTypes::forEditingSingleton()];
@@ -2918,7 +2918,7 @@ void WebViewImpl::setFontForWebView(NSFont *font, id sender)
     changes.setBold(fontTraits & NSBoldFontMask);
     changes.setItalic(fontTraits & NSItalicFontMask);
 
-    if (RetainPtr<NSString> textStyleAttribute = [retainPtr(font.fontDescriptor) objectForKey:(__bridge NSString *)kCTFontDescriptorTextStyleAttribute])
+    if (RetainPtr textStyleAttribute = dynamic_objc_cast<NSString>([protect(font.fontDescriptor) objectForKey:(__bridge NSString *)kCTFontDescriptorTextStyleAttribute]))
         changes.setFontFamily(textStyleAttribute.get());
 
     m_page->changeFont(WTF::move(changes));
@@ -3142,7 +3142,7 @@ bool WebViewImpl::writeSelectionToPasteboard(NSPasteboard *pasteboard, NSArray *
         if (wantsPlainText)
             [pasteboard setString:m_page->stringSelectionForPasteboard().createNSString().get() forType:WebCore::legacyStringPasteboardTypeSingleton()];
         else {
-            RetainPtr type = [types objectAtIndex:i];
+            RetainPtr type = checked_objc_cast<NSString>([types objectAtIndex:i]);
             RefPtr<WebCore::SharedBuffer> buffer = m_page->dataSelectionForPasteboard(type.get());
             [pasteboard setData:buffer ? buffer->createNSData().get() : nil forType:type.get()];
         }
@@ -6116,8 +6116,9 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
 
     bool registerUndoGroup = false;
     if (isAttributedString) {
-        WebCore::collectDictationTextAlternatives(string, dictationAlternatives);
-        registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
+        RetainPtr attributedString = checked_objc_cast<NSAttributedString>(string);
+        WebCore::collectDictationTextAlternatives(attributedString, dictationAlternatives);
+        registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(attributedString);
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
         text = [string string];
     } else
@@ -6297,7 +6298,7 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
         }
 
         NSUInteger origin = actualRange.location == notFound ? 0u : (NSUInteger)actualRange.location;
-        RetainPtr stagedString = adoptNS([attributedString mutableCopy]);
+        RetainPtr stagedString = checked_objc_cast<NSMutableAttributedString>(adoptNS([attributedString mutableCopy]));
         if (!stagedString)
             stagedString = adoptNS([[NSMutableAttributedString alloc] init]);
         for (auto& command : queuedInsertions) {
@@ -6435,11 +6436,11 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     Vector<WebCore::CompositionHighlight> highlights;
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
         std::optional<WebCore::Color> backgroundHighlightColor;
-        if (RetainPtr<WebCore::CocoaColor> backgroundColor = attributes[NSBackgroundColorAttributeName])
+        if (RetainPtr backgroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSBackgroundColorAttributeName]))
             backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor.get());
 
         std::optional<WebCore::Color> foregroundHighlightColor;
-        if (RetainPtr<WebCore::CocoaColor> foregroundColor = attributes[NSForegroundColorAttributeName])
+        if (RetainPtr foregroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSForegroundColorAttributeName]))
             foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor.get());
 
         highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
@@ -6472,11 +6473,11 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
     Vector<WebCore::CompositionUnderline> underlines;
 
     [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        RetainPtr<NSNumber> style = [attributes objectForKey:NSUnderlineStyleAttributeName];
+        RetainPtr style = dynamic_objc_cast<NSNumber>([attributes objectForKey:NSUnderlineStyleAttributeName]);
         if (!style)
             return;
 
-        RetainPtr<NSColor> underlineColor = attributes[NSUnderlineColorAttributeName];
+        RetainPtr underlineColor = dynamic_objc_cast<NSColor>(attributes[NSUnderlineColorAttributeName]);
         bool isClear = [underlineColor isEqual:NSColor.clearColor];
 
         if (!isClear)
@@ -6503,10 +6504,10 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
         NSRange range;
         RetainPtr<NSDictionary> attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
 
-        if (RetainPtr<NSNumber> style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
+        if (RetainPtr style = dynamic_objc_cast<NSNumber>([attrs objectForKey:NSUnderlineStyleAttributeName])) {
             WebCore::Color color = WebCore::Color::black;
             WebCore::CompositionUnderlineColor compositionUnderlineColor = WebCore::CompositionUnderlineColor::TextColor;
-            if (RetainPtr<NSColor> colorAttribute = [attrs objectForKey:NSUnderlineColorAttributeName]) {
+            if (RetainPtr colorAttribute = dynamic_objc_cast<NSColor>([attrs objectForKey:NSUnderlineColorAttributeName])) {
                 color = WebCore::colorFromCocoaColor(colorAttribute.get());
                 compositionUnderlineColor = WebCore::CompositionUnderlineColor::GivenColor;
             }
@@ -6556,12 +6557,13 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
+        RetainPtr attributedString = checked_objc_cast<NSAttributedString>(string);
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-        if (shouldUseHighlightsForMarkedText(string))
-            highlights = compositionHighlights(string);
+        if (shouldUseHighlightsForMarkedText(attributedString))
+            highlights = compositionHighlights(attributedString);
         else
 #endif
-            underlines = compositionUnderlines(string);
+            underlines = compositionUnderlines(attributedString);
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
@@ -6651,7 +6653,7 @@ void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candid
         if (!checkedThis)
             return;
 
-        RetainPtr<NSValue> softSpaceRangeValue = resultDictionary[NSTextCheckingSoftSpaceRangeKey];
+        RetainPtr softSpaceRangeValue = dynamic_objc_cast<NSValue>(resultDictionary[NSTextCheckingSoftSpaceRangeKey]);
         if (!softSpaceRangeValue)
             return;
 
