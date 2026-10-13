@@ -452,7 +452,7 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
         return;
     }
 
-    if (format == VideoPixelFormat::RGBA) {
+    if (format == VideoPixelFormat::RGBA || format == VideoPixelFormat::RGBX) {
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
@@ -473,7 +473,7 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
         return;
     }
 
-    if (format == VideoPixelFormat::BGRA) {
+    if (format == VideoPixelFormat::BGRA || format == VideoPixelFormat::BGRX) {
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
