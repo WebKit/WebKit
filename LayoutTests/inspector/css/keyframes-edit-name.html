@@ -3,7 +3,9 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <style>
     @keyframes fade { from { opacity: 0.1; } to { opacity: 0.9; } }
+    @keyframes "fade out" { from { opacity: 0.2; } to { opacity: 0.8; } }
     #target { animation: fade 100s linear paused; }
+    #quoted-target { animation: "fade out" 100s linear paused; }
 </style>
 <script>
 function test() {
@@ -29,11 +31,46 @@ function test() {
             let after = "0.1";
             for (let i = 0; i < 50 && after !== "1"; ++i) after = await opacity();
             InspectorTest.expectEqual(after, "1", "Renaming `fade` unlinks the animation (opacity reverts to 1).");
+
+            for (let [headerText, description] of [
+                ['"fade"', "A quoted name"],
+                [String.raw`\66 ade`, "An escaped name"],
+                ["  fade  ", "A name with surrounding whitespace"],
+            ]) {
+                await grouping.setText(headerText);
+                let name = await InspectorTest.evaluateInPage("document.styleSheets[0].cssRules[0].name");
+                InspectorTest.expectEqual(name, "fade", `${description} should set the parsed animation name.`);
+                InspectorTest.expectEqual(await opacity(), "0.1", `${description} should relink the paused animation.`);
+            }
+        },
+    });
+    suite.addTestCase({
+        name: "CSS.Keyframes.RenameQuotedNameSupportsUndo",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#quoted-target");
+            let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(nodeId));
+            await domNodeStyles.refresh();
+
+            let grouping = domNodeStyles.keyframes[0].groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.KeyframesRule);
+            InspectorTest.expectEqual(grouping.text, '"fade out"', "The original header should retain the quotes around a name with spaces.");
+
+            await grouping.setText("temporary");
+            let target = grouping.ownerStyleSheet.owningTarget || WI.assumingMainTarget();
+            await target.DOMAgent.undo();
+            await domNodeStyles.refresh();
+
+            let name = await InspectorTest.evaluateInPage("document.styleSheets[0].cssRules[1].name");
+            InspectorTest.expectEqual(name, "fade out", "Undo should restore the parsed name with spaces.");
+            let restoredGrouping = domNodeStyles.keyframes[0]?.groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.KeyframesRule);
+            InspectorTest.expectEqual(restoredGrouping?.text, '"fade out"', "Undo should restore the original quoted header.");
+            let restoredOpacity = await InspectorTest.evaluateInPage('getComputedStyle(document.getElementById("quoted-target")).opacity');
+            InspectorTest.expectEqual(restoredOpacity, "0.2", "Undo should relink the paused animation.");
         },
     });
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
-<body onload="runTest()"><div id="target"></div></body>
+<body onload="runTest()"><div id="target"></div><div id="quoted-target"></div></body>
 </html>

@@ -1204,9 +1204,6 @@ ExceptionOr<String> InspectorStyleSheet::ruleHeaderText(const InspectorCSSId& id
     if (RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get()))
         return cssStyleRule->selectorText();
 
-    if (RefPtr cssKeyframesRule = dynamicDowncast<CSSKeyframesRule>(rule.get()))
-        return String(cssKeyframesRule->name());
-
     if (RefPtr cssKeyframeRule = dynamicDowncast<CSSKeyframeRule>(rule.get()))
         return cssKeyframeRule->keyText();
 
@@ -1242,8 +1239,13 @@ ExceptionOr<void> InspectorStyleSheet::setRuleHeaderText(const InspectorCSSId& i
         useCSSOMFastPath = true;
         cssStyleRule->setSelectorText(correctedHeaderText);
     } else if (RefPtr cssKeyframesRule = dynamicDowncast<CSSKeyframesRule>(rule.get())) {
+        auto tokenizer = CSSTokenizer::tryCreate(correctedHeaderText);
+        if (!tokenizer)
+            return Exception { ExceptionCode::SyntaxError };
         useCSSOMFastPath = true;
-        cssKeyframesRule->setName(AtomString { correctedHeaderText });
+        auto tokenRange = tokenizer->tokenRange();
+        tokenRange.consumeWhitespace();
+        cssKeyframesRule->setName(tokenRange.consume().value().toAtomString());
     } else if (RefPtr cssKeyframeRule = dynamicDowncast<CSSKeyframeRule>(rule.get())) {
         useCSSOMFastPath = true;
         cssKeyframeRule->setKeyText(correctedHeaderText);
