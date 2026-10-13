@@ -33,6 +33,7 @@ enum MediaStreamTrackState { "live", "ended" };
     PrivateIdentifier,
     PublicIdentifier,
     Exposed=(Window,DedicatedWorker),
+    SameAgentCluster,
     Transferable
 ] interface MediaStreamTrack : EventTarget {
     readonly attribute DOMString kind;

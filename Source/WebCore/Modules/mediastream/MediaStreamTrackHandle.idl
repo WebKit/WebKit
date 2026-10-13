@@ -28,6 +28,7 @@
     PublicIdentifier,
     EnabledBySetting=MediaStreamTrackHandleEnabled,
     Exposed=(Window,DedicatedWorker),
+    SameAgentCluster,
     Transferable
 ] interface MediaStreamTrackHandle {
     constructor(MediaStreamTrack track);

@@ -28,6 +28,7 @@
     EnabledForContext,
     Exposed=(Window,DedicatedWorker),
     LegacyNoInterfaceObject,
+    SameAgentCluster,
     SecureContext,
     Serializable
 ] interface TestSerializable {

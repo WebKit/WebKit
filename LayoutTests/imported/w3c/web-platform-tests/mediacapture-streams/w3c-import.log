@@ -66,6 +66,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-iframe-audio-transfer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-iframe-transfer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-init.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-transfer-cross-agent-cluster.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-transfer-to-shared-and-service-workers-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-transfer-to-shared-and-service-workers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-transfer-video.https.html

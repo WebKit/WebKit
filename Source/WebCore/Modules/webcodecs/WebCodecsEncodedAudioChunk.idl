@@ -29,6 +29,7 @@
     EnabledBySetting=WebCodecsAudioEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=EncodedAudioChunk,
+    SameAgentCluster,
     Serializable,
 ] interface WebCodecsEncodedAudioChunk {
   [CallWith=CurrentGlobalObject] constructor(WebCodecsEncodedAudioChunkInit init);

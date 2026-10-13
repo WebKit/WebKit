@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackHandle-transfer-cross-agent-cluster.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackHandle-transfer-to-shared-and-service-workers-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackHandle-transfer-to-shared-and-service-workers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackProcessor-maxBufferSize.worker.js

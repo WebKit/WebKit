@@ -3472,7 +3472,11 @@ sub GenerateHeader
         push(@headerContent, "    static JSC::JSValue getLegacyFactoryFunction(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{LegacyFactoryFunction};
     }
 
-    push(@headerContent, "    static bool isExposedInGlobalObject(JSDOMGlobalObject&);\n") if IsSerializableOrTransferable($interface);
+    assert("[SameAgentCluster] requires [Serializable] or [Transferable].") if $interface->extendedAttributes->{SameAgentCluster} && !IsSerializableOrTransferable($interface);
+    if (IsSerializableOrTransferable($interface)) {
+        push(@headerContent, "    static bool isExposedInGlobalObject(JSDOMGlobalObject&);\n");
+        push(@headerContent, "    static constexpr bool isRestrictedToSameAgentCluster = " . ($interface->extendedAttributes->{SameAgentCluster} ? "true" : "false") . ";\n");
+    }
 
     if ($interface->extendedAttributes->{GenerateForEachEventHandlerContentAttribute}) {
         push(@headerContent, "    static void forEachEventHandlerContentAttribute(NOESCAPE const Function<void(const AtomString& attributeName, const AtomString& eventName)>&);\n\n");
