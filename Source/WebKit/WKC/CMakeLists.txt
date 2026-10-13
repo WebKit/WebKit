@@ -299,11 +299,11 @@ set_source_files_properties(${WTF_DIR}/wtf/SIMDUTF.cpp PROPERTIES COMPILE_OPTION
 
 # ---------------------------------------------------------------------------
 # Engine bring-up, step 2: JavaScriptCore core (interpreter/CLoop tier).
-# Compile the non-JIT engine. The jit/dfg/ftl/b3/wasm/assembler/disassembler/
-# inspector dirs are intentionally NOT compiled (x86/ARM-only, or need
-# generated dispatchers); their headers remain on the include path above for
-# code guarded by #if ENABLE(...). Generated sources (YarrCanonicalizeUnicode,
-# BytecodeDumperGenerated) live in the generated JSC dir after the CI copy.
+# Compile the non-JIT engine. JIT/DFG/FTL/B3 and architecture-specific assembler/
+# disassembler code remain excluded for Wii U's PowerPC CLoop build. The portable
+# Inspector protocol and agent sources are selected from Sources.txt below when
+# the debugger feature is enabled. Generated builtin/Yarr/bytecode files are
+# copied into the working tree by the CI generation steps.
 # ---------------------------------------------------------------------------
 file(GLOB JSC_CORE_SOURCES
     ${JSC_DIR}/runtime/*.cpp
