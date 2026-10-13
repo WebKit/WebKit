@@ -1076,7 +1076,7 @@ ExceptionOr<void> InputType::stepUp(int n)
     return applyStep(n, AnyStepHandling::Reject, DispatchNoEvent);
 }
 
-void InputType::stepUpFromRenderer(int n)
+void InputType::stepUpOrDown(StepDirection direction)
 {
     // The differences from stepUp()/stepDown():
     //
@@ -1116,9 +1116,7 @@ void InputType::stepUpFromRenderer(int n)
     ASSERT(isSteppable());
     if (!isSteppable())
         return;
-    ASSERT(n);
-    if (!n)
-        return;
+    const auto n = direction == StepDirection::Up ? 1 : -1;
 
     StepRange stepRange(createStepRange(AnyStepHandling::Default));
 
@@ -1177,11 +1175,7 @@ void InputType::stepUpFromRenderer(int n)
             if (newValue > stepRange.maximum())
                 newValue = stepRange.maximum();
 
-            setValueAsDecimal(newValue, n == 1 || n == -1 ? DispatchInputAndChangeEvent : DispatchNoEvent);
-            if (n > 1)
-                applyStep(n - 1, AnyStepHandling::Default, DispatchInputAndChangeEvent);
-            else if (n < -1)
-                applyStep(n + 1, AnyStepHandling::Default, DispatchInputAndChangeEvent);
+            setValueAsDecimal(newValue, DispatchInputAndChangeEvent);
         } else
             applyStep(n, AnyStepHandling::Default, DispatchInputAndChangeEvent);
     }

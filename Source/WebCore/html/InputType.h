@@ -66,6 +66,7 @@ struct InputElementClickState;
 
 enum class AnyStepHandling : bool;
 enum class RangeLimitations : bool;
+enum class StepDirection : bool { Up, Down };
 enum class DateComponentsType : uint8_t;
 
 namespace Style {
@@ -260,7 +261,7 @@ public:
     virtual bool getAllowedValueStep(Decimal*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual ExceptionOr<void> stepUp(int);
-    virtual void stepUpFromRenderer(int);
+    virtual void stepUpOrDown(StepDirection);
     virtual String badInputText() const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;

@@ -131,7 +131,7 @@ debug('Fractional cases')
 // WebKit seesm to perform this clamping when stepping from the UI, but not
 // from the API.
 //
-// See also the function comment for InputType::stepUpFromRenderer.
+// See also the function comment for InputType::stepUpOrDown.
 
 // Base/model/template tests
 shouldBe('stepUp("0.1", 1, null)', '"1"')       // Is 1.1 in non-render test
