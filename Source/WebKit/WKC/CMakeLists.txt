@@ -64,11 +64,11 @@ else ()
     set(_WKC_INDEXED_DATABASE_DEFINE 0)
 endif ()
 
-# JavaScriptCore's interpreter-side debugger support is separate from JIT support.
-# Keep JIT disabled on the Wii U, but compile debugger hooks so the embedder can
-# build toward usable JavaScript debugging. Full Inspector frontend/protocol
-# integration remains a separate task.
-option(WKC_ENABLE_JAVASCRIPT_DEBUGGER "Compile JavaScriptCore debugger support" ON)
+# JavaScript debugging runs on JavaScriptCore's portable CLoop tier (no JIT).
+# The Inspector Protocol backend is connected to WKC's embedder-owned JSON
+# transport. The embedder supplies the frontend and chooses its transport; WKC
+# deliberately does not open an unauthenticated network listener.
+option(WKC_ENABLE_JAVASCRIPT_DEBUGGER "Compile JavaScriptCore Inspector/debugger support" ON)
 if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
     set(_WKC_JAVASCRIPT_DEBUGGER_DEFINE 1)
 else ()
@@ -386,7 +386,29 @@ if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
     endif ()
 
     list(APPEND JSC_CORE_SOURCES ${_WKC_JSC_INSPECTOR_SOURCES})
+
+    # These protocol-generated implementations are necessary for a functional
+    # Inspector backend. Do not let the archive build successfully if only the
+    # source-list-selected agents are present but the protocol dispatchers were
+    # not generated or were omitted from the CMake target.
+    foreach (_required_inspector_source IN ITEMS
+        "InspectorBackendDispatchers.cpp"
+        "InspectorFrontendDispatchers.cpp"
+        "InspectorProtocolObjects.cpp")
+        set(_required_inspector_path "${JSC_DIR}/JavaScriptCore/${_required_inspector_source}")
+        if (NOT EXISTS "${_required_inspector_path}")
+            message(FATAL_ERROR "JavaScript debugging is enabled but the generated Inspector source is missing: ${_required_inspector_path}")
+        endif ()
+        list(FIND JSC_CORE_SOURCES "${_required_inspector_path}" _required_inspector_source_index)
+        if (_required_inspector_source_index EQUAL -1)
+            message(FATAL_ERROR "JavaScript debugging is enabled but the Inspector source is not included in JSC_CORE_SOURCES: ${_required_inspector_path}")
+        endif ()
+    endforeach ()
+
     list(LENGTH _WKC_JSC_INSPECTOR_SOURCES _WKC_JSC_INSPECTOR_COUNT)
+    if (_WKC_JSC_INSPECTOR_COUNT LESS 1)
+        message(FATAL_ERROR "JavaScript debugging is enabled but no portable JavaScriptCore Inspector sources were selected")
+    endif ()
     message(STATUS "WKC Inspector: ${_WKC_JSC_INSPECTOR_COUNT} portable inspector/agent sources selected")
 endif ()
 
@@ -409,6 +431,21 @@ file(GLOB_RECURSE WKC_WEBKIT_SOURCES
     ${WKC_DIR}/helpers/*.cpp
     ${WKC_DIR}/accessor/*.cpp
 )
+
+if (WKC_ENABLE_JAVASCRIPT_DEBUGGER)
+    # InspectorBackendClientWKC is the boundary between WebCore's DevTools
+    # Protocol implementation and the public ChromeClientIf message callbacks.
+    # Its absence would leave the API looking enabled without a working bridge.
+    set(_WKC_INSPECTOR_BACKEND_SOURCE "${WKC_DIR}/WebCoreSupport/InspectorBackendClientWKC.cpp")
+    if (NOT EXISTS "${_WKC_INSPECTOR_BACKEND_SOURCE}")
+        message(FATAL_ERROR "JavaScript debugging is enabled but the WKC Inspector bridge is missing: ${_WKC_INSPECTOR_BACKEND_SOURCE}")
+    endif ()
+    list(FIND WKC_WEBKIT_SOURCES "${_WKC_INSPECTOR_BACKEND_SOURCE}" _WKC_INSPECTOR_BACKEND_SOURCE_INDEX)
+    if (_WKC_INSPECTOR_BACKEND_SOURCE_INDEX EQUAL -1)
+        message(FATAL_ERROR "JavaScript debugging is enabled but the WKC Inspector bridge is not included in WKC_WEBKIT_SOURCES")
+    endif ()
+    message(STATUS "WKC Inspector bridge: ${_WKC_INSPECTOR_BACKEND_SOURCE}")
+endif ()
 
 # The default WKC target remains the known-good platform/engine bring-up set.
 # The full source-list probe is opt-in while the Wii U port is being completed:
