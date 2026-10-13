@@ -333,7 +333,6 @@ Tests/WebKit/WKWebView/TabOutOfWebView.mm @nonARC
 Tests/WebKit/WKWebView/TestAwakener.mm @nonARC
 Tests/WebKit/WKWebView/SOAuthorizationTests.mm @nonARC
 Tests/WebKit/WKWebView/TestURLSchemeHandler.mm @nonARC
-Tests/WebKit/WKWebView/TextManipulation.mm @nonARC
 Tests/WebKit/WKWebView/UIDelegate.mm @nonARC
 Tests/WebKit/WKWebView/UnifiedPDFTests.mm @nonARC
 Tests/WebKit/WKWebView/UploadDirectory.mm @nonARC
@@ -384,11 +383,6 @@ Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIRuntime.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPISidebar.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPITabs.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPITest.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIWebNavigation.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIWebRequest.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionContext.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionController.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionUnpartitionedStorage.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewAlwaysShowsScroller.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewCandidateTests.mm @nonARC
