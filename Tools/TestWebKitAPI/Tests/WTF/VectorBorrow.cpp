@@ -103,4 +103,55 @@ TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(MoveWhileBorrowe
     ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
 }
 
+TEST(WTF_VectorBorrow, RangeForOverBorrowTemporary)
+{
+    Vector<uint8_t> vector { 1, 2, 3 };
+    unsigned sum = 0;
+    for (auto& value : borrow(vector))
+        sum += value;
+    EXPECT_EQ(sum, 6u);
+    // The temporary Borrow ended with the loop, so mutation is allowed again.
+    vector.append(4);
+    EXPECT_EQ(vector.size(), 4u);
+}
+
+TEST(WTF_VectorBorrow, RangeForOverNamedBorrowAllowsMutatingElements)
+{
+    Vector<uint8_t> vector { 1, 2, 3 };
+    Borrow borrowed = vector;
+    for (auto& value : borrowed)
+        value *= 2;
+    EXPECT_EQ(borrowed[0], 2);
+    EXPECT_EQ(borrowed[2], 6);
+}
+
+TEST(WTF_VectorBorrow, SubscriptThroughBorrow)
+{
+    Vector<uint8_t> vector { 1, 2, 3 };
+    borrow(vector)[1] = 20;
+    EXPECT_EQ(vector[1], 20);
+    EXPECT_EQ(borrow(vector)[2], 3);
+
+    const Vector<uint8_t> constVector { 4, 5 };
+    EXPECT_EQ(borrow(constVector)[1], 5);
+    unsigned count = 0;
+    for (auto& value : borrow(constVector)) {
+        EXPECT_GE(value, 4);
+        ++count;
+    }
+    EXPECT_EQ(count, 2u);
+}
+
+TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(MutatingDuringBorrowedRangeForCrashes))
+{
+    Vector<uint8_t> vector { 1, 2, 3 };
+    auto shouldCrash = [&] {
+        for (auto& value : borrow(vector)) {
+            (void)value;
+            vector.append(4);
+        }
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
 } // namespace TestWebKitAPI

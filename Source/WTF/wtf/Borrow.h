@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <utility>
 #include <wtf/CanBorrow.h>
 #include <wtf/Compiler.h>
 #include <wtf/ForbidHeapAllocation.h>
@@ -75,6 +76,13 @@ inline void assertIsOnStack(const void* object)
  * use(borrow(object->vector())->span()); // argument is guaranteed valid for the duration of the call
  * @endcode
  *
+ * A Borrow of a container can be iterated and indexed directly, without get():
+ * @code
+ * for (auto& item : borrow(object->vector()))
+ *     use(item);
+ * use(borrow(object->vector())[0]);
+ * @endcode
+ *
  * T must implement the CanBorrow protocol — either by inheriting from
  * CanBorrow, or by providing setIsBorrowed() / crashIfBorrowed() by hand.
  *
@@ -114,6 +122,23 @@ public:
         return &m_ref;
     }
 
+    auto begin() const LIFETIME_BOUND requires requires (T& t) { t.begin(); }
+    {
+        return m_ref.begin();
+    }
+
+    auto end() const LIFETIME_BOUND requires requires (T& t) { t.end(); }
+    {
+        return m_ref.end();
+    }
+
+    template<typename I>
+    decltype(auto) operator[](I&& index) const LIFETIME_BOUND
+        requires requires (T& t, I&& i) { t[std::forward<I>(i)]; }
+    {
+        return m_ref[std::forward<I>(index)];
+    }
+
 private:
     T& m_ref;
     bool m_previous { false };
@@ -127,7 +152,7 @@ Borrow(T&) -> Borrow<T>;
 // have to suppress at every usage site.
 // FIXME: Remove this once all supported compilers have this fix.
 // Fixed in upstream Clang commit c86c815fc57c (July 2025).
-#if defined(__clang__) && defined(__clang_major__) && __clang_major__ < 21
+#if defined(__clang__) && defined(__clang_major__) && __clang_major__ < 22
 IGNORE_WARNINGS_BEGIN("dangling")
 #endif
 

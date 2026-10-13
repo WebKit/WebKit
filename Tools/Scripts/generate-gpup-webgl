@@ -89,6 +89,7 @@ context_functions_impl_template = (
 #include "RemoteGraphicsContextGL.h"
 
 #include "Logging.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
@@ -438,7 +439,7 @@ def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_contain
             type, f"spanReinterpretCast<const {target_value_type}{target_arity}>(std::span<const {source_value_type}{source_arity}>({str(expr)}))"
         )
     else:
-        return cpp_expr(type, f"spanReinterpretCast<const {target_value_type}{target_arity}>({str(expr)}.span())")
+        return cpp_expr(type, f"spanReinterpretCast<const {target_value_type}{target_arity}>({str(expr)}->span())")
 
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
@@ -1144,9 +1145,11 @@ class webkit_ipc_cpp_impl(object):
             self.pre_call_stmts += [f"if (!WTF::isValidCapacityForVector<{contained_type}>({a.name}Size))"]
             self.pre_call_stmts += [f"    {a.name}Size = {inline_capacity};"]
             self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}(FillWith {{ }}, {a.name}Size, 0);"]
-            self.in_exprs += [cpp_expr(store_arg.type, f"{store_arg.name}")]
+            borrowed_name = f"borrowed{a.name[0].upper()}{a.name[1:]}"
+            self.pre_call_stmts += [f"Borrow {borrowed_name} = {store_arg.name};"]
+            self.in_exprs += [cpp_expr(store_arg.type, f"{borrowed_name}->mutableSpan()")]
             webkit_ipc_type = webkit_ipc_types[a.type]
-            self.out_exprs += [webkit_ipc_convert_expr(cpp_expr(store_arg.type, store_arg.name), webkit_ipc_type)]
+            self.out_exprs += [webkit_ipc_convert_expr(cpp_expr(store_arg.type, borrowed_name), webkit_ipc_type)]
         elif a.type.is_span():
             assert isinstance(a.type, cpp_type_container)
             store_arg = cpp_arg(webkit_ipc_get_span_store_type(a.type), a.name)
