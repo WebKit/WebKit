@@ -33,6 +33,7 @@
 #include "KeyframeEffectStack.h"
 #include "PseudoElement.h"
 #include "PseudoElementUtilitiesInlines.h"
+#include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -160,10 +161,13 @@ static bool needsPseudoElementForAnimation(const Element& element, PseudoElement
     return stack->requiresPseudoElement() || stack->containsProperty(CSSPropertyID::Display);
 }
 
-static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const Style::ComputedStyle&)
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Text& value, const String& altText, Document& document, const Style::ComputedStyle& pseudoStyle)
 {
     if (value.text.value.isEmpty() && altText.isEmpty())
         return { };
+
+    if (pseudoStyle.isListMarkerStyle() && pseudoStyle.textCombine() != TextCombine::None)
+        return createRenderer<RenderCombineText>(document, value.text.value);
 
     auto contentRenderer = createRenderer<RenderTextFragment>(document, value.text.value);
     contentRenderer->setAltText(altText);
