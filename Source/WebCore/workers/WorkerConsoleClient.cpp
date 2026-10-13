@@ -78,9 +78,10 @@ WorkerConsoleClient::~WorkerConsoleClient() = default;
 void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* exec, Ref<Inspector::ScriptArguments>&& arguments)
 {
     String messageText;
-    arguments->getFirstArgumentAsString(messageText);
+    bool messageIsFirstArgument = arguments->getFirstArgumentAsString(messageText);
 
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
+    message->setMessageIsFirstArgument(messageIsFirstArgument);
 
     auto url = message->url();
     auto line = message->line();

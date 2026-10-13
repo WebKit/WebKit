@@ -283,7 +283,11 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
                     }
                 } else {
                     for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_s, generatePreview);
+                        String descriptionHint;
+                        if (i == 0 && m_messageIsFirstArgument)
+                            descriptionHint = m_message.isNull() ? emptyString() : m_message;
+
+                        auto inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console"_s, generatePreview, descriptionHint);
                         if (!inspectorValue) {
                             ASSERT_NOT_REACHED();
                             return;

@@ -276,7 +276,7 @@ Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames
     return JSON::ArrayOf<Protocol::Debugger::CallFrame>::create();
 }
 
-RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue value, const String& groupName, bool generatePreview) const
+RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue value, const String& groupName, bool generatePreview, const String& descriptionHint) const
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall wrapFunction(globalObject(), injectedScriptObject(), "wrapObject"_s, protect(inspectorEnvironment())->functionCallHandler());
@@ -284,6 +284,8 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue 
     wrapFunction.appendArgument(groupName);
     wrapFunction.appendArgument(hasAccessToInspectedScriptState());
     wrapFunction.appendArgument(generatePreview);
+    if (!descriptionHint.isNull())
+        wrapFunction.appendArgument(descriptionHint);
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
     if (!callResult || !callResult.value())

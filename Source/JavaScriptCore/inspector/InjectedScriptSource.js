@@ -378,12 +378,12 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
         return result;
     }
 
-    wrapObject(object, groupName, canAccessInspectedGlobalObject, generatePreview)
+    wrapObject(object, groupName, canAccessInspectedGlobalObject, generatePreview, descriptionHint)
     {
         if (!canAccessInspectedGlobalObject)
             return this._fallbackWrapper(object);
 
-        return RemoteObject.create(object, groupName, false, generatePreview);
+        return RemoteObject.create(object, groupName, false, generatePreview, @undefined, descriptionHint);
     }
 
     wrapJSONString(jsonString, groupName, generatePreview)
@@ -1047,7 +1047,7 @@ var injectedScript = new InjectedScript;
 
 let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 {
-    constructor(object, objectGroupName, forceValueType, generatePreview, columnNames)
+    constructor(object, objectGroupName, forceValueType, generatePreview, columnNames, descriptionHint)
     {
         super();
 
@@ -1080,7 +1080,7 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
             this.subtype = subtype;
 
         this.className = InjectedScriptHost.internalConstructorName(object);
-        this.description = RemoteObject.describe(object);
+        this.description = RemoteObject.describe(object, descriptionHint);
 
         if (subtype === "array")
             this.size = typeof object.length === "number" ? object.length : 0;
@@ -1109,10 +1109,10 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 
     // Static
 
-    static create(object, objectGroupName, forceValueType, generatePreview, columnNames)
+    static create(object, objectGroupName, forceValueType, generatePreview, columnNames, descriptionHint)
     {
         try {
-            return new RemoteObject(object, objectGroupName, forceValueType, generatePreview, columnNames);
+            return new RemoteObject(object, objectGroupName, forceValueType, generatePreview, columnNames, descriptionHint);
         } catch (e) {
             let description;
             try {
@@ -1159,7 +1159,7 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         return null;
     }
 
-    static describe(value)
+    static describe(value, hint)
     {
         if (isPrimitiveValue(value))
             return null;
@@ -1173,13 +1173,13 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
         let subtype = RemoteObject.subtype(value);
 
         if (subtype === "regexp")
-            return toString(value);
+            return hint ?? toString(value);
 
         if (subtype === "date")
-            return toString(value);
+            return hint ?? toString(value);
 
         if (subtype === "error")
-            return toString(value);
+            return hint ?? toString(value);
 
         if (subtype === "proxy")
             return "Proxy";
@@ -1199,11 +1199,11 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof value === "function")
-            return value.toString();
+            return hint ?? value.toString();
 
         // If Object, try for a better name from the constructor.
         if (className === "Object") {
-            let constructorName = value.constructor && value.constructor.name;
+            let constructorName = value?.constructor?.name;
             if (constructorName)
                 return constructorName;
         }

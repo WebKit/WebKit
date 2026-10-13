@@ -83,6 +83,8 @@ public:
     ScriptArguments* arguments() const { return m_arguments.get(); }
     unsigned LEGACY_NODELETE argumentCount() const;
 
+    void setMessageIsFirstArgument(bool value) { m_messageIsFirstArgument = value; }
+
     bool isEqual(ConsoleMessage* msg) const;
 
     JS_EXPORT_PRIVATE void clear();
@@ -106,6 +108,7 @@ private:
     unsigned m_repeatCount { 1 };
     String m_requestId;
     WallTime m_timestamp;
+    bool m_messageIsFirstArgument { false };
 };
 
 } // namespace Inspector
