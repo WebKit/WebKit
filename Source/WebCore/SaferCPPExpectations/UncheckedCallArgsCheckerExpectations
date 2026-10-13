@@ -106,7 +106,6 @@ layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LineSelection.h
 layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
-layout/layouttree/LayoutTreeBuilder.cpp
 [ macOS ] loader/DocumentLoader.cpp
 [ macOS ] loader/FrameLoader.cpp
 [ macOS ] loader/PolicyChecker.cpp

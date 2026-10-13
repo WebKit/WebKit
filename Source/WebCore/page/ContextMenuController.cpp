@@ -1023,7 +1023,7 @@ TextCheckingGuesses ContextMenuController::guessesForSpellingAndGrammarItems(Loc
     if (guesses.misspelled || guesses.ungrammatical || !frame.selection().isCaret())
         return guesses;
 
-    if (!contextualClickSkippedWordSelection(m_context.event(), editor))
+    if (!contextualClickSkippedWordSelection(protect(m_context.event()), editor))
         return guesses;
 
     auto caret = makeBoundaryPoint(frame.selection().selection().visibleStart());
