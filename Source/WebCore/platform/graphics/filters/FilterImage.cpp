@@ -307,6 +307,17 @@ RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaForm
 
 bool FilterImage::copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect)
 {
+    if (unsafeCopyPixelBuffer(destinationPixelBuffer, sourceRect))
+        return true;
+
+    // Callers treat a failed copy as "no input" and do not check the result, so the
+    // destination must read as transparent black rather than as uninitialized memory.
+    destinationPixelBuffer.zeroFill();
+    return false;
+}
+
+bool FilterImage::unsafeCopyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect)
+{
     auto alphaFormat = destinationPixelBuffer.format().alphaFormat;
     auto& colorSpace = destinationPixelBuffer.format().colorSpace;
 

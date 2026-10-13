@@ -94,6 +94,9 @@ private:
 
     RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
+    // Does not initialize destinationPixelBuffer when it returns false; use copyPixelBuffer().
+    bool unsafeCopyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
+
     ImageBuffer* imageBufferFromPixelBuffer();
 
     bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>) const;
