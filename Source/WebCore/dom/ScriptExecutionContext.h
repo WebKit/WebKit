@@ -146,6 +146,8 @@ public:
     virtual bool isServiceWorkerGlobalScope() const { return false; }
     virtual bool isWorkletGlobalScope() const { return false; }
 
+    bool isInDestructor() const { return m_inScriptExecutionContextDestructor; }
+
     virtual bool isContextThread() const { return true; }
     virtual bool isJSExecutionForbidden() const = 0;
 
@@ -463,9 +465,7 @@ private:
     OrderedHashSet<MessagePortIdentifier> m_portsWithAvailableMessages;
     bool m_dispatchAllPorts { false };
 
-#if ASSERT_ENABLED
     bool m_inScriptExecutionContextDestructor { false };
-#endif
 
     RefPtr<ServiceWorker> m_activeServiceWorker;
     HashMap<ServiceWorkerIdentifier, WeakRef<ServiceWorker, WeakPtrImplWithEventTargetData>> m_serviceWorkers;

@@ -191,7 +191,6 @@ public:
 
     // ContextDestructionObserver.
     ScriptExecutionContext* scriptExecutionContext() const final;
-    void contextDestroyed() final;
 
 protected:
     explicit WebAnimation(Document&);

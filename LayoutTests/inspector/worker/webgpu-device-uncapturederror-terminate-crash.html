@@ -1,0 +1,66 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let testWorker = null;
+
+function createWorker(mode) {
+    testWorker = new Worker("resources/webgpu-uncapturederror-worker.js");
+    testWorker.addEventListener("message", (event) => {
+        TestPage.dispatchEventToFrontend(event.data);
+    });
+    testWorker.postMessage(mode);
+}
+
+function terminateWorker() {
+    testWorker.terminate();
+    testWorker = null;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Worker.WebGPUDeviceUncapturedErrorTerminate");
+
+    for (let mode of ["attribute", "addEventListener"]) {
+        suite.addTestCase({
+            name: `Worker.WebGPUDeviceUncapturedErrorTerminate.${mode}`,
+            description: `Terminating a worker whose GPUDevice has an uncapturederror listener added with ${mode} should not crash.`,
+            async test() {
+                InspectorTest.log("Creating worker...");
+                let [event] = await Promise.all([
+                    Promise.race([
+                        InspectorTest.awaitEvent("DeviceReady"),
+                        InspectorTest.awaitEvent("NoAdapter"),
+                    ]),
+                    InspectorTest.evaluateInPage(`createWorker("${mode}")`),
+                ]);
+                InspectorTest.expectEqual(event.type, "DeviceReady", "Worker should create a GPUDevice.");
+
+                InspectorTest.log("Terminating worker...");
+                await InspectorTest.evaluateInPage(`terminateWorker()`);
+
+                // Create and terminate a second worker so the first worker's global scope is torn down before the test ends.
+                await Promise.all([
+                    Promise.race([
+                        InspectorTest.awaitEvent("DeviceReady"),
+                        InspectorTest.awaitEvent("NoAdapter"),
+                    ]),
+                    InspectorTest.evaluateInPage(`createWorker("${mode}")`),
+                ]);
+                await InspectorTest.evaluateInPage(`terminateWorker()`);
+
+                InspectorTest.pass("Should not crash.");
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that terminating a worker whose GPUDevice has an uncapturederror listener does not crash when an inspector frontend is connected.</p>
+</body>
+</html>

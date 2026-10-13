@@ -215,9 +215,9 @@ ScriptExecutionContext::~ScriptExecutionContext()
         Locker locker { allScriptExecutionContextsMapLock };
         ASSERT_WITH_MESSAGE(!allScriptExecutionContextsMap().contains(m_identifier), "A ScriptExecutionContext subclass instance implementing postTask should have already removed itself from the map");
     }
+#endif // ASSERT_ENABLED
 
     m_inScriptExecutionContextDestructor = true;
-#endif // ASSERT_ENABLED
 
     auto callbacks = WTF::move(m_notificationCallbacks);
     for (auto& callback : callbacks.values())
@@ -234,9 +234,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
     setContentSecurityPolicy(nullptr);
 
-#if ASSERT_ENABLED
     m_inScriptExecutionContextDestructor = false;
-#endif
 }
 
 void ScriptExecutionContext::resumeAllMessagePortsSoon()

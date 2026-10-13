@@ -106,13 +106,6 @@ WebGLProgram::~WebGLProgram()
     runDestructor();
 }
 
-void WebGLProgram::contextDestroyed()
-{
-    InspectorInstrumentation::willDestroyWebGLProgram(*this);
-
-    ContextDestructionObserver::contextDestroyed();
-}
-
 void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGL* context3d, PlatformGLObject obj)
 {
     context3d->deleteProgram(obj);

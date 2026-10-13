@@ -108,7 +108,6 @@ public:
     // ContextDestructionObserver.
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
-    void contextDestroyed() final;
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
     String LEGACY_NODELETE label() const;
@@ -186,6 +185,10 @@ private:
 
     // FIXME: We probably need to override more methods to make this work properly.
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
+
+    // ActiveDOMObject.
+    bool virtualHasPendingActivity() const final;
+    void stop() final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::GPUDevice; }

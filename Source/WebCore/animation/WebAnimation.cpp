@@ -140,13 +140,6 @@ ScriptExecutionContext* WebAnimation::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void WebAnimation::contextDestroyed()
-{
-    InspectorInstrumentation::willDestroyWebAnimation(*this);
-
-    ActiveDOMObject::contextDestroyed();
-}
-
 void WebAnimation::remove()
 {
     // This object could be deleted after either clearing the effect or timeline relationship.
@@ -1700,6 +1693,8 @@ void WebAnimation::resume()
 
 void WebAnimation::stop()
 {
+    InspectorInstrumentation::willDestroyWebAnimation(*this);
+
     ActiveDOMObject::stop();
     removeAllEventListeners();
     setEffectInternal(nullptr);

@@ -63,8 +63,6 @@ public:
     static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& LEGACY_NODELETE instances() WTF_REQUIRES_LOCK(instancesLock());
     static Lock& LEGACY_NODELETE instancesLock() WTF_RETURNS_LOCK(s_instancesLock);
 
-    void contextDestroyed() final;
-
     bool linkStatus();
     std::span<const GCGLAttribActiveInfo> activeAttribs() LIFETIME_BOUND;
     const HashMap<String, int>& attribLocations() LIFETIME_BOUND;
