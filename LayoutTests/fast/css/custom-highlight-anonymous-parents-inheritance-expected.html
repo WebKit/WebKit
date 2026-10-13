@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Ahem; src: url("../../resources/Ahem.ttf"); }
+body { font: 20px Ahem; color: black; background: white; }
+.row { margin: 10px 0; }
+math { font: inherit; }
+.paint { background-color: cyan; color: blue; }
+.child .paint { background-color: lime; color: red; }
+</style>
+<div class="ancestor">
+    <div class="row origin" id="block"><span class="paint">T XT</span></div>
+    <div class="row origin" id="flex" style="display:flex"><span><span class="paint">T XT</span></span></div>
+    <div class="row origin" id="grid" style="display:grid"><span><span class="paint">T XT</span></span></div>
+    <div class="row origin" id="table" style="display:table"><span><span class="paint">T XT</span></span></div>
+    <div class="row"><math><mtext class="origin" id="math"><span class="paint">T XT</span></mtext></math></div>
+    <div class="row origin" style="display:flex"><span class="child" id="child"><span class="paint">T XT</span></span></div>
+    <div class="row" style="display:flex"><span><span class="paint">T XT</span></span></div>
+    <div class="row"><math><mtext><span class="paint">T XT</span></mtext></math></div>
+</div>

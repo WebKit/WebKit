@@ -1,0 +1,8 @@
+PASS: constant zero opacity highlight change scheduled a repaint
+PASS: nested boxless inheritance highlight change scheduled a repaint
+PASS: rendered child inheritance highlight change scheduled a repaint
+PASS: assigned Text in boxless slot highlight change scheduled a repaint
+PASS: direct shadow Text highlight change scheduled a repaint
+PASS: multiple direct Text children highlight change scheduled a repaint
+PASS: first-letter highlight change scheduled a repaint
+PASS: unrelated box property did not schedule a highlight repaint

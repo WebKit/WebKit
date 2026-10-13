@@ -86,6 +86,8 @@ struct Difference {
 };
 Difference difference(const ComputedStyle&, const ComputedStyle&);
 
+bool highlightPseudoElementStyleChangeRequiresRepaint(const ComputedStyle&, const ComputedStyle&);
+
 bool differenceRequiresLayerRepaint(const ComputedStyle&, const ComputedStyle&, bool isComposited);
 bool borderIsEquivalentForPainting(const ComputedStyle&, const ComputedStyle&);
 
