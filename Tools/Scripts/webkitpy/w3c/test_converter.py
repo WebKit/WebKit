@@ -166,12 +166,6 @@ class _W3CTestConverter(HTMLParser):
             if attr[0] == 'style':
                 new_style = self.convert_style_data(attr[1])
                 converted = re.sub(re.escape(attr[1]), new_style, converted)
-            if attr[0] == 'name' and attr[1] == 'fuzzy' and tag == 'meta':
-                for rename in self.reference_file_renames:
-                    new_converted = re.sub(rename['src'], rename['dest'], converted)
-                    if new_converted != converted:
-                        self._modified = True
-                        converted = new_converted
 
         # Convert relative paths
         src_tags = ('script', 'style', 'img', 'frame', 'iframe', 'input', 'layer', 'textarea', 'video', 'audio')
