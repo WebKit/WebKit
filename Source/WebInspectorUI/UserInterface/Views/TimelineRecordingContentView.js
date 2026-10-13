@@ -989,7 +989,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     _updateProgressView()
     {
         let isCapturing = WI.timelineManager.isCapturing();
-        this._progressView.visible = isCapturing && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
+        this._progressView.visible = isCapturing && WI.timelineManager.activeRecording === this._recording && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
     }
 
     _updateFilterBar()
