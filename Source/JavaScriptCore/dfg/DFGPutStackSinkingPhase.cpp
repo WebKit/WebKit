@@ -35,6 +35,7 @@
 #include "DFGPreciseLocalClobberize.h"
 #include "DFGSSACalculator.h"
 #include "OperandsInlines.h"
+#include <wtf/BitVector.h>
 #include <wtf/IndexMap.h>
 
 namespace JSC { namespace DFG {
@@ -351,21 +352,24 @@ public:
         }
         
         UncheckedKeyHashSet<Node*> putStacksToSink;
-        
+        IndexMap<BasicBlock*, Vector<std::pair<size_t, Node*>>> defsInBlock(m_graph.numBlocks());
+
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
-                case PutStack:
+                case PutStack: {
+                    Operand operand = node->stackAccessData()->operand;
                     putStacksToSink.add(node);
-                    ssaCalculator.newDef(
-                        operandToVariable.operand(node->stackAccessData()->operand),
-                        block, node->child1().node());
+                    ssaCalculator.newDef(operandToVariable.operand(operand), block, node->child1().node());
+                    defsInBlock[block].append({ operandToVariable.operandIndex(operand), node->child1().node() });
                     break;
-                case GetStack:
-                    ssaCalculator.newDef(
-                        operandToVariable.operand(node->stackAccessData()->operand),
-                        block, node);
+                }
+                case GetStack: {
+                    Operand operand = node->stackAccessData()->operand;
+                    ssaCalculator.newDef(operandToVariable.operand(operand), block, node);
+                    defsInBlock[block].append({ operandToVariable.operandIndex(operand), node });
                     break;
+                }
                 default:
                     break;
                 }
@@ -394,20 +398,9 @@ public:
         
         Operands<Node*> mapping(OperandsLike, m_graph.block(0)->variablesAtHead);
         Operands<FlushFormat> deferred;
-        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            mapping.fill(nullptr);
-            
-            for (size_t i = mapping.size(); i--;) {
-                Operand operand(mapping.operandForIndex(i));
-                
-                SSACalculator::Variable* variable = operandToVariable.operand(operand);
-                SSACalculator::Def* def = ssaCalculator.reachingDefAtHead(block, variable);
-                if (!def)
-                    continue;
-                
-                mapping.operand(operand) = def->value();
-            }
-            
+        auto sinkInBlock = [&](BasicBlock* block, const Operands<Node*>& reachingDefsAtHead) {
+            mapping = reachingDefsAtHead;
+
             dataLogLnIf(verbose, "Mapping at top of ", pointerDump(block), ": ", mapping);
             
             for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(block)) {
@@ -559,8 +552,63 @@ public:
             }
             
             insertionSet.execute(block);
+        };
+
+        // The reaching def of a local at the head of a block is the one at the tail of its immediate
+        // dominator, so walk the dominator tree keeping the defs reaching the current block's tail,
+        // and undo each block's defs when leaving its subtree.
+        auto& dominators = m_graph.ensureSSADominators();
+        IndexMap<BasicBlock*, Vector<BasicBlock*>> dominatorTreeChildren(m_graph.numBlocks());
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            if (BasicBlock* idom = dominators.idom(block))
+                dominatorTreeChildren[idom].append(block);
         }
-        
+
+        Operands<Node*> reachingDefs(OperandsLike, m_graph.block(0)->variablesAtHead, nullptr);
+        Vector<std::pair<size_t, Node*>> undoLog;
+        struct WorklistEntry {
+            BasicBlock* block;
+            size_t undoLogSizeToRestore;
+        };
+        Vector<WorklistEntry, 16> worklist;
+#if ASSERT_ENABLED
+        BitVector visited(m_graph.numBlocks());
+#endif
+        worklist.append({ m_graph.block(0), notFound });
+        while (!worklist.isEmpty()) {
+            WorklistEntry entry = worklist.takeLast();
+            if (entry.undoLogSizeToRestore != notFound) {
+                while (undoLog.size() > entry.undoLogSizeToRestore) {
+                    auto [index, previous] = undoLog.takeLast();
+                    reachingDefs.at(index) = previous;
+                }
+                continue;
+            }
+
+            BasicBlock* block = entry.block;
+#if ASSERT_ENABLED
+            visited.set(block->index());
+#endif
+            sinkInBlock(block, reachingDefs);
+
+            worklist.append({ block, undoLog.size() });
+            auto setReachingDef = [&](size_t index, Node* value) {
+                undoLog.append({ index, reachingDefs.at(index) });
+                reachingDefs.at(index) = value;
+            };
+            for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(block))
+                setReachingDef(reachingDefs.operandIndex(indexToOperand[phiDef->variable()->index()]), phiDef->value());
+            for (auto [index, value] : defsInBlock[block])
+                setReachingDef(index, value);
+            for (BasicBlock* child : dominatorTreeChildren[block])
+                worklist.append({ child, notFound });
+        }
+
+#if ASSERT_ENABLED
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder())
+            ASSERT(visited.get(block->index()));
+#endif
+
         // Finally eliminate the sunken PutStacks by turning them into Checks. This keeps whatever
         // type check they were doing.
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
