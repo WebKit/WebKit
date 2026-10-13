@@ -24,9 +24,9 @@
 namespace WebCore {
 
 class CachedImage;
-class IntSize;
 class RenderElement;
 class SVGImageElement;
+class SVGPreserveAspectRatioValue;
 struct NaturalDimensions;
 
 namespace Style {
@@ -53,8 +53,15 @@ SVGImageIntrinsicSizing resolveSVGImageIntrinsicSizing(CachedImage&, float usedZ
 // the source's intrinsic sizing, per SVG 2 §12.2. Shared by the LBSE and legacy SVG renderers.
 FloatRect calculateSVGImageObjectBoundingBox(const SVGImageElement&, const Style::ComputedStyle&, CachedImage*);
 
-NaturalDimensions svgImageNaturalDimensions(const Style::Image&, const RenderElement&);
-FloatSize svgImageRenderingSize(const Style::Image&, const RenderElement&, FloatSize containerSize);
-IntSize svgImageSizeForPreserveAspectRatioNone(const CachedImage&, float usedZoom);
+NaturalDimensions calculateSVGImageNaturalDimensions(const Style::Image&, const RenderElement&);
+
+// https://svgwg.org/svg2-draft/embedded.html#Placement
+struct SVGImagePlacement {
+    // https://svgwg.org/svg2-draft/embedded.html#TermImageRenderingRectangle
+    FloatRect imageRenderingRectangle;
+    FloatRect destination;
+    FloatRect source;
+};
+SVGImagePlacement calculateSVGImagePlacement(const Style::Image&, const RenderElement&, const SVGPreserveAspectRatioValue&, const FloatRect& positioningRectangle);
 
 } // namespace WebCore

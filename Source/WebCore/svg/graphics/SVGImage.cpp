@@ -90,6 +90,7 @@ SVGImage::SVGImage(ImageObserver* observer)
         .containerSize = IntSize { },
         .fragmentURL = URL { },
         .linkParameters = CSS::Keyword::None { },
+        .ignoreRootPreserveAspectRatio = IgnoreRootPreserveAspectRatio::No,
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
         .invertContent = false,
 #endif
@@ -209,6 +210,8 @@ auto SVGImage::documentStateForDraw(ConcreteObjectSize concreteObjectSize, Image
         state.linkParameters = styleExtras->linkParameters();
     }
 
+    state.ignoreRootPreserveAspectRatio = options.ignoreRootPreserveAspectRatio();
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invert = options.invertContent();
     state.invertContent = invert == InvertContent::FromResource ? m_fallbackInvertContent : invert == InvertContent::Yes;
@@ -242,13 +245,23 @@ void SVGImage::applyDocumentState(Document& document, LocalFrameView& view, cons
         updateStyle = true;
     }
 
+    if (state.fragmentURL != m_appliedDocumentState.fragmentURL || state.ignoreRootPreserveAspectRatio != m_appliedDocumentState.ignoreRootPreserveAspectRatio) {
+        if (state.fragmentURL != m_appliedDocumentState.fragmentURL)
+            protect(view)->scrollToFragment(state.fragmentURL);
+
+        if (RefPtr root = rootElement()) {
+            root->setIgnoresPreserveAspectRatioForSVGImage(state.ignoreRootPreserveAspectRatio == IgnoreRootPreserveAspectRatio::Yes);
+            if (CheckedPtr renderer = root->renderer())
+                root->invalidateCurrentView(*renderer);
+        }
+
+        updateStyle = true;
+    }
+
     if (updateStyle) {
         ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
         protect(document)->updateStyleIfNeeded();
     }
-
-    if (state.fragmentURL != m_appliedDocumentState.fragmentURL)
-        protect(view)->scrollToFragment(state.fragmentURL);
 
     m_appliedDocumentState = state;
 }
@@ -321,10 +334,12 @@ void SVGImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concrete
     if (!buffer)
         return;
 
-    ImagePaintingOptions bufferOptions;
+    ImagePaintingOptions bufferOptions {
+        options.ignoreRootPreserveAspectRatio(),
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    bufferOptions = ImagePaintingOptions { options.invertContent() };
+        options.invertContent(),
 #endif
+    };
     draw(buffer->context(), concreteObjectSize, imageBufferSize, zoomedContainerRect, bufferOptions, extras);
     if (options.drawLuminanceMask() == DrawLuminanceMask::Yes)
         buffer->convertToLuminanceMask();

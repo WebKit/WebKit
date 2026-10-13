@@ -180,30 +180,17 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
-IntSize LegacyRenderSVGImage::imageContainerSize() const
-{
-    // https://w3c.github.io/svgwg/svg2-draft/coords.html#PreserveAspectRatioAttribute
-    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (RefPtr cachedImage = imageResource().cachedImage())
-            return svgImageSizeForPreserveAspectRatioNone(*cachedImage, style().usedZoom());
-    }
-
-    return enclosingIntRect(m_objectBoundingBox).size();
-}
-
 void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
     RefPtr styleImage = imageResource().styleImage();
     if (!styleImage || !styleImage->canDraw(*this))
         return;
 
-    auto imageRenderingSize = svgImageRenderingSize(*styleImage, *this, FloatSize { imageContainerSize() });
-    FloatRect destRect = m_objectBoundingBox;
-    FloatRect srcRect { { }, imageRenderingSize };
+    auto placement = calculateSVGImagePlacement(*styleImage, *this, imageElement().preserveAspectRatio(), m_objectBoundingBox);
+    auto destRect = placement.destination;
+    auto srcRect = placement.source;
 
-    imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
-
-    auto concreteObjectSize = ConcreteObjectSize::fixed(imageRenderingSize);
+    auto concreteObjectSize = ConcreteObjectSize::fixed(placement.imageRenderingRectangle.size());
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     auto invertContent = [&] {
@@ -222,6 +209,7 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         invertContent() ? InvertContent::Yes : InvertContent::No,
 #endif
         settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No,
+        IgnoreRootPreserveAspectRatio::Yes,
         settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No,
         paintInfo.paintBehavior.contains(PaintBehavior::DrawsHDRContent) ? DrawsHDRContent::Yes : DrawsHDRContent::No,
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()

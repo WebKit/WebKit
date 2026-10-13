@@ -111,6 +111,12 @@ enum class ShowDebugBackground : bool {
     Yes
 };
 
+// Treats an SVG root's preserveAspectRatio as none for an <svg:image>.
+enum class IgnoreRootPreserveAspectRatio : bool {
+    No,
+    Yes
+};
+
 enum class DrawLuminanceMask : bool {
     No,
     Yes

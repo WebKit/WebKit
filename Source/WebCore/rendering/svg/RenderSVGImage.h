@@ -45,7 +45,6 @@ public:
     const RenderImageResource& imageResource() const { return m_imageResource; }
 
     bool updateImageViewport();
-    IntSize imageContainerSize() const;
 
     bool isObjectBoundingBoxValid() const { return !m_objectBoundingBox.isEmpty(); }
 
