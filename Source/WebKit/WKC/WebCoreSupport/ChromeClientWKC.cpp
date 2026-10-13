@@ -456,6 +456,35 @@ ChromeClientWKC::exitFullScreenForElement(WebCore::Element*, CompletionHandler<v
 #endif // ENABLE(FULLSCREEN_API)
 
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+static WKC::String toWKCInspectorString(const WTF::String& value)
+{
+    auto utf8 = value.utf8();
+    return WKC::String::fromUTF8(utf8.data(), utf8.length());
+}
+
+void
+ChromeClientWKC::sendInspectorMessageToFrontend(const WTF::String& message)
+{
+    if (m_appClient)
+        m_appClient->sendInspectorMessageToFrontend(toWKCInspectorString(message));
+}
+
+void
+ChromeClientWKC::inspectorFrontendCountChanged(unsigned count)
+{
+    if (m_appClient)
+        m_appClient->inspectorFrontendCountChanged(count);
+}
+
+void
+ChromeClientWKC::bringInspectorFrontendToFront()
+{
+    if (m_appClient)
+        m_appClient->bringInspectorFrontendToFront();
+}
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+
 #if ENABLE(NOTIFICATIONS)
 static WKC::String toWKCNotificationString(const WTF::String& value)
 {
