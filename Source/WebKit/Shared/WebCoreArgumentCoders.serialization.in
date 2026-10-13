@@ -5389,7 +5389,10 @@ enum class WebCore::WebGPU::TextureAspect : uint8_t {
     DepthOnly,
 };
 
-enum class WebCore::WebGPU::PowerPreference : bool
+header: <WebCore/WebGPUPowerPreference.h>
+enum class ::WebGPU::PowerPreference : bool
+
+using WebCore::WebGPU::PowerPreference = ::WebGPU::PowerPreference
 
 header: <WebCore/WebGPUPredefinedColorSpace.h>
 using WebCore::WebGPU::PredefinedColorSpace = WebCore::PredefinedColorSpace

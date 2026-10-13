@@ -25,13 +25,10 @@
 
 #pragma once
 
-#include <cstdint>
+#include <WebGPU/WebGPUCpp.h>
 
 namespace WebCore::WebGPU {
 
-enum class PowerPreference : bool {
-    LowPower,
-    HighPerformance,
-};
+using PowerPreference = ::WebGPU::PowerPreference;
 
 } // namespace WebCore::WebGPU
