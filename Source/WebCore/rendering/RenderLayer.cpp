@@ -2795,7 +2795,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         adjustedClipRect.move(paintingInfo.subpixelOffset);
         context.clip(clipRectForTransparencyLayer(adjustedClipRect, renderer(), context));
 
-        bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacyRenderSVGRoot() && parent() && parent()->isRenderViewLayer());
+        bool usesCompositeOperation = hasBlendMode() && !blendModeAppliesToSVGRootContentsOnly();
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
 
@@ -2809,6 +2809,18 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         context.fillRect(pixelSnappedClipRect);
 #endif
     }
+}
+
+bool RenderLayer::blendModeAppliesToSVGRootContentsOnly() const
+{
+    if (!hasBlendMode())
+        return false;
+
+    if (renderer().isLegacyRenderSVGRoot())
+        return parent() && parent()->isRenderViewLayer();
+
+    // The root background is painted into this layer and must not be blended.
+    return renderer().isRenderSVGRoot() && renderer().isDocumentElementRenderer();
 }
 
 bool RenderLayer::isDescendantOf(const RenderLayer& layer) const

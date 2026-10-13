@@ -75,10 +75,6 @@ svg/foreignObject/vertical-foreignObject.html                  [ ImageOnlyFailur
 svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
 svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
 
-# CSS 'mix-blend-mode' broken
-svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]
-svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
-
 # Non-scaling stroke issues
 svg/repaint/non-scaling-stroke-transform-animation.html               [ ImageOnlyFailure ]
 
