@@ -255,6 +255,7 @@ rdar://136524076 [ mac ] TestWebKitAPI.ResourceLoadStatistics.StorageAccessGrant
 rdar://136524076 [ mac ] TestWebKitAPI.ResourceLoadStatistics.StorageAccessOnRedirectSitesWithQuirk [ Skip ]
 rdar://136525714 [ mac ] TestWebKitAPI.ResourceLoadStatistics.UserGestureLogsUserInteraction [ Skip ]
 webkit.org/b/225167 TestWebKitAPI.SampledPageTopColor.DisplayP3 [ Skip ]
+webkit.org/b/326919 [ mac GoldenGate ] TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithUniformCornerRadii [ Failure ]
 webkit.org/b/326919 [ mac GoldenGate ] TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithNonUniformCornerRadii [ Failure ]
 webkit.org/b/308786 [ mac ] TestWebKitAPI.ScrollingCoordinatorTests.ScrollingTreeAfterDetachReattach [ Skip ]
 webkit.org/b/326119 [ ios ] TestWebKitAPI.ServiceWorker.WindowClientNavigate [ Pass Timeout ]
