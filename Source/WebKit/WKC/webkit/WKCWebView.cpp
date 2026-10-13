@@ -603,7 +603,8 @@ WKCWebViewPrivate::construct()
     s.setSpatialNavigationEnabled(true);
     s.setImagesEnabled(true);
     s.setMediaEnabled(true);
-    s.setLocalStorageEnabled(false);
+    // Web Storage is needed by modern sites for preferences and application state.
+    s.setLocalStorageEnabled(true);
     s.setTextAreasAreResizable(true);
     s.setJavaScriptCanOpenWindowsAutomatically(false);
     s.setJavaScriptCanAccessClipboard(false);
