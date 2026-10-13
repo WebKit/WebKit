@@ -47,7 +47,7 @@ namespace WKC {
 class WKCWebView;
 class WKCWebFrame;
 class ChromeClientWKC;
-class InspectorClientWKC;
+class InspectorBackendClientWKC;
 class DropDownListClientWKC;
 class FrameLoaderClientWKC;
 class WKCSettings;
@@ -85,6 +85,10 @@ public:
     // local-frame downcast once and returns nullptr for the (never-expected
     // on this single-process bare-metal port) remote case.
     WebCore::LocalFrame* localMainFrame() const;
+
+    bool connectInspectorFrontend();
+    void disconnectInspectorFrontend();
+    void dispatchInspectorMessageFromFrontend(const WTF::String&);
 
     inline DropDownListClientWKC* dropdownlistclient() { return m_dropdownlist; };
     // settings
@@ -165,7 +169,7 @@ private:
 
     // instances
     WKCWebFrame* m_mainFrame;
-    InspectorClientWKC* m_inspector;
+    InspectorBackendClientWKC* m_inspector; // owned by WebCore::Page
     DropDownListClientWKC* m_dropdownlist;
     WKCSettings* m_settings;
 
