@@ -60,6 +60,7 @@
 #include "SourceBufferPrivate.h"
 #include "TextTrackList.h"
 #include "TimeRanges.h"
+#include "TrackOpaqueRoot.h"
 #include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
@@ -181,7 +182,7 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_private(WTF::move(sourceBufferPrivate))
     , m_client(SourceBufferClientImpl::create(*this))
     , m_source(&source)
-    , m_opaqueRootProvider(Observer<WebCoreOpaqueRoot()>::create([opaqueRoot = WebCoreOpaqueRoot { this }] { return opaqueRoot; }))
+    , m_trackOpaqueRoot(TrackOpaqueRoot::create(opaqueRoot()))
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_appendState(WaitingForSegment)
@@ -201,6 +202,7 @@ SourceBuffer::~SourceBuffer()
 {
     ASSERT(isRemoved());
     ALWAYS_LOG(LOGIDENTIFIER);
+    m_trackOpaqueRoot->clear();
 }
 
 ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
@@ -733,8 +735,16 @@ VideoTrackList& SourceBuffer::videoTracks()
 {
     if (!m_videoTracks) {
         Ref videoTracks = VideoTrackList::create(protect(scriptExecutionContext()).get());
+<<<<<<< HEAD
         lazyInitialize(m_videoTracks, videoTracks.copyRef());
         videoTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+||||||| parent of 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
+        m_videoTracks = videoTracks.copyRef();
+        videoTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+=======
+        m_videoTracks = videoTracks.copyRef();
+        videoTracks->setOpaqueRoot(m_trackOpaqueRoot);
+>>>>>>> 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
     }
     return *m_videoTracks;
 }
@@ -743,8 +753,16 @@ AudioTrackList& SourceBuffer::audioTracks()
 {
     if (!m_audioTracks) {
         Ref audioTracks = AudioTrackList::create(protect(scriptExecutionContext()).get());
+<<<<<<< HEAD
         lazyInitialize(m_audioTracks, audioTracks.copyRef());
         audioTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+||||||| parent of 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
+        m_audioTracks = audioTracks.copyRef();
+        audioTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+=======
+        m_audioTracks = audioTracks.copyRef();
+        audioTracks->setOpaqueRoot(m_trackOpaqueRoot);
+>>>>>>> 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
     }
     return *m_audioTracks;
 }
@@ -753,8 +771,16 @@ TextTrackList& SourceBuffer::textTracks()
 {
     if (!m_textTracks) {
         Ref textTracks = TextTrackList::create(protect(scriptExecutionContext()).get());
+<<<<<<< HEAD
         lazyInitialize(m_textTracks, textTracks.copyRef());
         textTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+||||||| parent of 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
+        m_textTracks = textTracks.copyRef();
+        textTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+=======
+        m_textTracks = textTracks.copyRef();
+        textTracks->setOpaqueRoot(m_trackOpaqueRoot);
+>>>>>>> 17c79af9d944 (Cherry-pick 3cbf2f5adfe0. rdar://184747619)
     }
     return *m_textTracks;
 }
