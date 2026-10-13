@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Shadows paint the whole specialized operator without assembly seams</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+mo::highlight(probe) { text-shadow: 12px 8px rgba(255,0,0,.5), -6px -4px green; }
+mo { color:blue; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" id="minus">−</mo></math></div>
+<div class="cell"><math display="block" style="text-align:left"><mo id="large" lspace="0" rspace="0">∑</mo></math></div>
+<div class="cell"><math><mo id="variant" lspace="0" rspace="0" symmetric="false">(</mo><mspace height="2.5em"/></math></div>
+<div class="cell"><math><mo id="vertical" lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<div class="cell"><math><mover><mo id="horizontal" lspace="0" rspace="0">→</mo><mspace width="120px" height="0"/></mover></math></div>
+
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const tokens = [...document.querySelectorAll("mo")];
+    if (reference) {
+        for (const token of tokens) {
+            const math = token.closest("math");
+            const parent = math.parentNode;
+            const mathRect = math.getBoundingClientRect(); const parentRect = parent.getBoundingClientRect();
+            for (const [x,y,color] of [[12,8,"rgba(255,0,0,.5)"],[-6,-4,"green"]]) {
+                const clone = math.cloneNode(true); clone.querySelector("mo").style.color = color;
+                Object.assign(clone.style, { position: "absolute", width: `${mathRect.width}px`, left: `${mathRect.left - parentRect.left + x}px`, top: `${mathRect.top - parentRect.top + y}px` });
+                parent.insertBefore(clone, math);
+            }
+            math.style.position = "relative";
+        }
+    } else CSS.highlights.set("probe", new Highlight(...tokens.map(rangeFor)));
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

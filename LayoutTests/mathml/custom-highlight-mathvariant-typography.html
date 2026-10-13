@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8"><title>Highlights preserve mathematical glyphs, advances and baselines</title>
+<link rel="match" href="custom-highlight-mathvariant-typography-expected.html">
+<style>
+@font-face { font-family: Italic; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+@font-face { font-family: Bold; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-bold.woff"); }
+body { margin: 20px; color: black; }
+math { font: 30px Italic; }
+.row { height: 80px; }
+.bold { font-family: Bold; }
+.fallback { font-family: serif; }
+.zoom { zoom: 1.5; }
+::highlight(parity) { color: black; }
+</style>
+<body>
+<div class="row"><math><mi>A</mi><mtext mathvariant="italic">a</mtext><mi>h</mi><mi mathvariant="normal">A</mi></math></div>
+<div class="row"><math class="bold"><mi mathvariant="bold">A</mi><mn mathvariant="bold">2</mn><mtext mathvariant="bold">a</mtext></math></div>
+<div class="row"><math dir="rtl"><mi>A</mi><mtext mathvariant="italic">a</mtext></math></div>
+<div class="row zoom"><math><mi>A</mi><mtext mathvariant="italic">a</mtext></math></div>
+<div class="row"><math class="fallback"><mi>A</mi><mi mathvariant="double-struck">R</mi><mi mathvariant="fraktur">F</mi></math></div>
+<script>
+const range = new Range();
+range.selectNodeContents(document.body);
+CSS.highlights.set("parity", new Highlight(range));
+document.fonts.ready.then(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+</script></body></html>

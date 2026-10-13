@@ -63,6 +63,8 @@ struct TextPaintStyle {
     float miterLimit { defaultMiterLimit };
 };
 
+float strokeOutsetForTextPaintStyle(const TextPaintStyle&);
+
 bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor);
 TextPaintStyle computeTextPaintStyle(const RenderText&, const Style::ComputedStyle&, const PaintInfo&);
 TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const Style::ComputedStyle&, const PaintInfo&, Style::TextShadows& selectionShadow);

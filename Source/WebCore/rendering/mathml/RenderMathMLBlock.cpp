@@ -192,6 +192,12 @@ void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
     }
 }
 
+void RenderMathMLBlock::layout()
+{
+    RenderBlock::layout();
+    addOverflowFromInFlowChildren(ComputeOverflowOptions::DoesNotContributeToScrollableOverflow);
+}
+
 void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());

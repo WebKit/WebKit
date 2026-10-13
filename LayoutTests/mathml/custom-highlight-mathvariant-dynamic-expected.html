@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Range, registry and style changes repaint legacy variant glyphs</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; --ink: red; }
+body.changed { --ink: blue; }
+.cell { position: relative; display: inline-block; width: 140px; height: 55px; padding: 15px; vertical-align: top; }
+math { font: 40px Variant; }
+mi::highlight(probe) { color: var(--ink); background: rgba(0, 255, 0, 0.5); }
+mi::selection { color: purple; background: orange; }
+.background { position: absolute; width: 100px; height: 40px; background: rgba(0, 255, 0, 0.5); z-index: -1; }
+</style><body>
+<div class="cell"><math><mi id="first">A</mi></math></div><div class="cell"><math><mi id="second">A</mi></math></div>
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const first = document.getElementById("first");
+    const second = document.getElementById("second");
+    const before = [first, second].map(token => token.getBoundingClientRect().toJSON());
+    const range = new Range();
+    range.selectNodeContents(first.firstChild);
+    const highlight = new Highlight(range);
+    if (!reference) {
+        CSS.highlights.set("probe", highlight);
+        getSelection().addRange(range.cloneRange());
+    }
+    await nextFrame();
+    await nextFrame();
+    if (!reference) {
+        getSelection().removeAllRanges();
+        CSS.highlights.delete("probe");
+    }
+    await nextFrame();
+    await nextFrame();
+    range.setStart(second.firstChild, 0);
+    range.setEnd(second.firstChild, 1);
+    document.body.classList.add("changed");
+    if (!reference)
+        CSS.highlights.set("probe", highlight);
+    else {
+        second.style.color = "blue";
+        const rect = second.getBoundingClientRect();
+        const parent = second.closest(".cell").getBoundingClientRect();
+        const background = document.createElement("div");
+        background.className = "background";
+        background.style.left = `${rect.left - parent.left}px`;
+        background.style.top = `${Math.round(rect.top + 38) - 40 - parent.top}px`;
+        second.closest(".cell").prepend(background);
+    }
+    await nextFrame();
+    await nextFrame();
+    const after = [first, second].map(token => token.getBoundingClientRect().toJSON());
+    if (JSON.stringify(before) !== JSON.stringify(after))
+        document.body.append("FAIL: highlight changes altered layout");
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

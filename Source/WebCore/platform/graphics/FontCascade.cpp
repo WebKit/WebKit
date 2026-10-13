@@ -1900,6 +1900,12 @@ Vector<FloatSegment> FontCascade::lineSegmentsForIntersectionsWithRect(const Tex
         return result;
 
     auto glyphBuffer = layoutText(codePath(run), run, 0, run.length()).glyphBuffer;
+    return lineSegmentsForIntersectionsWithRect(run, glyphBuffer, textOrigin, lineExtents);
+}
+
+Vector<FloatSegment> FontCascade::lineSegmentsForIntersectionsWithRect(const TextRun& run, const GlyphBuffer& glyphBuffer, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
+{
+    Vector<FloatSegment> result;
     if (!glyphBuffer.size())
         return result;
 

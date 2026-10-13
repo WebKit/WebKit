@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Bare radical highlighting preserves fallback scaling and RTL reflection</title>
+<link rel="match" href="custom-highlight-operators-radical-expected.html">
+<style>
+@font-face { font-family: Radical; src: url("resources/highlight-radical-fallback.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 170px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Radical; }
+::highlight(probe) { color: blue; }
+::highlight(shadow) { color: transparent; text-shadow: 30px 10px red; }
+::selection { color: blue; background: transparent; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" symmetric="false">√</mo><mspace height="6em"/></math></div>
+<div class="cell"><math dir="rtl"><mo lspace="0" rspace="0" symmetric="false">√</mo><mspace height="6em"/></math></div>
+<div class="cell"><math dir="rtl"><mo lspace="0" rspace="0" symmetric="false">√</mo><mspace height="6em"/></math></div>
+<div class="cell"><math dir="rtl"><mo lspace="0" rspace="0" symmetric="false">√</mo><mspace height="6em"/></math></div>
+<script>
+const reference = false;
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const tokens = [...document.querySelectorAll("mo")];
+    const rangeFor = token => { const range = new Range(); range.selectNodeContents(token); return range; };
+    if (reference) {
+        tokens.forEach(token => token.style.color = "blue");
+        const math = tokens[2].closest("math");
+        const rect = math.getBoundingClientRect();
+        const parent = math.parentElement.getBoundingClientRect();
+        tokens[2].style.color = "red";
+        math.style.position = "absolute";
+        math.style.left = `${rect.left - parent.left + 30}px`;
+        math.style.top = `${rect.top - parent.top + 10}px`;
+    } else {
+        CSS.highlights.set("probe", new Highlight(...tokens.slice(0, 2).map(rangeFor)));
+        CSS.highlights.set("shadow", new Highlight(rangeFor(tokens[2])));
+        getSelection().addRange(rangeFor(tokens[3]));
+    }
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

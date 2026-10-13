@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/CheckedPtr.h>
+#include <wtf/Function.h>
 #include <wtf/Hasher.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
@@ -35,6 +36,7 @@ namespace WebCore {
 
 class RenderBoxModelObject;
 class RenderText;
+class RenderHighlight;
 class RenderedDocumentMarker;
 struct TextBoxSelectableRange;
 enum class DocumentMarkerType : uint32_t;
@@ -95,6 +97,8 @@ struct MarkedText : public CanMakeCheckedPtr<MarkedText, WTF::DefaultedOperatorE
 
     static Vector<MarkedText> collectForDocumentMarkers(const RenderText&, const TextBoxSelectableRange&, PaintPhase);
     static Vector<MarkedText> collectForHighlights(const RenderText&, const TextBoxSelectableRange&, PaintPhase);
+    // Project a highlight onto specialized glyph geometry while retaining the normal collection policy.
+    static Vector<MarkedText> collectForHighlights(const RenderText&, PaintPhase, NOESCAPE const Function<std::pair<unsigned, unsigned>(RenderHighlight&)>&);
     static Vector<MarkedText> collectForDraggedAndTransparentContent(const DocumentMarkerType, const RenderText& renderer, const TextBoxSelectableRange&);
     static Vector<MarkedText> collectForDictationStreamingOpacity(const RenderText&, const TextBoxSelectableRange&);
 

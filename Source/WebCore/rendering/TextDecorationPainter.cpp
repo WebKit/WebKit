@@ -195,7 +195,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor)
+void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, Style::TextDecorationLine decorationType, const Styles& decorationStyle, float deviceScaleFactor, const GlyphBuffer* glyphBuffer, NOESCAPE const Function<Vector<FloatSegment>(const FloatPoint&, const FloatRect&)>* glyphIntersections)
 {
     auto paintDecoration = [&] (auto decoration, auto underlineStyle, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
@@ -210,7 +210,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const Style::ComputedStyl
                 || style.textDecorationSkipInk() == TextDecorationSkipInk::All)) {
                 if (!m_context.paintingDisabled()) {
                     auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(paintRect, m_isPrinting);
-                    auto intersections = m_font.lineSegmentsForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
+                    auto intersections = glyphIntersections ? (*glyphIntersections)(decorationGeometry.textOrigin, underlineBoundingBox) : glyphBuffer ? m_font.lineSegmentsForIntersectionsWithRect(textRun, *glyphBuffer, decorationGeometry.textOrigin, underlineBoundingBox) : m_font.lineSegmentsForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
                     if (!intersections.isEmpty()) {
                         auto dilationAmount = std::min(underlineBoundingBox.height(), style.metricsOfPrimaryFont().height() / 5);
                         auto boundaries = differenceWithDilation({ 0, paintRect.width() }, WTF::move(intersections), dilationAmount);

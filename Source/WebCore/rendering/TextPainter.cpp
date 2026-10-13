@@ -28,6 +28,9 @@
 #include "FilterOperations.h"
 #include "FontCascade.h"
 #include "FontCascadeInlines.h"
+#include "FontInlines.h"
+#include "GlyphBuffer.h"
+#include "GlyphPage.h"
 #include "GraphicsContext.h"
 #include "InlineDisplayBox.h"
 #include "InlineIteratorTextBox.h"
@@ -156,65 +159,44 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
 
 void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const Style::AppleColorFilter& colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)
 {
+    paintWithShadows(shadows, colorFilter, boxRect, textOrigin, stroked, [&](const FloatPoint& origin) {
+        paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, origin, startOffset, endOffset);
+    });
+}
+
+template<typename Paint>
+void TextPainter::paintWithShadows(const Style::TextShadows* shadows, const Style::AppleColorFilter& colorFilter, const FloatRect& boxRect, const FloatPoint& textOrigin, bool stroked, const Paint& paint, bool drawTextWithLastShadow)
+{
     if (!shadows || shadows->isNone()) {
-        paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
+        paint(textOrigin);
         return;
     }
 
     Color fillColor = m_context.fillColor();
     bool opaque = fillColor.isOpaque();
-    bool lastShadowIterationShouldDrawText = !stroked && opaque;
+    bool lastShadowIterationShouldDrawText = drawTextWithLastShadow && !stroked && opaque;
     if (!opaque)
         m_context.setFillColor(Color::black);
     for (const auto& shadow : *shadows) {
         ShadowApplier shadowApplier(m_renderStyle, m_context, &shadow, colorFilter, boxRect, &shadow == &shadows->last(), lastShadowIterationShouldDrawText, opaque, m_combinedText.get());
         if (!shadowApplier.nothingToDraw())
-            paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin + shadowApplier.extraOffset(), startOffset, endOffset);
+            paint(textOrigin + shadowApplier.extraOffset());
     }
 
     if (!lastShadowIterationShouldDrawText) {
         if (!opaque)
             m_context.setFillColor(fillColor);
-        paintTextOrEmphasisMarks(font, textRun, emphasisMark, emphasisMarkOffset, textOrigin, startOffset, endOffset);
+        paint(textOrigin);
     }
 }
 
 void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset,
     const TextPaintStyle& paintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter)
 {
-    if (paintStyle.paintOrder.isNormal()) {
-        // FIXME: Truncate right-to-left text correctly.
-        paintTextWithShadows(&shadow, shadowColorFilter, m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, paintStyle.strokeWidth > 0);
-    } else {
-        auto textDrawingMode = m_context.textDrawingMode();
-        auto shadowToUse = &shadow;
+    paintWithPaintOrder(boxRect, textOrigin, paintStyle, shadow, shadowColorFilter, [&](const FloatPoint& origin) {
+        paintTextOrEmphasisMarks(m_font, textRun, nullAtom(), 0, origin, startOffset, endOffset);
+    });
 
-        for (auto paintType : paintStyle.paintOrder) {
-            switch (paintType) {
-            case Style::PaintType::Fill: {
-                auto textDrawingModeWithoutStroke = textDrawingMode;
-                textDrawingModeWithoutStroke.remove(TextDrawingMode::Stroke);
-                m_context.setTextDrawingMode(textDrawingModeWithoutStroke);
-                paintTextWithShadows(shadowToUse, shadowColorFilter, m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, false);
-                shadowToUse = nullptr;
-                m_context.setTextDrawingMode(textDrawingMode);
-                break;
-            }
-            case Style::PaintType::Stroke: {
-                auto textDrawingModeWithoutFill = textDrawingMode;
-                textDrawingModeWithoutFill.remove(TextDrawingMode::Fill);
-                m_context.setTextDrawingMode(textDrawingModeWithoutFill);
-                paintTextWithShadows(shadowToUse, shadowColorFilter, m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, paintStyle.strokeWidth > 0);
-                shadowToUse = nullptr;
-                m_context.setTextDrawingMode(textDrawingMode);
-            }
-                break;
-            case Style::PaintType::Markers:
-                continue;
-            }
-        }
-    }
-    
     if (m_emphasisMark.isEmpty())
         return;
 
@@ -236,6 +218,67 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
 
     if (m_combinedText)
         m_context.concatCTM(rotation(boxRect, RotationDirection::Counterclockwise));
+}
+
+template<typename Paint>
+void TextPainter::paintWithPaintOrder(const FloatRect& boxRect, const FloatPoint& textOrigin, const TextPaintStyle& paintStyle, const Style::TextShadows& shadow, const Style::AppleColorFilter& shadowColorFilter, const Paint& paint, bool drawTextWithLastShadow)
+{
+    if (paintStyle.paintOrder.isNormal()) {
+        // FIXME: Truncate right-to-left text correctly.
+        paintWithShadows(&shadow, shadowColorFilter, boxRect, textOrigin, paintStyle.strokeWidth > 0, paint, drawTextWithLastShadow);
+    } else {
+        auto textDrawingMode = m_context.textDrawingMode();
+        auto shadowToUse = &shadow;
+
+        for (auto paintType : paintStyle.paintOrder) {
+            switch (paintType) {
+            case Style::PaintType::Fill: {
+                auto textDrawingModeWithoutStroke = textDrawingMode;
+                textDrawingModeWithoutStroke.remove(TextDrawingMode::Stroke);
+                m_context.setTextDrawingMode(textDrawingModeWithoutStroke);
+                paintWithShadows(shadowToUse, shadowColorFilter, boxRect, textOrigin, false, paint, drawTextWithLastShadow);
+                shadowToUse = nullptr;
+                m_context.setTextDrawingMode(textDrawingMode);
+                break;
+            }
+            case Style::PaintType::Stroke: {
+                auto textDrawingModeWithoutFill = textDrawingMode;
+                textDrawingModeWithoutFill.remove(TextDrawingMode::Fill);
+                m_context.setTextDrawingMode(textDrawingModeWithoutFill);
+                paintWithShadows(shadowToUse, shadowColorFilter, boxRect, textOrigin, paintStyle.strokeWidth > 0, paint, drawTextWithLastShadow);
+                shadowToUse = nullptr;
+                m_context.setTextDrawingMode(textDrawingMode);
+            }
+                break;
+            case Style::PaintType::Markers:
+                continue;
+            }
+        }
+    }
+}
+
+void TextPainter::paintGlyph(const GlyphData& glyphData, const FloatRect& boxRect, const FloatPoint& textOrigin)
+{
+    if (m_context.detectingContentfulPaint()) {
+        m_context.setContentfulPaintDetected();
+        return;
+    }
+    Ref font { *glyphData.font };
+    auto advance = makeGlyphBufferAdvance(font->widthForGlyph(glyphData.glyph));
+    paintWithPaintOrder(boxRect, textOrigin, m_style, m_shadow, m_shadowColorFilter, [&](const FloatPoint& origin) {
+        m_context.drawGlyphs(font, singleElementSpan(glyphData.glyph), singleElementSpan(advance), origin, m_font->fontDescription().usedFontSmoothing());
+    });
+}
+
+void TextPainter::paintGlyphs(const FloatRect& boxRect, const FloatPoint& origin, NOESCAPE const Function<void(const FloatPoint&)>& paint)
+{
+    if (m_context.detectingContentfulPaint()) {
+        m_context.setContentfulPaintDetected();
+        return;
+    }
+    // A multi-glyph painter may group shadow ink in an image buffer. Keep the
+    // foreground emission separate so that it retains native glyph rasterization.
+    paintWithPaintOrder(boxRect, origin, m_style, m_shadow, m_shadowColorFilter, paint, false);
 }
 
 void TextPainter::paintRange(const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end)

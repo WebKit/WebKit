@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Range, registry, style, and selection changes repaint assembled operators</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+mo::highlight(probe) { color: var(--ink, blue); }
+mo::selection { color: purple; background: orange; }
+</style><body>
+<div class="cell"><math><mo id="vertical" lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<div class="cell"><math><mover><mo id="horizontal" lspace="0" rspace="0">→</mo><mspace width="120px" height="0"/></mover></math></div>
+
+<script>
+const reference = false;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const tokens = [...document.querySelectorAll("mo")];
+    const before = tokens.map(token => JSON.stringify(token.getBoundingClientRect().toJSON()));
+    const range = rangeFor(tokens[0]); const highlight = new Highlight(range);
+    if (!reference) {
+        CSS.highlights.set("probe",highlight); await nextFrame(); await nextFrame();
+        getSelection().addRange(range); await nextFrame(); await nextFrame(); getSelection().removeAllRanges();
+        range.selectNodeContents(tokens[1]); await nextFrame(); await nextFrame();
+        highlight.priority = 3; document.body.style.setProperty("--ink", "red"); await nextFrame(); await nextFrame();
+        CSS.highlights.delete("probe"); await nextFrame(); await nextFrame();
+        CSS.highlights.set("probe",highlight); document.body.style.setProperty("--ink", "blue");
+    } else tokens[1].style.color = "blue";
+    if (tokens.some((token,i) => JSON.stringify(token.getBoundingClientRect().toJSON()) !== before[i])) document.body.textContent = "FAIL: highlight changed mathematical layout";
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

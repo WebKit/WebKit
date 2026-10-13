@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Native selection background paints above a custom operator background</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+mo::highlight(probe), .glyph::highlight(probe) { background: lime; }
+mo::selection, .glyph::selection { color: transparent; background: orange; }
+@font-face { font-family: Thin; src: url("resources/highlight-operators.woff"); }
+math { font-family: Thin; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" id="minus">−</mo></math></div>
+
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const token = document.querySelector("mo");
+    const range = rangeFor(token);
+    if (reference) {
+        const rect = token.getBoundingClientRect();
+        token.style.visibility = "hidden";
+        const glyph = document.createElement("span"); glyph.className = "glyph"; glyph.textContent = "−";
+        Object.assign(glyph.style, { position: "absolute", left: `${rect.left}px`, top: `${rect.top - 10}px`, font: "20px/20px Thin" });
+        document.body.append(glyph);
+        const selected = rangeFor(glyph); CSS.highlights.set("probe",new Highlight(selected)); getSelection().addRange(selected);
+    } else { CSS.highlights.set("probe",new Highlight(range)); getSelection().addRange(range); }
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

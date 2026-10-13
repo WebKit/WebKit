@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=true CSSTextTransformMathAutoEnabled=true ] -->
+<html class="reftest-wait"><meta charset="utf-8"><title>Core math-auto continues to use ordinary text highlights</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+math { font: 40px Variant; }
+math { color: blue; }
+</style><body><math><mi>A</mi><mtext mathvariant="italic">A</mtext></math>
+<script>
+document.fonts.ready.then(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+</script></body></html>

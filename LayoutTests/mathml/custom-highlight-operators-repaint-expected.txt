@@ -1,0 +1,12 @@
+PASS: registration covers operator paint
+PASS: style change covers operator paint
+PASS: range removal covers operator paint
+PASS: range addition covers operator paint
+PASS: selection covers operator paint
+PASS: selection bounds cover the assembly
+PASS: selection clear covers operator paint
+PASS: registry deletion covers operator paint
+PASS: effect registration covers operator paint
+PASS: effect style removal covers operator paint
+PASS: effect registry removal covers operator paint
+PASS: highlight updates preserve mathematical layout

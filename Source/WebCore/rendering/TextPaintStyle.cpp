@@ -245,6 +245,12 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     return selectionPaintStyle;
 }
 
+float strokeOutsetForTextPaintStyle(const TextPaintStyle& style)
+{
+    auto joinOutset = style.lineJoin == LineJoin::Miter ? std::max(1.0f, style.miterLimit) : 1.0f;
+    return ceilf(style.strokeWidth / 2 * joinOutset);
+}
+
 void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paintStyle, FillColorType fillColorType)
 {
     TextDrawingModeFlags mode = context.textDrawingMode();

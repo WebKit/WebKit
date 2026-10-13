@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Dynamic variant highlights paint outside the original MathML bounds</title>
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+body { margin: 0; }
+span { position: absolute; left: 80px; top: 38px; font: 40px/40px Variant; color: red; }
+</style>
+<!-- The original glyph baseline is top + .95em; ordinary text has a 1em ascent. -->
+<span>&#x1D434;</span>
+<script>
+document.fonts.ready.then(() => requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait")));
+</script></html>

@@ -1,0 +1,11 @@
+PASS: registration repaints the glyph em box
+PASS: style change repaints the glyph em box
+PASS: range removal repaints the glyph em box
+PASS: range addition repaints the glyph em box
+PASS: selection repaints the glyph em box
+PASS: selection bounds cover the glyph em box
+PASS: selection clear repaints the glyph em box
+PASS: registry deletion repaints the glyph em box
+PASS: effect registration repaints the glyph em box
+PASS: effect style removal repaints the glyph em box
+PASS: effect removal repaints the glyph em box

@@ -32,6 +32,10 @@
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
+#if ENABLE(MATHML)
+#include "RenderMathMLToken.h"
+#include "RenderText.h"
+#endif
 #include "StaticRange.h"
 
 namespace WebCore {
@@ -43,8 +47,19 @@ void Highlight::repaintRange(const AbstractRange& range)
         std::swap(sortedRange.start, sortedRange.end);
     // Highlight decorations can paint outside a renderer's ink overflow, so also repaint containing blocks (collected to avoid redundant repaints of shared containers).
     SingleThreadWeakHashSet<RenderBlock> containingBlocks;
+#if ENABLE(MATHML)
+    SingleThreadWeakHashSet<RenderMathMLToken> mathTokens;
+#endif
     for (Ref node : intersectingNodes(sortedRange)) {
         if (CheckedPtr renderer = node->renderer()) {
+#if ENABLE(MATHML)
+            if (CheckedPtr text = dynamicDowncast<RenderText>(*renderer)) {
+                if (CheckedPtr block = text->containingBlock()) {
+                    if (CheckedPtr token = dynamicDowncast<RenderMathMLToken>(block->parent()); token && mathTokens.add(*token).isNewEntry)
+                        token->invalidateHighlightOverflow();
+                }
+            }
+#endif
             renderer->repaint();
             if (CheckedPtr containingBlock = renderer->containingBlock())
                 containingBlocks.add(*containingBlock);

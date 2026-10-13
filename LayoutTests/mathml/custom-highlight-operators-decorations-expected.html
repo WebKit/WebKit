@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Operator decorations use assembled glyph ink, and stroke uses the selected variant</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+mo::highlight(probe) { text-decoration: underline; text-decoration-color: red; text-decoration-thickness: 2px; text-underline-offset: -10px; }
+mo::highlight(stroke) { color: blue; stroke-color: red; stroke-width: 2px; }
+mo { color:blue; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" id="minus">−</mo></math></div>
+<div class="cell"><math><mo id="vertical" lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<div class="cell"><math><mover><mo id="horizontal" lspace="0" rspace="0">→</mo><mspace width="120px" height="0"/></mover></math></div>
+<div class="cell"><math><mo id="variant" lspace="0" rspace="0" symmetric="false">(</mo><mspace height="2.5em"/></math></div>
+
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    const tokens = [...document.querySelectorAll("mo")];
+    if (reference) {
+        // The first three underlines cross the opaque rectangular ink and are entirely skipped.
+        const token = tokens[3];
+        const rect = token.getBoundingClientRect();
+        token.style.visibility = "hidden";
+        // The controlled font's 3em-high variant is a rectangular outline.
+        const box = document.createElement("div");
+        Object.assign(box.style, { position: "absolute", left: `${rect.left - 1}px`, top: `${rect.top - 1}px`, width: "18px", height: "58px", border: "2px solid red", background: "blue", boxSizing: "content-box" });
+        document.body.append(box);
+    } else {
+        CSS.highlights.set("probe", new Highlight(...tokens.slice(0,3).map(rangeFor)));
+        CSS.highlights.set("stroke", new Highlight(rangeFor(tokens[3])));
+    }
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

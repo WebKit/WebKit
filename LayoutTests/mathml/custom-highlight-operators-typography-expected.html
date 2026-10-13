@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Highlight painting preserves operator glyphs and mathematical typography</title>
+<style>
+@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+::highlight(black) { color: black; }
+</style><body>
+<div class="cell"><math><mo lspace="0" rspace="0" id="minus">−</mo></math></div>
+<div class="cell"><math display="block" style="text-align:left"><mo id="large" lspace="0" rspace="0">∑</mo></math></div>
+<div class="cell"><math><mo id="variant" lspace="0" rspace="0" symmetric="false">(</mo><mspace height="2.5em"/></math></div>
+<div class="cell"><math><mo id="vertical" lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math></div>
+<div class="cell"><math><mover><mo id="horizontal" lspace="0" rspace="0">→</mo><mspace width="120px" height="0"/></mover></math></div>
+<div class="cell"><math dir="rtl"><mo id="rtl" lspace="0" rspace="0" symmetric="false">(</mo><mspace height="6em"/></math></div>
+<div class="cell"><math><mover><mo id="nonbmp" form="prefix" lspace="0" rspace="0">&#x1EEF0;</mo><mspace width="120px" height="0"/></mover></math></div>
+<div class="cell"><math><msqrt><mn>2</mn></msqrt><mfenced><mn>3</mn></mfenced></math></div>
+
+<script>
+const reference = true;
+const nextFrame = () => new Promise(requestAnimationFrame);
+const rangeFor = node => { const range = new Range(); range.selectNodeContents(node); return range; };
+const background = (token, width, height, color = "rgba(0,255,0,.5)", x = 0, y = 0) => {
+    const rect = token.getBoundingClientRect();
+    const box = document.createElement("div");
+    box.className = "background";
+    Object.assign(box.style, { left: `${rect.left + x}px`, top: `${rect.top + y}px`, width: `${width}px`, height: `${height}px`, background: color });
+    document.body.append(box);
+};
+window.addEventListener("load", async () => {
+    await document.fonts.ready;
+    if (!reference) CSS.highlights.set("black", new Highlight(...[...document.querySelectorAll("math")].map(rangeFor)));
+    await nextFrame(); await nextFrame();
+    document.documentElement.classList.remove("reftest-wait");
+});
+</script></body></html>

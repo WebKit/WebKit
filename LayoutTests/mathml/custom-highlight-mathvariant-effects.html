@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CoreMathMLDeprecateLegacyMathvariant=false ] -->
+<html class="reftest-wait"><meta charset="utf-8">
+<title>Highlight effects preserve the chosen mathematical glyph</title>
+<link rel="match" href="custom-highlight-mathvariant-effects-expected.html">
+<style>
+@font-face { font-family: Variant; src: url("../imported/w3c/web-platform-tests/fonts/math/mathvariant-italic.woff"); }
+@font-face { font-family: Shaping; src: url("resources/mathvariant-highlight-shaping.woff"); }
+body { margin: 0; }
+.cell { position: relative; display: inline-block; width: 170px; height: 90px; padding: 15px; vertical-align: top; }
+math, .glyph { font: 40px Variant; }
+.glyph { position: absolute; line-height: 40px; white-space: pre; }
+::highlight(probe) { color: blue; }
+.shadow::highlight(probe), .shadow .glyph { text-shadow: -8px -8px red, 8px 8px rgba(0, 255, 0, 0.5); }
+.stroke mi::highlight(probe), .stroke .glyph { stroke-color: red; stroke-width: 2px; }
+.order mi::highlight(probe), .order .glyph { stroke-color: red; stroke-width: 2px; }
+.order math, .order .glyph { paint-order: stroke fill; }
+.decoration::highlight(probe), .decoration .glyph { text-decoration: underline overline line-through; text-decoration-color: red; text-decoration-thickness: 2px; }
+.offset::highlight(probe), .offset .glyph { text-decoration: underline; text-decoration-color: red; text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.shaping math { font-family: Shaping; font-feature-settings: "ss01"; }
+.shaping .glyph { font-family: Shaping; font-feature-settings: "ss01" 0; }
+.shaping::highlight(probe), .shaping .glyph { text-decoration: underline; text-decoration-color: red; text-decoration-thickness: 2px; text-underline-offset: -20px; }
+</style>
+<body>
+<script>
+const reference = false;
+const ranges = [];
+for (const kind of ["shadow", "stroke", "order", "decoration", "offset", "shaping"]) {
+    const cell = document.createElement("div");
+    cell.className = `cell ${kind}`;
+    cell.innerHTML = '<math><mi>A</mi></math>';
+    document.body.append(cell);
+    const range = new Range();
+    range.selectNodeContents(cell.querySelector("mi"));
+    ranges.push(range);
+}
+// Positive control: ordinary shaping must actually apply the test font's ss01 feature.
+const control = document.createElement("div");
+control.style.cssText = 'font: 40px Shaping; font-feature-settings: "ss01";';
+control.textContent = reference ? "A" : "\u{1D434}";
+document.body.append(control);
+if (!reference)
+    CSS.highlights.set("probe", new Highlight(...ranges));
+document.fonts.ready.then(() => requestAnimationFrame(() => {
+    if (reference) {
+        for (const cell of document.querySelectorAll(".cell")) {
+            const token = cell.querySelector("mi");
+            const rect = token.getBoundingClientRect();
+            const parent = cell.getBoundingClientRect();
+            const glyph = document.createElement("span");
+            glyph.className = "glyph";
+            glyph.textContent = "\u{1D434}";
+            glyph.style.color = "blue";
+            glyph.style.left = `${rect.left - parent.left}px`;
+            glyph.style.top = `${Math.round(rect.top + 38) - 40 - parent.top}px`;
+            token.style.color = "transparent";
+            cell.append(glyph);
+        }
+    }
+    document.documentElement.classList.remove("reftest-wait");
+}));
+</script>
+</body>
+</html>

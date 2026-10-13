@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Dynamic assembly repaint and selection bounds</title>
+<style>@font-face { font-family: Operators; src: url("../imported/w3c/web-platform-tests/fonts/math/operators.woff"); }
+body { margin: 0; }
+.cell { display: inline-block; position: relative; width: 150px; height: 160px; padding: 20px; vertical-align: top; }
+math { font: 20px Operators; }
+mo::highlight(probe) { color: blue; }
+mo::highlight(background) { color: transparent; background: rgba(0, 255, 0, .5); }
+mo::highlight(lower) { color: transparent; background: rgba(255, 0, 0, .5); }
+mo::highlight(upper) { background: rgba(0, 255, 0, .5); }
+.background { position: absolute; z-index: -1; }
+body { margin:20px; }
+mo::highlight(probe) { background:lime; }
+mo.changed::highlight(probe) { color:red; }
+mo.effects::highlight(probe) { text-shadow:-10px -10px red,10px 10px green; }
+mo::selection { color:purple; background:orange; }
+</style><math><mo id="token" lspace="0" rspace="0" symmetric="false">{</mo><mspace height="6em"/></math>
+<script>if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone(); }
+const nextFrame = () => new Promise(requestAnimationFrame);
+window.addEventListener("load", async () => {
+    await document.fonts.ready; await nextFrame(); await nextFrame();
+    const token = document.getElementById("token");
+    const initial = token.getBoundingClientRect();
+    const range = new Range(); range.selectNodeContents(token);
+    const highlight = new Highlight(range);
+    // The controlled font gives a 1em advance and this forced assembly has 6em height.
+    let expected = { x: initial.left, y: initial.top, width: 20, height: 120 };
+    const original = JSON.stringify(initial.toJSON());
+    const contains = rect => rect.x <= expected.x && rect.y <= expected.y && rect.x + rect.width >= expected.x + expected.width && rect.y + rect.height >= expected.y + expected.height;
+    const results = [];
+    async function check(name, change) {
+        internals.startTrackingRepaints(); change(); internals.selectionBounds();
+        const text = internals.repaintRectsAsText(); internals.stopTrackingRepaints();
+        const rects = [...text.matchAll(/\(rect ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+)\)/g)].map(m => ({ x:+m[1], y:+m[2], width:+m[3], height:+m[4] }));
+        results.push(`${rects.some(contains) ? "PASS" : "FAIL"}: ${name} covers operator paint`);
+        await nextFrame(); await nextFrame();
+    }
+    await check("registration", () => CSS.highlights.set("probe",highlight));
+    await check("style change", () => token.classList.add("changed"));
+    await check("range removal", () => highlight.delete(range));
+    await check("range addition", () => highlight.add(range));
+    await check("selection", () => getSelection().addRange(range));
+    results.push(`${contains(internals.selectionBounds()) ? "PASS" : "FAIL"}: selection bounds cover the assembly`);
+    await check("selection clear", () => getSelection().removeAllRanges());
+    await check("registry deletion", () => CSS.highlights.delete("probe"));
+    token.classList.add("effects"); await nextFrame(); await nextFrame();
+    expected = { x: initial.left - 10, y: initial.top - 10, width: 40, height: 140 };
+    await check("effect registration", () => CSS.highlights.set("probe",highlight));
+    await check("effect style removal", () => token.classList.remove("effects"));
+    token.classList.add("effects"); await nextFrame(); await nextFrame();
+    await check("effect registry removal", () => CSS.highlights.delete("probe"));
+    results.push(`${JSON.stringify(token.getBoundingClientRect().toJSON()) === original ? "PASS" : "FAIL"}: highlight updates preserve mathematical layout`);
+    const output = document.createElement("pre"); output.textContent = results.join("\n"); document.body.replaceChildren(output);
+    if (window.testRunner) testRunner.notifyDone();
+});</script>
