@@ -53,8 +53,8 @@
 #include "EditorClientWKC.h"
 #include "DragClientWKC.h"
 #include "FrameLoaderClientWKC.h"
-// 2026: InspectorClient was renamed to InspectorBackendClient and is optional in
-// PageConfiguration; the Wii U port ships no inspector backend, so the client is gone.
+// The WKC Inspector backend bridges DevTools Protocol JSON to the embedder.
+// The embedder controls its frontend transport; WKC opens no network listener.
 #include "DropDownListClientWKC.h"
 #if ENABLE(GEOLOCATION)
 #include "GeolocationClientWKC.h"
