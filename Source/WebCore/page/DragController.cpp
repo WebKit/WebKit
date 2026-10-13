@@ -1315,10 +1315,12 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         dragImage = DragImage { createDragImageForNode(src, *modelElement) };
 
         PasteboardImage pasteboardImage;
+#if PLATFORM(IOS_FAMILY)
         pasteboardImage.suggestedName = modelElement->model()->filename();
+#endif
         pasteboardImage.resourceMIMEType = modelElement->model()->mimeType();
         pasteboardImage.resourceData = modelElement->model()->data();
-        dataTransfer->pasteboard().write(pasteboardImage);
+        dataTransfer->pasteboard().write(WTF::move(pasteboardImage));
 
         dragImageOffset = IntPoint { dragImageSize(dragImage.get()) };
         dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, false);

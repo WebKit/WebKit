@@ -802,43 +802,6 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
     notImplemented();
 }
 
-void Pasteboard::writeImage(Element& element, const URL&, const String&)
-{
-    if (!is<RenderImage>(element.renderer()))
-        return;
-
-    auto& renderer = downcast<RenderImage>(*element.renderer());
-    CachedImage* cachedImage = renderer.cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return;
-    Image* image = cachedImage->image();
-    ASSERT(image);
-
-    clear();
-
-    HWndDC dc(0);
-    auto compatibleDC = adoptGDIObject(::CreateCompatibleDC(0));
-    auto sourceDC = adoptGDIObject(::CreateCompatibleDC(0));
-    auto resultBitmap = adoptGDIObject(::CreateCompatibleBitmap(dc, image->width(), image->height()));
-    HGDIOBJ oldBitmap = ::SelectObject(compatibleDC.get(), resultBitmap.get());
-
-    BitmapInfo bmInfo = BitmapInfo::create(IntSize(image->size()));
-
-    auto coreBitmap = adoptGDIObject(::CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0));
-    HGDIOBJ oldSource = ::SelectObject(sourceDC.get(), coreBitmap.get());
-    image->adapter().getHBITMAP(coreBitmap.get());
-
-    ::BitBlt(compatibleDC.get(), 0, 0, image->width(), image->height(), sourceDC.get(), 0, 0, SRCCOPY);
-
-    ::SelectObject(sourceDC.get(), oldSource);
-    ::SelectObject(compatibleDC.get(), oldBitmap);
-
-    if (::OpenClipboard(m_owner)) {
-        ::SetClipboardData(CF_BITMAP, resultBitmap.leak());
-        ::CloseClipboard();
-    }
-}
-
 bool Pasteboard::canSmartReplace()
 { 
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
@@ -1144,8 +1107,31 @@ void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, std:
 {
 }
 
-void Pasteboard::write(const PasteboardImage&)
+void Pasteboard::write(PasteboardImage&& pasteboardImage)
 {
+    RefPtr bitmap = WTF::move(pasteboardImage.bitmap);
+    if (!bitmap)
+        return;
+
+    auto size = bitmap->size();
+    BitmapInfo bitmapInfo = BitmapInfo::create(size);
+    void* pixels = nullptr;
+    auto hBitmap = adoptGDIObject(::CreateDIBSection(nullptr, &bitmapInfo, DIB_RGB_COLORS, &pixels, nullptr, 0));
+    if (!hBitmap || !pixels)
+        return;
+
+    size_t rowLength = size.width() * 4;
+    auto destination = unsafeMakeSpan(static_cast<uint8_t*>(pixels), rowLength * size.height());
+    auto source = bitmap->span();
+    for (int y = 0; y < size.height(); ++y)
+        memcpySpan(destination.subspan((size.height() - 1 - y) * rowLength, rowLength), source.subspan(y * bitmap->bytesPerRow(), rowLength));
+
+    clear();
+
+    if (::OpenClipboard(m_owner)) {
+        ::SetClipboardData(CF_BITMAP, hBitmap.leak());
+        ::CloseClipboard();
+    }
 }
 
 void Pasteboard::write(const PasteboardBuffer&)

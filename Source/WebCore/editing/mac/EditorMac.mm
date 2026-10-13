@@ -200,23 +200,6 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     return nullptr;
 }
 
-static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
-{
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
-    if (!renderImage)
-        return;
-
-    RefPtr tentativeCachedImage = renderImage->cachedImage();
-    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
-        return;
-
-    image = tentativeCachedImage->image();
-    if (!image)
-        return;
-
-    cachedImage = tentativeCachedImage.get();
-}
-
 void Editor::selectionWillChange()
 {
     if (!hasComposition() || ignoreSelectionChanges() || document().selection().isNone() || document().renderTreeState() != Document::RenderTreeState::Built)
@@ -241,13 +224,21 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
 {
-    PasteboardImage pasteboardImage;
-
-    CachedImage* cachedImage = nullptr;
-    getImage(imageElement, pasteboardImage.image, cachedImage);
-    if (!pasteboardImage.image)
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
+    if (!renderImage)
         return;
-    ASSERT(cachedImage);
+
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return;
+
+    PasteboardImage pasteboardImage;
+    if (RetainPtr tiffData = image->adapter().tiffRepresentation(renderImage->concreteObjectSizeForPasteboard()))
+        pasteboardImage.dataInTIFFFormat = SharedBuffer::create(tiffData.get());
 
     if (!pasteboard.isStatic())
         pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
@@ -262,7 +253,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.resourceData = buffer->makeContiguous();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 
-    pasteboard.write(pasteboardImage);
+    pasteboard.write(WTF::move(pasteboardImage));
 }
 
 bool Editor::writingSuggestionsSupportsSuffix()

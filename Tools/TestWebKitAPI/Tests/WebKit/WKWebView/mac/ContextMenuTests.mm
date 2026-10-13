@@ -1007,6 +1007,64 @@ TEST(ContextMenuTests, MenuTrackingCancelledWhenPageCloses)
     [NSNotificationCenter.defaultCenter removeObserver:observer.get()];
 }
 
+static NSString *svgImageURL(NSString *rootAttributes)
+{
+    NSString *svg = [NSString stringWithFormat:@"<svg xmlns='http://www.w3.org/2000/svg' %@><rect width='100%%' height='100%%' fill='green'/></svg>", rootAttributes];
+    return [@"data:image/svg+xml;base64," stringByAppendingString:[[svg dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:0]];
+}
+
+static NSSize copiedImageTIFFSize(NSString *source, NSString *style)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    NSString *markup = [NSString stringWithFormat:@"<body style='margin: 0'><img style='display: block; %@' src='%@'></body>", style, source];
+    [webView synchronouslyLoadHTMLString:markup];
+
+    clearPasteboard();
+
+    [webView rightClick:NSMakePoint(10, 10) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierCopyImage];
+    }];
+
+    NSData *tiff = nil;
+    for (unsigned i = 0; i < 100 && !tiff; ++i) {
+        Util::runFor(0.05_s);
+        tiff = [NSPasteboard.generalPasteboard dataForType:NSPasteboardTypeTIFF];
+    }
+
+    NSBitmapImageRep *representation = tiff ? [NSBitmapImageRep imageRepWithData:tiff] : nil;
+    if (!representation)
+        return NSZeroSize;
+    return NSMakeSize(representation.pixelsWide, representation.pixelsHigh);
+}
+
+TEST(ContextMenuTests, CopyImageTIFFForSVGWithNaturalSize)
+{
+    auto size = copiedImageTIFFSize(svgImageURL(@"width='200' height='100'"), @"width: 300px; height: 300px");
+    EXPECT_EQ(size.width, 200);
+    EXPECT_EQ(size.height, 100);
+}
+
+TEST(ContextMenuTests, CopyImageTIFFForSVGWithOnlyWidth)
+{
+    auto size = copiedImageTIFFSize(svgImageURL(@"width='200'"), @"");
+    EXPECT_EQ(size.width, 200);
+    EXPECT_EQ(size.height, 150); // The missing height comes from the used size of 200x150.
+}
+
+TEST(ContextMenuTests, CopyImageTIFFForSVGWithoutNaturalSize)
+{
+    auto size = copiedImageTIFFSize(svgImageURL(@""), @"width: 120px; height: 120px");
+    EXPECT_EQ(size.width, 120);
+    EXPECT_EQ(size.height, 120);
+}
+
+TEST(ContextMenuTests, CopyImageTIFFForHugeSVGIsCapped)
+{
+    auto size = copiedImageTIFFSize(svgImageURL(@"width='10000' height='5000'"), @"width: 200px; height: 100px");
+    EXPECT_EQ(size.width, 4096);
+    EXPECT_EQ(size.height, 2048);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

@@ -119,7 +119,7 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
     notImplemented();
 }
 
-void Pasteboard::write(const PasteboardImage&)
+void Pasteboard::write(PasteboardImage&&)
 {
 }
 

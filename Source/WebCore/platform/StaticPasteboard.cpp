@@ -119,7 +119,7 @@ void StaticPasteboard::write(const PasteboardURL& url)
     m_customData.writeString("text/uri-list"_s, url.url.string());
 }
 
-void StaticPasteboard::write(const PasteboardImage& image)
+void StaticPasteboard::write(PasteboardImage&& image)
 {
     // FIXME: This should ideally remember the image data, so that when this StaticPasteboard
     // is committed to the native pasteboard, we'll preserve the image as well. For now, stick

@@ -26,13 +26,17 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "CachedImage.h"
 #include "ClipboardUtilitiesWin.h"
+#include "ContainerNodeInlines.h"
 #include "DocumentFragment.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "LocalFrameInlines.h"
 #include "Pasteboard.h"
 #include "Range.h"
+#include "RenderImage.h"
+#include "ShareableBitmap.h"
 #include "SimpleRange.h"
 #include "windows.h"
 
@@ -52,6 +56,25 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
     if (fragment && shouldInsertFragment(*fragment, *range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
+}
+
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, const String&)
+{
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
+    if (!renderImage)
+        return;
+
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return;
+
+    PasteboardImage pasteboardImage;
+    pasteboardImage.bitmap = image->toShareableBitmap(renderImage->concreteObjectSizeForPasteboard());
+    pasteboard.write(WTF::move(pasteboardImage));
 }
 
 void Editor::platformCopyFont()

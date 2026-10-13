@@ -22,24 +22,17 @@
 
 headers: <WebCore/Pasteboard.h>
 
+#if PLATFORM(IOS_FAMILY)
 header: <WebCore/Pasteboard.h>
 [CustomHeader] struct WebCore::PasteboardImage {
-    RefPtr<WebCore::Image> image;
-#if PLATFORM(MAC)
-    RefPtr<WebCore::SharedBuffer> dataInWebArchiveFormat;
-    String dataInHTMLFormat;
-#endif
-#if !PLATFORM(WIN)
     WebCore::PasteboardURL url;
-#endif
-#if !(PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(WIN))
     RefPtr<WebCore::SharedBuffer> resourceData;
     String resourceMIMEType;
     Vector<std::pair<String, RefPtr<WebCore::SharedBuffer>>> clientTypesAndData;
-#endif
     String suggestedName;
-    WebCore::FloatSize imageSize;
+    WebCore::FloatSize preferredPresentationSize;
 };
+#endif
 
 header: <WebCore/Pasteboard.h>
 [CustomHeader] struct WebCore::PasteboardWebContent {

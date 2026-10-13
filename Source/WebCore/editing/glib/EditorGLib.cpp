@@ -86,32 +86,27 @@ static String elementURL(Element& element)
     return nullString();
 }
 
-static bool getImageForElement(Element& element, RefPtr<Image>& image)
-{
-    auto* renderer = element.renderer();
-    if (!is<RenderImage>(renderer))
-        return false;
-
-    CachedImage* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return false;
-
-    image = cachedImage->image();
-    return image;
-}
-
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL&, const String& title)
 {
-    PasteboardImage pasteboardImage;
-
-    if (!getImageForElement(imageElement, pasteboardImage.image))
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(imageElement.renderer());
+    if (!renderImage)
         return;
-    ASSERT(pasteboardImage.image);
+
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return;
+
+    PasteboardImage pasteboardImage;
+    pasteboardImage.bitmap = image->toShareableBitmap(renderImage->concreteObjectSizeForPasteboard());
 
     pasteboardImage.url.url = imageElement.document().encodingParseURL(elementURL(imageElement));
     pasteboardImage.url.title = title;
     pasteboardImage.url.markup = serializeFragment(imageElement, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::Yes);
-    pasteboard.write(pasteboardImage);
+    pasteboard.write(WTF::move(pasteboardImage));
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
