@@ -230,7 +230,7 @@ class SingleTestRunner(object):
                 result.type = test_expectations.SKIP
                 return result
             return self._run_reftest()
-        if self._test_input.test.is_wpt_crash_test:
+        if self._test_input.test.is_crash_test:
             return self._run_wpt_crash_test()
         if self._options.reset_results:
             return self._run_rebaseline()

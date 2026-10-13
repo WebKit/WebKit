@@ -933,6 +933,13 @@ class Port(object):
     def web_platform_test_server_doc_root(self):
         return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
 
+    def test_routes(self):
+        """Returns the roots of tests served over HTTP, for URL computation.
+
+        Each entry is a ServerRoute: test_file_dir is a "/"-separated directory
+        relative to LayoutTests, in the same form as Test.file_path."""
+        return apache_http_server.test_routes(self) + web_platform_test_server.test_routes(self)
+
     def web_platform_test_server_base_http_url(self, localhost_only=False):
         return web_platform_test_server.base_http_url(self, localhost_only)
 

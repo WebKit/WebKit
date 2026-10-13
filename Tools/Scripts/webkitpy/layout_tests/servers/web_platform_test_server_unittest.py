@@ -21,6 +21,7 @@
 #  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import optparse
 import sys
 import time
@@ -29,12 +30,13 @@ import unittest
 from webkitcorepy import OutputCapture
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.port import Port
 from webkitpy.tool.mocktool import MockOptions
 
 from webkitpy.layout_tests.servers.http_server_base import ServerError
-from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
+from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer, doc_root, test_routes
 
 
 class TestWebPlatformTestServer(unittest.TestCase):
@@ -118,3 +120,27 @@ class TestWebPlatformTestServer(unittest.TestCase):
             server.stop()
             server._process.poll = lambda: 1
             self.assertRaises(ServerError, server.start)
+
+    def test_test_routes_match_real_config(self):
+        # Every route other than the doc root must be declared as an alias in
+        # the real WPT config.json, and every route must exist on disk.
+        real_fs = FileSystem()
+        port = Port(MockHost(), "test", optparse.Values())
+        real_layout_tests = real_fs.join(WebKitFinder(real_fs).webkit_base(), "LayoutTests")
+        config = json.loads(real_fs.read_text_file(
+            real_fs.join(real_layout_tests, "imported", "w3c", "resources", "config.json")))
+        base_dir = doc_root(port)
+
+        aliases = {
+            alias["url-path"]: real_fs.relpath(
+                real_fs.normpath(real_fs.join(real_layout_tests, base_dir, alias["local-dir"])), real_layout_tests)
+            for alias in config["aliases"]
+            if alias["url-path"].endswith("/") and alias["local-dir"].endswith("/")
+        }
+        routes = test_routes(port)
+        self.assertIn(base_dir, [route.test_file_dir for route in routes])
+        for route in routes:
+            with self.subTest(route.test_file_dir):
+                self.assertTrue(real_fs.isdir(real_fs.join(real_layout_tests, route.test_file_dir)))
+                if route.test_file_dir != base_dir:
+                    self.assertEqual(aliases.get(route.url_base), route.test_file_dir)

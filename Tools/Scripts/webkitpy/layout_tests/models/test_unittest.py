@@ -28,6 +28,7 @@
 
 import unittest
 
+from webkitpy.layout_tests.models.server_routing import ServerType
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_input import TestInput
 
@@ -41,27 +42,27 @@ class TestNeedsServer(unittest.TestCase):
         self.assertFalse(t.needs_any_server)
 
     def test_http(self):
-        t = Test(test_path='http/tests/foo.html', is_http_test=True)
+        t = Test(test_path='http/tests/foo.html', served_by=ServerType.HTTP)
         self.assertTrue(t.needs_http_server)
         self.assertFalse(t.needs_wpt_server)
         self.assertTrue(t.needs_any_server)
 
     def test_http_websocket(self):
-        t = Test(test_path='http/tests/websocket/foo.html', is_http_test=True, is_websocket_test=True)
+        t = Test(test_path='http/tests/websocket/foo.html', served_by=ServerType.HTTP | ServerType.WEBSOCKET)
         self.assertTrue(t.needs_http_server)
         self.assertTrue(t.needs_websocket_server)
         self.assertTrue(t.needs_any_server)
 
     def test_websocket(self):
-        t = Test(test_path='websocket/tests/standalone.html', is_websocket_test=True)
+        t = Test(test_path='websocket/tests/standalone.html', served_by=ServerType.WEBSOCKET)
         self.assertFalse(t.needs_http_server)
         # Websocket server only starts when http or wpt also starts, so a websocket-only test
-        # has needs_websocket_server=False even though is_websocket_test=True.
+        # has needs_websocket_server=False even though ServerType.WEBSOCKET is set.
         self.assertFalse(t.needs_websocket_server)
         self.assertFalse(t.needs_any_server)
 
     def test_wpt(self):
-        t = Test(test_path='imported/w3c/web-platform-tests/foo.html', is_wpt_test=True)
+        t = Test(test_path='imported/w3c/web-platform-tests/foo.html', served_by=ServerType.WPT)
         self.assertFalse(t.needs_http_server)
         self.assertTrue(t.needs_wpt_server)
         self.assertTrue(t.needs_any_server)
@@ -69,7 +70,7 @@ class TestNeedsServer(unittest.TestCase):
     def test_wpt_websocket(self):
         # Not an HTTP test, but the websocket server still starts because the
         # WPT server does.
-        t = Test(test_path='imported/w3c/web-platform-tests/websocket/foo.html', is_wpt_test=True, is_websocket_test=True)
+        t = Test(test_path='imported/w3c/web-platform-tests/websocket/foo.html', served_by=ServerType.WPT | ServerType.WEBSOCKET)
         self.assertFalse(t.needs_http_server)
         self.assertTrue(t.needs_wpt_server)
         self.assertTrue(t.needs_websocket_server)
@@ -206,8 +207,8 @@ class TestSortOrder(unittest.TestCase):
         self.assertGreater(Test(test_path='foo_bar/baz'), Test(test_path='foo/bar/baz'))
 
     def test_other_fields_do_not_affect_ordering(self):
-        t1 = Test(test_path='a', expected_text_path='x', is_http_test=False)
-        t2 = Test(test_path='a', expected_text_path='y', is_http_test=True)
+        t1 = Test(test_path='a', expected_text_path='x', served_by=ServerType.FILE)
+        t2 = Test(test_path='a', expected_text_path='y', served_by=ServerType.HTTP)
         self.assertNotEqual(t1, t2)
         self.assertFalse(t1 < t2)
         self.assertFalse(t2 < t1)
