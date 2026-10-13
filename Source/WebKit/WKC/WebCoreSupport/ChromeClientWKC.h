@@ -104,6 +104,12 @@ public:
     void updateTextIndicator(RefPtr<WebCore::TextIndicator>&&) const final;
     void showShareSheet(WebCore::ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&&) final;
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    void sendInspectorMessageToFrontend(const WTF::String&);
+    void inspectorFrontendCountChanged(unsigned);
+    void bringInspectorFrontendToFront();
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     int checkWebNotificationPermission(const WTF::String& origin) const;
     void requestWebNotificationPermission(const WTF::String& origin, void (*completion)(void*, int), void* context);
