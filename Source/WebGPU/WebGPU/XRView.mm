@@ -61,7 +61,7 @@ void XRView::setLabel(String&&)
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuXRViewAddRef(WGPUXRView binding)
+void LEGACY_NODELETE wgpuXRViewAddRef(WGPUXRView binding)
 {
     WebGPU::Metal::fromAPI(binding).ref();
 }

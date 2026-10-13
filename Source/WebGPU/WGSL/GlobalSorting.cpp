@@ -72,10 +72,10 @@ public:
         {
         }
 
-        Node& NODELETE source() const { return *m_source; }
-        Node& NODELETE target() const { return *m_target; }
+        Node& LEGACY_NODELETE source() const { return *m_source; }
+        Node& LEGACY_NODELETE target() const { return *m_target; }
 
-        bool NODELETE operator==(const Edge& other) const
+        bool LEGACY_NODELETE operator==(const Edge& other) const
         {
             return m_source == other.m_source && m_target == other.m_target;
         }
@@ -87,8 +87,8 @@ public:
 
     struct EdgeHashTraits : HashTraits<Edge> {
         static constexpr bool emptyValueIsZero = true;
-        static void NODELETE constructDeletedValue(Edge& slot) { slot.m_source = std::bit_cast<Node*>(static_cast<intptr_t>(-1)); }
-        static bool NODELETE isDeletedValue(const Edge& edge) { return edge.m_source == std::bit_cast<Node*>(static_cast<intptr_t>(-1)); }
+        static void LEGACY_NODELETE constructDeletedValue(Edge& slot) { slot.m_source = std::bit_cast<Node*>(static_cast<intptr_t>(-1)); }
+        static bool LEGACY_NODELETE isDeletedValue(const Edge& edge) { return edge.m_source == std::bit_cast<Node*>(static_cast<intptr_t>(-1)); }
     };
 
     struct EdgeHash {
@@ -96,7 +96,7 @@ public:
         {
             return WTF::TupleHash<Node*, Node*>::hash(std::tuple(edge.m_source, edge.m_target));
         }
-        static bool NODELETE equal(const Edge& a, const Edge& b)
+        static bool LEGACY_NODELETE equal(const Edge& a, const Edge& b)
         {
             return a == b;
         }
@@ -116,10 +116,10 @@ public:
         {
         }
 
-        unsigned NODELETE index() const { return m_index; }
-        AST::Declaration& NODELETE astNode() const { return *m_astNode; }
-        EdgeSet& NODELETE incomingEdges() { return m_incomingEdges; }
-        EdgeSet& NODELETE outgoingEdges() { return m_outgoingEdges; }
+        unsigned LEGACY_NODELETE index() const { return m_index; }
+        AST::Declaration& LEGACY_NODELETE astNode() const { return *m_astNode; }
+        EdgeSet& LEGACY_NODELETE incomingEdges() { return m_incomingEdges; }
+        EdgeSet& LEGACY_NODELETE outgoingEdges() { return m_outgoingEdges; }
 
     private:
         unsigned m_index;
@@ -134,7 +134,7 @@ public:
     {
     }
 
-    FixedVector<Node>& NODELETE nodes() { return m_nodes; }
+    FixedVector<Node>& LEGACY_NODELETE nodes() { return m_nodes; }
     Node* addNode(unsigned index, AST::Declaration& astNode)
     {
         bool isConstAssert = is<AST::ConstAssert>(astNode);
@@ -155,7 +155,7 @@ public:
         return it->value;
     }
 
-    EdgeSet& NODELETE edges() { return m_edges; }
+    EdgeSet& LEGACY_NODELETE edges() { return m_edges; }
     void addEdge(Node& source, Node& target)
     {
         if constexpr (shouldLogGlobalSorting)

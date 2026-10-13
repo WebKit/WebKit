@@ -151,9 +151,9 @@ public:
     // The callback completes with true and the next uncaptured error, or with false and no error
     // when the device is destroyed or the callback is replaced.
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
-    void NODELETE setLabel(String&&) final;
+    void LEGACY_NODELETE setLabel(String&&) final;
 
-    bool NODELETE isValid() const final { return m_device; }
+    bool LEGACY_NODELETE isValid() const final { return m_device; }
     bool isLost() const { return m_isLost; }
     const Limits& limits() const LIFETIME_BOUND { return m_capabilities.limits; }
     const Limits limitsCopy() const { return m_capabilities.limits; }
@@ -187,19 +187,19 @@ public:
     uint32_t maxBuffersForFragmentStage() const { return m_capabilities.limits.maxBindGroups; }
 
     uint32_t maxBuffersForComputeStage() const { return m_capabilities.limits.maxBindGroups; }
-    uint32_t NODELETE vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+    uint32_t LEGACY_NODELETE vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
 
     id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
     id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions, bool skipMemoryAttribution = false) const;
     id<MTLTexture> newTextureWithDescriptor(MTLTextureDescriptor *, IOSurfaceRef = nullptr, NSUInteger plane = 0) const;
 
-    static bool NODELETE isStencilOnlyFormat(MTLPixelFormat);
-    bool NODELETE shouldStopCaptureAfterSubmit();
+    static bool LEGACY_NODELETE isStencilOnlyFormat(MTLPixelFormat);
+    bool LEGACY_NODELETE shouldStopCaptureAfterSubmit();
     id<MTLBuffer> placeholderBuffer() const { return m_placeholderBuffer; }
     uint64_t placeholderBufferUniqueId() const { return m_placeholderBuffer.gpuAddress; }
 
-    id<MTLTexture> NODELETE placeholderTexture(WGPUTextureFormat) const;
-    bool NODELETE isDestroyed() const;
+    id<MTLTexture> LEGACY_NODELETE placeholderTexture(WGPUTextureFormat) const;
+    bool LEGACY_NODELETE isDestroyed() const;
     NSString *errorValidatingTextureCreation(const WebGPU::TextureDescriptor&);
     id<MTLBuffer> _Nullable dispatchCallBuffer();
     id<MTLComputePipelineState> _Nullable dispatchCallPipelineState(id<MTLFunction>);
@@ -220,7 +220,7 @@ public:
         return buffer;
     }
     void loseTheDevice(WGPUDeviceLostReason);
-    int NODELETE bufferIndexForICBContainer() const;
+    int LEGACY_NODELETE bufferIndexForICBContainer() const;
     void setOwnerWithIdentity(id<MTLResource>) const;
     struct ExternalTextureData {
         id<MTLTexture> _Nullable texture0 { nil };
@@ -241,7 +241,7 @@ public:
     id<MTLTexture> _Nullable premultipliedAlphaTexture(id<MTLTexture>, MTLPixelFormat, std::optional<MTLTextureSwizzleChannels> sourceSwizzle) const;
     id<MTLComputePipelineState> _Nullable premultiplyAlphaPipeline() const;
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
-    RefPtr<XRSubImage> NODELETE getXRViewSubImage() const;
+    RefPtr<XRSubImage> LEGACY_NODELETE getXRViewSubImage() const;
     id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
     const std::optional<const MachSendRight> webProcessID() const;
 #if CPU(X86_64)
@@ -249,7 +249,7 @@ public:
 #else
     constexpr bool isIntel() const { return false; }
 #endif
-    bool NODELETE pauseErrorReporting(bool pauseReporting);
+    bool LEGACY_NODELETE pauseErrorReporting(bool pauseReporting);
     bool enableEncoderTimestamps() const;
     id<MTLCounterSampleBuffer> timestampsBuffer(id<MTLCommandBuffer>, size_t);
     void resolveTimestampsForBuffer(id<MTLCommandBuffer>);
@@ -270,7 +270,7 @@ public:
         m_commandEncoderMap.remove(identifier);
     }
     bool supportsResidencySets() { return m_capabilities.baseCapabilities.supportsResidencySets; }
-    bool NODELETE isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
+    bool LEGACY_NODELETE isCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
     void setCachedCompatibile(const BindGroupLayout&, const BindGroupLayout&) const;
     void removeCachedBindGroupLayout(const BindGroupLayout&) const;
     static constexpr uint64_t maxPipelines = (1ull << (64 - 5));
@@ -292,10 +292,10 @@ private:
     Device(Adapter&);
 
     struct ErrorScope;
-    ErrorScope* NODELETE currentErrorScope(WGPUErrorFilter);
-    std::optional<WGPUErrorType> NODELETE validatePopErrorScope() const;
+    ErrorScope* LEGACY_NODELETE currentErrorScope(WGPUErrorFilter);
+    std::optional<WGPUErrorType> LEGACY_NODELETE validatePopErrorScope() const;
 
-    bool NODELETE validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
+    bool LEGACY_NODELETE validateRenderPipeline(const WebGPU::RenderPipelineDescriptor&);
 
     enum class LibraryCompilation : bool { Synchronous, Asynchronous };
     // Asynchronous, unless something process-wide requires compiling one pipeline at a time.

@@ -74,7 +74,7 @@ public:
     void setLabel(String&&) final { }
     bool isValid() const final { return m_device; }
     void makeInvalid() { m_device = nil; }
-    bool NODELETE isXRCompatible() const;
+    bool LEGACY_NODELETE isXRCompatible() const;
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
     ThreadSafeWeakPtr<Instance> weakInstance() const { return m_instance; }

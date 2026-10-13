@@ -207,7 +207,7 @@ auto ShaderModule::convertCheckResult(Variant<WGSL::SuccessfulCheck, WGSL::Faile
     });
 }
 
-static MTLDataType NODELETE metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
+static MTLDataType LEGACY_NODELETE metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
 {
     switch (vectorSize) {
     case 1:
@@ -275,7 +275,7 @@ static MTLDataType NODELETE metalDataTypeFromPrimitive(const WGSL::Types::Primit
     }
 }
 
-static WGPUVertexFormat NODELETE vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
+static WGPUVertexFormat LEGACY_NODELETE vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
 {
     switch (vectorSize) {
     case 1:
@@ -791,7 +791,7 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label.createNSString().get();
 }
 
-static auto NODELETE wgslBindingType(WGPUBufferBindingType bindingType)
+static auto LEGACY_NODELETE wgslBindingType(WGPUBufferBindingType bindingType)
 {
     switch (bindingType) {
     case WGPUBufferBindingType_Uniform:
@@ -807,7 +807,7 @@ static auto NODELETE wgslBindingType(WGPUBufferBindingType bindingType)
     }
 }
 
-static auto NODELETE wgslSamplerType(WGPUSamplerBindingType bindingType)
+static auto LEGACY_NODELETE wgslSamplerType(WGPUSamplerBindingType bindingType)
 {
     switch (bindingType) {
     case WGPUSamplerBindingType_Filtering:
@@ -823,7 +823,7 @@ static auto NODELETE wgslSamplerType(WGPUSamplerBindingType bindingType)
     }
 }
 
-static auto NODELETE wgslSampleType(WGPUTextureSampleType sampleType)
+static auto LEGACY_NODELETE wgslSampleType(WGPUTextureSampleType sampleType)
 {
     switch (sampleType) {
     case WGPUTextureSampleType_Sint:
@@ -843,7 +843,7 @@ static auto NODELETE wgslSampleType(WGPUTextureSampleType sampleType)
     }
 }
 
-static auto NODELETE wgslViewDimension(WGPUTextureViewDimension viewDimension)
+static auto LEGACY_NODELETE wgslViewDimension(WGPUTextureViewDimension viewDimension)
 {
     switch (viewDimension) {
     case WGPUTextureViewDimension_Cube:
@@ -865,7 +865,7 @@ static auto NODELETE wgslViewDimension(WGPUTextureViewDimension viewDimension)
     }
 }
 
-static WGSL::StorageTextureAccess NODELETE wgslAccess(WGPUStorageTextureAccess access)
+static WGSL::StorageTextureAccess LEGACY_NODELETE wgslAccess(WGPUStorageTextureAccess access)
 {
     switch (access) {
     case WGPUStorageTextureAccess_WriteOnly:
@@ -880,7 +880,7 @@ static WGSL::StorageTextureAccess NODELETE wgslAccess(WGPUStorageTextureAccess a
     }
 }
 
-static WGSL::TexelFormat NODELETE wgslFormat(WGPUTextureFormat format)
+static WGSL::TexelFormat LEGACY_NODELETE wgslFormat(WGPUTextureFormat format)
 {
     switch (format) {
     case WGPUTextureFormat_BGRA8Unorm:
@@ -1091,7 +1091,7 @@ const String& ShaderModule::defaultComputeEntryPoint() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
+void LEGACY_NODELETE wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
 {
     WebGPU::Metal::fromAPI(shaderModule).ref();
 }

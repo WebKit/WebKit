@@ -65,7 +65,7 @@ constexpr size_t stageCount = std::size(stages);
 constexpr size_t stagesPlusUndefinedCount = std::size(stagesPlusUndefined);
 }
 
-static MTLRenderStages NODELETE metalRenderStage(ShaderStage shaderStage)
+static MTLRenderStages LEGACY_NODELETE metalRenderStage(ShaderStage shaderStage)
 {
     switch (shaderStage) {
     case ShaderStage::Vertex:
@@ -93,7 +93,7 @@ enum class PixelRange {
     Full
 };
 
-static PixelRange NODELETE pixelRangeFromPixelFormat(OSType pixelFormat)
+static PixelRange LEGACY_NODELETE pixelRangeFromPixelFormat(OSType pixelFormat)
 {
     switch (pixelFormat) {
     case kCVPixelFormatType_4444AYpCbCr8:
@@ -729,7 +729,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #endif
 }
 
-static bool NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, OptionSet<WebGPU::BufferUsage> usage)
+static bool LEGACY_NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, OptionSet<WebGPU::BufferUsage> usage)
 {
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
@@ -744,7 +744,7 @@ static bool NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, Optio
     }
 }
 
-static MTLResourceUsage NODELETE resourceUsageForBindingAcccess(BindGroupLayout::BindingAccess bindingAccess)
+static MTLResourceUsage LEGACY_NODELETE resourceUsageForBindingAcccess(BindGroupLayout::BindingAccess bindingAccess)
 {
     switch (bindingAccess) {
     case BindGroupLayout::BindingAccessReadOnly:
@@ -769,7 +769,7 @@ static bool is32bppFloatFormat(id<MTLTexture> t)
     return t.pixelFormat == MTLPixelFormatR32Float || t.pixelFormat == MTLPixelFormatRG32Float || t.pixelFormat == MTLPixelFormatRGBA32Float;
 }
 
-static bool NODELETE valid32bppFloatSampleType(WGPUTextureSampleType sampleType)
+static bool LEGACY_NODELETE valid32bppFloatSampleType(WGPUTextureSampleType sampleType)
 {
     return sampleType == WGPUTextureSampleType_Float || sampleType == WGPUTextureSampleType_UnfilterableFloat;
 }
@@ -1050,12 +1050,12 @@ static bool validateTextureViewDimension(const auto* textureEntry, const auto& a
     }
 }
 
-static bool NODELETE validateStorageTextureViewFormat(const BindGroupLayout::StorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
+static bool LEGACY_NODELETE validateStorageTextureViewFormat(const BindGroupLayout::StorageTextureBindingLayout* storageTexture, const auto& apiTextureView)
 {
     return !storageTexture || storageTexture->format == apiTextureView->format();
 }
 
-static bool NODELETE validateSamplerType(WGPUSamplerBindingType type, const Sampler& sampler)
+static bool LEGACY_NODELETE validateSamplerType(WGPUSamplerBindingType type, const Sampler& sampler)
 {
     switch (type) {
     case WGPUSamplerBindingType_Filtering:
@@ -1071,12 +1071,12 @@ static bool NODELETE validateSamplerType(WGPUSamplerBindingType type, const Samp
     }
 }
 
-static BindGroupEntryUsage NODELETE usageForTexture(const BindGroupLayout::TextureBindingLayout&)
+static BindGroupEntryUsage LEGACY_NODELETE usageForTexture(const BindGroupLayout::TextureBindingLayout&)
 {
     return BindGroupEntryUsage::ConstantTexture;
 }
 
-static BindGroupEntryUsage NODELETE usageForStorageTexture(const BindGroupLayout::StorageTextureBindingLayout& textureLayout)
+static BindGroupEntryUsage LEGACY_NODELETE usageForStorageTexture(const BindGroupLayout::StorageTextureBindingLayout& textureLayout)
 {
     switch (textureLayout.access) {
     case WGPUStorageTextureAccess_Undefined:
@@ -1095,7 +1095,7 @@ static BindGroupEntryUsage NODELETE usageForStorageTexture(const BindGroupLayout
     return BindGroupEntryUsage::Undefined;
 }
 
-static BindGroupEntryUsage NODELETE usageForBuffer(WGPUBufferBindingType bufferBindingType)
+static BindGroupEntryUsage LEGACY_NODELETE usageForBuffer(WGPUBufferBindingType bufferBindingType)
 {
     switch (bufferBindingType) {
     case WGPUBufferBindingType_Undefined:
@@ -1119,7 +1119,7 @@ static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage u
     return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = resource.ptr(), .entryOffset = entryOffset, .entrySize = entrySize };
 }
 
-static bool NODELETE allowedExternalTextureFormat(WGPUTextureFormat format)
+static bool LEGACY_NODELETE allowedExternalTextureFormat(WGPUTextureFormat format)
 {
     switch (format) {
     case WGPUTextureFormat_RGBA8Unorm:
@@ -1750,7 +1750,7 @@ bool BindGroup::makeSubmitInvalid(ShaderStage stage, const BindGroupLayout* pipe
     return true;
 }
 
-static uint64_t NODELETE makePipelineBindGroupKey(uint32_t groupIndex, uint64_t pipelineIndex)
+static uint64_t LEGACY_NODELETE makePipelineBindGroupKey(uint32_t groupIndex, uint64_t pipelineIndex)
 {
     return static_cast<uint64_t>(groupIndex) | (pipelineIndex << Device::maxBindGroups);
 }
@@ -1771,7 +1771,7 @@ bool BindGroup::previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipel
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
+void LEGACY_NODELETE wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
 {
     WebGPU::Metal::fromAPI(bindGroup).ref();
 }

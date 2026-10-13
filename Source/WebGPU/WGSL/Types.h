@@ -300,7 +300,7 @@ ConversionRank conversionRank(const Type* from, const Type* to);
 
 bool isPrimitive(const Type*, Types::Primitive::Kind);
 bool isPrimitiveReference(const Type*, Types::Primitive::Kind);
-const Type* NODELETE shaderTypeForTexelFormat(TexelFormat, const TypeStore&);
+const Type* LEGACY_NODELETE shaderTypeForTexelFormat(TexelFormat, const TypeStore&);
 
 } // namespace WGSL
 

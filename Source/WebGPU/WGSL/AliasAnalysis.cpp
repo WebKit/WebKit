@@ -57,17 +57,17 @@ public:
     {
     }
 
-    static MemoryLocation NODELETE parameter(unsigned id) { return MemoryLocation { Kind::Parameter, id }; }
-    static MemoryLocation NODELETE global(unsigned id) { return MemoryLocation { Kind::Global, id }; }
-    static MemoryLocation NODELETE local(unsigned id) { return MemoryLocation { Kind::Local, id }; }
+    static MemoryLocation LEGACY_NODELETE parameter(unsigned id) { return MemoryLocation { Kind::Parameter, id }; }
+    static MemoryLocation LEGACY_NODELETE global(unsigned id) { return MemoryLocation { Kind::Global, id }; }
+    static MemoryLocation LEGACY_NODELETE local(unsigned id) { return MemoryLocation { Kind::Local, id }; }
 
-    Kind NODELETE kind() const { return m_kind; }
-    unsigned NODELETE id() const { return m_id; }
+    Kind LEGACY_NODELETE kind() const { return m_kind; }
+    unsigned LEGACY_NODELETE id() const { return m_id; }
 
-    bool NODELETE isParameter() const { return m_kind == Kind::Parameter; }
-    bool NODELETE isGlobal() const { return m_kind == Kind::Global; }
+    bool LEGACY_NODELETE isParameter() const { return m_kind == Kind::Parameter; }
+    bool LEGACY_NODELETE isGlobal() const { return m_kind == Kind::Global; }
 
-    bool NODELETE operator==(const MemoryLocation& other) const
+    bool LEGACY_NODELETE operator==(const MemoryLocation& other) const
     {
         return m_kind == other.m_kind && m_id == other.m_id;
     }
@@ -100,7 +100,7 @@ private:
     {
     }
 
-    static MemoryLocation NODELETE hashTableDeletedValue()
+    static MemoryLocation LEGACY_NODELETE hashTableDeletedValue()
     {
         return MemoryLocation { Kind::Invalid, std::numeric_limits<unsigned>::max() };
     }
@@ -122,8 +122,8 @@ public:
         m_string = valueString.toString();
     }
 
-    unsigned NODELETE length() const { return m_string.length(); }
-    bool NODELETE is8Bit() const { return m_string.is8Bit(); }
+    unsigned LEGACY_NODELETE length() const { return m_string.length(); }
+    bool LEGACY_NODELETE is8Bit() const { return m_string.is8Bit(); }
     template<typename CharacterType>
     void writeTo(std::span<CharacterType> destination) const
     {
@@ -139,7 +139,7 @@ private:
 
 namespace WGSL {
 
-inline void NODELETE add(Hasher& hasher, const MemoryLocation& input)
+inline void LEGACY_NODELETE add(Hasher& hasher, const MemoryLocation& input)
 {
     WTF::add(hasher, input.kind());
     WTF::add(hasher, input.id());
@@ -147,10 +147,10 @@ inline void NODELETE add(Hasher& hasher, const MemoryLocation& input)
 
 struct MemoryLocationHashTraits : SimpleClassHashTraits<MemoryLocation> {
     static const bool emptyValueIsZero = false;
-    static MemoryLocation NODELETE emptyValue() { return MemoryLocation(); }
+    static MemoryLocation LEGACY_NODELETE emptyValue() { return MemoryLocation(); }
 
-    static void NODELETE constructDeletedValue(MemoryLocation& slot) { new (NotNull, &slot) MemoryLocation { MemoryLocation::Kind::Invalid, std::numeric_limits<unsigned>::max() }; }
-    static bool NODELETE isDeletedValue(const MemoryLocation& value)
+    static void LEGACY_NODELETE constructDeletedValue(MemoryLocation& slot) { new (NotNull, &slot) MemoryLocation { MemoryLocation::Kind::Invalid, std::numeric_limits<unsigned>::max() }; }
+    static bool LEGACY_NODELETE isDeletedValue(const MemoryLocation& value)
     {
         MemoryLocation deleted;
         constructDeletedValue(deleted);

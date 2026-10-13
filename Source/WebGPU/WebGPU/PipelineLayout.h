@@ -60,22 +60,22 @@ public:
 
     ~PipelineLayout();
 
-    void NODELETE setLabel(String&&) final;
+    void LEGACY_NODELETE setLabel(String&&) final;
 
     bool isValid() const final { return m_isValid; }
 
-    bool NODELETE operator==(const PipelineLayout&) const;
+    bool LEGACY_NODELETE operator==(const PipelineLayout&) const;
 
-    bool NODELETE isAutoLayout() const;
+    bool LEGACY_NODELETE isAutoLayout() const;
     size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts ? m_bindGroupLayouts->size() : 0; }
-    BindGroupLayout& NODELETE bindGroupLayout(size_t) const;
-    BindGroupLayout* NODELETE optionalBindGroupLayout(size_t) const;
+    BindGroupLayout& LEGACY_NODELETE bindGroupLayout(size_t) const;
+    BindGroupLayout* LEGACY_NODELETE optionalBindGroupLayout(size_t) const;
 
     Device& device() const { return m_device; }
     void makeInvalid();
-    size_t NODELETE sizeOfVertexDynamicOffsets() const;
-    size_t NODELETE sizeOfFragmentDynamicOffsets() const;
-    size_t NODELETE sizeOfComputeDynamicOffsets() const;
+    size_t LEGACY_NODELETE sizeOfVertexDynamicOffsets() const;
+    size_t LEGACY_NODELETE sizeOfFragmentDynamicOffsets() const;
+    size_t LEGACY_NODELETE sizeOfComputeDynamicOffsets() const;
 
     bool updateVertexOffsets(uint32_t, const Vector<uint32_t>&, std::span<uint32_t> destination);
     bool updateFragmentOffsets(uint32_t, const Vector<uint32_t>&, std::span<uint32_t> destination);
@@ -88,9 +88,9 @@ private:
     PipelineLayout(Device&);
 
     using DynamicOffsetMapValue = std::optional<uint32_t>;
-    DynamicOffsetMapValue NODELETE vertexOffsetForBindGroup(uint32_t) const;
-    DynamicOffsetMapValue NODELETE fragmentOffsetForBindGroup(uint32_t) const;
-    DynamicOffsetMapValue NODELETE computeOffsetForBindGroup(uint32_t) const;
+    DynamicOffsetMapValue LEGACY_NODELETE vertexOffsetForBindGroup(uint32_t) const;
+    DynamicOffsetMapValue LEGACY_NODELETE fragmentOffsetForBindGroup(uint32_t) const;
+    DynamicOffsetMapValue LEGACY_NODELETE computeOffsetForBindGroup(uint32_t) const;
 
     std::optional<Vector<Ref<BindGroupLayout>>> m_bindGroupLayouts;
     using DynamicOffsetMap = HashMap<uint32_t, DynamicOffsetMapValue, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;

@@ -70,7 +70,7 @@ public:
     ~RenderPipeline();
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
-    void NODELETE setLabel(String&&) final;
+    void LEGACY_NODELETE setLabel(String&&) final;
 
     bool isValid() const final { return m_renderPipelineDescriptor && m_pipelineLayout->isValid(); }
 
@@ -80,7 +80,7 @@ public:
 
     void setPrecompiledRenderPipelineState(id<MTLRenderPipelineState>);
 
-    id<MTLDepthStencilState> NODELETE depthStencilState() const;
+    id<MTLDepthStencilState> LEGACY_NODELETE depthStencilState() const;
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     MTLPrimitiveType primitiveType() const { return m_primitiveType; }
     MTLWinding frontFace() const { return m_frontFace; }
@@ -97,7 +97,7 @@ public:
     NSString* errorValidatingColorDepthStencilTargets(const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
     bool validateRenderBundle(bool depthReadOnly, bool stencilReadOnly, uint32_t sampleCount, std::span<const WGPUTextureFormat> colorFormats, WGPUTextureFormat depthStencilFormat) const;
     bool writesDepth() const;
-    bool NODELETE writesStencil() const;
+    bool LEGACY_NODELETE writesStencil() const;
 
     const RequiredBufferIndicesContainer& requiredBufferIndices() const LIFETIME_BOUND { return m_requiredBufferIndices; }
     WGPUPrimitiveTopology primitiveTopology() const { return m_primitiveTopology; }
@@ -106,7 +106,7 @@ public:
     // can ever match.
     std::optional<MTLIndexType> stripIndexFormat() const { return m_indexType; }
 
-    const BufferBindingSizesForBindGroup* NODELETE minimumBufferSizes(uint32_t) const;
+    const BufferBindingSizesForBindGroup* LEGACY_NODELETE minimumBufferSizes(uint32_t) const;
     RefPtr<RenderPipeline> recomputeLastStrideAsStride() const;
     uint64_t uniqueId() const { return m_uniqueId; }
     uint32_t vertexShaderBindingCount() const { return m_vertexShaderBindingCount; }

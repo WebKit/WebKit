@@ -142,7 +142,7 @@ public:
     void addTexture(id<MTLTexture>);
     void addTexture(const Texture&);
     void addSampler(const Sampler&);
-    id<MTLCommandBuffer> _Nullable NODELETE commandBuffer() const;
+    id<MTLCommandBuffer> _Nullable LEGACY_NODELETE commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
 
     // IOGPU can only fit on the order of 37000 MTLRenderCommandEncoders in a single MTLCommandBuffer
@@ -160,7 +160,7 @@ public:
     void encodeDeferredRenderPassTimestamps(MTLRenderPassDescriptor*);
     Ref<RenderPassEncoder> createRenderPassEncoder(const WebGPU::RenderPassDescriptor&, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, id<MTLBuffer> _Nullable visibilityResultBuffer, uint64_t maxDrawCount, MTLRenderPassDescriptor*);
     void generateInvalidEncoderStateError();
-    bool NODELETE validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
+    bool LEGACY_NODELETE validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     void clearTracking();
     bool trackEncoderForBuffer(const Buffer&, TrackedResourceContainer&);
     void trackEncoderForTexture(const Texture&, TrackedResourceContainer&);
@@ -182,7 +182,7 @@ private:
     CommandEncoder(id<MTLCommandBuffer>, Device&, uint64_t uniqueId);
     CommandEncoder(Device&);
 
-    bool NODELETE validatePopDebugGroup() const;
+    bool LEGACY_NODELETE validatePopDebugGroup() const;
 
     NSString * _Nullable validateFinishError() const;
     NSString * _Nullable errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);

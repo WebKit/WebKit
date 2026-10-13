@@ -74,18 +74,18 @@ public:
     void destroy();
     void setLabel(String&&) final;
 
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
 
-    void NODELETE setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex);
+    void LEGACY_NODELETE setOverrideLocation(QuerySet& otherQuerySet, uint32_t beginningOfPassIndex, uint32_t endOfPassIndex);
 
     Device& device() const { return m_device; }
     uint32_t count() const { return m_count; }
     WGPUQueryType type() const { return m_type; }
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
-    CounterSampleBuffer NODELETE counterSampleBufferWithOffset() const;
+    CounterSampleBuffer LEGACY_NODELETE counterSampleBufferWithOffset() const;
 
     void setCommandEncoder(CommandEncoder&) const;
-    bool NODELETE isDestroyed() const;
+    bool LEGACY_NODELETE isDestroyed() const;
     static void destroyQuerySet(const QuerySet&);
     static CounterSampleBuffer counterSampleBufferWithOffsetForDevice(size_t, const Device&);
     static void createContainersIfNeeded();

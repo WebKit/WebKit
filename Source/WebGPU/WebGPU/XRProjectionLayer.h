@@ -54,15 +54,15 @@ public:
 
     ~XRProjectionLayer();
 
-    void NODELETE setLabel(String&&) final;
+    void LEGACY_NODELETE setLabel(String&&) final;
 
-    bool NODELETE isValid() const final;
-    void NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
+    bool LEGACY_NODELETE isValid() const final;
+    void LEGACY_NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
 
-    id<MTLTexture> NODELETE colorTexture() const;
-    id<MTLTexture> NODELETE depthTexture() const;
-    const std::pair<id<MTLSharedEvent>, uint64_t>& NODELETE completionEvent() const;
-    size_t NODELETE reusableTextureIndex() const;
+    id<MTLTexture> LEGACY_NODELETE colorTexture() const;
+    id<MTLTexture> LEGACY_NODELETE depthTexture() const;
+    const std::pair<id<MTLSharedEvent>, uint64_t>& LEGACY_NODELETE completionEvent() const;
+    size_t LEGACY_NODELETE reusableTextureIndex() const;
     WGPUTextureFormat colorFormat() const { return m_colorFormat; }
     std::optional<WGPUTextureFormat> optionalDepthStencilFormat() const { return m_optionalDepthStencilFormat; }
     OptionSet<WebGPU::TextureUsage> flags() const { return m_flags; }

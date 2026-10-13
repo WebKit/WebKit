@@ -70,10 +70,10 @@ public:
     void destroy();
     void undestroy();
     void setCommandEncoder(CommandEncoder&) const;
-    bool NODELETE isDestroyed() const;
+    bool LEGACY_NODELETE isDestroyed() const;
 
     void setLabel(String&&) final { }
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
     void update(CVPixelBufferRef);
     size_t openCommandEncoderCount() const;
     void updateExternalTextures(id<MTLTexture>, id<MTLTexture>);

@@ -92,7 +92,7 @@ private:
     void introduceVariable(AST::Identifier&, MangledName::Kind);
     void readVariable(AST::Identifier&) const;
 
-    MangledName NODELETE makeMangledName(const String&, MangledName::Kind);
+    MangledName LEGACY_NODELETE makeMangledName(const String&, MangledName::Kind);
 
     void visitVariableDeclaration(AST::Variable&, MangledName::Kind);
 

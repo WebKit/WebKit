@@ -594,7 +594,7 @@ id<MTLIndirectCommandBuffer> Queue::trimICB(id<MTLIndirectCommandBuffer> dest, i
     return dest;
 }
 
-static std::pair<uint32_t, uint16_t> NODELETE maxIndexValueSlow(std::span<uint8_t> data)
+static std::pair<uint32_t, uint16_t> LEGACY_NODELETE maxIndexValueSlow(std::span<uint8_t> data)
 {
     auto lengthUint32 = data.size() / 4;
     std::span<uint32_t> dataUint = unsafeMakeSpan(static_cast<uint32_t*>(static_cast<void*>(data.data())), lengthUint32);
@@ -2158,7 +2158,7 @@ id<MTLDevice> Queue::metalDevice() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuQueueAddRef(WGPUQueue queue)
+void LEGACY_NODELETE wgpuQueueAddRef(WGPUQueue queue)
 {
     WebGPU::Metal::fromAPI(queue).ref();
 }

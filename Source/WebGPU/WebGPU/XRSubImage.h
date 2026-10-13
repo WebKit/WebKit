@@ -58,9 +58,9 @@ public:
 
     ~XRSubImage();
 
-    void NODELETE setLabel(String&&) final;
+    void LEGACY_NODELETE setLabel(String&&) final;
 
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
     void update(const XRProjectionLayer&);
     Texture* colorTexture();
     Texture* depthTexture();

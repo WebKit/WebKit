@@ -67,7 +67,7 @@ public:
 
     void setLabel(String&&) final;
 
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
 
     id<MTLSamplerState> cachedSamplerState() const { return m_cachedSamplerState; }
     id<MTLSamplerState> tryCacheSamplerState() const;

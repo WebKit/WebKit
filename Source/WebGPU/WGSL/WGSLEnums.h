@@ -184,6 +184,6 @@ ENUM_DECLARE(LanguageFeature);
 
 #undef ENUM_DECLARE
 
-AccessMode NODELETE defaultAccessModeForAddressSpace(AddressSpace);
+AccessMode LEGACY_NODELETE defaultAccessModeForAddressSpace(AddressSpace);
 
 } // namespace WGSL

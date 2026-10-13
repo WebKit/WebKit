@@ -58,7 +58,7 @@ public:
 
     virtual ~PresentationContext();
 
-    WebGPU::TextureFormat NODELETE getPreferredFormat(const Adapter&);
+    WebGPU::TextureFormat LEGACY_NODELETE getPreferredFormat(const Adapter&);
 
     virtual void configure(const WebGPU::CanvasConfiguration&);
     virtual void unconfigure();

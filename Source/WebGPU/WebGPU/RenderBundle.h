@@ -79,7 +79,7 @@ public:
 
     void setLabel(String&&) final;
 
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
 
     Device& device() const { return m_device; }
     NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
@@ -87,11 +87,11 @@ public:
     void replayCommands(RenderPassEncoder&) const;
     void updateMinMaxDepths(float minDepth, float maxDepth);
     bool validateRenderPass(bool depthReadOnly, bool stencilReadOnly, const Vector<TextureOrTextureView>&, const std::optional<TextureOrTextureView>&) const;
-    bool NODELETE validatePipeline(const RenderPipeline*);
-    uint64_t NODELETE drawCount() const;
-    NSString* NODELETE lastError() const;
-    bool NODELETE requiresCommandReplay() const;
-    bool NODELETE makeSubmitInvalid() const;
+    bool LEGACY_NODELETE validatePipeline(const RenderPipeline*);
+    uint64_t LEGACY_NODELETE drawCount() const;
+    NSString* LEGACY_NODELETE lastError() const;
+    bool LEGACY_NODELETE requiresCommandReplay() const;
+    bool LEGACY_NODELETE makeSubmitInvalid() const;
     bool rebindSamplersIfNeeded() const;
     const Vector<WebGPU::Metal::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 

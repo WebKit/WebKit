@@ -82,12 +82,12 @@ private:
     bool unify(const TypeVariable*, const Type*);
     bool unify(const AbstractType&, const Type*);
     bool assign(TypeVariable, const Type*);
-    const Type* NODELETE resolve(TypeVariable) const;
+    const Type* LEGACY_NODELETE resolve(TypeVariable) const;
     const Type* materialize(const AbstractType&) const;
 
     bool unify(const AbstractValue&, unsigned);
     void assign(ValueVariable, unsigned);
-    std::optional<unsigned> NODELETE resolve(ValueVariable) const;
+    std::optional<unsigned> LEGACY_NODELETE resolve(ValueVariable) const;
     unsigned materialize(const AbstractValue&) const;
 
     TypeStore& m_types;

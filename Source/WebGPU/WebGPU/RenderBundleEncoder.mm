@@ -1551,7 +1551,7 @@ void RenderBundleEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuRenderBundleEncoderAddRef(WGPURenderBundleEncoder renderBundleEncoder)
+void LEGACY_NODELETE wgpuRenderBundleEncoderAddRef(WGPURenderBundleEncoder renderBundleEncoder)
 {
     WebGPU::Metal::fromAPI(renderBundleEncoder).ref();
 }
@@ -1603,7 +1603,7 @@ void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleE
     protect(WebGPU::Metal::fromAPI(renderBundleEncoder))->pushDebugGroup(WebGPU::Metal::fromAPI(groupLabel));
 }
 
-void NODELETE wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
+void LEGACY_NODELETE wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
 {
 }
 

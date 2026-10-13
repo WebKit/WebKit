@@ -149,7 +149,7 @@ private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WebGPU::RenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, uint64_t maxDrawCount, Device&, MTLRenderPassDescriptor*);
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
-    bool NODELETE validatePopDebugGroup() const;
+    bool LEGACY_NODELETE validatePopDebugGroup() const;
     bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer*, bool needsValidationLayerWorkaround);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
     void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
@@ -164,11 +164,11 @@ private:
     NSString* errorValidatingAndBindingBuffers();
     NSString* errorValidatingDrawIndexed() const;
     NSString* errorValidatingStripIndexFormat() const;
-    uint32_t NODELETE maxVertexBufferIndex() const;
-    uint32_t NODELETE maxBindGroupIndex() const;
-    bool NODELETE issuedDrawCall() const;
+    uint32_t LEGACY_NODELETE maxVertexBufferIndex() const;
+    uint32_t LEGACY_NODELETE maxBindGroupIndex() const;
+    bool LEGACY_NODELETE issuedDrawCall() const;
     void incrementDrawCount(uint32_t = 1);
-    bool NODELETE occlusionQueryIsDestroyed() const;
+    bool LEGACY_NODELETE occlusionQueryIsDestroyed() const;
     DrawIndexResult clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType, NSUInteger indexBufferOffsetInBytes, bool& needsValidationLayerWorkaround);
     std::pair<uint32_t, uint32_t> computeMininumVertexInstanceCount(bool& needsValidationLayerWorkaround) const;
     std::pair<id<MTLBuffer>, uint64_t> clampIndirectIndexBufferToValidValues(Buffer&, MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder);

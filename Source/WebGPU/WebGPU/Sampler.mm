@@ -35,7 +35,7 @@
 
 namespace WebGPU::Metal {
 
-static bool NODELETE validateCreateSampler(Device& device, const WebGPU::SamplerDescriptor& descriptor)
+static bool LEGACY_NODELETE validateCreateSampler(Device& device, const WebGPU::SamplerDescriptor& descriptor)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpusamplerdescriptor
 
@@ -61,7 +61,7 @@ static bool NODELETE validateCreateSampler(Device& device, const WebGPU::Sampler
     return true;
 }
 
-static MTLSamplerAddressMode NODELETE addressMode(WebGPU::AddressMode addressMode)
+static MTLSamplerAddressMode LEGACY_NODELETE addressMode(WebGPU::AddressMode addressMode)
 {
     switch (addressMode) {
     case WebGPU::AddressMode::Repeat:
@@ -74,7 +74,7 @@ static MTLSamplerAddressMode NODELETE addressMode(WebGPU::AddressMode addressMod
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMinMagFilter NODELETE minMagFilter(WebGPU::FilterMode filterMode)
+static MTLSamplerMinMagFilter LEGACY_NODELETE minMagFilter(WebGPU::FilterMode filterMode)
 {
     switch (filterMode) {
     case WebGPU::FilterMode::Nearest:
@@ -85,7 +85,7 @@ static MTLSamplerMinMagFilter NODELETE minMagFilter(WebGPU::FilterMode filterMod
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMipFilter NODELETE mipFilter(WebGPU::MipmapFilterMode filterMode)
+static MTLSamplerMipFilter LEGACY_NODELETE mipFilter(WebGPU::MipmapFilterMode filterMode)
 {
     switch (filterMode) {
     case WebGPU::MipmapFilterMode::Nearest:
@@ -96,7 +96,7 @@ static MTLSamplerMipFilter NODELETE mipFilter(WebGPU::MipmapFilterMode filterMod
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static MTLCompareFunction NODELETE compareFunction(std::optional<WebGPU::CompareFunction> compareFunction)
+static MTLCompareFunction LEGACY_NODELETE compareFunction(std::optional<WebGPU::CompareFunction> compareFunction)
 {
     if (!compareFunction)
         return MTLCompareFunctionAlways;
@@ -199,7 +199,7 @@ struct SamplerState {
     size_t useCount { 0 };
 };
 
-static HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>& NODELETE samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
+static HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>& LEGACY_NODELETE samplerStates() WTF_REQUIRES_LOCK(samplerStatesLock)
 {
     static NeverDestroyed<HashMap<GenericHashKey<Sampler::UniqueSamplerIdentifier>, SamplerState>> samplerStates WTF_GUARDED_BY_LOCK(samplerStatesLock);
     return samplerStates.get();
@@ -361,7 +361,7 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuSamplerAddRef(WGPUSampler sampler)
+void LEGACY_NODELETE wgpuSamplerAddRef(WGPUSampler sampler)
 {
     WebGPU::Metal::fromAPI(sampler).ref();
 }

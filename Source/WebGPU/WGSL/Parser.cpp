@@ -41,7 +41,7 @@ namespace WGSL {
 
 template<TokenType TT, TokenType... TTs>
 struct TemplateTypes {
-    static bool NODELETE includes(TokenType tokenType)
+    static bool LEGACY_NODELETE includes(TokenType tokenType)
     {
         return TT == tokenType || TemplateTypes<TTs...>::includes(tokenType);
     }
@@ -55,7 +55,7 @@ struct TemplateTypes {
 
 template <TokenType TT>
 struct TemplateTypes<TT> {
-    static bool NODELETE includes(TokenType tokenType)
+    static bool LEGACY_NODELETE includes(TokenType tokenType)
     {
         return TT == tokenType;
     }
@@ -172,7 +172,7 @@ bool Parser<Lexer>::canBeginUnaryExpression(const Token& token)
     }
 }
 
-static bool NODELETE canContinueMultiplicativeExpression(const Token& token)
+static bool LEGACY_NODELETE canContinueMultiplicativeExpression(const Token& token)
 {
     switch (token.type) {
     case TokenType::Modulo:
@@ -199,7 +199,7 @@ bool Parser<Lexer>::canContinueAdditiveExpression(const Token& token)
     }
 }
 
-static bool NODELETE canContinueBitwiseExpression(const Token& token)
+static bool LEGACY_NODELETE canContinueBitwiseExpression(const Token& token)
 {
     switch (token.type) {
     case TokenType::And:
@@ -211,7 +211,7 @@ static bool NODELETE canContinueBitwiseExpression(const Token& token)
     }
 }
 
-static bool NODELETE canContinueRelationalExpression(const Token& token)
+static bool LEGACY_NODELETE canContinueRelationalExpression(const Token& token)
 {
     switch (token.type) {
     case TokenType::Gt:
@@ -226,17 +226,17 @@ static bool NODELETE canContinueRelationalExpression(const Token& token)
     }
 }
 
-static bool NODELETE canContinueShortCircuitAndExpression(const Token& token)
+static bool LEGACY_NODELETE canContinueShortCircuitAndExpression(const Token& token)
 {
     return token.type == TokenType::AndAnd;
 }
 
-static bool NODELETE canContinueShortCircuitOrExpression(const Token& token)
+static bool LEGACY_NODELETE canContinueShortCircuitOrExpression(const Token& token)
 {
     return token.type == TokenType::OrOr;
 }
 
-static bool NODELETE canContinueCompoundAssignmentStatement(const Token& token)
+static bool LEGACY_NODELETE canContinueCompoundAssignmentStatement(const Token& token)
 {
     switch (token.type) {
     case TokenType::PlusEq:
@@ -255,7 +255,7 @@ static bool NODELETE canContinueCompoundAssignmentStatement(const Token& token)
     }
 }
 
-static AST::BinaryOperation NODELETE toBinaryOperation(const Token& token)
+static AST::BinaryOperation LEGACY_NODELETE toBinaryOperation(const Token& token)
 {
     switch (token.type) {
     case TokenType::And:
@@ -309,7 +309,7 @@ static AST::BinaryOperation NODELETE toBinaryOperation(const Token& token)
     }
 }
 
-static AST::UnaryOperation NODELETE toUnaryOperation(const Token& token)
+static AST::UnaryOperation LEGACY_NODELETE toUnaryOperation(const Token& token)
 {
     switch (token.type) {
     case TokenType::And:

@@ -91,7 +91,7 @@ struct GPUFrameCapture {
             captureFrame(captureObject);
     }
 
-    static bool NODELETE shouldStopCaptureAfterSubmit()
+    static bool LEGACY_NODELETE shouldStopCaptureAfterSubmit()
     {
         ++submitCallsCaptured;
         auto result = submitCallsCaptured >= maxSubmitCallsToCapture;
@@ -1201,7 +1201,7 @@ void Device::makeSubmitInvalidClearingEncoders(TrackedResourceContainer& command
 static constexpr auto invalidComputePipelineDescriptorMessage = "GPUComputePipelineDescriptor has no shader module"_s;
 static constexpr auto invalidRenderPipelineDescriptorMessage = "GPURenderPipelineDescriptor has no shader module or an invalid enum value or color write mask bit"_s;
 
-void NODELETE wgpuDeviceAddRef(WGPUDevice device)
+void LEGACY_NODELETE wgpuDeviceAddRef(WGPUDevice device)
 {
     WebGPU::Metal::fromAPI(device).ref();
 }

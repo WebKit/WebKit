@@ -89,7 +89,7 @@ public:
     void setLabel(String&&) final;
     void generateAValidationError(String&&);
 
-    bool NODELETE isValid() const final;
+    bool LEGACY_NODELETE isValid() const final;
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     enum class State : uint8_t {
@@ -102,7 +102,7 @@ public:
 
     id<MTLBuffer> buffer() const { return m_buffer; }
 
-    uint64_t NODELETE initialSize() const;
+    uint64_t LEGACY_NODELETE initialSize() const;
     uint64_t currentSize() const;
     OptionSet<WebGPU::BufferUsage> usage() const { return m_usage; }
     State state() const { return m_state; }
@@ -147,8 +147,8 @@ private:
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
     NSString * _Nullable errorValidatingMapAsync(OptionSet<WebGPU::MapMode>, size_t offset, size_t rangeSize) const;
-    bool NODELETE validateUnmap() const;
-    void NODELETE setState(State);
+    bool LEGACY_NODELETE validateUnmap() const;
+    void LEGACY_NODELETE setState(State);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
 

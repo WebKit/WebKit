@@ -222,7 +222,7 @@ void PipelineLayout::makeInvalid()
     m_bindGroupLayouts = std::nullopt;
 }
 
-static size_t NODELETE returnTotalSize(auto& container)
+static size_t LEGACY_NODELETE returnTotalSize(auto& container)
 {
     size_t totalSize = 0;
     for (auto& v : container) {
@@ -248,7 +248,7 @@ size_t PipelineLayout::sizeOfComputeDynamicOffsets() const
     return returnTotalSize(m_computeOffsets);
 }
 
-static std::optional<uint32_t> NODELETE returnOffsetOfGroup0(auto& v, auto groupIndex)
+static std::optional<uint32_t> LEGACY_NODELETE returnOffsetOfGroup0(auto& v, auto groupIndex)
 {
     if (auto it = v.find(groupIndex); it != v.end())
         return it->value;
@@ -367,7 +367,7 @@ NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLa
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
+void LEGACY_NODELETE wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
 {
     WebGPU::Metal::fromAPI(pipelineLayout).ref();
 }

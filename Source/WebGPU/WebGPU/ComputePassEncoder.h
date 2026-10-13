@@ -86,8 +86,8 @@ public:
 
     Device& device() const { return m_device; }
 
-    bool NODELETE isValid() const final;
-    id<MTLComputeCommandEncoder> NODELETE computeCommandEncoder() const;
+    bool LEGACY_NODELETE isValid() const final;
+    id<MTLComputeCommandEncoder> LEGACY_NODELETE computeCommandEncoder() const;
 
     // A pass begun while its command encoder was not open never took the encoder over, so it can
     // never be ended. https://gpuweb.github.io/gpuweb/#dom-gpucomputepassencoder-end
@@ -97,7 +97,7 @@ private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>, const WebGPU::ComputePassDescriptor&, CommandEncoder&, Device&);
     ComputePassEncoder(CommandEncoder&, Device&, NSString*);
 
-    bool NODELETE validatePopDebugGroup() const;
+    bool LEGACY_NODELETE validatePopDebugGroup() const;
 
     void makeInvalid(NSString* = nil);
     void executePreDispatchCommands(const Buffer* = nullptr);
