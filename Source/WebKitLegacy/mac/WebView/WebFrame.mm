@@ -1057,7 +1057,7 @@ static NSURL *createUniqueWebDataURL();
     CheckedPtr bodyRenderer = body->renderer();
     if (!bodyRenderer)
         return nil;
-    auto color = protect(bodyRenderer->style())->visitedDependentBackgroundColorApplyingColorFilter();
+    auto color = protect(bodyRenderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
     if (!color.isValid())
         return nil;
 #if !PLATFORM(IOS_FAMILY)

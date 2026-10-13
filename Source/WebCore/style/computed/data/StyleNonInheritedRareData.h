@@ -214,6 +214,8 @@ public:
     std::optional<size_t> usedPositionOptionIndex;
 
     std::optional<BlendMode> overrideBlendMode;
+    // If set, this overrides the background color in NonInheritedData::backgroundData
+    Markable<Color> overrideBackgroundColor;
 
     BlockStepSize blockStepSize;
 

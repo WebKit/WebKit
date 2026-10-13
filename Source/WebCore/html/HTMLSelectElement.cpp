@@ -3002,7 +3002,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
     auto popupSize = RenderTheme::singleton().popupMenuSize(outerStyle, bounds);
     return PopupMenuStyle(
         outerStyle->visitedDependentColorApplyingColorFilter(),
-        outerStyle->visitedDependentBackgroundColorApplyingColorFilter(),
+        outerStyle->visitedDependentUsedBackgroundColorApplyingColorFilter(),
         outerStyle->fontCascade(),
         nullString(),
         renderer->usedStyle().visibility() == UsedVisibility::Visible,

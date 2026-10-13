@@ -63,14 +63,12 @@ bool BackgroundData::operator==(const BackgroundData& other) const
 bool BackgroundData::containsCurrentColor() const
 {
     return backgroundContainsCurrentColor()
+        || backgroundColor.containsCurrentColor()
         || outline.outlineColor.containsCurrentColor();
 }
 
 bool BackgroundData::backgroundContainsCurrentColor() const
 {
-    if (backgroundColor.containsCurrentColor())
-        return true;
-
     return std::ranges::any_of(background.usedValues(), [](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
         return image && image->containsCurrentColor();

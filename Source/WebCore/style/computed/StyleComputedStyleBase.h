@@ -572,6 +572,8 @@ public:
     inline StyleAppearance usedAppearance() const;
     inline void setUsedAppearance(StyleAppearance);
 
+    inline void setOverrideBackgroundColor(std::optional<Color>&&);
+
     inline void setUsedUserSelect(UserSelect);
 
     inline UserSelect usedUserSelectIgnoringEffectivelyInert() const;
