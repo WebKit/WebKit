@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Overflow: text-overflow on a block following the -webkit-line-clamp clamp point</title>
+<link rel="help" href="https://drafts.csswg.org/css-overflow-4/#propdef--webkit-line-clamp">
+<link rel="help" href="https://drafts.csswg.org/css-overflow-3/#text-overflow">
+<link rel="match" href="reference/webkit-line-clamp-054-ref.html">
+<meta name="assert" content="A block following the block that reaches the -webkit-line-clamp clamp point still gets its text-overflow ellipsis, regardless of whether the clamped block has exactly as many lines as the clamp or more.">
+<style>
+  .wrapper {
+    height: 100px;
+  }
+  .clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font: 16px / 20px serif;
+    width: 200px;
+  }
+  .clamped {
+    color: transparent;
+  }
+  .after {
+    width: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+</style>
+<!-- The clamped block has exactly as many lines as the clamp. -->
+<div class="wrapper">
+  <div class="clamp">
+    <div class="clamped">Line 1<br>Line 2</div>
+    <div class="after">This text overflows</div>
+  </div>
+</div>
+<!-- The clamped block has more lines than the clamp. -->
+<div class="wrapper">
+  <div class="clamp">
+    <div class="clamped">Line 1<br>Line 2<br>Line 3</div>
+    <div class="after">This text overflows</div>
+  </div>
+</div>
