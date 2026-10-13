@@ -893,7 +893,7 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(std::optio
 void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<String>&& schemes)
 {
     Ref registry = m_schemeRegistry;
-    for (auto&& scheme : WTF::move(schemes))
+    for (auto&& scheme : borrow(schemes))
         registry->registerURLSchemeAsCORSEnabled(connection(), WTF::move(scheme));
 }
 
@@ -1339,7 +1339,7 @@ CompletionHandlerCallingScope NetworkConnectionToWebProcess::retainBlobURLsWhile
         return { };
 
     Vector<URL> retainedBlobURLs;
-    for (auto& url : blobURLs) {
+    for (auto& url : borrow(blobURLs)) {
         if (!ownsBlobURL(url) || !session->blobRegistry().blobDataFromURL(url))
             continue;
         session->blobRegistry().registerBlobURLHandle(url, std::nullopt);
@@ -1355,7 +1355,7 @@ CompletionHandlerCallingScope NetworkConnectionToWebProcess::retainBlobURLsWhile
         CheckedPtr session = protectedNetworkProcess ? protectedNetworkProcess->networkSession(sessionID) : nullptr;
         if (!session)
             return;
-        for (auto& url : retainedBlobURLs)
+        for (auto& url : borrow(retainedBlobURLs))
             session->blobRegistry().unregisterBlobURLHandle(url, std::nullopt);
     } };
 }
@@ -1381,21 +1381,21 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
     MESSAGE_CHECK_COMPLETION(!session->sessionID().isEphemeral(), completionHandler({ }));
 
     Vector<Ref<BlobDataFileReference>> fileReferences;
-    for (auto& url : blobURLs)
+    for (auto& url : borrow(blobURLs))
         fileReferences.appendVector(session->blobRegistry().filesInBlob({ { }, url }));
 
-    for (auto& file : fileReferences)
+    for (auto& file : borrow(fileReferences))
         file->prepareForFileAccess();
 
     session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = Ref { *this }, fileReferences = WTF::move(fileReferences), completionHandler = WTF::move(completionHandler)](Vector<String>&& filePaths) mutable {
-        for (auto& file : fileReferences)
+        for (auto& file : borrow(fileReferences))
             file->revokeFileAccess();
 
         if (CheckedPtr session = networkSession())
             session->storageManager().registerTemporaryBlobFilePaths(Ref { m_connection }, filePaths);
 
         // Web process might create Blob with these files during index key generation.
-        for (auto& path : filePaths)
+        for (auto& path : borrow(filePaths))
             allowAccessToFile(path);
 
         completionHandler(WTF::move(filePaths));
@@ -1474,7 +1474,7 @@ static bool resourceLoadStatisticsContainsOnlyObservableFields(const ResourceLoa
 
 void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
-    for (auto& statistic : statistics)
+    for (auto& statistic : borrow(statistics))
         MESSAGE_CHECK_COMPLETION(resourceLoadStatisticsContainsOnlyObservableFields(statistic), completionHandler());
 
     if (CheckedPtr networkSession = this->networkSession()) {
@@ -1631,7 +1631,8 @@ std::optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTracki
     ASSERT(m_networkActivityTrackers[newActivityIndex].networkActivity.getPlatformObject());
 #endif
 
-    auto& newActivityTracker = m_networkActivityTrackers[newActivityIndex];
+    Borrow borrowedActivityTrackers = m_networkActivityTrackers;
+    auto& newActivityTracker = borrowedActivityTrackers[newActivityIndex];
     newActivityTracker.networkActivity.setParent(m_networkActivityTrackers[rootActivityIndex].networkActivity);
     newActivityTracker.networkActivity.start();
     newActivityTracker.isTopResource = isTopResource;
@@ -1656,7 +1657,7 @@ void NetworkConnectionToWebProcess::stopTrackingResourceLoad(WebCore::ResourceLo
 
 void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
 {
-    for (auto& activityTracker : borrow(m_networkActivityTrackers).get())
+    for (auto& activityTracker : borrow(m_networkActivityTrackers))
         activityTracker.networkActivity.complete(NetworkActivityTracker::CompletionCode::Cancel);
 
     m_networkActivityTrackers.clear();
@@ -1665,7 +1666,7 @@ void NetworkConnectionToWebProcess::stopAllNetworkActivityTracking()
 
 void NetworkConnectionToWebProcess::stopAllNetworkActivityTrackingForPage(PageIdentifier pageID, NetworkActivityTracker::CompletionCode rootCompletionCode)
 {
-    for (auto& activityTracker : borrow(m_networkActivityTrackers).get()) {
+    for (auto& activityTracker : borrow(m_networkActivityTrackers)) {
         if (activityTracker.pageID == pageID) {
             auto code = activityTracker.isRootActivity ? rootCompletionCode : NetworkActivityTracker::CompletionCode::Cancel;
             activityTracker.networkActivity.complete(code);
@@ -1945,8 +1946,8 @@ void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIden
         // record the destination for any ports being transferred so the receiver can entangle them.
         CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
         Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers;
-        for (auto& message : messages) {
-            for (auto& transferredPort : message.transferredPorts)
+        for (auto& message : borrow(messages)) {
+            for (auto& transferredPort : borrow(message.transferredPorts))
                 registry->recordPendingTransferDestination(transferredPort.first, m_webProcessIdentifier);
             if (RefPtr serializedValue = message.message)
                 transferIdentifiers.appendVector(serializedValue->transferredImageBufferIdentifiers());
@@ -1983,7 +1984,7 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
 
     // Each transferred port must have been disentangled by this same web process.
     // It's invalid to be transfering a port this web process doesn't even own.
-    for (auto& transferredPort : message.transferredPorts)
+    for (auto& transferredPort : borrow(message.transferredPorts))
         MESSAGE_CHECK(registry->claimPendingTransferOrigin(transferredPort.first, m_webProcessIdentifier));
 
     if (registry->didPostMessageToRemote(WTF::move(message), port, retainBlobURLsWhileMessageIsInFlight(blobURLs))) {

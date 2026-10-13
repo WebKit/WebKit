@@ -32,6 +32,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUBindGroupLayout.h>
 #include <WebCore/WebGPUPipelineLayoutDescriptor.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
 
@@ -64,7 +65,7 @@ std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingConte
     Vector<Ref<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
-        for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
+        for (const auto& backingBindGroupLayout : borrow(*pipelineLayoutDescriptor.bindGroupLayouts)) {
             RefPtr entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
             if (!entry)
                 return std::nullopt;

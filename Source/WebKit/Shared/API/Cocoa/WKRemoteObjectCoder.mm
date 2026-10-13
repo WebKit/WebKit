@@ -36,6 +36,7 @@
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
+#import <wtf/Borrow.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
@@ -984,9 +985,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             
         // Objective-C object
         case '@': {
-            auto& allowedClasses = allowedArgumentClasses[i - firstArgument];
-
-            RetainPtr value = decodeObjectFromObjectStream(decoder, allowedClasses);
+            RetainPtr value = decodeObjectFromObjectStream(decoder, borrow(allowedArgumentClasses)[i - firstArgument]);
             SUPPRESS_UNRETAINED_LOCAL id valueId = value.get();
             [invocation setArgument:&valueId atIndex:i];
 

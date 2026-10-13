@@ -29,6 +29,7 @@
 #include "RemoteSnapshot.h"
 
 #include "WebImage.h"
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -207,7 +208,7 @@ void RemoteSnapshot::dispatchCompletionHandlersIfComplete()
     // Frames are resolved on the rendering backends' work queues. Dispatching even from the main thread keeps
     // the handlers in the order they were added.
     RunLoop::mainSingleton().dispatch([completionHandlers = std::exchange(m_completionHandlers, { }), success = !hasFailedWithLockHeld()] mutable {
-        for (auto& completionHandler : completionHandlers)
+        for (auto& completionHandler : borrow(completionHandlers))
             completionHandler(success);
     });
 }

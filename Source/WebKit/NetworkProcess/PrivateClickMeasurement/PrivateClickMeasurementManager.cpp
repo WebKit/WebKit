@@ -39,6 +39,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -472,7 +473,7 @@ void PrivateClickMeasurementManager::attribute(SourceSite&& sourceSite, Attribut
             return;
 
         if (protectedThis->debugModeEnabled()) [[unlikely]] {
-            for (auto& message : debugInfo.messages)
+            for (auto& message : borrow(debugInfo.messages))
                 protectedThis->m_client->broadcastConsoleMessage(message.messageLevel, message.message);
         }
 
@@ -515,7 +516,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
             if (!protectedThis)
                 return;
 
-            auto publicKeyData = base64URLDecode(publicKeyBase64URL);
+            const auto publicKeyData = base64URLDecode(publicKeyBase64URL);
             if (!publicKeyData)
                 return;
 
@@ -535,7 +536,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
                     if (!protectedThis)
                         return;
 
-                    auto publicKeyData = base64URLDecode(publicKeyBase64URL);
+                    const auto publicKeyData = base64URLDecode(publicKeyBase64URL);
                     if (!publicKeyData)
                         return;
 
@@ -561,7 +562,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         if (!protectedThis)
             return;
 
-        auto publicKeyData = base64URLDecode(publicKeyBase64URL);
+        const auto publicKeyData = base64URLDecode(publicKeyBase64URL);
         if (!publicKeyData)
             return;
 
@@ -633,7 +634,7 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
         auto nextTimeToFire = Seconds::infinity();
         bool hasSentAttribution = false;
 
-        for (auto& attribution : attributions) {
+        for (auto& attribution : borrow(attributions)) {
             std::optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
             std::optional<WebCore::PCM::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
 

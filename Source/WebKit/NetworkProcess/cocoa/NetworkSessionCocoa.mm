@@ -61,6 +61,7 @@
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -1554,7 +1555,7 @@ void NetworkSessionCocoa::removeCredentialsForOrigins(const Vector<WebCore::Secu
         return;
 
     HashSet<WebCore::SecurityOriginData> originSet;
-    for (auto& origin : origins) {
+    for (auto& origin : borrow(origins)) {
         if (!origin.isNull() && !origin.isOpaque())
             originSet.add(origin);
     }
@@ -2025,7 +2026,7 @@ void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<Str
 {
 #if HAVE(ALTERNATIVE_SERVICE)
     RetainPtr<_NSHTTPAlternativeServicesStorage> storage = m_defaultSessionSet->sessionWithCredentialStorage->session.get().configuration._alternativeServicesStorage;
-    for (auto& host : hosts)
+    for (auto& host : borrow(hosts))
         [storage removeHTTPAlternativeServiceEntriesWithRegistrableDomain:host.createNSString().get()];
 #else
     UNUSED_PARAM(hosts);
@@ -2093,14 +2094,14 @@ void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8
     // If any of the proxies pass the `nw_proxy_config_stack_requires_http_protocols` check,
     // then we cannot set the proxy on the live nw_context_t and instead must destroy and recreate the NSURLSession
     bool recreateSessions = false;
-    for (auto& config : proxyConfigurations) {
+    for (auto& config : borrow(proxyConfigurations)) {
         uuid_t identifier;
         if (config.second)
             memcpySpan(asMutableByteSpan(identifier), config.second->span().first(sizeof(uuid_t)));
         else
             zeroBytes(identifier);
 
-        RetainPtr nwProxyConfig = adoptNS(nw_proxy_config_create_with_agent_data(config.first.span().data(), config.first.size(), identifier));
+        RetainPtr nwProxyConfig = adoptNS(nw_proxy_config_create_with_agent_data(borrow(config.first)->span().data(), config.first.size(), identifier));
 
         if (nw_proxy_config_stack_requires_http_protocols(nwProxyConfig.get()))
             recreateSessions = true;
@@ -2127,7 +2128,7 @@ void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8
     for (SUPPRESS_UNRETAINED_LOCAL nw_context_t context in contexts.get()) {
         nw_context_clear_proxies(context);
 
-        for (auto& proxyConfig : m_nwProxyConfigs)
+        for (auto& proxyConfig : borrow(m_nwProxyConfigs))
             nw_context_add_proxy(context, proxyConfig.get());
     }
 }
@@ -2136,7 +2137,7 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
 {
     if (!m_nwProxyConfigs.isEmpty()) {
         RetainPtr nwProxyConfigurations = adoptNS([[NSMutableArray alloc] initWithCapacity:m_nwProxyConfigs.size()]);
-        for (auto& proxyConfig : m_nwProxyConfigs)
+        for (auto& proxyConfig : borrow(m_nwProxyConfigs))
             [nwProxyConfigurations addObject:proxyConfig.get()];
 
         configuration.proxyConfigurations = nwProxyConfigurations.get();

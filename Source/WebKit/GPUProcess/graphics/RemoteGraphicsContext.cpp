@@ -407,8 +407,8 @@ void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifie
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     MESSAGE_CHECK(font);
-    Vector<GlyphBufferGlyph, 128> glyphs { glyphsAdvances.span<0>() };
-    Vector<GlyphBufferAdvance, 128> advances { glyphsAdvances.span<1>() };
+    const Vector<GlyphBufferGlyph, 128> glyphs { glyphsAdvances.span<0>() };
+    const Vector<GlyphBufferAdvance, 128> advances { glyphsAdvances.span<1>() };
     context().drawGlyphsImmediate(*font, glyphs.span(), advances.span(), localAnchor, fontSmoothingMode);
 }
 

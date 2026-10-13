@@ -45,6 +45,7 @@
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
+#include <wtf/Borrow.h>
 #include <wtf/NativePromise.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
@@ -633,7 +634,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     }
 
     MESSAGE_CHECK_COMPLETION(constraints->mandatoryConstraints.isValid(), completionHandler({ "Invalid mandatoryConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
-    for (const auto& advancedConstraint : constraints->advancedConstraints)
+    for (const auto& advancedConstraint : borrow(constraints->advancedConstraints))
         MESSAGE_CHECK_COMPLETION(advancedConstraint.isValid(), completionHandler({ "Invalid advancedConstraints"_s, WebCore::MediaAccessDenialReason::InvalidConstraint }, { }, { }));
 
     proxy->applyConstraints(WTF::move(mediaConstraints), [weakProxy = WeakPtr { proxy }, completionHandler = WTF::move(completionHandler), completeSetup = WTF::move(completeSetup)](auto&& error) mutable {
@@ -738,7 +739,7 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
     }
 
     MESSAGE_CHECK(constraints.mandatoryConstraints.isValid());
-    for (const auto& advancedConstraint : constraints.advancedConstraints)
+    for (const auto& advancedConstraint : borrow(constraints.advancedConstraints))
         MESSAGE_CHECK(advancedConstraint.isValid());
 
     proxy->applyConstraints(WTF::move(constraints), [id, proxy, connection = protect(m_connectionProxy->connection())](auto&& result) {

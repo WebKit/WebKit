@@ -46,6 +46,7 @@
 #import <stdlib.h>
 #import <sys/sysctl.h>
 #import <sysexits.h>
+#import <wtf/Borrow.h>
 #import <wtf/DataLog.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
@@ -366,7 +367,7 @@ static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<ui
     // then rename it to the final cache path.
     auto temporaryPath = makeString(info.filePath, '-', getpid());
     auto fileHandle = FileSystem::openFile(temporaryPath, FileSystem::FileOpenMode::Truncate);
-    if (fileHandle.write(cacheFile.span()) != cacheFile.size()) {
+    if (fileHandle.write(borrow(cacheFile)->span()) != cacheFile.size()) {
         FileSystem::deleteFile(temporaryPath);
         return false;
     }
@@ -464,7 +465,8 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
 
     // These values are computed based on the disk layout specified below the definition of the CachedSandboxHeader struct
     // and must be changed if the layout changes.
-    auto sandboxHeader = cachedSandboxContents.mutableSpan().subspan(sizeof(CachedSandboxHeader));
+    Borrow borrowedSandboxContents = cachedSandboxContents;
+    auto sandboxHeader = borrowedSandboxContents->mutableSpan().subspan(sizeof(CachedSandboxHeader));
     auto sandboxBuiltin = sandboxHeader.subspan(cachedSandboxHeader.headerSize);
     auto sandboxData = haveBuiltin ? sandboxBuiltin.subspan(cachedSandboxHeader.builtinSize) : sandboxBuiltin;
 

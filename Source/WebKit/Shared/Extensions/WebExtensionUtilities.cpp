@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebExtensionUtilities.h"
 #include "JSWebExtensionWrapper.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -80,7 +81,7 @@ RefPtr<JSON::Object> jsonWithLowercaseKeys(RefPtr<JSON::Object> json)
         return json;
 
     Ref newObject = JSON::Object::create();
-    for (auto& key : json->keys())
+    for (auto& key : borrow(json->keys()))
         newObject->setValue(key.convertToASCIILowercase(), *json->getValue(key));
 
     return newObject;
@@ -92,7 +93,7 @@ RefPtr<JSON::Object> mergeJSON(RefPtr<JSON::Object> jsonA, RefPtr<JSON::Object> 
         return jsonA ?: jsonB;
 
     RefPtr mergedObject = jsonA.copyRef();
-    for (auto& key : jsonB->keys()) {
+    for (auto& key : borrow(jsonB->keys())) {
         if (!mergedObject->getValue(key))
             mergedObject->setValue(key, *jsonB->getValue(key));
     }
@@ -116,7 +117,7 @@ void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const
     size_t currentMemoryCost = 0;
     Ref<JSON::Object> currentJSON = JSON::Object::create();
 
-    for (auto& key : jsonObject->keys()) {
+    for (auto& key : borrow(jsonObject->keys())) {
         RefPtr value = jsonObject->getValue(key);
         if (!value)
             continue;
@@ -266,7 +267,7 @@ static String formatList(Vector<String>& list)
     if (count == 2)
         return makeString("'"_s, list.first(), "' and '"_s, list.last(), "'"_s);
 
-    auto allButLast = list.subvector(0, count - 1);
+    const auto allButLast = list.subvector(0, count - 1);
     auto formattedInitialItems = makeStringByJoining(allButLast, "', '"_s);
     return makeString("'"_s, formattedInitialItems, "' and '"_s, list.last(), "'"_s);
 }
@@ -283,7 +284,7 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
 
     Vector<String> remainingRequiredKeys = requiredKeys;
     HashSet<String> requiredKeysSet;
-    for (auto& key : requiredKeys)
+    for (auto& key : borrow(requiredKeys))
         requiredKeysSet.addVoid(key);
     HashSet<String> optionalKeysSet;
     for (auto& key : keyTypes.keys())
@@ -292,7 +293,7 @@ bool validateDictionary(RefPtr<JSON::Value> dictionary, const String& sourceKey,
 
     String errorString;
 
-    for (auto& key : object->keys()) {
+    for (auto& key : borrow(object->keys())) {
         if (!requiredKeysSet.contains(key) && !optionalKeysSet.contains(key))
             continue;
 

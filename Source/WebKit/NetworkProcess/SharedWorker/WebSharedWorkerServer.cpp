@@ -284,13 +284,16 @@ void WebSharedWorkerServer::removeConnection(WebCore::ProcessIdentifier processI
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::removeConnection(%p): processIdentifier=%" PRIu64, connection.get(), processIdentifier.toUInt64());
     ASSERT(connection);
 
-    Vector<std::pair<WebCore::SharedWorkerKey, WebCore::SharedWorkerObjectIdentifier>> sharedWorkerObjectsGoingAway;
-    for (Ref sharedWorker : m_sharedWorkers.values()) {
-        sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
-            if (sharedWorkerObjectIdentifier.processIdentifier() == processIdentifier)
-                sharedWorkerObjectsGoingAway.append(std::make_pair(sharedWorker->key(), sharedWorkerObjectIdentifier));
-        });
-    }
+    const auto sharedWorkerObjectsGoingAway = [&] {
+        Vector<std::pair<WebCore::SharedWorkerKey, WebCore::SharedWorkerObjectIdentifier>> sharedWorkerObjectsGoingAway;
+        for (Ref sharedWorker : m_sharedWorkers.values()) {
+            sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
+                if (sharedWorkerObjectIdentifier.processIdentifier() == processIdentifier)
+                    sharedWorkerObjectsGoingAway.append(std::make_pair(sharedWorker->key(), sharedWorkerObjectIdentifier));
+            });
+        }
+        return sharedWorkerObjectsGoingAway;
+    }();
     for (auto& [sharedWorkerKey, sharedWorkerObjectIdentifier] : sharedWorkerObjectsGoingAway)
         sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }

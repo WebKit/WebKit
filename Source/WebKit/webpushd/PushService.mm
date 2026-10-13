@@ -27,8 +27,8 @@
 #import "PushService.h"
 
 #import "ApplePushServiceConnection.h"
-#import "MockPushServiceConnection.h"
 #import "Logging.h"
+#import "MockPushServiceConnection.h"
 #import "WebPushDaemonConstants.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/PushMessageCrypto.h>
@@ -36,6 +36,7 @@
 #import <notify.h>
 #import <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
@@ -710,7 +711,7 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
             return handler(removedRecords.size());
 
         Ref connection = protectedThis->connection();
-        for (auto& record : removedRecords) {
+        for (auto& record : borrow(removedRecords)) {
             connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
                 RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
@@ -736,7 +737,7 @@ void PushService::removeRecordsForBundleIdentifierAndDataStore(const String& bun
             return handler(removedRecords.size());
 
         Ref connection = protectedThis->connection();
-        for (auto& record : removedRecords) {
+        for (auto& record : borrow(removedRecords)) {
             connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
                 RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
@@ -918,7 +919,7 @@ void PushService::setPublicTokenForTesting(Vector<uint8_t>&& token)
 
 void PushService::didReceivePublicToken(Vector<uint8_t>&& token)
 {
-    m_database->updatePublicToken(token, [weakThis = WeakPtr { *this }](auto result) mutable {
+    m_database->updatePublicToken(borrow(token), [weakThis = WeakPtr { *this }](auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -964,11 +965,12 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
             WTF::move(record.sharedAuthSecret)
         };
 
+        Borrow borrowedEncryptedPayload = message.encryptedPayload;
         std::optional<Vector<uint8_t>> decryptedPayload;
         if (message.encoding == ContentEncoding::AES128GCM)
-            decryptedPayload = decryptAES128GCMPayload(clientKeys, message.encryptedPayload);
+            decryptedPayload = decryptAES128GCMPayload(clientKeys, borrowedEncryptedPayload);
         else if (message.encoding == ContentEncoding::AESGCM)
-            decryptedPayload = decryptAESGCMPayload(clientKeys, message.serverPublicKey, message.salt, message.encryptedPayload);
+            decryptedPayload = decryptAESGCMPayload(clientKeys, borrow(message.serverPublicKey), borrow(message.salt), borrowedEncryptedPayload);
 
         if (!decryptedPayload) {
             RELEASE_LOG_ERROR(Push, "Dropping incoming push due to decryption error for topic %{sensitive}s", message.topic.utf8());

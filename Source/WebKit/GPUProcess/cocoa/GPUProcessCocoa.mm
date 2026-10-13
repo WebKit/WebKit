@@ -36,6 +36,7 @@
 #import <WebCore/VP9UtilitiesCocoa.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
@@ -241,7 +242,7 @@ void GPUProcess::postWillTakeSnapshotNotification(CompletionHandler<void()>&& co
 
 void GPUProcess::registerFonts(Vector<SandboxExtension::Handle>&& sandboxExtensions)
 {
-    for (auto& sandboxExtension : sandboxExtensions)
+    for (auto& sandboxExtension : borrow(sandboxExtensions))
         SandboxExtension::consumePermanently(sandboxExtension);
 }
 

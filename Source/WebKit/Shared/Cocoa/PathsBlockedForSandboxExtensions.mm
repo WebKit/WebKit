@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PathsBlockedForSandboxExtensions.h"
 
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
@@ -46,7 +47,7 @@ static Vector<String>& subPathsBlockedForSandboxExtension()
 
 void addPathsBlockedForSandboxExtension(Vector<String>&& paths)
 {
-    for (auto& path : paths) {
+    for (auto& path : borrow(paths)) {
         String normalizedPath = FileSystem::realPath(path);
         path = FileSystem::lexicallyNormal(normalizedPath);
     }
@@ -55,7 +56,7 @@ void addPathsBlockedForSandboxExtension(Vector<String>&& paths)
 
 void addSubPathsBlockedForSandboxExtension(Vector<String>&& paths)
 {
-    for (auto& path : paths) {
+    for (auto& path : borrow(paths)) {
         String normalizedPath = FileSystem::realPath(path);
         path = FileSystem::lexicallyNormal(normalizedPath);
     }
@@ -72,7 +73,7 @@ bool pathIsBlockedForSandboxExtensions(const String& path)
             return true;
     }
 
-    for (auto& pathBlocked : subPathsBlockedForSandboxExtension()) {
+    for (auto& pathBlocked : borrow(subPathsBlockedForSandboxExtension())) {
         if (FileSystem::isAncestor(pathBlocked, normalizedPath))
             return true;
     }

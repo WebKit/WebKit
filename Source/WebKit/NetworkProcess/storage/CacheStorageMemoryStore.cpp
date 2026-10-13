@@ -27,6 +27,7 @@
 #include "CacheStorageMemoryStore.h"
 
 #include <WebCore/DOMCacheEngine.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -61,7 +62,7 @@ void CacheStorageMemoryStore::readRecords(const Vector<CacheStorageRecordInforma
 
 void CacheStorageMemoryStore::deleteRecords(const Vector<CacheStorageRecordInformation>& recordInfos, WriteRecordsCallback&& callback)
 {
-    for (auto& recordInfo : recordInfos)
+    for (auto& recordInfo : borrow(recordInfos))
         m_records.remove(recordInfo.identifier());
 
     callback(true);
@@ -69,7 +70,7 @@ void CacheStorageMemoryStore::deleteRecords(const Vector<CacheStorageRecordInfor
 
 void CacheStorageMemoryStore::writeRecords(Vector<CacheStorageRecord>&& records, WriteRecordsCallback&& callback)
 {
-    for (auto&& record : records)
+    for (auto&& record : borrow(records))
         m_records.set(record.info.identifier(), makeUnique<CacheStorageRecord>(WTF::move(record)));
 
     callback(true);

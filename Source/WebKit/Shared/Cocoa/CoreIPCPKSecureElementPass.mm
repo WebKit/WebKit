@@ -28,6 +28,7 @@
 
 #if USE(PASSKIT)
 
+#import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -40,7 +41,8 @@ CoreIPCPKSecureElementPass::CoreIPCPKSecureElementPass(PKSecureElementPass *pass
 
 RetainPtr<id> CoreIPCPKSecureElementPass::toID() const
 {
-    RetainPtr data = toNSDataNoCopy(m_data.span(), FreeWhenDone::No);
+    Borrow borrowedData = m_data;
+    RetainPtr data = toNSDataNoCopy(borrowedData->span(), FreeWhenDone::No);
     RELEASE_ASSERT(isInWebProcess());
     return [NSKeyedUnarchiver unarchivedObjectOfClass:PAL::getPKSecureElementPassClassSingleton() fromData:data.get() error:nil];
 }

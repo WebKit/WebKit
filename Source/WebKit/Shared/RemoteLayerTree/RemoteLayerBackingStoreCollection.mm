@@ -147,11 +147,14 @@ Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStore
 
 bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
 {
-    Vector<WeakPtr<RemoteLayerBackingStore>> newlyUnreachableBackingStore;
-    for (CheckedRef backingStore : m_liveBackingStore) {
-        if (!m_reachableBackingStoreInLatestFlush.contains(backingStore.get()))
-            newlyUnreachableBackingStore.append(backingStore.get());
-    }
+    const auto newlyUnreachableBackingStore = [&] {
+        Vector<WeakPtr<RemoteLayerBackingStore>> newlyUnreachableBackingStore;
+        for (CheckedRef backingStore : m_liveBackingStore) {
+            if (!m_reachableBackingStoreInLatestFlush.contains(backingStore.get()))
+                newlyUnreachableBackingStore.append(backingStore.get());
+        }
+        return newlyUnreachableBackingStore;
+    }();
 
     for (auto& backingStore : newlyUnreachableBackingStore)
         backingStoreBecameUnreachable(protect(*backingStore));

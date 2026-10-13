@@ -37,6 +37,7 @@
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -201,8 +202,10 @@ bool NetworkRTCMonitor::isEqual(const Vector<RTCNetwork::InterfaceAddress>& a, c
     if (a.size() != b.size())
         return false;
 
+    Borrow borrowedA = a;
+    Borrow borrowedB = b;
     for (size_t i = 0; i < a.size(); ++i) {
-        if (!isEqual(a[i], b[i]))
+        if (!isEqual(borrowedA[i], borrowedB[i]))
             return false;
     }
     return true;
@@ -218,8 +221,8 @@ bool NetworkRTCMonitor::sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (a.type != b.type)
         return a.type < b.type;
 
-    int precedenceA = webrtc::IPAddressPrecedence(a.ips[0].rtcAddress());
-    int precedenceB = webrtc::IPAddressPrecedence(b.ips[0].rtcAddress());
+    int precedenceA = webrtc::IPAddressPrecedence(borrow(a.ips)->at(0).rtcAddress());
+    int precedenceB = webrtc::IPAddressPrecedence(borrow(b.ips)->at(0).rtcAddress());
 
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;

@@ -98,6 +98,7 @@
 #include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/NeverDestroyed.h>
@@ -234,7 +235,7 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
     m_allowedWebPageProxyIdentifiers.remove(connection.webProcessIdentifier());
     auto completionHandlers = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier());
-    for (auto& completionHandler : completionHandlers)
+    for (auto& completionHandler : borrow(completionHandlers))
         completionHandler();
 }
 
@@ -357,21 +358,21 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 
-    for (auto& scheme : parameters.urlSchemesRegisteredAsSecure)
+    for (auto& scheme : borrow(parameters.urlSchemesRegisteredAsSecure))
         registerURLSchemeAsSecure(scheme);
 
-    for (auto& scheme : parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy)
+    for (auto& scheme : borrow(parameters.urlSchemesRegisteredAsBypassingContentSecurityPolicy))
         registerURLSchemeAsBypassingContentSecurityPolicy(scheme);
 
-    for (auto& scheme : parameters.urlSchemesRegisteredAsLocal)
+    for (auto& scheme : borrow(parameters.urlSchemesRegisteredAsLocal))
         registerURLSchemeAsLocal(scheme);
 
 #if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
-    for (auto& scheme : parameters.urlSchemesRegisteredAsNoAccess)
+    for (auto& scheme : borrow(parameters.urlSchemesRegisteredAsNoAccess))
         registerURLSchemeAsNoAccess(scheme);
 #endif
     
-    for (auto&& websiteDataStoreParameters : WTF::move(parameters.websiteDataStoreParameters))
+    for (auto&& websiteDataStoreParameters : borrow(parameters.websiteDataStoreParameters))
         addWebsiteDataStore(WTF::move(websiteDataStoreParameters));
 
     m_localhostAliasesForTesting = WTF::move(parameters.localhostAliasesForTesting);
@@ -1550,7 +1551,7 @@ void NetworkProcess::grantStorageAccessForTesting(PAL::SessionID sessionID, Vect
         return;
     }
     if (CheckedPtr networkStorageSession = storageSession(sessionID)) {
-        for (auto&& subFrameDomain : subFrameDomains)
+        for (auto&& subFrameDomain : borrow(subFrameDomains))
             networkStorageSession->grantCrossPageStorageAccess(WTF::move(topFrameDomain), WTF::move(subFrameDomain));
     } else
         ASSERT_NOT_REACHED();
@@ -1942,7 +1943,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session) {
         session->privateClickMeasurement().fetchRegistrableDomains([callbackAggregator](auto&& domains) mutable {
-            for (auto& domain : domains) {
+            for (auto& domain : borrow(domains)) {
                 WebsiteData::Entry entry {
                     WebCore::SecurityOriginData::fromURL(URL { makeString("https://"_s, domain.string()) }),
                     WebsiteDataType::PrivateClickMeasurements,
@@ -2168,9 +2169,10 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteDataForOrigins started to delete data for session %" PRIu64, sessionID.toUInt64());
     CheckedPtr session = networkSession(sessionID);
 
+    Borrow borrowedCookieHostNames = cookieHostNames;
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (CheckedPtr networkStorageSession = storageSession(sessionID))
-            networkStorageSession->deleteCookiesForHostnames(cookieHostNames, [clearTasksHandler] { });
+            networkStorageSession->deleteCookiesForHostnames(borrowedCookieHostNames->span(), [clearTasksHandler] { });
     }
 
 #if PLATFORM(COCOA) || USE(SOUP)
@@ -2187,15 +2189,16 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 #endif
 
+    Borrow borrowedOriginDatas = originDatas;
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session) {
-        for (auto& originData : originDatas)
+        for (auto& originData : borrowedOriginDatas)
             session->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host()), [clearTasksHandler] { });
     }
 
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
         Ref server = session->ensureSWServer();
-        for (auto& originData : originDatas) {
+        for (auto& originData : borrowedOriginDatas) {
             server->clear(originData, [clearTasksHandler] { });
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
@@ -2214,15 +2217,16 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (CheckedPtr storage = storageSession(sessionID)) {
-            for (auto& originData : originDatas)
+            for (auto& originData : borrowedOriginDatas)
                 storage->credentialStorage().removeCredentialsWithOrigin(originData);
         }
         if (session)
             session->removeCredentialsForOrigins(originDatas);
     }
 
+    Borrow borrowedRegistrableDomains = registrableDomains;
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && session) {
-        for (auto& domain : registrableDomains) {
+        for (auto& domain : borrowedRegistrableDomains) {
             if (RefPtr resourceLoadStatistics = session->resourceLoadStatistics())
                 resourceLoadStatistics->removeDataForDomain(domain, [clearTasksHandler] { });
         }
@@ -2233,13 +2237,13 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (session) {
         HashSet<WebCore::RegistrableDomain> domainsToDeleteNetworkDataFor;
-        for (auto& originData : originDatas)
+        for (auto& originData : borrowedOriginDatas)
             domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(originData.host()));
-        for (auto& cookieHostName : cookieHostNames)
+        for (auto& cookieHostName : borrowedCookieHostNames)
             domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookieHostName));
-        for (auto& cacheHostName : HSTSCacheHostNames)
+        for (auto& cacheHostName : borrow(HSTSCacheHostNames))
             domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(cacheHostName));
-        for (auto& domain : registrableDomains)
+        for (auto& domain : borrowedRegistrableDomains)
             domainsToDeleteNetworkDataFor.add(domain);
 
         session->removeNetworkWebsiteData(std::nullopt, WTF::move(domainsToDeleteNetworkDataFor), [clearTasksHandler] { });
@@ -2307,23 +2311,21 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (CheckedPtr networkStorageSession = storageSession(sessionID)) {
             HashSet<String> hostNamesWithCookies;
-            Vector<String> hostnamesWithCookiesToDelete;
-            Vector<String> hostnamesWithCookiesToDeleteAllButHttpOnly;
-            Vector<String> hostnamesWithScriptWrittenCookiesToDelete;
-
             networkStorageSession->getHostnamesWithCookies(hostNamesWithCookies);
 
-            hostnamesWithCookiesToDelete = filterForRegistrableDomains(domains.domainsToDeleteAllCookiesFor, hostNamesWithCookies);
+            const auto hostnamesWithCookiesToDelete = filterForRegistrableDomains(domains.domainsToDeleteAllCookiesFor, hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete, WebCore::IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, [callbackAggregator] { });
 
 #if ENABLE(JS_COOKIE_CHECKING)
-            hostnamesWithScriptWrittenCookiesToDelete = filterForRegistrableDomains(domains.domainsToDeleteAllScriptWrittenStorageFor, hostNamesWithCookies);
+            const auto hostnamesWithScriptWrittenCookiesToDelete = filterForRegistrableDomains(domains.domainsToDeleteAllScriptWrittenStorageFor, hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithScriptWrittenCookiesToDelete, WebCore::IncludeHttpOnlyCookies::No, ScriptWrittenCookiesOnly::Yes, [callbackAggregator] { });
+#else
+            const Vector<String> hostnamesWithScriptWrittenCookiesToDelete;
 #endif
             for (const auto& host : hostnamesWithCookiesToDelete)
                 callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
 
-            hostnamesWithCookiesToDeleteAllButHttpOnly = filterForRegistrableDomains(domains.domainsToDeleteAllButHttpOnlyCookiesFor, hostNamesWithCookies);
+            const auto hostnamesWithCookiesToDeleteAllButHttpOnly = filterForRegistrableDomains(domains.domainsToDeleteAllButHttpOnlyCookiesFor, hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDeleteAllButHttpOnly, WebCore::IncludeHttpOnlyCookies::No, ScriptWrittenCookiesOnly::No, [callbackAggregator] { });
 
             for (const auto& host : hostnamesWithCookiesToDeleteAllButHttpOnly)
@@ -2332,11 +2334,10 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         }
     }
 
-    Vector<String> hostnamesWithHSTSToDelete;
 #if PLATFORM(COCOA) || USE(SOUP)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         hostNamesWithHSTSCache = this->hostNamesWithHSTSCache(sessionID);
-        hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllScriptWrittenStorageFor, hostNamesWithHSTSCache);
+        const auto hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllScriptWrittenStorageFor, hostNamesWithHSTSCache);
 
         for (const auto& host : hostnamesWithHSTSToDelete)
             callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
@@ -2357,7 +2358,7 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (CheckedPtr session = storageSession(sessionID)) {
             auto origins = session->credentialStorage().originsWithCredentials();
-            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
+            const auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
             for (auto& origin : originsToDelete)
                 session->credentialStorage().removeCredentialsWithOrigin(origin);
         }
@@ -2451,7 +2452,7 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
                 for (const auto& hostnameWithHSTS : websiteData.hostNamesWithHSTSCache)
                     domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithHSTS));
 
-                for (const auto& entry : websiteData.entries)
+                for (const auto& entry : borrow(websiteData.entries))
                     domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host()));
 
                 completionHandler(WTF::move(domains));
@@ -3467,7 +3468,7 @@ void NetworkProcess::setCORSDisablingPatternsForPage(WebCore::ProcessIdentifier 
 
 void NetworkProcess::recordMessagePortTransferDestinationsForSiteIsolation(Vector<WebCore::MessagePortIdentifier>&& ports, WebCore::ProcessIdentifier destination, CompletionHandler<void()>&& completionHandler)
 {
-    for (auto& port : ports)
+    for (auto& port : borrow(ports))
         m_messagePortChannelRegistry.recordPendingTransferDestination(port, destination);
     completionHandler();
 }
@@ -3539,8 +3540,9 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
 
 void NetworkProcess::allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier processID, const Vector<String>& paths, CompletionHandler<void()>&& completionHandler)
 {
+    Borrow borrowedPaths = paths;
     if (RefPtr connection = webProcessConnection(processID)) {
-        for (auto& path : paths)
+        for (auto& path : borrowedPaths)
             connection->allowAccessToFile(path);
     } else {
         // If web process is not launched yet, buffer the grant so it can be applied
@@ -3548,7 +3550,7 @@ void NetworkProcess::allowFilesAccessFromWebProcess(WebCore::ProcessIdentifier p
         auto& pendingPaths = m_pendingAllowedFilePathsByProcess.ensure(processID, [] {
             return HashSet<String> { };
         }).iterator->value;
-        for (auto& path : paths)
+        for (auto& path : borrowedPaths)
             pendingPaths.add(path);
     }
     completionHandler();

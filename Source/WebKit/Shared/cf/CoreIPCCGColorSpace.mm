@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import "CoreIPCTypes.h"
+#import <wtf/Borrow.h>
 #import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -135,11 +136,12 @@ RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
         return adoptCF(CGColorSpaceCreateWithName(name.get()));
     },
     [](const ICCData& iccdata) -> RetainPtr<CGColorSpaceRef> {
+        Borrow borrowedData = iccdata.data;
         if (iccdata.derivative == ExtendedRangeDerivative::kNone)
-            return adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(iccdata.data).get()));
+            return adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(borrowedData->span()).get()));
 
         const void* keys[] = { kCGColorSpaceICCData, kCGColorSpaceExtendedRange, iccdata.derivative == ExtendedRangeDerivative::kExtendedRangeDisplayReferredDerivative ? kCGColorSpaceDisplayReferredDerivative : kCGColorSpaceSceneReferredDerivative };
-        RetainPtr data = toCFData(iccdata.data);
+        RetainPtr data = toCFData(borrowedData->span());
         const void* vals[] = { data.get(), kCFBooleanTrue, kCFBooleanTrue };
         RetainPtr propertyList = adoptCF(CFDictionaryCreate(NULL,
             (const void **)keys,
@@ -155,7 +157,7 @@ RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
         RetainPtr innerColorSpace = colorSpace.colorSpace->toCF();
         RetainPtr innerPropertyList = adoptCF(CGColorSpaceCopyPropertyList(innerColorSpace.get()));
         RetainPtr lastIndex = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt8Type, &colorSpace.index));
-        RetainPtr table = adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(colorSpace.table).get()));
+        RetainPtr table = adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(borrow(colorSpace.table)->span()).get()));
         const void* keys[] = { kCGIndexedBaseColorSpaceKey, kCGLastIndexKey, kCGIndexedColorTableKey };
         const void* vals[] = { innerPropertyList.get(), lastIndex.get(), table.get() };
         RetainPtr propertyList = adoptCF(CFDictionaryCreate(NULL,

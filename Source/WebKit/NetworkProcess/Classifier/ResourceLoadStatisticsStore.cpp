@@ -49,6 +49,7 @@
 #include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
@@ -251,7 +252,7 @@ constexpr int expectedIndexCount = 13;
 static String domainsToString(const Vector<RegistrableDomain>& domains)
 {
     StringBuilder builder;
-    for (auto& domain : domains)
+    for (auto& domain : borrow(domains))
         builder.append(builder.isEmpty() ? ""_s : ", "_s, domain.string());
     return builder.toString();
 }
@@ -259,11 +260,11 @@ static String domainsToString(const Vector<RegistrableDomain>& domains)
 static String domainsToString(const RegistrableDomainsToDeleteOrRestrictWebsiteDataFor& domainsToRemoveOrRestrictWebsiteDataFor)
 {
     StringBuilder builder;
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor)
+    for (auto& domain : borrow(domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllCookiesFor))
         builder.append(builder.isEmpty() ? ""_s : ", "_s, domain.string(), "(all data)"_s);
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor)
+    for (auto& domain : borrow(domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllButHttpOnlyCookiesFor))
         builder.append(builder.isEmpty() ? ""_s : ", "_s, domain.string(), "(all but HttpOnly cookies)"_s);
-    for (auto& domain : domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllScriptWrittenStorageFor)
+    for (auto& domain : borrow(domainsToRemoveOrRestrictWebsiteDataFor.domainsToDeleteAllScriptWrittenStorageFor))
         builder.append(builder.isEmpty() ? ""_s : ", "_s, domain.string(), "(all but cookies)"_s);
     return builder.toString();
 }
@@ -321,16 +322,30 @@ static DataRemovalFrequency toDataRemovalFrequency(int value)
     };
 }
 
+template <typename ValueType>
+static void appendListItem(StringBuilder& builder, const ValueType& value)
+{
+    if constexpr (std::is_arithmetic_v<ValueType>)
+        builder.append(builder.isEmpty() ? ""_s : ", "_s, value);
+    else
+        builder.append(builder.isEmpty() ? ""_s : ", "_s, '"', value, '"');
+}
+
 template <typename ContainerType>
 static String buildList(const ContainerType& values)
 {
     StringBuilder builder;
-    for (auto& value : values) {
-        if constexpr (std::is_arithmetic_v<std::remove_reference_t<decltype(value)>>)
-            builder.append(builder.isEmpty() ? ""_s : ", "_s, value);
-        else
-            builder.append(builder.isEmpty() ? ""_s : ", "_s, '"', value, '"');
-    }
+    for (auto& value : values)
+        appendListItem(builder, value);
+    return builder.toString();
+}
+
+template <typename ValueType>
+static String buildList(const Vector<ValueType>& values)
+{
+    StringBuilder builder;
+    for (auto& value : borrow(values))
+        appendListItem(builder, value);
     return builder.toString();
 }
 
@@ -431,7 +446,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
                 auto dataRecordRemovalCompletionHandlers = WTF::move(protectedThis->m_dataRecordRemovalCompletionHandlers);
                 completionHandler();
 
-                for (auto& dataRecordRemovalCompletionHandler : dataRecordRemovalCompletionHandlers)
+                for (auto& dataRecordRemovalCompletionHandler : borrow(dataRecordRemovalCompletionHandlers))
                     dataRecordRemovalCompletionHandler();
 
                 if (protectedThis->m_debugLoggingEnabled) [[unlikely]] {
@@ -747,9 +762,12 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
 {
     ASSERT(debugLoggingEnabled());
 
-    Vector<RegistrableDomain> domains;
-    domains.appendVector(domainsToBlock.domainsToBlockAndDeleteCookiesFor);
-    domains.appendVector(domainsToBlock.domainsToBlockButKeepCookiesFor);
+    const auto domains = [&] {
+        Vector<RegistrableDomain> domains;
+        domains.appendVector(domainsToBlock.domainsToBlockAndDeleteCookiesFor);
+        domains.appendVector(domainsToBlock.domainsToBlockButKeepCookiesFor);
+        return domains;
+    }();
     if (domains.isEmpty())
         return;
 
@@ -952,9 +970,9 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
                 return;
 
             Ref manager = networkSession->privateClickMeasurement();
-            for (auto&& pcm : WTF::move(attributed))
+            for (auto&& pcm : borrow(attributed))
                 manager->migratePrivateClickMeasurementFromLegacyStorage(WTF::move(pcm), PrivateClickMeasurementAttributionType::Attributed);
-            for (auto&& pcm : WTF::move(unattributed))
+            for (auto&& pcm : borrow(unattributed))
                 manager->migratePrivateClickMeasurementFromLegacyStorage(WTF::move(pcm), PrivateClickMeasurementAttributionType::Unattributed);
         });
 
@@ -967,7 +985,7 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
 
 void ResourceLoadStatisticsStore::addMissingTablesIfNecessary()
 {
-    auto missingTables = checkForMissingTablesInSchema();
+    const auto missingTables = checkForMissingTablesInSchema();
     if (!missingTables)
         return;
 
@@ -1395,7 +1413,8 @@ void ResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatistics>
 
     auto transactionScope = beginTransactionIfNecessary();
 
-    for (auto& statistic : statistics) {
+    Borrow borrowedStatistics = statistics;
+    for (auto& statistic : borrowedStatistics) {
         if (!domainID(statistic.registrableDomain)) {
             if (!insertObservedDomain(statistic)) {
                 ITP_RELEASE_LOG_ERROR("mergeStatistics: failed to insert observed domain");
@@ -1407,7 +1426,7 @@ void ResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatistics>
 
     // Make a separate pass for inter-domain relationships so we
     // can refer to the ObservedDomain table entries.
-    for (auto& statistic : statistics)
+    for (auto& statistic : borrowedStatistics)
         insertDomainRelationships(statistic);
 }
 
@@ -1878,7 +1897,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
             }
             if (additionalDomainGrants) {
                 for (auto&& [quirkTopFrameDomain, subFrameDomains] : additionalDomainGrants->quirkDomains) {
-                    for (auto&& quirkSubFrameDomain : subFrameDomains) {
+                    for (auto&& quirkSubFrameDomain : borrow(subFrameDomains)) {
                         if (quirkTopFrameDomain == topFrameDomain && quirkSubFrameDomain == subFrameDomain)
                             continue;
                         addGrant(SubFrameDomain { quirkSubFrameDomain }, TopFrameDomain { quirkTopFrameDomain }, canRequestStorageAccessWithoutUserInteraction, [] (StorageAccessWasGranted) { });
@@ -2232,10 +2251,13 @@ void ResourceLoadStatisticsStore::dumpResourceLoadStatistics(CompletionHandler<v
     if (!scopedStatement)
         return completionHandler({ });
 
-    Vector<String> domains;
-    while (scopedStatement->step() == SQLITE_ROW)
-        domains.append(scopedStatement->columnText(0));
-    std::ranges::sort(domains, WTF::codePointCompareLessThan);
+    const auto domains = [&] {
+        Vector<String> domains;
+        while (scopedStatement->step() == SQLITE_ROW)
+            domains.append(scopedStatement->columnText(0));
+        std::ranges::sort(domains, WTF::codePointCompareLessThan);
+        return domains;
+    }();
 
     StringBuilder result;
     result.append("Resource load statistics:\n\n"_s);
@@ -2891,7 +2913,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
 
     Vector<DomainData> domains = this->domains();
     Vector<unsigned> domainIDsToClearGrandfathering;
-    for (auto& statistic : domains) {
+    for (auto& statistic : borrow(domains)) {
         // Domains permanently configured to be exempt. This can be home screen web applications, app-bound domains, or similar.
         if (shouldExemptFromWebsiteDataDeletion(statistic.registrableDomain))
             continue;

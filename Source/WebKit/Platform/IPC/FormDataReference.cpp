@@ -30,6 +30,8 @@
 #include "PathsBlockedForSandboxExtensions.h"
 #endif
 
+#include <wtf/Borrow.h>
+
 namespace IPC {
 
 FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<WebKit::SandboxExtensionHandle>&& sandboxExtensionHandles)
@@ -59,7 +61,7 @@ FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<We
         return;
 
     unsigned consumedExtensions = 0;
-    for (auto& handle : sandboxExtensionHandles) {
+    for (auto& handle : borrow(sandboxExtensionHandles)) {
         if (WebKit::SandboxExtension::consumePermanently(handle))
             consumedExtensions++;
     }

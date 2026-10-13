@@ -29,6 +29,7 @@
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageHandleRegistry.h"
 #include "WebFileSystemStorageConnectionMessages.h"
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -352,7 +353,7 @@ void FileSystemStorageManager::registerPersistedHandlesAndAddReferences(const Ve
 {
     ASSERT(!RunLoop::isMain());
 
-    for (auto& record : records) {
+    for (auto& record : borrow(records)) {
         registerPersistedHandle(record.identifier, record.kind, String { record.path }, String { record.name });
         addGlobalIdentifierReference(record.identifier);
     }

@@ -67,6 +67,7 @@
 #include <algorithm>
 #include <pal/crypto/CryptoDigest.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SuspendableWorkQueue.h>
@@ -573,7 +574,7 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
 
 void NetworkStorageManager::performEvictionForOrigin(const WebCore::SecurityOriginData& topOrigin, const AccessRecord& record, OptionSet<WebsiteDataType> types, ASCIILiteral reason)
 {
-    for (auto& clientOrigin : record.clientOrigins) {
+    for (auto& clientOrigin : borrow(record.clientOrigins)) {
         auto origin = WebCore::ClientOrigin { topOrigin, clientOrigin };
         RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEvictionForOrigin sessionID=%" PRIu64 " clears data for origin %" SENSITIVE_LOG_STRING " due to %" PUBLIC_LOG_STRING, this, m_sessionID.toUInt64(), clientOrigin.toString().utf8(), reason.characters());
         originStorageManager(origin)->deleteData(types, -WallTime::infinity());
@@ -1336,7 +1337,7 @@ void NetworkStorageManager::removeGlobalIdentifierReferences(IPC::Connection& co
     MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
 
     Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
-    fileSystemStorageManager->removeGlobalIdentifierReferences(globalIdentifiers.span());
+    fileSystemStorageManager->removeGlobalIdentifierReferences(borrow(globalIdentifiers)->span());
 }
 
 void NetworkStorageManager::resolveGlobalIdentifier(IPC::Connection& connection, WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleGlobalIdentifier globalIdentifier, CompletionHandler<void(std::expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
@@ -1354,7 +1355,7 @@ void NetworkStorageManager::resolveGlobalIdentifier(IPC::Connection& connection,
 void NetworkStorageManager::forEachClientOriginDirectoryUnderTopOrigin(const String& encodedTopOrigin, NOESCAPE const Function<void(const String&)>& apply)
 {
     auto topOriginDirectory = FileSystem::pathByAppendingComponent(m_path, encodedTopOrigin);
-    auto openingOrigins = FileSystem::listDirectory(topOriginDirectory);
+    const auto openingOrigins = FileSystem::listDirectory(topOriginDirectory);
     if (openingOrigins.isEmpty()) {
         FileSystem::deleteEmptyDirectory(topOriginDirectory);
         return;
@@ -2517,7 +2518,7 @@ void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, 
     auto origin = cache->origin();
     STORAGE_MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
-    for (auto& record : records)
+    for (auto& record : borrow(records))
         MESSAGE_CHECK_COMPLETION(record.responseBodySize >= CacheStorageDiskStore::computeRealBodySizeForStorage(record.responseBody), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     cache->putRecords(WTF::move(records), WTF::move(callback));
@@ -2560,7 +2561,7 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(co
     StringBuilder builder;
     builder.append("{ \"path\": \""_s, m_customCacheStoragePath, "\", \"origins\": ["_s);
     ASCIILiteral divider = ""_s;
-    for (auto& origin : originStrings) {
+    for (auto& origin : borrow(originStrings)) {
         builder.append(divider, origin);
         divider = ","_s;
     }
@@ -2779,7 +2780,7 @@ Vector<WebCore::ServiceWorkerScripts> NetworkStorageManager::updateServiceWorker
     ASSERT(!RunLoop::isMain());
 
     HashMap<WebCore::ClientOrigin, std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>>> originRegistrations;
-    for (auto& registration : registrationsToUpdate) {
+    for (auto& registration : borrow(registrationsToUpdate)) {
         auto origin = registration.registration.key.clientOrigin();
         auto& registrations = originRegistrations.ensure(origin, []() {
             return std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>> { };
@@ -2788,7 +2789,7 @@ Vector<WebCore::ServiceWorkerScripts> NetworkStorageManager::updateServiceWorker
     }
 
     HashMap<WebCore::ClientOrigin, Vector<WebCore::ServiceWorkerRegistrationKey>> originRegistrationsToDelete;
-    for (auto&& key : registrationsToDelete) {
+    for (auto&& key : borrow(registrationsToDelete)) {
         auto origin = key.clientOrigin();
         auto& keys = originRegistrations.ensure(origin, []() {
             return std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>> { };

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CoreIPCDDScannerResult.h"
 
+#import <wtf/Borrow.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 #if ENABLE(DATA_DETECTION) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
@@ -120,7 +121,7 @@ RetainPtr<id> CoreIPCDDScannerResult::toID() const
 
     if (m_data.SR) {
         RetainPtr arr = [NSMutableArray arrayWithCapacity:m_data.SR->size()];
-        for (auto& element : *m_data.SR)
+        for (auto& element : borrow(*m_data.SR))
             [arr addObject:element.get()];
         propertyList.get()[@"SR"] = arr.get();
     }

@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "WebExtensionSQLiteHelpers.h"
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -46,11 +47,14 @@ static constexpr auto persistAcrossSessionsKey = "persistAcrossSessions"_s;
 
 static String rowFilterStringFromRowKeys(Vector<String> keys)
 {
-    Vector<String> escapedAndQuotedKeys;
-    for (const auto& key : keys) {
-        auto keyWithSingleQuotesEscaped = makeStringByReplacingAll(key, "'"_s, "''"_s);
-        escapedAndQuotedKeys.append(makeString("'"_s, keyWithSingleQuotesEscaped, "'"_s));
-    }
+    const auto escapedAndQuotedKeys = [&] {
+        Vector<String> escapedAndQuotedKeys;
+        for (const auto& key : borrow(keys)) {
+            auto keyWithSingleQuotesEscaped = makeStringByReplacingAll(key, "'"_s, "''"_s);
+            escapedAndQuotedKeys.append(makeString("'"_s, keyWithSingleQuotesEscaped, "'"_s));
+        }
+        return escapedAndQuotedKeys;
+    }();
 
     return makeStringByJoining(escapedAndQuotedKeys.span(), ", "_s);
 }
@@ -63,7 +67,7 @@ WebExtensionRegisteredScriptsSQLiteStore::WebExtensionRegisteredScriptsSQLiteSto
 void WebExtensionRegisteredScriptsSQLiteStore::updateScripts(Vector<Ref<JSON::Object>> scripts, CompletionHandler<void(const String& errorMessage)>&& completionHandler)
 {
     Vector<String> ids;
-    for (const auto& script : scripts)
+    for (const auto& script : borrow(scripts))
         ids.append(script->getString(idKey));
 
     deleteScriptsWithIDs(ids, [weakThis = ThreadSafeWeakPtr { *this }, scripts = WTF::move(scripts), completionHandler = WTF::move(completionHandler)](const String& errorMessage) mutable {
@@ -158,7 +162,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::addScripts(Vector<Ref<JSON::Objec
 
         ASSERT(errorMessage.isEmpty());
 
-        for (auto& [scriptID, scriptData] : persistentScripts)
+        for (auto& [scriptID, scriptData] : borrow(persistentScripts))
             protectedThis->insertScript(scriptID, scriptData, *(protectedThis->database()), errorMessage);
 
         WorkQueue::mainSingleton().dispatch([errorMessage = crossThreadCopy(errorMessage), completionHandler = WTF::move(completionHandler)]() mutable {

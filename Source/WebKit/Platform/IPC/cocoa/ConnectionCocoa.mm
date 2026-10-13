@@ -42,6 +42,7 @@
 #import <mach/mach_traps.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>
+#import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/HexNumber.h>
 #import <wtf/MachSendRight.h>
@@ -544,7 +545,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         ASSERT(descriptor.disposition == MACH_MSG_TYPE_PORT_SEND);
         MachSendRight right = MachSendRight::adopt(descriptor.name);
 
-        attachments[numberOfAttachments - i - 1] = Attachment { WTF::move(right) };
+        borrow(attachments)[numberOfAttachments - i - 1] = Attachment { WTF::move(right) };
     }
 
     if (messageBodyIsOOL) {
@@ -670,7 +671,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, buffer.mutableSpan());
+    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, borrow(buffer)->mutableSpan());
     if (!decoder)
         return;
 

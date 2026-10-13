@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import <wtf/ASCIICType.h>
+#import <wtf/Borrow.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -139,7 +140,7 @@ bool TextExtractionTokenizer::isMostlyRecognized(StringView input)
     if (m_embeddings.isEmpty())
         return false;
 
-    auto tokens = tokenize(input);
+    const auto tokens = tokenize(input);
     if (tokens.isEmpty())
         return false;
 
@@ -148,7 +149,7 @@ bool TextExtractionTokenizer::isMostlyRecognized(StringView input)
     for (auto& token : tokens) {
         totalLength += token.length();
         RetainPtr nsToken = token.createNSString();
-        for (auto& embedding : m_embeddings) {
+        for (auto& embedding : borrow(m_embeddings)) {
             if ([embedding.get() containsString:nsToken.get()]) {
                 recognizedLength += token.length();
                 break;

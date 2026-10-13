@@ -31,6 +31,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/ProcessIdentity.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/MathExtras.h>
@@ -895,7 +896,7 @@ static RetainPtr<NSMutableArray> createMetalTextures(id<MTLDevice> device, const
 {
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:width height:height mipmapped:NO];
     RetainPtr textures = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& ioSurface : ioSurfaces)
+    for (auto& ioSurface : borrow(ioSurfaces))
         [textures addObject:[device newTextureWithDescriptor:textureDescriptor iosurface:ioSurface.get() plane:0]];
     return textures;
 }

@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
 #include <WebCore/RegistrableDomain.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
@@ -102,11 +103,11 @@ static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::uniqu
     HashMap<Key, unsigned> previousMap;
     if (previousSubresources) {
         for (unsigned i = 0; i < previousSubresources->size(); ++i)
-            previousMap.add(previousSubresources->at(i).key(), i);
+            previousMap.add(borrow(*previousSubresources)->at(i).key(), i);
     }
 
     HashSet<Key> deduplicationSet;
-    for (auto& load : subresourceLoads) {
+    for (auto& load : borrow(subresourceLoads)) {
         if (!deduplicationSet.add(load->key).isNewEntry)
             continue;
         

@@ -32,6 +32,7 @@
 #include "NetworkCacheFileSystem.h"
 #include "NetworkCacheIOChannel.h"
 #include <mutex>
+#include <wtf/Borrow.h>
 #include <wtf/Condition.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
@@ -853,7 +854,7 @@ void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& comple
     });
 
     serialBackgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, keysToRemove = WTF::move(keysToRemove), completionHandler = WTF::move(completionHandler)] () mutable {
-        for (auto& key : keysToRemove)
+        for (auto& key : borrow(keysToRemove))
             deleteFiles(key);
 
         RunLoop::mainSingleton().dispatch(WTF::move(completionHandler));

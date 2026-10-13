@@ -35,6 +35,7 @@
 #include <WebCore/SQLiteIDBBackingStore.h>
 #include <WebCore/SQLiteMemoryIDBBackingStore.h>
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -46,7 +47,7 @@ static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String
     if (oldOriginDirectory.isEmpty() || !FileSystem::fileExists(oldOriginDirectory))
         return true;
 
-    auto fileNames = FileSystem::listDirectory(oldOriginDirectory);
+    const auto fileNames = FileSystem::listDirectory(oldOriginDirectory);
     if (fileNames.isEmpty()) {
         FileSystem::deleteEmptyDirectory(oldOriginDirectory);
         return true;
@@ -79,7 +80,7 @@ void IDBStorageManager::createVersionDirectoryIfNeeded(const String& rootDirecto
 
     bool oldVersionDirectoryExists = false;
     Vector<String> oldVersionNames;
-    auto fileNames = FileSystem::listDirectory(rootDirectory);
+    const auto fileNames = FileSystem::listDirectory(rootDirectory);
     for (auto& name : fileNames) {
         if (name == "v0"_s)
             oldVersionDirectoryExists = true;
@@ -115,7 +116,7 @@ void IDBStorageManager::createVersionDirectoryIfNeeded(const String& rootDirecto
     if (!oldVersionDirectoryExists)
         FileSystem::makeAllDirectories(oldVersionDirectory);
 
-    for (auto& name : oldVersionNames) {
+    for (auto& name : borrow(oldVersionNames)) {
         auto oldPath = FileSystem::pathByAppendingComponent(rootDirectory, name);
         auto newPath = FileSystem::pathByAppendingComponent(oldVersionDirectory, name);
         FileSystem::moveFile(oldPath, newPath);

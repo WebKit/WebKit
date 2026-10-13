@@ -49,6 +49,7 @@
 #import <WebCore/WebTransportSendStreamStats.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -192,7 +193,7 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     for (size_t i = 0; i < protocols.size(); ++i) {
         if (i)
             builder.append(", "_s);
-        builder.append('\"', protocols[i], '\"');
+        builder.append('\"', borrow(protocols)[i], '\"');
     }
     return builder.toString();
 }
@@ -213,7 +214,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         MAYBE_SOFT_LINK(nw_webtransport_options_set_allow_joining_before_ready)(options, true);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_uni)(options, maxStreamsUni);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_bidi)(options, maxStreamsBidi);
-        for (auto& header : additionalHeaders)
+        for (auto& header : borrow(additionalHeaders))
             MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, header.key.utf8().legacyCStringPointer(), header.value.utf8().legacyCStringPointer());
         MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "wt-available-protocols", protocols.utf8().legacyCStringPointer());
     };

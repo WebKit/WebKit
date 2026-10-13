@@ -35,6 +35,7 @@
 #import "CoreIPCPlistObject.h"
 #import "CoreIPCString.h"
 #import <wtf/Assertions.h>
+#import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -80,7 +81,7 @@ CoreIPCPlistDictionary::CoreIPCPlistDictionary(ValueType&& keyValuePairs)
 RetainPtr<id> CoreIPCPlistDictionary::toID() const
 {
     auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
-    for (auto& keyValuePair : m_keyValuePairs) {
+    for (auto& keyValuePair : borrow(m_keyValuePairs)) {
         auto key = keyValuePair.key.toID();
         auto value = keyValuePair.value.toID();
         if (key && value)

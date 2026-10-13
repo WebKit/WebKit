@@ -32,6 +32,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemWriteCloseReason.h>
 #include <WebCore/FileSystemWriteCommandType.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -433,7 +434,7 @@ void FileSystemStorageHandle::executeCommandForWritable(WebCore::FileSystemWrita
             return;
         }
 
-        auto error = protectedThis->executeCommandForWritableInternal(streamIdentifier, type, position, size, dataBytes.span(), false);
+        auto error = protectedThis->executeCommandForWritableInternal(streamIdentifier, type, position, size, borrow(dataBytes)->span(), false);
         if (error)
             protectedThis->closeWritable(streamIdentifier, WebCore::FileSystemWriteCloseReason::Aborted);
 

@@ -270,7 +270,7 @@ void NetworkTransportStream::receiveLoop()
             return request;
         };
 
-        auto vector = vectorFromData(content);
+        const auto vector = vectorFromData(content);
         protectedThis->m_bytesReceived += vector.size();
         session->streamReceiveBytes(protectedThis->m_identifier, vector.span(), withFin, std::nullopt);
 

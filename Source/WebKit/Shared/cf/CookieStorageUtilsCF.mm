@@ -27,6 +27,7 @@
 #import "CookieStorageUtilsCF.h"
 
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/cf/VectorCF.h>
 
@@ -37,7 +38,7 @@ RetainPtr<CFHTTPCookieStorageRef> cookieStorageFromIdentifyingData(const Vector<
     ASSERT(!data.isEmpty());
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
-    RetainPtr cookieStorageData = toCFData(data.span());
+    RetainPtr cookieStorageData = toCFData(borrow(data)->span());
     RetainPtr cookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
     ASSERT(cookieStorage);
 

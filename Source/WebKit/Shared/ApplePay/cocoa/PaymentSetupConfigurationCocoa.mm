@@ -32,6 +32,7 @@
 #import "Decoder.h"
 #import "Encoder.h"
 #import <WebCore/ApplePaySetupConfiguration.h>
+#import <wtf/Borrow.h>
 #import <wtf/URL.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -59,7 +60,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if ([configuration respondsToSelector:@selector(setSignedFields:)]) {
         RetainPtr signedFields = adoptNS([[NSMutableArray alloc] initWithCapacity:coreConfiguration.signedFields.size()]);
-        for (auto& signedField : coreConfiguration.signedFields)
+        for (auto& signedField : borrow(coreConfiguration.signedFields))
             [signedFields addObject:signedField.createNSString().get()];
         [configuration setSignedFields:signedFields.get()];
     }

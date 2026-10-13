@@ -40,7 +40,7 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto buffer = FileSystem::readEntireFile(path);
+    const auto buffer = FileSystem::readEntireFile(path);
     if (!buffer)
         return nullptr;
 

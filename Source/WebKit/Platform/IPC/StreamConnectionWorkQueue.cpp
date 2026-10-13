@@ -29,6 +29,7 @@
 #if USE(FOUNDATION)
 #include <wtf/AutodrainedPool.h>
 #endif
+#include <wtf/Borrow.h>
 
 namespace IPC {
 
@@ -155,7 +156,7 @@ void StreamConnectionWorkQueue::processStreams()
             WTF::move(function)();
 
         hasMoreToProcess = false;
-        for (auto& connection : connections)
+        for (auto& connection : borrow(connections))
             hasMoreToProcess |= connection->dispatchStreamMessages(defaultMessageLimit) == StreamServerConnection::HasMoreMessages;
     } while (hasMoreToProcess);
 }

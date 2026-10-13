@@ -38,6 +38,7 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <pal/HysteresisActivity.h>
+#include <wtf/Borrow.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -216,7 +217,7 @@ public:
     void markMainResourceResponseAsReceived()
     {
         m_didReceiveMainResourceResponse = true;
-        for (auto& task : m_postMainResourceResponseTasks)
+        for (auto& task : borrow(m_postMainResourceResponseTasks))
             task();
     }
 

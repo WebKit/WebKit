@@ -41,6 +41,7 @@
 #import <pal/spi/cocoa/WebPrivacySPI.h>
 #import <time.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RobinHoodHashMap.h>
@@ -214,8 +215,9 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
         }
 
         auto callbacks = std::exchange(lookupCallbacks.get(), { });
-        for (int i = callbacks.size() - 1; i >= 0; --i) {
-            auto& callback = callbacks[i];
+        Borrow borrowedCallbacks = callbacks;
+        for (int i = borrowedCallbacks->size() - 1; i >= 0; --i) {
+            auto& callback = borrowedCallbacks[i];
             if (i)
                 callback(Vector { result });
             else
@@ -660,10 +662,11 @@ private:
             }
         }
 
-        if (list[upper].containsAddress(address))
+        Borrow borrowedList = list;
+        if (borrowedList[upper].containsAddress(address))
             return &list[upper];
 
-        if (upper != lower && list[lower].containsAddress(address))
+        if (upper != lower && borrowedList[lower].containsAddress(address))
             return &list[lower];
 
         return nullptr;

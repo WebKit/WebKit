@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUShaderModuleDescriptor.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
 
@@ -42,7 +43,7 @@ std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(
 
     Vector<KeyValuePair<String, ShaderModuleCompilationHint>> hints;
     hints.reserveInitialCapacity(shaderModuleDescriptor.hints.size());
-    for (const auto& hint : shaderModuleDescriptor.hints) {
+    for (const auto& hint : borrow(shaderModuleDescriptor.hints)) {
         auto value = convertToBacking(hint.value);
         if (!value)
             return std::nullopt;
@@ -60,7 +61,7 @@ std::optional<WebCore::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext
 
     Vector<KeyValuePair<String, WebCore::WebGPU::ShaderModuleCompilationHint>> hints;
     hints.reserveInitialCapacity(shaderModuleDescriptor.hints.size());
-    for (const auto& hint : shaderModuleDescriptor.hints) {
+    for (const auto& hint : borrow(shaderModuleDescriptor.hints)) {
         auto value = convertFromBacking(hint.value);
         if (!value)
             return std::nullopt;

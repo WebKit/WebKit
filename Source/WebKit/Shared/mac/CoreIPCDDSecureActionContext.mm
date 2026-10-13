@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CoreIPCDDSecureActionContext.h"
 
+#import <wtf/Borrow.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
@@ -171,12 +172,12 @@ RetainPtr<id> CoreIPCDDSecureActionContext::toID() const
         [dict setObject:m_data.matchedString.get() forKey:@"matchedString"];
     if (m_data.allResults) {
         RetainPtr arr = [NSMutableArray arrayWithCapacity:m_data.allResults->size()];
-        for (auto& element : *m_data.allResults)
+        for (auto& element : borrow(*m_data.allResults))
             [arr addObject:element.get()];
         [dict setObject:arr.get() forKey:@"allResults"];
     }
     RetainPtr grpArr = [NSMutableArray arrayWithCapacity:m_data.groupAllResults.size()];
-    for (auto& element : m_data.groupAllResults)
+    for (auto& element : borrow(m_data.groupAllResults))
         [grpArr addObject:element.get()];
     [dict setObject:grpArr.get() forKey:@"groupAllResults"];
     if (m_data.groupCategory)

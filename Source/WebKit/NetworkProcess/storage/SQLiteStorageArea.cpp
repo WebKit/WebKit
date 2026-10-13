@@ -34,6 +34,7 @@
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/StorageMap.h>
 #include <wtf/Assertions.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -91,8 +92,9 @@ void SQLiteStorageArea::close()
     m_cache = std::nullopt;
     m_cacheSize = std::nullopt;
     commitTransactionIfNecessary();
+    Borrow borrowedStatements = m_cachedStatements;
     for (size_t i = 0; i < static_cast<size_t>(StatementType::Invalid); ++i)
-        m_cachedStatements[i] = nullptr;
+        borrowedStatements[i] = nullptr;
     m_database = nullptr;
 }
 
@@ -247,12 +249,13 @@ WebCore::SQLiteStatementAutoResetScope SQLiteStorageArea::cachedStatement(Statem
     ASSERT(type < StatementType::Invalid);
 
     auto index = static_cast<uint8_t>(type);
-    if (!m_cachedStatements[index]) {
+    Borrow borrowedStatements = m_cachedStatements;
+    if (!borrowedStatements[index]) {
         if (auto result = protect(m_database)->prepareStatement(statementString(type)))
-            m_cachedStatements[index] = WTF::move(result);
+            borrowedStatements[index] = WTF::move(result);
     }
 
-    return WebCore::SQLiteStatementAutoResetScope { m_cachedStatements[index].get() };
+    return WebCore::SQLiteStatementAutoResetScope { borrowedStatements[index].get() };
 }
 
 std::expected<String, StorageError> SQLiteStorageArea::getItem(const String& key)

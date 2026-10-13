@@ -27,6 +27,7 @@
 #import "CoreIPCNSURLProtectionSpace.h"
 
 #import "ArgumentCoders.h"
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -123,7 +124,7 @@ RetainPtr<id> CoreIPCNSURLProtectionSpace::toID() const
 
     if (m_data.distnames) {
         auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data.distnames->size()]);
-        for (auto& value : *m_data.distnames)
+        for (auto& value : borrow(*m_data.distnames))
             [array addObject:value.toID().get()];
         [dict setObject:array.get() forKey:@"distnames"];
     }

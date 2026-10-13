@@ -33,6 +33,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessCreationParameters.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -65,7 +66,7 @@ void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParamet
 {
     registerProtocolClass();
 
-    for (const auto& scheme : parameters.urlSchemesRegisteredForCustomProtocols)
+    for (const auto& scheme : borrow(parameters.urlSchemesRegisteredForCustomProtocols))
         registerScheme(scheme);
 }
 

@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import <string.h>
+#import <wtf/Borrow.h>
 #import <wtf/FileSystem.h>
 #import <wtf/darwin/DarwinExtras.h>
 #import <wtf/posix/POSIXExtras.h>
@@ -238,18 +239,19 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     ASSERT(!handle.m_sandboxExtension);
     
     Vector<char> path(PATH_MAX);
-    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, path.mutableSpan().data(), path.size()))
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, borrow(path)->mutableSpan().data(), path.size()))
         return std::nullopt;
     
     // Shrink the vector.   
-    path.shrink(strlenSpan(path.span()));
+    auto pathLength = strlenSpan(borrow(path)->span());
+    path.shrink(pathLength);
 
     ASSERT(path.last() == '/');
 
     // Append the file name.
     path.append(prefix.utf8().span());
 
-    auto pathString = String::fromUTF8(path.span());
+    auto pathString = String::fromUTF8(borrow(path)->span());
     if (pathString.isNull())
         return std::nullopt;
     
@@ -418,7 +420,7 @@ bool SandboxExtension::consumePermanently(const Handle& handle)
 bool SandboxExtension::consumePermanently(const Vector<Handle>& handleArray)
 {
     bool allSucceeded = true;
-    for (auto& handle : handleArray) {
+    for (auto& handle : borrow(handleArray)) {
         if (!handle.m_sandboxExtension)
             continue;
 

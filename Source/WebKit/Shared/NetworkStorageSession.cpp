@@ -37,6 +37,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldPartitionCookie.h>
 #include <WebCore/StorageAccessQuirks.h>
+#include <wtf/Borrow.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -272,7 +273,7 @@ void NetworkStorageSession::setDomainsWithCrossPageStorageAccess(const HashMap<T
 {
     m_pairsGrantedCrossPageStorageAccess.clear();
     for (auto& [topDomain, subResourceDomains] : domains) {
-        for (auto&& subResourceDomain : subResourceDomains)
+        for (auto&& subResourceDomain : borrow(subResourceDomains))
             grantCrossPageStorageAccess(topDomain, subResourceDomain);
     }
 }

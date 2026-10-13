@@ -62,6 +62,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SWServer.h>
 #include <numeric>
+#include <wtf/Borrow.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -308,7 +309,7 @@ WebCore::IPAddressSpace NetworkSession::classifyConnectionAddressSpace(const std
 
     // Checked first, so a test can describe a space a loopback-only server could not otherwise produce.
     if (auto port = url.port()) {
-        for (auto& candidate : m_ipAddressSpaceOverridesForTesting) {
+        for (auto& candidate : borrow(m_ipAddressSpaceOverridesForTesting)) {
             if (candidate.port == *port && candidate.address == *resolvedIPAddress)
                 return candidate.space;
         }
@@ -420,7 +421,7 @@ bool NetworkSession::isPrevalentDomain(const URL& url) const
 void NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     if (CheckedPtr storageSession = networkStorageSession()) {
-        for (auto& domain : domains.domainsToEnforceSameSiteStrictFor)
+        for (auto& domain : borrow(domains.domainsToEnforceSameSiteStrictFor))
             storageSession->setAllCookiesToSameSiteStrict(domain, [] { });
     }
     domains.domainsToEnforceSameSiteStrictFor.clear();
@@ -783,7 +784,7 @@ void NetworkSession::setParkedLoaderDestinationAndResolvePendingClaims(NetworkRe
     Ref parkedLoader = entry->value;
     parkedLoader->setDestinationWebProcess(destinationWebProcess);
 
-    auto pendingClaims = parkedLoader->takePendingClaims();
+    const auto pendingClaims = parkedLoader->takePendingClaims();
     if (pendingClaims.isEmpty())
         return;
 

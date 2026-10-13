@@ -48,6 +48,7 @@
 #include <WebCore/ThermalMitigationNotifier.h>
 #include <WebCore/URLPattern.h>
 #include <WebCore/URLPatternOptions.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -760,8 +761,9 @@ std::optional<Cache::CompressionDictionaryMatch> Cache::bestCompressionDictionar
         return std::nullopt;
     }
 
+    Borrow entries = it->value;
     const CompressionDictionaryIndexEntry* bestMatch = nullptr;
-    for (auto& entry : it->value) {
+    for (auto& entry : entries) {
         // https://www.rfc-editor.org/rfc/rfc9842#name-match-dest
         if (!entry.matchDest.isEmpty() && !entry.matchDest.contains(destination))
             continue;
@@ -1071,7 +1073,7 @@ void Cache::fetchOriginAccessTimes(CompletionHandler<void(HashMap<WebCore::Regis
 void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
 {
     HashSet<WebCore::SecurityOriginData> originSet;
-    for (auto& origin : origins)
+    for (auto& origin : borrow(origins))
         originSet.add(origin);
 
     Vector<NetworkCache::Key> keysToDelete;
@@ -1093,7 +1095,7 @@ void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, Compl
 void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>& domains, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
 {
     HashSet<WebCore::RegistrableDomain> domainSet;
-    for (auto& domain : domains)
+    for (auto& domain : borrow(domains))
         domainSet.add(domain);
 
     Vector<NetworkCache::Key> keysToDelete;

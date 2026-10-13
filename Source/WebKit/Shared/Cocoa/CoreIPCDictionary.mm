@@ -30,6 +30,7 @@
 #if PLATFORM(COCOA)
 
 #import "CoreIPCTypes.h"
+#import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebKit {
@@ -70,7 +71,7 @@ CoreIPCDictionary::CoreIPCDictionary(ValueType&& keyValuePairs)
 RetainPtr<id> CoreIPCDictionary::toID() const
 {
     auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_keyValuePairs.size()]);
-    for (auto& keyValuePair : m_keyValuePairs) {
+    for (auto& keyValuePair : borrow(m_keyValuePairs)) {
         RetainPtr keyID = keyValuePair.key.toID();
         RetainPtr valueID = keyValuePair.value.toID();
         if (!keyID || !valueID)

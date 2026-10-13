@@ -28,6 +28,7 @@
 
 #import <objc/runtime.h>
 #import <ranges>
+#import <wtf/Borrow.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -192,10 +193,13 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
         auto descriptionForArgument = [](auto& allowedArgumentClasses) {
             auto result = adoptNS([[NSMutableString alloc] initWithString:@"{"]);
 
-            auto orderedArgumentClasses = copyToVector(allowedArgumentClasses);
-            std::ranges::sort(orderedArgumentClasses, [](CFTypeRef a, CFTypeRef b) {
-                return is_lt(compareSpans(unsafeSpan(class_getName((__bridge Class)a)), unsafeSpan(class_getName((__bridge Class)b))));
-            });
+            const auto orderedArgumentClasses = [&] {
+                auto orderedArgumentClasses = copyToVector(allowedArgumentClasses);
+                std::ranges::sort(orderedArgumentClasses, [](CFTypeRef a, CFTypeRef b) {
+                    return is_lt(compareSpans(unsafeSpan(class_getName((__bridge Class)a)), unsafeSpan(class_getName((__bridge Class)b))));
+                });
+                return orderedArgumentClasses;
+            }();
 
             bool needsComma = false;
             for (auto& argumentClass : orderedArgumentClasses) {
@@ -210,7 +214,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
             return result;
         };
 
-        for (auto& argumentClasses : allowedClasses) {
+        for (auto& argumentClasses : borrow(allowedClasses)) {
             if (needsComma)
                 [result appendString:@", "];
 

@@ -36,6 +36,7 @@
 #include <WebCore/SharedMemory.h>
 #include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUQueue.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
@@ -151,7 +152,7 @@ void RemoteQueue::writeBufferWithCopy(
     if (!convertedBuffer)
         return;
 
-    protect(m_backing)->writeBufferNoCopy(protect(*convertedBuffer), bufferOffset, data.mutableSpan(), 0, std::nullopt);
+    protect(m_backing)->writeBufferNoCopy(protect(*convertedBuffer), bufferOffset, borrow(data)->mutableSpan(), 0, std::nullopt);
 }
 
 void RemoteQueue::writeTexture(
@@ -196,7 +197,7 @@ void RemoteQueue::writeTextureWithCopy(
     if (!convertedDestination || !convertedDestination || !convertedSize)
         return;
 
-    protect(m_backing)->writeTexture(*convertedDestination, data.mutableSpan(), *convertedDataLayout, *convertedSize);
+    protect(m_backing)->writeTexture(*convertedDestination, borrow(data)->mutableSpan(), *convertedDataLayout, *convertedSize);
 }
 
 void RemoteQueue::copyExternalImageToTexture(

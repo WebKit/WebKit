@@ -32,6 +32,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "WebBroadcastChannelRegistryMessages.h"
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -125,7 +126,7 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
     auto callbackAggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler), blobURLsInFlight = WTF::move(blobURLsInFlight)]() mutable {
         completionHandler();
     });
-    for (auto& connectionID : connectionIdentifiersForNameIterator->value) {
+    for (auto& connectionID : borrow(connectionIdentifiersForNameIterator->value)) {
         // Only dispatch the post the messages to BroadcastChannels outside the source process.
         if (connectionID == connection.uniqueID())
             continue;

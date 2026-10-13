@@ -28,6 +28,7 @@
 
 #include "NetworkStorageManager.h"
 #include <WebCore/SWServer.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -146,7 +147,7 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
             return callback();
 
         auto allScripts = WTF::move(result.value());
-        for (auto&& scripts : allScripts)
+        for (auto&& scripts : borrow(allScripts))
             protect(protectedThis->m_server)->didSaveWorkerScriptsToDisk(scripts.identifier, WTF::move(scripts.mainScript), WTF::move(scripts.importedScripts));
 
         callback();

@@ -29,6 +29,7 @@
 #include "RTCNetwork.h"
 
 #include <string_view>
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/posix/SocketPOSIX.h>
@@ -79,7 +80,7 @@ std::unique_ptr<webrtc::Network> RTCNetwork::value() const
 
     std::vector<webrtc::InterfaceAddress> vector;
     vector.reserve(ips.size());
-    for (auto& ip : ips)
+    for (auto& ip : borrow(ips))
         vector.push_back(ip.rtcAddress());
     network.SetIPs(WTF::move(vector), true);
 

@@ -59,6 +59,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -499,7 +500,7 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context,
     inverseTransform = CGAffineTransformScale(inverseTransform, m_parameters.scale, -m_parameters.scale);
     inverseTransform = CGAffineTransformTranslate(inverseTransform, 0, -m_parameters.size.height());
 
-    for (const auto& rect : m_paintingRects) {
+    for (const auto& rect : borrow(m_paintingRects)) {
         CGRect rectToDraw = CGRectApplyAffineTransform(rect, inverseTransform);
         block(rectToDraw);
     }
@@ -665,7 +666,7 @@ RemoteLayerBackingStoreProperties::LayerContentsBufferInfo RemoteLayerBackingSto
     });
 
     LayerContentsBufferInfo result = { { }, false };
-    for (auto& current : cachedBuffers) {
+    for (auto& current : borrow(cachedBuffers)) {
         if (m_frontBufferInfo->resourceIdentifier == current.imageBufferInfo.resourceIdentifier) {
             result.buffer = current.buffer;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

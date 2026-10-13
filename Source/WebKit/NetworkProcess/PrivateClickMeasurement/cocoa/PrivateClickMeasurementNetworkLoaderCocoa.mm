@@ -32,6 +32,7 @@
 #import <WebCore/UserAgent.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
@@ -104,7 +105,8 @@ static NSURLSession *statelessSessionWithoutRedirectsSingleton(const Application
                 configuration.get()._sourceApplicationBundleIdentifier = bundleIdentifiers.first.createNSString().get();
                 configuration.get()._sourceApplicationSecondaryIdentifier = bundleIdentifiers.second.createNSString().get();
             }, [&] (const Vector<uint8_t>& auditToken) {
-                configuration.get()._sourceApplicationAuditTokenData = [NSData dataWithBytes:auditToken.span().data() length:auditToken.size()];
+                Borrow borrowedAuditToken = auditToken;
+                configuration.get()._sourceApplicationAuditTokenData = [NSData dataWithBytes:borrowedAuditToken->span().data() length:borrowedAuditToken->size()];
             }
         );
 

@@ -38,6 +38,7 @@
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/SWServer.h>
 #include <WebCore/SWServerRegistration.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/WorkQueue.h>
@@ -97,7 +98,7 @@ void BackgroundFetchStoreImpl::initializeFetches(const WebCore::ClientOrigin& or
 
     initializeFetchesInternal(origin, [origin, weakEngine = WeakPtr { protect(m_server)->backgroundFetchEngine() }, protectedThis = Ref { *this }, manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
         if (RefPtr engine = weakEngine; engine && manager) {
-            for (auto& fetch : fetches) {
+            for (auto& fetch : borrow(fetches)) {
                 engine->addFetchFromStore(Ref { *fetch.first }->span(), [&](auto& key, auto& identifier) {
                     if (identifier.isEmpty()) {
                         manager->dispatchTaskToBackgroundFetchManager(origin, [identifier = crossThreadCopy(WTF::move(fetch.second))](auto* backgroundFetchManager) {
@@ -117,7 +118,7 @@ void BackgroundFetchStoreImpl::initializeFetches(const WebCore::ClientOrigin& or
             return;
 
         auto callbacks = std::exchange(iterator->value.initializationCallbacks, { });
-        for (auto& callback : callbacks)
+        for (auto& callback : borrow(callbacks))
             callback();
     });
 }
@@ -212,7 +213,7 @@ void BackgroundFetchStoreImpl::clearAllFetches(const ServiceWorkerRegistrationKe
     clearAllFetchesInternal(origin, fetchStorageIdentifiers, [protectedThis = Ref { *this }, fetchStorageIdentifiers, callback = WTF::move(callback)]() mutable {
         RefPtr manager = protectedThis->m_manager.get();
         if (manager) {
-            for (auto& fetchStorageIdentifier : fetchStorageIdentifiers)
+            for (auto& fetchStorageIdentifier : borrow(fetchStorageIdentifiers))
                 manager->notifyBackgroundFetchChange(fetchStorageIdentifier, BackgroundFetchChange::Removal);
         }
         callback();

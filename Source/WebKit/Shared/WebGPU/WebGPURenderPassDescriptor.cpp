@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPURenderPassDescriptor.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
 
@@ -42,7 +43,7 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
 
     Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
-    for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
+    for (const auto& colorAttachment : borrow(renderPassDescriptor.colorAttachments)) {
         if (colorAttachment) {
             auto backingColorAttachment = convertToBacking(*colorAttachment);
             if (!backingColorAttachment)
@@ -79,7 +80,7 @@ std::optional<WebCore::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::
 
     Vector<std::optional<WebCore::WebGPU::RenderPassColorAttachment>> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
-    for (const auto& backingColorAttachment : renderPassDescriptor.colorAttachments) {
+    for (const auto& backingColorAttachment : borrow(renderPassDescriptor.colorAttachments)) {
         if (backingColorAttachment) {
             auto colorAttachment = convertFromBacking(*backingColorAttachment);
             if (!colorAttachment)

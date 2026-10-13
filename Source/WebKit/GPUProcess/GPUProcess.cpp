@@ -52,6 +52,7 @@
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Language.h>
 #include <wtf/LogInitialization.h>
@@ -558,7 +559,7 @@ std::optional<MediaSessionIdentifier> GPUProcess::remoteCommandTargetSessionInPr
 void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
 {
     RELEASE_LOG(WebRTC, "GPUProcess::updateSandboxAccess: Adding %zu extensions", extensions.size());
-    for (auto& extension : extensions)
+    for (auto& extension : borrow(extensions))
         SandboxExtension::consumePermanently(extension);
 }
 

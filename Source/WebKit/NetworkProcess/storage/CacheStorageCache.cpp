@@ -36,6 +36,7 @@
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/ResourceError.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -86,7 +87,7 @@ CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String&
 CacheStorageCache::~CacheStorageCache()
 {
     assertIsOnCorrectQueue();
-    for (auto& callback : m_pendingInitializationCallbacks)
+    for (auto& callback : borrow(m_pendingInitializationCallbacks))
         callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 }
 
@@ -144,7 +145,7 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
 
         std::ranges::sort(recordInfos, { }, &CacheStorageRecordInformation::insertionTime);
 
-        for (auto&& recordInfo : recordInfos) {
+        for (auto&& recordInfo : borrow(recordInfos)) {
             recordInfo.setIdentifier(nextRecordIdentifier());
             protectedThis->m_records.ensure(computeKeyURL(recordInfo.url()), [] {
                 return Vector<CacheStorageRecordInformation> { };
@@ -152,7 +153,7 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
         }
 
         protectedThis->m_isInitialized = true;
-        for (auto& callback : protectedThis->m_pendingInitializationCallbacks)
+        for (auto& callback : borrow(protectedThis->m_pendingInitializationCallbacks))
             callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { protectedThis->identifier(), false });
         protectedThis->m_pendingInitializationCallbacks.clear();
     });
@@ -196,7 +197,7 @@ Vector<CacheStorageRecordInformation> CacheStorageCache::findRecords(const WebCo
             return { };
 
         WebCore::CacheQueryOptions queryOptions { options.ignoreSearch, options.ignoreMethod, options.ignoreVary };
-        for (auto& record : iterator->value) {
+        for (auto& record : borrow(iterator->value)) {
             if (WebCore::DOMCacheEngine::queryCacheMatch(options.request, record.url(), record.hasVaryStar(), record.varyHeaders(), queryOptions))
                 targetRecordInfos.append(record);
         }
@@ -214,7 +215,7 @@ void CacheStorageCache::retrieveRecords(const Vector<CacheStorageRecordInformati
         using namespace WebCore::DOMCacheEngine;
         Vector<CrossThreadRecord> result;
         result.reserveInitialCapacity(cacheStorageRecords.size());
-        for (auto&& cacheStorageRecord : cacheStorageRecords) {
+        for (auto&& cacheStorageRecord : borrow(cacheStorageRecords)) {
             if (!cacheStorageRecord)
                 continue;
     
@@ -351,7 +352,7 @@ void CacheStorageCache::putRecordsAfterQuotaCheck(Vector<CacheStorageRecord>&& r
     assertIsOnCorrectQueue();
 
     Vector<CacheStorageRecordInformation> targetRecordInfos;
-    for (auto& record : records) {
+    for (auto& record : borrow(records)) {
         if (auto* existingRecord = findExistingRecord(record.request)) {
             record.info.setIdentifier(existingRecord->identifier());
             targetRecordInfos.append(*existingRecord);
@@ -375,7 +376,7 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
 
     Vector<uint64_t> targetIdentifiers;
     uint64_t sizeIncreased = 0, sizeDecreased = 0;
-    for (auto& record : records) {
+    for (auto& record : borrow(records)) {
         if (!record.info.identifier()) {
             record.info.setIdentifier(nextRecordIdentifier());
             sizeIncreased += record.info.size();
@@ -383,7 +384,8 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
                 return Vector<CacheStorageRecordInformation> { };
             }).iterator->value.append(record.info);
         } else {
-            auto index = existingRecords.findIf([&](auto& existingRecord) {
+            Borrow borrowedExistingRecords = existingRecords;
+            auto index = borrowedExistingRecords->findIf([&](auto& existingRecord) {
                 return existingRecord && existingRecord->info.identifier() == record.info.identifier();
             });
             // Ensure record still exists.
@@ -392,7 +394,7 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
                 continue;
             }
 
-            auto& existingRecord = existingRecords[index];
+            auto& existingRecord = borrowedExistingRecords[index];
             // Ensure identifier still exists.
             auto* existingRecordInfo = findExistingRecord(record.request, record.info.identifier());
             if (!existingRecordInfo) {
@@ -442,7 +444,7 @@ void CacheStorageCache::removeAllRecords()
     uint64_t sizeDecreased = 0;
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     for (auto& urlRecords : m_records.values()) {
-        for (auto& record : urlRecords) {
+        for (auto& record : borrow(urlRecords)) {
             targetRecordInfos.append(record);
             sizeDecreased += record.size();
         }

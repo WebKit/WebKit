@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPushMessage.h"
 
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -84,7 +85,7 @@ RetainPtr<NSDictionary> WebPushMessage::toDictionary() const
 {
     RetainPtr<NSData> nsData;
     if (pushData)
-        nsData = nsData = toNSData(pushData->span());
+        nsData = nsData = toNSData(borrow(*pushData)->span());
 
     RetainPtr<NSDictionary> nsPayload;
 #if ENABLE(DECLARATIVE_WEB_PUSH)

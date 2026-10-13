@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SandboxInitializationParameters.h"
 
+#import <wtf/Borrow.h>
+
 namespace WebKit {
 
 SandboxInitializationParameters::SandboxInitializationParameters()
@@ -75,9 +77,11 @@ Vector<const char*> SandboxInitializationParameters::namedParameterVector() cons
     Vector<const char*> result;
     result.reserveInitialCapacity(m_parameterNames.size() * 2 + 1);
     ASSERT(m_parameterNames.size() == m_parameterValues.size());
+    Borrow borrowedNames = m_parameterNames;
+    Borrow borrowedValues = m_parameterValues;
     for (size_t i = 0; i < m_parameterNames.size(); ++i) {
-        result.append(m_parameterNames[i]);
-        result.append(m_parameterValues[i].legacyCStringPointer());
+        result.append(borrowedNames[i]);
+        result.append(borrowedValues[i].legacyCStringPointer());
     }
     result.append(nullptr);
     return result;

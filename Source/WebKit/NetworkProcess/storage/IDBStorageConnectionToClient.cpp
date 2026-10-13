@@ -34,6 +34,7 @@
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBResultData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -147,7 +148,7 @@ WebIDBResult IDBStorageConnectionToClient::prepareGetResult(const WebCore::IDBRe
 WebIDBResult IDBStorageConnectionToClient::prepareGetAllResult(const WebCore::IDBResultData& resultData)
 {
     return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
-        for (auto& value : resultData.getAllResult().values())
+        for (auto& value : borrow(resultData.getAllResult().values()))
             networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, value.fileSystemHandleRecords());
     });
 }
@@ -173,7 +174,7 @@ static Vector<String> resultBlobFilePaths(const WebCore::IDBResultData& resultDa
             paths.appendVector(record.value.blobFilePaths());
         break;
     case WebCore::IDBResultType::GetAllRecordsSuccess:
-        for (auto& value : resultData.getAllResult().values())
+        for (auto& value : borrow(resultData.getAllResult().values()))
             paths.appendVector(value.blobFilePaths());
         break;
     default:

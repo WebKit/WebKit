@@ -29,6 +29,7 @@
 #import "CoreIPCSecTrust.h"
 
 #import "Logging.h"
+#import <wtf/Borrow.h>
 #import <wtf/Compiler.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/MakeString.h>
@@ -661,7 +662,7 @@ static bool appendDataObject(NSMutableArray *array, const CoreIPCData& data, ASC
 static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData::PolicyOption& options)
 {
     RetainPtr<NSMutableDictionary> dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:options.size()]);
-    for (const auto& item : options) {
+    for (const auto& item : borrow(options)) {
         auto key = item.first.toID();
         RetainPtr<id> value;
 
@@ -674,19 +675,19 @@ static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData:
             },
             [&] (const CoreIPCSecTrustData::PolicyArrayOfNumbers& a) {
                 RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:a.size()]);
-                for (const auto& number : a)
+                for (const auto& number : borrow(a))
                     [array addObject:number.toID().get()];
                 value = array;
             },
             [&] (const CoreIPCSecTrustData::PolicyArrayOfStrings& a) {
                 RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:a.size()]);
-                for (const auto& str : a)
+                for (const auto& str : borrow(a))
                     [array addObject:str.toID().get()];
                 value = array;
             },
             [&] (const CoreIPCSecTrustData::PolicyArrayOfData& a) {
                 RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:a.size()]);
-                for (const auto& d : a) {
+                for (const auto& d : borrow(a)) {
                     if (!appendDataObject(array, d, "policy dictionary"_s))
                         return;
                 }
@@ -694,9 +695,9 @@ static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData:
             },
             [&] (const CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers& a) {
                 RetainPtr outerArray = adoptNS([[NSMutableArray alloc] initWithCapacity:a.size()]);
-                for (const Vector<Variant<CoreIPCNumber, CoreIPCDate>>& inner : a) {
+                for (const Vector<Variant<CoreIPCNumber, CoreIPCDate>>& inner : borrow(a)) {
                     RetainPtr innerArray = adoptNS([[NSMutableArray alloc] initWithCapacity:inner.size()]);
-                    for (const Variant<CoreIPCNumber, CoreIPCDate>& v : inner) {
+                    for (const Variant<CoreIPCNumber, CoreIPCDate>& v : borrow(inner)) {
                         WTF::switchOn(v,
                             [&] (const CoreIPCNumber& i) {
                                 [innerArray addObject:i.toID().get()];
@@ -712,7 +713,7 @@ static RetainPtr<NSDictionary> createPolicyDictionary(const CoreIPCSecTrustData:
             },
             [&] (const CoreIPCSecTrustData::PolicyDictionaryValueIsNumber& a) {
                 RetainPtr d = adoptNS([[NSMutableDictionary alloc] initWithCapacity:a.size()]);
-                for (const auto& i : a)
+                for (const auto& i : borrow(a))
                     [d setObject:i.second.toID().get() forKey:i.first.toID().get()];
                 value = d;
             }
@@ -729,7 +730,7 @@ static bool addToDictFromOptionalDataHelper(const std::optional<Vector<CoreIPCDa
     if (!opt)
         return true;
     RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:opt->size()]);
-    for (const CoreIPCData& d : *opt) {
+    for (const CoreIPCData& d : borrow(*opt)) {
         if (!appendDataObject(array, d, "data helper"_s))
             return false;
     }
@@ -786,7 +787,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!m_data->certificates.isEmpty()) {
         RetainPtr certificates = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data->certificates.size()]);
-        for (const CoreIPCData& cert : m_data->certificates) {
+        for (const CoreIPCData& cert : borrow(m_data->certificates)) {
             if (!appendDataObject(certificates, cert, "certificates"_s))
                 return { nullptr };
         }
@@ -795,7 +796,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!m_data->chain.isEmpty()) {
         RetainPtr chain = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data->chain.size()]);
-        for (const CoreIPCData& cert : m_data->chain) {
+        for (const CoreIPCData& cert : borrow(m_data->chain)) {
             if (!appendDataObject(chain, cert, "chain"_s))
                 return { nullptr };
         }
@@ -805,10 +806,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!m_data->policies.isEmpty()) {
         RetainPtr policies = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data->policies.size()]);
 
-        for (const auto& policyType : m_data->policies) {
+        for (const auto& policyType : borrow(m_data->policies)) {
             if (!policyType.isEmpty()) {
                 RetainPtr policy = adoptNS([[NSMutableDictionary alloc] initWithCapacity:policyType.size()]);
-                for (const auto& typeValue : policyType) {
+                for (const auto& typeValue : borrow(policyType)) {
                     RetainPtr<id> value;
                     RetainPtr<NSString> key = typeValue.first.toID();
                     WTF::switchOn(typeValue.second,
@@ -831,9 +832,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!m_data->details.isEmpty()) {
         RetainPtr details = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data->details.size()]);
-        for (const auto& detail : m_data->details) {
+        for (const auto& detail : borrow(m_data->details)) {
             RetainPtr d = adoptNS([[NSMutableDictionary alloc] initWithCapacity:detail.size()]);
-            for (const auto& item : detail)
+            for (const auto& item : borrow(detail))
                 [d setObject:@(item.second) forKey:item.first.toID().get()];
             [details addObject:d.get()];
         }
@@ -845,7 +846,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (m_data->info) {
         RetainPtr info = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_data->info->size()]);
-        for (const auto& pair : *m_data->info) {
+        for (const auto& pair : borrow(*m_data->info)) {
             RetainPtr<id> value;
             auto key = pair.first.toID();
             WTF::switchOn(pair.second,
@@ -860,11 +861,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 },
                 [&] (const CoreIPCSecTrustData::RevocationInfoArray& revocationInfoArray) {
                     RetainPtr array = adoptNS([[NSMutableArray alloc] initWithCapacity:revocationInfoArray.size()]);
-                    for (const auto& revocationEntry : revocationInfoArray) {
+                    for (const auto& revocationEntry : borrow(revocationInfoArray)) {
                         RetainPtr entryDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:revocationEntry.size()]);
-                        for (const auto& entryPair : revocationEntry) {
+                        for (const auto& entryPair : borrow(revocationEntry)) {
                             RetainPtr subDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:entryPair.second.size()]);
-                            for (const auto& subPair : entryPair.second) {
+                            for (const auto& subPair : borrow(entryPair.second)) {
                                 RetainPtr<id> subValue;
                                 WTF::switchOn(subPair.second,
                                     [&] (const bool& b) {
@@ -894,7 +895,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 },
                 [&] (const CoreIPCSecTrustData::InfoSubDict& infoSubDict) {
                     RetainPtr subDict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:infoSubDict.size()]);
-                    for (const auto& subPair : infoSubDict)
+                    for (const auto& subPair : borrow(infoSubDict))
                         [subDict setObject:@(subPair.second) forKey:subPair.first.toID().get()];
                     value = subDict;
                 }
@@ -917,9 +918,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (m_data->exceptions) {
         RetainPtr exceptions = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data->exceptions->size()]);
-        for (const auto& e : *m_data->exceptions) {
+        for (const auto& e : borrow(*m_data->exceptions)) {
             RetainPtr exception = adoptNS([[NSMutableDictionary alloc] initWithCapacity:e.size()]);
-            for (const auto& item : e) {
+            for (const auto& item : borrow(e)) {
                 RetainPtr<id> value;
                 RetainPtr<NSString> key = item.first.toID();
                 WTF::switchOn(item.second,

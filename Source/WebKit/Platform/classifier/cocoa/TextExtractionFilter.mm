@@ -137,7 +137,7 @@ bool TextExtractionFilter::shouldFilter(const String& text)
             return cachedEntry->value;
     }
 
-    auto allLines = text.split('\n');
+    const auto allLines = text.split('\n');
     for (auto& line : allLines) {
         if (line.length() <= chunkSize)
             continue;

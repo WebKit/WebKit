@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUFragmentState.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
 
@@ -42,7 +43,7 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const Web
 
     Vector<std::optional<ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
-    for (const auto& target : fragmentState.targets) {
+    for (const auto& target : borrow(fragmentState.targets)) {
         if (target) {
             auto convertedTarget = convertToBacking(*target);
             if (!convertedTarget)
@@ -63,7 +64,7 @@ std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convert
 
     Vector<std::optional<WebCore::WebGPU::ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
-    for (const auto& backingTarget : fragmentState.targets) {
+    for (const auto& backingTarget : borrow(fragmentState.targets)) {
         if (backingTarget) {
             auto target = convertFromBacking(*backingTarget);
             if (!target)

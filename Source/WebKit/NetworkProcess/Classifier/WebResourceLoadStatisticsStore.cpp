@@ -54,6 +54,7 @@
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/StorageAccessQuirks.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
@@ -1429,7 +1430,7 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
         }
 
         HashSet<RegistrableDomain> domainsWithUserInteractionQuirk;
-        for (auto& domain : domainsToBlock.domainsWithUserInteractionAsFirstParty) {
+        for (auto& domain : borrow(domainsToBlock.domainsWithUserInteractionAsFirstParty)) {
             if (needsUserInteractionQuirk(domain))
                 domainsWithUserInteractionQuirk.add(domain);
         }
@@ -1441,7 +1442,7 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
 
         HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
         for (auto& [firstPartyDomain, requestingDomains] : domainsToBlock.domainsWithStorageAccess) {
-            for (auto& requestingDomain : requestingDomains) {
+            for (auto& requestingDomain : borrow(requestingDomains)) {
                 if (WebCore::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
                     domainsWithStorageAccessQuirk.add(firstPartyDomain, Vector<SubResourceDomain> { }).iterator->value.append(requestingDomain);
             }

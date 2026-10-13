@@ -27,6 +27,7 @@
 #include "RemoteGraphicsContextGL.h"
 
 #include "Logging.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
@@ -460,8 +461,9 @@ void RemoteGraphicsContextGL::getFloatv(uint32_t pname, uint64_t valueSize, Comp
     if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
         valueSize = 16;
     Vector<GCGLfloat, 16> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getFloatv(pname, value);
-    completionHandler(spanReinterpretCast<const float>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getFloatv(pname, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const float>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getIntegerv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
@@ -470,8 +472,9 @@ void RemoteGraphicsContextGL::getIntegerv(uint32_t pname, uint64_t valueSize, Co
     if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
         valueSize = 4;
     Vector<GCGLint, 4> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getIntegerv(pname, value);
-    completionHandler(spanReinterpretCast<const int32_t>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getIntegerv(pname, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const int32_t>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&& completionHandler) // NOLINT
@@ -515,8 +518,9 @@ void RemoteGraphicsContextGL::getBooleanv(uint32_t pname, uint64_t valueSize, Co
     if (!WTF::isValidCapacityForVector<GCGLboolean>(valueSize))
         valueSize = 4;
     Vector<GCGLboolean, 4> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getBooleanv(pname, value);
-    completionHandler(spanReinterpretCast<const bool>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getBooleanv(pname, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const bool>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
@@ -602,8 +606,9 @@ void RemoteGraphicsContextGL::getUniformfv(uint32_t program, int32_t location, u
     if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
         valueSize = 16;
     Vector<GCGLfloat, 16> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getUniformfv(program, location, value);
-    completionHandler(spanReinterpretCast<const float>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getUniformfv(program, location, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const float>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
@@ -615,8 +620,9 @@ void RemoteGraphicsContextGL::getUniformiv(uint32_t program, int32_t location, u
     if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
         valueSize = 4;
     Vector<GCGLint, 4> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getUniformiv(program, location, value);
-    completionHandler(spanReinterpretCast<const int32_t>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getUniformiv(program, location, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const int32_t>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
@@ -628,8 +634,9 @@ void RemoteGraphicsContextGL::getUniformuiv(uint32_t program, int32_t location, 
     if (!WTF::isValidCapacityForVector<GCGLuint>(valueSize))
         valueSize = 4;
     Vector<GCGLuint, 4> value(FillWith { }, valueSize, 0);
-    protect(m_context)->getUniformuiv(program, location, value);
-    completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
+    Borrow borrowedValue = value;
+    protect(m_context)->getUniformuiv(program, location, borrowedValue->mutableSpan());
+    completionHandler(spanReinterpretCast<const uint32_t>(borrowedValue->span()));
 }
 
 void RemoteGraphicsContextGL::getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
@@ -1725,8 +1732,9 @@ void RemoteGraphicsContextGL::getActiveUniformBlockiv(uint32_t program, uint32_t
     if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
         paramsSize = 4;
     Vector<GCGLint, 4> params(FillWith { }, paramsSize, 0);
-    protect(m_context)->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
-    completionHandler(spanReinterpretCast<const int32_t>(params.span()));
+    Borrow borrowedParams = params;
+    protect(m_context)->getActiveUniformBlockiv(program, uniformBlockIndex, pname, borrowedParams->mutableSpan());
+    completionHandler(spanReinterpretCast<const int32_t>(borrowedParams->span()));
 }
 
 void RemoteGraphicsContextGL::getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(UTF8CString&&)>&& completionHandler)
@@ -1922,8 +1930,9 @@ void RemoteGraphicsContextGL::getInternalformativ(uint32_t target, uint32_t inte
     if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
         paramsSize = 4;
     Vector<GCGLint, 4> params(FillWith { }, paramsSize, 0);
-    protect(m_context)->getInternalformativ(target, internalformat, pname, params);
-    completionHandler(spanReinterpretCast<const int32_t>(params.span()));
+    Borrow borrowedParams = params;
+    protect(m_context)->getInternalformativ(target, internalformat, pname, borrowedParams->mutableSpan());
+    completionHandler(spanReinterpretCast<const int32_t>(borrowedParams->span()));
 }
 
 #if ENABLE(WEBXR)

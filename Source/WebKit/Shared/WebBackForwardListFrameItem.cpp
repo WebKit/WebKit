@@ -29,6 +29,7 @@
 #include "SessionState.h"
 #include "WebBackForwardListItem.h"
 #include "WebFrameProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -121,7 +122,7 @@ void WebBackForwardListFrameItem::setChild(Ref<FrameState>&& frameState)
     Ref childItem = WebBackForwardListFrameItem::create(*protect(backForwardListItem()), this, WTF::move(frameState));
     for (size_t i = 0; i < m_children.size(); i++) {
         if (m_children[i]->frameID() == childItem->m_frameState->frameID) {
-            m_children[i] = WTF::move(childItem);
+            borrow(m_children)[i] = WTF::move(childItem);
             return;
         }
     }
@@ -189,7 +190,7 @@ Ref<FrameState> WebBackForwardListFrameItem::copyFrameState()
 Ref<FrameState> WebBackForwardListFrameItem::copyFrameStateWithChildren()
 {
     Ref frameState = copyFrameState();
-    for (auto& child : m_children)
+    for (auto& child : borrow(m_children))
         frameState->children.append(child->copyFrameStateWithChildren());
     return frameState;
 }

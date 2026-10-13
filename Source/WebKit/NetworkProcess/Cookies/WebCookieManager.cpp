@@ -35,6 +35,7 @@
 #include "WebCookieManagerMessages.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -80,7 +81,7 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Complet
 void WebCookieManager::deleteCookiesForHostnames(PAL::SessionID sessionID, const Vector<String>& hostnames, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = m_process->storageSession(sessionID))
-        storageSession->deleteCookiesForHostnames(hostnames, WTF::move(completionHandler));
+        storageSession->deleteCookiesForHostnames(borrow(hostnames)->span(), WTF::move(completionHandler));
     else
         completionHandler();
 }
@@ -128,7 +129,7 @@ void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, Comp
 void WebCookieManager::setCookie(PAL::SessionID sessionID, const Vector<Cookie>& cookies, uint64_t cookiesVersion, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr storageSession = m_process->storageSession(sessionID)) {
-        for (auto& cookie : cookies)
+        for (auto& cookie : borrow(cookies))
             storageSession->setCookie(cookie);
         storageSession->setCookiesVersion(cookiesVersion);
     } else

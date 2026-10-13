@@ -29,6 +29,7 @@
 #import "GeneratedSerializers.h"
 #import "Logging.h"
 #import <WebCore/ResourceLoadPriority.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -420,7 +421,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
     if (m_data.headerFields) {
         auto headerFields = adoptNS([[NSMutableDictionary alloc] initWithCapacity:(*m_data.headerFields).size()]);
-        for (auto& headerPair : *m_data.headerFields) {
+        for (auto& headerPair : borrow(*m_data.headerFields)) {
             WTF::switchOn(headerPair.second,
                 [&] (const String& string) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
@@ -431,7 +432,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
                 },
                 [&] (const Vector<String>& vector) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
-                    for (auto& item : vector)
+                    for (auto& item : borrow(vector))
                         [array addObject:item.createNSString().get()];
                     if (!headerPair.first.isNull())
                         [headerFields setObject:array.get() forKey:headerPair.first.createNSString().get()];
@@ -490,7 +491,7 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
     if (m_data.contentDispositionEncodingFallbackArray) {
         auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data.contentDispositionEncodingFallbackArray->size()]);
-        for (auto& value : *m_data.contentDispositionEncodingFallbackArray) {
+        for (auto& value : borrow(*m_data.contentDispositionEncodingFallbackArray)) {
             if (auto valueObj = value.toID())
                 [array addObject:valueObj.get()];
         }

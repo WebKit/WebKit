@@ -31,6 +31,7 @@
 #include "NetworkCacheCoders.h"
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/ResourceResponse.h>
+#include <wtf/Borrow.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Scope.h>
@@ -394,7 +395,7 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(ReadAllRecordInfosCallbac
 {
     m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordsDirectory = recordsDirectoryPath().isolatedCopy(), cacheName = m_cacheName.isolatedCopy(), salt = m_salt, callback = WTF::move(callback)]() mutable {
         Vector<CacheStorageRecordInformation> recordInfos;
-        auto partitionNames = FileSystem::listDirectory(recordsDirectory);
+        const auto partitionNames = FileSystem::listDirectory(recordsDirectory);
         for (auto& partitionName : partitionNames) {
             auto partitionDirectoryPath = FileSystem::pathByAppendingComponent(recordsDirectory, partitionName);
             auto cacheDirectory = FileSystem::pathByAppendingComponent(partitionDirectoryPath, cacheName);
@@ -426,7 +427,7 @@ void CacheStorageDiskStore::readRecordsInternal(const Vector<CacheStorageRecordI
 {
     m_ioQueue->dispatch([this, protectedThis = Ref { *this }, directory = crossThreadCopy(recordsDirectoryPath()), recordInfos = crossThreadCopy(recordInfos), callback = WTF::move(callback)]() mutable {
         Vector<std::optional<CacheStorageRecord>> records;
-        for (auto& recordInfo : recordInfos) {
+        for (auto& recordInfo : borrow(recordInfos)) {
             auto recordFile = recordFilePathWithDirectory(directory, recordInfo.key());
             auto fileData = SafeFileData::read(recordFile);
             auto blobData = fileData ? SafeFileData::read(recordBlobFilePath(recordFile)) : SafeFileData { std::monostate() };
@@ -530,7 +531,7 @@ static Vector<uint8_t> encodeRecord(const NetworkCache::Key& key, const Vector<u
     encoder << currentVersion;
     encoder << key;
     encoder << WallTime { };
-    encoder << computeSHA1(headerData.span(), salt);
+    encoder << computeSHA1(borrow(headerData)->span(), salt);
     encoder << (uint64_t)headerData.size();
     encoder << bodyHash;
     encoder << (uint64_t)bodyData.size();
@@ -553,10 +554,10 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
     Vector<String> recordFiles;
     Vector<Vector<uint8_t>> recordDatas;
     Vector<Vector<uint8_t>> recordBlobDatas;
-    for (auto&& record : records) {
+    for (auto&& record : borrow(records)) {
         recordFiles.append(recordFilePath(record.info.key()));
         auto bodyData = encodeRecordBody(record.responseBody);
-        auto bodyHash = computeSHA1(bodyData.span(), m_salt);
+        auto bodyHash = computeSHA1(borrow(bodyData)->span(), m_salt);
         bool shouldCreateBlob = shouldStoreBodyAsBlob(bodyData);
         auto recordInfoKey = record.info.key();
         auto headerData = encodeRecordHeader(WTF::move(record));
@@ -572,8 +573,8 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
         // FIXME: we should probably stop writing and revert changes when result becomes false.
         for (size_t index = 0; index < recordFiles.size(); ++index) {
             auto recordFile = recordFiles[index];
-            auto recordData = recordDatas[index];
-            auto recordBlobData = recordBlobDatas[index];
+            const auto recordData = borrow(recordDatas)[index];
+            const auto recordBlobData = borrow(recordBlobDatas)[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
                 if (!FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), recordBlobData)) {

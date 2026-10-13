@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CoreIPCError.h"
 
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -69,7 +70,7 @@ RetainPtr<id> CoreIPCError::toID() const
 
     if (m_localizedRecoveryOptionsError) {
         RetainPtr options = [NSMutableArray arrayWithCapacity:m_localizedRecoveryOptionsError->size()];
-        for (const String& entry : *m_localizedRecoveryOptionsError)
+        for (const String& entry : borrow(*m_localizedRecoveryOptionsError))
             [options addObject:entry.createNSString().get()];
         INJECT_VALUE(NSLocalizedRecoveryOptionsErrorKey, options)
     }
@@ -90,7 +91,7 @@ RetainPtr<id> CoreIPCError::toID() const
 
     if (m_networkResolutionReport) {
         RetainPtr interfaces = adoptNS([[NSMutableArray alloc] initWithCapacity:m_networkResolutionReport->interfaces.size()]);
-        for (auto& [type, name] : m_networkResolutionReport->interfaces) {
+        for (auto& [type, name] : borrow(m_networkResolutionReport->interfaces)) {
             [interfaces addObject:@{
                 @"type" : type.createNSString().get() ?: @"",
                 @"name" : name.createNSString().get() ?: @"",

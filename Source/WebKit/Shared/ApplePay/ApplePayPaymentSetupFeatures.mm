@@ -32,6 +32,7 @@
 #import "Decoder.h"
 #import "Encoder.h"
 #import <WebCore/ApplePaySetupFeatureWebCore.h>
+#import <wtf/Borrow.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
 
@@ -40,7 +41,7 @@ namespace WebKit {
 static RetainPtr<NSArray<PKPaymentSetupFeature *>> toPlatformFeatures(Vector<Ref<WebCore::ApplePaySetupFeature>>&& features)
 {
     RetainPtr platformFeatures = adoptNS([[NSMutableArray alloc] initWithCapacity:features.size()]);
-    for (auto& feature : features)
+    for (auto& feature : borrow(features))
         [platformFeatures addObject:RetainPtr { feature->platformFeature() }.get()];
     return platformFeatures;
 }
@@ -48,7 +49,7 @@ static RetainPtr<NSArray<PKPaymentSetupFeature *>> toPlatformFeatures(Vector<Ref
 static RetainPtr<NSArray<PKPaymentSetupFeature *>> toPlatformFeatures(Vector<RetainPtr<PKPaymentSetupFeature>>&& features)
 {
     RetainPtr platformFeatures = adoptNS([[NSMutableArray alloc] initWithCapacity:features.size()]);
-    for (auto& feature : features)
+    for (auto& feature : borrow(features))
         [platformFeatures addObject:feature.get()];
     return platformFeatures;
 }

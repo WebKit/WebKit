@@ -30,6 +30,7 @@
 
 #import "CoreIPCNSCFObject.h"
 #import "CoreIPCTypes.h"
+#import <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -56,7 +57,7 @@ CoreIPCArray::CoreIPCArray(Vector<CoreIPCNSCFObject>&& array)
 RetainPtr<id> CoreIPCArray::toID() const
 {
     auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);
-    for (auto& object : m_array) {
+    for (auto& object : borrow(m_array)) {
         if (RetainPtr objectID = object.toID())
             [result addObject:objectID.get()];
     }

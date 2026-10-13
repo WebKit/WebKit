@@ -31,6 +31,7 @@
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/WebGPUVertexState.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit::WebGPU {
 
@@ -42,7 +43,7 @@ std::optional<VertexState> ConvertToBackingContext::convertToBacking(const WebCo
 
     Vector<std::optional<VertexBufferLayout>> buffers;
     buffers.reserveInitialCapacity(vertexState.buffers.size());
-    for (const auto& buffer : vertexState.buffers) {
+    for (const auto& buffer : borrow(vertexState.buffers)) {
         if (buffer) {
             auto convertedBuffer = convertToBacking(*buffer);
             if (!convertedBuffer)
@@ -63,7 +64,7 @@ std::optional<WebCore::WebGPU::VertexState> ConvertFromBackingContext::convertFr
 
     Vector<std::optional<WebCore::WebGPU::VertexBufferLayout>> buffers;
     buffers.reserveInitialCapacity(vertexState.buffers.size());
-    for (const auto& backingBuffer : vertexState.buffers) {
+    for (const auto& backingBuffer : borrow(vertexState.buffers)) {
         if (backingBuffer) {
             auto buffer = convertFromBacking(*backingBuffer);
             if (!buffer)

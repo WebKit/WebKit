@@ -33,6 +33,8 @@
 #include "NetworkProcessProxyMessages.h"
 #include "WebCompiledContentRuleList.h"
 
+#include <wtf/Borrow.h>
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -49,7 +51,7 @@ NetworkContentRuleListManager::~NetworkContentRuleListManager()
 
     WebCore::ContentExtensions::ContentExtensionsBackend backend;
     for (auto& callbacks : pendingCallbacks.values()) {
-        for (auto& callback : callbacks)
+        for (auto& callback : borrow(callbacks))
             callback(backend);
     }
 }
@@ -83,7 +85,7 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
         return makeUnique<WebCore::ContentExtensions::ContentExtensionsBackend>();
     }).iterator->value;
 
-    for (auto&& pair : contentRuleLists) {
+    for (auto&& pair : borrow(contentRuleLists)) {
         auto&& contentRuleList = WTF::move(pair.first);
         String identifier = contentRuleList.identifier;
         if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(contentRuleList)))
@@ -91,7 +93,7 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
     }
 
     auto pendingCallbacks = m_pendingCallbacks.take(identifier);
-    for (auto& callback : pendingCallbacks)
+    for (auto& callback : borrow(pendingCallbacks))
         callback(backend);
 
 }

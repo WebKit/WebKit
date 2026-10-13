@@ -42,6 +42,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -65,9 +66,10 @@ extern "C" {
 static void defaultTestDriver(WKMessageTestSendMessageFunc sendMessageFunc, void* context)
 {
     Vector<uint8_t> data(1000);
+    Borrow borrowedData = data;
     for (unsigned i = 0; i < 1000; ++i) {
-        cryptographicallyRandomValues(data.mutableSpan());
-        if (sendMessageFunc(data.span(), context))
+        cryptographicallyRandomValues(borrowedData->mutableSpan());
+        if (sendMessageFunc(borrowedData->span(), context))
             return;
     }
 }

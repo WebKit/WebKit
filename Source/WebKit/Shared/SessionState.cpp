@@ -30,6 +30,7 @@
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -226,7 +227,7 @@ void FrameState::setDocumentState(const Vector<AtomString>& documentState, Shoul
 
 void FrameState::replaceChildFrameState(Ref<FrameState>&& frameState)
 {
-    for (auto& child : children) {
+    for (auto& child : borrow(children)) {
         if (child->frameID == frameState->frameID) {
             child = WTF::move(frameState);
             return;

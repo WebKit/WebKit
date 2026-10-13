@@ -48,6 +48,7 @@
 #import <WebCore/ApplePayShippingMethodUpdate.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -112,18 +113,21 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
 
 static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
-    Vector<NSString *> result;
+    const auto result = [&] {
+        Vector<NSString *> result;
 
-    if (contactFields.postalAddress)
-        result.append(PKContactFieldPostalAddress);
-    if (contactFields.phone)
-        result.append(PKContactFieldPhoneNumber);
-    if (contactFields.email)
-        result.append(PKContactFieldEmailAddress);
-    if (contactFields.name)
-        result.append(PKContactFieldName);
-    if (contactFields.phoneticName)
-        result.append(PKContactFieldPhoneticName);
+        if (contactFields.postalAddress)
+            result.append(PKContactFieldPostalAddress);
+        if (contactFields.phone)
+            result.append(PKContactFieldPhoneNumber);
+        if (contactFields.email)
+            result.append(PKContactFieldEmailAddress);
+        if (contactFields.name)
+            result.append(PKContactFieldName);
+        if (contactFields.phoneticName)
+            result.append(PKContactFieldPhoneticName);
+        return result;
+    }();
 
     return adoptNS([[NSSet alloc] initWithObjects:result.span().data() count:result.size()]);
 }
@@ -268,7 +272,7 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
         return nil;
 
     auto mutableSet = adoptNS([[NSMutableSet alloc] initWithCapacity:strings.size()]);
-    for (auto& string : strings)
+    for (auto& string : borrow(strings))
         [mutableSet addObject:string.createNSString().get()];
 
     return WTF::move(mutableSet);

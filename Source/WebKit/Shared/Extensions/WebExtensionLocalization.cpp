@@ -32,6 +32,7 @@
 #include "WebExtension.h"
 #include "WebExtensionUtilities.h"
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/Borrow.h>
 #include <wtf/Language.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -139,7 +140,7 @@ RefPtr<JSON::Object> WebExtensionLocalization::localizedJSONforJSON(RefPtr<JSON:
 
     Ref newObject = JSON::Object::create();
 
-    for (auto& key : json->keys()) {
+    for (auto& key : borrow(json->keys())) {
         auto valueType = json->getValue(key)->type();
 
         if (valueType == JSON::Value::Type::String)
@@ -341,7 +342,7 @@ String WebExtensionLocalization::stringByReplacingPositionalPlaceholdersInString
 
         String replacement;
         if (keyInteger && placeholders.size() && *keyInteger <= placeholders.size() && keyInteger > 0)
-            replacement = placeholders[*keyInteger - 1];
+            replacement = borrow(placeholders)[*keyInteger - 1];
         else
             replacement = emptyString();
 

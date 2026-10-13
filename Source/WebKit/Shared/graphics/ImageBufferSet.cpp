@@ -28,6 +28,7 @@
 
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBufferBackend.h>
+#include <wtf/Borrow.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/PlatformCALayer.h>
@@ -79,14 +80,17 @@ ImageBufferSet::PaintRectList ImageBufferSet::computePaintingRects(const Region&
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
     // Otherwise, repaint the entire bounding box of the dirty region.
-    auto dirtyRects = dirtyRegion.rects();
+    const auto dirtyRects = [&] {
+        auto dirtyRects = dirtyRegion.rects();
 #if PLATFORM(COCOA)
-    IntRect dirtyBounds = dirtyRegion.bounds();
-    if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
-        dirtyRects.clear();
-        dirtyRects.append(dirtyBounds);
-    }
+        IntRect dirtyBounds = dirtyRegion.bounds();
+        if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+            dirtyRects.clear();
+            dirtyRects.append(dirtyBounds);
+        }
 #endif
+        return dirtyRects;
+    }();
 
     // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
     Vector<FloatRect, 5> paintingRects;
@@ -124,7 +128,7 @@ void ImageBufferSet::prepareBufferForDisplay(const FloatRect& layerBounds, const
     }
 
     if (paintingRects.size() == 1) {
-        context.clip(paintingRects[0]);
+        context.clip(borrow(paintingRects)[0]);
         if (copyRect.intersects(paintingRects[0]))
             m_frontBufferIsCleared = false;
     } else {

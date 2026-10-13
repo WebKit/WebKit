@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CoreIPCStringSet.h"
 
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
 
@@ -55,7 +56,7 @@ CoreIPCStringSet::~CoreIPCStringSet() = default;
 RetainPtr<id> CoreIPCStringSet::toID() const
 {
     RetainPtr result = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& s : m_stringSet)
+    for (auto& s : borrow(m_stringSet))
         [result addObject:s.createNSString().get()];
 
     RetainPtr<NSSet> set = [NSSet setWithArray:result.get()];

@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
@@ -124,7 +125,7 @@ void BackgroundFetchStoreManager::clearAllFetches(const Vector<String>& identifi
     assertIsCurrent(m_taskQueue.get());
 
     if (m_path.isEmpty()) {
-        for (auto& identifier : identifiers)
+        for (auto& identifier : borrow(identifiers))
             m_nonPersistentChunks.remove(identifier);
         callback();
         return;
@@ -134,7 +135,7 @@ void BackgroundFetchStoreManager::clearAllFetches(const Vector<String>& identifi
         return FileSystem::pathByAppendingComponents(m_path, std::initializer_list<StringView>({ identifier }));
     });
     m_ioQueue->dispatch([queue = Ref { m_taskQueue }, filePaths = crossThreadCopy(WTF::move(filePaths)), callback = WTF::move(callback)]() mutable {
-        for (auto& filePath : filePaths) {
+        for (auto& filePath : borrow(filePaths)) {
             FileSystem::deleteFile(filePath);
 
             size_t index = 0;
@@ -185,7 +186,7 @@ void BackgroundFetchStoreManager::storeFetchAfterQuotaCheck(const String& identi
     auto filePath = FileSystem::pathByAppendingComponents(m_path, std::initializer_list<StringView>({ identifier }));
     m_ioQueue->dispatch([queue = Ref { m_taskQueue }, filePath = WTF::move(filePath).isolatedCopy(), responseBodyIndexToClear, data = WTF::move(data), callback = WTF::move(callback)]() mutable {
         // FIXME: Cover the case of partial write.
-        auto writtenSize = FileSystem::overwriteEntireFile(filePath, data);
+        auto writtenSize = FileSystem::overwriteEntireFile(filePath, borrow(data)->span());
         auto result = writtenSize == data.size() ? StoreResult::OK : StoreResult::InternalError;
         if (result == StoreResult::OK && responseBodyIndexToClear)
             FileSystem::deleteFile(makeString(filePath, '-', *responseBodyIndexToClear));
@@ -213,7 +214,7 @@ void BackgroundFetchStoreManager::storeFetchResponseBodyChunk(const String& iden
         while (chunks.size() <= index)
             chunks.append({ });
 
-        chunks[index].append(data);
+        borrow(chunks)[index].append(data);
 
         callback(StoreResult::OK);
         return;
@@ -246,7 +247,7 @@ void BackgroundFetchStoreManager::retrieveResponseBody(const String& identifier,
             callback(RefPtr<SharedBuffer> { });
             return;
         }
-        callback(iterator->value[index].copyBuffer()->makeContiguous());
+        callback(borrow(iterator->value)[index].copyBuffer()->makeContiguous());
         return;
     }
 

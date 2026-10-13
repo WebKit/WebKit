@@ -63,6 +63,7 @@
 #include <WebCore/ImageBufferDisplayListBackend.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
@@ -648,7 +649,7 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBuffer
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created");
         SwapBuffersDisplayRequirement displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], displayRequirement, false);
+        remoteImageBufferSet->ensureBufferForDisplay(borrow(swapBuffersInput)[i], displayRequirement, false);
 
         if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
             remoteImageBufferSet->prepareBufferForDisplay(swapBuffersInput[i].dirtyRegion, swapBuffersInput[i].requiresClearedPixels);
@@ -665,7 +666,7 @@ void RemoteRenderingBackend::prepareImageBufferSetsForDisplaySync(Vector<ImageBu
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i) {
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(swapBuffersInput[i].remoteBufferSet);
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being updated before being created");
-        remoteImageBufferSet->ensureBufferForDisplay(swapBuffersInput[i], outputData[i], true);
+        remoteImageBufferSet->ensureBufferForDisplay(borrow(swapBuffersInput)[i], borrow(outputData)[i], true);
     }
 
     completionHandler(WTF::move(outputData));

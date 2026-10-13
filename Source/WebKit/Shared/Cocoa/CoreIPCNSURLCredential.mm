@@ -27,6 +27,7 @@
 #import "CoreIPCNSURLCredential.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSURLCredential(WKSecureCoding)
@@ -206,7 +207,7 @@ RetainPtr<id> CoreIPCNSURLCredential::toID() const
             [dict setObject:(*m_data.password).toID().get() forKey:@"password"];
         if (m_data.attributes) {
             RetainPtr attributes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:(*m_data.attributes).size()]);
-            for (auto& attributePair : *m_data.attributes) {
+            for (auto& attributePair : borrow(*m_data.attributes)) {
                 RetainPtr<id> value;
                 WTF::switchOn(attributePair.second,
                     [&] (const CoreIPCNumber& n) {
@@ -246,7 +247,7 @@ RetainPtr<id> CoreIPCNSURLCredential::toID() const
             [dict setObject:(*m_data.uuid).toID().get() forKey:@"uuid"];
         if (m_data.flags) {
             auto flags = adoptNS([[NSMutableDictionary alloc] initWithCapacity:(*m_data.flags).size()]);
-            for (auto& flagPair : *m_data.flags)
+            for (auto& flagPair : borrow(*m_data.flags))
                 [flags setObject: flagPair.second.toID().get() forKey:flagPair.first.toID().get()];
             [dict setObject:flags.get() forKey:@"flags"];
         }
