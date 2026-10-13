@@ -168,7 +168,8 @@ template<typename JSWrapper>
 static bool isInterfaceExposedInGlobalObject(JSC::JSGlobalObject& globalObject)
 {
     auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(globalObject);
-    if (!domGlobalObject || !domGlobalObject->scriptExecutionContext())
+    // JSIDBSerializationGlobalObject is only used for fuzzing, so let every reader run there.
+    if (!domGlobalObject || !domGlobalObject->scriptExecutionContext() || is<JSIDBSerializationGlobalObject>(*domGlobalObject))
         return true;
     return JSWrapper::isExposedInGlobalObject(*domGlobalObject);
 }
