@@ -31,6 +31,7 @@ namespace JSC { namespace Yarr {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CharacterClass);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CharacterClass::ByteTable);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CharacterClassBitTable);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ClassSet);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PatternAlternative);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PatternDisjunction);
