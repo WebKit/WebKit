@@ -246,6 +246,20 @@ static bool isUnsupportedGridTrackSize(const Style::GridTrackSize& trackSize)
     return trackSize.isFitContent();
 }
 
+static bool hasUnsupportedRepeatEntry(const Style::RepeatTrackList& repeatTrackList)
+{
+    return repeatTrackList.containsIf([](auto& repeatEntry) {
+        return WTF::switchOn(repeatEntry,
+            [](const Style::GridTrackSize& trackSize) {
+                return isUnsupportedGridTrackSize(trackSize);
+            },
+            [](const Style::GridLineNames& names) {
+                return !names.isEmpty();
+            }
+        );
+    });
+}
+
 static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackList)
 {
     return trackList.containsIf([](auto& trackListEntry) {
@@ -257,20 +271,10 @@ static bool hasUnsupportedGridTrackListEntry(const Style::GridTrackList& trackLi
                 return !names.isEmpty();
             },
             [](const Style::GridTrackEntryRepeat& repeat) {
-                return repeat.list.containsIf([](auto& repeatEntry) {
-                    return WTF::switchOn(repeatEntry,
-                        [](const Style::GridTrackSize& trackSize) {
-                            return isUnsupportedGridTrackSize(trackSize);
-                        },
-                        [](const Style::GridLineNames& names) {
-                            return !names.isEmpty();
-                        }
-                    );
-                });
+                return hasUnsupportedRepeatEntry(repeat.list);
             },
-            // auto-fill/auto-fit require computing the repetition count from the available space.
-            [](const Style::GridTrackEntryAutoRepeat&) {
-                return true;
+            [](const Style::GridTrackEntryAutoRepeat& autoRepeat) {
+                return autoRepeat.type == AutoRepeatType::Fit || hasUnsupportedRepeatEntry(autoRepeat.list);
             },
             [](const Style::GridTrackEntrySubgrid&) {
                 return true;
@@ -370,11 +374,13 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
     // container size, run the Grid Sizing Algorithm to size the grid." so that the
     // grid has a height to resolve the percentages again in the second step.
     auto gridBlockSizeIsIndefinite = renderGridStyle->height().isAuto() || renderGridStyle->height().isIntrinsic();
-    // Check the expanded track sizes so tracks inside repeat() are included.
+    // Check the expanded track sizes so tracks inside repeat() are included. Style keeps the
+    // auto-repeated tracks apart from the rest, so check those too.
     auto hasPercentageRowTrack = [&] {
-        return gridTemplateRows.sizes.containsIf([&](auto& trackSize) {
+        auto isPercentageTrack = [](auto& trackSize) {
             return trackSize.minTrackBreadth().isPercentOrCalculated() || trackSize.maxTrackBreadth().isPercentOrCalculated();
-        });
+        };
+        return gridTemplateRows.sizes.containsIf(isPercentageTrack) || gridTemplateRows.autoRepeatSizes.containsIf(isPercentageTrack);
     };
     if (gridBlockSizeIsIndefinite && hasPercentageRowTrack())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasPercentageRowsWithIndefiniteHeight, reasons, reasonCollectionMode);
