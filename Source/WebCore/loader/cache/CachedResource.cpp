@@ -47,6 +47,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "OriginAccessPatterns.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "SecurityOrigin.h"
@@ -104,7 +105,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == Type::MainResource || m_options.cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch);
 
-    if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
+    if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options, OriginAccessPatternsForWebProcess::singleton()))
         setCrossOrigin();
 }
 
