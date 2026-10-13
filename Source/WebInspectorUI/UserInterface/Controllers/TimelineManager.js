@@ -1319,6 +1319,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._enabled)
             return;
 
+        if (this._activeRecording.readonly)
+            return;
+
         let {message} = event.data;
 
         if (WI.ScreenshotsInstrument.supported() && message.source === WI.ConsoleMessage.MessageSource.ConsoleAPI && message.type === WI.ConsoleMessage.MessageType.Image && message.level === WI.ConsoleMessage.MessageLevel.Log && message.messageText)

@@ -44,6 +44,31 @@ function test()
 
             InspectorTest.assert(records[oldLength].startTime > records[oldLength - 1].startTime, "Screenshot record from console should be newer than the last screenshot record.");
             InspectorTest.assert(records[oldLength].imageData !== records[oldLength - 1].imageData, "Screenshot record from console should have different content than the last screenshot record.");
+
+            let recordingData = JSON.parse(JSON.stringify(recording.exportData()));
+            await WI.timelineManager.processJSON({
+                filename: "TEST",
+                json: {
+                    version: WI.TimelineRecording.SerializationVersion,
+                    recording: recordingData,
+                    overview: {},
+                },
+            });
+
+            let importedRecording = WI.timelineManager.activeRecording;
+            let importedScreenshots = importedRecording.timelines.get(WI.TimelineRecord.Type.Screenshots);
+            InspectorTest.expectTrue(importedRecording.readonly, "Imported recording should be readonly.");
+            InspectorTest.expectEqual(importedScreenshots.records.length, records.length, "Import should preserve saved screenshot records.");
+            let recordCount = importedRecording.exportData().records.length;
+
+            let [event] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`console.screenshot(document.getElementById("test"))`),
+            ]);
+
+            InspectorTest.expectEqual(event.data.message.type, WI.ConsoleMessage.MessageType.Image, "Console screenshot should still be logged.");
+            InspectorTest.expectEqual(importedScreenshots.records.length, records.length, "Live Console screenshots should not change the imported timeline.");
+            InspectorTest.expectEqual(importedRecording.exportData().records.length, recordCount, "Live Console screenshots should not change the exported recording.");
         }
     });
 

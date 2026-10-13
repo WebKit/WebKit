@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: [object HTMLDivElement]
 Tests 'Screenshot' Timeline event records.
 
 
@@ -12,4 +13,9 @@ PASS: Screenshot record should contain image data.
 Adding screenshot from console...
 PASS: Should have added another Screenshot record.
 PASS: Screenshot record from console should contain image data.
+PASS: Imported recording should be readonly.
+PASS: Import should preserve saved screenshot records.
+PASS: Console screenshot should still be logged.
+PASS: Live Console screenshots should not change the imported timeline.
+PASS: Live Console screenshots should not change the exported recording.
 
