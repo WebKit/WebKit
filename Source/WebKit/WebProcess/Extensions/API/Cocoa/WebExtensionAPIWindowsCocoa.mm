@@ -47,7 +47,7 @@
 
 namespace WebKit {
 
-static inline NSString *NODELETE toWebAPI(WebExtensionWindow::State state)
+static inline NSString *LEGACY_NODELETE toWebAPI(WebExtensionWindow::State state)
 {
     switch (state) {
     case WebExtensionWindow::State::Normal:
@@ -64,7 +64,7 @@ static inline NSString *NODELETE toWebAPI(WebExtensionWindow::State state)
     }
 }
 
-static inline NSString *NODELETE toWebAPI(WebExtensionWindow::Type type)
+static inline NSString *LEGACY_NODELETE toWebAPI(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:

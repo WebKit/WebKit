@@ -58,7 +58,7 @@ using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
 using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 
 // https://w3c.github.io/webdriver/#dfn-normalised-key-value
-VirtualKey NODELETE normalizedVirtualKey(VirtualKey);
+VirtualKey LEGACY_NODELETE normalizedVirtualKey(VirtualKey);
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.

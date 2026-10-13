@@ -583,7 +583,7 @@ public:
     NSUInteger accessibilityRemoteChildTokenHash();
     NSUInteger accessibilityUIProcessLocalTokenHash();
     NSArray<NSNumber *> *registeredRemoteAccessibilityPids();
-    NSData *NODELETE remoteAccessibilityChildToken();
+    NSData *LEGACY_NODELETE remoteAccessibilityChildToken();
     bool hasRemoteAccessibilityChild();
 
     void updatePrimaryTrackingAreaOptions(NSTrackingAreaOptions);
@@ -717,7 +717,7 @@ public:
     NSRange LEGACY_NODELETE selectedRange();
     bool hasMarkedText();
     NSRange LEGACY_NODELETE markedRange();
-    NSAttributedString *NODELETE attributedSubstringForProposedRange(NSRange, NSRangePointer actualRange);
+    NSAttributedString *LEGACY_NODELETE attributedSubstringForProposedRange(NSRange, NSRangePointer actualRange);
     NSUInteger LEGACY_NODELETE characterIndexForPoint(NSPoint);
     NSRect LEGACY_NODELETE firstRectForCharacterRange(NSRange, NSRangePointer actualRange);
     bool performKeyEquivalent(NSEvent *);

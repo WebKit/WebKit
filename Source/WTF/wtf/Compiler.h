@@ -599,8 +599,6 @@
 // Static analyzer does not require the use of smart pointers in the code which calls a function with this annotation.
 #ifndef LEGACY_NODELETE
 #define LEGACY_NODELETE [[clang::annotate_type("webkit.nodelete")]]
-// FIXME: Migrate all the code and remove this alias.
-#define NODELETE LEGACY_NODELETE
 #endif
 
 #else

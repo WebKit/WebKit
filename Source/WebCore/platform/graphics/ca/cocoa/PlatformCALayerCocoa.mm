@@ -198,7 +198,7 @@ void PlatformCALayerCocoa::setOwner(PlatformCALayerClient* owner)
         [static_cast<WebAnimationDelegate*>(m_delegate.get()) setOwner:this];        
 }
 
-static NSString *NODELETE toCAFilterType(PlatformCALayer::FilterType type)
+static NSString *LEGACY_NODELETE toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
     case PlatformCALayer::FilterType::Linear: return kCAFilterLinear;

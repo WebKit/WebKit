@@ -61,7 +61,7 @@ public:
     void registerScrollbar(Scrollbar&) override;
     void unregisterScrollbar(Scrollbar&) override;
 
-    static NSScrollerImp *NODELETE scrollerImpForScrollbar(Scrollbar&);
+    static NSScrollerImp *LEGACY_NODELETE scrollerImpForScrollbar(Scrollbar&);
 
     void setPaintCharacteristicsForScrollbar(Scrollbar&);
 

@@ -174,7 +174,7 @@ ApplePayPaymentMethod PaymentMethod::toApplePayPaymentMethod() const
     return convert(m_pkPaymentMethod.get());
 }
 
-PKPaymentMethod *NODELETE PaymentMethod::pkPaymentMethod() const
+PKPaymentMethod *LEGACY_NODELETE PaymentMethod::pkPaymentMethod() const
 {
     return m_pkPaymentMethod.get();
 }

@@ -46,7 +46,7 @@ FloatSize LEGACY_NODELETE visualCellSize(IntSize, const ControlStyle&);
 IntOutsets LEGACY_NODELETE cellOutsets(NSControlSize);
 IntOutsets LEGACY_NODELETE visualCellOutsets(NSControlSize, bool);
 FloatRect LEGACY_NODELETE rectForBounds(const FloatRect&);
-NSString *NODELETE coreUISizeForControlSize(const NSControlSize);
+NSString *LEGACY_NODELETE coreUISizeForControlSize(const NSControlSize);
 float LEGACY_NODELETE easeInOut(float);
 FloatRect LEGACY_NODELETE rectWithTransposedSize(const FloatRect&, bool);
 FloatRect trackRectForBounds(const FloatRect&, const FloatSize&);

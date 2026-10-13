@@ -79,7 +79,7 @@ static inline NSString *toWebAPI(PAL::SessionID sessionID)
     return [NSString stringWithFormat:@"%@%llu", prefix, maskedValue];
 }
 
-static inline NSString *NODELETE toWebAPI(WebCore::Cookie::SameSitePolicy policy)
+static inline NSString *LEGACY_NODELETE toWebAPI(WebCore::Cookie::SameSitePolicy policy)
 {
     switch (policy) {
     case WebCore::Cookie::SameSitePolicy::None:

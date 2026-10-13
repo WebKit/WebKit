@@ -6298,7 +6298,7 @@ class ComputedStylePropertyFunctionSignature(object):
         to.write(
               f"{''.join(map(lambda x: x + ' ', function_specifiers))}"
             + f"{self.function_return_type} "
-            + f"{'NODELETE ' if self.function_nodelete else ''}"
+            + f"{'LEGACY_NODELETE ' if self.function_nodelete else ''}"
             + f"{self.function_name}"
             + f"({', '.join(map(lambda x: x.value_for_function_declaration, self.function_arguments))})"
             + f"{''.join(map(lambda x: ' ' + x, self.function_qualifiers))};"

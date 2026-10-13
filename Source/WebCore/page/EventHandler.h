@@ -365,8 +365,8 @@ public:
 
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
 
-    WEBCORE_EXPORT static NSEvent *NODELETE currentNSEvent();
-    static NSEvent *NODELETE correspondingPressureEvent();
+    WEBCORE_EXPORT static NSEvent *LEGACY_NODELETE currentNSEvent();
+    static NSEvent *LEGACY_NODELETE correspondingPressureEvent();
 
     WEBCORE_EXPORT static IntSize LEGACY_NODELETE autoscrollAdjustmentFactorForScreenBoundaries(const FloatPoint& screenPoint, const FloatRect& screenRect);
 #endif

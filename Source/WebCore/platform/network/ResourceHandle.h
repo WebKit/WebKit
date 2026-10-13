@@ -111,7 +111,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT NSURLConnection *NODELETE connection() const;
+    WEBCORE_EXPORT NSURLConnection *LEGACY_NODELETE connection() const;
     id makeDelegate(bool, RefPtr<SynchronousLoaderMessageQueue>&&);
     id delegate();
     void releaseDelegate();

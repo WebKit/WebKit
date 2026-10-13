@@ -181,7 +181,7 @@ private:
 
     Ref<GenericPromise> updateDisplayLayerIfNeeded();
     bool LEGACY_NODELETE shouldEnsureLayerOrVideoRenderer() const;
-    WebSampleBufferVideoRendering *NODELETE layerOrVideoRenderer() const;
+    WebSampleBufferVideoRendering *LEGACY_NODELETE layerOrVideoRenderer() const;
     Ref<GenericPromise> ensureLayerOrVideoRenderer();
     void ensureLayer();
     void destroyLayer();

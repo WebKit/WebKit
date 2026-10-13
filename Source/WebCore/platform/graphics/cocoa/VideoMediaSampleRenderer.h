@@ -100,7 +100,7 @@ public:
 
     void expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime&);
 
-    WebSampleBufferVideoRendering *NODELETE renderer() const;
+    WebSampleBufferVideoRendering *LEGACY_NODELETE renderer() const;
 
     template <typename T> T* LEGACY_NODELETE as() const;
     template <> AVSampleBufferVideoRenderer* as() const;

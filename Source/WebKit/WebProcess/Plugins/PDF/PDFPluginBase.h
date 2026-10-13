@@ -498,10 +498,10 @@ protected:
 
     String annotationStyle() const;
 
-    static NSString *NODELETE htmlPasteboardType();
-    static NSString *NODELETE rtfPasteboardType();
-    static NSString *NODELETE stringPasteboardType();
-    static NSString *NODELETE urlPasteboardType();
+    static NSString *LEGACY_NODELETE htmlPasteboardType();
+    static NSString *LEGACY_NODELETE rtfPasteboardType();
+    static NSString *LEGACY_NODELETE stringPasteboardType();
+    static NSString *LEGACY_NODELETE urlPasteboardType();
 
 #if PLATFORM(MAC)
     void writeStringToFindPasteboard(const String&) const;
