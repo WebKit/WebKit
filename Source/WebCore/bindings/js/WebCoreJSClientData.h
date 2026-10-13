@@ -230,7 +230,7 @@ private:
 
 // Returns the first non-native source URL from the exception's stack frames without applying
 // URL masking, unlike StackFrame::sourceURL(VM&) which goes through overrideSourceURL.
-String unmaskedSourceURLFromException(const JSC::Exception&, JSC::VM&);
+String unmaskedSourceURLFromException(JSC::Exception&, JSC::VM&);
 
 } // namespace WebCore
 

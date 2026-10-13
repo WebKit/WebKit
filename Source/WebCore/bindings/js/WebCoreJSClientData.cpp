@@ -225,9 +225,9 @@ void JSVMClientData::initNormalWorld(VM* vm, WorkerThreadType type)
     vm->m_typedArrayController = adoptRef(new WebCoreTypedArrayController(type == WorkerThreadType::DedicatedWorker || type == WorkerThreadType::Worklet));
 }
 
-String unmaskedSourceURLFromException(const JSC::Exception& exception, JSC::VM& vm)
+String unmaskedSourceURLFromException(JSC::Exception& exception, JSC::VM& vm)
 {
-    for (auto& frame : exception.stack()) {
+    for (auto& frame : exception.stackForReporting(vm)) {
         String url = frame.sourceURL(vm, JSC::AllowURLOverride::No);
         if (!url.isEmpty() && url != "[native code]"_s)
             return url;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Exception.h"
 
+#include "ErrorInstance.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "JSObjectInlines.h"
@@ -63,6 +64,7 @@ void Exception::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(thisObject->m_value);
+    Locker locker { thisObject->cellLock() };
     for (StackFrame& frame : thisObject->m_stack)
         frame.visitAggregate(visitor);
     visitor.reportExtraMemoryVisited(thisObject->m_stack.sizeInBytes());
@@ -87,6 +89,24 @@ void Exception::finishCreation(VM& vm, StackCaptureAction action)
         vm.interpreter.getStackTrace(this, stackTrace, 0, Options::exceptionStackTraceLimit());
     m_stack = WTF::move(stackTrace);
     vm.heap.reportExtraMemoryAllocated(this, m_stack.sizeInBytes());
+}
+
+const Vector<StackFrame>& Exception::stackForReporting(VM& vm)
+{
+    if (m_stack.isEmpty()) {
+        if (auto* error = dynamicDowncast<ErrorInstance>(value())) {
+            if (auto* stackTrace = error->stackTrace(); stackTrace && !stackTrace->isEmpty()) {
+                Vector<StackFrame> stack = *stackTrace;
+                {
+                    Locker locker { cellLock() };
+                    m_stack = WTF::move(stack);
+                }
+                vm.writeBarrier(this);
+                vm.heap.reportExtraMemoryAllocated(this, m_stack.sizeInBytes());
+            }
+        }
+    }
+    return m_stack;
 }
 
 #if ENABLE(WEBASSEMBLY)

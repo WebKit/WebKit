@@ -5437,7 +5437,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             // and completionValue=V. Normal fallthrough keeps completionType=Normal (its initial value).
             Ref<Label> catchLabel = generator.newLabel();
             Ref<Label> tryStartLabel = generator.newEmittedLabel();
-            TryData* tryData = generator.pushTry(tryStartLabel.get(), catchLabel.get(), HandlerType::Finally);
+            TryData* tryData = generator.pushTry(tryStartLabel.get(), catchLabel.get(), HandlerType::SynthesizedCatch);
             generator.emitBodyWithUsingIfNeeded(usingDeclarationCount(), hasAwaitUsingDeclaration(),
                 [&](BytecodeGenerator& generator) {
                     emitStatementsBytecode(generator, generator.ignoredResult());
@@ -5447,10 +5447,10 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             Ref<Label> tryEndLabel = generator.newEmittedLabel();
             generator.popTry(tryData, tryEndLabel.get());
 
-            // Catch handler. Runtime populates completionValueRegister with the thrown value
-            // and completionTypeRegister with CompletionType::Throw.
+            // Catch handler. Runtime populates completionValueRegister with the thrown value.
             generator.emitLabel(catchLabel.get());
-            generator.emitOutOfLineCatchHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
+            generator.emitOutOfLineCatchHandler(finallyContext.completionValueRegister(), nullptr, tryData);
+            generator.emitLoad(finallyContext.completionTypeRegister(), CompletionType::Throw);
 
             generator.popFinallyControlFlowScope();
 
