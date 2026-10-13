@@ -217,6 +217,8 @@ ALWAYS_INLINE ReferrerToken AbstractSlotVisitor::referrer() const
 
 inline void AbstractSlotVisitor::didStartMarking(CollectionScope scope, bool isAnalyzingHeap)
 {
+    ASSERT(!m_visitCount);
+    ASSERT(!m_isAnalyzingHeap);
     m_collectionScope = scope;
     m_isAnalyzingHeap = isAnalyzingHeap;
 }

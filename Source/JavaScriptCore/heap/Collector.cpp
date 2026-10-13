@@ -624,6 +624,13 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
     assertMarkStacksEmpty();
     RELEASE_ASSERT(m_raceMarkStack->isEmpty());
 
+    // Each heap's End step reads these counts, so flush them now.
+    forEachSlotVisitor(
+        [&](SlotVisitor& visitor) {
+            visitor.flushBytesVisited();
+            visitor.flushExtraMemoryVisited();
+        });
+
     endCollectionInEachHeap();
 
     forEachSlotVisitor(
@@ -668,7 +675,7 @@ void Collector::endCollectionInEachHeap()
         // Executing CodeBlocks keep writing their profiles without barriers after this collection. Remembering
         // them makes the next collection reconcile those profiles even if it is an Eden collection.
         heap.rememberExecutingAndCompilingCodeBlocks();
-        heap.endMarking(bytesVisitedIn(heap));
+        heap.endMarking();
     });
 
     // Verify after every heap has finished marking, but before any heap prunes. Pruning applies the marking results
@@ -935,13 +942,6 @@ SUPPRESS_NODELETE size_t Collector::totalMaxEdenSize()
         result += heap.m_maxEdenSize;
     });
     return result;
-}
-
-size_t Collector::bytesVisitedIn(Heap& heap)
-{
-    // FIXME: Have the visitors count bytes per heap and return this heap's count.
-    ASSERT_UNUSED(heap, &heap == &this->heap());
-    return bytesVisited();
 }
 
 size_t Collector::bytesVisited()

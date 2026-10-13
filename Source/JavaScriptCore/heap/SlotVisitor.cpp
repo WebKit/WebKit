@@ -98,15 +98,13 @@ SlotVisitor::~SlotVisitor()
 
 void SlotVisitor::didStartMarking(CollectionScope scope, HeapVersion markingVersion, bool isAnalyzingHeap)
 {
-    switch (scope) {
-    case CollectionScope::Eden:
-        reset();
-        break;
-    case CollectionScope::Full:
-        m_extraMemorySize = 0;
-        break;
-    }
-    // After the reset above, which clears isAnalyzingHeap.
+    // The previous collection's End reset this visitor.
+    ASSERT(!m_bytesVisitedHeap);
+    ASSERT(!m_bytesVisitedInHeap);
+    ASSERT(!m_flushedBytesVisited);
+    ASSERT(!m_extraMemoryHeap);
+    ASSERT(!m_extraMemoryInHeap.hasOverflowed() && !m_extraMemoryInHeap);
+    ASSERT(!m_currentCell);
     Base::didStartMarking(scope, isAnalyzingHeap);
     m_markingVersion = markingVersion;
 }
@@ -114,7 +112,12 @@ void SlotVisitor::didStartMarking(CollectionScope scope, HeapVersion markingVers
 void SlotVisitor::reset()
 {
     Base::reset();
-    m_bytesVisited = 0;
+    // These counts should have been flushed to each heap by now.
+    RELEASE_ASSERT(!m_bytesVisitedInHeap);
+    RELEASE_ASSERT(!m_extraMemoryInHeap.hasOverflowed() && !m_extraMemoryInHeap);
+    m_bytesVisitedHeap = nullptr;
+    m_flushedBytesVisited = 0;
+    m_extraMemoryHeap = nullptr;
     RELEASE_ASSERT(!m_currentCell);
 }
 
@@ -288,7 +291,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
     container.noteMarked();
     
     m_visitCount++;
-    m_bytesVisited += container.cellSize();
+    noteBytesVisited(container.vm().heap, container.cellSize());
 
     m_collectorStack.append(cell);
 }
@@ -321,8 +324,26 @@ void SlotVisitor::noteLiveAuxiliaryCell(HeapCell* cell)
     m_visitCount++;
 
     size_t cellSize = container.cellSize();
-    m_bytesVisited += cellSize;
+    noteBytesVisited(container.vm().heap, cellSize);
     m_nonCellVisitCount += cellSize;
+}
+
+ALWAYS_INLINE void SlotVisitor::noteBytesVisited(JSC::Heap& heap, size_t bytes)
+{
+    if (&heap != m_bytesVisitedHeap) [[unlikely]] {
+        flushBytesVisited();
+        m_bytesVisitedHeap = &heap;
+    }
+    m_bytesVisitedInHeap += bytes;
+}
+
+NEVER_INLINE void SlotVisitor::flushBytesVisited()
+{
+    if (!m_bytesVisitedInHeap)
+        return;
+    m_bytesVisitedHeap->reportBytesVisited(m_bytesVisitedInHeap);
+    m_flushedBytesVisited += m_bytesVisitedInHeap;
+    m_bytesVisitedInHeap = 0;
 }
 
 class SetCurrentCellScope {
@@ -413,13 +434,17 @@ void SlotVisitor::visitAsConstraint(const JSCell* cell)
 
 inline void SlotVisitor::propagateExternalMemoryVisitedIfNecessary()
 {
-    if (m_isFirstVisit) {
-        if (m_extraMemorySize.hasOverflowed())
-            m_collector.heap().reportExtraMemoryVisited(std::numeric_limits<size_t>::max());
-        else if (m_extraMemorySize)
-            m_collector.heap().reportExtraMemoryVisited(m_extraMemorySize);
-        m_extraMemorySize = 0;
-    }
+    if (m_isFirstVisit)
+        flushExtraMemoryVisited();
+}
+
+void SlotVisitor::flushExtraMemoryVisited()
+{
+    if (m_extraMemoryInHeap.hasOverflowed())
+        m_extraMemoryHeap->reportExtraMemoryVisited(std::numeric_limits<size_t>::max());
+    else if (m_extraMemoryInHeap)
+        m_extraMemoryHeap->reportExtraMemoryVisited(m_extraMemoryInHeap);
+    m_extraMemoryInHeap = 0;
 }
 
 void SlotVisitor::donateKnownParallel(MarkStackArray& from, MarkStackArray& to)

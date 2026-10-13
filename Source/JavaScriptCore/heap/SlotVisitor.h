@@ -133,7 +133,9 @@ public:
     void LEGACY_NODELETE reset();
     void clearMarkStacks();
 
-    size_t bytesVisited() const { return m_bytesVisited; }
+    size_t bytesVisited() const { return m_flushedBytesVisited + m_bytesVisitedInHeap; }
+    void flushBytesVisited();
+    JS_EXPORT_PRIVATE void flushExtraMemoryVisited();
 
     void donate();
     void drain(MonotonicTime timeout = MonotonicTime::infinity());
@@ -212,6 +214,7 @@ private:
     void visitChildren(const JSCell*);
 
     void propagateExternalMemoryVisitedIfNecessary();
+    ALWAYS_INLINE void noteBytesVisited(JSC::Heap&, size_t);
     
     void donateKnownParallel();
     void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
@@ -228,9 +231,17 @@ private:
 
     HeapVersion m_markingVersion;
 
-    size_t m_bytesVisited { 0 };
+    // Bytes of m_bytesVisitedHeap's cells this visitor marked and has not yet added to that heap's count. Marking a
+    // cell of another heap flushes it, which is rare since a heap's cells mostly reference their own heap's cells.
+    size_t m_bytesVisitedInHeap { 0 };
+    SUPPRESS_FORWARD_DECL_MEMBER JSC::Heap* m_bytesVisitedHeap { nullptr }; // Heap is not refcounted.
+    size_t m_flushedBytesVisited { 0 }; // What this visitor has added to the heaps' counts, for bytesVisited().
+
     size_t m_nonCellVisitCount { 0 }; // Used for incremental draining, ignored otherwise.
-    CheckedSize m_extraMemorySize { 0 };
+
+    // Bytes of extra memory reported by cells of m_extraMemoryHeap and not yet added to that heap's count.
+    CheckedSize m_extraMemoryInHeap { 0 };
+    SUPPRESS_FORWARD_DECL_MEMBER JSC::Heap* m_extraMemoryHeap { nullptr }; // Heap is not refcounted.
 
     JSCell* m_currentCell { nullptr };
     bool m_isFirstVisit { false };

@@ -786,6 +786,7 @@ void Heap::beginMarking()
     TimingScope timingScope(*this, "Heap::beginMarking"_s);
     ASSERT(isInPhase(CollectorPhase::Begin));
     ASSERT(m_collectionScope);
+    ASSERT(!m_bytesVisitedDuringMarking.load(std::memory_order_relaxed));
     if (*m_collectionScope == CollectionScope::Full)
         m_mutatorMarkStack->clear();
     m_jitStubRoutines->clearMarks();
@@ -876,18 +877,15 @@ void Heap::recordBytesVisited(size_t bytesVisited)
         m_totalBytesVisitedAfterLastFullCollect = m_totalBytesVisited;
         m_totalBytesVisited = 0;
     }
-
-    m_totalBytesVisitedThisCycle = bytesVisited;
-    
-    m_totalBytesVisited += m_totalBytesVisitedThisCycle;
+    m_totalBytesVisited += bytesVisited;
 }
 
-void Heap::endMarking(size_t bytesVisited)
+void Heap::endMarking()
 {
     ASSERT(isInPhase(CollectorPhase::End));
     ASSERT(m_objectSpace.isMarking());
 
-    recordBytesVisited(bytesVisited);
+    recordBytesVisited(m_bytesVisitedDuringMarking.exchange(0, std::memory_order_relaxed));
 
     m_objectSpace.endMarking();
     setMutatorShouldBeFenced(Options::forceFencedBarrier());

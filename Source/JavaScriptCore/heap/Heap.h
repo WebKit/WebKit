@@ -420,7 +420,9 @@ public:
     void collectIfNecessaryOrDefer(GCDeferralContext* = nullptr);
 
     void completeAllJITPlans();
-    
+
+    void reportBytesVisited(size_t bytes) { m_bytesVisitedDuringMarking.exchangeAdd(bytes, std::memory_order_relaxed); }
+
     // Note that:
     // 1. Use this API to report non-GC memory referenced by GC objects. Be sure to
     // call both of these functions: Calling only one may trigger catastropic
@@ -722,7 +724,7 @@ private:
     void removeDeadCompilerWorklistEntries();
     void rememberExecutingAndCompilingCodeBlocks();
     void recordBytesVisited(size_t bytesVisited);
-    void endMarking(size_t bytesVisited);
+    void endMarking();
     void verifyHeapAfterMarking();
     void pruneDeadReferences();
     void prepareForAllocation();
@@ -815,7 +817,7 @@ private:
     size_t m_maxHeapSize;
     size_t m_totalBytesVisitedAfterLastFullCollect { 0 };
     size_t m_totalBytesVisited { 0 };
-    size_t m_totalBytesVisitedThisCycle { 0 };
+    Atomic<size_t> m_bytesVisitedDuringMarking { 0 };
     double m_incrementBalance { 0 };
     
     bool m_shouldDoOpportunisticFullCollection { false };

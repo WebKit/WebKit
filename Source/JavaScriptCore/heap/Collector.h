@@ -205,7 +205,6 @@ private:
     void assertMarkStacksEmpty();
 
     size_t bytesVisited();
-    size_t bytesVisitedIn(Heap&);
     UTF8CString bytesVisitedPerVisitorDump();
 
     // Summed over the heaps, for logging.
