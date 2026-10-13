@@ -20692,27 +20692,39 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
 
+        LBasicBlock oddWord = m_out.newBlock();
+        LBasicBlock pairCheck = m_out.newBlock();
         LBasicBlock initLoop = m_out.newBlock();
         LBasicBlock initDone = m_out.newBlock();
 
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(initLoop);
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(oddWord);
 
-        ValueFromBlock originalIndex = m_out.anchor(end);
-        ValueFromBlock originalPointer = m_out.anchor(
-            m_out.add(base, m_out.shl(m_out.signExt32ToPtr(begin), m_out.constInt32(3))));
-        m_out.branch(m_out.notEqual(end, begin), unsure(initLoop), unsure(initDone));
+        LValue beginPointer = m_out.add(base, m_out.shl(m_out.signExt32ToPtr(begin), m_out.constInt32(3)));
+        LValue endPointer = m_out.add(base, m_out.shl(m_out.signExt32ToPtr(end), m_out.constInt32(3)));
+        ValueFromBlock pointerWithoutOddWord = m_out.anchor(beginPointer);
+        m_out.branch(m_out.testNonZero32(m_out.sub(end, begin), m_out.int32One), unsure(oddWord), unsure(pairCheck));
+
+        m_out.appendTo(oddWord, pairCheck);
+        m_out.store64(value, TypedPointer(heap, beginPointer));
+        ValueFromBlock pointerAfterOddWord = m_out.anchor(m_out.add(beginPointer, m_out.intPtrEight));
+        m_out.jump(pairCheck);
+
+        // Storing two words per iteration lets the paired store optimization use a single 16-byte store.
+        m_out.appendTo(pairCheck, initLoop);
+        LValue pairBegin = m_out.phi(pointerType(), pointerWithoutOddWord, pointerAfterOddWord);
+        ValueFromBlock originalPointer = m_out.anchor(pairBegin);
+        m_out.branch(m_out.notEqual(pairBegin, endPointer), unsure(initLoop), unsure(initDone));
 
         m_out.appendTo(initLoop, initDone);
-        LValue index = m_out.phi(Int32, originalIndex);
         LValue pointer = m_out.phi(pointerType(), originalPointer);
 
         m_out.store64(value, TypedPointer(heap, pointer));
+        m_out.store64(value, TypedPointer(heap, m_out.add(pointer, m_out.intPtrEight)));
 
-        LValue nextIndex = m_out.sub(index, m_out.int32One);
-        m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
-        m_out.addIncomingToPhi(pointer, m_out.anchor(m_out.add(pointer, m_out.intPtrEight)));
+        LValue nextPointer = m_out.add(pointer, m_out.constIntPtr(2 * sizeof(uint64_t)));
+        m_out.addIncomingToPhi(pointer, m_out.anchor(nextPointer));
         m_out.branch(
-            m_out.notEqual(nextIndex, begin), unsure(initLoop), unsure(initDone));
+            m_out.notEqual(nextPointer, endPointer), unsure(initLoop), unsure(initDone));
 
         m_out.appendTo(initDone, lastNext);
     }
