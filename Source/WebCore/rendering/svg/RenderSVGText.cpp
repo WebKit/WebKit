@@ -755,7 +755,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
-        if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases))
+        if (!shouldPaintSVGContainerRenderer(paintInfo, relevantPaintPhases))
             return;
 
         if (paintInfo.phase == PaintPhase::ClippingMask) {

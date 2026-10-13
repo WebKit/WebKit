@@ -337,18 +337,40 @@ void RenderLayerModelObject::updateLayerTransform()
         layer()->updateTransform();
 }
 
-bool RenderLayerModelObject::shouldPaintSVGRenderer(const PaintInfo& paintInfo, const OptionSet<PaintPhase> relevantPaintPhases) const
+bool RenderLayerModelObject::shouldPaintSVGLeafRenderer(const PaintInfo& paintInfo, const OptionSet<PaintPhase> relevantPaintPhases) const
 {
     if (paintInfo.context().paintingDisabled())
         return false;
 
-    if (!relevantPaintPhases.isEmpty() && !relevantPaintPhases.contains(paintInfo.phase))
+    if (!relevantPaintPhases.contains(paintInfo.phase))
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return false;
 
     if (usedStyle().visibility() == UsedVisibility::Hidden || style().display() == Style::DisplayType::None)
+        return false;
+
+    return true;
+}
+
+bool RenderLayerModelObject::shouldPaintSVGContainerRenderer(const PaintInfo& paintInfo, const OptionSet<PaintPhase> relevantPaintPhases) const
+{
+    if (paintInfo.phase != PaintPhase::EventRegion && paintInfo.context().paintingDisabled())
+        return false;
+
+    if (!relevantPaintPhases.contains(paintInfo.phase))
+        return false;
+
+    if (!paintInfo.shouldPaintWithinRoot(*this))
+        return false;
+
+    if (style().display() == Style::DisplayType::None)
+        return false;
+
+    // Children can override with "visibility: visible", per SVG spec.
+    static constexpr OptionSet<PaintPhase> phasesPaintedIfHidden { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask };
+    if (!phasesPaintedIfHidden.contains(paintInfo.phase) && usedStyle().visibility() == UsedVisibility::Hidden)
         return false;
 
     return true;
@@ -940,7 +962,8 @@ void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo, const Fl
 {
     ASSERT(paintInfo.phase == PaintPhase::ClippingMask);
     auto& context = paintInfo.context();
-    if (!paintInfo.shouldPaintWithinRoot(*this) || usedStyle().visibility() != UsedVisibility::Visible || context.paintingDisabled())
+    // No visibility check: visible descendants of hidden containers must still be clipped.
+    if (!paintInfo.shouldPaintWithinRoot(*this) || context.paintingDisabled())
         return;
 
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
