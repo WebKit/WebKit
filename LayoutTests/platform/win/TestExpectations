@@ -705,7 +705,6 @@ webkit.org/b/214673 js/weakref-finalizationregistry.html [ Skip ] # Timeout Pass
 
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
-webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
 
 js/throw-large-string-oom.html [ Skip ] # Pass Timeout
 

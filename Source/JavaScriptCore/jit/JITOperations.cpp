@@ -68,7 +68,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSMapIterator.h"
 #include "JSMicrotask.h"
 #include "JSPromise.h"
-#include "JSRemoteFunction.h"
 #include "JSSentinel.h"
 #include "JSSetIterator.h"
 #include "JSStringIteratorInlines.h"
@@ -158,48 +157,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationThrowOutOfMemoryError, void, (VM* vmP
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
 }
 
-static JSValue getWrappedValue(JSGlobalObject* globalObject, JSGlobalObject* targetGlobalObject, JSValue value)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!value.isObject())
-        RELEASE_AND_RETURN(scope, value);
-
-    if (value.isCallable())
-        RELEASE_AND_RETURN(scope, JSRemoteFunction::tryCreate(targetGlobalObject, vm, static_cast<JSObject*>(value.asCell())));
-
-    throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive"_s);
-    return jsUndefined();
-}
-
-JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
-{
-    JSGlobalObject* globalObject = callee->realm();
-    VM& vm = globalObject->vm();
-
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(isRemoteFunction(callee));
-
-    JSGlobalObject* targetGlobalObject = callee->targetFunction()->realm();
-    OPERATION_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, targetGlobalObject, JSValue::decode(encodedValue))));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction* callee, EncodedJSValue encodedValue))
-{
-    JSGlobalObject* globalObject = callee->realm();
-    VM& vm = globalObject->vm();
-
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(isRemoteFunction(callee));
-
-    OPERATION_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, globalObject, JSValue::decode(encodedValue))));
-}
-
 static inline UGPRPair materializeTargetCode(VM& vm, JSFunction* targetFunction)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -229,51 +186,6 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, 
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* targetFunction = uncheckedDowncast<JSFunction>(callee->targetFunction()); // We call this function only when JSBoundFunction's target is JSFunction.
     OPERATION_RETURN(scope, materializeTargetCode(vm, targetFunction));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction* callee))
-{
-    JSGlobalObject* globalObject = callee->realm();
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(isRemoteFunction(callee));
-    auto* targetFunction = uncheckedDowncast<JSFunction>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
-    OPERATION_RETURN(scope, materializeTargetCode(vm, targetFunction));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction* callee))
-{
-    JSGlobalObject* globalObject = callee->realm();
-    VM& vm = globalObject->vm();
-
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(isRemoteFunction(callee));
-
-    Exception* exception = scope.exception();
-
-    // We should only be here when "rethrowing" an exception
-    RELEASE_ASSERT(exception);
-    JSValue exceptionValue = exception->value();
-
-    if (!scope.tryClearException()) [[unlikely]] {
-        scope.release();
-        OPERATION_RETURN(scope, encodedJSValue());
-    }
-
-    String exceptionString = exceptionValue.toWTFString(globalObject);
-    if (!scope.tryClearException()) [[unlikely]] {
-        scope.release();
-        OPERATION_RETURN(scope, encodedJSValue());
-    }
-
-    if (exceptionString.length())
-        OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope, exceptionString));
-
-    OPERATION_RETURN(scope, throwVMTypeError(globalObject, scope));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlobalObject* globalObject))

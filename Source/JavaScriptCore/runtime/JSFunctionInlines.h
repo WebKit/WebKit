@@ -30,7 +30,6 @@
 #include <JavaScriptCore/FunctionExecutable.h>
 #include <JavaScriptCore/JSBoundFunction.h>
 #include <JavaScriptCore/JSFunction.h>
-#include <JavaScriptCore/JSRemoteFunction.h>
 #include <JavaScriptCore/NativeExecutable.h>
 #include <JavaScriptCore/WebAssemblyFunction.h>
 #include <wtf/text/MakeString.h>
@@ -116,11 +115,6 @@ inline bool JSFunction::isClassConstructorFunction() const
     return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
 }
 
-inline bool JSFunction::isRemoteFunction() const
-{
-    return inherits<JSRemoteFunction>();
-}
-
 inline TaggedNativeFunction JSFunction::nativeFunction()
 {
     ASSERT(isHostFunctionNonInline());
@@ -131,11 +125,6 @@ inline TaggedNativeFunction JSFunction::nativeConstructor()
 {
     ASSERT(isHostFunctionNonInline());
     return static_cast<NativeExecutable*>(executable())->constructor();
-}
-
-inline bool isRemoteFunction(JSValue value)
-{
-    return value.inherits<JSRemoteFunction>();
 }
 
 inline bool JSFunction::hasReifiedLength() const
@@ -156,8 +145,6 @@ inline double JSFunction::originalLength(VM& vm)
 {
     if (inherits<JSBoundFunction>())
         return uncheckedDowncast<JSBoundFunction>(this)->length(vm);
-    if (inherits<JSRemoteFunction>())
-        return uncheckedDowncast<JSRemoteFunction>(this)->length(vm);
     if (isHostFunction()) {
         // The original length is captured in NativeExecutable at creation time.
         return uncheckedDowncast<NativeExecutable>(executable())->length();
@@ -185,13 +172,6 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
         JSString* nameMayBeNull = uncheckedDowncast<JSBoundFunction>(this)->nameMayBeNull();
         if (nameMayBeNull)
             RELEASE_AND_RETURN(scope, jsString(globalObject, vm.smallStrings.boundPrefixString(), nameMayBeNull));
-        return jsEmptyString(vm);
-    }
-
-    if (this->inherits<JSRemoteFunction>()) {
-        JSString* nameMayBeNull = uncheckedDowncast<JSRemoteFunction>(this)->nameMayBeNull();
-        if (nameMayBeNull)
-            return nameMayBeNull;
         return jsEmptyString(vm);
     }
 
@@ -282,7 +262,7 @@ inline FunctionRareData* JSFunction::ensureRareDataAndObjectAllocationProfile(JS
 
 inline JSString* JSFunction::asStringConcurrently() const
 {
-    if (inherits<JSBoundFunction>() || inherits<JSRemoteFunction>())
+    if (inherits<JSBoundFunction>())
         return nullptr;
     if (isHostFunction())
         return static_cast<NativeExecutable*>(executable())->asStringConcurrently();

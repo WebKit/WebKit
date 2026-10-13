@@ -76,7 +76,6 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         nullptr,
         nullptr,
 #endif
-        deriveShadowRealmGlobalObject,
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,

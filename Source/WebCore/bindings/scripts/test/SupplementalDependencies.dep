@@ -9,8 +9,6 @@ JSPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
 PaintWorkletGlobalScopeConstructors.idl:
 JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
 ServiceWorkerGlobalScopeConstructors.idl:
-JSShadowRealmGlobalScope.h: ShadowRealmGlobalScopeConstructors.idl
-ShadowRealmGlobalScopeConstructors.idl:
 JSSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
 SharedWorkerGlobalScopeConstructors.idl:
 JSTestAsyncIterable.h: 

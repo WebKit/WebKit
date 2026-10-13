@@ -140,7 +140,6 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
     macro(JSScope, FirstScopeType, LastScopeType) \
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
-    macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
     macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \
     macro(JSGenerator, JSType::JSGeneratorType, JSType::JSGeneratorType) \
     macro(JSAsyncFunctionGenerator, JSType::JSAsyncFunctionGeneratorType, JSType::JSAsyncFunctionGeneratorType) \

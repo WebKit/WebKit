@@ -501,13 +501,7 @@ _PATH_RULES_SPECIFIER = [
       '.any.sharedworker.html',
       '.any.sharedworker-module.html',
       '.any.worker.html',
-      '.any.worker-module.html',
-      '.any.shadowrealm-in-window.html',
-      '.any.shadowrealm-in-shadowrealm.html',
-      '.any.shadowrealm-in-dedicatedworker.html',
-      '.any.shadowrealm-in-sharedworker.html',
-      '.any.shadowrealm-in-serviceworker.html',
-      '.any.shadowrealm-in-audioworklet.html'],
+      '.any.worker-module.html'],
      ['-wpt/lint/worker_collision']),
 
     ([  # Templated test sources and their generated dummy .html counterparts.

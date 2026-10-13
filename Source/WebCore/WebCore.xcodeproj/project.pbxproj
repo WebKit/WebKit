@@ -1866,8 +1866,6 @@
 		467FB38F70C5854F710BA5C2 /* invalid-placard@1x.png in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = 714F5B091DEE5F9E0075BD17 /* invalid-placard@1x.png */; platformFilters = (macos, ); };
 		4682D2001F79783000C863DB /* StoredCredentialsPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4682D1FF1F79782300C863DB /* StoredCredentialsPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		468344E01EDDFAAA00B7795B /* DOMRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = 468344DE1EDDFA5F00B7795B /* DOMRectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4683DF402767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4683DF3E2767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.h */; };
-		4683DF412767E91A007D00C8 /* ShadowRealmGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4683DF3B2767DF26007D00C8 /* ShadowRealmGlobalScope.h */; };
 		4688C4B92B6B06F2003533C9 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4688C4B72B6B06F2003533C9 /* SharedMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4688E98027B6B45000567CD2 /* CoreLocationGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 4688E97F27B6B44400567CD2 /* CoreLocationGeolocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4688EE3C26DD2610002AF5C4 /* CrossOriginMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4688EE3A26DD260C002AF5C4 /* CrossOriginMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12197,11 +12195,6 @@
 		468344DD1EDDFA5F00B7795B /* DOMRectList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMRectList.cpp; sourceTree = "<group>"; };
 		468344DE1EDDFA5F00B7795B /* DOMRectList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMRectList.h; sourceTree = "<group>"; };
 		46838DFB27A1B8B9005DB9FB /* JSAudioWorkletGlobalScopeCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioWorkletGlobalScopeCustom.cpp; sourceTree = "<group>"; };
-		4683DF392767DF26007D00C8 /* ShadowRealmGlobalScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRealmGlobalScope.cpp; sourceTree = "<group>"; };
-		4683DF3B2767DF26007D00C8 /* ShadowRealmGlobalScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadowRealmGlobalScope.h; sourceTree = "<group>"; };
-		4683DF3C2767DF26007D00C8 /* ShadowRealmGlobalScope.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ShadowRealmGlobalScope.idl; sourceTree = "<group>"; };
-		4683DF3D2767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRealmGlobalScopeBase.cpp; sourceTree = "<group>"; };
-		4683DF3E2767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRealmGlobalScopeBase.h; sourceTree = "<group>"; };
 		4688C4B42B6B0697003533C9 /* SharedMemoryCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryCocoa.mm; sourceTree = "<group>"; };
 		4688C4B62B6B06F1003533C9 /* SharedMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemory.cpp; sourceTree = "<group>"; };
 		4688C4B72B6B06F2003533C9 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
@@ -31850,9 +31843,6 @@
 				7A7946642978815C00750A1B /* Settings.yaml */,
 				7CC6609B1F93057900D500E9 /* SettingsBase.cpp */,
 				7CC660991F93057800D500E9 /* SettingsBase.h */,
-				4683DF392767DF26007D00C8 /* ShadowRealmGlobalScope.cpp */,
-				4683DF3B2767DF26007D00C8 /* ShadowRealmGlobalScope.h */,
-				4683DF3C2767DF26007D00C8 /* ShadowRealmGlobalScope.idl */,
 				1DC55400211BA8C8004B780E /* ShareData.h */,
 				1DC553FF211BA841004B780E /* ShareData.idl */,
 				1A2C6671242AFEF7003055EC /* ShareDataReader.cpp */,
@@ -37971,8 +37961,6 @@
 				460C70FB28E662D4005F4D74 /* JSObservableArray.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
-				4683DF3D2767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.cpp */,
-				4683DF3E2767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.h */,
 				46714D6828E7488A004A2F0D /* JSShadowRootCustom.cpp */,
 				931AE3B81FB80EAE00F5EFB2 /* JSValueInWrappedObject.h */,
 				CD28D7052F60AD83008D8F59 /* JSValueInWrappedObjectInlines.h */,
@@ -47469,7 +47457,6 @@
 				5182C25C1F3143CD0059BA7C /* JSServiceWorkerRegistration.h in Headers */,
 				51F175031F358B3B00C74950 /* JSServiceWorkerUpdateViaCache.h in Headers */,
 				46EB37CE1F97CCD200B65523 /* JSServiceWorkerWindowClient.h in Headers */,
-				4683DF402767DF98007D00C8 /* JSShadowRealmGlobalScopeBase.h in Headers */,
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				46DFF49C1DC2620B00B80B48 /* JSShadowRootMode.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
@@ -49291,7 +49278,6 @@
 				7CD58DFB1F9565A500112791 /* Settings.h in Headers */,
 				7CC9722E1F93E3360004D4CF /* SettingsBase.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
-				4683DF412767E91A007D00C8 /* ShadowRealmGlobalScope.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				056A7AC8256C4F48002F9DDC /* ShadowRootInit.h in Headers */,
 				46DFF4981DC2603100B80B48 /* ShadowRootMode.h in Headers */,

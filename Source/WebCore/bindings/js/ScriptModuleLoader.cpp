@@ -47,7 +47,6 @@
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptSourceCode.h"
 #include "ServiceWorkerGlobalScope.h"
-#include "ShadowRealmGlobalScope.h"
 #include "SubresourceIntegrity.h"
 #include "WebAssemblyScriptSourceCode.h"
 #include "WebCoreJSClientData.h"
@@ -88,13 +87,6 @@ ScriptModuleLoader::~ScriptModuleLoader()
 {
     for (auto& loader : m_loaders)
         loader->clearClient();
-}
-
-UniqueRef<ScriptModuleLoader> ScriptModuleLoader::shadowRealmLoader(JSC::JSGlobalObject* realmGlobal) const
-{
-    auto loader = makeUniqueRef<ScriptModuleLoader>(m_context.get(), m_ownerType);
-    loader->m_shadowRealmGlobal = realmGlobal;
-    return loader;
 }
 
 static bool LEGACY_NODELETE isRootModule(JSC::JSValue importerModuleKey)
@@ -329,9 +321,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     if (!m_context)
         return JSC::jsUndefined();
 
-    if (m_shadowRealmGlobal)
-        RELEASE_AND_RETURN(scope, moduleRecord->evaluate(m_shadowRealmGlobal, awaitedValue, resumeMode));
-    else if (m_ownerType == OwnerType::Document) {
+    if (m_ownerType == OwnerType::Document) {
         if (RefPtr frame = downcast<Document>(*m_context).frame())
             RELEASE_AND_RETURN(scope, protect(frame->script())->evaluateModule(sourceURL, *moduleRecord, awaitedValue, resumeMode));
     } else {

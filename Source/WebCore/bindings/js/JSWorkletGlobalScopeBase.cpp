@@ -68,7 +68,6 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         nullptr,
         nullptr,
 #endif
-        deriveShadowRealmGlobalObject,
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,

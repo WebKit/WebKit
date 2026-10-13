@@ -507,7 +507,6 @@ static JSC_DECLARE_HOST_FUNCTION(functionDollarEvalScript);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarGC);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarClearKeptObjects);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarGlobalObjectFor);
-static JSC_DECLARE_HOST_FUNCTION(functionDollarIsRemoteFunction);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentStart);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast);
 static JSC_DECLARE_HOST_FUNCTION(functionDollarAgentReport);
@@ -900,7 +899,6 @@ private:
         addFunctionToObject(vm, dollar, "gc"_s, functionDollarGC, 0, static_cast<unsigned>(PropertyAttribute::None));
         addFunctionToObject(vm, dollar, "clearKeptObjects"_s, functionDollarClearKeptObjects, 0, static_cast<unsigned>(PropertyAttribute::None));
         addFunctionToObject(vm, dollar, "globalObjectFor"_s, functionDollarGlobalObjectFor, 1, static_cast<unsigned>(PropertyAttribute::None));
-        addFunctionToObject(vm, dollar, "isRemoteFunction"_s, functionDollarIsRemoteFunction, 1, static_cast<unsigned>(PropertyAttribute::None));
         
         dollar->putDirect(vm, Identifier::fromString(vm, "global"_s), globalThis());
         dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"_s),
@@ -1091,7 +1089,6 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantinateStreaming
-    &deriveShadowRealmGlobalObject,
     &codeForEval,
     &canCompileStrings,
     &trustedScriptStructure,
@@ -2712,18 +2709,6 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
     }
 
     return JSValue::encode(jsUndefined());
-}
-
-JSC_DEFINE_HOST_FUNCTION(functionDollarIsRemoteFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (callFrame->argumentCount() < 1)
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
-
-    JSValue arg = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(isRemoteFunction(arg)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))

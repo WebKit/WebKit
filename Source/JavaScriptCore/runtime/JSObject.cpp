@@ -2163,9 +2163,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
         return typeError(globalObject, scope, shouldThrowIfCantSet, "Cannot set prototype of immutable prototype object"_s);
     }
 
-    // Default realm global objects should have mutable prototypes despite having
-    // a Proxy globalThis.
-    ASSERT(this->isGlobalObject() || JSValue(this).toThis(globalObject, ECMAMode::sloppy()) == this);
+    ASSERT(JSValue(this).toThis(globalObject, ECMAMode::sloppy()) == this);
 
     if (this->getPrototypeDirect() == prototype)
         return true;

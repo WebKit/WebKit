@@ -114,7 +114,6 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
         nullptr,
         nullptr,
 #endif
-        deriveShadowRealmGlobalObject,
         codeForEval,
         canCompileStrings,
         trustedScriptStructure,

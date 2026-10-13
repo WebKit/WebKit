@@ -109,7 +109,6 @@
 #include "ProxyRevoke.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
-#include "ShadowRealmObject.h"
 #include "StrictEvalActivation.h"
 #include "StringObject.h"
 #include "StructureChain.h"

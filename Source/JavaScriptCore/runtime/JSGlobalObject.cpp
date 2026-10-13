@@ -183,7 +183,6 @@
 #include "JSPromiseReaction.h"
 #include "JSRawJSONObject.h"
 #include "JSRegExpStringIteratorInlines.h"
-#include "JSRemoteFunctionInlines.h"
 #include "JSSetInlines.h"
 #include "JSSetIteratorInlines.h"
 #include "JSStringIteratorInlines.h"
@@ -249,9 +248,6 @@
 #include "SetConstructorInlines.h"
 #include "SetIteratorPrototypeInlines.h"
 #include "SetPrototypeInlines.h"
-#include "ShadowRealmConstructorInlines.h"
-#include "ShadowRealmObjectInlines.h"
-#include "ShadowRealmPrototypeInlines.h"
 #include "SourceCodeKey.h"
 #include "StrictEvalActivationInlines.h"
 #include "StringConstructorInlines.h"
@@ -692,7 +688,6 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
         nullptr, // defaultLanguage
         nullptr, // compileStreaming
         nullptr, // instantiateStreaming
-        &deriveShadowRealmGlobalObject,
         &codeForEval,
         &canCompileStrings,
         &trustedScriptStructure,
@@ -1074,10 +1069,6 @@ void JSGlobalObject::init(VM& vm)
         [] (const Initializer<Structure>& init) {
             init.set(JSNativeStdFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
         });
-    m_remoteFunctionStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            init.set(JSRemoteFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
-        });
     JSFunction* callFunction = nullptr;
     JSFunction* applyFunction = nullptr;
     JSFunction* hasInstanceSymbolFunction = nullptr;
@@ -1284,9 +1275,6 @@ void JSGlobalObject::init(VM& vm)
     for (unsigned i = 0; i < NumberOfArrayIndexingModes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
 
-    m_shadowRealmPrototype.set(vm, this, ShadowRealmPrototype::create(vm, ShadowRealmPrototype::createStructure(vm, this, m_objectPrototype.get())));
-    m_shadowRealmObjectStructure.set(vm, this, ShadowRealmObject::createStructure(vm, this, m_shadowRealmPrototype.get()));
-
     m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
     m_regExpMatchesArrayStructure.set(vm, this, createRegExpMatchesArrayStructure(vm, this));
@@ -1435,9 +1423,6 @@ void JSGlobalObject::init(VM& vm)
     m_arrayConstructor.set(vm, this, arrayConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Array)].set(vm, this, arrayConstructor);
 
-    ShadowRealmConstructor* shadowRealmConstructor = ShadowRealmConstructor::create(vm, ShadowRealmConstructor::createStructure(vm, this, m_functionPrototype.get()), m_shadowRealmPrototype.get());
-    m_shadowRealmConstructor.set(vm, this, shadowRealmConstructor);
-
     RegExpConstructor* regExpConstructor = RegExpConstructor::create(vm, RegExpConstructor::createStructure(vm, this, m_functionPrototype.get()), m_regExpPrototype.get());
     m_regExpConstructor.set(vm, this, regExpConstructor);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::RegExp)].set(vm, this, regExpConstructor);
@@ -1521,7 +1506,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    m_shadowRealmPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1800,8 +1784,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
         putDirectWithoutTransition(vm, vm.propertyNames->Temporal, temporal, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
-    if (Options::useShadowRealm())
-        putDirectWithoutTransition(vm, vm.propertyNames->ShadowRealm, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     m_moduleLoader.initLater(
         [] (const Initializer<JSModuleLoader>& init) {
@@ -2062,17 +2044,8 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::repeatCharacter)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 2, "repeatCharacter"_s, stringProtoFuncRepeatCharacter, ImplementationVisibility::Private));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::importInRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, init.owner, 0, "importInRealm"_s, importInRealm, ImplementationVisibility::Private));
-        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::evalFunction)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 1, init.vm.propertyNames->eval.string(), globalFuncEval, ImplementationVisibility::Public));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::evalInRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, init.owner, 0, "evalInRealm"_s, evalInRealm, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::moveFunctionToRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, init.owner, 0, "moveFunctionToRealm"_s, moveFunctionToRealm, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::sameValue)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 2, "is"_s, objectConstructorIs, ImplementationVisibility::Private, ObjectIsIntrinsic));
@@ -2129,14 +2102,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::jsonStringify)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 2, "stringify"_s, jsonStringify, ImplementationVisibility::Private));
-        });
-
-    // ShadowRealms
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createRemoteFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, init.owner, 0, "createRemoteFunction"_s, createRemoteFunction, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isRemoteFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, init.owner, 0, "isRemoteFunction"_s, isRemoteFunction, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::emptyPropertyNameEnumerator)].initLater([] (const Initializer<JSCell>& init) {
@@ -2931,7 +2896,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_aggregateErrorStructure.visit(visitor);
     thisObject->m_suppressedErrorStructure.visit(visitor);
     visitor.append(thisObject->m_arrayConstructor);
-    visitor.append(thisObject->m_shadowRealmConstructor);
     visitor.append(thisObject->m_regExpConstructor);
     visitor.append(thisObject->m_objectConstructor);
     visitor.append(thisObject->m_functionConstructor);
@@ -3061,8 +3025,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_customGetterFunctionStructure.visit(visitor);
     thisObject->m_customSetterFunctionStructure.visit(visitor);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
-    thisObject->m_remoteFunctionStructure.visit(visitor);
-    visitor.append(thisObject->m_shadowRealmObjectStructure);
     visitor.append(thisObject->m_regExpStructure);
     visitor.append(thisObject->m_generatorFunctionStructure);
     visitor.append(thisObject->m_asyncFunctionStructure);
@@ -3819,13 +3781,6 @@ std::optional<unsigned> JSGlobalObject::stackTraceLimit() const
 JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
 {
     JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm)) JSGlobalObject(vm, structure);
-    globalObject->finishCreation(vm);
-    return globalObject;
-}
-
-JSGlobalObject* JSGlobalObject::createWithCustomMethodTable(VM& vm, Structure* structure, const GlobalObjectMethodTable* methodTable)
-{
-    JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm)) JSGlobalObject(vm, structure, methodTable);
     globalObject->finishCreation(vm);
     return globalObject;
 }

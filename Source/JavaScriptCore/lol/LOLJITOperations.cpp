@@ -59,7 +59,6 @@
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
-#include "JSRemoteFunction.h"
 #include "JSWithScope.h"
 #include "LLIntEntrypoint.h"
 #include "MegamorphicCache.h"

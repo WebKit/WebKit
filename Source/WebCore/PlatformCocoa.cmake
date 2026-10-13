@@ -906,7 +906,6 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/CachedModuleScriptLoader.h
     bindings/js/JSDOMConvertXPathNSResolver.h
     bindings/js/JSEventListener.h
-    bindings/js/JSShadowRealmGlobalScopeBase.h
     bindings/js/ReadableStreamDefaultController.h
     bindings/js/WebAssemblyCachedScriptSourceProvider.h
     bindings/js/WebAssemblyScriptSourceCode.h
@@ -1006,7 +1005,6 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/NavigationNavigationType.h
     page/NavigatorLoginStatus.h
     page/NavigatorUAData.h
-    page/ShadowRealmGlobalScope.h
     page/UADataValues.h
     page/UALowEntropyJSON.h
     page/WebKitNamespace.h

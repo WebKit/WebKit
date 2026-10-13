@@ -35,7 +35,6 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
-#include "JSRemoteFunction.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
@@ -246,12 +245,6 @@ JSString* JSFunction::toString(JSGlobalObject* globalObject)
         JSBoundFunction* function = uncheckedDowncast<JSBoundFunction>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
         JSValue string = jsMakeNontrivialString(globalObject, "function "_s, function->nameString(vm), "() {\n    [native code]\n}"_s);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        return asString(string);
-    } else if (inherits<JSRemoteFunction>()) {
-        JSRemoteFunction* function = uncheckedDowncast<JSRemoteFunction>(this);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        JSValue string = jsMakeNontrivialString(globalObject, "function "_s, function->nameString(), "() {\n    [native code]\n}"_s);
         RETURN_IF_EXCEPTION(scope, nullptr);
         return asString(string);
     }
@@ -662,14 +655,6 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
         putDirect(vm, nameIdent, string, initialAttributes);
-    } else if (this->inherits<JSRemoteFunction>()) {
-        FunctionRareData* rareData = this->ensureRareData(vm);
-        JSString* name = uncheckedDowncast<JSRemoteFunction>(this)->nameMayBeNull();
-        if (!name)
-            name = jsEmptyString(vm);
-        unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
-        rareData->setHasReifiedName();
-        putDirect(vm, nameIdent, name, initialAttributes);
     } else {
         ASSERT(isNonBoundHostFunction());
         FunctionRareData* rareData = this->ensureRareData(vm);

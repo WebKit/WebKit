@@ -805,7 +805,7 @@ sub GetCustomIsReachable
 sub IsDOMGlobalObject
 {
     my $interface = shift;
-    return $interface->type->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope") || $interface->type->name eq "ShadowRealmGlobalScope" || $interface->type->name eq "TestGlobalObject";
+    return $interface->type->name eq "DOMWindow" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope") || $interface->type->name eq "TestGlobalObject";
 }
 
 sub ShouldUseGlobalObjectPrototype
@@ -824,14 +824,14 @@ sub ShouldUseOrdinaryObjectPrototype
 {
     my $interface = shift;
 
-    return $interface->isNamespaceObject() || $interface->type->name eq "ShadowRealmGlobalScope";
+    return $interface->isNamespaceObject();
 }
 
 sub ShouldCreateWithJSGlobalProxy
 {
     my ($codeGenerator, $interface) = @_;
 
-    return $interface->type->name eq "ShadowRealmGlobalScope" || $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope");
+    return $codeGenerator->InheritsInterface($interface, "WorkerGlobalScope") || $codeGenerator->InheritsInterface($interface, "WorkletGlobalScope");
 }
 
 sub GenerateIndexedGetter
@@ -3639,12 +3639,7 @@ sub GenerateHeader
     # structure flags
     if (%structureFlags) {
         push(@headerContent, "public:\n");
-        if ($interfaceName eq "ShadowRealmGlobalScope") {
-            # Hack to make ShadowRealmGlobalScope a default realm global object (not an ImmutablePrototypeExoticObject)
-            push(@headerContent, "    static constexpr unsigned StructureFlags = (Base::StructureFlags & ~JSC::IsImmutablePrototypeExoticObject)");
-        } else {
-            push(@headerContent, "    static constexpr unsigned StructureFlags = Base::StructureFlags");
-        }
+        push(@headerContent, "    static constexpr unsigned StructureFlags = Base::StructureFlags");
         foreach my $structureFlag (sort (keys %structureFlags)) {
             push(@headerContent, " | " . $structureFlag);
         }
@@ -4428,8 +4423,6 @@ sub GenerateRuntimeEnableConditionalStringForExposeScope
       $wrapperType = "JSSharedWorkerGlobalScope";
     } elsif ($exposed eq "ServiceWorker") {
       $wrapperType = "JSServiceWorkerGlobalScope";
-    } elsif ($exposed eq "ShadowRealm") {
-      $wrapperType = "JSShadowRealmGlobalScopeBase";
     } elsif ($exposed eq "Worklet") {
       $wrapperType = "JSWorkletGlobalScopeBase";
     } elsif ($exposed eq "AudioWorklet") {

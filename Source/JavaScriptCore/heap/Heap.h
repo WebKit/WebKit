@@ -271,11 +271,9 @@ class Heap;
     v(proxyObjectSpace, cellHeapCellType, ProxyObject) \
     v(proxyRevokeSpace, cellHeapCellType, ProxyRevoke) \
     v(rawJSONObjectSpace, cellHeapCellType, JSRawJSONObject) \
-    v(remoteFunctionSpace, cellHeapCellType, JSRemoteFunction) \
     v(scopedArgumentsTableSpace, destructibleCellHeapCellType, ScopedArgumentsTable) \
     v(setIteratorSpace, cellHeapCellType, JSSetIterator) \
     v(setSpace, cellHeapCellType, JSSet) \
-    v(shadowRealmSpace, cellHeapCellType, ShadowRealmObject) \
     v(strictEvalActivationSpace, cellHeapCellType, StrictEvalActivation) \
     v(stringIteratorSpace, cellHeapCellType, JSStringIterator) \
     v(sourceCodeSpace, destructibleCellHeapCellType, JSSourceCode) \

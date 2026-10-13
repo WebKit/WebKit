@@ -43,7 +43,6 @@
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSQuotaExceededError.h"
 #include "JSServiceWorkerGlobalScope.h"
-#include "JSShadowRealmGlobalScope.h"
 #include "JSSharedWorkerGlobalScope.h"
 #include "JSWebTransportError.h"
 #include "JSWindowProxy.h"
@@ -93,7 +92,6 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_heapCellTypeForJSDedicatedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSDedicatedWorkerGlobalScope>())
     , m_heapCellTypeForJSWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSWorkerGlobalScope>())
     , m_heapCellTypeForJSSharedWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSSharedWorkerGlobalScope>())
-    , m_heapCellTypeForJSShadowRealmGlobalScope(JSC::IsoHeapCellType::Args<JSShadowRealmGlobalScope>())
     , m_heapCellTypeForJSServiceWorkerGlobalScope(JSC::IsoHeapCellType::Args<JSServiceWorkerGlobalScope>())
     , m_heapCellTypeForJSWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSWorkletGlobalScope>())
     , m_heapCellTypeForJSPaintWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSPaintWorkletGlobalScope>())

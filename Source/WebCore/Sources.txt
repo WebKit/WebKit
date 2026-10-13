@@ -855,7 +855,6 @@ bindings/js/JSResizeObserverCustom.cpp @cost:3
 bindings/js/JSResizeObserverEntryCustom.cpp
 bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSServiceWorkerGlobalScopeCustom.cpp @cost:4
-bindings/js/JSShadowRealmGlobalScopeBase.cpp @cost:3
 bindings/js/JSShadowRootCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStylePropertyMapReadOnlyCustom.cpp
@@ -2397,7 +2396,6 @@ page/SecurityOrigin.cpp
 page/SecurityOriginData.cpp
 page/SecurityPolicy.cpp
 page/SettingsBase.cpp @header:RenderStyleGetters @cost:6
-page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp @header:RenderStyleGetters @cost:6
 page/TextIndicator.cpp @header:RenderStyleGetters @cost:6
@@ -5182,7 +5180,6 @@ JSServiceWorkerGlobalScope.cpp
 JSServiceWorkerRegistration.cpp @cost:3
 JSServiceWorkerUpdateViaCache.cpp
 JSServiceWorkerWindowClient.cpp
-JSShadowRealmGlobalScope.cpp
 JSShadowRoot.cpp @cost:3
 JSShadowRootInit.cpp
 JSShadowRootMode.cpp

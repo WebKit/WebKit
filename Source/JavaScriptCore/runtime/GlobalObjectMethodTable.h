@@ -88,7 +88,6 @@ struct GlobalObjectMethodTable {
     void* compileStreamingPlaceholder; // placeholders to make positional initializers consistent
     void* instantiateStreamingPlaceholder;
 #endif
-    JSGlobalObject* (*deriveShadowRealmGlobalObject)(JSGlobalObject*);
     String (*codeForEval)(JSGlobalObject*, JSValue);
     bool (*canCompileStrings)(JSGlobalObject*, CompilationType, String, const ArgList&);
     Structure* (*trustedScriptStructure)(JSGlobalObject*);

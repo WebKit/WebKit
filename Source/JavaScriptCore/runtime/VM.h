@@ -610,8 +610,6 @@ public:
     WriteBarrier<NativeExecutable> m_fastCanConstructBoundExecutable;
     WriteBarrier<NativeExecutable> m_slowCanConstructBoundExecutable;
 
-    Weak<NativeExecutable> m_fastRemoteFunctionExecutable;
-    Weak<NativeExecutable> m_slowRemoteFunctionExecutable;
 
     const Ref<DeferredWorkTimer> deferredWorkTimer;
 
@@ -765,7 +763,6 @@ public:
     NativeExecutable* getHostFunction(NativeFunction, ImplementationVisibility, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, unsigned length, const String& name);
 
     NativeExecutable* getBoundFunction(bool isJSFunction, SourceTaintedOrigin taintedness);
-    NativeExecutable* getRemoteFunction(bool isJSFunction);
 
     CodePtr<JSEntryPtrTag> getCTIInternalFunctionTrampolineFor(CodeSpecializationKind);
     MacroAssemblerCodeRef<JSEntryPtrTag> getCTIThrowExceptionFromCallSlowPath();

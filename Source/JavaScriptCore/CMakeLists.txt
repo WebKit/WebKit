@@ -110,8 +110,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/RegExpPrototype.cpp
     runtime/RegExpStringIteratorPrototype.cpp
     runtime/SetPrototype.cpp
-    runtime/ShadowRealmObject.cpp
-    runtime/ShadowRealmPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
@@ -396,7 +394,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ProxyHelpers.js
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ShadowRealmPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayPrototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/WrapForValidIteratorPrototype.js
@@ -1291,7 +1288,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSPromise.h
     runtime/JSPromiseConstructor.h
     runtime/JSPropertyNameEnumerator.h
-    runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
     runtime/JSScopeInlines.h
@@ -1412,9 +1408,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScriptExecutable.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
-    runtime/ShadowRealmConstructor.h
-    runtime/ShadowRealmObject.h
-    runtime/ShadowRealmPrototype.h
     runtime/SideDataRepository.h
     runtime/SimpleTypedArrayController.h
     runtime/SlowPathFunction.h

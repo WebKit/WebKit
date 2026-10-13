@@ -33,7 +33,6 @@ runtime/GetPutInfo.h
 runtime/JSArrayBufferConstructor.cpp
 runtime/JSCConfig.h
 runtime/JSGlobalObject.h
-runtime/JSGlobalObjectInlines.h
 runtime/PropertySlot.h
 runtime/StringReplaceCache.h
 runtime/Structure.h

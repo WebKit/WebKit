@@ -49,8 +49,6 @@
 #include "JSRTCIceCandidate.h"
 #include "JSRTCSessionDescription.h"
 #include "JSReadableStream.h"
-#include "JSShadowRealmGlobalScope.h"
-#include "JSShadowRealmGlobalScopeBase.h"
 #include "JSTrustedScript.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
@@ -59,7 +57,6 @@
 #include "RejectedPromiseTracker.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
-#include "ShadowRealmGlobalScope.h"
 #include "StructuredClone.h"
 #include "TrustedType.h"
 #include "WebCoreJSBuiltinInternals.h"
@@ -393,8 +390,6 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
         return &worklet->wrapped();
     if (auto* idb = dynamicDowncast<const JSIDBSerializationGlobalObject>(this))
         return &idb->scriptExecutionContext();
-    if (auto* shadowRealm = dynamicDowncast<const JSShadowRealmGlobalScopeBase>(this))
-        return shadowRealm->scriptExecutionContext();
 
     dataLog("Unexpected global object: ", JSValue(this), "\n");
     RELEASE_ASSERT_NOT_REACHED();
@@ -715,8 +710,6 @@ static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
             return &document->moduleLoader();
         return nullptr;
     }
-    if (auto* globalScope = dynamicDowncast<JSShadowRealmGlobalScopeBase>(*globalObject))
-        return &globalScope->wrapped().moduleLoader();
     if (auto* worker = dynamicDowncast<JSWorkerGlobalScopeBase>(*globalObject))
         return &worker->wrapped().moduleLoader();
     if (auto* worklet = dynamicDowncast<JSWorkletGlobalScopeBase>(*globalObject))
@@ -782,56 +775,6 @@ JSC::JSObject* JSDOMGlobalObject::moduleLoaderCreateImportMetaProperties(JSC::JS
 bool JSDOMGlobalObject::moduleTypeIsAllowed(JSC::ScriptFetchParameters::Type type)
 {
     return type == JSC::ScriptFetchParameters::CSS;
-}
-
-JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlobalObject* globalObject)
-{
-    auto& vm = globalObject->vm();
-
-    auto domGlobalObject = downcast<JSDOMGlobalObject>(globalObject);
-    RefPtr context = domGlobalObject->scriptExecutionContext();
-    if (RefPtr document = dynamicDowncast<Document>(context.get())) {
-        // Same-origin iframes present a difficult circumstance because the
-        // shadow realm global object cannot retain the incubating realm's
-        // global object (that would be a refcount loop); but, same-origin
-        // iframes can create objects that outlive their global object.
-        //
-        // Our solution is to walk up the parent tree of documents as far as
-        // possible while still staying in the same origin to insure we don't
-        // allow the ShadowRealm to fetch modules masquerading as the wrong
-        // origin while avoiding any lifetime issues (since the topmost document
-        // with a given wrapper world should outlive other objects in that
-        // world)
-        Ref originalOrigin = document->securityOrigin();
-        auto originalAgentClusterIdentifier = document->agentClusterIdentifier();
-        auto& originalWorld = domGlobalObject->world();
-
-        while (!document->isTopDocument()) {
-            RefPtr candidateDocument = document->parentDocument();
-            if (!candidateDocument || !isPlatformObjectSameOrigin(protect(candidateDocument->securityOrigin()), candidateDocument->agentClusterIdentifier(), originalOrigin, originalAgentClusterIdentifier))
-                break;
-
-            document = candidateDocument;
-            domGlobalObject = protect(candidateDocument->frame()->script())->globalObject(originalWorld);
-        }
-    }
-
-    ASSERT(domGlobalObject);
-    auto scope = ShadowRealmGlobalScope::create(domGlobalObject, scriptModuleLoader(domGlobalObject));
-
-    auto structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, JSC::jsNull());
-    auto proxyStructure = JSGlobalProxy::createStructure(vm, nullptr, JSC::jsNull());
-    auto proxy = JSGlobalProxy::create(vm, proxyStructure);
-    auto wrapper = JSShadowRealmGlobalScope::create(vm, structure, WTF::move(scope), proxy);
-
-    wrapper->setPrototypeDirect(vm, wrapper->objectPrototype());
-    proxy->setTarget(vm, wrapper);
-
-    wrapper->setConsoleClient(domGlobalObject->consoleClient().get());
-    if (context && !is<WorkletGlobalScope>(context.get()))
-        context->addMicrotaskGlobalObject(wrapper);
-
-    return wrapper;
 }
 
 JSC::JSObject* JSDOMGlobalObject::readableStreamByteStrategySize()

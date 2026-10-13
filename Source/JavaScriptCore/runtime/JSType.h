@@ -131,7 +131,6 @@ namespace JSC {
     macro(AsyncDisposableStackType, SpecObjectOther) \
     macro(DisposableStackType, SpecObjectOther) \
     macro(ModuleNamespaceObjectType, SpecObjectOther) \
-    macro(ShadowRealmType, SpecObjectOther) \
     macro(RegExpObjectType, SpecRegExpObject) \
     macro(JSDateType, SpecDateObject) \
     macro(ProxyObjectType, SpecProxyObject) \

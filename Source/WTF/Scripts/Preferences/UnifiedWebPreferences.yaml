@@ -5597,17 +5597,6 @@ SessionStorageEnabled:
     WebCore: false
   sharedPreferenceForWebProcess: true
 
-ShadowRealmEnabled:
-  type: bool
-  status: testable
-  category: javascript
-  humanReadableName: "ShadowRealm"
-  humanReadableDescription: "Expose the ShadowRealm object."
-  jscOptionName: useShadowRealm
-  sharedPreferenceForWebProcess: true
-  excludeFrom: [ WebKitLegacy, WebCore ]
-  defaultValue: false
-
 ShadowRootReferenceTargetEnabled:
   type: bool
   status: testable
@@ -6979,14 +6968,6 @@ WebAPIStatisticsEnabled:
   category: dom
   humanReadableName: "Web API Statistics"
   humanReadableDescription: "Enable Web API Statistics"
-  defaultValue: false
-
-WebAPIsInShadowRealmEnabled:
-  type: bool
-  status: unstable
-  category: dom
-  humanReadableName: "Web APIs in ShadowRealm"
-  humanReadableDescription: "Enable Web APIs to be exposed in ShadowRealm"
   defaultValue: false
 
 WebAnimationsCustomEffectsEnabled:

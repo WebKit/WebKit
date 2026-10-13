@@ -289,7 +289,7 @@ public:
         }
 
         if (callee) {
-            if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
+            if (callee->inherits<JSBoundFunction>() || callee->type() == ProxyObjectType)
                 return IterationStatus::Continue;
             if (callee->inherits<JSFunction>()) {
                 if (uncheckedDowncast<JSFunction>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)

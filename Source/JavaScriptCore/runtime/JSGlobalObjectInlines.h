@@ -645,23 +645,9 @@ inline bool JSGlobalObject::isOriginalTypedArrayStructure(Structure* structure, 
     return typedArrayStructureConcurrently(type, isResizableOrGrowableShared) == structure;
 }
 
-inline JSGlobalObject* JSGlobalObject::deriveShadowRealmGlobalObject(JSGlobalObject* globalObject)
-{
-    auto& vm = globalObject->vm();
-    JSGlobalObject* result = createWithCustomMethodTable(vm, createStructureForShadowRealm(vm, jsNull()), globalObject->globalObjectMethodTable());
-    return result;
-}
-
 inline Structure* JSGlobalObject::createStructure(VM& vm, JSValue prototype)
 {
     Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
-    result->setTransitionWatchpointIsLikelyToBeFired(true);
-    return result;
-}
-
-inline Structure* JSGlobalObject::createStructureForShadowRealm(VM& vm, JSValue prototype)
-{
-    Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags & ~IsImmutablePrototypeExoticObject), info());
     result->setTransitionWatchpointIsLikelyToBeFired(true);
     return result;
 }

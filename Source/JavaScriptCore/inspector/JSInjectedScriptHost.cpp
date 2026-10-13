@@ -584,15 +584,6 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
             return array;
         }
     }
-    if (JSRemoteFunction* remoteFunction = dynamicDowncast<JSRemoteFunction>(value)) {
-        unsigned index = 0;
-        JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
-        RETURN_IF_EXCEPTION(scope, JSValue());
-        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "targetFunction"_s, remoteFunction->targetFunction()));
-        RETURN_IF_EXCEPTION(scope, JSValue());
-
-        return array;
-    }
 
     if (ProxyObject* proxy = dynamicDowncast<ProxyObject>(value)) {
         unsigned index = 0;

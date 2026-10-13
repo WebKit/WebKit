@@ -64,7 +64,6 @@ $(PROJECT_DIR)/builtins/PromiseConstructor.js
 $(PROJECT_DIR)/builtins/ProxyHelpers.js
 $(PROJECT_DIR)/builtins/ReflectObject.js
 $(PROJECT_DIR)/builtins/SetPrototype.js
-$(PROJECT_DIR)/builtins/ShadowRealmPrototype.js
 $(PROJECT_DIR)/builtins/StringConstructor.js
 $(PROJECT_DIR)/builtins/TypedArrayConstructor.js
 $(PROJECT_DIR)/builtins/TypedArrayPrototype.js
@@ -194,7 +193,6 @@ $(PROJECT_DIR)/runtime/ObjectConstructor.cpp
 $(PROJECT_DIR)/runtime/ReflectObject.cpp
 $(PROJECT_DIR)/runtime/RegExpConstructor.cpp
 $(PROJECT_DIR)/runtime/SetPrototype.cpp
-$(PROJECT_DIR)/runtime/ShadowRealmPrototype.cpp
 $(PROJECT_DIR)/runtime/StringConstructor.cpp
 $(PROJECT_DIR)/runtime/StringPrototype.cpp
 $(PROJECT_DIR)/runtime/SymbolConstructor.cpp
