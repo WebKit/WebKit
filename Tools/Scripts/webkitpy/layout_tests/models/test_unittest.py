@@ -29,6 +29,7 @@
 import unittest
 
 from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test_input import TestInput
 
 
 class TestNeedsServer(unittest.TestCase):
@@ -141,3 +142,105 @@ class TestFilePathAndVariant(unittest.TestCase):
                 self.assertEqual(t.file_path + t.variant, test_path)
                 self.assertNotIn('?', t.file_path)
                 self.assertNotIn('#', t.file_path)
+
+
+class TestSortOrder(unittest.TestCase):
+    def test_empty_is_least(self):
+        self.assertLess(Test(test_path=''), Test(test_path='ab'))
+
+    def test_alphabetical(self):
+        self.assertLess(Test(test_path='a'), Test(test_path='ab'))
+        self.assertLess(Test(test_path='a'), Test(test_path='b'))
+        self.assertLess(Test(test_path='a'), Test(test_path='a2'))
+
+    def test_numeric_ordering(self):
+        self.assertLess(Test(test_path='1'), Test(test_path='2'))
+        self.assertLess(Test(test_path='1'), Test(test_path='10'))
+        self.assertLess(Test(test_path='2'), Test(test_path='10'))
+
+    def test_leading_zeros(self):
+        self.assertLess(Test(test_path='01'), Test(test_path='1'))
+        self.assertLess(Test(test_path='001'), Test(test_path='01'))
+        self.assertGreater(Test(test_path='a/foo1'), Test(test_path='a/foo01'))
+        self.assertGreater(Test(test_path='a/foo01'), Test(test_path='a/foo001'))
+
+    def test_numeric_in_filename(self):
+        self.assertLess(Test(test_path='foo_1.html'), Test(test_path='foo_2.html'))
+        self.assertLess(Test(test_path='foo_1.1.html'), Test(test_path='foo_2.html'))
+        self.assertLess(Test(test_path='foo_1.html'), Test(test_path='foo_10.html'))
+        self.assertLess(Test(test_path='foo_2.html'), Test(test_path='foo_10.html'))
+        self.assertGreater(Test(test_path='foo_23.html'), Test(test_path='foo_10.html'))
+        self.assertLess(Test(test_path='foo_23.html'), Test(test_path='foo_100.html'))
+
+    def test_numeric_directory_components(self):
+        self.assertLess(Test(test_path='a2'), Test(test_path='a10'))
+        self.assertLess(Test(test_path='a2/foo'), Test(test_path='a10/foo'))
+
+    def test_numeric_filename_components(self):
+        self.assertGreater(Test(test_path='a/foo11'), Test(test_path='a/foo2'))
+
+    def test_flat_vs_nested(self):
+        self.assertLess(Test(test_path='ab'), Test(test_path='a/a/b'))
+        self.assertGreater(Test(test_path='a/a/b'), Test(test_path='ab'))
+
+    def test_variant_is_not_part_of_the_path(self):
+        # A '/' inside a variant must not split the directory from the filename.
+        self.assertLess(Test(test_path='a/b.html?z/z'), Test(test_path='a/c.html'))
+        self.assertLess(Test(test_path='a/b.html#x/y'), Test(test_path='a/c.html'))
+        self.assertLess(Test(test_path='dir/a.html?z/z'), Test(test_path='dir/b.html?a/a'))
+        self.assertGreater(Test(test_path='dir/b.html?a/a'), Test(test_path='dir/a.html?z/z'))
+
+    def test_variants_of_one_file_are_not_ordered(self):
+        # Only the file path is compared, so variants of the same file keep
+        # their discovery order under a stable sort.
+        for first, second in (('a/b.html?c/d', 'a/b.html?z/z'), ('a/b.html?c', 'a/b.html#c')):
+            self.assertFalse(Test(test_path=first) < Test(test_path=second))
+            self.assertFalse(Test(test_path=second) < Test(test_path=first))
+        tests = [Test(test_path=p) for p in ('a/b.html?z', 'a/b.html?c', 'a/a.html?q')]
+        self.assertEqual([t.test_path for t in sorted(tests)], ['a/a.html?q', 'a/b.html?z', 'a/b.html?c'])
+
+    def test_special_characters(self):
+        self.assertLess(Test(test_path='foo-bar/baz'), Test(test_path='foo/baz'))
+        self.assertLess(Test(test_path='foo!bar/baz'), Test(test_path='foo/bar/baz'))
+        self.assertLess(Test(test_path='foo-bar/baz'), Test(test_path='foo/bar/baz'))
+        self.assertGreater(Test(test_path='foo_bar/baz'), Test(test_path='foo/bar/baz'))
+
+    def test_other_fields_do_not_affect_ordering(self):
+        t1 = Test(test_path='a', expected_text_path='x', is_http_test=False)
+        t2 = Test(test_path='a', expected_text_path='y', is_http_test=True)
+        self.assertNotEqual(t1, t2)
+        self.assertFalse(t1 < t2)
+        self.assertFalse(t2 < t1)
+        self.assertLessEqual(t1, t2)
+        self.assertGreaterEqual(t1, t2)
+
+    def test_sorted_tests(self):
+        tests = [Test(test_path=p) for p in ('a/foo10.html', 'a/foo2.html', 'a2/foo.html', 'a10/foo.html', 'a/foo02.html')]
+        self.assertEqual(
+            [t.test_path for t in sorted(tests)],
+            ['a2/foo.html', 'a10/foo.html', 'a/foo02.html', 'a/foo2.html', 'a/foo10.html'],
+        )
+
+    def test_sorted_test_inputs(self):
+        inputs = [
+            TestInput(Test(test_path=p), timeout=timeout)
+            for p, timeout in (('a/foo10.html', 1), ('a/foo2.html', 100), ('a10/foo.html', 5), ('a2/foo.html', 50))
+        ]
+        self.assertEqual(
+            [i.test_name for i in sorted(inputs)],
+            ['a2/foo.html', 'a10/foo.html', 'a/foo2.html', 'a/foo10.html'],
+        )
+
+    def test_test_input_delegates_to_test(self):
+        # TestInput's other fields (timeout, is_slow, etc.) are order=False,
+        # so ordering is purely delegated to the wrapped Test, even where
+        # equality (which does consider every field) would disagree.
+        self.assertLess(
+            TestInput(Test(test_path='a'), timeout=100),
+            TestInput(Test(test_path='b'), timeout=1),
+        )
+        same_test_different_timeout = TestInput(Test(test_path='a'), timeout=1)
+        other_timeout = TestInput(Test(test_path='a'), timeout=100)
+        self.assertFalse(same_test_different_timeout < other_timeout)
+        self.assertFalse(other_timeout < same_test_different_timeout)
+        self.assertNotEqual(same_test_different_timeout, other_timeout)

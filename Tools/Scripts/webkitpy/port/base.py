@@ -546,31 +546,6 @@ class Port(object):
         expectations.parse_all_expectations()
         return CRASH not in expectations.filtered_expectations_for_test(test_name, False, False)
 
-    def test_key(self, test_name):
-        """Turns a test name into a list with two sublists, the natural key of the
-        dirname, and the natural key of the basename.
-
-        This can be used when sorting paths so that files in a directory.
-        directory are kept together rather than being mixed in with files in
-        subdirectories."""
-        dirname, basename = self.split_test(test_name)
-        return (self._natural_sort_key(dirname + self.TEST_PATH_SEPARATOR), self._natural_sort_key(basename))
-
-    def _natural_sort_key(self, string_to_split):
-        """ Turns a string into a list of string and number chunks, i.e. "z23a" -> ["z", 23, "a"]
-
-        This can be used to implement "natural sort" order. See:
-        http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html
-        http://nedbatchelder.com/blog/200712.html#e20071211T054956
-        """
-        def tryint(val):
-            try:
-                return int(val)
-            except ValueError:
-                return val
-
-        return [(tryint(chunk), chunk) for chunk in re.split(r'(\d+)', string_to_split)]
-
     @memoized
     def test_isfile(self, test_name):
         """Return True if the test name refers to a directory of tests."""

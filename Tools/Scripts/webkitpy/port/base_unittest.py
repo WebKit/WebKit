@@ -45,10 +45,6 @@ from webkitpy.thirdparty.mock import patch
 from webkitcorepy import OutputCapture
 from webkitscmpy import mocks
 
-
-def cmp(a, b):
-    return (a > b) - (a < b)
-
 class PortTest(unittest.TestCase):
     def setUp(self):
         Config._clear_cache_for_testing()
@@ -357,58 +353,6 @@ class PortTest(unittest.TestCase):
                 'timestamp': 1601668000,
                 'order': 1,
             }], port.commits_for_upload())
-
-
-class NaturalCompareTest(unittest.TestCase):
-    def setUp(self):
-        self._port = TestPort(MockSystemHost())
-
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(self._port._natural_sort_key(x), self._port._natural_sort_key(y)), result)
-
-    def test_natural_compare(self):
-        self.assert_cmp('a', 'a', 0)
-        self.assert_cmp('ab', 'a', 1)
-        self.assert_cmp('a', 'ab', -1)
-        self.assert_cmp('', '', 0)
-        self.assert_cmp('', 'ab', -1)
-        self.assert_cmp('01', '1', -1)
-        self.assert_cmp('001', '1', -1)
-        self.assert_cmp('001', '01', -1)
-        self.assert_cmp('1', '2', -1)
-        self.assert_cmp('2', '1', 1)
-        self.assert_cmp('1', '10', -1)
-        self.assert_cmp('2', '10', -1)
-        self.assert_cmp('foo_1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_2.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_23.html', 'foo_10.html', 1)
-        self.assert_cmp('foo_23.html', 'foo_100.html', -1)
-
-
-class KeyCompareTest(unittest.TestCase):
-    def setUp(self):
-        self._port = TestPort(MockSystemHost())
-
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(self._port.test_key(x), self._port.test_key(y)), result)
-
-    def test_test_key(self):
-        self.assert_cmp('/a', '/a', 0)
-        self.assert_cmp('/a', '/b', -1)
-        self.assert_cmp('/a', '/a2', -1)
-        self.assert_cmp('/a2', '/a10', -1)
-        self.assert_cmp('/a2/foo', '/a10/foo', -1)
-        self.assert_cmp('/a/foo11', '/a/foo2', 1)
-        self.assert_cmp('/a/foo1', '/a/foo01', 1)
-        self.assert_cmp('/a/foo01', '/a/foo001', 1)
-        self.assert_cmp('/ab', '/a/a/b', -1)
-        self.assert_cmp('/a/a/b', '/ab', 1)
-        self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
-        self.assert_cmp('/foo!bar/baz', '/foo/bar/baz', -1)
-        self.assert_cmp('/foo-bar/baz', '/foo/bar/baz', -1)
-        self.assert_cmp('/foo_bar/baz', '/foo/bar/baz', 1)
 
 
 class TestNameAndVariantTest(unittest.TestCase):

@@ -40,7 +40,7 @@ from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     LayoutTestFinder,
     _is_reference_html_file,
 )
-from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test import Test, _file_path_sort_key
 from webkitpy.port.test import (
     TestPort,
     add_unit_tests_to_mock_filesystem,
@@ -91,7 +91,7 @@ class LayoutTestFinderTestsBase(object):
     def test_find_no_paths_sorted(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path([])]
-        sorted_tests = sorted(tests, key=self.port.test_key)
+        sorted_tests = sorted(tests, key=_file_path_sort_key)
         self.assertEqual(tests, sorted_tests)
 
     def test_find_all_no_paths(self):
@@ -707,7 +707,7 @@ class LayoutTestFinderTestsBase(object):
             fs.write_text_file(fs.join("order", d, "test.html"), "1")
 
         tests = [t.test_path for t in finder.find_tests_by_path(["order"])]
-        sorted_tests = sorted(tests, key=self.port.test_key)
+        sorted_tests = sorted(tests, key=_file_path_sort_key)
         self.assertEqual(tests, sorted_tests)
         self.assertEqual(
             tests,
