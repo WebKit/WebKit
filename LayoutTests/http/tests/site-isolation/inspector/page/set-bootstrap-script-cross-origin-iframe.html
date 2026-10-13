@@ -1,0 +1,132 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+let frameCount = 0;
+let lastFrame = null;
+
+function addFrame(path) {
+    lastFrame = document.createElement("iframe");
+    lastFrame.src = `${path}?${++frameCount}`;
+    lastFrame.onload = (event) => { TestPage.dispatchEventToFrontend("FrameLoaded", event.target.src); };
+    document.body.appendChild(lastFrame);
+}
+
+function addCrossOriginFrame(file) {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    addFrame(`http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/${file}`);
+}
+
+function lastFrameState() {
+    let frameWindow = lastFrame.contentWindow;
+    return JSON.stringify({
+        seenByFirstScript: frameWindow.seenByFirstScript ?? null,
+        value: frameWindow.bootstrapValue ?? null,
+        runCount: frameWindow.bootstrapRunCount ?? 0,
+    });
+}
+
+function test() {
+    const frameStateExpression = `JSON.stringify({
+        seenByFirstScript: window.seenByFirstScript ?? null,
+        value: window.bootstrapValue ?? null,
+        runCount: window.bootstrapRunCount ?? 0,
+    })`;
+
+    function bootstrapSource(value) {
+        return `window.bootstrapValue = "${value}"; window.bootstrapRunCount = (window.bootstrapRunCount || 0) + 1;`;
+    }
+
+    async function addFrameAndGetState(expression) {
+        let [frameLoadedEvent] = await Promise.all([
+            InspectorTest.awaitEvent("FrameLoaded"),
+            InspectorTest.evaluateInPage(expression),
+        ]);
+        let url = frameLoadedEvent.data;
+        let target = await waitForFrameTargetForURLContaining(url.substring(url.lastIndexOf("/") + 1));
+        InspectorTest.assert(target instanceof WI.FrameTarget, "Should resolve the committed frame target.");
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: frameStateExpression, objectGroup: "test", returnByValue: true});
+        return JSON.parse(response.result.value);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetBootstrapScriptCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.CrossOriginFrameInNewProcess",
+        description: "A cross-origin iframe loaded in a new process should run the bootstrap script before its own scripts.",
+        async test() {
+            InspectorTest.assert(!WI.networkManager.bootstrapScript, "Should not already have a bootstrap script.");
+
+            InspectorTest.log("Setting bootstrap script...");
+            await WI.networkManager.createBootstrapScript(bootstrapSource("first"));
+            WI.networkManager.bootstrapScriptEnabled = true;
+
+            InspectorTest.log("Adding cross-origin iframe...");
+            let state = await addFrameAndGetState(`addCrossOriginFrame("bootstrap-frame.html")`);
+            InspectorTest.expectEqual(state.value, "first", "Cross-origin iframe should have run the bootstrap script.");
+            InspectorTest.expectEqual(state.seenByFirstScript, "first", "Bootstrap script should run before the cross-origin iframe's first script.");
+            InspectorTest.expectEqual(state.runCount, 1, "Bootstrap script should run exactly once in the cross-origin iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.CrossOriginScriptlessFrame",
+        description: "A cross-origin iframe without scripts should run the bootstrap script exactly once.",
+        async test() {
+            InspectorTest.log("Adding script-less cross-origin iframe...");
+            let state = await addFrameAndGetState(`addCrossOriginFrame("bootstrap-scriptless-frame.html")`);
+            InspectorTest.expectEqual(state.value, "first", "Script-less cross-origin iframe should have run the bootstrap script.");
+            InspectorTest.expectEqual(state.runCount, 1, "Bootstrap script should run exactly once in the script-less cross-origin iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.SameOriginFrame",
+        description: "A same-origin iframe shares the main frame's process and should still run the bootstrap script exactly once.",
+        async test() {
+            InspectorTest.log("Adding same-origin iframe...");
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoaded"),
+                InspectorTest.evaluateInPage(`addFrame("resources/bootstrap-frame.html")`),
+            ]);
+            let state = JSON.parse(await InspectorTest.evaluateInPage(`lastFrameState()`));
+            InspectorTest.expectEqual(state.seenByFirstScript, "first", "Bootstrap script should run before the same-origin iframe's first script.");
+            InspectorTest.expectEqual(state.runCount, 1, "Bootstrap script should run exactly once in the same-origin iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.EditedScript",
+        description: "Editing the bootstrap script should apply to the next cross-origin iframe, including in an existing process.",
+        async test() {
+            InspectorTest.log("Editing bootstrap script...");
+            WI.networkManager.bootstrapScript.currentRevision.updateRevisionContent(bootstrapSource("second"));
+
+            InspectorTest.log("Adding cross-origin iframe...");
+            let state = await addFrameAndGetState(`addCrossOriginFrame("bootstrap-frame.html")`);
+            InspectorTest.expectEqual(state.seenByFirstScript, "second", "Cross-origin iframe should run the edited bootstrap script.");
+            InspectorTest.expectEqual(state.runCount, 1, "Edited bootstrap script should run exactly once in the cross-origin iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetBootstrapScript.DisabledScript",
+        description: "Disabling the bootstrap script should stop it from running in the next cross-origin iframe.",
+        async test() {
+            InspectorTest.log("Disabling bootstrap script...");
+            WI.networkManager.bootstrapScriptEnabled = false;
+
+            InspectorTest.log("Adding cross-origin iframe...");
+            let state = await addFrameAndGetState(`addCrossOriginFrame("bootstrap-frame.html")`);
+            InspectorTest.expectEqual(state.value, null, "Cross-origin iframe should not run a disabled bootstrap script.");
+            InspectorTest.expectEqual(state.runCount, 0, "Disabled bootstrap script should not run in the cross-origin iframe.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.setBootstrapScript is injected into cross-origin iframes under site isolation.</p>
+</body>

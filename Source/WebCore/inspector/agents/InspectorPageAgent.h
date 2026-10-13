@@ -128,6 +128,8 @@ public:
     String loaderId(DocumentLoader*);
     RefPtr<LocalFrame> assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
+    static void evaluateBootstrapScript(LocalFrame&, const String& source);
+
 private:
     double timestamp();
 

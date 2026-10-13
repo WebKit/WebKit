@@ -299,12 +299,16 @@ RefPtr<CachedResource> cachedResource(const LocalFrame* frame, const URL& url)
 
     RefPtr cachedResource = protect(protect(frame->document())->cachedResourceLoader())->cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
     if (!cachedResource) {
+        RefPtr page = frame->page();
+        if (!page)
+            return nullptr;
+
         ResourceRequest request(URL { url });
         if (RefPtr document = frame->document()) {
             request.setShouldBlockThirdPartyStorage(document->shouldBlockThirdPartyStorage());
             request.setFirstPartyForCookies(document->firstPartyForCookies());
         }
-        cachedResource = MemoryCache::singleton().resourceForRequest(request, frame->page()->sessionID());
+        cachedResource = MemoryCache::singleton().resourceForRequest(request, page->sessionID());
     }
 
     return cachedResource;

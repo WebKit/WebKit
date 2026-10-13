@@ -205,6 +205,11 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // exactly once per (process, page) registration, guarded above.
     if (m_showPaintRects)
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
+
+    // Sent before the provisional frame's load is allowed to start (see WebFrameProxy::prepareForProvisionalLoadInProcess),
+    // so the first document committed in a new process already sees the script.
+    if (!m_bootstrapScript.isEmpty())
+        webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { m_bootstrapScript }, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -234,6 +239,19 @@ void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webPro
         m_pinnedInstrumentedProcesses.remove(processID);
 }
 
+void ProxyingPageAgent::forEachInstrumentedProcess(NOESCAPE const Function<void(WebProcessProxy&, PageIdentifier)>& function)
+{
+    for (auto& [key, _] : m_instrumentedProcessPageCounts) {
+        auto [processID, pageID] = key;
+        auto it = m_pinnedInstrumentedProcesses.find(processID);
+        ASSERT(it != m_pinnedInstrumentedProcesses.end());
+        if (it == m_pinnedInstrumentedProcesses.end())
+            continue;
+        Ref webProcess = it->value;
+        function(webProcess.get(), pageID);
+    }
+}
+
 CommandResult<void> ProxyingPageAgent::enable()
 {
     Ref<WebPageProxy> inspectedPage = m_inspectedPage.get();
@@ -259,29 +277,20 @@ CommandResult<void> ProxyingPageAgent::disable()
     m_enabled = false;
     m_cachedFrameDocumentInfo.clear();
 
-    // Reset so a later frontend reconnect doesn't replay a stale "on" toggle via
+    // Reset so a later frontend reconnect doesn't replay a stale toggle or script via
     // enableInstrumentationForProcess. The processes are torn down below, so no "off" send is needed.
     m_showPaintRects = false;
+    m_bootstrapScript = { };
 
     // Force-teardown: disable all processes unconditionally, bypassing the
     // refcount discipline in disableInstrumentationForProcess(). This is
     // correct because disable() is called when the Page domain is torn
     // down entirely -- no per-frame refcount preservation is needed.
-    //
-    // Iterate the registration map, not forEachWebContentProcess(): under
-    // Site Isolation a process may have swapped out while still holding our
-    // message receiver, in which case forEachWebContentProcess() would no
-    // longer enumerate it. The pinned process refs (see m_pinnedInstrumentedProcesses)
-    // keep the WebProcessProxy alive long enough for the send + remove below.
-    for (auto& [key, _] : m_instrumentedProcessPageCounts) {
-        auto [processID, pageID] = key;
-        auto it = m_pinnedInstrumentedProcesses.find(processID);
-        ASSERT(it != m_pinnedInstrumentedProcesses.end());
-        if (it == m_pinnedInstrumentedProcesses.end())
-            continue;
-        Ref webProcess = it->value;
-        webProcess->send(Messages::WebInspectorBackend::DisablePageInstrumentation { }, pageID);
-    }
+    // The pinned process refs (see m_pinnedInstrumentedProcesses) keep the
+    // WebProcessProxy alive long enough for the send + remove below.
+    forEachInstrumentedProcess([](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::DisablePageInstrumentation { }, pageID);
+    });
     removeAllRegisteredReceivers();
 
     return { };
@@ -505,9 +514,18 @@ void ProxyingPageAgent::getResourceContent(const Protocol::Network::FrameId& fra
         *targetPageID);
 }
 
-// FIXME: <https://webkit.org/b/308897> Cross-process bootstrap script injection.
-CommandResult<void> ProxyingPageAgent::setBootstrapScript(const String&)
+// Only the frontend may set this: relaying the script from a WebContent process would let one site inject script into another site's process.
+CommandResult<void> ProxyingPageAgent::setBootstrapScript(const String& source)
 {
+    if (!m_enabled)
+        return { };
+
+    m_bootstrapScript = source;
+
+    forEachInstrumentedProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { source }, pageID);
+    });
+
     return { };
 }
 
@@ -702,8 +720,7 @@ CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
 {
     m_showPaintRects = show;
 
-    Ref inspectedPage = m_inspectedPage.get();
-    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+    forEachInstrumentedProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { show }, pageID);
     });
 

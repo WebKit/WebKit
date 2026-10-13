@@ -1,0 +1,33 @@
+Test that Page.setBootstrapScript is injected into cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.SetBootstrapScriptCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.CrossOriginFrameInNewProcess
+Setting bootstrap script...
+Adding cross-origin iframe...
+PASS: Cross-origin iframe should have run the bootstrap script.
+PASS: Bootstrap script should run before the cross-origin iframe's first script.
+PASS: Bootstrap script should run exactly once in the cross-origin iframe.
+
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.CrossOriginScriptlessFrame
+Adding script-less cross-origin iframe...
+PASS: Script-less cross-origin iframe should have run the bootstrap script.
+PASS: Bootstrap script should run exactly once in the script-less cross-origin iframe.
+
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.SameOriginFrame
+Adding same-origin iframe...
+PASS: Bootstrap script should run before the same-origin iframe's first script.
+PASS: Bootstrap script should run exactly once in the same-origin iframe.
+
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.EditedScript
+Editing bootstrap script...
+Adding cross-origin iframe...
+PASS: Cross-origin iframe should run the edited bootstrap script.
+PASS: Edited bootstrap script should run exactly once in the cross-origin iframe.
+
+-- Running test case: SiteIsolation.Page.SetBootstrapScript.DisabledScript
+Disabling bootstrap script...
+Adding cross-origin iframe...
+PASS: Cross-origin iframe should not run a disabled bootstrap script.
+PASS: Disabled bootstrap script should not run in the cross-origin iframe.
+

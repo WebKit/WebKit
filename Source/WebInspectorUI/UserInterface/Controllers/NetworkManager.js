@@ -266,6 +266,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             // that finished before the frontend attached, so fold in the aggregated tree now that
             // ProxyingPageAgent is live.
             this._requestAggregatedResourceTree();
+
+            if (this._bootstrapScript && this._bootstrapScriptEnabledSetting.value && WI.backendTarget?.hasCommand("Page.setBootstrapScript"))
+                WI.backendTarget.PageAgent.setBootstrapScript(this._bootstrapScript.content);
         }
     }
 
@@ -420,12 +423,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._bootstrapScriptEnabledSetting.value = !!enabled;
 
         let source = this._bootstrapScriptEnabledSetting.value ? this._bootstrapScript.content : undefined;
-
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
-        for (let target of WI.targets) {
-            if (target.hasCommand("Page.setBootstrapScript"))
-                target.PageAgent.setBootstrapScript(source);
-        }
+        this._setBootstrapScriptSource(source);
 
         this.dispatchEventToListeners(NetworkManager.Event.BootstrapScriptEnabledChanged, {bootstrapScript: this._bootstrapScript});
     }
@@ -480,11 +478,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._bootstrapScript = null;
         WI.objectStores.general.delete(NetworkManager.bootstrapScriptSourceObjectStoreKey);
 
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
-        for (let target of WI.targets) {
-            if (target.hasCommand("Page.setBootstrapScript"))
-                target.PageAgent.setBootstrapScript();
-        }
+        this._setBootstrapScriptSource(undefined);
 
         this.dispatchEventToListeners(NetworkManager.Event.BootstrapScriptDestroyed, {bootstrapScript});
     }
@@ -1937,8 +1931,19 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!this._bootstrapScriptEnabledSetting.value)
             return;
 
-        // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
-        for (let target of WI.targets) {
+        this._setBootstrapScriptSource(source);
+    }
+
+    _setBootstrapScriptSource(source)
+    {
+        let targets = WI.targets;
+
+        // `WI.targets` excludes the WebPage target, whose ProxyingPageAgent forwards the script to cross-origin frames' processes under Site Isolation.
+        if (this._enabledPageForSiteIsolation && WI.backendTarget && !targets.includes(WI.backendTarget))
+            targets = [...targets, WI.backendTarget];
+
+        for (let target of targets) {
+            // COMPATIBILITY (iOS 13.0): Page.setBootstrapScript did not exist yet.
             if (target.hasCommand("Page.setBootstrapScript"))
                 target.PageAgent.setBootstrapScript(source);
         }

@@ -82,8 +82,8 @@ public:
     virtual void applyUserAgentOverride(String&) = 0;
     virtual void applyEmulatedMedia(AtomString&) = 0;
 
-    // Bootstrap script injection
-    virtual void didClearWindowObjectInWorld(WebCore::LocalFrame&, WebCore::DOMWrapperWorld&) = 0;
+    // Bootstrap script injection: InspectorInstrumentation evaluates the returned script, because evaluating it here could destroy this agent.
+    virtual String bootstrapScriptToEvaluate(WebCore::DOMWrapperWorld&) = 0;
 
     // Overlay / paint rect hooks
     virtual void didPaint(WebCore::RenderObject&, const WebCore::LayoutRect&) = 0;

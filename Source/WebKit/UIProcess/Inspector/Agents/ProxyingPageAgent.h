@@ -120,6 +120,10 @@ private:
 
     void removeAllRegisteredReceivers();
 
+    // Use this, not WebPageProxy::forEachWebContentProcess(): that misses registered processes the page has swapped out of, and
+    // includes processes holding only a remote page that were never registered, so state sent there outlives disable().
+    void forEachInstrumentedProcess(NOESCAPE const Function<void(WebKit::WebProcessProxy&, WebCore::PageIdentifier)>&);
+
     Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId, const HashMap<WebCore::FrameIdentifier, FrameResourceData>& resourcesByFrame) const;
 
     const UniqueRef<PageFrontendDispatcher> m_frontendDispatcher;
@@ -129,9 +133,10 @@ private:
     bool m_enabled { false };
     HashMap<std::pair<WebCore::ProcessIdentifier, WebCore::PageIdentifier>, unsigned> m_instrumentedProcessPageCounts;
 
-    // Latest paint-rects toggle, fanned out to every WebContent process and replayed to any
-    // process that registers later (e.g. a cross-origin navigation spawns a new one).
+    // Latest paint-rects toggle and bootstrap script, sent to every instrumented process and replayed
+    // to any process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
+    String m_bootstrapScript;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed
