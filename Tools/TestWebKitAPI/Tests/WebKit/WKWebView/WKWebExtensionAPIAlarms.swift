@@ -299,13 +299,10 @@ struct WKWebExtensionAPIAlarmsTests {
 
                 browser.alarms.onAlarm.addListener(listener)
 
-                browser.test.assertFalse(await browser.alarms.clearAll(), 'Should return false when there are no alarms.')
-
                 browser.alarms.create('one', { delayInMinutes: 0.01 })
                 browser.alarms.create('two', { delayInMinutes: 0.1 })
 
-                browser.test.assertTrue(await browser.alarms.clearAll(), 'Should return true when alarms were cleared.')
-                browser.test.assertFalse(await browser.alarms.clearAll(), 'Should return false once all alarms are gone.')
+                browser.test.assertTrue(await browser.alarms.clearAll() === undefined)
 
                 setTimeout(() => {
                   browser.test.notifyPass()

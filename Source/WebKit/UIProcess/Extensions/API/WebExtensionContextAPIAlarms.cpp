@@ -72,14 +72,11 @@ void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensio
     completionHandler(WTF::move(alarms));
 }
 
-void WebExtensionContext::alarmsClearAll(CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::alarmsClearAll(CompletionHandler<void()>&& completionHandler)
 {
-    // Per MDN, only return true if there are alarms to clear.
-    bool success = !m_alarmMap.isEmpty();
-
     m_alarmMap.clear();
 
-    completionHandler(success);
+    completionHandler();
 }
 
 void WebExtensionContext::fireAlarmsEventIfNeeded(const WebExtensionAlarm& alarm)

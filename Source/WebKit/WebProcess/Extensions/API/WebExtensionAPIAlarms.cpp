@@ -153,8 +153,8 @@ void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clearAll
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](bool success) {
-        callback->call(JSValueMakeBoolean(callback->globalContext(), success));
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)] {
+        callback->call();
     }, extensionContext().identifier());
 }
 
