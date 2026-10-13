@@ -1628,7 +1628,7 @@ inline bool PropertyParserCustom::consumeGridTemplateShorthand(CSSParserTokenRan
         // Handle leading <line-names>?.
         auto previousLineNames = std::exchange(lineNames, consumeUnresolvedGridLineNames(range, state));
         if (lineNames && !lineNames->isEmpty()) {
-            if (!previousLineNames)
+            if (!previousLineNames || previousLineNames->isEmpty())
                 templateRowsTrackList.value.value.append(CSS::GridTrackList::Track { WTF::move(*lineNames) });
             else {
                 CSS::GridLineNames combinedLineNames;
