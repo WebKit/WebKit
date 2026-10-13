@@ -230,6 +230,7 @@ public:
     inline String attributeTrimmedWithDefaultARIA(const QualifiedName&) const;
 
     inline bool isDrawable() const;
+    bool isInsideDrawableCanvas() const;
     bool isCanvasDrawable() const;
 
     enum class TopLayerElementType : bool { Other, Popover };

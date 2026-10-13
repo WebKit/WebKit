@@ -1,0 +1,23 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<body>
+<canvas id="canvas" width="200" height="200" content="drawable">
+    <!-- Offset so a composited child rendered directly on the page doesn't overlap the drawn snapshot. -->
+    <div id="box" drawable style="margin-left: 100px; width: 100px; height: 100px;">
+        <div style="width: 64px; height: 64px; background-color: green; will-change: transform;"></div>
+    </div>
+</canvas>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function runTest() {
+        document.getElementById('canvas').getContext('2d').drawElementImage(document.getElementById('box'), 0, 0);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+</body>
+</html>

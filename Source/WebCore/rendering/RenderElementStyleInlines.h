@@ -59,6 +59,12 @@ inline bool RenderElement::isCanvasDrawable() const
     return element && element->isCanvasDrawable();
 }
 
+inline bool RenderElement::isInsideDrawableCanvas() const
+{
+    RefPtr element = this->element();
+    return element && element->isInsideDrawableCanvas();
+}
+
 inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse) const
 {
     auto shouldApplyLayoutOrPaintContainment = [this](const auto& style) {

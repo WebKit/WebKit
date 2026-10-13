@@ -1342,6 +1342,7 @@ private:
     bool update3DTransformedDescendantStatus();
 
     bool isInsideSVGForeignObject() const { return m_insideSVGForeignObject; }
+    bool isInsideDrawableCanvas() const { return m_insideDrawableCanvas; }
 
     void createReflection();
     void removeReflection();
@@ -1474,6 +1475,7 @@ private:
     bool m_hasPaginatedAncestor : 1 { false };
 
     bool m_insideSVGForeignObject : 1;
+    bool m_insideDrawableCanvas : 1 { false };
     bool m_isHiddenByOverflowTruncation : 1 { false };
 
     bool m_hasDescendantNeedingEventRegionUpdate : 1 { false };

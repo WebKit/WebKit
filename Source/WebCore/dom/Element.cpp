@@ -970,16 +970,18 @@ bool Element::isFocusable() const
     return hasFocusableStyle();
 }
 
-bool Element::isCanvasDrawable() const
+bool Element::isInsideDrawableCanvas() const
 {
-    if (!isDrawable())
-        return false;
-
     RefPtr canvasElement = ancestorsOfType<HTMLCanvasElement>(*this).first();
     if (!canvasElement)
         return false;
 
     return canvasElement->hasDrawableContent();
+}
+
+bool Element::isCanvasDrawable() const
+{
+    return isDrawable() && isInsideDrawableCanvas();
 }
 
 bool Element::isUserActionElementInActiveChain() const

@@ -2006,10 +2006,13 @@ void RenderLayer::updateAncestorDependentState()
             insideSVGForeignObject = true;
     }
 
-    if (insideSVGForeignObject == m_insideSVGForeignObject)
+    bool insideDrawableCanvas = renderer().settings().htmlInCanvasEnabled() && renderer().isInsideDrawableCanvas();
+
+    if (insideSVGForeignObject == m_insideSVGForeignObject && insideDrawableCanvas == m_insideDrawableCanvas)
         return;
 
     m_insideSVGForeignObject = insideSVGForeignObject;
+    m_insideDrawableCanvas = insideDrawableCanvas;
     updateSelfPaintingLayer();
 }
 

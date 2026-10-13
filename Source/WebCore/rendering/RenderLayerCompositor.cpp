@@ -3365,7 +3365,7 @@ bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
             return false;
 
         // Drawable canvas descendants can only be recorded.
-        if (layer.renderer().isCanvasDrawable())
+        if (layer.isInsideDrawableCanvas())
             return false;
 
         if (layer.renderer().isSVGLayerAwareRenderer() && layer.isFlattenedByEnclosingSVGReferenceFilter())
