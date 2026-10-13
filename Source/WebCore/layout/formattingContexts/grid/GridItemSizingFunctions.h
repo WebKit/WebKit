@@ -37,6 +37,7 @@ class GridFormattingContext;
 class IntegrationUtils;
 class PlacedGridItem;
 struct AxisConstraint;
+struct UsedMargins;
 
 // When resolving intrinsic track sizes, the track sizing algorithm queries each
 // grid item for a few different sizes: its min-content contribution, its
@@ -46,7 +47,7 @@ struct AxisConstraint;
 // All three are outer sizes.
 struct GridItemSizingFunctions {
     GridItemSizingFunctions(Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContributionFunction, Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContributionFunction,
-        Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSizeFunction)
+        Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSizeFunction)
             : minContentContribution(WTF::move(minContentContributionFunction))
             , maxContentContribution(WTF::move(maxContentContributionFunction))
             , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
@@ -58,7 +59,7 @@ struct GridItemSizingFunctions {
 
     Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContribution;
     Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContribution;
-    Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSize;
+    Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSize;
 };
 
 } // namespace Layout

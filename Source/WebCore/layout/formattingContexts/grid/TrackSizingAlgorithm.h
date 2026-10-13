@@ -28,6 +28,7 @@
 #include "AxisConstraint.h"
 #include "ExtraSpaceDistributor.h"
 #include "GridItemSizingFunctions.h"
+#include "GridLayoutUtils.h"
 #include "GridTypeAliases.h"
 #include "LayoutUnit.h"
 #include "PlacedGridItem.h"
@@ -47,6 +48,7 @@ struct TrackSizingItem {
     const PlacedGridItem& gridItem;
     const ComputedSizes computedSizes;
     const LayoutUnit borderAndPadding;
+    const UsedMargins usedMargins;
     const WTF::Range<size_t> spannedLines;
     const std::optional<LayoutUnit> oppositeAxisConstraint;
 };

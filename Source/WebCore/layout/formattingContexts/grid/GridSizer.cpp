@@ -115,7 +115,7 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), { }).first;
         auto gridAreaBlockSize = gridAreaBlockSizeForFirstIterationColumnSizing(gridItem, definiteRowSizesForFirstColumnSizing, layoutState.usedRowGap);
-        return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding,
+        return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes()),
             { gridItem.columnStartLine(), gridItem.columnEndLine() }, gridAreaBlockSize };
     });
 
@@ -134,7 +134,7 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
         auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutState.usedColumnGap);
         auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
-        return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding,
+        return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding, GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes()),
             { gridItem.rowStartLine(), gridItem.rowEndLine() }, gridAreaInlineSize };
     });
 
