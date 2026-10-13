@@ -39,6 +39,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -577,7 +578,18 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     if (!marker)
         return { };
 
-    if (listMarkerHasContent(marker->style(), protect(document())) || listMarkerImage(marker->style()))
+    // css-lists-3 §3.3: with a non-normal `content` the marker says whatever its content renderers hold, unless the
+    // author gave it alternative text (css-content-3 §1.2).
+    if (listMarkerHasContent(marker->style(), protect(document()))) {
+        if (auto altText = marker->style().content().altText(); !altText.isNull())
+            return altText;
+        StringBuilder text;
+        for (auto& textRenderer : descendantsOfType<RenderText>(*marker))
+            text.append(textRenderer.text());
+        return text.toString();
+    }
+
+    if (listMarkerImage(marker->style()))
         return { };
 
     auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));

@@ -1,0 +1,18 @@
+This test makes sure the text of a ::marker with content is part of its list item's text, the way the text of a list-style-type marker is.
+
+PASS: textOf('outsideContent') === 'foobar'
+PASS: textOf('outsideType') === 'foobar'
+PASS: textOf('insideContent') === 'foobar'
+PASS: textOf('insideType') === 'foobar'
+PASS: textOf('outsideAlt') === 'foobar'
+PASS: textOf('insideAlt') === 'foobar'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+bar
+bar
+bar
+bar
+bar
+bar
