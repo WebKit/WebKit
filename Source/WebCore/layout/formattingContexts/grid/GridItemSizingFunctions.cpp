@@ -72,8 +72,6 @@ static std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t en
 
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
 {
-    // The opposite-axis constraint is part of the shared callback signature (blockAxis() uses it), but
-    // inline-axis intrinsic sizes don't depend on it while grid items with a preferred aspect ratio are unsupported.
     return {
         [&integrationUtils](const PlacedGridItem& gridItem, std::optional<LayoutUnit> gridAreaBlockSize) {
             UNUSED_PARAM(gridAreaBlockSize);
@@ -87,7 +85,6 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
         // progress: the available space is not yet known, so it is absent for the automatic minimum size
         // and percentage/calc() minimum sizes resolve against a zero containing block size.
         [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, const UsedMargins& usedMargins, std::optional<LayoutUnit> gridAreaBlockSize, LayoutUnit gapSize, const AxisConstraint& axisConstraint) {
-            UNUSED_PARAM(gridAreaBlockSize);
             auto& inlineAxisSizes = gridItem.inlineAxisSizes();
             auto borderBoxSize = WTF::switchOn(inlineAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
@@ -101,7 +98,7 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
                 },
                 [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumInlineSize = gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), trackSizingFunctions, gapSize, axisConstraint);
-                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils, usedMargins);
+                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils, gridAreaBlockSize, usedMargins);
                 },
                 [](const auto&) {
                     ASSERT_NOT_IMPLEMENTED_YET();
