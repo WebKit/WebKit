@@ -27,6 +27,7 @@
 #import "NetworkStorageSession.h"
 
 #import "CookieStorageObserver.h"
+#import "Logging.h"
 #import <WebCore/ClientOrigin.h>
 #import <WebCore/Cookie.h>
 #import <WebCore/CookieJar.h>
@@ -121,10 +122,21 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     completionHandler(hasCookieForDomain);
 }
 
+constexpr Seconds allowlistedCookieLifetime { 24_h * 365 };
+
 static bool isAllowlistedCookieName(const String& name)
 {
     // To be implemented.
     return false;
+}
+
+static String cookieNameFromSetCookieString(const String& cookieString)
+{
+    StringView view { cookieString };
+    auto separator = view.find('=');
+    if (separator != notFound)
+        view = view.left(static_cast<unsigned>(separator));
+    return view.trim(isASCIIWhitespace<char16_t>).toString();
 }
 
 void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -152,6 +164,62 @@ void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomai
             [cookieStorage setCookie:newCookie];
         END_BLOCK_OBJC_EXCEPTIONS
         completionHandler();
+    });
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *oldCookie in oldCookiesToDelete.get())
+        deleteHTTPCookie(cookieStorage().get(), oldCookie, [aggregator] { });
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void NetworkStorageSession::extendLifetimeOfAllowlistedCookies(const RegistrableDomain& domain)
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
+
+    RetainPtr<NSMutableArray<NSHTTPCookie *>> oldCookiesToDelete = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray<NSHTTPCookie *>> newCookiesToAdd = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr newExpiryDate = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:allowlistedCookieLifetime.seconds()]);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
+        if (nsCookie.isSessionOnly || !nsCookie.expiresDate)
+            continue;
+
+        if (nsCookie.expiresDate.timeIntervalSinceNow >= allowlistedCookieLifetime.seconds())
+            continue;
+
+        String cookieName { nsCookie.name };
+        if (!isAllowlistedCookieName(cookieName))
+            continue;
+
+        String cookieDomain { nsCookie.domain };
+        if (cookieDomain.startsWith('.'))
+            cookieDomain = cookieDomain.substring(1);
+        if (RegistrableDomain::uncheckedCreateFromHost(cookieDomain) != domain)
+            continue;
+
+        RELEASE_LOG(Storage, "NetworkStorageSession::extendLifetimeOfAllowlistedCookies: extending %" PUBLIC_LOG_STRING " for %" PUBLIC_LOG_STRING, cookieName.utf8(), domain.string().utf8());
+
+        [oldCookiesToDelete addObject:nsCookie];
+        RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> mutableProperties = adoptNS([[nsCookie properties] mutableCopy]);
+        mutableProperties.get()[NSHTTPCookieExpires] = newExpiryDate.get();
+        RetainPtr extendedCookie = adoptNS([[NSHTTPCookie alloc] initWithProperties:mutableProperties.get()]);
+        if (extendedCookie)
+            [newCookiesToAdd addObject:extendedCookie.get()];
+    }
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    if (![oldCookiesToDelete count])
+        return;
+
+    auto aggregator = CallbackAggregator::create([newCookiesToAdd = WTF::move(newCookiesToAdd), cookieStorage = RetainPtr { nsCookieStorage() }] mutable {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSHTTPCookie *newCookie in newCookiesToAdd.get())
+            [cookieStorage setCookie:newCookie];
+        END_BLOCK_OBJC_EXCEPTIONS
     });
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -237,6 +305,8 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
         return;
 
     auto cookieCap = clientSideCookieCap(RegistrableDomain { firstParty }, requiresScriptTrackingPrivacy, webPageProxyID);
+    if (cookieCap && m_extendAllowlistedCookieLifetime && requiresScriptTrackingPrivacy == RequiresScriptTrackingPrivacy::No && isAllowlistedCookieName(cookieNameFromSetCookieString(cookieString)))
+        cookieCap = std::max(*cookieCap, allowlistedCookieLifetime);
     CookieStorageSession::setCookiesFromDOM(firstParty, sameSiteInfo, url, cookieString, thirdPartyCookieBlockingDecision, cookieCap, cookiePartitionIdentifierIfEnabled(firstParty));
 }
 
@@ -247,6 +317,8 @@ bool NetworkStorageSession::setCookieFromDOM(const URL& firstParty, const SameSi
         return false;
 
     auto expiryCap = clientSideCookieCap(RegistrableDomain { firstParty }, requiresScriptTrackingPrivacy, webPageProxyID);
+    if (expiryCap && m_extendAllowlistedCookieLifetime && requiresScriptTrackingPrivacy == RequiresScriptTrackingPrivacy::No && isAllowlistedCookieName(cookie.name))
+        expiryCap = std::max(*expiryCap, allowlistedCookieLifetime);
     return CookieStorageSession::setCookieFromDOM(firstParty, sameSiteInfo, url, cookie, thirdPartyCookieBlockingDecision, expiryCap, cookiePartitionIdentifierIfEnabled(firstParty));
 }
 

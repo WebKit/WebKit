@@ -208,6 +208,9 @@ public:
     void LEGACY_NODELETE setAgeCapForClientSideCookies(std::optional<Seconds>);
     void setExemptAllowlistedCookiesFromITP(bool exempt) { m_exemptAllowlistedCookiesFromITP = exempt; }
     bool exemptAllowlistedCookiesFromITP() const { return m_exemptAllowlistedCookiesFromITP; }
+    void setExtendAllowlistedCookieLifetime(bool extend) { m_extendAllowlistedCookieLifetime = extend; }
+    bool extendAllowlistedCookieLifetime() const { return m_extendAllowlistedCookieLifetime; }
+    void extendLifetimeOfAllowlistedCookies(const WebCore::RegistrableDomain&);
     bool hasStorageAccess(const WebCore::RegistrableDomain& resourceDomain, const WebCore::RegistrableDomain& firstPartyDomain, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>) const;
     Vector<String> getAllStorageAccessEntries() const;
     void grantStorageAccess(const WebCore::RegistrableDomain& resourceDomain, const WebCore::RegistrableDomain& firstPartyDomain, std::optional<WebCore::FrameIdentifier>, WebPageProxyIdentifier);
@@ -310,6 +313,7 @@ private:
     HashMap<WebPageProxyIdentifier, WebCore::RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
     bool m_exemptAllowlistedCookiesFromITP { false };
+    bool m_extendAllowlistedCookieLifetime { false };
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
     HashSet<WebCore::RegistrableDomain> m_managedDomains;

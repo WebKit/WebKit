@@ -307,6 +307,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
     setExemptAllowlistedCookiesFromITP(parameters.resourceLoadStatisticsParameters.exemptAllowlistedCookiesFromITP);
+    setExtendAllowlistedCookieLifetime(parameters.resourceLoadStatisticsParameters.extendAllowlistedCookieLifetime);
 
     setShouldSendPrivateTokenIPCForTesting(parameters.shouldSendPrivateTokenIPCForTesting);
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
@@ -539,6 +540,12 @@ void NetworkSession::setExemptAllowlistedCookiesFromITP(bool exempt)
 {
     if (CheckedPtr storageSession = networkStorageSession())
         storageSession->setExemptAllowlistedCookiesFromITP(exempt);
+}
+
+void NetworkSession::setExtendAllowlistedCookieLifetime(bool extend)
+{
+    if (CheckedPtr storageSession = networkStorageSession())
+        storageSession->setExtendAllowlistedCookieLifetime(extend);
 }
 
 void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain)

@@ -1752,6 +1752,11 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforce
     protect(networkProcess())->setShouldEnbleSameSiteStrictEnforcementForTesting(m_sessionID, flag, WTF::move(completionHandler));
 }
 
+void WebsiteDataStore::setExtendAllowlistedCookieLifetime(bool extend)
+{
+    protect(networkProcess())->setExtendAllowlistedCookieLifetime(m_sessionID, extend, [] { });
+}
+
 void WebsiteDataStore::setExemptAllowlistedCookiesFromITP(bool exempt)
 {
     protect(networkProcess())->setExemptAllowlistedCookiesFromITP(m_sessionID, exempt, [] { });

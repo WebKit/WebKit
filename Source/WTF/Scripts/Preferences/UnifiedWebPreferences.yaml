@@ -2299,6 +2299,14 @@ ExposeSpeakersWithoutMicrophoneEnabled:
     default: false
     WebCore: false
 
+ExtendAllowlistedCookieLifetime:
+  type: bool
+  status: unstable
+  category: privacy
+  humanReadableName: "Extend Allowlisted Cookie Lifetime"
+  humanReadableDescription: "Extend lifetime of allowlisted cookies to 1 year after most recent visit, on a rolling basis"
+  defaultValue: false
+
 ExtendedAudioDescriptionsEnabled:
   type: bool
   status: stable

@@ -222,6 +222,12 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
         });
     }
 
+    if (key == WebPreferencesKey::extendAllowlistedCookieLifetimeKey()) {
+        WebsiteDataStore::forEachWebsiteDataStore([value](WebsiteDataStore& dataStore) {
+            dataStore.setExtendAllowlistedCookieLifetime(value);
+        });
+    }
+
     update(); // FIXME: Only send over the changed key and value.
 }
 
