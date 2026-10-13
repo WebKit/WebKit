@@ -366,16 +366,12 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 
 IntSize RenderImage::imageContainerSize() const
 {
-    return hasNaturalAspectRatio()
-        ? flooredIntSize(replacedContentRect().size())
-        : flooredIntSize(contentBoxRect().size());
+    return flooredIntSize(replacedContentRect().size());
 }
 
 LayoutRect RenderImage::imagePaintRect() const
 {
-    return hasNaturalAspectRatio()
-        ? computePaintRectForObjectViewBox(replacedContentRect())
-        : contentBoxRect();
+    return computePaintRectForObjectViewBox(replacedContentRect());
 }
 
 NaturalDimensions RenderImage::zoomedNaturalDimensions() const
@@ -543,11 +539,6 @@ bool RenderImage::isShowingMissingOrImageError() const
 bool RenderImage::isShowingAltText() const
 {
     return isShowingMissingOrImageError() && !m_altText.isEmpty();
-}
-
-bool RenderImage::hasNaturalAspectRatio() const
-{
-    return imageResource().naturalDimensions().hasUsableAspectRatio();
 }
 
 String RenderImage::accessibilityDescription() const
@@ -763,7 +754,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     contentBoxRect.moveBy(paintOffset);
 
-    auto replacedContentRect = hasNaturalAspectRatio() ? this->replacedContentRect() : this->contentBoxRect();
+    auto replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
     auto paintRect = imagePaintRect();

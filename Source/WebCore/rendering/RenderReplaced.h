@@ -50,7 +50,7 @@ public:
 
     // Returns the full content rect scaled so the view-box sub-region maps onto destRect,
     // or destRect itself when object-view-box is not set.
-    LayoutRect computePaintRectForObjectViewBox(const LayoutRect& destRect) const { return computePaintRectForObjectViewBox(destRect, intrinsicSize()); }
+    LayoutRect computePaintRectForObjectViewBox(const LayoutRect& destRect) const;
     LayoutRect computePaintRectForObjectViewBox(const LayoutRect& destRect, const LayoutSize& intrinsicSize) const;
 
     // False only when object-view-box has a negative inset, making the view box a superset
@@ -118,6 +118,8 @@ protected:
     virtual NaturalDimensions zoomedNaturalDimensions() const;
 
 private:
+    std::optional<LayoutSize> zoomedNaturalSize() const;
+
     LayoutUnit computeConstrainedLogicalWidth() const;
 
     template<typename SizeType> LayoutUnit computeReplacedLogicalWidthUsing(const SizeType& logicalWidth) const;

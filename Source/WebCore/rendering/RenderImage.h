@@ -166,8 +166,6 @@ private:
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
 
-    bool hasNaturalAspectRatio() const;
-
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
     bool imageRepresentsNothing() const;

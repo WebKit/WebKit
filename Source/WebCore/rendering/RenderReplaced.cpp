@@ -665,6 +665,13 @@ bool RenderReplaced::objectViewBoxIsContainedWithinNaturalSize() const
     return FloatRect({ }, FloatSize(intrinsicSize())).contains(*viewBox);
 }
 
+LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect) const
+{
+    if (auto naturalSize = zoomedNaturalSize())
+        return computePaintRectForObjectViewBox(destRect, *naturalSize);
+    return destRect;
+}
+
 LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect, const LayoutSize& intrinsicSize) const
 {
     if (auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize)))
@@ -687,6 +694,14 @@ static LayoutRect placeConcreteObject(const Style::ComputedStyle& style, const L
 NaturalDimensions RenderReplaced::zoomedNaturalDimensions() const
 {
     return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
+}
+
+std::optional<LayoutSize> RenderReplaced::zoomedNaturalSize() const
+{
+    auto naturalDimensions = zoomedNaturalDimensions();
+    if (!naturalDimensions.width || !naturalDimensions.height)
+        return std::nullopt;
+    return LayoutSize { FloatSize { *naturalDimensions.width, *naturalDimensions.height } };
 }
 
 LayoutRect RenderReplaced::replacedContentRect() const
