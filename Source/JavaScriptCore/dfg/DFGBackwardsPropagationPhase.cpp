@@ -562,17 +562,20 @@ private:
         }
 
         case LogicalNot: {
+            // The result is a boolean, so how it is used says nothing about how the operand is
+            // observed. The operand is compared against zero, so truncation is observable but -0 is not.
+            NodeFlags childFlags = NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther;
             switch (node->child1()->op()) {
             case ValueMod:
             case ArithMod:
-                // We can clear this flag since Mod and Div never produces Infinity. It is only NaN.
-                flags &= ~NodeBytecodeNeedsNaNOrInfinity;
+                // Mod never produces Infinity. This lets Mod return 0 instead of NaN for a zero
+                // divisor, which is fine here because NaN and 0 are both falsy.
+                childFlags &= ~NodeBytecodeNeedsNaNOrInfinity;
                 break;
             default:
                 break;
             }
-            flags &= ~NodeBytecodeNeedsNegZero;
-            node->child1()->mergeFlags(flags);
+            node->child1()->mergeFlags(childFlags);
             break;
         }
 
