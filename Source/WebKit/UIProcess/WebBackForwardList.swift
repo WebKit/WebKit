@@ -998,14 +998,18 @@ final class WebBackForwardList {
         return result
     }
 
-    private func addChildItem(parentFrameID: WebCore.FrameIdentifier, frameState: WebKit.RefFrameState) {
+    private func addChildItem(
+        parentFrameID: WebCore.FrameIdentifier,
+        frameState: WebKit.RefFrameState
+    ) -> WebCore.BackForwardItemIdentifier? {
         guard let currentItem = currentEntry() else {
-            return
+            return nil
         }
         guard let parentItem = currentItem.mainFrameItem().childItemForFrameID(parentFrameID) else {
-            return
+            return nil
         }
         parentItem.setChild(consuming: frameState)
+        return currentItem.identifier()
     }
 
     func setBackForwardItemIdentifier(frameState: WebKit.FrameState, itemID: WebCore.BackForwardItemIdentifier) {
@@ -1146,7 +1150,11 @@ final class WebBackForwardList {
         if targetFrame.isPendingInitialHistoryItem() {
             targetFrame.setIsPendingInitialHistoryItem(false)
             if let parent = targetFrame.parentFrame() {
-                addChildItem(parentFrameID: parent.frameID(), frameState: navigatedFrameState)
+                // The child now has the identifier of the item it was added to. Updates from the frame's process have to
+                // carry it to find the child.
+                if let itemID = addChildItem(parentFrameID: parent.frameID(), frameState: navigatedFrameState) {
+                    sendDidAddHistoryItemToBackForwardItem(process.ptr(), targetFrame.frameID(), navigatedFrameState.ptr(), itemID)
+                }
             }
             return
         }

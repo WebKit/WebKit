@@ -93,4 +93,7 @@ WebKit::FrameState* frameStateChildAtIndex(const WebKit::FrameState&, size_t ind
 // WebCore::Page is not visible to Swift.
 unsigned maxFrameStateDepthForMessageCheck();
 
+// Message types are not visible to Swift.
+void sendDidAddHistoryItemToBackForwardItem(WebKit::WebProcessProxy&, WebCore::FrameIdentifier, const WebKit::FrameState&, const WebCore::BackForwardItemIdentifier&);
+
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)
