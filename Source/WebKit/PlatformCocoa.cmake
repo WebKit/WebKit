@@ -82,8 +82,8 @@ set(WebKit_ENTITLEMENTS_DEPENDS
     ${WEBKIT_DIR}/Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def
 )
 
-# The iOS process extensions build with fixed entitlements, from
-# Shared/AuxiliaryProcessExtensions.
+# The iOS process extensions generate theirs in WEBKIT_IOS_EXTENSION, where
+# their targets are created.
 if (NOT USE_EXTENSIONKIT)
     webkit_generate_entitlements(WebProcess
         USING Scripts/process-entitlements.sh
@@ -2231,12 +2231,17 @@ function(WEBKIT_DEFINE_PROCESS_EXTENSIONS)
             "LINKER:-e,_NSExtensionMain"
         )
 
-        # Simulator: embed only. Device: embed and pass to codesign.
-        WEBKIT_EMBED_ENTITLEMENTS(${_name} ${_entitlements})
+        # Simulator: embed only. Device: embed and pass to codesign the
+        # per-product entitlements from process-entitlements.sh.
         if (NOT WEBKIT_SDK_IS_SIMULATOR)
-            set_property(TARGET ${_name} PROPERTY
-                CODE_SIGN_ENTITLEMENTS "${_entitlements}")
+            WEBKIT_GENERATE_ENTITLEMENTS(${_name}
+                USING Scripts/process-entitlements.sh
+                DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
+                BUNDLE_IDENTIFIER ${_bundle_id}
+                PRODUCT_NAME ${_name})
+            get_target_property(_entitlements ${_name} CODE_SIGN_ENTITLEMENTS)
         endif ()
+        WEBKIT_EMBED_ENTITLEMENTS(${_name} ${_entitlements})
 
         WEBKIT_EXECUTABLE(${_name})
     endfunction()
