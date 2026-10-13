@@ -2664,8 +2664,10 @@ webkit.org/b/327426 [ Debug arm64 ] http/wpt/webauthn/public-key-credential-get-
 webkit.org/b/327429 [ Debug arm64 ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html [ Pass Failure ]
 webkit.org/b/327433 [ arm64 ] http/wpt/background-fetch/background-fetch-click.window.html [ Pass Failure ]
 
-#webkit.org/b/327439 [macOS] css3/images/cross-fade-svg-size-diff.html (layout-tests) is a constant ImageOnlyFailure.
+# webkit.org/b/327439 macOS css3/images/cross-fade-svg-size-diff.html (layout-tests) is a constant ImageOnlyFailure.
 [ Sequoia x86_64 ] css3/images/cross-fade-svg-size-diff.html [ ImageOnlyFailure ]
 [ GoldenGate ] css3/images/cross-fade-svg-size-diff.html [ ImageOnlyFailure ]
 
 webkit.org/b/327445 [ Debug arm64 ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-path-ignored.window.html [ Pass Failure ]
+
+webkit.org/b/319930 [ Release ] media/video-webkit-playsinline.html [ Pass Timeout ]
