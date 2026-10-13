@@ -62,6 +62,8 @@ PASS: TimelineRecording should be imported.
 PASS: TimelineRecording should have a startTime.
 PASS: TimelineRecording should have a endTime.
 PASS: TimelineRecording identifier should be 999.
+PASS: Import should preserve the saved event markers.
+PASS: A readonly recording should not store live page event markers.
 Display Name:
 Imported - TEST
 

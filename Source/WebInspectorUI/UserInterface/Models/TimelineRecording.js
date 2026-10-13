@@ -303,6 +303,9 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     addEventMarker(marker)
     {
+        if (this._readonly && !this.__importing)
+            return;
+
         this._exportDataMarkers.push(marker);
 
         if (!this._capturing && !this.__importing)
