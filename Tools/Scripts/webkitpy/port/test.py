@@ -26,15 +26,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import time
 
 from webkitcorepy import string_utils
 
-from webkitpy.port.base import Port
-from webkitpy.port.driver import Driver, DriverOutput
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
+from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
+from webkitpy.port.base import Port
+from webkitpy.port.driver import Driver, DriverOutput
 from webkitpy.port.image_diff import ImageDiffResult
 
 
@@ -52,7 +54,7 @@ class TestInstance(object):
         self.error = ''
         self.timeout = False
         self.is_reftest = False
-        self.is_wpt_crash_test = False
+        self.is_crash_test = False
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
@@ -281,24 +283,24 @@ layer at (0,0) size 800x34
     tests.add('imported/w3c/web-platform-tests/some/new.html',
         expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.https.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-pass-crash.tentative.html',
-        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='some output', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-timeout-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/some/test-crash-crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_wpt_crash_test=True, crash=True, error='mock-crash-stderr')
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, is_crash_test=True, crash=True, error='mock-crash-stderr')
 
     tests.add('imported/w3c/web-platform-tests/crashtests/pass.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/timeout.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, timeout=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/crash.html',
-        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_wpt_crash_test=True)
+        expected_text=None, actual_text=None, actual_image=None, actual_checksum=None, crash=True, is_crash_test=True)
     tests.add('imported/w3c/web-platform-tests/crashtests/dir/test.html',
-        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_wpt_crash_test=True)
+        expected_text=None, actual_text='ok', actual_image=None, actual_checksum=None, is_crash_test=True)
 
     tests.add('variant/variant.any.html')
 
@@ -320,6 +322,22 @@ TEST_DIR = '/mock-checkout'
 def add_unit_tests_to_mock_filesystem(filesystem):
     # Add the test_expectations file.
     filesystem.maybe_make_directory(LAYOUT_TEST_DIR + '/platform/test')
+
+    # Apache's aliases, as in the real aliases.json: several alias directories
+    # of tests (such as media/), which must not be mistaken for test roots.
+    aliases_path = filesystem.join(WebKitFinder(filesystem).webkit_base(), 'Tools', 'Scripts', 'webkitpy', 'layout_tests', 'servers', 'aliases.json')
+    filesystem.maybe_make_directory(filesystem.dirname(aliases_path))
+    filesystem.write_text_file(aliases_path, json.dumps([
+        ['/ipc/coreipc.js', 'ipc/coreipc.js'],
+        ['/js-test-resources', 'resources'],
+        ['/media-resources', 'media'],
+        ['/modern-media-controls', '../Source/WebCore/Modules/modern-media-controls'],
+        ['/resources/testharness.css', 'resources/testharness.css'],
+        ['/resources/testharness.js', 'resources/testharness.js'],
+        ['/resources/testharnessreport.js', 'resources/testharnessreport.js'],
+        ['/root', '.'],
+    ]))
+
     if not filesystem.exists(LAYOUT_TEST_DIR + '/platform/test/TestExpectations'):
         filesystem.write_text_file(LAYOUT_TEST_DIR + '/platform/test/TestExpectations', """
 Bug(test) failures/expected/crash.html [ Crash ]
@@ -354,6 +372,19 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
     if not filesystem.exists(w3c_resources_path + 'resource-files.json'):
         filesystem.maybe_make_directory(w3c_resources_path)
         filesystem.write_text_file(w3c_resources_path + 'resource-files.json', '{"directories": [], "files": []}')
+    if not filesystem.exists(w3c_resources_path + 'config.json'):
+        filesystem.write_text_file(w3c_resources_path + 'config.json', json.dumps({
+            "ports": {"http": [8800], "https": [8800], "h2": [9000], "ws": [9001], "wss": [9444]},
+            "browser_host": "localhost",
+            "alternate_hosts": {"alt": "not-localhost"},
+            "ssl": {"openssl": {"base_path": "/tmp"}},
+            "aliases": [
+                {"url-path": "/resources/testharnessreport.js", "local-dir": "../../../resources/"},
+                {"url-path": "/resources/testdriver-vendor.js", "local-dir": "../../../resources/"},
+                {"url-path": "/webkit-test-resources/", "local-dir": "../../../resources/"},
+                {"url-path": "/WebKit/", "local-dir": "../../../http/wpt/"},
+            ],
+        }))
 
     # FIXME: This test was only being ignored because of missing a leading '/'.
     # Fixing the typo causes several tests to assert, so disabling the test entirely.
@@ -378,7 +409,7 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
         add_file(test, test.name[test.name.rfind('.'):], '')
         if test.is_reftest:
             continue
-        if test.is_wpt_crash_test:
+        if test.is_crash_test:
             continue
         if test.actual_audio:
             add_file(test, '-expected.wav', test.expected_audio)

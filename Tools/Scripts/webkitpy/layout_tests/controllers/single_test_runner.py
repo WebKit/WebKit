@@ -220,7 +220,7 @@ class SingleTestRunner(object):
             comparison_header = 'SiteIsolationEnabled=true'
             if self._reference_files:
                 return self._run_self_comparison_test(comparison_header)
-            if self._test_input.test.is_wpt_crash_test:
+            if self._test_input.test.is_crash_test:
                 return self._run_wpt_crash_test(comparison_header)
             return self._run_self_comparison_without_reference_test(comparison_header)
         if self._reference_files:
@@ -230,7 +230,7 @@ class SingleTestRunner(object):
                 result.type = test_expectations.SKIP
                 return result
             return self._run_reftest()
-        if self._test_input.test.is_wpt_crash_test:
+        if self._test_input.test.is_crash_test:
             return self._run_wpt_crash_test()
         if self._options.reset_results:
             return self._run_rebaseline()

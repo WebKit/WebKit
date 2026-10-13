@@ -33,7 +33,8 @@ import unittest
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port import test
-from webkitpy.layout_tests.servers.apache_http_server import LayoutTestApacheHttpd
+from webkitpy.layout_tests.models.server_routing import ServerRoute, ServerType
+from webkitpy.layout_tests.servers.apache_http_server import LayoutTestApacheHttpd, test_routes
 
 from webkitcorepy import OutputCapture
 
@@ -67,3 +68,10 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
             server.stop()
 
         self.assertTrue(host.filesystem.exists("/mock/output_dir/httpd.conf"))
+
+    def test_test_routes(self):
+        test_port = test.TestPort(MockHost())
+        self.assertEqual(
+            test_routes(test_port),
+            [ServerRoute("http/tests", "/", ServerType.HTTP)],
+        )

@@ -28,6 +28,7 @@ import urllib
 from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
+from webkitpy.layout_tests.models.server_routing import ServerType
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
@@ -98,7 +99,7 @@ def natsort(string_to_split):
 
 
 class LayoutTestFinder(object):
-    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths):
+    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths, test_routes=None):
         """Find layout tests.
 
         :param FileSystem fs: the current filesystem object
@@ -106,6 +107,9 @@ class LayoutTestFinder(object):
             (see: Port.layout_tests_dir())
         :param List[str] baseline_search_paths: the baseline search paths, from most to
             least specific (see: Port.baseline_search_path(device_type))
+        :param Optional[List[ServerRoute]] test_routes: the server routes
+            (see: Port.test_routes()); each test_file_dir is compared as a
+            string against "/"-separated test names
         """
         self.fs = fs
 
@@ -116,6 +120,7 @@ class LayoutTestFinder(object):
 
         self.layout_tests_base_dir = layout_tests_base_dir
         self.baseline_search_paths = baseline_search_paths
+        self.test_routes = test_routes or []
 
         self.w3c_support_dirs, self.w3c_support_files = self._load_w3c_resource_data()
 
@@ -435,6 +440,16 @@ class LayoutTestFinder(object):
                 self.fs.isabs(ref_path) for (_, ref_path) in reference_files
             )
 
+            server_type = ServerType.FILE
+            for route in self.test_routes:
+                if trimmed_path.startswith(route.test_file_dir + "/"):
+                    server_type = server_type | route.server_type
+                    break
+            if not (server_type & ServerType.WPT) and "websocket" in trimmed_path + variant:
+                server_type = server_type | ServerType.WEBSOCKET
+
+            is_crash_test = bool(server_type & ServerType.WPT) and self.is_wpt_crash_test(trimmed_path)
+
             yield Test(
                 test_path=trimmed_path + variant,
                 expected_text_path=expected_text_path,
@@ -443,17 +458,8 @@ class LayoutTestFinder(object):
                 reference_files=(
                     tuple(reference_files) if reference_files is not None else None
                 ),
-                is_http_test=trimmed_path.startswith("http/tests/"),
-                is_websocket_test=(
-                    "websocket/" in trimmed_path
-                    or "http/test" in trimmed_path
-                    and "websocket" in trimmed_path + variant
-                ),
-                is_wpt_test=(
-                    trimmed_path.startswith(IMPORTED_WPT_DIR + "/")
-                    or trimmed_path.startswith(LOCAL_WPT_PATH + "/")
-                ),
-                is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
+                served_by=server_type,
+                is_crash_test=is_crash_test,
             )
 
     def _find_variants(self, f):

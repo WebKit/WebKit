@@ -44,10 +44,13 @@ class TestInput(object):
     test = attr.ib(type=Test)  # ordering delegates to Test's __lt__ etc.
     timeout = attr.ib(default=None, order=False)  # type: Union[None, int, str]
     is_slow = attr.ib(default=None, order=False)  # type: Optional[bool]
-    needs_servers = attr.ib(default=None, order=False)  # type: Optional[bool]
     should_dump_jsconsolelog_in_stderr = attr.ib(default=None, order=False)  # type: Optional[bool]
     should_run_pixel_test = attr.ib(default=None, order=False)  # type: Optional[bool]
     expected_results = attr.ib(default=None, order=False)  # type: Optional[FrozenSet[int]]
+
+    @property
+    def needs_servers(self):
+        return self.test.needs_any_server
 
     @property
     def test_name(self):

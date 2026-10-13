@@ -161,7 +161,7 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
     def test_dispatch_basic(self):
         for path, command in [
             ('passes/text.html', '{d}/passes/text.html'),
-            # is_websocket_test via the "websocket/" directory, but since the
+            # Classified as a websocket test via the "websocket" substring, but since the
             # websocket server only starts when http or wpt also starts (see
             # layout_test_runner.py:121), and this test needs neither, no
             # server actually starts.
@@ -247,10 +247,10 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
                 'imported/w3c/foo/web-platform-tests/text.html',
                 '{d}/imported/w3c/foo/web-platform-tests/text.html',
             ),
-            # Contains the substring "websocket", but is_websocket_test also
-            # requires being under http/tests/ (or the "websocket/"
-            # directory itself), so this near-miss path needs no server at
-            # all — same as origin/main.
+            # Contains the substring "websocket", so it is classified as a
+            # websocket test, but that only starts the websocket server when
+            # http or wpt also starts; this path needs neither, so no server
+            # starts at all — same as origin/main.
             ('passes/text.html?websockets', '{d}/passes/text.html?websockets'),
         ]:
             with self.subTest(name=path):
@@ -265,8 +265,8 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
             # origin/main's is_http_test is `"http/test" in trimmed_path` —
             # an unanchored substring match on "http/test" (singular), so it
             # also fires on "http/testing/" or anywhere else those
-            # characters appear. HEAD's is_http_test anchors on
-            # trimmed_path.startswith("http/tests/"), so a path that merely
+            # characters appear. HEAD's routing table anchors on
+            # trimmed_path.startswith(prefix + "/"), so a path that merely
             # contains "http/test" without being rooted there is correctly
             # classified as needing no server. On origin/main this
             # classifies as needing the http server.
@@ -281,8 +281,8 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
             # Same shape of divergence: origin/main's is_wpt_test is
             # `IMPORTED_WPT_DIR + "/" in trimmed_path` — an unanchored
             # substring check — while HEAD anchors on
-            # trimmed_path.startswith(IMPORTED_WPT_DIR + "/"). On origin/main
-            # this classifies as needing the wpt server.
+            # trimmed_path.startswith(prefix + "/"). On origin/main this
+            # classifies as needing the wpt server.
             (
                 'weird/imported/w3c/web-platform-tests/foo.html',
                 '{d}/weird/imported/w3c/web-platform-tests/foo.html',
