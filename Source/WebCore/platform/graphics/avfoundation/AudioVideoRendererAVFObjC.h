@@ -247,6 +247,12 @@ private:
     void flushAudioTrack(TrackIdentifier);
     void removeBlockedSamples(NOESCAPE const Function<bool(TrackIdentifier)>& = { });
     void notifyRequiresFlushToResume();
+    void requestVideoDataWhenReady(TrackIdentifier);
+    void cancelVideoDataRequest();
+    void clearReadyToRequestVideoData();
+    void requestAudioDataWhenReady(TrackIdentifier);
+    void setReadyToRequestVideoData();
+    void setReadyToRequestAudioData(TrackIdentifier);
 
     void cancelSeekingPromiseIfNeeded();
     void cancelPerformTaskAtTimeObserverIfNeeded();
@@ -333,6 +339,8 @@ private:
 
     HashMap<TrackIdentifier, AudioTrackProperties> m_audioTracksMap;
     std::optional<RequestPromise::AutoRejectProducer> m_requestVideoPromise;
+    // Tracks the pending VideoMediaSampleRenderer::requestMediaDataWhenReady() callback.
+    const Ref<NativePromiseRequest> m_videoDataRequest { NativePromiseRequest::create() };
     bool m_readyToRequestVideoData { true };
     bool m_hasEverSubmittedVideoSample { false };
 

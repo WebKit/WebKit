@@ -42,6 +42,7 @@
 #import <wtf/MainThreadDispatcher.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/NativePromise.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -175,9 +176,13 @@ Ref<GenericPromise> VideoMediaSampleRenderer::changeRenderer(WebSampleBufferVide
 
     m_displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderer);
 
-    if (!isUsingDecompressionSession() && previousRenderer) {
-        [previousRenderer flush];
-        [previousRenderer stopRequestingMediaData];
+    if (!isUsingDecompressionSession()) {
+        if (previousRenderer) {
+            [previousRenderer flush];
+            [previousRenderer stopRequestingMediaData];
+        }
+        if (renderer)
+            resetReadyForMoreMediaData();
     }
 
     return invokeAsync(dispatcher(), [weakThis = ThreadSafeWeakPtr { *this }, renderer = WTF::move(videoRenderer)] {
@@ -193,6 +198,8 @@ Ref<GenericPromise> VideoMediaSampleRenderer::changeRenderer(WebSampleBufferVide
             protectedThis->purgeDecodedSampleQueue(protectedThis->m_flushId);
             for (Ref sample : protectedThis->m_decodedSampleQueue)
                 [renderer enqueueSampleBuffer:protect(sample->platformSample().cmSampleBuffer())];
+            protectedThis->m_waitingForMoreMediaData = false;
+            protectedThis->maybeBecomeReadyForMoreMediaData();
         }
         return GenericPromise::createAndResolve();
     });
@@ -291,11 +298,12 @@ void VideoMediaSampleRenderer::maybeBecomeReadyForMoreMediaData()
             return;
         m_waitingForMoreMediaData = true;
         ThreadSafeWeakPtr weakThis { *this };
+        WeakObjCPtr<WebSampleBufferVideoRendering> weakRenderer { renderer.get() };
         [renderer requestMediaDataWhenReadyOnQueue:protect(dispatchQueue()) usingBlock:^{
+            [protect(weakRenderer) stopRequestingMediaData];
             if (RefPtr protectedThis = weakThis.get()) {
                 assertIsCurrent(protectedThis->dispatcher().get());
                 protectedThis->m_waitingForMoreMediaData = false;
-                [protect(protectedThis->rendererOrDisplayLayer()) stopRequestingMediaData];
                 protectedThis->maybeBecomeReadyForMoreMediaData();
             }
         }];
@@ -312,20 +320,24 @@ void VideoMediaSampleRenderer::maybeBecomeReadyForMoreMediaData()
         assertIsMainThread();
         if (RefPtr protectedThis = weakThis.get()) {
             protectedThis->m_waitingForMoreMediaDataPending = false;
-            if (protectedThis->m_readyForMoreMediaDataFunction)
-                protectedThis->m_readyForMoreMediaDataFunction();
+            protectedThis->resolveRequestMediaDataIfNeeded();
         }
     });
+}
+
+void VideoMediaSampleRenderer::resolveRequestMediaDataIfNeeded()
+{
+    assertIsMainThread();
+
+    if (auto producer = std::exchange(m_requestMediaDataProducer, std::nullopt))
+        producer->resolve();
 }
 
 void VideoMediaSampleRenderer::stopRequestingMediaData()
 {
     assertIsMainThread();
 
-    // Destroy the readyForMoreMediaDataFunction in the next runloop to protect
-    // against re-entrancy if clients call into stopRequestingMediaData() during
-    // an invocation of readyForMoreMediaDataFunction.
-    callOnMainThread([readyForMoreMediaDataFunction = std::exchange(m_readyForMoreMediaDataFunction, nullptr)] { });
+    m_requestMediaDataProducer.reset();
 
     if (isUsingDecompressionSession()) {
         // stopRequestingMediaData may deadlock if used on the main thread while enqueuing on the workqueue
@@ -945,6 +957,7 @@ void VideoMediaSampleRenderer::shutdown()
 {
     assertIsMainThread();
 
+    m_requestMediaDataProducer.reset();
     clearTimebase();
     [protect(renderer()) flush];
     cancelTimer();
@@ -956,24 +969,38 @@ void VideoMediaSampleRenderer::shutdown()
     if (decompressionSession)
         decompressionSession->invalidate();
 
-    if (RetainPtr renderer = this->renderer()) {
+    RetainPtr renderer = this->renderer();
+    if (renderer) {
         [renderer flush];
         [renderer stopRequestingMediaData];
     }
+
+#if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
+    if (isUsingDecompressionSession()) {
+        // stopRequestingMediaData may deadlock if used on the main thread while enqueuing on the workqueue
+        dispatcher()->dispatch([videoRenderer = RetainPtr { videoRendererFor(renderer.get()) }] {
+            [videoRenderer stopRequestingMediaData];
+        });
+    }
+#endif
 }
 
-void VideoMediaSampleRenderer::requestMediaDataWhenReady(Function<void()>&& function)
+Ref<GenericPromise> VideoMediaSampleRenderer::requestMediaDataWhenReady()
 {
     assertIsMainThread();
-    m_readyForMoreMediaDataFunction = WTF::move(function);
+
+    m_requestMediaDataProducer.emplace();
+    Ref promise = m_requestMediaDataProducer->promise();
     resetReadyForMoreMediaData();
+    return promise;
 }
 
 void VideoMediaSampleRenderer::resetReadyForMoreMediaData()
 {
     assertIsMainThread();
 
-    if (!renderer() || isUsingDecompressionSession()) {
+    RetainPtr renderer = this->renderer();
+    if (!renderer || isUsingDecompressionSession()) {
         dispatcher()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->maybeBecomeReadyForMoreMediaData();
@@ -981,16 +1008,16 @@ void VideoMediaSampleRenderer::resetReadyForMoreMediaData()
         return;
     }
 
+    if (!m_requestMediaDataProducer)
+        return;
+
     ThreadSafeWeakPtr weakThis { *this };
-    [protect(renderer()) requestMediaDataWhenReadyOnQueue:mainDispatchQueueSingleton() usingBlock:^{
+    WeakObjCPtr<WebSampleBufferVideoRendering> weakRenderer { renderer.get() };
+    [renderer requestMediaDataWhenReadyOnQueue:mainDispatchQueueSingleton() usingBlock:^{
         assertIsMainThread();
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-        if (![protect(protectedThis->renderer()) isReadyForMoreMediaData])
-            return;
-        if (protectedThis->m_readyForMoreMediaDataFunction)
-            protectedThis->m_readyForMoreMediaDataFunction();
+        [protect(weakRenderer) stopRequestingMediaData];
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->resolveRequestMediaDataIfNeeded();
     }];
 }
 

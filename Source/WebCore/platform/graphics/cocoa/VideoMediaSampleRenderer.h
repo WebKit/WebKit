@@ -38,6 +38,7 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -82,7 +83,7 @@ public:
     RetainPtr<CMTimebaseRef> timebase() const;
 
     bool isReadyForMoreMediaData() const;
-    void requestMediaDataWhenReady(Function<void()>&&);
+    Ref<GenericPromise> requestMediaDataWhenReady();
     void enqueueSample(const MediaSample&, std::optional<MediaTime> minimumUpcomingTime);
     void stopRequestingMediaData();
 
@@ -139,6 +140,7 @@ private:
 #endif
 
     void resetReadyForMoreMediaData();
+    void resolveRequestMediaDataIfNeeded();
     void initializeDecompressionSession();
     void decodeNextSampleIfNeeded();
     using FlushId = int;
@@ -225,7 +227,7 @@ private:
     bool m_notifiedFirstFrameAvailable WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_waitingForMoreMediaData WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     std::atomic<bool> m_waitingForMoreMediaDataPending { false };
-    Function<void()> m_readyForMoreMediaDataFunction WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::optional<GenericPromise::AutoRejectProducer> m_requestMediaDataProducer WTF_GUARDED_BY_CAPABILITY(mainThread);
     Preferences m_preferences;
     std::optional<uint32_t> m_currentCodec;
     std::atomic<bool> m_gotDecodingError { false };
