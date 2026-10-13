@@ -14,10 +14,12 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a-referrerpolicy-reflection.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hreflang-setter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.hyperlink-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.ping-functionality.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.referrer-invalid-value.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-getter-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noreferrer-policy.html

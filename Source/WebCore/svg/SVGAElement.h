@@ -31,6 +31,7 @@ namespace WebCore {
 
 class DOMTokenList;
 
+enum class ReferrerPolicy : uint8_t;
 enum class Relation : uint8_t;
 
 class SVGAElement final : public SVGGraphicsElement, public SVGURIReference {
@@ -49,6 +50,9 @@ public:
 
     DOMTokenList& relList();
 
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const;
+
 private:
     SVGAElement(const QualifiedName&, Document&);
 
@@ -64,8 +68,6 @@ private:
     String title() const final;
     void defaultEventHandler(Event&) final;
 
-    bool LEGACY_NODELETE hasRel(Relation) const;
-    
     bool supportsFocus() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;

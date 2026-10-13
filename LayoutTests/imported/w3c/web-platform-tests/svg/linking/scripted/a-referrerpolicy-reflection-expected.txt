@@ -1,0 +1,13 @@
+
+PASS no-referrer is a known referrer policy
+PASS no-referrer-when-downgrade is a known referrer policy
+PASS same-origin is a known referrer policy
+PASS origin is a known referrer policy
+PASS strict-origin is a known referrer policy
+PASS origin-when-cross-origin is a known referrer policy
+PASS strict-origin-when-cross-origin is a known referrer policy
+PASS unsafe-url is a known referrer policy
+PASS missing referrerpolicy reflects as the empty string
+PASS invalid referrerpolicy reflects as the empty string
+PASS setting an invalid referrerPolicy preserves the content attribute
+

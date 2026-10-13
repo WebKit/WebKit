@@ -1504,7 +1504,7 @@ PASS SVGAElement interface: attribute rel
 PASS SVGAElement interface: attribute relList
 PASS SVGAElement interface: attribute hreflang
 PASS SVGAElement interface: attribute type
-FAIL SVGAElement interface: attribute referrerPolicy assert_true: The prototype object must have a property "referrerPolicy" expected true got false
+PASS SVGAElement interface: attribute referrerPolicy
 FAIL SVGAElement interface: attribute origin assert_true: The prototype object must have a property "origin" expected true got false
 FAIL SVGAElement interface: attribute protocol assert_true: The prototype object must have a property "protocol" expected true got false
 FAIL SVGAElement interface: attribute username assert_true: The prototype object must have a property "username" expected true got false
@@ -1525,7 +1525,7 @@ PASS SVGAElement interface: objects.a must inherit property "rel" with the prope
 PASS SVGAElement interface: objects.a must inherit property "relList" with the proper type
 PASS SVGAElement interface: objects.a must inherit property "hreflang" with the proper type
 PASS SVGAElement interface: objects.a must inherit property "type" with the proper type
-FAIL SVGAElement interface: objects.a must inherit property "referrerPolicy" with the proper type assert_inherits: property "referrerPolicy" not found in prototype chain
+PASS SVGAElement interface: objects.a must inherit property "referrerPolicy" with the proper type
 FAIL SVGAElement interface: objects.a must inherit property "origin" with the proper type assert_inherits: property "origin" not found in prototype chain
 FAIL SVGAElement interface: objects.a must inherit property "protocol" with the proper type assert_inherits: property "protocol" not found in prototype chain
 FAIL SVGAElement interface: objects.a must inherit property "username" with the proper type assert_inherits: property "username" not found in prototype chain

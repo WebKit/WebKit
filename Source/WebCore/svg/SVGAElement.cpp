@@ -148,7 +148,7 @@ void SVGAElement::defaultEventHandler(Event& event)
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
-            auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : ReferrerPolicy::EmptyString;
+            auto referrerPolicy = effectiveReferrerPolicy(m_linkRelations, this->referrerPolicy());
             navigateHyperlink(*this, event, completedURL, target, m_linkRelations, referrerPolicy);
             return;
         }
@@ -251,9 +251,14 @@ DOMTokenList& SVGAElement::relList()
     return *m_relList;
 }
 
-bool SVGAElement::hasRel(Relation relation) const
+String SVGAElement::referrerPolicyForBindings() const
 {
-    return m_linkRelations.contains(relation);
+    return referrerPolicyToString(referrerPolicy());
+}
+
+ReferrerPolicy SVGAElement::referrerPolicy() const
+{
+    return parseReferrerPolicy(attributeWithoutSynchronization(SVGNames::referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
 }
 
 } // namespace WebCore

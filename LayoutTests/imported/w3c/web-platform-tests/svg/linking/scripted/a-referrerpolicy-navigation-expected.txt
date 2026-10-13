@@ -1,0 +1,7 @@
+
+PASS no referrerpolicy attribute sends the full URL to a same-origin page
+PASS referrerpolicy=no-referrer sends no referrer
+PASS referrerpolicy=origin sends only the origin
+PASS an invalid referrerpolicy value is ignored
+PASS rel=noreferrer wins over referrerpolicy
+

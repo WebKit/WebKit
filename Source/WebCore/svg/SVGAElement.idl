@@ -32,6 +32,7 @@
     [Reflect] attribute DOMString rel;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
     [Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings, ReflectSetter] attribute [AtomString] DOMString referrerPolicy;
 };
 
 SVGAElement includes SVGURIReference;
