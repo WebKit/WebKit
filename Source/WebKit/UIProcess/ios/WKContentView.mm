@@ -96,7 +96,7 @@
 #import "ExtensionKitSPI.h"
 #endif
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #import "PortalPresentationManagerProxy.h"
 #endif
 

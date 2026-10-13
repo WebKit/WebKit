@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)
 
 #import <WebCore/ModelContext.h>
 #import <WebCore/PlatformLayerIdentifier.h>
@@ -44,7 +44,6 @@
 OBJC_CLASS WKPageHostedPortalView;
 OBJC_CLASS WKPortalVolumetricSceneController;
 OBJC_CLASS UIView;
-OBJC_CLASS _UIRemoteView;
 
 namespace WebKit {
 
@@ -83,7 +82,6 @@ private:
 
     public:
         Ref<WebCore::ModelContext> modelContext;
-        RetainPtr<_UIRemoteView> remoteModelView;
         RetainPtr<WKPageHostedPortalView> pageHostedPortalView;
     };
 
@@ -108,4 +106,4 @@ private:
 
 }
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_CONTEXT)

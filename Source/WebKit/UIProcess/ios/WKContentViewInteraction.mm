@@ -189,7 +189,7 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/WebItemProviderPasteboard.h>
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #import "PortalPresentationManagerProxy.h"
 #endif
 #endif
@@ -1425,11 +1425,18 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
 #if ENABLE(MODEL_PROCESS)
-    _modelInteractionPanGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_modelInteractionPanGestureRecognized:)]);
-    [_modelInteractionPanGestureRecognizer setMinimumNumberOfTouches:1];
-    [_modelInteractionPanGestureRecognizer setMaximumNumberOfTouches:1];
-    [_modelInteractionPanGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
+    bool addModelInteractionPanGesture = true;
+#if ENABLE(UNIFIED_MODEL_RENDERING)
+    if (_page && protect(_page->preferences())->unifiedModelRenderingEnabled())
+        addModelInteractionPanGesture = false;
+#endif
+    if (addModelInteractionPanGesture) {
+        _modelInteractionPanGestureRecognizer = adoptNS([[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_modelInteractionPanGestureRecognized:)]);
+        [_modelInteractionPanGestureRecognizer setMinimumNumberOfTouches:1];
+        [_modelInteractionPanGestureRecognizer setMaximumNumberOfTouches:1];
+        [_modelInteractionPanGestureRecognizer setDelegate:self];
+        [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
+    }
 #endif
 
     _nonBlockingDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_nonBlockingDoubleTapRecognized:)]);
@@ -1806,7 +1813,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 #if ENABLE(MODEL_PROCESS)
-    [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
+    if (_modelInteractionPanGestureRecognizer)
+        [self addGestureRecognizer:_modelInteractionPanGestureRecognizer.get()];
 #endif
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [self addInteraction:_mouseInteraction.get()];

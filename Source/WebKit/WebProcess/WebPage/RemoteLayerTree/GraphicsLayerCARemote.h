@@ -30,7 +30,7 @@
 #include <WebCore/PlatformLayer.h>
 #include <wtf/TZoneMalloc.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 namespace WebCore {
 class ModelContext;
 }
@@ -56,7 +56,7 @@ private:
 
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) override;
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::ModelContext>, WebCore::PlatformCALayerClient* owner) override;
 #endif
 #if ENABLE(MODEL_ELEMENT)

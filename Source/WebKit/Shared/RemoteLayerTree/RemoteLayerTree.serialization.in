@@ -153,13 +153,13 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     Markable<WebCore::PlatformLayerIdentifier> layerID;
     WebCore::PlatformCALayerLayerType type;
     std::optional<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData> videoElementData;
-#if ENABLE(MODEL_ELEMENT) && ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_ELEMENT) && ENABLE(MODEL_CONTEXT)
     Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, Ref<WebCore::ModelContext>, WebCore::LayerHostingContextIdentifier> additionalData;
 #endif
-#if ENABLE(MODEL_ELEMENT) && !ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_ELEMENT) && !ENABLE(MODEL_CONTEXT)
     Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, Ref<WebCore::Model>, WebCore::LayerHostingContextIdentifier> additionalData;
 #endif
-#if !ENABLE(MODEL_PROCESS) && !ENABLE(MODEL_ELEMENT)
+#if !ENABLE(MODEL_CONTEXT) && !ENABLE(MODEL_ELEMENT)
     Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, WebCore::LayerHostingContextIdentifier> additionalData;
 #endif
 };

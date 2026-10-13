@@ -40,7 +40,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRightAnnotated.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_CONTEXT)
 #import "PortalPresentationManagerProxy.h"
 #if HAVE(CORE_RE)
 #import "WKPageHostedPortalView.h"
@@ -124,7 +124,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
         if (!protect(m_drawingArea)->page())
             return nullptr;
 
-#if ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
+#if ENABLE(MODEL_CONTEXT) && HAVE(CORE_RE)
         if (auto modelContext = properties.modelContext()) {
             if (auto portalPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->portalPresentationManagerProxy() : nullptr) {
                 if (auto view = portalPresentationManager->setUpModelView(*modelContext)) {

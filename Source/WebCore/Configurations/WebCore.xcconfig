@@ -205,7 +205,10 @@ SECTORDER_FLAGS = $(WK_ORDER_FILE_LDFLAGS);
 
 EXCLUDED_SOURCE_FILE_NAMES = pdfjs*/*;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = $(inherited) *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=xr*] = $(inherited) *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h modelDefaultDiffuseData modelDefaultSpecularData;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=xr*] = $(inherited) *.tiff *Cursor.png npapi.h npfunctions.h npruntime.h npruntime_internal.h $(WK_MODEL_LIGHTMAP_EXCLUSIONS_$(ENABLE_UNIFIED_MODEL_RENDERING));
+
+WK_MODEL_LIGHTMAP_EXCLUSIONS_ = ;
+WK_MODEL_LIGHTMAP_EXCLUSIONS_YES = modelDefaultDiffuseData modelDefaultSpecularData;
 
 INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_SOURCE_FILE_NAMES_$(ENABLE_PDFJS));
 INCLUDED_SOURCE_FILE_NAMES_ENABLE_PDFJS = pdfjs*/*;
