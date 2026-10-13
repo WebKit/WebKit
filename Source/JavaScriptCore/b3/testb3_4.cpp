@@ -1868,6 +1868,923 @@ void testDiamondFold(int value)
     CHECK_EQ(compileAndRun<int32_t>(proc), !!value);
 }
 
+static unsigned valueCount(Procedure& proc, B3::Opcode opcode)
+{
+    unsigned count = 0;
+    for (Value* value : proc.values()) {
+        if (value->opcode() == opcode)
+            count++;
+    }
+    return count;
+}
+
+static Value* onlyReturnedValue(Procedure& proc)
+{
+    Value* result = nullptr;
+    for (Value* value : proc.values()) {
+        if (value->opcode() == Return) {
+            CHECK(!result);
+            result = value->child(0);
+        }
+    }
+    CHECK(result);
+    return result;
+}
+
+void testPhiFoldChain()
+{
+    // Each diamond branches on the Phi of the previous one, so every fold exposes the next. A single
+    // reduceStrength run must resolve the whole chain.
+    //
+    //   root:
+    //     Branch(1, #then0, #else0)
+    //   thenN:
+    //     Upsilon(1, ^phiN), Jump(#joinN)
+    //   elseN:
+    //     Upsilon(0, ^phiN), Jump(#joinN)
+    //   joinN:
+    //     @phiN = Phi(), Branch(@phiN, #thenN+1, #elseN+1)
+    //   joinLast:
+    //     @phiLast = Phi(), Return(@phiLast)
+    constexpr unsigned chainLength = 4;
+    Procedure proc;
+    BasicBlock* current = proc.addBlock();
+    Value* condition = current->appendNew<Const32Value>(proc, Origin(), 1);
+    for (unsigned i = 0; i < chainLength; ++i) {
+        BasicBlock* thenCase = proc.addBlock();
+        BasicBlock* elseCase = proc.addBlock();
+        BasicBlock* join = proc.addBlock();
+
+        current->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+        current->appendNew<Value>(proc, Branch, Origin(), condition);
+
+        UpsilonValue* thenResult = thenCase->appendNew<UpsilonValue>(
+            proc, Origin(), thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+        thenCase->setSuccessors(FrequentedBlock(join));
+        thenCase->appendNew<Value>(proc, Jump, Origin());
+
+        UpsilonValue* elseResult = elseCase->appendNew<UpsilonValue>(
+            proc, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+        elseCase->setSuccessors(FrequentedBlock(join));
+        elseCase->appendNew<Value>(proc, Jump, Origin());
+
+        Value* phi = join->appendNew<Value>(proc, Phi, Int32, Origin());
+        thenResult->setPhi(phi);
+        elseResult->setPhi(phi);
+
+        current = join;
+        condition = phi;
+    }
+    current->clearSuccessors();
+    current->appendNew<Value>(proc, Return, Origin(), condition);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 0u);
+    CHECK(onlyReturnedValue(proc)->isInt32(1));
+    CHECK_EQ(compileAndRun<int32_t>(proc), 1);
+}
+
+void testPhiFoldKeepsUpsilonBeforeFoldedBranch()
+{
+    // The Upsilon sits in root, ahead of a Branch whose edge into #join is folded away. It still
+    // runs, and is the only definition of @phi.
+    //
+    //   root:
+    //     Upsilon(arg, ^phi), Branch(1, #mid, #join)
+    //   mid:
+    //     Fence, Jump(#join)
+    //   join:
+    //     @phi = Phi(), Return(@phi)
+    //
+    // The Fence keeps #mid from being threaded away before the walk.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* mid = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* upsilon = root->appendNew<UpsilonValue>(proc, Origin(), argument);
+    root->setSuccessors(FrequentedBlock(mid), FrequentedBlock(join));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 1));
+
+    mid->appendNew<FenceValue>(proc, Origin());
+    mid->setSuccessors(FrequentedBlock(join));
+    mid->appendNew<Value>(proc, Jump, Origin());
+
+    Value* phi = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    upsilon->setPhi(phi);
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), phi);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 0u);
+    CHECK_EQ(onlyReturnedValue(proc), argument);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldUpsilonAwayFromJoin()
+{
+    // The dead arm's Upsilon is not in a predecessor of #join, so the arm is only known dead by
+    // following reachability through #deadTail.
+    //
+    //   root:
+    //     Branch(1, #live, #deadHead)
+    //   live:
+    //     Upsilon(arg, ^phi), Jump(#join)
+    //   deadHead:
+    //     Upsilon(0, ^phi), Branch(arg, #deadTail, #deadExit)
+    //   deadTail:
+    //     Fence, Jump(#join)
+    //   deadExit:
+    //     Return(0)
+    //   join:
+    //     @phi = Phi(), Return(@phi)
+    //
+    // #deadHead's Branch keeps #deadTail from being merged into it, and the Fence keeps #deadTail
+    // from being threaded away.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* live = proc.addBlock();
+    BasicBlock* deadHead = proc.addBlock();
+    BasicBlock* deadTail = proc.addBlock();
+    BasicBlock* deadExit = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(live), FrequentedBlock(deadHead));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 1));
+
+    UpsilonValue* liveResult = live->appendNew<UpsilonValue>(proc, Origin(), argument);
+    live->setSuccessors(FrequentedBlock(join));
+    live->appendNew<Value>(proc, Jump, Origin());
+
+    UpsilonValue* deadResult = deadHead->appendNew<UpsilonValue>(
+        proc, Origin(), deadHead->appendNew<Const32Value>(proc, Origin(), 0));
+    deadHead->setSuccessors(FrequentedBlock(deadTail), FrequentedBlock(deadExit));
+    deadHead->appendNew<Value>(proc, Branch, Origin(), argument);
+
+    deadTail->appendNew<FenceValue>(proc, Origin());
+    deadTail->setSuccessors(FrequentedBlock(join));
+    deadTail->appendNew<Value>(proc, Jump, Origin());
+
+    deadExit->appendNew<Value>(proc, Return, Origin(), deadExit->appendNew<Const32Value>(proc, Origin(), 0));
+
+    Value* phi = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    liveResult->setPhi(phi);
+    deadResult->setPhi(phi);
+    join->clearSuccessors();
+    join->appendNew<Value>(proc, Return, Origin(), phi);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 0u);
+    CHECK_EQ(onlyReturnedValue(proc), argument);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldLoopUnderConstantBranch(bool enterLoop)
+{
+    // When the loop is skipped, #header's only other predecessor is #latch, which #header
+    // dominates, so the whole loop is dead and @result folds to -1. When the loop runs, @result
+    // folds to @sum instead.
+    //
+    //   root:
+    //     Branch(enterLoop, #preheader, #skip)
+    //   preheader:
+    //     Upsilon(0, ^i), Upsilon(0, ^sum), Jump(#header)
+    //   header:
+    //     @i = Phi(), @sum = Phi(), Upsilon(@sum, ^result)
+    //     Branch(LessThan(@i, limit), #latch, #exit)
+    //   latch:
+    //     Upsilon(Add(@i, 1), ^i), Upsilon(Add(@sum, @i), ^sum), Jump(#header)
+    //   skip:
+    //     Upsilon(-1, ^result), Jump(#exit)
+    //   exit:
+    //     @result = Phi(), Return(@result)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* preheader = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* skip = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* limit = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(preheader), FrequentedBlock(skip));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), enterLoop));
+
+    UpsilonValue* initialI = preheader->appendNew<UpsilonValue>(
+        proc, Origin(), preheader->appendNew<Const32Value>(proc, Origin(), 0));
+    UpsilonValue* initialSum = preheader->appendNew<UpsilonValue>(
+        proc, Origin(), preheader->appendNew<Const32Value>(proc, Origin(), 0));
+    preheader->setSuccessors(FrequentedBlock(header));
+    preheader->appendNew<Value>(proc, Jump, Origin());
+
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* sum = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialI->setPhi(i);
+    initialSum->setPhi(sum);
+    UpsilonValue* loopResult = header->appendNew<UpsilonValue>(proc, Origin(), sum);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, LessThan, Origin(), i, limit));
+
+    latch->appendNew<UpsilonValue>(
+        proc, Origin(), latch->appendNew<Value>(proc, Add, Origin(), i, latch->appendNew<Const32Value>(proc, Origin(), 1)), i);
+    latch->appendNew<UpsilonValue>(proc, Origin(), latch->appendNew<Value>(proc, Add, Origin(), sum, i), sum);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    UpsilonValue* skipResult = skip->appendNew<UpsilonValue>(
+        proc, Origin(), skip->appendNew<Const32Value>(proc, Origin(), -1));
+    skip->setSuccessors(FrequentedBlock(exit));
+    skip->appendNew<Value>(proc, Jump, Origin());
+
+    Value* result = exit->appendNew<Value>(proc, Phi, Int32, Origin());
+    loopResult->setPhi(result);
+    skipResult->setPhi(result);
+    exit->appendNew<Value>(proc, Return, Origin(), result);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), enterLoop ? 2u : 0u);
+    if (!enterLoop)
+        CHECK(onlyReturnedValue(proc)->isInt32(-1));
+    CHECK_EQ(compileAndRun<int32_t>(proc, 10), enterLoop ? 45 : -1);
+}
+
+void testPhiFoldLoopInvariantPhis()
+{
+    // @same is only ever fed itself or arg. @viaIdentity is fed arg and @zeroAdd, which becomes
+    // Identity(arg) before #latch, the block holding its Upsilon, is visited. Both fold; @i stays.
+    //
+    //   root:
+    //     @zeroAdd = Add(arg, 0)
+    //     Upsilon(0, ^i), Upsilon(arg, ^same), Upsilon(arg, ^viaIdentity), Jump(#header)
+    //   header:
+    //     @i = Phi(), @same = Phi(), @viaIdentity = Phi()
+    //     Branch(LessThan(@i, limit), #latch, #exit)
+    //   latch:
+    //     Upsilon(Add(@i, 1), ^i), Upsilon(@same, ^same), Upsilon(@zeroAdd, ^viaIdentity)
+    //     Jump(#header)
+    //   exit:
+    //     Return(Add(@same, @viaIdentity))
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* argument = arguments[0];
+    Value* limit = arguments[1];
+
+    Value* zeroAdd = root->appendNew<Value>(proc, Add, Origin(), argument, root->appendNew<Const32Value>(proc, Origin(), 0));
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(
+        proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    UpsilonValue* initialSame = root->appendNew<UpsilonValue>(proc, Origin(), argument);
+    UpsilonValue* initialViaIdentity = root->appendNew<UpsilonValue>(proc, Origin(), argument);
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* same = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* viaIdentity = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialI->setPhi(i);
+    initialSame->setPhi(same);
+    initialViaIdentity->setPhi(viaIdentity);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, LessThan, Origin(), i, limit));
+
+    latch->appendNew<UpsilonValue>(
+        proc, Origin(), latch->appendNew<Value>(proc, Add, Origin(), i, latch->appendNew<Const32Value>(proc, Origin(), 1)), i);
+    latch->appendNew<UpsilonValue>(proc, Origin(), same, same);
+    latch->appendNew<UpsilonValue>(proc, Origin(), zeroAdd, viaIdentity);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    exit->appendNew<Value>(proc, Return, Origin(), exit->appendNew<Value>(proc, Add, Origin(), same, viaIdentity));
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 21, 5), 42);
+}
+
+void testPhiFoldDeadLoopSelfReference(bool useBitXor)
+{
+    // The preheader dies when root's Branch folds. #header's remaining predecessor is #latch, which
+    // #header dominates, so the loop is dead. Folding @x to the only Upsilon left would make @next
+    // use itself, and the update below then simplifies to Identity of itself.
+    //
+    //   root:
+    //     Branch(0, #preheader, #exit)
+    //   preheader:
+    //     Upsilon(arg, ^x), Jump(#header)
+    //   header:
+    //     @x = Phi(), Branch(@x, #latch, #exit)
+    //   latch:
+    //     @next = BitXor(BitXor(@x, 1), 1) or Add(Add(@x, 1), -1)
+    //     Upsilon(@next, ^x), Jump(#header)
+    //   exit:
+    //     Return(arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* preheader = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(preheader), FrequentedBlock(exit));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* initialX = preheader->appendNew<UpsilonValue>(proc, Origin(), argument);
+    preheader->setSuccessors(FrequentedBlock(header));
+    preheader->appendNew<Value>(proc, Jump, Origin());
+
+    Value* x = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialX->setPhi(x);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), x);
+
+    Value* next;
+    if (useBitXor) {
+        Value* one = latch->appendNew<Const32Value>(proc, Origin(), 1);
+        next = latch->appendNew<Value>(proc, BitXor, Origin(), latch->appendNew<Value>(proc, BitXor, Origin(), x, one), one);
+    } else {
+        Value* increment = latch->appendNew<Value>(proc, Add, Origin(), x, latch->appendNew<Const32Value>(proc, Origin(), 1));
+        next = latch->appendNew<Value>(proc, Add, Origin(), increment, latch->appendNew<Const32Value>(proc, Origin(), -1));
+    }
+    latch->appendNew<UpsilonValue>(proc, Origin(), next, x);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    exit->appendNew<Value>(proc, Return, Origin(), argument);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldDeadIrreducibleCycle()
+{
+    // #q and #j form a dead irreducible loop entered from two dead blocks, so neither dominates the
+    // other. Folding @q to @y, then @p to @x, turns @y into Trunc(SExt32(@y)), which is @y itself.
+    //
+    //   root:
+    //     Branch(arg, #s2, #s1)
+    //   s1:
+    //     Branch(0, #pre, #exit)
+    //   s2:
+    //     Branch(0, #d, #exit)
+    //   pre:
+    //     Upsilon(arg, ^q), Jump(#q)
+    //   d:
+    //     Upsilon(7, ^p), Jump(#j)
+    //   q:
+    //     @q = Phi(), @x = SExt32(@q), Upsilon(@x, ^p), Jump(#j)
+    //   j:
+    //     @p = Phi(), @y = Trunc(@p), Upsilon(@y, ^q), Branch(@y, #q, #exit)
+    //   exit:
+    //     Return(arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* s1 = proc.addBlock();
+    BasicBlock* s2 = proc.addBlock();
+    BasicBlock* pre = proc.addBlock();
+    BasicBlock* d = proc.addBlock();
+    BasicBlock* qBlock = proc.addBlock();
+    BasicBlock* jBlock = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(s2), FrequentedBlock(s1));
+    root->appendNew<Value>(proc, Branch, Origin(), argument);
+
+    s1->setSuccessors(FrequentedBlock(pre), FrequentedBlock(exit));
+    s1->appendNew<Value>(proc, Branch, Origin(), s1->appendNew<Const32Value>(proc, Origin(), 0));
+
+    s2->setSuccessors(FrequentedBlock(d), FrequentedBlock(exit));
+    s2->appendNew<Value>(proc, Branch, Origin(), s2->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* initialQ = pre->appendNew<UpsilonValue>(proc, Origin(), argument);
+    pre->setSuccessors(FrequentedBlock(qBlock));
+    pre->appendNew<Value>(proc, Jump, Origin());
+
+    UpsilonValue* initialP = d->appendNew<UpsilonValue>(proc, Origin(), d->appendNew<Const64Value>(proc, Origin(), 7));
+    d->setSuccessors(FrequentedBlock(jBlock));
+    d->appendNew<Value>(proc, Jump, Origin());
+
+    Value* q = qBlock->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* x = qBlock->appendNew<Value>(proc, SExt32, Origin(), q);
+    UpsilonValue* loopP = qBlock->appendNew<UpsilonValue>(proc, Origin(), x);
+    qBlock->setSuccessors(FrequentedBlock(jBlock));
+    qBlock->appendNew<Value>(proc, Jump, Origin());
+
+    Value* p = jBlock->appendNew<Value>(proc, Phi, Int64, Origin());
+    Value* y = jBlock->appendNew<Value>(proc, Trunc, Origin(), p);
+    jBlock->appendNew<UpsilonValue>(proc, Origin(), y, q);
+    jBlock->setSuccessors(FrequentedBlock(qBlock), FrequentedBlock(exit));
+    jBlock->appendNew<Value>(proc, Branch, Origin(), y);
+
+    initialQ->setPhi(q);
+    initialP->setPhi(p);
+    loopP->setPhi(p);
+
+    exit->clearSuccessors();
+    exit->appendNew<Value>(proc, Return, Origin(), argument);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldDeadLoopFeedingBranch()
+{
+    // The loop is dead once root's Branch folds, although #latch, its back edge, is visited after
+    // #header. #header's Upsilon into @result must still be dropped within the walk, so that @result
+    // folds to 1 and #join's Branch folds too.
+    //
+    //   root:
+    //     Branch(0, #preheader, #skip)
+    //   preheader:
+    //     Upsilon(0, ^i), Jump(#header)
+    //   header:
+    //     @i = Phi(), Upsilon(@i, ^result), Branch(LessThan(@i, arg), #latch, #join)
+    //   latch:
+    //     Upsilon(Add(@i, 1), ^i), Jump(#header)
+    //   skip:
+    //     Upsilon(1, ^result), Jump(#join)
+    //   join:
+    //     @result = Phi(), Branch(@result, #thenCase, #elseCase)
+    //   thenCase:
+    //     Return(arg)
+    //   elseCase:
+    //     Return(-1)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* preheader = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* skip = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(preheader), FrequentedBlock(skip));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* initialI = preheader->appendNew<UpsilonValue>(
+        proc, Origin(), preheader->appendNew<Const32Value>(proc, Origin(), 0));
+    preheader->setSuccessors(FrequentedBlock(header));
+    preheader->appendNew<Value>(proc, Jump, Origin());
+
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialI->setPhi(i);
+    UpsilonValue* loopResult = header->appendNew<UpsilonValue>(proc, Origin(), i);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(join));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, LessThan, Origin(), i, argument));
+
+    latch->appendNew<UpsilonValue>(
+        proc, Origin(), latch->appendNew<Value>(proc, Add, Origin(), i, latch->appendNew<Const32Value>(proc, Origin(), 1)), i);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    UpsilonValue* skipResult = skip->appendNew<UpsilonValue>(
+        proc, Origin(), skip->appendNew<Const32Value>(proc, Origin(), 1));
+    skip->setSuccessors(FrequentedBlock(join));
+    skip->appendNew<Value>(proc, Jump, Origin());
+
+    Value* result = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    loopResult->setPhi(result);
+    skipResult->setPhi(result);
+    join->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    join->appendNew<Value>(proc, Branch, Origin(), result);
+
+    thenCase->appendNew<Value>(proc, Return, Origin(), argument);
+    elseCase->appendNew<Value>(proc, Return, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), -1));
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), 0u);
+    CHECK_EQ(valueCount(proc, Branch), 0u);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+static void setReturn42Generator(CheckValue* check)
+{
+    check->setGenerator(
+        [&](CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+}
+
+void testPhiFoldCheckAlwaysExitsBeforePhi()
+{
+    // simplifyCFG merges #next into root before the walk, so @phi sits after a Check that always
+    // exits. Replacing the rest of the block must not leave Upsilon(@a, ^phi) pointing at a non-Phi.
+    //
+    //   root:
+    //     @a = arg, Upsilon(@a, ^phi), Check(Equal(@a, @a)), Jump(#next)
+    //   next:
+    //     @phi = Phi(), Return(@phi)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* next = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* upsilon = root->appendNew<UpsilonValue>(proc, Origin(), argument);
+    CheckValue* check = root->appendNew<CheckValue>(
+        proc, Check, Origin(), root->appendNew<Value>(proc, Equal, Origin(), argument, argument));
+    setReturn42Generator(check);
+    root->setSuccessors(FrequentedBlock(next));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* phi = next->appendNew<Value>(proc, Phi, Int32, Origin());
+    upsilon->setPhi(phi);
+    next->appendNew<Value>(proc, Return, Origin(), phi);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 7), 42);
+}
+
+void testPhiFoldEqualConstantFromBackEdge()
+{
+    // @p is fed 0 from root and a separate Const32(0) from #latch, which is visited after #header.
+    // The two are the same constant, so @p folds while #header is visited and its Check goes away.
+    //
+    //   root:
+    //     Upsilon(0, ^p), Upsilon(0, ^i), Jump(#header)
+    //   header:
+    //     @p = Phi(), @i = Phi(), Check(@p), @nextI = Add(@i, 1)
+    //     Branch(LessThan(@nextI, arg), #latch, #exit)
+    //   latch:
+    //     Upsilon(0, ^p), Upsilon(@nextI, ^i), Jump(#header)
+    //   exit:
+    //     Return(@nextI)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* limit = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* initialP = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* p = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialP->setPhi(p);
+    initialI->setPhi(i);
+    setReturn42Generator(header->appendNew<CheckValue>(proc, Check, Origin(), p));
+    Value* nextI = header->appendNew<Value>(proc, Add, Origin(), i, header->appendNew<Const32Value>(proc, Origin(), 1));
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, LessThan, Origin(), nextI, limit));
+
+    latch->appendNew<UpsilonValue>(proc, Origin(), latch->appendNew<Const32Value>(proc, Origin(), 0), p);
+    latch->appendNew<UpsilonValue>(proc, Origin(), nextI, i);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    exit->appendNew<Value>(proc, Return, Origin(), nextI);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    CHECK_EQ(valueCount(proc, Check), 0u);
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 5), 5);
+}
+
+void testPhiFoldDeadLoopWithStalePredecessor()
+{
+    // Root never jumps to #header, but the test leaves root in #header's predecessor list, a state
+    // B3Validate rejects. It checks that the walk takes reachability only from successor edges:
+    // trusting the entry would make the dead loop look reachable, so @x would fold to @next and
+    // @next would end up computed from itself.
+    //
+    //   root:
+    //     Branch(0, #preheader, #exit)
+    //   preheader:
+    //     Upsilon(arg, ^x), Jump(#header)
+    //   header (predecessors: #preheader, #latch, root):
+    //     @x = Phi(), Branch(@x, #latch, #exit)
+    //   latch:
+    //     @next = BitXor(BitXor(@x, 1), 1), Upsilon(@next, ^x), Jump(#header)
+    //   exit:
+    //     Return(arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* preheader = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    root->setSuccessors(FrequentedBlock(preheader), FrequentedBlock(exit));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* initialX = preheader->appendNew<UpsilonValue>(proc, Origin(), argument);
+    preheader->setSuccessors(FrequentedBlock(header));
+    preheader->appendNew<Value>(proc, Jump, Origin());
+
+    Value* x = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialX->setPhi(x);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(exit));
+    header->appendNew<Value>(proc, Branch, Origin(), x);
+
+    Value* one = latch->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* next = latch->appendNew<Value>(proc, BitXor, Origin(), latch->appendNew<Value>(proc, BitXor, Origin(), x, one), one);
+    latch->appendNew<UpsilonValue>(proc, Origin(), next, x);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    exit->appendNew<Value>(proc, Return, Origin(), argument);
+
+    proc.resetReachability();
+    header->predecessors().append(root);
+    reduceStrength(proc);
+
+    proc.resetReachability();
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldConstantInBlockReachedOnlyByRetreatingEdge(bool swapArms)
+{
+    // As in testPhiFoldInBlockReachedOnlyByRetreatingEdge, #join may be visited before its
+    // reachability is known. @p is fed 0 by both Upsilons, so it can still fold within the walk, and
+    // the Check on it then goes away in the same reduceStrength run.
+    //
+    //   root:
+    //     Upsilon(0, ^i), Branch(arg, #q, #s), arms swapped if swapArms
+    //   s:
+    //     Upsilon(0, ^p), Branch(0, #join, #exit)
+    //   q:
+    //     Upsilon(0, ^p), Jump(#join)
+    //   join:
+    //     @p = Phi(), @i = Phi(), Check(@p), @nextI = Add(@i, 1), Upsilon(@nextI, ^i)
+    //     Branch(LessThan(@nextI, arg), #q, #exit)
+    //   exit:
+    //     Return(arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* s = proc.addBlock();
+    BasicBlock* q = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    if (swapArms)
+        root->setSuccessors(FrequentedBlock(s), FrequentedBlock(q));
+    else
+        root->setSuccessors(FrequentedBlock(q), FrequentedBlock(s));
+    root->appendNew<Value>(proc, Branch, Origin(), argument);
+
+    UpsilonValue* sP = s->appendNew<UpsilonValue>(proc, Origin(), s->appendNew<Const32Value>(proc, Origin(), 0));
+    s->setSuccessors(FrequentedBlock(join), FrequentedBlock(exit));
+    s->appendNew<Value>(proc, Branch, Origin(), s->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* qP = q->appendNew<UpsilonValue>(proc, Origin(), q->appendNew<Const32Value>(proc, Origin(), 0));
+    q->setSuccessors(FrequentedBlock(join));
+    q->appendNew<Value>(proc, Jump, Origin());
+
+    Value* p = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* i = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    sP->setPhi(p);
+    qP->setPhi(p);
+    initialI->setPhi(i);
+    setReturn42Generator(join->appendNew<CheckValue>(proc, Check, Origin(), p));
+    Value* nextI = join->appendNew<Value>(proc, Add, Origin(), i, join->appendNew<Const32Value>(proc, Origin(), 1));
+    join->appendNew<UpsilonValue>(proc, Origin(), nextI, i);
+    join->setSuccessors(FrequentedBlock(q), FrequentedBlock(exit));
+    join->appendNew<Value>(proc, Branch, Origin(), join->appendNew<Value>(proc, LessThan, Origin(), nextI, argument));
+
+    exit->appendNew<Value>(proc, Return, Origin(), argument);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    CHECK_EQ(valueCount(proc, Check), 0u);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldInBlockReachedOnlyByRetreatingEdge(bool swapArms)
+{
+    // #join and #q reach each other, and neither dominates the other. #q is entered from root, so it
+    // is reachable in any order. #join's live predecessor is #q, so when #join is visited first its
+    // reachability is unknown. Which comes first depends on the order root's successors are
+    // explored, so the test runs with root's arms both ways. @p is fed arg by both of its Upsilons
+    // and must still fold within this reduceStrength run, at every optimization level.
+    //
+    //   root:
+    //     Upsilon(0, ^i), Branch(arg, #q, #s), arms swapped if swapArms
+    //   s:
+    //     Upsilon(arg, ^p), Branch(0, #join, #exit)
+    //   q:
+    //     Upsilon(arg, ^p), Jump(#join)
+    //   join:
+    //     @p = Phi(), @i = Phi(), @nextI = Add(@i, 1), Upsilon(@nextI, ^i)
+    //     Branch(LessThan(@nextI, @p), #q, #exit)
+    //   exit:
+    //     Return(arg)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* s = proc.addBlock();
+    BasicBlock* q = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    if (swapArms)
+        root->setSuccessors(FrequentedBlock(s), FrequentedBlock(q));
+    else
+        root->setSuccessors(FrequentedBlock(q), FrequentedBlock(s));
+    root->appendNew<Value>(proc, Branch, Origin(), argument);
+
+    UpsilonValue* sP = s->appendNew<UpsilonValue>(proc, Origin(), argument);
+    s->setSuccessors(FrequentedBlock(join), FrequentedBlock(exit));
+    s->appendNew<Value>(proc, Branch, Origin(), s->appendNew<Const32Value>(proc, Origin(), 0));
+
+    UpsilonValue* qP = q->appendNew<UpsilonValue>(proc, Origin(), argument);
+    q->setSuccessors(FrequentedBlock(join));
+    q->appendNew<Value>(proc, Jump, Origin());
+
+    Value* p = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* i = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    sP->setPhi(p);
+    qP->setPhi(p);
+    initialI->setPhi(i);
+    Value* nextI = join->appendNew<Value>(proc, Add, Origin(), i, join->appendNew<Const32Value>(proc, Origin(), 1));
+    join->appendNew<UpsilonValue>(proc, Origin(), nextI, i);
+    join->setSuccessors(FrequentedBlock(q), FrequentedBlock(exit));
+    join->appendNew<Value>(proc, Branch, Origin(), join->appendNew<Value>(proc, LessThan, Origin(), nextI, p));
+
+    exit->appendNew<Value>(proc, Return, Origin(), argument);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    validate(proc);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldDeadLoopHeaderEnteredFromRoot()
+{
+    // Root's Branch folds away its edge into #header, leaving #latch as #header's only predecessor.
+    // #header dominates #latch, so the loop is dead although #header's immediate dominator, root,
+    // is reachable. #header's Upsilon into @result is dropped, so @result folds to 1 and #join's
+    // Branch folds too.
+    //
+    //   root:
+    //     Upsilon(0, ^i), Branch(0, #header, #skip)
+    //   header:
+    //     @i = Phi(), Upsilon(@i, ^result), Branch(LessThan(@i, arg), #latch, #join)
+    //   latch:
+    //     Upsilon(Add(@i, 1), ^i), Jump(#header)
+    //   skip:
+    //     Upsilon(1, ^result), Jump(#join)
+    //   join:
+    //     @result = Phi(), Branch(@result, #thenCase, #elseCase)
+    //   thenCase:
+    //     Return(arg)
+    //   elseCase:
+    //     Return(-1)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* skip = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    Value* argument = cCallArgumentValues<int32_t>(proc, root)[0];
+
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->setSuccessors(FrequentedBlock(header), FrequentedBlock(skip));
+    root->appendNew<Value>(proc, Branch, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialI->setPhi(i);
+    UpsilonValue* loopResult = header->appendNew<UpsilonValue>(proc, Origin(), i);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(join));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, LessThan, Origin(), i, argument));
+
+    latch->appendNew<UpsilonValue>(
+        proc, Origin(), latch->appendNew<Value>(proc, Add, Origin(), i, latch->appendNew<Const32Value>(proc, Origin(), 1)), i);
+    latch->setSuccessors(FrequentedBlock(header));
+    latch->appendNew<Value>(proc, Jump, Origin());
+
+    UpsilonValue* skipResult = skip->appendNew<UpsilonValue>(
+        proc, Origin(), skip->appendNew<Const32Value>(proc, Origin(), 1));
+    skip->setSuccessors(FrequentedBlock(join));
+    skip->appendNew<Value>(proc, Jump, Origin());
+
+    Value* result = join->appendNew<Value>(proc, Phi, Int32, Origin());
+    loopResult->setPhi(result);
+    skipResult->setPhi(result);
+    join->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    join->appendNew<Value>(proc, Branch, Origin(), result);
+
+    thenCase->appendNew<Value>(proc, Return, Origin(), argument);
+    elseCase->appendNew<Value>(proc, Return, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), -1));
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), 0u);
+    CHECK_EQ(valueCount(proc, Branch), 0u);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 42), 42);
+}
+
+void testPhiFoldLoopPhiTrivialAfterLatch()
+{
+    // @v only becomes trivial once #latch, visited after #header, reduces its update to @v, so the
+    // walk cannot fold it. The round of Phi folding after the walk must.
+    //
+    //   root:
+    //     Upsilon(arg, ^v), Upsilon(0, ^i), Jump(#header)
+    //   header:
+    //     @v = Phi(), @i = Phi(), Branch(Equal(@v, arg), #latch, #mismatch)
+    //   mismatch:
+    //     Return(-1)
+    //   latch:
+    //     Upsilon(BitXor(BitXor(@v, 1), 1), ^v), @nextI = Add(@i, 1), Upsilon(@nextI, ^i)
+    //     Branch(LessThan(@nextI, limit), #header, #exit)
+    //   exit:
+    //     Return(@nextI)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* mismatch = proc.addBlock();
+    BasicBlock* latch = proc.addBlock();
+    BasicBlock* exit = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* argument = arguments[0];
+    Value* limit = arguments[1];
+
+    UpsilonValue* initialV = root->appendNew<UpsilonValue>(proc, Origin(), argument);
+    UpsilonValue* initialI = root->appendNew<UpsilonValue>(proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->setSuccessors(FrequentedBlock(header));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    Value* v = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    Value* i = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialV->setPhi(v);
+    initialI->setPhi(i);
+    header->setSuccessors(FrequentedBlock(latch), FrequentedBlock(mismatch));
+    header->appendNew<Value>(proc, Branch, Origin(), header->appendNew<Value>(proc, Equal, Origin(), v, argument));
+
+    mismatch->appendNew<Value>(proc, Return, Origin(), mismatch->appendNew<Const32Value>(proc, Origin(), -1));
+
+    Value* one = latch->appendNew<Const32Value>(proc, Origin(), 1);
+    Value* nextV = latch->appendNew<Value>(proc, BitXor, Origin(), latch->appendNew<Value>(proc, BitXor, Origin(), v, one), one);
+    latch->appendNew<UpsilonValue>(proc, Origin(), nextV, v);
+    Value* nextI = latch->appendNew<Value>(proc, Add, Origin(), i, one);
+    latch->appendNew<UpsilonValue>(proc, Origin(), nextI, i);
+    latch->setSuccessors(FrequentedBlock(header), FrequentedBlock(exit));
+    latch->appendNew<Value>(proc, Branch, Origin(), latch->appendNew<Value>(proc, LessThan, Origin(), nextI, limit));
+
+    exit->appendNew<Value>(proc, Return, Origin(), nextI);
+
+    proc.resetReachability();
+    reduceStrength(proc);
+
+    validate(proc);
+    CHECK_EQ(valueCount(proc, Phi), 1u);
+    CHECK_EQ(compileAndRun<int32_t>(proc, 5, 10), 10);
+}
+
 void testBranchNotEqualFoldPtr(intptr_t value)
 {
     Procedure proc;
