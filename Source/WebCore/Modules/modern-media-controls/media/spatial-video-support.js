@@ -36,7 +36,7 @@ class SpatialVideoSupport extends MediaControllerSupport
         this._lastX = 0;
         this._lastY = 0;
         this._projection = "equirect360";
-        this._cameraFieldOfView = SpatialVideoSupport.DefaultCameraFieldOfView;
+        this._cameraFieldOfView = 0;
         this._maybeEnable();
     }
 
@@ -130,14 +130,9 @@ class SpatialVideoSupport extends MediaControllerSupport
 
     _applyDeclaredCameraView(media)
     {
-        const fieldOfView = parseFloat(media.getAttribute("x-webkit-fieldofview"));
-        this._cameraFieldOfView = isNaN(fieldOfView) ? SpatialVideoSupport.DefaultCameraFieldOfView : clampFieldOfView(fieldOfView);
-
-        const yaw = parseFloat(media.getAttribute("x-webkit-yaw"));
-        this._yaw = isNaN(yaw) ? 0 : yaw * Math.PI / 180;
-
-        const pitch = parseFloat(media.getAttribute("x-webkit-pitch"));
-        this._pitch = isNaN(pitch) ? 0 : clampPitch(pitch * Math.PI / 180);
+        this._cameraFieldOfView = clampFieldOfView(media.defaultFieldOfView);
+        this._yaw = media.defaultYaw * Math.PI / 180;
+        this._pitch = clampPitch(media.defaultPitch * Math.PI / 180);
     }
 
     _enable()
@@ -583,7 +578,6 @@ class SpatialVideoSupport extends MediaControllerSupport
 
 SpatialVideoSupport.FeatherFraction = 0.12;
 SpatialVideoSupport.FieldOfViewScale = 1000;
-SpatialVideoSupport.DefaultCameraFieldOfView = 80;
 SpatialVideoSupport.MinimumCameraFieldOfView = 30;
 SpatialVideoSupport.MaximumCameraFieldOfView = 110;
 SpatialVideoSupport.DragTolerance = 3;

@@ -40,6 +40,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSVideoFrameRequestCallback.h"
@@ -263,6 +264,36 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
     m_cameraFieldOfView = fieldOfView;
 
     scheduleEvent(eventNames().webkitcameramovedEvent);
+}
+
+double HTMLVideoElement::defaultYaw() const
+{
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkityawAttr), 0);
+}
+
+double HTMLVideoElement::defaultPitch() const
+{
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkitpitchAttr), 0);
+}
+
+double HTMLVideoElement::defaultFieldOfView() const
+{
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkitfieldofviewAttr), defaultSpatialCameraFieldOfView);
+}
+
+double HTMLVideoElement::yaw() const
+{
+    return m_cameraYaw.value_or(defaultYaw());
+}
+
+double HTMLVideoElement::pitch() const
+{
+    return m_cameraPitch.value_or(defaultPitch());
+}
+
+double HTMLVideoElement::fieldOfView() const
+{
+    return m_cameraFieldOfView.value_or(defaultFieldOfView());
 }
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
