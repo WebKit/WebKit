@@ -93,8 +93,7 @@ public:
     ASCIILiteral logClassName() const final { return "MediaSourcePrivateAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
-
-    uint64_t nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
+    uint64_t nextSourceBufferLogIdentifier();
 #endif
 
     using RendererType = MediaSourcePrivateClient::RendererType;
@@ -127,7 +126,6 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
-    uint64_t m_nextSourceBufferID { 0 };
 #endif
 
     ProcessIdentity m_resourceOwner;
