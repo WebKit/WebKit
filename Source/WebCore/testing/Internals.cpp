@@ -8623,15 +8623,19 @@ ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() c
     if (!document || !document->page())
         return Exception { ExceptionCode::NotSupportedError };
 
+    // Damage is tracked in device pixels, but testing expectations are written in CSS pixels, so convert
+    // back using the page's device scale factor to keep results independent of the host display's scale.
+    float deviceScaleFactor = document->page()->deviceScaleFactor();
+
     Vector<Internals::FrameDamage> damageDetails;
     unsigned sequenceId = 0;
     document->page()->chrome().client().foreachRegionInDamageHistoryForTesting([&](const auto& region) {
         const auto& regionBounds = region.bounds();
         damageDetails.append(FrameDamage {
             .sequenceId = sequenceId++,
-            .bounds = DOMRectReadOnly::create(regionBounds.x(), regionBounds.y(), regionBounds.width(), regionBounds.height()),
-            .rects = region.rects().map([](const IntRect& rect) -> Ref<DOMRectReadOnly> {
-                return DOMRectReadOnly::create(rect.x(), rect.y(), rect.width(), rect.height());
+            .bounds = DOMRectReadOnly::create(regionBounds.x() / deviceScaleFactor, regionBounds.y() / deviceScaleFactor, regionBounds.width() / deviceScaleFactor, regionBounds.height() / deviceScaleFactor),
+            .rects = region.rects().map([deviceScaleFactor](const IntRect& rect) -> Ref<DOMRectReadOnly> {
+                return DOMRectReadOnly::create(rect.x() / deviceScaleFactor, rect.y() / deviceScaleFactor, rect.width() / deviceScaleFactor, rect.height() / deviceScaleFactor);
             }),
         });
     });
