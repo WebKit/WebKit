@@ -255,6 +255,7 @@ webkit.org/b/324363 [ mac Sequoia+ debug x86_64 ] TestWebKitAPI.ProcessSwap.Navi
 webkit.org/b/321635 [ mac debug Tahoe ] TestWebKitAPI.ProcessSwap.SessionStorage [ Pass Failure ]
 webkit.org/b/324475 [ mac debug Sequoia ] TestWebKitAPI.ProcessSwap.SessionStorage [ Pass Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
+webkit.org/b/327476 [ mac debug ] TestWebKitAPI.ProcessSwap.WebInspectorReconnectsPageRestoredFromBackForwardCache [ Pass Failure ]
 webkit.org/b/325221 [ ios debug ] TestWebKitAPI.QuirksTest.AnElementTargetIsMatchedAgainstTheSelectorItself [ Crash ]
 webkit.org/b/325221 [ ios debug ] TestWebKitAPI.QuirksTest.ATargetThatIsNotAnElementAndHasNoParentElementNeverMatches [ Crash ]
 webkit.org/b/325221 [ ios debug ] TestWebKitAPI.QuirksTest.ConditionsSupportTheSelectorShapesAQuirkMightNeed [ Crash ]
