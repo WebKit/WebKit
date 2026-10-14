@@ -170,8 +170,30 @@ AudioVideoRendererAVFObjC::~AudioVideoRendererAVFObjC()
 #endif
 }
 
+void AudioVideoRendererAVFObjC::shutdown()
+{
+    if (std::exchange(m_isShutdown, true))
+        return;
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    cancelSeekingPromiseIfNeeded();
+    cancelTimeReachedAction();
+
+    for (auto& renderer : m_audioRenderers.values()) {
+        removeRendererFromSynchronizerIfNeeded(renderer.get());
+        m_listener->stopObservingAudioRenderer(renderer.get());
+        [renderer stopRequestingMediaData];
+    }
+    m_audioRenderers.clear();
+    m_audioTracksMap.clear();
+
+    destroyVideoTrack();
+}
+
 void AudioVideoRendererAVFObjC::setPreferences(VideoRendererPreferences preferences)
 {
+    if (m_isShutdown)
+        return;
     m_preferences = preferences;
     if (auto* videoRenderer = m_videoRenderer.get())
         videoRenderer->setPreferences(preferences);
@@ -179,6 +201,8 @@ void AudioVideoRendererAVFObjC::setPreferences(VideoRendererPreferences preferen
 
 void AudioVideoRendererAVFObjC::setHasProtectedVideoContent(bool protectedContent)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, "protectedContent: ", protectedContent);
 
     if (std::exchange(m_hasProtectedVideoContent, protectedContent) != protectedContent)
@@ -187,6 +211,8 @@ void AudioVideoRendererAVFObjC::setHasProtectedVideoContent(bool protectedConten
 
 std::optional<TracksRendererManager::TrackIdentifier> AudioVideoRendererAVFObjC::addTrack(TrackType type)
 {
+    if (m_isShutdown)
+        return { };
     auto identifier = TrackIdentifier::generate();
     m_trackTypes.add(identifier, type);
     ALWAYS_LOG(LOGIDENTIFIER, toString(identifier));
@@ -211,6 +237,8 @@ std::optional<TracksRendererManager::TrackIdentifier> AudioVideoRendererAVFObjC:
 
 void AudioVideoRendererAVFObjC::removeTrack(TrackIdentifier trackId)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, toString(trackId));
     auto type = typeOf(trackId);
     if (!type)
@@ -234,6 +262,8 @@ void AudioVideoRendererAVFObjC::removeTrack(TrackIdentifier trackId)
 
 void AudioVideoRendererAVFObjC::enqueueSample(TrackIdentifier trackId, Ref<MediaSample>&& sample, std::optional<MediaTime> minimumUpcomingTime)
 {
+    if (m_isShutdown)
+        return;
     auto type = typeOf(trackId);
     if (!type)
         return;
@@ -330,6 +360,8 @@ bool AudioVideoRendererAVFObjC::isReadyForMoreSamples(TrackIdentifier trackId)
 
 Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererAVFObjC::requestMediaDataWhenReady(TrackIdentifier trackId)
 {
+    if (m_isShutdown)
+        return RequestPromise::createAndReject(PlatformMediaError::Shutdown);
     auto type = typeOf(trackId);
     if (!type)
         return RequestPromise::createAndReject(PlatformMediaError::LogicError);
@@ -458,6 +490,8 @@ void AudioVideoRendererAVFObjC::setReadyToRequestAudioData(TrackIdentifier track
 
 void AudioVideoRendererAVFObjC::notifyTrackNeedsReenqueuing(TrackIdentifier trackId, Function<void(TrackIdentifier, const MediaTime&)>&& callback)
 {
+    if (m_isShutdown)
+        return;
     auto type = typeOf(trackId);
     if (!type)
         return;
@@ -478,6 +512,8 @@ void AudioVideoRendererAVFObjC::notifyTrackNeedsReenqueuing(TrackIdentifier trac
 
 void AudioVideoRendererAVFObjC::flush()
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER);
 
     cancelSeekingPromiseIfNeeded();
@@ -490,6 +526,8 @@ void AudioVideoRendererAVFObjC::flush()
 
 void AudioVideoRendererAVFObjC::flushTrack(TrackIdentifier trackId)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, toString(trackId));
 
     auto type = typeOf(trackId);
@@ -512,6 +550,8 @@ void AudioVideoRendererAVFObjC::flushTrack(TrackIdentifier trackId)
 
 void AudioVideoRendererAVFObjC::applicationWillResignActive()
 {
+    if (m_isShutdown)
+        return;
     RefPtr videoRenderer = m_videoRenderer;
     if (!videoRenderer || !videoRenderer->isUsingDecompressionSession())
         return;
@@ -527,12 +567,18 @@ void AudioVideoRendererAVFObjC::applicationWillResignActive()
 
 void AudioVideoRendererAVFObjC::notifyWhenErrorOccurs(Function<void(PlatformMediaError)>&& callback)
 {
+    if (m_isShutdown) {
+        callback(PlatformMediaError::Shutdown);
+        return;
+    }
     m_errorCallback = WTF::move(callback);
 }
 
 // Synchronizer interface
 void AudioVideoRendererAVFObjC::play(std::optional<MonotonicTime> hostTime)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", m_rate, " seeking: ", seeking());
     m_isPlaying = true;
     if (!seeking())
@@ -541,6 +587,8 @@ void AudioVideoRendererAVFObjC::play(std::optional<MonotonicTime> hostTime)
 
 void AudioVideoRendererAVFObjC::pause(std::optional<MonotonicTime> hostTime)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", m_rate);
     m_isPlaying = false;
     // Capture current time to prevent time going backwards after resume.
@@ -584,6 +632,8 @@ MediaTime AudioVideoRendererAVFObjC::currentTime() const
 
 void AudioVideoRendererAVFObjC::setRate(double rate)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, "m_rate: ", rate);
 
     if (m_rate == rate)
@@ -649,12 +699,16 @@ void AudioVideoRendererAVFObjC::publishSnapshot(MediaTime currentTime, double pl
 
 void AudioVideoRendererAVFObjC::stall()
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, "playing: ", m_isPlaying, " rate: ", m_rate);
     setSynchronizerRate(0, { });
 }
 
 Ref<MediaTimePromise> AudioVideoRendererAVFObjC::notifyTimeReachedAndStall(const MediaTime& timeBoundary)
 {
+    if (m_isShutdown)
+        return MediaTimePromise::createAndReject(PlatformMediaError::Shutdown);
     cancelTimeReachedAction();
 
     if (timeBoundary <= currentTime()) {
@@ -714,6 +768,8 @@ void AudioVideoRendererAVFObjC::cancelTimeReachedAction()
 
 void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Function<void(const MediaTime&)>&& task)
 {
+    if (m_isShutdown)
+        return;
     cancelPerformTaskAtTimeObserverIfNeeded();
 
     RetainPtr<NSArray> times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
@@ -739,6 +795,8 @@ void AudioVideoRendererAVFObjC::performTaskAtTime(const MediaTime& time, Functio
 
 void AudioVideoRendererAVFObjC::setTimeObserver(Seconds interval, Function<void(const MediaTime&)>&& callback)
 {
+    if (m_isShutdown)
+        return;
     cancelTimeObserver();
 
     if (!callback)
@@ -768,6 +826,8 @@ void AudioVideoRendererAVFObjC::cancelPerformTaskAtTimeObserverIfNeeded()
 
 Ref<MediaTimePromise> AudioVideoRendererAVFObjC::prepareToSeek(const MediaTime& seekTime)
 {
+    if (m_isShutdown)
+        return MediaTimePromise::createAndReject(PlatformMediaError::Shutdown);
     ALWAYS_LOG(LOGIDENTIFIER, "state: ", toString(m_seekState));
 
     cancelSeekingPromiseIfNeeded();
@@ -813,6 +873,8 @@ Ref<MediaTimePromise> AudioVideoRendererAVFObjC::prepareToSeek(const MediaTime& 
 
 Ref<GenericPromise> AudioVideoRendererAVFObjC::finishSeek(const MediaTime& seekTime)
 {
+    if (m_isShutdown)
+        return GenericPromise::createAndReject();
     ALWAYS_LOG(LOGIDENTIFIER, seekTime, "state: ", toString(m_seekState), " m_isSynchronizerSeeking: ", m_isSynchronizerSeeking, " hasAvailableVideoFrame: ", m_videoRenderer && allRenderersHaveAvailableSamples());
 
     if (m_seekState != Seeking)
@@ -826,6 +888,8 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::finishSeek(const MediaTime& seekT
 
 void AudioVideoRendererAVFObjC::notifyEffectiveRateChanged(Function<void(double)>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_effectiveRateChangedCallback = WTF::move(callback);
     // False positive see webkit.org/b/298024
     SUPPRESS_UNRETAINED_ARG m_effectiveRateChangedListener = EffectiveRateChangedListener::create([weakThis = ThreadSafeWeakPtr { *this }](double rate) mutable {
@@ -898,6 +962,8 @@ void AudioVideoRendererAVFObjC::cancelStartupGateObserver()
 
 void AudioVideoRendererAVFObjC::setVolume(float volume)
 {
+    if (m_isShutdown)
+        return;
     m_volume = volume;
     applyOnAudioRenderers([&](auto* renderer) {
         [renderer setVolume:volume];
@@ -906,6 +972,8 @@ void AudioVideoRendererAVFObjC::setVolume(float volume)
 
 void AudioVideoRendererAVFObjC::setMuted(bool muted)
 {
+    if (m_isShutdown)
+        return;
     m_muted = muted;
     applyOnAudioRenderers([&](auto* renderer) {
         [renderer setMuted:muted];
@@ -914,6 +982,8 @@ void AudioVideoRendererAVFObjC::setMuted(bool muted)
 
 void AudioVideoRendererAVFObjC::setPreservesPitchAndCorrectionAlgorithm(bool preservesPitch, std::optional<PitchCorrectionAlgorithm> pitchCorrectionAlgorithm)
 {
+    if (m_isShutdown)
+        return;
     m_preservesPitch = preservesPitch;
     m_pitchCorrectionAlgorithm = pitchCorrectionAlgorithm;
     RetainPtr algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm.value_or(PitchCorrectionAlgorithm::BestAllAround), preservesPitch, m_rate).createNSString();
@@ -930,6 +1000,8 @@ void AudioVideoRendererAVFObjC::setAudioTimePitchAlgorithm(AVSampleBufferAudioRe
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
 void AudioVideoRendererAVFObjC::setOutputDeviceId(const String& outputDeviceId)
 {
+    if (m_isShutdown)
+        return;
     m_audioOutputDeviceId = outputDeviceId;
     if (!outputDeviceId)
         return;
@@ -954,6 +1026,8 @@ void AudioVideoRendererAVFObjC::setOutputDeviceIdOnRenderer(AVSampleBufferAudioR
 
 void AudioVideoRendererAVFObjC::setIsVisible(bool visible)
 {
+    if (m_isShutdown)
+        return;
     if (m_visible == visible)
         return;
     m_visible = visible;
@@ -964,11 +1038,15 @@ void AudioVideoRendererAVFObjC::setIsVisible(bool visible)
 
 void AudioVideoRendererAVFObjC::setPresentationSize(const IntSize& newSize)
 {
+    if (m_isShutdown)
+        return;
     m_presentationSize = newSize;
 }
 
 void AudioVideoRendererAVFObjC::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
 {
+    if (m_isShutdown)
+        return;
     if (m_shouldMaintainAspectRatio == shouldMaintainAspectRatio)
         return;
 
@@ -988,6 +1066,8 @@ void AudioVideoRendererAVFObjC::setShouldMaintainAspectRatio(bool shouldMaintain
 
 void AudioVideoRendererAVFObjC::renderingCanBeAcceleratedChanged(bool isAccelerated)
 {
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, isAccelerated);
     m_renderingCanBeAccelerated = isAccelerated;
     updateDisplayLayerIfNeeded();
@@ -995,33 +1075,45 @@ void AudioVideoRendererAVFObjC::renderingCanBeAcceleratedChanged(bool isAccelera
 
 void AudioVideoRendererAVFObjC::contentBoxRectChanged(const LayoutRect& newRect)
 {
+    if (m_isShutdown)
+        return;
     if (!layerOrVideoRenderer() && !newRect.isEmpty())
         updateDisplayLayerIfNeeded();
 }
 
 void AudioVideoRendererAVFObjC::notifyFirstFrameAvailable(Function<void()>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_firstFrameAvailableCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_hasAvailableVideoFrameCallback = WTF::move(callback);
     configureHasAvailableVideoFrameCallbackIfNeeded();
 }
 
 void AudioVideoRendererAVFObjC::notifyWhenRequiresFlushToResume(Function<void()>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_notifyWhenRequiresFlushToResume = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::notifyRenderingModeChanged(Function<void()>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_renderingModeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const MediaTime& presentationTime)
 {
+    if (m_isShutdown)
+        return;
     if (!m_enabledVideoTrackId)
         return;
     if (RefPtr videoRenderer = m_videoRenderer)
@@ -1030,11 +1122,15 @@ void AudioVideoRendererAVFObjC::expectMinimumUpcomingPresentationTime(const Medi
 
 void AudioVideoRendererAVFObjC::notifySizeChanged(Function<void(const MediaTime&, FloatSize)>&& callback)
 {
+    if (m_isShutdown)
+        return;
     m_sizeChangedCallback = WTF::move(callback);
 }
 
 void AudioVideoRendererAVFObjC::setShouldDisableHDR(bool shouldDisable)
 {
+    if (m_isShutdown)
+        return;
     m_shouldDisableHDR = shouldDisable;
     if (![m_sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
         return;
@@ -1045,12 +1141,21 @@ void AudioVideoRendererAVFObjC::setShouldDisableHDR(bool shouldDisable)
 
 void AudioVideoRendererAVFObjC::setPlatformDynamicRangeLimit(const PlatformDynamicRangeLimit& platformDynamicRangeLimit)
 {
+    if (m_isShutdown)
+        return;
     m_dynamicRangeLimit = platformDynamicRangeLimit;
 
     if (!m_sampleBufferDisplayLayer)
         return;
 
     setLayerDynamicRangeLimit(m_sampleBufferDisplayLayer.get(), platformDynamicRangeLimit);
+}
+
+void AudioVideoRendererAVFObjC::setResourceOwner(const ProcessIdentity& resourceOwner)
+{
+    if (m_isShutdown)
+        return;
+    m_resourceOwner = resourceOwner;
 }
 
 RefPtr<VideoFrame> AudioVideoRendererAVFObjC::currentVideoFrame() const
@@ -1068,7 +1173,7 @@ RefPtr<VideoFrame> AudioVideoRendererAVFObjC::currentVideoFrame() const
 
 void AudioVideoRendererAVFObjC::paintCurrentVideoFrameInContext(GraphicsContext& context, const FloatRect& outputRect)
 {
-    if (context.paintingDisabled())
+    if (m_isShutdown || context.paintingDisabled())
         return;
 
     auto image = currentNativeImage();
@@ -1098,6 +1203,8 @@ PlatformLayer* AudioVideoRendererAVFObjC::platformVideoLayer() const
 
 void AudioVideoRendererAVFObjC::setVideoLayerSize(const FloatSize& newSize)
 {
+    if (m_isShutdown)
+        return;
     if (!layerOrVideoRenderer() && !newSize.isEmpty())
         updateDisplayLayerIfNeeded();
 }
@@ -1109,23 +1216,33 @@ void AudioVideoRendererAVFObjC::setVideoLayerSizeFenced(const FloatSize& newSize
 
 void AudioVideoRendererAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
+    if (m_isShutdown) {
+        completionHandler();
+        return;
+    }
     RefPtr currentImage = currentNativeImage();
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler), currentImage ? currentImage->platformImage() : nullptr);
 }
 
 void AudioVideoRendererAVFObjC::setVideoFullscreenFrame(const FloatRect& frame)
 {
+    if (m_isShutdown)
+        return;
     m_videoLayerManager->setVideoFullscreenFrame(frame);
 }
 
 void AudioVideoRendererAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
 {
+    if (m_isShutdown)
+        return;
     RetainPtr representationLayer = representation ? representation->platformLayer() : nil;
     m_videoLayerManager->setTextTrackRepresentationLayer(representationLayer.get());
 }
 
 void AudioVideoRendererAVFObjC::syncTextTrackBounds()
 {
+    if (m_isShutdown)
+        return;
     m_videoLayerManager->syncTextTrackBounds();
 }
 
@@ -1135,6 +1252,8 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoTarget(const PlatformVide
     UNUSED_PARAM(videoTarget);
     return GenericPromise::createAndReject();
 #else
+    if (m_isShutdown)
+        return GenericPromise::createAndReject();
     m_videoTarget = videoTarget;
     return updateDisplayLayerIfNeeded();
 #endif
@@ -1143,6 +1262,8 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::setVideoTarget(const PlatformVide
 void AudioVideoRendererAVFObjC::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
 {
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (m_isShutdown)
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, isInFullscreenOrPictureInPicture);
     destroyExpiringVideoRenderersIfNeeded();
 #else
@@ -1241,6 +1362,8 @@ bool AudioVideoRendererAVFObjC::seeking() const
 
 void AudioVideoRendererAVFObjC::setScreenReserved(bool reserved)
 {
+    if (m_isShutdown)
+        return;
     setSynchronizerScreenReserved(m_synchronizer, reserved);
 }
 
@@ -1816,6 +1939,8 @@ void AudioVideoRendererAVFObjC::audioRendererWasAutomaticallyFlushed(AVSampleBuf
 #if HAVE(SPATIAL_TRACKING_LABEL)
 void AudioVideoRendererAVFObjC::setSpatialTrackingInfo(bool prefersSpatialAudioExperience, SoundStageSize soundStage, const String& sceneIdentifier, const String& defaultLabel, const String& label)
 {
+    if (m_isShutdown)
+        return;
     if (m_prefersSpatialAudioExperience == prefersSpatialAudioExperience
         && m_soundStage == soundStage
         && m_sceneIdentifier == sceneIdentifier
@@ -1895,6 +2020,8 @@ void AudioVideoRendererAVFObjC::updateSpatialTrackingLabel()
 #if ENABLE(ENCRYPTED_MEDIA)
 void AudioVideoRendererAVFObjC::setCDMInstance(CDMInstance* instance)
 {
+    if (m_isShutdown)
+        return;
     RefPtr fpsInstance = dynamicDowncast<CDMInstanceFairPlayStreamingAVFObjC>(instance);
     if (fpsInstance == m_cdmInstance)
         return;
@@ -1912,6 +2039,8 @@ void AudioVideoRendererAVFObjC::setCDMInstance(CDMInstance* instance)
 
 Ref<MediaPromise> AudioVideoRendererAVFObjC::setInitData(Ref<SharedBuffer> initData)
 {
+    if (m_isShutdown)
+        return MediaPromise::createAndReject(PlatformMediaError::Shutdown);
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     m_initData = initData.copyRef();
     if (RefPtr session = m_session.get()) {
@@ -1938,6 +2067,8 @@ Ref<MediaPromise> AudioVideoRendererAVFObjC::setInitData(Ref<SharedBuffer> initD
 
 void AudioVideoRendererAVFObjC::attemptToDecrypt()
 {
+    if (m_isShutdown)
+        return;
     if (m_blockedSamples.isEmpty())
         return;
     if (m_cdmInstance && m_keyIDs.isEmpty()) {
@@ -2016,6 +2147,8 @@ void AudioVideoRendererAVFObjC::attachContentKeyToSampleIfNeeded(const MediaSamp
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 void AudioVideoRendererAVFObjC::setCDMSession(LegacyCDMSession* session)
 {
+    if (m_isShutdown)
+        return;
     RefPtr oldSession = m_session.get();
     if (session == oldSession)
         return;
@@ -2094,6 +2227,8 @@ RefPtr<NativeImage> AudioVideoRendererAVFObjC::currentNativeImage() const
 
 Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererAVFObjC::currentBitmapImage() const
 {
+    if (m_isShutdown)
+        return BitmapImagePromise::createAndReject();
     RefPtr nativeImage = currentNativeImage();
     if (!nativeImage)
         return BitmapImagePromise::createAndReject();

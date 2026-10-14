@@ -1075,6 +1075,7 @@ enum class WebCore::PlatformMediaError : uint8_t {
     VideoDecodingError,
     InvalidState,
     CDMInstanceKeyNeeded,
+    Shutdown,
 };
 #endif
 

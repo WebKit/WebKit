@@ -102,6 +102,18 @@ void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
     });
 }
 
+void MediaSourcePrivateAVFObjC::willShutdown()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    RefPtr renderer = m_renderer.get();
+    if (!renderer)
+        return;
+    ensureOnDispatcher([renderer = renderer.releaseNonNull()] {
+        renderer->shutdown();
+    });
+}
+
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration& configuration, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);

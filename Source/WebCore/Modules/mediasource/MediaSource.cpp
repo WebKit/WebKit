@@ -1059,6 +1059,9 @@ void MediaSource::detachFromElement()
     // 2.4.2 Detaching from a media element
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-detach
 
+    if (RefPtr msp = m_private)
+        msp->willShutdown();
+
     if (detachable())
         m_readyStateBeforeDetached = readyState();
 

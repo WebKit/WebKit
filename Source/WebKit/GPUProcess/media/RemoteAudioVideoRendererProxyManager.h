@@ -95,6 +95,7 @@ private:
     // Messages
     void createManager(RemoteAudioVideoRendererIdentifier, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::SharedTimebaseHandle>)>&&);
     void shutdown(RemoteAudioVideoRendererIdentifier);
+    void destroy(RemoteAudioVideoRendererIdentifier);
 
     void setPreferences(RemoteAudioVideoRendererIdentifier, WebCore::VideoRendererPreferences);
     void setHasProtectedVideoContent(RemoteAudioVideoRendererIdentifier, bool);

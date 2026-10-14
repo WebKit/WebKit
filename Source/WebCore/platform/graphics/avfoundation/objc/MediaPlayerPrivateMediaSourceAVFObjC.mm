@@ -143,7 +143,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
     cancelPendingSeek();
     m_seekTimer.stop();
     dispatchToRendererQueue([](auto& renderer) {
-        renderer.pause();
+        renderer.shutdown();
     });
 }
 

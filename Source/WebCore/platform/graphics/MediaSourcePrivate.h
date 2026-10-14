@@ -85,6 +85,7 @@ public:
     RefPtr<MediaSourcePrivateClient> client() const;
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
     virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
+    virtual void willShutdown() { }
     void shutdown();
     // Returns the target of the seek being waited on if any, the platform's current time otherwise.
     MediaTime currentTime() const;

@@ -135,6 +135,8 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM() WTF_IGNORES_THREAD_SAFETY_ANAL
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    m_renderer->shutdown();
+
     // cancelPendingSeek() requires being on m_runningQueue because disconnecting a
     // NativePromiseRequest requires being on the queue the callback was registered on.
     // Move the seek request out and dispatch to that queue.

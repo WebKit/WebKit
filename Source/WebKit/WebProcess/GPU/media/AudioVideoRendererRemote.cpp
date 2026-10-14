@@ -155,13 +155,29 @@ AudioVideoRendererRemote::~AudioVideoRendererRemote() WTF_IGNORES_THREAD_SAFETY_
             producer->reject(PlatformMediaError::Cancelled);
     });
 
-    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && !m_shutdown) {
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && !m_gpuProcessConnectionShutDown) {
         ensureOnDispatcher([gpuProcessConnection, identifier = m_identifier] {
-            gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Shutdown(identifier), 0);
+            gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Destroy(identifier), 0);
             gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), identifier.toUInt64());
         });
     }
 
+}
+
+void AudioVideoRendererRemote::shutdown()
+{
+    if (m_isShutdown.exchange(true))
+        return;
+    ALWAYS_LOG(LOGIDENTIFIER);
+    ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
+        if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+            return;
+        gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Shutdown(protectedThis->m_identifier), 0);
+    });
 }
 
 void AudioVideoRendererRemote::setVolume(float volume)
@@ -313,6 +329,8 @@ RefPtr<VideoFrame> AudioVideoRendererRemote::currentVideoFrame() const
 
     RefPtr<VideoFrame> videoFrame;
     callOnMainRunLoopAndWait([&] {
+        if (m_isShutdown)
+            return;
         auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteAudioVideoRendererProxyManager::CurrentVideoFrame(m_identifier), 0);
         if (!sendResult.succeeded())
             return;
@@ -353,7 +371,7 @@ RefPtr<NativeImage> AudioVideoRendererRemote::currentNativeImage() const
 Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererRemote::currentBitmapImage() const
 {
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning() || !gpuProcessConnection)
+    if (m_isShutdown || !isGPURunning() || !gpuProcessConnection)
         return BitmapImagePromise::createAndReject();
 
     return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteAudioVideoRendererProxyManager::CurrentBitmapImage(m_identifier))->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) -> Ref<BitmapImagePromise> {
@@ -422,6 +440,10 @@ PlatformLayer* AudioVideoRendererRemote::platformVideoLayer() const
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 void AudioVideoRendererRemote::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
+    if (m_isShutdown) {
+        completionHandler();
+        return;
+    }
 #if PLATFORM(COCOA)
     Locker locker { m_lock };
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler), nullptr);
@@ -526,6 +548,11 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::prepareToSeek(const MediaTime& t
     return invokeAsync(queueSingleton(), [protectedThis = Ref { *this }, this, time] -> Ref<MediaTimePromise> {
         cancelPendingSeek();
 
+        if (m_isShutdown) {
+            m_seeking = false;
+            return MediaTimePromise::createAndReject(PlatformMediaError::Shutdown);
+        }
+
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection) {
             m_seeking = false;
@@ -569,7 +596,7 @@ Ref<GenericPromise> AudioVideoRendererRemote::finishSeek(const MediaTime& time)
         cancelPendingSeek();
 
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
-        if (!isGPURunning() || !gpuProcessConnection) {
+        if (m_isShutdown || !isGPURunning() || !gpuProcessConnection) {
             m_seeking = false;
             return GenericPromise::createAndReject();
         }
@@ -631,6 +658,8 @@ std::optional<AudioVideoRendererRemote::TrackIdentifier> AudioVideoRendererRemot
     // the sendSync() call requires us to run on the connection's dispatcher, which is the main thread.
     std::expected<WebCore::SamplesRendererTrackIdentifier, WebCore::PlatformMediaError> result = makeUnexpected(PlatformMediaError::IPCError);
     callOnMainRunLoopAndWait([&] {
+        if (m_isShutdown)
+            return;
         // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
         auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteAudioVideoRendererProxyManager::AddTrack(m_identifier, type), 0);
         if (!sendResult.succeeded())
@@ -685,7 +714,7 @@ void AudioVideoRendererRemote::enqueueSample(TrackIdentifier trackIdentifier, Re
             }();
             if (!pendingSamples && !readyForMoreData) {
                 RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
-                if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+                if (protectedThis->m_isShutdown || !protectedThis->isGPURunning() || !gpuProcessConnection)
                     return;
                 gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::RequestMediaDataWhenReady(protectedThis->m_identifier, trackIdentifier), 0);
                 return;
@@ -708,6 +737,8 @@ Ref<AudioVideoRenderer::RequestPromise> AudioVideoRendererRemote::requestMediaDa
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return RequestPromise::createAndReject(PlatformMediaError::Cancelled);
+        if (protectedThis->m_isShutdown)
+            return RequestPromise::createAndReject(PlatformMediaError::Shutdown);
         if (protectedThis->isReadyForMoreSamples(trackIdentifier))
             return RequestPromise::createAndResolve(trackIdentifier);
         auto addResult = protectedThis->m_requestMediaDataWhenReadyDataPromises.set(trackIdentifier, makeUnique<RequestPromise::AutoRejectProducer>(PlatformMediaError::Cancelled));
@@ -719,6 +750,8 @@ void AudioVideoRendererRemote::notifyTrackNeedsReenqueuing(TrackIdentifier track
 {
     ensureOnDispatcher([protectedThis = Ref { *this }, trackIdentifier, callback = WTF::move(callback)]() mutable {
         assertIsCurrent(queueSingleton());
+        if (protectedThis->m_isShutdown)
+            return;
         if (callback)
             protectedThis->m_trackNeedsReenqueuingCallbacks.set(trackIdentifier, WTF::move(callback));
         else
@@ -736,6 +769,8 @@ void AudioVideoRendererRemote::notifyEffectiveRateChanged(Function<void(double)>
 {
     ensureOnDispatcher([protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
         assertIsCurrent(queueSingleton());
+        if (protectedThis->m_isShutdown)
+            return;
         protectedThis->m_effectiveRateChangedCallback = WTF::move(callback);
     });
 }
@@ -767,6 +802,9 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::notifyTimeReachedAndStall(const 
             protect(m_stallRequest)->disconnect();
         if (auto previous = std::exchange(m_stallProducer, std::nullopt))
             previous->reject(PlatformMediaError::Cancelled);
+
+        if (m_isShutdown)
+            return MediaTimePromise::createAndReject(PlatformMediaError::Shutdown);
 
         RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
         if (!isGPURunning() || !gpuProcessConnection)
@@ -835,7 +873,7 @@ void AudioVideoRendererRemote::flushTrack(TrackIdentifier identifier)
             }
             if (!isReadyForMoreMediaData) {
                 RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
-                if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+                if (protectedThis->m_isShutdown || !protectedThis->isGPURunning() || !gpuProcessConnection)
                     return;
                 gpuProcessConnection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::RequestMediaDataWhenReady(protectedThis->m_identifier, identifier), 0);
                 return;
@@ -856,6 +894,10 @@ void AudioVideoRendererRemote::notifyWhenErrorOccurs(Function<void(PlatformMedia
 {
     ensureOnDispatcher([protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
         assertIsCurrent(queueSingleton());
+        if (protectedThis->m_isShutdown) {
+            callback(PlatformMediaError::Shutdown);
+            return;
+        }
         protectedThis->m_errorCallback = WTF::move(callback);
     });
 }
@@ -887,7 +929,7 @@ void AudioVideoRendererRemote::ensureOnDispatcherWithConnection(Function<void(Au
 {
     ensureOnDispatcher([weakThis = ThreadSafeWeakPtr { *this }, function = WTF::move(function)]() mutable {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || protectedThis->m_isShutdown)
             return;
         RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
         if (!protectedThis->isGPURunning() || !gpuProcessConnection)
@@ -948,7 +990,7 @@ Ref<AudioVideoRenderer::HostingContextPromise> AudioVideoRendererRemote::request
 
         // FIXME: should it be called on the main thread???
         RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
-        if (!protectedThis->isGPURunning() || !gpuProcessConnection)
+        if (protectedThis->m_isShutdown || !protectedThis->isGPURunning() || !gpuProcessConnection)
             return HostingContextPromise::createAndReject();
 
         auto layerHostingContext = [&] {
@@ -1025,6 +1067,8 @@ Ref<MediaPromise> AudioVideoRendererRemote::setInitData(Ref<SharedBuffer> initDa
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
+        if (protectedThis->m_isShutdown)
+            return MediaPromise::createAndReject(PlatformMediaError::Shutdown);
         RefPtr gpuProcessConnection = protectedThis->m_gpuProcessConnection.get();
         if (!protectedThis->isGPURunning() || !gpuProcessConnection)
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
@@ -1092,6 +1136,8 @@ void AudioVideoRendererRemote::notifyVideoLayerSizeChanged(Function<void(const M
 {
     ensureOnDispatcher([protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
         assertIsCurrent(queueSingleton());
+        if (protectedThis->m_isShutdown)
+            return;
         protectedThis->m_videoLayerSizeChangedCallback = WTF::move(callback);
     });
 }
@@ -1099,9 +1145,9 @@ void AudioVideoRendererRemote::notifyVideoLayerSizeChanged(Function<void(const M
 void AudioVideoRendererRemote::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
     ASSERT(m_gpuProcessConnection.get() == &connection);
-    m_shutdown = true;
+    m_gpuProcessConnectionShutDown = true;
     ensureOnDispatcher([connection = Ref { connection }, identifier = m_identifier, protectedThis = Ref { *this }] {
-        connection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Shutdown(identifier), 0);
+        connection->connection().send(Messages::RemoteAudioVideoRendererProxyManager::Destroy(identifier), 0);
         connection->connection().removeWorkQueueMessageReceiver(Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName(), identifier.toUInt64());
         assertIsCurrent(queueSingleton());
         if (protectedThis->m_errorCallback)

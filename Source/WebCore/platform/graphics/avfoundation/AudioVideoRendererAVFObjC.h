@@ -75,6 +75,8 @@ public:
     ~AudioVideoRendererAVFObjC();
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
+    void shutdown() final;
+
     WEBCORE_EXPORT void setPreferences(VideoRendererPreferences) final;
     void setHasProtectedVideoContent(bool) final;
 
@@ -140,7 +142,7 @@ public:
     void notifySizeChanged(Function<void(const MediaTime&, FloatSize)>&&) final;
     void setShouldDisableHDR(bool) final;
     void setPlatformDynamicRangeLimit(const PlatformDynamicRangeLimit&) final;
-    void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
+    void setResourceOwner(const ProcessIdentity&) final;
     RefPtr<VideoFrame> currentVideoFrame() const final;
     void paintCurrentVideoFrameInContext(GraphicsContext&, const FloatRect&) final;
     RefPtr<NativeImage> currentNativeImage() const final;
@@ -311,6 +313,7 @@ private:
     RetainPtr<id> m_timeChangedObserver;
 
     bool m_isPlaying { false };
+    bool m_isShutdown { false };
     double m_rate { 1 };
     // Cached value of the rate last passed to [m_synchronizer setRate:].
     // Avoid querying [m_synchronizer rate] (heavy dispatch_sync) — read this

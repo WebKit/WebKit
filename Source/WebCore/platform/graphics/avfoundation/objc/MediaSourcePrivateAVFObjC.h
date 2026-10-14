@@ -70,6 +70,7 @@ public:
 
     RefPtr<MediaPlayerPrivateInterface> player() const final;
     void setPlayer(MediaPlayerPrivateInterface*) final;
+    void willShutdown() final;
 
     AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
