@@ -88,9 +88,9 @@ static CheckedPtr<RenderBlockFlow> lastFormattedLineRoot(const RenderBlockFlow& 
 {
     if (enclosingBlockContainer.hasContentfulInlineOrBlockLine()) {
         // With blocks-in-inline, the last formatted line may be a block sitting on the last line.
-        auto firstBoxOnLastFormattedLineWithContent = [&]() -> InlineIterator::LeafBoxIterator {
-            for (auto lineBox = InlineIterator::lastLineBoxFor(enclosingBlockContainer); lineBox; --lineBox) {
-                if (auto box = lineBox->logicalLeftmostLeafBox())
+        auto firstBoxOnLastFormattedLineWithContent = [&] -> InlineIterator::LeafBoxIterator {
+            for (auto& lineBox : InlineIterator::lineBoxesFor(enclosingBlockContainer) | std::views::reverse) {
+                if (auto box = lineBox.logicalLeftmostLeafBox())
                     return box;
             }
             return { };

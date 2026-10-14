@@ -37,46 +37,7 @@
 namespace WebCore {
 namespace InlineIterator {
 
-LineBoxIterator::LineBoxIterator(const LineBox& lineBox)
-    : m_lineBox(lineBox)
-{
-}
-
-bool LineBoxIterator::atEnd() const
-{
-    return m_lineBox.atEnd();
-}
-
-LineBoxIterator& LineBoxIterator::traverseNext()
-{
-    ASSERT(!atEnd());
-
-    ++m_lineBox.m_lineIndex;
-    return *this;
-}
-
-LineBoxIterator& LineBoxIterator::traversePrevious()
-{
-    ASSERT(!atEnd());
-
-    if (!m_lineBox.m_lineIndex) {
-        m_lineBox.setAtEnd();
-        return *this;
-    }
-
-    --m_lineBox.m_lineIndex;
-    return *this;
-}
-
-LineBoxIterator::operator bool() const
-{
-    return !atEnd();
-}
-
-bool LineBoxIterator::operator==(const LineBoxIterator& other) const
-{
-    return m_lineBox.m_inlineContent == other.m_lineBox.m_inlineContent && m_lineBox.m_lineIndex == other.m_lineBox.m_lineIndex;
-}
+static_assert(std::ranges::bidirectional_range<LineBoxRange> && std::ranges::common_range<LineBoxRange> && std::ranges::view<LineBoxRange> && std::ranges::borrowed_range<LineBoxRange>);
 
 LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 {
@@ -92,19 +53,23 @@ LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
     return { };
 }
 
-LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
+LineBox lineBoxFor(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
 {
-    return { LineBox { inlineContent, lineIndex } };
+    return { inlineContent, lineIndex };
 }
 
 LineBoxIterator LineBox::next() const
 {
-    return LineBoxIterator(*this).traverseNext();
+    ASSERT(!atEnd());
+    return LineBox { *m_inlineContent, m_lineIndex + 1 };
 }
 
 LineBoxIterator LineBox::previous() const
 {
-    return LineBoxIterator(*this).traversePrevious();
+    ASSERT(!atEnd());
+    if (!m_lineIndex)
+        return { };
+    return LineBox { *m_inlineContent, m_lineIndex - 1 };
 }
 
 LeafBoxIterator LineBox::lineLeftmostLeafBox() const
@@ -112,8 +77,8 @@ LeafBoxIterator LineBox::lineLeftmostLeafBox() const
     if (!line().boxCount())
         return { };
     auto box = boxFor(*m_inlineContent, line().firstBoxIndex());
-    if (box->isInlineBox())
-        box.traverseLineRightwardOnLine();
+    if (box.isInlineBox())
+        return box.nextLineRightwardOnLine();
     return box;
 }
 
@@ -123,9 +88,14 @@ LeafBoxIterator LineBox::lineRightmostLeafBox() const
     if (!boxCount)
         return { };
     auto box = boxFor(*m_inlineContent, line().firstBoxIndex() + boxCount - 1);
-    if (box->isInlineBox())
-        box.traverseLineLeftwardOnLine();
+    if (box.isInlineBox())
+        return box.nextLineLeftwardOnLine();
     return box;
+}
+
+LeafBoxRange LineBox::leafBoxes() const
+{
+    return { lineLeftmostLeafBox() };
 }
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float horizontalPosition, bool editableOnly)
@@ -168,18 +138,18 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
 RenderObject::HighlightState LineBox::ellipsisSelectionState() const
 {
     auto lastLeafBox = this->lineRightmostLeafBox();
-    if (!lastLeafBox)
+    if (!lastLeafBox || !lastLeafBox->isText())
         return RenderObject::HighlightState::None;
 
-    auto* text = dynamicDowncast<InlineIterator::TextBox>(*lastLeafBox);
-    if (!text || text->selectionState() == RenderObject::HighlightState::None)
+    auto text = downcast<TextBox>(*lastLeafBox);
+    if (text.selectionState() == RenderObject::HighlightState::None)
         return RenderObject::HighlightState::None;
 
-    auto selectionRange = text->selectableRange();
+    auto selectionRange = text.selectableRange();
     if (!selectionRange.truncation)
         return RenderObject::HighlightState::None;
 
-    auto [selectionStart, selectionEnd] = formattingContextRoot().view().selection().rangeForTextBox(protect(text->renderer()), selectionRange);
+    auto [selectionStart, selectionEnd] = formattingContextRoot().view().selection().rangeForTextBox(protect(text.renderer()), selectionRange);
     return selectionStart <= *selectionRange.truncation && selectionEnd >= *selectionRange.truncation ? RenderObject::HighlightState::Inside : RenderObject::HighlightState::None;
 }
 

@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace InlineIterator {
 
+static_assert(std::ranges::bidirectional_range<InlineBoxRange> && std::ranges::common_range<InlineBoxRange> && std::ranges::view<InlineBoxRange> && std::ranges::borrowed_range<InlineBoxRange>);
+
 InlineBox::InlineBox(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
     : Box(inlineContent, boxIndex)
 {
@@ -59,57 +61,56 @@ RectEdges<bool> InlineBox::closedEdges() const
 
 InlineBoxIterator InlineBox::nextInlineBoxLineRightward() const
 {
-    return InlineBoxIterator(*this).traverseInlineBoxLineRightward();
+    return std::ranges::next(InlineBoxIterator { *this });
 }
 
 InlineBoxIterator InlineBox::nextInlineBoxLineLeftward() const
 {
-    return InlineBoxIterator(*this).traverseInlineBoxLineLeftward();
+    return std::ranges::prev(InlineBoxIterator { *this });
+}
+
+InlineBoxIterator InlineBox::iterator() const
+{
+    return { *this };
 }
 
 LeafBoxIterator InlineBox::firstLeafBox() const
 {
-    return { firstLeafBoxForInlineBox() };
+    auto first = std::ranges::next(LeafBoxIterator { *this });
+    if (!first || !first->isWithinInlineBox(displayBox().layoutBox()))
+        return { };
+    return first;
 }
 
 LeafBoxIterator InlineBox::lastLeafBox() const
 {
-    return { lastLeafBoxForInlineBox() };
+    // FIXME: Get the last box index directly from the display box.
+    LeafBoxIterator last;
+    for (auto& box : leafDescendants())
+        last = box;
+    return last;
 }
 
-LeafBoxIterator InlineBox::endLeafBox() const
+size_t InlineBox::endOfDescendantsIndex() const
 {
-    if (auto last = lastLeafBox())
-        return last->nextLineRightwardOnLine();
-    return { };
+    auto end = *this;
+    end.traverseNextBoxOnLineSkippingChildren();
+    if (end.atEnd())
+        return line().firstBoxIndex() + line().boxCount();
+    return end.boxIndex();
 }
 
-IteratorRange<BoxIterator> InlineBox::descendants() const
+BoxRange<BoxIterator> InlineBox::descendants() const
 {
-    BoxIterator begin(*this);
-    begin.traverseLineRightwardOnLine();
-
-    BoxIterator end(*this);
-    end.traverseLineRightwardOnLineSkippingChildren();
-
-    return { begin, end };
+    auto end = endOfDescendantsIndex();
+    if (boxIndex() + 1 == end)
+        return { };
+    return { BoxIterator { Box { inlineContent(), boxIndex() + 1 } }, end };
 }
 
-InlineBoxIterator::InlineBoxIterator(const Box& box)
-    : BoxIterator(box)
+LeafBoxRange InlineBox::leafDescendants() const
 {
-}
-
-InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineRightward()
-{
-    m_box.traverseNextInlineBox();
-    return *this;
-}
-
-InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineLeftward()
-{
-    m_box.traversePreviousInlineBox();
-    return *this;
+    return { firstLeafBox(), endOfDescendantsIndex() };
 }
 
 InlineBoxIterator lineLeftmostInlineBoxFor(const RenderBoxModelObject& inlineBox)
@@ -119,6 +120,11 @@ InlineBoxIterator lineLeftmostInlineBoxFor(const RenderBoxModelObject& inlineBox
     return { };
 }
 
+InlineBoxRange inlineBoxesFor(const RenderBoxModelObject& inlineBox)
+{
+    return { lineLeftmostInlineBoxFor(inlineBox) };
+}
+
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
 {
     if (CheckedPtr lineLayout = block.inlineLayout())
@@ -126,15 +132,20 @@ InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
     return { };
 }
 
-InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
+InlineBoxRange rootInlineBoxesFor(const RenderBlockFlow& block)
+{
+    return { firstRootInlineBoxFor(block) };
+}
+
+InlineBox inlineBoxFor(const LayoutIntegration::InlineContent& content, const InlineDisplay::Box& box)
 {
     return inlineBoxFor(content, content.indexForBox(box));
 }
 
-InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
+InlineBox inlineBoxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
     ASSERT(content.displayContent().boxes[boxIndex].isInlineBox());
-    return { Box { content, boxIndex } };
+    return { content, boxIndex };
 }
 
 }

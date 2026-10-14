@@ -1619,7 +1619,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     };
 
     // Appends text to the current lineString, collapsing whitespace as necessary (similar to how TextIterator::handleTextRun() does).
-    auto appendToLineString = [&] (const InlineIterator::TextBoxIterator& textBox) {
+    auto appendToLineString = [&](const InlineIterator::TextBoxIterator& textBox) {
         auto text = textBox->originalText();
         if (text.isEmpty())
             return;
@@ -1636,9 +1636,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
         auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
         auto lineBox = textBox->lineBox();
-        if (!lineBox)
-            return;
-        lineHeight = LineSelection::logicalRect(*lineBox).height();
+        lineHeight = LineSelection::logicalRect(lineBox).height();
 
         // Compute distanceFromBoundsInDirection only for the first text box on each
         // line. Multiple text boxes can share a line (e.g. due to inline formatting
@@ -1648,7 +1646,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         if (!didComputeDistanceFromBounds) {
             didComputeDistanceFromBounds = true;
             computeBoundsOffsetsIfNeeded();
-            distanceFromBoundsInDirection = isHorizontal ? textRun.xPos() + lineBox->contentLogicalLeft() + containingBlockOffset - elementRectOffset : -textRun.xPos() + containingBlockOffset - elementRectOffset;
+            distanceFromBoundsInDirection = isHorizontal ? textRun.xPos() + lineBox.contentLogicalLeft() + containingBlockOffset - elementRectOffset : -textRun.xPos() + containingBlockOffset - elementRectOffset;
         }
 
         // Populate GlyphBuffer with all of the glyphs for the text runs, enabling us to measure character widths.

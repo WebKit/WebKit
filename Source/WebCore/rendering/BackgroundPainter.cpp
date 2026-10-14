@@ -551,7 +551,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
 
         geometry.clip(LayoutRect(pixelSnappedRect));
-        bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox()->isFirst();
+        bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox().isFirst();
         if (!geometry.destinationRect.isEmpty() && bgImage->canDrawAtSize(clientForBackgroundImage, geometry.tileSize)) {
             // image-orientation does not apply to mask images (https://drafts.csswg.org/css-images-3/#propdef-image-orientation).
             auto orientation = [&] {

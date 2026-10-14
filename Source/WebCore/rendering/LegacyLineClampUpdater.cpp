@@ -68,16 +68,16 @@ static CheckedPtr<RenderBlockFlow> blockContainerForLastFormattedLine(RenderBloc
     if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(enclosingBlockContainer); blockFlow && blockFlow->childrenInline()) {
         // The lines tell us where the last formatted line is: either it is one of this container's own lines, or it is inside the block level box sitting on the last line.
         auto blockLevelBoxOnLastFormattedLine = [&] -> CheckedPtr<RenderBlock> {
-            for (auto lineBox = InlineIterator::lastLineBoxFor(*blockFlow); lineBox; --lineBox) {
-                if (!lineBox->hasContentfulInFlowBox()) {
+            for (auto& lineBox : InlineIterator::lineBoxesFor(*blockFlow) | std::views::reverse) {
+                if (!lineBox.hasContentfulInFlowBox()) {
                     // Out-of-flow content could initiate a line with no inline content.
                     continue;
                 }
-                if (!lineBox->hasBlockContent()) {
+                if (!lineBox.hasBlockContent()) {
                     // The last formatted line is one of this inline formatting context's own lines.
                     return { };
                 }
-                auto blockBox = lineBox->blockLevelBox();
+                auto blockBox = lineBox.blockLevelBox();
                 // FIXME: Remove suppression once rdar://189998365 is fixed.
                 SUPPRESS_MEMORY_UNSAFE_CAST return blockBox ? dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockBox->renderer())) : nullptr;
             }

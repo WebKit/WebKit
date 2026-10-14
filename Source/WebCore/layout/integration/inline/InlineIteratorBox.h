@@ -31,6 +31,7 @@
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderSVGInlineText.h>
 #include <WebCore/TextBoxSelectableRange.h>
+#include <ranges>
 
 namespace WebCore {
 
@@ -44,12 +45,21 @@ class ComputedStyle;
 
 namespace InlineIterator {
 
-class LineBoxIterator;
-class BoxIterator;
+class BoxIteratorBase;
+class InlineBox;
+class InlineBoxIterator;
 class LeafBoxIterator;
-class TextBoxIterator;
+class LineBox;
 
-struct EndIterator { };
+// Which boxes a box iterator visits.
+enum class BoxFilter : uint8_t {
+    All,
+    Leaf,
+    SameLayoutBox,
+};
+
+template<typename, typename, BoxFilter> class BasicBoxIterator;
+template<typename> class BoxRange;
 
 class Box {
 public:
@@ -100,13 +110,13 @@ public:
     CheckedRef<const Style::ComputedStyle> style() const;
     WritingMode writingMode() const { return style()->writingMode(); }
 
-    // Text-relative left/right
+    // Text-relative left/right leaf boxes.
     LeafBoxIterator nextLineRightwardOnLine() const;
     LeafBoxIterator nextLineLeftwardOnLine() const;
     LeafBoxIterator nextLineRightwardOnLineIgnoringLineBreak() const;
     LeafBoxIterator nextLineLeftwardOnLineIgnoringLineBreak() const;
 
-    // Coordinate-relative left/right
+    // Coordinate-relative left/right leaf boxes.
     inline LeafBoxIterator nextLogicalRightwardOnLine() const;
     inline LeafBoxIterator nextLogicalLeftwardOnLine() const;
     inline LeafBoxIterator nextLogicalRightwardOnLineIgnoringLineBreak() const;
@@ -114,7 +124,7 @@ public:
 
     InlineBoxIterator parentInlineBox() const;
 
-    LineBoxIterator lineBox() const;
+    LineBox lineBox() const;
     size_t lineIndex() const;
 
     const InlineDisplay::Box& displayBox() const { return displayBoxes()[m_boxIndex]; }
@@ -122,26 +132,14 @@ public:
     const LayoutIntegration::InlineContent& inlineContent() const { return *m_inlineContent; }
 
 protected:
-    friend class BoxIterator;
-    friend class InlineBoxIterator;
-    friend class LeafBoxIterator;
-    friend class TextBoxIterator;
+    friend class BoxIteratorBase;
+    friend class InlineBox;
+    template<typename, typename, BoxFilter> friend class BasicBoxIterator;
+    template<typename> friend class BoxRange;
 
     Box() = default;
 
     bool atEnd() const { return !m_inlineContent || m_boxIndex == displayBoxes().size(); }
-
-    void traverseNextTextBox();
-    void traverseNextLeafOnLine();
-    void traversePreviousLeafOnLine();
-    void traverseNextInlineBox();
-    void traversePreviousInlineBox();
-    void traverseNextBoxOnLine();
-    void traverseNextBoxOnLineSkippingChildren();
-    void traversePreviousBoxOnLine();
-
-    Box firstLeafBoxForInlineBox() const;
-    Box lastLeafBoxForInlineBox() const;
 
     const InlineDisplay::Line& line() const { return m_inlineContent->lineForBox(displayBox()); }
 
@@ -149,85 +147,256 @@ private:
     bool hasRenderer() const;
     bool isWithinInlineBox(const Layout::Box&) const;
 
+    void traverseNextBoxOnLineSkippingChildren();
+
     void traverseNextBox();
     void traversePreviousBox();
-    void traverseNextLeaf();
-    void traversePreviousLeaf();
-    void traverseNextWithSameLayoutBox();
-    void traversePreviousWithSameLayoutBox();
 
     void setAtEnd() { m_boxIndex = displayBoxes().size(); }
 
     const InlineDisplay::Boxes& displayBoxes() const { return m_inlineContent->displayContent().boxes; }
 
-    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    SingleThreadWeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_boxIndex { 0 };
 };
 
-class BoxIterator {
+// Box iterators are bidirectional and work with std::ranges. They are also the nullable box type: an iterator can be
+// positioned at any box, tests false at the end, and decrementing past the first box moves it to the end too. An
+// iterator converts to any other kind of box iterator positioned at the same box.
+// BoxIterator and LeafBoxIterator visit the boxes of one line. TextBoxIterator, SVGTextBoxIterator and
+// InlineBoxIterator visit the boxes of one layout box.
+// An iterator reads as at the end once the inline content is destroyed. Relayout rebuilds the content in place, so
+// iterators must not be held across layout.
+class BoxIteratorBase {
 public:
-    BoxIterator() = default;
-    BoxIterator(const Box&);
-
     explicit operator bool() const { return !atEnd(); }
 
-    bool operator==(const BoxIterator&) const;
-    bool operator==(EndIterator) const { return atEnd(); }
+    bool operator==(const BoxIteratorBase& other) const
+    {
+        if (atEnd() || other.atEnd())
+            return atEnd() == other.atEnd();
+        return m_box.m_inlineContent == other.m_box.m_inlineContent && m_box.m_boxIndex == other.m_box.m_boxIndex;
+    }
 
-    const Box& operator*() const LIFETIME_BOUND { return m_box; }
-    const Box* operator->() const LIFETIME_BOUND { return &m_box; }
+    bool operator==(const Box& box) const { return !atEnd() && m_box.m_inlineContent == box.m_inlineContent && m_box.m_boxIndex == box.m_boxIndex; }
 
-    BoxIterator& traverseLineRightwardOnLine();
-    BoxIterator& traverseLineRightwardOnLineSkippingChildren();
-    BoxIterator& traverseLineLeftwardOnLine();
-
-    BoxIterator& operator++() { return traverseLineRightwardOnLine(); }
-    BoxIterator& operator--() { return traverseLineLeftwardOnLine(); }
-
-    bool atEnd() const;
+    bool atEnd() const { return !m_box.m_inlineContent || m_box.m_boxIndex == m_endIndex; }
 
 protected:
+    template<typename, typename, BoxFilter> friend class BasicBoxIterator;
+    template<typename> friend class BoxRange;
+
+    BoxIteratorBase() = default;
+
     Box m_box;
+    size_t m_beginIndex { 0 };
+    size_t m_endIndex { 0 };
+    size_t m_referenceIndex { 0 };
 };
 
-class LeafBoxIterator : public BoxIterator {
+// Dereferencing returns the box handle by value since the iterator holds it (a reference would dangle in
+// std::reverse_iterator). The pointer from operator-> has the same problem, so don't use it on a std::reverse_iterator.
+template<typename DerivedIterator, typename BoxType, BoxFilter boxFilter>
+class BasicBoxIterator : public BoxIteratorBase {
 public:
-    LeafBoxIterator() = default;
-    LeafBoxIterator(const Box&);
+    static constexpr auto filter = boxFilter;
 
-    // Text-relative left/right
-    LeafBoxIterator& traverseLineRightwardOnLine();
-    LeafBoxIterator& traverseLineLeftwardOnLine();
-    LeafBoxIterator& traverseLineRightwardOnLineIgnoringLineBreak();
-    LeafBoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak();
+    using value_type = BoxType;
+    using difference_type = std::ptrdiff_t;
+    using iterator_concept = std::bidirectional_iterator_tag;
+    using iterator_category = std::input_iterator_tag;
 
-    // Coordinate-relative left/right
-    inline LeafBoxIterator& traverseLogicalRightwardOnLine();
-    inline LeafBoxIterator& traverseLogicalLeftwardOnLine();
-    inline LeafBoxIterator& traverseLogicalRightwardOnLineIgnoringLineBreak();
-    inline LeafBoxIterator& traverseLogicalLeftwardOnLineIgnoringLineBreak();
-
-    LeafBoxIterator& operator++() { return traverseLineRightwardOnLine(); }
-};
-
-template<class IteratorType>
-class BoxRange {
-public:
-    BoxRange(IteratorType begin)
-        : m_begin(begin)
+    BasicBoxIterator() = default;
+    BasicBoxIterator(const Box& box)
+    {
+        if (box.atEnd())
+            return;
+        m_box = box;
+        m_referenceIndex = box.m_boxIndex;
+        if constexpr (filter == BoxFilter::SameLayoutBox)
+            m_endIndex = box.displayBoxes().size();
+        else {
+            m_beginIndex = box.line().firstBoxIndex();
+            m_endIndex = m_beginIndex + box.line().boxCount();
+        }
+    }
+    // Positioned at the same box as another kind of box iterator.
+    BasicBoxIterator(const BoxIteratorBase& other)
+        : BasicBoxIterator(other ? other.m_box : Box { })
     {
     }
 
-    IteratorType begin() const { return m_begin; }
-    EndIterator end() const { return { }; }
+    const BoxType operator*() const { ASSERT(!atEnd()); return get(); }
+    const BoxType* operator->() const LIFETIME_BOUND { ASSERT(!atEnd()); return &get(); }
+
+    DerivedIterator& operator++()
+    {
+        ASSERT(!atEnd());
+        auto& index = m_box.m_boxIndex;
+        if constexpr (filter == BoxFilter::SameLayoutBox) {
+            if (m_box.displayBox().isLastForLayoutBox()) {
+                index = m_endIndex;
+                return derived();
+            }
+        }
+        do {
+            ++index;
+        } while (index < m_endIndex && !matches(index));
+        return derived();
+    }
+
+    DerivedIterator& operator--()
+    {
+        if (!m_box.m_inlineContent)
+            return derived();
+        auto& index = m_box.m_boxIndex;
+        if constexpr (filter == BoxFilter::SameLayoutBox) {
+            if (!atEnd() && m_box.displayBox().isFirstForLayoutBox()) {
+                index = m_endIndex;
+                return derived();
+            }
+        }
+        for (auto candidate = index; candidate > m_beginIndex;) {
+            if (matches(--candidate)) {
+                index = candidate;
+                return derived();
+            }
+        }
+        index = m_endIndex;
+        return derived();
+    }
+
+    DerivedIterator operator++(int)
+    {
+        auto copy = derived();
+        ++*this;
+        return copy;
+    }
+
+    DerivedIterator operator--(int)
+    {
+        auto copy = derived();
+        --*this;
+        return copy;
+    }
+
+    // Named versions of ++ and -- for cursor-style code.
+    DerivedIterator& traverseLineRightwardOnLine() requires (filter != BoxFilter::SameLayoutBox) { return ++*this; }
+    DerivedIterator& traverseLineLeftwardOnLine() requires (filter != BoxFilter::SameLayoutBox) { return --*this; }
+
+    DerivedIterator& traverseLineRightwardOnLineIgnoringLineBreak() requires (filter == BoxFilter::Leaf)
+    {
+        do {
+            ++*this;
+        } while (!atEnd() && m_box.isLineBreak());
+        return derived();
+    }
+
+    DerivedIterator& traverseLineLeftwardOnLineIgnoringLineBreak() requires (filter == BoxFilter::Leaf)
+    {
+        do {
+            --*this;
+        } while (!atEnd() && m_box.isLineBreak());
+        return derived();
+    }
+
+    // Coordinate-relative left/right.
+    DerivedIterator& traverseLogicalRightwardOnLine() requires (filter == BoxFilter::Leaf)
+    {
+        return m_box.writingMode().isLogicalLeftLineLeft() ? traverseLineRightwardOnLine() : traverseLineLeftwardOnLine();
+    }
+    DerivedIterator& traverseLogicalLeftwardOnLine() requires (filter == BoxFilter::Leaf)
+    {
+        return m_box.writingMode().isLogicalLeftLineLeft() ? traverseLineLeftwardOnLine() : traverseLineRightwardOnLine();
+    }
+    DerivedIterator& traverseLogicalRightwardOnLineIgnoringLineBreak() requires (filter == BoxFilter::Leaf)
+    {
+        return m_box.writingMode().isLogicalLeftLineLeft() ? traverseLineRightwardOnLineIgnoringLineBreak() : traverseLineLeftwardOnLineIgnoringLineBreak();
+    }
+    DerivedIterator& traverseLogicalLeftwardOnLineIgnoringLineBreak() requires (filter == BoxFilter::Leaf)
+    {
+        return m_box.writingMode().isLogicalLeftLineLeft() ? traverseLineLeftwardOnLineIgnoringLineBreak() : traverseLineRightwardOnLineIgnoringLineBreak();
+    }
+
+    // Moves past the descendants of the current inline box.
+    DerivedIterator& traverseLineRightwardOnLineSkippingChildren() requires (filter == BoxFilter::All)
+    {
+        ASSERT(!atEnd());
+        auto box = m_box;
+        box.traverseNextBoxOnLineSkippingChildren();
+        m_box.m_boxIndex = box.atEnd() ? m_endIndex : std::min(box.m_boxIndex, m_endIndex);
+        return derived();
+    }
 
 private:
-    IteratorType m_begin;
+    const BoxType& get() const LIFETIME_BOUND
+    {
+        if constexpr (std::is_same_v<BoxType, Box>)
+            return m_box;
+        else
+            return downcast<BoxType>(m_box);
+    }
+
+    DerivedIterator& derived() { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<DerivedIterator&>(*this); }
+    const DerivedIterator& derived() const { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const DerivedIterator&>(*this); }
+
+    bool matches(size_t index) const
+    {
+        auto& displayBox = m_box.displayBoxes()[index];
+        if constexpr (filter == BoxFilter::Leaf)
+            return !displayBox.isInlineBox();
+        else if constexpr (filter == BoxFilter::SameLayoutBox)
+            return &displayBox.layoutBox() == &m_box.displayBoxes()[m_referenceIndex].layoutBox();
+        else
+            return true;
+    }
 };
+
+// Every box on a line, including inline boxes.
+class BoxIterator : public BasicBoxIterator<BoxIterator, Box, BoxFilter::All> {
+public:
+    using BasicBoxIterator::BasicBoxIterator;
+};
+
+// Leaf boxes on a line.
+class LeafBoxIterator : public BasicBoxIterator<LeafBoxIterator, Box, BoxFilter::Leaf> {
+public:
+    using BasicBoxIterator::BasicBoxIterator;
+};
+
+// Boxes matching the iterator filter, in display order.
+template<typename IteratorType>
+class BoxRange : public std::ranges::view_interface<BoxRange<IteratorType>> {
+public:
+    using Iterator = IteratorType;
+
+    BoxRange() = default;
+
+    // The range ends where the iterator kind ends unless an end box index is given.
+    BoxRange(const BoxIteratorBase& first, std::optional<size_t> endIndex = { })
+        : m_begin(first)
+    {
+        if (!m_begin)
+            return;
+        if (endIndex)
+            m_begin.m_endIndex = *endIndex;
+        m_end = m_begin;
+        m_end.m_box.m_boxIndex = m_end.m_endIndex;
+    }
+
+    Iterator begin() const { return m_begin; }
+    Iterator end() const { return m_end; }
+
+private:
+    Iterator m_begin;
+    Iterator m_end;
+};
+
+using LeafBoxRange = BoxRange<LeafBoxIterator>;
 
 LeafBoxIterator boxFor(const RenderLineBreak&);
 LeafBoxIterator boxFor(const RenderBox&);
-LeafBoxIterator boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
+Box boxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
 // -----------------------------------------------
 
@@ -317,86 +486,6 @@ inline CheckedRef<const Style::ComputedStyle> Box::style() const
     return displayBox().style();
 }
 
-inline void Box::traverseNextTextBox()
-{
-    ASSERT(!atEnd());
-    ASSERT(displayBox().isTextOrSoftLineBreak());
-
-    if (displayBox().isLastForLayoutBox()) {
-        setAtEnd();
-        return;
-    }
-
-    traverseNextWithSameLayoutBox();
-
-    // Display content truncated by content removal may end before the last box of the text.
-    ASSERT(atEnd() || displayBox().isTextOrSoftLineBreak());
-}
-
-inline void Box::traverseNextLeafOnLine()
-{
-    ASSERT(!atEnd());
-
-    auto oldLineIndex = displayBox().lineIndex();
-
-    traverseNextLeaf();
-
-    if (!atEnd() && oldLineIndex != displayBox().lineIndex())
-        setAtEnd();
-}
-
-inline void Box::traversePreviousLeafOnLine()
-{
-    ASSERT(!atEnd());
-
-    auto oldLineIndex = displayBox().lineIndex();
-
-    traversePreviousLeaf();
-
-    if (!atEnd() && oldLineIndex != displayBox().lineIndex())
-        setAtEnd();
-}
-
-inline void Box::traverseNextInlineBox()
-{
-    ASSERT(!atEnd());
-    ASSERT(displayBox().isInlineBox());
-
-    if (displayBox().isLastForLayoutBox()) {
-        setAtEnd();
-        return;
-    }
-
-    traverseNextWithSameLayoutBox();
-
-    ASSERT(displayBox().isInlineBox());
-}
-
-inline void Box::traversePreviousInlineBox()
-{
-    ASSERT(!atEnd());
-    ASSERT(displayBox().isInlineBox());
-
-    if (displayBox().isFirstForLayoutBox()) {
-        setAtEnd();
-        return;
-    }
-
-    traversePreviousWithSameLayoutBox();
-
-    ASSERT(displayBox().isInlineBox());
-}
-
-inline void Box::traverseNextBoxOnLine()
-{
-    auto lineIndex = displayBox().lineIndex();
-
-    traverseNextBox();
-
-    if (!atEnd() && lineIndex != displayBox().lineIndex())
-        setAtEnd();
-}
-
 inline void Box::traverseNextBoxOnLineSkippingChildren()
 {
     auto lineIndex = displayBox().lineIndex();
@@ -412,46 +501,6 @@ inline void Box::traverseNextBoxOnLineSkippingChildren()
 
     if (!atEnd() && lineIndex != displayBox().lineIndex())
         setAtEnd();
-}
-
-inline void Box::traversePreviousBoxOnLine()
-{
-    auto lineIndex = displayBox().lineIndex();
-
-    traversePreviousBox();
-
-    if (!atEnd() && lineIndex != displayBox().lineIndex())
-        setAtEnd();
-}
-
-inline Box Box::firstLeafBoxForInlineBox() const
-{
-    ASSERT(displayBox().isInlineBox());
-
-    auto& inlineBox = displayBox().layoutBox();
-
-    // The next box is the first descendant of this box.
-    auto first = *this;
-    first.traverseNextLeafOnLine();
-
-    if (!first.atEnd() && !first.isWithinInlineBox(inlineBox))
-        first.setAtEnd();
-
-    return first;
-}
-
-inline Box Box::lastLeafBoxForInlineBox() const
-{
-    ASSERT(displayBox().isInlineBox());
-
-    auto& inlineBox = displayBox().layoutBox();
-
-    // FIXME: Get the last box index directly from the display box.
-    auto last = firstLeafBoxForInlineBox();
-    for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextLeafOnLine())
-        last = box;
-
-    return last;
 }
 
 inline bool Box::isWithinInlineBox(const Layout::Box& inlineBox) const
@@ -477,35 +526,9 @@ inline void Box::traversePreviousBox()
     m_boxIndex = m_boxIndex ? m_boxIndex - 1 : displayBoxes().size();
 }
 
-inline void Box::traverseNextLeaf()
-{
-    do {
-        traverseNextBox();
-    } while (!atEnd() && displayBox().isInlineBox());
+}
 }
 
-inline void Box::traversePreviousLeaf()
-{
-    do {
-        traversePreviousBox();
-    } while (!atEnd() && displayBox().isInlineBox());
-}
-
-inline void Box::traverseNextWithSameLayoutBox()
-{
-    auto& layoutBox = displayBox().layoutBox();
-    do {
-        traverseNextBox();
-    } while (!atEnd() && &displayBox().layoutBox() != &layoutBox);
-}
-
-inline void Box::traversePreviousWithSameLayoutBox()
-{
-    auto& layoutBox = displayBox().layoutBox();
-    do {
-        traversePreviousBox();
-    } while (!atEnd() && &displayBox().layoutBox() != &layoutBox);
-}
-
-}
-}
+// Range iterators hold their own box, so they stay valid after the range object goes away.
+template<typename IteratorType>
+inline constexpr bool std::ranges::enable_borrowed_range<WebCore::InlineIterator::BoxRange<IteratorType>> = true;

@@ -57,47 +57,47 @@ static bool LEGACY_NODELETE isAncestorAndWithinBlock(const RenderBoxModelObject&
     return false;
 }
 
-static float minLogicalTopForTextDecorationLineUnder(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement& decoratingBoxRendererForUnderline)
+static float minLogicalTopForTextDecorationLineUnder(const InlineIterator::LineBox& lineBox, float textRunLogicalTop, const RenderElement& decoratingBoxRendererForUnderline)
 {
     auto minLogicalTop = textRunLogicalTop;
-    for (auto run = lineBox->lineLeftmostLeafBox(); run; run.traverseLineRightwardOnLine()) {
-        if (run->renderer().isOutOfFlowPositioned())
+    for (auto& run : lineBox.leafBoxes()) {
+        if (run.renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        CheckedRef runStyle = run->style();
+        CheckedRef runStyle = run.style();
         if (!runStyle->textDecorationLineInEffect().hasUnderline())
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run->renderer()))
+        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run.renderer()))
             continue;
 
-        if (run->isText() || runStyle->textDecorationSkipInk() == TextDecorationSkipInk::None)
-            minLogicalTop = std::min<float>(minLogicalTop, run->logicalTop());
+        if (run.isText() || runStyle->textDecorationSkipInk() == TextDecorationSkipInk::None)
+            minLogicalTop = std::min<float>(minLogicalTop, run.logicalTop());
     }
     return minLogicalTop;
 }
 
-static float maxLogicalBottomForTextDecorationLineUnder(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement& decoratingBoxRendererForUnderline)
+static float maxLogicalBottomForTextDecorationLineUnder(const InlineIterator::LineBox& lineBox, float textRunLogicalBottom, const RenderElement& decoratingBoxRendererForUnderline)
 {
     auto maxLogicalBottom = textRunLogicalBottom;
-    for (auto run = lineBox->lineLeftmostLeafBox(); run; run.traverseLineRightwardOnLine()) {
-        if (run->renderer().isOutOfFlowPositioned())
+    for (auto& run : lineBox.leafBoxes()) {
+        if (run.renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        CheckedRef runStyle = run->style();
+        CheckedRef runStyle = run.style();
         if (!runStyle->textDecorationLineInEffect().hasUnderline())
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run->renderer()))
+        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run.renderer()))
             continue;
 
-        if (run->isText() || runStyle->textDecorationSkipInk() == TextDecorationSkipInk::None)
-            maxLogicalBottom = std::max<float>(maxLogicalBottom, run->logicalBottom());
+        if (run.isText() || runStyle->textDecorationSkipInk() == TextDecorationSkipInk::None)
+            maxLogicalBottom = std::max<float>(maxLogicalBottom, run.logicalBottom());
     }
     return maxLogicalBottom;
 }
 
-static float boxOffsetFromBottomMost(const InlineIterator::LineBoxIterator& lineBox, const RenderElement& decoratingInlineBoxRenderer, float boxLogicalTop, float boxLogicalBottom)
+static float boxOffsetFromBottomMost(const InlineIterator::LineBox& lineBox, const RenderElement& decoratingInlineBoxRenderer, float boxLogicalTop, float boxLogicalBottom)
 {
     if (decoratingInlineBoxRenderer.writingMode().isLineInverted())
         return boxLogicalTop - minLogicalTopForTextDecorationLineUnder(lineBox, boxLogicalTop, decoratingInlineBoxRenderer);

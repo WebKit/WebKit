@@ -47,22 +47,16 @@ public:
     const RenderSVGInlineText& renderer() const { return downcast<RenderSVGInlineText>(TextBox::renderer()); }
 };
 
-class SVGTextBoxIterator : public TextBoxIterator {
+class SVGTextBoxIterator : public BasicBoxIterator<SVGTextBoxIterator, SVGTextBox, BoxFilter::SameLayoutBox> {
 public:
-    SVGTextBoxIterator() = default;
-    SVGTextBoxIterator(const Box&);
-
-    SVGTextBoxIterator& operator++() { return downcast<SVGTextBoxIterator>(traverseNextTextBox()); }
-
-    const SVGTextBox& operator*() const LIFETIME_BOUND { return get(); }
-    const SVGTextBox* operator->() const LIFETIME_BOUND { return &get(); }
-
-private:
-    const SVGTextBox& get() const LIFETIME_BOUND { return downcast<SVGTextBox>(m_box); }
+    using BasicBoxIterator::BasicBoxIterator;
 };
 
+using SVGTextBoxRange = BoxRange<SVGTextBoxIterator>;
+
 SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText&);
-BoxRange<SVGTextBoxIterator> svgTextBoxesFor(const RenderSVGInlineText&);
+
+SVGTextBoxRange svgTextBoxesFor(const RenderSVGInlineText&);
 SVGTextBoxIterator svgTextBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
 
 BoxRange<BoxIterator> boxesFor(const RenderSVGText&);
@@ -73,8 +67,4 @@ BoxIterator lastBoxFor(const RenderSVGText&);
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::SVGTextBox)
 static bool isType(const WebCore::InlineIterator::Box& box) { return box.isSVGText(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::SVGTextBoxIterator)
-static bool isType(const WebCore::InlineIterator::BoxIterator& box) { return !box || box->isSVGText(); }
 SPECIALIZE_TYPE_TRAITS_END()

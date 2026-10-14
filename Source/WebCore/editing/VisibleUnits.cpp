@@ -176,7 +176,7 @@ static const InlineIterator::LeafBoxIterator logicallyPreviousBox(const VisibleP
     if (auto previousBox = previousTextOrLineBreakBox(startBox, orderCache))
         return previousBox;
 
-    if (auto previousLineBox = startBox->lineBox()->previous()) {
+    if (auto previousLineBox = startBox->lineBox().previous()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
         if (auto previousBox = endTextOrLineBreakBox(previousLineBox, orderCache))
             return previousBox;
@@ -214,7 +214,7 @@ static const InlineIterator::LeafBoxIterator logicallyNextBox(const VisiblePosit
     if (auto nextBox = nextTextOrLineBreakBox(startBox, orderCache))
         return nextBox;
 
-    if (auto nextLineBox = startBox->lineBox()->next()) {
+    if (auto nextLineBox = startBox->lineBox().next()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
         if (auto nextBox = startTextOrLineBreakBox(nextLineBox, orderCache))
             return nextBox;
@@ -262,7 +262,7 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
     string.clear();
 
     if (previousBox) {
-        auto& previousTextBox = downcast<InlineIterator::TextBoxIterator>(previousBox);
+        auto previousTextBox = InlineIterator::TextBoxIterator { previousBox };
         previousBoxLength = previousTextBox->length();
         append(string, previousTextBox->originalText());
     }
@@ -288,7 +288,7 @@ static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePositi
     append(string, textBox->originalText());
 
     if (nextBox) {
-        auto& nextTextBox = downcast<InlineIterator::TextBoxIterator>(nextBox);
+        auto nextTextBox = InlineIterator::TextBoxIterator { nextBox };
         append(string, nextTextBox->originalText());
     }
 
@@ -348,7 +348,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
             continue;
         }
 
-        auto& textBox = downcast<InlineIterator::TextBoxIterator>(box);
+        auto textBox = InlineIterator::TextBoxIterator { box };
         unsigned previousBoxLength = 0;
         bool previousBoxInDifferentLine = false;
         bool nextBoxInDifferentLine = false;
@@ -852,7 +852,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     if (is<HTMLBRElement>(*endNode))
         pos = positionBeforeNode(*endNode);
     else if (RefPtr endTextNode = dynamicDowncast<Text>(*endNode); endTextNode && is<InlineIterator::TextBox>(*endBox)) {
-        auto& endTextBox = downcast<InlineIterator::TextBox>(*endBox);
+        auto endTextBox = downcast<InlineIterator::TextBox>(*endBox);
         int endOffset = endTextBox.start();
         if (!endTextBox.isLineBreak())
             endOffset += endTextBox.length();
@@ -977,7 +977,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
 
     InlineIterator::LineBoxIterator lineBox;
     if (auto box = visiblePosition.inlineBoxAndOffset().box) {
-        lineBox = box->lineBox()->previous();
+        lineBox = box->lineBox().previous();
         // We want to skip zero height boxes.
         // This could happen in case of a line with trailing floats.
         // A line whose content is a block level box (block-in-inline) is not a line to move the caret
@@ -1037,7 +1037,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
 
     InlineIterator::LineBoxIterator lineBox;
     if (auto box = visiblePosition.inlineBoxAndOffset().box) {
-        lineBox = box->lineBox()->next();
+        lineBox = box->lineBox().next();
         // We want to skip zero height boxes.
         // This could happen in case of a line with trailing floats.
         // A line whose content is a block level box (block-in-inline) is not a line to move the caret

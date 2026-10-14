@@ -77,33 +77,5 @@ inline LeafBoxIterator Box::nextLogicalLeftwardOnLineIgnoringLineBreak() const
         ? nextLineLeftwardOnLineIgnoringLineBreak() : nextLineRightwardOnLineIgnoringLineBreak();
 }
 
-inline LeafBoxIterator& LeafBoxIterator::traverseLogicalRightwardOnLine()
-{
-    return m_box.writingMode().isLogicalLeftLineLeft()
-        ? traverseLineRightwardOnLine()
-        : traverseLineLeftwardOnLine();
-}
-
-inline LeafBoxIterator& LeafBoxIterator::traverseLogicalLeftwardOnLine()
-{
-    return m_box.writingMode().isLogicalLeftLineLeft()
-        ? traverseLineLeftwardOnLine()
-        : traverseLineRightwardOnLine();
-}
-
-inline LeafBoxIterator& LeafBoxIterator::traverseLogicalRightwardOnLineIgnoringLineBreak()
-{
-    return m_box.writingMode().isLogicalLeftLineLeft()
-        ? traverseLineRightwardOnLineIgnoringLineBreak()
-        : traverseLineLeftwardOnLineIgnoringLineBreak();
-}
-
-inline LeafBoxIterator& LeafBoxIterator::traverseLogicalLeftwardOnLineIgnoringLineBreak()
-{
-    return m_box.writingMode().isLogicalLeftLineLeft()
-        ? traverseLineLeftwardOnLineIgnoringLineBreak()
-        : traverseLineRightwardOnLineIgnoringLineBreak();
-}
-
 }
 }

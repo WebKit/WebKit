@@ -103,16 +103,16 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         return;
     auto lineBox = run->lineBox();
 
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
+    auto lineSelectionRect = LineSelection::logicalRect(lineBox);
     LayoutRect rect = IntRect(run->logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), 0, lineSelectionRect.height());
-    if (!lineBox->isHorizontal())
+    if (!lineBox.isHorizontal())
         rect = rect.transposedRect();
 
-    if (lineBox->isFirstAfterPageBreak()) {
+    if (lineBox.isFirstAfterPageBreak()) {
         if (run->isHorizontal())
-            rect.shiftYEdgeTo(lineBox->logicalTop());
+            rect.shiftYEdgeTo(lineBox.logicalTop());
         else
-            rect.shiftXEdgeTo(lineBox->logicalTop());
+            rect.shiftXEdgeTo(lineBox.logicalTop());
     }
 
     // FIXME: Out-of-flow positioned line breaks do not follow normal containing block chain.
@@ -139,7 +139,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     bool isFixed = false;
     // FIXME: Remove suppression once rdar://189998444 is fixed.
     SUPPRESS_MEMORY_UNSAFE_CAST auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, &isFixed);
-    bool boxIsHorizontal = !is<InlineIterator::SVGTextBoxIterator>(run) ? run->isHorizontal() : !writingMode().isVertical();
+    bool boxIsHorizontal = !run->isSVGText() ? run->isHorizontal() : !writingMode().isVertical();
 
     rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(WTF::protect(element())), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }

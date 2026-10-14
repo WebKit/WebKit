@@ -384,11 +384,9 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
 
         if (auto* block = dynamicDowncast<RenderBlockFlow>(element->renderer())) {
             if (block->style().textOverflow().isEllipsis()) {
-                for (auto lineBox = InlineIterator::firstLineBoxFor(*block); lineBox; lineBox.traverseNext()) {
-                    if (lineBox->hasEllipsis()) {
-                        dir = block->writingMode().computedTextDirection();
-                        return element->innerText();
-                    }
+                if (std::ranges::any_of(InlineIterator::lineBoxesFor(*block), &InlineIterator::LineBox::hasEllipsis)) {
+                    dir = block->writingMode().computedTextDirection();
+                    return element->innerText();
                 }
             }
             break;
