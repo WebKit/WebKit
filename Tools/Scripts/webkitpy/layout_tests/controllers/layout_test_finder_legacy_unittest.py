@@ -24,7 +24,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import logging
 import unittest
+from unittest import mock
 
 from pyfakefs.fake_filesystem import OSType
 
@@ -1856,6 +1858,128 @@ class LayoutTestFinderTestsBase(object):
             tests,
             ["passes/skipped/skip.html"],
         )
+
+    def _fuzzy_of(self, contents, test='fast/fuzzy/test.html', reference='fast/fuzzy/test-expected.html', query=None):
+        """Discover a non-WPT test and return its Test.fuzzy. A sibling
+        reference is needed for the test to be a reftest at all."""
+        fs = self.finder._filesystem
+        fs.chdir(self.port.layout_tests_dir())
+        for path, file_contents in ((test, contents), (reference, '<html></html>\n')):
+            if path:
+                fs.maybe_make_directory(fs.dirname(path))
+                fs.write_text_file(path, file_contents)
+        (found,) = self.finder.find_tests_by_path([query or test])
+        self.assertEqual(found.test_path, query or test)
+        return found.fuzzy
+
+    def _abs(self, rel_path):
+        fs = self.finder._filesystem
+        return fs.normpath(fs.join(self.port.layout_tests_dir(), rel_path))
+
+    MATCH = '<link rel="match" href="test-expected.html">'
+
+    def test_fuzzy_default_values(self):
+        for description, value, expected in (
+            ('named, with spaces', 'maxDifference = 15 ; totalPixels = 300', {None: [[15, 15], [300, 300]]}),
+            ('nameless', ' 15 ; 300 ', {None: [[15, 15], [300, 300]]}),
+            ('named ranges', 'maxDifference=5-15;totalPixels =  200 - 300 ', {None: [[5, 15], [200, 300]]}),
+            ('nameless ranges', '5-15;  200 - 300 ', {None: [[5, 15], [200, 300]]}),
+        ):
+            with self.subTest(description):
+                self.assertEqual(
+                    self._fuzzy_of('<html><head>%s<meta name=fuzzy content="%s"></head></html>\n' % (self.MATCH, value)),
+                    expected,
+                )
+
+    def test_fuzzy_per_reference_is_keyed_by_absolute_reference_path(self):
+        fuzzy = self._fuzzy_of(
+            '<html><head>%s'
+            '<link rel="match" href="close-match-ref.html">'
+            '<link rel="match" href="worse-match-ref.html">'
+            '<meta name=fuzzy content="5-15;200-300 ">'
+            '<meta name=fuzzy content="close-match-ref.html:5;20">'
+            '<meta name=fuzzy content="worse-match-ref.html: 15;30">'
+            '</head></html>\n' % self.MATCH
+        )
+        self.assertEqual(
+            fuzzy,
+            {
+                None: [[5, 15], [200, 300]],
+                self._abs('fast/fuzzy/close-match-ref.html'): [[5, 5], [20, 20]],
+                self._abs('fast/fuzzy/worse-match-ref.html'): [[15, 15], [30, 30]],
+            },
+        )
+
+    def test_fuzzy_relative_reference_is_resolved_to_an_absolute_key(self):
+        fuzzy = self._fuzzy_of(
+            '<html><head>%s'
+            '<link rel="match" href="../resources/common-ref.html">'
+            '<meta name=fuzzy content="maxDifference=15;totalPixels=300">'
+            '<meta name=fuzzy content="../resources/common-ref.html:maxDifference=5-8;totalPixels=78-84">'
+            '</head></html>\n' % self.MATCH
+        )
+        self.assertEqual(
+            fuzzy,
+            {
+                None: [[15, 15], [300, 300]],
+                self._abs('fast/resources/common-ref.html'): [[5, 8], [78, 84]],
+            },
+        )
+
+    def test_fuzzy_in_xml_document(self):
+        fuzzy = self._fuzzy_of(
+            '<svg width="340" height="140" xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml">'
+            '<html:meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-2"/></svg>\n',
+            test='fast/fuzzy/test.svg',
+            reference='fast/fuzzy/test-expected.svg',
+        )
+        self.assertEqual(fuzzy, {None: [[0, 1], [0, 2]]})
+
+    def test_without_fuzzy_metadata_has_no_fuzzy(self):
+        self.assertIsNone(self._fuzzy_of('<html><head>%s</head></html>\n' % self.MATCH))
+
+    def test_fuzzy_needs_a_sibling_reference(self):
+        # Without a sibling reference the test isn't a reftest, so its
+        # metadata is not read.
+        self.assertIsNone(
+            self._fuzzy_of(
+                '<html><head>%s<meta name=fuzzy content="15;300"></head></html>\n' % self.MATCH,
+                reference=None,
+            )
+        )
+
+    def test_fuzzy_of_a_variant_comes_from_the_file_without_the_variant(self):
+        # Including a fragment before a query: splitting at the first '?'
+        # would leave '#frag' on the file name, so the file wouldn't be found.
+        for query in ('fast/fuzzy/test.html?variant', 'fast/fuzzy/test.html#frag?variant'):
+            with self.subTest(query):
+                fuzzy = self._fuzzy_of(
+                    '<html><head>%s<meta name=fuzzy content="15;300"></head></html>\n' % self.MATCH,
+                    query=query,
+                )
+                self.assertEqual(fuzzy, {None: [[15, 15], [300, 300]]})
+
+    def test_malformed_fuzzy_is_ignored_with_a_warning(self):
+        for description, head in (
+            ('one range', '<meta name=fuzzy content="1">'),
+            ('unknown property', '<meta name=fuzzy content="foo=1;2">'),
+            ('reference that is not linked', '<meta name=fuzzy content="other-ref.html:1;2">'),
+            ('non-integer', '<meta name=fuzzy content="a;1">'),
+        ):
+            with self.subTest(description):
+                with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+                    fuzzy = self._fuzzy_of('<html><head>%s%s</head></html>\n' % (self.MATCH, head))
+                self.assertIsNone(fuzzy)
+                self.assertTrue(
+                    any("Ignoring fuzzy metadata" in msg and "fast/fuzzy/test.html" in msg for msg in cm.output),
+                    cm.output,
+                )
+
+    def test_fuzzy_when_the_file_cannot_be_read_through_the_filesystem(self):
+        # The finder falls back to letting SourceFile read the file itself.
+        with mock.patch.object(self.finder._filesystem, "read_binary_file", side_effect=IOError("gone")):
+            fuzzy = self._fuzzy_of('<html><head>%s<meta name=fuzzy content="15;300"></head></html>\n' % self.MATCH)
+        self.assertEqual(fuzzy, {None: [[15, 15], [300, 300]]})
 
 
 class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
