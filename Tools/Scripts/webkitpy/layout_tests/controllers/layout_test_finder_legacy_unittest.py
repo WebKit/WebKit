@@ -380,7 +380,6 @@ class LayoutTestFinderTestsBase(object):
             ('fast/foo/bar.window.js', any_js),
             ('fast/foo/bar.worker.js', any_js),
             ('imported/w3c/web-platform-tests/foo/bar.any.js', any_js),
-            ('imported/w3c/web-platform-tests/foo/bar.any.html', '<!-- stub -->\n'),
         ):
             fs.maybe_make_directory(fs.dirname(path))
             fs.write_text_file(path, contents)
@@ -389,6 +388,25 @@ class LayoutTestFinderTestsBase(object):
         self.assertEqual(
             [t.test_path for t in finder.find_tests_by_path(['imported/w3c/web-platform-tests/foo'])],
             ['imported/w3c/web-platform-tests/foo/bar.any.html'],
+        )
+
+    def test_find_stubless_generated_variant(self):
+        # A generated variant is discovered from its .any.js source alone.
+        finder = self.finder
+        fs = finder._filesystem
+        fs.chdir(self.port.layout_tests_dir())
+
+        path = 'imported/w3c/web-platform-tests/foo/basic.any.js'
+        fs.maybe_make_directory(fs.dirname(path))
+        fs.write_text_file(path, '// META: global=window,worker\ntest(() => {}, "pass");\n')
+
+        tests = [t.test_path for t in finder.find_tests_by_path(['imported/w3c/web-platform-tests/foo'])]
+        self.assertEqual(
+            sorted(tests),
+            [
+                'imported/w3c/web-platform-tests/foo/basic.any' + suffix
+                for suffix in ('.html', '.serviceworker.html', '.sharedworker.html', '.worker.html')
+            ],
         )
 
     def test_find_glob_mixed_file_type_sorted(self):
@@ -593,9 +611,9 @@ class LayoutTestFinderTestsBase(object):
 
 
     def test_find_template_variants_any_js(self):
-        """Test that .any.js source files are processed and produce multiple test URLs
-        for the variants that have an on-disk stub: only the .any.html stub is
-        written below, so the .any.worker.html variants are not discovered."""
+        """Test that .any.js source files are processed and produce multiple test URLs,
+        one per generated basename (.any.html, .any.worker.html) times variant, regardless
+        of whether an on-disk importer stub exists for a given generated basename."""
         find_paths = ["imported/w3c/web-platform-tests/foo/variant_test.any.js"]
         finder = self.finder
 
@@ -617,6 +635,9 @@ class LayoutTestFinderTestsBase(object):
                 "imported/w3c/web-platform-tests/foo/variant_test.any.html",
                 "imported/w3c/web-platform-tests/foo/variant_test.any.html?1-10",
                 "imported/w3c/web-platform-tests/foo/variant_test.any.html?11-20",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html?1-10",
+                "imported/w3c/web-platform-tests/foo/variant_test.any.worker.html?11-20",
             ],
             tests_found,
         )
