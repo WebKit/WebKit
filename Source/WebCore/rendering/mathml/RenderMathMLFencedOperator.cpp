@@ -82,7 +82,7 @@ LayoutUnit RenderMathMLFencedOperator::leadingSpace() const
     MathMLElement::Length leadingSpace;
     leadingSpace.type = MathMLElement::LengthType::MathUnit;
     leadingSpace.value = static_cast<float>(m_leadingSpaceInMathUnit);
-    return toUserUnits(leadingSpace, style(), 0);
+    return toUserUnits(leadingSpace, protect(style()), 0);
 }
 
 LayoutUnit RenderMathMLFencedOperator::trailingSpace() const
@@ -90,7 +90,7 @@ LayoutUnit RenderMathMLFencedOperator::trailingSpace() const
     MathMLElement::Length trailingSpace;
     trailingSpace.type = MathMLElement::LengthType::MathUnit;
     trailingSpace.value = static_cast<float>(m_trailingSpaceInMathUnit);
-    return toUserUnits(trailingSpace, style(), 0);
+    return toUserUnits(trailingSpace, protect(style()), 0);
 }
 
 }

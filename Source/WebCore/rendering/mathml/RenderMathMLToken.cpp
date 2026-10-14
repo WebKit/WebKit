@@ -88,7 +88,7 @@ void RenderMathMLToken::computeIntrinsicLogicalWidthContributions()
         updateMathVariantGlyph();
 
     if (m_mathVariantCodePoint) {
-        auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
             m_maxContentLogicalWidthContribution = protect(mathVariantGlyph.font)->widthForGlyph(mathVariantGlyph.glyph);
             m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
@@ -151,7 +151,7 @@ void RenderMathMLToken::updateFromElement()
 std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
-        auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
             auto baseline = LayoutUnit(-protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y());
             return { borderAndPaddingBefore() + baseline };
@@ -173,7 +173,7 @@ void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
     GlyphData mathVariantGlyph;
     if (m_mathVariantCodePoint)
-        mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
 
     if (!mathVariantGlyph.font) {
         RenderMathMLBlock::layoutBlock(relayoutChildren, pageLogicalHeight);
@@ -201,12 +201,12 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || usedStyle().visibility() != UsedVisibility::Visible || !m_mathVariantCodePoint)
         return;
 
-    auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+    auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
     if (!mathVariantGlyph.font)
         return;
 
     GraphicsContextStateSaver stateSaver(info.context());
-    info.context().setFillColor(style().visitedDependentTextFillColorApplyingColorFilter());
+    info.context().setFillColor(protect(style())->visitedDependentTextFillColorApplyingColorFilter());
 
     auto glyphAscent = -protect(mathVariantGlyph.font)->boundsForGlyph(mathVariantGlyph.glyph).y();
     // FIXME: If we're just drawing a single glyph, why do we need to compute an advance?
@@ -223,7 +223,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
     if (m_mathVariantCodePoint) {
-        auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
+        auto mathVariantGlyph = protect(style().fontCascade())->glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font)
             return;
     }

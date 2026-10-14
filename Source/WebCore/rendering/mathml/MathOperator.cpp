@@ -134,7 +134,7 @@ LayoutUnit MathOperator::stretchSize() const
 
 bool MathOperator::getGlyph(const Style::ComputedStyle& style, char32_t character, GlyphData& glyph) const
 {
-    glyph = style.fontCascade().glyphDataForCharacter(character, style.writingMode().isBidiRTL());
+    glyph = protect(style.fontCascade())->glyphDataForCharacter(character, style.writingMode().isBidiRTL());
     if (!glyph.font)
         return false;
 
@@ -145,17 +145,19 @@ bool MathOperator::getGlyph(const Style::ComputedStyle& style, char32_t characte
     if (m_operatorType == Type::NormalOperator)
         return true;
 
-    return glyph.font == &style.fontCascade().primaryFont();
+    return glyph.font == &protect(style.fontCascade())->primaryFont();
 }
 
 bool MathOperator::getBaseGlyph(const Style::ComputedStyle& style, GlyphData& glyph)
 {
     bool isPrimary = getGlyph(style, m_baseCharacter, glyph);
-    if (isPrimary && style.writingMode().isBidiRTL() && glyph.font->mathData()) {
-        Glyph mirroredGlyph = glyph.font->mathData()->getMirroredGlyph(m_baseCharacter);
-        if (mirroredGlyph && mirroredGlyph != glyph.glyph) {
-            glyph.glyph = mirroredGlyph;
-            this->m_baseGlyphMirroredByRTLM = true;
+    if (isPrimary && style.writingMode().isBidiRTL()) {
+        if (RefPtr mathData = protect(glyph.font.get())->mathData()) {
+            Glyph mirroredGlyph = mathData->getMirroredGlyph(m_baseCharacter);
+            if (mirroredGlyph && mirroredGlyph != glyph.glyph) {
+                glyph.glyph = mirroredGlyph;
+                this->m_baseGlyphMirroredByRTLM = true;
+            }
         }
     }
     return isPrimary;
@@ -174,13 +176,13 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
 static GlyphData glyphDataForCodePointOrFallbackGlyph(const Style::ComputedStyle& style, char32_t codePoint, Glyph fallbackGlyph)
 {
     if (codePoint)
-        return style.fontCascade().glyphDataForCharacter(codePoint, false);
+        return protect(style.fontCascade())->glyphDataForCharacter(codePoint, false);
     
     GlyphData fallback;
     
     if (fallbackGlyph) {
         fallback.glyph = fallbackGlyph;
-        fallback.font = &style.fontCascade().primaryFont();
+        fallback.font = &protect(style.fontCascade())->primaryFont();
     }
     
     return fallback;
@@ -238,9 +240,12 @@ void MathOperator::getMathVariantsWithFallback(const Style::ComputedStyle& style
 {
     // In general, we first try and find contruction for the base glyph.
     GlyphData baseGlyph;
-    if (!getBaseGlyph(style, baseGlyph) || !protect(baseGlyph.font.get())->mathData())
+    if (!getBaseGlyph(style, baseGlyph))
         return;
-    protect(baseGlyph.font.get())->mathData()->getMathVariants(baseGlyph.glyph, isVertical, sizeVariants, assemblyParts);
+    RefPtr mathData = protect(baseGlyph.font.get())->mathData();
+    if (!mathData)
+        return;
+    mathData->getMathVariants(baseGlyph.glyph, isVertical, sizeVariants, assemblyParts);
     if (!sizeVariants.isEmpty() || !assemblyParts.isEmpty())
         return;
 
@@ -252,7 +257,7 @@ void MathOperator::getMathVariantsWithFallback(const Style::ComputedStyle& style
                 GlyphData glyphData;
                 if (!getGlyph(style, fallbacks[j], glyphData))
                     continue;
-                protect(glyphData.font.get())->mathData()->getMathVariants(glyphData.glyph, isVertical, sizeVariants, assemblyParts);
+                protect(protect(glyphData.font.get())->mathData())->getMathVariants(glyphData.glyph, isVertical, sizeVariants, assemblyParts);
                 if (!sizeVariants.isEmpty() || !assemblyParts.isEmpty())
                     return;
             }
@@ -266,21 +271,24 @@ void MathOperator::calculateDisplayStyleLargeOperator(const Style::ComputedStyle
     ASSERT(m_operatorType == Type::DisplayOperator);
 
     GlyphData baseGlyph;
-    if (!getBaseGlyph(style, baseGlyph) || !protect(baseGlyph.font.get())->mathData())
+    if (!getBaseGlyph(style, baseGlyph))
+        return;
+    RefPtr mathData = protect(baseGlyph.font.get())->mathData();
+    if (!mathData)
         return;
 
-    float displayOperatorMinHeight = protect(baseGlyph.font.get())->mathData()->getMathConstant(protect(*baseGlyph.font), OpenTypeMathData::MathConstant::DisplayOperatorMinHeight);
+    float displayOperatorMinHeight = mathData->getMathConstant(protect(*baseGlyph.font), OpenTypeMathData::MathConstant::DisplayOperatorMinHeight);
 
     Vector<Glyph> sizeVariants;
     Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
-    protect(baseGlyph.font.get())->mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
+    mathData->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
     for (auto& sizeVariant : sizeVariants) {
         GlyphData glyphData(sizeVariant, baseGlyph.font.get());
         setSizeVariant(glyphData);
         m_maxPreferredWidth = m_width;
-        m_italicCorrection = protect(glyphData.font.get())->mathData()->getItalicCorrection(protect(*glyphData.font), glyphData.glyph);
+        m_italicCorrection = mathData->getItalicCorrection(protect(*glyphData.font), glyphData.glyph);
         if (heightForGlyph(glyphData) >= displayOperatorMinHeight)
             break;
     }

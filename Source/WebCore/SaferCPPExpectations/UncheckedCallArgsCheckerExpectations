@@ -216,20 +216,6 @@ rendering/TextDecorationPainter.cpp
 rendering/cocoa/RenderThemeCocoa.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm
 rendering/line/WordTrailingSpace.h
-rendering/mathml/MathOperator.cpp
-rendering/mathml/RenderMathMLBlock.cpp
-rendering/mathml/RenderMathMLFenced.cpp
-rendering/mathml/RenderMathMLFencedOperator.cpp
-rendering/mathml/RenderMathMLFraction.cpp
-rendering/mathml/RenderMathMLMenclose.cpp
-rendering/mathml/RenderMathMLMenclose.h
-rendering/mathml/RenderMathMLOperator.cpp
-rendering/mathml/RenderMathMLPadded.cpp
-rendering/mathml/RenderMathMLRoot.cpp
-rendering/mathml/RenderMathMLScripts.cpp
-rendering/mathml/RenderMathMLSpace.cpp
-rendering/mathml/RenderMathMLToken.cpp
-rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGInline.cpp

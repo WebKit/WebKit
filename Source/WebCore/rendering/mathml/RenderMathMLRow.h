@@ -42,7 +42,7 @@ public:
     MathMLRowElement& LEGACY_NODELETE element() const;
     virtual ~RenderMathMLRow();
 
-    RenderMathMLOperator* unembellishedOperator() const override;
+    CheckedPtr<RenderMathMLOperator> unembellishedOperator() const override;
 
 protected:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

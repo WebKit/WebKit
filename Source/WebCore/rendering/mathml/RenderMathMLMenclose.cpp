@@ -241,7 +241,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
 
     paintInfo.context().setStrokeThickness(thickness);
     paintInfo.context().setStrokeStyle(StrokeStyle::SolidStroke);
-    paintInfo.context().setStrokeColor(style().visitedDependentColorApplyingColorFilter());
+    paintInfo.context().setStrokeColor(protect(style())->visitedDependentColorApplyingColorFilter());
     paintInfo.context().setFillColor(Color::transparentBlack);
     paintInfo.applyTransform(AffineTransform().translate(paintOffset + location()));
 

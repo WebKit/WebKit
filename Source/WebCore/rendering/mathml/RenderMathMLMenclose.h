@@ -47,7 +47,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     LayoutUnit LEGACY_NODELETE ruleThickness() const;
-    bool hasNotation(MathMLMencloseElement::MencloseNotationFlag notationFlag) const { return downcast<MathMLMencloseElement>(element()).hasNotation(notationFlag); }
+    bool hasNotation(MathMLMencloseElement::MencloseNotationFlag notationFlag) const { return protect(downcast<MathMLMencloseElement>(element()))->hasNotation(notationFlag); }
 
     struct SpaceAroundContent {
         LayoutUnit left;

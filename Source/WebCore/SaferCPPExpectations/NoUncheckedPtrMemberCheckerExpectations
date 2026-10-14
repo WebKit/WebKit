@@ -44,7 +44,6 @@ rendering/RenderTableSection.h
 rendering/RenderText.cpp
 rendering/TextDecorationPainter.h
 [ iOS ] rendering/cocoa/RenderThemeCocoa.mm
-rendering/mathml/RenderMathMLScripts.h
 rendering/shapes/ShapeOutsideInfo.h
 rendering/svg/SVGRenderingContext.h
 rendering/svg/SVGTextBoxPainter.h

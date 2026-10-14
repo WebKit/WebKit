@@ -58,16 +58,16 @@ MathMLRowElement& RenderMathMLRow::element() const
     return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
 }
 
-RenderMathMLOperator* RenderMathMLRow::unembellishedOperator() const
+CheckedPtr<RenderMathMLOperator> RenderMathMLRow::unembellishedOperator() const
 {
     // Per MathML Core spec (section 3.2.4.1), a grouping element (mrow) with a
     // single embellished operator child is itself an embellished operator.
-    auto* child = firstInFlowChildBox();
+    CheckedPtr child = firstInFlowChildBox();
     if (!child || child->nextInFlowSiblingBox())
         return nullptr;
 
-    if (is<RenderMathMLOperator>(*child))
-        return downcast<RenderMathMLOperator>(child);
+    if (CheckedPtr renderOperator = dynamicDowncast<RenderMathMLOperator>(*child))
+        return renderOperator;
 
     CheckedPtr mathMLBlock = dynamicDowncast<RenderMathMLBlock>(*child);
     return mathMLBlock ? mathMLBlock->unembellishedOperator() : nullptr;
@@ -75,7 +75,7 @@ RenderMathMLOperator* RenderMathMLRow::unembellishedOperator() const
 
 std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
-    auto* baselineChild = firstInFlowChildBox();
+    CheckedPtr baselineChild = firstInFlowChildBox();
     if (!baselineChild)
         return { };
 
@@ -83,10 +83,10 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
     return { baseline };
 }
 
-static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)
+static CheckedPtr<RenderMathMLOperator> toVerticalStretchyOperator(RenderBox* box)
 {
     if (auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(box)) {
-        auto* renderOperator = mathMLBlock->unembellishedOperator();
+        CheckedPtr renderOperator = mathMLBlock->unembellishedOperator();
         if (renderOperator && renderOperator->isStretchy() && renderOperator->isVertical())
             return renderOperator;
     }
@@ -100,14 +100,14 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     // the parent mrow. Don't re-stretch internally to avoid double-stretching which
     // can cause inverted paint coordinates.
     if (unembellishedOperator()) {
-        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->layoutIfNeeded();
         return;
     }
 
     // First calculate stretch ascent and descent.
     LayoutUnit stretchAscent, stretchDescent;
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         if (toVerticalStretchyOperator(child))
             continue;
         child->layoutIfNeeded();
@@ -123,8 +123,8 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
 
     // Next, we stretch the vertical operators.
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        if (auto renderOperator = toVerticalStretchyOperator(child)) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        if (CheckedPtr renderOperator = toVerticalStretchyOperator(child)) {
             renderOperator->stretchTo(stretchAscent, stretchDescent);
             renderOperator->layoutIfNeeded();
             child->layoutIfNeeded();
@@ -137,7 +137,7 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
     ascent = 0;
     descent = 0;
     width = 0;
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         width += child->marginStart(child->writingMode()) + child->logicalWidth() + child->marginEnd(child->writingMode());
         LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore(child->writingMode());
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
@@ -149,7 +149,7 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
 LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
 {
     LayoutUnit preferredWidth = 0;
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         preferredWidth += child->maxContentLogicalWidthContribution() + marginIntrinsicLogicalWidthForChild(*child);
     }
     return preferredWidth;
@@ -173,7 +173,7 @@ void RenderMathMLRow::computeIntrinsicLogicalWidthContributions()
 void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 {
     LayoutUnit horizontalOffset = 0;
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+    for (CheckedPtr child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         horizontalOffset += child->marginStart(child->writingMode());
         LayoutUnit childVerticalOffset = ascent - ascentForChild(*child);
         LayoutUnit childWidth = child->logicalWidth();

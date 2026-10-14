@@ -52,13 +52,13 @@ MathMLPaddedElement& RenderMathMLPadded::element() const
 
 LayoutUnit RenderMathMLPadded::voffset() const
 {
-    return toUserUnits(protect(element())->voffset(), style(), 0);
+    return toUserUnits(protect(element())->voffset(), protect(style()), 0);
 }
 
 LayoutUnit RenderMathMLPadded::lspace() const
 {
     // FIXME: Negative lspace values are not supported yet (https://bugs.webkit.org/show_bug.cgi?id=85730).
-    return std::max(0_lu, toUserUnits(protect(element())->lspace(), style(), 0));
+    return std::max(0_lu, toUserUnits(protect(element())->lspace(), protect(style()), 0));
 }
 
 LayoutUnit RenderMathMLPadded::mpaddedWidth(LayoutUnit contentWidth) const
@@ -68,7 +68,7 @@ LayoutUnit RenderMathMLPadded::mpaddedWidth(LayoutUnit contentWidth) const
     // If parsing failed (attribute not set) or it's a percentage, use the content width as default.
     if (widthAttr.type == MathMLElement::LengthType::ParsingFailed ||  widthAttr.type == MathMLElement::LengthType::Percentage)
         return contentWidth;
-    return std::max(0_lu, toUserUnits(widthAttr, style(), 0));
+    return std::max(0_lu, toUserUnits(widthAttr, protect(style()), 0));
 }
 
 LayoutUnit RenderMathMLPadded::mpaddedHeight(LayoutUnit contentHeight) const
@@ -78,7 +78,7 @@ LayoutUnit RenderMathMLPadded::mpaddedHeight(LayoutUnit contentHeight) const
     // If parsing failed (attribute not set) or it's a percentage, use the content height as default.
     if (heightAttr.type == MathMLElement::LengthType::ParsingFailed ||  heightAttr.type == MathMLElement::LengthType::Percentage)
         return contentHeight;
-    return std::max(0_lu, toUserUnits(heightAttr, style(), 0));
+    return std::max(0_lu, toUserUnits(heightAttr, protect(style()), 0));
 }
 
 LayoutUnit RenderMathMLPadded::mpaddedDepth(LayoutUnit contentDepth) const
@@ -88,7 +88,7 @@ LayoutUnit RenderMathMLPadded::mpaddedDepth(LayoutUnit contentDepth) const
     // If parsing failed (attribute not set) or it's a percentage, use the content depth as default.
     if (depthAttr.type == MathMLElement::LengthType::ParsingFailed ||  depthAttr.type == MathMLElement::LengthType::Percentage)
         return contentDepth;
-    return std::max(0_lu, toUserUnits(depthAttr, style(), 0));
+    return std::max(0_lu, toUserUnits(depthAttr, protect(style()), 0));
 }
 
 void RenderMathMLPadded::computeIntrinsicLogicalWidthContributions()

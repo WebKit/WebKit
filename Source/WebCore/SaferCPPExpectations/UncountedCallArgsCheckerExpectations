@@ -121,8 +121,6 @@ rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
 [ macOS ] rendering/StyledMarkedText.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
-rendering/mathml/MathOperator.cpp
-rendering/mathml/RenderMathMLMenclose.h
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
 rendering/svg/RenderSVGTextPath.cpp
