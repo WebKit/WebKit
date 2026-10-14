@@ -3506,8 +3506,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
     Scope* labelScope = currentScope();
     for (auto& label : labels)
         pushLabel(label.m_ident, isLoop);
-    m_immediateParentAllowsFunctionDeclarationInStatement = allowFunctionDeclarationAsStatement;
-    TreeStatement statement = parseStatement(context, unused);
+    TreeStatement statement = 0;
+    if (allowFunctionDeclarationAsStatement && match(FUNCTION) && !strictMode())
+        statement = parseFunctionDeclaration(context, FunctionDeclarationType::Statement);
+    else
+        statement = parseStatement(context, unused);
     for (size_t i = 0; i < labels.size(); i++)
         popLabel(labelScope);
     failIfFalse(statement, "Cannot parse statement");
@@ -3525,7 +3528,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionSta
     // https://tc39.es/ecma262/#sec-expression-statement
     // Despite the spec's requirement to fail from FUNCTION token here, Annex B.3.1
     // permits a labelled FunctionDeclaration in sloppy mode for web compatibility
-    // reasons. We implement this semantics in parseStatement().
+    // reasons. We implement this semantics in parseExpressionOrLabelStatement().
     case CLASSTOKEN:
         failWithMessage("'class' declaration is not directly within a block statement");
     case LET: {

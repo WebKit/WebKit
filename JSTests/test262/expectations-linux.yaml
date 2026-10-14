@@ -226,10 +226,6 @@ test/staging/sm/generators/delegating-yield-6.js:
 test/staging/sm/generators/delegating-yield-7.js:
   default: 3
   strict mode: 3
-test/staging/sm/lexical-environment/block-scoped-functions-annex-b-label.js:
-  default: 3
-test/staging/sm/lexical-environment/block-scoped-functions-deprecated-redecl.js:
-  default: 3
 test/staging/sm/lexical-environment/for-loop.js:
   default: 3
   strict mode: 3
