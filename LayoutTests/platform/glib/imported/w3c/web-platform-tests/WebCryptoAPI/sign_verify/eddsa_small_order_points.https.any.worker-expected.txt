@@ -1,0 +1,16 @@
+
+PASS Ed25519 Verification checks with small-order key of order - Test 0
+PASS Ed25519 Verification checks with small-order key of order - Test 1
+PASS Ed25519 Verification checks with small-order key of order - Test 2
+FAIL Ed25519 Verification checks with small-order key of order - Test 3 assert_equals: Signature verification result. expected true but got false
+PASS Ed25519 Verification checks with small-order key of order - Test 4
+PASS Ed25519 Verification checks with small-order key of order - Test 5
+FAIL Ed25519 Verification checks with small-order key of order - Test 6 assert_equals: Signature verification result. expected false but got true
+PASS Ed25519 Verification checks with small-order key of order - Test 7
+PASS Ed25519 Verification checks with small-order key of order - Test 8
+PASS Ed25519 Verification checks with small-order key of order - Test 9
+PASS Ed25519 Verification checks with small-order key of order - Test 10
+PASS Ed25519 Verification checks with small-order key of order - Test 11
+PASS Ed25519 Verification checks with small-order key of order - Test 12
+PASS Ed25519 Verification checks with small-order key of order - Test 13
+
