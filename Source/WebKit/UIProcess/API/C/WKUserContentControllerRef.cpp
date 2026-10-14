@@ -38,6 +38,7 @@
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include "WebUserContentControllerProxy.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace WebKit;
 
