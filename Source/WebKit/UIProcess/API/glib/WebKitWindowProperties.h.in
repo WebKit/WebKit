@@ -27,6 +27,8 @@
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
+#elif PLATFORM(WPE)
+#include <wpe/WebKitRectangle.h>
 #endif
 
 G_BEGIN_DECLS
@@ -53,13 +55,47 @@ struct _WebKitWindowPropertiesClass {
 WEBKIT_DECLARE_FINAL_TYPE (WebKitWindowProperties, webkit_window_properties, WEBKIT, WINDOW_PROPERTIES, GObject)
 
 #if PLATFORM(GTK)
+/**
+ * WebKitWindowProperties:geometry:
+ *
+ * The size and position of the window on the screen.
+ */
+
+/**
+ * webkit_window_properties_get_geometry:
+ * @window_properties: a #WebKitWindowProperties
+ * @geometry: (out): return location for the window geometry
+ *
+ * Get the geometry the window should have on the screen when shown.
+ */
 WEBKIT_API void
 webkit_window_properties_get_geometry            (WebKitWindowProperties *window_properties,
                                                   GdkRectangle           *geometry);
+#elif PLATFORM(WPE)
+/**
+ * WebKitWindowProperties:geometry:
+ *
+ * The size and position of the window on the screen.
+ *
+ * Since: 2.56
+ */
+
+/**
+ * webkit_window_properties_get_geometry:
+ * @window_properties: a #WebKitWindowProperties
+ * @geometry: (out): return location for the window geometry
+ *
+ * Get the geometry the window should have on the screen when shown.
+ *
+ * Since: 2.56
+ */
+WEBKIT_API void
+webkit_window_properties_get_geometry            (WebKitWindowProperties *window_properties,
+                                                  WebKitRectangle        *geometry);
+#endif
 
 WEBKIT_API gboolean
 webkit_window_properties_get_has_custom_geometry (WebKitWindowProperties *window_properties);
-#endif
 
 WEBKIT_API gboolean
 webkit_window_properties_get_toolbar_visible     (WebKitWindowProperties *window_properties);

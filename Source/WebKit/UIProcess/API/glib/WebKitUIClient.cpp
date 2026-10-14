@@ -232,13 +232,14 @@ private:
 #else
             g_signal_handler_disconnect(window, signalID);
 #endif
-        } else {
-            auto* windowProperties = webkit_web_view_get_window_properties(m_webView);
-            webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
-            if (m_wasReadyToShowEmitted || !page.configuration().windowFeatures())
-                webkitWindowPropertiesSetHasCustomGeometry(windowProperties, true);
+            return;
         }
 #endif // PLATFORM(GTK)
+
+        auto* windowProperties = webkit_web_view_get_window_properties(m_webView);
+        webkitWindowPropertiesSetGeometry(windowProperties, WebCore::IntRect(frame));
+        if (m_wasReadyToShowEmitted || !page.configuration().windowFeatures())
+            webkitWindowPropertiesSetHasCustomGeometry(windowProperties, true);
     }
 
     void windowFrame(WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler) final

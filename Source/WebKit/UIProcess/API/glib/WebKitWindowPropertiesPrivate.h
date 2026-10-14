@@ -27,14 +27,13 @@
 #pragma once
 
 #include "WebKitWindowProperties.h"
+#include <WebCore/IntRect.h>
 #include <WebCore/WindowFeatures.h>
 
 WebKitWindowProperties* webkitWindowPropertiesCreate();
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, const WebCore::WindowFeatures&);
-#if PLATFORM(GTK)
-void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
+void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, const WebCore::IntRect&);
 void webkitWindowPropertiesSetHasCustomGeometry(WebKitWindowProperties*, bool);
-#endif
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);
 void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties*, bool statusBarVisible);
