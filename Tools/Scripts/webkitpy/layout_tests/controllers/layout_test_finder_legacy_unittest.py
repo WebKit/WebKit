@@ -354,6 +354,14 @@ class LayoutTestFinderTestsBase(object):
         tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/image.html?variant'])]
         self.assertEqual(tests, ['failures/expected/image.html?variant'])
 
+    def test_find_glob_double_star(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['**/*test-crash-crash*'])]
+        self.assertEqual(
+            tests,
+            ['imported/w3c/web-platform-tests/some/test-crash-crash.html'],
+        )
+
     def test_find_glob_mixed_file_type_sorted(self):
         finder = self.finder
         # this should expand the *, sort the result, then recurse;

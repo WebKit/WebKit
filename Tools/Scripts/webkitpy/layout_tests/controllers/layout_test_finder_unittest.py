@@ -114,13 +114,6 @@ class LayoutTestFinderTestsBase(object):
         v = list(self.finder._split_glob("a/#b"))
         self.assertEqual([], v)
 
-    def test_get_tests__double_star_glob(self):
-        tests = list(self.finder.get_tests(['**/*test-crash-crash*']))
-        self.assertEqual(
-            [t.test_path for t in tests],
-            ['imported/w3c/web-platform-tests/some/test-crash-crash.html'],
-        )
-
 
 class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
     pass
