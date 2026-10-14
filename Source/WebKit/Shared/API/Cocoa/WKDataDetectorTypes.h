@@ -29,8 +29,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if TARGET_OS_IPHONE
-
 /*! @enum WKDataDetectorTypes
  @abstract The type of data detected.
  @constant WKDataDetectorTypeNone No detection is performed.
@@ -52,9 +50,7 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
     WKDataDetectorTypeLookupSuggestion = 1 << 6,
     WKDataDetectorTypeAll = NSUIntegerMax,
 
-    WKDataDetectorTypeSpotlightSuggestion WK_API_DEPRECATED_WITH_REPLACEMENT("WKDataDetectorTypeLookupSuggestion", ios(10.0, 10.0)) = WKDataDetectorTypeLookupSuggestion,
-} WK_API_AVAILABLE(ios(10.0));
-
-#endif
+    WKDataDetectorTypeSpotlightSuggestion WK_API_DEPRECATED_WITH_REPLACEMENT("WKDataDetectorTypeLookupSuggestion", macos(WK_MAC_TBA, WK_MAC_TBA), ios(10.0, 10.0)) = WKDataDetectorTypeLookupSuggestion,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(10.0));
 
 NS_ASSUME_NONNULL_END

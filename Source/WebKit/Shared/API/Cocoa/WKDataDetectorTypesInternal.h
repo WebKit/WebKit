@@ -25,7 +25,7 @@
 
 #import "WKDataDetectorTypes.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
+#if ENABLE(DATA_DETECTION)
 
 #import <WebCore/DataDetectorType.h>
 

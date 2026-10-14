@@ -30,10 +30,14 @@
 
 #import "Attr.h"
 #import "BoundaryPointInlines.h"
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "ColorConversion.h"
 #import "ColorSerialization.h"
 #import "CommonAtomStrings.h"
 #import "DataDetectionResultsStorage.h"
+#import "DataDetectorElementInfo.h"
+#import "DocumentPage.h"
 #import "DocumentView.h"
 #import "EditingInlines.h"
 #import "ElementAncestorIteratorInlines.h"
@@ -49,8 +53,10 @@
 #import "ImageOverlay.h"
 #import "LocalFrameInlines.h"
 #import "LocalFrameView.h"
+#import "MouseEvent.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
+#import "Page.h"
 #import "QualifiedName.h"
 #import "Range.h"
 #import "RenderObject.h"
@@ -188,6 +194,77 @@ static BOOL resultIsURL(DDResultRef result)
     return [urlTypes.get() containsObject:bridge_cast(type.get())];
 }
 
+static RetainPtr<DDResultRef> coreResultForDataDetectorElement(Element& element)
+{
+    auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
+    if (resultAttribute.isEmpty())
+        return nullptr;
+
+    RefPtr frame = element.document().frame();
+    if (!frame)
+        return nullptr;
+
+    auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
+    if (!dataDetectionResults)
+        return nullptr;
+
+    RetainPtr<NSArray> results = dataDetectionResults->documentLevelResults();
+    RetainPtr<DDResultRef> result;
+    for (auto indexString : StringView { resultAttribute }.split('/')) {
+        // Handle the case of a signature block, where we need to follow the path down one or more subresult levels.
+        if (result)
+            results = (__bridge NSArray *)PAL::softLink_DataDetectorsCore_DDResultGetSubResults(result.get());
+
+        auto index = parseIntegerAllowingTrailingJunk<unsigned>(indexString);
+        if (!index || *index >= [results count])
+            return nullptr;
+
+        id resultObject = [results objectAtIndex:*index];
+        result = result ? (__bridge DDResultRef)resultObject : [resultObject coreResult];
+    }
+    return result;
+}
+
+#if PLATFORM(MAC)
+
+bool DataDetection::handleClickOnDataDetectorLink(Element& element, const Event& event)
+{
+    if (!isDataDetectorElement(element))
+        return false;
+
+    // Detected web links navigate like any other link.
+    if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "link"_s))
+        return false;
+
+    RetainPtr coreResult = coreResultForDataDetectorElement(element);
+    if (!coreResult)
+        return false;
+
+    RefPtr page = element.document().page();
+    if (!page)
+        return false;
+
+    RefPtr frameView = element.document().view();
+    if (!frameView)
+        return false;
+
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    RetainPtr scannerResult = [[PAL::getDDScannerResultClassSingleton() resultsFromCoreResults:(__bridge CFArrayRef)@[ (__bridge id)coreResult.get() ]] firstObject];
+    if (!scannerResult)
+        return false;
+
+    auto elementBounds = frameView->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
+    auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+    auto clickLocation = mouseEvent && !mouseEvent->isSimulated() ? frameView->contentsToMainFrameView(roundedIntPoint(mouseEvent->absoluteLocation())) : elementBounds.center();
+    page->chrome().client().handleClickForDataDetectionResult({ WTF::move(scannerResult), elementBounds }, clickLocation);
+    return true;
+}
+
+#endif // PLATFORM(MAC)
+
 #if PLATFORM(IOS_FAMILY)
 
 bool DataDetection::canBePresentedByDataDetectors(const URL& url)
@@ -218,38 +295,38 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
     
     if (PAL::softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForURL(downcast<HTMLAnchorElement>(element).href().createNSURL().get()))
         return true;
-    
-    auto& resultAttribute = element.attributeWithoutSynchronization(x_apple_data_detectors_resultAttr);
-    if (resultAttribute.isEmpty())
-        return false;
 
-    auto* dataDetectionResults = element.document().frame()->dataDetectionResultsIfExists();
-    if (!dataDetectionResults)
-        return false;
-
-    RetainPtr results = dataDetectionResults->documentLevelResults();
-    if (!results)
-        return false;
-
-    auto resultIndices = StringView { resultAttribute }.split('/');
-    auto indexIterator = resultIndices.begin();
-    RetainPtr result = [[results objectAtIndex:parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)] coreResult];
-
-    // Handle the case of a signature block, where we need to follow the path down one or more subresult levels.
-    while (++indexIterator != resultIndices.end()) {
-        results = (__bridge NSArray *)PAL::softLink_DataDetectorsCore_DDResultGetSubResults(result);
-        result = (__bridge DDResultRef)[results objectAtIndex:parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)];
-    }
-
-    return PAL::softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
+    RetainPtr result = coreResultForDataDetectorElement(element);
+    return result && PAL::softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result.get());
 }
 
-static NSString *constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorType> detectionTypes)
+#endif // PLATFORM(IOS_FAMILY)
+
+static RetainPtr<NSString> urlStringForResult(DDResultRef result, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorType> detectionTypes)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto phoneTypes = detectionTypes.contains(DataDetectorType::PhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
+    return PAL::softLink_DataDetectorsCore_DDURLStringForResult(result, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
+#else
+    // DDURLStringForResult is unavailable on macOS. Links and phone numbers keep their own URLs; every other result gets
+    // an x-apple-data-detectors URL, and clicks on all detected links are handled by DataDetection::handleClickOnDataDetectorLink.
+    UNUSED_PARAM(referenceDate);
+    UNUSED_PARAM(referenceTimeZone);
+    UNUSED_PARAM(detectionTypes);
+    auto category = PAL::softLink_DataDetectorsCore_DDResultGetCategory(result);
+    if (category == DDResultCategoryLink || category == DDResultCategoryPhoneNumber) {
+        if (RetainPtr extractedURL = adoptCF(PAL::softLink_DataDetectorsCore_DDResultCopyExtractedURL(result)))
+            return bridge_cast(WTF::move(extractedURL));
+    }
+    return makeString(DataDetection::dataDetectorURLProtocol(), "://"_s, String { resultIdentifier }).createNSString();
+#endif
+}
+
+static RetainPtr<NSString> constructURLStringForResult(DDResultRef currentResult, NSString *resultIdentifier, NSDate *referenceDate, NSTimeZone *referenceTimeZone, OptionSet<DataDetectorType> detectionTypes)
 {
     if (!PAL::softLink_DataDetectorsCore_DDResultHasProperties(currentResult, DDResultPropertyPassiveDisplay))
         return nil;
 
-    auto phoneTypes = detectionTypes.contains(DataDetectorType::PhoneNumber) ? DDURLifierPhoneNumberDetectionRegular : DDURLifierPhoneNumberDetectionNone;
     auto category = PAL::softLink_DataDetectorsCore_DDResultGetCategory(currentResult);
     RetainPtr type = PAL::softLink_DataDetectorsCore_DDResultGetType(currentResult);
 
@@ -260,11 +337,11 @@ static NSString *constructURLStringForResult(DDResultRef currentResult, NSString
         || (detectionTypes.contains(DataDetectorType::PhoneNumber) && DDResultCategoryPhoneNumber == category)
         || (detectionTypes.contains(DataDetectorType::Link) && resultIsURL(currentResult))
         || (detectionTypes.contains(DataDetectorType::Money) && DDResultCategoryMoney == category)) {
-        return PAL::softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
+        return urlStringForResult(currentResult, resultIdentifier, referenceDate, referenceTimeZone, detectionTypes);
     }
     if (detectionTypes.contains(DataDetectorType::CalendarEvent) && DDResultCategoryCalendarEvent == category) {
         if (!PAL::softLink_DataDetectorsCore_DDResultIsPastDate(currentResult, (CFDateRef)referenceDate, (CFTimeZoneRef)referenceTimeZone))
-            return PAL::softLink_DataDetectorsCore_DDURLStringForResult(currentResult, resultIdentifier, phoneTypes, referenceDate, referenceTimeZone);
+            return urlStringForResult(currentResult, resultIdentifier, referenceDate, referenceTimeZone, detectionTypes);
     }
     return nil;
 }
@@ -456,7 +533,12 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
 
 std::optional<double> DataDetection::extractReferenceDate(NSDictionary *context)
 {
-    if (auto date = dynamic_objc_cast<NSDate>([context objectForKey:PAL::get_DataDetectorsUI_kDataDetectorsReferenceDateKeySingleton()]))
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr referenceDate = [context objectForKey:PAL::get_DataDetectorsUI_kDataDetectorsReferenceDateKeySingleton()];
+#else
+    RetainPtr referenceDate = [context objectForKey:PAL::get_DataDetectors_kDataDetectorsReferenceDateKeySingleton()];
+#endif
+    if (auto date = dynamic_objc_cast<NSDate>(referenceDate.get()))
         return [date timeIntervalSince1970];
     return std::nullopt;
 }
@@ -770,29 +852,6 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
 
     return processDataDetectorScannerResults(scanner.get(), types, referenceDateFromContext, scanQuery.get(), contextRange, fragments);
 }
-
-#else
-
-std::optional<double> DataDetection::extractReferenceDate(NSDictionary *)
-{
-    return std::nullopt;
-}
-
-void DataDetection::detectContentInFrame(LocalFrame*, OptionSet<DataDetectorType>, std::optional<double>, CompletionHandler<void(NSArray *)>&& completionHandler)
-{
-    completionHandler(nil);
-}
-
-NSArray *DataDetection::detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double>)
-{
-    return nil;
-}
-
-void DataDetection::removeDataDetectedLinksInDocument(Document&)
-{
-}
-
-#endif
 
 const String& DataDetection::dataDetectorURLProtocol()
 {

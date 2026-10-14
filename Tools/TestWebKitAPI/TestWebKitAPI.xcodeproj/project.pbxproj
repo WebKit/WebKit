@@ -1058,7 +1058,6 @@
 				WebKit/WKWebView/ios/BacklightLevelNotification.mm,
 				WebKit/WKWebView/ios/CALayerTreeAsText.mm,
 				WebKit/WKWebView/ios/CustomContentViewGestures.mm,
-				WebKit/WKWebView/ios/DataDetectorsTestIOS.mm,
 				WebKit/WKWebView/ios/DataListTextSuggestionTests.mm,
 				WebKit/WKWebView/ios/DragAndDropTestsIOS.mm,
 				WebKit/WKWebView/ios/ElementActionTests.mm,

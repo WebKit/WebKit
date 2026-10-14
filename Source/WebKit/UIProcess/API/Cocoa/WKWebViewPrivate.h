@@ -341,6 +341,8 @@ for this property.
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (void)_isEnhancedSecurityEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 - (void)_removeDataDetectedLinks:(dispatch_block_t)completion WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(12.2));
+- (NSArray *)_dataDetectionResults WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 - (IBAction)_alignCenter:(id)sender WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 - (IBAction)_alignJustified:(id)sender WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
@@ -778,8 +780,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 - (void)_setFontSize:(CGFloat)fontSize sender:(id)sender WK_API_AVAILABLE(ios(12.2));
 - (void)_setTextColor:(UIColor *)color sender:(id)sender WK_API_AVAILABLE(ios(12.2));
 
-- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion WK_API_AVAILABLE(ios(12.2));
-
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
 
 - (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(10.3));
@@ -814,8 +814,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_API_AVAILABLE(ios(9.0));
 
 - (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(ios(9.0));
-
-- (NSArray *)_dataDetectionResults;
 
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(11.3));
 - (void)_accessibilityStoreSelection WK_API_AVAILABLE(ios(11.3));

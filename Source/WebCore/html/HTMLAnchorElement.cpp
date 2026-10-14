@@ -547,6 +547,9 @@ void HTMLAnchorElement::handleClick(Event& event)
                 return;
         }
     }
+#elif ENABLE(DATA_DETECTION) && PLATFORM(MAC)
+    if (DataDetection::handleClickOnDataDetectorLink(*this, event))
+        return;
 #endif
 
     AtomString downloadAttribute = parseDownloadAttribute(*this, completedURL, downloadAttr);
