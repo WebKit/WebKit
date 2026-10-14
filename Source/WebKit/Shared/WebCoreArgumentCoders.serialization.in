@@ -286,6 +286,11 @@ struct WebCore::CharacterRange {
     [Validator='!(CheckedUint64 { *location } + *length).hasOverflowed()'] uint64_t length
 }
 
+header: <WebCore/EmulationOverrides.h>
+[CustomHeader] struct Inspector::EmulationOverrides {
+    std::optional<String> emulatedMedia;
+}
+
 webkit_platform_headers: <WebCore/AffineTransform.h>
 
 [AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] class WebCore::AffineTransform {

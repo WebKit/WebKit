@@ -211,6 +211,11 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // so the first document committed in a new process already sees the script.
     if (!m_bootstrapScript.isEmpty())
         webProcess.send(Messages::WebInspectorBackend::SetBootstrapScript { m_bootstrapScript }, pageID);
+
+    // A process created after the override was set already received it in WebPageCreationParameters.
+    // This send is the catch-up for an override set between CreateWebPage and this registration, and
+    // the path for processes that existed before enable(). See webkit.org/b/308898.
+    m_syncState.sendTo(webProcess, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -272,6 +277,10 @@ CommandResult<void> ProxyingPageAgent::enable()
 
 CommandResult<void> ProxyingPageAgent::disable()
 {
+    // Clear even while disabled: a page-target override recorded while the Page domain was disabled
+    // must not be replayed to a later frontend, matching InspectorPageAgent::disable().
+    m_syncState.clear();
+
     if (!m_enabled)
         return { };
 
@@ -728,9 +737,33 @@ CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String&)
+CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String& media)
 {
+    if (!m_enabled)
+        return makeUnexpected("Page domain must be enabled"_s);
+
+    emulatedMediaChangedOnPageTarget(media);
     return { };
+}
+
+void ProxyingPageAgent::emulatedMediaChangedOnPageTarget(const String& media)
+{
+    // Bail out on a same-value set so a toggle relayed from the main-frame process is not broadcast
+    // back to it.
+    const auto& current = m_syncState.overrides().emulatedMedia;
+    if (media.isEmpty() ? !current : current == media)
+        return;
+
+    // Store the override so a late-joining process inherits it at the shared join seam, then
+    // broadcast it to every process already hosting a frame of the inspected page via the same
+    // SetEmulationOverrides message the join path sends. The WebContent WebInspectorBackend applies
+    // it to its local frames' media queries. See webkit.org/b/308898.
+    m_syncState.setEmulatedMedia(media);
+
+    // While the Page domain is disabled nothing is instrumented; enable() replays the stored value.
+    forEachInstrumentedProcess([&](WebProcessProxy& process, PageIdentifier pageID) {
+        m_syncState.sendTo(process, pageID);
+    });
 }
 
 CommandResult<String> ProxyingPageAgent::snapshotNode(Protocol::DOM::NodeId)

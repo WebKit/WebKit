@@ -806,6 +806,14 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents& i
 
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, AtomString& media)
 {
+    // Under Site Isolation a frame's PageAgentProxy and the page's InspectorPageAgent both read the
+    // override from the one per-process owner, so either gives the same answer. Only the proxy exists
+    // in a cross-origin subframe's process, which has no enabled InspectorPageAgent. See webkit.org/b/308898.
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy()) {
+        pageProxy->applyEmulatedMedia(media);
+        return;
+    }
+
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->applyEmulatedMedia(media);
 }

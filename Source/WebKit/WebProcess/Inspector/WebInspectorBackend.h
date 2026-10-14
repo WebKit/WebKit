@@ -37,9 +37,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
+class EmulationManager;
+struct EmulationOverrides;
 struct FrameResourceData;
 struct SearchMatch;
 struct SearchResult;
@@ -51,7 +54,11 @@ class FrameNetworkAgentProxy;
 class PageAgentProxy;
 class WebPage;
 
-class WebInspectorBackend : public ThreadSafeRefCounted<WebInspectorBackend>, private IPC::Connection::Client {
+// IPC::Connection::Client publicly derives CanMakeThreadSafeCheckedPtr, which is the
+// checked-pointer capability this class exposes. The base must be public so the
+// CheckedRef<WebInspectorBackend> member in EmulationManager can reach
+// increment/decrementCheckedPtrCount(); private inheritance hides them and fails to compile.
+class WebInspectorBackend : public ThreadSafeRefCounted<WebInspectorBackend>, public IPC::Connection::Client {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WebInspectorBackend);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInspectorBackend);
 public:
@@ -94,6 +101,7 @@ public:
     void elementSelectionChanged(bool);
     void timelineRecordingChanged(bool);
     void showPaintRectsChanged(bool);
+    void emulatedMediaChanged(const String&);
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>);
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -125,6 +133,13 @@ public:
     void setShowPaintRects(bool);
     void setBootstrapScript(const String&);
 
+    // Apply the typed emulation overrides forwarded from the UIProcess InspectorBackendSyncState.
+    // Only emulatedMedia is materialized today; it is applied through the EmulationManager so a
+    // process joining under Site Isolation inherits the config. See webkit.org/b/308898.
+    void setEmulationOverrides(Inspector::EmulationOverrides&&);
+
+    Inspector::EmulationManager& emulationManager() { return m_emulationManager.get(); }
+
     // Set up / tear down every per-frame instrumentation agent for a frame. Callers
     // don't need to know which agents are frame-scoped; each helper no-ops unless its
     // domain is enabled.
@@ -154,6 +169,10 @@ private:
     void ensurePageInstrumentationForFrame(WebCore::LocalFrame&);
 
     WeakPtr<WebPage> m_page;
+
+    // Owned eagerly (created in the ctor): the backend's lifetime is the manager's lifetime, and the
+    // manager reaches the page back through this backend. See webkit.org/b/308898.
+    const Ref<Inspector::EmulationManager> m_emulationManager;
 
     RefPtr<IPC::Connection> m_frontendConnection;
     Vector<Function<void(IPC::Connection&)>> m_frontendConnectionActions;

@@ -47,6 +47,7 @@
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CornerRadii.h>
 #include <WebCore/DocumentSyncData.h>
+#include <WebCore/EmulationOverrides.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HighlightVisibility.h>
@@ -407,6 +408,7 @@ struct WebPageCreationParameters {
     bool shouldForceSiteIsolationAlwaysOnForTesting { false };
     bool shouldEnableNetworkInstrumentation { false };
     bool shouldEnablePageInstrumentation { false };
+    Inspector::EmulationOverrides emulationOverrides { };
 };
 
 } // namespace WebKit

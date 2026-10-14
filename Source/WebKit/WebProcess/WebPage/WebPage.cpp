@@ -43,6 +43,7 @@
 #include "DrawingArea.h"
 #include "DrawingAreaMessages.h"
 #include "EditorState.h"
+#include "EmulationManager.h"
 #include "EventDispatcher.h"
 #include "FindController.h"
 #include "FocusedElementInformation.h"
@@ -999,8 +1000,13 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         // first frame commit. This sets the gate so ensurePageInstrumentationForFrame() registers
         // a per-frame proxy when the provisional LocalFrame is created (WebFrame::createProvisionalFrame),
         // delivering the child's initial frameNavigated to the UIProcess ProxyingPageAgent.
-        if (RefPtr backend = inspector(LazyCreationPolicy::CreateIfNeeded))
+        // The emulated-media override is stored as state only: no frame has committed yet, and
+        // the per-frame PageAgentProxy reads it from the EmulationManager at first style resolution.
+        if (RefPtr backend = inspector(LazyCreationPolicy::CreateIfNeeded)) {
+            if (auto& media = parameters.emulationOverrides.emulatedMedia)
+                backend->emulationManager().setEmulatedMedia(*media);
             backend->enablePageInstrumentation();
+        }
     }
 
 #if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)

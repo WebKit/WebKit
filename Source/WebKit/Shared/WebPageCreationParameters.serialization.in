@@ -319,6 +319,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     bool shouldForceSiteIsolationAlwaysOnForTesting;
     bool shouldEnableNetworkInstrumentation;
     bool shouldEnablePageInstrumentation;
+    Inspector::EmulationOverrides emulationOverrides;
 }
 
 [Nested] struct WebKit::RemotePageParameters {
