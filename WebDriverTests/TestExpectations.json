@@ -3080,16 +3080,6 @@
         },
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/create/invalid.py": {
-        "subtests": {
-            "test_params_reference_context_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
-            },
-            "test_params_reference_context_non_top_level": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/286790"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/create/reference_context.py": {
         "subtests": {
             "test_reference_context[tab]": {
