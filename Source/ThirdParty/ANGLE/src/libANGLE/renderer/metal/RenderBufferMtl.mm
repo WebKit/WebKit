@@ -186,12 +186,15 @@ angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
                                                   GLenum binding,
                                                   const gl::ImageIndex &imageIndex)
 {
-    if (imageIndex.valid())
-        return mtl::InitializeTextureContents(
-            context, mTexture, mFormat, mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
-    else
-        return mtl::InitializeTextureContents(
-            context, mTexture, mFormat,
-            mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
+    // Renderbuffer formats are renderable, so clear on the GPU. mtl::InitializeTextureContents()
+    // would write CPU-accessible textures from the CPU one row at a time, which is slow when the
+    // GPU stores the texture in a compressed layout.
+    ANGLE_CHECK_ASSERT(mtl::GetImpl(context),
+                       mTexture && mTexture->valid() && mFormat.valid() &&
+                           mFormat.getCaps().isRenderable());
+    auto nativeIndex = mtl::ImageNativeIndex::FromBaseZeroGLIndex(
+        imageIndex.valid() ? imageIndex : gl::ImageIndex::Make2D(0));
+    return mtl::InitializeTextureContentsGPU(context, mTexture, mFormat, nativeIndex,
+                                             MTLColorWriteMaskAll, /* toNonZero */ false);
 }
 }  // namespace rx
