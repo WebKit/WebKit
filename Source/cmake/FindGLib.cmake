@@ -197,7 +197,6 @@ function(GLib_HandleComponent name)
     list(TRANSFORM dependencies PREPEND GLib::)
     add_library(GLib::${name} UNKNOWN IMPORTED GLOBAL)
     set_target_properties(GLib::${name} PROPERTIES IMPORTED_LOCATION "${GLib_${name}_LIBRARY}")
-    target_include_directories(GLib::${name} INTERFACE ${PC_GLib_${name}_INCLUDEDIR})
     target_include_directories(GLib::${name} INTERFACE ${PC_GLib_${name}_INCLUDE_DIRS})
     WEBKIT_SCOPE_OPTIONS_TO_NON_SWIFT(_component_cflags
         ${PC_GLib_${name}_CFLAGS} ${PC_GLib_${name}_CFLAGS_OTHER})
