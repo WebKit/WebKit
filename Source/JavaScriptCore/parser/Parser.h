@@ -139,6 +139,19 @@ ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM& vm, const Identi
 {
     return isEval(vm, ident) || isArguments(vm, ident);
 }
+ALWAYS_INLINE static bool isStrictModeReservedWord(const VM& vm, const Identifier* ident)
+{
+    auto& propertyNames = *vm.propertyNames;
+    return propertyNames.implementsKeyword == *ident
+        || propertyNames.interfaceKeyword == *ident
+        || propertyNames.letKeyword == *ident
+        || propertyNames.packageKeyword == *ident
+        || propertyNames.privateKeyword == *ident
+        || propertyNames.protectedKeyword == *ident
+        || propertyNames.publicKeyword == *ident
+        || propertyNames.staticKeyword == *ident
+        || propertyNames.yieldKeyword == *ident;
+}
 ALWAYS_INLINE static bool isIdentifierOrKeyword(const JSToken& token)
 {
     return token.m_type == IDENT || token.m_type & KeywordTokenFlag;
@@ -611,7 +624,7 @@ public:
         bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
         bool isDuplicateParameter = !addResult.isNewEntry && addResult.iterator->value.isParameter();
-        bool isValidStrictMode = !isDuplicateParameter && m_vm.propertyNames->eval != *ident && !isArgumentsIdent;
+        bool isValidStrictMode = !isDuplicateParameter && m_vm.propertyNames->eval != *ident && !isArgumentsIdent && !isStrictModeReservedWord(m_vm, ident);
         addResult.iterator->value.clearIsVar();
         addResult.iterator->value.setIsParameter();
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;

@@ -229,5 +229,3 @@ test/staging/sm/generators/delegating-yield-7.js:
 test/staging/sm/lexical-environment/for-loop.js:
   default: 3
   strict mode: 3
-test/staging/sm/misc/future-reserved-words.js:
-  default: 3
