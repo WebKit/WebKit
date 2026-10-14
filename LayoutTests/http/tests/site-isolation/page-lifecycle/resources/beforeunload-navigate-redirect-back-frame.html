@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+const method = location.search.substring(1);
+onbeforeunload = () => parent.postMessage(`beforeunload ${method}`, "*");
+
+// The first hop is same-site. The redirect to localhost leaves this frame's process, then the next redirect brings it back.
+const destination = `http://127.0.0.1:8000/site-isolation/page-lifecycle/resources/beforeunload-navigate-redirect-back-destination.html?${method}`;
+const url = "/resources/redirect.py?url=" + encodeURIComponent("http://localhost:8000/resources/redirect.py?url=" + encodeURIComponent(destination));
+
+onload = () => {
+    if (method == "navigate")
+        navigation.navigate(url);
+    else
+        location.href = url;
+};
+</script>
