@@ -126,7 +126,7 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
             if (!sliceValue->slices().fill.has_value() && sliceValue->slices().values.allOf([](auto& edge) { return edge == 0_css_number; }))
                 return true;
         }
-        return false;
+        break;
     case CSSPropertyID::BorderImageWidth:
         if (RefPtr widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
             if (!widthValue->widths().legacyWebkitBorderImage && widthValue->widths().values.allOf([](auto& edge) { return edge == 1_css_number; }))
