@@ -240,6 +240,37 @@ struct WKWebExtensionAPIAlarmsTests {
     }
 
     @Test
+    func repeatingScheduledTimeWithUnloadedBackground() async throws {
+        let manager = try loadWebExtension(
+            manifest: alarmsManifest,
+            resources: [
+                "background.js": """
+                browser.alarms.onAlarm.addListener(async (alarmInfo) => {
+                  const alarm = await browser.alarms.get(alarmInfo.name)
+
+                  browser.test.assertTrue(alarmInfo.scheduledTime < alarm.scheduledTime, 'The event should have the time the alarm was scheduled to fire, not its next scheduled time.')
+
+                  browser.test.notifyPass()
+                })
+
+                if (!(await browser.alarms.get('repeat'))) {
+                  await browser.alarms.create('repeat', { delayInMinutes: (1000 / 1000 / 60), periodInMinutes: 1 })
+
+                  browser.test.sendMessage('Alarm Created')
+                }
+                """
+            ]
+        )
+
+        try await manager.waitForTestMessage("Alarm Created")
+
+        let context = try #require(manager.context)
+        context._unloadBackgroundContentForTesting()
+
+        try await manager.run()
+    }
+
+    @Test
     func clearSingleAlarm() async throws {
         try await loadAndRun(
             backgroundScript: """
