@@ -862,7 +862,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
 
     float deviceScaleFactor = protect(box.document())->deviceScaleFactor();
     auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
-    auto borderShape = BorderShape::shapeForBorderRect(protect(box.style()).get(), LayoutRect(zoomedRect));
+    auto borderShape = BorderShape::shapeForBorderRect(box.usedStyle(), LayoutRect(zoomedRect));
     auto controlStyle = extractControlStyleForRenderer(box);
     auto& context = paintInfo.context();
 

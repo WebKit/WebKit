@@ -74,6 +74,7 @@
 #import "RenderAttachment.h"
 #import "RenderBoxInlines.h"
 #import "RenderButton.h"
+#import "RenderElementInlines.h"
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
 #import "RenderObject.h"
@@ -344,7 +345,7 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
         shouldPaintFillAndInnerShadow = true;
 
     if (PAL::currentUserInterfaceIdiomIsVision() && shouldPaintFillAndInnerShadow) {
-        auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(rect));
+        auto borderShape = BorderShape::shapeForBorderRect(box.usedStyle(), LayoutRect(rect));
         auto path = borderShape.pathForOuterShape(protect(box.document())->deviceScaleFactor());
         context.setFillColor(Color::black.colorWithAlphaByte(10));
         context.drawPath(path);

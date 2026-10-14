@@ -252,7 +252,7 @@ void RenderTableRow::paintShadowForRowIfNeeded(PaintInfo& paintInfo, const Layou
     adjustBorderBoxRectForPainting(rect);
 
     BackgroundPainter backgroundPainter { *this, paintInfo };
-    backgroundPainter.paintBoxShadow(rect, style(), Style::ShadowStyle::Normal);
+    backgroundPainter.paintBoxShadow(rect, usedStyle(), Style::ShadowStyle::Normal);
 }
 
 void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

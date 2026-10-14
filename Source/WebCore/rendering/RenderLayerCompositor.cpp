@@ -3789,7 +3789,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
                     haveNonScrollableClippingIntermediateLayer = false;
                 }
 
-                auto borderShape = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect());
+                auto borderShape = BorderShape::shapeForBorderRect(box->usedStyle(), box->borderBoxRect());
                 auto clipRoundedRect = borderShape.deprecatedInnerRoundedRect();
 
                 auto offset = layer.convertToLayerCoords(&ancestorLayer, { }, RenderLayer::AdjustForColumns);
@@ -5925,7 +5925,7 @@ LayoutRoundedRect RenderLayerCompositor::parentRelativeScrollableRect(const Rend
 
         scrollableRect = LayoutRoundedRect { box->paddingBoxRect() };
         if (box->style().border().hasBorderRadius()) {
-            auto borderShape = BorderShape::shapeForBorderRect(box->style(), box->borderBoxRect());
+            auto borderShape = BorderShape::shapeForBorderRect(box->usedStyle(), box->borderBoxRect());
             scrollableRect = borderShape.deprecatedInnerRoundedRect();
         }
     }

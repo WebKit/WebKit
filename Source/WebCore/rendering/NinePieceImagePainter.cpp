@@ -35,6 +35,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "UsedStyle.h"
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
 #include <WebKitAdditions/AXCustomColorModeController.h>
@@ -198,16 +199,17 @@ static NinePieceScales computeTileScales(const NinePieceRects& destinationRects,
 }
 
 template<typename T>
-static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
     auto styleImage = ninePieceImage.source().tryStyleImage();
     ASSERT(styleImage);
     ASSERT(styleImage->isLoaded(&renderer));
 
+    auto& style = usedStyle.computedStyle();
     auto zoom = style.usedZoomForLength();
 
     auto sourceSlices      = computeSlices(source, ninePieceImage.slice(), styleImage->imageScaleFactor());
-    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), Style::evaluate<LayoutBoxExtent>(Style::effectiveBorderWidths(style).to<Style::LineWidthBox>(), zoom, deviceScaleFactor), sourceSlices, zoom);
+    auto destinationSlices = computeSlices(destination.size(), ninePieceImage.width(), usedStyle.borderWidths(), sourceSlices, zoom);
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 
@@ -240,14 +242,14 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
 
 // MARK: - Painter entry point
 
-void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::BorderImage& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
-    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, style, destination, source, deviceScaleFactor, options);
+    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
 }
 
-void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const Style::ComputedStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
+void NinePieceImagePainter::paint(const Style::MaskBorder& ninePieceImage, GraphicsContext& graphicsContext, const RenderElement& renderer, const UsedStyle& usedStyle, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions options)
 {
-    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, style, destination, source, deviceScaleFactor, options);
+    return paintNinePieceImage(ninePieceImage, graphicsContext, renderer, usedStyle, destination, source, deviceScaleFactor, options);
 }
 
 } // namespace WebCore

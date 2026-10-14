@@ -206,14 +206,14 @@ void InlineBoxPainter::paintMask()
     BorderPainter borderPainter { renderer(), m_paintInfo };
 
     if (!m_inlineBox.isSplit())
-        borderPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer().style(), maskBorder, compositeOp);
+        borderPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer().usedStyle(), maskBorder, compositeOp);
     else {
         // We have a mask image that spans multiple lines.
         LayoutRect imageStrip = computeNinePieceImageStrip(adjustedPaintOffset, localRect);
         LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, maskBorder, paintRect);
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip(clipRect);
-        borderPainter.paintNinePieceImage(imageStrip, renderer().style(), maskBorder, compositeOp);
+        borderPainter.paintNinePieceImage(imageStrip, renderer().usedStyle(), maskBorder, compositeOp);
     }
 
     if (pushTransparencyLayer)
@@ -343,14 +343,14 @@ void InlineBoxPainter::paintBoxShadow(Style::ShadowStyle shadowStyle, const Layo
     BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
 
     if (!m_inlineBox.isSplit() || m_isRootInlineBox) {
-        backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle);
+        backgroundPainter.paintBoxShadow(paintRect, usedStyle(), shadowStyle);
         return;
     }
 
     // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
     // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
     auto closedEdges = m_inlineBox.closedEdges();
-    backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle, closedEdges);
+    backgroundPainter.paintBoxShadow(paintRect, usedStyle(), shadowStyle, closedEdges);
 }
 
 const Style::ComputedStyle& InlineBoxPainter::style() const

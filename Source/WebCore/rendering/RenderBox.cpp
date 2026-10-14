@@ -1021,7 +1021,7 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
 // FIXME: Despite the name, this returns rounded borders based on the padding box, which seems wrong.
 LayoutRoundedRect::Radii RenderBox::borderRadii() const
 {
-    auto borderShape = BorderShape::shapeForBorderRect(style(), paddingBoxRectIncludingScrollbar());
+    auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), paddingBoxRectIncludingScrollbar());
     return borderShape.deprecatedRoundedRect().radii();
 }
 
@@ -1787,7 +1787,7 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, cons
     LayoutRect borderRect = borderBoxRect();
     borderRect.moveBy(adjustedLocation);
 
-    auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
+    auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), borderRect);
     return borderShape.shapeIntersectsHitTestLocation(hitTestLocation, style().deviceScaleFactor());
 }
 
@@ -1911,7 +1911,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
     if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(*this, paintRect.location(), bleedAvoidance, { }))
-        backgroundPainter.paintBoxShadow(paintRect, style(), Style::ShadowStyle::Normal);
+        backgroundPainter.paintBoxShadow(paintRect, usedStyle(), Style::ShadowStyle::Normal);
 
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer) {
@@ -1919,7 +1919,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
         stateSaver.save();
-        auto borderShape = BorderShape::shapeForBorderRect(style(), paintRect);
+        auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), paintRect);
         borderShape.clipToOuterShape(paintInfo.context(), protect(document())->pixelSnappingScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
@@ -1950,7 +1950,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         }
     }
 
-    backgroundPainter.paintBoxShadow(paintRect, style(), Style::ShadowStyle::Inset);
+    backgroundPainter.paintBoxShadow(paintRect, usedStyle(), Style::ShadowStyle::Inset);
 
     if (bleedAvoidance != BleedAvoidance::BackgroundOverBorder) {
         bool paintCSSBorder = false;
@@ -2195,7 +2195,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
     if (allMaskImagesLoaded) {
         BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), style().usedZoomForLength(), paintRect, BleedAvoidance::None, compositeOp);
-        BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBorder(), compositeOp);
+        BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, usedStyle(), style().maskBorder(), compositeOp);
     }
     
     if (pushTransparencyLayer)
@@ -2368,7 +2368,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
 
 void RenderBox::clipToPaddingBoxShape(GraphicsContext& context, const LayoutPoint& accumulatedOffset, float deviceScaleFactor) const
 {
-    auto borderShape = BorderShape::shapeForBorderRect(style(), LayoutRect(accumulatedOffset, borderBoxSize()));
+    auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), LayoutRect(accumulatedOffset, borderBoxSize()));
     borderShape.clipToInnerShape(context, deviceScaleFactor);
 }
 

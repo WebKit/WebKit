@@ -719,7 +719,7 @@ bool AccessibilityRenderObject::isNonLayerSVGObject() const
 
 static Path computePathForRenderBox(const RenderBox& renderBox)
 {
-    auto borderShape = BorderShape::shapeForBorderRect(protect(renderBox.style()), renderBox.borderBoxRect());
+    auto borderShape = BorderShape::shapeForBorderRect(renderBox.usedStyle(), renderBox.borderBoxRect());
     auto path = borderShape.pathForOuterShape(protect(renderBox.document())->deviceScaleFactor());
     // borderBoxRect() is in local coordinates. Offset it to absolute document coordinates
     // to match the coordinate system used by SVG, RenderText, and RenderInline paths.

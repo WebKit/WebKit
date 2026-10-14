@@ -42,6 +42,7 @@
 #include "Path.h"
 #include "PathUtilities.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "UsedStyle.h"
 #include <cmath>
 
 namespace WebCore {
@@ -101,11 +102,16 @@ float BorderShape::constrainedRadiiScale(const LayoutRect& borderRect, const Lay
     return std::min(adjacent, opposite);
 }
 
+BorderShape BorderShape::shapeForBorderRect(const UsedStyle& usedStyle, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
+{
+    return shapeForBorderRect(usedStyle.computedStyle(), borderRect, usedStyle.borderWidths(), closedEdges);
+}
+
 BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
     auto zoom = style.usedZoomForLength();
     auto deviceScaleFactor = style.deviceScaleFactor();
-    auto borderWidths = RectEdges<LayoutUnit>::map(Style::effectiveBorderWidths(style), [&](auto width) {
+    auto borderWidths = RectEdges<LayoutUnit>::map(Style::effectiveBorderWidths(style), [&](const auto& width) {
         return Style::evaluate<LayoutUnit>(width, zoom, deviceScaleFactor);
     });
     return shapeForBorderRect(style, borderRect, borderWidths, closedEdges);

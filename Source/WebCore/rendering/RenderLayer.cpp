@@ -3367,7 +3367,7 @@ void RenderLayer::applyAncestorClippingForBorderRadius(GraphicsContext& context,
         if (layer->renderer().hasNonVisibleOverflow() && layer->renderer().style().border().hasBorderRadius() && ancestorLayerIsInContainingBlockChain(*layer)) {
             auto adjustedClipRect = LayoutRect { LayoutPoint { layer->offsetFromAncestor(paintingInfo.rootLayer, AdjustForColumns) }, layer->rendererBorderBoxRect().size() };
             adjustedClipRect.move(paintingInfo.subpixelOffset);
-            auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().style(), adjustedClipRect);
+            auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().usedStyle(), adjustedClipRect);
             if (borderShape.innerShapeContains(paintingInfo.paintDirtyRect))
                 context.clip(snapRectToDevicePixels(intersection(paintingInfo.paintDirtyRect, adjustedClipRect), snappingScaleFactor));
             else

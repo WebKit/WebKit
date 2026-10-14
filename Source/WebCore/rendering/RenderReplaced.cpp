@@ -286,7 +286,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         // shape. The children still register their precise bounds via paintReplaced.
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
-            auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
+            auto borderShape = BorderShape::shapeForBorderRect(usedStyle(), borderRect);
             auto contributeToInteractionRegions = (svgRootHasChildrenOrFilters && !isSkippedContentRoot(*this))
                 ? EventRegionContext::ContributeToInteractionRegions::No
                 : EventRegionContext::ContributeToInteractionRegions::Yes;

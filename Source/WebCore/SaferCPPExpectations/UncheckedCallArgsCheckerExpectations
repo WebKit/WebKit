@@ -126,7 +126,6 @@ rendering/LayoutRepainter.cpp
 rendering/LogicalSelectionOffsetCachesInlines.h
 rendering/MarkedText.cpp
 rendering/MarkedText.h
-rendering/MotionPath.cpp
 [ macOS ] rendering/OutlinePainter.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RegionContext.h

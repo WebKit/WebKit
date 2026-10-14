@@ -1572,8 +1572,8 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
             // If the border radius changed, repaints at style change time will take care of that.
             // This code is attempting to detect whether border-radius constraining based on box size
             // affects the radii, using the outlineBoundsRect as a proxy for the border box.
-            auto oldShapeApproximation = BorderShape::shapeForBorderRect(style(), oldOutlineBounds);
-            auto newShapeApproximation = BorderShape::shapeForBorderRect(style(), newOutlineBounds);
+            auto oldShapeApproximation = BorderShape::shapeForBorderRect(usedStyle(), oldOutlineBounds);
+            auto newShapeApproximation = BorderShape::shapeForBorderRect(usedStyle(), newOutlineBounds);
             if (oldShapeApproximation.radii() != newShapeApproximation.radii())
                 return true;
         }

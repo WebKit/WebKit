@@ -60,6 +60,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -623,7 +624,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 
         clipPath = path;
     } else if ((regionRendererBox = dynamicDowncast<RenderBox>(regionRenderer))) {
-        auto borderShape = BorderShape::shapeForBorderRect(protect(regionRendererBox->style()), regionRendererBox->borderBoxRect());
+        auto borderShape = BorderShape::shapeForBorderRect(regionRendererBox->usedStyle(), regionRendererBox->borderBoxRect());
         auto borderRadii = borderShape.radii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();

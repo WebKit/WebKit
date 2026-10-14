@@ -395,9 +395,9 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // SVG root's border rect doesn't change the interaction-region shape — only the
         // children should contribute to interaction regions.
         auto borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
-        CheckedRef style = this->style();
-        auto borderShape = BorderShape::shapeForBorderRect(style, borderRect);
-        protect(paintInfo.eventRegionContext())->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style, false, EventRegionContext::ContributeToInteractionRegions::No);
+        auto usedStyle = this->usedStyle();
+        auto borderShape = BorderShape::shapeForBorderRect(usedStyle, borderRect);
+        protect(paintInfo.eventRegionContext())->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, usedStyle.computedStyle(), false, EventRegionContext::ContributeToInteractionRegions::No);
     }
 
     if (paintInfo.paintRootBackgroundOnly())

@@ -31,6 +31,7 @@
 #include "PathOperation.h"
 #include "PathTraversalState.h"
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TransformOperationData.h"
@@ -50,7 +51,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
         [&](const Style::BoxPath& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();
             auto referenceRect = container.referenceBoxRect(referenceBox);
-            auto borderShape = BorderShape::shapeForBorderRect(container.style(), LayoutRect(referenceRect));
+            auto borderShape = BorderShape::shapeForBorderRect(container.usedStyle(), LayoutRect(referenceRect));
             return borderShape.deprecatedPixelSnappedRoundedRect(protect(container.document())->deviceScaleFactor());
         },
         [&](const auto& offsetPath) -> FloatRoundedRect {
@@ -113,7 +114,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     MotionPathData data;
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
-    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->style(), container->borderBoxRect()).cornerCurvatures();
+    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->usedStyle(), container->borderBoxRect()).cornerCurvatures();
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
     auto zoom = renderer.style().usedZoomForLength();

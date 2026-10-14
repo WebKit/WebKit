@@ -39,12 +39,12 @@ public:
 
     void paintBorder(const LayoutRect&, const UsedStyle&, BleedAvoidance = BleedAvoidance::None, RectEdges<bool> closedEdges = { true }) const;
 
-    bool paintNinePieceImage(const LayoutRect&, const Style::ComputedStyle&, const Style::BorderImage&, CompositeOperator = CompositeOperator::SourceOver) const;
-    bool paintNinePieceImage(const LayoutRect&, const Style::ComputedStyle&, const Style::MaskBorder&, CompositeOperator = CompositeOperator::SourceOver) const;
+    bool paintNinePieceImage(const LayoutRect&, const UsedStyle&, const Style::BorderImage&, CompositeOperator = CompositeOperator::SourceOver) const;
+    bool paintNinePieceImage(const LayoutRect&, const UsedStyle&, const Style::MaskBorder&, CompositeOperator = CompositeOperator::SourceOver) const;
 
     static void drawLineForBoxSide(GraphicsContext&, const Document&, const FloatRect&, BoxSide, Color, BorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false);
 
-    static std::optional<Path> pathForBorderArea(const LayoutRect&, const Style::ComputedStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true });
+    static std::optional<Path> pathForBorderArea(const LayoutRect&, const UsedStyle&, float deviceScaleFactor, RectEdges<bool> closedEdges = { true });
 
     static bool shouldAntialiasLines(GraphicsContext&);
     static bool LEGACY_NODELETE decorationHasAllSolidEdges(const RectEdges<BorderEdge>&);
@@ -65,7 +65,7 @@ private:
     void paintSides(const BorderShape&, const Sides&) const;
 
     template<typename T>
-    bool paintNinePieceImageImpl(const LayoutRect&, const Style::ComputedStyle&, const T&, CompositeOperator = CompositeOperator::SourceOver) const;
+    bool paintNinePieceImageImpl(const LayoutRect&, const UsedStyle&, const T&, CompositeOperator = CompositeOperator::SourceOver) const;
 
     void paintTranslucentBorderSides(const BorderShape&, const Sides&, BoxSideSet edgesToDraw, bool antialias) const;
     void paintBorderSides(const BorderShape&, const Sides&, BoxSideSet edgesToDraw, bool antialias, const Color* overrideColor = nullptr) const;

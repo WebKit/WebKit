@@ -37,6 +37,8 @@ enum class CompositeOperator : uint8_t;
 
 struct ImagePaintingOptions;
 
+class UsedStyle;
+
 namespace Style {
 class ComputedStyle;
 struct BorderImage;
@@ -45,8 +47,8 @@ struct MaskBorder;
 
 class NinePieceImagePainter {
 public:
-    static void paint(const Style::BorderImage&, GraphicsContext&, const RenderElement&, const Style::ComputedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
-    static void paint(const Style::MaskBorder&, GraphicsContext&, const RenderElement&, const Style::ComputedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
+    static void paint(const Style::BorderImage&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
+    static void paint(const Style::MaskBorder&, GraphicsContext&, const RenderElement&, const UsedStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, ImagePaintingOptions);
 };
 
 } // namespace WebCore

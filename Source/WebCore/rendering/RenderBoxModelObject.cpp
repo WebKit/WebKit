@@ -824,7 +824,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
 {
-    auto edges = borderEdges(style(), protect(document())->deviceScaleFactor());
+    auto edges = borderEdges(usedStyle(), protect(document())->deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         auto& currEdge = edges.at(side);
@@ -846,7 +846,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     if (!style().borderImageSource().isNone())
         return false;
 
-    auto edges = borderEdges(style(), protect(document())->deviceScaleFactor());
+    auto edges = borderEdges(usedStyle(), protect(document())->deviceScaleFactor());
 
     for (auto side : allBoxSides) {
         if (!edges.at(side).obscuresBackground())

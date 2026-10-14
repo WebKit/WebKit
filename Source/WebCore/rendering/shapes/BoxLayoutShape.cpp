@@ -33,6 +33,7 @@
 #include "BorderShape.h"
 #include "PolygonLayoutShape.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -83,7 +84,7 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
         if (!style->border().hasBorderRadius())
             return { BorderShape { marginBox, { } }, BoxShapeGeometry::Edge::Outer };
 
-        auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
+        auto borderShape = BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect());
         auto cornerCurvatures = borderShape.cornerCurvatures();
         auto radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
         // Expanding the radii for the margins can push concave corners into each other, so re-run the
@@ -94,7 +95,7 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
         return { BorderShape { marginBox, { }, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
     }
     case CSSBoxType::PaddingBox:
-        return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
     case CSSBoxType::ContentBox:
@@ -104,11 +105,11 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
-        return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+        return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
     }
 
     ASSERT_NOT_REACHED();
-    return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+    return { BorderShape::shapeForBorderRect(renderer.usedStyle(), renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
 }
 
 LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
