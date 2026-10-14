@@ -7,7 +7,6 @@ assembler/MacroAssemblerPrinter.cpp
 assembler/PerfLog.cpp
 b3/B3AbstractHeap.cpp
 b3/B3CanonicalizePrePostIncrements.cpp
-b3/B3EliminateCommonSubexpressions.cpp
 b3/B3EliminateDeadCode.cpp
 b3/B3EliminateWasmGCAllocations.cpp
 b3/B3EnsureLoopPreHeaders.cpp
@@ -18,7 +17,6 @@ b3/B3LowerToAir.cpp
 b3/B3OptimizeAssociativeExpressionTrees.cpp
 b3/B3PatchpointValue.cpp
 b3/B3Procedure.cpp
-b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SparseCollection.h

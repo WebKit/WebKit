@@ -103,6 +103,12 @@ public:
         return m_begin <= point && point < m_end;
     }
 
+    // Whether every point of `other` lies in this range. Anything subsumes an empty range.
+    bool subsumes(const Range& other) const
+    {
+        return !other || (m_begin <= other.m_begin && other.m_end <= m_end);
+    }
+
     void dump(PrintStream& out) const
     {
         if (*this == Range()) {

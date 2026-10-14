@@ -31,13 +31,13 @@ namespace JSC { namespace B3 {
 
 class Procedure;
 
-// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, and CSE of
-// values that a dominating block already computed. The goal of the phase is to dramatically reduce
-// the complexity of the code. In the future, it's preferable to add optimizations to this phase
-// rather than creating new optimizations because then the optimizations can feed each other.
-// However, because of the many interlocking optimizations, it can be difficult to add sophisticated
-// optimizations to it. For that reason CSE that has to synthesize Phis for values arriving on
-// several paths lives in eliminateCommonSubexpressions.
+// Does strength reduction, constant folding, canonicalization, CFG simplification, DCE, CSE of
+// values and memory loads that a dominating block already computed, and dead store elimination.
+// The goal of the phase is to dramatically reduce the complexity of the code. In the future, it's
+// preferable to add optimizations to this phase rather than creating new optimizations because then
+// the optimizations can feed each other. However, because of the many interlocking optimizations,
+// it can be difficult to add sophisticated optimizations to it. That is why a value available along
+// each of several incoming paths, but not from a dominator, is not reused: it would need a Phi.
 
 enum class ReduceStrengthPass : uint8_t {
     Initial,

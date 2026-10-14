@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3AbstractHeap.h"
+#include "B3HeapRangeTree.h"
 #include "B3Value.h"
 #include "DFGArrayMode.h"
 #include "IndexingType.h"
@@ -343,7 +344,7 @@ public:
         }
     }
 
-    void decorateMemory(const AbstractHeap*, Value*);
+    JS_EXPORT_PRIVATE void decorateMemory(const AbstractHeap*, Value*);
     void decorateCCallRead(const AbstractHeap*, Value*);
     void decorateCCallWrite(const AbstractHeap*, Value*);
     void decoratePatchpointRead(const AbstractHeap*, Value*);
@@ -361,7 +362,10 @@ public:
     void decorateWasmArrayNew(const AbstractHeap*, Value*);
     void decorateWasmArrayLength(const AbstractHeap*, Value*);
 
-    void computeRangesAndDecorateInstructions();
+    JS_EXPORT_PRIVATE void computeRangesAndDecorateInstructions();
+
+    // The tree of every heap's range, once computeRangesAndDecorateInstructions() has run.
+    const std::optional<HeapRangeTree>& rangeTree() const { return m_rangeTree; }
 
 private:
 
@@ -397,6 +401,8 @@ private:
     Vector<HeapForValue> m_heapForWasmArraySet;
     Vector<HeapForValue> m_heapForWasmArrayNew;
     Vector<HeapForValue> m_heapForWasmArrayLength;
+
+    std::optional<HeapRangeTree> m_rangeTree;
 };
 
 } // namespace JSC::B3

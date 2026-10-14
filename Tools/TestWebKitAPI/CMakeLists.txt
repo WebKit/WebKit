@@ -133,6 +133,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PlainGregorianDateTime.cpp
     Tests/WTF/PreciseSum.cpp
     Tests/WTF/PriorityQueue.cpp
+    Tests/WTF/Range.cpp
     Tests/WTF/RapidHash.cpp
     Tests/WTF/ReadWriteLock.cpp
     Tests/WTF/RedBlackTree.cpp

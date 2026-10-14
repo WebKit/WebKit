@@ -56,10 +56,9 @@ struct Effects {
     // would not have otherwise trapped.
     bool controlDependent : 1 { false };
 
-    // Mutability::Immutable if the instruction is readings an immutable value. This read itself can
-    // be control dependent, but once it succeeds, the subsequent code must be producing the same value.
-    // CSE leverages this information and eliminate redundant loads when the target and preceding load
-    // are the same and Mutability::Immutable.
+    // Mutability::Immutable if the instruction is reading an immutable value. This read itself can
+    // be control dependent, but once it succeeds, any later read of the same location produces the
+    // same value, whatever is written in between.
     Mutability readsMutability : 1 { Mutability::Mutable };
 
     // True if this writes to the local state. Operations that write local state don't write to anything
