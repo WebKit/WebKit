@@ -65,7 +65,7 @@ GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElemen
 {
     std::optional<FloatRect> objectBoundingBox;
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        objectBoundingBox = renderer.objectBoundingBox();
+        objectBoundingBox = renderer.objectBoundingBoxForResources();
 
     float textPaintingScale = 1;
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))

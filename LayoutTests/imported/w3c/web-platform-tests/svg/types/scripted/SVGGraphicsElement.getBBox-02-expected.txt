@@ -1,4 +1,4 @@
 XX
 
-FAIL SVGGraphicsElement.prototype.getBBox on <tspan> assert_equals: x expected 100 but got 0
+PASS SVGGraphicsElement.prototype.getBBox on <tspan>
 

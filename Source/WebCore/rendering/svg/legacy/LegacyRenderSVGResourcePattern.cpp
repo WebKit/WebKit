@@ -165,7 +165,7 @@ auto LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, cons
     
     // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
     // then the given effect (e.g. a gradient or a filter) will be ignored.
-    FloatRect objectBoundingBox = renderer.objectBoundingBox();
+    FloatRect objectBoundingBox = renderer.objectBoundingBoxForResources();
     if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return { };
 
@@ -228,7 +228,7 @@ bool LegacyRenderSVGResourcePattern::buildTileImageTransform(RenderElement& rend
                                                        FloatRect& patternBoundaries,
                                                        AffineTransform& tileImageTransform) const
 {
-    FloatRect objectBoundingBox = renderer.objectBoundingBox();
+    FloatRect objectBoundingBox = renderer.objectBoundingBoxForResources();
     patternBoundaries = legacyCalculatePatternBoundaries(attributes, objectBoundingBox, patternElement);
     if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
         return false;

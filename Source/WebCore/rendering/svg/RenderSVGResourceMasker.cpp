@@ -89,7 +89,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto objectBoundingBox = targetRenderer.objectBoundingBoxForResources();
     auto coordinateSystemOriginTranslation = adjustedPaintOffset - targetRenderer.nominalSVGLayoutLocation();
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
@@ -166,7 +166,7 @@ FloatRect RenderSVGResourceMasker::maskBoundsInLocalCoordinates(const FloatRect&
 
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    auto targetBoundingBox = object.objectBoundingBox();
+    auto targetBoundingBox = object.objectBoundingBoxForResources();
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
     SVGVisitedRendererTracking recursionTracking(s_visitedSet);
