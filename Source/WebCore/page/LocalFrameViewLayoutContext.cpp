@@ -87,7 +87,7 @@ public :
                 if (renderer.needsLayout())
                     return true;
                 if (auto* renderBlockFlow = dynamicDowncast<RenderBlockFlow>(renderer); renderBlockFlow && renderBlockFlow->inlineLayout())
-                    return renderBlockFlow->inlineLayout()->hasDetachedContent();
+                    return renderBlockFlow->inlineLayout()->hasTruncatedDisplayContent();
                 return false;
             };
 

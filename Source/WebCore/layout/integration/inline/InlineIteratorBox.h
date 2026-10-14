@@ -329,7 +329,8 @@ inline void Box::traverseNextTextBox()
 
     traverseNextWithSameLayoutBox();
 
-    ASSERT(displayBox().isTextOrSoftLineBreak());
+    // Display content truncated by content removal may end before the last box of the text.
+    ASSERT(atEnd() || displayBox().isTextOrSoftLineBreak());
 }
 
 inline void Box::traverseNextLeafOnLine()

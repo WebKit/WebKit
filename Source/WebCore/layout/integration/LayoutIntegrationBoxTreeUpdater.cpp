@@ -28,6 +28,7 @@
 
 #include "FormattingContextBoxIterator.h"
 #include "InlineWalker.h"
+#include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBlock.h"
@@ -405,15 +406,25 @@ const Layout::Box& BoxTreeUpdater::insert(const RenderElement& parent, RenderObj
     return *child.layoutBox();
 }
 
-UniqueRef<Layout::Box> BoxTreeUpdater::remove(const RenderElement& parent, RenderObject& child)
+void BoxTreeUpdater::remove(const RenderElement& parent, RenderObject& child)
 {
     UNUSED_PARAM(parent);
     ASSERT(child.layoutBox());
 
-    CheckedPtr layoutBox = child.layoutBox();
-    child.clearLayoutBox();
+    auto removedBox = [&] {
+        CheckedPtr layoutBox = child.layoutBox();
+        child.clearLayoutBox();
+        return layoutBox->removeFromParent();
+    }();
 
-    return layoutBox->removeFromParent();
+#if ASSERT_ENABLED
+    // Nothing may refer to the removed boxes, except the renderers in the subtree, which the boxes unlink on destruction.
+    ASSERT(!removedBox->checkedPtrCount());
+    if (CheckedPtr removedElementBox = dynamicDowncast<Layout::ElementBox>(removedBox.get())) {
+        for (auto& descendant : Layout::descendantsOfType<Layout::Box>(*removedElementBox))
+            ASSERT(descendant.checkedPtrCount() == (descendant.rendererForIntegration() ? 1u : 0u));
+    }
+#endif
 }
 
 const Layout::ElementBox& BoxTreeUpdater::rootLayoutBox() const

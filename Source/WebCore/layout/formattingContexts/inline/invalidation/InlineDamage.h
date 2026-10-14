@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FloatRect.h>
 #include <WebCore/InlineDisplayContent.h>
 #include <WebCore/InlineLineTypes.h>
 #include <wtf/EnumSet.h>
@@ -39,7 +40,6 @@ class InlineDamage {
     WTF_MAKE_TZONE_ALLOCATED(InlineDamage);
 public:
     InlineDamage() = default;
-    ~InlineDamage();
 
     enum class Reason : uint8_t {
         Append,
@@ -62,12 +62,13 @@ public:
     using TrailingDisplayBoxList = Vector<InlineDisplay::Box>;
     std::optional<InlineDisplay::Box> trailingContentForLine(size_t lineIndex) const;
 
-    void addDetachedBox(UniqueRef<Box>&& layoutBox) { m_detachedLayoutBoxes.append(WTF::move(layoutBox)); }
-
     bool isInlineItemListDirty() const { return m_isInlineItemListDirty; }
     void setInlineItemListClean() { m_isInlineItemListDirty = false; }
 
-    bool hasDetachedContent() const { return !m_detachedLayoutBoxes.isEmpty(); }
+    // Removing laid out content truncates the display content at the damaged line. The next layout appends the new lines.
+    void setDisplayContentTruncated(const FloatRect& truncatedContentInkOverflow);
+    bool hasTruncatedDisplayContent() const { return m_hasTruncatedDisplayContent; }
+    FloatRect truncatedContentInkOverflow() const { return m_truncatedContentInkOverflow; }
 
 private:
     friend class InlineInvalidation;
@@ -80,9 +81,10 @@ private:
 
     EnumSet<Reason> m_damageReasons;
     bool m_isInlineItemListDirty { false };
+    bool m_hasTruncatedDisplayContent { false };
     std::optional<LayoutPosition> m_layoutStartPosition;
     TrailingDisplayBoxList m_trailingDisplayBoxes;
-    Vector<UniqueRef<Box>> m_detachedLayoutBoxes;
+    FloatRect m_truncatedContentInkOverflow;
 };
 
 inline std::optional<InlineDisplay::Box> InlineDamage::trailingContentForLine(size_t lineIndex) const
@@ -103,17 +105,19 @@ inline std::optional<InlineDisplay::Box> InlineDamage::trailingContentForLine(si
     return { m_trailingDisplayBoxes[relativeLineIndex] };
 }
 
-inline InlineDamage::~InlineDamage()
+inline void InlineDamage::setDisplayContentTruncated(const FloatRect& truncatedContentInkOverflow)
 {
+    m_hasTruncatedDisplayContent = true;
+    m_truncatedContentInkOverflow.unite(truncatedContentInkOverflow);
+    // The lines these would be compared against are gone.
     m_trailingDisplayBoxes.clear();
-    m_detachedLayoutBoxes.clear();
 }
 
 inline void InlineDamage::resetLayoutPosition()
 {
     m_layoutStartPosition = { };
     m_trailingDisplayBoxes.clear();
-    // Never reset m_detachedLayoutBoxes. We need to keep those layout boxes around until after layout.
+    // Never reset m_hasTruncatedDisplayContent. The display content stays truncated until the next layout.
 }
 
 }

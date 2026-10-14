@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ListMarkerPositionedPostLayoutEnabled=false ] -->
+<style>
+li {
+    list-style-type: none;
+}
+.with-marker {
+    list-style-type: disc;
+}
+</style>
+<!-- The outer list item's marker sits on the nested list item's line. Starting a marquee that has not scrolled yet computes intrinsic widths outside of layout, which sets up the new marker's nested offset before the marker is removed again. -->
+<marquee id="marquee" scrollamount="0"><ul><li id="outer"><ul><li>text</li></ul></li></ul></marquee>
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+
+outer.className = "with-marker";
+marquee.setAttribute("scrollamount", "6");
+getComputedStyle(marquee).color;
+marquee.start();
+outer.className = "";
+getComputedStyle(outer).color;
+document.body.offsetHeight;
+
+marquee.remove();
+document.body.append("PASS if no crash");
+</script>

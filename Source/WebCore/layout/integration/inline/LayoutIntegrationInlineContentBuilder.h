@@ -47,6 +47,9 @@ public:
     // recomputes line and block level overflow from them.
     void updateOverflow(InlineContent&, size_t startIndex) const;
 
+    // Laid out content is being removed. Drops the lines the next layout rebuilds, from the damaged line on.
+    void truncateDisplayContent(InlineContent&, Layout::InlineDamage&) const;
+
 private:
     void updateInkOverflowForBoxes(InlineContent&, size_t startIndex) const;
     static void updateInkOverflowForText(std::span<InlineDisplay::Box>, const Layout::ElementBox& root, const IntSize& initialContainingBlockSize);
@@ -57,6 +60,7 @@ private:
     void adjustInkOverflowForPercentageTextDecorationInsets(InlineContent&, size_t startIndex, const DecoratingBoxes&) const;
     void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;
     FloatRect handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
+    FloatRect appendToTruncatedDisplayContent(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage&) const;
 
     const RenderBlockFlow& m_blockFlow;
 };

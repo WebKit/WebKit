@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<style>
+body {
+    font: 20px/1 monospace;
+}
+</style>
+<!-- Starting a marquee that has not scrolled yet computes the intrinsic widths of its content outside of layout. That builds inline items for appended text, which is then removed before it is laid out. -->
+<marquee id="marquee" scrollamount="0"><div id="multiLineContainer">first<br>second</div><div id="singleLineContainer">first</div></marquee>
+<marquee id="marqueeWithImmediateRendererDestruction" scrollamount="0"><div id="multiLineContainer2">first<br>second</div><div id="singleLineContainer2">first</div></marquee>
+<span id="reference">first</span>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+
+const results = [];
+
+function contentWidth(element)
+{
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return range.getBoundingClientRect().width;
+}
+
+function test(marquee, multiLineContainer, singleLineContainer)
+{
+    multiLineContainer.append(" appended");
+    singleLineContainer.append(" appended");
+    marquee.setAttribute("scrollamount", "6");
+    getComputedStyle(marquee).color;
+    marquee.start();
+    multiLineContainer.lastChild.remove();
+    singleLineContainer.lastChild.remove();
+
+    const passed = multiLineContainer.offsetHeight == 40 && contentWidth(singleLineContainer) == contentWidth(reference);
+    results.push(passed ? "PASS" : "FAIL");
+}
+
+document.body.offsetHeight;
+test(marquee, multiLineContainer, singleLineContainer);
+
+window.internals?.setImmediateRendererDestructionEnabled(true);
+test(marqueeWithImmediateRendererDestruction, multiLineContainer2, singleLineContainer2);
+window.internals?.setImmediateRendererDestructionEnabled(false);
+
+log.textContent = results.join("\n");
+document.body.replaceChildren(log);
+</script>

@@ -30,6 +30,7 @@
 #include "InlineSoftLineBreakItem.h"
 #include "InlineTextItem.h"
 #include "LayoutElementBox.h"
+#include "LayoutInlineTextBox.h"
 #include "LayoutUnit.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextBreakingPositionContext.h"
@@ -642,6 +643,18 @@ void InlineInvalidation::resetInlineDamage(InlineDamage& inlineDamage)
 {
     inlineDamage.setInlineItemListDirty();
     inlineDamage.resetLayoutPosition();
+}
+
+void InlineInvalidation::inlineItemListWillChange(InlineDamage& inlineDamage)
+{
+    inlineDamage.setInlineItemListDirty();
+}
+
+bool InlineInvalidation::isSafeToRemoveWithoutFullInvalidation(const Box& layoutBox)
+{
+    // Intrinsic width computation may have built state for content that was never laid out. For text and line breaks
+    // that is only inline items. Anything else (floats, list markers, nested inline layout) may have left more behind.
+    return is<InlineTextBox>(layoutBox) || layoutBox.isLineBreakBox();
 }
 
 }

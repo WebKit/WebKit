@@ -68,7 +68,8 @@ public:
     static void updateContent(const RenderText&);
 
     const Layout::Box& insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild = nullptr);
-    UniqueRef<Layout::Box> remove(const RenderElement& parent, RenderObject& child);
+    // Destroys the layout box of the child, and the boxes of its subtree.
+    void remove(const RenderElement& parent, RenderObject& child);
 
 private:
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }

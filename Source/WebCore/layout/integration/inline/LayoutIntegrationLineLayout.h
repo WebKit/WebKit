@@ -151,7 +151,7 @@ public:
     bool isDamaged() const { return !!m_lineDamage; }
     const Layout::InlineDamage* damage() const LIFETIME_BOUND { return m_lineDamage.get(); }
 #ifndef NDEBUG
-    bool hasDetachedContent() const { return m_lineDamage && m_lineDamage->hasDetachedContent(); }
+    bool hasTruncatedDisplayContent() const { return m_lineDamage && m_lineDamage->hasTruncatedDisplayContent(); }
 #endif
 
     struct SVGTextFragmentsForBoxes {
@@ -180,6 +180,8 @@ private:
     const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }
 
     Layout::InlineDamage& ensureLineDamage() LIFETIME_BOUND;
+    void removeLayoutBox(const RenderElement& parent, RenderObject& child);
+    void releaseContentRebuiltFromDamage();
 
     const Layout::ElementBox& rootLayoutBox() const { return *m_rootLayoutBox; }
     Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }

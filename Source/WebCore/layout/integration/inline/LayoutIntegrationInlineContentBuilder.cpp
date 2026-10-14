@@ -38,6 +38,7 @@
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderView.h"
+#include "SVGTextFragment.h"
 #include "StringTruncator.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <WebCore/StyleShadow.h>
@@ -592,6 +593,9 @@ void InlineContentBuilder::computeIsFirstIsLastBoxAndBidiReorderingForInlineCont
 
 FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage* lineDamage) const
 {
+    if (lineDamage && lineDamage->hasTruncatedDisplayContent())
+        return appendToTruncatedDisplayContent(WTF::move(layoutResult), inlineContent, *lineDamage);
+
     auto firstDamagedLineIndex = [&]() -> std::optional<size_t> {
         auto& displayContentFromPreviousLayout = inlineContent.displayContent();
         if (!lineDamage || !lineDamage->layoutStartPosition() || !displayContentFromPreviousLayout.lines.size())
@@ -646,9 +650,7 @@ FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::Inline
 
     if (!firstDamagedLineIndex || !numberOfDamagedLines || !firstDamagedBoxIndex || !numberOfDamagedBoxes) {
         ASSERT_NOT_REACHED();
-        // We failed to compute the damaged range. The existing display content may still hold references to
-        // layout boxes that were detached (see InlineDamage::m_detachedLayoutBoxes) and will be destroyed as
-        // soon as line damage is released. Do not leave those stale display boxes in place.
+        // We failed to compute the damaged range. Do not leave stale display boxes in place.
         for (auto& line : inlineContent.displayContent().lines)
             damagedRect.unite(line.inkOverflow());
         inlineContent.displayContent().clear();
@@ -706,6 +708,54 @@ FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::Inline
     updateOverflow(inlineContent, *firstDamagedLineIndex);
     // Repaint the new content boundary.
     adjustDamagedRectWithLineRange(*firstDamagedLineIndex, numberOfNewLines);
+
+    return damagedRect;
+}
+
+void InlineContentBuilder::truncateDisplayContent(InlineContent& inlineContent, Layout::InlineDamage& lineDamage) const
+{
+    auto& displayContent = inlineContent.displayContent();
+    auto& lines = displayContent.lines;
+    auto& boxes = displayContent.boxes;
+    // No damaged line (SVG text) means every line is rebuilt.
+    auto lineIndex = lineDamage.layoutStartPosition() ? lineDamage.layoutStartPosition()->lineIndex : 0;
+    if (lineIndex >= lines.size())
+        return;
+
+    auto truncatedInkOverflow = FloatRect { };
+    for (auto& line : lines.subspan(lineIndex))
+        truncatedInkOverflow.unite(line.inkOverflow());
+
+    auto firstBoxIndex = lineIndex ? lines[lineIndex - 1].lastBoxIndex() + 1 : 0;
+    ASSERT(firstBoxIndex <= boxes.size());
+    displayContent.remove(lineIndex, lines.size() - lineIndex, firstBoxIndex, boxes.size() - firstBoxIndex);
+
+    auto& svgTextFragments = inlineContent.svgTextFragmentsForBoxes();
+    if (svgTextFragments.size() > boxes.size())
+        svgTextFragments.shrink(boxes.size());
+    inlineContent.releaseCaches();
+
+    lineDamage.setDisplayContentTruncated(truncatedInkOverflow);
+}
+
+FloatRect InlineContentBuilder::appendToTruncatedDisplayContent(Layout::InlineLayoutResult&& layoutResult, InlineContent& inlineContent, const Layout::InlineDamage& lineDamage) const
+{
+    // truncateDisplayContent dropped the lines from the damaged line on. There are no trailing display boxes
+    // to stop at, so layout always runs to the end of the content. Any further change after a removal
+    // invalidates the whole line layout, so the damaged line is still the one truncation happened at.
+    auto& displayContent = inlineContent.displayContent();
+    auto firstNewLineIndex = displayContent.lines.size();
+    ASSERT(lineDamage.layoutStartPosition() && lineDamage.layoutStartPosition()->lineIndex == firstNewLineIndex);
+    ASSERT(layoutResult.range == Layout::InlineLayoutResult::Range::FullFromDamage);
+
+    // Repaint the removed content boundary.
+    auto damagedRect = lineDamage.truncatedContentInkOverflow();
+
+    displayContent.append(WTF::move(layoutResult.displayContent));
+    updateOverflow(inlineContent, firstNewLineIndex);
+    // Repaint the new content boundary.
+    for (auto& line : displayContent.lines.subspan(firstNewLineIndex))
+        damagedRect.unite(line.inkOverflow());
 
     return damagedRect;
 }
