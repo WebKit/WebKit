@@ -50,8 +50,8 @@ public:
 
         ~Scope()
         {
-            if (m_renderer)
-                m_tracking.removeUnique(*m_renderer);
+            if (CheckedPtr renderer = m_renderer)
+                m_tracking.removeUnique(*renderer);
         }
 
     private:

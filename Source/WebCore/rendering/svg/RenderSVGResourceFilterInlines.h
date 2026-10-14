@@ -39,12 +39,12 @@ inline SVGFilterElement& RenderSVGResourceFilter::filterElement() const
 
 inline SVGUnitTypes::SVGUnitType RenderSVGResourceFilter::filterUnits() const
 {
-    return filterElement().filterUnits();
+    return protect(filterElement())->filterUnits();
 }
 
 inline SVGUnitTypes::SVGUnitType RenderSVGResourceFilter::primitiveUnits() const
 {
-    return filterElement().primitiveUnits();
+    return protect(filterElement())->primitiveUnits();
 }
 
 } // namespace WebCore

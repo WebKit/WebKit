@@ -55,12 +55,12 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
     bool transformChanged = transformToRootChanged(m_container.ptr());
 
     m_positionedChildren.clear();
-    for (auto& child : childrenOfType<RenderObject>(m_container)) {
-        if (child.isSVGLayerAwareRenderer())
+    for (CheckedRef child : childrenOfType<RenderObject>(m_container)) {
+        if (child->isSVGLayerAwareRenderer())
             m_positionedChildren.append(downcast<RenderLayerModelObject>(child));
 
         bool needsLayout = containerNeedsLayout;
-        bool childEverHadLayout = child.everHadLayout();
+        bool childEverHadLayout = child->everHadLayout();
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
@@ -70,10 +70,10 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         }
 
         if (layoutSizeChanged) {
-            if (child.isAnonymous()) {
+            if (child->isAnonymous()) {
                 ASSERT(is<RenderSVGViewportContainer>(child));
                 needsLayout = true;
-            } else if (RefPtr element = dynamicDowncast<SVGElement>(child.node())) {
+            } else if (RefPtr element = dynamicDowncast<SVGElement>(child->node())) {
                 if (element->hasRelativeLengths()) {
                     // When containerNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
 
@@ -93,7 +93,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         }
 
         if (needsLayout)
-            child.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            child->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
         if (CheckedPtr element = dynamicDowncast<RenderElement>(child)) {
             if (element->needsLayout())
@@ -103,7 +103,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
                 element->repaint();
         }
 
-        ASSERT(!child.needsLayout());
+        ASSERT(!child->needsLayout());
     }
 }
 
@@ -112,7 +112,7 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
     if (m_positionedChildren.isEmpty())
         return;
 
-    auto verifyPositionedChildRendererExpectation = [](auto& renderer) {
+    auto verifyPositionedChildRendererExpectation = [](const RenderLayerModelObject& renderer) {
 #if !defined(NDEBUG)
         ASSERT(renderer.isSVGLayerAwareRenderer()); // Pre-condition to enter m_positionedChildren
         ASSERT(!renderer.isRenderSVGRoot()); // There is only one outermost RenderSVGRoot object
@@ -143,17 +143,18 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
         if (is<RenderSVGViewportContainer>(m_container) && !m_container->isAnonymous())
             return { };
 
-        return m_container->nominalSVGLayoutLocation();
+        return protect(m_container)->nominalSVGLayoutLocation();
     };
 
     // Arrange layout location for all child renderers relative to the container layout location.
     auto parentLayoutLocation = computeContainerLayoutLocation();
-    for (RenderLayerModelObject& child : m_positionedChildren) {
+    for (auto& childReference : m_positionedChildren) {
+        CheckedRef child = childReference.get();
         verifyPositionedChildRendererExpectation(child);
 
-        auto desiredLayoutLocation = toLayoutPoint(child.nominalSVGLayoutLocation() - parentLayoutLocation);
-        if (child.currentSVGLayoutLocation() != desiredLayoutLocation)
-            child.setCurrentSVGLayoutLocation(desiredLayoutLocation);
+        auto desiredLayoutLocation = toLayoutPoint(child->nominalSVGLayoutLocation() - parentLayoutLocation);
+        if (child->currentSVGLayoutLocation() != desiredLayoutLocation)
+            child->setCurrentSVGLayoutLocation(desiredLayoutLocation);
     }
 }
 
@@ -163,11 +164,11 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
         auto currentLayoutLocation = renderer.currentSVGLayoutLocation();
 
         auto expectedLayoutLocation = currentLayoutLocation;
-        for (auto& ancestor : ancestorsOfType<RenderLayerModelObject>(renderer)) {
-            ASSERT(ancestor.isSVGLayerAwareRenderer());
-            if (ancestor.isRenderSVGRoot())
+        for (CheckedRef ancestor : ancestorsOfType<RenderLayerModelObject>(renderer)) {
+            ASSERT(ancestor->isSVGLayerAwareRenderer());
+            if (ancestor->isRenderSVGRoot())
                 break;
-            expectedLayoutLocation.moveBy(ancestor.currentSVGLayoutLocation());
+            expectedLayoutLocation.moveBy(ancestor->currentSVGLayoutLocation());
         }
 
         auto initialLayoutLocation = renderer.nominalSVGLayoutLocation();
@@ -190,8 +191,8 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
         }
     }
 
-    for (auto& child : childrenOfType<RenderLayerModelObject>(renderer)) {
-        if (child.isSVGLayerAwareRenderer())
+    for (CheckedRef child : childrenOfType<RenderLayerModelObject>(renderer)) {
+        if (child->isSVGLayerAwareRenderer())
             verifyLayoutLocationConsistency(child);
     }
 

@@ -38,7 +38,6 @@ rendering/RenderImage.cpp
 rendering/RenderIterator.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
-rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
@@ -76,12 +75,7 @@ rendering/mathml/RenderMathMLUnderOver.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGInline.cpp
 rendering/svg/RenderSVGInlineText.cpp
-rendering/svg/RenderSVGPath.cpp
-rendering/svg/RenderSVGResourceClipper.cpp
-rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGText.cpp
-rendering/svg/SVGContainerLayout.cpp
-rendering/svg/SVGPaintServerHandlingInlines.h
 rendering/svg/SVGPathFromElement.cpp
 rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderingContext.cpp
@@ -90,7 +84,6 @@ rendering/svg/SVGTextLayoutAttributesBuilder.cpp
 rendering/svg/SVGTextLayoutEngine.cpp
 rendering/svg/SVGTextMetrics.cpp
 rendering/svg/SVGTextMetricsBuilder.cpp
-rendering/svg/SVGTransformComputation.h
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGPath.cpp
 rendering/svg/legacy/LegacyRenderSVGResource.cpp

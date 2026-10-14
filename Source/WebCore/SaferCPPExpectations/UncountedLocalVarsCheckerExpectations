@@ -1,6 +1,5 @@
 rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
-rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 style/ElementRuleCollector.cpp
 style/StyleBuilderCustom.h

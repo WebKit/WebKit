@@ -231,7 +231,7 @@ void RenderSVGPath::drawMarkers(PaintInfo& paintInfo)
 
     float strokeWidth = this->strokeWidthForMarkerUnits();
     for (auto& markerPosition : m_markerPositions) {
-        if (auto* marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()); marker && marker->hasLayer()) {
+        if (CheckedPtr marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()); marker && marker->hasLayer()) {
             auto& context = paintInfo.context();
             GraphicsContextStateSaver stateSaver(context);
 
@@ -263,7 +263,7 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
 
     FloatRect boundaries;
     for (auto& markerPosition : m_markerPositions) {
-        if (auto* marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()))
+        if (CheckedPtr marker = markerForType(markerPosition.type, markerStart.get(), markerMid.get(), markerEnd.get()))
             boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(markerPosition.origin, markerPosition.angle, strokeWidth())));
     }
 
@@ -278,7 +278,7 @@ void RenderSVGPath::updateMarkerPositions()
         return;
 
     ASSERT(hasPath());
-    auto* markerStart = svgMarkerStartResourceFromStyle();
+    CheckedPtr markerStart = svgMarkerStartResourceFromStyle();
 
     SVGMarkerData markerData(m_markerPositions, markerStart && markerStart->hasReverseStart());
     path().applyElements([&markerData](const PathElement& pathElement) {

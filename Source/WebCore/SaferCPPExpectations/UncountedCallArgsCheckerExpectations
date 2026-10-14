@@ -103,7 +103,6 @@ rendering/RenderImageResource.h
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
-rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
@@ -126,13 +125,7 @@ rendering/mathml/MathOperator.cpp
 rendering/mathml/RenderMathMLMenclose.h
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
-rendering/svg/RenderSVGImage.cpp
-rendering/svg/RenderSVGModelObject.cpp
-rendering/svg/RenderSVGResourceClipper.cpp
-rendering/svg/RenderSVGResourceFilterInlines.h
-rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGTextPath.cpp
-[ macOS ] rendering/svg/RenderSVGViewportContainer.cpp
 [ macOS ] rendering/svg/SVGRenderSupport.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp

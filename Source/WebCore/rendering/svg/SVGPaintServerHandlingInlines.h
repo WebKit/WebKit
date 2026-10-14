@@ -45,13 +45,13 @@ bool SVGPaintServerHandling::preparePaintOperation(const RenderLayerModelObject&
         return false;
 
     if (std::holds_alternative<RenderSVGResourcePaintServer*>(paintServerResult)) {
-        auto& paintServer = *std::get<RenderSVGResourcePaintServer*>(paintServerResult);
+        CheckedRef paintServer = *std::get<RenderSVGResourcePaintServer*>(paintServerResult);
 
         if constexpr (op == Operation::Fill) {
-            if (paintServer.prepareFillOperation(m_context, renderer, style))
+            if (paintServer->prepareFillOperation(m_context, renderer, style))
                 return true;
         } else if constexpr (op == Operation::Stroke) {
-            if (paintServer.prepareStrokeOperation(m_context, renderer, style))
+            if (paintServer->prepareStrokeOperation(m_context, renderer, style))
                 return true;
         }
 
@@ -111,7 +111,7 @@ SVGPaintServerOrColor SVGPaintServerHandling::requestPaintServer(const RenderLay
             };
 
             // Try resolving URI first.
-            if (auto* paintServer = paintServerForOperation())
+            if (CheckedPtr paintServer = paintServerForOperation())
                 return paintServer;
 
             // If we found no paint server, and no fallback is desired, stop here.
@@ -201,12 +201,12 @@ bool SVGPaintServerHandling::inheritColorFromParentStyleIfNeeded(const RenderLay
     // FIXME: If this is intentionally using the `renderer` currentColor to resolve colors from `renderer.parent()`, we should document that, otherwise, this should probably use the corresponding style's current color.
 
     Style::ColorResolver colorResolver { renderer.style() };
-    auto& parentStyle = renderer.parent()->style();
+    CheckedRef parentStyle = renderer.parent()->style();
 
     if constexpr (op == Operation::Fill)
-        color = colorResolver.colorResolvingCurrentColor(parentStyle.fill().colorDisregardingType());
+        color = colorResolver.colorResolvingCurrentColor(parentStyle->fill().colorDisregardingType());
     else
-        color = colorResolver.colorResolvingCurrentColor(parentStyle.stroke().colorDisregardingType());
+        color = colorResolver.colorResolvingCurrentColor(parentStyle->stroke().colorDisregardingType());
 
     return true;
 }

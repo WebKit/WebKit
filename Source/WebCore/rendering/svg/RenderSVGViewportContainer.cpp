@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(RenderSVGRoot& parent, Style::ComputedStyle&& style)
-    : RenderSVGContainer(Type::SVGViewportContainer, parent.document(), WTF::move(style))
+    : RenderSVGContainer(Type::SVGViewportContainer, protect(parent.document()), WTF::move(style))
     , m_owningSVGRoot(parent)
 {
     ASSERT(isRenderSVGViewportContainer());
@@ -78,7 +78,7 @@ FloatPoint RenderSVGViewportContainer::computeViewportLocation() const
 FloatSize RenderSVGViewportContainer::computeViewportSize() const
 {
     if (isOutermostSVGViewportContainer())
-        return downcast<RenderSVGRoot>(*parent()).computeViewportSize();
+        return protect(downcast<RenderSVGRoot>(*parent()))->computeViewportSize();
 
     Ref useSVGSVGElement = svgSVGElement();
     SVGLengthContext lengthContext(useSVGSVGElement.ptr());
@@ -115,7 +115,7 @@ bool RenderSVGViewportContainer::needsHasSVGTransformFlags() const
         // Use m_owningSVGRoot instead of parent() since this may be called during
         // initializeStyle() before the renderer is attached to the tree.
         if (m_owningSVGRoot)
-            return !m_owningSVGRoot->contentBoxLocation().isZero();
+            return !protect(m_owningSVGRoot)->contentBoxLocation().isZero();
     }
 
     return false;

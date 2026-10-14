@@ -81,7 +81,7 @@ SVGImageElement& RenderSVGImage::imageElement() const
 
 FloatRect RenderSVGImage::calculateObjectBoundingBox() const
 {
-    return calculateSVGImageObjectBoundingBox(imageElement(), style(), imageResource().cachedImage());
+    return calculateSVGImageObjectBoundingBox(protect(imageElement()), protect(style()), protect(imageResource().cachedImage()));
 }
 
 void RenderSVGImage::layout()
@@ -306,7 +306,7 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
 
     // Tell any potential compositing layers that the image needs updating.
     if (hasLayer())
-        layer()->contentChanged(ContentChangeType::Image);
+        protect(layer())->contentChanged(ContentChangeType::Image);
 }
 
 void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
@@ -320,7 +320,7 @@ void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadM
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         if (hasLayer())
-            layer()->contentChanged(ContentChangeType::Image);
+            protect(layer())->contentChanged(ContentChangeType::Image);
     }
 
     RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);

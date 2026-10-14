@@ -128,9 +128,8 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
     ASSERT(currentClippingMode() == ClippingMode::NoClipping || currentClippingMode() == ClippingMode::MaskClipping);
     SetForScope<ClippingMode> switchClippingMode(currentClippingMode(), ClippingMode::PathClipping);
 
-    auto* clipRendererPtr = graphicsElement.renderer();
-    ASSERT(clipRendererPtr);
-    auto& clipRenderer = downcast<RenderSVGModelObject>(*clipRendererPtr);
+    ASSERT(graphicsElement.renderer());
+    CheckedRef clipRenderer = downcast<RenderSVGModelObject>(*graphicsElement.renderer());
 
     AffineTransform clipPathTransform;
     auto clipContentBox = objectBoundingBox;
@@ -152,9 +151,9 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
     }
     clipPathTransform.multiply(clipContentTransform(clipContentBox));
 
-    clipRenderer.computeClipContentTransform(clipPathTransform);
+    clipRenderer->computeClipContentTransform(clipPathTransform);
     const auto& clipPath = cachedPathClip(clipRenderer);
-    auto windRule = clipRenderer.style().clipRule();
+    auto windRule = clipRenderer->style().clipRule();
 
     if (auto* shape = dynamicDowncast<RenderSVGShape>(targetRenderer); shape && shape->shapeType() == RenderSVGShape::ShapeType::Rectangle) {
         // When clipping a rect with a path, if we know the path is entirely inside the rect, we can skip a clip when filling the rect.
@@ -276,7 +275,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
     // the child's SVG transform before testing.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::SVGClipContent, HitTestRequest::Type::DisallowUserAgentShadowContent };
     for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
-        auto* svgChild = dynamicDowncast<RenderSVGModelObject>(*child);
+        CheckedPtr svgChild = dynamicDowncast<RenderSVGModelObject>(*child);
         if (!svgChild)
             continue;
 
@@ -288,8 +287,9 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
             AffineTransform childTransform;
             if (svgChild->hasLayer()) {
                 TransformationMatrix tm;
-                auto referenceBoxRect = svgChild->transformReferenceBoxRect(svgChild->style());
-                svgChild->applyTransform(tm, svgChild->style(), referenceBoxRect, Style::TransformResolver::allTransformOperations);
+                CheckedRef childStyle = svgChild->style();
+                auto referenceBoxRect = svgChild->transformReferenceBoxRect(childStyle);
+                svgChild->applyTransform(tm, childStyle, referenceBoxRect, Style::TransformResolver::allTransformOperations);
                 childTransform = tm.toAffineTransform();
             } else
                 childTransform = svgChild->localTransform();
@@ -353,7 +353,7 @@ void RenderSVGResourceClipper::styleDidChange(Style::Difference diff, const Styl
 
     // Ensure that descendants with layers are rooted within our layer.
     if (hasLayer())
-        layer()->setIsOpportunisticStackingContext(true);
+        protect(layer())->setIsOpportunisticStackingContext(true);
 }
 
 void RenderSVGResourceClipper::clearCacheBeforeLayout()
