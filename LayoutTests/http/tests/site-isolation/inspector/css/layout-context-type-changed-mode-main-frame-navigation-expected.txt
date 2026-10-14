@@ -1,0 +1,55 @@
+Tests that the `All` layout context type changed mode survives a main-frame navigation on the page target under Site Isolation.
+
+
+== Running test suite: SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.BeforeNavigation
+Changing `layoutContextTypeChangedMode` to `All`...
+PASS: #present-grid should be sent.
+Known page layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid should be sent live.
+Known page layout context nodes: [present-grid, late-grid]
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterReload
+Reloading the page...
+Page target changed: false
+PASS: #present-grid of the new document should be sent.
+Known page layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid made after the reload should be sent live.
+Known page layout context nodes: [present-grid, late-grid]
+Control: changing `layoutContextTypeChangedMode` to `All` again...
+PASS: #present-grid should be sent after the mode is set again.
+Known page layout context nodes: [present-grid, late-grid]
+PASS: #late-grid should be sent after the mode is set again.
+Known page layout context nodes: [present-grid, late-grid]
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterSameOriginNavigation
+Navigating to a new same-origin URL...
+Page target changed: false
+PASS: The main frame should have navigated.
+PASS: #present-grid of the new document should be sent.
+Known page layout context nodes: [present-grid]
+Changing #late-grid to `display: grid`...
+PASS: #late-grid made after the navigation should be sent live.
+Known page layout context nodes: [present-grid, late-grid]
+Control: changing `layoutContextTypeChangedMode` to `All` again...
+PASS: #present-grid should be sent after the mode is set again.
+Known page layout context nodes: [present-grid, late-grid]
+PASS: #late-grid should be sent after the mode is set again.
+Known page layout context nodes: [present-grid, late-grid]
+
+-- Running test case: SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.FrameTargetReloadKeepsMode
+Adding a cross-origin iframe...
+PASS: #deep-grid in the iframe should be sent.
+Known frame layout context nodes: [grid, deep-grid]
+Reloading the cross-origin iframe in place...
+PASS: The iframe should keep its frame target.
+Adding grid #frame-late-grid inside the iframe's #shown, whose children the frontend does not have...
+PASS: The iframe's #frame-late-grid added after the reload should be sent live.
+Known frame layout context nodes: [frame-late-grid, grid, deep-grid]
+Control: setting the frame target to `Observed` directly...
+Adding grid #frame-observed-grid inside the iframe's #grid, whose children the frontend does not have...
+PASS: In `Observed` mode, #frame-observed-grid should not be sent.
+-- Running test teardown.
+
