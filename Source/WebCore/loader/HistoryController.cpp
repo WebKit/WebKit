@@ -125,7 +125,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         item->setScrollPosition(frameView->scrollPosition());
 #if PLATFORM(IOS_FAMILY)
         item->setUnobscuredContentRect(frameView->unobscuredContentRect());
-        item->setExposedContentRect(frameView->exposedContentRect());
+        item->setExposedContentRect(frameView->exposedContentRect().raw());
 #endif
     }
 

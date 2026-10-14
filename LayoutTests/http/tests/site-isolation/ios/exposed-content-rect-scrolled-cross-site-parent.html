@@ -22,7 +22,7 @@ body { margin: 0 }
 <script>
 
 promise_test(async t => {
-    await assertExposedRect("child", "0,0 300x250", "whole child frame should have tiled backing");
+    await assertExposedRect("child", "0,250 300x250", "the scrolled-to part of the child frame should have tiled backing");
     await assertExposedRect("grandchild", "0,0 200x150", "whole grandchild frame should have tiled backing");
     await assertExposedRect("greatGrandchild", "0,0 120x100", "whole great-grandchild frame should have tiled backing");
 }, "exposedContentRect is mapped down through a scrolled cross-site frame to its same-site child");

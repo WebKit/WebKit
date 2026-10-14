@@ -2402,7 +2402,7 @@ void Page::syncLocalFrameInfoToRemote()
 #if PLATFORM(IOS_FAMILY)
         auto exposedContentRect = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
             if (!rect)
-                rect = LayoutRect { frameView->exposedContentRect() };
+                rect = LayoutRect { frameView->exposedContentRect().raw() };
             return *rect;
         };
 #endif
