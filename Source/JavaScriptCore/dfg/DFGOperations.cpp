@@ -2973,6 +2973,12 @@ JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (length < 0) [[unlikely]] {
+        throwRangeError(structure->realm(), scope, "length cannot be negative"_s);
+        OPERATION_RETURN(scope, nullptr);
+    }
+
     OPERATION_RETURN(scope, constructArrayBufferWithSize(structure, length));
 }
 
