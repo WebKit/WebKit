@@ -238,6 +238,7 @@ protected:
 
     void updateColumnCache() const;
     void invalidateCachedColumns();
+    void invalidateAllTableCellsContentLogicalWidths();
 
     void LEGACY_NODELETE invalidateCachedColumnOffsets();
     
