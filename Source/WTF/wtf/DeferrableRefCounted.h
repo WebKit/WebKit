@@ -28,6 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SwiftBridging.h>
 
 namespace WTF {
 
@@ -110,10 +111,17 @@ public:
         return true;
     }
 
+#if defined(__swift__) && ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+    void swiftRef() const
+    {
+        ref();
+    }
+#endif
+
 protected:
     DeferrableRefCounted() { }
     ~DeferrableRefCounted() { }
-};
+} SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT BASE_CLASS_SWIFT_SHARED_REFERENCE(.swiftRef, .deref);
 
 } // namespace WTF
 
