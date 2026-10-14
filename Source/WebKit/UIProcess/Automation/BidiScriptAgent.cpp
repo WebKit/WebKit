@@ -794,9 +794,13 @@ RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmI
     if (!contextHandle)
         return nullptr;
 
+    RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
+    if (!frame)
+        return nullptr;
+
     RealmIdentifier realmIdentifier = generateRealmIdForFrame(frameInfo);
     String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
-    String origin = originStringFromSecurityOriginData(frameInfo.securityOrigin);
+    String origin = originStringFromSecurityOriginData(frame->documentSecurityOriginData());
 
     auto realmInfo = Inspector::Protocol::BidiScript::RealmInfo::create()
         .setRealm(realmID)

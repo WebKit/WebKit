@@ -47,6 +47,7 @@ auto FrameInfo::stateSnapshot(WebCore::FrameIdentifier frameID) -> StateSnapshot
     RefPtr parent = frame->parentFrame();
     return StateSnapshot {
         frame->certificateInfo(),
+        frame->documentSecurityOriginData(),
         parent ? std::optional(parent->frameID()) : std::nullopt,
         frame->title(),
         frame->isMainFrame(),

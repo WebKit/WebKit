@@ -1279,6 +1279,19 @@ bool WebProcessProxy::hasCommittedClientOrigin(const WebCore::ClientOrigin& clie
     if (m_committedClientOrigins.contains(clientOrigin))
         return true;
 
+    // Opaque origins are identified by a process-qualified identifier, so the one the UI process derives
+    // for a frame never equals the one the WebContent process uses. Treat any two opaque origins as equal,
+    // but still require the other half of the ClientOrigin to match exactly.
+    if (clientOrigin.topOrigin.isOpaque() || clientOrigin.clientOrigin.isOpaque()) {
+        auto matches = [](const WebCore::SecurityOriginData& committed, const WebCore::SecurityOriginData& claimed) {
+            return (committed.isOpaque() && claimed.isOpaque()) || committed == claimed;
+        };
+        for (auto& committed : m_committedClientOrigins) {
+            if (matches(committed.topOrigin, clientOrigin.topOrigin) && matches(committed.clientOrigin, clientOrigin.clientOrigin))
+                return true;
+        }
+    }
+
     // A remote-worker process is authenticated only for the top-domain partitions it hosts workers
     // for, not for those workers' own (possibly cross-site) origins, so validate the top domain here.
     // The network process assigns workers to processes by registrable domain, regardless of scheme.

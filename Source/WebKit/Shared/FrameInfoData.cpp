@@ -35,7 +35,6 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
 
     return FrameInfoData {
         WTF::move(request),
-        WebCore::SecurityOriginData::createOpaque(),
         String { },
         WebCore::generateFrameIdentifier(),
         std::nullopt,

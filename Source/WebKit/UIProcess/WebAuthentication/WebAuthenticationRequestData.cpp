@@ -28,10 +28,21 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "WebFrameProxy.h"
+#import <WebCore/SecurityOriginData.h>
 #import <WebCore/UserVerificationRequirement.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+SecurityOriginData WebAuthenticationRequestData::callerOrigin() const
+{
+    if (!globalFrameID)
+        return SecurityOriginData::createOpaque();
+    if (RefPtr frame = WebFrameProxy::webFrame(globalFrameID->frameID))
+        return frame->documentSecurityOriginData();
+    return SecurityOriginData::createOpaque();
+}
 
 ClientDataType getClientDataType(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {

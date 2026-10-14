@@ -62,6 +62,8 @@ struct WebAuthenticationRequestData {
     WeakPtr<API::WebAuthenticationPanel> weakPanel;
     std::optional<WebCore::MediationRequirement> mediation;
     std::optional<WebCore::SecurityOriginData> parentOrigin;
+
+    WebCore::SecurityOriginData callerOrigin() const;
 };
 
 WebCore::ClientDataType LEGACY_NODELETE getClientDataType(const Variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);
