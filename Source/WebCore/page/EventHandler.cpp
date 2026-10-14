@@ -189,6 +189,10 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "ServicesOverlayController.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EventHandler);
@@ -492,6 +496,7 @@ void EventHandler::clear()
     m_shouldOnlyFireDragOverEvent = false;
 #endif
     clearLastKnownMousePosition();
+    m_lastMouseMoveTargetedRemoteFrame = false;
     m_mousePressNode = nullptr;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -1983,7 +1988,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
     }
 #endif
 
-    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent, frame))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2235,11 +2240,13 @@ HandleUserInputEventResult EventHandler::mouseMoved(const PlatformMouseEvent& ev
     RefPtr protectedView { frame->view() };
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
-    if (frame->page() && frame->page()->pageOverlayController().handleMouseEvent(event))
+    m_lastMouseMoveTargetedRemoteFrame = false;
+    if (frame->page() && frame->page()->pageOverlayController().handleMouseEvent(event, frame))
         return true;
 
     HitTestResult hitTestResult;
     auto result = handleMouseMoveEvent(event, &hitTestResult);
+    m_lastMouseMoveTargetedRemoteFrame = result.remoteUserInputEventData().has_value();
 
     RefPtr page = m_frame->page();
     if (!page)
@@ -2267,6 +2274,22 @@ void EventHandler::mouseDidLeaveLocalRoot()
     // FIXME: Dispatch mouseout and mouseleave to m_elementUnderMouse.
     Ref frame = m_frame.get();
     InspectorInstrumentation::mouseDidLeaveLocalRoot(frame);
+
+    if (m_lastMouseMoveTargetedRemoteFrame || !frame->isRootFrame())
+        return;
+
+    RefPtr page { frame->page() };
+    if (!page)
+        return;
+
+#if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
+    protect(page->servicesOverlayController())->mouseDidLeaveLocalRoot(frame);
+#endif
+
+#if PLATFORM(MAC)
+    if (RefPtr imageOverlayController { page->imageOverlayControllerIfExists() })
+        imageOverlayController->mouseDidLeaveLocalRoot(frame);
+#endif
 }
 
 bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& event)
@@ -2552,7 +2575,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     }
 #endif
 
-    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (page->pageOverlayController().handleMouseEvent(platformMouseEvent, frame))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)

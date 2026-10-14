@@ -1719,7 +1719,7 @@ public:
     void setDataDetectionResults(NSArray *);
     void detectDataInAllFrames(OptionSet<WebCore::DataDetectorType>, CompletionHandler<void(DataDetectionResult&&)>&&);
     void removeDataDetectedLinks(CompletionHandler<void(DataDetectionResult&&)>&&);
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+    void handleClickForDataDetectionResult(WebCore::FrameIdentifier, const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
 
     WebCore::ScrollPinningBehavior LEGACY_NODELETE scrollPinningBehavior();
@@ -1736,7 +1736,7 @@ public:
     void getSamplingProfilerOutput(CompletionHandler<void(const String&)>&&);
 
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
-    void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&, const WebCore::IntRect&);
+    void handleTelephoneNumberClick(WebCore::FrameIdentifier, const String& number, const WebCore::IntPoint&, const WebCore::IntRect&);
     void handleSelectionServiceClick(WebCore::FrameIdentifier, WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
     void handleImageServiceClick(WebCore::FrameIdentifier, const WebCore::IntPoint&, WebCore::Image&, WebCore::HTMLImageElement&);
     void handlePDFServiceClick(WebCore::FrameIdentifier, const WebCore::IntPoint&, WebCore::HTMLAttachmentElement&);
