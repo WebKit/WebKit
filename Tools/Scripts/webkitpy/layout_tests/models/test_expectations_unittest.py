@@ -896,17 +896,19 @@ class GeneratedVariantExistenceTests(unittest.TestCase, TestCaseMixin):
         stub = self.WPT_PREFIX + '/foo/basic.any.worker.html'
         self.assertNotIn('Path does not exist.', self._parse(stub).warnings)
 
-    def test_stubless_variant_warns_as_missing(self):
+    def test_stubless_variant_does_not_warn(self):
         # basic.any.js declares global=window,worker but only the worker
-        # variant has an on-disk stub (see setUp). The window variant
-        # (basic.any.html) has no file at all, and LayoutTestFinder only
-        # discovers generated variants that have a stub, so it is reported
-        # as missing rather than resolved through the finder.
+        # variant has an on-disk stub (see setUp) -- the window variant
+        # (basic.any.html) exists purely via LayoutTestFinder synthesis, with
+        # no file on disk at all. This is the case test_stub_backed_variant_
+        # does_not_warn can't cover: that test's stub file means _test_exists
+        # returns True from the plain os.path fast path, without ever
+        # reaching the synthesis fallback.
         stubless = self.WPT_PREFIX + '/foo/basic.any.html'
         self.assertFalse(self.filesystem.exists(
             self.filesystem.join(self.port.layout_tests_dir(), stubless)))
-        self.assertFalse(self._exists(stubless))
-        self.assertIn('Path does not exist.', self._parse(stubless).warnings)
+        self.assertTrue(self._exists(stubless))
+        self.assertNotIn('Path does not exist.', self._parse(stubless).warnings)
 
     def test_nonexistent_test_still_warns(self):
         line = self._parse(self.WPT_PREFIX + '/foo/does-not-exist-xyz.html')
