@@ -29,6 +29,7 @@ target_include_directories(WPEPlatformHeadless PRIVATE ${WPEPlatformHeadless_PRI
 target_include_directories(WPEPlatformHeadless SYSTEM PRIVATE ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatformHeadless ${WPEPlatform_LIBRARIES})
 add_dependencies(WPEPlatformHeadless WPEPlatformGeneratedEnumTypesHeader)
+WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WPEPlatformHeadless)
 
 set_target_properties(WPEPlatformHeadless PROPERTIES
     SOURCES_FOR_INTROSPECTION "${WPEPlatformHeadless_SOURCES_FOR_INTROSPECTION}"

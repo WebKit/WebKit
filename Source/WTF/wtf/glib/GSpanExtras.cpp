@@ -36,6 +36,15 @@ std::expected<GMallocSpan<char>, GUniquePtr<GError>> gFileGetContents(UTF8CStrin
     return adoptGMallocSpan(unsafeMakeSpan(contents, length));
 }
 
+GMallocSpan<char*, GMallocStrv> gKeyFileGetGroups(GKeyFile* keyFile)
+{
+    ASSERT(keyFile);
+
+    size_t groupCount = 0;
+    char** groups = g_key_file_get_groups(keyFile, &groupCount);
+    return adoptGMallocSpan<char*, GMallocStrv>(unsafeMakeSpan(groups, groupCount));
+}
+
 std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKeys(GKeyFile* keyFile, UTF8CStringView groupName)
 {
     ASSERT(keyFile);
@@ -47,6 +56,20 @@ std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetKe
     if (error)
         return makeUnexpected(GUniquePtr<GError>(error.release()));
     return adoptGMallocSpan<char*, GMallocStrv>(unsafeMakeSpan(keys, keyCount));
+}
+
+std::expected<GMallocSpan<char*, GMallocStrv>, GUniquePtr<GError>> gKeyFileGetStringList(GKeyFile* keyFile, UTF8CStringView groupName, UTF8CStringView key)
+{
+    ASSERT(keyFile);
+    ASSERT(groupName);
+    ASSERT(key);
+
+    size_t valueCount = 0;
+    GUniqueOutPtr<GError> error;
+    char** values = g_key_file_get_string_list(keyFile, groupName.utf8(), key.utf8(), &valueCount, &error.outPtr());
+    if (error)
+        return makeUnexpected(GUniquePtr<GError>(error.release()));
+    return adoptGMallocSpan<char*, GMallocStrv>(unsafeMakeSpan(values, valueCount));
 }
 
 GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass* objectClass)

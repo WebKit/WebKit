@@ -475,8 +475,8 @@ static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, const W
     priv->pendingBuffer = buffer;
     priv->damageRects.clear();
     priv->damageRects.reserveInitialCapacity(nDamageRects);
-    for (unsigned i = 0; i < nDamageRects; ++i)
-        priv->damageRects.append({ damageRects[i].x, damageRects[i].y, damageRects[i].x + damageRects[i].width, damageRects[i].y + damageRects[i].height });
+    for (const auto& rect : unsafeMakeSpan(damageRects, nDamageRects))
+        priv->damageRects.append({ rect.x, rect.y, rect.x + rect.width, rect.y + rect.height });
 
     if (priv->updateFlags.contains(UpdateFlags::CursorUpdateRequested)) {
         priv->updateFlags.add(UpdateFlags::BufferUpdatePending);

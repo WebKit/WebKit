@@ -76,7 +76,9 @@ GRefPtr<WPEDRMDevice> wpeDRMDeviceCreateForDevice(const char* deviceFilename)
 
         bool hasRenderNode = device->available_nodes & (1 << DRM_NODE_RENDER);
         const char* primaryNode = device->nodes[DRM_NODE_PRIMARY];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         const char* renderNode = hasRenderNode ? device->nodes[DRM_NODE_RENDER] : nullptr;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (deviceFilename) {
             if (!g_strcmp0(deviceFilename, primaryNode) || !g_strcmp0(deviceFilename, renderNode)) {
                 drmDevice = adoptGRef(wpe_drm_device_new(primaryNode, renderNode));

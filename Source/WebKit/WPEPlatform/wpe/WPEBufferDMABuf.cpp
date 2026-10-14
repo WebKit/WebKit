@@ -329,6 +329,7 @@ WPEBufferDMABuf* wpe_buffer_dma_buf_new(WPEDisplay* display, int width, int heig
 
     buffer->priv->format = format;
     buffer->priv->fds.reserveInitialCapacity(planeCount);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (guint32 i = 0; i < planeCount; ++i)
         buffer->priv->fds.append(UnixFileDescriptor { fds[i], UnixFileDescriptor::Adopt });
     buffer->priv->offsets.grow(planeCount);
@@ -336,6 +337,7 @@ WPEBufferDMABuf* wpe_buffer_dma_buf_new(WPEDisplay* display, int width, int heig
     buffer->priv->strides.grow(planeCount);
     memcpy(buffer->priv->strides.mutableSpan().data(), strides, planeCount * sizeof(guint32));
     buffer->priv->modifier = modifier;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return buffer;
 }

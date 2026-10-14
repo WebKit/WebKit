@@ -347,7 +347,9 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, struct wl_array* device)
     {
         dev_t deviceID;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memcpy(&deviceID, device->data, sizeof(dev_t));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         drmDevicePtr drmDevice;
         if (drmGetDeviceFromDevId(deviceID, 0, &drmDevice))
@@ -355,8 +357,10 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
 
         auto* priv = WPE_DISPLAY_WAYLAND(data)->priv;
         if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY)) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             priv->drmDevice = adoptGRef(wpe_drm_device_new(drmDevice->nodes[DRM_NODE_PRIMARY],
                 drmDevice->available_nodes & (1 << DRM_NODE_RENDER) ? drmDevice->nodes[DRM_NODE_RENDER] : nullptr));
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
         drmFreeDevice(&drmDevice);
     },

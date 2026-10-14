@@ -110,13 +110,7 @@ struct DMABufFeedback {
         Data* data { nullptr };
     };
 
-    DMABufFeedback()
-    {
-#if USE(LIBDRM)
-        memset(&mainDevice, 0, sizeof(dev_t));
-#endif
-    }
-
+    DMABufFeedback() = default;
     ~DMABufFeedback() = default;
 
     DMABufFeedback(const DMABufFeedback&) = delete;
@@ -126,11 +120,10 @@ struct DMABufFeedback {
         : formatTable(WTF::move(other.formatTable))
         , pendingTranche(WTF::move(other.pendingTranche))
         , tranches(WTF::move(other.tranches))
-    {
 #if USE(LIBDRM)
-        memcpy(&mainDevice, &other.mainDevice, sizeof(dev_t));
-        memset(&other.mainDevice, 0, sizeof(dev_t));
+        , mainDevice(std::exchange(other.mainDevice, 0))
 #endif
+    {
     }
 
 #if USE(LIBDRM)
@@ -145,10 +138,12 @@ struct DMABufFeedback {
             if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
                 returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_PRIMARY]);
         } else {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             if (drmDevice->available_nodes & (1 << DRM_NODE_RENDER))
                 returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_RENDER]);
             else if (drmDevice->available_nodes & (1 << DRM_NODE_PRIMARY))
                 returnValue = UTF8CString::unsafeFromUTF8(drmDevice->nodes[DRM_NODE_PRIMARY]);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
 
         drmFreeDevice(&drmDevice);
@@ -167,23 +162,16 @@ struct DMABufFeedback {
     }
 
     struct Tranche {
-        Tranche()
-        {
-#if USE(LIBDRM)
-            memset(&targetDevice, 0, sizeof(dev_t));
-#endif
-        }
+        Tranche() = default;
         Tranche(const Tranche&) = delete;
         Tranche& operator=(const Tranche&) = delete;
         Tranche(Tranche&& other)
-            : flags(other.flags)
+            : flags(std::exchange(other.flags, 0))
             , formats(WTF::move(other.formats))
-        {
-            other.flags = 0;
 #if USE(LIBDRM)
-            memcpy(&targetDevice, &other.targetDevice, sizeof(dev_t));
-            memset(&other.targetDevice, 0, sizeof(dev_t));
+            , targetDevice(std::exchange(other.targetDevice, 0))
 #endif
+        {
         }
 
         const dev_t* device() const
@@ -198,7 +186,7 @@ struct DMABufFeedback {
         uint32_t flags { 0 };
         Vector<uint16_t> formats;
 #if USE(LIBDRM)
-        dev_t targetDevice;
+        dev_t targetDevice { 0 };
 #endif
     };
 
@@ -208,14 +196,16 @@ struct DMABufFeedback {
         if (index >= formatTable.size) [[unlikely]]
             return { 0, 0 };
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return { formatTable.data[index].format, formatTable.data[index].modifier };
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     FormatTable formatTable;
     Tranche pendingTranche;
     Vector<Tranche> tranches;
 #if USE(LIBDRM)
-    dev_t mainDevice;
+    dev_t mainDevice { 0 };
 #endif
 };
 
@@ -494,7 +484,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
             priv->pendingDMABufFeedback = makeUnique<DMABufFeedback>();
 
 #if USE(LIBDRM)
-        memcpy(&priv->pendingDMABufFeedback->mainDevice, device->data, sizeof(dev_t));
+        priv->pendingDMABufFeedback->mainDevice = *static_cast<const dev_t*>(device->data);
 #endif
     },
     // tranche_done
@@ -514,7 +504,7 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         if (!priv->pendingDMABufFeedback)
             return;
 
-        memcpy(&priv->pendingDMABufFeedback->pendingTranche.targetDevice, device->data, sizeof(dev_t));
+        priv->pendingDMABufFeedback->pendingTranche.targetDevice = *static_cast<const dev_t*>(device->data);
 #endif
     },
     // tranche_formats
@@ -524,9 +514,11 @@ static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackLis
         if (!priv->pendingDMABufFeedback)
             return;
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         const char* end = static_cast<const char*>(indices->data) + indices->size;
         for (uint16_t* index = static_cast<uint16_t*>(indices->data); reinterpret_cast<const char*>(index) < end; ++index)
             priv->pendingDMABufFeedback->pendingTranche.formats.append(*index);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     },
     // tranche_flags
     [](void* data, struct zwp_linux_dmabuf_feedback_v1*, uint32_t flags)
@@ -693,8 +685,10 @@ static GRefPtr<WPEDRMDevice> wpeToplevelWaylandGetDRMDevice(WPEToplevel* topleve
     if (displayDevice && !g_strcmp0(drmDevice->nodes[DRM_NODE_PRIMARY], wpe_drm_device_get_primary_node(displayDevice)))
         return displayDevice;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return adoptGRef(wpe_drm_device_new(drmDevice->nodes[DRM_NODE_PRIMARY],
         drmDevice->available_nodes & (1 << DRM_NODE_RENDER) ? drmDevice->nodes[DRM_NODE_RENDER] : nullptr));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #else
     return nullptr;
 #endif
@@ -739,6 +733,7 @@ static void wpeToplevelWaylandSetTitle(WPEToplevel* toplevel, const char* title)
     }
 
     static constexpr size_t wlMaxTitleSize = 4083; // 4096 minus header, string argument length and NUL byte.
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto titleLength = strlen(title);
     auto minTitleLength = std::min<size_t>(titleLength, wlMaxTitleSize);
     const char* end = nullptr;
@@ -752,6 +747,7 @@ static void wpeToplevelWaylandSetTitle(WPEToplevel* toplevel, const char* title)
         validTitle.reset(g_strndup(title, end - title));
     } else
         validTitle.reset(g_utf8_make_valid(title, minTitleLength));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     xdg_toplevel_set_title(priv->xdgToplevel, validTitle.get());
 }
@@ -783,19 +779,14 @@ static bool regionsEqual(WPERectangle* rectsA, unsigned rectsACount, WPERectangl
     if (!rectsA || !rectsB)
         return false;
 
-    auto rectsEqual = [](const WPERectangle& rectA, const WPERectangle& rectB) -> bool {
-        return rectA.x == rectB.x
-            && rectA.y == rectB.y
-            && rectA.width == rectB.width
-            && rectA.height == rectB.height;
-    };
-
-    for (unsigned i = 0; i < rectsACount; ++i) {
-        if (!rectsEqual(rectsA[i], rectsB[i]))
-            return false;
-    }
-
-    return true;
+    return std::ranges::all_of(std::views::zip(unsafeMakeSpan(rectsA, rectsACount), unsafeMakeSpan(rectsB, rectsBCount)),
+        [](const auto& rects) {
+            const auto& [rectA, rectB] = rects;
+            return rectA.x == rectB.x
+                && rectA.y == rectB.y
+                && rectA.width == rectB.width
+                && rectA.height == rectB.height;
+    });
 }
 
 void wpeToplevelWaylandSetOpaqueRectangles(WPEToplevelWayland* toplevel, WPERectangle* rects, unsigned rectsCount)
@@ -807,8 +798,8 @@ void wpeToplevelWaylandSetOpaqueRectangles(WPEToplevelWayland* toplevel, WPERect
     priv->opaqueRegion.rects.clear();
     if (rects) {
         priv->opaqueRegion.rects.reserveInitialCapacity(rectsCount);
-        for (unsigned i = 0; i < rectsCount; ++i)
-            priv->opaqueRegion.rects.append(rects[i]);
+        for (const auto& rect : unsafeMakeSpan(rects, rectsCount))
+            priv->opaqueRegion.rects.append(rect);
     }
     priv->opaqueRegion.dirty = true;
 }

@@ -75,8 +75,8 @@ static gboolean wpeKeymapXKBGetEntriesForKeyval(WPEKeymap* keymap, guint keyval,
             for (int level = 0; level < numLevels; ++level) {
                 const xkb_keysym_t* syms;
                 int numSyms = xkb_keymap_key_get_syms_by_level(priv->xkbKeymap, keycode, layout, level, &syms);
-                for (int sym = 0; sym < numSyms; ++sym) {
-                    if (syms[sym] != keyval)
+                for (auto sym : unsafeMakeSpan(syms, numSyms)) {
+                    if (sym != keyval)
                         continue;
 
                     WPEKeymapEntry entry = { keycode, layout, level };
