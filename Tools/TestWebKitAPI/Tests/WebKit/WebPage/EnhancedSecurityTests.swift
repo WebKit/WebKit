@@ -21,12 +21,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+private import TestWebKitAPILibrary
+import Testing
+import WebKit
+private import WebKit_Private.WKPreferencesPrivate
+import WebKit_Private.WKWebViewPrivate
+private import WebKit_Private.WKWebViewPrivateForTesting
+private import WebKit_Private.WKWebsiteDataStorePrivate
+private import WebKit_Private._WKFeature
+private import WebKit_Private._WKWebsiteDataStoreConfiguration
+
+import struct Foundation.URL
+import struct Foundation.URLRequest
+import struct Swift.String
+
 #if ENABLE_SWIFTUI
 
-import Testing
 @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
-import WebKit_Private.WKWebViewPrivate
-private import TestWebKitAPILibrary
 
 // MARK: Supporting test types
 
@@ -85,3 +96,90 @@ struct EnhancedSecurityTests {
 }
 
 #endif
+
+@MainActor
+private final class PopupRecorder: NSObject, WKUIDelegate {
+    private(set) var popup: WKWebView?
+
+    func webView(
+        _ webView: WKWebView,
+        createWebViewWith configuration: WKWebViewConfiguration,
+        for navigationAction: WKNavigationAction,
+        windowFeatures: WKWindowFeatures
+    ) -> WKWebView? {
+        let popup = WKWebView(frame: .zero, configuration: configuration)
+        self.popup = popup
+        return popup
+    }
+}
+
+@MainActor
+struct EnhancedSecurityProcessSwapTests {
+    @Test
+    func declinedSwapDropsLoadCancelledByItsProcess() async throws {
+        var server = try HTTPServer(protocol: .http) {
+            Route("http://parked-load.internal/popup") { "popup" }
+            Route("http://parked-load.internal/ping") { "pong" }
+            // Enough of the body for content sniffing, which holds back the response until it has 512 bytes.
+            Route(unfinished: "http://parked-load.internal/insecure", headerFields: ["Content-Type": "text/html"]) {
+                String(repeating: " ", count: 512)
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let storeConfiguration = _WKWebsiteDataStoreConfiguration(nonPersistentConfiguration: ())
+            storeConfiguration.httpProxy = serverConfiguration.address
+            let configuration = WKWebViewConfiguration()
+            configuration.websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
+            configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+            for feature in WKPreferences._features() {
+                if feature.key == "EnhancedSecurityHeuristicsEnabled" {
+                    configuration.preferences._setEnabled(true, for: feature)
+                }
+                if feature.key == "SiteIsolationSharedProcessEnabled" {
+                    configuration.preferences._setEnabled(false, for: feature)
+                }
+            }
+            let (webView, navigationDelegate) = siteIsolatedWebViewAndDelegate(configuration: configuration)
+            let popupRecorder = PopupRecorder()
+            webView.uiDelegate = popupRecorder
+
+            let baseURL = try #require(URL(string: "http://parked-load.internal/"))
+            webView.loadHTMLString("<script>open('/popup')</script>", baseURL: baseURL)
+            try await navigationDelegate.waitForDidFinishNavigation()
+            try await waitForCondition("the popup to load") {
+                guard let popup = popupRecorder.popup else {
+                    return false
+                }
+                return popup.url?.path == "/popup" && !popup.isLoading
+            }
+            #expect(popupRecorder.popup?._webProcessIdentifier == webView._webProcessIdentifier)
+
+            var swapsProcess: Bool?
+            var sendReply: (() -> Void)?
+            defer {
+                sendReply?()
+                webView._setNavigationResponseProcessSwapReplyHandler(forTesting: nil)
+            }
+            webView._setNavigationResponseProcessSwapReplyHandler(forTesting: { swaps, reply in
+                swapsProcess = swaps
+                sendReply = reply
+            })
+
+            webView.load(URLRequest(url: try #require(URL(string: "http://parked-load.internal/insecure"))))
+            try await waitForCondition("the UI process to decide whether to swap processes") { sendReply != nil }
+            #expect(swapsProcess == false)
+            #expect(webView._provisionalWebProcessIdentifier == 0)
+
+            webView.stopLoading()
+            try await webView.callJavaScript { "await fetch('/ping')" }
+
+            sendReply?()
+            sendReply = nil
+
+            try await waitForCondition("the network process to cancel the load") {
+                serverConfiguration.closedUnfinishedResponseCount == 1
+            }
+        }
+    }
+}
