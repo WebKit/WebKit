@@ -1681,7 +1681,7 @@ void Heap::runCollectionEpilogue()
     
     {
         SweepingScope sweepingScope(*this);
-        deleteSourceProviderCaches();
+        pruneUnusedSourceProviderCaches();
         sweepEagerlyInEpilogue();
     }
 #if ENABLE(WEBASSEMBLY)
@@ -1843,10 +1843,10 @@ void Heap::snapshotUnswept()
     m_objectSpace.snapshotUnswept();
 }
 
-void Heap::deleteSourceProviderCaches()
+void Heap::pruneUnusedSourceProviderCaches()
 {
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
-        vm().clearSourceProviderCaches();
+        vm().pruneUnusedSourceProviderCaches();
 }
 
 double Heap::projectedGCRateLimitingValue(MonotonicTime now)

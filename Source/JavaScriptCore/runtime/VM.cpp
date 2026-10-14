@@ -1038,12 +1038,15 @@ SourceProviderCache* VM::addSourceProviderCache(SourceProvider* sourceProvider)
     auto addResult = sourceProviderCacheMap.add(sourceProvider, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = SourceProviderCache::create(sourceProvider->source().length());
+    addResult.iterator->value->markUsed();
     return addResult.iterator->value.get();
 }
 
-void VM::clearSourceProviderCaches()
+void VM::pruneUnusedSourceProviderCaches()
 {
-    sourceProviderCacheMap.clear();
+    sourceProviderCacheMap.removeIf([](auto& entry) {
+        return !entry.value->takeUsedSinceLastPrune();
+    });
 }
 
 bool VM::hasExceptionsAfterHandlingTraps()

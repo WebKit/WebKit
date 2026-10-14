@@ -734,7 +734,7 @@ private:
     void reconcileWeakGCHashTables();
     void sweepArrayBuffers();
     void snapshotUnswept();
-    void deleteSourceProviderCaches();
+    void pruneUnusedSourceProviderCaches();
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>

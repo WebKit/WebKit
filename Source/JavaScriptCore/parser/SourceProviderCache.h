@@ -47,10 +47,14 @@ public:
     void add(int sourcePosition, std::unique_ptr<SourceProviderCacheItem>);
     const SourceProviderCacheItem* get(int sourcePosition) const LIFETIME_BOUND { return m_map.get(sourcePosition); }
 
+    void markUsed() { m_usedSinceLastPrune = true; }
+    bool takeUsedSinceLastPrune() { return std::exchange(m_usedSinceLastPrune, false); }
+
 private:
     explicit SourceProviderCache(unsigned sourceLength);
 
     UncheckedKeyHashMap<int, std::unique_ptr<SourceProviderCacheItem>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> m_map;
+    bool m_usedSinceLastPrune { false };
 };
 
 } // namespace JSC

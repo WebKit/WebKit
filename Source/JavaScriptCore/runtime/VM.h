@@ -745,7 +745,7 @@ public:
     static void computeCanUseJIT();
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
-    void clearSourceProviderCaches();
+    void pruneUnusedSourceProviderCaches();
 
     typedef UncheckedKeyHashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
