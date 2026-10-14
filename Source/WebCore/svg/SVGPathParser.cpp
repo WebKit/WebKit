@@ -280,15 +280,13 @@ bool SVGPathParser::parseArcToSegment()
         else
             arcIsZeroLength = result->targetPoint == m_currentPoint;
     }
-    if (!result->rx || !result->ry || arcIsZeroLength) {
-        if (m_pathParsingMode == NormalizedParsing) {
-            if (m_mode == RelativeCoordinates)
-                m_currentPoint += result->targetPoint;
-            else
-                m_currentPoint = result->targetPoint;
-            m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
-        } else
-            m_consumer->lineTo(result->targetPoint, m_mode);
+    // In unaltered mode the arc is preserved as-is so that it serializes and interpolates correctly.
+    if (m_pathParsingMode == NormalizedParsing && (!result->rx || !result->ry || arcIsZeroLength)) {
+        if (m_mode == RelativeCoordinates)
+            m_currentPoint += result->targetPoint;
+        else
+            m_currentPoint = result->targetPoint;
+        m_consumer->lineTo(m_currentPoint, AbsoluteCoordinates);
         return true;
     }
 
