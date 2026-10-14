@@ -62,6 +62,7 @@ public:
     double LEGACY_NODELETE maxWriteOperationsPerMinute();
 
     WebExtensionAPIEvent& onChanged();
+#endif
 
 private:
     explicit WebExtensionAPIStorageArea(WebExtensionAPIObject& parentObject, WebExtensionDataType type)
@@ -73,7 +74,6 @@ private:
 
     WebExtensionDataType m_type { WebExtensionDataType::Local };
     const RefPtr<WebExtensionAPIEvent> m_onChanged;
-#endif
 };
 
 } // namespace WebKit

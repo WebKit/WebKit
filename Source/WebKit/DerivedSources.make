@@ -1110,7 +1110,6 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIScripting \
     WebExtensionAPISidePanel \
     WebExtensionAPISidebarAction \
-    WebExtensionAPIStorage \
     WebExtensionAPIStorageArea \
     WebExtensionAPITabs \
     WebExtensionAPIWebNavigation \
@@ -1125,6 +1124,7 @@ CPP_EXTENSION_INTERFACES = \
 	WebExtensionAPIAlarms \
 	WebExtensionAPINamespace \
     WebExtensionAPIRuntime \
+    WebExtensionAPIStorage \
     WebExtensionAPITest \
 	WebExtensionAPIWebPageNamespace \
     WebExtensionAPIWebPageRuntime \

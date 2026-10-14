@@ -36,6 +36,11 @@ OBJC_CLASS JSValue;
 
 namespace WebKit {
 
+struct JSListenerArgument {
+    const String& argument;
+    bool convertToJSON;
+};
+
 class WebExtensionAPIEvent : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIEvent, event, event);
 
@@ -50,6 +55,7 @@ public:
 #endif
     void invokeListenersWithJSONArgument(const String& argument1);
     void invokeListenersWithJSONArgument(const String& argument1, const String& argument2);
+    void invokeListenersWithJSArgument(JSListenerArgument argument1, JSListenerArgument argument2);
 
     template<typename T>
     void invokeListenersWithParametersArgument(T& argument)
