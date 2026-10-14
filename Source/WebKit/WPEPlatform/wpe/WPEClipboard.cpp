@@ -50,6 +50,43 @@
  * [method@Clipboard.set_content] and read them with
  * [method@Clipboard.read_text] or [method@Clipboard.read_bytes].
  */
+
+/**
+ * WPEClipboardClass::read:
+ * @clipboard: The clipboard.
+ * @format: MIME type string indicating the format of the data to return.
+ *
+ * Read the contents of the clipboard.
+ *
+ * The returned data will be in the indicated @format, which is specified
+ * as a MIME type string.
+ *
+ * Returns: (transfer full): Clipboard contents in the requested @format.
+ */
+
+/**
+ * WPEClipboardClass::changed:
+ * @clipboard: The clipboard.
+ * @formats: (element-type utf8): List of formats in which the @contents can be read.
+ * @is_local: Whether the contents are provided locally by WebKit.
+ * @content: New clipboard contents.
+ *
+ * Provide new content for the clipboard.
+ *
+ * The @formats array indicates the list of MIME types in which the @content may be
+ * read using [vfunc@WPEClipboard.read]. This array need to be null-terminated, and
+ * it is recommended to use [id@g_ptr_array_new_null_terminated] to create suitable
+ * values.
+ *
+ * The @is_local flag indicates whether the @content is be provided by WebKit
+ * itself.
+ *
+ * ::: important
+ *
+ *     Custom implementations of this virtual function must chain up to the
+ *     base implementation.
+ */
+
 struct _WPEClipboardPrivate {
     GWeakPtr<WPEDisplay> display;
     int64_t changeCount;
