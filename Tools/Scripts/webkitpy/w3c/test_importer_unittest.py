@@ -286,9 +286,9 @@ class TestImporterTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/.svn/wc.db': '0',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/old-test.html': '1',
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/old-test-expected.txt': '2',
-            '/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test.html': '3',
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test.html': MINIMAL_TESTHARNESS,
             '/mock-checkout/LayoutTests/w3c/web-platform-tests/existing-test-expected.txt': '4',
-            f'{FAKE_WPT_DIR}/existing-test.html': '5',
+            f'{FAKE_WPT_DIR}/existing-test.html': MINIMAL_TESTHARNESS,
             '/mock-checkout/w3c-tests/csswg-tests/test.html': '1',
         }
 
