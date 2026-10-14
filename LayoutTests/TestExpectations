@@ -4552,9 +4552,7 @@ imported/w3c/web-platform-tests/css/css-images/cross-fade-cross-origin-orientati
 imported/w3c/web-platform-tests/css/css-images/cross-fade-natural-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/cross-fade-premultiplied-alpha.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-color-cross-fade.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/gradient/gradient-eval-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-none-interpolation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/gradient/gradient-eval-predefined-color-spaces.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-003.html [ ImageOnlyFailure ]
@@ -4628,23 +4626,12 @@ imported/w3c/web-platform-tests/css/css-images/object-position-svg-001e.html [ I
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-001o.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-002e.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-position-svg-002o.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/tiled-gradients.html [ ImageOnlyFailure ]
 
-# These need fuzziness.
-imported/w3c/web-platform-tests/css/css-images/color-stop-color-mix-currentcolor-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/color-stop-currentcolor-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/color-stop-light-dark-currentcolor-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/color-stop-relative-color-currentcolor-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ ImageOnlyFailure ]
+# The hard stops of the two overlapping conic gradients leave a visible seam.
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-border-image.sub.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/radial-gradient-line-height-relative-units-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/radial-gradient-line-height-relative-units-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/radial-gradient-line-height-relative-units-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/radial-gradient-line-height-relative-units-004.html [ ImageOnlyFailure ]
 
 # wpt css-transitions and css-animations failures and flakiness
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure ]
