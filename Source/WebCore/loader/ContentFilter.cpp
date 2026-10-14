@@ -438,7 +438,9 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
     RefPtr blockingContentFilter = m_blockingContentFilter.get();
     ASSERT(blockingContentFilter);
     RefPtr replacementData { blockingContentFilter->replacementData() };
-    ResourceResponse response { URL(), "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };
+    // The page replaces the blocked document's contents, so it gets an opaque origin.
+    ResourceResponse response { URL { blockedPageURL() }, "text/html"_s, static_cast<long long>(replacementData->size()), "UTF-8"_s };
+    response.setTainting(ResourceResponse::Tainting::Opaque);
     SubstituteData substituteData { WTF::move(replacementData), URL { error.failingURL() }, WTF::move(response), SubstituteData::SessionHistoryVisibility::Hidden };
     SetForScope loadingBlockedPage { m_isLoadingBlockedPage, true };
     if (RefPtr protectedClient = m_client.get())

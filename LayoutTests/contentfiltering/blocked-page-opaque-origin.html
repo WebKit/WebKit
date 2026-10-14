@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+promise_test(async () => {
+    const settings = internals.mockContentFilterSettings;
+    settings.enabled = true;
+    settings.decisionPoint = "afterAddData";
+    settings.decision = "block";
+    settings.blockedString = "<!DOCTYPE html><script>"
+        + "let canAccessEmbedder = true;"
+        + "try { parent.document; } catch { canAccessEmbedder = false; }"
+        + "parent.postMessage({ origin: self.origin, canAccessEmbedder }, '*');"
+        + "<\/script>";
+
+    const message = new Promise(resolve => window.onmessage = event => resolve(event.data));
+    const iframe = document.createElement("iframe");
+    iframe.src = "resources/fail.html";
+    document.body.appendChild(iframe);
+
+    const { origin, canAccessEmbedder } = await message;
+    assert_equals(origin, "null");
+    assert_false(canAccessEmbedder);
+}, "The page shown in place of a blocked document has an opaque origin");
+</script>
