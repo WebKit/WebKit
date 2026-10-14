@@ -262,7 +262,7 @@ std::optional<CanvasElementSnapshot> HTMLCanvasElement::canvasDrawableSnapshot(E
     return canvasRenderer->canvasDrawableSnapshot(*elementRenderer);
 }
 
-ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& element)
+ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& element) const
 {
     if (auto snapshot = canvasDrawableSnapshot(element))
         return CanvasElementImage::create(WTF::move(*snapshot));

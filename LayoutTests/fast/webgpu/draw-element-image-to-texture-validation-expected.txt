@@ -1,0 +1,39 @@
+Tests the input validation of GPUQueue.drawElementImageToTexture().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element source: no exception
+PASS element image source: no exception
+PASS full source rect: no exception
+PASS destination size: no exception
+PASS destination origin and size: no exception
+PASS missing source: TypeError
+PASS null source: TypeError
+PASS non-element source: TypeError
+PASS element which is not a drawable child of a canvas: InvalidStateError
+PASS only sourceX: InvalidStateError
+PASS only sourceY: InvalidStateError
+PASS only sourceWidth: InvalidStateError
+PASS only sourceHeight: InvalidStateError
+PASS three of four source rect members: InvalidStateError
+PASS negative sourceX: InvalidStateError
+PASS negative sourceY: InvalidStateError
+PASS negative sourceWidth: InvalidStateError
+PASS negative sourceHeight: InvalidStateError
+PASS zero sourceWidth: InvalidStateError
+PASS zero sourceHeight: InvalidStateError
+PASS source rect outside the snapshot: InvalidStateError
+PASS NaN sourceX: TypeError
+PASS Infinity sourceWidth: TypeError
+PASS zero destination width: InvalidStateError
+PASS zero destination height: InvalidStateError
+PASS negative destination width: TypeError
+PASS negative destination height: TypeError
+PASS missing destination texture: TypeError
+PASS invalid destination texture: TypeError
+PASS missing arguments: TypeError
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

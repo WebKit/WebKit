@@ -29,8 +29,11 @@
 #include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CanvasRenderingContext.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "GPUBuffer.h"
 #include "GPUDevice.h"
+#include "GPUDrawElementImageDestination.h"
+#include "GPUDrawElementImageSource.h"
 #include "GPUExternalTextureDescriptor.h"
 #include "GPUImageCopyExternalImage.h"
 #include "GPUTexture.h"
@@ -1506,9 +1509,103 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
     return { };
 }
 
-ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageSource&, const GPUDrawElementImageDestination&)
+ExceptionOr<void> GPUQueue::drawSnapshotToTexture(const CanvasElementSnapshot& snapshot, const GPUDrawElementImageSource& source, const GPUDrawElementImageDestination& destination)
 {
-    return Exception { ExceptionCode::InvalidStateError };
+    auto snapshotRect = FloatRect { { }, snapshot.size };
+    auto srcRect = snapshotRect;
+
+    bool hasSourceMembers[] = { !!source.sourceX, !!source.sourceY, !!source.sourceWidth, !!source.sourceHeight };
+    bool hasAnySourceMember = hasSourceMembers[0] || hasSourceMembers[1] || hasSourceMembers[2] || hasSourceMembers[3];
+    bool hasAllSourceMembers = hasSourceMembers[0] && hasSourceMembers[1] && hasSourceMembers[2] && hasSourceMembers[3];
+
+    // Sepcs: If only some of the config members are supplied, generates an INVALID_VALUE error.
+    if (hasAnySourceMember && !hasAllSourceMembers)
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: sx, sy, swidth and sheight must be all specified or all omitted"_s };
+
+    // Specs: If any supplied numeric member of config is negative, generates an INVALID_VALUE error.
+    if (source.sourceX.value_or(0) < 0 || source.sourceY.value_or(0) < 0 || source.sourceWidth.value_or(0) < 0 || source.sourceHeight.value_or(0) < 0)
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: config members must not be negative"_s };
+
+    // Sepcs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
+    // define the source rectangle of the element image snapshot to render, in CSS pixels.
+    if (hasAllSourceMembers) {
+        srcRect = {
+            *source.sourceX,
+            *source.sourceY,
+            *source.sourceWidth,
+            *source.sourceHeight
+        };
+    }
+
+    if (!std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
+        return { };
+
+    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
+    if (normalizedSrcRect.isEmpty())
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: source rectangle is empty"_s };
+
+    auto dstSize = normalizedSrcRect.size();
+
+    if (destination.size)
+        dstSize = FloatSize(dimension(*destination.size, 0), dimension(*destination.size, 1));
+
+    if (dstSize.isEmpty())
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: width or height <= 0"_s };
+
+    RefPtr buffer = ImageBuffer::create(dstSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer)
+        return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: failed to create an ImageBuffer"_s };
+
+    {
+        auto& context = buffer->context();
+        auto scale = dstSize / normalizedSrcRect.size();
+        context.translate(-toFloatSize(normalizedSrcRect.location()) * scale);
+        context.scale(scale);
+        context.drawDisplayList(snapshot.displayList);
+    }
+
+    // FIXME: destination.colorSpace is not honored yet; the pixels are always sRGB.
+    bool needsPremultipliedAlpha = destination.premultipliedAlpha;
+    bool callbackScopeIsSafe { true };
+    getImageBytesFromImageBuffer(buffer, needsPremultipliedAlpha, [&](std::span<const uint8_t> imageBytes, size_t columns, size_t rows) {
+        RELEASE_ASSERT(callbackScopeIsSafe);
+        if (!imageBytes.data() || imageBytes.empty() || (imageBytes.size() % 4))
+            return;
+
+        Ref destinationTexture = destination.texture;
+        bool supportedFormat;
+        auto newImageBytes = copyToDestinationFormat(imageBytes, destinationTexture->format(), supportedFormat, rows, false, needsPremultipliedAlpha, std::nullopt);
+        auto sizeInBytes = newImageBytes ? newImageBytes.sizeInBytes() : imageBytes.size();
+        auto widthInBytes = sizeInBytes / rows;
+        GPUImageDataLayout dataLayout { 0, widthInBytes, rows };
+
+        auto copyDestination = destination.convertToBacking();
+
+        if (!supportedFormat || !(destinationTexture->usage() & GPUTextureUsage::RENDER_ATTACHMENT))
+            copyDestination.mipLevel = INT_MAX;
+
+        WebGPU::Extent3D backingCopySize = WebGPU::Extent3DDict { static_cast<WebGPU::IntegerCoordinate>(columns), static_cast<WebGPU::IntegerCoordinate>(rows), 1 };
+        m_backing->writeTexture(copyDestination, newImageBytes ? newImageBytes.span() : imageBytes, dataLayout.convertToBacking(), backingCopySize);
+    });
+
+    callbackScopeIsSafe = false;
+    return { };
+}
+
+ExceptionOr<void> GPUQueue::drawElementImageToTexture(const GPUDrawElementImageSource& source, const GPUDrawElementImageDestination& destination)
+{
+    return WTF::switchOn(source.source,
+        [&](const Ref<Element>& element) -> ExceptionOr<void> {
+            if (RefPtr canvasElement = ancestorsOfType<HTMLCanvasElement>(element.get()).first()) {
+                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
+                    return drawSnapshotToTexture(*snapshot, source, destination);
+            }
+            return Exception { ExceptionCode::InvalidStateError, "GPUQueue.drawElementImageToTexture: Failed to get a snapshot for a drawableElement"_s };
+        },
+        [&](const Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
+            return drawSnapshotToTexture(elementImage->snapshot(), source, destination);
+        }
+    );
 }
 
 } // namespace WebCore
