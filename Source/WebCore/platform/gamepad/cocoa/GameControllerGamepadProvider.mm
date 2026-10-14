@@ -39,6 +39,8 @@
 
 #import "GameControllerSoftLink.h"
 
+SPECIALIZE_OBJC_TYPE_TRAITS(GCController, WebCore::getGCControllerClassSingleton())
+
 namespace WebCore {
 
 static bool shouldExcludeGameController(GCController *controller)
@@ -222,7 +224,7 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
         lazyInitialize(m_connectObserver, RetainPtr<NSObject> { [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidConnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             RetainPtr<id> object = notification.object;
             LOG(Gamepad, "GameControllerGamepadProvider notified of new GCController %p", object.get());
-            GameControllerGamepadProvider::singleton().controllerDidConnect(object.get(), ConnectionVisibility::Visible);
+            GameControllerGamepadProvider::singleton().controllerDidConnect(checked_objc_cast<GCController>(object.get()), ConnectionVisibility::Visible);
         }] });
     }
 
@@ -230,7 +232,7 @@ void GameControllerGamepadProvider::startMonitoringGamepads(GamepadProviderClien
         m_disconnectObserver = [[NSNotificationCenter defaultCenter] addObserverForName:get_GameController_GCControllerDidDisconnectNotificationSingleton() object:nil queue:nil usingBlock:^(NSNotification *notification) {
             RetainPtr<id> object = notification.object;
             LOG(Gamepad, "GameControllerGamepadProvider notified of disconnected GCController %p", object.get());
-            GameControllerGamepadProvider::singleton().controllerDidDisconnect(object.get());
+            GameControllerGamepadProvider::singleton().controllerDidDisconnect(checked_objc_cast<GCController>(object.get()));
         }];
     }
 

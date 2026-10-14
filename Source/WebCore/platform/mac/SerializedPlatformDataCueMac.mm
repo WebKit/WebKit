@@ -113,17 +113,17 @@ static JSValue *jsValueWithValueInContext(id value, JSContext *context)
     if ([value isKindOfClass:[NSLocale class]])
         return [JSValue valueWithObject:retainPtr([value localeIdentifier]).get() inContext:context];
 
-    if ([value isKindOfClass:[NSDictionary class]])
-        return jsValueWithDictionaryInContext(value, context);
+    if (RetainPtr dictionary = dynamic_objc_cast<NSDictionary>(value))
+        return jsValueWithDictionaryInContext(dictionary, context);
 
-    if ([value isKindOfClass:[NSArray class]])
-        return jsValueWithArrayInContext(value, context);
+    if (RetainPtr array = dynamic_objc_cast<NSArray>(value))
+        return jsValueWithArrayInContext(array, context);
 
-    if ([value isKindOfClass:[NSData class]])
-        return jsValueWithDataInContext(value, context);
+    if (RetainPtr data = dynamic_objc_cast<NSData>(value))
+        return jsValueWithDataInContext(data, context);
 
-    if ([value isKindOfClass:PAL::getAVMetadataItemClassSingleton()])
-        return jsValueWithAVMetadataItemInContext(value, context);
+    if (RetainPtr item = dynamic_objc_cast<AVMetadataItem>(value))
+        return jsValueWithAVMetadataItemInContext(item, context);
 
     return nil;
 }
@@ -171,14 +171,15 @@ static JSValue *jsValueWithDictionaryInContext(NSDictionary *dictionary, JSConte
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL id key in [dictionary keyEnumerator]) {
-        if (![key isKindOfClass:[NSString class]])
+        RetainPtr keyString = dynamic_objc_cast<NSString>(key);
+        if (!keyString)
             continue;
 
         RetainPtr value = jsValueWithValueInContext(retainPtr([dictionary objectForKey:key]).get(), context);
         if (!value)
             continue;
 
-        auto name = OpaqueJSString::tryCreate(key);
+        auto name = OpaqueJSString::tryCreate(keyString.get());
         JSObjectSetProperty([context JSGlobalContextRef], resultObject, name.get(), [value JSValueRef], 0, &exception);
         if (exception)
             continue;

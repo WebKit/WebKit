@@ -401,7 +401,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, Wal
         if (![fileAttributes[NSURLIsRegularFileKey] boolValue])
             continue;
 
-        if (toSystemClockTime(fileAttributes[NSURLContentModificationDateKey]) <= modifiedSince)
+        if (toSystemClockTime(dynamic_objc_cast<NSDate>(fileAttributes[NSURLContentModificationDateKey])) <= modifiedSince)
             continue;
 
         [urlsToDelete addObject:fileURL];
@@ -4501,9 +4501,9 @@ NSArray* playerKVOPropertiesSingleton()
         // -liveUpdateInterval and -seekableTimeRangesLastModifiedTime are not KVO observable, but may also hang when queried.
         // Query their values here on a background thread, and pass to the main thread for caching.
         id newValue = [change valueForKey:NSKeyValueChangeNewKey];
-        auto seekableTimeRanges = RetainPtr<NSArray> { newValue };
+        RetainPtr seekableTimeRanges = dynamic_objc_cast<NSArray>(newValue);
 
-        protect(m_backgroundQueue)->dispatch([seekableTimeRanges = WTF::move(seekableTimeRanges), playerItem = RetainPtr<AVPlayerItem> { object }, queueTaskOnEventLoopWithPlayer] mutable {
+        protect(m_backgroundQueue)->dispatch([seekableTimeRanges = WTF::move(seekableTimeRanges), playerItem = RetainPtr<AVPlayerItem> { checked_objc_cast<AVPlayerItem>(object) }, queueTaskOnEventLoopWithPlayer] mutable {
             auto seekableTimeRangesLastModifiedTime = [playerItem seekableTimeRangesLastModifiedTime];
             auto liveUpdateInterval = [playerItem liveUpdateInterval];
             queueTaskOnEventLoopWithPlayer([seekableTimeRanges = WTF::move(seekableTimeRanges), seekableTimeRangesLastModifiedTime, liveUpdateInterval](auto& player) mutable {
@@ -4550,9 +4550,9 @@ NSArray* playerKVOPropertiesSingleton()
                 player.setAsset(RetainPtr<id>(newValue));
                 shouldLogValue = false;
             } else if ([keyPath isEqualToString:@"loadedTimeRanges"])
-                player.loadedTimeRangesDidChange(RetainPtr<NSArray>(newValue));
+                player.loadedTimeRangesDidChange(dynamic_objc_cast<NSArray>(newValue));
             else if ([keyPath isEqualToString:@"tracks"]) {
-                player.tracksDidChange(RetainPtr<NSArray>(newValue));
+                player.tracksDidChange(dynamic_objc_cast<NSArray>(newValue));
                 shouldLogValue = false;
             } else if ([keyPath isEqualToString:@"hasEnabledAudio"])
                 player.hasEnabledAudioDidChange([newValue boolValue]);

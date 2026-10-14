@@ -342,12 +342,12 @@ void ResourceResponseBase::includeCertificateInfo(std::span<const std::byte> aud
 {
     if (m_certificateInfo)
         return;
-    m_certificateInfo = static_cast<const ResourceResponse*>(this)->platformCertificateInfo(auditToken);
+    m_certificateInfo = downcast<ResourceResponse>(*this).platformCertificateInfo(auditToken);
 }
 
 String ResourceResponseBase::suggestedFilename() const
 {
-    return static_cast<const ResourceResponse*>(this)->platformSuggestedFilename();
+    return downcast<ResourceResponse>(*this).platformSuggestedFilename();
 }
 
 String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFilename)
@@ -873,7 +873,7 @@ ResourceResponseBase::Source ResourceResponseBase::source() const
 
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
 {
-    const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);
+    const_cast<ResourceResponse&>(downcast<ResourceResponse>(*this)).platformLazyInit(initLevel);
 }
 
 bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const ResourceResponse& a, const ResourceResponse& b)

@@ -32,6 +32,7 @@
 #import "FontAttributeChanges.h"
 #import "LayoutUnit.h"
 #import <AppKit/NSFontManager.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
@@ -125,17 +126,17 @@ FontAttributeChanges computedFontAttributeChanges(NSFontManager *fontManager, id
     RetainPtr<NSDictionary> convertedAttributesA = [attributeConverter convertAttributes:originalAttributesA];
     RetainPtr<NSDictionary> convertedAttributesB = [attributeConverter convertAttributes:originalAttributesB];
 
-    RetainPtr convertedBackgroundColorA = [convertedAttributesA objectForKey:NSBackgroundColorAttributeName];
+    RetainPtr convertedBackgroundColorA = dynamic_objc_cast<NSColor>([convertedAttributesA objectForKey:NSBackgroundColorAttributeName]);
     if (convertedBackgroundColorA == [convertedAttributesB objectForKey:NSBackgroundColorAttributeName])
         changes.setBackgroundColor(colorFromCocoaColor(convertedBackgroundColorA ? convertedBackgroundColorA.get() : RetainPtr { NSColor.clearColor }.get()));
 
-    changes.setFontChanges(computedFontChanges(fontManager, originalFontA.get(), retainPtr([convertedAttributesA objectForKey:NSFontAttributeName]).get(), retainPtr([convertedAttributesB objectForKey: NSFontAttributeName]).get()));
+    changes.setFontChanges(computedFontChanges(fontManager, originalFontA.get(), protect(dynamic_objc_cast<NSFont>([convertedAttributesA objectForKey:NSFontAttributeName])), protect(dynamic_objc_cast<NSFont>([convertedAttributesB objectForKey: NSFontAttributeName]))));
 
-    RetainPtr convertedForegroundColorA = [convertedAttributesA objectForKey:NSForegroundColorAttributeName];
+    RetainPtr convertedForegroundColorA = dynamic_objc_cast<NSColor>([convertedAttributesA objectForKey:NSForegroundColorAttributeName]);
     if (convertedForegroundColorA == [convertedAttributesB objectForKey:NSForegroundColorAttributeName])
         changes.setForegroundColor(colorFromCocoaColor(convertedForegroundColorA ? convertedForegroundColorA.get() : RetainPtr { NSColor.blackColor }.get()));
 
-    RetainPtr<NSShadow> convertedShadow = [convertedAttributesA objectForKey:NSShadowAttributeName];
+    RetainPtr convertedShadow = dynamic_objc_cast<NSShadow>([convertedAttributesA objectForKey:NSShadowAttributeName]);
     if (convertedShadow) {
         FloatSize offset { LayoutUnit::fromFloatRound(static_cast<float>([convertedShadow shadowOffset].width)).toFloat(), LayoutUnit::fromFloatRound(static_cast<float>([convertedShadow shadowOffset].height)).toFloat() };
         changes.setShadow({ colorFromCocoaColor(RetainPtr { [convertedShadow shadowColor] ?: NSColor.blackColor }.get()), offset, [convertedShadow shadowBlurRadius] });

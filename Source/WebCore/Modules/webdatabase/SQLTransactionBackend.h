@@ -78,3 +78,8 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SQLTransactionBackend)
+    // SQLTransactionBackend derives from SQLTransactionStateMachine<SQLTransactionBackend> (CRTP).
+    static bool isType(const WebCore::SQLTransactionStateMachine<WebCore::SQLTransactionBackend>&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

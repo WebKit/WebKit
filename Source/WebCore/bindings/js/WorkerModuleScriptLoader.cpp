@@ -81,9 +81,9 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     fetchOptions.mode = FetchOptions::Mode::Cors;
     fetchOptions.cache = FetchOptions::Cache::Default;
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
-    fetchOptions.credentials = static_cast<WorkerScriptFetcher&>(scriptFetcher()).credentials();
-    fetchOptions.destination = static_cast<WorkerScriptFetcher&>(scriptFetcher()).destination();
-    fetchOptions.referrerPolicy = static_cast<WorkerScriptFetcher&>(scriptFetcher()).referrerPolicy();
+    fetchOptions.credentials = downcast<WorkerScriptFetcher>(scriptFetcher()).credentials();
+    fetchOptions.destination = downcast<WorkerScriptFetcher>(scriptFetcher()).destination();
+    fetchOptions.referrerPolicy = downcast<WorkerScriptFetcher>(scriptFetcher()).referrerPolicy();
 
     // CSS modules aren't allowed in workers/worklets.
     // It should've been blocked elsewhere before reaching here.

@@ -281,7 +281,7 @@ static std::optional<std::array<uint8_t, size>> createArrayFromData(NSData * dat
 
 std::optional<struct WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint8_t>& wrappedKey)
 {
-    RetainPtr<NSDictionary> dictionary = [NSPropertyListSerialization propertyListWithData:toNSDataNoCopy(wrappedKey.span(), FreeWhenDone::No).get() options:0 format:nullptr error:nullptr];
+    RetainPtr dictionary = dynamic_objc_cast<NSDictionary>([NSPropertyListSerialization propertyListWithData:toNSDataNoCopy(wrappedKey.span(), FreeWhenDone::No).get() options:0 format:nullptr error:nullptr]);
     if (!dictionary)
         return std::nullopt;
 
@@ -291,20 +291,20 @@ std::optional<struct WrappedCryptoKey> readSerializedCryptoKey(const Vector<uint
     if ([versionObject unsignedIntegerValue] > currentSerializationVersion)
         return std::nullopt;
 
-    id wrappedKEKObject = [dictionary objectForKey:wrappedKEKKey];
-    if (![wrappedKEKObject isKindOfClass:[NSData class]])
+    RetainPtr wrappedKEKObject = dynamic_objc_cast<NSData>([dictionary objectForKey:wrappedKEKKey]);
+    if (!wrappedKEKObject)
         return std::nullopt;
     auto wrappedKEK = createArrayFromData<wrappedKekSize>(wrappedKEKObject);
     if (!wrappedKEK)
         return std::nullopt;
 
-    id encryptedKeyObject = [dictionary objectForKey:encryptedKeyKey];
-    if (![encryptedKeyObject isKindOfClass:[NSData class]])
+    RetainPtr encryptedKeyObject = dynamic_objc_cast<NSData>([dictionary objectForKey:encryptedKeyKey]);
+    if (!encryptedKeyObject)
         return std::nullopt;
     auto encryptedKey = Vector<uint8_t>(span(encryptedKeyObject));
 
-    id tagObject = [dictionary objectForKey:tagKey];
-    if (![tagObject isKindOfClass:[NSData class]])
+    RetainPtr tagObject = dynamic_objc_cast<NSData>([dictionary objectForKey:tagKey]);
+    if (!tagObject)
         return std::nullopt;
     auto tag = createArrayFromData<expectedTagLengthAES>(tagObject);
     if (!tag)

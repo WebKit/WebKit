@@ -32,7 +32,7 @@ namespace WebCore {
 
 SVGGradientElement& LegacyRenderSVGResourceGradient::gradientElement() const
 {
-    return static_cast<SVGGradientElement&>(LegacyRenderSVGResourceContainer::element());
+    return downcast<SVGGradientElement>(LegacyRenderSVGResourceContainer::element());
 }
 
 }

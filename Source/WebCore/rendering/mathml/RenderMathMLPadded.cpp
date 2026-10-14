@@ -47,7 +47,7 @@ RenderMathMLPadded::~RenderMathMLPadded() = default;
 
 MathMLPaddedElement& RenderMathMLPadded::element() const
 {
-    return static_cast<MathMLPaddedElement&>(nodeForNonAnonymous());
+    return downcast<MathMLPaddedElement>(nodeForNonAnonymous());
 }
 
 LayoutUnit RenderMathMLPadded::voffset() const

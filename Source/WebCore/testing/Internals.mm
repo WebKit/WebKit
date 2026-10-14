@@ -55,6 +55,7 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DarwinExtras.h>
 #import <wtf/unicode/CharacterNames.h>
 
@@ -64,6 +65,8 @@
 
 #if ENABLE(DATA_DETECTION)
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+
+SPECIALIZE_OBJC_TYPE_TRAITS(DDScannerResult, PAL::getDDScannerResultClassSingleton())
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
@@ -268,7 +271,7 @@ DDScannerResult *Internals::fakeDataDetectorResultForTesting()
         if (!CFArrayGetCount(results.get()))
             return nil;
 
-        return { [[PAL::getDDScannerResultClassSingleton() resultsFromCoreResults:results.get()] firstObject] };
+        return { checked_objc_cast<DDScannerResult>([[PAL::getDDScannerResultClassSingleton() resultsFromCoreResults:results.get()] firstObject]) };
     }();
     return result->get();
 }

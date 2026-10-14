@@ -48,7 +48,7 @@ RenderMathMLSpace::~RenderMathMLSpace() = default;
 
 MathMLSpaceElement& RenderMathMLSpace::element() const
 {
-    return static_cast<MathMLSpaceElement&>(nodeForNonAnonymous());
+    return downcast<MathMLSpaceElement>(nodeForNonAnonymous());
 }
 
 void RenderMathMLSpace::computeIntrinsicLogicalWidthContributions()

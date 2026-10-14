@@ -179,7 +179,11 @@ public:
             : ComposedTreeIterator<ContextInlineCapacity>(root, current)
         { }
 
-        Iterator& operator++() { return static_cast<Iterator&>(ComposedTreeIterator<ContextInlineCapacity>::traverseNextSibling()); }
+        Iterator& operator++()
+        {
+            ComposedTreeIterator<ContextInlineCapacity>::traverseNextSibling();
+            return *this;
+        }
         Iterator& operator--() { return static_cast<Iterator&>(ComposedTreeIterator<ContextInlineCapacity>::traversePreviousSibling()); }
     };
 

@@ -213,7 +213,7 @@ void AXObjectCache::attachWrapper(AccessibilityObject& object)
     object.setWrapper(wrapper.get());
 }
 
-static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, NSString *notification, id userInfo, bool skipSystemNotification = false)
+static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, NSString *notification, NSDictionary *userInfo, bool skipSystemNotification = false)
 {
     if (id associatedPluginParent = [object _associatedPluginParent])
         object = associatedPluginParent;

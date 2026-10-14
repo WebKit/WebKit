@@ -163,7 +163,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     if (!avVoice)
         avVoice = [PAL::getAVSpeechSynthesisVoiceClassSingleton() voiceWithLanguage:voiceLanguage.get()];
 
-    RetainPtr<AVSpeechUtterance> avUtterance = [PAL::getAVSpeechUtteranceClassSingleton() speechUtteranceWithString:utterance->text().createNSString().get()];
+    RetainPtr avUtterance = checked_objc_cast<AVSpeechUtterance>([PAL::getAVSpeechUtteranceClassSingleton() speechUtteranceWithString:utterance->text().createNSString().get()]);
 
     [avUtterance setRate:[self mapSpeechRateToPlatformRate:utterance->rate()]];
     [avUtterance setVolume:utterance->volume()];

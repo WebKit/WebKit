@@ -133,7 +133,8 @@ inline RenderDescendantIterator<T>::RenderDescendantIterator(const RenderElement
 template <typename T>
 inline RenderDescendantIterator<T>& RenderDescendantIterator<T>::operator++()
 {
-    return static_cast<RenderDescendantIterator<T>&>(RenderIterator<T>::traverseNext());
+    RenderIterator<T>::traverseNext();
+    return *this;
 }
 
 // RenderDescendantConstIterator
@@ -153,7 +154,8 @@ inline RenderDescendantConstIterator<T>::RenderDescendantConstIterator(const Ren
 template <typename T>
 inline RenderDescendantConstIterator<T>& RenderDescendantConstIterator<T>::operator++()
 {
-    return static_cast<RenderDescendantConstIterator<T>&>(RenderConstIterator<T>::traverseNext());
+    RenderConstIterator<T>::traverseNext();
+    return *this;
 }
 
 // RenderDescendantIteratorAdapter
@@ -225,7 +227,8 @@ inline RenderDescendantPostOrderIterator<T>::RenderDescendantPostOrderIterator(c
 template <typename T>
 inline RenderDescendantPostOrderIterator<T>& RenderDescendantPostOrderIterator<T>::operator++()
 {
-    return static_cast<RenderDescendantPostOrderIterator<T>&>(RenderPostOrderIterator<T>::traverseNext());
+    RenderPostOrderIterator<T>::traverseNext();
+    return *this;
 }
 
 // RenderDescendantPostOrderConstIterator

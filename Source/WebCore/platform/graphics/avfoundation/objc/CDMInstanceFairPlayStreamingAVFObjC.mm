@@ -990,7 +990,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
                 if (!payloadVector)
                     return false;
                 auto payloadData = SharedBuffer::create(WTF::move(*payloadVector));
-                [request processContentKeyResponse:[PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:payloadData->makeContiguous()->createNSData().get()]];
+                [request processContentKeyResponse:checked_objc_cast<AVContentKeyResponse>([PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:payloadData->makeContiguous()->createNSData().get()])];
             }
             return true;
         };
@@ -1003,7 +1003,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
         }
     } else {
         ALWAYS_LOG(LOGIDENTIFIER, "'sinf' initData, processing response");
-        [m_currentRequest.value().requests.first() processContentKeyResponse:[PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData->makeContiguous()->createNSData().get()]];
+        [m_currentRequest.value().requests.first() processContentKeyResponse:checked_objc_cast<AVContentKeyResponse>([PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:responseData->makeContiguous()->createNSData().get()])];
     }
 
     // FIXME(rdar://problem/35592277): stash the callback and call it once AVContentKeyResponse supports a success callback.

@@ -71,6 +71,10 @@
 
 #import <pal/cocoa/AccessibilitySoftLink.h>
 
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+SPECIALIZE_OBJC_TYPE_TRAITS(AXCustomContent, PAL::getAXCustomContentClassSingleton())
+#endif
+
 using namespace WebCore;
 
 // Search Keys
@@ -449,7 +453,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     if (extendedDescription.length()) {
         accessibilityCustomContent = adoptNS([[NSMutableArray alloc] init]);
         Class customContentClass = PAL::getAXCustomContentClassSingleton();
-        RetainPtr contentItem = [customContentClass customContentWithLabel:WEB_UI_STRING("description", "description detail").createNSString().get() value:extendedDescription.createNSString().get()];
+        RetainPtr contentItem = checked_objc_cast<AXCustomContent>([customContentClass customContentWithLabel:WEB_UI_STRING("description", "description detail").createNSString().get() value:extendedDescription.createNSString().get()]);
         // Set this to high, so that it's always spoken.
         [contentItem setImportance:AXCustomContentImportanceHigh];
         [accessibilityCustomContent addObject:contentItem];
@@ -658,8 +662,8 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
         auto text = adoptNS([[NSMutableAttributedString alloc] init]);
         // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
         for (SUPPRESS_UNRETAINED_LOCAL id item in content.get()) {
-            if ([item isKindOfClass:NSAttributedString.class])
-                [text appendAttributedString:item];
+            if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(item))
+                [text appendAttributedString:attributedString];
             else if ([item isKindOfClass:WebAccessibilityObjectWrapper.class]) {
                 RetainPtr wrapper = static_cast<WebAccessibilityObjectWrapper *>(item);
 #if PLATFORM(MAC)
@@ -845,10 +849,10 @@ static NSArray *arrayRemovingNonSupportedTypes(NSArray *array)
     auto mutableArray = adoptNS([array mutableCopy]);
     for (NSUInteger i = 0; i < [mutableArray count];) {
         id value = [mutableArray objectAtIndex:i];
-        if ([value isKindOfClass:[NSDictionary class]])
-            [mutableArray replaceObjectAtIndex:i withObject:protect(dictionaryRemovingNonSupportedTypes(value))];
-        else if ([value isKindOfClass:[NSArray class]])
-            [mutableArray replaceObjectAtIndex:i withObject:protect(arrayRemovingNonSupportedTypes(value))];
+        if (RetainPtr dictionaryValue = dynamic_objc_cast<NSDictionary>(value))
+            [mutableArray replaceObjectAtIndex:i withObject:protect(dictionaryRemovingNonSupportedTypes(dictionaryValue))];
+        else if (RetainPtr arrayValue = dynamic_objc_cast<NSArray>(value))
+            [mutableArray replaceObjectAtIndex:i withObject:protect(arrayRemovingNonSupportedTypes(arrayValue))];
         else if (!isValueTypeSupported(value)) {
             [mutableArray removeObjectAtIndex:i];
             continue;
@@ -867,10 +871,10 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
-        if ([value isKindOfClass:[NSDictionary class]])
-            [mutableDictionary setObject:protect(dictionaryRemovingNonSupportedTypes(value)) forKey:key];
-        else if ([value isKindOfClass:[NSArray class]])
-            [mutableDictionary setObject:protect(arrayRemovingNonSupportedTypes(value)) forKey:key];
+        if (RetainPtr dictionaryValue = dynamic_objc_cast<NSDictionary>(value))
+            [mutableDictionary setObject:protect(dictionaryRemovingNonSupportedTypes(dictionaryValue)) forKey:key];
+        else if (RetainPtr arrayValue = dynamic_objc_cast<NSArray>(value))
+            [mutableDictionary setObject:protect(arrayRemovingNonSupportedTypes(arrayValue)) forKey:key];
         else if (!isValueTypeSupported(value))
             [mutableDictionary removeObjectForKey:key];
     }
@@ -976,9 +980,9 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
 
 static std::optional<AccessibilitySearchKey> makeVectorElement(const AccessibilitySearchKey*, id arrayElement)
 {
-    if (![arrayElement isKindOfClass:NSString.class])
-        return std::nullopt;
-    return { { accessibilitySearchKeyForString(arrayElement) } };
+    if (RetainPtr string = dynamic_objc_cast<NSString>(arrayElement))
+        return { { accessibilitySearchKeyForString(string.get()) } };
+    return std::nullopt;
 }
 
 AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCoreObject& object, const NSDictionary *parameter)
@@ -1027,10 +1031,10 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
     if ([visibleOnly isKindOfClass:[NSNumber class]])
         criteria.visibleOnly = [visibleOnly boolValue];
 
-    if ([searchKey isKindOfClass:[NSString class]])
-        criteria.searchKeys.append(accessibilitySearchKeyForString(searchKey));
-    else if ([searchKey isKindOfClass:[NSArray class]])
-        criteria.searchKeys = makeVector<AccessibilitySearchKey>(searchKey);
+    if (RetainPtr searchKeyString = dynamic_objc_cast<NSString>(searchKey))
+        criteria.searchKeys.append(accessibilitySearchKeyForString(searchKeyString.get()));
+    else if (RetainPtr searchKeyArray = dynamic_objc_cast<NSArray>(searchKey))
+        criteria.searchKeys = makeVector<AccessibilitySearchKey>(searchKeyArray);
 
     return criteria;
 }

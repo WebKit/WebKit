@@ -335,7 +335,9 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         RetainPtr<NSError> error;
         RetainPtr<NSData> requestData;
         Semaphore keyRequestCompleted { 0 };
-        [contentKeyRequest makeStreamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:nsIdentifier.get() options:options.get() completionHandler:[&] (NSData *outRequestData, NSError *outError) {
+        // When AVFoundation initiates the request, its identifier may not be NSData (e.g. an skd:// NSString).
+        // We intentionally pass it back to AVFoundation unchanged, as we always have.
+        SUPPRESS_MEMORY_UNSAFE_CAST [contentKeyRequest makeStreamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:nsIdentifier.get() options:options.get() completionHandler:[&](NSData *outRequestData, NSError *outError) {
             error = outError;
             requestData = outRequestData;
             keyRequestCompleted.signal();
@@ -360,7 +362,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
     RetainPtr keyData = WTF::toNSData(key->span());
     
     if ([contentKeyRequest respondsToSelector:@selector(processContentKeyResponse:)] && [PAL::getAVContentKeyResponseClassSingleton() respondsToSelector:@selector(contentKeyResponseWithFairPlayStreamingKeyResponseData:)])
-        [contentKeyRequest processContentKeyResponse:[PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:keyData.get()]];
+        [contentKeyRequest processContentKeyResponse:checked_objc_cast<AVContentKeyResponse>([PAL::getAVContentKeyResponseClassSingleton() contentKeyResponseWithFairPlayStreamingKeyResponseData:keyData.get()])];
     else
         [contentKeyRequest processContentKeyResponseData:keyData.get()];
 
@@ -459,7 +461,7 @@ void CDMSessionAVContentKeySession::didProvideContentKeyRequest(AVContentKeyRequ
 RetainPtr<AVContentKeySession> CDMSessionAVContentKeySession::createContentKeySession(NSURL *storageURL)
 {
     if ([PAL::getAVContentKeySessionClassSingleton() respondsToSelector:@selector(contentKeySessionWithKeySystem:storageDirectoryAtURL:)])
-        return [PAL::getAVContentKeySessionClassSingleton() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
+        return checked_objc_cast<AVContentKeySession>([PAL::getAVContentKeySessionClassSingleton() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL]);
     return adoptNS([PAL::allocAVContentKeySessionInstance() initWithStorageDirectoryAtURL:storageURL]);
 }
 

@@ -59,4 +59,6 @@ protected:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(AllDescendantsCollection)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AllDescendantsCollection)
+    static bool isType(const WebCore::HTMLCollection& collection) { return collection.type() == WebCore::CollectionType::AllDescendants || collection.type() == WebCore::CollectionType::DocAll; }
+SPECIALIZE_TYPE_TRAITS_END()

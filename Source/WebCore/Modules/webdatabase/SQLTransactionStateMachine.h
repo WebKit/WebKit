@@ -107,7 +107,7 @@ void SQLTransactionStateMachine<T>::runStateMachine()
     m_nextStateAuditEntry = (m_nextStateAuditEntry + 1) % s_sizeOfStateAuditTrail;
 #endif
 
-    (static_cast<T*>(this)->*stateFunction)();
+    (downcast<T>(*this).*stateFunction)();
     m_nextState = SQLTransactionState::Idle;
 }
 

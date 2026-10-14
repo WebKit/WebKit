@@ -132,4 +132,5 @@ inline bool HTMLTagCollection::elementMatches(Element& element) const
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(TagCollection)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(TagCollectionNS)
 SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLTagCollection)

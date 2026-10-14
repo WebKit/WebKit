@@ -39,9 +39,9 @@ public:
 
 inline ValidityState& FormListedElement::validity()
 {
-    // Because ValidityState adds nothing to FormListedElement, we rely on it being safe
-    // to cast a FormListedElement like this, even though it's not actually a ValidityState.
-    return static_cast<ValidityState&>(*this);
+    // This object is never actually a ValidityState, so the cast can't be checked. It is safe in practice
+    // because ValidityState adds no data members or virtual functions to FormListedElement.
+    SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<ValidityState&>(*this);
 }
 
 } // namespace WebCore

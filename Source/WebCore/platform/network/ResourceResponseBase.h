@@ -40,6 +40,7 @@
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/TypeCasts.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/persistence/PersistentCoders.h>
@@ -426,3 +427,8 @@ template<> struct Coder<WebCore::ResourceResponseData> {
 } // namespace Persistence
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ResourceResponse)
+    // ResourceResponse is the only subclass of ResourceResponseBase.
+    static bool isType(const WebCore::ResourceResponseBase&) { return true; }
+SPECIALIZE_TYPE_TRAITS_END()

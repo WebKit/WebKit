@@ -189,7 +189,7 @@ CheckedPtr<RenderMathMLOperator> RenderMathMLFraction::unembellishedOperator() c
 
 MathMLFractionElement& RenderMathMLFraction::element() const
 {
-    return static_cast<MathMLFractionElement&>(nodeForNonAnonymous());
+    return downcast<MathMLFractionElement>(nodeForNonAnonymous());
 }
 
 void RenderMathMLFraction::computeIntrinsicLogicalWidthContributions()

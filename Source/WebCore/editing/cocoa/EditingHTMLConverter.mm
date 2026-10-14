@@ -178,7 +178,7 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForFileWrappe
         return adoptNS([[NSAttributedString alloc] initWithString:@" "]).autorelease();
 
     RetainPtr attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithFileWrapper:fileWrapper]);
-    return [NSAttributedString attributedStringWithAttachment:attachment.get()];
+    return [NSAttributedString attributedStringWithAttachment:checked_objc_cast<NSTextAttachment>(attachment.get())];
 }
 
 static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLImageElement& element)

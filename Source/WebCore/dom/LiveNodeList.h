@@ -111,8 +111,9 @@ protected:
     inline CachedLiveNodeList(ContainerNode& rootNode, LiveNodeListType, NodeListInvalidationType);
 
 private:
+    // CRTP: NodeListType always derives from CachedLiveNodeList<NodeListType>.
     NodeListType& nodeList() { return static_cast<NodeListType&>(*this); }
-    const NodeListType& nodeList() const { return static_cast<const NodeListType&>(*this); }
+    const NodeListType& nodeList() const { return uncheckedDowncast<NodeListType>(*this); }
 
     mutable CollectionIndexCache<NodeListType, Iterator> m_indexCache;
 };

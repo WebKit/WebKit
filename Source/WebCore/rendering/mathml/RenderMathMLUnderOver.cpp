@@ -54,7 +54,7 @@ RenderMathMLUnderOver::~RenderMathMLUnderOver() = default;
 
 MathMLUnderOverElement& RenderMathMLUnderOver::element() const
 {
-    return static_cast<MathMLUnderOverElement&>(nodeForNonAnonymous());
+    return downcast<MathMLUnderOverElement>(nodeForNonAnonymous());
 }
 
 static CheckedPtr<RenderMathMLOperator> horizontalStretchyOperator(const RenderBox& box)

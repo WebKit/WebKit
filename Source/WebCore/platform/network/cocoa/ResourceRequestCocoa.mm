@@ -173,7 +173,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_requestData.m_timeoutInterval = [m_nsRequest timeoutInterval];
     m_requestData.m_firstPartyForCookies = [m_nsRequest mainDocumentURL];
 
-    URL siteForCookies { [m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
+    URL siteForCookies { dynamic_objc_cast<NSURL>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"]) };
     m_requestData.m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_requestData.m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
     m_requestData.m_isTopSite = static_cast<NSNumber*>([m_nsRequest _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
@@ -263,7 +263,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         return;
     }
 
-    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
+    RetainPtr<NSMutableURLRequest> nsRequest = adoptNS([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url().createNSURL().get()];
@@ -340,7 +340,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         return;
     }
 
-    auto nsRequest = adoptNS<NSMutableURLRequest *>([m_nsRequest mutableCopy]);
+    RetainPtr<NSMutableURLRequest> nsRequest = adoptNS([m_nsRequest mutableCopy]);
 
     if (nsRequest)
         [nsRequest setURL:url().createNSURL().get()];
@@ -355,7 +355,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     if (RetainPtr bodyStream = [nsRequest HTTPBodyStream]) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
-        RetainPtr<NSString> lengthString = [bodyStream propertyForKey:RetainPtr { bridge_cast(formDataStreamLengthPropertyNameSingleton()) }.get()];
+        RetainPtr lengthString = dynamic_objc_cast<NSString>([bodyStream propertyForKey:RetainPtr { bridge_cast(formDataStreamLengthPropertyNameSingleton()) }.get()]);
         if (lengthString) {
             [nsRequest setValue:lengthString.get() forHTTPHeaderField:@"Content-Length"];
             // Since resource request is already marked updated, we need to keep it up to date too.
