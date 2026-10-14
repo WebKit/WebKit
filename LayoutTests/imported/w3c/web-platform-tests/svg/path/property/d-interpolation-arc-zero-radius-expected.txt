@@ -1,0 +1,16 @@
+
+PASS "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" are valid d values
+PASS Animation between "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" at progress -1
+PASS Animation between "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" at progress 0
+PASS Animation between "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" at progress 0.5
+PASS Animation between "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" at progress 1
+PASS Animation between "path("M 0 0 A 0 10 0 0 1 50 50")" and "path("M 0 0 A 20 30 0 0 1 50 50")" at progress 2
+PASS "path("M 0 0 A 10 0 0 0 1 50 50")" and "path("M 0 0 A 30 20 0 0 1 50 50")" are valid d values
+PASS Animation between "path("M 0 0 A 10 0 0 0 1 50 50")" and "path("M 0 0 A 30 20 0 0 1 50 50")" at progress 0
+PASS Animation between "path("M 0 0 A 10 0 0 0 1 50 50")" and "path("M 0 0 A 30 20 0 0 1 50 50")" at progress 0.5
+PASS Animation between "path("M 0 0 A 10 0 0 0 1 50 50")" and "path("M 0 0 A 30 20 0 0 1 50 50")" at progress 1
+PASS "path("M 0 0 A 0 0 0 0 1 50 50")" and "path("M 0 0 A 0 0 0 0 1 100 100")" are valid d values
+PASS Animation between "path("M 0 0 A 0 0 0 0 1 50 50")" and "path("M 0 0 A 0 0 0 0 1 100 100")" at progress 0
+PASS Animation between "path("M 0 0 A 0 0 0 0 1 50 50")" and "path("M 0 0 A 0 0 0 0 1 100 100")" at progress 0.5
+PASS Animation between "path("M 0 0 A 0 0 0 0 1 50 50")" and "path("M 0 0 A 0 0 0 0 1 100 100")" at progress 1
+
