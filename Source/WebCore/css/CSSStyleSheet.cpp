@@ -579,9 +579,14 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
             m_contents = *cachedContents;
             protect(m_contents)->registerClient(this);
         } else {
-            protect(m_contents)->parseString(WTF::move(text));
-            if (protect(m_contents)->isCacheable())
-                Style::StyleSheetContentsCache::singleton().add(WTF::move(key), m_contents);
+            Ref contents = StyleSheetContents::create(m_contents->parserContext());
+            protect(m_contents)->unregisterClient(this);
+            m_contents = contents;
+            contents->registerClient(this);
+            contents->checkLoaded();
+            contents->parseString(WTF::move(text));
+            if (contents->isCacheable())
+                Style::StyleSheetContentsCache::singleton().add(WTF::move(key), contents);
         }
         return { };
     }
