@@ -869,7 +869,7 @@ bool RenderBlockFlow::establishesLineClampContainer() const
 {
     // "If the box is a multicol container, the behavior is the same as continue: auto."
     // https://drafts.csswg.org/css-overflow-4/#continue
-    return style().overflowContinue() == OverflowContinue::Discard && !multiColumnFlow();
+    return LineClampUpdater::shouldDiscardOverflow(*this) && !multiColumnFlow();
 }
 
 static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContainer)

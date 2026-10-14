@@ -40,6 +40,13 @@
 
 namespace WebCore {
 
+bool LineClampUpdater::shouldDiscardOverflow(const RenderBlock& blockContainer)
+{
+    // FIXME: continue: discard should turn the box into a fragmentation container instead (https://drafts.csswg.org/css-overflow-4/#valdef-continue-discard).
+    auto overflowContinue = blockContainer.style().overflowContinue();
+    return overflowContinue == OverflowContinue::Discard || overflowContinue == OverflowContinue::Collapse;
+}
+
 LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     : m_blockContainer(blockContainer)
 {
@@ -70,7 +77,7 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             return;
         // New, top level line clamp.
         m_isLineClampRoot = true;
-        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard, { } });
+        layoutState->setLineClamp(RenderLayoutState::LineClamp { static_cast<size_t>(maximumLinesForBlockContainer->value), shouldDiscardOverflow(m_blockContainer), { } });
         return;
     }
 
@@ -89,7 +96,7 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
             layoutState->setLineClamp({ });
             return;
         }
-        auto effectiveShouldDiscard = m_previousLineClamp->shouldDiscardOverflow  || m_blockContainer->style().overflowContinue() == OverflowContinue::Discard;
+        auto effectiveShouldDiscard = m_previousLineClamp->shouldDiscardOverflow || shouldDiscardOverflow(m_blockContainer);
         layoutState->setLineClamp(RenderLayoutState::LineClamp { m_previousLineClamp->maximumLines, effectiveShouldDiscard, { }, m_previousLineClamp->isStableTextWrap });
         return;
     }
@@ -129,7 +136,7 @@ bool LineClampUpdater::isAutoLineClampRoot() const
 {
     // line-clamp: auto (or just a block-ellipsis value) leaves max-lines at auto on a line-clamp container.
     CheckedRef style = m_blockContainer->style();
-    if (!style->maxLines().isAuto() || style->overflowContinue() != OverflowContinue::Discard)
+    if (!style->maxLines().isAuto() || !shouldDiscardOverflow(m_blockContainer))
         return false;
     // "If the box is a multicol container, the behavior is the same as continue: auto."
     CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(m_blockContainer.get());
@@ -142,7 +149,7 @@ void LineClampUpdater::setMaximumLines(size_t maximumLines)
     if (!layoutState)
         return;
     m_isLineClampRoot = true;
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, m_blockContainer->style().overflowContinue() == OverflowContinue::Discard, { } });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { maximumLines, shouldDiscardOverflow(m_blockContainer), { } });
 }
 
 void LineClampUpdater::setClampAfterBox(const RenderBox& clampAfterBox)
@@ -152,7 +159,7 @@ void LineClampUpdater::setClampAfterBox(const RenderBox& clampAfterBox)
         return;
     m_isLineClampRoot = true;
     // Lines before the clamp point do not run out of the budget (and no line gets the block ellipsis).
-    layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), m_blockContainer->style().overflowContinue() == OverflowContinue::Discard, &clampAfterBox });
+    layoutState->setLineClamp(RenderLayoutState::LineClamp { std::numeric_limits<size_t>::max(), shouldDiscardOverflow(m_blockContainer), &clampAfterBox });
 }
 
 void LineClampUpdater::resetLineClamp()

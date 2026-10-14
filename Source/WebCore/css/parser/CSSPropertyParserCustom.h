@@ -2126,7 +2126,7 @@ bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange& range,
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyID::MaxLines, WTF::move(maxLines));
     result.addPropertyForCurrentShorthand(state, CSSPropertyID::BlockEllipsis, WTF::move(blockEllipsis));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyID::Continue, CSSKeywordValue::create(isLegacyLineClamp || webkitLegacy ? CSSValueID::WebkitLegacy : CSSValueID::Discard));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyID::Continue, CSSKeywordValue::create(isLegacyLineClamp || webkitLegacy ? CSSValueID::WebkitLegacy : CSSValueID::Collapse));
     return range.atEnd();
 }
 

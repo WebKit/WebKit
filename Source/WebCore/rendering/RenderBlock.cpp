@@ -1384,7 +1384,7 @@ bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(con
         || style.containerType().hasSizeContainment()
         || Style::ContainmentChecker { style, *element }.shouldApplyPaintContainment()
         || (style.display().isBlockType() && !style.blockStepSize().isNone())
-        || style.overflowContinue() == OverflowContinue::Discard;
+        || (style.display().doesGenerateBlockContainer() && (style.overflowContinue() == OverflowContinue::Discard || style.overflowContinue() == OverflowContinue::Collapse));
 }
 
 bool RenderBlock::establishesIndependentFormattingContext() const
