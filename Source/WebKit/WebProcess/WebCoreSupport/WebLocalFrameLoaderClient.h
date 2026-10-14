@@ -87,6 +87,7 @@ private:
     
     void setCopiesOnScroll() final;
     
+    void willDetachFromParent() final;
     void detachedFromParent2() final;
     void detachedFromParent3() final;
 

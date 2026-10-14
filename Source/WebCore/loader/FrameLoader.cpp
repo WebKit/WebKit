@@ -3523,6 +3523,7 @@ void FrameLoader::detachFromParent()
 
     closeURL();
     history().saveScrollPositionAndViewStateToItem(protect(history().currentItem()).get());
+    m_client->willDetachFromParent();
     detachChildren();
     if (frame->document()->backForwardCacheState() != Document::InBackForwardCache) {
         // stopAllLoaders() needs to be called after detachChildren() if the document is not in the back/forward cache,
