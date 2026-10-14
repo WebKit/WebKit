@@ -52,7 +52,7 @@ static bool listItemsAreChildrenOfSelect(const HTMLSelectElement& select)
 {
     if (CheckedPtr renderer = select.renderer())
         return is<RenderListBox>(*renderer);
-    return !select.usesMenuList();
+    return !select.isDropdownBox();
 }
 
 AccessibilityListBoxOption::AccessibilityListBoxOption(AXID axID, RenderObject& renderer, AXObjectCache& cache)
@@ -72,7 +72,7 @@ AccessibilityRole AccessibilityListBoxOption::determineAccessibilityRole()
     // Base-appearance select options live inside a popover and behave as menu
     // items (activate to select and close), not listbox options (toggle selection
     // in an always-visible list).
-    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(m_node.get())) {
+    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(m_node)) {
         if (RefPtr select = option->ownerSelectElement(); select && select->usesBaseAppearancePicker())
             return AccessibilityRole::MenuItem;
     }
@@ -97,7 +97,7 @@ bool AccessibilityListBoxOption::isEnabled() const
 
 bool AccessibilityListBoxOption::isSelected() const
 {
-    RefPtr option = dynamicDowncast<HTMLOptionElement>(m_node.get());
+    RefPtr option = dynamicDowncast<HTMLOptionElement>(m_node);
     return option && option->selected();
 }
 
@@ -170,7 +170,7 @@ void AccessibilityListBoxOption::addChildren()
 
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const
 {
-    RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(m_node.get());
+    RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(m_node);
     if (!optionElement)
         return false;
 
@@ -201,8 +201,8 @@ String AccessibilityListBoxOption::stringValue() const
 
 Element* AccessibilityListBoxOption::actionElement() const
 {
-    AX_ASSERT(is<HTMLElement>(m_node.get()));
-    return dynamicDowncast<Element>(m_node.get());
+    AX_ASSERT(is<HTMLElement>(m_node));
+    return dynamicDowncast<Element>(m_node);
 }
 
 AccessibilityObject* AccessibilityListBoxOption::parentObject() const

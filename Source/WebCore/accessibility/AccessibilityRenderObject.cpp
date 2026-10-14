@@ -1104,7 +1104,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         }
 
         for (Ref ancestor : ancestorsOfType<HTMLSelectElement>(*node)) {
-            if (ancestor->usesMenuList() && !ancestor->usesBaseAppearancePicker())
+            if (ancestor->isDropdownBox() && !ancestor->usesBaseAppearancePicker())
                 return true;
         }
     }
@@ -2420,7 +2420,7 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
         return true;
 
     // Element-based check for HTMLSelectElement listbox.
-    if (auto* selectElement = dynamicDowncast<HTMLSelectElement>(*element); selectElement && !selectElement->usesMenuList())
+    if (auto* selectElement = dynamicDowncast<HTMLSelectElement>(*element); selectElement && !selectElement->isDropdownBox())
         return true;
 
     // Textboxes should send out notifications.

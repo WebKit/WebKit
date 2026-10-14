@@ -886,7 +886,7 @@ void AccessibilityNodeObject::addChildren()
 #else
     // For listbox selects, use listItems() to get option elements instead of
     // composedTreeChildren which would return shadow DOM content.
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node); selectElement && !selectElement->usesMenuList()) {
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node); selectElement && !selectElement->isDropdownBox()) {
         for (const auto& listItem : selectElement->listItems()) {
             if (listItem)
                 addChild(protect(cache->getOrCreate(*listItem)));
@@ -977,13 +977,10 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
     }
 
     // For HTMLSelectElement with arbitrary renderer use the size attribute as approximation.
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->usesMenuList()) {
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->isDropdownBox()) {
         const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
         AccessibilityChildrenVector result;
-        unsigned visibleCount = selectElement->size();
-        if (!visibleCount)
-            visibleCount = 4; // Default size for multiple select is 4
-        size_t count = std::min(static_cast<size_t>(visibleCount), children.size());
+        size_t count = std::min(static_cast<size_t>(selectElement->preferredSize()), children.size());
         result.reserveInitialCapacity(count);
         for (size_t i = 0; i < count; i++)
             result.append(children[i]);

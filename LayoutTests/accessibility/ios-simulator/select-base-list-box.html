@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="listbox" class="base" size="3">
+    <option>Apple</option>
+    <option id="banana" selected>Banana</option>
+    <option>Cherry</option>
+</select>
+
+<select id="multiple" multiple>
+    <option selected>Cheese</option>
+    <option selected>Ham</option>
+</select>
+</div>
+
+<script>
+var output = "This test ensures that a base appearance list box is exposed as a list box with its options, while a native select with the multiple attribute is a dropdown box on iOS.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.axListBox = await waitForElementById("listbox");
+        output += expect("axListBox?.role", "'ListBox'");
+        output += expect("axListBox?.supportsExpanded", "false");
+        window.axBanana = await waitForElementById("banana");
+        output += expect("axBanana?.role", "'ListBoxOption'");
+        output += expect("axBanana?.isSelected", "true");
+
+        window.axMultiple = await waitForElementById("multiple");
+        output += expect("axMultiple?.role", "'PopUpButton'");
+        output += expect("axMultiple?.stringValue", "'AXValue: 2 Items'");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

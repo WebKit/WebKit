@@ -1,0 +1,13 @@
+This test ensures that a base appearance list box is exposed as a list box with its options, while a native select with the multiple attribute is a dropdown box on iOS.
+
+PASS: axListBox?.role === 'ListBox'
+PASS: axListBox?.supportsExpanded === false
+PASS: axBanana?.role === 'ListBoxOption'
+PASS: axBanana?.isSelected === true
+PASS: axMultiple?.role === 'PopUpButton'
+PASS: axMultiple?.stringValue === 'AXValue: 2 Items'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

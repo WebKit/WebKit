@@ -1025,14 +1025,14 @@ static RenderObjectClass renderObjectClass(RenderObject& renderer)
         return RenderObjectClass::MathML;
 #endif
 
-    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(node); select && select->usesMenuList() && !select->usesBaseAppearancePicker())
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(node); select && select->isDropdownBox() && !select->usesBaseAppearancePicker())
         return RenderObjectClass::MenuList;
 
     RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(node);
     RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(node);
     if (optionElement || optGroupElement) {
         RefPtr select = optionElement ? optionElement->ownerSelectElement() : optGroupElement->ownerSelectElement();
-        if (select && !select->usesMenuList())
+        if (select && !select->isDropdownBox())
             return RenderObjectClass::ListBoxOption;
     }
 
@@ -1222,7 +1222,7 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
         if (!select)
             return nullptr;
         RefPtr<AccessibilityObject> object;
-        if (select->usesMenuList() && !select->usesBaseAppearancePicker()) {
+        if (select->isDropdownBox() && !select->usesBaseAppearancePicker()) {
             if (!optionElement || !select->renderer())
                 return nullptr;
             object = AccessibilityMenuListOption::create(AXID::generate(), *optionElement, *this);
