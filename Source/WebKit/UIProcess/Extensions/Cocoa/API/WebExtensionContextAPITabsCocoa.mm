@@ -47,6 +47,7 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
 #import <WebCore/ImageUtilities.h>
+#import <wtf/Borrow.h>
 #import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/MathExtras.h>
@@ -597,7 +598,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
     Vector<Ref<WebExtensionTab>> tabs;
     tabs.reserveInitialCapacity(tabIdentifiers.size());
 
-    for (auto& tabIdentifier : tabIdentifiers) {
+    for (auto& tabIdentifier : borrow(tabIdentifiers)) {
         if (RefPtr tab = getTab(tabIdentifier))
             tabs.append(tab.releaseNonNull());
         else {
@@ -700,7 +701,7 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
     Vector<Ref<WebExtensionTab>> tabs;
     tabs.reserveInitialCapacity(tabIdentifiers.size());
 
-    for (auto& tabIdentifier : tabIdentifiers) {
+    for (auto& tabIdentifier : borrow(tabIdentifiers)) {
         if (RefPtr tab = getTab(tabIdentifier))
             tabs.append(tab.releaseNonNull());
         else {
@@ -745,7 +746,7 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
         if (parameters.code)
             scriptData = SourcePair { parameters.code.value(), URL { } };
         else {
-            RetainPtr filePath = parameters.files.value().first().createNSString();
+            RetainPtr filePath = borrow(parameters.files.value())->first().createNSString();
             scriptData = sourcePairForResource(filePath.get(), *this);
             if (!scriptData) {
                 completionHandler(toWebExtensionError(apiName, nullString(), makeString("Invalid resource: "_s, String(filePath.get()))));

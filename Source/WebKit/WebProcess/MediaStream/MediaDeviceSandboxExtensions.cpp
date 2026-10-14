@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -43,7 +44,7 @@ std::pair<String, Ref<SandboxExtension>> MediaDeviceSandboxExtensions::operator[
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_ids.size() == m_handles.size());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < m_ids.size());
-    return { m_ids[i], SandboxExtension::create(WTF::move(m_handles[i])).releaseNonNull() };
+    return { m_ids[i], SandboxExtension::create(WTF::move(borrow(m_handles)[i])).releaseNonNull() };
 }
 
 size_t MediaDeviceSandboxExtensions::size() const

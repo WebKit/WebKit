@@ -48,7 +48,7 @@ void WebExtensionAPIWindowsEvent::invokeListenersWithArgument(id argument, Optio
         return;
 
     // Copy the listeners since call() can trigger a mutation of the listeners.
-    auto listenersCopy = m_listeners;
+    const Vector listenersCopy = m_listeners;
 
     for (auto& listener : listenersCopy) {
         if (!listener.second.containsAny(windowTypeFilter))

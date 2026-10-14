@@ -37,6 +37,7 @@
 #include <WebCore/ScrollAnimator.h>
 #include <WebCore/TiledBacking.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -360,7 +361,7 @@ auto PDFScrollingPresentationController::layerCoveragesForRepaintPageCoverage(Re
 {
     Vector<LayerCoverage> result;
     FloatRect contentsRect;
-    for (auto& perPage : pageCoverage)
+    for (auto& perPage : borrow(pageCoverage))
         contentsRect.unite(m_plugin->convertUp(UnifiedPDFPlugin::CoordinateSpace::PDFPage, UnifiedPDFPlugin::CoordinateSpace::Contents, perPage.rectInPageLayoutCoordinates, perPage.pageIndex));
 
 #if ENABLE(PDFKIT_PAINTED_SELECTIONS)

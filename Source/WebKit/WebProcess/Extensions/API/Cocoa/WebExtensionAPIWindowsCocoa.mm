@@ -44,6 +44,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import "WebProcess.h"
+#import <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -107,7 +108,7 @@ static NSDictionary *toWebAPI(const WebExtensionWindowParameters& parameters)
     if (parameters.tabs) {
         NSMutableArray *tabs = [[NSMutableArray alloc] initWithCapacity:parameters.tabs.value().size()];
 
-        for (auto& tab : parameters.tabs.value())
+        for (auto& tab : borrow(parameters.tabs.value()))
             [tabs addObject:toWebAPI(tab)];
 
         result[tabsKey] = [tabs copy];

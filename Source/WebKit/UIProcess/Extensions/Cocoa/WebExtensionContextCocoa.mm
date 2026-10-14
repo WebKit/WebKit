@@ -94,6 +94,7 @@
 #import <WebCore/UserScript.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/EnumTraits.h>
 #import <wtf/FileSystem.h>
@@ -568,7 +569,7 @@ void WebExtensionContext::removeStaleExtensionWebsiteData()
         auto activeExtensionURLs = controller->activeExtensionURLs();
 
         Vector<WebsiteDataRecord> staleRecords;
-        for (auto& record : records) {
+        for (auto& record : borrow(records)) {
             WebsiteDataRecord staleRecord;
             for (auto& origin : record.origins) {
                 if (WebExtensionMatchPattern::isWebExtensionURL(origin.toURL()) && !activeExtensionURLs.contains(origin.toURL().protocolHostAndPort().convertToASCIILowercase()))
@@ -774,7 +775,7 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
 void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& requestedURLs, RefPtr<WebExtensionTab> tab, CompletionHandler<void(URLSet&&, URLSet&&, WallTime expirationDate)>&& completionHandler, GrantOnCompletion grantOnCompletion, OptionSet<PermissionStateOptions> options)
 {
     URLSet neededURLs;
-    for (auto& url : requestedURLs) {
+    for (auto& url : borrow(requestedURLs)) {
         // Only HTTP family URLs are really valid to request. This avoids requesting for
         // things like new tab pages, special tabs, other extensions, about:blank, etc.
         if (url.protocolIsInHTTPFamily() && needsPermission(url, tab.get(), options))
@@ -1310,7 +1311,8 @@ RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAcc
 RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
     // Return the first non-null window, skipping private windows if access is denied.
-    for (auto& windowIdentifier : m_windowOrderVector) {
+    for (size_t i = 0; i < m_windowOrderVector.size(); ++i) {
+        auto windowIdentifier = m_windowOrderVector[i];
         if (RefPtr window = getWindow(windowIdentifier, std::nullopt, ignoreExtensionAccess))
             return window;
     }
@@ -2094,7 +2096,7 @@ WebExtensionCommand* WebExtensionContext::command(const String& commandIdentifie
     if (commandIdentifier.isEmpty())
         return nullptr;
 
-    for (auto& command : commands()) {
+    for (auto& command : borrow(commands())) {
         if (command->identifier() == commandIdentifier)
             return command.ptr();
     }
@@ -2167,7 +2169,7 @@ WebExtensionCommand* WebExtensionContext::command(NSEvent *event)
     if (event.type != NSEventTypeKeyDown || event.isARepeat)
         return nullptr;
 
-    for (auto& command : commands()) {
+    for (auto& command : borrow(commands())) {
         if (command->matchesEvent(event))
             return command.ptr();
     }
@@ -2977,7 +2979,7 @@ void WebExtensionContext::performTasksAfterBackgroundContentLoads()
 
     RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content loaded", m_actionsToPerformAfterBackgroundContentLoads.size());
 
-    for (auto& action : m_actionsToPerformAfterBackgroundContentLoads)
+    for (auto& action : borrow(m_actionsToPerformAfterBackgroundContentLoads))
         action();
 
     m_backgroundContentIsLoaded = true;
@@ -3603,7 +3605,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 
     auto addStaticRulesets = [this, protectedThis = Ref { *this }, applyDeclarativeNetRequestRules = WTF::move(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
         RefPtr extension = m_extension;
-        for (auto& ruleset : extension->declarativeNetRequestRulesets()) {
+        for (auto& ruleset : borrow(extension->declarativeNetRequestRulesets())) {
             if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 

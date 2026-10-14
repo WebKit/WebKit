@@ -32,6 +32,7 @@
 #import "WKNFReaderSessionDelegate.h"
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
@@ -90,7 +91,7 @@ NfcConnection::~NfcConnection()
 Vector<uint8_t> NfcConnection::transact(Vector<uint8_t>&& data) const
 {
     // The method will return an empty NSData if the tag is disconnected.
-    RetainPtr responseData = [m_session transceive:toNSData(data).get()];
+    RetainPtr responseData = [m_session transceive:toNSData(borrow(data)->span()).get()];
     return makeVector(responseData.get());
 }
 

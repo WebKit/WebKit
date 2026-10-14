@@ -32,6 +32,7 @@
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/ExceptionData.h>
+#import <wtf/Borrow.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -150,7 +151,7 @@ void MockLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionRespo
         return;
 
     RefPtr<AuthenticatorAssertionResponse> matchingResponse;
-    for (auto& response : responses) {
+    for (auto& response : borrow(responses)) {
         RefPtr rawId = response->rawId();
         ASSERT(rawId);
         auto rawIdBase64 = base64EncodeToString(rawId->span());

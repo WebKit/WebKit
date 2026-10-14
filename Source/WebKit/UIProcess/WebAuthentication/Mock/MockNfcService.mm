@@ -33,6 +33,7 @@
 #import <WebCore/FidoConstants.h>
 #import <objc/runtime.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -230,7 +231,7 @@ NSData* MockNfcService::transceive()
     if (m_configuration.nfc->payloadBase64.isEmpty())
         return nil;
 
-    auto result = adoptNS([[NSData alloc] initWithBase64EncodedString:m_configuration.nfc->payloadBase64[0].createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
+    RetainPtr result = adoptNS([[NSData alloc] initWithBase64EncodedString:borrow(m_configuration.nfc->payloadBase64)[0].createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]);
     m_configuration.nfc->payloadBase64.removeAt(0);
     return result.autorelease();
 }

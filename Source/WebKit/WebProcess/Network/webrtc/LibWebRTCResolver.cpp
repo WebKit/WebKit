@@ -36,6 +36,7 @@
 #include "WebProcess.h"
 #include <WebCore/Document.h>
 #include <WebCore/Settings.h>
+#include <wtf/Borrow.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -125,7 +126,7 @@ bool LibWebRTCResolver::GetResolvedAddress(int family, webrtc::SocketAddress* ad
         return false;
 
     *address = m_addressToResolve;
-    for (auto& ipAddress : m_addresses) {
+    for (auto& ipAddress : borrow(m_addresses)) {
         if (family == ipAddress.family()) {
             address->SetResolvedIP(ipAddress);
             address->SetPort(m_port);

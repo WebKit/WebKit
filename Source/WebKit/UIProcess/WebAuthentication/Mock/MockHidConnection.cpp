@@ -35,6 +35,7 @@
 #include <WebCore/Pin.h>
 #include <WebCore/WebAuthenticationConstants.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/darwin/DispatchExtras.h>
@@ -159,7 +160,7 @@ void MockHidConnection::parseRequest()
             ASSERT(payload.size());
             auto cmd = static_cast<CtapRequestCommand>(payload[0]);
             payload.removeAt(0);
-            auto requestMap = CBORReader::read(payload);
+            auto requestMap = CBORReader::read(borrow(payload));
             ASSERT(requestMap || cmd == CtapRequestCommand::kAuthenticatorGetNextAssertion);
 
             if (cmd == CtapRequestCommand::kAuthenticatorMakeCredential) {
@@ -220,7 +221,7 @@ void MockHidConnection::feedReports()
             return;
         }
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, kCtapChannelIdSize));
+        cryptographicallyRandomValues(borrow(payload)->mutableSpan().subspan(writePosition, kCtapChannelIdSize));
         auto channel = kHidBroadcastChannel;
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             channel--;
@@ -286,7 +287,7 @@ void MockHidConnection::feedReports()
             message = FidoHidMessage::create(m_currentChannel, FidoHidDeviceCommand::kCbor, { static_cast<uint8_t>(CtapDeviceResponseCode::kCtap2ErrUnsupportedOption) });
         else {
             ASSERT(!m_configuration.hid->payloadBase64.isEmpty());
-            auto payload = base64Decode(m_configuration.hid->payloadBase64[0]);
+            auto payload = base64Decode(borrow(m_configuration.hid->payloadBase64)[0]);
             m_configuration.hid->payloadBase64.removeAt(0);
             if (!m_configuration.hid->isU2f)
                 message = FidoHidMessage::create(m_currentChannel, FidoHidDeviceCommand::kCbor, WTF::move(*payload));
@@ -341,7 +342,7 @@ void MockHidConnection::initializeExpectedCommands()
     m_expectedCommands.clear();
     m_currentExpectedCommandIndex = 0;
 
-    for (const auto& expectedCommandBase64 : m_configuration.hid->expectedCommandsBase64) {
+    for (const auto& expectedCommandBase64 : borrow(m_configuration.hid->expectedCommandsBase64)) {
         auto decodedMessage = base64Decode(expectedCommandBase64);
         if (decodedMessage)
             m_expectedCommands.append(WTF::move(*decodedMessage));
@@ -359,7 +360,8 @@ void MockHidConnection::validateExpectedCommand(const Vector<uint8_t>& actualCom
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("MockHidConnection: Unexpected command.");
     }
 
-    const auto& expectedCommand = m_expectedCommands[m_currentExpectedCommandIndex];
+    Borrow borrowedExpectedCommands = m_expectedCommands;
+    const auto& expectedCommand = borrowedExpectedCommands[m_currentExpectedCommandIndex];
     if (actualCommand != expectedCommand) {
         RELEASE_LOG_ERROR(WebAuthn, "MockHidConnection: VALIDATION FAILED - Command mismatch at index %zu. Expected %s Actual %s", m_currentExpectedCommandIndex, base64EncodeToString(expectedCommand).utf8(), base64EncodeToString(actualCommand).utf8());
         RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("MockHidConnection: Command did not match expected value.");

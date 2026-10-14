@@ -48,6 +48,7 @@
 #include <WebCore/IDBTransactionInfo.h>
 #include <WebCore/IDBValue.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -284,7 +285,7 @@ void WebIDBConnectionToServer::didGetRecord(const WebIDBResult& result)
 void WebIDBConnectionToServer::didGetAllRecords(const WebIDBResult& result)
 {
     if (result.clientOrigin()) {
-        for (auto& value : result.resultData().getAllResult().values())
+        for (auto& value : borrow(result.resultData().getAllResult().values()))
             attachStorageKeepAliveIfNeeded(result, value);
     }
     m_connectionToServer->didGetAllRecords(result.resultData());

@@ -41,6 +41,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
@@ -271,7 +272,7 @@ static NSDictionary *toWebAPI(const Vector<WebExtensionMatchedRuleParameters>& m
 {
     NSMutableArray *matchedRuleArray = [NSMutableArray arrayWithCapacity:matchedRules.size()];
 
-    for (auto& matchedRule : matchedRules) {
+    for (auto& matchedRule : borrow(matchedRules)) {
         [matchedRuleArray addObject:@{
             @"request": @{ @"url": matchedRule.url.string().createNSString().get() },
             @"timeStamp": @(floor(matchedRule.timeStamp.secondsSinceEpoch().milliseconds())),

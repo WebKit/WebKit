@@ -42,6 +42,7 @@
 #import "WebExtensionMenuItemParameters.h"
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
@@ -122,14 +123,14 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
     }
 
     if (parameters.documentURLPatterns) {
-        for (auto& patternString : parameters.documentURLPatterns.value()) {
+        for (auto& patternString : borrow(parameters.documentURLPatterns.value())) {
             if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
                 m_documentPatterns.add(pattern.releaseNonNull());
         }
     }
 
     if (parameters.targetURLPatterns) {
-        for (auto& patternString : parameters.targetURLPatterns.value()) {
+        for (auto& patternString : borrow(parameters.targetURLPatterns.value())) {
             if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
                 m_targetPatterns.add(pattern.releaseNonNull());
         }
@@ -217,7 +218,7 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
     if (parameters.documentURLPatterns) {
         m_documentPatterns.clear();
 
-        for (auto& patternString : parameters.documentURLPatterns.value()) {
+        for (auto& patternString : borrow(parameters.documentURLPatterns.value())) {
             if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
                 m_documentPatterns.add(pattern.releaseNonNull());
         }
@@ -226,7 +227,7 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
     if (parameters.targetURLPatterns) {
         m_targetPatterns.clear();
 
-        for (auto& patternString : parameters.targetURLPatterns.value()) {
+        for (auto& patternString : borrow(parameters.targetURLPatterns.value())) {
             if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
                 m_targetPatterns.add(pattern.releaseNonNull());
         }

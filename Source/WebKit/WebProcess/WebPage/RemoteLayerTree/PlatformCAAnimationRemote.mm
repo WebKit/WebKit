@@ -37,6 +37,7 @@
 #import <WebCore/TimingFunction.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
@@ -281,7 +282,7 @@ void PlatformCAAnimationRemote::setFromValue(float value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[0] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setFromValue(const TransformationMatrix& value)
@@ -290,7 +291,7 @@ void PlatformCAAnimationRemote::setFromValue(const TransformationMatrix& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[0] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setFromValue(const FloatPoint3D& value)
@@ -299,7 +300,7 @@ void PlatformCAAnimationRemote::setFromValue(const FloatPoint3D& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[0] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setFromValue(const Color& value)
@@ -308,7 +309,7 @@ void PlatformCAAnimationRemote::setFromValue(const Color& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[0] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setFromValue(const FilterOperation& operation)
@@ -317,7 +318,7 @@ void PlatformCAAnimationRemote::setFromValue(const FilterOperation& operation)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = KeyframeValue(operation.clone());
+    borrow(m_properties.keyValues)[0] = KeyframeValue(operation.clone());
 }
 
 void PlatformCAAnimationRemote::copyFromValueFrom(const PlatformCAAnimation& value)
@@ -328,7 +329,7 @@ void PlatformCAAnimationRemote::copyFromValueFrom(const PlatformCAAnimation& val
         return;
     
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[0] = other.m_properties.keyValues[0];
+    borrow(m_properties.keyValues)[0] = borrow(other.m_properties.keyValues)[0];
 }
 
 void PlatformCAAnimationRemote::setToValue(float value)
@@ -337,7 +338,7 @@ void PlatformCAAnimationRemote::setToValue(float value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[1] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setToValue(const TransformationMatrix& value)
@@ -346,7 +347,7 @@ void PlatformCAAnimationRemote::setToValue(const TransformationMatrix& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[1] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setToValue(const FloatPoint3D& value)
@@ -355,7 +356,7 @@ void PlatformCAAnimationRemote::setToValue(const FloatPoint3D& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[1] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setToValue(const Color& value)
@@ -364,7 +365,7 @@ void PlatformCAAnimationRemote::setToValue(const Color& value)
         return;
 
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(value);
+    borrow(m_properties.keyValues)[1] = KeyframeValue(value);
 }
 
 void PlatformCAAnimationRemote::setToValue(const FilterOperation& operation)
@@ -373,7 +374,7 @@ void PlatformCAAnimationRemote::setToValue(const FilterOperation& operation)
         return;
     
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = KeyframeValue(operation.clone());
+    borrow(m_properties.keyValues)[1] = KeyframeValue(operation.clone());
 }
 
 void PlatformCAAnimationRemote::copyToValueFrom(const PlatformCAAnimation& value)
@@ -383,7 +384,7 @@ void PlatformCAAnimationRemote::copyToValueFrom(const PlatformCAAnimation& value
     if (other.m_properties.keyValues.size() < 2)
         return;
     m_properties.keyValues.resize(2);
-    m_properties.keyValues[1] = other.m_properties.keyValues[1];
+    borrow(m_properties.keyValues)[1] = borrow(other.m_properties.keyValues)[1];
 }
 
 // Keyframe-animation properties.
@@ -501,8 +502,9 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         RetainPtr basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath.createNSString().get()];
 
         if (properties.keyValues.size() > 1) {
-            [basicAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
-            [basicAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1]).get()];
+            Borrow borrowedKeyValues = properties.keyValues;
+            [basicAnimation setFromValue:animationValueFromKeyframeValue(borrowedKeyValues[0]).get()];
+            [basicAnimation setToValue:animationValueFromKeyframeValue(borrowedKeyValues[1]).get()];
         }
 
         if (properties.timingFunctions.size())
@@ -557,12 +559,14 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         RetainPtr springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath.createNSString().get()];
 
         if (properties.keyValues.size() > 1) {
-            [springAnimation setFromValue:animationValueFromKeyframeValue(properties.keyValues[0]).get()];
-            [springAnimation setToValue:animationValueFromKeyframeValue(properties.keyValues[1]).get()];
+            Borrow borrowedKeyValues = properties.keyValues;
+            [springAnimation setFromValue:animationValueFromKeyframeValue(borrowedKeyValues[0]).get()];
+            [springAnimation setToValue:animationValueFromKeyframeValue(borrowedKeyValues[1]).get()];
         }
 
         if (properties.timingFunctions.size()) {
-            auto& timingFunction = properties.timingFunctions[0];
+            Borrow borrowedTimingFunctions = properties.timingFunctions;
+            auto& timingFunction = borrowedTimingFunctions[0];
             if (timingFunction->isSpringTimingFunction()) {
                 Ref function = downcast<SpringTimingFunction>(timingFunction.get());
                 [springAnimation setMass:function->mass()];
@@ -633,7 +637,7 @@ void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLaye
     for (const auto& value : animationsToRemove)
         [layer removeAnimationForKey:value.createNSString().get()];
 
-    for (const auto& keyAnimationPair : animationsToAdd)
+    for (const auto& keyAnimationPair : borrow(animationsToAdd))
         addAnimationToLayer(layer, layerTreeHost, keyAnimationPair.first, keyAnimationPair.second);
 
     END_BLOCK_OBJC_EXCEPTIONS
@@ -694,7 +698,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
         ts.writeIndent();
         ts << "(keyframe "_s << unsigned(i);
         if (i < animation.keyTimes.size())
-            ts.dumpProperty("time"_s, animation.keyTimes[i]);
+            ts.dumpProperty("time"_s, borrow(animation.keyTimes)[i]);
 
         if (i < animation.timingFunctions.size())
             ts.dumpProperty<const TimingFunction&>("timing function"_s, protect(animation.timingFunctions[i]));
@@ -702,7 +706,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
         if (i < animation.keyValues.size()) {
             ts.startGroup();
             ts << "value "_s;
-            WTF::switchOn(animation.keyValues[i],
+            WTF::switchOn(borrow(animation.keyValues)[i],
                 [&](const float number) { ts << "number="_s << number; },
                 [&](const WebCore::Color color) { ts << "color="_s << color; },
                 [&](const WebCore::FloatPoint3D point) { ts << "point="_s << point; },
@@ -724,7 +728,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
         ts << '(' << "animations"_s;
         ts.increaseIndent();
 
-        for (auto& childAnimation : animation.animations) {
+        for (auto& childAnimation : borrow(animation.animations)) {
             ts << '\n';
             ts.writeIndent();
             ts << "(animation "_s << childAnimation;

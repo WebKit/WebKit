@@ -165,7 +165,7 @@ void WebExtensionAPINotifications::getAll(Ref<WebExtensionCallbackHandler>&& cal
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/getAll
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsGetAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<String> identifiers) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsGetAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](const Vector<String> identifiers) {
         NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:identifiers.size()];
         for (auto& identifier : identifiers)
             result[identifier.createNSString().get()] = @YES;

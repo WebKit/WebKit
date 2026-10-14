@@ -41,6 +41,7 @@
 #include <WebCore/Page.h>
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <pal/spi/mac/DataDetectorsSPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
@@ -112,7 +113,7 @@ static RetainPtr<DDHighlightRef> createPlatformDataDetectorHighlight(Vector<Floa
     BOOL drawFlipped = YES;
     float targetSurfaceBackingScaleFactor = 0;
 
-    return adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, highlightBoundsCG.mutableSpan().data(), highlightBounds.size(), visibleContentRect, style, drawButton, writingDirection, endsWithEOL, drawFlipped, targetSurfaceBackingScaleFactor));
+    return adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, borrow(highlightBoundsCG)->mutableSpan().data(), highlightBounds.size(), visibleContentRect, style, drawButton, writingDirection, endsWithEOL, drawFlipped, targetSurfaceBackingScaleFactor));
 }
 
 RetainPtr<DDHighlightRef> PDFDataDetectorOverlayController::createPlatformDataDetectorHighlight(PDFDataDetectorItem& dataDetectorItem) const
@@ -155,7 +156,7 @@ bool PDFDataDetectorOverlayController::handleMouseEvent(const WebCore::PlatformM
     RefPtr<PDFDataDetectorItem> dataDetectorItemForActiveHighlight;
 
     if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end()) {
-        for (auto& [dataDetectorItem, coreHighlight] : iterator->value) {
+        for (auto& [dataDetectorItem, coreHighlight] : borrow(iterator->value)) {
             Boolean isOverButton = NO;
             if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(protect(coreHighlight->highlight()).get(), mousePositionInMainFrameContentsSpace, &isOverButton))
                 continue;

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include <WebCore/FidoConstants.h>
 #include <wtf/Assertions.h>
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -211,8 +212,8 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     }
     ASSERT(message->channelId() == m_channelId);
 
-    auto payload = message->getMessagePayload();
-    if (payload.size() < kHidInitResponseSize || !spanHasPrefix(payload.span(), m_nonce.span())) {
+    const Vector payload = message->getMessagePayload();
+    if (payload.size() < kHidInitResponseSize || !spanHasPrefix(payload.span(), borrow(m_nonce)->span())) {
         m_state = State::Idle;
         RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, data = WTF::move(m_requestData), callback = WTF::move(m_responseCallback)]() mutable {
             if (RefPtr protectedThis = weakThis)

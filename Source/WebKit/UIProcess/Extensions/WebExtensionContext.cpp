@@ -41,6 +41,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/TextResourceDecoder.h>
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -1348,7 +1349,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
     auto& userContentControllers = this->userContentControllers();
 
-    for (auto& injectedContentData : injectedContents) {
+    for (auto& injectedContentData : borrow(injectedContents)) {
         HashSet<String> includeMatchPatternsSet;
 
         for (auto& includeMatchPattern : injectedContentData.includeMatchPatterns) {
@@ -1408,7 +1409,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
         RefPtr extension = m_extension;
 
-        for (auto& scriptPath : injectedContentData.scriptPaths) {
+        for (auto& scriptPath : borrow(injectedContentData.scriptPaths)) {
             auto scriptStringResult = extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);
             if (!scriptStringResult) {
                 recordErrorIfNeeded(scriptStringResult.error());
@@ -1433,7 +1434,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             }
         }
 
-        for (auto& styleSheetPath : injectedContentData.styleSheetPaths) {
+        for (auto& styleSheetPath : borrow(injectedContentData.styleSheetPaths)) {
             auto styleSheetStringResult = extension->resourceStringForPath(styleSheetPath, WebExtension::CacheResult::Yes);
             if (!styleSheetStringResult) {
                 recordErrorIfNeeded(styleSheetStringResult.error());
@@ -1466,12 +1467,12 @@ void WebExtensionContext::addInjectedContent(WebUserContentControllerProxy& user
         return;
 
     for (auto& entry : m_injectedScriptsPerPatternMap) {
-        for (auto& userScript : entry.value)
+        for (auto& userScript : borrow(entry.value))
             userContentController.addUserScript(userScript, InjectUserScriptImmediately::Yes);
     }
 
     for (auto& entry : m_injectedStyleSheetsPerPatternMap) {
-        for (auto& userStyleSheet : entry.value)
+        for (auto& userStyleSheet : borrow(entry.value))
             userContentController.addUserStyleSheet(userStyleSheet);
     }
 }
@@ -1505,12 +1506,12 @@ void WebExtensionContext::removeInjectedContent()
     // and content was injected into any of those content controllers.
     for (Ref userContentController : extensionController()->allUserContentControllers()) {
         for (auto& entry : m_injectedScriptsPerPatternMap) {
-            for (auto& userScript : entry.value)
+            for (auto& userScript : borrow(entry.value))
                 userContentController->removeUserScript(userScript);
         }
 
         for (auto& entry : m_injectedStyleSheetsPerPatternMap) {
-            for (auto& userStyleSheet : entry.value)
+            for (auto& userStyleSheet : borrow(entry.value))
                 userContentController->removeUserStyleSheet(userStyleSheet);
         }
     }
@@ -1538,8 +1539,8 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
     if (!isLoaded())
         return;
 
-    auto originInjectedScripts = m_injectedScriptsPerPatternMap.take(pattern);
-    auto originInjectedStyleSheets = m_injectedStyleSheetsPerPatternMap.take(pattern);
+    const Vector originInjectedScripts = m_injectedScriptsPerPatternMap.take(pattern);
+    const Vector originInjectedStyleSheets = m_injectedStyleSheetsPerPatternMap.take(pattern);
 
     if (originInjectedScripts.isEmpty() && originInjectedStyleSheets.isEmpty())
         return;
@@ -1558,12 +1559,12 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
 void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& userContentController)
 {
     for (auto& entry : m_injectedScriptsPerPatternMap) {
-        for (auto& userScript : entry.value)
+        for (auto& userScript : borrow(entry.value))
             userContentController.removeUserScript(userScript);
     }
 
     for (auto& entry : m_injectedStyleSheetsPerPatternMap) {
-        for (auto& userStyleSheet : entry.value)
+        for (auto& userStyleSheet : borrow(entry.value))
             userContentController.removeUserStyleSheet(userStyleSheet);
     }
 }
@@ -1603,7 +1604,7 @@ bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
         return false;
 
     DeclarativeNetRequestMatchedRuleVector filteredMatchedRules;
-    for (auto& matchedRule : m_matchedRules) {
+    for (auto& matchedRule : borrow(m_matchedRules)) {
         if (matchedRule.timeStamp >= startTime)
             filteredMatchedRules.append(matchedRule);
     }

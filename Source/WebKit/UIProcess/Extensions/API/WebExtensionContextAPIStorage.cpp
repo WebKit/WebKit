@@ -37,6 +37,7 @@
 #include "WebExtensionStorageAccessLevel.h"
 #include "WebExtensionStorageSQLiteStore.h"
 #include "WebExtensionUtilities.h"
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -116,7 +117,7 @@ void WebExtensionContext::storageSet(WebPageProxyIdentifier webPageProxyIdentifi
     HashMap<String, String> data = { };
     if (RefPtr json = JSON::Value::parseJSON(dataJSON)) {
         if (RefPtr object = json->asObject()) {
-            for (const auto& key : object->keys())
+            for (const auto& key : borrow(object->keys()))
                 data.set(key, object->getString(key));
         }
     }

@@ -45,6 +45,7 @@
 #import <WebCore/WebAuthenticationConstants.h>
 #import <WebCore/WebAuthenticationUtils.h>
 #import <pal/crypto/CryptoDigest.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
@@ -137,9 +138,9 @@ static inline void performEnterpriseAttestation(const WebCore::PublicKeyCredenti
 {
     using namespace WebCore;
 
-    RetainPtr dataToSign = [NSMutableData dataWithBytes:authData.span().data() length:authData.size()];
+    RetainPtr dataToSign = [NSMutableData dataWithBytes:borrow(authData)->span().data() length:authData.size()];
     [dataToSign replaceBytesInRange:NSMakeRange(aaguidStartPosition, sizeof(enterpriseAAGUID)) withBytes:enterpriseAAGUID];
-    [dataToSign appendBytes:clientDataHash.span().data() length:clientDataHash.size()];
+    [dataToSign appendBytes:borrow(clientDataHash)->span().data() length:clientDataHash.size()];
 
     RetainPtr<NSData> persistentRef = [WebKit::getASCWebKitSPISupportClassSingleton() entepriseAttestationIdentityPersistentReferenceForRelyingParty:creationOptions.rp.id.createNSString().get()];
     if (!persistentRef) {
@@ -220,7 +221,7 @@ static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>
 static inline HashSet<String> produceHashSet(const Vector<PublicKeyCredentialDescriptor>& credentialDescriptors)
 {
     HashSet<String> result;
-    for (auto& credentialDescriptor : credentialDescriptors) {
+    for (auto& credentialDescriptor : borrow(credentialDescriptors)) {
         if (emptyTransportsOrContain(credentialDescriptor.transports, AuthenticatorTransport::Internal) && credentialDescriptor.type == PublicKeyCredentialType::PublicKey)
             result.add(base64EncodeToString(BufferSource { credentialDescriptor.id }.span()));
     }
@@ -309,7 +310,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
         RefPtr<ArrayBuffer> userHandle;
         auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
         if (it != responseMap.end() && it->second.isByteString())
-            userHandle = LocalAuthenticatorInternal::toArrayBuffer(it->second.getByteString());
+            userHandle = LocalAuthenticatorInternal::toArrayBuffer(borrow(it->second.getByteString())->span());
 
         it = responseMap.find(CBOR(fido::kEntityNameMapKey));
         if (it == responseMap.end() || !it->second.isString()) {
@@ -341,7 +342,7 @@ std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::g
 
         it = responseMap.find(CBOR(LocalAuthenticatorInternal::kLargeBlobMapKey));
         if (it != responseMap.end() && it->second.isByteString())
-            response->setLargeBlob(ArrayBuffer::create(it->second.getByteString()));
+            response->setLargeBlob(ArrayBuffer::create(borrow(it->second.getByteString())->span()));
 
         response->setAccessGroup(checked_objc_cast<NSString>(attributes[(id)kSecAttrAccessGroup]));
 
@@ -517,7 +518,7 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         responseMap[CBOR(kLargeBlobMapKey)] = CBOR(largeBlobInput->write.value());
 
         auto outputTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(responseMap)));
-        auto nsOutputTag = toNSData(*outputTag);
+        auto nsOutputTag = WTF::toNSData(borrow(*outputTag)->span());
         NSDictionary *updateQuery = @{
             (id)kSecValuePersistentRef: dict.get()[(id)kSecValuePersistentRef],
         };
@@ -595,7 +596,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     userEntityMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(creationOptions.user.displayName);
     auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(userEntityMap)));
     ASSERT(userEntity);
-    auto secAttrApplicationTag = toNSData(*userEntity);
+    auto secAttrApplicationTag = WTF::toNSData(borrow(*userEntity)->span());
 
     // Step 7.
     // The above-to-create private key will be inserted into keychain while using SEP.
@@ -626,7 +627,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         auto digest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_1);
         digest->addBytes(span(nsPublicKeyData.get()));
         credentialId = digest->computeHash();
-        m_provisionalCredentialId = toNSData(credentialId);
+        m_provisionalCredentialId = WTF::toNSData(borrow(credentialId)->span());
 
         auto query = adoptNS([[NSMutableDictionary alloc] init]);
         [query setDictionary:@{
@@ -654,9 +655,9 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     {
         // COSE Encoding
         Vector<uint8_t> x(ES256FieldElementLength);
-        [nsPublicKeyData getBytes:x.mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:borrow(x)->mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
-        [nsPublicKeyData getBytes:y.mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:borrow(y)->mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTF::move(x), WTF::move(y));
     }
 
@@ -827,8 +828,8 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         }
         auto privateKey = adoptCF(privateKeyRef);
 
-        RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:authData.span().data() length:authData.size()]);
-        [dataToSign appendBytes:requestData().hash.span().data() length:requestData().hash.size()];
+        RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:borrow(authData)->span().data() length:authData.size()]);
+        [dataToSign appendBytes:borrow(requestData().hash)->span().data() length:requestData().hash.size()];
 
         CFErrorRef rawError = nullptr;
         // FIXME: Converting CFTypeRef to SecKeyRef is quite subtle here.

@@ -32,6 +32,7 @@
 #include <WebCore/WebAuthenticationConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Borrow.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
 #include <wtf/cocoa/VectorCocoa.h>
 
@@ -92,9 +93,9 @@ std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateK
     {
         // COSE Encoding
         Vector<uint8_t> x(ES256FieldElementLength);
-        [nsPublicKeyData getBytes:x.mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:borrow(x)->mutableSpan().data() range:NSMakeRange(1, ES256FieldElementLength)];
         Vector<uint8_t> y(ES256FieldElementLength);
-        [nsPublicKeyData getBytes:y.mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
+        [nsPublicKeyData getBytes:borrow(y)->mutableSpan().data() range:NSMakeRange(1 + ES256FieldElementLength, ES256FieldElementLength)];
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTF::move(x), WTF::move(y));
     }
     return std::pair { credentialId, cosePublicKey };
@@ -135,8 +136,8 @@ RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey)
 
 Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Vector<uint8_t>& authData, const Vector<uint8_t>& clientDataHash)
 {
-    RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:authData.span().data() length:authData.size()]);
-    [dataToSign appendBytes:clientDataHash.span().data() length:clientDataHash.size()];
+    RetainPtr dataToSign = adoptNS([[NSMutableData alloc] initWithBytes:borrow(authData)->span().data() length:authData.size()]);
+    [dataToSign appendBytes:borrow(clientDataHash)->span().data() length:clientDataHash.size()];
     RetainPtr<CFDataRef> signature;
     {
         CFErrorRef rawError = nullptr;

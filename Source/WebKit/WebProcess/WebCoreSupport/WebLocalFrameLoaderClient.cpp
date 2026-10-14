@@ -111,6 +111,7 @@
 #include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
@@ -2166,7 +2167,7 @@ void WebLocalFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<W
         return;
 
     HashMap<CallbackID, WebCore::LinkIcon> callbackIdIconMap;
-    for (auto& icon : icons)
+    for (auto& icon : borrow(icons))
         callbackIdIconMap.add(CallbackID::fromInteger(icon.second), icon.first);
 
     webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcons(WTF::move(callbackIdIconMap)));

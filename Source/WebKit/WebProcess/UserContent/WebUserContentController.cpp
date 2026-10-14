@@ -56,6 +56,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/UserStyleSheet.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -108,7 +109,7 @@ Ref<WebUserContentController> WebUserContentController::getOrCreate(UserContentC
     userContentController->addUserScripts(WTF::move(parameters.userScripts), InjectUserScriptImmediately::No);
     userContentController->addUserStyleSheets(WTF::move(parameters.userStyleSheets));
     userContentController->addUserScriptMessageHandlers(WTF::move(parameters.messageHandlers));
-    for (auto&& buffer : WTF::move(parameters.buffers))
+    for (auto&& buffer : borrow(parameters.buffers))
         userContentController->addJSBuffer(WTF::move(buffer));
 #if ENABLE(CONTENT_EXTENSIONS)
     userContentController->addContentRuleLists(WTF::move(parameters.contentRuleLists));
@@ -208,7 +209,7 @@ void WebUserContentController::removeContentWorld(ContentWorldIdentifier worldId
 
 void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userScripts, InjectUserScriptImmediately immediately)
 {
-    for (auto& userScriptData : userScripts) {
+    for (auto& userScriptData : borrow(userScripts)) {
         addContentWorldIfNecessary(userScriptData.worldData);
         RefPtr world = worldMap().get(userScriptData.worldData.identifier);
         if (!world) {
@@ -234,7 +235,7 @@ void WebUserContentController::removeUserScript(ContentWorldIdentifier worldIden
 
 void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
-    for (auto& worldIdentifier : worldIdentifiers) {
+    for (auto& worldIdentifier : borrow(worldIdentifiers)) {
         RefPtr world = worldMap().get(worldIdentifier);
         if (!world) {
             RELEASE_LOG(UserContentController, "Trying to remove all UserScripts from a ContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.object().toUInt64());
@@ -247,7 +248,7 @@ void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIde
 
 void WebUserContentController::addUserStyleSheets(Vector<WebUserStyleSheetData>&& userStyleSheets)
 {
-    for (auto& userStyleSheetData : userStyleSheets) {
+    for (auto& userStyleSheetData : borrow(userStyleSheets)) {
         addContentWorldIfNecessary(userStyleSheetData.worldData);
         RefPtr world = worldMap().get(userStyleSheetData.worldData.identifier);
         if (!world) {
@@ -276,7 +277,7 @@ void WebUserContentController::removeUserStyleSheet(ContentWorldIdentifier world
 void WebUserContentController::removeAllUserStyleSheets(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     bool sheetsChanged = false;
-    for (auto& worldIdentifier : worldIdentifiers) {
+    for (auto& worldIdentifier : borrow(worldIdentifiers)) {
         RefPtr world = worldMap().get(worldIdentifier);
         if (!world) {
             RELEASE_LOG(UserContentController, "Trying to remove all UserStyleSheets from a ContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.object().toUInt64());
@@ -390,7 +391,7 @@ private:
 void WebUserContentController::addUserScriptMessageHandlers(Vector<WebScriptMessageHandlerData>&& scriptMessageHandlers)
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    for (auto& handler : scriptMessageHandlers) {
+    for (auto& handler : borrow(scriptMessageHandlers)) {
         addContentWorldIfNecessary(handler.worldData);
         RefPtr world = worldMap().get(handler.worldData.identifier);
         if (!world) {
@@ -436,7 +437,7 @@ void WebUserContentController::removeAllUserScriptMessageHandlersForWorlds(const
 {
 #if ENABLE(USER_MESSAGE_HANDLERS)
     bool userMessageHandlersChanged = false;
-    for (auto& worldIdentifier : worldIdentifiers) {
+    for (auto& worldIdentifier : borrow(worldIdentifiers)) {
         RefPtr world = worldMap().get(worldIdentifier);
         if (!world) {
             RELEASE_LOG(UserContentController, "Trying to remove all UserScriptMessageHandler from a ContentWorld (id=%" PRIu64 ") that does not exist.", worldIdentifier.object().toUInt64());
@@ -491,7 +492,7 @@ void WebUserContentController::removeUserScriptMessageHandlerInternal(InjectedBu
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebUserContentController::addContentRuleLists(Vector<std::pair<WebCompiledContentRuleListData, URL>>&& contentRuleLists)
 {
-    for (auto&& pair : contentRuleLists) {
+    for (auto&& pair : borrow(contentRuleLists)) {
         auto&& contentRuleList = WTF::move(pair.first);
         String identifier = contentRuleList.identifier;
         if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(contentRuleList)))
@@ -679,7 +680,7 @@ void WebUserContentController::forEachUserScript(NOESCAPE const Function<void(We
     for (const auto& worldAndUserScriptVector : m_userScripts) {
         Ref key = worldAndUserScriptVector.key;
         Ref world = key->coreWorld();
-        for (const auto& identifierUserScriptPair : worldAndUserScriptVector.value)
+        for (const auto& identifierUserScriptPair : borrow(worldAndUserScriptVector.value))
             functor(world, identifierUserScriptPair.second);
     }
 }
@@ -687,7 +688,7 @@ void WebUserContentController::forEachUserScript(NOESCAPE const Function<void(We
 void WebUserContentController::forEachUserStyleSheet(NOESCAPE const Function<void(const WebCore::UserStyleSheet&)>& functor) const
 {
     for (auto& styleSheetVector : m_userStyleSheets.values()) {
-        for (const auto& identifierUserStyleSheetPair : styleSheetVector)
+        for (const auto& identifierUserStyleSheetPair : borrow(styleSheetVector))
             functor(identifierUserStyleSheetPair.second);
     }
 }
@@ -696,7 +697,7 @@ void WebUserContentController::forEachUserStyleSheet(NOESCAPE const Function<voi
 void WebUserContentController::forEachUserMessageHandler(NOESCAPE const Function<void(const WebCore::UserMessageHandlerDescriptor&)>& functor) const
 {
     for (auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
-        for (auto& pair : userMessageHandlerVector)
+        for (auto& pair : borrow(userMessageHandlerVector))
             functor(protect(pair.second.get()));
     }
 }

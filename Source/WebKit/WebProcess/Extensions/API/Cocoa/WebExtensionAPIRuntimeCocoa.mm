@@ -197,11 +197,11 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceW
         if (!matchesTarget(frame, targetParameters))
             return;
 
-        WebExtensionAPIEvent::ListenerVector listeners;
-        if (sourceContentWorldType == WebExtensionContentWorldType::WebPage)
-            listeners = protect(namespaceObject.runtime())->onMessageExternal().listeners();
-        else
-            listeners = protect(namespaceObject.runtime())->onMessage().listeners();
+        const Vector listeners = [&] {
+            if (sourceContentWorldType == WebExtensionContentWorldType::WebPage)
+                return protect(namespaceObject.runtime())->onMessageExternal().listeners();
+            return protect(namespaceObject.runtime())->onMessage().listeners();
+        }();
 
         if (listeners.isEmpty())
             return;

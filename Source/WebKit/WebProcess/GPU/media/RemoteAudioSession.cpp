@@ -34,6 +34,7 @@
 #include "RemoteAudioSessionProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -173,7 +174,7 @@ void RemoteAudioSession::sendNextActivationIPC()
             setActive(!active); // revert optimistic update
         sendNextActivationIPC();
 
-        for (auto& waiter : pending.waiters) {
+        for (auto& waiter : borrow(pending.waiters)) {
             if (succeeded)
                 waiter.resolve();
             else

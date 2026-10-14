@@ -48,6 +48,7 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "WebPageProxy.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -220,7 +221,7 @@ bool WebExtensionTab::matches(const WebExtensionTabQueryParameters& parameters, 
 
     if (parameters.urlPatterns) {
         bool matchesAnyPattern = false;
-        for (auto& patternString : parameters.urlPatterns.value()) {
+        for (auto& patternString : borrow(parameters.urlPatterns.value())) {
             RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!matchPattern)
                 continue;

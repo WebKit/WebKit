@@ -33,6 +33,7 @@
 #include "WebExtensionControllerProxyMessages.h"
 #include "WebFrame.h"
 #include "WebProcess.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -60,7 +61,7 @@ Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const 
         WebExtensionContextProxySet contexts;
         WebExtensionContextProxyBaseURLMap baseURLMap;
 
-        for (auto& contextParameters : parameters.contextParameters) {
+        for (auto& contextParameters : borrow(parameters.contextParameters)) {
             Ref context = WebExtensionContextProxy::getOrCreate(contextParameters, controller, newPage);
             baseURLMap.add(contextParameters.baseURL.protocolHostAndPort(), context);
             contexts.add(context);

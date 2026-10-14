@@ -38,6 +38,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
@@ -409,7 +410,7 @@ bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pa
     ASSERT(resourcePath.startsWith('/'));
     resourcePath = resourcePath.substring(1);
 
-    for (auto& data : m_webAccessibleResources) {
+    for (auto& data : borrow(m_webAccessibleResources)) {
         // If matchPatterns is empty, these resources are allowed on any page.
         bool allowed = data.matchPatterns.isEmpty();
         for (Ref matchPattern : data.matchPatterns) {
@@ -422,7 +423,7 @@ bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pa
         if (!allowed)
             continue;
 
-        for (auto& pathPattern : data.resourcePathPatterns) {
+        for (auto& pathPattern : borrow(data.resourcePathPatterns)) {
             // Because we remove the prefix slash from the resource path, we also have to remove it from the pattern path.
             if (pathPattern.startsWith('/'))
                 pathPattern = pathPattern.substring(1);
@@ -1059,30 +1060,33 @@ const String& WebExtension::generatedBackgroundContent()
     bool isServiceWorker = backgroundContentIsServiceWorker();
     bool usesModules = backgroundContentUsesModules();
 
-    Vector<String> scripts;
-    for (auto& scriptPath : m_backgroundScriptPaths) {
-        StringBuilder format;
-        if (isServiceWorker) {
-            if (usesModules) {
-                format.append("import \"./"_s, scriptPath, "\";"_s);
+    const Vector scripts = [&] {
+        Vector<String> scripts;
+        for (auto& scriptPath : borrow(m_backgroundScriptPaths)) {
+            StringBuilder format;
+            if (isServiceWorker) {
+                if (usesModules) {
+                    format.append("import \"./"_s, scriptPath, "\";"_s);
+
+                    scripts.append(format.toString());
+                    continue;
+                }
+
+                format.append("importScripts(\""_s, scriptPath, "\");"_s);
 
                 scripts.append(format.toString());
                 continue;
             }
 
-            format.append("importScripts(\""_s, scriptPath, "\");"_s);
+            format.append("<script"_s);
+            if (usesModules)
+                format.append(" type=\"module\""_s);
+            format.append(" src=\""_s, scriptPath, "\"></script>"_s);
 
             scripts.append(format.toString());
-            continue;
         }
-
-        format.append("<script"_s);
-        if (usesModules)
-            format.append(" type=\"module\""_s);
-        format.append(" src=\""_s, scriptPath, "\"></script>"_s);
-
-        scripts.append(format.toString());
-    }
+        return scripts;
+    }();
 
     StringBuilder generatedBackgroundContent;
     if (!isServiceWorker)
@@ -1146,7 +1150,7 @@ void WebExtension::populateBackgroundPropertiesIfNeeded()
     } else if (backgroundManifestObject->getValue(backgroundPreferredEnvironmentManifestKey))
         recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has an empty or invalid `preferred_environment` key.", "WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key")));
 
-    for (auto& environment : preferredEnvironments) {
+    for (auto& environment : borrow(preferredEnvironments)) {
         if (environment == backgroundDocumentManifestKey) {
             m_backgroundContentEnvironment = Environment::Document;
             m_backgroundServiceWorkerPath = nullString();
@@ -1325,7 +1329,7 @@ bool WebExtension::hasStaticInjectedContentForURL(const URL& url)
 {
     populateContentScriptPropertiesIfNeeded();
 
-    for (auto& injectedContent : m_staticInjectedContents) {
+    for (auto& injectedContent : borrow(m_staticInjectedContents)) {
         // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
         bool isExcluded = false;
         for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
@@ -1699,7 +1703,7 @@ WebExtension::MatchPatternSet WebExtension::allRequestedMatchPatterns()
     for (Ref matchPattern : m_externallyConnectableMatchPatterns)
         result.add(matchPattern);
 
-    for (auto& injectedContent : m_staticInjectedContents) {
+    for (auto& injectedContent : borrow(m_staticInjectedContents)) {
         for (Ref matchPattern : injectedContent.includeMatchPatterns)
             result.add(matchPattern);
     }
@@ -2287,7 +2291,7 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
         key = entry->value;
     }
 
-    for (auto& part : parts) {
+    for (auto& part : borrow(parts)) {
         // Modifiers must exist in the modifier map.
         if (!modifierMap.get().contains(part))
             return false;
@@ -2530,7 +2534,7 @@ const WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativ
 
 std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::declarativeNetRequestRuleset(const String& identifier)
 {
-    for (auto& ruleset : declarativeNetRequestRulesets()) {
+    for (auto& ruleset : borrow(declarativeNetRequestRulesets())) {
         if (ruleset.rulesetID == identifier)
             return ruleset;
     }

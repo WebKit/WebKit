@@ -35,6 +35,7 @@
 #include <WebCore/FidoConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/darwin/DispatchExtras.h>
@@ -146,7 +147,7 @@ void VirtualHidConnection::parseRequest()
         payload.appendVector(m_nonce);
         size_t writePosition = payload.size();
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.mutableSpan().subspan(writePosition, CtapChannelIdSize));
+        cryptographicallyRandomValues(borrow(payload)->mutableSpan().subspan(writePosition, CtapChannelIdSize));
         auto channel = kHidBroadcastChannel;
         FidoHidInitPacket initPacket(channel, FidoHidDeviceCommand::kInit, WTF::move(payload), payload.size());
         receiveReport(initPacket.getSerializedData());
@@ -157,7 +158,7 @@ void VirtualHidConnection::parseRequest()
         ASSERT(payload.size());
         auto cmd = static_cast<CtapRequestCommand>(payload[0]);
         payload.removeAt(0);
-        auto requestMap = CBORReader::read(payload);
+        auto requestMap = CBORReader::read(borrow(payload)->span());
         ASSERT(requestMap || cmd == CtapRequestCommand::kAuthenticatorGetNextAssertion);
         if (cmd == CtapRequestCommand::kAuthenticatorMakeCredential) {
             VirtualCredential credential;
@@ -262,7 +263,7 @@ void VirtualHidConnection::parseRequest()
                     return;
                 }
 
-                for (const auto& cborCredential : cborAllowList) {
+                for (const auto& cborCredential : borrow(cborAllowList)) {
                     auto& credMap = cborCredential.getMap();
                     auto itr = credMap.find(CBORValue(fido::kEntityIdMapKey));
                     if (itr == credMap.end() || !itr->second.isByteString()) {
@@ -299,7 +300,7 @@ void VirtualHidConnection::parseRequest()
                     }
                 }
             }
-            auto matchingCredentials = manager->credentialsMatchingList(m_authenticatorId, rpId, allowList);
+            const Vector matchingCredentials = manager->credentialsMatchingList(m_authenticatorId, rpId, allowList);
             if (matchingCredentials.isEmpty()) {
                 recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrNoCredentials);
                 return;

@@ -40,6 +40,7 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageAccessQuirks.h>
+#include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -477,7 +478,7 @@ bool WebResourceLoadObserver::hasCrossPageStorageAccess(const SubFrameDomain& su
 void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubFrameDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
     for (const auto& [topDomain, subResourceDomains] : domains) {
-        for (auto& subResourceDomain : subResourceDomains) {
+        for (auto& subResourceDomain : borrow(subResourceDomains)) {
             m_domainsWithCrossPageStorageAccess.ensure(topDomain, [] {
                 return HashSet<RegistrableDomain> { };
             }).iterator->value.add(subResourceDomain);

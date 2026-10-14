@@ -33,6 +33,7 @@
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -88,7 +89,7 @@ void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIde
 void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::MessagePortIdentifier& port)
 {
     auto inProcessPortMessages = m_inProcessPortMessages.take(port);
-    for (auto& message : inProcessPortMessages)
+    for (auto& message : borrow(inProcessPortMessages))
         postMessageToRemote(WTF::move(message), port);
 }
 
@@ -128,7 +129,7 @@ void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIden
 
         auto& provider = WebMessagePortChannelProvider::singleton();
 
-        for (auto& message : messages) {
+        for (auto& message : borrow(messages)) {
             if (auto& serializedScriptValue = message.message) {
                 if (auto token = serializedScriptValue->nonSerializedDataToken()) {
                     if (token->processIdentifier == Process::identifier())
@@ -160,7 +161,7 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
         return;
     }
 
-    for (auto& port : message.transferredPorts)
+    for (auto& port : borrow(message.transferredPorts))
         messagePortSentToRemote(port.first);
 
     Vector<URL> blobURLs;

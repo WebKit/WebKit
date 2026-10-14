@@ -40,6 +40,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebExtensionWindowIdentifier.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -83,7 +84,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     NSMutableArray<id<WKWebExtensionTab>> *tabs = [NSMutableArray array];
 
     if (creationParameters.tabs) {
-        for (auto& tabParameters : creationParameters.tabs.value()) {
+        for (auto& tabParameters : borrow(creationParameters.tabs.value())) {
             if (tabParameters.identifier) {
                 RefPtr tab = getTab(tabParameters.identifier.value());
                 if (!tab) {

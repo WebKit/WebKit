@@ -92,6 +92,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleColorOptions.h>
 #import <WebCore/VoidCallback.h>
+#import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/HexNumber.h>
 #import <wtf/StdLibExtras.h>
@@ -1244,7 +1245,7 @@ void PDFPluginBase::writeItemsToGeneralPasteboard(Vector<PasteboardItem>&& paste
         return content;
     };
 
-    for (auto&& [data, type] : WTF::move(pasteboardItems)) {
+    for (auto&& [data, type] : borrow(pasteboardItems)) {
         if (![data length]) {
             ASSERT_NOT_REACHED();
             continue;

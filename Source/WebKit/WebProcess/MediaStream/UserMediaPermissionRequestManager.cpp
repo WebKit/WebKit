@@ -127,7 +127,7 @@ void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
 {
     ASSERT(document.page()->canStartMedia());
 
-    auto pendingRequests = m_pendingUserMediaRequests.take(document);
+    const Vector pendingRequests = m_pendingUserMediaRequests.take(document);
     for (auto& pendingRequest : pendingRequests)
         sendUserMediaRequest(pendingRequest);
 }

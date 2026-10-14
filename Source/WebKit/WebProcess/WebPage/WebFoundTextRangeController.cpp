@@ -77,7 +77,7 @@ WebFoundTextRangeController::WebFoundTextRangeController(WebPage& webPage)
 {
 }
 
-static inline WebFoundTextRange createWebFoundTextRange(SimpleRange& simpleRange)
+static inline WebFoundTextRange createWebFoundTextRange(const SimpleRange& simpleRange)
 {
     Ref document = simpleRange.startContainer().document();
     RefPtr element = document->documentElement();
@@ -94,7 +94,7 @@ static inline WebFoundTextRange createWebFoundTextRange(SimpleRange& simpleRange
     };
 }
 
-static inline bool LEGACY_NODELETE canConvertToWebFoundTextRange(SimpleRange& range)
+static inline bool LEGACY_NODELETE canConvertToWebFoundTextRange(const SimpleRange& range)
 {
     auto& document = range.startContainer().document();
 
@@ -154,7 +154,7 @@ static Vector<WebFoundTextRange::CueData> findCueMatchesInFrame(Frame* frame, co
 void WebFoundTextRangeController::findTextRangesForStringMatches(const String& string, OptionSet<FindOptions> options, uint32_t maxMatchCount, CompletionHandler<void(HashMap<WebCore::FrameIdentifier, Vector<WebFoundTextRange>>&&)>&& completionHandler)
 {
     auto matchingRanges = protect(protect(m_webPage.get())->corePage())->findTextMatches(string, core(options), maxMatchCount, false);
-    Vector<WebCore::SimpleRange> findMatches = WTF::move(matchingRanges.ranges);
+    const Vector findMatches = WTF::move(matchingRanges.ranges);
 
     if (findMatches.size() > 0)
         m_cachedFoundRanges.clear();
@@ -505,7 +505,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
 
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor);
 
-    auto foundFramePaths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(rects, indicatorRadius);
+    const Vector foundFramePaths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(rects, indicatorRadius);
 
     WebCore::GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -534,7 +534,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
             return rect;
         });
 
-        auto paths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(textRectsInRootViewCoordinates, indicatorRadius);
+        const Vector paths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(textRectsInRootViewCoordinates, indicatorRadius);
 
         graphicsContext.setCompositeOperation(WebCore::CompositeOperator::SourceOver);
         graphicsContext.setFillColor(highlightColor);

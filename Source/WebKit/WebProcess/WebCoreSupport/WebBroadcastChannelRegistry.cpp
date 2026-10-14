@@ -114,7 +114,7 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
     if (channelsForOriginIterator == channelsForOrigin.end())
         return;
 
-    auto channelIdentifiersForName = channelsForOriginIterator->value;
+    const Vector channelIdentifiersForName = channelsForOriginIterator->value;
 
     size_t numberOfMessagesNeeded = channelIdentifiersForName.size();
     for (auto& channelIdentifier : channelIdentifiersForName) {

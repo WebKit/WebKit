@@ -39,6 +39,7 @@
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionNotificationInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -46,7 +47,7 @@ static _WKWebExtensionNotification *createNotificationObject(WKWebExtensionConte
 {
     NSMutableArray<_WKWebExtensionNotificationButton *> *buttons = [NSMutableArray array];
     if (parameters.buttons) {
-        for (auto& button : *parameters.buttons)
+        for (auto& button : borrow(*parameters.buttons))
             [buttons addObject:[[_WKWebExtensionNotificationButton alloc] initWithTitle:button.title.createNSString().get()]];
     }
 

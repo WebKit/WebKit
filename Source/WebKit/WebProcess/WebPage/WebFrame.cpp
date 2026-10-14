@@ -139,6 +139,7 @@
 #include <WebCore/TextIterator.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <WebCore/WebKitJSHandle.h>
+#include <wtf/Borrow.h>
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -1919,7 +1920,7 @@ static Vector<TextExtraction::Item> itemsForPDFTextAndLinks(String&& text, Vecto
 
     Vector<TextExtraction::Item> items;
     unsigned cursor = 0;
-    for (auto& link : links) {
+    for (auto& link : borrow(links)) {
         auto linkLocation = static_cast<unsigned>(link.rangeInText.location);
         auto linkLength = static_cast<unsigned>(link.rangeInText.length);
         if (linkLocation < cursor)
@@ -2101,7 +2102,7 @@ void WebFrame::requestContentFrameIdentifierForNode(NodeIdentifier nodeIdentifie
 
 void WebFrame::findFirstConnectedNode(Vector<NodeIdentifier>&& candidates, CompletionHandler<void(std::optional<NodeIdentifier>)>&& completion)
 {
-    for (auto& candidate : candidates) {
+    for (auto& candidate : borrow(candidates)) {
         RefPtr node = Node::fromIdentifier(candidate);
         if (node && node->isConnected())
             return completion(candidate);

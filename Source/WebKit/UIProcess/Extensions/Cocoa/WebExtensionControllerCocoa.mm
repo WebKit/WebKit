@@ -47,6 +47,7 @@
 #import "_WKFeatureInternal.h"
 #import <WebCore/ContentRuleListResults.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/FileSystem.h>
 #import <wtf/text/WTFString.h>
@@ -128,7 +129,7 @@ void WebExtensionController::getDataRecords(OptionSet<WebExtensionDataType> data
         completionHandler(records);
     });
 
-    auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
+    const Vector uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
         String displayName;
         if (!WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
@@ -168,7 +169,7 @@ void WebExtensionController::getDataRecord(OptionSet<WebExtensionDataType> dataT
     String matchingUniqueIdentifier;
     String displayName;
 
-    auto uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
+    const Vector uniqueIdentifiers = FileSystem::listDirectory(m_configuration->storageDirectory());
     for (auto& uniqueIdentifier : uniqueIdentifiers) {
         if (uniqueIdentifier == extensionContext.uniqueIdentifier() && WebExtensionContext::readDisplayNameFromState(stateFilePath(uniqueIdentifier), displayName)) {
             matchingUniqueIdentifier = uniqueIdentifier;
@@ -271,7 +272,7 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
 {
     bool savedMatchedRule = false;
 
-    for (const auto& result : results.results) {
+    for (const auto& result : borrow(results.results)) {
         auto contentRuleListIdentifier = result.first;
         for (Ref context : m_extensionContexts) {
             if (context->uniqueIdentifier() != contentRuleListIdentifier)
@@ -386,7 +387,7 @@ void WebExtensionController::resourceLoadDidCompleteWithError(WebPageProxyIdenti
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebExtensionController::resourceLoadWasBlockedByContentRuleList(WebPageProxyIdentifier pageID, const WebExtensionContentRuleListBlockedLoadInfo& info)
 {
-    for (auto& identifier : info.blockingContentRuleListIdentifiers) {
+    for (auto& identifier : borrow(info.blockingContentRuleListIdentifiers)) {
         for (Ref context : m_extensionContexts) {
             if (context->uniqueIdentifier() == identifier) {
                 context->resourceLoadWasBlockedByDeclarativeNetRequest(pageID, info);

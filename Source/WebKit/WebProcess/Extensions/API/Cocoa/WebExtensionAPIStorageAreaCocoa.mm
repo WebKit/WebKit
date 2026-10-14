@@ -43,6 +43,7 @@
 #import "WebExtensionStorageAccessLevel.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -107,7 +108,7 @@ void WebExtensionAPIStorageArea::get(WebPageProxyIdentifier webPageProxyIdentifi
         }
 
         auto *deserializedData = [NSDictionary dictionary];
-        for (auto& serializedJSON : result.value()) {
+        for (auto& serializedJSON : borrow(result.value())) {
             NSDictionary *data = parseJSON(serializedJSON.createNSString().get());
             NSDictionary<NSString *, id> *parsedJSON = mapObjects(data, ^id(NSString *key, NSString *jsonString) {
                 return parseJSON(jsonString, JSONOptions::FragmentsAllowed);

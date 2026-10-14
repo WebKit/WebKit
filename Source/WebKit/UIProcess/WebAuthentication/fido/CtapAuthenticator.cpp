@@ -45,6 +45,7 @@
 #include <WebCore/WebAuthenticationUtils.h>
 #include <array>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Borrow.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
@@ -71,7 +72,7 @@ static Vector<Vector<PublicKeyCredentialDescriptor>> batchesForCredentials(Vecto
             continue;
         if (!batches.size() || batches.last().size() >= maxBatchSize)
             batches.append({ });
-        batches.last().append(credential);
+        borrow(batches)->last().append(credential);
     }
 
     return batches;
@@ -159,7 +160,7 @@ void CtapAuthenticator::makeCredential()
         std::optional<PinParameters> pinParameters;
         if (!m_pinAuth.isEmpty())
             pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
-        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, m_batches[m_currentBatch], pinParameters);
+        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
             ASSERT(RunLoop::isMain());
             RefPtr protectedThis = weakThis;
@@ -210,9 +211,9 @@ void CtapAuthenticator::continueSilentlyCheckCredentials(Vector<uint8_t>&& data,
     if (!m_pinAuth.isEmpty())
         pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
     WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
-        cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, m_batches[m_currentBatch], pinParameters);
+        cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, m_batches[m_currentBatch], pinParameters);
+        cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
     });
 
     protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](Vector<uint8_t>&& data) mutable {
@@ -231,7 +232,7 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
     std::optional<Vector<PublicKeyCredentialDescriptor>> overrideExcludeCredentials;
     if (includeCurrentBatch) {
         ASSERT(m_currentBatch < m_batches.size());
-        overrideExcludeCredentials = m_batches[m_currentBatch];
+        overrideExcludeCredentials = borrow(m_batches)[m_currentBatch];
     } else if (!m_batches.isEmpty())
         overrideExcludeCredentials = Vector<PublicKeyCredentialDescriptor> { };
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
@@ -371,7 +372,7 @@ void CtapAuthenticator::getAssertion()
         std::optional<PinParameters> pinParameters;
         if (!m_pinAuth.isEmpty())
             pinParameters = PinParameters { static_cast<uint8_t>(selectPinProtocol()), m_pinAuth };
-        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, m_batches[m_currentBatch], pinParameters);
+        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, borrow(m_batches)[m_currentBatch], pinParameters);
         protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) mutable {
             ASSERT(RunLoop::isMain());
             RefPtr protectedThis = weakThis;
@@ -417,7 +418,7 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
         authenticatorSupportedExtensions = *m_info.extensions();
     std::optional<Vector<PublicKeyCredentialDescriptor>> overrideAllowCredentials;
     if (options.allowCredentials.size() > 1 && m_currentBatch < m_batches.size())
-        overrideAllowCredentials = m_batches[m_currentBatch];
+        overrideAllowCredentials = borrow(m_batches)[m_currentBatch];
 
     bool needsPRF = options.extensions && options.extensions->prf;
     CTAP_RELEASE_LOG("continueGetAssertionAfterCheckAllowCredentials: PRF check - extensions=%d, prf=%d", !!options.extensions, needsPRF);
@@ -912,13 +913,13 @@ std::optional<HmacSecretParameters> CtapAuthenticator::prepareHmacSecretParamete
         return std::nullopt;
     }
 
-    const AuthenticationExtensionsClientInputs::PRFValues* selectedValues = nullptr;
+    std::optional<AuthenticationExtensionsClientInputs::PRFValues> selectedValues;
 
     if (prfInputs.evalByCredential && credentialId) {
-        auto credentialIdString = base64URLEncodeToString(*credentialId);
-        for (const auto& entry : *prfInputs.evalByCredential) {
+        auto credentialIdString = base64URLEncodeToString(borrow(*credentialId)->span());
+        for (const auto& entry : borrow(*prfInputs.evalByCredential)) {
             if (entry.key == credentialIdString) {
-                selectedValues = &entry.value;
+                selectedValues = entry.value;
                 CTAP_RELEASE_LOG("prepareHmacSecretParameters: Using evalByCredential for credential");
                 break;
             }
@@ -926,7 +927,7 @@ std::optional<HmacSecretParameters> CtapAuthenticator::prepareHmacSecretParamete
     }
 
     if (!selectedValues && prfInputs.eval) {
-        selectedValues = &*prfInputs.eval;
+        selectedValues = *prfInputs.eval;
         CTAP_RELEASE_LOG("prepareHmacSecretParameters: Using eval");
     }
 

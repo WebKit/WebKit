@@ -73,7 +73,7 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
 
 static void removeAllMediaKeyStorageForOriginPath(const String& originPath, WallTime startDate, WallTime endDate)
 {
-    Vector<String> mediaKeyNames = FileSystem::listDirectory(originPath);
+    const Vector mediaKeyNames = FileSystem::listDirectory(originPath);
 
     for (const auto& mediaKeyName : mediaKeyNames) {
         auto mediaKeyPath = FileSystem::pathByAppendingComponent(originPath, mediaKeyName);
@@ -109,7 +109,7 @@ void WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates(WallTi
     if (m_mediaKeyStorageDirectory.isEmpty())
         return;
 
-    Vector<String> originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
+    const Vector originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
     for (auto& originName : originNames)
         removeAllMediaKeyStorageForOriginPath(FileSystem::pathByAppendingComponent(m_mediaKeyStorageDirectory, originName), startDate, endDate);
 }
@@ -119,7 +119,7 @@ void WebMediaKeyStorageManager::deleteAllMediaKeyEntries()
     if (m_mediaKeyStorageDirectory.isEmpty())
         return;
 
-    Vector<String> originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
+    const Vector originNames = FileSystem::listDirectory(m_mediaKeyStorageDirectory);
     for (auto& originName : originNames)
         removeAllMediaKeyStorageForOriginPath(FileSystem::pathByAppendingComponent(m_mediaKeyStorageDirectory, originName), -WallTime::infinity(), WallTime::infinity());
 }

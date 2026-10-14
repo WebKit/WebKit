@@ -52,7 +52,7 @@ void WebExtensionAPIWebRequestEvent::enumerateListeners(WebExtensionTabIdentifie
     auto resourceURL = resourceLoadInfo.originalURL;
 
     // Copy the listeners since call() can trigger a mutation of the listeners.
-    auto listenersCopy = m_listeners;
+    const Vector listenersCopy = m_listeners;
 
     for (auto& listener : listenersCopy) {
         auto* filter = listener.filter.get();

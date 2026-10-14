@@ -32,6 +32,7 @@
 #import <CryptoTokenKit/TKSmartCard.h>
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Function.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -148,8 +149,9 @@ void CcidConnection::trySelectFidoApplet()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f })
-            || equalSpans(response.span(), std::span { kCtapNfcAppletSelectionCtap })) {
+        Borrow borrowedResponse = response;
+        if (equalSpans(borrowedResponse->span(), std::span { kCtapNfcAppletSelectionU2f })
+            || equalSpans(borrowedResponse->span(), std::span { kCtapNfcAppletSelectionCtap })) {
             if (RefPtr service = protectedThis->m_service.get())
                 service->didConnectTag();
             return;
@@ -162,7 +164,7 @@ void CcidConnection::trySelectFidoApplet()
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
-            if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f })) {
+            if (equalSpans(borrow(response)->span(), std::span { kCtapNfcAppletSelectionU2f })) {
                 if (RefPtr service = protectedThis->m_service.get())
                     service->didConnectTag();
                 return;
@@ -182,7 +184,7 @@ void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& cal
     }
     if (m_hasSession) {
         CCID_RELEASE_LOG("reusing session, calling transmitRequest");
-        [m_smartCard transmitRequest:toNSData(data).get() reply:makeBlockPtr([protectedThis = Ref { *this }, callback = WTF::move(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+        [m_smartCard transmitRequest:toNSData(borrow(data)->span()).get() reply:makeBlockPtr([protectedThis = Ref { *this }, callback = WTF::move(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
             RELEASE_LOG(WebAuthn, "%p - CcidConnection::transmitRequest reply, error=%p", protectedThis.ptr(), error);
             bool hasError = !!error;
             callOnMainRunLoop([protectedThis = WTF::move(protectedThis), response = makeVector(nsResponse), callback = WTF::move(callback), hasError] () mutable {
@@ -214,7 +216,7 @@ void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& cal
                 protectedThis->m_sessionPending = false;
                 protectedThis->m_hasSession = true;
                 RELEASE_LOG(WebAuthn, "%p - CcidConnection::session started", protectedThis.ptr());
-                [protectedThis->m_smartCard transmitRequest:toNSData(data).get() reply:makeBlockPtr([protectedThis = WTF::move(protectedThis), callback = WTF::move(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+                [protectedThis->m_smartCard transmitRequest:toNSData(borrow(data)->span()).get() reply:makeBlockPtr([protectedThis = WTF::move(protectedThis), callback = WTF::move(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
                     RELEASE_LOG(WebAuthn, "%p - CcidConnection::transmitRequest reply, error=%p", protectedThis.ptr(), error);
                     bool hasError = !!error;
                     callOnMainRunLoop([protectedThis = WTF::move(protectedThis), response = makeVector(nsResponse), callback = WTF::move(callback), hasError] () mutable {

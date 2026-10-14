@@ -59,6 +59,7 @@
 #import <WebCore/WellKnownOriginList.h>
 #import <ranges>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -470,11 +471,11 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             RetainPtr<NSMutableDictionary> perCredentialInputValues = nullptr;
             if (prf->evalByCredential) {
                 perCredentialInputValues = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& credentialIDAndInputValues : *prf->evalByCredential) {
+                for (auto& credentialIDAndInputValues : borrow(*prf->evalByCredential)) {
                     auto key = base64URLDecode(credentialIDAndInputValues.key);
                     if (!key)
                         continue;
-                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(*key).get()];
+                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(borrow(*key)->span()).get()];
                 }
             }
             request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFAssertionInputInstance() initWithInputValues:inputValues.get() perCredentialInputValues:perCredentialInputValues.get()]).get();
@@ -506,11 +507,11 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
             RetainPtr<NSMutableDictionary> perCredentialInputValues = nullptr;
             if (prf->evalByCredential) {
                 perCredentialInputValues = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& credentialIDAndInputValues : *prf->evalByCredential) {
+                for (auto& credentialIDAndInputValues : borrow(*prf->evalByCredential)) {
                     auto key = base64URLDecode(credentialIDAndInputValues.key);
                     if (!key)
                         continue;
-                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(*key).get()];
+                    [perCredentialInputValues setObject:toASAssertionPRFInputValue(credentialIDAndInputValues.value).get() forKey: toNSData(borrow(*key)->span()).get()];
                 }
             }
             request.get().prf = adoptNS([allocASAuthorizationPublicKeyCredentialPRFAssertionInputInstance() initWithInputValues:inputValues.get() perCredentialInputValues:perCredentialInputValues.get()]).get();
@@ -1494,7 +1495,7 @@ void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(IPC::Connection& 
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalUnknownCredentialWithRelyingPartyIdentifier:options.rpId.createNSString().get() credentialID:WTF::toNSData(*decodedCredentialId).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [getCredentialUpdaterShimClassSingleton() signalUnknownCredentialWithRelyingPartyIdentifier:options.rpId.createNSString().get() credentialID:WTF::toNSData(borrow(*decodedCredentialId)->span()).get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         ensureOnMainRunLoop([error = protect(error), completionHandler = WTF::move(completionHandler)] mutable {
             if (error) {
                 RELEASE_LOG_ERROR(WebAuthn, "Error signaling unknown credential: %@.", error.get().localizedDescription);
@@ -1522,18 +1523,18 @@ void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(IPC::Connect
         return;
     }
     RetainPtr<NSMutableArray<NSData *>> credentialIds = adoptNS([[NSMutableArray alloc] init]);
-    for (auto& credential : options.allAcceptedCredentialIds) {
+    for (auto& credential : borrow(options.allAcceptedCredentialIds)) {
         auto decodedCredentialId = base64URLDecode(credential);
         if (!decodedCredentialId) {
             RELEASE_LOG_ERROR(WebAuthn, "Failed to parse credentialId for signalAllAcceptedCredentials.");
             completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unable to parse credential ID."_s });
             return;
         }
-        [credentialIds addObject:toNSData(*decodedCredentialId).get()];
+        [credentialIds addObject:toNSData(borrow(*decodedCredentialId)->span()).get()];
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalAllAcceptedCredentialsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() acceptedCredentialIDs:credentialIds.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [getCredentialUpdaterShimClassSingleton() signalAllAcceptedCredentialsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(borrow(*userHandle)->span()).get() acceptedCredentialIDs:credentialIds.get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), error = retainPtr(error)]() mutable {
             if (error) {
                 RELEASE_LOG_ERROR(WebAuthn, "Error signaling all accepted credentials: %@.", error.get().localizedDescription);
@@ -1562,7 +1563,7 @@ void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(IPC::Connection&
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-    [getCredentialUpdaterShimClassSingleton() signalCurrentUserDetailsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(*userHandle).get() newName:options.name.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+    [getCredentialUpdaterShimClassSingleton() signalCurrentUserDetailsWithRelyingPartyIdentifier:options.rpId.createNSString().get() userHandle:WTF::toNSData(borrow(*userHandle)->span()).get() newName:options.name.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
         ensureOnMainRunLoop([completionHandler = WTF::move(completionHandler), error = retainPtr(error)]() mutable {
             if (error) {
                 RELEASE_LOG_ERROR(WebAuthn, "Error signaling current user details: %@.", error.get().localizedDescription);

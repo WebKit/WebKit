@@ -35,6 +35,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/U2fResponseConverter.h>
+#include <wtf/Borrow.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
@@ -77,7 +78,7 @@ void U2fAuthenticator::checkExcludeList(size_t index)
         issueRegisterCommand();
         return;
     }
-    auto u2fCmd = convertToU2fCheckOnlySignCommand(requestData().hash, creationOptions, creationOptions.excludeCredentials[index]);
+    auto u2fCmd = convertToU2fCheckOnlySignCommand(requestData().hash, creationOptions, borrow(creationOptions.excludeCredentials)[index]);
     ASSERT(u2fCmd);
     issueNewCommand(WTF::move(*u2fCmd), CommandType::CheckOnlyCommand);
 }

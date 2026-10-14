@@ -43,11 +43,14 @@ static const SchemaVersion currentSchemaVersion = 2;
 
 static String rowFilterStringFromRowKeys(Vector<String> keys)
 {
-    Vector<String> escapedAndQuotedKeys;
-    for (String key : keys) {
-        String keyWithSingleQuotesEscaped = makeStringByReplacingAll(key, "'"_s, "''"_s);
-        escapedAndQuotedKeys.append(makeString("'"_s, keyWithSingleQuotesEscaped, "'"_s));
-    }
+    const Vector escapedAndQuotedKeys = [&] {
+        Vector<String> escapedAndQuotedKeys;
+        for (String key : keys) {
+            String keyWithSingleQuotesEscaped = makeStringByReplacingAll(key, "'"_s, "''"_s);
+            escapedAndQuotedKeys.append(makeString("'"_s, keyWithSingleQuotesEscaped, "'"_s));
+        }
+        return escapedAndQuotedKeys;
+    }();
 
     return makeStringByJoining(escapedAndQuotedKeys.span(), ", "_s);
 }

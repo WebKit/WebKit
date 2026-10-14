@@ -51,6 +51,7 @@
 #import "_WKFrameTreeNode.h"
 #import <WebCore/UserStyleSheet.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
@@ -77,7 +78,7 @@ static Ref<JSON::Array> toJSONSerialization(const Vector<String>& items)
 {
     Ref result = JSON::Array::create();
 
-    for (const auto& item : items)
+    for (const auto& item : borrow(items))
         result->pushString(item);
 
     return result;
@@ -87,7 +88,7 @@ static Vector<Ref<JSON::Object>> toJSONSerialization(const Vector<WebExtensionRe
 {
     Vector<Ref<JSON::Object>> result;
 
-    for (const auto& parameters : scripts) {
+    for (const auto& parameters : borrow(scripts)) {
         Ref object = JSON::Object::create();
 
         ASSERT(parameters.matchPatterns);
@@ -244,7 +245,7 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
         }
 
         InjectedContentVector injectedContents;
-        for (auto& parameters : scripts) {
+        for (auto& parameters : borrow(scripts)) {
             auto injectedContent = injectedContentsMap.get(parameters.identifier);
             m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
             injectedContents.append(WTF::move(injectedContent));
@@ -289,7 +290,7 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
         }
 
         InjectedContentVector injectedContents;
-        for (auto& parameters : scripts) {
+        for (auto& parameters : borrow(scripts)) {
             auto scriptID = parameters.identifier;
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
             ASSERT(registeredScript);
@@ -320,7 +321,7 @@ void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& sc
         for (auto& entry : m_registeredScriptsMap)
             scripts.append(protect(entry.value.get())->parameters());
     } else {
-        for (auto& scriptID : scriptIDs) {
+        for (auto& scriptID : borrow(scriptIDs)) {
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
             if (!registeredScript)
                 continue;
@@ -339,7 +340,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
     // Remove all registered scripts if no filter is specififed.
     auto ids = scriptIDs.isEmpty() ? copyToVector(m_registeredScriptsMap.keys()) : scriptIDs;
 
-    for (auto& scriptID : ids) {
+    for (auto& scriptID : borrow(ids)) {
         if (!m_registeredScriptsMap.contains(scriptID)) {
             completionHandler(toWebExtensionError(apiName, nullString(), makeString("no script with ID '"_s, scriptID, "'"_s)));
             return;
@@ -352,7 +353,7 @@ void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>
             return;
         }
 
-        for (auto& scriptID : ids) {
+        for (auto& scriptID : borrow(ids)) {
             if (RefPtr registeredScript = m_registeredScriptsMap.take(scriptID))
                 registeredScript->removeUserScriptsAndStyleSheets(scriptID);
         }
@@ -387,7 +388,7 @@ void WebExtensionContext::loadRegisteredContentScripts()
         }
 
         InjectedContentVector injectedContents;
-        for (auto& parameters : parametersVector) {
+        for (auto& parameters : borrow(parametersVector)) {
             auto injectedContent = injectedContentsMap.get(parameters.identifier);
             m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters, injectedContent));
             injectedContents.append(WTF::move(injectedContent));
@@ -411,7 +412,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
 {
     Vector<String> idsToAdd;
 
-    for (auto& parameters : scripts) {
+    for (auto& parameters : borrow(scripts)) {
         auto scriptID = parameters.identifier;
 
         if (firstTimeRegistration == FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {

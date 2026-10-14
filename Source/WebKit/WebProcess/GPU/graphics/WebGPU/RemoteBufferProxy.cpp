@@ -30,6 +30,7 @@
 
 #include "RemoteBufferMessages.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit::WebGPU {
@@ -78,7 +79,7 @@ void RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
         return;
     }
 
-    callback(data->mutableSpan().subspan(offset));
+    callback(borrow(*data)->mutableSpan().subspan(offset));
 }
 
 std::span<uint8_t> RemoteBufferProxy::getBufferContents()

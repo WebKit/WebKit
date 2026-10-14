@@ -32,6 +32,7 @@
 #import <WebCore/AffineTransform.h>
 #import <WebCore/GeometryUtilities.h>
 #import <ranges>
+#import <wtf/Borrow.h>
 #import <wtf/text/TextStream.h>
 
 #import "PDFKitSoftLink.h"
@@ -641,7 +642,8 @@ FloatPoint PDFDocumentLayout::documentToPDFPage(FloatPoint documentPoint, PageIn
     if (pageIndex >= m_pageGeometry.size())
         return documentPoint;
 
-    auto& pageGeometry = m_pageGeometry[pageIndex];
+    Borrow borrowedPageGeometry = m_pageGeometry;
+    auto& pageGeometry = borrowedPageGeometry[pageIndex];
 
     auto mappedPoint = documentPoint;
     mappedPoint.moveBy(-pageGeometry.layoutBounds.location());
@@ -658,7 +660,8 @@ FloatRect PDFDocumentLayout::documentToPDFPage(FloatRect documentRect, PageIndex
     if (pageIndex >= m_pageGeometry.size())
         return documentRect;
 
-    auto& pageGeometry = m_pageGeometry[pageIndex];
+    Borrow borrowedPageGeometry = m_pageGeometry;
+    auto& pageGeometry = borrowedPageGeometry[pageIndex];
 
     auto mappedRect = documentRect;
 
@@ -676,7 +679,8 @@ FloatPoint PDFDocumentLayout::pdfPageToDocument(FloatPoint pagePoint, PageIndex 
     if (pageIndex >= m_pageGeometry.size())
         return pagePoint;
 
-    auto& pageGeometry = m_pageGeometry[pageIndex];
+    Borrow borrowedPageGeometry = m_pageGeometry;
+    auto& pageGeometry = borrowedPageGeometry[pageIndex];
 
     auto matrix = toPageTransform(pageGeometry);
     auto mappedPoint = matrix.inverse().value_or(AffineTransform { }).mapPoint(pagePoint);
@@ -692,7 +696,8 @@ FloatRect PDFDocumentLayout::pdfPageToDocument(const FloatRect pageSpaceRect, Pa
     if (pageIndex >= m_pageGeometry.size())
         return pageSpaceRect;
 
-    auto& pageGeometry = m_pageGeometry[pageIndex];
+    Borrow borrowedPageGeometry = m_pageGeometry;
+    auto& pageGeometry = borrowedPageGeometry[pageIndex];
 
     auto matrix = toPageTransform(pageGeometry);
     auto mappedRect = matrix.inverse().value_or(AffineTransform { }).mapRect(pageSpaceRect);

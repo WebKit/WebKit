@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "WellKnownResourceFetcher.h"
 #include <WebCore/WellKnownOriginList.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -53,8 +54,9 @@ void RelatedOriginsValidation::validate(WebPageProxy& page, const WebCore::Secur
             return;
         }
 
-        auto origins = WebCore::parseOriginsFromWellKnownList(result.body.span(), webAuthnOriginsMember);
-        auto found = WebCore::findOriginInWellKnownList(callerOrigin, result.body.span(), webAuthnOriginsMember);
+        Borrow borrowedBody = result.body;
+        auto origins = WebCore::parseOriginsFromWellKnownList(borrowedBody->span(), webAuthnOriginsMember);
+        auto found = WebCore::findOriginInWellKnownList(callerOrigin, borrowedBody->span(), webAuthnOriginsMember);
         if (found == WebCore::WellKnownOriginListResult::Malformed)
             RELEASE_LOG_ERROR(WebAuthn, "Related origins: well-known resource is malformed.");
 

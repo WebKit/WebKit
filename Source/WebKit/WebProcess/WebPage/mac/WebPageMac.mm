@@ -116,6 +116,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SortedArrayMap.h>
@@ -311,8 +312,9 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
 
     Ref editor = frame->editor();
     bool eventWasHandled = false;
-    for (size_t i = 0; i < commands.size(); ++i) {
-        auto& currentCommand = commands[i];
+    Borrow borrowedCommands = commands;
+    for (size_t i = 0; i < borrowedCommands->size(); ++i) {
+        auto& currentCommand = borrowedCommands[i];
         if (currentCommand.commandName == "insertText:"_s) {
             if (editor->hasComposition()) {
                 eventWasHandled = true;
@@ -346,11 +348,11 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
                 if (!commandExecutedByEditor) {
-                    bool performedNonEditingBehavior = event->underlyingPlatformEvent()->type() == PlatformEvent::Type::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName, event);
+                    bool performedNonEditingBehavior = event->underlyingPlatformEvent()->type() == PlatformEvent::Type::RawKeyDown && performNonEditingBehaviorForSelector(borrowedCommands[i].commandName, event);
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
-                auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), m_identifier);
+                auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(borrowedCommands[i].commandName), m_identifier);
                 auto [commandWasHandledByUIProcess] = sendResult.takeReplyOr(false);
                 eventWasHandled |= commandWasHandledByUIProcess;
             }
@@ -387,7 +389,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     // (e.g. Tab that inserts a Tab character, or Enter).
     bool haveTextInsertionCommands = false;
     Ref editor = frame->editor();
-    for (auto& command : commands) {
+    for (auto& command : borrow(commands)) {
         if (editor->command(commandNameForSelectorName(command.commandName)).isTextInsertion())
             haveTextInsertionCommands = true;
     }
@@ -501,7 +503,7 @@ void WebPage::updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCor
 
 void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
 {
-    RetainPtr elementTokenData = toNSData(elementToken.bytes);
+    RetainPtr elementTokenData = toNSData(borrow(elementToken.bytes)->span());
     auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
 
     // Each local root frame gets a mock accessibility element that serves as the target for the
@@ -517,8 +519,8 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::Accessi
 
 void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken windowToken)
 {
-    RetainPtr elementTokenData = toNSData(elementToken.bytes);
-    RetainPtr windowTokenData = toNSData(windowToken.bytes);
+    RetainPtr elementTokenData = toNSData(borrow(elementToken.bytes)->span());
+    RetainPtr windowTokenData = toNSData(borrow(windowToken.bytes)->span());
     auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
     auto remoteWindow = [windowTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:windowTokenData.get()]) : nil;
 

@@ -30,6 +30,7 @@
 
 #import <CryptoTokenKit/TKSmartCard.h>
 #include <WebCore/FidoConstants.h>
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/cocoa/VectorCocoa.h>
@@ -103,7 +104,7 @@ RetainPtr<NSData> MockCcidService::nextReply(NSData *request)
 {
     // Command-aware replies let a test model a legacy U2F-only key: the applet selection command can be
     // answered with a non-match, forcing the connection to fall back to the U2F_VERSION command.
-    auto requestVector = makeVector(request);
+    const Vector requestVector = makeVector(request);
     if (!m_configuration.ccid->appletSelectionResponseBase64.isEmpty() && equalSpans(requestVector.span(), std::span { kCtapNfcAppletSelectionCommand }))
         return dataFromBase64(m_configuration.ccid->appletSelectionResponseBase64);
     if (!m_configuration.ccid->u2fVersionResponseBase64.isEmpty() && equalSpans(requestVector.span(), std::span { kCtapNfcU2fVersionCommand }))
@@ -112,7 +113,7 @@ RetainPtr<NSData> MockCcidService::nextReply(NSData *request)
     if (m_configuration.ccid->payloadBase64.isEmpty())
         return nil;
 
-    auto result = dataFromBase64(m_configuration.ccid->payloadBase64[0]);
+    auto result = dataFromBase64(borrow(m_configuration.ccid->payloadBase64)[0]);
     m_configuration.ccid->payloadBase64.removeAt(0);
     return result;
 }

@@ -35,6 +35,7 @@
 #import "WebExtensionAPIWebRequest.h"
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/Borrow.h>
 #import <wtf/URLParser.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -145,7 +146,7 @@ static NSString *toWebAPI(const WebCore::FormData& formData, const String& conte
     for (const WebCore::FormDataElement& element : formData.elements()) {
         if (auto* data = std::get_if<Vector<uint8_t>>(&element.data)) {
             if (isURLEncoded) {
-                auto dataString = String::fromUTF8(data->span());
+                auto dataString = String::fromUTF8(borrow(*data)->span());
 
                 for (auto& pair : URLParser::parseURLEncodedForm(dataString)) {
                     RetainPtr key = pair.key.createNSString();

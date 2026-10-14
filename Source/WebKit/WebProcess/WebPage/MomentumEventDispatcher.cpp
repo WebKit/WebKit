@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/Scrollbar.h>
+#include <wtf/Borrow.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -491,10 +492,11 @@ void MomentumEventDispatcher::equalizeTailGaps()
         if (!firstZeroIndex[axis])
             return;
 
-        if (deltas[axis][0] > 0)
-            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]), std::greater());
+        Borrow borrowedDeltas = deltas[axis];
+        if (borrowedDeltas[0] > 0)
+            std::sort(borrowedDeltas->begin(), std::next(borrowedDeltas->begin(), firstZeroIndex[axis]), std::greater());
         else
-            std::sort(deltas[axis].begin(), std::next(deltas[axis].begin(), firstZeroIndex[axis]));
+            std::sort(borrowedDeltas->begin(), std::next(borrowedDeltas->begin(), firstZeroIndex[axis]));
     };
 
     sortDeltas(Horizontal);

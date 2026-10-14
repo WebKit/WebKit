@@ -167,7 +167,7 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
                 continue;
             }
 
-            for (auto& script : scriptPairs) {
+            for (auto& script : borrow(scriptPairs)) {
                 [webView _evaluateJavaScript:script.first.createNSString().get() withSourceURL:script.second.createNSURL().get() inFrame:frameInfo inContentWorld:checked_objc_cast<WKContentWorld>(executionWorld->wrapper()) withUserGesture:userGesture completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));
                 }).get()];
@@ -180,7 +180,7 @@ void injectStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView, A
 {
     Ref page = *webView._page;
 
-    for (auto& styleSheet : styleSheetPairs) {
+    for (auto& styleSheet : borrow(styleSheetPairs)) {
         auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.first, styleSheet.second, { }, { }, injectedFrames, WebCore::UserContentMatchParentFrame::Never, styleLevel, std::nullopt }, executionWorld, page.ptr());
 
         Ref controller = page->userContentController();
@@ -195,8 +195,8 @@ void removeStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView,  
     UserStyleSheetVector styleSheetsToRemove;
     auto& dynamicallyInjectedUserStyleSheets = context.dynamicallyInjectedUserStyleSheets();
 
-    for (auto& styleSheetContent : styleSheetPairs) {
-        for (Ref userStyleSheet : borrow(dynamicallyInjectedUserStyleSheets).get()) {
+    for (auto& styleSheetContent : borrow(styleSheetPairs)) {
+        for (Ref userStyleSheet : borrow(dynamicallyInjectedUserStyleSheets)) {
             if (userStyleSheetMatchesContent(userStyleSheet, styleSheetContent, injectedFrames)) {
                 styleSheetsToRemove.append(userStyleSheet);
                 Ref controller = webView._page.get()->userContentController();
@@ -204,7 +204,7 @@ void removeStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView,  
             }
         }
 
-        for (auto& stylesheet : styleSheetsToRemove)
+        for (auto& stylesheet : borrow(styleSheetsToRemove))
             dynamicallyInjectedUserStyleSheets.removeFirst(stylesheet);
 
         styleSheetsToRemove.clear();
@@ -290,7 +290,7 @@ void WebExtensionRegisteredScript::removeUserScriptsAndStyleSheets(const String&
 
 void WebExtensionRegisteredScript::removeUserScripts(const String& identifier)
 {
-    auto userScripts = m_userScriptsMap.take(identifier);
+    const Vector userScripts = m_userScriptsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();
 
     for (auto& userScript : userScripts) {
@@ -301,7 +301,7 @@ void WebExtensionRegisteredScript::removeUserScripts(const String& identifier)
 
 void WebExtensionRegisteredScript::removeUserStyleSheets(const String& identifier)
 {
-    auto userStyleSheets = m_userStyleSheetsMap.take(identifier);
+    const Vector userStyleSheets = m_userStyleSheetsMap.take(identifier);
     auto allUserContentControllers = m_extensionContext->extensionController()->allUserContentControllers();
 
     for (auto& userStyleSheet : userStyleSheets) {

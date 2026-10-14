@@ -37,6 +37,7 @@
 #import "WebExtensionPermission.h"
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 static NSString * const declarativeNetRequestRulesetStateKey = @"DeclarativeNetRequestRulesetState";
@@ -51,7 +52,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRulesetStateFromStorage()
     auto *savedRulesetState = objectForKey<NSDictionary>(m_state, declarativeNetRequestRulesetStateKey);
     if (!savedRulesetState.count) {
         // Populate with the default enabled state.
-        for (auto& ruleset : protect(extension())->declarativeNetRequestRulesets()) {
+        for (auto& ruleset : borrow(protect(extension())->declarativeNetRequestRulesets())) {
             if (ruleset.enabled)
                 m_enabledStaticRulesetIDs.add(ruleset.rulesetID);
         }
@@ -92,7 +93,7 @@ void WebExtensionContext::clearDeclarativeNetRequestRulesetState()
 void WebExtensionContext::declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState)
 {
     RefPtr extension = m_extension;
-    for (auto& identifier : rulesetIdentifiers) {
+    for (auto& identifier : borrow(rulesetIdentifiers)) {
         auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
             continue;

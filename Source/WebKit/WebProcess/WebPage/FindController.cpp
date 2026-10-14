@@ -62,6 +62,7 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
+#include <wtf/Borrow.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -76,6 +77,8 @@ static Vector<FindMatch> mergeByDocumentOrder(Page& page, Vector<SimpleRange>&& 
     Vector<FindMatch> merged;
     merged.reserveInitialCapacity(domRanges.size() + cueMatches.size());
 
+    Borrow borrowedDomRanges = domRanges;
+    Borrow borrowedCueMatches = cueMatches;
     size_t rangeIndex = 0;
     size_t cueIndex = 0;
     page.forEachDocument([&](Document& document) {
@@ -99,9 +102,9 @@ static Vector<FindMatch> mergeByDocumentOrder(Page& page, Vector<SimpleRange>&& 
         while (haveRange || cueElement) {
             bool takeRange = haveRange && (!cueElement || is_lt(treeOrder<ComposedTree>(domRanges[rangeIndex].start, makeBoundaryPointBeforeNodeContents(*cueElement))));
             if (takeRange)
-                merged.append(WTF::move(domRanges[rangeIndex++]));
+                merged.append(WTF::move(borrowedDomRanges[rangeIndex++]));
             else
-                merged.append(WTF::move(cueMatches[cueIndex++]));
+                merged.append(WTF::move(borrowedCueMatches[cueIndex++]));
             haveRange = rangeBelongsToDocument();
             cueElement = nextCueElementInDocument();
         }
@@ -138,10 +141,11 @@ static size_t cueIndexNearestPlayhead(const Vector<FindMatch>& merged, size_t ma
     double currentTime = media->currentTime();
     size_t nearestIndex = matchIndex;
 
+    Borrow borrowedMerged = merged;
     if (!backwards) {
         for (size_t index = matchIndex; index < merged.size() && isSameMediaCue(index); ++index) {
             nearestIndex = index;
-            if (std::get<CueMatch>(merged[index]).seekTime.toDouble() >= currentTime)
+            if (std::get<CueMatch>(borrowedMerged[index]).seekTime.toDouble() >= currentTime)
                 return index;
         }
         return nearestIndex;
@@ -149,7 +153,7 @@ static size_t cueIndexNearestPlayhead(const Vector<FindMatch>& merged, size_t ma
 
     for (size_t index = matchIndex + 1; index && isSameMediaCue(index - 1); --index) {
         nearestIndex = index - 1;
-        if (std::get<CueMatch>(merged[index - 1]).seekTime.toDouble() <= currentTime)
+        if (std::get<CueMatch>(borrowedMerged[index - 1]).seekTime.toDouble() <= currentTime)
             return index - 1;
     }
     return nearestIndex;
@@ -169,15 +173,16 @@ static std::optional<size_t> indexClosestToSelection(const Vector<FindMatch>& me
     };
 
     auto anchor = selection->start;
+    Borrow borrowedMerged = merged;
     if (!backwards) {
         for (size_t matchIndex = 0; matchIndex < merged.size(); ++matchIndex) {
-            if (auto position = positionOf(merged[matchIndex]); position && is_gteq(treeOrder<ComposedTree>(*position, anchor)))
+            if (auto position = positionOf(borrowedMerged[matchIndex]); position && is_gteq(treeOrder<ComposedTree>(*position, anchor)))
                 return cueIndexNearestPlayhead(merged, matchIndex, backwards);
         }
         return std::nullopt;
     }
     for (size_t matchIndex = merged.size(); matchIndex > 0; --matchIndex) {
-        if (auto position = positionOf(merged[matchIndex - 1]); position && is_lteq(treeOrder<ComposedTree>(*position, anchor)))
+        if (auto position = positionOf(borrowedMerged[matchIndex - 1]); position && is_lteq(treeOrder<ComposedTree>(*position, anchor)))
             return cueIndexNearestPlayhead(merged, matchIndex - 1, backwards);
     }
     return std::nullopt;
@@ -254,9 +259,10 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
 
     Vector<SimpleRange> rangesToReplace;
     rangesToReplace.reserveInitialCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
+    Borrow borrowedFindMatches = m_findMatches;
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
-            rangesToReplace.append(m_findMatches[index]);
+            rangesToReplace.append(borrowedFindMatches[index]);
         if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
             break;
     }
@@ -610,11 +616,12 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
                 }
 
                 if (nextIndex) {
-                    if (auto frameID = applyFindMatch(merged[*nextIndex], options)) {
+                    Borrow borrowedMerged = merged;
+                    if (auto frameID = applyFindMatch(borrowedMerged[*nextIndex], options)) {
                         idOfFrameContainingString = frameID;
                         found = true;
                         didWrap = wrapped ? WebCore::DidWrap::Yes : WebCore::DidWrap::No;
-                        m_lastFoundRange = WTF::move(merged[*nextIndex]);
+                        m_lastFoundRange = WTF::move(borrowedMerged[*nextIndex]);
                         m_lastFoundRangeDidWrap = wrapped;
 
                         m_foundStringMatchIndex = *nextIndex;
@@ -663,7 +670,7 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     m_findMatches = WTF::move(result.ranges);
 
     Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>> matchRects;
-    for (auto& range : m_findMatches) {
+    for (auto& range : borrow(m_findMatches)) {
         auto frameID = protect(range.start.document().frame())->frameID();
         if (matchRects.isEmpty() || matchRects.last().first != frameID)
             matchRects.append({ frameID, { } });
@@ -690,13 +697,14 @@ void FindController::getImageForFindMatch(uint32_t matchIndex, CompletionHandler
 {
     if (matchIndex >= m_findMatches.size())
         return completionHandler(std::nullopt, std::nullopt);
-    RefPtr frame = m_findMatches[matchIndex].start.document().frame();
+    Borrow borrowedFindMatches = m_findMatches;
+    RefPtr frame = borrowedFindMatches[matchIndex].start.document().frame();
     if (!frame)
         return completionHandler(std::nullopt, std::nullopt);
 
     CheckedRef frameSelection = frame->selection();
     auto oldSelection = frameSelection->selection();
-    frameSelection->setSelection(m_findMatches[matchIndex]);
+    frameSelection->setSelection(borrowedFindMatches[matchIndex]);
 
     auto selectionSnapshot = protect(WebFrame::fromCoreFrame(*frame))->createSelectionSnapshot();
 
@@ -716,10 +724,11 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    RefPtr frame = m_findMatches[matchIndex].start.document().frame();
+    Borrow borrowedFindMatches = m_findMatches;
+    RefPtr frame = borrowedFindMatches[matchIndex].start.document().frame();
     if (!frame)
         return;
-    protect(frame->selection())->setSelection(m_findMatches[matchIndex]);
+    protect(frame->selection())->setSelection(borrowedFindMatches[matchIndex]);
 }
 
 void FindController::indicateFindMatch(uint32_t matchIndex)
@@ -859,7 +868,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor);
 
-    Vector<Path> whiteFramePaths = PathUtilities::pathsWithShrinkWrappedRects(rects, findIndicatorRadius);
+    const Vector whiteFramePaths = PathUtilities::pathsWithShrinkWrappedRects(rects, findIndicatorRadius);
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
 

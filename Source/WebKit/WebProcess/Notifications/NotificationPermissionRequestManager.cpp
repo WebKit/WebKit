@@ -36,6 +36,7 @@
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <wtf/Borrow.h>
 
 #if ENABLE(NOTIFICATIONS)
 #include "WebNotificationManager.h"
@@ -97,7 +98,7 @@ void NotificationPermissionRequestManager::startRequest(const SecurityOriginData
 
 void NotificationPermissionRequestManager::callPermissionHandlersWith(PermissionHandlers& permissionHandlers, Permission permission)
 {
-    for (auto& permissionHandler : permissionHandlers)
+    for (auto& permissionHandler : borrow(permissionHandlers))
         permissionHandler(permission);
 }
 #endif

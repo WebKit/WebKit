@@ -38,6 +38,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
+#include <wtf/Borrow.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -333,7 +334,7 @@ void AsyncPDFRenderer::ensurePreviewsForCurrentPageCoverage()
     if (!presentationController)
         return;
 
-    auto pageCoverage = *m_currentPageCoverage;
+    const Vector pageCoverage = *m_currentPageCoverage;
     auto pagePreviewScale = presentationController->scaleForPagePreviews();
 
     for (auto& pageInfo : pageCoverage) {
@@ -372,7 +373,7 @@ void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& co
     if (!presentationController)
         return;
 
-    auto pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
+    const Vector pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
     using PDFPageIndex = PDFDocumentLayout::PageIndex;
     HashSet<PDFPageIndex, IntHash<PDFPageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFPageIndex>> unwantedPageIndices;
@@ -575,7 +576,7 @@ static void renderPDFTile(PDFDocument *pdfDocument, const TileRenderInfo& render
     context.translate(-renderInfo.pageCoverage.contentsOffset);
     context.scale(renderInfo.pageCoverage.pdfDocumentScale);
 
-    for (auto& pageInfo : renderInfo.pageCoverage.pages) {
+    for (auto& pageInfo : borrow(renderInfo.pageCoverage.pages)) {
         RetainPtr pdfPage = [pdfDocument pageAtIndex:pageInfo.pageIndex];
         if (!pdfPage)
             continue;
@@ -745,7 +746,7 @@ bool AsyncPDFRenderer::paintTilesForPage(const GraphicsLayer* layer, GraphicsCon
             if (tileForGrid.gridIdentifier != tileGridIdentifier)
                 continue;
 
-            for (auto& pageInfo : renderedTile.tileInfo.pageCoverage.pages) {
+            for (auto& pageInfo : borrow(renderedTile.tileInfo.pageCoverage.pages)) {
                 if (pageInfo.pageIndex != pageIndex)
                     continue;
 
@@ -851,7 +852,7 @@ void AsyncPDFRenderer::invalidatePreviewsForPageCoverage(const PDFPageCoverage& 
     RefPtr presentationController = m_presentationController.get();
     if (!presentationController)
         return;
-    for (auto& pageInfo : pageCoverage)
+    for (auto& pageInfo : borrow(pageCoverage))
         removePreviewForPage(pageInfo.pageIndex);
 
     ensurePreviewsForCurrentPageCoverage();

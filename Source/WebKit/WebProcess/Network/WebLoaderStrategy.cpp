@@ -76,6 +76,7 @@
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/UserContentProvider.h>
 #include <pal/SessionID.h>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -1060,7 +1061,7 @@ void WebLoaderStrategy::setOnLineState(bool isOnLine)
         return;
 
     m_isOnLine = isOnLine;
-    for (auto& listener : m_onlineStateChangeListeners)
+    for (auto& listener : borrow(m_onlineStateChangeListeners))
         listener(isOnLine);
 }
 

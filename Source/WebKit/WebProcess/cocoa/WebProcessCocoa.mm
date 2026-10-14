@@ -121,6 +121,7 @@
 #import <stdio.h>
 #import <wtf/AvailableMemory.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
@@ -355,23 +356,27 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
     if (!(PAL::isVideoToolboxFrameworkAvailable() && PAL::canLoad_VideoToolbox_VTRestrictVideoDecoders()))
         return;
 
-    Vector<CMVideoCodecType> allowedCodecTypeList;
+    const Vector allowedCodecTypeList = [&] {
+        Vector<CMVideoCodecType> allowedCodecTypeList;
 
-    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableCommonVideoDecoders)) {
-        allowedCodecTypeList.append(kCMVideoCodecType_H263);
-        allowedCodecTypeList.append(kCMVideoCodecType_H264);
-        allowedCodecTypeList.append(kCMVideoCodecType_MPEG4Video);
-    }
+        if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableCommonVideoDecoders)) {
+            allowedCodecTypeList.append(kCMVideoCodecType_H263);
+            allowedCodecTypeList.append(kCMVideoCodecType_H264);
+            allowedCodecTypeList.append(kCMVideoCodecType_MPEG4Video);
+        }
 
-    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableHEIC)) {
-        allowedCodecTypeList.append(kCMVideoCodecType_HEVC);
-        allowedCodecTypeList.append(kCMVideoCodecType_HEVCWithAlpha);
-    }
+        if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableHEIC)) {
+            allowedCodecTypeList.append(kCMVideoCodecType_HEVC);
+            allowedCodecTypeList.append(kCMVideoCodecType_HEVCWithAlpha);
+        }
 
 #if HAVE(AVIF)
-    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableAVIF))
-        allowedCodecTypeList.append(kCMVideoCodecType_AV1);
+        if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableAVIF))
+            allowedCodecTypeList.append(kCMVideoCodecType_AV1);
 #endif
+
+        return allowedCodecTypeList;
+    }();
 
     unsigned flags = 0;
 
@@ -404,7 +409,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if ENABLE(NOTIFY_BLOCKING)
-    for (const auto& [name, state] : parameters.notifyState)
+    for (const auto& [name, state] : borrow(parameters.notifyState))
         setNotifyState(name, state);
 #endif
 
@@ -1407,7 +1412,7 @@ void WebProcess::grantAccessToAssetServices(Vector<WebKit::SandboxExtensionHandl
 {
     if (m_assetServicesExtensions.size())
         return;
-    for (auto& handle : assetServicesHandles) {
+    for (auto& handle : borrow(assetServicesHandles)) {
         auto extension = SandboxExtension::create(WTF::move(handle));
         if (!extension)
             continue;
@@ -1486,7 +1491,7 @@ void WebProcess::updatePageScreenProperties()
 
 void WebProcess::unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&& handles)
 {
-    auto extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
+    const Vector extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
         auto extension = SandboxExtension::create(WTF::move(handle));
         if (extension)
             extension->consume();
@@ -1632,7 +1637,7 @@ void WebProcess::getNotifyStateForTesting(const String& name, CompletionHandler<
 void WebProcess::registerAdditionalFonts(AdditionalFonts&& fonts)
 {
     RetainPtr<NSMutableArray> fontURLs = [NSMutableArray array];
-    for (auto& fontData : fonts.fontDataList) {
+    for (auto& fontData : borrow(fonts.fontDataList)) {
         SandboxExtension::consumePermanently(fontData.sandboxExtensionHandle);
 
         RetainPtr<CFURLRef> cfURL = fontData.fontURL.createCFURL();
@@ -1666,7 +1671,7 @@ void WebProcess::initializeAccessibility(Vector<SandboxExtension::Handle>&& hand
 #endif
 
     RELEASE_LOG(Process, "WebProcess::initializeAccessibility, pid = %d", getpid());
-    auto extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
+    const Vector extensions = WTF::compactMap(WTF::move(handles), [](SandboxExtension::Handle&& handle) -> RefPtr<SandboxExtension> {
         auto extension = SandboxExtension::create(WTF::move(handle));
         if (extension)
             extension->consume();

@@ -33,6 +33,7 @@
 #import "WebExtensionMatchPattern.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -170,9 +171,11 @@ bool WebExtensionMenuItem::toggleCheckedIfNeeded(const WebExtensionMenuItemConte
         if (index == notFound)
             break;
 
+        Borrow borrowedItems = items;
+
         // Uncheck all radio items in the same group before the current item.
         for (ssize_t i = index - 1; i >= 0; --i) {
-            auto& item = items[i];
+            auto& item = borrowedItems[i];
             if (!item->matches(contextParameters))
                 continue;
 
@@ -183,8 +186,8 @@ bool WebExtensionMenuItem::toggleCheckedIfNeeded(const WebExtensionMenuItemConte
         }
 
         // Uncheck all radio items in the same group after the current item.
-        for (size_t i = index + 1; i < items.size(); ++i) {
-            auto& item = items[i];
+        for (size_t i = index + 1; i < borrowedItems->size(); ++i) {
+            auto& item = borrowedItems[i];
             if (!item->matches(contextParameters))
                 continue;
 

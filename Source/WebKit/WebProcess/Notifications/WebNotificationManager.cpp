@@ -30,6 +30,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessCreationParameters.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -146,7 +147,7 @@ void WebNotificationManager::didUpdateNotificationDecision(const String& originS
 void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>& originStrings)
 {
 #if ENABLE(NOTIFICATIONS)
-    for (auto& originString : originStrings) {
+    for (auto& originString : borrow(originStrings)) {
         if (!originString.isEmpty())
             m_permissionsMap.remove(originString);
     }
@@ -331,7 +332,7 @@ void WebNotificationManager::didCloseNotifications(const Vector<WTF::UUID>& noti
     ASSERT(isMainRunLoop());
 
 #if ENABLE(NOTIFICATIONS)
-    for (auto& notificationID : notificationIDs) {
+    for (auto& notificationID : borrow(notificationIDs)) {
         auto contextIdentifier = m_nonPersistentNotificationsContexts.get(notificationID);
         if (!contextIdentifier)
             continue;

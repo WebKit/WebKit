@@ -50,6 +50,7 @@
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <WebCore/UserGestureIndicator.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -64,9 +65,11 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
 {
     auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
 
+    Borrow borrowedParametersVector = parametersVector;
+
     // tabs.executeScript() only returns an array of the injection result.
     if (returnExecutionResultOnly) {
-        for (auto& parameters : parametersVector) {
+        for (auto& parameters : borrowedParametersVector) {
             RetainPtr result = parameters.resultJSON ? parseJSON(parameters.resultJSON.value().createNSString().get(), JSONOptions::FragmentsAllowed) : nil;
             [results addObject:result.get() ?: NSNull.null];
         }
@@ -74,8 +77,8 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
         return [results copy];
     }
 
-    for (auto& parameters : parametersVector) {
-        auto *result = [NSMutableDictionary dictionaryWithCapacity:3];
+    for (auto& parameters : borrowedParametersVector) {
+        auto *result =[NSMutableDictionary dictionaryWithCapacity:3];
 
         id value = parameters.resultJSON ? parseJSON(parameters.resultJSON.value().createNSString().get(), JSONOptions::FragmentsAllowed) : nil;
         result[@"result"] = value ?: NSNull.null;

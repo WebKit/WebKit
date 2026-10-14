@@ -74,6 +74,7 @@
 #include <WebCore/ServiceWorkerJobDataIdentifier.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/UserContentURLPattern.h>
+#include <wtf/Borrow.h>
 #include <wtf/ProcessID.h>
 
 #if USE(QUICK_LOOK)
@@ -520,7 +521,7 @@ void WebSWContextManagerConnection::setRegistrationUpdateViaCache(WebCore::Servi
 
 void WebSWContextManagerConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin)
 {
-    for (auto& port : message.transferredPorts)
+    for (auto& port : borrow(message.transferredPorts))
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
     Vector<URL> blobURLs;

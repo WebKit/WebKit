@@ -640,11 +640,11 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
         if (!matchesTarget(frame, targetParameters))
             return;
 
-        WebExtensionAPIEvent::ListenerVector listeners;
-        if (sourceContentWorldType == WebExtensionContentWorldType::WebPage)
-            listeners = protect(namespaceObject.runtime())->onConnectExternal().listeners();
-        else
-            listeners = protect(namespaceObject.runtime())->onConnect().listeners();
+        const WebExtensionAPIEvent::ListenerVector listeners = [&] {
+            if (sourceContentWorldType == WebExtensionContentWorldType::WebPage)
+                return protect(namespaceObject.runtime())->onConnectExternal().listeners();
+            return protect(namespaceObject.runtime())->onConnect().listeners();
+        }();
 
         if (listeners.isEmpty())
             return;

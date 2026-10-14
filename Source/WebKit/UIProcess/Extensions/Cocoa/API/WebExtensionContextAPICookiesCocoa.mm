@@ -46,6 +46,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <pal/SessionID.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/text/MakeString.h>
 
 namespace WebKit {
@@ -133,13 +134,13 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
                 return;
             }
 
-            auto& cookies = result.value();
-            if (cookies.isEmpty()) {
+            Borrow cookies = result.value();
+            if (cookies->isEmpty()) {
                 completionHandler({ });
                 return;
             }
 
-            ASSERT(cookies.size() == 1);
+            ASSERT(cookies->size() == 1);
             auto& cookieParameters = cookies[0];
 
             completionHandler({ WTF::move(cookieParameters) });
@@ -205,13 +206,13 @@ void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID,
                 return;
             }
 
-            auto& cookies = result.value();
-            if (cookies.isEmpty()) {
+            Borrow cookies = result.value();
+            if (cookies->isEmpty()) {
                 completionHandler({ });
                 return;
             }
 
-            ASSERT(cookies.size() == 1);
+            ASSERT(cookies->size() == 1);
             auto& cookieParameters = cookies[0];
 
             protect(dataStore->cookieStore())->deleteCookie(cookieParameters.cookie, [completionHandler = WTF::move(completionHandler), cookieParameters]() mutable {

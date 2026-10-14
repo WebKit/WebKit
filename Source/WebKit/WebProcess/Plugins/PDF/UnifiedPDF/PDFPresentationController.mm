@@ -198,7 +198,7 @@ void PDFPresentationController::setNeedsRepaintForPageCoverage(RepaintRequiremen
         repaintRequirements.add(RepaintRequirement::PDFContent);
     }
 
-    auto layerCoverages = layerCoveragesForRepaintPageCoverage(repaintRequirements, coverage);
+    const Vector layerCoverages = layerCoveragesForRepaintPageCoverage(repaintRequirements, coverage);
     for (auto& layerCoverage : layerCoverages)
         Ref { layerCoverage.layer }->setNeedsDisplayInRect(layerCoverage.bounds);
 

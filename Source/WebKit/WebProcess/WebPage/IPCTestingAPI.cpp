@@ -69,6 +69,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
+#include <wtf/Borrow.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Scope.h>
@@ -2247,7 +2248,7 @@ static bool encodeArrayArgument(IPC::Encoder& encoder, ArrayMode arrayMode, JSCo
         vector.append(VectorEncodeHelper { context, { JSContextGetGlobalContext(context), itemRef }, exception, success });
     }
     if (arrayMode == ArrayMode::Tuple) {
-        for (auto& item : vector)
+        for (auto& item : borrow(vector))
             item.encode(encoder);
     } else
         encoder << vector;
@@ -2827,8 +2828,9 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
         // Create valueMap array with both values and names
         JSC::JSObject* valueMapArray = JSC::constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
-        for (size_t i = 0; i < enumeration.valueMap.size(); i++) {
-            auto& valueInfo = enumeration.valueMap[i];
+        Borrow borrowedValueMap = enumeration.valueMap;
+        for (size_t i = 0; i < borrowedValueMap->size(); i++) {
+            auto& valueInfo = borrowedValueMap[i];
             JSC::JSObject* valueObject = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
             RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
@@ -2973,8 +2975,9 @@ static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* gl
     JSC::JSObject* argumentsArray = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-    for (unsigned argumentIndex = 0; argumentIndex < argumentDescriptions->size(); ++argumentIndex) {
-        auto& description = argumentDescriptions->at(argumentIndex);
+    Borrow borrowedDescriptions = *argumentDescriptions;
+    for (unsigned argumentIndex = 0; argumentIndex < borrowedDescriptions->size(); ++argumentIndex) {
+        auto& description = borrowedDescriptions->at(argumentIndex);
         JSC::JSObject* jsDescriptions = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 

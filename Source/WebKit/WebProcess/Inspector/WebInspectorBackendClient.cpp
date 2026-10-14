@@ -414,15 +414,18 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifie
 
     // Tear highlight overlays down too, or a stale one re-parents under the main frame.
     // Collect and erase first: uninstalling re-enters willMoveToPage(), which mutates this map.
-    Vector<std::pair<Ref<LocalFrame>, RefPtr<PageOverlay>>> detachedHighlights;
-    m_frameHighlightOverlays.removeIf([&](auto& entry) {
-        Ref frame = entry.key;
-        if (frame->frameID() != frameID)
-            return false;
+    const Vector detachedHighlights = [&] {
+        Vector<std::pair<Ref<LocalFrame>, RefPtr<PageOverlay>>> detachedHighlights;
+        m_frameHighlightOverlays.removeIf([&](auto& entry) {
+            Ref frame = entry.key;
+            if (frame->frameID() != frameID)
+                return false;
 
-        detachedHighlights.append({ WTF::move(frame), entry.value });
-        return true;
-    });
+            detachedHighlights.append({ WTF::move(frame), entry.value });
+            return true;
+        });
+        return detachedHighlights;
+    }();
 
     for (auto& [frame, overlay] : detachedHighlights) {
         if (!corePage)

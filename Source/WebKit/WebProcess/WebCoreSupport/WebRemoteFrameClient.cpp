@@ -48,6 +48,7 @@
 #include <WebCore/RemoteFrame.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -99,7 +100,7 @@ void WebRemoteFrameClient::paintContents(GraphicsContext& context, const IntRect
 
 void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const SecurityOriginData& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts& message, const std::optional<WebCore::UserGestureTokenData>& userGestureToken)
 {
-    for (auto& port : message.transferredPorts)
+    for (auto& port : borrow(message.transferredPorts))
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
     if (RefPtr serializedValue = message.message)
@@ -124,7 +125,7 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
         return;
 
     WebMessagePortChannelProvider::singleton().ensureMessagePortCreatedWithRoundtrip([pendingPostMessages, page] {
-        auto messagesToSend = pendingPostMessages->takeMessagesThroughNextPortTransfer();
+        const Vector messagesToSend = pendingPostMessages->takeMessagesThroughNextPortTransfer();
         for (auto& pendingPostMessage : messagesToSend)
             page->send(Messages::WebPageProxy::PostMessageToRemote(pendingPostMessage.source, pendingPostMessage.sourceOrigin, pendingPostMessage.target, pendingPostMessage.targetOrigin, pendingPostMessage.message, pendingPostMessage.userGestureToken));
     });

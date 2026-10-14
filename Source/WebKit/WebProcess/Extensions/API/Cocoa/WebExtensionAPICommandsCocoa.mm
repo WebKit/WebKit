@@ -45,6 +45,7 @@
 #import "WebFrame.h"
 #import "WebProcess.h"
 #import <WebCore/LocalFrameInlines.h>
+#import <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -62,7 +63,7 @@ static inline NSArray *toAPI(const Vector<WebExtensionCommandParameters>& comman
 {
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:commands.size()];
 
-    for (auto& command : commands)
+    for (auto& command : borrow(commands))
         [result addObject:toAPI(command)];
 
     return [result copy];

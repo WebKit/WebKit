@@ -32,6 +32,7 @@
 #include "WebExtensionConstants.h"
 #include "WebExtensionDeclarativeNetRequestSQLiteStore.h"
 #include "WebExtensionPermission.h"
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 
 namespace WebKit {
@@ -55,7 +56,7 @@ WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext:
     WebExtension::DeclarativeNetRequestRulesetVector validatedRulesets;
 
     RefPtr extension = m_extension;
-    for (auto& identifier : rulesetIdentifiers) {
+    for (auto& identifier : borrow(rulesetIdentifiers)) {
         auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
             return toWebExtensionError("declarativeNetRequest.updateEnabledRulesets()"_s, nullString(), makeString("Failed to apply rules. Invalid ruleset id: "_s, identifier, "."_s));

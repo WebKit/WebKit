@@ -235,7 +235,7 @@ void WebExtensionContext::firePortMessageEventsIfNeeded(WebExtensionContentWorld
 
 void WebExtensionContext::fireQueuedPortMessageEventsIfNeeded(WebExtensionContentWorldType targetContentWorldType, WebExtensionPortChannelIdentifier channelIdentifier)
 {
-    auto messages = portQueuedMessages(targetContentWorldType, channelIdentifier);
+    const Vector messages = portQueuedMessages(targetContentWorldType, channelIdentifier);
     if (messages.isEmpty())
         return;
 
@@ -248,7 +248,7 @@ void WebExtensionContext::fireQueuedPortMessageEventsIfNeeded(WebExtensionConten
 void WebExtensionContext::sendQueuedNativePortMessagesIfNeeded(WebExtensionPortChannelIdentifier channelIdentifier)
 {
     constexpr auto targetContentWorldType = WebExtensionContentWorldType::Native;
-    auto messages = portQueuedMessages(targetContentWorldType, channelIdentifier);
+    const Vector messages = portQueuedMessages(targetContentWorldType, channelIdentifier);
     if (messages.isEmpty())
         return;
 

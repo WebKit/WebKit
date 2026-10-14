@@ -54,6 +54,7 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/UserGestureIndicator.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
@@ -330,7 +331,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         parameters.urlPatterns = makeVector<String>(urls);
 
     if (parameters.urlPatterns) {
-        for (auto& patternString : parameters.urlPatterns.value()) {
+        for (auto& patternString : borrow(parameters.urlPatterns.value())) {
             auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!pattern || !pattern->isSupported()) {
                 *outExceptionString = toErrorString(nullString(), urlKey, makeString("'"_s, patternString, "' is not a valid pattern"_s)).createNSString().autorelease();
@@ -676,7 +677,7 @@ void WebExtensionAPITabs::getSelected(WebPageProxyIdentifier webPageProxyIdentif
 
         ASSERT(tabs.size() == 1);
 
-        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(tabs.first())));
+        callback->call(toJSValueRef(callback->globalContext(), toWebAPI(borrow(tabs)->first())));
     }, extensionContext().identifier());
 }
 
@@ -777,7 +778,7 @@ void WebExtensionAPITabs::move(NSObject *tabIDs, NSDictionary *properties, Ref<W
         auto& movedTabs = result.value();
 
         if (movedTabs.size() == 1)
-            callback->call(toJSValueRef(callback->globalContext(), toWebAPI(movedTabs[0])));
+            callback->call(toJSValueRef(callback->globalContext(), toWebAPI(borrow(movedTabs)[0])));
         else
             callback->call(toJSValueRef(callback->globalContext(), toWebAPI(movedTabs)));
     }, extensionContext().identifier());

@@ -63,6 +63,7 @@
 #include <WebCore/ServiceWorkerRoute.h>
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerScriptLoader.h>
+#include <wtf/Borrow.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -141,7 +142,7 @@ void WebSWClientConnection::scheduleUnregisterJobInServer(ServiceWorkerRegistrat
 
 void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
 {
-    for (auto& port : message.transferredPorts)
+    for (auto& port : borrow(message.transferredPorts))
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
     Vector<URL> blobURLs;

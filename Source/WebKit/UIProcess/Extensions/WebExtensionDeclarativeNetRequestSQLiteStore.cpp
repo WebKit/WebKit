@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "WebExtensionSQLiteHelpers.h"
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -108,8 +109,10 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
 
         ASSERT(errorMessage.isEmpty());
 
+        Borrow borrowedSerializedRules = serializedRules;
+
         Vector<double> rulesIDs;
-        for (auto& [ruleID, ruleData] : serializedRules)
+        for (auto& [ruleID, ruleData] : borrowedSerializedRules)
             rulesIDs.append(ruleID);
 
         ASSERT(rulesIDs.size());
@@ -136,7 +139,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::addRules(Ref<JSON::Array> rul
             }
         }
 
-        for (auto& [ruleID, ruleData] : serializedRules) {
+        for (auto& [ruleID, ruleData] : borrowedSerializedRules) {
             errorMessage = protectedThis->insertRule(ruleID, ruleData, *(protectedThis->database()));
             if (!errorMessage.isEmpty())
                 break;
@@ -221,9 +224,12 @@ RefPtr<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRu
     RefPtr<WebExtensionSQLiteRowEnumerator> rows;
 
     if (ruleIDs.size()) {
-        Vector<String> bindings;
-        for (size_t i = 0; i < ruleIDs.size(); i++)
-            bindings.append("?"_s);
+        const Vector bindings = [&] {
+            Vector<String> bindings;
+            for (size_t i = 0; i < ruleIDs.size(); i++)
+                bindings.append("?"_s);
+            return bindings;
+        }();
 
         auto joinedBindings = makeStringByJoining(bindings.span(), ", "_s);
         auto query = makeString("SELECT * FROM "_s, m_tableName, " WHERE id IN ("_s, joinedBindings, ")"_s);
@@ -232,8 +238,9 @@ RefPtr<JSON::Array> WebExtensionDeclarativeNetRequestSQLiteStore::getRulesWithRu
         if (!statement || statementError)
             return { };
 
+        Borrow borrowedRuleIDs = ruleIDs;
         for (size_t i = 0; i < ruleIDs.size(); i++)
-            statement->bind(ruleIDs[i], i + 1);
+            statement->bind(borrowedRuleIDs[i], i + 1);
 
         rows = statement->fetch();
     } else

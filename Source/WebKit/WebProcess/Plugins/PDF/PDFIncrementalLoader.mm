@@ -739,7 +739,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
             protectedLoader->getResourceBytesAtPosition(ranges[i].length, ranges[i].location, [i, &dataResults, dataSemaphore, callbackAggregator](std::span<const uint8_t> bytes) {
                 if (dataSemaphore->wasSignaled())
                     return;
-                dataResults[i] = adoptCF(CFDataCreate(kCFAllocatorDefault, bytes.data(), bytes.size()));
+                borrow(dataResults)[i] = adoptCF(CFDataCreate(kCFAllocatorDefault, bytes.data(), bytes.size()));
             });
         }
     });
@@ -751,7 +751,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     incrementalLoaderLog(makeString("PDF data provider finished receiving the requested "_s, ranges.size(), " byte ranges"_s));
 #endif
 
-    for (auto& result : dataResults) {
+    for (auto& result : borrow(dataResults)) {
         if (!result)
             result = adoptCF(CFDataCreate(kCFAllocatorDefault, 0, 0));
         CFArrayAppendValue(buffers, result.get());

@@ -42,6 +42,7 @@
 #import "WebExtensionLocalization.h"
 #import "WebPage.h"
 #import "WebProcess.h"
+#import <wtf/Borrow.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjectIdentifier.h>
@@ -101,7 +102,7 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
         }
 
         auto processPageIdentifiers = [&context, &newPage](auto& identifiers, auto addPage) {
-            for (auto& identifierTuple : identifiers) {
+            for (auto& identifierTuple : borrow(identifiers)) {
                 auto& pageIdentifier = std::get<WebCore::PageIdentifier>(identifierTuple);
                 auto& tabIdentifier = std::get<std::optional<WebExtensionTabIdentifier>>(identifierTuple);
                 auto& windowIdentifier = std::get<std::optional<WebExtensionWindowIdentifier>>(identifierTuple);

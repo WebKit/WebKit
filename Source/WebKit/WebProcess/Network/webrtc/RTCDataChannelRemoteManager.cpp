@@ -36,6 +36,7 @@
 #include <WebCore/RTCDataChannel.h>
 #include <WebCore/RTCError.h>
 #include <WebCore/ScriptExecutionContext.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 
@@ -152,7 +153,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
 
     postTaskToHandler(handlerIdentifier, [isRaw, text = WTF::move(text).isolatedCopy(), buffer = WTF::move(buffer)](auto& handler) mutable {
         if (isRaw)
-            handler.didReceiveRawData(buffer.span());
+            handler.didReceiveRawData(borrow(buffer)->span());
         else
             handler.didReceiveStringData(WTF::move(text));
     });

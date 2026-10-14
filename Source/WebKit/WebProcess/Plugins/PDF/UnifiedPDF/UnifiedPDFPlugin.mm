@@ -119,6 +119,7 @@
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <algorithm>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/Borrow.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -967,7 +968,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
     auto pageCoverage = presentationController->pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
     auto documentScale = pageCoverage.pdfDocumentScale;
 
-    for (auto& pageInfo : pageCoverage.pages) {
+    for (auto& pageInfo : borrow(pageCoverage.pages)) {
         auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
         if (!page)
             continue;
@@ -1079,7 +1080,7 @@ void UnifiedPDFPlugin::paintPDFSelection(const GraphicsLayer* layer, GraphicsCon
 
     auto pageCoverage = presentationController->pageCoverageAndScalesForContentsRect(clipRect, row, tilingScaleFactor);
     auto documentScale = pageCoverage.pdfDocumentScale;
-    for (auto& pageInfo : pageCoverage.pages) {
+    for (auto& pageInfo : borrow(pageCoverage.pages)) {
         auto page = m_documentLayout.pageAtIndex(pageInfo.pageIndex);
         if (!page)
             continue;
@@ -3712,7 +3713,7 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::rectsForTextMatchesInRect(const Vec
     auto lastCoveredPage = std::ranges::max(coveredPages);
 
     PDFPageCoverage findMatchRects;
-    for (auto& match : matches) {
+    for (auto& match : borrow(matches)) {
         if (match.startPage > lastCoveredPage || firstCoveredPage > match.endPage)
             continue;
 
@@ -3742,7 +3743,7 @@ Vector<WebCore::FloatRect> UnifiedPDFPlugin::visibleRectsForFindMatchRects(const
     if (!visibleRow)
         rectsInPluginCoordinates.reserveCapacity(findMatchRects.size());
 
-    for (auto& perPageInfo : findMatchRects) {
+    for (auto& perPageInfo : borrow(findMatchRects)) {
         if (visibleRow && !visibleRow->containsPage(perPageInfo.pageIndex))
             continue;
 
