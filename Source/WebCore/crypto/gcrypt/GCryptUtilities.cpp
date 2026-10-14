@@ -194,7 +194,7 @@ std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
     if (!data)
         return std::nullopt;
 
-    if (data->at(0) & 0x80)
+    if (data->isEmpty() || data->at(0) & 0x80)
         data->insert(0, 0x00);
 
     return data;
@@ -206,7 +206,7 @@ std::optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
     if (!data)
         return std::nullopt;
 
-    if (data->at(0) & 0x80)
+    if (data->isEmpty() || data->at(0) & 0x80)
         data->insert(0, 0x00);
 
     return data;
