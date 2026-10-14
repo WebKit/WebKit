@@ -115,6 +115,8 @@ private:
     // The scrolled-contents layer position the scrolling thread would write for this scale and scroll position.
     WebCore::FloatPoint scrolledContentsLayerPositionForScale(double scale, WebCore::FloatPoint scrollPosition) const;
 
+    bool uiProcessOwnsScrolledContentsLayerPosition() const;
+
     enum class IsStableState : bool { No, Yes };
     void sendVisibleContentRectUpdate(double scale, IsStableState);
 

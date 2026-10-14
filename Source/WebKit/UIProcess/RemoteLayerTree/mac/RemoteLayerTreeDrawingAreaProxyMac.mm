@@ -460,6 +460,11 @@ bool RemoteLayerTreeDrawingAreaProxyMac::ownsPositionOfLayer(WebCore::PlatformLa
     return m_delegatedZoomAppliedScale.has_value();
 }
 
+bool RemoteLayerTreeDrawingAreaProxyMac::uiProcessOwnsScrolledContentsLayerPosition() const
+{
+    return m_transientZoomScale || m_delegatedZoomCommittedScale || m_delegatedZoomTargetScrollPosition;
+}
+
 void RemoteLayerTreeDrawingAreaProxyMac::applyDelegatedZoomToLayer(double scale, FloatPoint originInVisibleRect)
 {
     // Scale the scrolled-contents layer like iOS does: inside the frame clipping layer so the viewport clip keeps
@@ -482,13 +487,14 @@ void RemoteLayerTreeDrawingAreaProxyMac::applyDelegatedZoomToLayer(double scale,
 
     // Override the position in the same CA commit as the transform, or a frame with one and not the other jumps
     // by (scale - 1) * scroll. With no scrolling coordinator there's nothing to anchor to.
-    if (RefPtr page = this->page(); page && page->scrollingCoordinatorProxy()) {
+    if (RefPtr page = this->page(); page && page->scrollingCoordinatorProxy() && uiProcessOwnsScrolledContentsLayerPosition()) {
         auto scaledScrollPosition = scrolledContentsLayerPositionForScale(scale, scrollPositionAnchoringGestureOrigin(scale, originInVisibleRect));
         // An animation here, unlike the transform, since the scrolling thread rewrites this layer's model
         // position every commit and an animation wins over that.
         [layerForPageScale addAnimation:transientPositionAnimation(scaledScrollPosition).get() forKey:transientScrolledContentsPositionAnimationKey];
         m_delegatedZoomAppliedLayerPosition = scaledScrollPosition;
-    }
+    } else
+        [layerForPageScale removeAnimationForKey:transientScrolledContentsPositionAnimationKey];
 
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -670,17 +676,22 @@ String RemoteLayerTreeDrawingAreaProxyMac::delegatedZoomOverrideAsTextForTesting
 
     // Read back off the layer rather than recomputed, so this is the position CA is presenting.
     auto layerPosition = IntPoint { };
+    bool positionIsOverridden = false;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (RetainPtr layerForPageScale = remoteLayerTreeHost().layerForID(m_scrolledContentsLayerID)) {
         RetainPtr animation = dynamic_objc_cast<CABasicAnimation>([layerForPageScale animationForKey:transientScrolledContentsPositionAnimationKey]);
-        if (RetainPtr value = dynamic_objc_cast<NSValue>([animation toValue]))
+        if (RetainPtr value = dynamic_objc_cast<NSValue>([animation toValue])) {
             layerPosition = roundedIntPoint(FloatPoint { [value pointValue] });
+            positionIsOverridden = true;
+        } else
+            layerPosition = roundedIntPoint(FloatPoint { [layerForPageScale position] });
     }
     END_BLOCK_OBJC_EXCEPTIONS
 
     return makeString("scale "_s, FormattedNumber::fixedWidth(scale, 2),
         " anchoring scroll position ("_s, anchoringScrollPosition.x(), ", "_s, anchoringScrollPosition.y(),
-        ") scrolled contents layer position ("_s, layerPosition.x(), ", "_s, layerPosition.y(), ')');
+        ") scrolled contents layer position ("_s, layerPosition.x(), ", "_s, layerPosition.y(),
+        ") owned by the "_s, positionIsOverridden ? "UI process"_s : "scrolling thread"_s);
 }
 
 
@@ -793,7 +804,10 @@ void RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate(double sca
 
     LOG_WITH_STREAM(VisibleRects, stream << "RemoteLayerTreeDrawingAreaProxyMac::sendVisibleContentRectUpdate " << visibleContentRectUpdateInfo.dump());
 
-    page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
+    if (uiProcessOwnsScrolledContentsLayerPosition())
+        page->updateVisibleContentRectsAndAdjustLayers(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
+    else
+        page->updateVisibleContentRects(visibleContentRectUpdateInfo, isStableState == IsStableState::Yes);
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::updateLayoutViewportForScroll(IsStableState isStableState)
