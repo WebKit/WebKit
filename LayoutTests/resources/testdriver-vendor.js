@@ -455,6 +455,11 @@ window.test_driver_internal.click = async function (element, coords)
     let point = coords;
     const elementWindow = element.ownerDocument.defaultView;
     if (elementWindow && elementWindow !== elementWindow.top) {
+        // Under site isolation, the offsets of ancestor frames in other processes come from frame
+        // geometry each process broadcasts during its rendering update. runUIScript waits for a
+        // presentation update in every web process, so that geometry is current before we use it.
+        if (testRunner?.isWebKit2 && testRunner?.runUIScript)
+            await new Promise((resolve) => testRunner.runUIScript(`uiController.uiScriptComplete()`, resolve));
         const rootView = targetWindow.internals.boundingBoxInMainFrameViewCoordinates(element);
         const frameLocal = element.getBoundingClientRect();
         point = {
