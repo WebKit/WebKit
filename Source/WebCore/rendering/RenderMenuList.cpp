@@ -73,7 +73,7 @@ void RenderMenuList::styleDidChange(Style::Difference diff, const Style::Compute
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    bool fontChanged = !oldStyle || !oldStyle->fontCascadeEqual(style());
+    bool fontChanged = !oldStyle || !oldStyle->fontCascadeEqual(protect(style()));
     if (fontChanged) {
         updateOptionsWidth();
         m_needsOptionsWidthUpdate = false;
@@ -95,12 +95,13 @@ void RenderMenuList::updateOptionsWidth()
     float widthWithoutOptions = 0;
     Ref select = selectElement();
 
+    CheckedRef style = this->style();
     auto measure = [&](const String& text) {
-        auto transformed = applyTextTransform(style(), text);
+        auto transformed = applyTextTransform(style, text);
         if (transformed.isEmpty())
             return;
-        CheckedRef font = style().fontCascade();
-        auto run = RenderBlock::constructTextRun(transformed, style());
+        CheckedRef font = style->fontCascade();
+        auto run = RenderBlock::constructTextRun(transformed, style);
         maxOptionWidth = std::max(maxOptionWidth, font->width(run));
     };
 
@@ -121,14 +122,15 @@ void RenderMenuList::updateOptionsWidth()
 
     // https://html.spec.whatwg.org/#width-of-the-select's-labels
     if (select->multiple()) {
-        CheckedRef font = style().fontCascade();
+        CheckedRef font = style->fontCascade();
         // A button shows the count in place of its selectedcontent elements, see HTMLSelectElement::buttonText().
         bool countReplacesSelectedContent = select->buttonElement() && select->updatesSelectedContent();
         auto countTextWidth = [&](unsigned count) {
             auto text = htmlSelectMultipleItems(count);
             if (countReplacesSelectedContent)
                 text = select->buttonLabelText(text);
-            return font->width(RenderBlock::constructTextRun(applyTextTransform(style(), text), style()));
+            auto run = RenderBlock::constructTextRun(applyTextTransform(style, text), style);
+            return font->width(run);
         };
         widthWithoutOptions = countTextWidth(0);
         maxOptionWidth = std::max(maxOptionWidth, widthWithoutOptions);
@@ -163,7 +165,7 @@ void RenderMenuList::updateFromElement()
 
 LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) const
 {
-    auto internalPadding = theme().popupInternalPaddingBox(style());
+    auto internalPadding = theme().popupInternalPaddingBox(protect(style()));
     auto zoom = style().usedZoomForLength();
 
     float paddingBoxTop = 0;
@@ -192,24 +194,25 @@ std::pair<LayoutUnit, LayoutUnit> RenderMenuList::computeIntrinsicLogicalWidths(
     if (style().fieldSizing() == FieldSizing::Content)
         return RenderFlexibleBox::computeIntrinsicLogicalWidths();
 
-    auto minimumSize = LayoutUnit { theme().minimumMenuListSize(style()) };
+    CheckedRef style = this->style();
+    auto minimumSize = LayoutUnit { theme().minimumMenuListSize(style) };
     auto maxLogicalWidth = std::max(LayoutUnit { shouldApplySizeContainment() ? m_widthWithoutOptions : m_optionsWidth }, minimumSize);
 
-    auto internalPadding = theme().popupInternalPaddingBox(style());
+    auto internalPadding = theme().popupInternalPaddingBox(style);
     if (auto start = internalPadding.start(writingMode()).tryFixed())
-        maxLogicalWidth += LayoutUnit(start->resolveZoom(style().usedZoomForLength()));
+        maxLogicalWidth += LayoutUnit(start->resolveZoom(style->usedZoomForLength()));
     if (auto end = internalPadding.end(writingMode()).tryFixed())
-        maxLogicalWidth += LayoutUnit(end->resolveZoom(style().usedZoomForLength()));
+        maxLogicalWidth += LayoutUnit(end->resolveZoom(style->usedZoomForLength()));
 
     if (shouldApplySizeOrInlineSizeContainment()) {
         if (auto logicalWidth = explicitIntrinsicInnerLogicalWidth())
             maxLogicalWidth = logicalWidth.value();
     }
 
-    auto& logicalWidth = style().logicalWidth();
+    auto& logicalWidth = style->logicalWidth();
     auto minLogicalWidth = LayoutUnit { };
     if (logicalWidth.isCalculated())
-        minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, style().usedZoomForLength()));
+        minLogicalWidth = std::max(0_lu, Style::evaluate<LayoutUnit>(logicalWidth, 0_lu, style->usedZoomForLength()));
     else if (!logicalWidth.isPercent())
         minLogicalWidth = maxLogicalWidth;
 
@@ -251,7 +254,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     Ref select = selectElement();
     const auto& listItems = select->listItems();
     if (listIndex >= listItems.size()) {
-        itemBackgroundColor = style().visitedDependentUsedBackgroundColorApplyingColorFilter();
+        itemBackgroundColor = protect(style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
         itemHasCustomBackgroundColor = false;
         return;
     }
@@ -269,7 +272,7 @@ void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackg
     }
 
     // Otherwise, the item's background is overlayed on top of the menu background.
-    backgroundColor = blendSourceOver(style().visitedDependentUsedBackgroundColorApplyingColorFilter(), backgroundColor);
+    backgroundColor = blendSourceOver(protect(style())->visitedDependentUsedBackgroundColorApplyingColorFilter(), backgroundColor);
     if (backgroundColor.isOpaque()) {
         itemBackgroundColor = backgroundColor;
         return;
@@ -323,7 +326,7 @@ void RenderMenuList::layout()
     //
     // Note that similar adjustments are made in RenderSliderThumb, RenderButton
     // and RenderTextControlSingleLine.
-    RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
+    RenderThemeIOS::adjustRoundBorderRadius(protect(mutableStyle()), *this);
 }
 #endif
 

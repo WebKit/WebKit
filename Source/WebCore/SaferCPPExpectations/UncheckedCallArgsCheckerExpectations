@@ -123,7 +123,6 @@ layout/layouttree/LayoutContainingBlockChainIterator.h
 [ macOS ] platform/mediastream/AudioTrackPrivateMediaStream.cpp
 [ macOS ] platform/mediastream/MediaStreamTrackPrivate.cpp
 [ macOS ] rendering/AccessibilityRegionContext.cpp
-rendering/AttachmentLayout.mm
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
@@ -147,7 +146,6 @@ rendering/MotionPath.cpp
 [ macOS ] rendering/OutlinePainter.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RegionContext.h
-rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
@@ -160,12 +158,9 @@ rendering/RenderDescendantIterator.h
 rendering/RenderElement.cpp
 rendering/RenderElement.h
 rendering/RenderElementStyleInlines.h
-rendering/RenderEmbeddedObject.cpp
-rendering/RenderFileUploadControl.cpp
 rendering/RenderFragmentContainer.cpp
 rendering/RenderFragmentContainerSet.cpp
 rendering/RenderFragmentedFlow.cpp
-rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
 [ macOS ] rendering/RenderHighlight.cpp
@@ -179,10 +174,8 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
-rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderListOutsideMarker.cpp
-rendering/RenderMenuList.cpp
 rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
 [ macOS ] rendering/RenderMultiColumnSpannerPlaceholder.cpp
@@ -203,7 +196,6 @@ rendering/RenderTextControlMultiLine.cpp
 rendering/RenderTextControlSingleLine.cpp
 rendering/RenderTextControlSingleLine.h
 rendering/RenderTextFragment.cpp
-rendering/RenderVTTCue.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp

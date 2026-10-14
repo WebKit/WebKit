@@ -79,7 +79,7 @@ void RenderFrameSet::paintColumnBorder(const PaintInfo& paintInfo, const IntRect
     
     // Fill first.
     GraphicsContext& context = paintInfo.context();
-    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
+    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? protect(style())->visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
     
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
@@ -98,7 +98,7 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     
     // Fill first.
     GraphicsContext& context = paintInfo.context();
-    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? style().visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
+    context.fillRect(borderRect, frameSetElement().hasBorderColor() ? protect(style())->visitedDependentBorderLeftColorApplyingColorFilter() : borderFillColor);
 
     // Now stroke the edges but only if we have enough room to paint both edges with a little
     // bit of the fill color showing through.
@@ -113,7 +113,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase != PaintPhase::Foreground)
         return;
     
-    RenderObject* child = firstChild();
+    CheckedPtr child = firstChild();
     if (!child)
         return;
 
@@ -385,7 +385,7 @@ void RenderFrameSet::computeEdgeInfo()
     m_cols.m_preventResize.fill(frameSetElement().noResize());
     m_cols.m_allowBorder.fill(false);
     
-    RenderObject* child = firstChild();
+    CheckedPtr child = firstChild();
     if (!child)
         return;
 
@@ -394,7 +394,7 @@ void RenderFrameSet::computeEdgeInfo()
     for (size_t r = 0; r < rows; ++r) {
         for (size_t c = 0; c < cols; ++c) {
             FrameEdgeInfo edgeInfo;
-            if (auto* frameSet = dynamicDowncast<RenderFrameSet>(*child))
+            if (CheckedPtr frameSet = dynamicDowncast<RenderFrameSet>(*child))
                 edgeInfo = frameSet->edgeInfo();
             else
                 edgeInfo = downcast<RenderFrame>(*child).edgeInfo();
@@ -440,8 +440,9 @@ void RenderFrameSet::layout()
     }
 
     if (!parent()->isRenderFrameSet() && !protect(document())->printing()) {
-        setBorderBoxWidth(view().viewWidth());
-        setBorderBoxHeight(view().viewHeight());
+        CheckedRef view = this->view();
+        setBorderBoxWidth(view->viewWidth());
+        setBorderBoxHeight(view->viewHeight());
     }
 
     unsigned cols = frameSetElement().totalCols();
@@ -479,7 +480,7 @@ static void resetFrameRendererAndDescendants(RenderBox* frameSetChild, RenderFra
     if (!frameSetChild)
         return;
 
-    for (auto* descendant = frameSetChild; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, &parentFrameSet))) {
+    for (CheckedPtr descendant = frameSetChild; descendant; descendant = downcast<RenderBox>(RenderObjectTraversal::next(*descendant, &parentFrameSet))) {
         descendant->setBorderBoxWidth(0);
         descendant->setBorderBoxHeight(0);
         descendant->clearNeedsLayout();
@@ -488,7 +489,7 @@ static void resetFrameRendererAndDescendants(RenderBox* frameSetChild, RenderFra
 
 void RenderFrameSet::positionFrames()
 {
-    RenderBox* child = firstChildBox();
+    CheckedPtr child = firstChildBox();
     if (!child)
         return;
 
@@ -585,7 +586,8 @@ bool RenderFrameSet::userResize(MouseEvent& event)
 void RenderFrameSet::setIsResizing(bool isResizing)
 {
     m_isResizing = isResizing;
-    frame().eventHandler().setResizingFrameSet(isResizing ? &frameSetElement() : nullptr);
+    RefPtr frameSetElement = isResizing ? &this->frameSetElement() : nullptr;
+    protect(frame().eventHandler())->setResizingFrameSet(frameSetElement);
 }
 
 bool RenderFrameSet::canResizeRow(const IntPoint& p) const

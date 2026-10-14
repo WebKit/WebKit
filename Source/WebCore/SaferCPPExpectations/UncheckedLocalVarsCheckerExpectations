@@ -19,7 +19,6 @@ rendering/HitTestResult.cpp
 rendering/InlineBoxPainter.cpp
 rendering/MarkedText.cpp
 rendering/PositionedLayoutConstraints.cpp
-rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
@@ -29,10 +28,8 @@ rendering/RenderCounter.cpp
 rendering/RenderDeprecatedFlexibleBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderElementStyleInlines.h
-rendering/RenderFileUploadControl.cpp
 rendering/RenderFlexibleBox.cpp
 rendering/RenderFragmentedFlow.cpp
-rendering/RenderFrameSet.cpp
 rendering/RenderGrid.cpp
 rendering/RenderImage.cpp
 rendering/RenderIterator.h
@@ -42,7 +39,6 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
-rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderListOutsideMarker.cpp
 rendering/RenderMultiColumnFlow.cpp
@@ -58,7 +54,6 @@ rendering/RenderText.cpp
 rendering/RenderText.h
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.cpp
-rendering/RenderVTTCue.cpp
 rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextAutoSizing.cpp

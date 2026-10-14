@@ -52,8 +52,8 @@ private:
     bool isOutside() const;
     bool rectIsWithinContainer(const FloatRect&) const;
     bool isOverlapping() const;
-    RenderVTTCue* overlappingObject() const;
-    RenderVTTCue* overlappingObjectForRect(const FloatRect&) const;
+    CheckedPtr<RenderVTTCue> overlappingObject() const;
+    CheckedPtr<RenderVTTCue> overlappingObjectForRect(const FloatRect&) const;
     bool shouldSwitchDirection(const InlineIterator::InlineBox&, LayoutUnit) const;
 
     void LEGACY_NODELETE moveBoxesByStep(LayoutUnit);

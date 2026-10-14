@@ -85,7 +85,6 @@ dom/ShadowRoot.cpp
 [ macOS ] platform/mediastream/cocoa/ScreenCaptureKitSharingSessionManager.mm
 [ macOS ] platform/mock/MockRealtimeMediaSourceCenter.cpp
 [ macOS ] platform/network/cocoa/WebCoreNSURLSession.mm
-[ macOS ] rendering/AttachmentLayout.mm
 rendering/BackgroundPainter.cpp
 [ iOS ] rendering/BorderPainter.cpp
 rendering/HitTestResult.cpp
@@ -96,7 +95,6 @@ rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderFragmentContainer.cpp
-rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.h
@@ -107,7 +105,6 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
-rendering/RenderListBox.cpp
 [ macOS ] rendering/RenderListOutsideMarker.cpp
 [ macOS ] rendering/RenderMultiColumnSet.cpp
 [ macOS ] rendering/RenderMultiColumnSpannerPlaceholder.cpp

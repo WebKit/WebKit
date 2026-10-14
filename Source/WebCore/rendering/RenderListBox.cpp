@@ -126,7 +126,7 @@ void RenderListBox::updateFromElement()
 {
     if (m_optionsChanged) {
         float logicalWidth = 0;
-        auto& normalFont = style().fontCascade();
+        CheckedRef style = this->style();
         std::optional<FontCascade> boldFont;
         for (auto& element : protect(selectElement())->listItems()) {
             String text;
@@ -139,12 +139,14 @@ void RenderListBox::updateFromElement()
             }
             if (text.isEmpty())
                 continue;
-            if (isGroupLabel && !boldFont)
-                boldFont = bolder(protect(document()), normalFont);
-            auto& font = isGroupLabel ? boldFont.value() : normalFont;
-            text = applyTextTransform(style(), text);
-            auto textRun = constructTextRun(text, style(), ExpansionBehavior::allowRightOnly());
-            logicalWidth = std::max(logicalWidth, font.width(textRun));
+            if (isGroupLabel && !boldFont) {
+                FontCascade bolderFont = bolder(protect(document()), protect(style->fontCascade()));
+                boldFont = WTF::move(bolderFont);
+            }
+            CheckedRef font = isGroupLabel ? *boldFont : style->fontCascade();
+            text = applyTextTransform(style, text);
+            auto textRun = constructTextRun(text, style, ExpansionBehavior::allowRightOnly());
+            logicalWidth = std::max(logicalWidth, font->width(textRun));
         }
         // FIXME: Is ceiling right here, or should we be doing some kind of rounding instead?
         m_optionsLogicalWidth = static_cast<int>(std::ceil(logicalWidth));
@@ -482,7 +484,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     const auto& listItems = element->listItems();
     RefPtr listItemElement = listItems[listIndex].get();
 
-    auto itemStyle = listItemElement->computedStyleForEditability();
+    CheckedPtr itemStyle = listItemElement->computedStyleForEditability();
     if (!itemStyle)
         return;
 
@@ -496,7 +498,8 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = optionElement->textIndentedToRespectGroupLabel();
     else if (optGroupElement)
         itemText = optGroupElement->groupLabelText();
-    itemText = applyTextTransform(style(), itemText);
+    CheckedRef style = this->style();
+    itemText = applyTextTransform(style, itemText);
 
     if (itemText.isNull())
         return;
@@ -515,9 +518,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     paintInfo.context().setFillColor(textColor);
 
     TextRun textRun(itemText, 0, 0, ExpansionBehavior::allowRightOnly(), itemStyle->writingMode().bidiDirection(), isOverride(itemStyle->unicodeBidi()), true);
-    FontCascade itemFont = style().fontCascade();
+    FontCascade itemFont = style->fontCascade();
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
-    r.move(itemOffsetForAlignment(textRun, style(), itemStyle, itemFont, r));
+    r.move(itemOffsetForAlignment(textRun, style, itemStyle, itemFont, r));
 
     bool isHorizontalWritingMode = writingMode().isHorizontal();
     if (!isHorizontalWritingMode) {
@@ -546,7 +549,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
     Ref element = selectElement();
     const auto& listItems = element->listItems();
     RefPtr listItemElement = listItems[listIndex].get();
-    auto itemStyle = listItemElement->computedStyleForEditability();
+    CheckedPtr itemStyle = listItemElement->computedStyleForEditability();
     if (!itemStyle)
         return;
 
@@ -837,7 +840,7 @@ void RenderListBox::scrollTo(const ScrollPosition& position)
 
 LayoutUnit RenderListBox::itemLogicalHeight() const
 {
-    return style().metricsOfPrimaryFont().intHeight() + itemBlockSpacing;
+    return protect(style())->metricsOfPrimaryFont().intHeight() + itemBlockSpacing;
 }
 
 int RenderListBox::verticalScrollbarWidth() const
@@ -1124,7 +1127,7 @@ bool RenderListBox::isScrollableOrRubberbandable()
 
 bool RenderListBox::hasScrollableOrRubberbandableAncestor()
 {
-    if (auto* scrollableArea = enclosingLayer() ? enclosingLayer()->scrollableArea() : nullptr)
+    if (CheckedPtr scrollableArea = enclosingLayer() ? enclosingLayer()->scrollableArea() : nullptr)
         return scrollableArea->hasScrollableOrRubberbandableAncestor();
     return false;
 }
@@ -1141,7 +1144,7 @@ bool RenderListBox::mockScrollbarsControllerEnabled() const
 
 void RenderListBox::logMockScrollbarsControllerMessage(const String& message) const
 {
-    document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderListBox: "_s, message));
+    protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("RenderListBox: "_s, message));
 }
 
 String RenderListBox::debugDescription() const
@@ -1151,7 +1154,7 @@ String RenderListBox::debugDescription() const
 
 void RenderListBox::didStartScrollAnimation()
 {
-    page().scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+    protect(page())->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
 }
 
 Ref<Scrollbar> RenderListBox::createScrollbar(ScrollbarOrientation orientation)
@@ -1176,7 +1179,7 @@ void RenderListBox::destroyScrollbar()
         return;
 
     if (!m_scrollbar->isCustomScrollbar())
-        ScrollableArea::willRemoveScrollbar(*m_scrollbar, protect(m_scrollbar)->orientation());
+        ScrollableArea::willRemoveScrollbar(*protect(m_scrollbar), protect(m_scrollbar)->orientation());
     protect(m_scrollbar)->removeFromParent();
     m_scrollbar = nullptr;
 }
