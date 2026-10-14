@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="native" multiple size="3">
+    <option selected>Red</option>
+    <option>Green</option>
+    <option>Blue</option>
+</select>
+
+<select id="base" class="base" multiple size="3">
+    <option selected>Red</option>
+    <option>Green</option>
+    <option>Blue</option>
+</select>
+
+<script>
+var output = "This test ensures that an AX user changing the selected children of a list box only changes the options whose selectedness changes, as for a non-AX user.\n\n";
+
+var events = [];
+
+function selection(id)
+{
+    return Array.from(document.getElementById(id).options).filter(option => option.selected).map(option => option.text).join() || "none";
+}
+
+for (const select of document.querySelectorAll("select")) {
+    for (const type of ["input", "change"])
+        select.addEventListener(type, () => events.push(`${type} (${selection(select.id)})`));
+}
+
+async function check(id, action, expectedSelection)
+{
+    events = [];
+    action();
+    output += await expectAsync(`selection('${id}')`, `'${expectedSelection}'`);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    output += `${id}: ${events.join(", ") || "no events"}\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (const id of ["native", "base"]) {
+            const axSelect = await waitForElementById(id);
+            await check(id, () => axSelect?.setSelectedChildAtIndex(1), "Red,Green");
+            await check(id, () => axSelect?.removeSelectionAtIndex(0), "Green");
+        }
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

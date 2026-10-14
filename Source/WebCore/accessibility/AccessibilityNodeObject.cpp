@@ -4912,9 +4912,10 @@ void AccessibilityNodeObject::setSelectedChildren(const AccessibilityChildrenVec
     if (role() != AccessibilityRole::ListBox || !canSetSelectedChildren())
         return;
 
-    // Unselect any selected option.
-    for (const auto& child : selectedChildren())
-        child->setSelected(false);
+    for (const auto& child : selectedChildren()) {
+        if (!children.contains(child))
+            child->setSelected(false);
+    }
 
     for (const auto& object : children) {
         if (object->isListBoxOption())
