@@ -505,6 +505,15 @@ ApplePayEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+ApplePayReferenceSessionEnabled:
+  type: bool
+  status: unstable
+  condition: ENABLE(APPLE_PAY_REFERENCE_SESSION)
+  humanReadableName: "Apple Pay Reference Session"
+  humanReadableDescription: "Enable the Apple Pay reference session API"
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+
 AsyncAudioSessionActivationEnabled:
   type: bool
   status: stable
