@@ -114,10 +114,10 @@ static String codecStringForMediaVideoCodecId(FourCharCode codec)
     switch (codec) {
     case 'vp08': return "vp8"_s;
     case kCMVideoCodecType_VP9: return "vp09.00.10.08"_s; // vp9, profile 0, level 1.0, 8 bits, "VideoRange"
-    case 'vp92': return "vp09.02.30.10"_s; // vp9, profile 0, level 1.0, 10 bits, "VideoRange"
+    case 'vp92': return "vp09.02.30.10"_s; // vp9, profile 2, level 1.0, 10 bits, "VideoRange"
     case kCMVideoCodecType_AV1: return "av01.0.01M.08"_s; // av01, "Main", "Level_2_1", "Main", 8 bits, "VideoRange";
     case kCMVideoCodecType_H264: return "avc1.42000a"_s; // AVC Baseline Level 1
-    case kCMVideoCodecType_HEVC: return "hev1.1.6.L93.B0"_s; // HEVC progressive, non-packed stream, Main Profile, Main Tier, Level 3.1
+    case kCMVideoCodecType_HEVC: return "hvc1.1.6.L93.B0"_s; // HEVC progressive, non-packed stream, Main Profile, Main Tier, Level 3.1
     case kAudioFormatMPEG4AAC: return "mp4a.40.2"_s;
     case kAudioFormatOpus: return "opus"_s;
     case kAudioFormatLinearPCM: return "pcm"_s;
@@ -157,7 +157,7 @@ bool MediaRecorderPrivateEncoder::initialize(const MediaRecorderPrivateOptions& 
             m_audioCodec = kAudioFormatAppleLossless;
         else if (startsWithLettersIgnoringASCIICase(codec, "avc1"_s))
             m_videoCodec = kCMVideoCodecType_H264;
-        else if (!isWebM && (codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s)))
+        else if (!isWebM && codec.startsWith("hvc1."_s))
             m_videoCodec = kCMVideoCodecType_HEVC;
         else if (!isWebM && codec.startsWith("av01.0"_s))
             m_videoCodec = kCMVideoCodecType_AV1;

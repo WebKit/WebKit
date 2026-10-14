@@ -64,7 +64,7 @@ bool MediaRecorderPrivateAVFImpl::isTypeSupported(Document& document, ContentTyp
                 && !(codec.startsWith("av01."_s) && document.settings().webCodecsAV1Enabled())
 #endif
 #if ENABLE(WEB_RTC)
-                && !((codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s)) && document.settings().webRTCH265CodecEnabled())
+                && !(codec.startsWith("hvc1."_s) && document.settings().webRTCH265CodecEnabled())
 #endif
 #if HAVE(AVASSETWRITER_WITH_OPUS_SUPPORTED)
                 && codec != "opus"_s
