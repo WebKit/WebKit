@@ -1,0 +1,33 @@
+
+PASS Element.setHTMLUnsafe: without default policy, report-only does not throw and reports violation
+PASS Element.innerHTML: without default policy, report-only does not throw and reports violation
+PASS Document.parseHTMLUnsafe: without default policy, report-only does not throw and reports violation
+FAIL Element.setHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation assert_equals: Sanitizer must remove forbidden expected null but got Element node <span id="forbidden"></span>
+FAIL Element.innerHTML: default policy createParserOptions with sanitizer does not report violation assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Document.parseHTMLUnsafe: default policy createParserOptions with sanitizer does not report violation assert_equals: expected null but got Element node <span id="forbidden"></span>
+PASS Element.setHTMLUnsafe: default policy createParserOptions without sanitizer does not report violation
+FAIL Element.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions without sanitizer does not report violation assert_equals: no exception thrown expected null but got object "TypeError: testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({})', 'testPolicy.createParserOptions' is undefined)"
+FAIL Element.setHTMLUnsafe: default createParserOptions returning null does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.innerHTML: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning null with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.innerHTML: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning null and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.setHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.innerHTML: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning null and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.setHTMLUnsafe: default createParserOptions returning undefined does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.innerHTML: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning undefined with TrustedHTML does not throw in report-only mode and reports violation assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.innerHTML: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning undefined and createHTML returning null reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.setHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.innerHTML: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Document.parseHTMLUnsafe: default createParserOptions returning undefined and createHTML returning undefined reports two violations in report-only mode assert_equals: two violations reported (one for createParserOptions, one for createHTML) expected 2 but got 1
+FAIL Element.setHTMLUnsafe: JS exception in createParserOptions is rethrown in report-only mode assert_throws_js: function "() => {
+          node.setHTMLUnsafe("<span></span>");
+        }" did not throw
+

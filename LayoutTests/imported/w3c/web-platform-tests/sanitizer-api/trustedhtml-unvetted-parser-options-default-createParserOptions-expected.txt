@@ -1,0 +1,7 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted assert_equals: createParserOptions was called once expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted assert_equals: createParserOptions was called once expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted assert_equals: createParserOptions was called once expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true is allowed when vetted assert_equals: createParserOptions was called once expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config is allowed when vetted assert_equals: createParserOptions was called once expected 1 but got 0
+

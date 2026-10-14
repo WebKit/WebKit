@@ -1,0 +1,180 @@
+
+FAIL ShadowRoot.setHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS ShadowRoot.setHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+FAIL ShadowRoot.setHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.innerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS ShadowRoot.innerHTML: sending TrustedHTML does not call default policy createHTML
+FAIL ShadowRoot.innerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL ShadowRoot.innerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.innerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.beforebegin: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS ShadowRoot.beforebegin: sending TrustedHTML does not call default policy createHTML
+FAIL ShadowRoot.beforebegin: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL ShadowRoot.beforebegin: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.beforebegin: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.afterend: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS ShadowRoot.afterend: sending TrustedHTML does not call default policy createHTML
+FAIL ShadowRoot.afterend: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL ShadowRoot.afterend: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.afterend: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL ShadowRoot.setHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML assert_equals: Default policy sanitizer must remove span expected null but got Element node <span id="span"></span>
+FAIL ShadowRoot.setHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through assert_equals: Caller-provided sanitizer dictionary passed through by default policy must remove b expected null but got Element node <b id="bold"></b>
+FAIL ShadowRoot.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({
+            sanitizer: { removeElements: ["b"] },
+          })', 'testPolicy.createParserOptions' is undefined)
+PASS ShadowRoot.setHTMLUnsafe: default policy createParserOptions can disable runScripts
+FAIL ShadowRoot.setHTMLUnsafe: default policy createParserOptions can enable runScripts assert_true: Default policy createParserOptions can enable runScripts expected true got false
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({ runScripts: true })', 'testPolicy.createParserOptions' is undefined)
+FAIL ShadowRoot.innerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.setHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.setHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+FAIL Element.setHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.setHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.setHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.innerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.innerHTML: sending TrustedHTML does not call default policy createHTML
+FAIL Element.innerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.innerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.innerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.outerHTML: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.outerHTML: sending TrustedHTML does not call default policy createHTML
+FAIL Element.outerHTML: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.outerHTML: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.outerHTML: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.createContextualFragment: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.createContextualFragment: sending TrustedHTML does not call default policy createHTML
+FAIL Element.createContextualFragment: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.createContextualFragment: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.createContextualFragment: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.afterbegin: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.afterbegin: sending TrustedHTML does not call default policy createHTML
+FAIL Element.afterbegin: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.afterbegin: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.afterbegin: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.beforeend: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.beforeend: sending TrustedHTML does not call default policy createHTML
+FAIL Element.beforeend: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.beforeend: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.beforeend: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.beforebegin: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.beforebegin: sending TrustedHTML does not call default policy createHTML
+FAIL Element.beforebegin: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.beforebegin: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.beforebegin: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.afterend: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.afterend: sending TrustedHTML does not call default policy createHTML
+FAIL Element.afterend: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.afterend: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.afterend: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: sending TrustedHTML applies sanitizer in default policy createParserOptions assert_equals: Default policy sanitizer must be applied even when TrustedHTML is provided expected null but got Element node <span id="forbidden"></span>
+PASS Element.parseHTMLUnsafe: sending TrustedHTML does not call default policy createHTML
+FAIL Element.parseHTMLUnsafe: exception in default createParserOptions rethrows when TrustedHTML is passed assert_throws_js: function "() => {
+              run_method(node, method, trustedHTML);
+            }" did not throw
+FAIL Element.parseHTMLUnsafe: default createParserOptions returning null throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.parseHTMLUnsafe: default createParserOptions returning undefined throws TypeError when TrustedHTML is passed assert_throws_js: function "() => {
+                run_method(node, method, trustedHTML);
+              }" did not throw
+FAIL Element.setHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML assert_equals: Default policy sanitizer must remove span expected null but got Element node <span id="span"></span>
+FAIL Element.setHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through assert_equals: Caller-provided sanitizer dictionary passed through by default policy must remove b expected null but got Element node <b id="bold"></b>
+FAIL Element.setHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({
+            sanitizer: { removeElements: ["b"] },
+          })', 'testPolicy.createParserOptions' is undefined)
+PASS Element.setHTMLUnsafe: default policy createParserOptions can disable runScripts
+FAIL Element.setHTMLUnsafe: default policy createParserOptions can enable runScripts assert_true: Default policy createParserOptions can enable runScripts expected true got false
+FAIL Element.setHTMLUnsafe: TrustedHTML runs scripts when caller requests runScripts and default policy allows it testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({ runScripts: true })', 'testPolicy.createParserOptions' is undefined)
+FAIL Element.innerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.outerHTML: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.afterbegin: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.beforeend: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.beforebegin: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element.afterend: default policy createParserOptions returning {runScripts: true} enables script execution with TrustedHTML assert_false: Initial runScripts option should be false expected false got null
+FAIL Element: createContextualFragment with TrustedHTML and createParserOptions(runScripts=false) does not run scripts assert_false: Default policy createParserOptions(runScripts=false) disables scripts in fragment from TrustedHTML expected false got true
+PASS Element: createContextualFragment with TrustedHTML runs scripts by default
+FAIL Document.parseHTMLUnsafe: default policy createParserOptions sanitizer overrides caller sanitizer dictionary with TrustedHTML assert_equals: Default policy sanitizer must remove span expected null but got Element node <span id="span"></span>
+FAIL Document.parseHTMLUnsafe: caller-provided sanitizer dictionary is applied with TrustedHTML when default policy passes it through assert_equals: Caller-provided sanitizer dictionary passed through by default policy must remove b expected null but got Element node <b id="bold"></b>
+FAIL Document.parseHTMLUnsafe: caller-provided TrustedHTMLParserOptions sanitizer is applied with TrustedHTML while default policy is bypassed testPolicy.createParserOptions is not a function. (In 'testPolicy.createParserOptions({
+          sanitizer: { removeElements: ["b"] },
+        })', 'testPolicy.createParserOptions' is undefined)
+PASS innerHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS outerHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS insertAdjacentHTML on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+PASS createContextualFragment on XML document does not call createParserOptions or throw TypeError when TrustedHTML is passed
+FAIL setHTMLUnsafe on XML document calls createParserOptions and applies sanitizer when TrustedHTML is passed assert_true: createParserOptions must be called for setHTMLUnsafe even on XML document expected true got false
+

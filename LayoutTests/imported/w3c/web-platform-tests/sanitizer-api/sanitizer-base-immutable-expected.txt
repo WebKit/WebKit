@@ -1,0 +1,24 @@
+
+FAIL Modifying a Sanitizer instance does not change subsequent new Sanitizer() instances Can't find variable: Sanitizer
+FAIL allowElement() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL removeElement() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL replaceElementWithChildren() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL allowAttribute() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL removeAttribute() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL allowProcessingInstruction() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL removeProcessingInstruction() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL setComments() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL setDataAttributes() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL removeUnsafe() on new Sanitizer() does not affect subsequent instances Can't find variable: Sanitizer
+FAIL Mutating the object returned by sanitizer.get() does not affect the Sanitizer or default configuration Can't find variable: Sanitizer
+FAIL Repeated calls to sanitizer.get() return distinct object copies Can't find variable: Sanitizer
+FAIL Modifying a Sanitizer after removeUnsafe() does not change the built-in safe baseline configuration Can't find variable: Sanitizer
+FAIL Mutating config returned from baseline sanitizer does not affect subsequent removeUnsafe() calls Can't find variable: Sanitizer
+FAIL Modifying input configuration dictionary after new Sanitizer(config) does not affect the Sanitizer Can't find variable: Sanitizer
+FAIL Sanitization with Element.prototype.setHTML() does not change default base configuration Can't find variable: Sanitizer
+PASS Sanitization with Document.parseHTML() does not change default base configuration
+FAIL A modified Sanitizer used in setHTML() does not affect default configuration or other Sanitizers Can't find variable: Sanitizer
+FAIL s.get() is unchanged after Element.prototype.setHTML() when Sanitizer has unsafe allowlist entries Can't find variable: Sanitizer
+FAIL s.get() is unchanged after Element.prototype.setHTML() when Sanitizer has unsafe remove-list configuration Can't find variable: Sanitizer
+PASS s.get() is unchanged after Document.parseHTML() when Sanitizer has unsafe entries
+

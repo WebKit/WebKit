@@ -1,0 +1,10 @@
+
+FAIL The is= attribute is removed by the default sanitizer config. d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer } )', 'd.setHTML' is undefined)
+FAIL The is= attribute is removed by the global removeAttributes d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer } )', 'd.setHTML' is undefined)
+FAIL The is= attribute is removed by the local removeAttributes d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer } )', 'd.setHTML' is undefined)
+FAIL The is= attribute is removed by the local missing attributes d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer } )', 'd.setHTML' is undefined)
+FAIL The is= attribute is kept when allowed with an empty config. d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer })', 'd.setHTML' is undefined)
+FAIL The is= attribute is kept when allowed by global attributes. d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer })', 'd.setHTML' is undefined)
+FAIL The is= attribute is kept when allowed by global removeAttributes. d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer })', 'd.setHTML' is undefined)
+FAIL The is= attribute is kept when allowed by local attributes. d.setHTML is not a function. (In 'd.setHTML(`<div is="foo-bar">hello</div>`, { sanitizer })', 'd.setHTML' is undefined)
+

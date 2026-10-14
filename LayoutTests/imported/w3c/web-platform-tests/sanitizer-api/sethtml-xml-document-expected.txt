@@ -1,0 +1,10 @@
+
+FAIL Testcase #0 with xmlDoc.setHTML("Hello!") context.setHTML is not a function. (In 'context.setHTML(testcase.data)', 'context.setHTML' is undefined)
+FAIL Testcase #0, shadow inside xmlDoc, shadowroot.setHTML("Hello!") The operation is not supported.
+FAIL Testcase #1 with xmlDoc.setHTML("<br>") context.setHTML is not a function. (In 'context.setHTML(testcase.data)', 'context.setHTML' is undefined)
+FAIL Testcase #1, shadow inside xmlDoc, shadowroot.setHTML("<br>") The operation is not supported.
+FAIL Testcase #2 with xmlDoc.setHTML("<p>Hi</p>") context.setHTML is not a function. (In 'context.setHTML(testcase.data)', 'context.setHTML' is undefined)
+FAIL Testcase #2, shadow inside xmlDoc, shadowroot.setHTML("<p>Hi</p>") The operation is not supported.
+FAIL Testcase #3 with xmlDoc.setHTML("<iframe></iframe><p>text</p>") context.setHTML is not a function. (In 'context.setHTML(testcase.data)', 'context.setHTML' is undefined)
+FAIL Testcase #3, shadow inside xmlDoc, shadowroot.setHTML("<iframe></iframe><p>text</p>") The operation is not supported.
+

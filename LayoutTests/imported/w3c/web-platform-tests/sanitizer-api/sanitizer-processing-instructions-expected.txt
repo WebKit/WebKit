@@ -1,0 +1,59 @@
+
+FAIL setHTMLUnsafe testcase agnostic/0, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/0, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/0, "<?target data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/0, "<?target data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/0, "<?target data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/0, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/1, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/1, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/1, "<?target data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/1, "<?target data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/1, "<?target data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/1, "<?target data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/2, "<?Target data?>" assert_true: [object Comment].isEqual(null) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/2, "<?Target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/2, "<?Target data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/2, "<?Target data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/2, "<?Target data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/2, "<?Target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/3, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/3, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/3, "<?target data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/3, "<?target data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/3, "<?target data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/3, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/4, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/4, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/4, "<?target-1 data?><?target-2 data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/4, "<?target-1 data?><?target-2 data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/4, "<?target-1 data?><?target-2 data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/4, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/5, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/5, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL setHTML testcase agnostic/5, "<?target-1 data?><?target-2 data?>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/5, "<?target-1 data?><?target-2 data?>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/5, "<?target-1 data?><?target-2 data?>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/5, "<?target-1 data?><?target-2 data?>" assert_true: [object Comment].isEqual([object ProcessingInstruction]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase agnostic/6, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: <DIV> / <DIV>. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase agnostic/6, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object ShadowRoot] / <DIV>. expected true got false
+FAIL setHTML testcase agnostic/6, "<div><?target data?></div>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase agnostic/6, "<div><?target data?></div>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase agnostic/6, "<div><?target data?></div>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+FAIL parseHTMLUnsafe testcase agnostic/6, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / <DIV>. expected true got false
+FAIL setHTMLUnsafe testcase unsafe-only/0, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase unsafe-only/0, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL parseHTMLUnsafe testcase unsafe-only/0, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase unsafe-only/1, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: <DIV> / [object Comment]. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase unsafe-only/1, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object ShadowRoot] / [object Comment]. expected true got false
+FAIL parseHTMLUnsafe testcase unsafe-only/1, "<?target data?>" assert_true: [object Comment].isEqual(null) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / [object Comment]. expected true got false
+FAIL setHTMLUnsafe testcase unsafe-only/2, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: <DIV> / <DIV>. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase unsafe-only/2, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object ShadowRoot] / <DIV>. expected true got false
+FAIL parseHTMLUnsafe testcase unsafe-only/2, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / <DIV>. expected true got false
+FAIL setHTMLUnsafe testcase unsafe-only/3, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: <DIV> / <DIV>. expected true got false
+FAIL ShadowRoot.setHTMLUnsafe testcase unsafe-only/3, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object ShadowRoot] / <DIV>. expected true got false
+FAIL parseHTMLUnsafe testcase unsafe-only/3, "<div><?target data?></div>" assert_true: [object HTMLDivElement].isEqual([object HTMLDivElement]) fails. Path: [object HTMLDocument] / <HTML> / <BODY> / <DIV> / <DIV>. expected true got false
+FAIL setHTML testcase safe-only/0, "<div><?target data?></div>" div.setHTML is not a function. (In 'div.setHTML(testcase.data, config)', 'div.setHTML' is undefined)
+FAIL ShadowRoot.setHTML testcase safe-only/0, "<div><?target data?></div>" shadowRoot.setHTML is not a function. (In 'shadowRoot.setHTML(testcase.data, config)', 'shadowRoot.setHTML' is undefined)
+FAIL parseHTML testcase safe-only/0, "<div><?target data?></div>" Document.parseHTML is not a function. (In 'Document.parseHTML(`<div>${testcase.data}</div>`, config)', 'Document.parseHTML' is undefined)
+

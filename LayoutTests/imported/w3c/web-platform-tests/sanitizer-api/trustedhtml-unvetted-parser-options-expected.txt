@@ -1,0 +1,45 @@
+
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with a Sanitizer throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws assert_equals: a single violation reported expected 1 but got 0
+PASS Element.setHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Element.setHTMLUnsafe: TrustedHTML with runScripts false is allowed
+FAIL Element.setHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed assert_equals: no exception thrown expected null but got object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: { replaceWithChildrenElements: ["div"] } })', 'policy.createParserOptions' is undefined)"
+FAIL Element.setHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed assert_equals: no exception thrown expected null but got object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ runScripts: true })', 'policy.createParserOptions' is undefined)"
+FAIL Element.setHTMLUnsafe: string with a sanitizer config throws assert_equals: violation is for the options, not the string expected "Element setHTMLUnsafe|" but got "Element setHTMLUnsafe|<div id=wrapper><span id=inner></span></"
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a Sanitizer throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true throws assert_equals: a single violation reported expected 1 but got 0
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config throws assert_equals: a single violation reported expected 1 but got 0
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with no options is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts false is allowed
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed assert_equals: no exception thrown expected null but got object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: { replaceWithChildrenElements: ["div"] } })', 'policy.createParserOptions' is undefined)"
+FAIL ShadowRoot.setHTMLUnsafe: TrustedHTML with runScripts true in TrustedHTMLParserOptions is allowed assert_equals: no exception thrown expected null but got object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ runScripts: true })', 'policy.createParserOptions' is undefined)"
+FAIL ShadowRoot.setHTMLUnsafe: string with a sanitizer config throws assert_equals: violation is for the options, not the string expected "ShadowRoot setHTMLUnsafe|" but got "ShadowRoot setHTMLUnsafe|<div id=wrapper><span id=inner></span></"
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config without effect throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a Sanitizer throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: TrustedHTML with the "default" sanitizer preset throws assert_equals: a single violation reported expected 1 but got 0
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer config and runScripts false throws assert_equals: a single violation reported expected 1 but got 0
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts true is allowed, as runScripts is not an option
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts true and an empty sanitizer config is allowed, as runScripts is not an option
+PASS Document.parseHTMLUnsafe: TrustedHTML with no options is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty dictionary is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with an empty sanitizer config is allowed
+PASS Document.parseHTMLUnsafe: TrustedHTML with runScripts false is allowed
+FAIL Document.parseHTMLUnsafe: TrustedHTML with a sanitizer in TrustedHTMLParserOptions is allowed assert_equals: no exception thrown expected null but got object "TypeError: policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: { replaceWithChildrenElements: ["div"] } })', 'policy.createParserOptions' is undefined)"
+FAIL Document.parseHTMLUnsafe: string with a sanitizer config throws assert_equals: violation is for the options, not the string expected "Document parseHTMLUnsafe|" but got "Document parseHTMLUnsafe|<div id=wrapper><span id=inner></span></"
+PASS Range.createContextualFragment: TrustedHTML is allowed, as its runScripts is not author-supplied
+PASS Element.innerHTML: TrustedHTML is allowed
+

@@ -1,0 +1,29 @@
+
+FAIL Document.parseHTMLUnsafe: createParserOptions can inject a sanitizer config assert_equals: expected null but got Element node <span id="forbidden"></span>
+FAIL Document.parseHTMLUnsafe: passing TrustedHTMLParserOptions directly works policy.createParserOptions is not a function. (In 'policy.createParserOptions({ sanitizer: { removeElements: ["span"] } })', 'policy.createParserOptions' is undefined)
+FAIL Document.parseHTMLUnsafe: createParserOptions returning null fails assert_throws_js: function "() => {
+            Document.parseHTMLUnsafe(
+              "<div id='allowed'><span id=forbidden></span></div>",
+            );
+          }" did not throw
+FAIL Document.parseHTMLUnsafe: createParserOptions returning undefined fails assert_throws_js: function "() => {
+            Document.parseHTMLUnsafe(
+              "<div id='allowed'><span id=forbidden></span></div>",
+            );
+          }" did not throw
+FAIL Document.parseHTMLUnsafe: createParserOptions returning 0 fails assert_throws_js: function "() => {
+            Document.parseHTMLUnsafe(
+              "<div id='allowed'><span id=forbidden></span></div>",
+            );
+          }" did not throw
+FAIL Document.parseHTMLUnsafe: createParserOptions returning 123 fails assert_throws_js: function "() => {
+            Document.parseHTMLUnsafe(
+              "<div id='allowed'><span id=forbidden></span></div>",
+            );
+          }" did not throw
+FAIL Document.parseHTMLUnsafe: createParserOptions returning "foo" fails assert_throws_js: function "() => {
+            Document.parseHTMLUnsafe(
+              "<div id='allowed'><span id=forbidden></span></div>",
+            );
+          }" did not throw
+

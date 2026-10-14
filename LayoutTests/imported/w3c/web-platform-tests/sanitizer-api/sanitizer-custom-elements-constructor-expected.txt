@@ -1,0 +1,10 @@
+
+FAIL setHTML blocks CE constructor when element is dropped by explicit sanitizer config (removeElements) target.setHTML is not a function. (In 'target.setHTML(`<${tag}></${tag}>`, { sanitizer })', 'target.setHTML' is undefined)
+FAIL setHTML blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (removeElements) target.setHTML is not a function. (In 'target.setHTML(`<${tag}></${tag}>`, { sanitizer })', 'target.setHTML' is undefined)
+FAIL setHTML blocks CE constructor when element is dropped by explicit sanitizer config (allowElements) target.setHTML is not a function. (In 'target.setHTML(`<${tag}></${tag}>`, { sanitizer })', 'target.setHTML' is undefined)
+FAIL setHTML blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (allowElements) target.setHTML is not a function. (In 'target.setHTML(`<${tag}></${tag}>`, { sanitizer })', 'target.setHTML' is undefined)
+FAIL setHTMLUnsafe blocks CE constructor when element is dropped by explicit sanitizer config (removeElements) assert_equals: expected "" but got "<disallowed-element></disallowed-element>"
+FAIL setHTMLUnsafe blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (removeElements) assert_equals: expected "" but got "<disallowed-element-scoped></disallowed-element-scoped>"
+FAIL setHTMLUnsafe blocks CE constructor when element is dropped by explicit sanitizer config (allowElements) assert_equals: expected "" but got "<disallowed-element></disallowed-element>"
+FAIL setHTMLUnsafe blocks CE constructor in scoped registry when element is dropped by explicit sanitizer config (allowElements) assert_equals: expected "" but got "<disallowed-element-scoped></disallowed-element-scoped>"
+

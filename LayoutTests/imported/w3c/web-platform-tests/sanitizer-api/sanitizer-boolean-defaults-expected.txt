@@ -1,0 +1,7 @@
+
+FAIL comments Can't find variable: Sanitizer
+FAIL data attributes Can't find variable: Sanitizer
+FAIL data- with an empty suffix div.setHTML is not a function. (In 'div.setHTML(`<div data-="x"></div>`,
+                { sanitizer: { attributes: [], dataAttributes } })', 'div.setHTML' is undefined)
+FAIL javascript URLs Can't find variable: Sanitizer
+

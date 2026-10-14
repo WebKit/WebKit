@@ -1,0 +1,35 @@
+
+PASS wrapper
+FAIL Testcase #0, setHTML("test"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #1, setHTML("<p>Hello</p>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #2, setHTML("<div>Hello<script>World</script>xxx"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #3, setHTML("<div>Hello<script>World</script>xxx"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #4, setHTML("<svg>Hello<script>World</script>xxx"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #5, setHTML("<a href="https://web-platform.test/" onclick="2+2" one="two">"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #6, setHTML("<a href="https://web-platform.test/" onclick="2+2" one="two">"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #7, setHTML("<img src="https://web-platform.test/test-image" onclick="2+2" one="two">"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #8, setHTML("<p data-x="1" data-y="2" data-z="3">"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #9, setHTML("<div><base href="https://example.org/"></base></div>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #10, setHTML("<div><embed src="https://example.org/"></embed></div>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #11, setHTML("<div><iframe src="https://example.org/"></iframe></div>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #12, setHTML("<div><object data="https://example.org/"></object></div>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #13, setHTML("<div><script src="https://example.org/"></script></div>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #14, setHTML("<svg><script src="https://example.org/"></script></svg>"). undefined is not an object (evaluating 'context[method].call')
+FAIL Testcase #15, setHTML("<svg><use href="https://example.org/"></use></svg>"). undefined is not an object (evaluating 'context[method].call')
+PASS Testcase #0, setHTMLUnsafe("test").
+PASS Testcase #1, setHTMLUnsafe("<p>Hello</p>").
+PASS Testcase #2, setHTMLUnsafe("<div>Hello<script>World</script>xxx").
+PASS Testcase #3, setHTMLUnsafe("<div>Hello<script>World</script>xxx").
+PASS Testcase #4, setHTMLUnsafe("<svg>Hello<script>World</script>xxx").
+PASS Testcase #5, setHTMLUnsafe("<a href="https://web-platform.test/" onclick="2+2" one="two">").
+PASS Testcase #6, setHTMLUnsafe("<a href="https://web-platform.test/" onclick="2+2" one="two">").
+PASS Testcase #7, setHTMLUnsafe("<img src="https://web-platform.test/test-image" onclick="2+2" one="two">").
+PASS Testcase #8, setHTMLUnsafe("<p data-x="1" data-y="2" data-z="3">").
+PASS Testcase #9, setHTMLUnsafe("<div><base href="https://example.org/"></base></div>").
+PASS Testcase #10, setHTMLUnsafe("<div><embed src="https://example.org/"></embed></div>").
+PASS Testcase #11, setHTMLUnsafe("<div><iframe src="https://example.org/"></iframe></div>").
+PASS Testcase #12, setHTMLUnsafe("<div><object data="https://example.org/"></object></div>").
+PASS Testcase #13, setHTMLUnsafe("<div><script src="https://example.org/"></script></div>").
+PASS Testcase #14, setHTMLUnsafe("<svg><script src="https://example.org/"></script></svg>").
+PASS Testcase #15, setHTMLUnsafe("<svg><use href="https://example.org/"></use></svg>").
+

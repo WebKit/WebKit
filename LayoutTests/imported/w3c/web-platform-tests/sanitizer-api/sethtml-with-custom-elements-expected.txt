@@ -1,0 +1,24 @@
+
+FAIL Custom element that is removed during sanitization. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe></x-probe>")', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element that is allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe></x-probe>",
+    {sanitizer: {elements: ["x-probe"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is not default-allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>")', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is removed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["div"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is removed but the custom element would have been allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["div", "x-div"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element with an is-attribute, where the is=-attribute is blocked. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<x-probe is='x-div'></x-probe>",
+    {sanitizer: {elements:["div", "x-probe"], removeAttributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is not. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {elements:["p", "x-div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is removed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {removeElements:["div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+FAIL Custom element via is-attribute, where is attribute is allowed, but the element is replaced. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML("<div is='x-div'></div>",
+    {sanitizer: {replaceWithChildrenElements:["div"], attributes:["is", "data-attr"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+PASS Custom element via is-attribute with unsafe, where is attribute is not default-allowed.
+FAIL Sanity check, that is= processing still works when allowed. document.body.firstElementChild.setHTML is not a function. (In 'document.body.firstElementChild.setHTML(
+    "<div is='x-div'></div>",
+    {sanitizer: {elements:["p", "div"], attributes:["is"]}})', 'document.body.firstElementChild.setHTML' is undefined)
+PASS Custom element via is-attribute on script element, where is attribute is not allowed.
+PASS Custom element via is-attribute on html element, where is attribute is not default-allowed.
+
