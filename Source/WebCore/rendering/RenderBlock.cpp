@@ -49,6 +49,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "MotionPath.h"
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -826,6 +827,7 @@ bool RenderBlock::simplifiedLayout()
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
     if (outOfFlowChildNeedsLayout() || canContainFixedPosObjects)
         layoutOutOfFlowBoxes(RelayoutChildren::No, !outOfFlowChildNeedsLayout() && canContainFixedPosObjects);
+    updateOutOfFlowDescendantTransformsAfterLayout();
     addOverflowFromOutOfFlowBoxes();
 
     // Transform-origin depends on box size. When simplified layout doesn't change our
@@ -934,6 +936,9 @@ void RenderBlock::layoutOutOfFlowBox(RenderBox& outOfFlowBox, RelayoutChildren r
     if (outOfFlowBox.needsOutOfFlowMovementLayoutOnly() && outOfFlowBox.tryLayoutDoingOutOfFlowMovementOnly()) {
         if (Style::AnchorPositionEvaluator::isAnchorPositioned(outOfFlowBoxStyle))
             Style::AnchorPositionEvaluator::captureScrollSnapshots(outOfFlowBox);
+        // The motion path transform depends on the box's position within its containing block.
+        if (MotionPath::needsUpdateAfterContainingBlockLayout(outOfFlowBoxStyle.offsetPath()))
+            outOfFlowBox.updateLayerTransform();
         outOfFlowBox.clearNeedsLayout();
     }
 
