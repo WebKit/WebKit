@@ -10015,6 +10015,8 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 
 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Pass Failure ] # rdar://178674096
 
+webkit.org/b/326716 imported/w3c/web-platform-tests/resource-timing/initiator-type/style.html [ Pass Failure ]
+
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-input-type-change.html [ Pass Failure ] # rdar://178674298
 
 imported/w3c/web-platform-tests/selection/onselectionchange-on-distinct-text-controls.html [ Pass Failure ] # rdar://178674219
