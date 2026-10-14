@@ -1,0 +1,4 @@
+
+
+PASS Foster parenting redirects into the template contents when the table's parent is a template element
+

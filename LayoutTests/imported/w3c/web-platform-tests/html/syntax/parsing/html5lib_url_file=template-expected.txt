@@ -44,8 +44,15 @@ PASS <frameset><template><frame></frame></template></frameset>
 PASS <template><frame></frame></frameset><frame></frame></template>
 PASS <template><div><frameset><span></span></div><span></span></template>
 PASS <body><template><div><frameset><span></span></div><span></span></template></body>
+PASS <head><template></template></head><p><frameset>
+PASS <template>x</template><p><frameset>
+PASS <head></head><template></template><p><frameset>
+PASS <p><template></template><frameset>
+PASS <p><template><frameset></template>
+PASS <template></template>x<frameset>
 PASS <body><template><script>var i = 1;</script><td></td></template>
 PASS <body><template><tr><div></div></tr></template>
+PASS <table><template><tr><div></div></tr></template>
 PASS <body><template><tr></tr><td></td></template>
 PASS <body><template><td></td></tr><td></td></template>
 PASS <body><template><td></td><tbody><td></td></template>
@@ -112,7 +119,7 @@ PASS <template><a><table><a>
 PASS <template><form><input name="q"></form><div>second</div></template> (innerHTML in template)
 PASS <template><table><form></table></template>
 PASS <table><form></table> (innerHTML in template)
-PASS <template><form><form><input></template>
+PASS <template><form><form><input></template>: form start tags inside template do not set the form element pointer, so nested forms are kept
 PASS <form><form> (innerHTML in template)
 PASS <template><form><template></template><form></template>
 PASS <template><template><form></template><form></template>

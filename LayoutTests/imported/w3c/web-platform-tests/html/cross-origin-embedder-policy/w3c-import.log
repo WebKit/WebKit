@@ -57,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/report-only-require-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/report-only-require-corp.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-report-to-must-be-string.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html

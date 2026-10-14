@@ -1,0 +1,5 @@
+<__proto__>
+
+PASS Creating HTML elements with property names from Object.prototype should not be problematic
+PASS Creating XML elements with property names from Object.prototype should not be problematic
+

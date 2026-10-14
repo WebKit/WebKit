@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-content-type-and-body.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-origin-same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer-when-downgrade.https.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-no-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/headers/header-referrer-origin-when-cross-origin.html

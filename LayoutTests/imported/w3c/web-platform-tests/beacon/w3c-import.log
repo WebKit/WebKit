@@ -10,14 +10,14 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/beacon/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/beacon/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-common.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-url-encoding-euc-kr.https.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/idlharness.any.js

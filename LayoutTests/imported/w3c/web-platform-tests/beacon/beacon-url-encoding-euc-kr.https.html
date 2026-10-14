@@ -7,7 +7,7 @@
 
   promise_test(async (t) => {
     // "icon" in Korean language
-    const iconKorean = "\uc544\uc744\ucf58";
+    const iconKorean = "\uc544\uc774\ucf58";
     const id = crypto.randomUUID();
 
     assert_true(navigator.sendBeacon(
@@ -20,7 +20,7 @@
       const response = await fetch(statUrl);
       const text = await response.text();
       if (text) {
-        assert_equals(text, `cmd=store&id=${id}&icon=%EC%95%84%EC%9D%84%EC%BD%98`, "URL encoded with utf-8");
+        assert_equals(text, `cmd=store&id=${id}&icon=%EC%95%84%EC%9D%B4%EC%BD%98`, "URL encoded with utf-8");
         return;
       }
       await new Promise(resolve => t.step_timeout(resolve, 200));

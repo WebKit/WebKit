@@ -1,0 +1,45 @@
+
+PASS Loading data…
+PASS <a>: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host
+PASS <area>: Setting <file://localhost/>.protocol = 'http' Can’t switch from file URL with no host
+PASS <a>: Setting <file:///test>.protocol = 'https'
+PASS <area>: Setting <file:///test>.protocol = 'https'
+PASS <a>: Setting <file:>.protocol = 'wss'
+PASS <area>: Setting <file:>.protocol = 'wss'
+PASS <a>: Setting <file://hi/path>.protocol = 's'
+PASS <area>: Setting <file://hi/path>.protocol = 's'
+PASS <a>: Setting <file:///home/you/index.html>.username = 'me' No host means no username
+PASS <area>: Setting <file:///home/you/index.html>.username = 'me' No host means no username
+PASS <a>: Setting <file://test/>.username = 'test'
+PASS <area>: Setting <file://test/>.username = 'test'
+PASS <a>: Setting <file:///home/me/index.html>.password = 'secret' No host means no password
+PASS <area>: Setting <file:///home/me/index.html>.password = 'secret' No host means no password
+PASS <a>: Setting <file://test/>.password = 'test'
+PASS <area>: Setting <file://test/>.password = 'test'
+PASS <a>: Setting <file://y/>.host = 'x:123'
+PASS <area>: Setting <file://y/>.host = 'x:123'
+PASS <a>: Setting <file://y/>.host = 'loc%41lhost'
+PASS <area>: Setting <file://y/>.host = 'loc%41lhost'
+PASS <a>: Setting <file://hi/x>.host = ''
+PASS <area>: Setting <file://hi/x>.host = ''
+PASS <a>: Setting <file://y/>.hostname = 'x:123'
+PASS <area>: Setting <file://y/>.hostname = 'x:123'
+PASS <a>: Setting <file://y/>.hostname = 'loc%41lhost'
+PASS <area>: Setting <file://y/>.hostname = 'loc%41lhost'
+PASS <a>: Setting <file://hi/x>.hostname = ''
+PASS <area>: Setting <file://hi/x>.hostname = ''
+PASS <a>: Setting <file://test/>.port = '12'
+PASS <area>: Setting <file://test/>.port = '12'
+PASS <a>: Setting <file://localhost/>.port = '12'
+PASS <area>: Setting <file://localhost/>.port = '12'
+PASS <a>: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS <area>: Setting <file:///some/path>.pathname = '' Special URLs cannot have their paths erased
+PASS <a>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS <area>: Setting <file://monkey/>.pathname = '\\' File URLs and (back)slashes
+PASS <a>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS <area>: Setting <file:///unicorn>.pathname = '//\/' File URLs and (back)slashes
+PASS <a>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
+PASS <area>: Setting <file:///unicorn>.pathname = '//monkey/..//' File URLs and (back)slashes
+PASS <a>: Setting <file:///var/log/system.log>.href = 'http://0300.168.0xF0'
+PASS <area>: Setting <file:///var/log/system.log>.href = 'http://0300.168.0xF0'
+

@@ -183,6 +183,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/host-specificity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/host-with-default-namespace-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/host-with-default-namespace-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/hover-invalidates-slotted-descendant.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/keyframes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/keyframes-002.html
@@ -274,6 +275,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-specificity-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-specificity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-specificity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-text-with-flex-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-text-with-flex-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-text-with-flex.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/slotted-user-agent-part-invalidation.html

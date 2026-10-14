@@ -333,7 +333,10 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-dedicated-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-service-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-shared-worker.https.html [ Skip ]
 
 fast/frames/frame-append-body-child-crash.html [ Slow ]
 [ Debug ] fast/frames/lots-of-objects.html [ Slow ]

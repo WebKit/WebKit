@@ -604,6 +604,86 @@ bad frameset
 |         <span>
 
 #data
+<head><template></template></head><p><frameset>
+#errors
+no doctype
+bad frameset
+eof in frameset
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|   <frameset>
+
+#data
+<template>x</template><p><frameset>
+#errors
+no doctype
+bad frameset
+eof in frameset
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         "x"
+|   <frameset>
+
+#data
+<head></head><template></template><p><frameset>
+#errors
+no doctype
+bad template
+bad frameset
+eof in frameset
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|   <frameset>
+
+#data
+<p><template></template><frameset>
+#errors
+no doctype
+bad frameset
+#document
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <template>
+|         content
+
+#data
+<p><template><frameset></template>
+#errors
+no doctype
+bad frameset
+#document
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <template>
+|         content
+
+#data
+<template></template>x<frameset>
+#errors
+no doctype
+bad frameset
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|   <body>
+|     "x"
+
+#data
 <body><template><script>var i = 1;</script><td></td></template>
 #errors
 no doctype
@@ -631,6 +711,23 @@ foster-parented /div
 |       content
 |         <tr>
 |         <div>
+
+#data
+<table><template><tr><div></div></tr></template>
+#errors
+no doctype
+foster-parented div
+foster-parented /div
+eof in table
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         content
+|           <tr>
+|           <div>
 
 #data
 <body><template><tr></tr><td></td></template>
@@ -1648,6 +1745,8 @@ template
 | <table>
 |   <form>
 
+#description
+form start tags inside template do not set the form element pointer, so nested forms are kept
 #data
 <template><form><form><input></template>
 #errors

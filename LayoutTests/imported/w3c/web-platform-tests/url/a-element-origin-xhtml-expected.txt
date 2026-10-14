@@ -42,6 +42,8 @@ PASS Parsing origin: <::> against <http://example.org/foo/bar>
 PASS Parsing origin: <::23> against <http://example.org/foo/bar>
 PASS Parsing origin: <foo://> against <http://example.org/foo/bar>
 PASS Parsing origin: <http://a:b@c:29/d> against <http://example.org/foo/bar>
+PASS Parsing origin: <http://é@é> against <about:blank>
+PASS Parsing origin: <http://é@example.com> against <about:blank>
 PASS Parsing origin: <http::@c:29> against <http://example.org/foo/bar>
 PASS Parsing origin: <http://&a:foo(b]c@d:2/> against <http://example.org/foo/bar>
 PASS Parsing origin: <http://::@c@d:2> against <http://example.org/foo/bar>
@@ -240,6 +242,9 @@ PASS Parsing origin: <http://./> against <about:blank>
 PASS Parsing origin: <http://../> against <about:blank>
 PASS Parsing origin: <h://.> against <about:blank>
 PASS Parsing origin: <http://foo:💩@example.com/bar> against <http://other.com/>
+PASS Parsing origin: <http://😀x@host/> against <about:blank>
+PASS Parsing origin: <http://a:😀x@host/> against <about:blank>
+PASS Parsing origin: <http://😀@host/> against <about:blank>
 PASS Parsing origin: <https://localhost?q=🔥> against <about:blank>
 PASS Parsing origin: <https://localhost#🔥> against <about:blank>
 PASS Parsing origin: <#> against <test:test>
@@ -372,6 +377,9 @@ PASS Parsing origin: <wss://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> against
 PASS Parsing origin: <https://example.com/"quoted"> against <about:blank>
 PASS Parsing origin: <https://a%C2%ADb/> against <about:blank>
 PASS Parsing origin: <https://xn--/> against <about:blank>
+PASS Parsing origin: <constructor:example> against <about:blank>
+PASS Parsing origin: <constructor:/example> against <about:blank>
+PASS Parsing origin: <constructor://HOST:80> against <about:blank>
 PASS Parsing origin: <data://example.com:8080/pathname?search#hash> against <about:blank>
 PASS Parsing origin: <data:///test> against <about:blank>
 PASS Parsing origin: <data://test/a/../b> against <about:blank>

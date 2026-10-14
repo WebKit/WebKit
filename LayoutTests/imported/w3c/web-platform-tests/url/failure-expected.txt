@@ -766,6 +766,18 @@ PASS URL's constructor's base argument: \\\.\Y: should throw
 PASS URL's href: \\\.\Y: should throw
 PASS URL's constructor's base argument: \\\.\y: should throw
 PASS URL's href: \\\.\y: should throw
+PASS URL's constructor's base argument: https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS URL's href: https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS XHR: https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS sendBeacon(): https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS Location's href: https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS window.open(): https://[0:1:2:3:4:5:192.0.02.1]/ should throw
+PASS URL's constructor's base argument: https://[192.0.2.1::]/ should throw
+PASS URL's href: https://[192.0.2.1::]/ should throw
+PASS XHR: https://[192.0.2.1::]/ should throw
+PASS sendBeacon(): https://[192.0.2.1::]/ should throw
+PASS Location's href: https://[192.0.2.1::]/ should throw
+PASS window.open(): https://[192.0.2.1::]/ should throw
 PASS URL's constructor's base argument: https://[0::0::0] should throw
 PASS URL's href: https://[0::0::0] should throw
 PASS XHR: https://[0::0::0] should throw

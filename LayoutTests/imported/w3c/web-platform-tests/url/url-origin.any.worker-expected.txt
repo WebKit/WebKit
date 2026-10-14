@@ -42,6 +42,8 @@ PASS Origin parsing: <::> against <http://example.org/foo/bar>
 PASS Origin parsing: <::23> against <http://example.org/foo/bar>
 PASS Origin parsing: <foo://> against <http://example.org/foo/bar>
 PASS Origin parsing: <http://a:b@c:29/d> against <http://example.org/foo/bar>
+PASS Origin parsing: <http://é@é> without base
+PASS Origin parsing: <http://é@example.com> without base
 PASS Origin parsing: <http::@c:29> against <http://example.org/foo/bar>
 PASS Origin parsing: <http://&a:foo(b]c@d:2/> against <http://example.org/foo/bar>
 PASS Origin parsing: <http://::@c@d:2> against <http://example.org/foo/bar>
@@ -240,6 +242,9 @@ PASS Origin parsing: <http://./> without base
 PASS Origin parsing: <http://../> without base
 PASS Origin parsing: <h://.> without base
 PASS Origin parsing: <http://foo:💩@example.com/bar> against <http://other.com/>
+PASS Origin parsing: <http://😀x@host/> without base
+PASS Origin parsing: <http://a:😀x@host/> without base
+PASS Origin parsing: <http://😀@host/> without base
 PASS Origin parsing: <https://localhost?q=🔥> without base
 PASS Origin parsing: <https://localhost#🔥> without base
 PASS Origin parsing: <#> against <test:test>
@@ -373,6 +378,9 @@ PASS Origin parsing: <wss://host/dir/# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~> without
 PASS Origin parsing: <https://example.com/"quoted"> without base
 PASS Origin parsing: <https://a%C2%ADb/> without base
 PASS Origin parsing: <https://xn--/> without base
+PASS Origin parsing: <constructor:example> without base
+PASS Origin parsing: <constructor:/example> without base
+PASS Origin parsing: <constructor://HOST:80> without base
 PASS Origin parsing: <data://example.com:8080/pathname?search#hash> without base
 PASS Origin parsing: <data:///test> without base
 PASS Origin parsing: <data://test/a/../b> without base
