@@ -2732,6 +2732,15 @@ void NetworkProcess::runningOrTerminatingServiceWorkerCountForTesting(PAL::Sessi
     completionHandler(session->ensureSWServer().runningOrTerminatingCount());
 }
 
+void NetworkProcess::loadersAwaitingWebProcessTransferCountForTesting(PAL::SessionID sessionID, CompletionHandler<void(uint64_t)>&& completionHandler) const
+{
+    CheckedPtr session = networkSession(sessionID);
+    if (!session)
+        return completionHandler(0);
+
+    completionHandler(session->loadersAwaitingWebProcessTransferCount());
+}
+
 void NetworkProcess::isStorageSuspendedForTesting(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
 {
     CheckedPtr session = networkSession(sessionID);

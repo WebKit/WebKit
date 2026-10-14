@@ -624,6 +624,7 @@ private:
 
     void terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType, PAL::SessionID, const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
     void runningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID, CompletionHandler<void(unsigned)>&&) const;
+    void loadersAwaitingWebProcessTransferCountForTesting(PAL::SessionID, CompletionHandler<void(uint64_t)>&&) const;
     void platformFlushCookies(PAL::SessionID, CompletionHandler<void()>&&);
     
     void registerURLSchemeAsSecure(const String&) const;
