@@ -944,7 +944,7 @@ void WebPageProxy::createTextFragmentDirectiveFromSelection(CompletionHandler<vo
     if (!hasRunningProcess())
         return;
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::CreateTextFragmentDirectiveFromSelection(), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::CreateTextFragmentDirectiveFromSelection(), Messages::WebPage::CreateTextFragmentDirectiveFromSelection::Reply { WTF::move(completionHandler) });
 }
 
 void WebPageProxy::getTextFragmentRanges(CompletionHandler<void(const Vector<EditingRange>&&)>&& completionHandler)
