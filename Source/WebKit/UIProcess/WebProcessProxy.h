@@ -913,7 +913,7 @@ private:
 
     HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.
     HashSet<WebCore::ClientOrigin> m_committedStorageClientOrigins; // Storage keys of frames with unpartitioned storage access. Only grows, like m_committedClientOrigins.
-    HashSet<WebCore::Site> m_remoteWorkerSites; // Only grows so that messages sent by a remote worker that is going away remain valid.
+    HashSet<WebCore::RegistrableDomain> m_remoteWorkerDomains; // Only grows so that messages sent by a remote worker that is going away remain valid.
 
     // A single page can register with a store more than once for the same process, e.g. when a
     // ProvisionalPageProxy and a RemotePageProxy for the same page live in the same process, so
