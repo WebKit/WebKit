@@ -163,13 +163,19 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
 {
-    for (CheckedPtr<const RenderObject> descendant = &box; descendant; descendant = descendant->nextInPreOrder(&box)) {
-        CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant);
-        if (!blockContainer || blockContainer->isInline())
+    for (CheckedPtr<const RenderObject> descendant = &box; descendant;) {
+        // Out-of-flow boxes add nothing to the intrinsic sizes of their parent.
+        if (descendant != &box && descendant->isOutOfFlowPositioned()) {
+            descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
-        CheckedRef style = blockContainer->style();
-        if (style->paddingLeft().isPercentOrCalculated() || style->paddingRight().isPercentOrCalculated() || blockContainer->shouldApplyInlineSizeContainment())
-            return false;
+        }
+        if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isInline()) {
+            CheckedRef style = blockContainer->style();
+            auto writingMode = blockContainer->writingMode();
+            if (style->paddingStart(writingMode).isPercentOrCalculated() || style->paddingEnd(writingMode).isPercentOrCalculated() || blockContainer->shouldApplyInlineSizeContainment())
+                return false;
+        }
+        descendant = descendant->nextInPreOrder(&box);
     }
     return true;
 }
@@ -206,8 +212,10 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
         || !(style->minWidth().isAuto() || isSupportedSize(style->minWidth())) || !(style->minHeight().isAuto() || isSupportedSize(style->minHeight()))
         || !(style->maxWidth().isNone() || isSupportedSize(style->maxWidth())) || !(style->maxHeight().isNone() || isSupportedSize(style->maxHeight())))
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
-    // FIXME: An auto inline size with an auto inset is the fit-content size, which needs the intrinsic sizes of the content (css-position-3 §4.3).
-    if (style->width().isAuto() && (style->left().isAuto() || style->right().isAuto()))
+    // An auto inline size with an auto inset is the fit-content size (css-position-3 §4.3), from the inline sizes of the content.
+    auto writingMode = outOfFlowBox.writingMode();
+    auto hasFitContentInlineSize = style->logicalWidth(writingMode).isAuto() && (style->insetStart(writingMode).isAuto() || style->insetEnd(writingMode).isAuto());
+    if (hasFitContentInlineSize && !canComputeContentInlineSizes(downcast<RenderBlockFlow>(outOfFlowBox)))
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
     // FIXME: The automatic size a preferred aspect ratio gives in the other axis (css-sizing-4 §5.1).
     if (style->aspectRatio().hasRatio())

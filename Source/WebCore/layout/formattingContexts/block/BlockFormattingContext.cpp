@@ -217,7 +217,8 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
     auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
     auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
 
-    auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry();
+    auto contentInlineSizes = outOfFlowGeometry.hasFitContentInlineSize() ? std::optional { computeIntrinsicInlineSizes(box) } : std::nullopt;
+    auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry(contentInlineSizes);
     geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
     geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
     geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);

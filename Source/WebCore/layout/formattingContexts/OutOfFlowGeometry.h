@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FormattingConstraints.h"
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/WritingMode.h>
 #include <optional>
@@ -69,8 +70,10 @@ public:
 
     OutOfFlowGeometry(const RenderBox&, const ContainingBlock&, const StaticPosition&, LayoutUnit inlineAxisBorderAndPadding, LayoutUnit blockAxisBorderAndPadding);
 
-    // FIXME: An auto inline size with an auto inset is the fit-content size; coverage keeps those out, and this uses the stretch-fit size.
-    AxisGeometry computeInlineAxisGeometry() const;
+    // An auto inline size is the fit-content size when an inset in the inline axis is auto (css-position-3 §4.3), which takes the
+    // min-content and max-content inline sizes of the content (css-sizing-3 §5.1).
+    bool hasFitContentInlineSize() const;
+    AxisGeometry computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes = { }) const;
     // The content box block size when it does not depend on the content, which percentages inside the box resolve against.
     std::optional<LayoutUnit> definiteContentBoxBlockSize() const;
     AxisGeometry computeBlockAxisGeometry(LayoutUnit intrinsicContentBlockSize) const;
@@ -87,6 +90,7 @@ private:
         LayoutUnit staticPosition;
         bool staticPositionIsMarginBoxEnd { false };
     };
+    static std::pair<LayoutUnit, LayoutUnit> insetModifiedContainingBlock(const AxisValues&);
     static AxisGeometry computeAxisGeometry(Axis, const AxisValues&, LayoutUnit borderBoxSize);
     AxisValues inlineAxisValues() const;
     AxisValues blockAxisValues() const;
