@@ -1,0 +1,10 @@
+Tests that loads requested by a dedicated worker in an iframe while the page enters the back/forward cache do not start while the page is in the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Page was restored from the back/forward cache 10 times without crashing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
