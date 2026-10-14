@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
@@ -93,7 +94,7 @@ private:
     WeakHashSet<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElements;
     const UniqueRef<SVGResourcesCache> m_resourcesCache;
 
-    Vector<Ref<SVGElement>> m_rebuildElements;
+    ListHashSet<Ref<SVGElement>> m_rebuildElements;
     bool m_areAnimationsPaused { false };
 
     HashMap<URL, Ref<IsolatedSVGDocumentContext>> m_externalSVGDocuments;
