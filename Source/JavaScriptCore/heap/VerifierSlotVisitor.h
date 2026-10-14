@@ -93,7 +93,7 @@ public:
     void reportExternalMemoryVisited(size_t) final { }
 #endif
 
-    bool mutatorIsStopped() const final;
+    bool mutatorsAreStopped() const final;
 
     void didAddOpaqueRoot(void*) final;
     void didFindOpaqueRoot(void*) final;

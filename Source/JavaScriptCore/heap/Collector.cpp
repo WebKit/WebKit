@@ -42,7 +42,6 @@
 #include <wtf/ParkingLot.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
-#include <wtf/SpinBackoff.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -128,8 +127,6 @@ Collector::Collector()
 {
     for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
         std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toASCIICString("P", i + 1));
-        if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
-            visitor->optimizeForStoppedMutator();
         m_availableParallelSlotVisitors.append(visitor.get());
         m_parallelSlotVisitors.append(WTF::move(visitor));
     }
@@ -144,8 +141,6 @@ Collector::Collector()
         // should always be stopped when the collector is running.
         m_scheduler = makeUnique<SynchronousStopTheWorldMutatorScheduler>();
     }
-
-    m_collectorSlotVisitor->optimizeForStoppedMutator();
 
     Locker locker { *m_threadLock };
     lazyInitialize(m_thread, adoptRef(*new CollectorThread(locker, *this)));
@@ -756,13 +751,7 @@ void Collector::stopThePeriphery()
     forEachHeap([](Heap& heap) {
         heap.stopThePeriphery();
     });
-
-    // updateMutatorIsStopped() recomputes from m_worldIsStopped rather than being told, so it has to
-    // run after Heap::stopThePeriphery() sets it.
-    forEachSlotVisitor(
-        [&] (SlotVisitor& visitor) {
-            visitor.updateMutatorIsStopped(NoLockingNecessary);
-        });
+    m_collectorSlotVisitor->setMutatorsAreStopped(true);
 
     m_stopTime = MonotonicTime::now();
 }
@@ -772,45 +761,8 @@ NEVER_INLINE void Collector::resumeThePeriphery()
     forEachHeap([](Heap& heap) {
         heap.resumeThePeriphery();
     });
-
-    // updateMutatorIsStopped() recomputes from the current stopped state rather than being told it,
-    // so it has to run after the write.
-    //
-    // FIXME: This could be vastly improved: we want to grab the locks in the order in which they
-    // become available. We basically want a lockAny() method that will lock whatever lock is available
-    // and tell you which one it locked. That would require teaching ParkingLot how to park on multiple
-    // queues at once, which is totally achievable - it would just require memory allocation, which is
-    // suboptimal but not a disaster. Alternatively, we could replace the SlotVisitor rightToRun lock
-    // with a DLG-style handshake mechanism, but that seems not as general.
-    Vector<SlotVisitor*, 8> visitorsToUpdate;
-
-    forEachSlotVisitor(
-        [&] (SlotVisitor& visitor) {
-            visitorsToUpdate.append(&visitor);
-        });
-
-    SpinBackoff backoff;
-    for (unsigned countdown = 40; !visitorsToUpdate.isEmpty() && countdown--;) {
-        for (unsigned index = 0; index < visitorsToUpdate.size(); ++index) {
-            SlotVisitor& visitor = *visitorsToUpdate[index];
-            bool remove = false;
-            if (visitor.hasAcknowledgedThatTheMutatorIsResumed())
-                remove = true;
-            else if (visitor.rightToRun().tryLock()) {
-                Locker locker { AdoptLock, visitor.rightToRun() };
-                visitor.updateMutatorIsStopped(locker);
-                remove = true;
-            }
-            if (remove) {
-                visitorsToUpdate[index--] = visitorsToUpdate.last();
-                visitorsToUpdate.takeLast();
-            }
-        }
-        backoff.spinOnce();
-    }
-
-    for (SlotVisitor* visitor : visitorsToUpdate)
-        visitor->updateMutatorIsStopped();
+    // Before any mutator runs again.
+    m_collectorSlotVisitor->setMutatorsAreStopped(false);
 
     if (std::exchange(m_isCompilerThreadsSuspended, false))
         resumeCompilerThreads();

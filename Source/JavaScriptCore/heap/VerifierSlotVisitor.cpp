@@ -357,7 +357,7 @@ void VerifierSlotVisitor::markAuxiliary(const void* base)
     testAndSetMarked(cell);
 }
 
-bool VerifierSlotVisitor::mutatorIsStopped() const
+bool VerifierSlotVisitor::mutatorsAreStopped() const
 {
     return true;
 }

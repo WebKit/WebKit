@@ -211,7 +211,6 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, collectContinuouslyPeriodMS, 1, Normal, nullptr) \
     v(Bool, forceFencedBarrier, false, Normal, nullptr) \
     v(Bool, verboseVisitRace, false, Normal, nullptr) \
-    v(Bool, optimizeParallelSlotVisitorsForStoppedMutator, false, Normal, nullptr) \
     v(Bool, verboseHeapSnapshotLogging, true, Normal, nullptr) \
     v(Unsigned, largeHeapSize, 32 * 1024 * 1024, Normal, nullptr) \
     v(Unsigned, mediumHeapSize, 4 * 1024 * 1024, Normal, nullptr) \

@@ -167,17 +167,14 @@ public:
 
     HeapVersion markingVersion() const { return m_markingVersion; }
 
-    bool mutatorIsStopped() const final { return m_mutatorIsStopped; }
-    
-    Lock& rightToRun() LIFETIME_BOUND WTF_RETURNS_LOCK(m_rightToRun) { return m_rightToRun; }
-    
-    void LEGACY_NODELETE updateMutatorIsStopped(const AbstractLocker&);
-    void updateMutatorIsStopped();
-    
-    bool LEGACY_NODELETE hasAcknowledgedThatTheMutatorIsResumed() const;
-    bool LEGACY_NODELETE mutatorIsStoppedIsUpToDate() const;
-    
-    void LEGACY_NODELETE optimizeForStoppedMutator();
+    bool mutatorsAreStopped() const final { return m_mutatorsAreStopped; }
+
+    // While set, visits assume the mutators of the heaps being collected are stopped. Change it only between drains.
+    void setMutatorsAreStopped(bool areStopped)
+    {
+        ASSERT(!m_isInParallelMode); // Verify this visitor is not draining.
+        m_mutatorsAreStopped = areStopped;
+    }
     
     JS_EXPORT_PRIVATE void didRace(const VisitRaceKey&) final;
     inline void didRace(JSCell* cell, const char* reason); // Defined in SlotVisitorInlines.h
@@ -245,10 +242,8 @@ private:
 
     JSCell* m_currentCell { nullptr };
     bool m_isFirstVisit { false };
-    bool m_mutatorIsStopped { false };
-    bool m_canOptimizeForStoppedMutator { false };
+    bool m_mutatorsAreStopped { false };
     bool m_isInParallelMode { false };
-    Lock m_rightToRun;
 
 #if ASSERT_ENABLED
     bool m_isCheckingForDefaultMarkViolation { false };

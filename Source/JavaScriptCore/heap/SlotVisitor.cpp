@@ -482,44 +482,14 @@ void SlotVisitor::donateKnownParallel()
         });
 }
 
-void SlotVisitor::updateMutatorIsStopped(const AbstractLocker&)
-{
-    m_mutatorIsStopped = (m_collector.heap().worldIsStopped() & m_canOptimizeForStoppedMutator);
-}
-
-void SlotVisitor::updateMutatorIsStopped()
-{
-    if (mutatorIsStoppedIsUpToDate())
-        return;
-    updateMutatorIsStopped(Locker { m_rightToRun });
-}
-
-bool SlotVisitor::hasAcknowledgedThatTheMutatorIsResumed() const
-{
-    return !m_mutatorIsStopped;
-}
-
-bool SlotVisitor::mutatorIsStoppedIsUpToDate() const
-{
-    return m_mutatorIsStopped == (m_collector.heap().worldIsStopped() & m_canOptimizeForStoppedMutator);
-}
-
-void SlotVisitor::optimizeForStoppedMutator()
-{
-    m_canOptimizeForStoppedMutator = true;
-}
-
 NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
 {
     if (!m_isInParallelMode) {
         dataLog("FATAL: attempting to drain when not in parallel mode.\n");
         RELEASE_ASSERT_NOT_REACHED();
     }
-    
-    Locker locker { m_rightToRun };
-    
+
     while (!hasElapsed(timeout)) {
-        updateMutatorIsStopped(locker);
         IterationStatus status = forEachMarkStack(
             [&] (MarkStackArray& stack) -> IterationStatus {
                 if (stack.isEmpty())
@@ -550,8 +520,7 @@ NEVER_INLINE void SlotVisitor::drain(MonotonicTime timeout)
         propagateExternalMemoryVisitedIfNecessary();
         if (status == IterationStatus::Continue)
             break;
-        
-        m_rightToRun.safepoint();
+
         donateKnownParallel();
     }
 }
@@ -581,41 +550,35 @@ size_t SlotVisitor::performIncrementOfDraining(size_t bytesRequested)
         return bytesVisited() >= bytesRequested;
     };
     
-    {
-        Locker locker { m_rightToRun };
-        
-        while (!isDone()) {
-            updateMutatorIsStopped(locker);
-            IterationStatus status = forEachMarkStack(
-                [&] (MarkStackArray& stack) -> IterationStatus {
-                    if (stack.isEmpty() || isDone())
-                        return IterationStatus::Continue;
+    while (!isDone()) {
+        IterationStatus status = forEachMarkStack(
+            [&](MarkStackArray& stack) -> IterationStatus {
+                if (stack.isEmpty() || isDone())
+                    return IterationStatus::Continue;
 
-                    stack.refill();
-                    
-                    m_isFirstVisit = (&stack == &m_collectorStack);
+                stack.refill();
 
-                    unsigned countdown = Options::minimumNumberOfScansBetweenRebalance();
-                    auto popAndPrefetch = [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
-                        if (!countdown || !stack.canRemoveLast() || isDone())
-                            return nullptr;
-                        --countdown;
-                        return stack.popAndPrefetch();
-                    };
-                    for (const JSCell* next = popAndPrefetch(); next;) {
-                        const JSCell* cell = next;
-                        next = popAndPrefetch();
-                        cellBytesVisited += cell->cellSize();
-                        visitChildren(cell);
-                    }
-                    return IterationStatus::Done;
-                });
-            propagateExternalMemoryVisitedIfNecessary();
-            if (status == IterationStatus::Continue)
-                break;
-            m_rightToRun.safepoint();
-            donateKnownParallel();
-        }
+                m_isFirstVisit = (&stack == &m_collectorStack);
+
+                unsigned countdown = Options::minimumNumberOfScansBetweenRebalance();
+                auto popAndPrefetch = [&] ALWAYS_INLINE_LAMBDA -> const JSCell* {
+                    if (!countdown || !stack.canRemoveLast() || isDone())
+                        return nullptr;
+                    --countdown;
+                    return stack.popAndPrefetch();
+                };
+                for (const JSCell* next = popAndPrefetch(); next;) {
+                    const JSCell* cell = next;
+                    next = popAndPrefetch();
+                    cellBytesVisited += cell->cellSize();
+                    visitChildren(cell);
+                }
+                return IterationStatus::Done;
+            });
+        propagateExternalMemoryVisitedIfNecessary();
+        if (status == IterationStatus::Continue)
+            break;
+        donateKnownParallel();
     }
 
     donateAll();

@@ -145,7 +145,7 @@ ALWAYS_INLINE Structure* JSObjectWithButterfly::visitButterflyImpl(Visitor& visi
         }
     };
 
-    if (visitor.mutatorIsStopped()) {
+    if (visitor.mutatorsAreStopped()) {
         butterfly = this->butterfly();
         structure = this->structure();
         maxOffset = structure->maxOffset();

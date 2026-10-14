@@ -208,7 +208,7 @@ public:
     RootMarkReason rootMarkReason() const { return m_rootMarkReason; }
     void setRootMarkReason(RootMarkReason reason) { m_rootMarkReason = reason; }
 
-    virtual bool mutatorIsStopped() const = 0;
+    virtual bool mutatorsAreStopped() const = 0;
 
     virtual void didRace(const VisitRaceKey&) = 0;
     void didRace(JSCell* cell, const char* reason) { didRace(VisitRaceKey(cell, reason)); }
