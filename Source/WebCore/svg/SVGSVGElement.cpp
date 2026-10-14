@@ -699,7 +699,7 @@ bool SVGSVGElement::hasSynthesizedViewBoxForSVGImage() const
 {
     // An SVG document embedded through SVGImage is resized to the container size chosen by the
     // embedder. Without an explicit viewBox the content has to stretch to that size, which is
-    // modeled by synthesizing a viewBox from the intrinsic size, see currentViewBoxRect().
+    // modeled by synthesizing a viewBox from the width and height, see synthesizedViewBoxForSVGImage().
     return !m_useCurrentView && viewBox().isEmpty() && isEmbeddedThroughSVGImage(*this);
 }
 
@@ -730,6 +730,21 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
     return { 0, 0, intrinsicWidth(), intrinsicHeight() };
 }
 
+FloatRect SVGSVGElement::synthesizedViewBoxForSVGImage(float viewWidth, float viewHeight) const
+{
+    ASSERT(hasSynthesizedViewBoxForSVGImage());
+
+    // Unlike currentViewBoxRect(), which feeds intrinsic sizing, this depends on the viewport.
+    auto synthesizeAxis = [&](const SVGLengthValue& length, float viewportLength) -> float {
+        if (length.lengthType() == SVGLengthType::Percentage)
+            return viewportLength * length.valueInSpecifiedUnits() / 100;
+        SVGLengthContext lengthContext(this);
+        return length.value(lengthContext);
+    };
+
+    return { 0, 0, synthesizeAxis(width(), viewWidth), synthesizeAxis(height(), viewHeight) };
+}
+
 FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
 {
     // The cache is only flushed from the LBSE renderers (RenderSVGRoot / RenderSVGViewportContainer),
@@ -745,6 +760,11 @@ FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
 FloatSize SVGSVGElement::viewportSizeForLengthResolution() const
 {
     auto compute = [&]() -> FloatSize {
+        if (hasSynthesizedViewBoxForSVGImage()) {
+            auto viewportSize = currentViewportSizeExcludingZoom();
+            auto viewBoxSize = synthesizedViewBoxForSVGImage(viewportSize.width(), viewportSize.height()).size();
+            return viewBoxSize.isEmpty() ? viewportSize : viewBoxSize;
+        }
         auto viewBoxSize = currentViewBoxRect().size();
         return viewBoxSize.isEmpty() ? currentViewportSizeExcludingZoom() : viewBoxSize;
     };
@@ -825,11 +845,13 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     SVGPreserveAspectRatioValue none { SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE, SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET };
 
     if (!m_useCurrentView || !m_viewSpec) {
-        auto currentViewBox = currentViewBoxRect();
-
         // If we synthesized a viewBox (no explicit viewBox but embedded through SVGImage),
         // we should also synthesize preserveAspectRatio="none" to allow stretching.
-        if (hasSynthesizedViewBoxForSVGImage() || m_ignoresPreserveAspectRatioForSVGImage)
+        if (hasSynthesizedViewBoxForSVGImage())
+            return SVGFitToViewBox::viewBoxToViewTransform(synthesizedViewBoxForSVGImage(viewWidth, viewHeight), none, viewWidth, viewHeight);
+
+        auto currentViewBox = currentViewBoxRect();
+        if (m_ignoresPreserveAspectRatioForSVGImage)
             return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, none, viewWidth, viewHeight);
 
         return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, preserveAspectRatio(), viewWidth, viewHeight);
