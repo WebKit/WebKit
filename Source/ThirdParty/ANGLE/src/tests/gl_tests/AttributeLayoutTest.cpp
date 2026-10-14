@@ -342,12 +342,12 @@ class AttributeLayoutTest : public ANGLETest<>
             std::string testCase;
             if (drawFirstTriangle)
             {
-                Draw(0, kNumVertices, mIndices);
+                Draw(0, kNumVertices, mIndices.data());
                 testCase = "draw";
             }
             else
             {
-                Draw(3, kNumVertices - 3, ANGLE_UNSAFE_TODO(mIndices + 3));
+                Draw(3, kNumVertices - 3, &mIndices[3]);
                 testCase = "skip";
             }
 
@@ -368,7 +368,8 @@ class AttributeLayoutTest : public ANGLETest<>
         }
     }
 
-    static const GLushort mIndices[kNumVertices];
+    static constexpr std::array<GLushort, kNumVertices> mIndices = {0, 1, 2, 3, 4,  5,
+                                                                    6, 7, 8, 9, 10, 11};
 
     GLuint mProgram;
     GLuint mIndexBuffer;
@@ -378,7 +379,6 @@ class AttributeLayoutTest : public ANGLETest<>
     VertexData mCoord;
     VertexData mColor;
 };
-const GLushort AttributeLayoutTest::mIndices[kNumVertices] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
 void AttributeLayoutTest::GetTestCases(void)
 {
@@ -486,7 +486,7 @@ class AttributeLayoutBufferIndexed : public AttributeLayoutTest
     void Draw(int firstVertex, unsigned vertexCount, const GLushort *indices) override
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(*mIndices) * vertexCount, indices,
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mIndices[0]) * vertexCount, indices,
                      GL_STATIC_DRAW);
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_SHORT, nullptr);
     }

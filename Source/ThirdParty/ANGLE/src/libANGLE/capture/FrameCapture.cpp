@@ -1197,6 +1197,29 @@ void CaptureUpdateCurrentProgram(const CallCapture &call,
     callsOut->emplace_back("UpdateCurrentProgramPerContext", std::move(paramBuffer));
 }
 
+// Reset unpack alignment early (before resource regeneration) so that textures are unpacked with
+// the correct alignment during reset replay.
+void EarlyResetUnpackAlignment(ReplayWriter &replayWriter,
+                               std::stringstream &out,
+                               std::stringstream &header,
+                               FrameCaptureBinaryData *binaryData,
+                               const StateResetHelper &stateResetHelper,
+                               size_t *maxResourceIDBufferSize)
+{
+    const CallResetMap &resetCalls = stateResetHelper.getResetCalls();
+    auto pixelStoreiIter           = resetCalls.find(angle::EntryPoint::GLPixelStorei);
+    if (pixelStoreiIter != resetCalls.end())
+    {
+        for (const auto &call : pixelStoreiIter->second)
+        {
+            out << "    ";
+            WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
+                                  maxResourceIDBufferSize);
+            out << ";\n";
+        }
+    }
+}
+
 bool ProgramNeedsReset(const gl::Context *context,
                        ResourceTracker *resourceTracker,
                        gl::ShaderProgramID programID)
@@ -5921,8 +5944,22 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         currentPackState.skipPixels = apiState.getPackSkipPixels();
     }
 
-    // We set unpack alignment above, no need to change it here
+    // Ensure the unpack alignment is always reset to its initial value during the replay reset
+    // to prevent data corruption for the next iterations.
+    GLint contextUnpackAlignment = apiState.getUnpackState().alignment;
+    Capture(&resetCalls[angle::EntryPoint::GLPixelStorei],
+            CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment,
+                               contextUnpackAlignment));
+
+    // We set unpack alignment above to 1 for texture capture, no need to change it here.
     ASSERT(currentUnpackState.alignment == 1);
+    if (currentUnpackState.alignment != contextUnpackAlignment)
+    {
+        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment,
+                               contextUnpackAlignment));
+        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
+    }
+
     if (currentUnpackState.rowLength != apiState.getUnpackRowLength())
     {
         cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackRowLength,
@@ -6014,14 +6051,6 @@ void CaptureMidExecutionSetup(const gl::Context *context,
 
     // Clean up the replay state.
     replayState.reset(context);
-
-    GLint contextUnpackAlignment = context->getState().getUnpackState().alignment;
-    if (currentUnpackState.alignment != contextUnpackAlignment)
-    {
-        cap(CapturePixelStorei(replayState, true, gl::PackUnpackParameter::UnpackAlignment,
-                               contextUnpackAlignment));
-        replayState.getMutablePrivateStateForCapture()->setUnpackAlignment(contextUnpackAlignment);
-    }
 
     if (validationEnabled)
     {
@@ -9032,9 +9061,9 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
                 &mResourceIDBufferSize);
 
             // Release the previously-bound window surface so the side context does not keep a
-            // reference. Otherwise surface's isReferenced() stays true and the app's other thread
-            // gets EGL_BAD_ACCESS "Surface can only be current on one thread" when trying to get
-            // the surface on capture start, leading to lost context/bad glBindFramebuffer calls
+            // reference. Otherwise surface's isCurrentOnAnyContext() stays true and the app's other
+            // thread gets EGL_BAD_ACCESS "Surface can only be current on one thread" when trying to
+            // get the surface on capture start, leading to lost context/bad glBindFramebuffer calls
             egl::Error unmakeError = shareContext->unMakeCurrent(display);
             if (unmakeError.isError())
             {
@@ -9841,6 +9870,11 @@ void FrameCaptureShared::writeMainContextCppReplay(const gl::Context *context,
                         << FmtResetFunction(kNoPartId, kSharedContextId, FuncUsage::Prototype);
             bodyStream << protoStream.str() << "\n";
             bodyStream << "{\n";
+
+            // Unpack alignment should be reset before the resources to prevent data corruption for
+            // the next replay iteration.
+            EarlyResetUnpackAlignment(mReplayWriter, bodyStream, headerStream, &mBinaryData,
+                                      stateResetHelper, &mResourceIDBufferSize);
 
             for (ResourceIDType resourceType : AllEnums<ResourceIDType>())
             {

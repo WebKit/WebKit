@@ -98,7 +98,7 @@ Surface::Surface(EGLint surfaceType,
       mTexture(nullptr),
       mColorFormat(config->renderTargetFormat),
       mDSFormat(config->depthStencilFormat),
-      mIsCurrentOnAnyContext(false),
+      mCurrentRefCount(0),
       mLockBufferPtr(nullptr),
       mLockBufferPitch(0),
       mBufferAgeQueriedSinceLastSwap(false),
@@ -162,7 +162,10 @@ Surface::Surface(EGLint surfaceType,
     mTextureOffset.y = static_cast<int>(mState.attributes.get(EGL_TEXTURE_OFFSET_Y_ANGLE, 0));
 }
 
-Surface::~Surface() {}
+Surface::~Surface()
+{
+    ASSERT(mCurrentRefCount == 0);
+}
 
 rx::FramebufferAttachmentObjectImpl *Surface::getAttachmentImpl() const
 {
@@ -281,7 +284,7 @@ Error Surface::initialize(const Display *display)
 Error Surface::makeCurrent(const gl::Context *context)
 {
     ANGLE_TRY(mImplementation->makeCurrent(context));
-    mIsCurrentOnAnyContext = true;
+    mCurrentRefCount++;
     addRef();
     return NoError();
 }
@@ -289,7 +292,8 @@ Error Surface::makeCurrent(const gl::Context *context)
 Error Surface::unMakeCurrent(const gl::Context *context)
 {
     ANGLE_TRY(mImplementation->unMakeCurrent(context));
-    mIsCurrentOnAnyContext = false;
+    ASSERT(mCurrentRefCount > 0);
+    mCurrentRefCount--;
     return releaseRef(context->getDisplay());
 }
 

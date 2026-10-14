@@ -2067,7 +2067,7 @@ void main()
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     auto test = [&](GLColor color0, GLColor color1, Invalidate invalidate) {
-        const GLenum discards[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT2};
+        const std::array<GLenum, 2> discards = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT2};
 
         // Resolve attachments should be used and the MSAA attachments should be invalidated.
         // Only the resolve attachments should have Store.
@@ -2092,7 +2092,7 @@ void main()
 
         if (invalidate == Invalidate::AfterEachResolve)
         {
-            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards);
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, discards.data());
         }
 
         // Resolve the second attachment
@@ -2104,11 +2104,11 @@ void main()
 
         if (invalidate == Invalidate::AfterEachResolve)
         {
-            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, ANGLE_UNSAFE_TODO(discards + 1));
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 1, &discards[1]);
         }
         else if (invalidate == Invalidate::AllAtEnd)
         {
-            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 2, discards);
+            glInvalidateFramebuffer(GL_READ_FRAMEBUFFER, 2, discards.data());
         }
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFBO1);
@@ -10429,7 +10429,7 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, ManyDSBufferUsedInOneSubmit)
 
     static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
                                                           GL_STENCIL_ATTACHMENT};
-    GLfloat depthValue                = 0.0f;
+    GLfloat depthValue                                 = 0.0f;
     for (size_t i = 0; i < kRepeatCount; i++)
     {
         setupColorTexturesAndDepthBuffer(colorTextures1[i], colorTextures2[i], depthStencils[i],

@@ -11,11 +11,12 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include <array>
+#include <numeric>
+
 #include "gpu_info_util/SystemInfo.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
-
-#include <numeric>
 
 using namespace angle;
 
@@ -1749,10 +1750,10 @@ void main()
 
     // Per-instance attribute: 8 distinct integer values, divisor = 3.
     // Each value is a unique identifier for its buffer index.
-    const GLint instValues[] = {0, 1, 2, 3, 4, 5, 6, 7};
+    const std::array<GLint, 8> instValues = {0, 1, 2, 3, 4, 5, 6, 7};
     GLBuffer instBuffer;
     glBindBuffer(GL_ARRAY_BUFFER, instBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(instValues), instValues, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(instValues), instValues.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(instLoc);
     glVertexAttribIPointer(instLoc, 1, GL_INT, 0, nullptr);
     glVertexAttribDivisor(instLoc, 3);
@@ -1781,8 +1782,7 @@ void main()
                                                subcase.baseInstance);
         ASSERT_GL_NO_ERROR();
         GLint lastInstanceAttrIndex = subcase.baseInstance + (subcase.instanceCount - 1) / 3;
-        // SAFETY: Values chosen in the test cases, max value within 0..7.
-        GLint lastInstValue  = ANGLE_UNSAFE_BUFFERS(instValues[lastInstanceAttrIndex]);
+        GLint lastInstValue         = instValues[lastInstanceAttrIndex];
         GLint lastInstanceID = subcase.instanceCount - 1;
         // R == instValue (per-instance attribute), G == gl_InstanceID, B == gl_BaseInstance.
         GLColor32I expected(lastInstValue, lastInstanceID, static_cast<GLint>(subcase.baseInstance),

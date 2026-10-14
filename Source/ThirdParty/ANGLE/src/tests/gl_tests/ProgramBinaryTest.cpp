@@ -1189,8 +1189,11 @@ TEST_P(ProgramBinaryES3Test, ArrayOfStructContainingArrayOfSamplers)
     glUseProgram(program);
     std::array<GLTexture, 4> textures;
     GLColor expected = MakeGLColor(32, 64, 96, 255);
-    GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
-    ANGLE_UNSAFE_TODO(memcpy(data, expected.data(), sizeof(expected)));
+
+    // 4 bytes of padding, so that texture can be initialized with 4 bytes
+    const std::array<GLubyte, 8> data = {expected.R, expected.G, expected.B, expected.A,
+                                         0,          0,          0,          0};
+
     for (int i = 0; i < 4; i++)
     {
         int outerIdx = i % 2;
@@ -1198,8 +1201,7 @@ TEST_P(ProgramBinaryES3Test, ArrayOfStructContainingArrayOfSamplers)
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, textures[i]);
         // Each element provides two components.
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                     ANGLE_UNSAFE_TODO(data + i));
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &data[i]);
         std::stringstream uniformName;
         uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
         // Then send it as a uniform

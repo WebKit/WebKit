@@ -312,6 +312,9 @@ public:
 
         vk::VkPhysicalDevice physDevice = vk::chooseDevice(vki, instance, cmdLine);
 
+        m_vki        = &vki;
+        m_physDevice = physDevice;
+
         /* Get a Drm fd that matches the device. */
 
         vk::VkPhysicalDeviceProperties2 deviceProperties2;
@@ -380,8 +383,6 @@ public:
         if (result != vk::VK_SUCCESS)
             TCU_THROW(NotSupportedError, "vkAcquireDrmDisplayEXT failed.");
 
-        m_vki         = &vki;
-        m_physDevice  = physDevice;
         m_initialized = true;
     }
 

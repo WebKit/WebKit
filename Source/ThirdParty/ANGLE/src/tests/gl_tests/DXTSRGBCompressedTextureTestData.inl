@@ -7,6 +7,8 @@
 //   Data for sRGB DXT texture tests (DXTSRGBCompressedTextureTest.cpp)
 //
 
+#include <array>
+
 static constexpr size_t kMaxCompressedSize = 64;
 static constexpr size_t kMaxDecompressedSize = 256;
 
@@ -15,8 +17,8 @@ struct TestCase
     GLsizei width;
     GLsizei height;
     GLsizei dataSize;
-    uint8_t data[kMaxCompressedSize];
-    uint8_t expected[kMaxDecompressedSize];
+    std::array<uint8_t, kMaxCompressedSize> data;
+    std::array<uint8_t, kMaxDecompressedSize> expected;
 };
 
 static const std::map<GLenum, TestCase> kTests = {

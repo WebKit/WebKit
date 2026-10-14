@@ -33,7 +33,8 @@ class ScopedCaptureExclude
         {
             glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_MARKER,
                                     angle::kFixtureInjectedCommandsBeginId,
-                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1, "");
+                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1,
+                                    "ANGLE capture marker (begin): for trace upgrades, ignore");
         }
     }
     ~ScopedCaptureExclude()
@@ -42,7 +43,8 @@ class ScopedCaptureExclude
         {
             glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_MARKER,
                                     angle::kFixtureInjectedCommandsEndId,
-                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1, "");
+                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1,
+                                    "ANGLE capture marker (end): for trace upgrades, ignore");
         }
     }
 };

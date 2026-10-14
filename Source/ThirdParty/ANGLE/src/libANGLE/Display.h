@@ -31,7 +31,6 @@
 #include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/MemoryProgramCache.h"
 #include "libANGLE/MemoryShaderCache.h"
-#include "libANGLE/ObjectMap.h"
 #include "libANGLE/Observer.h"
 #include "libANGLE/ShareGroup.h"
 #include "libANGLE/Surface.h"
@@ -85,7 +84,6 @@ class ScopedDisplayLockAndRefT;
 using ScopedDisplayLockAndRef      = ScopedDisplayLockAndRefT<Display>;
 using ScopedConstDisplayLockAndRef = ScopedDisplayLockAndRefT<const Display>;
 
-using SurfaceMap = priv::ObjectMap<Surface, angle::SimpleMutex>;
 using ThreadSet  = angle::HashSet<Thread *>;
 
 // Size of a Vulkan device or driver UUID, matching VK_UUID_SIZE.  Spelled out

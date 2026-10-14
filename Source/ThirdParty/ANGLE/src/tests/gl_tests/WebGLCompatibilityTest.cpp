@@ -8237,6 +8237,81 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
     test(GL_TEXTURE_3D, 1, 4, 1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
 }
 
+// Tests that hardened-context unpack state validation and PBO validation are enforced on ES2
+// contexts when GL_EXT_unpack_subimage and GL_NV_pixel_buffer_object are enabled.
+TEST_P(WebGL1CompatibilityTest, UnpackStateAndPBOValidation)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_unpack_subimage"));
+
+    constexpr size_t kPixelCount = 8 * 8;
+    std::vector<GLColor> data(kPixelCount);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    ASSERT_GL_NO_ERROR();
+
+    auto testClientMemory = [&](GLint skipPixels, GLint rowLength, GLenum expectedError) {
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, rowLength);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS_EXT, skipPixels);
+
+        // When no PBO is bound and pixels is nullptr, glTexImage2D must succeed regardless of
+        // unpack parameters.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_NO_ERROR();
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        EXPECT_GL_ERROR(expectedError);
+
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS_EXT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        EXPECT_GL_NO_ERROR();
+
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, rowLength);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS_EXT, skipPixels);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        EXPECT_GL_ERROR(expectedError);
+    };
+
+    testClientMemory(0, 0, GL_NO_ERROR);
+    testClientMemory(0, 4, GL_NO_ERROR);           // 0 + 4 <= 4
+    testClientMemory(1, 5, GL_NO_ERROR);           // 1 + 4 <= 5
+    testClientMemory(0, 3, GL_INVALID_OPERATION);  // 0 + 4 > 3
+    testClientMemory(1, 0, GL_INVALID_OPERATION);  // 1 + 4 > 4
+    testClientMemory(1, 4, GL_INVALID_OPERATION);  // 1 + 4 > 4
+
+    if (EnsureGLExtensionEnabled("GL_NV_pixel_buffer_object"))
+    {
+        GLBuffer pbo;
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, kPixelCount * sizeof(GLColor), data.data(),
+                     GL_STATIC_DRAW);
+        ASSERT_GL_NO_ERROR();
+
+        // With a bound PBO, glTexImage2D(..., nullptr) must also reject overlapping unpack rows.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 1);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS_EXT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        // Valid row length with PBO succeeds.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 4);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        EXPECT_GL_NO_ERROR();
+
+        // Unaligned PBO offset for GL_UNSIGNED_SHORT_5_6_5 (2 bytes per datum) must fail.
+        glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 4, 4, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
+                     reinterpret_cast<const void *>(1));
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    }
+}
+
 // Tests that using cube map arrays is not supported in WebGL.
 TEST_P(WebGL2CompatibilityTest, CubeMapArrayNotSupported)
 {

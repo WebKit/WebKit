@@ -22,6 +22,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Image.h"
+#include "libANGLE/ObjectMap.h"
 #include "libANGLE/RefCountObject.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
@@ -162,7 +163,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     egl::Error unlockSurfaceKHR(const egl::Display *display);
 
     bool isLocked() const;
-    bool isCurrentOnAnyContext() const { return mIsCurrentOnAnyContext; }
+    bool isCurrentOnAnyContext() const { return mCurrentRefCount > 0; }
 
     gl::Texture *getBoundTexture() const { return mTexture; }
 
@@ -239,7 +240,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
         ASSERT(mRefCount > 0);
         mRefCount--;
     }
-    bool isReferenced() const { return mRefCount > 0; }
 
   protected:
     Surface(EGLint surfaceType,
@@ -301,7 +301,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     gl::Offset mTextureOffset;
 
-    bool mIsCurrentOnAnyContext;  // The surface is current to a context/client API
+    uint32_t mCurrentRefCount;    // The surface is current to a context/client API
     uint8_t *mLockBufferPtr;      // Memory owned by backend.
     EGLint mLockBufferPitch;
 
@@ -406,6 +406,8 @@ class SurfaceDeleter final
 };
 
 using SurfacePointer = std::unique_ptr<Surface, SurfaceDeleter>;
+
+using SurfaceMap = priv::ObjectMap<Surface, angle::SimpleMutex>;
 
 }  // namespace egl
 

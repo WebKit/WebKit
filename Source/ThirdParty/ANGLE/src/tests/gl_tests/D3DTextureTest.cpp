@@ -17,6 +17,7 @@
 #include <dxgiformat.h>
 #include <windows.h>
 #include <wrl/client.h>
+#include <array>
 
 #include "util/EGLWindow.h"
 
@@ -264,11 +265,11 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsSurface)
     bool srgbSupported = IsGLExtensionEnabled("GL_EXT_sRGB") || getClientMajorVersion() == 3;
     ANGLE_SKIP_TEST_IF(!valid() || !mD3D11Device || !srgbSupported);
 
-    const DXGI_FORMAT formats[] = {DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                   DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB};
-    for (size_t i = 0; i < 4; ++i)
+    constexpr std::array formats = {DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                    DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM_SRGB};
+    for (DXGI_FORMAT format : formats)
     {
-        if (formats[i] == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
+        if (format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
         {
             if (IsOpenGL())
             {
@@ -280,7 +281,7 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsSurface)
         }
 
         EGLSurface pbuffer = createD3D11PBuffer(32, 32, EGL_TEXTURE_RGBA, EGL_TEXTURE_2D, 1, 0,
-                                                D3D11_BIND_RENDER_TARGET, formats[i]);
+                                                D3D11_BIND_RENDER_TARGET, format);
         ASSERT_EGL_SUCCESS();
         ASSERT_NE(EGL_NO_SURFACE, pbuffer);
 
@@ -290,8 +291,7 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsSurface)
         EGLint colorspace = EGL_NONE;
         eglQuerySurface(display, pbuffer, EGL_GL_COLORSPACE, &colorspace);
 
-        if (formats[i] == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB ||
-            formats[i] == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
+        if (format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB || format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
         {
             EXPECT_EQ(EGL_GL_COLORSPACE_SRGB, colorspace);
         }
@@ -317,12 +317,12 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsTexture)
     bool srgbWriteControlSupported =
         IsGLExtensionEnabled("GL_EXT_sRGB_write_control") && !IsOpenGL();
 
-    const DXGI_FORMAT formats[] = {DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM,
-                                   DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
-                                   DXGI_FORMAT_B8G8R8A8_UNORM_SRGB};
-    for (size_t i = 0; i < 4; ++i)
+    constexpr std::array formats = {DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_B8G8R8A8_UNORM,
+                                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                                    DXGI_FORMAT_B8G8R8A8_UNORM_SRGB};
+    for (DXGI_FORMAT format : formats)
     {
-        if (formats[i] == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
+        if (format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
         {
             if (IsOpenGL())
             {
@@ -333,13 +333,14 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsTexture)
             }
         }
 
-        SCOPED_TRACE(std::string("Test case:") + std::to_string(i));
+        SCOPED_TRACE(std::string("Test case: DXGI_FORMAT ") +
+                     std::to_string(static_cast<int>(format)));
         EGLWindow *window  = getEGLWindow();
         EGLDisplay display = window->getDisplay();
 
         EGLSurface pbuffer =
             createD3D11PBuffer(32, 32, EGL_TEXTURE_RGBA, EGL_TEXTURE_2D, 1, 0,
-                               D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, formats[i]);
+                               D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, format);
         ASSERT_EGL_SUCCESS();
         ASSERT_NE(EGL_NO_SURFACE, pbuffer);
 
@@ -364,8 +365,7 @@ TEST_P(D3DTextureTest, TestD3D11SupportedFormatsTexture)
                                               GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT,
                                               &colorEncoding);
 
-        if (formats[i] == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB ||
-            formats[i] == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
+        if (format == DXGI_FORMAT_R8G8B8A8_UNORM_SRGB || format == DXGI_FORMAT_B8G8R8A8_UNORM_SRGB)
         {
             EXPECT_EQ(EGL_GL_COLORSPACE_SRGB, colorspace);
             EXPECT_EQ(GL_SRGB_EXT, colorEncoding);

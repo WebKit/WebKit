@@ -115,6 +115,32 @@ pub fn run(ir: &mut IR) -> HashSet<VariableId> {
         },
     );
 
+    // Make sure ANGLE-internal interface block and struct variables and types are retained.  This
+    // is temporary and specifically to keep driver-uniforms and the emulated
+    // gl_DepthRangeParameters type in the output, so that it can be found in the AST.  TODO: Once
+    // all SPIR-V, MSL and WGSL generators produce output directly from the IR, this can be removed.
+    // http://anglebug.com/349994211
+    for &variable_id in state.ir_meta.all_global_variables() {
+        let variable = state.ir_meta.get_variable(variable_id);
+        if variable.name.source == NameSource::Internal {
+            let type_id = state.ir_meta.get_pointee_type(variable.type_id);
+            if state.ir_meta.get_type(type_id).is_struct() {
+                state.referenced.types[variable.type_id.id as usize] = true;
+                state.referenced.types[type_id.id as usize] = true;
+                state.referenced.variables[variable_id.id as usize] = true;
+            }
+        }
+    }
+    for (type_id, type_info) in
+        state.ir_meta.all_types().iter().enumerate().skip(MAX_PREDEFINED_TYPE_ID as usize)
+    {
+        if let Type::Struct(name, ..) = type_info
+            && name.source == NameSource::Internal
+        {
+            state.referenced.types[type_id] = true;
+        }
+    }
+
     // Extract the list of active interface variables to return.  Mark all interface variables
     // active regardless so nothing about them is pruned here.  `reflection::collect_info()` needs
     // this information so it can collect inactive interface variables as well.
@@ -374,9 +400,9 @@ fn transform_blocks_in_reverse_order(state: &mut State, block: &mut Block) -> Bl
         .as_mut()
         .map(|sub_block| transform_blocks_in_reverse_order(state, sub_block))
         .unwrap_or(BlockStats::new());
-    // Before visiting the continue block of a loop, check to see if its
-    // body has any `continue` instructions at all.  If it doesn't, the continue block is dead code
-    // and can be removed.  For example:
+    // Before visiting the continue block of a loop, check to see if its body has any `continue`
+    // instructions at all.  If it doesn't, the continue block is dead code and can be removed.  For
+    // example:
     //
     //     for (...; ++i)
     //     {

@@ -4669,6 +4669,106 @@ TEST_P(UniformBufferTest, DifferentRangeSizesSameOffsetAndStride)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that partial updates to a uniform buffer via glCopyBufferSubData preserve the remaining
+// untouched buffer data.
+TEST_P(UniformBufferTest, CopySubDataPartialOverwritePreservesRemainingUniformData)
+{
+    constexpr size_t kElementCount         = 64;
+    constexpr size_t kComponentsPerElement = 4;
+    constexpr GLsizeiptr kElementStride    = kComponentsPerElement * sizeof(GLuint);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+layout(std140) uniform BlockLarge {
+    uvec4 data[64];
+};
+void main() {
+    bool ok = (data[0] == uvec4(100u)) && (data[1] == uvec4(200u)) &&
+              (data[63] == uvec4(64u));
+    my_FragColor = ok ? vec4(0.0, 1.0, 0.0, 1.0) : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(prog, essl3_shaders::vs::Simple(), kFS);
+    glUniformBlockBinding(prog, glGetUniformBlockIndex(prog, "BlockLarge"), 0);
+
+    std::vector<GLuint> initialData(kElementCount * kComponentsPerElement);
+    for (size_t i = 0; i < kElementCount; ++i)
+    {
+        for (size_t c = 0; c < kComponentsPerElement; ++c)
+        {
+            initialData[i * kComponentsPerElement + c] = static_cast<GLuint>(i + 1);
+        }
+    }
+
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, initialData.size() * sizeof(GLuint), initialData.data(),
+                 GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+
+    // Use a non-uniform target with GL_DYNAMIC_DRAW so the D3D11 backend keeps the source buffer in
+    // system memory and takes the CPU copy path into the uniform buffer.
+    GLBuffer copySrc;
+    glBindBuffer(GL_COPY_READ_BUFFER, copySrc);
+    std::vector<GLuint> patchData = {100u, 100u, 100u, 100u, 200u, 200u, 200u, 200u};
+    glBufferData(GL_COPY_READ_BUFFER, patchData.size() * sizeof(GLuint), patchData.data(),
+                 GL_DYNAMIC_DRAW);
+
+    // Partially overwrite element 0 and element 1 of ubo.
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_UNIFORM_BUFFER, 0, 0, kElementStride);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_UNIFORM_BUFFER, kElementStride, kElementStride,
+                        kElementStride);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify that elements 0 and 1 have the copied data and element 63 still retains its value.
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that drawing with an uninitialized uniform buffer followed by a full-buffer glBufferSubData
+// update works properly when the shader uses the D3D11 structured buffer path.
+TEST_P(UniformBufferTest, UninitializedStructuredBufferRangeCacheAndUpdate)
+{
+    constexpr size_t kElementCount         = 64;
+    constexpr size_t kComponentsPerElement = 4;
+    constexpr GLsizeiptr kBlockSize        = kElementCount * kComponentsPerElement * sizeof(GLuint);
+    constexpr GLsizeiptr kTotalSize        = kBlockSize * 2;
+
+    // It is important to use a std140 uniform block with a sufficiently large array so the
+    // D3D11 backend translates the uniform block into a StructuredBuffer instead of a cbuffer.
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+layout(std140) uniform BlockLarge {
+    uvec4 data[64];
+};
+void main() {
+    my_FragColor = (data[0] == uvec4(42u)) ? vec4(0.0, 1.0, 0.0, 1.0)
+                                           : vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(prog, essl3_shaders::vs::Simple(), kFS);
+    glUniformBlockBinding(prog, glGetUniformBlockIndex(prog, "BlockLarge"), 0);
+
+    // Allocate an uninitialized buffer (data = nullptr) larger than the shader block size.
+    GLBuffer ubo;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, kTotalSize, nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+
+    // Draw once before populating the buffer to trigger structured buffer range cache creation on
+    // the D3D11 backend while the buffer has no canonical storage yet.
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Populate the full buffer (kTotalSize > kBlockSize) via glBufferSubData and draw again.
+    std::vector<GLuint> fullData(kTotalSize / sizeof(GLuint), 42u);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, kTotalSize, fullData.data());
+    drawQuad(prog, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // Tests rendering with a bound, unreferenced UBO that has no data. Covers a paticular back-end bug.
 TEST_P(UniformBufferTest, EmptyUnusedUniformBuffer)
 {

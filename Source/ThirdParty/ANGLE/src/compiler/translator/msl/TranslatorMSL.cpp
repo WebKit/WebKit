@@ -972,13 +972,20 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
         }
     }
 
-    if (getShaderType() == GL_COMPUTE_SHADER)
+    if (compileOptions.useIR)
     {
-        driverUniforms->addComputeDriverUniformsToShader(root, &getSymbolTable());
+        driverUniforms->findDeclarationAddedByIR(root);
     }
     else
     {
-        driverUniforms->addGraphicsDriverUniformsToShader(root, &getSymbolTable());
+        if (getShaderType() == GL_COMPUTE_SHADER)
+        {
+            driverUniforms->addComputeDriverUniformsToShader(root, &getSymbolTable());
+        }
+        else
+        {
+            driverUniforms->addGraphicsDriverUniformsToShader(root, &getSymbolTable());
+        }
     }
 
     if (atomicCounterCount > 0)

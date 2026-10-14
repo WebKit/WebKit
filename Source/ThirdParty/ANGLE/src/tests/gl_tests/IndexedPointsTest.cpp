@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "test_utils/ANGLETest.h"
 
 using namespace angle;
@@ -70,7 +72,7 @@ void main()
 
         // Construct a vertex buffer of position values and color values
         // contained in a single structure
-        const float verticesWithColor[] = {
+        const std::array<float, 20> verticesWithColor = {
             getIndexPositionX(0), getIndexPositionY(0), 0.0f, 1.0f, 0.0f,
             getIndexPositionX(2), getIndexPositionY(2), 0.0f, 1.0f, 0.0f,
             getIndexPositionX(1), getIndexPositionY(1), 0.0f, 1.0f, 0.0f,
@@ -79,23 +81,23 @@ void main()
 
         glGenBuffers(1, &mVertexWithColorBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, mVertexWithColorBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithColor), &verticesWithColor[0],
+        glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithColor), verticesWithColor.data(),
                      GL_STATIC_DRAW);
 
         // Construct a vertex buffer of position values only
-        const GLfloat vertices[] = {
+        const std::array<GLfloat, 8> vertices = {
             getIndexPositionX(0), getIndexPositionY(0), getIndexPositionX(2), getIndexPositionY(2),
             getIndexPositionX(1), getIndexPositionY(1), getIndexPositionX(3), getIndexPositionY(3),
         };
         glGenBuffers(1, &mVertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 
         // The indices buffer is shared between both variations of tests
-        const IndexType indices[] = {0, 2, 1, 3};
+        const std::array<IndexType, 4> indices = {0, 2, 1, 3};
         glGenBuffers(1, &mIndexBuffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(), GL_STATIC_DRAW);
     }
 
     void testTearDown() override

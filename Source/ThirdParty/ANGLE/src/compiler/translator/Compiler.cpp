@@ -311,9 +311,12 @@ SamplersStaticallyUsedWithTexelFetch PreprocessSamplersStaticallyUsedWithTexelFe
         SelectedFields *fields = &result[access.uniform];
         for (uint32_t fieldIndex : access.fields)
         {
-            // operator[] inserts a new empty element in subfields, which is what makes this
-            // algorithm work.
-            fields = &fields->subfields[fieldIndex];
+            auto [it, inserted] = fields->subfields.try_emplace(fieldIndex, nullptr);
+            if (inserted)
+            {
+                it->second = new SelectedFields();
+            }
+            fields = it->second;
         }
     }
 

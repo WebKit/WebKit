@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "common/Optional.h"
+#include "common/span.h"
 
 namespace angle
 {
@@ -135,6 +136,7 @@ bool IsGlobPattern(const std::string_view &potential_glob);
 bool NamesMatchWithWildcard(const std::string_view &glob, const std::string_view &name);
 
 std::vector<uint8_t> HexStringToUintVector(const std::string_view &hexStr);
+std::string UintStreamToHexString(angle::Span<const uint8_t> uintStream);
 }  // namespace angle
 
 #endif  // LIBANGLE_STRING_UTILS_H_

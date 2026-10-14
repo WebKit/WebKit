@@ -100,7 +100,6 @@ SYNCED_CIPD_DEPS = {
     'third_party/jdk/current',
     'third_party/ninja',
     'third_party/r8/cipd',
-    'third_party/r8/d8/cipd',
     'third_party/siso/cipd',
     'third_party/turbine/cipd',
     'tools/luci-go',

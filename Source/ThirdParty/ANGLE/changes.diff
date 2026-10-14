@@ -128,7 +128,7 @@ index e59c7e773209f35d4422b9d7051b1df595a2750b..a39be1af458f11e6378a1856fefc61bd
      // Constants.
      int MaxVertexAttribs;
 diff --git a/include/platform/autogen/FeaturesMtl_autogen.h b/include/platform/autogen/FeaturesMtl_autogen.h
-index 22f8ce2fb2c8827dce74cb2a8aa4aa153e266298..3cd82435105ea8d24ac3e4c9ce67aa2cf2ce6a1a 100644
+index 26be85bf41b231d0333be5ec44c5a4d68e5f8139..24e6c2e5a20b97b068282a5f7e52f8e4dbc69000 100644
 --- a/include/platform/autogen/FeaturesMtl_autogen.h
 +++ b/include/platform/autogen/FeaturesMtl_autogen.h
 @@ -74,6 +74,12 @@ struct FeaturesMtl : FeatureSetBase
@@ -158,7 +158,7 @@ index 22f8ce2fb2c8827dce74cb2a8aa4aa153e266298..3cd82435105ea8d24ac3e4c9ce67aa2c
          "copyIOSurfaceToNonIOSurfaceForReadOptimization",
          FeatureCategory::MetalWorkarounds,
 diff --git a/include/platform/mtl_features.json b/include/platform/mtl_features.json
-index acdbfe0028f6217de03ef3963a751b9d43aa6148..a8a81f42e834fa7c1375b33879a9e3d90b98a231 100644
+index f045d5735fd54b6609cc1618bf32dc00c1dfe085..82372fceec30a195ecce3a694eaa702dead69c3b 100644
 --- a/include/platform/mtl_features.json
 +++ b/include/platform/mtl_features.json
 @@ -70,6 +70,13 @@
@@ -278,7 +278,7 @@ index c26d5611b3741086a7df57a206e1eaf026a54d58..e3a555a2b8071390cc4a715fa1395dd6
      "2056d54ea07156f1988ca1366bdee21a",
    "third_party/OpenCL-Docs/src/xml/cl.xml":
 diff --git a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
-index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
+index 001eb298bc5ad90da9717fcba902d2f69234701b..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
 --- a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 +++ b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 @@ -11,166 +11,8 @@
@@ -334,7 +334,7 @@ index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/api/CMakeLists.txt":
 -    "02e15370f47081f609361962fbadeda2",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/binding_model/CMakeLists.txt":
--    "2496de088ab6a631e5da0faada7cb631",
+-    "85283debeac4d1ce4bfec422d7b45cd4",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/clipping/CMakeLists.txt":
 -    "2341f788b087bc78e89f66446fdad59b",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/compute/CMakeLists.txt":
@@ -384,7 +384,7 @@ index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/pipeline/CMakeLists.txt":
 -    "3ae9900b7c55828bf5c58dc0c1bbfb80",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/postmortem/CMakeLists.txt":
--    "a7cede3be182251b4be471d5e4e11b56",
+-    "9d6e5b17cc560e31ff6497d8a94830a0",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/protected_memory/CMakeLists.txt":
 -    "57966bb46c3156d090443753a38ee0ac",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/query_pool/CMakeLists.txt":
@@ -412,7 +412,7 @@ index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/sparse_resources/CMakeLists.txt":
 -    "965e2b61b0d71a751dedafc771f9a6b2",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/spirv_assembly/CMakeLists.txt":
--    "e73b9d85e1e5398833cc360e8751339d",
+-    "96b59b8006e40c0cc894661f64fbb896",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/ssbo/CMakeLists.txt":
 -    "d55fb16baef897474f99294e88fd6300",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/subgroups/CMakeLists.txt":
@@ -420,7 +420,7 @@ index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/synchronization/CMakeLists.txt":
 -    "4166a007b65a7ab34b7a90c6b734401a",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/tensor/CMakeLists.txt":
--    "c8c4b65c5aee453616ee148189d8b9c8",
+-    "c0540e4f2d712d3c815a97dbc65c7793",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/tessellation/CMakeLists.txt":
 -    "ce33d79ab4c6522f0d25db75c7959089",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/texture/CMakeLists.txt":
@@ -2940,7 +2940,7 @@ index 512668941204463ffcb167887c645365285b40d5..244bc7c4ff7378cade5f06eea5d087f1
  }
  }  // anonymous namespace
 diff --git a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
-index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a4fc7b24e 100644
+index 6778e11c270d58f997415938375c31f86426c1de..3424603d33923d8cd0272e1b31be6dab31ea2661 100644
 --- a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
 +++ b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
 @@ -40,18 +40,19 @@ using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
@@ -3061,7 +3061,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
  {
      const bool isSampler = node->getType().isSampler();
  
-@@ -222,18 +241,17 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -222,19 +241,18 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
          iter = iter->getLeft()->getAsBinaryNode();
      }
  
@@ -3076,13 +3076,24 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
      else
      {
          const TVariable *baseUniformVar = &baseUniform->variable();
-         ASSERT(structureUniformMap.find(baseUniformVar) != structureUniformMap.end());
--        rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
-+        *rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+         if (structureUniformMap.find(baseUniformVar) != structureUniformMap.end())
+         {
+-            rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
++            *rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+         }
+         else
+         {
+@@ -242,7 +260,8 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+             // to the struct itself gets removed as dead-code, but it may survive in some cases
+             // (such as |(side_effect, struct_uniform)|.  The result of such a comma expression
+             // cannot be used, so it's safe to just replace the |struct_uniform| with anything.
+-            return CreateZeroNode(TType(EbtInt, EbpMedium));
++            *rewritten = CreateZeroNode(TType(EbtInt, EbpMedium));
++            return true;
+         }
      }
  
-     // Iterate again and build the expression from bottom up.
-@@ -246,13 +264,30 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -256,13 +275,30 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
              case EOpIndexDirectStruct:
                  if (!isSampler)
                  {
@@ -3116,7 +3127,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
                  break;
  
              case EOpIndexIndirect:
-@@ -263,7 +298,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -273,7 +309,7 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
                  TIntermTyped *indexExpression = indexNode->getRight();
                  RewriteIndexExpression(compiler, indexExpression, structureMap, structureUniformMap,
                                         extractedSamplers);
@@ -3125,7 +3136,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
                  break;
              }
  
-@@ -273,14 +308,16 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
+@@ -283,14 +319,16 @@ TIntermTyped *RewriteModifiedStructFieldSelectionExpression(
          }
      }
  
@@ -3144,7 +3155,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
      {}
  
  
-@@ -342,8 +379,13 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -352,8 +390,13 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
      // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
      bool visitBinary(Visit visit, TIntermBinary *node) override
      {
@@ -3160,7 +3171,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
  
          if (rewritten == nullptr)
          {
-@@ -367,6 +409,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -377,6 +420,8 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
          }
      }
  
@@ -3169,7 +3180,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
    private:
      // Removes all samplers from a struct specifier.
      void stripStructSpecifierSamplers(const TStructure *structure, TIntermSequence *newSequence)
-@@ -603,6 +647,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+@@ -613,6 +658,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
      // A stack of array sizes.  Used to figure out the array dimensions of the extracted sampler,
      // for example when it's nested in an array of structs in an array of structs.
      TVector<unsigned int> mArraySizeStack;
@@ -3181,7 +3192,7 @@ index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a
  };
  }  // anonymous namespace
  
-@@ -610,6 +659,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
+@@ -620,6 +670,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
  {
      RewriteStructSamplersTraverser traverser(compiler, symbolTable);
      root->traverse(&traverser);
@@ -3494,7 +3505,7 @@ index eafe6ade3cbd5b5ec2fbb55921afedf6f00382d7..73cf52db0d08a8d39403493b9b2921b8
      uint8_t index = ((sourceWidth > 1)  ? 1 : 0) |
                      ((sourceHeight > 1) ? 2 : 0) |
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index ff627e5ece94cdd2e1b2e63f64237728bd737926..263081d82daabcaa07064661bdb84e076d40e030 100644
+index c79c87d4c97114235c499c205db7f1e496b75b6c..2216bbdb05cc04f2cfc5098f34f8affb14cdadc6 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
 @@ -10136,6 +10136,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
@@ -3654,10 +3665,10 @@ index 02e0c549452499ec716af105dc8e7b363142e749..550d2ff283f6999dbd4de89e15032ae0
                                const AttributeMap &attributes) const
  {
 diff --git a/src/libANGLE/Display.h b/src/libANGLE/Display.h
-index 274f4b2356307e7faf580708bfb765703dcd16e6..002d0b7edf3aaad8c3e1427e7f8ea1bcb5a2025a 100644
+index 661dec5961e8ba4079aa95adbf220ee190aba9a4..18e16e7f85b8b0f61fd939d98441e0d26e60c3b1 100644
 --- a/src/libANGLE/Display.h
 +++ b/src/libANGLE/Display.h
-@@ -383,7 +383,7 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
+@@ -381,7 +381,7 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
                                      EGLenum target,
                                      EGLClientBuffer clientBuffer,
                                      const egl::AttributeMap &attribs) const;
@@ -3680,7 +3691,7 @@ index 48c91ed76f8e9ec0e56597172fa8ed6dba127d76..8aa004302cd1eb4ca215c751198b8c08
  inline constexpr const char *kNegativeLayer = "Negative layer.";
  inline constexpr const char *kNegativeLength = "Negative length.";
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index fd4818d42903fb63438b37454a8072a7f02eb849..5ccf5381e59214ef4fd3a3705506cab2086f818e 100644
+index 2b279d5fe247d56311dfdbcd7c09f23fefa535ec..ba3473d15e456170f2d78fe53afcb587462dda5e 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
 @@ -128,6 +128,48 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
@@ -3899,7 +3910,35 @@ index fd4818d42903fb63438b37454a8072a7f02eb849..5ccf5381e59214ef4fd3a3705506cab2
      }
  
      // Starting from ES 3.0 stencil and depth, if present, should be the same image
-@@ -2055,6 +2201,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
+@@ -1704,21 +1850,22 @@ angle::Result Framebuffer::partialClearNeedsInit(const Context *context,
+         }
+     }
+ 
+-    // For layered attachments, consider this a partial clear.  Otherwise the framebuffer clears
+-    // some layers but marks the entire mip as initialized.
+-    if (depth && mState.mDepthAttachment.hasLayer())
++    // If an attachment is a single layer of a 3D or array texture, consider this a partial clear.
++    // Texture tracks initialization per mip level, so a full clear of one layer would otherwise
++    // mark the other layers initialized too.
++    if (depth && mState.mDepthAttachment.has3DLayer())
+     {
+         *needsInitOut = true;
+         return angle::Result::Continue;
+     }
+-    if (stencil && mState.mStencilAttachment.hasLayer())
++    if (stencil && mState.mStencilAttachment.has3DLayer())
+     {
+         *needsInitOut = true;
+         return angle::Result::Continue;
+     }
+     for (size_t colorIndex : color)
+     {
+-        if (mState.mColorAttachments[colorIndex].hasLayer())
++        if (mState.mColorAttachments[colorIndex].has3DLayer())
+         {
+             *needsInitOut = true;
+             return angle::Result::Continue;
+@@ -2055,6 +2202,66 @@ void Framebuffer::setAttachmentMultisampleMultiview(const Context *context,
                    samples);
  }
  
@@ -3966,7 +4005,7 @@ index fd4818d42903fb63438b37454a8072a7f02eb849..5ccf5381e59214ef4fd3a3705506cab2
  void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                         GLsizei numViews,
                                                         GLuint baseViewIndex,
-@@ -2232,11 +2438,40 @@ void Framebuffer::updateAttachment(const Context *context,
+@@ -2237,11 +2444,40 @@ void Framebuffer::updateAttachment(const Context *context,
      invalidateCompletenessCache();
  }
  
@@ -4007,7 +4046,7 @@ index fd4818d42903fb63438b37454a8072a7f02eb849..5ccf5381e59214ef4fd3a3705506cab2
  void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
  {
      if (srgbWriteControlMode != mState.getWriteControlMode())
-@@ -3087,4 +3322,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -3092,4 +3328,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
@@ -4099,6 +4138,37 @@ index 535e5187b7f1500f12d45c0fbfd57973ff008fd8..7e9cf5f71adae5bd99828a60e26b5f4a
      void markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil);
      void markAttachmentsUninitialized(const Context *context,
                                        size_t count,
+diff --git a/src/libANGLE/FramebufferAttachment.cpp b/src/libANGLE/FramebufferAttachment.cpp
+index 0f389641237ba6db41aae330047b681ec6afd204..74cfd646c2623d65259a1f7854b908b19294d949 100644
+--- a/src/libANGLE/FramebufferAttachment.cpp
++++ b/src/libANGLE/FramebufferAttachment.cpp
+@@ -216,9 +216,11 @@ GLint FramebufferAttachment::layer() const
+     return (index.has3DLayer() ? index.getLayerIndex() : 0);
+ }
+ 
+-bool FramebufferAttachment::hasLayer() const
++bool FramebufferAttachment::has3DLayer() const
+ {
+-    return mTarget.textureIndex().hasLayer();
++    // Renderbuffer and default framebuffer attachments have a default ImageIndex, whose layer index
++    // is 0.
++    return mType == GL_TEXTURE && mTarget.textureIndex().has3DLayer();
+ }
+ 
+ bool FramebufferAttachment::isLayered() const
+diff --git a/src/libANGLE/FramebufferAttachment.h b/src/libANGLE/FramebufferAttachment.h
+index 924d9ba785a40c4b9020926a7fcabe52fafddabb..33d365366b087baf4794d9913fc45409cbdfca35 100644
+--- a/src/libANGLE/FramebufferAttachment.h
++++ b/src/libANGLE/FramebufferAttachment.h
+@@ -110,7 +110,7 @@ class FramebufferAttachment final
+     TextureTarget cubeMapFace() const;
+     GLint mipLevel() const;
+     GLint layer() const;
+-    bool hasLayer() const;
++    bool has3DLayer() const;
+     bool isLayered() const;
+ 
+     GLsizei getNumViews() const { return mNumViews; }
 diff --git a/src/libANGLE/GlobalMutex.cpp b/src/libANGLE/GlobalMutex.cpp
 index 330d0cae7f1b02fc15660fa78ec7f41b21475746..75f5119b466eb03a4c664ecbf7c3d6f647d465bc 100644
 --- a/src/libANGLE/GlobalMutex.cpp
@@ -4502,12 +4572,12 @@ index ec521e0712beede891dd75d5ef454e08fb5da2a5..c2c1b0d00175bb8fc3e030b1709ef212
 +
  }  // namespace rx
 diff --git a/src/libANGLE/renderer/ContextImpl.h b/src/libANGLE/renderer/ContextImpl.h
-index 0ebad533292ff09cd7bc8a1f915ab58b00b78bf5..39a4046fd3755b62ac3809a41e342e23a450e273 100644
+index d31dbeec6e08c2238cbf82c603652c9daa161b40..3003b35873a23f4935f53dce4425f9b414532d36 100644
 --- a/src/libANGLE/renderer/ContextImpl.h
 +++ b/src/libANGLE/renderer/ContextImpl.h
-@@ -280,6 +280,11 @@ class ContextImpl : public GLImplFactory
-     virtual const angle::PerfMonitorCounterGroupsInfo &getPerfMonitorCountersInfo() const;
-     virtual const angle::PerfMonitorCounterGroups &getPerfMonitorCounters();
+@@ -283,6 +283,11 @@ class ContextImpl : public GLImplFactory
+     // GL_ANGLE_trim_memory
+     virtual void trimMemory(const gl::Context *context, gl::MemoryTrimLevel trimLevel) {}
  
 +    // GL_ANGLE_variable_rasterization_rate_metal
 +    virtual angle::Result bindMetalRasterizationRateMap(gl::Context *,
@@ -4548,10 +4618,10 @@ index c85ef6270cb1f10b6e17c179b0e5195042b4a039..11de2386287c32d94a8c79c0ea2ee28f
  
      return result;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index ba1bc56b5a5d7a5c72e8a88a93cca336188515f2..c1a58c12b32434063c0c42e44d6b107d6c9e6ef9 100644
+index 053586271f9d845e8c8ac161eade40ddcaa6fe13..43fede7cb6c9a6986893acd0965d69233b7c96d6 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -3891,6 +3891,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+@@ -3992,6 +3992,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
                              break;
@@ -4617,7 +4687,7 @@ index aec1ca8aee07b3181cf5e37ab6730f86174a8a64..930be8a4396ff2e1beb9994564e49367
      const auto begin              = elements.cbegin();
      const auto end                = elements.cend();
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411859088ea 100644
+index af77f6e36e1337667ecf023fda56d0dfd6ade371..a586ec36f14ba2b6c64c7c00aa20e18f39492b43 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
 @@ -31,6 +31,7 @@ namespace rx
@@ -4628,7 +4698,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  class VertexArrayMtl;
  class ProgramMtl;
  class ProgramExecutableMtl;
-@@ -270,6 +271,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -276,6 +277,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
      angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
      angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
  
@@ -4639,7 +4709,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
      // override mtl::ErrorHandler
      void handleError(GLenum error,
                       const char *message,
-@@ -294,16 +299,22 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -300,16 +305,22 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                         bool renderPassChanged);
      void onBackbufferResized(const gl::Context *context, WindowSurfaceMtl *backbuffer);
  
@@ -4668,7 +4738,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  
      // Invoke by TransformFeedbackMtl
      void onTransformFeedbackActive(const gl::Context *context, TransformFeedbackMtl *xfb);
-@@ -411,6 +422,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -417,6 +428,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                              GLint firstVertex,
                              GLsizei vertexOrIndexCount,
                              GLsizei instanceCount,
@@ -4676,7 +4746,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
                              gl::DrawElementsType indexTypeOrNone,
                              const void *indices,
                              bool xfbPass,
-@@ -420,6 +432,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -426,6 +438,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                  GLint firstVertex,
                                  GLsizei vertexOrIndexCount,
                                  GLsizei instanceCount,
@@ -4684,7 +4754,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
                                  gl::DrawElementsType indexTypeOrNone,
                                  const void *indices,
                                  bool xfbPass,
-@@ -474,12 +487,15 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -480,12 +493,15 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                                  GLsizei instances,
                                                  GLuint baseInstance);
  
@@ -4701,7 +4771,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  
      angle::Result drawElementsImpl(const gl::Context *context,
                                     gl::PrimitiveMode mode,
-@@ -488,7 +504,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -494,7 +510,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                     const void *indices,
                                     GLsizei instanceCount,
                                     GLint baseVertex,
@@ -4711,7 +4781,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
      void flushCommandBufferIfNeeded();
      void updateExtendedState(const gl::State &glState,
                               const gl::state::ExtendedDirtyBits extendedDirtyBits);
-@@ -523,8 +540,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -529,8 +546,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                           bool xfbPass,
                                           bool *pipelineDescChanged);
  
@@ -4720,7 +4790,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
      angle::Result checkCommandBufferError();
  
      // Dirty bits.
-@@ -547,6 +562,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -553,6 +568,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
          DIRTY_BIT_RENDER_PIPELINE,
          DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
          DIRTY_BIT_RASTERIZER_DISCARD,
@@ -4728,7 +4798,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  
          DIRTY_BIT_INVALID,
          DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-@@ -593,7 +609,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -599,7 +615,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
      FramebufferMtl *mDrawFramebuffer  = nullptr;
      VertexArrayMtl *mVertexArray      = nullptr;
      ProgramExecutableMtl *mExecutable = nullptr;
@@ -4736,7 +4806,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  
      using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
  
-@@ -640,7 +655,13 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -648,7 +663,13 @@ class ContextMtl : public ContextImpl, public mtl::Context
      IncompleteTextureSet mIncompleteTextures;
      ProvokingVertexHelper mProvokingVertexHelper;
  
@@ -4751,10 +4821,10 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..ca68c9775cdd71c520b4aea981e5e411
  
  }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c1f6f8d0b 100644
+index 53231b206edd4158eaf56a49e5f215bebd772fe7..3bb9d14540f64867152fa8c1bcb67ee5fe9d91bb 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -115,23 +115,24 @@ bool IsTransformFeedbackOnly(const gl::State &glState)
+@@ -116,23 +116,24 @@ bool IsTransformFeedbackOnly(const gl::State &glState)
      return glState.isTransformFeedbackActiveUnpaused() && glState.isRasterizerDiscardEnabled();
  }
  
@@ -4787,16 +4857,16 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
          encoder->drawIndexed(MTLPrimitiveTypeLine, 2, MTLIndexTypeUInt32,
                               mLineLoopIndexBuffer.buffer(), mLineLoopIndexBuffer.offset());
      }
-@@ -239,6 +240,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-     mIncompleteTextures.onDestroy(context);
+@@ -259,6 +260,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      mProvokingVertexHelper.onDestroy(this);
+     ASSERT(mBufferPools.empty());
      mDummyXFBRenderTexture = nullptr;
 +    mRasterizationRateMap.reset();
 +    mRasterizationRateMapTexture = nil;
  
      mContextDevice.reset();
  }
-@@ -310,8 +313,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -339,8 +342,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
      ASSERT(!getState().isTransformFeedbackActiveUnpaused());
      bool isNoOp = false;
@@ -4808,7 +4878,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      if (!isNoOp)
      {
          // Draw with the zero starting index buffer, shift the vertex index using baseVertex
-@@ -341,7 +345,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -370,7 +374,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
      ASSERT(!getState().isTransformFeedbackActiveUnpaused());
      bool isNoOp = false;
@@ -4817,7 +4887,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
                          reinterpret_cast<const void *>(0), false, &isNoOp));
      if (!isNoOp)
      {
-@@ -372,14 +376,21 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -401,14 +405,21 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
                                                           GLint first,
                                                           GLsizei count)
  {
@@ -4841,7 +4911,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
  }
  
  angle::Result ContextMtl::drawLineLoopArrays(const gl::Context *context,
-@@ -405,8 +416,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -434,8 +445,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
      ASSERT(!getState().isTransformFeedbackActiveUnpaused());
      bool isNoOp = false;
@@ -4852,7 +4922,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      if (!isNoOp)
      {
          if (baseInstance == 0)
-@@ -431,8 +442,16 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -460,8 +471,16 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
                                           GLint first,
                                           GLsizei count,
                                           GLsizei instances,
@@ -4870,7 +4940,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      // Real instances count. Zero means this is not instanced draw.
      GLsizei instanceCount = instances ? instances : 1;
  
-@@ -475,8 +494,12 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -504,8 +523,12 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  #define DRAW_GENERIC_ARRAY(xfbPass)                                                                \
      {                                                                                              \
          bool isNoOp = false;                                                                       \
@@ -4885,7 +4955,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
          if (!isNoOp)                                                                               \
          {                                                                                          \
                                                                                                     \
-@@ -565,7 +588,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -594,7 +617,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
          ANGLE_TRY(mTriFanIndexBuffer.commit(this));
          bool isNoOp = false;
@@ -4895,7 +4965,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
          if (!isNoOp && genIndicesCount > 0)
          {
              if (baseVertex == 0 && baseInstance == 0)
-@@ -595,13 +619,21 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -624,13 +648,21 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      gl::DrawElementsType type,
      const void *indices)
  {
@@ -4919,7 +4989,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
  }
  
  angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
-@@ -636,7 +668,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -665,7 +697,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  
          ANGLE_TRY(mLineLoopIndexBuffer.commit(this));
          bool isNoOp = false;
@@ -4929,7 +4999,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
          if (!isNoOp && genIndicesCount > 0)
          {
              if (baseVertex == 0 && baseInstance == 0)
-@@ -687,8 +720,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -716,8 +749,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      if (xfbPass)                                                                                   \
      {                                                                                              \
          bool isNoOp = false;                                                                       \
@@ -4940,7 +5010,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
          if (!isNoOp)                                                                               \
          {                                                                                          \
              MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);                                \
-@@ -714,8 +747,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -743,8 +776,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      else                                                                                           \
      {                                                                                              \
          bool isNoOp = false;                                                                       \
@@ -4951,7 +5021,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
                                                                                                     \
          if (!isNoOp)                                                                               \
          {                                                                                          \
-@@ -754,8 +787,16 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -783,8 +816,16 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
                                             const void *indices,
                                             GLsizei instances,
                                             GLint baseVertex,
@@ -4969,7 +5039,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      // Real instances count. Zero means this is not instanced draw.
      GLsizei instanceCount = instances ? instances : 1;
  
-@@ -785,7 +826,12 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -814,7 +855,12 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
          mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferType));
  
      bool isNoOp = false;
@@ -4983,7 +5053,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      if (!isNoOp)
      {
          MTLPrimitiveType mtlType = mtl::GetPrimitiveType(newMode);
-@@ -1031,6 +1077,13 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1060,6 +1106,13 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -4997,7 +5067,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -1367,6 +1420,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1396,6 +1449,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
              case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                  mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                  break;
@@ -5007,7 +5077,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
              default:
                  break;
          }
-@@ -1616,6 +1672,37 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1645,6 +1701,37 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      return angle::Result::Stop;
  }
  
@@ -5045,7 +5115,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
  // override mtl::ErrorHandler
  void ContextMtl::handleError(GLenum glErrorCode,
                               const char *message,
-@@ -1764,7 +1851,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1793,7 +1880,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
              mRenderEncoder.setStoreAction(MTLStoreActionStore);
          }
  
@@ -5054,7 +5124,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
  
          mOcclusionQueryPool.prepareRenderPassVisibilityPoolBuffer(this);
  
-@@ -1879,16 +1966,22 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1908,16 +1995,22 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      mDirtyBits.set();
  
      const mtl::ContextDevice &metalDevice = getMetalDevice();
@@ -5081,7 +5151,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
              handleError(GL_INVALID_OPERATION, errorStream.str().c_str(), __FILE__, ANGLE_FUNCTION,
                          __LINE__);
              return nullptr;
-@@ -2216,78 +2309,73 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -2245,78 +2338,73 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      onDrawFrameBufferChangedState(context, framebuffer, true);
  }
  
@@ -5200,7 +5270,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      return angle::Result::Continue;
  }
  
-@@ -2414,13 +2502,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2443,13 +2531,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                                      GLint firstVertex,
                                      GLsizei vertexOrIndexCount,
                                      GLsizei instances,
@@ -5217,7 +5287,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      if (*isNoOp)
      {
          return angle::Result::Continue;
-@@ -2431,7 +2520,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2460,7 +2549,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
          // pass state. This would happen for example when there is no more space in the uniform
          // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
          // buffer memory for new usage. In this case, re-run the setup.
@@ -5226,7 +5296,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
                                  indexTypeOrNone, indices, xfbPass, isNoOp));
  
          if (*isNoOp)
-@@ -2439,8 +2528,22 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2468,8 +2557,22 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              return checkCommandBufferError();
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -5251,7 +5321,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      }
      return angle::Result::Continue;
  }
-@@ -2449,6 +2552,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2478,6 +2581,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                                          GLint firstVertex,
                                          GLsizei vertexOrIndexCount,
                                          GLsizei instances,
@@ -5259,7 +5329,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
                                          gl::DrawElementsType indexTypeOrNone,
                                          const void *indices,
                                          bool xfbPass,
-@@ -2462,7 +2566,8 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2491,7 +2595,8 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
      if (context->hasAnyActiveClientAttrib())
      {
          ANGLE_TRY(mVertexArray->updateClientAttribs(context, firstVertex, vertexOrIndexCount,
@@ -5269,7 +5339,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      }
  
      // This must be called before render command encoder is started.
-@@ -2498,8 +2603,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2527,8 +2632,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
          ANGLE_TRY(handleDirtyRenderPass(context));
      }
  
@@ -5279,7 +5349,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      {
          // The occlusion query is still active, and a new render pass has started or we have paused
          // the querying process. We need to continue the querying process.
-@@ -2510,7 +2614,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2539,7 +2643,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              endEncoding(true);
              return angle::Result::Continue;
          }
@@ -5288,7 +5358,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
      }
  
      bool isPipelineDescChanged;
-@@ -2556,10 +2660,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2585,10 +2689,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                      mState.getBlendColor().blue, mState.getBlendColor().alpha);
                  break;
              case DIRTY_BIT_VIEWPORT:
@@ -5305,7 +5375,7 @@ index 497701140d72e76a46b801ae0be90470f93c62ce..227a60aa3d052a648dec9eb192daf85c
                  break;
              case DIRTY_BIT_DRAW_FRAMEBUFFER:
                  // Already handled.
-@@ -2584,6 +2692,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2613,6 +2721,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              case DIRTY_BIT_RASTERIZER_DISCARD:
                  // Already handled.
                  break;
@@ -5370,7 +5440,7 @@ index 8ace984134a3a72867c4b481616cf3bcd2703b55..01fa41724f240ffa49c6912ce5e92715
      mutable bool mHasFragmentMemoryBarriers;
  
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d330793a746e2e 100644
+index ceb52c2c17d43dd9444d476a58bc00f1b755bf0a..fa0242a65f22e7ed4028068fd52bab1e9e57deea 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -175,14 +175,24 @@ bool IsMetalDisplayAvailable()
@@ -5437,7 +5507,7 @@ index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d33079
      if (!mFeatures.limitMaxVisibilityQueryOffset.enabled && supportsAppleGPUFamily(7))
      {
          mMaxVisibilityQueryOffset = 262136;
-@@ -1151,6 +1146,14 @@ bool IsMetalDisplayAvailable()
+@@ -1154,6 +1149,14 @@ bool IsMetalDisplayAvailable()
      // qualifier on that hardware.
      mNativePLSOptions.supportsNoncoherent = !supportsAppleGPUFamily(1);
  
@@ -5452,7 +5522,7 @@ index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d33079
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1221,6 +1224,8 @@ bool IsMetalDisplayAvailable()
+@@ -1224,6 +1227,8 @@ bool IsMetalDisplayAvailable()
      ANGLE_FEATURE_CONDITION((&mFeatures), hasExplicitMemBarrier, (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -5461,8 +5531,8 @@ index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d33079
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1267,6 +1272,8 @@ bool IsMetalDisplayAvailable()
-     ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
+@@ -1271,6 +1276,8 @@ bool IsMetalDisplayAvailable()
+     ANGLE_FEATURE_CONDITION((&mFeatures), purgeableBufferPool, false);
  
      ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
 +    // At least for Radeon 5500M. See rdar://178796612.
@@ -5470,7 +5540,7 @@ index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d33079
      ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
                              isIntel() || isAMD());
      ANGLE_FEATURE_CONDITION((&mFeatures), copyTextureToBufferForReadOptimization, isAMD());
-@@ -1404,6 +1411,17 @@ bool IsMetalDisplayAvailable()
+@@ -1408,6 +1415,17 @@ bool IsMetalDisplayAvailable()
      return false;
  #endif
  }
@@ -5489,10 +5559,10 @@ index b309c96c62061f98b54a25b7f467f9b0932014fc..be53a7e9b39424590deb009279d33079
  {
      return angle::IsAMD(mMetalDeviceVendorId);
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.h b/src/libANGLE/renderer/metal/FrameBufferMtl.h
-index 1598346227a18112ce57ce308bee5ef738e6195a..731b1c1989d39bcb97832671066663f092a633db 100644
+index b3cfc8e38e7e68f8cf3cd09356648aaa658604ee..c1ab7e16ed8c9b2b5742ccf4bffb713d7821e085 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.h
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.h
-@@ -159,6 +159,9 @@ class FramebufferMtl : public FramebufferImpl
+@@ -161,6 +161,9 @@ class FramebufferMtl : public FramebufferImpl
                                  gl::DrawBufferMask clearColorBuffers,
                                  const mtl::ClearRectParams &clearOpts);
  
@@ -5502,7 +5572,7 @@ index 1598346227a18112ce57ce308bee5ef738e6195a..731b1c1989d39bcb97832671066663f0
      // Initialize load store options for a render pass's first start (i.e. not render pass resuming
      // from interruptions such as those caused by a conversion compute pass)
      void setLoadStoreActionOnRenderPassFirstStart(mtl::RenderPassAttachmentDesc *attachmentOut,
-@@ -196,8 +199,6 @@ class FramebufferMtl : public FramebufferImpl
+@@ -198,8 +201,6 @@ class FramebufferMtl : public FramebufferImpl
                                       uint32_t dstBufferRowPitch,
                                       const mtl::BufferRef *dstBuffer) const;
  
@@ -5511,7 +5581,7 @@ index 1598346227a18112ce57ce308bee5ef738e6195a..731b1c1989d39bcb97832671066663f0
      RenderTargetMtl *getColorReadRenderTargetNoCache(const gl::Context *context) const;
      angle::Result prepareForUse(const gl::Context *context) const;
  
-@@ -210,6 +211,14 @@ class FramebufferMtl : public FramebufferImpl
+@@ -212,6 +213,14 @@ class FramebufferMtl : public FramebufferImpl
      angle::FixedVector<RenderTargetMtl *, mtl::kMaxRenderTargets> mColorRenderTargets;
      RenderTargetMtl *mDepthRenderTarget   = nullptr;
      RenderTargetMtl *mStencilRenderTarget = nullptr;
@@ -5524,13 +5594,13 @@ index 1598346227a18112ce57ce308bee5ef738e6195a..731b1c1989d39bcb97832671066663f0
 +#endif
 +
      mtl::RenderPassDesc mRenderPassDesc;
+     bool mRenderPassDescChangedBeforeSyncState = false;
  
-     const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c3072900c042edb 100644
+index 79033bad6bcdd5adf521be14bddc1e660daaeecb..e74c716a9e76c20c2883d821cea4e9e5865aa835 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -134,6 +134,9 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
+@@ -135,6 +135,9 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
  FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, ContextMtl *context, bool flipY)
      : FramebufferImpl(state),
        mColorRenderTargets(context->getNativeCaps().maxColorAttachments, nullptr),
@@ -5540,7 +5610,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
        mBackbuffer(nullptr),
        mBackbufferFlipY(flipY)
  {
-@@ -161,6 +164,14 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
+@@ -162,6 +165,14 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
      }
      mDepthRenderTarget = mStencilRenderTarget = nullptr;
  
@@ -5554,8 +5624,8 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
 +
      mRenderPassFirstColorAttachmentFormat = nullptr;
  
-     mReadPixelBuffer = nullptr;
-@@ -658,30 +669,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+     mReadPixelBuffer                      = nullptr;
+@@ -661,30 +672,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      return angle::Result::Continue;
  }
  
@@ -5593,7 +5663,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          {
              return gl::FramebufferStatus::Incomplete(
                  GL_FRAMEBUFFER_UNSUPPORTED,
-@@ -700,12 +699,37 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -703,12 +702,37 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          }
      }
  
@@ -5632,7 +5702,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  
      return gl::FramebufferStatus::Complete();
  }
-@@ -925,6 +949,10 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -968,6 +992,10 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      ASSERT(desc.equalIgnoreLoadStoreOptions(mRenderPassDesc));
  
      encoder = contextMtl->getRenderPassCommandEncoder(desc);
@@ -5643,7 +5713,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      mStartedRenderEncoderSerial = encoder->getSerial();
  
      ANGLE_TRY(unresolveIfNeeded(context, encoder));
-@@ -965,7 +993,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1008,7 +1036,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          attachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -5652,7 +5722,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      {
          attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1032,22 +1060,47 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1075,22 +1103,47 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      ASSERT(colorIndexGL < mColorRenderTargets.size());
      // Reset load store action
      mRenderPassDesc.colorAttachments[colorIndexGL] = {};
@@ -5704,7 +5774,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  }
  
  angle::Result FramebufferMtl::updateCachedRenderTarget(const gl::Context *context,
-@@ -1089,6 +1142,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1132,6 +1185,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
  
          mtl::RenderPassColorAttachmentDesc &colorAttachment = desc.colorAttachments[colorIndexGL];
          const RenderTargetMtl *colorRenderTarget            = mColorRenderTargets[colorIndexGL];
@@ -5714,7 +5784,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  
          // GL allows data types of fragment shader color outputs to be incompatible with disabled
          // color attachments. To prevent various Metal validation issues, assign textures only to
-@@ -1096,6 +1152,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1139,6 +1195,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          if (colorRenderTarget && enabledDrawBuffers.test(colorIndexGL))
          {
              colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
@@ -5727,7 +5797,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  
              desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
              desc.rasterSampleCount =
-@@ -1125,6 +1187,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1168,6 +1230,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      if (mDepthRenderTarget)
      {
          mDepthRenderTarget->toRenderPassAttachmentDesc(&desc.depthAttachment);
@@ -5740,7 +5810,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          desc.rasterSampleCount =
              std::max(desc.rasterSampleCount, mDepthRenderTarget->getRenderSamples());
      }
-@@ -1136,6 +1204,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1179,6 +1247,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      if (mStencilRenderTarget)
      {
          mStencilRenderTarget->toRenderPassAttachmentDesc(&desc.stencilAttachment);
@@ -5753,7 +5823,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          desc.rasterSampleCount =
              std::max(desc.rasterSampleCount, mStencilRenderTarget->getRenderSamples());
      }
-@@ -1215,7 +1289,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1258,7 +1332,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              colorAttachment.loadAction = MTLLoadActionLoad;
          }
  
@@ -5762,7 +5832,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          {
              colorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
          }
-@@ -1235,7 +1309,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1278,7 +1352,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          tempDesc.depthAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -5771,7 +5841,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      {
          tempDesc.depthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1254,7 +1328,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1297,7 +1371,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          tempDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -5780,7 +5850,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      {
          tempDesc.stencilAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1422,7 +1496,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1465,7 +1539,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      if (clearOpts.clearArea == renderArea &&
          (!clearOpts.clearColor.valid() || allBuffersUnmasked) &&
          (!clearOpts.clearStencil.valid() ||
@@ -5790,7 +5860,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      {
          return clearWithLoadOp(context, clearColorBuffers, clearOpts);
      }
-@@ -1430,6 +1505,29 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1473,6 +1548,29 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      return clearWithDraw(context, clearColorBuffers, clearOpts);
  }
  
@@ -5820,7 +5890,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
                                               size_t count,
                                               const GLenum *attachments)
-@@ -1492,31 +1590,54 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1535,31 +1633,54 @@ void RoundValueAndAdjustCorrespondingValue(float a,
                  }
              }
  
@@ -5882,7 +5952,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          }
      }
  
-@@ -1705,7 +1826,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1748,7 +1869,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
      ANGLE_CHECK_GL_MATH(contextMtl,
@@ -5892,7 +5962,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-@@ -1853,9 +1975,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1896,9 +2018,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          const mtl::RenderPassColorAttachmentDesc &colorAttachment =
              renderPassDesc.colorAttachments[colorIndexGL];
  
@@ -5904,7 +5974,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
          {
              continue;
          }
-@@ -1863,9 +1984,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1906,9 +2027,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          const angle::Format &angleFormat = colorRenderTarget->getFormat().actualAngleFormat();
  
          // Blit the resolve texture to the MS texture.
@@ -5917,7 +5987,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
  
          colorBlitParams.enabledBuffers.reset();
          colorBlitParams.enabledBuffers.set(colorIndexGL);
-@@ -1880,19 +2001,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1923,19 +2044,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      mtl::DepthStencilBlitParams dsBlitParams;
      dsBlitParams.BlitParams::operator=(baseParams);
      const mtl::RenderPassDepthAttachmentDesc &depthAttachment = renderPassDesc.depthAttachment;
@@ -5944,7 +6014,7 @@ index 2825a7c32e3fc5123c9afa2de2de87d83b449b7b..567dd9a03ed209d6bcdf950e0c307290
      {
          if (mState.hasSeparateDepthAndStencilAttachments())
          {
-@@ -1902,9 +2022,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1945,9 +2065,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              dsBlitParams.src = nullptr;
          }
  
@@ -6174,6 +6244,33 @@ index e797c1cfe500b1bc24f1c3a12b91fbfb0db35130..2954970cdde864c6c3e875221d4a08c9
  void QueryMtl::onTransformFeedbackEnd(const gl::Context *context)
  {
      gl::TransformFeedback *transformFeedback = context->getState().getCurrentTransformFeedback();
+diff --git a/src/libANGLE/renderer/metal/RenderBufferMtl.mm b/src/libANGLE/renderer/metal/RenderBufferMtl.mm
+index d41e1fdf6acafad46a40e8a5acec4dd09cd5126c..61d4cce1c4d422f744245d7677c64d2dfcd6c5e9 100644
+--- a/src/libANGLE/renderer/metal/RenderBufferMtl.mm
++++ b/src/libANGLE/renderer/metal/RenderBufferMtl.mm
+@@ -186,12 +186,15 @@
+                                                   GLenum binding,
+                                                   const gl::ImageIndex &imageIndex)
+ {
+-    if (imageIndex.valid())
+-        return mtl::InitializeTextureContents(
+-            context, mTexture, mFormat, mtl::ImageNativeIndex::FromBaseZeroGLIndex(imageIndex));
+-    else
+-        return mtl::InitializeTextureContents(
+-            context, mTexture, mFormat,
+-            mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
++    // Renderbuffer formats are renderable, so clear on the GPU. mtl::InitializeTextureContents()
++    // would write CPU-accessible textures from the CPU one row at a time, which is slow when the
++    // GPU stores the texture in a compressed layout.
++    ANGLE_CHECK_ASSERT(mtl::GetImpl(context),
++                       mTexture && mTexture->valid() && mFormat.valid() &&
++                           mFormat.getCaps().isRenderable());
++    auto nativeIndex = mtl::ImageNativeIndex::FromBaseZeroGLIndex(
++        imageIndex.valid() ? imageIndex : gl::ImageIndex::Make2D(0));
++    return mtl::InitializeTextureContentsGPU(context, mTexture, mFormat, nativeIndex,
++                                             MTLColorWriteMaskAll, /* toNonZero */ false);
+ }
+ }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/RenderTargetMtl.h b/src/libANGLE/renderer/metal/RenderTargetMtl.h
 index 281085bbc46eb7d96dabf73b9c75ee0a61125bab..a07218bc78473252b0b2b9e561ec74799959177e 100644
 --- a/src/libANGLE/renderer/metal/RenderTargetMtl.h
@@ -6801,7 +6898,7 @@ index 6115160fee12ba87e55e99644c5a441d45e0dc36..ee8666b1e0b74dc888125a816a04e56f
                                        const void *indices);
  
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe7b3f6a91 100644
+index 26b5dec350dfd5dc24c09b24ad015c1c43bf6a9b..1fc0317ca5726e6e71c0a68d70f5d0f59df02e26 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 @@ -11,6 +11,7 @@
@@ -6876,7 +6973,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
  }
  
  inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
-@@ -460,6 +465,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -461,6 +466,7 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                                                    GLint firstVertex,
                                                    GLsizei vertexOrIndexCount,
                                                    GLsizei instanceCount,
@@ -6884,7 +6981,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
                                                    gl::DrawElementsType indexTypeOrInvalid,
                                                    const void *indices)
  {
-@@ -498,8 +504,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -499,8 +505,10 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
          }
          else
          {
@@ -6897,7 +6994,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
              elementCount = UnsignedCeilDivide(instanceCount, binding.getDivisor());
          }
          size_t bytesIntendedToUse = (startElement + elementCount) * binding.getStride();
-@@ -614,17 +622,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -615,17 +623,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
                  (binding.getStride() < format.actualAngleFormat().pixelBytes) ||
                  (binding.getStride() % mtl::kVertexAttribBufferStrideAlignment) != 0;
  
@@ -6928,7 +7025,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
              }
          }
          else
-@@ -1037,18 +1055,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1038,18 +1056,6 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
  {
      unsigned srcFormatSize = srcVertexFormat.intendedAngleFormat().pixelBytes;
  
@@ -6947,7 +7044,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
      ContextMtl *contextMtl = mtl::GetImpl(glContext);
  
      // Convert to tightly packed format
-@@ -1075,7 +1081,7 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1076,7 +1082,7 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
          mCurrentArrayBufferStrides[attribIndex] = stride;
          return angle::Result::Continue;
      }
@@ -6956,7 +7053,7 @@ index 7dcc534136f36f5edf281084caf13171deefd051..271b7909f64660604888d5e477facdfe
          srcBuffer, static_cast<VertexConversionBufferMtl *>(conversion), binding, srcFormatSize);
  
      const angle::Format &convertedAngleFormat = convertedFormat.actualAngleFormat();
-@@ -1161,16 +1167,27 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
+@@ -1162,16 +1168,27 @@ void AppendSimpleDrawCommandRanges(std::vector<DrawCommandRange> &drawCommands,
      mtl::BufferSlice newBuffer;
      ANGLE_TRY(conversion->bufferPool.allocate(contextMtl, numVertices * targetStride, &newBuffer));
  
@@ -7206,7 +7303,7 @@ index 2221ba033f9977064b33a49accb4091cc5962229..4fbb579b748f1154d181ad188adc1677
    private:
      // Override CommandEncoder
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a9fdb92ba 100644
+index 8f3861e3a6b3376bf0203b7a9a9d66aa3cde9c41..ab85f512d051022b7b297a5b6cef818b669f2079 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -691,6 +691,18 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
@@ -7255,7 +7352,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
      {
          objCRenderPassDesc.visibilityResultBuffer =
              mOcclusionQueryPool.getRenderPassVisibilityPoolBuffer()->get();
-@@ -1581,13 +1593,13 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1584,13 +1596,13 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
      const RenderPassAttachmentDesc &attachment)
  {
@@ -7272,7 +7369,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
          mRenderPassMaxScissorRect.width =
              std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
          mRenderPassMaxScissorRect.height =
-@@ -1865,7 +1877,8 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1868,7 +1880,8 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return setStencilRefVals(ref, ref);
  }
  
@@ -7282,7 +7379,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
  {
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
-@@ -1878,12 +1891,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1881,12 +1894,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return *this;
  }
  
@@ -7311,7 +7408,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1895,6 +1921,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1898,6 +1924,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  
      mStateCache.scissorRect = clampedRect;
  
@@ -7337,7 +7434,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -2305,6 +2350,20 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2308,6 +2353,20 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -7358,7 +7455,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2400,6 +2459,16 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2403,6 +2462,16 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return *this;
  }
  
@@ -10923,7 +11020,7 @@ index 8916375318715e32e360189b1996fd96b8c005cc..4be593e59d56e075a29157980776c250
      TextureRef createMipsView(const MipmapNativeLevel &baseLevel, uint32_t levels);
      // Create a view of a level.
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index fcd258be2cb25c292ab7e7833838e7e048297e3d..76bdd08e55370f3963f6205d4579595ea899f649 100644
+index 052d74e218222da46b4f6a863872bab537afd123..692ec1845c471724f4c8fe6d40dd48887364efc6 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -79,12 +79,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
@@ -11005,7 +11102,7 @@ index 329402d8ac205f127a1ab4cadcdf335709c287ea..e523c66c720211bb7b1a3fc2bffec498
      bool blendable                           = false;
      MTLLoadAction loadAction                 = MTLLoadActionLoad;
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index ec81f974e0b45b191b904867fcb7982d0d50f9e8..077fdd30f72eeb4b285ea83cada9336424fb304c 100644
+index 72d47f518b93d4707fc4cbd8fcf6204094e1b24f..8ea124f96a7cfb60a722917bf3b503dbd835cdb8 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -133,44 +133,29 @@
@@ -11678,7 +11775,7 @@ index 6b7f524e2236df25b5ea5ae14327b2e803c3b6ea..01aa53dfd6dc42d809b016ff985557fc
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 5afa0a48324ecfa0f544a77dac0096312e7232a3..abcb528d4eb102568e82b0577e27e5c93fcdb8dc 100644
+index ae3eaf24c8ae5210058c961153e9e40067a08e4f..2cbaae5dd65fb34c1ab5ffd7b1f793307d66e477 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
 @@ -6005,6 +6005,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
@@ -11706,10 +11803,10 @@ index 0aa0b64324fcb33c94f56dc6c54b13f16190a0bc..2a2499f9bfbae9ffeefaa468b6e2a686
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index a1802b5bcf231d0c87510ad6436d17b22c2a3d48..a2a8b08270618739332540581c55ac6df2cf5b43 100644
+index e5cfa5cb6fa2e3f0ebe79db0f4bac22f409290fa..38c96e4136bd0201cb470df536f4f514e3ed895b 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-@@ -9425,10 +9425,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
+@@ -9475,10 +9475,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
          return angle::Result::Continue;
      }
  
@@ -11749,7 +11846,7 @@ index 1a9be1cb7e3cbf52b6a59fc85f69a2c5b64a637f..0817383b43cd79d1bcbee7f7a063a629
  #include <string>
  
 diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index e143c7e8a757c0a81888d596040a9f1439041f9b..827303a79f5e3e292c9bb00581848f85114ca885 100644
+index c33399b9f7d41d7022bfc7c281df5f47150bc75b..a839d5dcb2a573c01de5517bd472a56b35cccff7 100644
 --- a/src/libANGLE/validationEGL.cpp
 +++ b/src/libANGLE/validationEGL.cpp
 @@ -3637,11 +3637,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
@@ -11776,7 +11873,7 @@ index e143c7e8a757c0a81888d596040a9f1439041f9b..827303a79f5e3e292c9bb00581848f85
                  ValidateQuerySurface(val, dpy, surfaceID, attribute, &querySurfaceValue));
          }
 diff --git a/src/libANGLE/validationES.cpp b/src/libANGLE/validationES.cpp
-index d2a5a2627a403d6df2af82211df70dd7ec975ecc..ab2d694701707b0da007f7bf7c3f6938bf06b7b3 100644
+index 7e0b75f2d5b6d1a3f0f5a6cf8b96bd8aadcb9513..a111eb0f3cf5a69b51c7b2c5a3b0815c0cf47091 100644
 --- a/src/libANGLE/validationES.cpp
 +++ b/src/libANGLE/validationES.cpp
 @@ -903,6 +903,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
@@ -11801,7 +11898,7 @@ index d2a5a2627a403d6df2af82211df70dd7ec975ecc..ab2d694701707b0da007f7bf7c3f6938
      {
          return false;
      }
-@@ -4496,7 +4498,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
+@@ -4567,7 +4569,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
                                          GLsizei primcount)
  {
      if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11810,7 +11907,7 @@ index d2a5a2627a403d6df2af82211df70dd7ec975ecc..ab2d694701707b0da007f7bf7c3f6938
      {
          return false;
      }
-@@ -4513,7 +4515,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
+@@ -4584,7 +4586,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
                                        GLsizei primcount)
  {
      if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11820,10 +11917,10 @@ index d2a5a2627a403d6df2af82211df70dd7ec975ecc..ab2d694701707b0da007f7bf7c3f6938
          return false;
      }
 diff --git a/src/libANGLE/validationES.h b/src/libANGLE/validationES.h
-index 811244ca200eed23e7c8251840d0a44e4ac4f275..03a978a99d07aa2b9141c1405eb10dc132096320 100644
+index 58fec91efc32cd8c98d16a304dc170474cac98f4..59d6e4ca3f23af9525d512cf5245ae9f0c899ef0 100644
 --- a/src/libANGLE/validationES.h
 +++ b/src/libANGLE/validationES.h
-@@ -429,6 +429,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
+@@ -430,6 +430,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
                                         DrawElementsType type,
                                         const void *indices,
                                         GLsizei primcount,
@@ -11831,7 +11928,7 @@ index 811244ca200eed23e7c8251840d0a44e4ac4f275..03a978a99d07aa2b9141c1405eb10dc1
                                         GLuint baseinstance);
  
  bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryPoint);
-@@ -1054,7 +1055,8 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
+@@ -1055,7 +1056,8 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
                                               GLsizei count,
                                               DrawElementsType type,
                                               const void *indices,
@@ -11841,7 +11938,7 @@ index 811244ca200eed23e7c8251840d0a44e4ac4f275..03a978a99d07aa2b9141c1405eb10dc1
  {
      if (ANGLE_UNLIKELY(!ValidateDrawElementsBase(context, entryPoint, mode, type)))
      {
-@@ -1159,8 +1161,6 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
+@@ -1160,8 +1162,6 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
      if (ANGLE_UNLIKELY(context->isBufferAccessValidationEnabled()) && ANGLE_UNLIKELY(primcount > 0))
      {
          // Use the parameter buffer to retrieve and cache the index range.
@@ -11850,7 +11947,7 @@ index 811244ca200eed23e7c8251840d0a44e4ac4f275..03a978a99d07aa2b9141c1405eb10dc1
          IndexRange indexRange{IndexRange::Undefined()};
          ANGLE_VALIDATION_TRY(vao->getIndexRange(context, type, count, indices,
                                                  context->getState().isPrimitiveRestartEnabled(),
-@@ -1169,16 +1169,33 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
+@@ -1170,16 +1170,33 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
          // No op if there are no real indices in the index data (all are primitive restart).
          if (!indexRange.isEmpty())
          {
@@ -11890,7 +11987,7 @@ index 811244ca200eed23e7c8251840d0a44e4ac4f275..03a978a99d07aa2b9141c1405eb10dc1
                  return false;
              }
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index 40d9b54f40e93e8374fcb116f044cac0990ea384..db6ed7da7f669c04c98c62d3eed781d549f8174e 100644
+index 95d89a2f680625257beea53869606af9a343446c..cbb1c4825aaed1092ecd8d20ead24cfe0a5d723c 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -708,6 +708,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
@@ -11937,10 +12034,10 @@ index 3ebd466b455df15e3db80fb7bdc0e8ae0fcb85f3..b6291d769ed5a8131779ed6b51f552aa
  
  ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
 diff --git a/src/libANGLE/validationES3.cpp b/src/libANGLE/validationES3.cpp
-index 21b661cff63e7410c337f5d19d40a5a85f495a14..1bf651d299275dd8479dbeb70efec5003a886e12 100644
+index 9528cf718114e5802daf95fff9850b9a1011ff1e..3e614438cf970ff18e9409074b2a9ae008611edf 100644
 --- a/src/libANGLE/validationES3.cpp
 +++ b/src/libANGLE/validationES3.cpp
-@@ -1684,7 +1684,7 @@ bool ValidateDrawRangeElements(const Context *context,
+@@ -1610,7 +1610,7 @@ bool ValidateDrawRangeElements(const Context *context,
          return false;
      }
  
@@ -11949,7 +12046,7 @@ index 21b661cff63e7410c337f5d19d40a5a85f495a14..1bf651d299275dd8479dbeb70efec500
      {
          return false;
      }
-@@ -3212,7 +3212,7 @@ bool ValidateDrawElementsInstanced(const Context *context,
+@@ -3138,7 +3138,7 @@ bool ValidateDrawElementsInstanced(const Context *context,
                                     GLsizei instanceCount)
  {
      return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11958,7 +12055,7 @@ index 21b661cff63e7410c337f5d19d40a5a85f495a14..1bf651d299275dd8479dbeb70efec500
  }
  
  bool ValidateMultiDrawArraysInstancedANGLE(const Context *context,
-@@ -3289,7 +3289,7 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
+@@ -3215,7 +3215,7 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
      {
          if (ANGLE_UNSAFE_TODO(
                  !ValidateDrawElementsInstancedBase(context, entryPoint, mode, counts[drawID], type,
@@ -11967,7 +12064,7 @@ index 21b661cff63e7410c337f5d19d40a5a85f495a14..1bf651d299275dd8479dbeb70efec500
          {
              return false;
          }
-@@ -3331,7 +3331,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
+@@ -3257,7 +3257,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                                GLuint baseInstance)
  {
      return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11976,7 +12073,7 @@ index 21b661cff63e7410c337f5d19d40a5a85f495a14..1bf651d299275dd8479dbeb70efec500
  }
  
  bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,
-@@ -3397,7 +3397,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
+@@ -3323,7 +3323,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
      {
          if (!ANGLE_UNSAFE_TODO(ValidateDrawElementsInstancedBase(
                  context, entryPoint, modePacked, counts[drawID], typePacked, indices[drawID],
@@ -12034,7 +12131,7 @@ index b54c1be22c192e616ea982a914b7851d75f647bf..22a648142e1e69d14268ef2193d06fe1
  }
  
 diff --git a/src/libANGLE/validationESEXT.cpp b/src/libANGLE/validationESEXT.cpp
-index f1a013bd0a12074b6a5b86a3636ee976f24fdfeb..6d64bd82935cbea9a4169c69da2d783c9605cb87 100644
+index 9a5f8d8a41ef39af931c0f9a47a99bcedeaa31b1..969cb5465df5292e1c564a0fb3063278d7b10e58 100644
 --- a/src/libANGLE/validationESEXT.cpp
 +++ b/src/libANGLE/validationESEXT.cpp
 @@ -503,7 +503,8 @@ bool ValidateDrawElementsBaseVertexEXT(const Context *context,
@@ -12655,10 +12752,10 @@ index 0943c311aec4ccee5cc4e15b08a4df8366caf2e6..d2b950c572580cbda24ee8223bfe8533
      // file access.
      angle::InitMetalFileAPIHooking(argc, argv);
 diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
-index 44ad8549bad5363a433c4bab846c21489b97507c..d0d17d85af90cf5bba590a3294e3491983d5b622 100644
+index bda5052638ab3fa802c09eaba8c60085544cd6e9..a90f3795177d1f5483ce09ddbb3ee2b0379d98e6 100644
 --- a/src/tests/angle_end2end_tests.gni
 +++ b/src/tests/angle_end2end_tests.gni
-@@ -106,6 +106,7 @@ angle_end2end_tests_sources = [
+@@ -107,6 +107,7 @@ angle_end2end_tests_sources = [
    "gl_tests/IndexBufferOffsetTest.cpp",
    "gl_tests/IndexedPointsTest.cpp",
    "gl_tests/InstancingTest.cpp",
@@ -12667,10 +12764,10 @@ index 44ad8549bad5363a433c4bab846c21489b97507c..d0d17d85af90cf5bba590a3294e34919
    "gl_tests/LineLoopTest.cpp",
    "gl_tests/LinkAndRelinkTest.cpp",
 diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
-index 1015a58a1b34ceb280decb2e451071b1e0b7b695..f90b2f606f29682a7a2bbbf656a1e7c85b13e9dc 100644
+index 495cd202fff0f7fba172a0e69318ec6bf66e91a6..3a76556187beccec0b787e0ef2a2a271eb06d36f 100644
 --- a/src/tests/angle_end2end_tests_expectations.txt
 +++ b/src/tests/angle_end2end_tests_expectations.txt
-@@ -607,6 +607,8 @@
+@@ -608,6 +608,8 @@
  42266214 MAC APPLE METAL : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
  494392011 MAC METAL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
  496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
@@ -12679,7 +12776,7 @@ index 1015a58a1b34ceb280decb2e451071b1e0b7b695..f90b2f606f29682a7a2bbbf656a1e7c8
  515709506 MAC METAL : DrawBaseVertexBaseInstanceTest_ES3.BaseInstanceSmallDivisorClientMemory/* = SKIP
  524008572 MAC METAL : VertexAttributeTestES3.LargeAttribPointerOffsetNoCrash/* = SKIP
  534815900 MAC METAL : TextureCubeTestES3.RedefinedCubemapLevelsOnlyFaceZeroCompatible/* = SKIP
-@@ -660,6 +662,10 @@
+@@ -661,6 +663,10 @@
  351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  
@@ -12699,16 +12796,16 @@ index 1015a58a1b34ceb280decb2e451071b1e0b7b695..f90b2f606f29682a7a2bbbf656a1e7c8
  40096874 IOS METAL : MaxTextureSizeTest.Render1xTexture/* = SKIP
  40096874 IOS METAL : MultisampleTest.AlphaToSampleCoverage/* = SKIP
  40096838 IOS METAL : PixelLocalStorageTest.BlendColorMaskAndClear/ES3_Metal_EmulatePixelLocalStorage* = SKIP
-@@ -1637,6 +1641,8 @@
- 564547811 IOS METAL : ASTCCompressedWithBaseLevelTest.Image/* = SKIP
- 564547811 IOS METAL : ASTCCompressedWithBaseLevelTest.SubImage/* = SKIP
- 564569394 IOS METAL : RobustResourceInitTestES3.RGBASwizzleUndefinedMipCachedThenInitialized/* = SKIP
+@@ -1640,6 +1644,8 @@
+ 567407816 IOS METAL : ASTCCompressedWithBaseLevelRobustInitTest.DrawWithoutUpload4x4/* = SKIP
+ 567407816 IOS METAL : ASTCCompressedWithBaseLevelRobustInitTest.DrawWithoutUpload8x5/* = SKIP
+ 567407816 IOS METAL : ASTCCompressedWithBaseLevelRobustInitTest.SubImage/* = SKIP
 +// webkit.org/b/316306
 +0 IOSSIMULATOR METAL : WebGL2CompatibilityTest.CompressedTextureASTCEmptyStorageError/* = SKIP
  
  // D3D11 backend does not support LOD options with shadow samplers
  365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureBias_Mipmapped = SKIP
-@@ -3035,6 +3041,61 @@
+@@ -3031,6 +3037,61 @@
  // Unimplemented parts.
  515493666 D3D11 : Restart/DrawElementsVariantsTest.Draw/* = SKIP
  
@@ -13044,7 +13141,7 @@ index 171d5a1a1a247c27954e6811b6861c1db97b6192..cccf8bcae221e70fc703edc951583109
          argv.push_back("--deqp-visibility=hidden");
      }
 diff --git a/src/tests/deqp_support/deqp_gles2_test_expectations.txt b/src/tests/deqp_support/deqp_gles2_test_expectations.txt
-index 1c6bdcdc362186752ad0747f12ae100dd5e08b51..f4cec676326b408b45001400d59b812ceaad8399 100644
+index 06a26ebf7bde0d5298637afd00c07534f787cb33..b765ce0ad6fc34059038a089fbc77c96ba791518 100644
 --- a/src/tests/deqp_support/deqp_gles2_test_expectations.txt
 +++ b/src/tests/deqp_support/deqp_gles2_test_expectations.txt
 @@ -414,6 +414,9 @@
@@ -13058,10 +13155,10 @@ index 1c6bdcdc362186752ad0747f12ae100dd5e08b51..f4cec676326b408b45001400d59b812c
  // Some |bool| variables seem to be given a precision
  349994211 IR PIXEL10 GLES : dEQP-GLES2.functional.shaders.random.* = SKIP
 diff --git a/src/tests/deqp_support/deqp_gles3_test_expectations.txt b/src/tests/deqp_support/deqp_gles3_test_expectations.txt
-index ae34d6d5e3c112f42636d74778c02011df941d2d..f972363cc109fa5da1974ad2411994221f2a079a 100644
+index e865bcb0c14ef997cc3434344555538e88fbdfce..f87ea808ef92a36764efa6016c6c5d67de8ccdf6 100644
 --- a/src/tests/deqp_support/deqp_gles3_test_expectations.txt
 +++ b/src/tests/deqp_support/deqp_gles3_test_expectations.txt
-@@ -801,6 +801,14 @@
+@@ -804,6 +804,14 @@
  349994211 IR PIXEL10 GLES : dEQP-GLES3.functional.shaders.random.* = SKIP
  349994211 IR PIXEL10 GLES : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.31 = SKIP
  
@@ -13077,10 +13174,10 @@ index ae34d6d5e3c112f42636d74778c02011df941d2d..f972363cc109fa5da1974ad241199422
  8021882 GALAXYS22 VULKAN : dEQP-GLES3.functional.transform_feedback.*.lines.* = SKIP
  8021882 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.*.lines.* = SKIP
 diff --git a/src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp b/src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp
-index e0c4db1580ee931d9f82dd07bfa32b9fbc5e4a69..a1dd7855bdc3595edf48a2fa556d8407c4f544a9 100644
+index 11b28ca00f22b23a7a2f09156e13b2aec0b8eeb0..5c4465a33d702658c5670097fc7573cbf9dc0c5f 100644
 --- a/src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp
 +++ b/src/tests/deqp_support/tcuANGLENativeDisplayFactory.cpp
-@@ -534,9 +534,12 @@ eglu::NativeDisplay *ANGLENativeDisplayFactory::createDisplay(
+@@ -535,9 +535,12 @@ eglu::NativeDisplay *ANGLENativeDisplayFactory::createDisplay(
      DE_UNREF(attribList);
      if (mPlatformType == EGL_PLATFORM_ANGLE_ANGLE)
      {
@@ -13378,10 +13475,10 @@ index 9b0d0facc1bb6b4b2570d3b4dccabe6ce4d5ef7d..e82974f351797df675951a6a54636e9e
      }
  
 diff --git a/src/tests/gl_tests/CopyTexImageTest.cpp b/src/tests/gl_tests/CopyTexImageTest.cpp
-index 8a89b3e6345cb5f0728439ca73d2dee8e6ff9da1..bc011578c14fc455853e8e11a2ca87bce631f050 100644
+index 76a4a4e4c367c3ee00e52adcc422a208bb309099..b93d1dd9bba5566f9eabb653da0e69231e6ac22c 100644
 --- a/src/tests/gl_tests/CopyTexImageTest.cpp
 +++ b/src/tests/gl_tests/CopyTexImageTest.cpp
-@@ -1464,6 +1464,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
+@@ -1465,6 +1465,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
                    kTexSize, 1.0);
  }
  
@@ -13424,10 +13521,10 @@ index 8a89b3e6345cb5f0728439ca73d2dee8e6ff9da1..bc011578c14fc455853e8e11a2ca87bc
  void CopyTexImageTestES3::initialize3DTexture(GLTexture &texture,
                                                const GLsizei imageWidth,
 diff --git a/src/tests/gl_tests/CubeMapTextureTest.cpp b/src/tests/gl_tests/CubeMapTextureTest.cpp
-index 6bc586d7d257cddf5d0b02be9c1c3fc87f5d4ee4..1f4c66119b1153b03c9d808087bb496012861a6f 100644
+index 0218e9bb757b941787b3ea90d8919cb22c1c14cc..59bb82be743302841dd7c850b49e4d9b51397bba 100644
 --- a/src/tests/gl_tests/CubeMapTextureTest.cpp
 +++ b/src/tests/gl_tests/CubeMapTextureTest.cpp
-@@ -10,7 +10,6 @@
+@@ -9,7 +9,6 @@
  #include "test_utils/ANGLETest.h"
  #include "test_utils/angle_test_configs.h"
  #include "test_utils/gl_raii.h"
@@ -13507,7 +13604,7 @@ index 493c81d54be8176005a921c6e5960ad385952383..582e3776b4c08d3145b0f1a617e85f67
  TEST_P(DepthStencilFormatsTest, VerifyDepth32UploadData)
  {
 diff --git a/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp b/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
-index 163d80f88e7b1159c0bf8c8c1d74e97663828099..231068ecf0cc5c27eeec4a70a2665421765176b8 100644
+index c70186990c09620460712ef2488972147a089d91..7cb50c035fd80b3ede15846caf79e378b1d4fdc3 100644
 --- a/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
 +++ b/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
 @@ -7,6 +7,10 @@
@@ -13518,9 +13615,9 @@ index 163d80f88e7b1159c0bf8c8c1d74e97663828099..231068ecf0cc5c27eeec4a70a2665421
 +#    pragma allow_unsafe_buffers
 +#endif
 +
- #include "gpu_info_util/SystemInfo.h"
- #include "test_utils/ANGLETest.h"
- #include "test_utils/gl_raii.h"
+ #include <array>
+ #include <numeric>
+ 
 diff --git a/src/tests/gl_tests/DrawBuffersTest.cpp b/src/tests/gl_tests/DrawBuffersTest.cpp
 index 5632a5f38c2a04966c5ad939c8615678c26dad5e..0c490655e4751f512755bfb7cdb75654fd873c87 100644
 --- a/src/tests/gl_tests/DrawBuffersTest.cpp
@@ -14781,7 +14878,7 @@ index b75c7c5043ff3beee6c69ab4db10a71bc09b6ab2..caa8add04cc2a9e398b090332c53bcc9
          compileShader(GL_FRAGMENT_SHADER, shader.c_str());
          verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
 diff --git a/src/tests/gl_tests/GLSLTest.cpp b/src/tests/gl_tests/GLSLTest.cpp
-index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edbc17ac069 100644
+index fcede154e29044fa424f464390d56ecbae2f28bc..699ed6e22ba2f204a83fee5eeb96d060851db5d1 100644
 --- a/src/tests/gl_tests/GLSLTest.cpp
 +++ b/src/tests/gl_tests/GLSLTest.cpp
 @@ -810,6 +810,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
@@ -14814,7 +14911,7 @@ index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edb
  // Same test as above without unary increments.
  TEST_P(GLSLTest, SwizzledChainedAssign)
  {
-@@ -7550,6 +7573,64 @@ void main()
+@@ -7709,6 +7732,64 @@ void main()
      ASSERT_GL_NO_ERROR();
  }
  
@@ -14879,7 +14976,7 @@ index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edb
  // Test that nested structs with samplers work when the nested struct is not the last element.
  TEST_P(GLSLTest_ES3, NestedStructWithSamplers)
  {
-@@ -7815,6 +7896,53 @@ void main()
+@@ -7974,6 +8055,53 @@ void main()
      EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
  }
  
@@ -14933,7 +15030,7 @@ index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edb
  // Test that a varying struct that's not statically used in the fragment shader works.
  // GLSL ES 3.00.6 section 4.3.10.
  TEST_P(GLSLTest_ES3, VaryingStructNotStaticallyUsedInFragmentShader)
-@@ -11707,6 +11835,43 @@ void main()
+@@ -11866,6 +11994,43 @@ void main()
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
  }
  
@@ -14977,7 +15074,7 @@ index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edb
  // Test a fragment shader that returns inside if (that being the only branch that actually gets
  // executed). Regression test for http://anglebug.com/42261034
  TEST_P(GLSLTest, IfElseIfAndReturn)
-@@ -24262,6 +24427,830 @@ void main()
+@@ -24421,6 +24586,830 @@ void main()
      ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
      drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -15809,10 +15906,10 @@ index 06b28ebdd779d90cbeca42ba5af68aceda378b79..2a6f5fab7327368d1a539490e4329edb
  }
  
 diff --git a/src/tests/gl_tests/ImageTest.cpp b/src/tests/gl_tests/ImageTest.cpp
-index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292eb28329f5 100644
+index 63e5314637b8153408b27c49856bcfbcfcbce24d..c520c291ecdbd86f768da06a45cac3fe968c5875 100644
 --- a/src/tests/gl_tests/ImageTest.cpp
 +++ b/src/tests/gl_tests/ImageTest.cpp
-@@ -2974,8 +2974,8 @@ TEST_P(ImageTestES3, SourceAHBTargetTexture2DGenerateMipmap)
+@@ -2983,8 +2983,8 @@ TEST_P(ImageTestES3, SourceAHBTargetTexture2DGenerateMipmap)
  
      GLubyte red_data[16] = {255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255};
  
@@ -15823,7 +15920,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{red_data, 16}}, &source, &image));
-@@ -3036,8 +3036,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DDraw)
+@@ -3045,8 +3045,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DDraw)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -15834,7 +15931,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -3073,8 +3073,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDraw)
+@@ -3082,8 +3082,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDraw)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
@@ -15845,7 +15942,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -3112,8 +3112,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadPacked565Data)
+@@ -3121,8 +3121,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadPacked565Data)
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
      constexpr size_t kWidth  = 8;
      constexpr size_t kHeight = 8;
@@ -15856,7 +15953,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {}, &source, &image));
-@@ -3164,8 +3164,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadByteData)
+@@ -3173,8 +3173,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadByteData)
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
      constexpr size_t kWidth  = 8;
      constexpr size_t kHeight = 8;
@@ -15867,7 +15964,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {}, &source, &image));
-@@ -3213,8 +3213,8 @@ TEST_P(ImageTestSampleOnlyES3, SourceAHBTarget2DSampleOnly)
+@@ -3222,8 +3222,8 @@ TEST_P(ImageTestSampleOnlyES3, SourceAHBTarget2DSampleOnly)
      ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
@@ -15878,7 +15975,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kAHBUsageGPUSampledImage, kDefaultAttribs,
          {{kLinearColor, 4}}, &source, &image));
-@@ -3245,8 +3245,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DUseAfterDetach)
+@@ -3254,8 +3254,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DUseAfterDetach)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -15889,7 +15986,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -3506,8 +3506,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DTextureThenMSRTSS)
+@@ -3515,8 +3515,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DTextureThenMSRTSS)
      ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -15900,7 +15997,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -3963,8 +3963,8 @@ TEST_P(ImageTest, SourceAHBTarget2DEarlyDelete)
+@@ -3972,8 +3972,8 @@ TEST_P(ImageTest, SourceAHBTarget2DEarlyDelete)
      GLubyte data[4] = {7, 51, 197, 231};
  
      // Create the Image
@@ -15911,7 +16008,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{data, 4}}, &source, &image));
-@@ -4007,8 +4007,8 @@ void ImageTest::SourceAHBTarget2D_helper(const EGLint *attribs)
+@@ -4016,8 +4016,8 @@ void ImageTest::SourceAHBTarget2D_helper(const EGLint *attribs)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -15922,7 +16019,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
          {{kSrgbColor, 4}}, &source, &image));
-@@ -4038,8 +4038,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+@@ -4047,8 +4047,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create YCbCr source and image but without initial data
@@ -15933,7 +16030,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &ycbcrSource, &ycbcrImage));
-@@ -4047,8 +4047,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+@@ -4056,8 +4056,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
      EXPECT_NE(ycbcrImage, EGL_NO_IMAGE_KHR);
  
      // Create YCrCb source and image but without initial data
@@ -15944,7 +16041,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cr8Cb8_420_SP, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &ycrcbSource, &ycrcbImage));
-@@ -4056,8 +4056,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+@@ -4065,8 +4065,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
      EXPECT_NE(ycrcbImage, EGL_NO_IMAGE_KHR);
  
      // Create YV12 source and image but without initial data
@@ -15955,7 +16052,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs, {}, &yv12Source,
          &yv12Image));
-@@ -4114,8 +4114,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
+@@ -4123,8 +4123,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create YCbCr BT601 source and image but without initial data
@@ -15966,7 +16063,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &ycbcrBT601Source, &ycbcrBT601Image));
-@@ -4130,8 +4130,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
+@@ -4139,8 +4139,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
      // implementation will pick the correct dataspace.
      //
      // [1] hardware/interfaces/graphics/common/aidl/android/hardware/graphics/common/Dataspace.aidl
@@ -15977,7 +16074,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1280, 720, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &ycbcrBT709Source, &ycbcrBT709Image));
-@@ -4187,15 +4187,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources)
+@@ -4196,15 +4196,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources)
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage));
  
      // Create RGB Image
@@ -15997,7 +16094,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorPurpleY, 1}, {kYUVColorPurpleCb, 1}, {kYUVColorPurpleCr, 1}}, &yuvSource,
-@@ -4247,15 +4247,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets)
+@@ -4256,15 +4256,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create RGBA Image
@@ -16017,7 +16114,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorPurpleY, 1}, {kYUVColorPurpleCb, 1}, {kYUVColorPurpleCr, 1}}, &yuvSource,
-@@ -4320,8 +4320,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
+@@ -4329,8 +4329,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create YCbCr source and image but without initial data
@@ -16028,7 +16125,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &ycbcrSource, &ycbcrImage));
-@@ -4329,8 +4329,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
+@@ -4338,8 +4338,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
      EXPECT_NE(ycbcrImage, EGL_NO_IMAGE_KHR);
  
      // Create YV12 source and image but without initial data
@@ -16039,7 +16136,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs, {}, &yv12Source,
          &yv12Image));
-@@ -4394,8 +4394,8 @@ TEST_P(ImageTest, SourceAHBTarget2DRetainInitialData)
+@@ -4403,8 +4403,8 @@ TEST_P(ImageTest, SourceAHBTarget2DRetainInitialData)
      GLubyte data[4] = {0, 255, 0, 255};
  
      // Create the Image
@@ -16050,7 +16147,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{data, 4}}, &source, &image));
-@@ -4439,8 +4439,8 @@ TEST_P(ImageTest, SourceAHBTarget2DMSRTTInteraction)
+@@ -4448,8 +4448,8 @@ TEST_P(ImageTest, SourceAHBTarget2DMSRTTInteraction)
      ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
  
      // Create the Image
@@ -16061,7 +16158,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -4494,8 +4494,8 @@ void ImageTest::SourceAHBTarget2DArray_helper(const EGLint *attribs)
+@@ -4503,8 +4503,8 @@ void ImageTest::SourceAHBTarget2DArray_helper(const EGLint *attribs)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16072,7 +16169,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
          {{kSrgbColor, 4}}, &source, &image));
-@@ -4538,8 +4538,8 @@ void ImageTest::SourceAHBTargetExternal_helper(const EGLint *attribs)
+@@ -4547,8 +4547,8 @@ void ImageTest::SourceAHBTargetExternal_helper(const EGLint *attribs)
      ANGLE_SKIP_TEST_IF(IsOzone());
  
      // Create the Image
@@ -16083,7 +16180,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
          {{kSrgbColor, 4}}, &source, &image));
-@@ -5088,8 +5088,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
+@@ -5097,8 +5097,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16094,7 +16191,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
-@@ -5115,8 +5115,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleNoData)
+@@ -5124,8 +5124,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleNoData)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16105,7 +16202,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -5222,8 +5222,8 @@ TEST_P(ImageTest, SourceYUVAHBMipTargetExternalRGBSampleNoData)
+@@ -5231,8 +5231,8 @@ TEST_P(ImageTest, SourceYUVAHBMipTargetExternalRGBSampleNoData)
          kDefaultAHBYUVUsage | kAHBUsageGPUMipMapComplete));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16116,7 +16213,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          4, 4, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420,
          kDefaultAHBYUVUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
-@@ -5257,8 +5257,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSample)
+@@ -5266,8 +5266,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSample)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16127,7 +16224,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
-@@ -5285,8 +5285,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleVS)
+@@ -5294,8 +5294,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleVS)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16138,7 +16235,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
-@@ -5314,8 +5314,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchSamplerExternalOES)
+@@ -5323,8 +5323,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchSamplerExternalOES)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16149,7 +16246,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
-@@ -5342,8 +5342,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchVSSamplerExternalOES)
+@@ -5351,8 +5351,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchVSSamplerExternalOES)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16160,7 +16257,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
-@@ -5379,8 +5379,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalCopySrc)
+@@ -5388,8 +5388,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalCopySrc)
      };
  
      // Create the Image
@@ -16171,7 +16268,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -5441,8 +5441,8 @@ TEST_P(ImageTestES3, SourceR10X6G10X6B10X6A10X6AHBTargetExternalCopySrc)
+@@ -5450,8 +5450,8 @@ TEST_P(ImageTestES3, SourceR10X6G10X6B10X6A10X6AHBTargetExternalCopySrc)
      }
  
      // Create the image
@@ -16182,7 +16279,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R10G10B10A10_UNORM, kAHBUsageGPUFramebuffer,
          kDefaultAttribs, {{reinterpret_cast<const GLubyte *>(srcData.data()), 8}}, &source,
-@@ -5509,8 +5509,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleLinearFiltering)
+@@ -5518,8 +5518,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleLinearFiltering)
      // clang-format on
  
      // Create the Image
@@ -16193,7 +16290,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 4, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &ahbSource, &ahbImage));
-@@ -5561,8 +5561,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternal2DY2YSample)
+@@ -5570,8 +5570,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternal2DY2YSample)
          2, 2, 1, AHARDWAREBUFFER_FORMAT_YCbCr_P210, kDefaultAHBYUVUsage));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16204,7 +16301,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_YCbCr_P210, kDefaultAHBYUVUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -5606,8 +5606,8 @@ TEST_P(ImageTestES3, RenderToYUVAHB)
+@@ -5615,8 +5615,8 @@ TEST_P(ImageTestES3, RenderToYUVAHB)
      };
  
      // Create the Image
@@ -16215,7 +16312,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -5667,8 +5667,8 @@ TEST_P(ImageTestES31, RenderToYUVAHBFramebufferTexture)
+@@ -5676,8 +5676,8 @@ TEST_P(ImageTestES31, RenderToYUVAHBFramebufferTexture)
      };
  
      // Create the Image
@@ -16226,7 +16323,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -5727,8 +5727,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBIndexedBlendValidationBypass)
+@@ -5736,8 +5736,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBIndexedBlendValidationBypass)
      GLubyte dataCb[1] = {0};
      GLubyte dataCr[1] = {0};
  
@@ -16237,7 +16334,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -5796,8 +5796,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBWithDepth)
+@@ -5805,8 +5805,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBWithDepth)
      };
  
      // Create the Image
@@ -16248,7 +16345,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -5851,8 +5851,8 @@ TEST_P(ImageTestES3, ClearYUVAHB)
+@@ -5860,8 +5860,8 @@ TEST_P(ImageTestES3, ClearYUVAHB)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16259,7 +16356,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -5893,8 +5893,8 @@ TEST_P(ImageTestES3, ClearYUVAHBWithDepth)
+@@ -5902,8 +5902,8 @@ TEST_P(ImageTestES3, ClearYUVAHBWithDepth)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16270,7 +16367,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -5951,8 +5951,8 @@ TEST_P(ImageTestES3, PartialClearYUVAHB)
+@@ -5960,8 +5960,8 @@ TEST_P(ImageTestES3, PartialClearYUVAHB)
          0,
      };
  
@@ -16281,7 +16378,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          8, 8, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 64}, {dataCb, 64}, {dataCr, 64}}, &source, &image));
-@@ -6018,8 +6018,8 @@ TEST_P(ImageTestES3, PartialRenderToYUVAHB)
+@@ -6027,8 +6027,8 @@ TEST_P(ImageTestES3, PartialRenderToYUVAHB)
      };
  
      // Create the Image
@@ -16292,7 +16389,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          4, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -6096,8 +6096,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBThenReadPixels)
+@@ -6105,8 +6105,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBThenReadPixels)
      constexpr uint32_t kHeight = 2;
  
      // Create the Image
@@ -16303,7 +16400,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
          {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
-@@ -6162,8 +6162,8 @@ TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
+@@ -6171,8 +6171,8 @@ TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16314,7 +16411,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6202,8 +6202,8 @@ TEST_P(ImageTestES3, AHBClearAppliedViaClearTexImageBeforeReadBack)
+@@ -6211,8 +6211,8 @@ TEST_P(ImageTestES3, AHBClearAppliedViaClearTexImageBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16325,7 +16422,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6233,8 +6233,8 @@ TEST_P(ImageTestES3, AHBTwiceClearAppliedBeforeReadBack)
+@@ -6242,8 +6242,8 @@ TEST_P(ImageTestES3, AHBTwiceClearAppliedBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16336,7 +16433,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6275,8 +6275,8 @@ TEST_P(ImageTestES3, AHBTwiceClearViaClearTexImageAppliedBeforeReadBack)
+@@ -6284,8 +6284,8 @@ TEST_P(ImageTestES3, AHBTwiceClearViaClearTexImageAppliedBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16347,7 +16444,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6308,8 +6308,8 @@ TEST_P(ImageTestES3, AHBClearAndDetachBeforeReadback)
+@@ -6317,8 +6317,8 @@ TEST_P(ImageTestES3, AHBClearAndDetachBeforeReadback)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16358,7 +16455,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6352,8 +6352,8 @@ TEST_P(ImageTestES3, AHBClearAndAttachAnotherTextureBeforeReadback)
+@@ -6361,8 +6361,8 @@ TEST_P(ImageTestES3, AHBClearAndAttachAnotherTextureBeforeReadback)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16369,7 +16466,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6400,8 +6400,8 @@ TEST_P(ImageTestES3, AHBClearAndSwitchToDefaultFBOBeforeReadBack)
+@@ -6409,8 +6409,8 @@ TEST_P(ImageTestES3, AHBClearAndSwitchToDefaultFBOBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16380,7 +16477,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6443,8 +6443,8 @@ TEST_P(ImageTestES3, AHBClearWithGLClientWaitSyncBeforeReadBack)
+@@ -6452,8 +6452,8 @@ TEST_P(ImageTestES3, AHBClearWithGLClientWaitSyncBeforeReadBack)
      const GLubyte kBlack[] = {0, 0, 0, 0};
  
      // Create one image backed by the AHB.
@@ -16391,7 +16488,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -6482,8 +6482,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAppliedBeforeReadBack)
+@@ -6491,8 +6491,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAppliedBeforeReadBack)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
  
      // Create a GLTexture backed by the AHB.
@@ -16402,7 +16499,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      const GLubyte kBlack[] = {0, 0, 0, 0};
      const GLubyte kRed[]   = {255, 0, 0, 255};
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
-@@ -6530,8 +6530,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndDetachBeforeReadBack)
+@@ -6539,8 +6539,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndDetachBeforeReadBack)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
  
      // Create a GLTexture backed by the AHB.
@@ -16413,7 +16510,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      const GLubyte kBlack[] = {0, 0, 0, 0};
      const GLubyte kRed[]   = {255, 0, 0, 255};
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
-@@ -6582,8 +6582,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndAttachAnotherTextureBeforeReadBack)
+@@ -6591,8 +6591,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndAttachAnotherTextureBeforeReadBack)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
  
      // Create a GLTexture backed by the AHB.
@@ -16424,7 +16521,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      const GLubyte kBlack[] = {0, 0, 0, 0};
      const GLubyte kRed[]   = {255, 0, 0, 255};
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
-@@ -6638,8 +6638,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndSwitchToDefaultFBOBeforeReadBack)
+@@ -6647,8 +6647,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndSwitchToDefaultFBOBeforeReadBack)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
  
      // Create a GLTexture backed by the AHB.
@@ -16435,7 +16532,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      const GLubyte kBlack[] = {0, 0, 0, 0};
      const GLubyte kRed[]   = {255, 0, 0, 255};
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
-@@ -6689,8 +6689,8 @@ TEST_P(ImageTestES3, AHBTextureSwizzleParameters)
+@@ -6698,8 +6698,8 @@ TEST_P(ImageTestES3, AHBTextureSwizzleParameters)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16446,7 +16543,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -6721,8 +6721,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData)
+@@ -6730,8 +6730,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16457,7 +16554,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -6751,8 +6751,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace)
+@@ -6760,8 +6760,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace)
      const GLubyte kRed50Linear[] = {128, 0, 0, 255};
  
      // Create the Image
@@ -16468,7 +16565,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
          {{kRed50SRGB, 4}}, &ahb, &ahbImage));
-@@ -6783,8 +6783,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace_TexStorage)
+@@ -6792,8 +6792,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace_TexStorage)
      const GLubyte kRed50Linear[] = {128, 0, 0, 255};
  
      // Create the Image
@@ -16479,7 +16576,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
          {{kRed50SRGB, 4}}, &ahb, &ahbImage));
-@@ -6839,8 +6839,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDownload)
+@@ -6848,8 +6848,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDownload)
      }
  
      // Create the Image
@@ -16490,7 +16587,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {{pixelsRGBABlack.data(), 4}}, &ahb, &ahbImage));
-@@ -6897,8 +6897,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadData)
+@@ -6906,8 +6906,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadData)
      const GLubyte kRed50Linear[] = {128, 0, 0, 127};
  
      // Create the Image
@@ -16501,7 +16598,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kGarbage, 4}}, &ahb, &ahbImage));
-@@ -6933,8 +6933,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadDataColorspace)
+@@ -6942,8 +6942,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadDataColorspace)
      const GLubyte kRed50Linear[] = {128, 0, 0, 127};
  
      // Create the Image
@@ -16512,7 +16609,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
          {{kGarbage, 4}}, &ahb, &ahbImage));
-@@ -6969,8 +6969,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadData)
+@@ -6978,8 +6978,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadData)
      const GLubyte kRed50Linear[] = {128, 0, 0, 255};
  
      // Create the Image
@@ -16523,7 +16620,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kGarbage, 4}}, &ahb, &ahbImage));
-@@ -7006,8 +7006,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataColorspace)
+@@ -7015,8 +7015,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataColorspace)
      const GLubyte kRed50Linear[] = {128, 0, 0, 255};
  
      // Create the Image
@@ -16534,7 +16631,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
          {{kGarbage, sizeof(kGarbage)}}, &ahb, &ahbImage));
-@@ -7043,8 +7043,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataRGBA)
+@@ -7052,8 +7052,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataRGBA)
      const GLubyte kRed50Linear[]        = {128, 0, 0, 255};
  
      // Create the Image
@@ -16545,7 +16642,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kGarbage, 4}}, &ahb, &ahbImage));
-@@ -7082,8 +7082,8 @@ TEST_P(ImageTestES3, RGBAHBUploadDataColorspace)
+@@ -7091,8 +7091,8 @@ TEST_P(ImageTestES3, RGBAHBUploadDataColorspace)
      const GLubyte kRed50Linear[] = {128, 0, 0, 255};
  
      // Create the Image
@@ -16556,7 +16653,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
          {{kGarbage, sizeof(kGarbage)}}, &ahb, &ahbImage));
-@@ -7114,8 +7114,8 @@ TEST_P(ImageTestES3, RGBXAHBImportNoFramebufferUsage)
+@@ -7123,8 +7123,8 @@ TEST_P(ImageTestES3, RGBXAHBImportNoFramebufferUsage)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16567,7 +16664,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kAHBUsageGPUSampledImage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -7153,8 +7153,8 @@ TEST_P(ImageTestES3, RGBXAHBImportMultipleLayers)
+@@ -7162,8 +7162,8 @@ TEST_P(ImageTestES3, RGBXAHBImportMultipleLayers)
      const GLubyte kInitColor[] = {132, 55, 219, 12, 77, 23, 190, 101, 231, 44, 143, 99};
  
      // Create the Image
@@ -16578,7 +16675,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, kLayerCount, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kInitColor, 4}}, &ahb, &ahbImage));
-@@ -7189,8 +7189,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenReadPixels)
+@@ -7198,8 +7198,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenReadPixels)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16589,7 +16686,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -7227,8 +7227,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClear)
+@@ -7236,8 +7236,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClear)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16600,7 +16697,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -7270,8 +7270,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClearThenDraw)
+@@ -7279,8 +7279,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClearThenDraw)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16611,7 +16708,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -7332,8 +7332,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenUpload)
+@@ -7341,8 +7341,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenUpload)
      const GLubyte kInitColor[] = {132, 55, 219, 12, 132, 55, 219, 12};
  
      // Create the Image
@@ -16622,7 +16719,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kInitColor, 4}}, &ahb, &ahbImage));
-@@ -7372,8 +7372,8 @@ TEST_P(ImageTestES3, IncompleteRGBXAHBImportThenUploadThenEnd)
+@@ -7381,8 +7381,8 @@ TEST_P(ImageTestES3, IncompleteRGBXAHBImportThenUploadThenEnd)
      const GLubyte kInitColor[] = {132, 55, 219, 12, 132, 55, 219, 12};
  
      // Create the Image
@@ -16633,7 +16730,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kInitColor, 4}}, &ahb, &ahbImage));
-@@ -7406,8 +7406,8 @@ TEST_P(ImageTestES3, RGBXAHBImportOcclusionQueryNotCounted)
+@@ -7415,8 +7415,8 @@ TEST_P(ImageTestES3, RGBXAHBImportOcclusionQueryNotCounted)
      glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
  
      // Create the Image
@@ -16644,7 +16741,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kLinearColor, 4}}, &ahb, &ahbImage));
-@@ -7474,8 +7474,8 @@ TEST_P(ImageTestES3, AHBImportReleaseStress)
+@@ -7483,8 +7483,8 @@ TEST_P(ImageTestES3, AHBImportReleaseStress)
  
      for (int i = 0; i < 20; i++)
      {
@@ -16655,7 +16752,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
          ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
              1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
              {{kBlack, 4}}, &ahb, &ahbImage));
-@@ -7510,8 +7510,8 @@ TEST_P(ImageTestES3, YUVValidation)
+@@ -7519,8 +7519,8 @@ TEST_P(ImageTestES3, YUVValidation)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16666,7 +16763,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
          &yuvSource, &yuvImage));
-@@ -7537,8 +7537,8 @@ TEST_P(ImageTestES3, YUVValidation)
+@@ -7546,8 +7546,8 @@ TEST_P(ImageTestES3, YUVValidation)
      EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
  
      // Create an rgba image
@@ -16677,7 +16774,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &rgbaSource, &rgbaImage));
-@@ -7655,8 +7655,8 @@ TEST_P(ImageTestES31, YUVValidation)
+@@ -7664,8 +7664,8 @@ TEST_P(ImageTestES31, YUVValidation)
      ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16688,7 +16785,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
          &yuvSource, &yuvImage));
-@@ -7708,8 +7708,8 @@ void ImageTest::SourceAHBTargetExternalESSL3_helper(const EGLint *attribs)
+@@ -7717,8 +7717,8 @@ void ImageTest::SourceAHBTargetExternalESSL3_helper(const EGLint *attribs)
      ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
  
      // Create the Image
@@ -16699,7 +16796,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
          {{kSrgbColor, 4}}, &source, &image));
-@@ -7742,8 +7742,8 @@ TEST_P(ImageTestES3, SourceAHBArrayTarget2DArray)
+@@ -7751,8 +7751,8 @@ TEST_P(ImageTestES3, SourceAHBArrayTarget2DArray)
          1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16710,7 +16807,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
          &source, &image));
-@@ -7781,8 +7781,8 @@ TEST_P(ImageTestES3, SourceAHBCubeTargetCube)
+@@ -7790,8 +7790,8 @@ TEST_P(ImageTestES3, SourceAHBCubeTargetCube)
          kDefaultAHBUsage | kAHBUsageGPUCubeMap));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16721,7 +16818,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, kCubeFaceCount, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
          kDefaultAHBUsage | kAHBUsageGPUCubeMap, kDefaultAttribs, {}, &source, &image));
-@@ -7827,8 +7827,8 @@ TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
+@@ -7836,8 +7836,8 @@ TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
          kDefaultAHBUsage | kAHBUsageGPUCubeMap));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16732,7 +16829,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage | kAHBUsageGPUCubeMap,
          kDefaultAttribs, {}, &source, &image));
-@@ -7873,8 +7873,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMip)
+@@ -7882,8 +7882,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMip)
          kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16743,7 +16840,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
          kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
-@@ -7921,8 +7921,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMipGenerateMipmap)
+@@ -7930,8 +7930,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMipGenerateMipmap)
          kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
  
      // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
@@ -16754,7 +16851,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
          kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
-@@ -7974,8 +7974,8 @@ TEST_P(ImageTest, SourceAHBTarget2DDepth)
+@@ -7983,8 +7983,8 @@ TEST_P(ImageTest, SourceAHBTarget2DDepth)
      GLint depthStencilValue = 0;
  
      // Create the Image
@@ -16765,7 +16862,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          width, height, depth, AHARDWAREBUFFER_FORMAT_D24_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{reinterpret_cast<GLubyte *>(&depthStencilValue), 3}}, &source, &image));
-@@ -9345,8 +9345,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
+@@ -9500,8 +9500,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
      const uint32_t bytesPerPixel = 4;
  
      // Create the Image
@@ -16776,7 +16873,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kOriginalData, bytesPerPixel}}, &source, &image));
-@@ -9430,8 +9430,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTextureWithSharedContext)
+@@ -9585,8 +9585,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTextureWithSharedContext)
      ASSERT_GL_NO_ERROR();
  
      // Create the Image
@@ -16787,7 +16884,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kOriginalData, bytesPerPixel}}, &source, &image));
-@@ -9515,8 +9515,8 @@ TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
+@@ -9670,8 +9670,8 @@ TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
      const uint32_t bytesPerPixel = 4;
  
      // Create the Image
@@ -16798,7 +16895,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{kOriginalData, bytesPerPixel}}, &source, &image));
-@@ -9716,8 +9716,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
+@@ -9871,8 +9871,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
      GLubyte data[4] = {7, 51, 197, 231};
  
      // Create the Image
@@ -16809,7 +16906,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{data, 4}}, &source, &image));
-@@ -9733,8 +9733,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
+@@ -9888,8 +9888,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
  
      // Create another eglImage with another associated texture
      // Draw using the eglImage target texture created in frame 1
@@ -16820,7 +16917,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
          {{data, 4}}, &source2, &image2));
-@@ -10386,8 +10386,8 @@ void ImageTest::useAHBByGLThenForeignThenGLHelper(
+@@ -10541,8 +10541,8 @@ void ImageTest::useAHBByGLThenForeignThenGLHelper(
      constexpr uint32_t kHeight = 37;
  
      // Create the Image
@@ -16831,7 +16928,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {}, &source, &image));
-@@ -10732,8 +10732,8 @@ TEST_P(ImageTest, UploadForeignUntilSubmitDoesNotBreakRenderPass)
+@@ -10887,8 +10887,8 @@ TEST_P(ImageTest, UploadForeignUntilSubmitDoesNotBreakRenderPass)
      glViewport(0, 0, kWidth, kHeight);
  
      // Create the EGL image and a texture target to bind it.
@@ -16842,7 +16939,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {}, &source, &image));
-@@ -10815,8 +10815,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
+@@ -10970,8 +10970,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
      glViewport(0, 0, kWidth, kHeight);
  
      // Create the EGL images and the texture targets to bind them.
@@ -16853,7 +16950,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {}, &source1, &image1));
-@@ -10824,8 +10824,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
+@@ -10979,8 +10979,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
      GLTexture target1;
      createEGLImageTargetTexture2D(image1, target1);
  
@@ -16864,7 +16961,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {}, &source2, &image2));
-@@ -11055,8 +11055,8 @@ TEST_P(ImageTestES3, MultithreadedDrawForeignReadbackForeignSample)
+@@ -11210,8 +11210,8 @@ TEST_P(ImageTestES3, MultithreadedDrawForeignReadbackForeignSample)
      constexpr uint32_t kHeight = 37;
  
      // Create the Image
@@ -16875,7 +16972,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
          kDefaultAttribs, {}, &source, &image));
-@@ -11774,8 +11774,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16_UINT)
+@@ -11929,8 +11929,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16_UINT)
      ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT, kDefaultAHBUsage));
  
@@ -16886,7 +16983,7 @@ index 8f209bbff95db18522947f4fc8ca523168817e15..9ca0bd38762df52169dc9d17cf11292e
      ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT, kDefaultAHBUsage, kDefaultAttribs, {}, &source,
          &image));
-@@ -11804,8 +11804,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16G16_UINT)
+@@ -11959,8 +11959,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16G16_UINT)
      ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
          1, 1, 1, AHARDWAREBUFFER_FORMAT_R16G16_UINT, kDefaultAHBUsage));
  
@@ -17119,10 +17216,10 @@ index 0000000000000000000000000000000000000000..70d8f1b9dabc7ceddc43ec5d0133ecbc
 +
 +}  // namespace
 diff --git a/src/tests/gl_tests/LineLoopTest.cpp b/src/tests/gl_tests/LineLoopTest.cpp
-index 3de2ae03e63c5ef739c619dfc635d12dab9eb487..ca36ea97bb970f782b51576ed499504a77bc106e 100644
+index e71d77cbf89fb2259896ba1823c0ae2336cc1722..a3f9ad263cc6a660f7997f07813eedd43f598851 100644
 --- a/src/tests/gl_tests/LineLoopTest.cpp
 +++ b/src/tests/gl_tests/LineLoopTest.cpp
-@@ -862,6 +862,107 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
+@@ -864,6 +864,107 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
  }
  
@@ -17231,10 +17328,10 @@ index 3de2ae03e63c5ef739c619dfc635d12dab9eb487..ca36ea97bb970f782b51576ed499504a
  // drawn as a GL_LINE_LOOP is widened to 32-bits internally and overflows.
  // Disabled because it slow and triggers an internal error.
 diff --git a/src/tests/gl_tests/MipmapTest.cpp b/src/tests/gl_tests/MipmapTest.cpp
-index 0e4a9a25b22c6826485e9aa435849670d4f8c337..61dd00b4719b6cf03b34d9e82cdde13f9ee03ee1 100644
+index 710a113e952d6d57f196391640b67965edb7cc2a..4b445f9f412ea636459577b7e58a5384d5f6c201 100644
 --- a/src/tests/gl_tests/MipmapTest.cpp
 +++ b/src/tests/gl_tests/MipmapTest.cpp
-@@ -2271,6 +2271,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
+@@ -2270,6 +2270,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
      EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::black);
  }
  
@@ -17266,7 +17363,7 @@ index 0e4a9a25b22c6826485e9aa435849670d4f8c337..61dd00b4719b6cf03b34d9e82cdde13f
  // Test that manually generating mipmaps using draw calls is functional
  TEST_P(MipmapTestES31, GenerateMipmapWithDraw)
  {
-@@ -2957,6 +2982,82 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(MipmapRobustInitTestES3,
+@@ -2951,6 +2976,82 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(MipmapRobustInitTestES3,
                                 ES3_VULKAN().enable(Feature::AllocateNonZeroMemory),
                                 ES3_VULKAN_SWIFTSHADER().enable(Feature::AllocateNonZeroMemory));
  
@@ -17623,7 +17720,7 @@ index fcae00f2b1167dda52f8c857c8d94cc6c2eb7d98..a03f894e251fa90bcad100a9401b845b
          Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(getDriverType());
  
 diff --git a/src/tests/gl_tests/RobustResourceInitTest.cpp b/src/tests/gl_tests/RobustResourceInitTest.cpp
-index c35f0620ba68cd02824b1f4ac8850e78feb3cfb0..863f6afd650352de2a8e9ffadadc9416aa374726 100644
+index 5d3a05a2052f0eb387c6064cd547978a487b2e3e..de5edb1d0af5ee934fff961184ea4f414a82ac1c 100644
 --- a/src/tests/gl_tests/RobustResourceInitTest.cpp
 +++ b/src/tests/gl_tests/RobustResourceInitTest.cpp
 @@ -12,7 +12,6 @@
@@ -17633,6 +17730,84 @@ index c35f0620ba68cd02824b1f4ac8850e78feb3cfb0..863f6afd650352de2a8e9ffadadc9416
 -#include "util/gles_loader_autogen.h"
  
  namespace angle
+ {
+@@ -3584,6 +3583,77 @@ TEST_P(RobustResourceInitTestES3, Texture2DArrayPartiallyCleared)
+     ASSERT_GL_NO_ERROR();
+ }
+ 
++// Test that robust init is done correctly for cube maps if a face is cleared with glClear.
++TEST_P(RobustResourceInitTest, CubeMapFaceCleared)
++{
++    ANGLE_SKIP_TEST_IF(!hasGLExtension());
++
++    constexpr int kSize         = 16;
++    constexpr GLenum kClearFace = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
++
++    GLTexture texture;
++    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
++    for (GLenum face : kCubeFaces)
++    {
++        glTexImage2D(face, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
++    }
++
++    // Clear one face, expect the other faces to read back as transparent black.
++    GLFramebuffer framebuffer;
++    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
++    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, kClearFace, texture, 0);
++    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
++
++    glClearColor(0, 1, 0, 1);
++    glClear(GL_COLOR_BUFFER_BIT);
++
++    for (GLenum face : kCubeFaces)
++    {
++        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, texture, 0);
++        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
++        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize,
++                             face == kClearFace ? GLColor::green : GLColor::transparentBlack);
++    }
++    ASSERT_GL_NO_ERROR();
++}
++
++// Test that a full clear of a renderbuffer doesn't mark the other, uncleared renderbuffer
++// attachments as initialized.
++TEST_P(RobustResourceInitTest, RenderbufferColorClearWithDepthInit)
++{
++    ANGLE_SKIP_TEST_IF(!hasGLExtension());
++
++    constexpr int kSize = 16;
++
++    GLRenderbuffer colorRenderbuffer;
++    glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
++    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, kSize, kSize);
++
++    GLRenderbuffer depthRenderbuffer;
++    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
++    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, kSize, kSize);
++
++    GLFramebuffer framebuffer;
++    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
++    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
++                              colorRenderbuffer);
++    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
++                              depthRenderbuffer);
++    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
++
++    glClearColor(0, 1, 0, 1);
++    glClear(GL_COLOR_BUFFER_BIT);
++    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
++
++    // Depth must have been initialized to 1.0, so a draw at depth 0.5 passes the depth test.
++    glEnable(GL_DEPTH_TEST);
++    glDepthFunc(GL_LESS);
++    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
++    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.0f);
++    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
++    ASSERT_GL_NO_ERROR();
++}
++
+ // Test that redefining a 2D array texture doesn't bypass robust resource initialization.
+ TEST_P(RobustResourceInitTestES3, Texture2DArrayRedefine)
  {
 diff --git a/src/tests/gl_tests/SamplersTest.cpp b/src/tests/gl_tests/SamplersTest.cpp
 index 012908e1186e54d7ae684036aee86cc28c8e6139..8d1b360b004f83c31059bf9d00a127747574ac2d 100644
@@ -17792,10 +17967,10 @@ index d87dd3dc5299e44482cdda4fde6d51623bd67093..882be7ceac6c71a30e21357d6d49358f
  {};
  
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985cdfe502b6 100644
+index 565777216df986d8d849268cfe241a9f97860988..7ce10a24211d803b263e0c76adbb85fd71246864 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
-@@ -2038,6 +2038,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
+@@ -2040,6 +2040,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
              break;
          default:
              UNREACHABLE();
@@ -17803,7 +17978,7 @@ index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985c
      }
  
      // Set up a color texture.
-@@ -2729,7 +2730,37 @@ TEST_P(Texture2DTest, DefineMultipleLevelsWithoutMipmapping)
+@@ -2731,7 +2732,37 @@ TEST_P(Texture2DTest, DefineMultipleLevelsWithoutMipmapping)
      EXPECT_PIXEL_COLOR_EQ(0, 0, kMipColors[0][0]);
  }
  
@@ -17842,7 +18017,7 @@ index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985c
  TEST_P(TextureCubeTest, CubeMapBug)
  {
      glActiveTexture(GL_TEXTURE0);
-@@ -14969,7 +15000,7 @@ class TextureLimitsTest : public ANGLETest<>
+@@ -15188,7 +15219,7 @@ class TextureLimitsTest : public ANGLETest<>
          initTextures(vertexTextureCount + fragmentTextureCount, 0);
  
          glUseProgram(mProgram);
@@ -17851,7 +18026,7 @@ index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985c
          for (GLint texIndex = 0; texIndex < vertexTextureCount; ++texIndex)
          {
              std::stringstream uniformNameStr;
-@@ -16125,6 +16156,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
+@@ -16344,6 +16375,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
  }
  
@@ -17933,7 +18108,7 @@ index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985c
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
-@@ -21200,7 +21306,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
+@@ -21419,7 +21525,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
  }
  
  // Create an integer format texture but specify a FLOAT sampler. OpenGL
@@ -17942,7 +18117,7 @@ index a03165c628fcb59fd4289345ad9712de952b3b8f..dba39c05e44b3c53af5847be4400985c
  TEST_P(Texture2DTestES3, TexImageFormatMismatch)
  {
      GLint textureUnit = 2;
-@@ -21301,6 +21407,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
+@@ -21520,6 +21626,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
      glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
  }
  
@@ -18214,10 +18389,10 @@ index 3db493dbdcf7d972d9e6d1f72956881e69674dfe..2199b24a2c08b3e300d62f1a459ba418
          uniformMatrixCxRfv = {{
              {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index bbd3457e6494d2ba477a40a4fbbb8c529805e447..1ac761f088860f8ad85bbf75f181f45aaa75e856 100644
+index c03fdc91d9c1c602c5f75225d116082910109f6e..ec86586fb5d972794c62255ca6ec28324b95debf 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
-@@ -1428,6 +1428,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
+@@ -1523,6 +1523,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
      EXPECT_GL_ERROR(GL_INVALID_OPERATION);
  }
  
@@ -18290,7 +18465,7 @@ index bbd3457e6494d2ba477a40a4fbbb8c529805e447..1ac761f088860f8ad85bbf75f181f45a
  // Test that enabling a buffer in an unused attribute doesn't crash.  There should be an active
  // attribute after that.
  TEST_P(RobustVertexAttributeTest, BoundButUnusedBuffer)
-@@ -5885,6 +5951,212 @@ void main(void)
+@@ -5980,6 +6046,212 @@ void main(void)
      EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
  }
  
@@ -18503,7 +18678,7 @@ index bbd3457e6494d2ba477a40a4fbbb8c529805e447..1ac761f088860f8ad85bbf75f181f45a
  // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
  #if !defined(__APPLE__)
  #    define EMULATED_VAO_CONFIGS                                          \
-@@ -6440,7 +6712,8 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
+@@ -6535,7 +6807,8 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
      std::vector<float> verts(256 * 2);
      for (int i = 0; i < 256; i++)
      {
@@ -18514,7 +18689,7 @@ index bbd3457e6494d2ba477a40a4fbbb8c529805e447..1ac761f088860f8ad85bbf75f181f45a
          // Vertices 3, 4, 5: cover the left half of the framebuffer
          switch (i % 6)
 diff --git a/src/tests/gl_tests/WebGLCompatibilityTest.cpp b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
-index 0c2174486d22bf0933efc966d90eac9246ea61f7..81d2653f5c4cc3e76370fb55115c2e20dcc8bd7e 100644
+index f304aa2bfcfafef0df4f2a69c12405212ae2496e..a24c0134155e5b5e7eeaf73df995abcb4d1e92fe 100644
 --- a/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 +++ b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 @@ -1764,13 +1764,16 @@ void main()
@@ -18619,7 +18794,7 @@ index 0c2174486d22bf0933efc966d90eac9246ea61f7..81d2653f5c4cc3e76370fb55115c2e20
  TEST_P(WebGLCompatibilityTest, L32FTextures)
  {
      constexpr float textureData[]   = {15.1f, 0.0f, 0.0f, 0.0f};
-@@ -8279,6 +8352,147 @@ void main()
+@@ -8354,6 +8427,147 @@ void main()
      }
  }
  
@@ -19501,7 +19676,7 @@ index 63710e7589b0479ede4630fde35b5c5d511c59f0..54d225db62abc0a15ee469a4a44df6c2
  
      for (const std::string &path : searchPaths)
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 20700bf6a5a419783540a36924b52be2fb7b488d..76e6ed0682cdf6e6e1ec83225163aa911aafce3d 100644
+index 7e0d667b50cbcf8470b8beeedb3988c8ac3a081b..958f0ffdd1209a1668cb43cba599069d51969204 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -75,6 +75,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -19512,7 +19687,7 @@ index 20700bf6a5a419783540a36924b52be2fb7b488d..76e6ed0682cdf6e6e1ec83225163aa91
      {Feature::ClearsWithGapsNeedFlush, "clearsWithGapsNeedFlush"},
      {Feature::ClipCullDistanceBrokenWithPassthroughShaders, "clipCullDistanceBrokenWithPassthroughShaders"},
      {Feature::ClipSrcRegionForBlitFramebuffer, "clipSrcRegionForBlitFramebuffer"},
-@@ -239,6 +240,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -241,6 +242,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -19521,7 +19696,7 @@ index 20700bf6a5a419783540a36924b52be2fb7b488d..76e6ed0682cdf6e6e1ec83225163aa91
      {Feature::InitializeColorAttachmentWithWhite, "initializeColorAttachmentWithWhite"},
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 9806d537f9f4e64c9561f25312cb00e4d5f436ef..7baf64b021a937ede7df6b218d94e96c1f061821 100644
+index 2a973e006b598d6e406cce573939c9e4333e8671..0d4c0155d05f2aa9facb46e4c7b681c966d053d4 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -75,6 +75,7 @@ enum class Feature
@@ -19532,7 +19707,7 @@ index 9806d537f9f4e64c9561f25312cb00e4d5f436ef..7baf64b021a937ede7df6b218d94e96c
      ClearsWithGapsNeedFlush,
      ClipCullDistanceBrokenWithPassthroughShaders,
      ClipSrcRegionForBlitFramebuffer,
-@@ -239,6 +240,7 @@ enum class Feature
+@@ -241,6 +242,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

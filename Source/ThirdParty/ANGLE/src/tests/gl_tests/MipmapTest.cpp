@@ -6,7 +6,6 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -2353,15 +2352,10 @@ void main()
     };
     // clang-format on
 
-    GLubyte mip0Color[16 * 4];
+    std::array<GLColor, 16> mip0Color;
     for (size_t i = 0; i < 16; i++)
     {
-        ANGLE_UNSAFE_TODO({
-            mip0Color[i * 4 + 0] = kRedColor[i];
-            mip0Color[i * 4 + 1] = 0;
-            mip0Color[i * 4 + 2] = 0;
-            mip0Color[i * 4 + 3] = 0xff;
-        })
+        mip0Color[i] = GLColor(kRedColor[i], 0, 0, 0xff);
     }
 
     GLFramebuffer fb0, fb1, fb2;
@@ -2378,7 +2372,7 @@ void main()
 
     // initialize base mip
     glBindFramebuffer(GL_FRAMEBUFFER, fb0);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, &mip0Color[0]);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
     EXPECT_GL_NO_ERROR();
 
     // draw mip 1 with mip 0
@@ -2761,7 +2755,7 @@ TEST_P(MipmapRobustInitTestES3, GenerateMipmapRobustInitOptimization)
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // Allocate with nullptr to verify it gets robust cleared later
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 40, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     // Set levels 1 through 4 to be mipcomplete (incompatible with level 0) with different colors.
     std::vector<GLColor> kLevel1Data(8 * 8, GLColor::green);
@@ -2841,7 +2835,7 @@ TEST_P(MipmapRobustInitTestES3, GenerateMipmapRobustInitOptimizationWithSampling
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // Allocate with nullptr to verify it gets robust cleared later
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 40, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     // Set levels 1 through 4 to be mipcomplete (incompatible with level 0) with different colors.
     std::vector<GLColor> kLevel1Data(8 * 8, GLColor::green);

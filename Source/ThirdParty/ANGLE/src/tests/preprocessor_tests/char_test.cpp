@@ -5,8 +5,8 @@
 //
 
 #include <algorithm>
+#include <array>
 #include <climits>
-#include "common/unsafe_buffers.h"
 
 #include "PreprocessorTest.h"
 #include "compiler/preprocessor/Token.h"
@@ -20,25 +20,20 @@ class CharTest : public PreprocessorTest, public testing::WithParamInterface<int
     CharTest() : PreprocessorTest(SH_GLES2_SPEC) {}
 };
 
-static const char kPunctuators[] = {'.', '+', '-', '/', '*', '%', '<', '>', '[', ']', '(', ')',
-                                    '{', '}', '^', '|', '&', '~', '=', '!', ':', ';', ',', '?'};
-static const int kNumPunctuators = sizeof(kPunctuators) / sizeof(kPunctuators[0]);
+static constexpr std::array kPunctuators = {'.', '+', '-', '/', '*', '%', '<', '>',
+                                            '[', ']', '(', ')', '{', '}', '^', '|',
+                                            '&', '~', '=', '!', ':', ';', ',', '?'};
 
 bool isPunctuator(char c)
 {
-    static const char *kPunctuatorBeg = kPunctuators;
-    static const char *kPunctuatorEnd = ANGLE_UNSAFE_TODO(kPunctuators + kNumPunctuators);
-    return std::find(kPunctuatorBeg, kPunctuatorEnd, c) != kPunctuatorEnd;
+    return std::ranges::find(kPunctuators, c) != kPunctuators.end();
 }
 
-static const char kWhitespaces[] = {' ', '\t', '\v', '\f', '\n', '\r'};
-static const int kNumWhitespaces = sizeof(kWhitespaces) / sizeof(kWhitespaces[0]);
+static constexpr std::array kWhitespaces = {' ', '\t', '\v', '\f', '\n', '\r'};
 
 bool isWhitespace(char c)
 {
-    static const char *kWhitespaceBeg = kWhitespaces;
-    static const char *kWhitespaceEnd = ANGLE_UNSAFE_TODO(kWhitespaces + kNumWhitespaces);
-    return std::find(kWhitespaceBeg, kWhitespaceEnd, c) != kWhitespaceEnd;
+    return std::ranges::find(kWhitespaces, c) != kWhitespaces.end();
 }
 
 TEST_P(CharTest, Identified)

@@ -733,7 +733,10 @@
 410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.strides.int2_10_10_10.user_ptr_stride32_components4_quads1 = SKIP
 410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.strides.int2_10_10_10.user_ptr_stride32_components4_quads256 = SKIP
 558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.array.interleaved.triangles.highp_mat4x3 = FAIL
+558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.basic_types.separate.triangles.mediump_vec2 = FAIL
+558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.centroid.lowp_vec4_lines_interleaved = FAIL
 558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.centroid.mediump_vec4_lines_interleaved = FAIL
+558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.smooth.lowp_vec4_lines_interleaved = FAIL
 558505633 GALAXYS24EXYNOS VULKAN : dEQP-GLES3.functional.transform_feedback.interpolation.smooth.mediump_vec4_lines_interleaved = FAIL
 
 // Snapdragon 8 Gen3 Mobile Reference Device

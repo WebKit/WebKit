@@ -21,6 +21,7 @@ angle_translator_ir_sources = [
   "src/output/null.rs",
   "src/reflection.rs",
   "src/transform.rs",
+  "src/transform/add_driver_uniforms.rs",
   "src/transform/astify.rs",
   "src/transform/broadcast_fragcolor.rs",
   "src/transform/clamp_frag_depth.rs",

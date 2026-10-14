@@ -1585,8 +1585,11 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
     }
 #endif
 
-    // reset state
-    mRenderPassDesc = RenderPassDesc();
+    // Reset the C++ render pass descriptor, then use convertToMetalDesc() to reset the cached
+    // Objective-C render pass descriptor.
+    const uint32_t numColorAttachments = mRenderPassDesc.numColorAttachments;
+    mRenderPassDesc                    = RenderPassDesc();
+    mRenderPassDesc.convertToMetalDesc(objCRenderPassDesc, numColorAttachments);
     mStateCache.reset();
 }
 

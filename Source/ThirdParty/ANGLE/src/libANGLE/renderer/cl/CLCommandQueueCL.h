@@ -166,7 +166,7 @@ class CLCommandQueueCL : public CLCommandQueueImpl
                                   void *&mapPtr) override;
 
     angle::Result enqueueUnmapMemObject(const cl::Memory &memory,
-                                        void *mappedPtr,
+                                        const cl::MappedRegionInfo<const void *> &mappedInfo,
                                         const cl::EventPtrs &waitEvents,
                                         cl::EventPtr &event) override;
 

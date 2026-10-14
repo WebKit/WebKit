@@ -626,6 +626,7 @@ bool VulkanHelper::canCreateImageExternal(VkFormat format,
 }
 
 VkResult VulkanHelper::createImage2DExternal(VkFormat format,
+                                             VkImageTiling tiling,
                                              VkImageCreateFlags createFlags,
                                              VkImageUsageFlags usageFlags,
                                              const void *imageCreateInfoPNext,
@@ -651,7 +652,7 @@ VkResult VulkanHelper::createImage2DExternal(VkFormat format,
         /* .mipLevels = */ 1,
         /* .arrayLayers = */ 1,
         /* .samples = */ VK_SAMPLE_COUNT_1_BIT,
-        /* .tiling = */ VK_IMAGE_TILING_OPTIMAL,
+        /* .tiling = */ tiling,
         /* .usage = */ usageFlags,
         /* .sharingMode = */ VK_SHARING_MODE_EXCLUSIVE,
         /* .queueFamilyIndexCount = */ 0,
@@ -731,6 +732,7 @@ bool VulkanHelper::canCreateImageOpaqueFd(VkFormat format,
 }
 
 VkResult VulkanHelper::createImage2DOpaqueFd(VkFormat format,
+                                             VkImageTiling tiling,
                                              VkImageCreateFlags createFlags,
                                              VkImageUsageFlags usageFlags,
                                              const void *imageCreateInfoPNext,
@@ -739,8 +741,8 @@ VkResult VulkanHelper::createImage2DOpaqueFd(VkFormat format,
                                              VkDeviceMemory *deviceMemoryOut,
                                              VkDeviceSize *deviceMemorySizeOut)
 {
-    return createImage2DExternal(format, createFlags, usageFlags, imageCreateInfoPNext, extent,
-                                 VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT, imageOut,
+    return createImage2DExternal(format, tiling, createFlags, usageFlags, imageCreateInfoPNext,
+                                 extent, VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT, imageOut,
                                  deviceMemoryOut, deviceMemorySizeOut);
 }
 
@@ -772,6 +774,7 @@ bool VulkanHelper::canCreateImageZirconVmo(VkFormat format,
 }
 
 VkResult VulkanHelper::createImage2DZirconVmo(VkFormat format,
+                                              VkImageTiling tiling,
                                               VkImageCreateFlags createFlags,
                                               VkImageUsageFlags usageFlags,
                                               const void *imageCreateInfoPNext,
@@ -780,9 +783,9 @@ VkResult VulkanHelper::createImage2DZirconVmo(VkFormat format,
                                               VkDeviceMemory *deviceMemoryOut,
                                               VkDeviceSize *deviceMemorySizeOut)
 {
-    return createImage2DExternal(format, createFlags, usageFlags, imageCreateInfoPNext, extent,
-                                 VK_EXTERNAL_MEMORY_HANDLE_TYPE_ZIRCON_VMO_BIT_FUCHSIA, imageOut,
-                                 deviceMemoryOut, deviceMemorySizeOut);
+    return createImage2DExternal(format, tiling, createFlags, usageFlags, imageCreateInfoPNext,
+                                 extent, VK_EXTERNAL_MEMORY_HANDLE_TYPE_ZIRCON_VMO_BIT_FUCHSIA,
+                                 imageOut, deviceMemoryOut, deviceMemorySizeOut);
 }
 
 VkResult VulkanHelper::exportMemoryZirconVmo(VkDeviceMemory deviceMemory, zx_handle_t *vmo)

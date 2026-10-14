@@ -456,6 +456,7 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
     {
 #    if defined(ANGLE_USE_X11)
         case EGL_PLATFORM_X11_EXT:
+            XInitThreads();
             mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(XOpenDisplay(nullptr));
             break;
 #    endif  // ANGLE_USE_X11

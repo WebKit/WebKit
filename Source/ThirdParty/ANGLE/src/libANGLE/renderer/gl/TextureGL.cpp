@@ -447,7 +447,7 @@ angle::Result TextureGL::setImageViaScratchUnpackBuffer(const gl::Context *conte
 
     GLuint scratch = 0;
     functions->genBuffers(1, &scratch);
-    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, scratch);
+    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, scratch, context->isHardenedContext());
     // Regardless of whether the user supplied data (pixels != nullptr), the pixel unpack buffer
     // must be allocated with the expected amount of data.
     if (uploadBytes > 0)
@@ -503,7 +503,7 @@ angle::Result TextureGL::setImageViaScratchUnpackBuffer(const gl::Context *conte
         setLevelInfo(context, target, level, 1, levelInfo);
     }
 
-    stateManager->deleteBuffer(scratch);
+    stateManager->deleteBuffer(scratch, 0, context->isHardenedContext());
 
     contextGL->markWorkSubmitted();
     return angle::Result::Continue;
@@ -1541,7 +1541,8 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
         else
         {
             // Make sure no pixel unpack buffer is bound
-            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0,
+                                     context->isHardenedContext());
 
             const gl::InternalFormat &internalFormatInfo =
                 gl::GetSizedInternalFormatInfo(internalFormat);
@@ -1660,7 +1661,8 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
         else
         {
             // Make sure no pixel unpack buffer is bound
-            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0,
+                                     context->isHardenedContext());
 
             // Internal format must be sized
             ASSERT(internalFormatInfo.sized);
@@ -1948,7 +1950,8 @@ angle::Result TextureGL::allocateMipmapLevelsForGeneration(const gl::Context *co
         if (levelDesc.size != levelSize || *levelDesc.format.info != baseLevelInternalFormat)
         {
             // Make sure no pixel unpack buffer is bound
-            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0,
+                                     context->isHardenedContext());
 
             switch (getType())
             {
@@ -2705,6 +2708,12 @@ angle::Result TextureGL::useTempForNonZeroBaseLevelGenmipmap(const gl::Context *
     ANGLE_TRY(
         copyLevelsBetweenTextures(context, mTextureID, effectiveBaseLevel, tempTextureID, 0, 1));
 
+    if (features.flushBeforeGenerateMipmap.enabled)
+    {
+        // Force a flush before generating the mipmap, which avoids bad states in the IMG driver.
+        ANGLE_GL_TRY(context, stateManager->forcefullyFlush());
+    }
+
     ANGLE_GL_TRY_ALWAYS_CHECK(context, functions->generateMipmap(GL_TEXTURE_2D));
 
     ANGLE_TRY(copyLevelsBetweenTextures(context, tempTextureID, 1, mTextureID,
@@ -3031,7 +3040,7 @@ angle::Result TextureGL::initializeContentsImpl(const gl::Context *context,
     ANGLE_TRY(stateManager->setPixelUnpackState(context, unpackState));
 
     GLuint prevUnpackBuffer = stateManager->getBufferID(gl::BufferBinding::PixelUnpack);
-    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0, context->isHardenedContext());
 
     stateManager->bindTexture(getType(), mTextureID);
     if (internalFormatInfo.compressed)
@@ -3106,7 +3115,8 @@ angle::Result TextureGL::initializeContentsImpl(const gl::Context *context,
         angle::Span<const uint8_t> uploadSpan;
         if (usePBO)
         {
-            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, pboId);
+            stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, pboId,
+                                     context->isHardenedContext());
         }
         else
         {
@@ -3148,7 +3158,8 @@ angle::Result TextureGL::initializeContentsImpl(const gl::Context *context,
     // glTexImage call, we need to make sure that the texture data to be uploaded later has the
     // expected unpack state.
     ANGLE_TRY(stateManager->setPixelUnpackState(context, context->getState().getUnpackState()));
-    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, prevUnpackBuffer);
+    stateManager->bindBuffer(gl::BufferBinding::PixelUnpack, prevUnpackBuffer,
+                             context->isHardenedContext());
 
     contextGL->markWorkSubmitted();
     return angle::Result::Continue;

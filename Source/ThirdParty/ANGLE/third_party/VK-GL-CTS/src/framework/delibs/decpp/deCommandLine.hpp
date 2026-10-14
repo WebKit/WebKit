@@ -59,7 +59,6 @@ struct Option
     const char *longName;
     const char *description;
     const char *defaultValue; //!< Default value (parsed from string), or null if should not be set
-    const bool printInHelp;
 
     // \note Either parse or namedValues must be null.
     ParseFunc parse;                             //!< Custom parsing function or null.
@@ -67,13 +66,11 @@ struct Option
     const NamedValue<ValueType> *namedValuesEnd; //!< Named value list end.
 
     //! Construct generic option (string, int, boolean).
-    Option(const char *shortName_, const char *longName_, const char *description_, const char *defaultValue_ = nullptr,
-           bool printInHelp_ = true)
+    Option(const char *shortName_, const char *longName_, const char *description_, const char *defaultValue_ = nullptr)
         : shortName(shortName_)
         , longName(longName_)
         , description(description_)
         , defaultValue(defaultValue_)
-        , printInHelp(printInHelp_)
         , parse(parseType<ValueType>)
         , namedValues(nullptr)
         , namedValuesEnd(0)
@@ -82,12 +79,11 @@ struct Option
 
     //! Option with custom parsing function.
     Option(const char *shortName_, const char *longName_, const char *description_, ParseFunc parse_,
-           const char *defaultValue_ = nullptr, bool printInHelp_ = true)
+           const char *defaultValue_ = nullptr)
         : shortName(shortName_)
         , longName(longName_)
         , description(description_)
         , defaultValue(defaultValue_)
-        , printInHelp(printInHelp_)
         , parse(parse_)
         , namedValues(nullptr)
         , namedValuesEnd(nullptr)
@@ -97,12 +93,11 @@ struct Option
     //! Option that uses named values.
     Option(const char *shortName_, const char *longName_, const char *description_,
            const NamedValue<ValueType> *namedValues_, const NamedValue<ValueType> *namedValuesEnd_,
-           const char *defaultValue_ = nullptr, bool printInHelp_ = true)
+           const char *defaultValue_ = nullptr)
         : shortName(shortName_)
         , longName(longName_)
         , description(description_)
         , defaultValue(defaultValue_)
-        , printInHelp(printInHelp_)
         , parse(nullptr)
         , namedValues(namedValues_)
         , namedValuesEnd(namedValuesEnd_)
@@ -112,13 +107,11 @@ struct Option
     //! Option that uses named values.
     template <size_t NumNamedValues>
     Option(const char *shortName_, const char *longName_, const char *description_,
-           const NamedValue<ValueType> (&namedValues_)[NumNamedValues], const char *defaultValue_ = nullptr,
-           bool printInHelp_ = true)
+           const NamedValue<ValueType> (&namedValues_)[NumNamedValues], const char *defaultValue_ = nullptr)
         : shortName(shortName_)
         , longName(longName_)
         , description(description_)
         , defaultValue(defaultValue_)
-        , printInHelp(printInHelp_)
         , parse(nullptr)
         , namedValues(DE_ARRAY_BEGIN(namedValues_))
         , namedValuesEnd(DE_ARRAY_END(namedValues_))
@@ -314,8 +307,6 @@ private:
         DispatchParseFunc dispatchParse;
         SetDefaultFunc setDefault;
 
-        bool printInHelp;
-
         OptInfo(void)
             : shortName(nullptr)
             , longName(nullptr)
@@ -328,7 +319,6 @@ private:
             , namedValueStride(0)
             , dispatchParse(nullptr)
             , setDefault(nullptr)
-            , printInHelp(true)
         {
         }
     };
@@ -424,7 +414,6 @@ void Parser::addOption(const Option<OptType> &option)
     opt.namedValuesEnd   = (const void *)option.namedValuesEnd;
     opt.namedValueStride = sizeof(*option.namedValues);
     opt.dispatchParse    = dispatchParse<OptType>;
-    opt.printInHelp      = option.printInHelp;
 
     if (opt.isFlag)
         opt.setDefault = dispatchSetDefault<OptType>;

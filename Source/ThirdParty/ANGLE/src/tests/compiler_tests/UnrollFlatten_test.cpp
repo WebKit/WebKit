@@ -8,10 +8,11 @@
 //   This test can only be enabled when HLSL support is enabled.
 //
 
+#include <array>
+
 #include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "common/angleutils.h"
-#include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
 #include "tests/test_utils/compiler_test.h"
 
@@ -43,12 +44,11 @@ class UnrollFlattenTest : public testing::Test
         mCurrentPosition = static_cast<int>(mTranslatedSource.find("cbuffer DriverConstants"));
     }
 
-    void expect(const char *patterns[], size_t count)
+    void expect(angle::Span<const char *const> patterns)
     {
-        const char *badPatterns[] = {UNROLL, FLATTEN};
-        for (size_t i = 0; i < count; i++)
+        constexpr std::array badPatterns = {UNROLL, FLATTEN};
+        for (const char *pattern : patterns)
         {
-            const char *pattern = ANGLE_UNSAFE_TODO(patterns[i]);
             auto position       = mTranslatedSource.find(pattern, mCurrentPosition);
             if (position == std::string::npos)
             {
@@ -57,9 +57,8 @@ class UnrollFlattenTest : public testing::Test
                        << mTranslatedSource;
             }
 
-            for (size_t j = 0; j < ArraySize(badPatterns); j++)
+            for (const char *badPattern : badPatterns)
             {
-                const char *badPattern = ANGLE_UNSAFE_TODO(badPatterns[j]);
                 if (pattern != badPattern &&
                     mTranslatedSource.find(badPattern, mCurrentPosition) < position)
                 {
@@ -74,8 +73,8 @@ class UnrollFlattenTest : public testing::Test
         }
     }
 
-    static const char *UNROLL;
-    static const char *FLATTEN;
+    static constexpr const char *UNROLL  = "LOOP";
+    static constexpr const char *FLATTEN = "FLATTEN";
 
   private:
     ShShaderSpec mInputSpec;
@@ -84,9 +83,6 @@ class UnrollFlattenTest : public testing::Test
     int mCurrentPosition;
     std::string mExpectationList;
 };
-
-const char *UnrollFlattenTest::UNROLL  = "LOOP";
-const char *UnrollFlattenTest::FLATTEN = "FLATTEN";
 
 // Check that the nothing is added if there is no gradient operation
 // even when there is ifs and discontinuous loops
@@ -121,7 +117,7 @@ TEST_F(UnrollFlattenTest, NoGradient)
     // 7 - no FLATTEN
     const char *expectations[] = {"fun(",  "if",   "fun2(", "for", "if",
                                   "break", "fun(", "main(", "if",  "fun2("};
-    expect(expectations, ArraySize(expectations));
+    expect(expectations);
 }
 
 // Check that when we have a gradient in a non-discontinuous loop
@@ -160,7 +156,7 @@ TEST_F(UnrollFlattenTest, GradientNotInDiscont)
     compile(shaderString);
     const char *expectations[] = {"fun(", "texture2D(", "fun2(", "LOOP",    "for", "if",
                                   "fun(", "texture2D(", "main(", "FLATTEN", "if",  "fun2("};
-    expect(expectations, ArraySize(expectations));
+    expect(expectations);
 }
 
 // Check that when we have a gradient in a discontinuous loop
@@ -199,7 +195,7 @@ TEST_F(UnrollFlattenTest, GradientInDiscont)
     const char *expectations[] = {
         "fun(",  "texture2D(", "funLod0(",      "texture2DLod0(", "fun2(",   "LOOP", "for",  "if",
         "break", "funLod0(",   "texture2DLod0", "main(",          "FLATTEN", "if",   "fun2("};
-    expect(expectations, ArraySize(expectations));
+    expect(expectations);
 }
 
 class UnrollFlattenTestES3 : public UnrollFlattenTest
@@ -227,6 +223,6 @@ TEST_F(UnrollFlattenTestES3, TextureBuiltin)
 
     compile(shaderString);
     const char *expectations[] = {"main(", "LOOP", "Lod0("};
-    expect(expectations, ArraySize(expectations));
+    expect(expectations);
 }
 }  // namespace

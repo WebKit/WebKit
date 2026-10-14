@@ -475,24 +475,6 @@ angle::VulkanPerfCounters GetPerfCounters(const CounterNameToIndexMap &indexMap)
     return counters;
 }
 
-CounterNameToValueMap BuildCounterNameToValueMap()
-{
-    CounterNameToIndexMap indexMap                     = BuildCounterNameToIndexMap();
-    std::vector<angle::PerfMonitorTriplet> perfResults = GetPerfMonitorTriplets();
-
-    CounterNameToValueMap valueMap;
-
-    for (const auto &iter : indexMap)
-    {
-        const std::string &name = iter.first;
-        GLuint index            = iter.second;
-
-        valueMap[name] = perfResults[index].value;
-    }
-
-    return valueMap;
-}
-
 namespace angle
 {
 

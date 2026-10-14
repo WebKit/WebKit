@@ -24,12 +24,15 @@
 #include "es3fFboInvalidateTests.hpp"
 #include "es3fFboTestCase.hpp"
 #include "es3fFboTestUtil.hpp"
+#include "gluObjectWrapper.hpp"
 #include "gluTextureUtil.hpp"
+#include "gluStrUtil.hpp"
 #include "tcuImageCompare.hpp"
 #include "tcuTextureUtil.hpp"
 #include "sglrContextUtil.hpp"
 
 #include "glwEnums.hpp"
+#include "glwFunctions.hpp"
 
 #include <algorithm>
 
@@ -1394,6 +1397,107 @@ private:
     std::vector<uint32_t> m_invalidateAttachments;
 };
 
+class InvalidateIncompleteFboCase : public TestCase
+{
+public:
+    InvalidateIncompleteFboCase(Context &context, const char *name, const char *description)
+        : TestCase(context, name, description)
+    {
+    }
+
+    IterateResult iterate(void)
+    {
+        const glw::Functions &gl = m_context.getRenderContext().getFunctions();
+        glu::Texture tex(gl);
+        glu::Framebuffer fbo(gl);
+
+        int32_t majorVersion = 0;
+        int32_t minorVersion = 0;
+        gl.getIntegerv(GL_MAJOR_VERSION, &majorVersion);
+        gl.getIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+        const bool isES32 = glu::contextSupports(m_context.getRenderContext().getType(), glu::ApiType::es(3, 2)) ||
+                            (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 2));
+
+        // Allocate immutable texture storage with 2 mip levels (levels 0 and 1)
+        gl.bindTexture(GL_TEXTURE_2D_ARRAY, *tex);
+        gl.texStorage3D(GL_TEXTURE_2D_ARRAY, 2, GL_RGBA8, 4, 4, 1);
+
+        if (gl.getError() != GL_NO_ERROR)
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Unexpected GL error during texture allocation");
+            return STOP;
+        }
+
+        // Bind out-of-bounds mip level 2 of RGBA8 texture to GL_DEPTH_STENCIL_ATTACHMENT
+        gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo);
+        gl.framebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, *tex, 2, 0);
+
+        // In OpenGL ES 3.0 / 3.1, binding level=2 on a 2-level immutable texture is legal at attachment time
+        // (0 <= level <= log2(MAX_TEXTURE_SIZE)) and returns GL_NO_ERROR, flagging GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT.
+        // In OpenGL ES 3.2+ (Section 9.2.8), level must be smaller than TEXTURE_VIEW_NUM_LEVELS for immutable-format
+        // textures. When dEQP-GLES3 requests an ES 3.0 context that is promoted to ES 3.2, an implementation may
+        // either enforce the ES 3.2 rule (generating GL_INVALID_VALUE and leaving the attachment unbound with
+        // GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) or apply the requested ES 3.0 rule (returning GL_NO_ERROR
+        // and flagging GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT).
+        uint32_t setupError = gl.getError();
+        if (isES32 && setupError == GL_INVALID_VALUE)
+        {
+            uint32_t status = gl.checkFramebufferStatus(GL_FRAMEBUFFER);
+            if (status != GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
+            {
+                m_testCtx.setTestResult(QP_TEST_RESULT_FAIL,
+                                        ("Expected GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT, got " +
+                                         glu::getFramebufferStatusStr(status).toString())
+                                            .c_str());
+                return STOP;
+            }
+        }
+        else
+        {
+            if (setupError != GL_NO_ERROR)
+            {
+                m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, ("Expected GL_NO_ERROR after attachment binding, got " +
+                                                              glu::getErrorStr(setupError).toString())
+                                                                 .c_str());
+                return STOP;
+            }
+
+            // Format mismatch and non-existent mip level must flag FBO as incomplete.
+            uint32_t status = gl.checkFramebufferStatus(GL_FRAMEBUFFER);
+            if (status != GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
+            {
+                m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, ("Expected GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT, got " +
+                                                              glu::getFramebufferStatusStr(status).toString())
+                                                                 .c_str());
+                return STOP;
+            }
+        }
+
+        // Trigger invalidation and finish command buffer processing
+        const uint32_t att[] = {GL_DEPTH_STENCIL_ATTACHMENT};
+        gl.invalidateFramebuffer(GL_FRAMEBUFFER, 1, att);
+        gl.finish();
+
+        // Capture resulting error state
+        uint32_t invalidateError = gl.getError();
+
+        // Invalidating an incomplete FBO must be ignored without generating an error (GL_NO_ERROR).
+        if (invalidateError == GL_NO_ERROR)
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        }
+        else
+        {
+            m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, ("Unexpected GL error during incomplete FBO invalidation: " +
+                                                          glu::getErrorStr(invalidateError).toString())
+                                                             .c_str());
+        }
+
+        return STOP;
+    }
+};
+
 FboInvalidateTests::FboInvalidateTests(Context &context)
     : TestCaseGroup(context, "invalidate", "Framebuffer invalidate tests")
 {
@@ -1668,6 +1772,16 @@ void FboInvalidateTests::init(void)
                                                               invalidateT, &allAttachments[0],
                                                               DE_LENGTH_OF_ARRAY(allAttachments)));
         }
+    }
+
+    // invalidate.incomplete
+    {
+        tcu::TestCaseGroup *incompleteGroup =
+            new tcu::TestCaseGroup(m_testCtx, "incomplete", "Invalidate incomplete framebuffer tests");
+        addChild(incompleteGroup);
+
+        incompleteGroup->addChild(new InvalidateIncompleteFboCase(
+            m_context, "depth_stencil", "Invalidate incomplete framebuffer with out-of-bounds texture level"));
     }
 }
 

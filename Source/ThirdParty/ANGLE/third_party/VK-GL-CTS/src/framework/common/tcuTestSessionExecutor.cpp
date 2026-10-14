@@ -62,7 +62,24 @@ TestSessionExecutor::TestSessionExecutor(TestPackageRoot &root, TestContext &tes
     , m_testStartTime(0)
     , m_packageStartTime(0)
     , m_groupsDurationTime()
-    , m_subprocessTestExecutor(testCtx)
+    /*
+        1. The group path MUST NOT END WITH A DOT!
+        ------------------------------------------
+            When CTS terminates individual tests in a given group, it repeatedly
+            calls the TestSessionExecutor::leaveTestGroup(casePath) method, removing
+            the last part of the test name following the dot in each call.
+            If the path of the test being run matches the group path name, it is treated
+            as a candidate for execution in the subprocess. Only when the name matches
+            the group path name and ends without any characters after it, the list
+            of collected candidates is passed on to be executed in the subprocesses.
+        2. The group path MUST BE UNIQUE!
+        ---------------------------------
+            The group path must be unique among all the test paths run in subprocesses.
+            The program matches names by looking for the name from the beginning, so if
+            the group name is part of another test name being run, it will be misinterpreted
+            as the name of a group of tests to be run in subprocesses.
+    */
+    , m_subprocessTestExecutor(testCtx, {"dEQP-VK.postmortem.device_fault", "dEQP-VK.shader_abort"})
 {
 }
 
@@ -211,7 +228,7 @@ void TestSessionExecutor::leaveTestGroup(const std::string &casePath)
     m_groupsDurationTime[casePath] = deGetMicroseconds() - m_groupsDurationTime[casePath];
     if (m_subprocessTestExecutor.isSubprocessCase(casePath, false, true))
     {
-        m_subprocessTestExecutor.spawnSubprocessCases();
+        m_subprocessTestExecutor.spawnSubprocessCases(casePath);
         m_subprocessTestExecutor.updateRunStatus(m_status);
     }
 }

@@ -63,6 +63,7 @@ void FreeMemory(VmaAllocator allocator, VmaAllocation allocation);
 
 VkResult CreatePool(VmaAllocator allocator,
                     uint32_t memoryTypeIndex,
+                    size_t maxBlockCount,
                     VkDeviceSize blockSize,
                     VmaPool *pPoolOut);
 

@@ -56,6 +56,12 @@ class ContextMtl : public ContextImpl, public mtl::Context
     angle::Result flush(const gl::Context *context) override;
     angle::Result finish(const gl::Context *context) override;
 
+    // GL_ANGLE_trim_memory
+    void trimMemory(const gl::Context *context, gl::MemoryTrimLevel trimLevel) override;
+
+    void registerBufferPool(mtl::BufferPool *pool);
+    void unregisterBufferPool(mtl::BufferPool *pool);
+
     // Drawing methods.
     angle::Result drawArrays(const gl::Context *context,
                              gl::PrimitiveMode mode,
@@ -637,6 +643,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     gl::DrawBufferMask mIncompatibleAttachments;
 
     mtl::BufferManager mBufferManager;
+
+    angle::HashSet<mtl::BufferPool *> mBufferPools;
 
     // Lineloop and TriFan index buffer
     mtl::BufferPool mLineLoopIndexBuffer;

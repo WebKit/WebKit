@@ -39,6 +39,7 @@
 #include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
@@ -202,7 +203,23 @@ ContextMtl::ContextMtl(const gl::State &state,
       mContextDevice(GetOwnershipIdentity(attribs))
 {}
 
-ContextMtl::~ContextMtl() {}
+ContextMtl::~ContextMtl()
+{
+    while (!mBufferPools.empty())
+    {
+        (*mBufferPools.begin())->destroy(this);
+    }
+}
+
+void ContextMtl::registerBufferPool(mtl::BufferPool *pool)
+{
+    mBufferPools.insert(pool);
+}
+
+void ContextMtl::unregisterBufferPool(mtl::BufferPool *pool)
+{
+    mBufferPools.erase(pool);
+}
 
 angle::Result ContextMtl::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
@@ -216,12 +233,14 @@ angle::Result ContextMtl::initialize(const angle::ImageLoadContext &imageLoadCon
     mDepthStencilDesc = {};
 
     mTriFanIndexBuffer.initialize(this, 0, mtl::kIndexBufferOffsetAlignment,
-                                  kMaxTriFanLineLoopBuffersPerFrame);
+                                  kMaxTriFanLineLoopBuffersPerFrame,
+                                  mtl::TrackBufferInContext::Yes);
     mLineLoopIndexBuffer.initialize(this, 0, mtl::kIndexBufferOffsetAlignment,
-                                    kMaxTriFanLineLoopBuffersPerFrame);
-    mLineLoopLastSegmentIndexBuffer.initialize(this, 2 * sizeof(uint32_t),
-                                               mtl::kIndexBufferOffsetAlignment,
-                                               kMaxTriFanLineLoopBuffersPerFrame);
+                                    kMaxTriFanLineLoopBuffersPerFrame,
+                                    mtl::TrackBufferInContext::Yes);
+    mLineLoopLastSegmentIndexBuffer.initialize(
+        this, 2 * sizeof(uint32_t), mtl::kIndexBufferOffsetAlignment,
+        kMaxTriFanLineLoopBuffersPerFrame, mtl::TrackBufferInContext::Yes);
 
     mContextDevice.set(mDisplay->getMetalDevice());
 
@@ -239,6 +258,7 @@ void ContextMtl::onDestroy(const gl::Context *context)
 
     mIncompleteTextures.onDestroy(context);
     mProvokingVertexHelper.onDestroy(this);
+    ASSERT(mBufferPools.empty());
     mDummyXFBRenderTexture = nullptr;
     mRasterizationRateMap.reset();
     mRasterizationRateMapTexture = nil;
@@ -261,6 +281,15 @@ angle::Result ContextMtl::finish(const gl::Context *context)
 {
     ANGLE_TRY(finishCommandBuffer());
     return checkCommandBufferError();
+}
+
+void ContextMtl::trimMemory(const gl::Context *context, gl::MemoryTrimLevel trimLevel)
+{
+    ANGLE_TRACE_EVENT("gpu.angle", __PRETTY_FUNCTION__);
+    for (mtl::BufferPool *pool : mBufferPools)
+    {
+        pool->trim(this);
+    }
 }
 
 ANGLE_INLINE angle::Result ContextMtl::resyncDrawFramebufferIfNeeded(const gl::Context *context)

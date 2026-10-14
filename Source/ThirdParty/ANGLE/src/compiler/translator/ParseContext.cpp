@@ -17,6 +17,7 @@
 #include "common/unsafe_buffers.h"
 #include "compiler/translator/Compiler.h"
 
+#include <anglebase/sha1.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -495,15 +496,30 @@ TIntermDeclaration *RenameAndDeclareStruct(TSymbolTable *symbolTable,
     // always for simplicity.  +1 for the NUL terminator.
     //
     // If appending ID and the name is too long, cut off the end of the name.  The ID makes it
-    // unique.
+    // unique.  Where _0 is used, long names are hashed to avoid collision.
     constexpr uint32_t kAppendExtraChars = 1 + 11;  // underscore + 32-bit number
-    const ImmutableString name(
-        structure->name().data(),
-        std::min<size_t>(structure->name().length(), kESSLMaxIdentifierLength - kAppendExtraChars));
 
     ImmutableStringBuilder builder(structure->name().length() + kAppendExtraChars);
-    builder << name << "_"
-            << (scope == StructureOriginalScope::Global ? 0 : structure->uniqueId().get());
+    if (scope == StructureOriginalScope::Global &&
+        structure->name().length() > kESSLMaxIdentifierLength - kAppendExtraChars)
+    {
+        angle::base::SecureHashAlgorithm hasher;
+        hasher.Init();
+        hasher.Update(structure->name().data(), structure->name().length());
+        hasher.Final();
+        // SAFETY: The SHA1 hasher guarantees that the returned digest is kSHA1Length bytes.
+        const std::string hashed = angle::UintStreamToHexString(
+            ANGLE_UNSAFE_BUFFERS(angle::Span(hasher.Digest(), angle::base::kSHA1Length)));
+        builder << "struct" << ImmutableString(hashed.c_str(), hashed.size()) << "_0";
+    }
+    else
+    {
+        const ImmutableString name(structure->name().data(),
+                                   std::min<size_t>(structure->name().length(),
+                                                    kESSLMaxIdentifierLength - kAppendExtraChars));
+        builder << name << "_"
+                << (scope == StructureOriginalScope::Global ? 0 : structure->uniqueId().get());
+    }
     structure->setName(builder);
 
     return DeclareStruct(symbolTable, structure);
@@ -3573,7 +3589,7 @@ void TParseContext::functionCallFragDataCheck(const TFunction *fnCandidate,
         // Note: ESSL 100 does not allow arrays in ternary operator, so there is no need to check
         // for TIntermTernary here for a whole-array use of gl_FragData, only descending into
         // EOpComma nodes is sufficient.
-        if (RemoveCommaLeftHandSize(argument)->getQualifier() == EvqFragData)
+        if (RemoveCommaLeftHandSide(argument)->getQualifier() == EvqFragData)
         {
             // The whole array is passed to the function.  For validation purposes, assume all
             // indices are accessed in the function.
@@ -7483,7 +7499,7 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
         return CreateZeroNode(TType(EbtFloat, EbpHigh, EvqConst));
     }
 
-    TIntermTyped *effectivelyIndexedExpression = RemoveCommaLeftHandSize(baseExpression);
+    TIntermTyped *effectivelyIndexedExpression = RemoveCommaLeftHandSide(baseExpression);
     switch (effectivelyIndexedExpression->getQualifier())
     {
         case EvqPerVertexIn:
@@ -11331,11 +11347,10 @@ void TParseContext::addAndCheckOutputVaryings(const TVariable &variable, const T
     mNumOutputVaryingComponents =
         checkedNum.ValueOrDefault(std::numeric_limits<unsigned int>::max());
 
-    // The cap to 256 vec4s = 1024 components seems somewhat arbitrary, but this is intended as a
-    // workaround for a specific driver bug, and this limit being much
-    // higher than the device limits (mResources.MaxVertexOutputVectors *
-    // 4), it avoids regressing both tests and applications.
-    if (mNumOutputVaryingComponents > 1024)
+    // The cap to 256 components seems somewhat arbitrary, but this is intended as a workaround for
+    // a specific driver bug, and this limit being much higher than the device limits
+    // (mResources.MaxVertexOutputVectors * 4), it avoids regressing both tests and applications.
+    if (mNumOutputVaryingComponents > 256)
     {
         error(line, "Too many declared shader output varying components for this device",
               variable.name());

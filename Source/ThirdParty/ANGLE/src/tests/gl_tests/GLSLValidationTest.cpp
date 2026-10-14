@@ -10220,14 +10220,14 @@ class GLSLValidationTest_ES3_LimitOutputVaryings : public GLSLValidationTest_ES3
 {};
 
 // Regression test for crbug.com/529991907.
-// Verify that compiling a shader with up to 1024 output varying components
-// succeeds, and exceeding 1024 components is rejected at compile time.
+// Verify that compiling a shader with up to 256 output varying components
+// succeeds, and exceeding 256 components is rejected at compile time.
 TEST_P(GLSLValidationTest_ES3_LimitOutputVaryings, TooManyDeclaredVertexOutputComponents)
 {
     ANGLE_SKIP_TEST_IF(
         !getEGLWindow()->isFeatureEnabled(Feature::LimitOutputVaryingsTo256AtCompileTime));
 
-    constexpr int kMaxVectors = 1024 / 4;
+    constexpr int kMaxVectors = 256 / 4;
 
     std::stringstream vsValid;
     vsValid << "#version 300 es\n";

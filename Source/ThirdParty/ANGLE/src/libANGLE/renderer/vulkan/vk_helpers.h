@@ -3592,6 +3592,9 @@ class ImageHelper final : public Resource, public angle::Subject
     bool mTileMemoryCompatible;
     // True if it actually uses tile memory.
     bool mUseTileMemory;
+    // True if the tile memory image also supports VK_IMAGE_USAGE_TRANSFER_SRC_BIT, allowing
+    // vkCmdCopyImage to be used instead of a shader-based copy during fallback.
+    bool mTileMemorySupportsTransferSrc;
 
     // Only used for swapChain images. This is set when an image is acquired and is waited on
     // by the next submission (which uses this image), at which point it is released.

@@ -342,7 +342,7 @@ angle::Result CommandQueue::enqueueMapBuffer(cl_mem buffer,
                                              cl_event *event,
                                              void *&mapPtr)
 {
-    const Buffer &buf          = buffer->cast<Buffer>();
+    Buffer &buf                = buffer->cast<Buffer>();
     const bool blocking        = blockingMap != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 
@@ -352,6 +352,11 @@ angle::Result CommandQueue::enqueueMapBuffer(cl_mem buffer,
     ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueMapBuffer(buf, blocking, mapFlags, offset, size, waitEvents,
                                                  eventPtr, mapPtr),
                          event);
+
+    // Add region to a list of active mapped regions, to detect on any overlapping regions.
+    // The region is in sub-buffer-local coordinates; addMappedRegion translates to the parent
+    // coordinate space when forwarding to a sub-buffer's parent.
+    ANGLE_TRY(buf.addMappedRegion(mapFlags, mapPtr, cl::MemoryRegion(offset, size)));
 
     return angle::Result::Continue;
 }
@@ -507,7 +512,7 @@ angle::Result CommandQueue::enqueueMapImage(cl_mem image,
                                             cl_event *event,
                                             void *&mapPtr)
 {
-    const Image &img           = image->cast<Image>();
+    Image &img                 = image->cast<Image>();
     const bool blocking        = blockingMap != CL_FALSE;
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 
@@ -519,6 +524,8 @@ angle::Result CommandQueue::enqueueMapImage(cl_mem image,
                                imageSlicePitch, waitEvents, eventPtr, mapPtr),
         event);
 
+    ANGLE_TRY(img.addMappedRegion(mapFlags, mapPtr, cl::MemoryRegion(origin, region)));
+
     return angle::Result::Continue;
 }
 
@@ -528,13 +535,16 @@ angle::Result CommandQueue::enqueueUnmapMemObject(cl_mem memobj,
                                                   const cl_event *eventWaitList,
                                                   cl_event *event)
 {
-    const Memory &memory       = memobj->cast<Memory>();
+    Memory &memory             = memobj->cast<Memory>();
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 
     ANGLE_TRY(CreateEvent(event, *this, CL_COMMAND_UNMAP_MEM_OBJECT));
     EventPtr eventPtr(event != nullptr ? &(*event)->cast<Event>() : nullptr);
 
-    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueUnmapMemObject(memory, mappedPtr, waitEvents, eventPtr),
+    // Pass in the cl::MappedRegionInfo to the backend
+    const cl::MappedRegionInfo<const void *> mappedInfo = memory.popMappedRegion(mappedPtr);
+
+    ANGLE_CL_ENQUEUE_TRY(mImpl->enqueueUnmapMemObject(memory, mappedInfo, waitEvents, eventPtr),
                          event);
 
     return angle::Result::Continue;

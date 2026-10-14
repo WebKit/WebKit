@@ -644,6 +644,7 @@
 		4557460D814F5DF1D5787863 /* es3sLongRunningShaderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7134402C9425888101366367 /* es3sLongRunningShaderTests.cpp */; };
 		457CC0343015771C001DE9FC /* angle_end2end_tests_expectations.txt in State Test Expectations */ = {isa = PBXBuildFile; fileRef = 7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */; };
 		4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */; };
+		D59D4EB48664844AFAC7447B /* DeleteBuffersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 683EA8379656AEEEC5A762DC /* DeleteBuffersTest.cpp */; };
 		45F4464AB2B8513CB3E3762B /* es3fNegativeStateApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F264D619701179ECB7F6033 /* es3fNegativeStateApiTests.cpp */; };
 		46574F8EBAA668D2A75348A0 /* es3pShaderOperatorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F384DF192F867DA1896E9B2 /* es3pShaderOperatorTests.cpp */; };
 		46724657AF064907DE2EA506 /* deThreadTest.c in Sources */ = {isa = PBXBuildFile; fileRef = ADE748218E43074A54016343 /* deThreadTest.c */; };
@@ -1058,6 +1059,7 @@
 		7BB9735D2DE4875E00455D13 /* SystemInfo_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */; };
 		7BB9735E2DE4875E00455D13 /* SystemInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59982284FC750018F2D8 /* SystemInfo.cpp */; };
 		7BB9735F2DE4877900455D13 /* sha1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EBF922980B445002C72BC /* sha1.cc */; };
+		6DD84D6FA01F04A45F0B2F5A /* sha1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EBF922980B445002C72BC /* sha1.cc */; };
 		7BCA710E2E5B3F1000455D13 /* trace_categories.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7BCA710B2E5B3F1000455D13 /* trace_categories.cc */; };
 		7BB973602DE4880F00455D13 /* validationES32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B57E8238CB09C0079FDDC /* validationES32.cpp */; };
 		7BB973612DE4881500455D13 /* validationES31.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD816A1DBFE999006066B8 /* validationES31.cpp */; };
@@ -1241,6 +1243,7 @@
 		7BD3D2762FCDB8A300C386DC /* IndexBufferOffsetTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */; };
 		7BD3D2772FCDB8A300C386DC /* IndexedPointsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */; };
 		7BD3D2782FCDB8A300C386DC /* InstancingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */; };
+		C804E96922B0BAAA42FBA28B /* DeleteBuffersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 683EA8379656AEEEC5A762DC /* DeleteBuffersTest.cpp */; };
 		7BD3D2792FCDB8A300C386DC /* KTXCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */; };
 		7BD3D27A2FCDB8A300C386DC /* libEGL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB9723C2DE4827800455D13 /* libEGL_autogen.cpp */; };
 		7BD3D27B2FCDB8A300C386DC /* libGLESv2_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB972342DE480F000455D13 /* libGLESv2_autogen.cpp */; };
@@ -3290,6 +3293,7 @@
 		44E247508F92F73A06DB9605 /* sglrReferenceContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sglrReferenceContext.cpp; sourceTree = "<group>"; };
 		451D41F7AE0365931A4AA60B /* tes3InfoTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tes3InfoTests.cpp; sourceTree = "<group>"; };
 		4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegerOverflowClampTest.cpp; sourceTree = "<group>"; };
+		683EA8379656AEEEC5A762DC /* DeleteBuffersTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteBuffersTest.cpp; sourceTree = "<group>"; };
 		45A743169381B27478632DE1 /* glsUniformBlockCase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glsUniformBlockCase.cpp; sourceTree = "<group>"; };
 		45DE4E258609976D2067B1DE /* es3sSpecialFloatTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3sSpecialFloatTests.cpp; sourceTree = "<group>"; };
 		463D416587F5C55E8292E1C8 /* es3fShaderDerivateTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3fShaderDerivateTests.cpp; sourceTree = "<group>"; };
@@ -6625,6 +6629,7 @@
 				7BFAF5162DE59DA000327F7F /* CubeMapTextureTest.cpp */,
 				7BFAF5242DE59DB800327F7F /* DebugMarkerTest.cpp */,
 				7BFAF5252DE59DB800327F7F /* DebugTest.cpp */,
+				683EA8379656AEEEC5A762DC /* DeleteBuffersTest.cpp */,
 				7BFAF5262DE59DB800327F7F /* DepthStencilFormatsTest.cpp */,
 				7BFAF5272DE59DB800327F7F /* DepthStencilTest.cpp */,
 				7BFAF5282DE59DB800327F7F /* DepthWriteTest.cpp */,
@@ -10594,6 +10599,7 @@
 				7BD3D22A2FCDB8A300C386DC /* CubeMapTextureTest.cpp in Sources */,
 				7BD3D22B2FCDB8A300C386DC /* DebugMarkerTest.cpp in Sources */,
 				7BD3D22C2FCDB8A300C386DC /* DebugTest.cpp in Sources */,
+				C804E96922B0BAAA42FBA28B /* DeleteBuffersTest.cpp in Sources */,
 				7BD3D22D2FCDB8A300C386DC /* DepthStencilFormatsTest.cpp in Sources */,
 				7BD3D22E2FCDB8A300C386DC /* DepthStencilTest.cpp in Sources */,
 				7BD3D22F2FCDB8A300C386DC /* DepthWriteTest.cpp in Sources */,
@@ -10798,6 +10804,7 @@
 				7BFAF51E2DE59DA000327F7F /* CubeMapTextureTest.cpp in Sources */,
 				7BFAF53E2DE59DB800327F7F /* DebugMarkerTest.cpp in Sources */,
 				7BFAF53F2DE59DB800327F7F /* DebugTest.cpp in Sources */,
+				D59D4EB48664844AFAC7447B /* DeleteBuffersTest.cpp in Sources */,
 				7BFAF5362DE59DB800327F7F /* DepthStencilFormatsTest.cpp in Sources */,
 				7BFAF5352DE59DB800327F7F /* DepthStencilTest.cpp in Sources */,
 				7BFAF53C2DE59DB800327F7F /* DepthWriteTest.cpp in Sources */,
@@ -11107,6 +11114,7 @@
 				7B62E9E02DA91F0900793212 /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */,
 				7BF5557F2C81F198002B101E /* SeparateCompoundExpressions.cpp in Sources */,
 				7BF555642C81F198002B101E /* SeparateDeclarations.cpp in Sources */,
+				6DD84D6FA01F04A45F0B2F5A /* sha1.cc in Sources */,
 				7BF554F42C81F198002B101E /* ShaderLang.cpp in Sources */,
 				7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */,
 				7BF555432C81F198002B101E /* SimplifyLoopConditions.cpp in Sources */,

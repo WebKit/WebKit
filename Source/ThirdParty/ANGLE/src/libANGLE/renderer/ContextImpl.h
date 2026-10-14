@@ -280,6 +280,9 @@ class ContextImpl : public GLImplFactory
     virtual const angle::PerfMonitorCounterGroupsInfo &getPerfMonitorCountersInfo() const;
     virtual const angle::PerfMonitorCounterGroups &getPerfMonitorCounters();
 
+    // GL_ANGLE_trim_memory
+    virtual void trimMemory(const gl::Context *context, gl::MemoryTrimLevel trimLevel) {}
+
     // GL_ANGLE_variable_rasterization_rate_metal
     virtual angle::Result bindMetalRasterizationRateMap(gl::Context *,
                                                         RenderbufferImpl *renderbuffer,

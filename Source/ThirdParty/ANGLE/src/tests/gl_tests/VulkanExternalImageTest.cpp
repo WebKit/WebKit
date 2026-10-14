@@ -95,6 +95,7 @@ struct OpaqueFdTraits
 
     static VkResult CreateImage2D(VulkanHelper *helper,
                                   VkFormat format,
+                                  VkImageTiling tiling,
                                   VkImageCreateFlags createFlags,
                                   VkImageUsageFlags usageFlags,
                                   const void *imageCreateInfoPNext,
@@ -103,9 +104,9 @@ struct OpaqueFdTraits
                                   VkDeviceMemory *deviceMemoryOut,
                                   VkDeviceSize *deviceMemorySizeOut)
     {
-        return helper->createImage2DOpaqueFd(format, createFlags, usageFlags, imageCreateInfoPNext,
-                                             extent, imageOut, deviceMemoryOut,
-                                             deviceMemorySizeOut);
+        return helper->createImage2DOpaqueFd(format, tiling, createFlags, usageFlags,
+                                             imageCreateInfoPNext, extent, imageOut,
+                                             deviceMemoryOut, deviceMemorySizeOut);
     }
 
     static VkResult ExportMemory(VulkanHelper *helper, VkDeviceMemory deviceMemory, Handle *handle)
@@ -160,6 +161,7 @@ struct FuchsiaTraits
 
     static VkResult CreateImage2D(VulkanHelper *helper,
                                   VkFormat format,
+                                  VkImageTiling tiling,
                                   VkImageCreateFlags createFlags,
                                   VkImageUsageFlags usageFlags,
                                   const void *imageCreateInfoPNext,
@@ -168,9 +170,9 @@ struct FuchsiaTraits
                                   VkDeviceMemory *deviceMemoryOut,
                                   VkDeviceSize *deviceMemorySizeOut)
     {
-        return helper->createImage2DZirconVmo(format, createFlags, usageFlags, imageCreateInfoPNext,
-                                              extent, imageOut, deviceMemoryOut,
-                                              deviceMemorySizeOut);
+        return helper->createImage2DZirconVmo(format, tiling, createFlags, usageFlags,
+                                              imageCreateInfoPNext, extent, imageOut,
+                                              deviceMemoryOut, deviceMemorySizeOut);
     }
 
     static VkResult ExportMemory(VulkanHelper *helper, VkDeviceMemory deviceMemory, Handle *handle)
@@ -275,8 +277,9 @@ void RunShouldImportMemoryTest(VkImageCreateFlags createFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {1, 1, 1};
-    VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
-                                              extent, &image, &deviceMemory, &deviceMemorySize);
+    VkResult result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -387,8 +390,9 @@ void RunShouldClearTest(bool useMemoryObjectFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {1, 1, 1};
-    VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
-                                              extent, &image, &deviceMemory, &deviceMemorySize);
+    VkResult result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -455,8 +459,9 @@ void RunShouldClearTestRGB565(bool useMemoryObjectFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {1, 1, 1};
-    VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
-                                              extent, &image, &deviceMemory, &deviceMemorySize);
+    VkResult result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -652,9 +657,9 @@ void RunTextureFormatCompatChromiumTest(bool useMemoryObjectFlags,
         VkDeviceSize deviceMemorySize = 0;
 
         VkExtent3D extent = {113, 211, 1};
-        VkResult result =
-            Traits::CreateImage2D(&helper, format.vkFormat, createFlags, usageFlags, nullptr,
-                                  extent, &image, &deviceMemory, &deviceMemorySize);
+        VkResult result   = Traits::CreateImage2D(&helper, format.vkFormat, VK_IMAGE_TILING_OPTIMAL,
+                                                  createFlags, usageFlags, nullptr, extent, &image,
+                                                  &deviceMemory, &deviceMemorySize);
         EXPECT_EQ(result, VK_SUCCESS);
 
         typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -823,8 +828,9 @@ void RunShouldClearWithSemaphoresTest(bool useMemoryObjectFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {1, 1, 1};
-    result = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr, extent,
-                                   &image, &deviceMemory, &deviceMemorySize);
+    result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -1050,9 +1056,9 @@ void VulkanExternalImageTest::runShouldDrawTest(bool isSwiftshader, bool enableD
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {1, 1, 1};
-    result =
-        Traits::CreateImage2D(&helper, format, kDefaultImageCreateFlags, kDefaultImageUsageFlags,
-                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
+    result = Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL,
+                                   kDefaultImageCreateFlags, kDefaultImageUsageFlags, nullptr,
+                                   extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -1199,9 +1205,9 @@ void VulkanExternalImageTest::runWaitSemaphoresRetainsContentTest(bool isSwiftsh
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {kWidth, kHeight, 1};
-    result =
-        Traits::CreateImage2D(&helper, format, kDefaultImageCreateFlags, kDefaultImageUsageFlags,
-                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
+    result = Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL,
+                                   kDefaultImageCreateFlags, kDefaultImageUsageFlags, nullptr,
+                                   extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -1393,8 +1399,8 @@ void RunPreInitializedOnGLImportTest(bool useMemoryObjectFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {kWidth, kHeight, 1};
-    result = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr, extent,
-                                   &image, &deviceMemory, &deviceMemorySize);
+    result = Traits::CreateImage2D(&helper, format, tiling, createFlags, usageFlags, nullptr,
+                                   extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     // Initialize a pixel in the image
@@ -1574,8 +1580,9 @@ TEST_P(VulkanExternalImageTest, NonRenderableWithFlags)
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {kWidth, kHeight, 1};
-    result = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr, extent,
-                                   &image, &deviceMemory, &deviceMemorySize);
+    result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     // Initialize the image
@@ -1690,8 +1697,9 @@ void RunUninitializedOnGLImportTest(bool useMemoryObjectFlags,
     VkDeviceSize deviceMemorySize = 0;
 
     VkExtent3D extent = {kWidth, kHeight, 1};
-    result = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr, extent,
-                                   &image, &deviceMemory, &deviceMemorySize);
+    result =
+        Traits::CreateImage2D(&helper, format, VK_IMAGE_TILING_OPTIMAL, createFlags, usageFlags,
+                              nullptr, extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();

@@ -49,7 +49,7 @@ namespace fs = std::filesystem;
 namespace tcu
 {
 
-SubprocessTestExecutor::SubprocessTestExecutor(TestContext &testCtx)
+SubprocessTestExecutor::SubprocessTestExecutor(TestContext &testCtx, const std::vector<std::string> &groupPaths)
     : m_testCtx(testCtx)
     , m_subprocessCasesMax(0u)
     , m_subprocessCaseCount(0u)
@@ -60,6 +60,7 @@ SubprocessTestExecutor::SubprocessTestExecutor(TestContext &testCtx)
     , m_subprocesses()
     , m_subprocessFiles()
     , m_sharedMemory("SharedMemory")
+    , m_groupPaths(groupPaths)
 {
     if (inSubprocessCaseCount())
     {
@@ -178,16 +179,27 @@ uint32_t SubprocessTestExecutor::getSubprocessCaseCount(TestContext &testCtx)
 bool SubprocessTestExecutor::isSubprocessCase(const std::string &casePath, bool checkList, bool groupPath) const
 {
     DE_ASSERT(false == groupPath || false == checkList);
-    if (checkList)
+    auto groupPathMatches = [&](const std::string &path) -> bool
     {
-        return m_subprocessCases.end() != std::find_if(m_subprocessCases.begin(), m_subprocessCases.end(),
-                                                       [&](const Item &c) { return casePath == c.first; });
+        if (checkList)
+        {
+            return m_subprocessCases.end() != std::find_if(m_subprocessCases.begin(), m_subprocessCases.end(),
+                                                           [&](const Item &c) { return casePath == c.first; });
+        }
+        const std::string_view lookupPath(path);
+        const auto pos = casePath.find(lookupPath);
+        const bool subprocessCase =
+            pos != std::string::npos && (groupPath ? casePath.length() == (pos + lookupPath.size()) : true);
+        return subprocessCase;
+    };
+
+    for (const std::string &path : m_groupPaths)
+    {
+        if (groupPathMatches(path))
+            return true;
     }
-    const std::string_view lookupPath(".postmortem.device_fault");
-    const auto pos = casePath.find(lookupPath);
-    const bool subprocessCase =
-        pos != std::string::npos && (groupPath ? casePath.length() == (pos + lookupPath.size()) : true);
-    return subprocessCase;
+
+    return false;
 }
 
 uint32_t SubprocessTestExecutor::inSubprocessCaseCount()
@@ -232,14 +244,19 @@ bool SubprocessTestExecutor::updateSubprocessCase(const std::string &casePath, q
     return false;
 }
 
-std::string makeCommandLine(const tcu::CommandLine &srcLine, uint64_t stamp,
+std::string makeCommandLine(const tcu::CommandLine &srcLine, uint64_t stamp, const std::string &groupPath,
                             const std::vector<SubprocessTestExecutor::Item> &casePaths, std::string &processFile,
                             uint32_t first, uint32_t count, uint32_t rem, uint32_t casesMax)
 {
     const auto [logDir, _] = resolvePath(srcLine.getLogFileName());
 
+    // Use the last dot-separated component of the group path (e.g. "device_fault" from
+    // "dEQP-VK.postmortem.device_fault") as a short, group-specific label for the log file name.
+    const auto lastDot           = groupPath.find_last_of('.');
+    const std::string groupLabel = (lastDot == std::string::npos) ? groupPath : groupPath.substr(lastDot + 1);
+
     std::ostringstream logFileName;
-    logFileName << "device_fault";
+    logFileName << groupLabel;
     logFileName << '_' << (first / count) << '_' << count;
     logFileName << '_' << (rem ? rem : count) << ".qpa";
     processFile = logFileName.str();
@@ -280,28 +297,40 @@ std::string makeCommandLine(const tcu::CommandLine &srcLine, uint64_t stamp,
     return cmdLine;
 }
 
-void SubprocessTestExecutor::spawnSubprocessCases()
+void SubprocessTestExecutor::spawnSubprocessCases(const std::string &groupPath)
 {
     if (0u == m_subprocessCaseCount || std::numeric_limits<uint16_t>::max() < m_subprocessCaseCount)
     {
         return;
     }
 
-    const uint32_t casesMax = uint32_t(m_subprocessCases.size());
+    std::vector<Item> groupSubprocessCases;
+    for (const Item &i : m_subprocessCases)
+    {
+        if (i.first.find(groupPath) != std::string::npos)
+            groupSubprocessCases.emplace_back(i);
+    }
+
+    const uint32_t casesMax = uint32_t(groupSubprocessCases.size());
     const uint32_t intCount = uint32_t(casesMax / m_subprocessCaseCount);
     const uint32_t rem      = uint32_t(casesMax % m_subprocessCaseCount);
 
     std::string processFile;
     const uint32_t subprocessCount = (casesMax + m_subprocessCaseCount - 1u) / m_subprocessCaseCount;
+    m_subprocessFiles.clear();
     m_subprocessFiles.reserve(subprocessCount);
+    m_subprocesses.clear();
     m_subprocesses.reserve(subprocessCount);
 
     unsigned long error = 0;
+    if (m_sharedMemory.getSize())
+        m_sharedMemory.close();
     m_sharedMemory.allocate((casesMax * sizeof(SharedCase)), error, true);
+
     for (uint32_t i = 0u; i < casesMax; ++i)
     {
         m_sharedMemory.write(
-            SharedCase::Helper(m_subprocessCases[i].first, int(i + 1), QP_TEST_RESULT_LAST, m_sharedMemory.name), i);
+            SharedCase::Helper(groupSubprocessCases[i].first, int(i + 1), QP_TEST_RESULT_LAST, m_sharedMemory.name), i);
 #if DEBUG_SUBPROCESS
         error = (unsigned long)m_sharedMemory.find(m_subprocessCases[i].first);
         DE_ASSERT(error == i);
@@ -311,11 +340,13 @@ void SubprocessTestExecutor::spawnSubprocessCases()
     for (uint32_t i = 0u; i < intCount; ++i)
     {
         const std::string cmdLine =
-            makeCommandLine(m_testCtx.getCommandLine(), m_sessionStartTime, m_subprocessCases, processFile,
-                            (i * m_subprocessCaseCount), m_subprocessCaseCount, 0u, casesMax);
+            makeCommandLine(m_testCtx.getCommandLine(), m_sessionStartTime, groupPath, groupSubprocessCases,
+                            processFile, (i * m_subprocessCaseCount), m_subprocessCaseCount, 0u, casesMax);
         deProcess *p = deProcess_create();
         if (deProcess_start(p, cmdLine.c_str(), "."))
         {
+            deProcess_closeStdOut(p);
+            deProcess_closeStdErr(p);
             m_subprocesses.emplace_back((i * m_subprocessCaseCount), m_subprocessCaseCount, p);
             m_subprocessFiles.emplace_back(processFile);
 
@@ -328,11 +359,13 @@ void SubprocessTestExecutor::spawnSubprocessCases()
     if (rem)
     {
         const std::string cmdLine =
-            makeCommandLine(m_testCtx.getCommandLine(), m_sessionStartTime, m_subprocessCases, processFile,
-                            (intCount * m_subprocessCaseCount), rem, m_subprocessCaseCount, casesMax);
+            makeCommandLine(m_testCtx.getCommandLine(), m_sessionStartTime, groupPath, groupSubprocessCases,
+                            processFile, (intCount * m_subprocessCaseCount), rem, m_subprocessCaseCount, casesMax);
         deProcess *p = deProcess_create();
         if (deProcess_start(p, cmdLine.c_str(), "."))
         {
+            deProcess_closeStdOut(p);
+            deProcess_closeStdErr(p);
             m_subprocesses.emplace_back((intCount * m_subprocessCaseCount), rem, p);
             m_subprocessFiles.emplace_back(processFile);
 
@@ -383,7 +416,13 @@ uint32_t SubprocessTestExecutor::updateRunStatus(TestRunStatus &runStatus)
             break;
         }
     }
-    return uint32_t(m_subprocessCases.size());
+    // Each call handles exactly one finished group's cases (see spawnSubprocessCases()). Clear them now so that:
+    // (a) this tally is never re-applied to the same cases when a later group finishes, and
+    // (b) the next group's spawnSubprocessCases() call sees an m_subprocessCases that contains only its own
+    //     cases, keeping its case indices aligned with the group-local indices used in waitForSubprocesses().
+    const uint32_t count = uint32_t(m_subprocessCases.size());
+    m_subprocessCases.clear();
+    return count;
 }
 
 SubprocessTestExecutor::Subprocess::Subprocess(uint32_t firstCase, uint32_t caseCount, deProcess *process)
@@ -550,6 +589,9 @@ SubprocessTestExecutor::SharedCase::SharedCase(const Helper &helper) : Subproces
 {
     exitCode   = helper.exitCode;
     caseResult = helper.caseResult;
+    // A truncated casePath would silently fail to match in SharedMemory::find(), losing the case's
+    // result. caseDesc truncation only shortens the logged description, so it is not asserted here.
+    DE_ASSERT(helper.casePath.size() < sizeof(casePath));
     std::snprintf(casePath, sizeof(casePath), "%s", helper.casePath.c_str());
     std::snprintf(caseDesc, sizeof(caseDesc), "%s", helper.caseDesc.c_str());
 }
