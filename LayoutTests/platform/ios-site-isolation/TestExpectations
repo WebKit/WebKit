@@ -53,18 +53,8 @@ svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 ####################################
 fast/block/float/independent-align-positioning.html [ Missing ]
 
-####################################
-# Tests with intentional text fail #
-####################################
-# The following tests have a different console log with Site Isolation enabled
-# vs disabled. The difference is that with Site Isolation enabled, the error message
-# only includes the protocol and origin of a RemoteFrame when with Site Isolation
-# is disabled the other frame is a LocalFrame which we log the URL with the
-# full path.
-http/tests/security/block-top-level-navigation-to-different-scheme-by-third-party-iframes.html [ Failure ]
+# Top-level navigation by a sandboxed iframe with a propagated user gesture is not blocked.
 http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html [ Failure ]
-http/tests/security/block-top-level-navigations-by-third-party-iframes.html [ Failure ]
-http/tests/security/block-top-level-navigations-by-third-party-sandboxed-iframe.html [ Failure ]
 
 # Document-Isolation-Policy is partially implemented.
 imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html [ Pass ]
