@@ -2346,7 +2346,6 @@ int main(int argc, char* argv[])
     }
     failed |= testTypedArrayCAPI();
     failed |= testTemporalCore();
-    failed |= testFunctionOverrides();
     failed |= testFunctionToString();
     failed |= testGlobalContextWithFinalizer();
     failed |= testJSONParse();
@@ -2409,8 +2408,10 @@ int main(int argc, char* argv[])
     // as part of its testing. This can wreak havoc on the rest of the system that
     // expects the options to be frozen. Ideally, we'll find a way for testExecutionTimeLimit()
     // to do its work without changing JIT options, but that is not easy to do.
+    // 3. testFunctionOverrides() sets and clears Options::functionOverrides() at runtime.
     //
     // For now, we'll just run them here at the end as a workaround.
+    failed |= testFunctionOverrides();
     failed |= testPingPongStackOverflow();
     failed |= testExecutionTimeLimit();
     failed |= testVMManagerStopTheWorld();
