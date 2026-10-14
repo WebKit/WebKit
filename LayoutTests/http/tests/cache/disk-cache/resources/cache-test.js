@@ -78,6 +78,14 @@ function loadResource(test, onload)
     if (test.fragment)
         test.url = addFragmentToURL(test.url);
 
+    if (test.method == "fetch") {
+        fetch(test.url, test.requestHeaders).then((result) => {
+            test.fetchResult = result;
+            onload();
+        });
+        return;
+    }
+
     test.xhr = new XMLHttpRequest();
     test.xhr.onload = onload;
     test.xhr.onerror = onload;
@@ -120,7 +128,7 @@ function printResults(tests)
             debug("response's 'Expires' header is overriden by future date in 304 response");
         if (test.requestHeaders)
             debug("request headers: " + JSON.stringify(test.requestHeaders));
-        responseSource = internals.xhrResponseSource(test.xhr);
+        responseSource = test.xhr ? internals.xhrResponseSource(test.xhr) : internals.fetchResponseSource(test.fetchResult) + " (fetch)";
         debug("response source: " + responseSource);
         debug("");
     }
