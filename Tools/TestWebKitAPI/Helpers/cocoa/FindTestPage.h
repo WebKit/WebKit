@@ -43,6 +43,7 @@ struct FrameSpec {
     String body { };
     String iframeAttributes { };
     Vector<FrameSpec> children { };
+    String iframeContainerStyle { };
 };
 
 enum class SiteIsolation : bool { Off, On };

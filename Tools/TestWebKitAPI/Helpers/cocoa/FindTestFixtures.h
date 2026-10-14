@@ -75,6 +75,37 @@ inline FrameSpec hiddenChildFrame()
     return { .body = "<p>hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .iframeAttributes = "style='display: none'"_s } } };
 }
 
+inline FrameSpec childFrameInZeroHeightClipper()
+{
+    return { .body = "<p>hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .iframeContainerStyle = "overflow: hidden; height: 0"_s } } };
+}
+
+inline FrameSpec absolutelyPositionedChildFrameInZeroHeightClipper()
+{
+    return { .body = "<p>hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .iframeAttributes = "style='position: absolute'"_s, .iframeContainerStyle = "overflow: hidden; height: 0"_s } } };
+}
+
+inline FrameSpec grandchildOfChildFrameInZeroHeightClipper()
+{
+    return {
+        .body = "<p>hello</p>"_s,
+        .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .children = { { .host = "c.com"_s, .body = "<p>hello</p>"_s } }, .iframeContainerStyle = "overflow: hidden; height: 0"_s } },
+    };
+}
+
+inline FrameSpec zeroSizeChildFrame()
+{
+    return { .body = "<p>hello</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .iframeAttributes = "style='width: 0; height: 0'"_s } } };
+}
+
+inline FrameSpec grandchildOfHiddenChildFrame()
+{
+    return {
+        .body = "<p>hello</p>"_s,
+        .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s, .iframeAttributes = "style='display: none'"_s, .children = { { .host = "c.com"_s, .body = "<p>hello</p>"_s } } } },
+    };
+}
+
 inline FrameSpec matchOnlyInChild()
 {
     return { .body = "<p>nothing here</p>"_s, .children = { { .host = "b.com"_s, .body = "<p>hello</p>"_s } } };

@@ -708,6 +708,9 @@ public:
     void setOwnerHasRendererInParentFrameProcess(bool hasRenderer) { m_ownerHasRendererInParentFrameProcess = hasRenderer; }
     bool ownerHasRendererInParentFrameProcess() const { return m_ownerHasRendererInParentFrameProcess; }
 
+    void setOwnerIsFullyClippedInParentFrameProcess(bool isFullyClipped) { m_ownerIsFullyClippedInParentFrameProcess = isFullyClipped; }
+    bool ownerIsFullyClippedInParentFrameProcess() const { return m_ownerIsFullyClippedInParentFrameProcess; }
+
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
 
@@ -1068,6 +1071,7 @@ private:
 
     bool m_hasSetExposedContentRectFromEmbedder { false };
     bool m_ownerHasRendererInParentFrameProcess { true };
+    bool m_ownerIsFullyClippedInParentFrameProcess { false };
 
     OptionSet<PaintBehavior> m_paintBehavior;
 

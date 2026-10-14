@@ -201,12 +201,47 @@ TEST_P(FindPrivateSPI, HiddenChildFrame)
     FindTestPage page { FindTestFixtures::hiddenChildFrame(), GetParam() };
     PrivateFindSPITester find { page.webView() };
 
-    auto count = find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive);
-    // FIXME(326317): With site isolation, matches inside a display: none cross-origin frame are counted.
-    if (GetParam() == SiteIsolation::On)
-        EXPECT_EQ(count, 2u);
-    else
-        EXPECT_EQ(count, 1u);
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 1u);
+}
+
+TEST_P(FindPrivateSPI, ChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::childFrameInZeroHeightClipper(), GetParam() };
+    PrivateFindSPITester find { page.webView() };
+
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 1u);
+}
+
+TEST_P(FindPrivateSPI, AbsolutelyPositionedChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::absolutelyPositionedChildFrameInZeroHeightClipper(), GetParam() };
+    PrivateFindSPITester find { page.webView() };
+
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 2u);
+}
+
+TEST_P(FindPrivateSPI, GrandchildOfChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfChildFrameInZeroHeightClipper(), GetParam() };
+    PrivateFindSPITester find { page.webView() };
+
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 1u);
+}
+
+TEST_P(FindPrivateSPI, ZeroSizeChildFrame)
+{
+    FindTestPage page { FindTestFixtures::zeroSizeChildFrame(), GetParam() };
+    PrivateFindSPITester find { page.webView() };
+
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 2u);
+}
+
+TEST_P(FindPrivateSPI, GrandchildOfHiddenChildFrame)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfHiddenChildFrame(), GetParam() };
+    PrivateFindSPITester find { page.webView() };
+
+    EXPECT_EQ(find.countStringMatches(@"hello", _WKFindOptionsCaseInsensitive), 1u);
 }
 
 TEST_P(FindPrivateSPI, NestedFrames)

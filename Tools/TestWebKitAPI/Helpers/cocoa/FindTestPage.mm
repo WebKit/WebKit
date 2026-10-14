@@ -48,7 +48,11 @@ static void addFrameSpecRoutes(const FrameSpec& frame, const String& path, HTTPS
     for (size_t i = 0; i < frame.children.size(); ++i) {
         auto& child = frame.children[i];
         auto pathForChild = childPath(path, i);
+        if (!child.iframeContainerStyle.isEmpty())
+            html.append("<div style='"_s, child.iframeContainerStyle, "'>"_s);
         html.append("<iframe src='https://"_s, child.host, pathForChild, "' "_s, child.iframeAttributes, "></iframe>"_s);
+        if (!child.iframeContainerStyle.isEmpty())
+            html.append("</div>"_s);
         addFrameSpecRoutes(child, pathForChild, routes);
     }
     routes.add(path, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, html.toString() });

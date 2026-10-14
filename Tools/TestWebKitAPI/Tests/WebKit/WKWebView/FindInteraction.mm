@@ -182,12 +182,47 @@ TEST_P(FindInteraction, HiddenChildFrame)
     FindTestPage page { FindTestFixtures::hiddenChildFrame(), GetParam() };
     FindInteractionTester find { page.webView() };
 
-    auto count = [find.performTextSearch(@"hello") count];
-    // FIXME(326317): With site isolation, matches inside a display: none cross-origin frame are found.
-    if (GetParam() == SiteIsolation::On)
-        EXPECT_EQ(count, 2u);
-    else
-        EXPECT_EQ(count, 1u);
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 1u);
+}
+
+TEST_P(FindInteraction, ChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::childFrameInZeroHeightClipper(), GetParam() };
+    FindInteractionTester find { page.webView() };
+
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 1u);
+}
+
+TEST_P(FindInteraction, AbsolutelyPositionedChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::absolutelyPositionedChildFrameInZeroHeightClipper(), GetParam() };
+    FindInteractionTester find { page.webView() };
+
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 2u);
+}
+
+TEST_P(FindInteraction, GrandchildOfChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfChildFrameInZeroHeightClipper(), GetParam() };
+    FindInteractionTester find { page.webView() };
+
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 1u);
+}
+
+TEST_P(FindInteraction, ZeroSizeChildFrame)
+{
+    FindTestPage page { FindTestFixtures::zeroSizeChildFrame(), GetParam() };
+    FindInteractionTester find { page.webView() };
+
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 2u);
+}
+
+TEST_P(FindInteraction, GrandchildOfHiddenChildFrame)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfHiddenChildFrame(), GetParam() };
+    FindInteractionTester find { page.webView() };
+
+    EXPECT_EQ([find.performTextSearch(@"hello") count], 1u);
 }
 
 TEST_P(FindInteraction, ShadowDOM)

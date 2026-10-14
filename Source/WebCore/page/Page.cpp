@@ -2460,6 +2460,9 @@ void Page::syncLocalFrameInfoToRemote()
             }();
 #endif
 
+            RefPtr owner = child->ownerElement();
+            bool ownerIsFullyClipped = owner && isFrameOwnerFullyClipped(*owner, findIteratorOptions());
+
             childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
                 visibleRectInParent,
                 onScreenRectInChildView,
@@ -2467,6 +2470,7 @@ void Page::syncLocalFrameInfoToRemote()
                 exposedContentRectInChildView,
 #endif
                 !!child->ownerRenderer(),
+                ownerIsFullyClipped,
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
                 frame.frameScaleFactorForChild(*child),

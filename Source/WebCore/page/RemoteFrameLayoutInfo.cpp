@@ -41,6 +41,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     FloatRect exposedContentRectInChildView,
 #endif
     bool ownerHasRenderer,
+    bool ownerIsFullyClipped,
     TransformationMatrix childFrameOwnerToRootContentTransform,
     TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
     float frameScaleFactor,
@@ -53,6 +54,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     , m_exposedContentRectInChildView(exposedContentRectInChildView)
 #endif
     , m_ownerHasRenderer(ownerHasRenderer)
+    , m_ownerIsFullyClipped(ownerIsFullyClipped)
     , m_childFrameOwnerToRootContentTransform(WTF::move(childFrameOwnerToRootContentTransform))
     , m_absoluteToChildFrameOwnerLocalTransform(WTF::move(absoluteToChildFrameOwnerLocalTransform))
     , m_frameScaleFactor(frameScaleFactor)
@@ -69,6 +71,7 @@ bool operator==(const RemoteFrameLayoutInfo& a, const RemoteFrameLayoutInfo& b)
         && a.m_exposedContentRectInChildView == b.m_exposedContentRectInChildView
 #endif
         && a.m_ownerHasRenderer == b.m_ownerHasRenderer
+        && a.m_ownerIsFullyClipped == b.m_ownerIsFullyClipped
         && a.m_childFrameOwnerToRootContentTransform == b.m_childFrameOwnerToRootContentTransform
         && a.m_absoluteToChildFrameOwnerLocalTransform == b.m_absoluteToChildFrameOwnerLocalTransform
         && a.m_frameScaleFactor == b.m_frameScaleFactor
@@ -99,6 +102,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const RemoteFrameLayoutInfo& in
     ts.dumpProperty("exposedContentRectInChildView"_s, info.exposedContentRectInChildView());
 #endif
     ts.dumpProperty("ownerHasRenderer"_s, info.ownerHasRenderer());
+    ts.dumpProperty("ownerIsFullyClipped"_s, info.ownerIsFullyClipped());
     ts.dumpProperty("childFrameOwnerToRootContentTransform"_s, info.childFrameOwnerToRootContentTransform());
     ts.dumpProperty("absoluteToChildFrameOwnerLocalTransform"_s, info.absoluteToChildFrameOwnerLocalTransform());
     ts.dumpProperty("frameScaleFactor"_s, info.frameScaleFactor());

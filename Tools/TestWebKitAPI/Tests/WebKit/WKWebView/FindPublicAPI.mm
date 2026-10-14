@@ -129,9 +129,57 @@ TEST_P(FindPublicAPI, HiddenChildFrame)
 
     EXPECT_TRUE(find.findString(@"hello"));
     EXPECT_TRUE(find.findString(@"hello"));
-    // FIXME(326317): With site isolation, find selects a match inside a display: none cross-origin frame.
-    Vector<unsigned> expectedFrame = GetParam() == SiteIsolation::On ? Vector<unsigned> { 0 } : Vector<unsigned> { };
-    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { expectedFrame });
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { } });
+}
+
+TEST_P(FindPublicAPI, ChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::childFrameInZeroHeightClipper(), GetParam() };
+    PublicFindAPITester find { page.webView() };
+
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { } });
+}
+
+TEST_P(FindPublicAPI, AbsolutelyPositionedChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::absolutelyPositionedChildFrameInZeroHeightClipper(), GetParam() };
+    PublicFindAPITester find { page.webView() };
+
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { 0 } });
+}
+
+TEST_P(FindPublicAPI, GrandchildOfChildFrameInZeroHeightClipper)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfChildFrameInZeroHeightClipper(), GetParam() };
+    PublicFindAPITester find { page.webView() };
+
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { } });
+}
+
+TEST_P(FindPublicAPI, ZeroSizeChildFrame)
+{
+    FindTestPage page { FindTestFixtures::zeroSizeChildFrame(), GetParam() };
+    PublicFindAPITester find { page.webView() };
+
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { 0 } });
+}
+
+TEST_P(FindPublicAPI, GrandchildOfHiddenChildFrame)
+{
+    FindTestPage page { FindTestFixtures::grandchildOfHiddenChildFrame(), GetParam() };
+    PublicFindAPITester find { page.webView() };
+
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_TRUE(find.findString(@"hello"));
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { } });
 }
 
 TEST_P(FindPublicAPI, ShadowDOM)
@@ -187,7 +235,7 @@ TEST_P(FindPublicAPI, ChildFrameRemovedBetweenSteps)
     EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { 0 } });
     [page.webView() objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
     EXPECT_TRUE(find.findString(@"hello"));
-    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { { } });
+    EXPECT_EQ(FindStateSnapshot::capture(page.webView()).framesWithSelection(), Vector<Vector<unsigned>> { Vector<unsigned> { } });
 }
 
 TEST_P(FindPublicAPI, StepIntoCaptionCueInCrossOriginFrame)

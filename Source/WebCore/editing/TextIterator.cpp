@@ -56,6 +56,7 @@
 #include "ImageOverlay.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBoxInlines.h"
@@ -264,16 +265,19 @@ static void setUpFullyClippedStack(BitStack& stack, Node& node, TextIteratorBeha
 
 static bool isClippedByFrameAncestor(const Document& document, TextIteratorBehaviors behaviors)
 {
-    if (!behaviors.contains(TextIteratorBehavior::ClipsToFrameAncestors))
-        return false;
+    if (RefPtr owner = document.ownerElement())
+        return isFrameOwnerFullyClipped(*owner, behaviors);
 
-    for (RefPtr owner = document.ownerElement(); owner; owner = owner->document().ownerElement()) {
-        BitStack ownerClipStack;
-        setUpFullyClippedStack(ownerClipStack, *owner, behaviors);
-        if (ownerClipStack.top())
-            return true;
-    }
-    return false;
+    // With site isolation, the owner of a root frame is in another process.
+    RefPtr view = document.view();
+    return view && view->ownerIsFullyClippedInParentFrameProcess();
+}
+
+bool isFrameOwnerFullyClipped(HTMLFrameOwnerElement& owner, TextIteratorBehaviors behaviors)
+{
+    BitStack ownerClipStack;
+    setUpFullyClippedStack(ownerClipStack, owner, behaviors);
+    return ownerClipStack.top() || isClippedByFrameAncestor(protect(owner.document()), behaviors);
 }
 
 // FIXME: editingIgnoresContent and isRendererReplacedElement try to do the same job.
@@ -388,7 +392,7 @@ TextIterator::TextIterator(const SimpleRange& range, TextIteratorBehaviors behav
 void TextIterator::init()
 {
     RefPtr currentNode = m_currentNode;
-    if (isClippedByFrameAncestor(protect(currentNode->document()), m_behaviors))
+    if (m_behaviors.contains(TextIteratorBehavior::ClipsToFrameAncestors) && isClippedByFrameAncestor(protect(currentNode->document()), m_behaviors))
         return;
 
     setUpFullyClippedStack(m_fullyClippedStack, *currentNode, m_behaviors);
