@@ -20,10 +20,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import ntpath
 import posixpath
 import unittest
 from collections import OrderedDict
+from unittest import mock
 
 from pyfakefs.fake_filesystem import OSType
 
@@ -34,9 +36,11 @@ from webkitpy.common.system.fakefs_testcase import (
     PyFakefsWindowsTestCaseMixin,
 )
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.layout_tests.controllers import layout_test_finder
 from webkitpy.layout_tests.controllers.layout_test_finder import (
     LayoutTestFinder,
 )
+from webkitpy.layout_tests.models.server_routing import ServerRoute, ServerType
 from webkitpy.layout_tests.models.test import Reference, test_name_and_variant
 from webkitpy.port.test import (
     TestPort,
@@ -278,4 +282,738 @@ class LayoutTestFinderWindowsTests(PyFakefsWindowsTestCaseMixin, LayoutTestFinde
 
 
 class LayoutTestFinderMacOSTests(PyFakefsMacOSTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):
+    pass
+
+
+class WptTestsForPathTestsBase(object):
+    """Tests for _wpt_tests_for_path dispatch on item_type."""
+
+    WPT_PREFIX = "imported/w3c/web-platform-tests"
+    WPT_URL_BASE = "/"
+
+    def setUp(self):
+        self.setUpPyfakefs()
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        self.port = TestPort(host)
+        self.filesystem = self.port.host.filesystem
+        self.layout_tests_dir = self.port.layout_tests_dir()
+        self.test_routes = [
+            ServerRoute(self.WPT_PREFIX, self.WPT_URL_BASE, ServerType.WPT),
+        ]
+        self.finder = LayoutTestFinder(
+            self.filesystem,
+            self.layout_tests_dir,
+            self.port.baseline_search_path(),
+            test_routes=self.test_routes,
+        )
+
+    def tearDown(self):
+        self.port = None
+        self.finder = None
+        self.filesystem = None
+
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self.filesystem.sep, expected_sep)
+
+    def _write_wpt_file(self, rel_path, contents):
+        """Write a file under the WPT prefix, return its absolute path."""
+        # WPT_PREFIX and rel_path use "/", so normalise to the host separator
+        # to match the paths the finder reports.
+        abs_path = self.filesystem.normpath(self.filesystem.join(self.layout_tests_dir, self.WPT_PREFIX, rel_path))
+        self.filesystem.maybe_make_directory(self.filesystem.dirname(abs_path))
+        self.filesystem.write_text_file(abs_path, contents)
+        return abs_path
+
+    def _write_stub(self, rel_path):
+        """Write the comment-only stub the WPT importer emits for a generated variant."""
+        return self._write_wpt_file(
+            rel_path,
+            "<!-- This file is required for WebKit test infrastructure to run the templated test -->\n",
+        )
+
+    def _get_wpt_tests(self, rel_path, variants=None):
+        """Run _wpt_tests_for_path for a file under the WPT prefix."""
+        parts = rel_path.rsplit("/", 1)
+        if len(parts) == 2:
+            dirname = self.WPT_PREFIX + "/" + parts[0]
+            basename = parts[1]
+        else:
+            dirname = self.WPT_PREFIX
+            basename = parts[0]
+        from collections import OrderedDict
+        non_test_files = OrderedDict()
+        layout_dir = self.filesystem.join(self.layout_tests_dir, dirname)
+        files = set()
+        if self.filesystem.isdir(layout_dir):
+            for entry in self.filesystem.scandir(layout_dir):
+                if entry.is_file():
+                    files.add(entry.name)
+        non_test_files[layout_dir] = files
+        return list(self.finder._wpt_tests_for_path(dirname, basename, variants, non_test_files))
+
+    # -----------------------------------------------------------------------
+    # Test: jsshell variant is skipped
+    # -----------------------------------------------------------------------
+    def test_any_js_jsshell_variant_skipped(self):
+        """TestharnessTest with jsshell=True must not yield a Test."""
+        # An .any.js declaring global=window,jsshell produces two items:
+        # one for the .any.html window variant, and one for jsshell (.any.js URL).
+        self._write_wpt_file("blob/Blob-bytes.any.js", "// META: global=window,jsshell\ntest(() => {}, 'blob');\n")
+
+        # Without a stub, neither is discovered.
+        self.assertEqual(self._get_wpt_tests("blob/Blob-bytes.any.js"), [])
+
+        # With the .any.html stub, only the window variant is: the jsshell URL
+        # is the .any.js source itself and must not appear.
+        self._write_stub("blob/Blob-bytes.any.html")
+        self.assertEqual(
+            [t.test_path for t in self._get_wpt_tests("blob/Blob-bytes.any.js")],
+            [self.WPT_PREFIX + "/blob/Blob-bytes.any.html"],
+        )
+
+    # -----------------------------------------------------------------------
+    # Test: manual item type yields nothing
+    # -----------------------------------------------------------------------
+    def test_manual_file_yields_nothing(self):
+        """-manual.window.js files produce a 'manual' item_type — yield nothing."""
+        self._write_wpt_file("foo/test-manual.window.js", "// META: global=window\ntest(() => {}, 'manual');\n")
+        tests = self._get_wpt_tests("foo/test-manual.window.js")
+        self.assertEqual(tests, [])
+
+    # -----------------------------------------------------------------------
+    # Test: HTML support file → no Test yielded and no warning
+    # -----------------------------------------------------------------------
+    def test_html_support_file_yields_nothing(self):
+        """Pure HTML support file under WPT root: no Test yielded, and nothing
+        is logged (asymmetric with non-WPT silent-skip otherwise)."""
+        self._write_wpt_file("foo/helper.html", "<html><body>helper</body></html>\n")
+        logger = logging.getLogger("webkitpy.layout_tests.controllers.layout_test_finder")
+        # assertNoLogs needs Python 3.10; log a sentinel so assertLogs
+        # doesn't fail on an empty log, and check it is the only record.
+        with self.assertLogs(logger, level=logging.WARNING) as cm:
+            logger.warning("sentinel")
+            tests = self._get_wpt_tests("foo/helper.html")
+        self.assertEqual(tests, [])
+        self.assertEqual(len(cm.output), 1, cm.output)
+
+    # -----------------------------------------------------------------------
+    # Test: .any.js produces expected .any.html and .any.worker.html Tests
+    # -----------------------------------------------------------------------
+    def test_any_js_produces_html_and_worker_variants(self):
+        """A basic .any.js (global=window,worker) yields the variants that have
+        an on-disk stub, and only those."""
+        self._write_wpt_file("foo/basic.any.js", "// META: global=window,worker\ntest(() => {}, 'pass');\n")
+
+        # Without stubs, no variant is discovered.
+        self.assertEqual(self._get_wpt_tests("foo/basic.any.js"), [])
+
+        # global=window,worker generates .any.html, .any.worker.html,
+        # .any.sharedworker.html and .any.serviceworker.html; only the first two
+        # have a stub.
+        self._write_stub("foo/basic.any.html")
+        self._write_stub("foo/basic.any.worker.html")
+        tests = self._get_wpt_tests("foo/basic.any.js")
+        self.assertEqual(
+            sorted(t.test_path for t in tests),
+            [self.WPT_PREFIX + "/foo/basic.any.html", self.WPT_PREFIX + "/foo/basic.any.worker.html"],
+        )
+        for t in tests:
+            self.assertEqual(t.served_by, ServerType.WPT)
+
+    # -----------------------------------------------------------------------
+    # Test: variant with spaces is percent-encoded in test_path
+    # -----------------------------------------------------------------------
+    def test_window_js_variant_with_spaces_is_percent_encoded(self):
+        """A .window.js with '// META: variant=?foo bar' must yield a Test
+        whose test_path ends with '?foo%20bar' (percent-encoded), and the
+        baseline lookup must resolve to the canonical '…_foo_20bar-expected.txt'
+        on-disk filename.
+        """
+        self._write_wpt_file(
+            "foo/test.window.js",
+            "// META: variant=?foo bar\ntest(() => {}, 'pass');\n",
+        )
+        stub = self._write_stub("foo/test.window.html")
+
+        # The canonical on-disk form: space → %20 via _percent_encoded_variant,
+        # then % → _ via sanitized_variant. So "?foo bar" → "?foo%20bar" →
+        # "foo_20bar" → "test.window_foo_20bar-expected.txt".
+        baseline_filename = "test.window_foo_20bar-expected.txt"
+        baseline_path = self._write_wpt_file("foo/" + baseline_filename, "PASS\n")
+
+        (t,) = self._get_wpt_tests("foo/test.window.js")
+        self.assertEqual(t.test_path, self.WPT_PREFIX + "/foo/test.window.html?foo%20bar")
+        self.assertIsNotNone(t.expected_text_path)
+        self.assertEqual(t.expected_text_path, baseline_path)
+
+        # Without the stub the variant is not discovered at all.
+        self.filesystem.remove(stub)
+        self.assertEqual(self._get_wpt_tests("foo/test.window.js"), [])
+
+    def test_baseline_paths_use_a_single_separator(self):
+        # The baseline name carries the "/" of the WPT test path, but the path
+        # reported to callers must be normalised to the host separator.
+        self._write_wpt_file("foo/t.html", '<script src="/resources/testharness.js"></script>\n')
+        baseline = self._write_wpt_file("foo/t-expected.txt", "PASS\n")
+        (test,) = self._get_wpt_tests("foo/t.html")
+        # Compare the whole path, not its basename: os.path.basename doesn't split on
+        # backslashes under pyfakefs's Windows emulation (https://github.com/pytest-dev/pyfakefs/issues/1348).
+        self.assertEqual(test.expected_text_path, baseline)
+
+    def test_reftest_fuzzy_keyed_by_relative_path(self):
+        """Fuzzy dict keys must be relative-to-test-dir strings, not abs paths."""
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<html><head>'
+            '<link rel=match href="some-ref.html">'
+            '<meta name="fuzzy" content="some-ref.html:0-5;0-100">'
+            '</head></html>\n'
+        )
+        # Create the reference file so it resolves on disk
+        self._write_wpt_file("foo/some-ref.html", "<html><body>ref</body></html>\n")
+
+        tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(len(tests), 1)
+        t = tests[0]
+        self.assertIsNotNone(t.fuzzy)
+        # The key must be the relative path from the test's directory.
+        # (A later change in this series keys by absolute reference path
+        # instead, and rewrites this test accordingly.)
+        self.assertIn("some-ref.html", t.fuzzy,
+                      f"Expected 'some-ref.html' key in fuzzy dict, got: {list(t.fuzzy.keys())}")
+        # Must NOT be an absolute path key
+        abs_keys = [k for k in t.fuzzy if k is not None and k.startswith("/")]
+        self.assertEqual(abs_keys, [], f"Found absolute path key(s) in fuzzy dict: {abs_keys}")
+
+    def test_reftest_reference_keeps_its_query(self):
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<link rel=match href="some-ref.html?a=b&c#frag"><meta name=fuzzy content="some-ref.html?a=b&c#frag:0-5;0-100">\n',
+        )
+        ref_path = self._write_wpt_file("foo/some-ref.html", "<html></html>\n")
+        (test,) = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(self._reference_pairs(test), [("==", ref_path + "?a=b&c#frag")])
+        # The key is relative or absolute, depending on how fuzzy is keyed; it
+        # names the reference with its query either way.
+        (key,) = test.fuzzy
+        self.assertTrue(key.endswith("some-ref.html?a=b&c#frag"), key)
+        self.assertEqual(test.fuzzy[key], [[0, 5], [0, 100]])
+
+    def test_reftest_with_a_missing_reference_with_a_query_warns_without_the_query(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="missing-ref.html?a=b">\n')
+        with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+            tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(tests, [])
+        self.assertEqual(len(cm.output), 1, cm.output)
+        self.assertIn("missing-ref.html", cm.output[0])
+        self.assertNotIn("?a=b", cm.output[0])
+
+    def test_reftest_prefers_sibling_over_manifest_ref(self):
+        """When a reftest's manifest ref AND an imported `<stem>-expected.<ext>`
+        sibling both exist on disk, the sibling must win — the WebKit WPT
+        importer hand-tweaks the imported sibling for WebKit-specific
+        rendering quirks, so TestExpectations is calibrated against the
+        sibling, not the upstream manifest ref."""
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<html><head>'
+            '<link rel=match href="upstream-ref.html">'
+            '</head></html>\n'
+        )
+        # Manifest target — resolves on disk
+        self._write_wpt_file("foo/upstream-ref.html", "<html><body>upstream</body></html>\n")
+        # Imported sibling — what TestExpectations is calibrated against
+        self._write_wpt_file("foo/reftest-expected.html", "<html><body>imported</body></html>\n")
+
+        tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(len(tests), 1)
+        t = tests[0]
+        self.assertIsNotNone(t.reference_files)
+        ref_paths = [ref.path for ref in t.reference_files]
+        # Sibling must win
+        self.assertTrue(
+            any(p.endswith("reftest-expected.html") for p in ref_paths),
+            f"Expected sibling reftest-expected.html in references, got: {ref_paths}",
+        )
+        # Manifest ref must NOT appear
+        self.assertFalse(
+            any(p.endswith("upstream-ref.html") for p in ref_paths),
+            f"Manifest ref upstream-ref.html should be overridden by sibling, got: {ref_paths}",
+        )
+
+    # -----------------------------------------------------------------------
+    # Tests for union-match in _process_directory
+    # -----------------------------------------------------------------------
+    def test_process_directory_matches_generated_any_worker_html(self):
+        """Path-spec naming a generated WPT variant (foo.any.worker.html)
+        yields that variant's Test when its stub is on disk, and nothing when
+        only foo.any.js exists. Exercises branch 2 of the union match in
+        _process_directory's inner loop.
+        """
+        self._write_wpt_file(
+            "foo/foo.any.js",
+            "// META: global=window,worker\ntest(() => {}, 'pass');\n",
+        )
+        dirname = self.WPT_PREFIX + "/foo"
+        fnfilter = [("foo.any.worker.html", "")]
+
+        self.assertEqual(list(self.finder._process_directory(dirname, fnfilter=fnfilter)), [])
+
+        self._write_stub("foo/foo.any.worker.html")
+        self.assertEqual(
+            [t.test_path for t in self.finder._process_directory(dirname, fnfilter=fnfilter)],
+            [self.WPT_PREFIX + "/foo/foo.any.worker.html"],
+        )
+
+    # -----------------------------------------------------------------------
+    # Exception narrowing around SourceFile.manifest_items()
+    # -----------------------------------------------------------------------
+    def test_manifest_items_value_error_is_skipped(self):
+        """SourceFile.manifest_items() raising ValueError (malformed fuzzy,
+        malformed reference keys, print reftests without refs, etc.) is
+        treated as 'skip this file', not a discovery-aborting failure."""
+        self._write_wpt_file("foo/malformed.html", "<html></html>\n")
+        with mock.patch.object(
+            layout_test_finder.SourceFile, "manifest_items", side_effect=ValueError("bad fuzzy value")
+        ):
+            tests = self._get_wpt_tests("foo/malformed.html")
+        self.assertEqual(tests, [])
+
+    def test_manifest_items_other_exception_propagates(self):
+        """A non-ValueError from SourceFile.manifest_items() must propagate,
+        rather than being silently swallowed like the old `except Exception`."""
+        self._write_wpt_file("foo/broken.html", "<html></html>\n")
+        with mock.patch.object(
+            layout_test_finder.SourceFile, "manifest_items", side_effect=RuntimeError("boom")
+        ):
+            with self.assertRaises(RuntimeError):
+                self._get_wpt_tests("foo/broken.html")
+
+    def test_malformed_wpt_files_are_skipped_with_a_warning(self):
+        """One real file per `raise ValueError` site in SourceFile; none is mocked."""
+        ref = '<link rel=match href="ref.html">'
+        for description, rel_path, head in (
+            ("fuzzy key is not a reference", "foo/a.html", ref + '<meta name=fuzzy content="other-ref.html:0-1;0-1">'),
+            ("malformed fuzzy value", "foo/b.html", ref + '<meta name=fuzzy content="1">'),
+            ("invalid fuzzy property", "foo/c.html", ref + '<meta name=fuzzy content="foo=1;2">'),
+            ("duplicate fuzzy property", "foo/d.html", ref + '<meta name=fuzzy content="maxDifference=1;maxDifference=2">'),
+            ("non-integer fuzzy range", "foo/e.html", ref + '<meta name=fuzzy content="a;1">'),
+            (
+                "duplicate page-ranges",
+                "print/f.html",
+                ref + '<meta name=reftest-pages content="1"><meta name=reftest-pages content="2">',
+            ),
+            ("malformed page-range", "print/g.html", ref + '<meta name=reftest-pages content="a-b">'),
+            ("zero page-range", "print/h.html", ref + '<meta name=reftest-pages content="0-1">'),
+            ("single non-integer page-range", "print/i.html", ref + '<meta name=reftest-pages content="x">'),
+            ("print reftest without references", "print/j.html", ""),
+        ):
+            with self.subTest(description):
+                self._write_wpt_file(rel_path, "<html><head>%s</head></html>\n" % head)
+                self._write_wpt_file(rel_path.rsplit("/", 1)[0] + "/ref.html", "<html></html>\n")
+                with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+                    tests = self._get_wpt_tests(rel_path)
+                self.assertEqual(tests, [])
+                self.assertTrue(
+                    any("Skipping WPT file" in msg and rel_path in msg for msg in cm.output),
+                    "Expected a warning naming %s, got: %s" % (rel_path, cm.output),
+                )
+
+    def test_unreadable_file_falls_back_to_sourcefile_read(self):
+        self._write_wpt_file("foo/plain.html", '<script src="/resources/testharness.js"></script>\n')
+        for error in (IOError("gone"), UnicodeDecodeError("utf-8", b"\xff", 0, 1, "invalid start byte")):
+            with self.subTest(type(error).__name__):
+                with mock.patch.object(self.filesystem, "read_binary_file", side_effect=error):
+                    tests = self._get_wpt_tests("foo/plain.html")
+                self.assertEqual([t.test_path for t in tests], [self.WPT_PREFIX + "/foo/plain.html"])
+
+    def test_only_requested_variants_are_returned(self):
+        self._write_wpt_file(
+            "foo/test.window.js",
+            "// META: variant=?a\n// META: variant=?b\n// META: variant=?c\ntest(() => {}, 'pass');\n",
+        )
+        self._write_stub("foo/test.window.html")
+        self.assertEqual(
+            [t.test_path for t in self._get_wpt_tests("foo/test.window.js")],
+            [self.WPT_PREFIX + "/foo/test.window.html" + v for v in ("?a", "?b", "?c")],
+        )
+        self.assertEqual(
+            [t.test_path for t in self._get_wpt_tests("foo/test.window.js", variants=["?b"])],
+            [self.WPT_PREFIX + "/foo/test.window.html?b"],
+        )
+        self.assertEqual(self._get_wpt_tests("foo/test.window.js", variants=["?zzz"]), [])
+
+    def test_reftest_uses_manifest_reference_when_there_is_no_sibling(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="manifest-ref.html">\n')
+        ref_path = self._write_wpt_file("foo/manifest-ref.html", "<html></html>\n")
+        (test,) = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual([(r.relation, r.path) for r in test.reference_files], [("==", ref_path)])
+
+    def test_reftest_with_missing_manifest_reference_and_no_sibling_is_not_run(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="missing-ref.html">\n')
+        with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+            tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(tests, [])
+        self.assertTrue(
+            any("manifest reference(s) missing" in msg and "missing-ref.html" in msg for msg in cm.output),
+            cm.output,
+        )
+
+    def test_reftest_with_some_missing_manifest_references_is_not_run(self):
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<link rel=match href="present-ref.html"><link rel=mismatch href="missing-ref.html">\n',
+        )
+        self._write_wpt_file("foo/present-ref.html", "<html></html>\n")
+        with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+            tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(tests, [])
+        self.assertTrue(
+            any("missing-ref.html" in msg and "present-ref.html" not in msg for msg in cm.output),
+            cm.output,
+        )
+
+    def _reference_pairs(self, test):
+        return [(r.relation, self.filesystem.normpath(r.path)) for r in test.reference_files]
+
+    def _write_blank(self):
+        return self._write_wpt_file("common/blank.html", "")
+
+    def test_reftest_against_about_blank_is_mapped_to_common_blank(self):
+        blank = self._write_blank()
+        for href in ("about:blank", "ABOUT:blank"):
+            for rel, relation in (("match", "=="), ("mismatch", "!=")):
+                with self.subTest(href=href, rel=rel):
+                    self._write_wpt_file("foo/reftest.html", '<link rel=%s href="%s">\n' % (rel, href))
+                    self._write_wpt_file("foo/reftest-expected.txt", "dead text baseline\n")
+                    with mock.patch.object(layout_test_finder._log, "warning") as warning:
+                        (test,) = self._get_wpt_tests("foo/reftest.html")
+                    warning.assert_not_called()
+                    self.assertEqual(self._reference_pairs(test), [(relation, self.filesystem.normpath(blank))])
+                    self.assertIsNone(test.expected_text_path)
+
+    def test_reftest_against_about_blank_prefers_an_imported_sibling(self):
+        self._write_blank()
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="about:blank">\n')
+        sibling = self._write_wpt_file("foo/reftest-expected.html", "")
+        (test,) = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(self._reference_pairs(test), [("==", self.filesystem.normpath(sibling))])
+
+    def test_reftest_against_about_blank_without_blank_on_disk_is_not_run(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="about:blank">\n')
+        with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+            tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(tests, [])
+        self.assertEqual(len(cm.output), 1, cm.output)
+        self.assertIn("common/blank.html", cm.output[0].replace(self.filesystem.sep, "/"))
+
+    def test_reftest_against_about_blank_without_a_root_route_is_not_run(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="about:blank">\n')
+        self.finder = LayoutTestFinder(
+            self.filesystem,
+            self.layout_tests_dir,
+            self.port.baseline_search_path(),
+            test_routes=[ServerRoute(self.WPT_PREFIX, "/WebKit/", ServerType.WPT)],
+        )
+        with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+            tests = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(tests, [])
+        self.assertEqual(len(cm.output), 1, cm.output)
+        self.assertIn("about:blank", cm.output[0])
+
+    def test_reftest_against_about_blank_under_another_route_uses_the_root_blank(self):
+        blank = self._write_blank()
+        abs_path = self.filesystem.join(self.layout_tests_dir, "http/wpt/foo/reftest.html")
+        self.filesystem.maybe_make_directory(self.filesystem.dirname(abs_path))
+        self.filesystem.write_text_file(abs_path, '<link rel=match href="about:blank">\n')
+        finder = LayoutTestFinder(
+            self.filesystem,
+            self.layout_tests_dir,
+            self.port.baseline_search_path(),
+            test_routes=self.test_routes + [ServerRoute("http/wpt", "/WebKit/", ServerType.WPT)],
+        )
+        non_test_files = OrderedDict([(self.filesystem.dirname(abs_path), {"reftest.html"})])
+        (test,) = finder._wpt_tests_for_path("http/wpt/foo", "reftest.html", None, non_test_files)
+        self.assertEqual(self._reference_pairs(test), [("==", self.filesystem.normpath(blank))])
+
+    def test_reftest_with_an_unusable_reference_is_not_run(self):
+        for href in ("http://example.org/ref.html", "//other.example/ref.html", "data:text/html,"):
+            with self.subTest(href):
+                self._write_wpt_file(
+                    "foo/reftest.html",
+                    '<link rel=match href="present-ref.html"><link rel=mismatch href="%s">\n' % href,
+                )
+                self._write_wpt_file("foo/present-ref.html", "<html></html>\n")
+                self._write_wpt_file("foo/reftest-expected.txt", "dead text baseline\n")
+                with self.assertLogs("webkitpy.layout_tests.controllers.layout_test_finder", level=logging.WARNING) as cm:
+                    tests = self._get_wpt_tests("foo/reftest.html")
+                self.assertEqual(tests, [])
+                self.assertEqual(len(cm.output), 1, cm.output)
+                self.assertIn(href, cm.output[0])
+                self.assertIn("foo/reftest.html", cm.output[0])
+
+    def test_reftest_with_an_unusable_reference_uses_an_imported_sibling(self):
+        self._write_wpt_file("foo/reftest.html", '<link rel=match href="http://example.org/ref.html">\n')
+        sibling = self._write_wpt_file("foo/reftest-expected.html", "<html></html>\n")
+        with mock.patch.object(layout_test_finder._log, "warning") as warning:
+            (test,) = self._get_wpt_tests("foo/reftest.html")
+        warning.assert_not_called()
+        self.assertEqual(self._reference_pairs(test), [("==", self.filesystem.normpath(sibling))])
+
+    def test_reftest_fuzzy_about_blank_is_keyed_by_the_blank_path(self):
+        self._write_blank()
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<link rel=match href="about:blank"><meta name=fuzzy content="about:blank:0-5;0-100">\n',
+        )
+        (test,) = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(test.fuzzy, {"../common/blank.html": [[0, 5], [0, 100]]})
+
+    def test_reftest_reference_in_another_directory(self):
+        self._write_wpt_file("css/foo/bar/reftest.html", '<link rel=match href="../../common/ref.html">\n')
+        ref_path = self._write_wpt_file("css/common/ref.html", "<html></html>\n")
+        (test,) = self._get_wpt_tests("css/foo/bar/reftest.html")
+        self.assertEqual(self._reference_pairs(test), [("==", self.filesystem.normpath(ref_path))])
+
+    def test_url_base_other_than_root(self):
+        finder = LayoutTestFinder(
+            self.filesystem,
+            self.layout_tests_dir,
+            self.port.baseline_search_path(),
+            test_routes=[ServerRoute("http/wpt", "/WebKit/", ServerType.WPT)],
+        )
+        abs_path = self.filesystem.join(self.layout_tests_dir, "http/wpt/foo/bar.html")
+        self.filesystem.maybe_make_directory(self.filesystem.dirname(abs_path))
+        self.filesystem.write_text_file(abs_path, '<script src="/resources/testharness.js"></script>\n')
+        tests = list(finder.get_tests(["http/wpt/foo"]))
+        self.assertEqual([t.test_path for t in tests], ["http/wpt/foo/bar.html"])
+        self.assertEqual(tests[0].served_by, ServerType.WPT)
+
+        self.assertEqual(finder._wpt_url_to_test_path("/WebKit/foo/bar.html?x", "http/wpt", "/WebKit/"), "http/wpt/foo/bar.html?x")
+        # A "?" inside a fragment doesn't start the query.
+        self.assertEqual(finder._wpt_url_to_test_path("/WebKit/foo.html#a b?c", "http/wpt", "/WebKit/"), "http/wpt/foo.html#a%20b?c")
+        self.assertIsNone(finder._wpt_url_to_test_path("/other/foo/bar.html", "http/wpt", "/WebKit/"))
+        self.assertIsNone(finder._wpt_url_to_test_path("relative/bar.html", "http/wpt", "/WebKit/"))
+
+    def test_discovery_through_tests_for_path_dispatches_on_wpt_route(self):
+        self._write_wpt_file("foo/basic.any.js", "// META: global=window,worker\ntest(() => {}, 'pass');\n")
+        for suffix in (".html", ".serviceworker.html", ".sharedworker.html", ".worker.html"):
+            self._write_stub("foo/basic.any" + suffix)
+        dirname = self.WPT_PREFIX + "/foo"
+        tests = list(self.finder._tests_for_path(dirname, "basic.any.js", None, OrderedDict()))
+        self.assertEqual(
+            sorted(t.test_path for t in tests),
+            [
+                self.WPT_PREFIX + "/foo/basic.any" + suffix
+                for suffix in (".html", ".serviceworker.html", ".sharedworker.html", ".worker.html")
+            ],
+        )
+        for t in tests:
+            self.assertEqual(t.served_by, ServerType.WPT)
+
+    def test_process_directory_branch1_unencoded_variant_matches(self):
+        """Branch-1 encoding mismatch, fixed: _split_glob yields the user's
+        variant unencoded (`?foo bar`), but _process_directory now encodes it
+        before passing it down as wanted_variants, matching the encoded
+        `?foo%20bar` that _wpt_tests_for_path compares against.
+        """
+        self._write_wpt_file(
+            "foo/test.window.js",
+            "// META: variant=?foo bar\ntest(() => {}, 'pass');\n",
+        )
+        self._write_stub("foo/test.window.html")
+        # path-spec matches test.window.js on disk (branch 1), variant "?foo bar"
+        dirname = self.WPT_PREFIX + "/foo"
+        fnfilter = [("test.window.js", "?foo bar")]
+        self.assertEqual(
+            [t.test_path for t in self.finder._process_directory(dirname, fnfilter=fnfilter)],
+            [self.WPT_PREFIX + "/foo/test.window.html?foo%20bar"],
+        )
+
+    def test_process_directory_branch2_unencoded_variant_matches(self):
+        """Branch-2 encoding mismatch, fixed: the post-filter now compares
+        the Test's encoded `?foo%20bar` against the user's variant encoded
+        the same way, instead of against the raw unencoded `?foo bar`.
+        """
+        self._write_wpt_file(
+            "foo/test.window.js",
+            "// META: variant=?foo bar\ntest(() => {}, 'pass');\n",
+        )
+        self._write_stub("foo/test.window.html")
+        # path-spec matches the generated test.window.html, not test.window.js
+        # (branch 2 — must dispatch test.window.js and post-filter on generated
+        # test_path basename + variant)
+        dirname = self.WPT_PREFIX + "/foo"
+        fnfilter = [("test.window.html", "?foo bar")]
+        self.assertEqual(
+            [t.test_path for t in self.finder._process_directory(dirname, fnfilter=fnfilter)],
+            [self.WPT_PREFIX + "/foo/test.window.html?foo%20bar"],
+        )
+
+    def _process_window_js_with_variants(self, fnfilter):
+        self._write_wpt_file(
+            "foo/test.window.js",
+            "// META: variant=?a\n// META: variant=?b\ntest(() => {}, 'pass');\n",
+        )
+        self._write_stub("foo/test.window.html")
+        return [
+            t.test_path
+            for t in self.finder._process_directory(self.WPT_PREFIX + "/foo", fnfilter=fnfilter)
+        ]
+
+    def test_process_directory_generated_variant_with_variant_selects_only_that_variant(self):
+        # test.window.html isn't on disk (branch 2), and ?a selects one of
+        # the two generated variants.
+        prefix = self.WPT_PREFIX + "/foo/test.window.html"
+        self.assertEqual(self._process_window_js_with_variants([("test.window.html", "?a")]), [prefix + "?a"])
+        self.assertEqual(self._process_window_js_with_variants([("test.window.html", "?b")]), [prefix + "?b"])
+        self.assertEqual(self._process_window_js_with_variants([("test.window.html", "?zzz")]), [])
+
+    def test_process_directory_generated_variant_without_variant_returns_all_variants(self):
+        prefix = self.WPT_PREFIX + "/foo/test.window.html"
+        self.assertEqual(
+            self._process_window_js_with_variants([("test.window.html", "")]),
+            [prefix + "?a", prefix + "?b"],
+        )
+
+    def test_process_directory_source_file_with_variant_selects_only_that_variant(self):
+        # test.window.js is on disk (branch 1), and the variant is passed down.
+        prefix = self.WPT_PREFIX + "/foo/test.window.html"
+        self.assertEqual(self._process_window_js_with_variants([("test.window.js", "?b")]), [prefix + "?b"])
+        self.assertEqual(self._process_window_js_with_variants([("test.window.js", "?zzz")]), [])
+
+
+    # -----------------------------------------------------------------------
+    # Warning: on-disk stub for a generated variant classifies as non-support
+    # -----------------------------------------------------------------------
+    def test_generated_variant_stub_non_support_warns(self):
+        """A .any.js source generates a variant whose on-disk stub classifies
+        as `crashtest` (not `support`) — both sides yield a Test for the
+        same URL, so we warn about the duplicate dispatch as we drop the stub.
+        Concrete case: `.any.js` under /crashtests/ with the importer-emitted
+        `.any.html` stub beside it. (Symmetric non-crashtest case verified below
+        is silent.)"""
+        self._write_wpt_file(
+            "IndexedDB/crashtests/create-index.any.js",
+            "// META: global=window,worker\ntest(() => {}, 'pass');\n",
+        )
+        # Importer-emitted stub — HTML inside /crashtests/ classifies as
+        # `crashtest` per SourceFile.
+        self._write_wpt_file(
+            "IndexedDB/crashtests/create-index.any.html",
+            "<!DOCTYPE html>\n<title>crash</title>\n",
+        )
+        with self.assertLogs(
+            "webkitpy.layout_tests.controllers.layout_test_finder",
+            level=logging.WARNING,
+        ) as cm:
+            tests = list(self.finder._process_directory(
+                self.WPT_PREFIX + "/IndexedDB/crashtests", fnfilter=[("*", "")],
+            ))
+        self.assertTrue(tests, "Expected .any.js to yield at least one Test")
+        # Warning must mention both the source and the stub, and the type each
+        # classifies as (the path alone also contains "crashtests").
+        joined = "\n".join(cm.output)
+        self.assertIn("create-index.any.js (as testharness)", joined)
+        self.assertIn("create-index.any.html (as crashtest)", joined)
+        # Only the stub's collision warns, once.
+        self.assertEqual(len(cm.output), 1, cm.output)
+
+    def _write_crashtest_source_and_stubs(self):
+        self._write_wpt_file(
+            "IndexedDB/crashtests/create-index.any.js",
+            "// META: global=window,worker\ntest(() => {}, 'pass');\n",
+        )
+        # Importer-emitted stubs, which classify as `crashtest` under /crashtests/.
+        for variant in ("html", "worker.html"):
+            self._write_wpt_file(
+                "IndexedDB/crashtests/create-index.any." + variant,
+                "<!DOCTYPE html>\n<title>crash</title>\n",
+            )
+
+    def _process_crashtests_directory(self, fnfilter):
+        with self.assertLogs(
+            "webkitpy.layout_tests.controllers.layout_test_finder",
+            level=logging.WARNING,
+        ):
+            return list(self.finder._process_directory(
+                self.WPT_PREFIX + "/IndexedDB/crashtests", fnfilter=fnfilter,
+            ))
+
+    def test_generated_variant_wins_over_crashtest_stub_for_named_variant(self):
+        """Naming create-index.any.worker.html matches both the on-disk crashtest
+        stub and, via the .any.js source, the generated variant. The test must
+        be dispatched once, as the generated testharness test."""
+        self._write_crashtest_source_and_stubs()
+        tests = self._process_crashtests_directory([("create-index.any.worker.html", "")])
+        self.assertEqual(
+            [t.test_path for t in tests],
+            [self.WPT_PREFIX + "/IndexedDB/crashtests/create-index.any.worker.html"],
+        )
+        self.assertFalse(tests[0].is_crash_test)
+        self.assertTrue(tests[0].file_path.endswith("create-index.any.js"))
+
+    def test_generated_variant_wins_over_crashtest_stub_for_whole_directory(self):
+        """Every stub-backed generated variant is dispatched once, and the
+        generated variant wins over the stub."""
+        self._write_crashtest_source_and_stubs()
+        tests = self._process_crashtests_directory([("*", "")])
+        test_paths = [t.test_path for t in tests]
+        self.assertEqual(len(test_paths), len(set(test_paths)), test_paths)
+        self.assertTrue(test_paths)
+        for t in tests:
+            self.assertFalse(t.is_crash_test, t.test_path)
+            self.assertTrue(t.file_path.endswith("create-index.any.js"), t.test_path)
+
+    def test_generated_variant_support_stub_silent(self):
+        """The mirror case: a .any.js OUTSIDE /crashtests/ with an on-disk
+        `.any.html` stub. The stub classifies as `support`, so no dup is
+        possible and the warning must NOT fire."""
+        self._write_wpt_file(
+            "foo/basic.any.js",
+            "// META: global=window,worker\ntest(() => {}, 'pass');\n",
+        )
+        # Non-crashtest importer stub — classifies as `support`.
+        self._write_wpt_file(
+            "foo/basic.any.html",
+            "<!DOCTYPE html>\n<title>basic</title>\n",
+        )
+        logger = logging.getLogger(
+            "webkitpy.layout_tests.controllers.layout_test_finder"
+        )
+        # Suppress "no logs" AssertionError from assertNoLogs (only 3.10+);
+        # instead capture at WARNING+ and assert nothing about the stub
+        # was emitted.
+        with self.assertLogs(logger, level=logging.DEBUG) as cm:
+            logger.debug("sentinel")  # ensure the context has at least one record
+            tests = list(self.finder._process_directory(
+                self.WPT_PREFIX + "/foo", fnfilter=[("*", "")],
+            ))
+        warnings = [r for r in cm.records if r.levelno >= logging.WARNING]
+        stub_warnings = [
+            r for r in warnings if "Duplicate WPT Test dispatch" in r.getMessage()
+        ]
+        self.assertEqual(
+            stub_warnings, [],
+            f"Expected no dup-dispatch warnings, got: "
+            f"{[r.getMessage() for r in stub_warnings]}",
+        )
+        # Sanity: the .any.js produces only the stub-backed variant (.any.html).
+        test_paths = {t.test_path for t in tests}
+        self.assertIn(self.WPT_PREFIX + "/foo/basic.any.html", test_paths)
+        # The .any.worker.html stub does not exist, so it's not discovered.
+        self.assertNotIn(self.WPT_PREFIX + "/foo/basic.any.worker.html", test_paths)
+
+class WptTestsForPathLinuxTests(PyFakefsLinuxTestCaseMixin, WptTestsForPathTestsBase, unittest.TestCase):
+    pass
+
+
+class WptTestsForPathWindowsTests(PyFakefsWindowsTestCaseMixin, WptTestsForPathTestsBase, unittest.TestCase):
+    pass
+
+
+class WptTestsForPathMacOSTests(PyFakefsMacOSTestCaseMixin, WptTestsForPathTestsBase, unittest.TestCase):
     pass

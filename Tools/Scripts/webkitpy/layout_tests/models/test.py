@@ -71,16 +71,18 @@ class Test(object):
 
     Note that this is inherently platform specific, as expectations are platform specific."""
     test_path = attr.ib(type=str, order=_file_path_sort_key)
+    file_path = attr.ib(type=str, order=False)
     expected_text_path = attr.ib(default=None, type=str, order=False)
     expected_image_path = attr.ib(default=None, type=str, order=False)
     expected_audio_path = attr.ib(default=None, type=str, order=False)
     reference_files = attr.ib(default=None, type=list, order=False)
     served_by = attr.ib(default=ServerType.FILE, type=ServerType, order=False)
     is_crash_test = attr.ib(default=False, type=bool, order=False)
+    fuzzy = attr.ib(default=None, eq=False, order=False)
     protocol = attr.ib(default="http", type=str, order=False)  # "http", "https" or "h2"
 
-    @property
-    def file_path(self):
+    @file_path.default
+    def _file_path_factory(self):
         return test_name_and_variant(self.test_path)[0]
 
     @property

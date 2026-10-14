@@ -417,6 +417,13 @@ Bug(test) corner-cases/multiple-failures/failure-timeout.html [ Pass Timeout ]
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
 
+    # 'new.html' is a real WPT test with no baseline (used to test MISSING
+    # results/rebaselining), so it needs testharness.js content for
+    # SourceFile to classify it as a test rather than a support file.
+    filesystem.write_text_file(
+        LAYOUT_TEST_DIR + '/imported/w3c/web-platform-tests/some/new.html',
+        '<script src="/resources/testharness.js"></script>')
+
 
 def add_checkout_information_json_to_mock_filesystem(filesystem):
     if not filesystem.exists(TEST_DIR):

@@ -696,7 +696,12 @@ class SingleTestRunner(object):
         test_path = self._test_input.test.file_path
         test_full_path = self._port.abspath_for_test(test_path)
 
-        fuzzy = self._fuzzy_metadata_for_file(test_full_path)
+        # Prefer fuzzy metadata pre-parsed at discovery time (e.g. by
+        # SourceFile.manifest_items() for WPT tests).
+        test = self._test_input.test
+        fuzzy = getattr(test, "fuzzy", None)
+        if not fuzzy:
+            fuzzy = self._fuzzy_metadata_for_file(test_full_path)
         if not fuzzy:
             return None
 
