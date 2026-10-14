@@ -45,8 +45,8 @@ Vector<double> availableScreenScales()
     if (WKWPE::isUsingWPEPlatformAPI()) {
         GUniquePtr<GList> toplevels(wpe_toplevel_list());
         for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
-            auto* screen = wpe_toplevel_get_screen(WPE_TOPLEVEL(iter->data));
-            screenScales.append(wpe_screen_get_scale(screen));
+            if (auto* screen = wpe_toplevel_get_screen(WPE_TOPLEVEL(iter->data)))
+                screenScales.append(wpe_screen_get_scale(screen));
         }
     }
 #endif
