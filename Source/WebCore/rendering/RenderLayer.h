@@ -1189,8 +1189,12 @@ private:
         HasSeenViewportConstrainedAncestor      = 1 << 1,
         HasSeenAncestorWithOverflowClip         = 1 << 2,
         HasChangedAncestor                      = 1 << 3,
+        SkipsUnconstrainedSubtrees              = 1 << 4,
     };
     void recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayerPositionsAfterScrollFlag> = { });
+#if ASSERT_ENABLED || ENABLE(CONJECTURE_ASSERT)
+    void verifySkippedLayerPositionsAfterDocumentScroll();
+#endif
 
     RenderLayer* enclosingPaginationLayerInSubtree(const RenderLayer* rootLayer, PaginationInclusionMode) const;
 

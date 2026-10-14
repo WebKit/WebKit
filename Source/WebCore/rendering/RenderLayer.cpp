@@ -1597,7 +1597,13 @@ void RenderLayer::updateLayerPositionsAfterDocumentScroll()
     LOG(Scrolling, "RenderLayer::updateLayerPositionsAfterDocumentScroll");
 
     willUpdateLayerPositions();
-    recursiveUpdateLayerPositionsAfterScroll();
+
+    // FIXME(rdar://188839922): Enable for all configs, not just when Site Isolation is enabled.
+    OptionSet<UpdateLayerPositionsAfterScrollFlag> flags;
+    if (renderer().settings().siteIsolationEnabled())
+        flags.add(SkipsUnconstrainedSubtrees);
+
+    recursiveUpdateLayerPositionsAfterScroll(flags);
 }
 
 void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayerPositionsAfterScrollFlag> flags)
@@ -1611,6 +1617,15 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
     // recompute all our positions anyway.
     if (!m_hasVisibleDescendant && !m_hasVisibleContent)
         return;
+
+    // A document scroll moves only fixed and sticky layers and their descendants, so skip subtrees
+    // that contain none of these layers.
+    if (flags.contains(SkipsUnconstrainedSubtrees) && !flags.containsAny({ IsOverflowScroll, HasSeenViewportConstrainedAncestor }) && !isViewportConstrained() && !m_hasViewportConstrainedDescendant) {
+#if LAYER_POSITIONS_ASSERT_ENABLED
+        verifySkippedLayerPositionsAfterDocumentScroll();
+#endif
+        return;
+    }
 
     bool positionChanged = updateLayerPosition();
     if (positionChanged)
@@ -1640,6 +1655,23 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
     if (m_scrollableArea)
         m_scrollableArea->updateMarqueePosition();
 }
+
+#if LAYER_POSITIONS_ASSERT_ENABLED
+void RenderLayer::verifySkippedLayerPositionsAfterDocumentScroll()
+{
+    LAYER_POSITIONS_ASSERT(!isViewportConstrained());
+    LAYER_POSITIONS_ASSERT(!m_hasViewportConstrainedDescendantStatusDirty);
+
+    // recursiveUpdateLayerPositionsAfterScroll() also skips invisible subtrees.
+    if (!m_hasVisibleDescendant && !m_hasVisibleContent)
+        return;
+
+    updateLayerPosition(nullptr, Verify);
+
+    for (auto* child = firstChild(); child; child = child->nextSibling())
+        child->verifySkippedLayerPositionsAfterDocumentScroll();
+}
+#endif
 
 void RenderLayer::updateBlendMode()
 {
