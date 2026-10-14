@@ -1,0 +1,88 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="host" role="group">
+<button id="before">Before</button>
+<iframe id="iframe" role="none" src="../resources/presentational-iframe-nested-middle.html"></iframe>
+<button id="after">After</button>
+</div>
+
+<script>
+var output = "This test ensures that when a presentational (accessibility-ignored) iframe hosts a document that itself contains an iframe, the nested iframe's content is reachable from the host, and the hoisted children's parents are consistent with the host's children.\n\n";
+
+var host, root, button;
+function ancestryReaches(element, target) {
+    for (var ancestor = element; ancestor; ancestor = ancestor.parentElement()) {
+        if (ancestor.isEqual(target))
+            return true;
+    }
+    return false;
+}
+
+function descendantsInclude(element, target, depth) {
+    if (!element || depth > 10)
+        return false;
+    if (element.isEqual(target))
+        return true;
+    for (var i = 0; i < element.childrenCount; i++) {
+        if (descendantsInclude(element.childAtIndex(i), target, depth + 1))
+            return true;
+    }
+    return false;
+}
+
+function hostChildrenAreAllReachable() {
+    for (var i = 0; i < host.childrenCount; i++) {
+        if (!host.childAtIndex(i))
+            return false;
+    }
+    return true;
+}
+
+function hostChildrenParentsAreHost() {
+    for (var i = 0; i < host.childrenCount; i++) {
+        var child = host.childAtIndex(i);
+        if (!child)
+            return false;
+        var parent = child.parentElement();
+        if (!parent || !parent.isEqual(host))
+            return false;
+    }
+    return true;
+}
+
+window.jsTestIsAsync = true;
+
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    button = await waitForElementById("frame-button-1");
+    await waitFor(() => {
+        host = accessibilityController.accessibleElementById("host");
+        return button && host && descendantsInclude(host, button, 0);
+    });
+
+    root = accessibilityController.rootElement;
+
+    output += expect("host.childAtIndex(0).domIdentifier", "'before'");
+    output += expect("host.childAtIndex(host.childrenCount - 1).domIdentifier", "'after'");
+    output += expect("descendantsInclude(host, button, 0)", "true");
+    output += expect("hostChildrenAreAllReachable()", "true");
+    output += expect("hostChildrenParentsAreHost()", "true");
+    output += expect("(button && host ? ancestryReaches(button, host) : false)", "true");
+    output += expect("(button && root ? ancestryReaches(button, root) : false)", "true");
+
+    debug(output);
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>

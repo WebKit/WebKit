@@ -493,23 +493,33 @@ std::optional<AXStitchGroup> AXCoreObject::stitchGroupFromGroups(const Vector<AX
     return { };
 }
 
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+// When a cross-frame child (i.e. a local frame's root) is ignored, e.g. via
+// role="presentation", hoist its content rather than returning the ignored root,
+// which would cause parent-child mismatches in the AT-exposed accessibility tree.
+static void appendCrossFrameContent(AXCoreObject::AccessibilityChildrenVector& out, AXCoreObject& crossFrameChild)
+{
+    if (!crossFrameChild.isIgnored()) {
+        out.append(crossFrameChild);
+        return;
+    }
+
+    for (auto& grandchild : crossFrameChild.stitchedUnignoredChildren()) {
+        // The hoisted content can itself contain a cross-frame child, e.g. when the presentational
+        // iframe's document contains another iframe, so resolve it rather than exposing the local frame.
+        if (RefPtr nestedCrossFrameChild = grandchild->crossFrameChildObject())
+            appendCrossFrameContent(out, *nestedCrossFrameChild);
+        else
+            out.append(grandchild);
+    }
+}
+#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
+
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameUnignoredChildren()
 {
     AXCoreObject::AccessibilityChildrenVector result = stitchedUnignoredChildren();
 
 #if ENABLE_ACCESSIBILITY_LOCAL_FRAME
-    // When a cross-frame child (i.e. a local frame's root) is ignored, e.g. via
-    // role="presentation", hoist its content rather than returning the ignored root,
-    // which would cause parent-child mismatches in the AT-exposed accessibility tree.
-    // crossFrameParentObjectUnignored() is the matching parent-side hoist that keeps the
-    // hoisted content reciprocal.
-    auto appendCrossFrameContent = [](AccessibilityChildrenVector& out, AXCoreObject& crossFrameChild) {
-        if (crossFrameChild.isIgnored()) {
-            for (auto& grandchild : crossFrameChild.stitchedUnignoredChildren())
-                out.append(grandchild);
-        } else
-            out.append(crossFrameChild);
-    };
 
     if (result.isEmpty()) {
         if (RefPtr crossFrameChild = crossFrameChildObject())

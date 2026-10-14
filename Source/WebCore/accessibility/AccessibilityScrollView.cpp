@@ -594,8 +594,11 @@ AccessibilityObject* AccessibilityScrollView::crossFrameParentObject() const
         ancestorElement = ancestorElement->parentElementInComposedTree();
     }
 
+    // An ignored owner (e.g. a role="presentation" iframe) may itself be in a frame whose root is
+    // ignored, as when a presentational iframe hosts a document that contains another iframe, so the
+    // walk to an unignored parent must be able to cross more than one frame boundary.
     if (ancestorAccessibilityObject && ancestorAccessibilityObject->isIgnored())
-        return ancestorAccessibilityObject->parentObjectUnignored();
+        return downcast<AccessibilityObject>(ancestorAccessibilityObject->crossFrameParentObjectUnignored());
 
     // TODO: this should return a RefPtr
     return ancestorAccessibilityObject.unsafeGet();  // NOLINT

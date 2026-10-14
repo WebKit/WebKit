@@ -4320,11 +4320,53 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         postPlatformNotification(*target, AXNotification::SelectedCellsChanged);
 }
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+// A hosted document's web area is ignored when its frame owner element is presentational (see
+// webAreaIsPresentational()), and the frame root's ignored state follows its web area's. Both live in
+// the hosted frame's own cache, so a role change on the owner must recompute them there.
+static void recomputeIsIgnoredForHostedFrameRoot(HTMLFrameOwnerElement& owner)
+{
+    RefPtr childLocalFrame = dynamicDowncast<LocalFrame>(owner.contentFrame());
+    RefPtr childDocument = childLocalFrame ? childLocalFrame->document() : nullptr;
+    CheckedPtr childCache = childDocument ? childDocument->existingAXObjectCache() : nullptr;
+    if (!childCache)
+        return;
+
+    RefPtr root = childCache->get(protect(childLocalFrame->view()).get());
+    if (!root)
+        return;
+
+    if (RefPtr webArea = root->webAreaObject())
+        webArea->recomputeIsIgnored();
+    root->recomputeIsIgnored();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // The roots of frames nested in the hosted document cache their cross-frame parent in the isolated tree,
+    // which may have been resolved through the hosted frame's root while it was ignored, so refresh them.
+    for (RefPtr frame = childLocalFrame->tree().traverseNext(childLocalFrame.get()); frame; frame = frame->tree().traverseNext(childLocalFrame.get())) {
+        RefPtr nestedLocalFrame = dynamicDowncast<LocalFrame>(frame);
+        RefPtr nestedDocument = nestedLocalFrame ? nestedLocalFrame->document() : nullptr;
+        CheckedPtr nestedCache = nestedDocument ? nestedDocument->existingAXObjectCache() : nullptr;
+        RefPtr nestedRoot = nestedCache ? nestedCache->get(protect(nestedLocalFrame->view()).get()) : nullptr;
+        if (!nestedRoot)
+            continue;
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(nestedCache->frameID()))
+            tree->queueNodeUpdate(nestedRoot->objectID(), { AXProperty::CrossFrameParentAXID });
+    }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+}
+#endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+
 void AXObjectCache::handleRoleChanged(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE("AXObjectCache::handleRoleChanged"_s);
     AXLOG(makeString("oldValue "_s, oldValue, " new value "_s, newValue));
     AX_ASSERT(oldValue != newValue);
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(element))
+        recomputeIsIgnoredForHostedFrameRoot(*frameOwner);
+#endif
 
     RefPtr object = get(element);
     if (!object)
