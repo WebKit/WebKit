@@ -443,15 +443,15 @@ class LayoutTestFinder(object):
                 reference_files=(
                     tuple(reference_files) if reference_files is not None else None
                 ),
-                is_http_test="http/test" in trimmed_path,
+                is_http_test=trimmed_path.startswith("http/tests/"),
                 is_websocket_test=(
                     "websocket/" in trimmed_path
                     or "http/test" in trimmed_path
                     and "websocket" in trimmed_path + variant
                 ),
                 is_wpt_test=(
-                    IMPORTED_WPT_DIR + "/" in trimmed_path
-                    or LOCAL_WPT_PATH + "/" in trimmed_path
+                    trimmed_path.startswith(IMPORTED_WPT_DIR + "/")
+                    or trimmed_path.startswith(LOCAL_WPT_PATH + "/")
                 ),
                 is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
             )

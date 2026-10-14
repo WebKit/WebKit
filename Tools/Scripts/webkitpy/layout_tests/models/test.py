@@ -47,11 +47,11 @@ class Test(object):
 
     @property
     def needs_http_server(self):
-        return self.is_http_test or self.is_websocket_test
+        return self.is_http_test
 
     @property
     def needs_websocket_server(self):
-        return self.is_websocket_test
+        return self.is_websocket_test and (self.needs_http_server or self.needs_wpt_server)
 
     @property
     def needs_wpt_server(self):

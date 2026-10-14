@@ -102,13 +102,17 @@ class TestList(object):
         return item in self.tests
 
     def __getitem__(self, item):
+        # Tests injected into the mock filesystem by a unit test need no canned
+        # driver output; TestInstance derives usable defaults from the name.
+        if item not in self.tests:
+            self.tests[item] = TestInstance(item)
         return self.tests[item]
 
 
 #
 # These numbers may need to be updated whenever we add or delete tests.
 #
-TOTAL_TESTS = 91
+TOTAL_TESTS = 92
 TOTAL_SKIPS = 12
 TOTAL_RETRIES = 15
 
@@ -239,6 +243,7 @@ layer at (0,0) size 800x34
     # FIXME: Add a reftest which crashes.
 
     tests.add('websocket/tests/passes/text.html')
+    tests.add('http/tests/websocket/passes/text.html')
 
     # For testing test are properly included from platform directories.
     tests.add('platform/test-mac-leopard/passes/platform-specific-test.html')
@@ -410,6 +415,7 @@ class TestPort(Port):
         Port.__init__(self, host, port_name or TestPort.default_port_name, **kwargs)
         self._tests = unit_test_list()
         self._flakes = set()
+        self._running_servers = set()
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/TestExpectations'
         self._results_directory = None
 
@@ -514,22 +520,31 @@ class TestPort(Port):
         return self.results_directory()
 
     def start_http_server(self, additional_dirs=None):
-        pass
+        self._running_servers.add('http')
 
     def start_websocket_server(self):
-        pass
+        self._running_servers.add('websocket')
 
     def stop_http_server(self):
-        pass
+        self._running_servers.discard('http')
 
     def stop_websocket_server(self):
-        pass
+        self._running_servers.discard('websocket')
 
     def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
-        pass
+        self._running_servers.add('wpt')
 
     def stop_web_platform_test_server(self):
-        pass
+        self._running_servers.discard('wpt')
+
+    def is_http_server_running(self):
+        return 'http' in self._running_servers
+
+    def is_websocket_server_running(self):
+        return 'websocket' in self._running_servers
+
+    def is_wpt_server_running(self):
+        return 'wpt' in self._running_servers
 
     def web_platform_test_server_doc_root(self):
         return 'imported/w3c/web-platform-tests/'
