@@ -163,7 +163,7 @@ class SingleTestRunner(object):
                 ) as filehandle:
                     image_hash = read_checksum_from_png.read_checksum(filehandle)
 
-        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr, self._options.additional_header)
+        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr, self._options.additional_header, url=self._test_input.url)
 
     def _should_try_short_timeout(self, short_timeout, expected_results):
         if not short_timeout or int(self._timeout) <= short_timeout:
@@ -225,7 +225,7 @@ class SingleTestRunner(object):
             return self._run_self_comparison_without_reference_test(comparison_header)
         if self._reference_files:
             if self._port.get_option('no_ref_tests') or self._options.reset_results:
-                reftest_type = set([reference_file[0] for reference_file in self._reference_files])
+                reftest_type = set([reference_file.relation for reference_file in self._reference_files])
                 result = TestResult(self._test_input, reftest_type=reftest_type)
                 result.type = test_expectations.SKIP
                 return result
@@ -558,10 +558,11 @@ class SingleTestRunner(object):
 
         putAllMismatchBeforeMatch = sorted
         reference_test_names = []
-        for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
-            reference_test_name = self._port.relative_test_filename(reference_filename)
+        ref_url_by_path = {ri.reference.path: ri.url for ri in self._test_input.reference_inputs}
+        for reference in putAllMismatchBeforeMatch(self._reference_files):
+            reference_test_name = self._port.relative_test_filename(reference.path)
             reference_test_names.append(reference_test_name)
-            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True), self._stop_when_done)
+            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True, url=ref_url_by_path.get(reference.path)), self._stop_when_done)
             reference_output.strip_patterns(self._port.logging_patterns_to_strip())
             reference_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
             reference_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
@@ -570,15 +571,15 @@ class SingleTestRunner(object):
                 # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
                 self._driver.stop()
 
-            test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
+            test_result = self._compare_output_with_reference(reference_output, test_output, reference.path, reference.relation == '!=')
 
-            if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):
+            if (reference.relation == '!=' and test_result.failures) or (reference.relation == '==' and not test_result.failures):
                 break
             total_test_time += test_result.test_run_time
 
         assert(reference_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
-        reftest_type = set([reference_file[0] for reference_file in self._reference_files])
+        reftest_type = set([reference_file.relation for reference_file in self._reference_files])
         return TestResult(self._test_input, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
 
     def _run_self_comparison_test(self, header):

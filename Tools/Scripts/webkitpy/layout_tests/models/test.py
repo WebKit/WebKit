@@ -34,6 +34,12 @@ import attr
 from webkitpy.layout_tests.models.server_routing import ServerType
 
 
+@attr.s(frozen=True, slots=True)
+class Reference(object):
+    relation = attr.ib(type=str)  # "==" or "!="
+    path = attr.ib(type=str)  # absolute filesystem path
+
+
 _digit_re = re.compile(r"(\d+)")
 
 
@@ -71,6 +77,7 @@ class Test(object):
     reference_files = attr.ib(default=None, type=list, order=False)
     served_by = attr.ib(default=ServerType.FILE, type=ServerType, order=False)
     is_crash_test = attr.ib(default=False, type=bool, order=False)
+    protocol = attr.ib(default="http", type=str, order=False)  # "http", "https" or "h2"
 
     @property
     def file_path(self):
