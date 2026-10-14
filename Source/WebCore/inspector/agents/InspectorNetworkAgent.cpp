@@ -851,10 +851,12 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
     return object.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionEnabled(bool enabled)
+void InspectorNetworkAgent::setInterceptionEnabled(bool enabled, Ref<SetInterceptionEnabledCallback>&& callback)
 {
-    if (m_interceptionEnabled == enabled)
-        return makeUnexpected(m_interceptionEnabled ? "Interception already enabled"_s : "Interception already disabled"_s);
+    if (m_interceptionEnabled == enabled) {
+        callback->sendFailure(m_interceptionEnabled ? "Interception already enabled"_s : "Interception already disabled"_s);
+        return;
+    }
 
     m_interceptionEnabled = enabled;
 
@@ -863,10 +865,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setInterceptionE
         continuePendingResponses();
     }
 
-    return { };
+    callback->sendSuccess();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+void InspectorNetworkAgent::addInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<AddInterceptionCallback>&& callback)
 {
     Intercept intercept;
     intercept.url = url;
@@ -876,13 +878,15 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::addInterception(
         intercept.isRegex = *isRegex;
     intercept.networkStage = networkStageFromProtocol(networkStage);
 
-    if (!m_intercepts.appendIfNotContains(intercept))
-        return makeUnexpected("Intercept for given url, given isRegex, and given stage already exists"_s);
+    if (!m_intercepts.appendIfNotContains(intercept)) {
+        callback->sendFailure("Intercept for given url, given isRegex, and given stage already exists"_s);
+        return;
+    }
 
-    return { };
+    callback->sendSuccess();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
+void InspectorNetworkAgent::removeInterception(const String& url, Inspector::Protocol::Network::NetworkStage networkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, Ref<RemoveInterceptionCallback>&& callback)
 {
     Intercept intercept;
     intercept.url = url;
@@ -892,10 +896,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::removeIntercepti
         intercept.isRegex = *isRegex;
     intercept.networkStage = networkStageFromProtocol(networkStage);
 
-    if (!m_intercepts.removeAll(intercept))
-        return makeUnexpected("Missing intercept for given url, given isRegex, and given stage"_s);
+    if (!m_intercepts.removeAll(intercept)) {
+        callback->sendFailure("Missing intercept for given url, given isRegex, and given stage"_s);
+        return;
+    }
 
-    return { };
+    callback->sendSuccess();
 }
 
 bool InspectorNetworkAgent::willIntercept(const ResourceRequest& request)

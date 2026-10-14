@@ -37,4 +37,10 @@ messages -> Inspector::ProxyingNetworkAgent {
     LoadingFailed(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String errorText, bool canceled)
 
     RequestServedFromMemoryCache(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::FrameIdentifier frameID, String loaderId, String documentURL, WebCore::ResourceResponse response, Inspector::ResourceType resourceType, String sourceMapURL, uint64_t bodySize, double timestamp, Inspector::InitiatorData initiator)
+
+    # A load paused in the WebContent process for one of Web Inspector's intercept patterns. It
+    # waits in that process's NetworkInterceptionSink for a Network.intercept* command.
+    RequestIntercepted(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::ResourceRequest request)
+
+    ResponseIntercepted(WebCore::ScopedResourceLoaderIdentifier resourceID, WebCore::ResourceResponse response)
 }

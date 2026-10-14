@@ -1,12 +1,12 @@
-Test that the Network interception commands fail explicitly instead of silently succeeding under Site Isolation.
+Test that the Network interception commands that resolve a paused load fail for a requestId that is not paused under Site Isolation.
 
 
-== Running test suite: SiteIsolation.Network.InterceptionNotSupported
--- Running test case: SiteIsolation.Network.InterceptionNotSupported.CrossOriginIFrameTargetExists
+== Running test suite: SiteIsolation.Network.InterceptionUnknownRequestId
+-- Running test case: SiteIsolation.Network.InterceptionUnknownRequestId.CrossOriginIFrameTargetExists
 PASS: Added target should have Frame type.
 PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
 
--- Running test case: SiteIsolation.Network.InterceptionNotSupported.PausedRequestCommands
+-- Running test case: SiteIsolation.Network.InterceptionUnknownRequestId.PausedRequestCommands
 PASS: Network.interceptContinue should fail with "Missing pending intercept request for given requestId".
 PASS: Network.interceptWithRequest should fail with "Missing pending intercept request for given requestId".
 PASS: Network.interceptWithResponse should fail with "Missing pending intercept response for given requestId".

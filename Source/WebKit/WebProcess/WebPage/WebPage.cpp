@@ -4811,6 +4811,11 @@ void WebPage::setNetworkInterception(Inspector::NetworkInterception&& configurat
     completionHandler();
 }
 
+void WebPage::resolveNetworkInterception(WebCore::ResourceLoaderIdentifier identifier, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution&& resolution)
+{
+    networkInterceptionSink().resolveInterception(identifier, owner, phase, WTF::move(resolution));
+}
+
 CheckedRef<PageInspectorTarget> WebPage::ensureInspectorTarget()
 {
     if (!m_inspectorTarget)

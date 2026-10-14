@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SharedBuffer.h"
 #include <wtf/URL.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -85,6 +86,41 @@ struct NetworkInterception {
 
     // Whether a pattern of the owner matches the URL at the phase.
     WEBCORE_EXPORT bool matches(const URL&, NetworkInterceptionPhase, NetworkInterceptOwner) const;
+};
+
+// What the owner of a paused load decided.
+enum class NetworkInterceptionAction : uint8_t {
+    // Let the load go on, with the edits of the resolution applied.
+    Continue,
+    // Finish the load with the response and body of the resolution, without the network.
+    Fulfill,
+    // Fail the load with a network error.
+    Fail,
+};
+
+// The kind of network error a failed load reports.
+enum class NetworkInterceptionErrorType : uint8_t {
+    General,
+    AccessControl,
+    Cancellation,
+    Timeout,
+};
+
+// The resolution of a paused load, sent by the UI process to the process that paused it. Each
+// edit is applied only if it is set.
+struct NetworkInterceptionResolution {
+    NetworkInterceptionAction action { NetworkInterceptionAction::Continue };
+    std::optional<URL> url;
+    String method;
+    // Replaces every header of the request or response.
+    std::optional<Vector<std::pair<String, String>>> headers;
+    // The body of the request, or of the response when fulfilling.
+    RefPtr<WebCore::SharedBuffer> body;
+    std::optional<int> statusCode;
+    String reasonPhrase;
+    // The MIME type of the response when fulfilling, or when replacing a paused response.
+    String mimeType;
+    NetworkInterceptionErrorType errorType { NetworkInterceptionErrorType::General };
 };
 
 } // namespace Inspector

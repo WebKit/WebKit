@@ -1,0 +1,17 @@
+Test that disabling the Network domain clears Web Inspector's interception patterns even if the domain was not enabled.
+
+
+== Running test suite: SiteIsolation.Network.InterceptionClearedOnDisable
+-- Running test case: SiteIsolation.Network.InterceptionClearedOnDisable.CrossOriginIFrameTargetExists
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+
+-- Running test case: SiteIsolation.Network.InterceptionClearedOnDisable.WhileNotEnabled
+Disabling the Network domain...
+Adding an interception pattern while the Network domain is not enabled...
+PASS: The cross-origin iframe's process should hold the interception pattern.
+Disabling the Network domain again...
+PASS: The cross-origin iframe's process should no longer hold the interception pattern, so no load pauses.
+Re-enabling the Network domain...
+PASS: Re-enabling the Network domain should not bring back the interception pattern.
+PASS: Adding the same interception pattern again should not report a duplicate.
+
