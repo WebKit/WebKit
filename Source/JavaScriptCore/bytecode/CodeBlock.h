@@ -339,6 +339,7 @@ public:
 
     unsigned instructionsSize() const { return instructions().size(); }
     unsigned bytecodeCost() const;
+    unsigned bytecodeCostForFTLInlining() const;
 
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();

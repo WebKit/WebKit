@@ -3597,12 +3597,34 @@ CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(const ConcurrentJSL
     return m_jitCode->addressForCall(arityCheck);
 }
 
+#if ENABLE(FTL_JIT)
+static unsigned approximateBytecodeCostForFTLNodes(unsigned numberOfCompiledDFGNodes)
+{
+    return numberOfCompiledDFGNodes * Options::ratioFTLNodesToBytecodeCost();
+}
+#endif
+
 unsigned CodeBlock::bytecodeCost() const
 {
 #if ENABLE(FTL_JIT)
     if (jitType() == JITType::FTLJIT) {
         if (auto* jitCode = static_cast<FTL::JITCode*>(m_jitCode.get()))
-            return std::min(static_cast<unsigned>(jitCode->numberOfCompiledDFGNodes() * Options::ratioFTLNodesToBytecodeCost()), m_bytecodeCost);
+            return std::min(approximateBytecodeCostForFTLNodes(jitCode->numberOfCompiledDFGNodes()), m_bytecodeCost);
+    }
+#endif
+    return m_bytecodeCost;
+}
+
+unsigned CodeBlock::bytecodeCostForFTLInlining() const
+{
+#if ENABLE(FTL_JIT)
+    if (jitType() == JITType::FTLJIT)
+        return bytecodeCost();
+
+    const CodeBlock* baseline = m_alternative ? m_alternative.get() : this;
+    if (baseline->jitType() == JITType::BaselineJIT) {
+        if (unsigned numberOfCompiledFTLNodes = static_cast<BaselineJITCode*>(baseline->m_jitCode.get())->numberOfCompiledFTLNodes())
+            return std::min(approximateBytecodeCostForFTLNodes(numberOfCompiledFTLNodes), m_bytecodeCost);
     }
 #endif
     return m_bytecodeCost;
