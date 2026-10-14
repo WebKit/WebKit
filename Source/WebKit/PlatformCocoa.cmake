@@ -897,6 +897,13 @@ webkit_target_add_swift_options(WebKitSwift
     "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
 )
 
+# Without -clang-target, explicit module builds import Clang modules at the SDK
+# version rather than the deployment target, so headers would see different
+# HAVE()/ENABLE() values than the Swift compilation conditions.
+if (CMAKE_Swift_COMPILER_TARGET)
+    webkit_target_add_swift_options(WebKitSwift "-clang-target ${CMAKE_Swift_COMPILER_TARGET}")
+endif ()
+
 # WebKit's custom Swift @available macros, as a response file.
 set(_swift_tba_resp "${CMAKE_CURRENT_BINARY_DIR}/swift-tba-availability-macros.resp")
 if (WEBKIT_SDK_IS_MACOS)
