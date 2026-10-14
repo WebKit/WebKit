@@ -1,0 +1,4 @@
+
+
+PASS Existing input focus cancels and consumes pending autofocus
+
