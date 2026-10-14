@@ -50,13 +50,20 @@ const Style::ComputedStyle& OutOfFlowGeometry::style() const
     return m_box->style();
 }
 
-// The geometry of one axis: the inset-modified containing block (§4.1), auto margins (§4.4) and the alignment of the margin box (§4.5).
+// The inset-modified containing block (§4.1): with both insets auto, it starts or ends at the static position.
+std::pair<LayoutUnit, LayoutUnit> OutOfFlowGeometry::insetModifiedContainingBlock(const AxisValues& values)
+{
+    auto usesStaticPosition = !values.insetStart && !values.insetEnd;
+    auto rangeStart = values.insetStart.value_or(usesStaticPosition && !values.staticPositionIsMarginBoxEnd ? values.staticPosition : 0_lu);
+    auto rangeEnd = values.containingBlockSize - values.insetEnd.value_or(usesStaticPosition && values.staticPositionIsMarginBoxEnd ? values.containingBlockSize - values.staticPosition : 0_lu);
+    return { rangeStart, rangeEnd };
+}
+
+// The geometry of one axis: auto margins (§4.4) and the alignment of the margin box (§4.5) in the inset-modified containing block.
 auto OutOfFlowGeometry::computeAxisGeometry(Axis axis, const AxisValues& values, LayoutUnit borderBoxSize) -> AxisGeometry
 {
     auto [insetStart, insetEnd, marginStart, marginEnd, containingBlockSize, borderAndPadding, staticPosition, staticPositionIsMarginBoxEnd] = values;
-    auto usesStaticPosition = !insetStart && !insetEnd;
-    auto rangeStart = insetStart.value_or(usesStaticPosition && !staticPositionIsMarginBoxEnd ? staticPosition : 0_lu);
-    auto rangeEnd = containingBlockSize - insetEnd.value_or(usesStaticPosition && staticPositionIsMarginBoxEnd ? containingBlockSize - staticPosition : 0_lu);
+    auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
     borderBoxSize = std::max(borderAndPadding, borderBoxSize);
 
     auto usedMarginStart = marginStart.value_or(0_lu);
@@ -137,15 +144,27 @@ LayoutUnit OutOfFlowGeometry::clamp(LayoutUnit borderBoxSize, const MinimumSizeT
     return std::max(borderAndPadding, borderBoxSize);
 }
 
-auto OutOfFlowGeometry::computeInlineAxisGeometry() const -> AxisGeometry
+bool OutOfFlowGeometry::hasFitContentInlineSize() const
 {
+    CheckedRef style = this->style();
+    return style->width().isAuto() && (style->left().isAuto() || style->right().isAuto());
+}
+
+auto OutOfFlowGeometry::computeInlineAxisGeometry(std::optional<IntrinsicWidthConstraints> contentInlineSizes) const -> AxisGeometry
+{
+    ASSERT(contentInlineSizes || !hasFitContentInlineSize());
     CheckedRef style = this->style();
     auto values = inlineAxisValues();
     auto borderBoxSize = [&] {
         if (style->width().isSpecified())
             return borderBoxSizeFor(style->width(), values.containingBlockSize, values.borderAndPadding);
-        // The automatic size is the stretch-fit size: the inset-modified containing block minus the margins, auto ones as zero.
-        return values.containingBlockSize - values.insetStart.value_or(0_lu) - values.insetEnd.value_or(0_lu) - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
+        // The automatic size is resolved against the inset-modified containing block minus the margins, auto ones as zero.
+        auto [rangeStart, rangeEnd] = insetModifiedContainingBlock(values);
+        auto stretchFitSize = rangeEnd - rangeStart - values.marginStart.value_or(0_lu) - values.marginEnd.value_or(0_lu);
+        if (!hasFitContentInlineSize())
+            return stretchFitSize;
+        // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size (css-sizing-3 §5.1).
+        return std::min(std::max(contentInlineSizes->minimum + values.borderAndPadding, stretchFitSize), contentInlineSizes->maximum + values.borderAndPadding);
     }();
     return computeAxisGeometry(Axis::Inline, values, clamp(borderBoxSize, style->minWidth(), style->maxWidth(), values.containingBlockSize, values.borderAndPadding));
 }
