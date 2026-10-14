@@ -1006,6 +1006,7 @@
 		26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */; };
 		26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C9F4A2B917E3DC5F002A1B3E /* ViewportSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = C9F4A2B817E3DC5F002A1B3E /* ViewportSegments.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		27A0042F2AD3161800407880 /* ShouldNotFireMutationEventsScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 27A0042E2AD3161800407880 /* ShouldNotFireMutationEventsScope.h */; };
 		27C4A656181E768DF2AB1CEB /* UnifiedSource26-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1085E5B79E8A71CC22A26E /* UnifiedSource26-header-RenderStyleGetters.cpp */; };
 		27E3C808257F5E6E00C986AB /* ANGLEHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 27E3C806257F5E6E00C986AB /* ANGLEHeaders.h */; };
@@ -3124,6 +3125,7 @@
 		7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */; };
 		7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */; };
 		7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7779BD921F2FDBF700C21417 /* JSVisualViewport.h */; };
+		0BA0D8D92FD44CB7808D57F0 /* JSViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = ECDA3A597D0E4B5797B97FBD /* JSViewport.h */; };
 		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
 		77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		77A17A7B12F2890B004E02F6 /* GraphicsTypesGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A7A12F2890B004E02F6 /* GraphicsTypesGL.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10320,6 +10322,7 @@
 		26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableNFANodeBuilder.h; sourceTree = "<group>"; };
 		26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportConfiguration.cpp; sourceTree = "<group>"; };
 		26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportConfiguration.h; sourceTree = "<group>"; };
+		C9F4A2B817E3DC5F002A1B3E /* ViewportSegments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewportSegments.h; sourceTree = "<group>"; };
 		27A0042E2AD3161800407880 /* ShouldNotFireMutationEventsScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShouldNotFireMutationEventsScope.h; sourceTree = "<group>"; };
 		27E3C806257F5E6E00C986AB /* ANGLEHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEHeaders.h; sourceTree = "<group>"; };
 		27E7CA902D7572C600554A77 /* BoundaryPointInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoundaryPointInlines.h; sourceTree = "<group>"; };
@@ -14934,8 +14937,14 @@
 		7753C43C54634ECDD24A3B83 /* SkipForward15.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SkipForward15.svg; sourceTree = "<group>"; };
 		7779BD911F2FDBCE00C21417 /* JSVisualViewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVisualViewport.cpp; sourceTree = "<group>"; };
 		7779BD921F2FDBF700C21417 /* JSVisualViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVisualViewport.h; sourceTree = "<group>"; };
+		D7BF8B5A72DC497CB336EA89 /* JSViewport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSViewport.cpp; sourceTree = "<group>"; };
+		ECDA3A597D0E4B5797B97FBD /* JSViewport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSViewport.h; sourceTree = "<group>"; };
 		7779BD931F2FDFCB00C21417 /* VisualViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisualViewport.h; sourceTree = "<group>"; };
 		7779BD941F3117B700C21417 /* VisualViewport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisualViewport.cpp; sourceTree = "<group>"; };
+		58C95966F1304A5D8E869698 /* Viewport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Viewport.h; sourceTree = "<group>"; };
+		AFA7E2C4FB4049CA806E5719 /* Viewport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Viewport.cpp; sourceTree = "<group>"; };
+		8EC318F150134D0A96C46C9E /* Viewport.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Viewport.idl; sourceTree = "<group>"; };
+		F91CF24A12C141699E9055B7 /* DOMWindow+Viewport.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "DOMWindow+Viewport.idl"; sourceTree = "<group>"; };
 		77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESVertexArrayObject.cpp; sourceTree = "<group>"; };
 		77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESVertexArrayObject.h; sourceTree = "<group>"; };
 		77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESVertexArrayObject.idl; sourceTree = "<group>"; };
@@ -31484,6 +31493,7 @@
 				7C6771352527DDA900FDEF00 /* DOMWindow+DeviceOrientation.idl */,
 				7C6771332527DC4800FDEF00 /* DOMWindow+RequestIdleCallback.idl */,
 				7C6771302527DA1300FDEF00 /* DOMWindow+Selection.idl */,
+				F91CF24A12C141699E9055B7 /* DOMWindow+Viewport.idl */,
 				7C67712F2527D9D600FDEF00 /* DOMWindow+VisualViewport.idl */,
 				46B95193207D632F00A7D2DD /* DOMWindow.cpp */,
 				46B9518A207D632800A7D2DD /* DOMWindow.h */,
@@ -31900,10 +31910,14 @@
 				BC8BF150105813BF00A40A07 /* UserStyleSheet.h */,
 				BC8BF1591058141800A40A07 /* UserStyleSheetTypes.h */,
 				F513A3E915FF4841001526DB /* ValidationMessageClient.h */,
+				AFA7E2C4FB4049CA806E5719 /* Viewport.cpp */,
+				58C95966F1304A5D8E869698 /* Viewport.h */,
+				8EC318F150134D0A96C46C9E /* Viewport.idl */,
 				26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */,
 				26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */,
 				6D66568C305A760500B4BA0F /* ViewportProximityInfo.cpp */,
 				6D66568B305A75FA00B4BA0F /* ViewportProximityInfo.h */,
+				C9F4A2B817E3DC5F002A1B3E /* ViewportSegments.h */,
 				1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */,
 				7779BD941F3117B700C21417 /* VisualViewport.cpp */,
@@ -36027,6 +36041,8 @@
 				9B098BE71F3D6AF6002DD562 /* JSStringCallback.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
+				D7BF8B5A72DC497CB336EA89 /* JSViewport.cpp */,
+				ECDA3A597D0E4B5797B97FBD /* JSViewport.h */,
 				46E791451F97E01700199739 /* JSVisibilityState.cpp */,
 				46E791461F97E01700199739 /* JSVisibilityState.h */,
 				7779BD911F2FDBCE00C21417 /* JSVisualViewport.cpp */,
@@ -47599,6 +47615,7 @@
 				BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */,
 				07277E5317D018CC0015535D /* JSVideoTrackGenerator.h in Headers */,
 				BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */,
+				0BA0D8D92FD44CB7808D57F0 /* JSViewport.h in Headers */,
 				719A4FD12CC188220050BFCF /* JSViewTimeline.h in Headers */,
 				46E791491F97E01A00199739 /* JSVisibilityState.h in Headers */,
 				7779BD961F32246A00C21417 /* JSVisualViewport.h in Headers */,
@@ -50415,6 +50432,7 @@
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
 				6D66568D305A799300B4BA0F /* ViewportProximityInfo.h in Headers */,
+				C9F4A2B917E3DC5F002A1B3E /* ViewportSegments.h in Headers */,
 				713516A22AE6EF3500718EBE /* ViewTimeline.h in Headers */,
 				7A10958A28C7CEB20056F3BE /* ViolationReportType.h in Headers */,
 				F4FC07D62BB3A6220090B808 /* VisibilityAdjustment.h in Headers */,

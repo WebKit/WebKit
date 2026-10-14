@@ -6807,6 +6807,15 @@ ViewGestureDebuggingEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: false
 
+ViewportSegmentsAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  defaultsOverridable: true
+  humanReadableName: "Viewport Segments API"
+  humanReadableDescription: "Enable the Viewport Segments API"
+  defaultValue: false
+
 VisibleDebugOverlayRegions:
   type: uint32_t
   status: embedder

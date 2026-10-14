@@ -61,6 +61,7 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
+#include <WebCore/ViewportSegments.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -183,6 +184,7 @@ struct WebPageCreationParameters {
     WebCore::IntSize sizeToContentAutoSizeMaximumSize { };
     bool autoSizingShouldExpandToViewHeight { false };
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits { };
+    WebCore::ViewportSegments viewportSegments { };
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior { WebCore::ScrollPinningBehavior::DoNotPin };
 

@@ -863,6 +863,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Selection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Selection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+SpeechSynthesis.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+SpeechSynthesis.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Viewport.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Viewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+VisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+VisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+WebDatabase.cpp
@@ -3278,6 +3280,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionTypeSet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionTypeSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewport.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisitorCallback.cpp

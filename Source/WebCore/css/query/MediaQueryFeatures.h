@@ -72,6 +72,8 @@ const FeatureSchema& transition();
 const FeatureSchema& update();
 const FeatureSchema& videoPlayableInline();
 const FeatureSchema& width();
+const FeatureSchema& horizontalViewportSegments();
+const FeatureSchema& verticalViewportSegments();
 #if ENABLE(APPLICATION_MANIFEST)
 const FeatureSchema& displayMode();
 #endif

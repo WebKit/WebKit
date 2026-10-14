@@ -47,6 +47,7 @@
 #include <WebCore/Supplementable.h>
 #include <WebCore/Timer.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebCore/ViewportSegments.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
@@ -705,6 +706,9 @@ public:
 
     const FloatBoxExtent& unobscuredSafeAreaInsets() const LIFETIME_BOUND { return m_unobscuredSafeAreaInsets; }
     WEBCORE_EXPORT void setUnobscuredSafeAreaInsets(const FloatBoxExtent&);
+
+    const ViewportSegments& viewportSegments() const LIFETIME_BOUND { return m_viewportSegments; }
+    WEBCORE_EXPORT void setViewportSegments(const ViewportSegments&);
 
 #if PLATFORM(IOS_FAMILY)
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
@@ -1618,6 +1622,7 @@ private:
     FloatBoxExtent m_obscuredContentInsets;
     FloatBoxExtent m_contentInsets;
     FloatBoxExtent m_unobscuredSafeAreaInsets;
+    ViewportSegments m_viewportSegments;
     FloatBoxExtent m_fullscreenInsets;
     Seconds m_fullscreenAutoHideDuration { 0_s };
 

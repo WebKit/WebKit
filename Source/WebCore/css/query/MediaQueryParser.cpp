@@ -206,7 +206,15 @@ const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& na
         if (!context.useSystemAppearance && !isUASheetBehavior(context.mode))
             return nullptr;
     }
-    
+
+    if (!context.viewportSegmentsAPIEnabled) {
+        if (schema == &Features::horizontalViewportSegments())
+            return nullptr;
+
+        if (schema == &Features::verticalViewportSegments())
+            return nullptr;
+    }
+
     return schema;
 }
 

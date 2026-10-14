@@ -75,6 +75,7 @@
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <WebCore/UserScriptTypes.h>
+#include <WebCore/ViewportSegments.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <memory>
@@ -1707,6 +1708,8 @@ public:
 
     void setViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSize>);
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits() const { return m_viewportSizeForCSSViewportUnits; }
+
+    void setViewportSegments(const WebCore::ViewportSegments&);
 
     bool canShowMIMEType(const String& MIMEType) const;
     bool canShowResponse(const WebCore::ResourceResponse&) const;

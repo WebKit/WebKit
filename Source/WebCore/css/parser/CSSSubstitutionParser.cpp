@@ -262,8 +262,20 @@ bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext&
 bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
-    if (!isValidEnvVariableName(range.consumeIncludingWhitespace()))
+    auto nameToken = range.consumeIncludingWhitespace();
+    if (!isValidEnvVariableName(nameToken))
         return false;
+
+    // viewport-segment-* env() variables require two space-separated integer indices (column, row).
+    if (parserContext.viewportSegmentsAPIEnabled && nameToken.value().startsWith("viewport-segment-"_s)) {
+        if (range.atEnd() || range.peek().type() != NumberToken)
+            return false;
+        range.consumeIncludingWhitespace();
+        if (range.atEnd() || range.peek().type() != NumberToken)
+            return false;
+        range.consumeIncludingWhitespace();
+    }
+
     if (range.atEnd())
         return true;
 

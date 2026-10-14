@@ -71,6 +71,7 @@
 #include <wtf/IndexedRange.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace Style {
@@ -214,10 +215,28 @@ bool SubstitutionResolver::substituteEnvFunction(CSSParserTokenRange range, Vect
     // FIXME: env()'s argument grammar is env( <declaration-value>, <declaration-value>? ) like var()'s,
     // so the name argument should be substituted and only then parsed as <custom-ident> <integer>*.
     // Only a literal <ident> name is supported here, the same limitation as the unsupported indices.
+    // Special logic for viewport-segment-* with indices exists, but that should be made generic for
+    // any <custom-ident> to support env( <custom-ident> <integer [0,∞]>*, <declaration-value>? ).
+    // https://bugs.webkit.org/show_bug.cgi?id=327437
+
     range.consumeWhitespace();
     if (range.peek().type() != IdentToken)
         return false;
     auto name = range.consumeIncludingWhitespace().value().toAtomString();
+
+    // viewport-segment-* env() variables are looked up with composite names of the form
+    // "viewport-segment-<prop> <col> <row>" — consume the two integer indices here.
+    if (context.viewportSegmentsAPIEnabled && name.startsWith("viewport-segment-"_s)) {
+        if (range.peek().type() == NumberToken) {
+            int col = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
+            if (range.peek().type() == NumberToken) {
+                int row = static_cast<int>(range.consumeIncludingWhitespace().numericValue());
+                // FIXME: Rather than constructing a string which needs to be reparsed, the logic
+                // should be updated to pass in an index vector and name.
+                name = makeAtomString(name, ' ', col, ' ', row);
+            }
+        }
+    }
 
     std::optional<CSSParserTokenRange> fallbackRange;
     if (!range.atEnd()) {

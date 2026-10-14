@@ -477,6 +477,7 @@ namespace WebCore {
     macro(ViewTimeline) \
     macro(ViewTransition) \
     macro(ViewTransitionTypeSet) \
+    macro(Viewport) \
     macro(VisualViewport) \
     macro(WGSLLanguageFeatures) \
     macro(WakeLock) \
@@ -767,6 +768,7 @@ namespace WebCore {
     macro(underlyingSource) \
     macro(utils) \
     macro(view) \
+    macro(viewport) \
     macro(visualViewport) \
     macro(webkit) \
     macro(webkitAudioContext) \

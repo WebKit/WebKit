@@ -59,6 +59,7 @@ namespace WebCore {
 class CloseWatcherManager;
 class JSDOMGlobalObject;
 class SecurityOriginData;
+class Viewport;
 struct ScrollToOptions;
 class UserGestureToken;
 struct UserGestureTokenData;
@@ -251,6 +252,7 @@ public:
     void resizeBy(int x, int y) const;
     void resizeTo(int width, int height) const;
 
+    Viewport& viewport();
     VisualViewport& visualViewport();
 
     // Timers
@@ -456,6 +458,7 @@ private:
     mutable RefPtr<DOMSelection> m_selection;
     mutable RefPtr<BarProp> m_statusbar;
     mutable RefPtr<BarProp> m_toolbar;
+    mutable RefPtr<Viewport> m_viewport;
     mutable RefPtr<VisualViewport> m_visualViewport;
     mutable RefPtr<Navigation> m_navigation;
     mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;

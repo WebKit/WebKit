@@ -654,6 +654,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSize> viewportSize)
 
+    SetViewportSegments(struct WebCore::ViewportSegments segments)
+
 #if PLATFORM(COCOA)
     HandleAlternativeTextUIResult(String result)
 #endif

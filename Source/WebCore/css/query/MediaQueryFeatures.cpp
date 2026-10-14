@@ -44,6 +44,7 @@
 #include "Settings.h"
 #include "StyleZoomPrimitivesInlines.h"
 #include "Theme.h"
+#include "ViewportSegments.h"
 #include <wtf/Function.h>
 
 namespace WebCore::MQ {
@@ -762,6 +763,34 @@ static const LengthSchema& widthFeatureSchema()
     return schema;
 }
 
+static const IntegerSchema& horizontalViewportSegmentsFeatureSchema()
+{
+    static MainThreadNeverDestroyed<IntegerSchema> schema {
+        "horizontal-viewport-segments"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
+        [](auto& context) {
+            if (RefPtr page = context.document->frame()->page())
+                return static_cast<int>(page->viewportSegments().columns);
+            return 1;
+        }
+    };
+    return schema;
+}
+
+static const IntegerSchema& verticalViewportSegmentsFeatureSchema()
+{
+    static MainThreadNeverDestroyed<IntegerSchema> schema {
+        "vertical-viewport-segments"_s,
+        OptionSet<MediaQueryDynamicDependency>(),
+        [](auto& context) {
+            if (RefPtr page = context.document->frame()->page())
+                return static_cast<int>(page->viewportSegments().rows);
+            return 1;
+        }
+    };
+    return schema;
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 static const IdentifierSchema& displayModeFeatureSchema()
 {
@@ -1044,6 +1073,16 @@ const FeatureSchema& width()
     return widthFeatureSchema();
 }
 
+const FeatureSchema& horizontalViewportSegments()
+{
+    return horizontalViewportSegmentsFeatureSchema();
+}
+
+const FeatureSchema& verticalViewportSegments()
+{
+    return verticalViewportSegmentsFeatureSchema();
+}
+
 #if ENABLE(APPLICATION_MANIFEST)
 const FeatureSchema& displayMode()
 {
@@ -1106,6 +1145,8 @@ Vector<const FeatureSchema*> allSchemas()
         &update(),
         &videoPlayableInline(),
         &width(),
+        &horizontalViewportSegments(),
+        &verticalViewportSegments(),
 #if ENABLE(APPLICATION_MANIFEST)
         &displayMode(),
 #endif
