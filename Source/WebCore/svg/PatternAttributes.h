@@ -121,11 +121,11 @@ private:
     SVGLengthValue m_width;
     SVGLengthValue m_height;
     FloatRect m_viewBox;
+    AffineTransform m_patternTransform;
+    WeakPtr<const SVGPatternElement, WeakPtrImplWithEventTargetData> m_patternContentElement;
     SVGPreserveAspectRatioValue m_preserveAspectRatio;
     SVGUnitTypes::SVGUnitType m_patternUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
     SVGUnitTypes::SVGUnitType m_patternContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
-    AffineTransform m_patternTransform;
-    WeakPtr<const SVGPatternElement, WeakPtrImplWithEventTargetData> m_patternContentElement;
 
     // Property states
     bool m_xSet : 1 { false };

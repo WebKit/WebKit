@@ -69,30 +69,30 @@ public:
     }
 
     SVGTransformValue(SVGTransformType type = SVG_TRANSFORM_MATRIX, const AffineTransform& transform = { })
-        : m_type(type)
-        , m_matrix(SVGMatrix::create(transform))
+        : m_matrix(SVGMatrix::create(transform))
+        , m_type(type)
     {
     }
 
     SVGTransformValue(const SVGTransformValue& other)
-        : m_type(other.m_type)
-        , m_matrix(SVGMatrix::create(other.matrix().value()))
+        : m_matrix(SVGMatrix::create(other.matrix().value()))
+        , m_type(other.m_type)
         , m_angle(other.m_angle)
         , m_rotationCenter(other.m_rotationCenter)
     {
     }
 
     SVGTransformValue(SVGTransformType type, Ref<SVGMatrix>&& matrix, float angle, const FloatPoint& rotationCenter)
-        : m_type(type)
-        , m_matrix(WTF::move(matrix))
+        : m_matrix(WTF::move(matrix))
+        , m_type(type)
         , m_angle(angle)
         , m_rotationCenter(rotationCenter)
     {
     }
 
     SVGTransformValue(SVGTransformValue&& other)
-        : m_type(other.m_type)
-        , m_matrix(other.m_matrix.copyRef())
+        : m_matrix(other.m_matrix.copyRef())
+        , m_type(other.m_type)
         , m_angle(other.m_angle)
         , m_rotationCenter(other.m_rotationCenter)
     {
@@ -293,8 +293,8 @@ private:
         appendFixedPrecisionNumbers(builder, m_angle);
     }
 
-    SVGTransformType m_type { SVG_TRANSFORM_UNKNOWN };
     const Ref<SVGMatrix> m_matrix;
+    SVGTransformType m_type { SVG_TRANSFORM_UNKNOWN };
     float m_angle { 0 };
     FloatPoint m_rotationCenter;
 };
