@@ -573,6 +573,37 @@ class LayoutTestFinder(object):
 
             protocol = self._protocol_for_test(served_by, trimmed_path, basename)
 
+            # Parse fuzzy metadata at discovery time for reftests.
+            fuzzy = None
+            if reference_files is not None:
+                rel_path = self.fs.join(dirname, basename)
+                try:
+                    contents = self.fs.read_binary_file(path)
+                except (IOError, OSError, UnicodeDecodeError):
+                    contents = None
+                try:
+                    sourcefile = SourceFile(
+                        self.layout_tests_base_dir, rel_path, "/", contents=contents
+                    )
+                    if sourcefile.fuzzy:
+                        fuzzy = {}
+                        for key, value in sourcefile.fuzzy.items():
+                            if key is None:
+                                fuzzy[None] = value
+                            else:
+                                # key is (test_url, ref_url, reftype); only ref_url matters
+                                # url_base is "/", so ref_url is like /dir/reference.html
+                                ref_url = key[1]
+                                ref_rel_path = ref_url.lstrip("/")
+                                ref_abs_path = self.fs.join(
+                                    self.layout_tests_base_dir, *ref_rel_path.split("/")
+                                )
+                                fuzzy[ref_abs_path] = value
+                except ValueError as e:
+                    # SourceFile raises ValueError for malformed fuzzy metadata
+                    # (see _wpt_tests_for_path); run the test without it.
+                    _log.warning("Ignoring fuzzy metadata of %s: %s", trimmed_path, e)
+
             yield Test(
                 test_path=trimmed_path + variant,
                 file_path=trimmed_path,
@@ -584,6 +615,7 @@ class LayoutTestFinder(object):
                 ),
                 served_by=served_by,
                 protocol=protocol,
+                fuzzy=fuzzy,
             )
 
     def _protocol_for_test(self, served_by, trimmed_path, basename):
@@ -686,6 +718,7 @@ class LayoutTestFinder(object):
                 # sibling; only use manifest refs when no sibling exists.
                 # Delete this block once the importer is fixed (when the
                 # warnings stop firing across a full run).
+                renamed_references = None
                 if reference_files or unusable_urls:
                     sibling_refs = self._sibling_references_for_test(
                         posixpath.basename(test_file_part),
@@ -693,6 +726,7 @@ class LayoutTestFinder(object):
                         non_test_files_by_search_path,
                     )
                     if sibling_refs:
+                        renamed_references = self._wpt_sibling_replacements(reference_files, sibling_refs)
                         reference_files = sibling_refs
                     else:
                         # Running with only some of the references would change
@@ -722,26 +756,24 @@ class LayoutTestFinder(object):
                 raw_fuzzy = getattr(item, "fuzzy", None)
                 if raw_fuzzy:
                     fuzzy = {}
-                    # `single_test_runner._fuzzy_tolerance_for_reference` looks up
-                    # tolerances by ref-path-relative-to-test-dir strings (matching
-                    # what `_fuzzy_metadata_for_file` produces from
-                    # `<meta name="fuzzy" content="bar-ref.html:5;100">` tags) or
-                    # by `None` for the default. Translate WPT's
-                    # `(test_url, ref_url, reftype)` keys into that shape.
-                    # (The pre-fixup code keyed by absolute filesystem paths,
-                    # which never matched the consumer's lookup — only the
-                    # `None`-default fallback worked. Fixed here.)
-                    test_file_part, _ = test_name_and_variant(test_path)
-                    test_dirname = posixpath.dirname(test_file_part)
+                    # `single_test_runner._fuzzy_tolerance_for_reference` looks
+                    # up tolerances by the Reference's `path` (an absolute
+                    # filesystem path -- see _wpt_references_for_item) or by
+                    # `None` for the default. Translate WPT's
+                    # `(test_url, ref_url, reftype)` keys into that shape. When an
+                    # imported sibling replaced the manifest references, a
+                    # tolerance moves to the sibling that replaced its reference,
+                    # and is dropped if that is ambiguous.
                     for key, value in raw_fuzzy.items():
                         if key is None:
                             fuzzy[None] = value
                         else:
                             ref_abs_path = self._wpt_reference_abs_path(key[1], wpt_prefix, url_base)
+                            if renamed_references is not None:
+                                ref_abs_path = renamed_references.get(ref_abs_path)
                             if ref_abs_path is None:
                                 continue
-                            test_abs_dirname = self.fs.join(self.layout_tests_base_dir, *test_dirname.split("/"))
-                            fuzzy[self.fs.relpath(ref_abs_path, test_abs_dirname).replace(self.fs.sep, "/")] = value
+                            fuzzy[ref_abs_path] = value
                 if fuzzy is not None:
                     kwargs["fuzzy"] = fuzzy
 
@@ -838,6 +870,18 @@ class LayoutTestFinder(object):
                     posixpath.join(route.test_file_dir, "common", "blank.html")
                 )
         return None
+
+    def _wpt_sibling_replacements(self, references, sibling_references):
+        """Map the path of each manifest reference to the path of the imported
+        sibling that replaces it. A reference is only mapped when it is the one
+        manifest reference, and the sibling the one sibling, with its relation."""
+        replacements = {}
+        for relation in ("==", "!="):
+            manifest = [ref for ref in references if ref.relation == relation]
+            siblings = [ref for ref in sibling_references if ref.relation == relation]
+            if len(manifest) == 1 and len(siblings) == 1:
+                replacements[manifest[0].path] = siblings[0].path
+        return replacements
 
     def _wpt_test_path_to_abs_path(self, test_path):
         # Strip any query/fragment before resolving to a filesystem path.
