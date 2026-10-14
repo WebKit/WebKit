@@ -1244,7 +1244,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     // ::slotted() rules that match a slotted element live in the shadow tree it is slotted into.
     for (RefPtr slot = element.assignedSlot(); slot; slot = slot->assignedSlot())
-        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*slot));
+        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(Style::Scope::forNode(*slot)));
 
     // ::part() rules that match an element in a shadow tree live in an ancestor host's scope.
     for (RefPtr host = element.shadowHost(); host; host = host->shadowHost())
