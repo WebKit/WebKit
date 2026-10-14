@@ -195,11 +195,12 @@ public:
     void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationAbortedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void fragmentNavigatedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
-    void emitContextCreatedEvent(const WebPageProxy&);
+    void contextCreatedForPage(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void clearContextDestroyedStateForFrame(const WebFrameProxy&);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
+    void clearStateForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
     void contextDestroyedForChildFramesOfPreviousDocument(const WebFrameProxy& mainFrame);
     void updateChildFrameContextsForMainFrameCommit(WebPageProxy&, const WebFrameProxy& mainFrame, bool isBackForwardNavigation);
@@ -382,7 +383,6 @@ private:
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void recursivelyEmitContextCreatedEvent(const FrameTreeNodeData&, std::optional<String>&& parentContext);
     void contextCreatedForFramesRestoredFromBackForwardCache(WebPageProxy&, uint64_t generation);
     WebPageProxy* getOpenerPage(const WebPageProxy&);
 #endif
@@ -460,6 +460,7 @@ private:
     HashSet<WebCore::FrameIdentifier> m_framesReportedDestroyed;
     HashMap<WebPageProxyIdentifier, uint64_t> m_mainFrameDocumentGenerations;
     HashMap<WebPageProxyIdentifier, String> m_originalOpenerHandles;
+    HashSet<WebPageProxyIdentifier> m_pagesReportedCreated;
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
