@@ -59,6 +59,35 @@ LineSegment PathLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUn
         maxX = std::max(maxX, point.x() + reach);
     };
 
+    auto includeEdge = [&](FloatPoint start, FloatPoint end) {
+        includePoint(start);
+        includePoint(end);
+
+        double dx = static_cast<double>(end.x()) - start.x();
+        double dy = static_cast<double>(end.y()) - start.y();
+        if (!dy)
+            return;
+
+        auto includeAtY = [&](double y) {
+            double fractionAlongEdge = (y - start.y()) / dy;
+            if (fractionAlongEdge <= 0 || fractionAlongEdge >= 1)
+                return;
+            includePoint({ static_cast<float>(start.x() + fractionAlongEdge * dx), static_cast<float>(start.y() + fractionAlongEdge * dy) });
+        };
+
+        includeAtY(y1);
+        includeAtY(y2);
+        includeAtY(y1 - margin);
+        includeAtY(y2 + margin);
+
+        double length = std::hypot(dx, dy);
+        double delta = length ? margin * dx / length : 0;
+        includeAtY(y1 + delta);
+        includeAtY(y1 - delta);
+        includeAtY(y2 + delta);
+        includeAtY(y2 - delta);
+    };
+
     for (auto& polyline : m_polylines) {
         auto vertexCount = polyline.size();
         for (size_t index = 0; index < vertexCount; ++index) {
@@ -81,11 +110,7 @@ LineSegment PathLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUn
                 continue;
             }
 
-            includePoint(start);
-            auto span = end - start;
-            auto steps = static_cast<unsigned>(std::ceil(span.diagonalLength()));
-            for (unsigned step = 1; step < steps; ++step)
-                includePoint(start + span.scaled(float(step) / steps));
+            includeEdge(start, end);
         }
     }
 
