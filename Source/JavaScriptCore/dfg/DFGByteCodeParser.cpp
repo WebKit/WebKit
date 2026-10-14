@@ -6741,7 +6741,7 @@ bool ByteCodeParser::handleConstantFunction(
         return true;
     }
 
-    if (function->classInfo() == RegExpConstructor::info()) {
+    if (function->classInfo() == RegExpConstructor::info() && kind == CodeSpecializationKind::CodeForConstruct) {
         Node* newTargetNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
         // We cannot handle the case where new.target != callee (i.e. a construct from a super call) because we
         // don't know what the prototype of the constructed object will be.
