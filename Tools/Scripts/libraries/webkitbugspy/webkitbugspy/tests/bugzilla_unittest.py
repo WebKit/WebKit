@@ -87,6 +87,19 @@ class TestBugzilla(unittest.TestCase):
         self.assertEqual(decoded.url, 'https://bugs.example.com')
         self.assertEqual(decoded.from_string('example.com/b/1234').id, 1234)
 
+    def test_default_timeout(self):
+        self.assertEqual(bugzilla.Tracker(self.URL).timeout, bugzilla.Tracker.DEFAULT_TIMEOUT)
+
+    def test_timeout(self):
+        self.assertEqual(bugzilla.Tracker(self.URL, timeout=5).timeout, 5)
+
+    def test_requests_use_timeout(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
+            with patch.object(mock, 'request', wraps=mock.request) as request:
+                self.assertEqual(bugzilla.Tracker(self.URL, timeout=5).issue(1).title, 'Example issue 1')
+            self.assertTrue(request.call_args_list)
+            self.assertEqual({call.kwargs.get('timeout') for call in request.call_args_list}, {5})
+
     def test_no_users(self):
         with mocks.Bugzilla(self.URL.split('://')[1]):
             self.assertEqual(
