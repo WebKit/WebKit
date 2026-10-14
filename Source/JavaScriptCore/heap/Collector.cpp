@@ -499,7 +499,7 @@ NEVER_INLINE bool Collector::runFixpointPhase(GCConductor conn)
 
     SlotVisitor& visitor = *m_collectorSlotVisitor;
 
-    dataLogIf(Options::logGC(), "v=", bytesVisited() / 1024, "kb (", bytesVisitedPerVisitorDump(), ") o=", m_opaqueRoots.size(), " b=", barriersExecuted(), " ");
+    dataLogIf(Options::logGC(), "v=", bytesMarked() / 1024, "kb (", bytesMarkedPerVisitorDump(), ") o=", m_opaqueRoots.size(), " b=", barriersExecuted(), " ");
 
     if (visitor.didReachTermination()) {
         m_opaqueRoots.deleteOldTables();
@@ -627,7 +627,7 @@ NEVER_INLINE bool Collector::runEndPhase(GCConductor conn)
     // Each heap's End step reads these counts, so flush them now.
     forEachSlotVisitor(
         [&](SlotVisitor& visitor) {
-            visitor.flushBytesVisited();
+            visitor.flushBytesMarked();
             visitor.flushExtraMemoryVisited();
         });
 
@@ -944,23 +944,23 @@ SUPPRESS_NODELETE size_t Collector::totalMaxEdenSize()
     return result;
 }
 
-size_t Collector::bytesVisited()
+size_t Collector::bytesMarked()
 {
     size_t result = 0;
     forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
-            result += visitor.bytesVisited();
+            result += visitor.bytesMarked();
         });
     return result;
 }
 
-UTF8CString Collector::bytesVisitedPerVisitorDump()
+UTF8CString Collector::bytesMarkedPerVisitorDump()
 {
     // Every heap's mutator visitor has the same name, so their counts are summed.
     UncheckedKeyHashMap<ASCIICString, size_t> visitMap;
     forEachSlotVisitor(
         [&](SlotVisitor& visitor) {
-            visitMap.add(visitor.codeName(), 0).iterator->value += visitor.bytesVisited() / 1024;
+            visitMap.add(visitor.codeName(), 0).iterator->value += visitor.bytesMarked() / 1024;
         });
     return sortedMapDump(visitMap, std::less<>(), ":"_s, " "_s);
 }

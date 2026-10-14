@@ -786,7 +786,7 @@ void Heap::beginMarking()
     TimingScope timingScope(*this, "Heap::beginMarking"_s);
     ASSERT(isInPhase(CollectorPhase::Begin));
     ASSERT(m_collectionScope);
-    ASSERT(!m_bytesVisitedDuringMarking.load(std::memory_order_relaxed));
+    ASSERT(!m_bytesMarkedThisCycle.load(std::memory_order_relaxed));
     if (*m_collectionScope == CollectionScope::Full)
         m_mutatorMarkStack->clear();
     m_jitStubRoutines->clearMarks();
@@ -871,13 +871,13 @@ void Heap::rememberExecutingAndCompilingCodeBlocks()
         });
 }
 
-void Heap::recordBytesVisited(size_t bytesVisited)
+void Heap::updateOldGenerationCellBytes(size_t bytesMarked)
 {
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
-        m_totalBytesVisitedAfterLastFullCollect = m_totalBytesVisited;
-        m_totalBytesVisited = 0;
+        m_oldGenerationCellBytesAtStartOfLastFullCollect = m_oldGenerationCellBytes;
+        m_oldGenerationCellBytes = 0;
     }
-    m_totalBytesVisited += bytesVisited;
+    m_oldGenerationCellBytes += bytesMarked;
 }
 
 void Heap::endMarking()
@@ -885,7 +885,7 @@ void Heap::endMarking()
     ASSERT(isInPhase(CollectorPhase::End));
     ASSERT(m_objectSpace.isMarking());
 
-    recordBytesVisited(m_bytesVisitedDuringMarking.exchange(0, std::memory_order_relaxed));
+    updateOldGenerationCellBytes(m_bytesMarkedThisCycle.exchange(0, std::memory_order_relaxed));
 
     m_objectSpace.endMarking();
     setMutatorShouldBeFenced(Options::forceFencedBarrier());
@@ -1872,20 +1872,20 @@ void Heap::updateAllocationLimits()
     // fragmentation, we may have size() much smaller than capacity().
     size_t currentHeapSize = 0;
 
-    // For marked space, we use the total number of bytes visited. This matches the logic for
+    // For marked space, we use the old generation's cell bytes. This matches the logic for
     // BlockDirectory's calls to didAllocate(), which effectively accounts for the total size of
     // objects allocated rather than blocks used. This will underestimate capacity(), and in case
     // of fragmentation, this may be substantial. Fortunately, marked space rarely fragments because
     // cells usually have a narrow range of sizes. So, the underestimation is probably OK.
-    currentHeapSize += m_totalBytesVisited;
-    dataLogLnIf(verbose, "totalBytesVisited = ", m_totalBytesVisited, ", currentHeapSize = ", currentHeapSize);
+    currentHeapSize += m_oldGenerationCellBytes;
+    dataLogLnIf(verbose, "oldGenerationCellBytes = ", m_oldGenerationCellBytes, ", currentHeapSize = ", currentHeapSize);
 
     // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
     // extra memory reporting.
     auto computedExtraMemorySize = extraMemorySize();
     currentHeapSize += computedExtraMemorySize;
     if (ASSERT_ENABLED) {
-        CheckedSize checkedCurrentHeapSize = m_totalBytesVisited;
+        CheckedSize checkedCurrentHeapSize = m_oldGenerationCellBytes;
         checkedCurrentHeapSize += computedExtraMemorySize;
         ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize == currentHeapSize);
     }
@@ -1940,7 +1940,7 @@ void Heap::updateAllocationLimits()
     dataLogLnIf(verbose, "sizeAfterLastCollect = ", m_sizeAfterLastCollect);
     m_nonOversizedBytesAllocatedThisCycle = 0;
     m_oversizedBytesAllocatedThisCycle = 0;
-    m_lastOversidedAllocationThisCycle = 0;
+    m_lastOversizedAllocationThisCycle = 0;
 
     dataLogIf(Options::logGC(), "=> ", currentHeapSize / 1024, "kb, ");
 }
@@ -2019,7 +2019,7 @@ void Heap::didAllocate(size_t bytes)
 {
     if (bytes >= oversizedAllocationThreshold) {
         m_oversizedBytesAllocatedThisCycle += bytes;
-        m_lastOversidedAllocationThisCycle = bytes;
+        m_lastOversizedAllocationThisCycle = bytes;
     } else
         m_nonOversizedBytesAllocatedThisCycle += bytes;
 
@@ -2283,11 +2283,11 @@ void Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
         // if the system is cricital or we have a small heap we want to be very agressive about reclaiming memory to reduce overall
         // pressure on the system.
         if (!isCritical && m_heapType == HeapType::Large) {
-            if (static_cast<double>(m_lastOversidedAllocationThisCycle) / bytesAllocatedThisCycle > 1.0 / 3.0)
+            if (static_cast<double>(m_lastOversizedAllocationThisCycle) / bytesAllocatedThisCycle > 1.0 / 3.0)
                 return false;
         }
 
-        dataLogLnIf(logRequestGC, "Requesting GC because bytes allocated this cycle: ", bytesAllocatedThisCycle, " exceed bytes allowed: ", bytesAllowedThisCycle, ConditionalDump(isCritical, " (critical)"), " normal bytes: ", m_nonOversizedBytesAllocatedThisCycle, " oversized bytes: ", m_oversizedBytesAllocatedThisCycle, " last oversized: ", m_lastOversidedAllocationThisCycle);
+        dataLogLnIf(logRequestGC, "Requesting GC because bytes allocated this cycle: ", bytesAllocatedThisCycle, " exceed bytes allowed: ", bytesAllowedThisCycle, ConditionalDump(isCritical, " (critical)"), " normal bytes: ", m_nonOversizedBytesAllocatedThisCycle, " oversized bytes: ", m_oversizedBytesAllocatedThisCycle, " last oversized: ", m_lastOversizedAllocationThisCycle);
         return true;
     };
     if (!shouldRequestGC())

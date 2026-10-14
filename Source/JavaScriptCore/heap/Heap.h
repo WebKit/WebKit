@@ -421,7 +421,7 @@ public:
 
     void completeAllJITPlans();
 
-    void reportBytesVisited(size_t bytes) { m_bytesVisitedDuringMarking.exchangeAdd(bytes, std::memory_order_relaxed); }
+    void reportBytesMarked(size_t bytes) { m_bytesMarkedThisCycle.exchangeAdd(bytes, std::memory_order_relaxed); }
 
     // Note that:
     // 1. Use this API to report non-GC memory referenced by GC objects. Be sure to
@@ -723,7 +723,7 @@ private:
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
     void rememberExecutingAndCompilingCodeBlocks();
-    void recordBytesVisited(size_t bytesVisited);
+    void updateOldGenerationCellBytes(size_t bytesMarked);
     void endMarking();
     void verifyHeapAfterMarking();
     void pruneDeadReferences();
@@ -800,6 +800,11 @@ private:
     const size_t m_minBytesPerCycle;
     const size_t m_maxEdenSizeForRateLimiting;
     double m_gcRateLimitingValue { 0.0 };
+
+    // Sizes count the bytes of cells plus the extra memory they keep alive.
+    // A size "after" a collection is measured when it ends. A size "before" a collection is estimated
+    // when it starts: the size after the previous collection plus the bytes allocated since.
+    // "This cycle" means since the last collection ended.
     size_t m_bytesAllocatedBeforeLastEdenCollect { 0 };
     size_t m_sizeAfterLastCollect { 0 };
     size_t m_sizeAfterLastFullCollect { 0 };
@@ -808,16 +813,21 @@ private:
     size_t m_sizeBeforeLastEdenCollect { 0 };
 
     size_t m_oversizedBytesAllocatedThisCycle { 0 };
-    size_t m_lastOversidedAllocationThisCycle { 0 };
+    size_t m_lastOversizedAllocationThisCycle { 0 };
 
     size_t m_nonOversizedBytesAllocatedThisCycle { 0 };
     size_t m_bytesAbandonedSinceLastFullCollect { 0 };
     size_t m_maxEdenSize;
     size_t m_maxEdenSizeWhenCritical;
     size_t m_maxHeapSize;
-    size_t m_totalBytesVisitedAfterLastFullCollect { 0 };
-    size_t m_totalBytesVisited { 0 };
-    Atomic<size_t> m_bytesVisitedDuringMarking { 0 };
+
+    // The old generation's cells, in bytes: those the last Full collection marked, plus those each later
+    // Eden collection marked. Old cells that die stay counted until the next Full collection.
+    size_t m_oldGenerationCellBytes { 0 };
+    size_t m_oldGenerationCellBytesAtStartOfLastFullCollect { 0 };
+    // Bytes the visitors have marked this cycle, gathered for the End step.
+    Atomic<size_t> m_bytesMarkedThisCycle { 0 };
+
     double m_incrementBalance { 0 };
     
     bool m_shouldDoOpportunisticFullCollection { false };

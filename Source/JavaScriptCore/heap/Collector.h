@@ -204,8 +204,8 @@ private:
 
     void assertMarkStacksEmpty();
 
-    size_t bytesVisited();
-    UTF8CString bytesVisitedPerVisitorDump();
+    size_t bytesMarked();
+    UTF8CString bytesMarkedPerVisitorDump();
 
     // Summed over the heaps, for logging.
     size_t capacity();
