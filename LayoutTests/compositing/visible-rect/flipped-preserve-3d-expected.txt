@@ -5,6 +5,7 @@ Some text here.
 Description
 Some text here.
 (GraphicsLayer
+  (anchor 0.00 0.00)
   (bounds 785.00 615.00)
   (children 1
     (GraphicsLayer
@@ -21,12 +22,12 @@ Some text here.
               (anchor 0.57 0.50)
               (bounds 440.00 440.00)
               (preserves3D 1)
-              (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
+              (transform [-1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
               (children 1
                 (GraphicsLayer
                   (bounds 420.00 420.00)
                   (contentsOpaque 1)
-                  (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
+                  (transform [-1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 0.00 1.00])
                   (children 1
                     (GraphicsLayer
                       (bounds 420.00 420.00)
@@ -40,24 +41,24 @@ Some text here.
                               (bounds 418.00 510.00)
                               (children 3
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 0.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)
-                                  (usingTiledLayer 1)
                                   (drawsContent 1)
                                 )
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 120.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)
-                                  (usingTiledLayer 1)
                                   (drawsContent 1)
                                 )
                                 (GraphicsLayer
+                                  (offsetFromRenderer width=-3000 height=0)
                                   (position -3000.00 240.00)
                                   (anchor 0.94 0.50)
                                   (bounds 3418.00 120.00)
-                                  (usingTiledLayer 1)
                                   (drawsContent 1)
                                 )
                               )

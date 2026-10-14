@@ -210,8 +210,6 @@ webkit.org/b/251107 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-tran
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
 Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
 
-# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
-Bug(GTK) compositing/visible-rect [ Skip ]
 
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]

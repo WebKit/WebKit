@@ -4331,6 +4331,12 @@ compositing/layer-creation/no-compositing-for-sticky.html [ Failure ]
 compositing/tiling/tiled-drawing-async-frame-scrolling.html [ Failure ]
 compositing/transforms/perspective-with-scrolling.html [ ImageOnlyFailure ]
 
+# A 1px difference in the position and bounds of a transformed layer (coverage-clipped, iframe-and-layers), and no
+# contents layer for the background color (mask-layer-coverage).
+compositing/visible-rect/coverage-clipped.html [ Failure ]
+compositing/visible-rect/iframe-and-layers.html [ Failure ]
+compositing/visible-rect/mask-layer-coverage.html [ Failure ]
+
 imported/w3c/web-platform-tests/css/css-view-transitions/snapshot-containing-block-includes-scrollbar-gutter.html [ ImageOnlyFailure Pass ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-inline-with-offset-from-containing-block-clipped.html [ ImageOnlyFailure ]
