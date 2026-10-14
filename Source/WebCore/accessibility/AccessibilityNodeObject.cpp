@@ -890,7 +890,7 @@ void AccessibilityNodeObject::addChildren()
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node); selectElement && !selectElement->isDropdownBox()) {
         for (const auto& listItem : selectElement->listItems()) {
             if (listItem)
-                addChild(protect(cache->getOrCreate(*listItem)));
+                addChild(protect(cache->getOrCreate(protect(listItem))));
         }
         return;
     }
@@ -1379,7 +1379,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::radioButtonGr
         for (auto& radioSibling : radioButtonGroup) {
             if (!cache)
                 break;
-            if (RefPtr object = cache->getOrCreate(radioSibling.ptr()))
+            if (RefPtr object = protect(cache)->getOrCreate(radioSibling.ptr()))
                 result.append(object.releaseNonNull());
         }
     }
@@ -1563,7 +1563,7 @@ Element* AccessibilityNodeObject::anchorElement() const
 
 RefPtr<Element> AccessibilityNodeObject::popoverTargetElement() const
 {
-    WeakPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
+    RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
     return formControlElement ? formControlElement->popoverTargetElement() : nullptr;
 }
 
@@ -1582,7 +1582,7 @@ CommandType AccessibilityNodeObject::commandType() const
 AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
 {
     // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.
-    WeakPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());
+    RefPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());
     if (!anchor)
         return nullptr;
 
@@ -1776,7 +1776,7 @@ bool AccessibilityNodeObject::showsCursorOnHover() const
         for (auto& invalidationRuleSet : *invalidationRuleSets) {
             element->document().userActionElements().setHovered(*element, invalidationRuleSet.isNegation == Style::IsNegation::No);
 
-            Style::ElementRuleCollector ruleCollector(*element, *invalidationRuleSet.ruleSet, nullptr, SelectorChecker::Mode::StyleInvalidation);
+            Style::ElementRuleCollector ruleCollector(*element, *protect(invalidationRuleSet.ruleSet), nullptr, SelectorChecker::Mode::StyleInvalidation);
             ruleCollector.matchAuthorRules();
             Ref matchResult = ruleCollector.releaseMatchResult();
 
@@ -1838,7 +1838,7 @@ void AccessibilityNodeObject::alterRangeValue(StepAction stepAction)
 
 void AccessibilityNodeObject::increment()
 {
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(document()));
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr mediaElement = this->mediaElement()) {
         AccessibilityMediaHelpers::increment(*mediaElement);
@@ -1851,7 +1851,7 @@ void AccessibilityNodeObject::increment()
 
 void AccessibilityNodeObject::decrement()
 {
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(document()));
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr mediaElement = this->mediaElement()) {
         AccessibilityMediaHelpers::decrement(*mediaElement);
@@ -2274,7 +2274,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::rows()
 // The goal is to only show "data" tables.
 bool AccessibilityNodeObject::isDataTable() const
 {
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return false;
 
@@ -2393,7 +2393,7 @@ unsigned AccessibilityNodeObject::computeCellSlots()
 {
     if (!isExposableTable())
         return 0;
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return 0;
 
@@ -3367,7 +3367,7 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
 
     WeakPtr cache = axObjectCache();
     for (auto& labelElement : labelElements) {
-        RefPtr label = cache ? cache->getOrCreate(labelElement.get()) : nullptr;
+        RefPtr label = cache ? protect(cache)->getOrCreate(labelElement.get()) : nullptr;
         if (!label)
             continue;
 
@@ -4554,7 +4554,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendInt
                 RefPtr assignedElement = dynamicDowncast<Element>(assignedNode.get());
                 if (assignedElement && (assignedElement->renderer() ? isRenderHidden(*assignedElement->renderer()) : isRenderHidden(safeStyleFrom(*assignedElement))))
                     continue;
-                appendNameToStringBuilder(builder, accessibleNameForNode(*assignedNode, nullptr, descendIntoContainers));
+                appendNameToStringBuilder(builder, accessibleNameForNode(*protect(assignedNode), nullptr, descendIntoContainers));
             }
 
             auto assignedNodesText = builder.toString();

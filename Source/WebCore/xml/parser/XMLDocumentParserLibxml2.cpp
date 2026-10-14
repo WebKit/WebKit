@@ -527,7 +527,7 @@ static void* openFunc(const char* uri)
             FetchOptions options;
             options.mode = FetchOptions::Mode::SameOrigin;
             options.credentials = FetchOptions::Credentials::Include;
-            cachedResourceLoader->frame()->loader().loadResourceSynchronously(URL { url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
+            protect(cachedResourceLoader->frame()->loader())->loadResourceSynchronously(URL { url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
 
             if (response.url().isEmpty()) {
                 if (RefPtr frame = document ? document->frame() : nullptr)
@@ -670,7 +670,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, IsInFrameView isInFrame
 }
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
-    : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
+    : ScriptableDocumentParser(protect(fragment.document()), parserContentPolicy)
     , m_pendingCallbacks(makeUniqueRef<PendingCallbacks>())
     , m_currentNode(&fragment)
     , m_maxEntityExpansionCount(fragment.document().settings().maximumXMLParserEntityExpansionCount())

@@ -533,7 +533,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         record.record.primaryKey = record.record.key;
 
         Vector<String> blobURLs, blobFilePaths;
-        auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(record.rowID, blobURLs, blobFilePaths);
+        auto error = protect(m_transaction->backingStore())->getBlobRecordsForObjectStoreRecord(record.rowID, blobURLs, blobFilePaths);
         if (!error.isNull()) {
             LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
             markAsErrored(record);
@@ -541,7 +541,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue) {
-            auto valueResult = m_transaction->backingStore().buildIDBValueForRecord(record.rowID, ThreadSafeDataBuffer::create(WTF::move(keyData)), WTF::move(blobURLs), WTF::move(blobFilePaths));
+            auto valueResult = protect(m_transaction->backingStore())->buildIDBValueForRecord(record.rowID, ThreadSafeDataBuffer::create(WTF::move(keyData)), WTF::move(blobURLs), WTF::move(blobFilePaths));
             if (!valueResult) {
                 LOG_ERROR("Unable to fetch FileSystemHandle records from database while advancing cursor");
                 markAsErrored(record);
@@ -575,14 +575,14 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         if (result == SQLITE_ROW) {
             auto recordsRowID = cachedObjectStoreStatement->columnInt64(0);
             Vector<String> blobURLs, blobFilePaths;
-            auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(recordsRowID, blobURLs, blobFilePaths);
+            auto error = protect(m_transaction->backingStore())->getBlobRecordsForObjectStoreRecord(recordsRowID, blobURLs, blobFilePaths);
             if (!error.isNull()) {
                 LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
                 markAsErrored(record);
                 return FetchResult::Failure;
             }
 
-            auto valueResult = m_transaction->backingStore().buildIDBValueForRecord(recordsRowID, ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths));
+            auto valueResult = protect(m_transaction->backingStore())->buildIDBValueForRecord(recordsRowID, ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths));
             if (!valueResult) {
                 LOG_ERROR("Unable to fetch FileSystemHandle records from database while advancing cursor");
                 markAsErrored(record);

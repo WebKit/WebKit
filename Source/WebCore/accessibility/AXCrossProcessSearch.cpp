@@ -463,7 +463,7 @@ AccessibilitySearchResults performSearchWithParentCoordination(AXCoreObject& anc
     Ref context = adoptRef(*new ParentFrameSearchContext);
 
     ensureOnMainThread([context, criteriaForParent, treeID, currentFrameID]() mutable {
-        WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(*treeID);
+        CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(*treeID);
         RefPtr document = cache ? cache->document() : nullptr;
         RefPtr frame = document ? document->frame() : nullptr;
         RefPtr page = frame ? frame->page() : nullptr;

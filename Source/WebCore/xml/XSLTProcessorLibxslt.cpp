@@ -126,7 +126,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
             FetchOptions options;
             options.mode = FetchOptions::Mode::SameOrigin;
             options.credentials = FetchOptions::Credentials::Include;
-            cachedResourceLoader->frame()->loader().loadResourceSynchronously(URL { url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
+            protect(cachedResourceLoader->frame()->loader())->loadResourceSynchronously(URL { url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
             if (error.isNull())
                 requestAllowed = protect(cachedResourceLoaderDocument->securityOrigin())->canRequest(response.url(), OriginAccessPatternsForWebProcess::singleton());
             else if (data)

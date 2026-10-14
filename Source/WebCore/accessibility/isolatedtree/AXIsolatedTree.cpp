@@ -300,7 +300,7 @@ void AXIsolatedTree::reportLoadingProgress(double processingProgress)
     String title = AXProcessingPage(loadingProgress());
     AXLOG(title);
 
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (RefPtr axWebArea = cache ? cache->rootWebArea() : nullptr) {
         AXPropertyVector properties;
         properties.append({ AXProperty::WebAreaTitle, WTF::move(title) });
@@ -337,7 +337,7 @@ void AXIsolatedTree::generateSubtree(AccessibilityObject& axObject)
         return;
 
     // We're about to a lot of read-only work, so start the attribute cache.
-    AXAttributeCacheScope enableCache(axObject.axObjectCache());
+    AXAttributeCacheScope enableCache(protect(axObject.axObjectCache()));
     collectNodeChangesForSubtree(axObject);
     queueRemovalsAndUnresolvedChanges();
 }
@@ -1078,7 +1078,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         return;
 
     // We're about to do a lot of work, so start the attribute cache.
-    AXAttributeCacheScope enableCache(axObject.axObjectCache());
+    AXAttributeCacheScope enableCache(protect(axObject.axObjectCache()));
 
     // updateChildren may be called as the result of a children changed
     // notification for an axObject that has no associated isolated object.
@@ -1183,7 +1183,7 @@ void AXIsolatedTree::updateChildrenForObjects(const ListHashSet<Ref<Accessibilit
     if (isUpdatingSubtree())
         return;
 
-    AXAttributeCacheScope enableCache(axObjectCache());
+    AXAttributeCacheScope enableCache(protect(axObjectCache()));
     for (auto& axObject : axObjects)
         queueNodeUpdate(axObject->objectID(), NodeUpdateOptions::childrenUpdate());
 
@@ -2151,7 +2151,7 @@ void AXIsolatedTree::processQueuedNodeUpdates()
         if (!cache)
             break;
 
-        if (RefPtr axObject = cache->objectForID(nodeID))
+        if (RefPtr axObject = protect(cache)->objectForID(nodeID))
             updateChildren(*axObject, ResolveNodeChanges::No);
     }
     m_needsUpdateChildren.clear();
@@ -2172,16 +2172,16 @@ void AXIsolatedTree::processQueuedNodeUpdates()
         if (!cache)
             break;
 
-        if (RefPtr axObject = cache->objectForID(propertyUpdate.key))
+        if (RefPtr axObject = protect(cache)->objectForID(propertyUpdate.key))
             updateNodeProperties(*axObject, propertyUpdate.value);
     }
 
     if (m_relationsNeedUpdate && cache)
-        updateRelations(cache->relations());
+        updateRelations(protect(cache)->relations());
 
     if (m_mostRecentlyPaintedTextIsDirty) {
         m_mostRecentlyPaintedTextIsDirty = false;
-        markDirtyAndGetWorkingChanges().mostRecentlyPaintedText = cache ? cache->mostRecentlyPaintedText() : HashMap<AXID, LineRange> { };
+        markDirtyAndGetWorkingChanges().mostRecentlyPaintedText = cache ? protect(cache)->mostRecentlyPaintedText() : HashMap<AXID, LineRange> { };
     }
 
     queueRemovalsAndUnresolvedChanges();

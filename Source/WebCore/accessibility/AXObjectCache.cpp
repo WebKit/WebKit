@@ -760,7 +760,7 @@ Node* AXObjectCache::modalNode()
         // understandable mistake. Only do this if literally nothing on the page is
         // accessible (!m_unignoredContentObjectCount).
         if (!m_unignoredContentObjectCount) {
-            for (auto& modal : m_modalElements) {
+            for (RefPtr modal : m_modalElements) {
                 if (!modal || !isModalElement(*modal))
                     continue;
 
@@ -7242,7 +7242,7 @@ AXTreeData AXObjectCache::treeData(std::optional<OptionSet<AXStreamOptions>> add
             data.warnings.append("Couldn't verify the frame-loader client had an isolated tree because the cache has no m_document."_s);
         else if (!document->frame())
             data.warnings.append("Couldn't verify the frame-loader client had an isolated tree because the cache's document had no frame."_s);
-        else if (!document->frame()->loader().client().isolatedTree())
+        else if (!protect(document->frame()->loader().client())->isolatedTree())
             data.warnings.append("The frame-loader client (typically the webpage object) had no isolated tree set!"_s);
 
         stream << "\nAXIsolatedTree:\n";
@@ -7658,7 +7658,7 @@ void AXObjectCache::updateRelationsIfNeeded()
 
     if (!m_doneInitialRelationsBuild) {
         if (m_document)
-            updateRelationsForTree(m_document->rootNode());
+            updateRelationsForTree(protect(m_document->rootNode()));
         m_doneInitialRelationsBuild = true;
         addDetectedFormErrorRelations();
         return;

@@ -279,7 +279,7 @@ void AXGeometryManager::expandHitTestCacheAroundPoint(const IntPoint& center, AX
                 return;
 
             // Perform hit test.
-            if (WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
+            if (CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
                 auto pageRelativePoint = cache->mapScreenPointToPagePoint(probePoint);
                 RefPtr root = cache->rootWebArea();
                 if (RefPtr hitResult = root ? root->accessibilityHitTest(pageRelativePoint) : nullptr)

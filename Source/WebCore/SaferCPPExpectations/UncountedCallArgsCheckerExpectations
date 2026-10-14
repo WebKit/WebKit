@@ -1,10 +1,5 @@
 [ macOS ] InternalSettingsGenerated.cpp
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ macOS ] accessibility/AXObjectCache.cpp
-[ macOS ] accessibility/AccessibilityNodeObject.cpp
-[ macOS ] accessibility/AccessibilityObject.cpp
-[ macOS ] accessibility/AccessibilityObject.h
-[ macOS ] accessibility/cocoa/WebAccessibilityObjectWrapperBase.mm
 [ macOS ] animation/KeyframeEffect.cpp
 [ macOS ] animation/KeyframeEffectStack.cpp
 [ macOS ] animation/StyleOriginatedAnimation.cpp
@@ -164,16 +159,3 @@ style/values/will-change/StyleWillChange.h
 [ macOS ] svg/properties/SVGAnimatedPropertyList.h
 [ macOS ] testing/InternalSettings.cpp
 [ macOS ] testing/Internals.cpp
-[ macOS ] workers/Worker.cpp
-[ macOS ] workers/WorkerGlobalScope.cpp
-[ macOS ] workers/WorkerMessagingProxy.cpp
-[ macOS ] workers/WorkerRunLoop.cpp
-[ macOS ] workers/service/ExtendableMessageEvent.cpp
-[ macOS ] workers/service/background-fetch/BackgroundFetch.cpp
-[ macOS ] workers/service/background-fetch/BackgroundFetchEngine.cpp
-[ macOS ] workers/service/background-fetch/BackgroundFetchManager.cpp
-[ macOS ] workers/service/background-fetch/BackgroundFetchRegistration.cpp
-[ macOS ] workers/service/server/SWServer.cpp
-[ macOS ] xml/XSLStyleSheetLibxslt.cpp
-[ macOS ] xml/XSLTProcessorLibxslt.cpp
-[ macOS ] xml/parser/XMLDocumentParserLibxml2.cpp

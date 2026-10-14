@@ -290,7 +290,7 @@ bool SWRegistrationDatabase::prepareDatabase(ShouldCreateIfNotExists shouldCreat
     }
 
     if (version < currentSWRegistrationVersion) {
-        SQLiteTransaction transaction(*m_database);
+        SQLiteTransaction transaction(*protect(m_database.get()));
         transaction.begin();
 
         if (databaseExists) {
@@ -585,7 +585,7 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
     if (!prepareDatabase(ShouldCreateIfNotExists::Yes))
         return std::nullopt;
 
-    SQLiteTransaction transaction(*m_database);
+    SQLiteTransaction transaction(*protect(m_database.get()));
     transaction.begin();
 
     for (auto& registration : registrationsToDelete) {

@@ -123,10 +123,12 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
         return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTF::move(responseHeaders) };
     });
     SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTF::move(requests), WTF::move(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTF::move(promise)](ExceptionOr<std::optional<BackgroundFetchInformation>>&& result) mutable {
-        if (!weakContext)
+        RefPtr context = weakContext;
+        if (!context)
             return;
-        weakContext->postTask([weakThis = WTF::move(weakThis), promise = WTF::move(promise), result = WTF::move(result)](auto& context) mutable {
-            if (!weakThis)
+        context->postTask([weakThis = WTF::move(weakThis), promise = WTF::move(promise), result = WTF::move(result)](auto& context) mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
 
             if (result.hasException()) {
@@ -138,7 +140,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
                 return;
             }
 
-            promise.resolve(weakThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue()));
+            promise.resolve(protectedThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue()));
         });
 
     });
@@ -153,10 +155,12 @@ void BackgroundFetchManager::get(ScriptExecutionContext& context, const String& 
     }
 
     SWClientConnection::fromScriptExecutionContext(context)->backgroundFetchInformation(m_identifier, fetchIdentifier, [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTF::move(promise)](auto&& result) mutable {
-        if (!weakContext)
+        RefPtr context = weakContext;
+        if (!context)
             return;
-        weakContext->postTask([weakThis = WTF::move(weakThis), promise = WTF::move(promise), result = WTF::move(result)](auto& context) mutable {
-            if (!weakThis)
+        context->postTask([weakThis = WTF::move(weakThis), promise = WTF::move(promise), result = WTF::move(result)](auto& context) mutable {
+            RefPtr protectedThis = weakThis;
+            if (!protectedThis)
                 return;
 
             if (result.hasException()) {
@@ -166,7 +170,7 @@ void BackgroundFetchManager::get(ScriptExecutionContext& context, const String& 
 
             RefPtr<BackgroundFetchRegistration> backgroundFetchRegistration;
             if (result.returnValue())
-                backgroundFetchRegistration = weakThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue());
+                backgroundFetchRegistration = protectedThis->backgroundFetchRegistrationInstance(context, *result.releaseReturnValue());
 
             promise.resolve(backgroundFetchRegistration.get());
         });

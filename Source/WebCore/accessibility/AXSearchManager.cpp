@@ -311,7 +311,7 @@ static void appendChildrenToArray(AXCoreObject& object, bool isForward, RefPtr<A
 DidTimeout AXSearchManager::revealHiddenMatchWithTimeout(AXCoreObject& matchedObject, Seconds timeout)
 {
     auto revealAndUpdateAccessibilityTrees = [axID = matchedObject.objectID(), treeID = matchedObject.treeID()] {
-        WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID);
+        CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID);
         RefPtr object = cache ? cache->objectForID(axID) : nullptr;
         if (!object)
             return;

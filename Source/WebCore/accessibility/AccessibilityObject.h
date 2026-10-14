@@ -1092,7 +1092,7 @@ public:
 
     AccessibilityObject::iterator begin()
     {
-        return AccessibilityObject::iterator { m_parent->firstChild(), m_parent.get() };
+        return AccessibilityObject::iterator { protect(m_parent->firstChild()), m_parent.get() };
     }
     AccessibilityObject::iterator end()
     {

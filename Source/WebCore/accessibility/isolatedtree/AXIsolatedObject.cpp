@@ -778,7 +778,7 @@ RefPtr<AXCoreObject> AXIsolatedObject::accessibilityHitTest(const IntPoint& poin
         bool shouldCache;
     };
     auto hitTestOnMainThread = [axID = objectID(), treeID = treeID(), point] -> std::optional<HitTestResult> {
-        if (WeakPtr<AXObjectCache> cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
+        if (CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
             RefPtr object = cache->objectForID(axID);
             auto pageRelativePoint = cache->mapScreenPointToPagePoint(point);
             if (RefPtr hitTestResult = object ? object->accessibilityHitTest(pageRelativePoint) : nullptr) {

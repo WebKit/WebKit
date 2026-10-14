@@ -44,7 +44,7 @@ static JSC::Strong<JSC::JSObject> createWrapperAndSetData(JSC::JSGlobalObject& g
     auto& vm = globalObject.vm();
     JSC::Strong<JSC::Unknown> strongData(vm, value);
 
-    Locker<JSC::JSLock> locker(vm.apiLock());
+    JSC::JSLockHolder locker(vm);
     JSC::Strong<JSC::JSObject> strongWrapper(vm, downcast<JSC::JSObject>(toJSNewlyCreated<IDLInterface<ExtendableMessageEvent>>(globalObject,  downcast<JSDOMGlobalObject>(globalObject), Ref { event })));
     event.data().set(globalObject, strongWrapper.get(), value);
 
@@ -62,7 +62,7 @@ auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, const Ato
 auto ExtendableMessageEvent::create(JSC::JSGlobalObject& globalObject, Vector<Ref<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, Ref<SecurityOrigin>&& origin, const String& lastEventId, std::optional<ExtendableMessageEventSource>&& source) -> ExtendableMessageEventWithStrongData
 {
     auto& vm = globalObject.vm();
-    Locker<JSC::JSLock> locker(vm.apiLock());
+    JSC::JSLockHolder locker(vm);
 
     bool didFail = false;
 

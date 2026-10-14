@@ -431,7 +431,7 @@ void WorkerDedicatedRunLoop::Task::performTask(WorkerOrWorkletGlobalScope* conte
                 context->script()->forbidExecution();
                 return;
             }
-            Locker<JSC::JSLock> locker(vm.apiLock());
+            JSC::JSLockHolder locker(vm);
             reportException(protect(context->script())->globalScopeWrapper(), scope.exception());
         }
     }

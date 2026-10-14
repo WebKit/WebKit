@@ -293,7 +293,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     if (!m_renderer)
         return AccessibilityNodeObject::parentObject();
 
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -374,7 +374,7 @@ bool AccessibilityRenderObject::isOffScreen() const
 
     IntRect contentRect = snappedIntRect(protect(m_renderer)->absoluteClippedOverflowRectForSpatialNavigation());
     // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
-    IntRect viewRect = m_renderer->view().frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    IntRect viewRect = protect(m_renderer->view().frameView())->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
     viewRect.intersect(contentRect);
     return viewRect.isEmpty();
 }
@@ -384,7 +384,7 @@ Element* AccessibilityRenderObject::anchorElement() const
     if (!m_renderer)
         return AccessibilityNodeObject::anchorElement();
 
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return nullptr;
 
@@ -1119,7 +1119,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     if (m_renderer->isBR())
         return true;
 
-    if (WeakPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
         // Text elements with no rendered text, or only whitespace should not be part of the AX tree.
         if (!renderText->hasRenderedText()) {
             // Layout must be clean to make the right decision here (because hasRenderedText() can return false solely because layout is dirty).
@@ -1229,7 +1229,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
         // However, if this is not a native image, fallback to the attribute on the Element.
         AccessibilityObjectInclusion altTextInclusion = AccessibilityObjectInclusion::DefaultBehavior;
-        WeakPtr image = dynamicDowncast<RenderImage>(*m_renderer);
+        CheckedPtr image = dynamicDowncast<RenderImage>(*m_renderer);
         if (image)
             altTextInclusion = objectInclusionFromAltText(image->altText());
         else
@@ -1311,7 +1311,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
     // This logic, originally added in:
     // https://github.com/WebKit/WebKit/commit/ddeb923489b58fd890527bf0e432ebe6a477d2ef
     // Results in a lot of useless generics being exposed, which is wasteful. We should remove this.
-    WeakPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*m_renderer);
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*m_renderer);
     if (blockFlow && m_renderer->childrenInline() && !canSetFocusAttribute() && !blockFlow->hasBlocksInInlineLayout()) {
         return !blockFlow->hasContentfulInlineLine() && !clickableSelfOrAncestor();
     }
@@ -1565,7 +1565,7 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         );
     }
 
-    WeakPtr renderText = dynamicDowncast<RenderText>(renderer.get());
+    CheckedPtr renderText = dynamicDowncast<RenderText>(renderer.get());
     if (!renderText)
         return { };
 
@@ -2714,7 +2714,7 @@ void AccessibilityRenderObject::addImageMapChildren()
     if (!map)
         return;
 
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     if (!cache)
         return;
     for (Ref area : descendantsOfType<HTMLAreaElement>(*map)) {
@@ -3009,7 +3009,7 @@ void AccessibilityRenderObject::addChildren()
         addChild(object);
     };
 
-    WeakPtr cache = axObjectCache();
+    CheckedPtr cache = axObjectCache();
     auto addListItemMarker = [&] () {
         if (CheckedPtr marker = markerRenderer(); marker && cache)
             addChild(protect(cache->getOrCreate(*marker)));

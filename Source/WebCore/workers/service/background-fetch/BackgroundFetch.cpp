@@ -159,8 +159,8 @@ void BackgroundFetch::storeResponse(size_t index, bool shouldClearResponseBody, 
     }
 
     doStore([weakThis = WeakPtr { *this }](auto result) {
-        if (weakThis)
-            weakThis->handleStoreResult(result);
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->handleStoreResult(result);
     }, shouldClearResponseBody ? std::make_optional(index) : std::nullopt);
 }
 
@@ -175,8 +175,8 @@ void BackgroundFetch::storeResponseBodyChunk(size_t index, const SharedBuffer& d
 
     updateBackgroundFetchStatus(m_result, m_failureReason);
     m_store->storeFetchResponseBodyChunk(m_registrationKey, m_identifier, index, data, [weakThis = WeakPtr { *this }](auto result) {
-        if (weakThis)
-            weakThis->handleStoreResult(result);
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->handleStoreResult(result);
     });
 }
 

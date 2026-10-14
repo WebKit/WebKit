@@ -284,7 +284,7 @@ void Worker::reportError(const String& errorMessage)
         Ref event = Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No);
         worker.AbstractWorker::dispatchEvent(event);
         if (!event->defaultPrevented() && worker.scriptExecutionContext())
-            worker.scriptExecutionContext()->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage));
+            protect(worker.scriptExecutionContext())->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage));
     });
 }
 

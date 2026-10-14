@@ -145,7 +145,7 @@ AXTextMarker::operator VisiblePosition() const
 {
     AX_ASSERT(isMainThread());
 
-    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
+    CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
     if (!cache)
         return { };
 
@@ -159,7 +159,7 @@ AXTextMarker::operator CharacterOffset() const
     if (isRedacted() || isNull())
         return { };
 
-    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID());
+    CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID());
     if (!cache)
         return { };
 
@@ -227,7 +227,7 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
         return tree ? tree->objectForID(objectID()) : nullptr;
     }
 #endif
-    auto tree = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
+    CheckedPtr tree = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
     return tree ? tree->objectForID(*objectID()) : nullptr;
 }
 

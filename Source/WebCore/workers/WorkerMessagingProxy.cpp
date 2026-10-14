@@ -329,7 +329,7 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
     ASSERT(document);
     if (!document || !document->page())
         return nullptr;
-    return document->page()->cacheStorageProvider().createCacheStorageConnection();
+    return protect(document->page()->cacheStorageProvider())->createCacheStorageConnection();
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
@@ -537,7 +537,7 @@ void WorkerMessagingProxy::setAppBadge(std::optional<uint64_t> badge)
         if (!document || !document->page())
             return;
 
-        document->page()->badgeClient().setAppBadge(nullptr, SecurityOriginData::fromURL(m_scriptURL), badge);
+        protect(document->page()->badgeClient())->setAppBadge(nullptr, SecurityOriginData::fromURL(m_scriptURL), badge);
     });
 }
 

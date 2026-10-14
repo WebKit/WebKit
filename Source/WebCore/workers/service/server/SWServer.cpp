@@ -1993,7 +1993,7 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, WTF::move(notificationPayload), [callback = WTF::move(callback), terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)](bool succeeded, std::optional<NotificationPayload>&& resultPayload) mutable {
+            protect(connectionOrStatus.value())->firePushEvent(serviceWorkerIdentifier, data, WTF::move(notificationPayload), [callback = WTF::move(callback), terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)](bool succeeded, std::optional<NotificationPayload>&& resultPayload) mutable {
                 if (!succeeded)
                     RELEASE_LOG(Push, "Push event was not successfully handled");
                 if (terminateWorkerTimer->isActive()) {
@@ -2047,7 +2047,7 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [callback = WTF::move(callback), terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)] (bool succeeded) mutable {
+            protect(connectionOrStatus.value())->fireNotificationEvent(serviceWorkerIdentifier, data, type, [callback = WTF::move(callback), terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)] (bool succeeded) mutable {
                 RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Service Worker notification event handler did not succeed");
 
                 // FIXME: if succeeded is false, should we implement a default action like opening a new page?
@@ -2085,7 +2085,7 @@ void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, Back
             worker->decrementFunctionalEventCounter();
         });
         terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-        connectionOrStatus.value()->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker), callback = WTF::move(callback)](bool succeeded) mutable {
+        protect(connectionOrStatus.value())->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker), callback = WTF::move(callback)](bool succeeded) mutable {
             RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch event was not successfully handled");
             if (terminateWorkerTimer->isActive()) {
                 worker->decrementFunctionalEventCounter();
@@ -2116,7 +2116,7 @@ void SWServer::fireBackgroundFetchClickEvent(SWServerRegistration& registration,
             worker->decrementFunctionalEventCounter();
         });
         terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-        connectionOrStatus.value()->fireBackgroundFetchClickEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)](bool succeeded) mutable {
+        protect(connectionOrStatus.value())->fireBackgroundFetchClickEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTF::move(terminateWorkerTimer), worker = WTF::move(worker)](bool succeeded) mutable {
             RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch clickevent was not successfully handled");
             if (terminateWorkerTimer->isActive()) {
                 worker->decrementFunctionalEventCounter();

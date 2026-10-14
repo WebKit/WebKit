@@ -477,8 +477,8 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
                 return { };
             }
         }
-        if (sourceProvider)
-            addImportedScriptSourceProvider(url, *sourceProvider);
+        if (RefPtr provider = sourceProvider)
+            addImportedScriptSourceProvider(url, *provider);
     }
 
     return { };

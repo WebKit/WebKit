@@ -2342,7 +2342,7 @@ bool performCustomActionPress(AXTreeID treeID, AXID targetID)
 {
     return retrieveValueFromMainThreadWithTimeoutAndDefault([treeID, targetID] () -> bool {
         if (WeakPtr<AXObjectCache> cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID)) {
-            if (RefPtr object = cache->objectForID(targetID))
+            if (RefPtr object = protect(cache)->objectForID(targetID))
                 return object->pressPreservingFocus();
         }
         return false;

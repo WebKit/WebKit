@@ -153,7 +153,7 @@ void ServiceWorkerGlobalScope::skipWaiting(Ref<DeferredPromise>&& promise)
             connection->skipWaiting(identifier, [workerThread = WTF::move(workerThread), requestIdentifier] {
                 workerThread->runLoop().postTask([requestIdentifier](auto& context) {
                     auto& scope = downcast<ServiceWorkerGlobalScope>(context);
-                    scope.eventLoop().queueTask(TaskSource::DOMManipulation, [scope = Ref { scope }, requestIdentifier]() mutable {
+                    protect(scope.eventLoop())->queueTask(TaskSource::DOMManipulation, [scope = Ref { scope }, requestIdentifier]() mutable {
                         if (RefPtr promise = scope->m_pendingSkipWaitingPromises.take(requestIdentifier))
                             promise->resolve();
                     });

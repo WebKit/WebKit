@@ -212,7 +212,7 @@ void XMLDocumentParser::end()
         // Appending to the leaf text node may have fired mutation events, which can run arbitrary scripts.
         if (isDetached())
             return;
-        document()->styleScope().didChangeStyleSheetEnvironment();
+        protect(document()->styleScope())->didChangeStyleSheetEnvironment();
     }
 
     if (isParsing())

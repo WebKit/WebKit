@@ -180,7 +180,8 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
     RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), context.documentIsolationPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
 
     SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTF::move(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTF::move(promise)](Vector<BackgroundFetchRecordInformation>&& results) mutable {
-        if (!weakContext)
+        RefPtr context = weakContext;
+        if (!context)
             return;
 
         if (!results.size()) {
@@ -188,7 +189,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
             return;
         }
 
-        promise.resolve(createRecord(*weakContext, WTF::move(results[0])));
+        promise.resolve(createRecord(*context, WTF::move(results[0])));
     });
 }
 
@@ -213,7 +214,7 @@ void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std:
             return;
 
         auto records = WTF::map(results, [&weakContext](auto& result) {
-            return createRecord(*weakContext, WTF::move(result));
+            return createRecord(*protect(weakContext), WTF::move(result));
         });
 
         promise.resolve(WTF::move(records));

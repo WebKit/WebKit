@@ -64,7 +64,7 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
     }
 
     FetchResponse::fetch(scope, request.get(), [promise = WTF::move(promise), scope = Ref { scope }, userGestureToken = UserGestureIndicator::currentUserGesture()]<typename Result> (Result&& result) mutable {
-        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTF::move(promise), userGestureToken = WTF::move(userGestureToken), result = std::forward<Result>(result)] () mutable {
+        protect(scope->eventLoop())->queueTask(TaskSource::Networking, [promise = WTF::move(promise), userGestureToken = WTF::move(userGestureToken), result = std::forward<Result>(result)] () mutable {
             if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture()) {
                 promise.settle(WTF::move(result));
                 return;

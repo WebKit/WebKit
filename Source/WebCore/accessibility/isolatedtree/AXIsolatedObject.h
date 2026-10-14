@@ -226,7 +226,7 @@ private:
         // AXObjectCache ID, then having the main-thread re-hydrate the equivalent main-thread accessibility object,
         // if it's still alive by the time the dispatch is serviced.
         Accessibility::performFunctionOnMainThread([lambda = WTF::move(lambda), axID = objectID(), cacheID = treeID()] () mutable {
-            WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(cacheID);
+            CheckedPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(cacheID);
             if (!cache)
                 return;
             if (RefPtr object = cache->objectForID(axID))
