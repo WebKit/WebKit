@@ -1246,6 +1246,10 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     for (RefPtr slot = element.assignedSlot(); slot; slot = slot->assignedSlot())
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*slot));
 
+    // ::part() rules that match an element in a shadow tree live in an ancestor host's scope.
+    for (RefPtr host = element.shadowHost(); host; host = host->shadowHost())
+        styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(Style::Scope::forNode(*host)));
+
     if (RefPtr cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForStyleRuleInSheets(styleRule))
         return buildObjectForRule(cssomWrapper.get());
 

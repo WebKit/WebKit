@@ -1,0 +1,9 @@
+Test that a shadow part element shows the ::part() styles that target it from the host document. Bug 245208
+
+
+== Running test suite: CSS.ShadowPartStyle
+-- Running test case: CSS.ShadowPartStyle.PartElement
+PASS: Should find the ::part(label) rule from the host document.
+PASS: The ::part(label) rule should include its `color` property.
+PASS: The `color` property should be `red`.
+
