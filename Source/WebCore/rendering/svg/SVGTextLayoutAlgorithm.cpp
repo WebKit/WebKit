@@ -27,7 +27,6 @@
 #include "SVGTextLayoutAlgorithm.h"
 
 #include "ComplexTextController.h"
-#include "FontCascadeCache.h"
 #include "FontCascadeInlines.h"
 #include "InlineDisplayBoxInlines.h"
 #include "LayoutElementBox.h"
@@ -155,7 +154,6 @@ static void ensureTextMetrics(RenderSVGInlineText& text)
     };
 
     if (shouldUseComplexTextController(scaledFont, run)) {
-        FontCascadeCache::forCurrentThread().invalidate();
         auto controller = ComplexTextController { scaledFont, run, true };
         auto totalWidth = 0.f;
         for (unsigned position = 0; position < length;) {

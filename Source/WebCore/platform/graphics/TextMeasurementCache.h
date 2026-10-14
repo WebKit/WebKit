@@ -90,15 +90,17 @@ private:
         {
         }
 
-        ALWAYS_INLINE SmallStringKey(StringView string)
+        // Bits 0-21 hold the hash, bits 22-23 the shaping direction and bits 24-31 the length.
+        ALWAYS_INLINE SmallStringKey(StringView string, unsigned shapingDirection)
         {
             unsigned length = string.length();
             ASSERT(length <= s_capacity);
+            ASSERT(shapingDirection < 4);
             if (string.is8Bit())
                 copySmallCharacters(std::span { m_characters }, string.span8());
             else
                 copySmallCharacters(std::span { m_characters }, string.span16());
-            m_hashAndLength = RapidHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters }.first(length)) | (length << 24);
+            m_hashAndLength = (RapidHash::computeHashAndMaskTop8Bits(std::span<const char16_t> { m_characters }.first(length)) & 0x003fffffU) | (shapingDirection << 22) | (length << 24);
         }
 
         const char16_t* characters() const LIFETIME_BOUND { return m_characters.data(); }
@@ -146,13 +148,9 @@ private:
     };
 
 public:
-    TextMeasurementCache()
-        : m_interval(InitialInterval)
-        , m_countdown(InitialInterval)
-    {
-    }
+    TextMeasurementCache() = default;
 
-    CachedType* add(StringView text, CachedType&& entry)
+    CachedType* add(StringView text, CachedType&& entry, TextDirection direction = TextDirection::LTR, DirectionalOverride directionalOverride = DirectionalOverride::No)
     {
         if (!isMainThread())
             return nullptr;
@@ -171,7 +169,7 @@ public:
             return nullptr;
         }
 
-        return addSlowCase(text, WTF::move(entry));
+        return addSlowCase(text, WTF::move(entry), (direction == TextDirection::RTL ? 1 : 0) | (directionalOverride == DirectionalOverride::Yes ? 2 : 0));
     }
 
     CachedType* add(const TextRun& run, CachedType&& entry, TextShapingContext shapingContext)
@@ -192,7 +190,7 @@ public:
         if (shapingContext.hasTextSpacing && invalidateCacheForTextSpacing(run))
             return nullptr;
 
-        return add(run.text(), WTF::move(entry));
+        return add(run.text(), WTF::move(entry), run.direction(), run.directionalOverride() ? DirectionalOverride::Yes : DirectionalOverride::No);
     }
 
     void clear()
@@ -200,10 +198,11 @@ public:
         ASSERT(isMainThread());
         m_singleCharMap.clear();
         m_map.clear();
-        m_outOfLineMap.clear();
+        for (auto& map : m_outOfLineMaps)
+            map.clear();
     }
 
-    bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty() && m_outOfLineMap.isEmpty(); }
+    bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty() && std::ranges::all_of(m_outOfLineMaps, [](auto& map) { return map.isEmpty(); }); }
 
     static constexpr unsigned inlineKeyCapacity() { return InlineKeyCapacity; }
     static constexpr unsigned maxTextLength() { return MaxTextLength; }
@@ -211,7 +210,7 @@ public:
 
 private:
 
-    CachedType* addSlowCase(StringView text, CachedType&& entry)
+    CachedType* addSlowCase(StringView text, CachedType&& entry, unsigned shapingDirection)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
@@ -223,15 +222,15 @@ private:
             // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
             // This is fine since the key is uint32_t while character is char16_t. So +1 never causes overflow.
             uint32_t character = text[0];
-            auto addResult = m_singleCharMap.fastAdd(character + 1, WTF::move(entry));
+            auto addResult = m_singleCharMap.fastAdd((character + 1) | (shapingDirection << 17), WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else if (length <= InlineKeyCapacity) {
-            auto addResult = m_map.fastAdd(text, WTF::move(entry));
+            auto addResult = m_map.fastAdd(SmallStringKey { text, shapingDirection }, WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else {
-            auto addResult = m_outOfLineMap.template add<StringViewHashTranslator>(text, WTF::move(entry));
+            auto addResult = m_outOfLineMaps[shapingDirection].template add<StringViewHashTranslator>(text, WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         }
@@ -247,14 +246,18 @@ private:
             ++m_interval;
         m_countdown = m_interval;
 
-        // This quick computation doesn't account for external strings owned by m_outOfLineMap.
-        if ((m_singleCharMap.size() + m_map.size() + m_outOfLineMap.size()) < MaxSize)
+        // This quick computation doesn't account for external strings owned by m_outOfLineMaps.
+        size_t outOfLineSize = 0;
+        for (auto& map : m_outOfLineMaps)
+            outOfLineSize += map.size();
+        if ((m_singleCharMap.size() + m_map.size() + outOfLineSize) < MaxSize)
             return value;
 
         // No need to be fancy: we're just trying to avoid pathological growth.
         m_singleCharMap.clear();
         m_map.clear();
-        m_outOfLineMap.clear();
+        for (auto& map : m_outOfLineMaps)
+            map.clear();
         return nullptr;
     }
 
@@ -279,12 +282,12 @@ private:
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
     using OutOfLineMap = HashMap<String, CachedType>;
 
-    int m_interval;
-    int m_countdown;
-    SingleCharMap m_singleCharMap;
-    Map m_map;
-    OutOfLineMap m_outOfLineMap;
-    bool m_hasSeenIdeograph;
+    int m_interval { InitialInterval };
+    int m_countdown { InitialInterval };
+    SingleCharMap m_singleCharMap { };
+    Map m_map { };
+    std::array<OutOfLineMap, 4> m_outOfLineMaps { };
+    bool m_hasSeenIdeograph { false };
 };
 
 } // namespace WebCore

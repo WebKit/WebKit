@@ -1,0 +1,11 @@
+Tests that the text width cache keeps widths measured in different directions apart.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS measure('rtl') is measure('rtl', '1px')
+PASS measure('ltr') is measure('ltr', '1px')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

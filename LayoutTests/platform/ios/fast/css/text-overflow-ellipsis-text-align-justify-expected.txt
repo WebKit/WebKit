@@ -66,35 +66,35 @@ layer at (8,444) size 310x31 clip at (9,445) size 308x29 scrollWidth 762
     RenderImage {IMG} at (278,1) size 26x25
     RenderText {#text} at (303,11) size 460x19
       text run at (303,11) width 460: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,536) size 310x20 clip at (9,537) size 308x18 scrollX 429 scrollWidth 737
+layer at (8,536) size 310x20 clip at (9,537) size 308x18 scrollX 430 scrollWidth 738
   RenderBlock {DIV} at (0,527) size 310x21 [border: (1px solid #000000)]
-    RenderText {#text} at (-428,1) size 737x18
-      text run at (-427,1) width 736 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,616) size 310x74 clip at (9,617) size 308x72 scrollX 429 scrollWidth 737
+    RenderText {#text} at (-429,1) size 738x18
+      text run at (-428,1) width 737 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,616) size 310x74 clip at (9,617) size 308x72 scrollX 430 scrollWidth 738
   RenderBlock {DIV} at (0,608) size 310x75 [border: (1px solid #000000)]
-    RenderText {#text} at (-428,1) size 737x18
-      text run at (-427,1) width 736 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-    RenderBR {BR} at (-428,1) size 1x18
-    RenderText {#text} at (-418,19) size 727x18
-      text run at (-417,19) width 726 RTL: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-    RenderBR {BR} at (-418,19) size 1x18
-    RenderText {#text} at (-410,37) size 719x18
-      text run at (-409,37) width 718 RTL: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-    RenderBR {BR} at (-410,37) size 1x18
-    RenderText {#text} at (-405,55) size 714x18
-      text run at (-404,55) width 713 RTL: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-    RenderBR {BR} at (-405,55) size 1x18
-layer at (8,751) size 310x31 clip at (9,752) size 308x29 scrollX 458 scrollWidth 766
+    RenderText {#text} at (-429,1) size 738x18
+      text run at (-428,1) width 737 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (-429,1) size 1x18
+    RenderText {#text} at (-419,19) size 728x18
+      text run at (-418,19) width 727 RTL: "orem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (-419,19) size 1x18
+    RenderText {#text} at (-411,37) size 720x18
+      text run at (-410,37) width 719 RTL: "rem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (-411,37) size 1x18
+    RenderText {#text} at (-406,55) size 715x18
+      text run at (-405,55) width 714 RTL: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderBR {BR} at (-406,55) size 1x18
+layer at (8,751) size 310x31 clip at (9,752) size 308x29 scrollX 459 scrollWidth 767
   RenderBlock {DIV} at (0,742) size 310x32 [border: (1px solid #000000)]
     RenderText {#text} at (123,11) size 186x19
       text run at (123,11) width 186 RTL: "Lorem ipsum dolor sit amet, "
     RenderImage {IMG} at (98,1) size 26x25
-    RenderText {#text} at (-457,11) size 556x19
-      text run at (-456,11) width 555 RTL: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
-layer at (8,842) size 310x31 clip at (9,843) size 308x29 scrollX 454 scrollWidth 762
+    RenderText {#text} at (-458,11) size 557x19
+      text run at (-457,11) width 556 RTL: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+layer at (8,842) size 310x31 clip at (9,843) size 308x29 scrollX 455 scrollWidth 763
   RenderBlock {DIV} at (0,834) size 310x31 [border: (1px solid #000000)]
     RenderText {#text} at (31,11) size 278x19
       text run at (31,11) width 278 RTL: "Lorem ipsum dolor sit amet, consectetur ad"
     RenderImage {IMG} at (6,1) size 26x25
-    RenderText {#text} at (-453,11) size 460x19
-      text run at (-452,11) width 459 RTL: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderText {#text} at (-454,11) size 461x19
+      text run at (-453,11) width 460 RTL: "ipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
