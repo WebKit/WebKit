@@ -328,11 +328,15 @@ void WebFrameProxy::loadURL(const URL& url, const String& referrer)
 void WebFrameProxy::loadData(std::span<const uint8_t> data, const String& type, const String& encodingName, const URL& baseURL)
 {
     ASSERT(!isMainFrame());
-    if (RefPtr page = m_page.get()) {
-        if (baseURL.protocolIsFile())
-            protect(process())->addPreviouslyApprovedFileURL(baseURL);
-        page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID));
-    }
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    if (baseURL.protocolIsFile())
+        protect(process())->addPreviouslyApprovedFileURL(baseURL);
+    // This load skips both policy decisions, which otherwise assign the agent cluster.
+    auto agentClusterAssignment = protect(page->browsingContextGroup())->assignAgentCluster(AgentClusterRequest::forNavigationAction(baseURL, page->topLevelCreationURL(baseURL, isMainFrame()), IsSubstituteData::Yes));
+    page->sendToProcessContainingFrame(m_frameID, Messages::WebPage::LoadDataInFrame(data, type, encodingName, baseURL, m_frameID, agentClusterAssignment));
 }
     
 bool WebFrameProxy::canProvideSource() const

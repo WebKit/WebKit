@@ -122,6 +122,18 @@ static constexpr auto parentTemplate =
 "</script>"
 "</html>";
 
+static constexpr auto wasmModuleParentTemplate =
+"<html>"
+"<iframe src='%s'></iframe>"
+"<script>"
+"window.addEventListener('message', (event) => {"
+"    window.webkit.messageHandlers.testHandler.postMessage(event.data);"
+"    if (event.data == 'Hello.')"
+"        event.source.postMessage(new WebAssembly.Module(new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00])), '*');"
+"});"
+"</script>"
+"</html>";
+
 static constexpr auto iframeTemplate =
 "<html>"
 "<script>"
@@ -3199,6 +3211,36 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccessTwice)
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:toNSData(byteCast<uint8_t>(iframeHtmlCString.span())).get()];
         Util::run(&allMessagesReceived);
     }
+}
+
+// A WebAssembly.Module can only be posted within an agent cluster.
+TEST(SOAuthorizationSubFrame, InterceptionSuccessAgentCluster)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+    SWIZZLE_AKAUTH();
+
+    URL testURL { "http://www.example.com"_str };
+    auto testHtml = generateHTML(wasmModuleParentTemplate, testURL.string());
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    // Same site as the iframe.
+    [webView loadHTMLString:testHtml.createNSString().get() baseURL:URL { "http://example.com"_str }.createNSURL().get()];
+    Util::run(&allMessagesReceived);
+
+    [messageHandler extendExpectations:@[@"Hello.", @"Received a WebAssembly.Module."]];
+
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.createNSURL().get() statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
+    auto iframeHtmlCString = generateHTML(iframeTemplate, "onmessage = (event) => parent.postMessage(event.data instanceof WebAssembly.Module ? 'Received a WebAssembly.Module.' : 'Received something else.', '*'); onmessageerror = () => parent.postMessage('Could not receive a WebAssembly.Module.', '*');"_s).utf8();
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:toNSData(byteCast<uint8_t>(iframeHtmlCString.span())).get()];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationSubFrame, AuthorizationOptions)

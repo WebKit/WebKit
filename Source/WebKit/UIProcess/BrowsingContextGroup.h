@@ -65,10 +65,12 @@ class WebProcessPool;
 enum class IsMainFrame : bool;
 
 // What a load asks for in terms of agent clusters. BrowsingContextGroup::assignAgentCluster() makes the assignment.
+enum class IsSubstituteData : bool { No, Yes };
+
 struct AgentClusterRequest {
     enum class Source : uint8_t { NavigationAction, SubstituteData, NavigationResponse };
 
-    static AgentClusterRequest forNavigationAction(const URL&, const URL& topLevelCreationURL, bool isSubstituteData);
+    static AgentClusterRequest forNavigationAction(const URL&, const URL& topLevelCreationURL, IsSubstituteData);
     static AgentClusterRequest forNavigationResponse(const WebCore::ResourceResponse&, const URL& topLevelCreationURL, const WebPreferences&);
 
     Source source;

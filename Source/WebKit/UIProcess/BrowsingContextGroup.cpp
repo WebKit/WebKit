@@ -479,9 +479,9 @@ WebCore::AgentClusterIdentifier BrowsingContextGroup::agentClusterIdentifier(con
     }).iterator->value;
 }
 
-AgentClusterRequest AgentClusterRequest::forNavigationAction(const URL& url, const URL& topLevelCreationURL, bool isSubstituteData)
+AgentClusterRequest AgentClusterRequest::forNavigationAction(const URL& url, const URL& topLevelCreationURL, IsSubstituteData isSubstituteData)
 {
-    return { isSubstituteData ? Source::SubstituteData : Source::NavigationAction, WebCore::SecurityOrigin::create(url)->data(), topLevelCreationURL };
+    return { isSubstituteData == IsSubstituteData::Yes ? Source::SubstituteData : Source::NavigationAction, WebCore::SecurityOrigin::create(url)->data(), topLevelCreationURL };
 }
 
 AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, const URL& topLevelCreationURL, const WebPreferences& preferences)
