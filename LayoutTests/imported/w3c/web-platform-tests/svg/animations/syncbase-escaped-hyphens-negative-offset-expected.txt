@@ -1,0 +1,4 @@
+
+PASS Escaped hyphen in syncbase ID with negative offset (begin="a\-b\-c.end - 500ms")
+PASS Control: negative offset with no hyphen in the ID (begin="abc.end - 500ms")
+
