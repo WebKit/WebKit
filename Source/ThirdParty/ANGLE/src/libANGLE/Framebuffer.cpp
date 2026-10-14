@@ -1850,21 +1850,22 @@ angle::Result Framebuffer::partialClearNeedsInit(const Context *context,
         }
     }
 
-    // For layered attachments, consider this a partial clear.  Otherwise the framebuffer clears
-    // some layers but marks the entire mip as initialized.
-    if (depth && mState.mDepthAttachment.hasLayer())
+    // If an attachment is a single layer of a 3D or array texture, consider this a partial clear.
+    // Texture tracks initialization per mip level, so a full clear of one layer would otherwise
+    // mark the other layers initialized too.
+    if (depth && mState.mDepthAttachment.has3DLayer())
     {
         *needsInitOut = true;
         return angle::Result::Continue;
     }
-    if (stencil && mState.mStencilAttachment.hasLayer())
+    if (stencil && mState.mStencilAttachment.has3DLayer())
     {
         *needsInitOut = true;
         return angle::Result::Continue;
     }
     for (size_t colorIndex : color)
     {
-        if (mState.mColorAttachments[colorIndex].hasLayer())
+        if (mState.mColorAttachments[colorIndex].has3DLayer())
         {
             *needsInitOut = true;
             return angle::Result::Continue;

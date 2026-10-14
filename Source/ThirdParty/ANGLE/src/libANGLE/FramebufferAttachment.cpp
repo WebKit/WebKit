@@ -216,9 +216,11 @@ GLint FramebufferAttachment::layer() const
     return (index.has3DLayer() ? index.getLayerIndex() : 0);
 }
 
-bool FramebufferAttachment::hasLayer() const
+bool FramebufferAttachment::has3DLayer() const
 {
-    return mTarget.textureIndex().hasLayer();
+    // Renderbuffer and default framebuffer attachments have a default ImageIndex, whose layer index
+    // is 0.
+    return mType == GL_TEXTURE && mTarget.textureIndex().has3DLayer();
 }
 
 bool FramebufferAttachment::isLayered() const
