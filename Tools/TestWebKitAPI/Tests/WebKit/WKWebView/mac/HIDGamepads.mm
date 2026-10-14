@@ -837,6 +837,13 @@ TEST(Gamepad, CrossSiteIframeReceivesInput)
         return !![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting];
     }));
 
+    // Virtual button 0 is the D-pad's up direction, which GameController.framework reports as button 12.
+#if HAVE(WIDE_GAMECONTROLLER_SUPPORT)
+    constexpr size_t expectedButtonIndex = 12;
+#else
+    constexpr size_t expectedButtonIndex = 0;
+#endif
+
     gamepad->setButtonValue(0, 1.0);
     gamepad->publishReport();
 
@@ -845,7 +852,7 @@ TEST(Gamepad, CrossSiteIframeReceivesInput)
     bool gotExpectedValues = false;
     auto resultBlock = [&] (id result, NSError *error) {
         EXPECT_NULL(error);
-        if ([result[@"gamepadCount"] isEqualToNumber:@(1)] && WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][0] doubleValue], 1.0))
+        if ([result[@"gamepadCount"] isEqualToNumber:@(1)] && WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][expectedButtonIndex] doubleValue], 1.0))
             gotExpectedValues = true;
         done = true;
     };
