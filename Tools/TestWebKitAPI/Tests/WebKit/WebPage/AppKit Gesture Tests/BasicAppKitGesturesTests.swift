@@ -1937,6 +1937,42 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test
+    func choosingLearnSpellingAtCaretAfterMisspelledWordChangesLearnsNothing() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let endOfCrazy = try await pointJustInsideEndOfText("crazy")
+        let spellChecker = SpellCheckerStub(misspelledWord: "crazy", guesses: [])
+
+        let (caretSelection, _) = try await contextMenuAfterClickingTwiceInMisspelledWord(
+            at: endOfCrazy,
+            spellChecker: spellChecker,
+            choosingItemTitled: "Learn Spelling",
+            whileMenuIsOpen: {
+                do {
+                    try await page.callJavaScript {
+                        """
+                        const text = document.getElementById("div").firstChild;
+                        text.replaceData(text.data.indexOf("crazy") + 1, 1, "l");
+                        """
+                    }
+                } catch {
+                    Issue.record(error)
+                }
+            }
+        )
+
+        #expect(spellChecker.learnedWords.isEmpty)
+
+        let text = try await page.callJavaScript(returning: String.self) {
+            "return document.getElementById('div').textContent;"
+        }
+        #expect(text == "Here's to the clazy ones.")
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(selection == caretSelection)
+    }
+
+    @Test
     func choosingSpellingGuessAtCaretReplacesMisspelledWord() async throws {
         try await loadHTML(contentEditable: true)
 
@@ -4031,11 +4067,12 @@ private struct PresentedMenuItem: Sendable, Equatable {
     let isEnabled: Bool
 }
 
-/// Captures the items of the context menu that `body` presents instead of showing it, choosing the item titled
-/// `itemTitle`, if any, as if it were picked from the menu.
+/// Captures the items of the context menu that `body` presents instead of showing it. Then runs `whileMenuIsOpen`,
+/// and chooses the item titled `itemTitle`, if any, as if it were picked from the menu.
 @discardableResult
 nonisolated(nonsending) private func withSwizzledContextMenu(
     choosingItemTitled itemTitle: String? = nil,
+    whileMenuIsOpen: () async -> Void = {},
     perform body: () async -> Void
 ) async -> [PresentedMenuItem] {
     typealias CompletionHandler = @convention(block) () -> Void
@@ -4045,17 +4082,10 @@ nonisolated(nonsending) private func withSwizzledContextMenu(
         ) -> Void
 
     let future = Future()
-    let presentedItems = Mutex<[PresentedMenuItem]>([])
+    let presentedMenu = PresentedContextMenu()
 
     let implementation: ObjCImplementation = { _, menu, _, _, completion in
-        let items = menu.items.filter { !$0.isSeparatorItem }.map { PresentedMenuItem(title: $0.title, isEnabled: $0.isEnabled) }
-        presentedItems.withLock { $0 = items }
-
-        if let itemTitle, let index = menu.items.firstIndex(where: { $0.title == itemTitle }) {
-            menu.performActionForItem(at: index)
-        }
-
-        completion?()
+        presentedMenu.open(menu, completion: completion)
 
         future.signal()
     }
@@ -4068,9 +4098,40 @@ nonisolated(nonsending) private func withSwizzledContextMenu(
         await body()
 
         await future.wait()
+
+        await whileMenuIsOpen()
+
+        await presentedMenu.close(choosingItemTitled: itemTitle)
     }
 
-    return presentedItems.withLock { $0 }
+    return await presentedMenu.items
+}
+
+@MainActor
+private final class PresentedContextMenu {
+    private(set) var items: [PresentedMenuItem] = []
+    private var menu: NSMenu?
+    private var completion: (() -> Void)?
+
+    nonisolated init() {
+    }
+
+    func open(_ menu: NSMenu, completion: (() -> Void)?) {
+        self.menu = menu
+        self.completion = completion
+        items = menu.items.filter { !$0.isSeparatorItem }.map { PresentedMenuItem(title: $0.title, isEnabled: $0.isEnabled) }
+    }
+
+    func close(choosingItemTitled itemTitle: String?) {
+        if let itemTitle, let menu, let index = menu.items.firstIndex(where: { $0.title == itemTitle }) {
+            menu.performActionForItem(at: index)
+        }
+
+        completion?()
+
+        menu = nil
+        completion = nil
+    }
 }
 
 @discardableResult
@@ -4265,7 +4326,8 @@ extension AppKitGesturesTests.Basic {
     private func contextMenuAfterClickingTwiceInMisspelledWord(
         at point: CGPoint,
         spellChecker: SpellCheckerStub,
-        choosingItemTitled itemTitle: String? = nil
+        choosingItemTitled itemTitle: String? = nil,
+        whileMenuIsOpen: () async -> Void = {}
     ) async throws -> (caretSelection: JavaScriptSelection, menuItems: [PresentedMenuItem]) {
         await recap.play { composer in
             composer._wk_click(at: point, for: .seconds(0.05))
@@ -4285,7 +4347,7 @@ extension AppKitGesturesTests.Basic {
 
         var menuItems: [PresentedMenuItem] = []
         await withSpellChecker(spellChecker) {
-            menuItems = await withSwizzledContextMenu(choosingItemTitled: itemTitle) {
+            menuItems = await withSwizzledContextMenu(choosingItemTitled: itemTitle, whileMenuIsOpen: whileMenuIsOpen) {
                 await recap.play { composer in
                     composer._wk_click(at: point, for: .seconds(0.05))
                 }

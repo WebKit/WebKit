@@ -252,8 +252,7 @@ std::unique_ptr<ContextMenu> ContextMenuController::maybeCreateContextMenu(Event
         return nullptr;
 
     m_context = { contextType, result, &event };
-    m_spellingAndGrammarTargetRange = nullptr;
-    m_spellingAndGrammarTargetText = { };
+    m_spellingAndGrammarTarget.reset();
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     prepareContextForQRCode(m_context);
 #endif
@@ -508,8 +507,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
 #endif
     case ContextMenuItemTagSpellingGuess: {
-        if (RefPtr targetRange = m_spellingAndGrammarTargetRange) {
-            auto wordRange = rangeIfTextUnchanged(*targetRange, m_spellingAndGrammarTargetText);
+        if (auto target = m_spellingAndGrammarTarget) {
+            auto wordRange = rangeIfTextUnchanged(target->range, target->text);
             if (wordRange && protect(frame->editor())->shouldInsertText(title, *wordRange, EditorInsertAction::Pasted))
                 protect(frame->editor())->replaceRangeForSpellChecking(*wordRange, title);
             break;
@@ -538,16 +537,16 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     }
     case ContextMenuItemTagIgnoreSpelling:
-        if (RefPtr targetRange = m_spellingAndGrammarTargetRange) {
-            if (auto wordRange = rangeIfTextUnchanged(*targetRange, m_spellingAndGrammarTargetText))
-                protect(frame->editor())->ignoreSpelling(*wordRange);
+        if (auto target = m_spellingAndGrammarTarget) {
+            if (auto wordRange = rangeIfTextUnchanged(target->range, target->text))
+                protect(frame->editor())->ignoreSpelling(WTF::move(wordRange));
         } else
             protect(frame->editor())->ignoreSpelling();
         break;
     case ContextMenuItemTagLearnSpelling:
-        if (RefPtr targetRange = m_spellingAndGrammarTargetRange) {
-            if (auto wordRange = rangeIfTextUnchanged(*targetRange, m_spellingAndGrammarTargetText))
-                protect(frame->editor())->learnSpelling(*wordRange);
+        if (auto target = m_spellingAndGrammarTarget) {
+            if (auto wordRange = rangeIfTextUnchanged(target->range, target->text))
+                protect(frame->editor())->learnSpelling(WTF::move(wordRange));
         } else
             protect(frame->editor())->learnSpelling();
         break;
@@ -1039,8 +1038,7 @@ TextCheckingGuesses ContextMenuController::guessesForSpellingAndGrammarItems(Loc
         if (!wordGuesses.misspelled && !wordGuesses.ungrammatical)
             continue;
 
-        m_spellingAndGrammarTargetRange = createLiveRange(wordRange);
-        m_spellingAndGrammarTargetText = plainText(WTF::move(wordRange));
+        m_spellingAndGrammarTarget.emplace(createLiveRange(wordRange), plainText(wordRange));
         return wordGuesses;
     }
 
@@ -1698,7 +1696,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagIgnoreSpelling:
         case ContextMenuItemTagLearnSpelling:
-            shouldEnable = frame->selection().isRange() || m_spellingAndGrammarTargetRange;
+            shouldEnable = frame->selection().isRange() || m_spellingAndGrammarTarget;
             break;
         case ContextMenuItemTagPaste:
             shouldEnable = frameEditor->canDHTMLPaste() || frameEditor->canEdit();

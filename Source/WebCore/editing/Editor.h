@@ -36,6 +36,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/PasteboardWriterData.h>
 #include <WebCore/ScrollView.h>
+#include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextEventInputType.h>
@@ -369,10 +370,8 @@ public:
     WEBCORE_EXPORT void toggleContinuousSpellChecking();
     bool isGrammarCheckingEnabled();
     void toggleGrammarChecking();
-    void ignoreSpelling();
-    void ignoreSpelling(const SimpleRange&);
-    void learnSpelling();
-    void learnSpelling(const SimpleRange&);
+    void ignoreSpelling(const std::optional<SimpleRange>& = std::nullopt);
+    void learnSpelling(const std::optional<SimpleRange>& = std::nullopt);
     int spellCheckerDocumentTag();
     WEBCORE_EXPORT bool isSelectionUngrammatical();
     String misspelledSelectionString() const;

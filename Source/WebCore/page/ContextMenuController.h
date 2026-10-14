@@ -114,9 +114,14 @@ private:
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;
     ContextMenuContext m_context;
+
+    struct SpellingAndGrammarTarget {
+        Ref<Range> range;
+        String text;
+    };
     // The unselected word that spelling and grammar items act on.
-    RefPtr<Range> m_spellingAndGrammarTargetRange;
-    String m_spellingAndGrammarTargetText;
+    std::optional<SpellingAndGrammarTarget> m_spellingAndGrammarTarget;
+
     bool m_isHandlingContextMenuEvent { false };
 };
 

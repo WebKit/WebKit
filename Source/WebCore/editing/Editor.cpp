@@ -2738,54 +2738,30 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 #endif
 }
 
-void Editor::ignoreSpelling()
+void Editor::ignoreSpelling(const std::optional<SimpleRange>& range)
 {
     if (!client())
         return;
 
-    if (auto selectedRange = document().selection().selection().toNormalizedRange())
-        removeMarkers(*selectedRange, DocumentMarkerType::Spelling);
+    if (auto rangeToIgnore = range ?: document().selection().selection().toNormalizedRange())
+        removeMarkers(*rangeToIgnore, DocumentMarkerType::Spelling);
 
-    String text = selectedText();
+    String text = range ? plainText(*range) : selectedText();
     ASSERT(text.length());
     textChecker()->ignoreWordInSpellDocument(text);
 }
 
-void Editor::learnSpelling()
+void Editor::learnSpelling(const std::optional<SimpleRange>& range)
 {
     if (!client())
         return;
-        
+
     // FIXME: On macOS, when use "learn" button on "Spelling and Grammar" panel, we don't call this function. It should remove misspelling markers around the learned word, see <rdar://problem/5396072>.
 
-    if (auto selectedRange = document().selection().selection().toNormalizedRange())
-        removeMarkers(*selectedRange, DocumentMarkerType::Spelling);
+    if (auto rangeToLearn = range ?: document().selection().selection().toNormalizedRange())
+        removeMarkers(*rangeToLearn, DocumentMarkerType::Spelling);
 
-    String text = selectedText();
-    ASSERT(text.length());
-    textChecker()->learnWord(text);
-}
-
-void Editor::ignoreSpelling(const SimpleRange& range)
-{
-    if (!client())
-        return;
-
-    removeMarkers(range, DocumentMarkerType::Spelling);
-
-    String text = plainText(range);
-    ASSERT(text.length());
-    textChecker()->ignoreWordInSpellDocument(text);
-}
-
-void Editor::learnSpelling(const SimpleRange& range)
-{
-    if (!client())
-        return;
-
-    removeMarkers(range, DocumentMarkerType::Spelling);
-
-    String text = plainText(range);
+    String text = range ? plainText(*range) : selectedText();
     ASSERT(text.length());
     textChecker()->learnWord(text);
 }
