@@ -2175,9 +2175,9 @@ bool RenderObject::useDarkAppearance() const
     return protect(document())->useDarkAppearance(&style());
 }
 
-OptionSet<StyleColorOptions> RenderObject::styleColorOptions() const
+OptionSet<StyleColorOptions> RenderObject::styleColorOptions(StyleColorOptionsPurpose purpose) const
 {
-    return protect(document())->styleColorOptions(&style());
+    return protect(document())->styleColorOptions(&style(), purpose);
 }
 
 void RenderObject::setSelectionState(HighlightState state)

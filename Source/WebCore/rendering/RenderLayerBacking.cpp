@@ -1428,7 +1428,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     else if (is<RenderModel>(renderer())) {
         RefPtr element = downcast<HTMLModelElement>(renderer().element());
 
-        auto modelBackgroundColor = blendSourceOver(renderer().theme().systemColor(CSSValueID::Canvas, renderer().styleColorOptions()), rendererBackgroundColor());
+        auto modelBackgroundColor = blendSourceOver(renderer().theme().systemColor(CSSValueID::Canvas, renderer().styleColorOptions(StyleColorOptionsPurpose::Rendering)), rendererBackgroundColor());
         element->configureGraphicsLayer(*m_graphicsLayer, modelBackgroundColor);
         element->sizeMayHaveChanged();
 
@@ -1440,7 +1440,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (RefPtr element = renderer().element()) {
         if (CheckedPtr controller = element->spatialPortalController()) {
             updateContentsRects();
-            auto portalBackgroundColor = blendSourceOver(renderer().theme().systemColor(CSSValueID::Canvas, renderer().styleColorOptions()), rendererBackgroundColor());
+            auto portalBackgroundColor = blendSourceOver(renderer().theme().systemColor(CSSValueID::Canvas, renderer().styleColorOptions(StyleColorOptionsPurpose::Rendering)), rendererBackgroundColor());
             controller->configureGraphicsLayer(*m_graphicsLayer, portalBackgroundColor);
             controller->sizeMayHaveChanged();
             layerConfigChanged = true;

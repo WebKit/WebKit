@@ -3026,14 +3026,14 @@ bool LocalFrameView::useDarkAppearance() const
     return false;
 }
 
-OptionSet<StyleColorOptions> LocalFrameView::styleColorOptions() const
+OptionSet<StyleColorOptions> LocalFrameView::styleColorOptions(StyleColorOptionsPurpose purpose) const
 {
 #if ENABLE(DARK_MODE_CSS)
     if (CheckedPtr renderer = rendererForColorScheme())
-        return renderer->styleColorOptions();
+        return renderer->styleColorOptions(purpose);
 #endif
     if (RefPtr document = m_frame->document())
-        return document->styleColorOptions(nullptr);
+        return document->styleColorOptions(nullptr, purpose);
     return { };
 }
 
@@ -4495,7 +4495,7 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
         return;
 
 #if ENABLE(DARK_MODE_CSS)
-    m_styleColorOptions = styleColorOptions();
+    m_styleColorOptions = styleColorOptions(StyleColorOptionsPurpose::Rendering);
 #endif
     m_baseBackgroundColor = newBaseBackgroundColor;
 
@@ -4508,7 +4508,7 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
 #if ENABLE(DARK_MODE_CSS)
 void LocalFrameView::updateBaseBackgroundColorIfNecessary()
 {
-    auto styleColorOptions = this->styleColorOptions();
+    auto styleColorOptions = this->styleColorOptions(StyleColorOptionsPurpose::Rendering);
     if (m_styleColorOptions == styleColorOptions)
         return;
 
@@ -4529,7 +4529,7 @@ void LocalFrameView::updateBackgroundRecursively(const std::optional<Color>& bac
 #else
         static const auto cssValueControlBackground = CSSValueID::Window;
 #endif
-        return RenderTheme::singleton().systemColor(cssValueControlBackground, view.styleColorOptions());
+        return RenderTheme::singleton().systemColor(cssValueControlBackground, view.styleColorOptions(StyleColorOptionsPurpose::Rendering));
     };
 
     for (Ref localFrame : inclusiveDescendantFrames<LocalFrame>(m_frame.get())) {

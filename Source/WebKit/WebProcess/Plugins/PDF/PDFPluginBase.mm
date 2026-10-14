@@ -1670,7 +1670,7 @@ Color PDFPluginBase::pluginBackgroundColor() const
     RefPtr element = m_element.get();
     OptionSet<WebCore::StyleColorOptions> options;
     if (RefPtr element = m_element.get())
-        options = protect(element->renderer())->styleColorOptions();
+        options = protect(element->renderer())->styleColorOptions(WebCore::StyleColorOptionsPurpose::Rendering);
     return WebCore::RenderTheme::singleton().systemColor(CSSValueID::AppleSystemBackground, WTF::move(options));
 #else
     static NeverDestroyed color = roundAndClampToSRGBALossy(RetainPtr { [CocoaColor grayColor].CGColor }.get());

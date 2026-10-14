@@ -286,7 +286,7 @@ void OutlinePainter::paintFocusRing(const RenderElement& renderer, const Vector<
         rect.inflate(outlineOffset);
         pixelSnappedFocusRingRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto styleOptions = renderer.styleColorOptions();
+    auto styleOptions = renderer.styleColorOptions(StyleColorOptionsPurpose::Rendering);
     styleOptions.add(StyleColorOptions::UseSystemAppearance);
     auto focusRingColor = usePlatformFocusRingColorForOutlineStyleAuto() ? RenderTheme::singleton().focusRingColor(styleOptions) : style->visitedDependentOutlineColorApplyingColorFilter();
 

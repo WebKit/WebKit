@@ -98,7 +98,7 @@ static Color adjustColorForPunchedOutBackground(const Color& textColor, const Re
     if (!frameView)
         return textColor;
 
-    auto styleColorOptions = document->styleColorOptions(&lineStyle);
+    auto styleColorOptions = document->styleColorOptions(&lineStyle, StyleColorOptionsPurpose::Rendering);
 
     auto backdropColor = frameView->documentBackgroundColor();
     if (!backdropColor.isOpaque())

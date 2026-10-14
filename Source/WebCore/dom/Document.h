@@ -780,7 +780,7 @@ public:
     OptionSet<ColorScheme> resolvedColorScheme(const Style::ComputedStyle*) const;
 #endif
 
-    OptionSet<StyleColorOptions> styleColorOptions(const Style::ComputedStyle*) const;
+    OptionSet<StyleColorOptions> styleColorOptions(const Style::ComputedStyle*, StyleColorOptionsPurpose) const;
 
     CompositeOperator compositeOperatorForBackgroundColor(const Color&, const RenderElement&) const;
 
@@ -1008,9 +1008,9 @@ public:
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const LIFETIME_BOUND { return m_textColor; }
 
-    Color linkColor(const Style::ComputedStyle&) const;
-    Color visitedLinkColor(const Style::ComputedStyle&) const;
-    Color activeLinkColor(const Style::ComputedStyle&) const;
+    Color linkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
+    Color visitedLinkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
+    Color activeLinkColor(const Style::ComputedStyle&, StyleColorOptionsPurpose) const;
     void setLinkColor(const Color& c) { m_linkColor = c; }
     void setVisitedLinkColor(const Color& c) { m_visitedLinkColor = c; }
     void setActiveLinkColor(const Color& c) { m_activeLinkColor = c; }
