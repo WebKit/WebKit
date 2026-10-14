@@ -140,6 +140,7 @@ private:
 
     bool shouldPerformSecurityChecks() const final;
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
+    bool hasExistingNetworkLoadToResume() const final { return !!m_existingNetworkResourceLoadIdentifierToResume; }
 
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;
 
