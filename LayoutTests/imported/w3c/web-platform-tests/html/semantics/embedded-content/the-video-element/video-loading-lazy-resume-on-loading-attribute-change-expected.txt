@@ -1,0 +1,5 @@
+
+PASS Deferred loading=lazy video resumes when the loading attribute is eager
+PASS Deferred loading=lazy video resumes when the loading attribute is removed
+PASS Deferred loading=lazy video resumes when the loading attribute is invalid
+
