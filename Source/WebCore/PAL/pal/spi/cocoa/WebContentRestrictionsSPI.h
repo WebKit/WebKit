@@ -38,6 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WCRBrowserEngineClient ()
 - (void)evaluateURL:(NSURL *)url mainDocumentURL:(NSURL * _Nullable)mainDocumentURL withCompletion:(void (^)(BOOL shouldBlock,  NSData * _Nullable blockPageRepresentation))completion onCompletionQueue:(dispatch_queue_t)completionQueue;
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+- (void)askToBrowseURL:(NSURL *)url referrerURL:(NSURL * _Nullable)referrer withCompletion:(void(^)(WCRAskToBrowseResponse response, NSError * _Nullable error))completion;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

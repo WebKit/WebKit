@@ -183,6 +183,15 @@ selectors = [
 requires = ["HAVE_WEBCONTENTRESTRICTIONS_TRANSITIVE_TRUST"]
 
 [[temporary-usage]]
+request = "rdar://168696619"
+cleanup = "rdar://169487203"
+classes = ["WCRBrowserEngineClient"]
+selectors = [
+    { name = "askToBrowseURL:referrerURL:withCompletion:", class = "WCRBrowserEngineClient" },
+]
+requires = ["HAVE_WEBCONTENTRESTRICTIONS_ASK_TO"]
+
+[[temporary-usage]]
 requires = [ "HAVE_CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP" ]
 request = "rdar://170092229"
 cleanup = "rdar://170092414"

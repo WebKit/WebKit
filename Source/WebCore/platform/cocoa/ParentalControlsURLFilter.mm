@@ -32,10 +32,6 @@
 #import "DeprecatedGlobalSettings.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebContentRestrictionsInternalSPI.h>
-#endif
-
 #import "Logging.h"
 #import "ParentalControlsURLFilterParameters.h"
 #import <wtf/CompletionHandler.h>
@@ -279,9 +275,31 @@ void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const UR
     if (!wcrBrowserEngineClient)
         return completionHandler(true);
 
-#if __has_include(<WebKitAdditions/WebContentRestrictionsInternalSPI.h>)
-    MAYBE_REQUEST_PERMISSION_WCR_ASK_TO
-#endif
+    if ([wcrBrowserEngineClient respondsToSelector:@selector(askToBrowseURL:referrerURL:withCompletion:)]) {
+        [wcrBrowserEngineClient askToBrowseURL:url.createNSURL().get() referrerURL:referrerURL.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WCRAskToBrowseResponse result, NSError *) mutable {
+            switch (result) {
+            case WCRAskToBrowseResponseNone:
+                RELEASE_LOG(Loading, "ParentalControlsURLFilter::requestPermissionForURL result is none");
+                break;
+            case WCRAskToBrowseResponseApproved:
+                RELEASE_LOG(Loading, "ParentalControlsURLFilter::requestPermissionForURL result is approved");
+                break;
+            case WCRAskToBrowseResponseDenied:
+                RELEASE_LOG(Loading, "ParentalControlsURLFilter::requestPermissionForURL result is denied");
+                break;
+            case WCRAskToBrowseResponsePending:
+                RELEASE_LOG(Loading, "ParentalControlsURLFilter::requestPermissionForURL result is pending");
+                break;
+            default:
+                RELEASE_LOG(Loading, "ParentalControlsURLFilter::requestPermissionForURL result is invalid, result:%ld", (long)result);
+                break;
+            }
+            bool didAllow = (result == WCRAskToBrowseResponseApproved);
+            ASSERT(isMainThread());
+            completionHandler(didAllow);
+        }).get()];
+        return;
+    }
 
     RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::requestPermissionForURL falls back to allow.");
     return completionHandler(true);
