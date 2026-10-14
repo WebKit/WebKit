@@ -503,8 +503,10 @@ bool HTMLSelectElement::optionsAreRenderedWithBaseAppearance() const
 
 Element* HTMLSelectElement::optionContainer() const
 {
-    if (isBaseListBox())
-        return const_cast<HTMLSelectElement*>(this);
+    if (isBaseListBox()) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<HTMLSelectElement*>(this);
+    }
     return m_popover.get();
 }
 
@@ -1614,7 +1616,8 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
     };
 
     if (document().settings().htmlEnhancedSelectParsingEnabled()) {
-        for (auto it = descendantsOfType<HTMLElement>(*const_cast<HTMLSelectElement*>(this)).begin(); it;) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST for (auto it = descendantsOfType<HTMLElement>(*const_cast<HTMLSelectElement*>(this)).begin(); it;) {
             Ref descendant = *it;
             if (RefPtr option = dynamicDowncast<HTMLOptionElement>(descendant)) {
                 handleOptionElement(*option);
@@ -1651,7 +1654,8 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
             it.traverseNext();
         }
     } else {
-        for (Ref child : childrenOfType<HTMLElement>(*const_cast<HTMLSelectElement*>(this))) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST for (Ref child : childrenOfType<HTMLElement>(*const_cast<HTMLSelectElement*>(this))) {
             if (is<HTMLOptGroupElement>(child)) {
                 m_listItems.append(child.ptr());
                 for (Ref option : childrenOfType<HTMLOptionElement>(child))
@@ -2798,7 +2802,8 @@ bool HTMLSelectElement::updatesSelectedContent() const
 Vector<Ref<HTMLSelectedContentElement>> HTMLSelectElement::selectedContentElements() const
 {
     Vector<Ref<HTMLSelectedContentElement>> result;
-    for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*const_cast<HTMLSelectElement*>(this))) {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST for (Ref selectedContent : descendantsOfType<HTMLSelectedContentElement>(*const_cast<HTMLSelectElement*>(this))) {
         if (!selectedContent->isDisabled())
             result.append(selectedContent);
     }

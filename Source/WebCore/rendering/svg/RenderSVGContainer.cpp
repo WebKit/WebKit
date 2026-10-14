@@ -171,8 +171,10 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
 
     // For layer-backed containers, clipping is handled by RenderLayer::calculateClipRects().
     if (isRenderSVGViewportContainer() && SVGRenderSupport::isOverflowHidden(*this)) {
-        if (auto clipRect = overflowClipRectForPainting(adjustedPaintOffset); !clipRect.isInfinite())
-            childPaintInfo.context().clip(FloatRect(clipRect));
+        if (auto clipRect = overflowClipRectForPainting(adjustedPaintOffset); !clipRect.isInfinite()) {
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST childPaintInfo.context().clip(FloatRect(clipRect));
+        }
     }
 
     childPaintInfo.updateSubtreePaintRootForChildren(this);

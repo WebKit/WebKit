@@ -189,7 +189,8 @@ FloatRect RenderLayerBacking::computeSVGSegmentBounds(const SVGPaintOrderSegment
     // delta so every segment shares one space and the crop lines up.
     FloatRect bounds;
     CheckedPtr owningLayerRenderer = &m_owningLayer.renderer();
-    auto rendererToCompositedBoundsSpace = owningLayerRenderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Fast).location() - FloatPoint(compositedBounds().location());
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto rendererToCompositedBoundsSpace = owningLayerRenderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Fast).location() - FloatPoint(compositedBounds().location());
 
     CheckedPtr owningLayer = &m_owningLayer;
     auto& items = owningLayer->childrenInDOMOrderForSVG();
@@ -205,7 +206,8 @@ FloatRect RenderLayerBacking::computeSVGSegmentBounds(const SVGPaintOrderSegment
 
             // Same machinery compositedBounds() uses for descendant layers, so the result is in the
             // identical coordinate space.
-            bounds.unite(FloatRect(layer->calculateLayerBounds(owningLayer, layer->offsetFromAncestor(owningLayer), RenderLayer::defaultCalculateLayerBoundsFlags())));
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST bounds.unite(FloatRect(layer->calculateLayerBounds(owningLayer, layer->offsetFromAncestor(owningLayer), RenderLayer::defaultCalculateLayerBoundsFlags())));
             continue;
         }
 
@@ -236,7 +238,8 @@ void RenderLayerBacking::updateSVGSegmentLayerGeometry(FloatSize foregroundLikeS
     // That appears to be the underlying cause and needs a follow-up investigation, so for now the
     // origin is kept foreground-aligned to composite identically.
     bool canCrop = !m_scrolledContentsLayer && !hasClippingLayer() && !m_owningLayer.isTransformed();
-    FloatPoint contentOrigin = FloatRect(compositedBounds()).location();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST FloatPoint contentOrigin = FloatRect(compositedBounds()).location();
 
     for (auto& segment : m_svgPaintOrderSegments) {
         segment.segmentBoundsInLayerSpace = { };

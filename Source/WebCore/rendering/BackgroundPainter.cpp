@@ -1175,8 +1175,10 @@ bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxMode
     if (is<RenderTableCell>(renderer))
         return false;
 
-    if (auto* imageRenderer = dynamicDowncast<RenderImage>(renderer))
-        return !const_cast<RenderImage&>(*imageRenderer).backgroundIsKnownToBeObscured(paintOffset);
+    if (auto* imageRenderer = dynamicDowncast<RenderImage>(renderer)) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return !const_cast<RenderImage&>(*imageRenderer).backgroundIsKnownToBeObscured(paintOffset);
+    }
 
     return true;
 }

@@ -281,8 +281,10 @@ void SVGFontFaceElement::rebuildFontFace()
     if (describesParentFont) {
         // Traverse parsed CSS values and associate CSSFontFaceSrcLocalValue elements with ourselves.
         if (RefPtr srcList = downcast<CSSValueList>(protect(fontFaceRule->properties())->getPropertyCSSValue(CSSPropertyID::Src).get())) {
-            for (Ref item : *srcList)
-                downcast<CSSFontFaceSrcLocalValue>(const_cast<CSSValue&>(item.get())).setSVGFontFaceElement(*this);
+            for (Ref item : *srcList) {
+                // FIXME: Remove suppression once rdar://189998365 is fixed.
+                SUPPRESS_MEMORY_UNSAFE_CAST downcast<CSSFontFaceSrcLocalValue>(const_cast<CSSValue&>(item.get())).setSVGFontFaceElement(*this);
+            }
         }
     }
 

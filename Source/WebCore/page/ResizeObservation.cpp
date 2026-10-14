@@ -103,7 +103,8 @@ LayoutPoint ResizeObservation::computeTargetLocation() const
 
 FloatRect ResizeObservation::computeContentRect() const
 {
-    return FloatRect(FloatPoint(computeTargetLocation()), FloatSize(m_lastObservationSizes.contentBoxSize));
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return FloatRect(FloatPoint(computeTargetLocation()), FloatSize(m_lastObservationSizes.contentBoxSize));
 }
 
 FloatSize ResizeObservation::borderBoxSize() const

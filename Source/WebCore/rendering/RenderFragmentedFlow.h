@@ -183,7 +183,8 @@ private:
 protected:
     RenderFragmentedFlow(Type, Document&, Style::ComputedStyle&&);
 
-    RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { return const_cast<RenderFragmentedFlow*>(this); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentedFlow*>(this); }
 
     ASCIILiteral renderName() const override = 0;
 

@@ -302,16 +302,20 @@ CSSRule* CSSStyleRule::item(unsigned index) const
     ASSERT(m_childRuleCSSOMWrappers.size() == nestedRules().size());
 
     auto& rule = m_childRuleCSSOMWrappers[index];
-    if (!rule)
-        rule = protect(nestedRules()[index])->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
+    if (!rule) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST rule = protect(nestedRules()[index])->createCSSOMWrapper(const_cast<CSSStyleRule&>(*this));
+    }
 
     return rule.get();
 }
 
 CSSRuleList& CSSStyleRule::cssRules() const
 {
-    if (!m_ruleListCSSOMWrapper)
-        lazyInitialize(m_ruleListCSSOMWrapper, makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this)));
+    if (!m_ruleListCSSOMWrapper) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST lazyInitialize(m_ruleListCSSOMWrapper, makeUniqueWithoutRefCountedCheck<LiveCSSRuleList<CSSStyleRule>>(const_cast<CSSStyleRule&>(*this)));
+    }
 
     return *m_ruleListCSSOMWrapper;
 }

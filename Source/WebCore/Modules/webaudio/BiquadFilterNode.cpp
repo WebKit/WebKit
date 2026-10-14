@@ -67,7 +67,8 @@ BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context)
 
 BiquadFilterType BiquadFilterNode::type() const
 {
-    return const_cast<BiquadFilterNode*>(this)->biquadProcessor()->type();
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<BiquadFilterNode*>(this)->biquadProcessor()->type();
 }
 
 void BiquadFilterNode::setType(BiquadFilterType type)

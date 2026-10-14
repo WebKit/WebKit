@@ -2194,8 +2194,10 @@ RefPtr<HTMLInputElement> HTMLInputElement::checkedRadioButtonForGroup() const
 {
     ASSERT(isRadioButton());
 
-    if (checked())
-        return const_cast<HTMLInputElement*>(this);
+    if (checked()) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<HTMLInputElement*>(this);
+    }
 
     auto& name = this->name();
     if (auto* buttons = radioButtonGroups())

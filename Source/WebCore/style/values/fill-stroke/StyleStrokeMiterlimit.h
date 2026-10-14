@@ -43,7 +43,8 @@ struct StrokeMiterlimit {
     constexpr StrokeMiterlimit(CSS::ValueLiteral<CSS::NumberUnit::Number> literal) : value { literal } { }
 
     constexpr bool operator==(const StrokeMiterlimit&) const = default;
-    constexpr auto operator<=>(const StrokeMiterlimit&) const = default;
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE_ON_FUNCTION("alpha.webkit.MemoryUnsafeCastChecker") constexpr auto operator<=>(const StrokeMiterlimit&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(StrokeMiterlimit, value);
 

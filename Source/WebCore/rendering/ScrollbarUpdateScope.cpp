@@ -75,8 +75,10 @@ ScrollbarUpdateScope::~ScrollbarUpdateScope()
     LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea [" << m_renderLayerScrollableArea->scrollingNodeID() << "] updateScrollInfoAfterLayout - new scroll width " << m_renderLayerScrollableArea->m_scrollWidth << " scroll height " << m_renderLayerScrollableArea->m_scrollHeight
         << " rubber banding " << m_renderLayerScrollableArea->isRubberBandInProgress() << " user scrolling " << m_renderLayerScrollableArea->isUserScrollInProgress() << " scroll position updated from " << m_originalScrollPosition << " to " << m_renderLayerScrollableArea->scrollPosition());
 
-    if (m_originalScrollPosition != m_renderLayerScrollableArea->scrollPosition())
-        m_renderLayerScrollableArea->scrollToPositionWithoutAnimation(IntPoint(m_renderLayerScrollableArea->scrollPosition()));
+    if (m_originalScrollPosition != m_renderLayerScrollableArea->scrollPosition()) {
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST m_renderLayerScrollableArea->scrollToPositionWithoutAnimation(IntPoint(m_renderLayerScrollableArea->scrollPosition()));
+    }
 
     if (m_renderLayerScrollableArea->m_layer.isComposited()) {
         m_renderLayerScrollableArea->m_layer.setNeedsCompositingGeometryUpdate();

@@ -146,9 +146,12 @@ private:
     friend struct IPC::ArgumentCoder<TrackInfo>;
     Variant<Ref<AudioInfo>, Ref<VideoInfo>> toVariant() const
     {
-        if (isAudio())
-            return const_cast<AudioInfo&>(downcast<AudioInfo>(*this));
-        return const_cast<VideoInfo&>(downcast<VideoInfo>(*this));
+        if (isAudio()) {
+            // FIXME: Remove suppression once rdar://189998365 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AudioInfo&>(downcast<AudioInfo>(*this));
+        }
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<VideoInfo&>(downcast<VideoInfo>(*this));
     }
 
     WEBCORE_EXPORT static Ref<TrackInfo> fromVariant(Variant<Ref<AudioInfo>, Ref<VideoInfo>>);

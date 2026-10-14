@@ -876,7 +876,8 @@ ALWAYS_INLINE void Node::deref() const
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = true;
 #endif
-        const_cast<Node&>(*this).removedLastRef();
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<Node&>(*this).removedLastRef();
         return;
     }
     m_refCountAndParentBit = updatedRefCount;

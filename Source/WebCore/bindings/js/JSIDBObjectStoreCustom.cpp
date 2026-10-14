@@ -38,7 +38,8 @@ using namespace JSC;
 template<typename Visitor>
 void JSIDBObjectStore::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    static_cast<IDBObjectStore&>(wrapped()).visitReferencedIndexesInGCThread(visitor);
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<IDBObjectStore&>(wrapped()).visitReferencedIndexesInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIDBObjectStore);

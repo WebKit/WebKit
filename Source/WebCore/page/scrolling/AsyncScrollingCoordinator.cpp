@@ -1150,10 +1150,12 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode->setMinLayoutViewportOrigin(frameView.minStableLayoutViewportOrigin());
     frameScrollingNode->setMaxLayoutViewportOrigin(frameView.maxStableLayoutViewportOrigin());
 
-    if (auto visualOverrideRect = frameView.visualViewportOverrideRect())
-        frameScrollingNode->setOverrideVisualViewportSize(FloatSize(visualOverrideRect.value().size()));
-    else
+    if (auto visualOverrideRect = frameView.visualViewportOverrideRect()) {
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST frameScrollingNode->setOverrideVisualViewportSize(FloatSize(visualOverrideRect.value().size()));
+    } else {
         frameScrollingNode->setOverrideVisualViewportSize(std::nullopt);
+    }
 
     auto visualViewportIsSmallerThanLayoutViewport = [](const LocalFrameView& frameView) {
         auto layoutViewport = frameView.layoutViewportRect();

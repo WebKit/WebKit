@@ -505,8 +505,10 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     auto rootLocalIntersectionRect = intersectionState.rootBounds;
     intersectionState.isIntersecting = rootRelativeTargetRect && rootLocalIntersectionRect.edgeInclusiveIntersect(*rootRelativeTargetRect);
 
-    if (isFirstObservation || intersectionState.isIntersecting)
-        intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
+    if (isFirstObservation || intersectionState.isIntersecting) {
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
+    }
 
     auto rootLocalToAbsoluteRect = [&] (FloatRect rect) {
         if (rootRenderer)
@@ -564,8 +566,10 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
     if (intersectionState.observationChanged) {
         intersectionState.absoluteRootBounds = rootLocalToAbsoluteRect(intersectionState.rootBounds);
 
-        if (!intersectionState.absoluteTargetRect)
-            intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
+        if (!intersectionState.absoluteTargetRect) {
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST intersectionState.absoluteTargetRect = targetRenderer->localToAbsoluteQuad(FloatRect(localTargetBounds)).boundingBox();
+        }
     }
 
     return intersectionState;

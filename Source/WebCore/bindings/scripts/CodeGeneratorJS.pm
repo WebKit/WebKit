@@ -3628,7 +3628,8 @@ sub GenerateHeader
     }
 
     if (NeedsImplementationClass($interface)) {
-        if ($hasParent) {
+        # JSLegacyParent base classes already return the right type from wrapped().
+        if ($hasParent && !$interface->extendedAttributes->{JSLegacyParent}) {
             push(@headerContent, "    $interfaceName& wrapped() const\n");
             push(@headerContent, "    {\n");
             push(@headerContent, "        return static_cast<$interfaceName&>(Base::wrapped());\n");

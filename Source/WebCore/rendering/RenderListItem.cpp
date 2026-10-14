@@ -592,7 +592,8 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     if (listMarkerImage(marker->style()))
         return { };
 
-    auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));
     return includeSuffix == ListMarkerIncludeSuffix::Yes ? textContent.textWithSuffix : textContent.textWithoutSuffix().toString();
 }
 

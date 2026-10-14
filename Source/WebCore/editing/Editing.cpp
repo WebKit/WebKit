@@ -188,8 +188,10 @@ Element* editableRootForPosition(const Position& position, EditableType editable
 
     switch (editableType) {
     case HasEditableAXRole:
-        if (CheckedPtr cache = protect(node->document())->existingAXObjectCache())
-            return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
+        if (CheckedPtr cache = protect(node->document())->existingAXObjectCache()) {
+            // FIXME: Remove suppression once rdar://189998365 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
+        }
         [[fallthrough]];
     case ContentIsEditable:
         return node->rootEditableElement();
@@ -1228,7 +1230,8 @@ IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, c
 
     LayoutRect localRect(rect);
     rendererForCaretPainting->flipForWritingMode(localRect);
-    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), MapCoordinatesMode::UseTransforms, insideFixed).enclosingBoundingBox();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), MapCoordinatesMode::UseTransforms, insideFixed).enclosingBoundingBox();
 }
 
 HashSet<Ref<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange& range)

@@ -285,7 +285,8 @@ static RefPtr<NativeImage> copyImageBufferToNativeImage(Ref<ImageBuffer> source,
 
 RefPtr<ImageBuffer> ImageBuffer::clone() const
 {
-    return copyImageBuffer(const_cast<ImageBuffer&>(*this), PreserveResolution::Yes);
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return copyImageBuffer(const_cast<ImageBuffer&>(*this), PreserveResolution::Yes);
 }
 
 GraphicsContext& ImageBuffer::context() const

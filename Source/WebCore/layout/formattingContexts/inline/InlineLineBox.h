@@ -74,8 +74,9 @@ public:
     InlineRect logicalBorderBoxForInlineBox(const Box&, const BoxGeometry&) const;
     InlineRect logicalContentBoxForInlineBox(const Box&) const;
 
-    const InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).inlineLevelBoxFor(layoutBox); }
-    const InlineLevelBox& inlineLevelBoxFor(const LineRun& lineRun) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).inlineLevelBoxFor(lineRun); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    const InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox) const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<LineBox&>(*this).inlineLevelBoxFor(layoutBox); }
+    const InlineLevelBox& inlineLevelBoxFor(const LineRun& lineRun) const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<LineBox&>(*this).inlineLevelBoxFor(lineRun); }
 
     const InlineLevelBox& rootInlineBox() const LIFETIME_BOUND { return m_rootInlineBox; }
     using InlineLevelBoxList = Vector<InlineLevelBox>;
@@ -102,10 +103,12 @@ private:
 
     InlineLevelBox& rootInlineBox() LIFETIME_BOUND { return m_rootInlineBox; }
 
-    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
     InlineLevelBox& parentInlineBox(const InlineLevelBox&) LIFETIME_BOUND;
 
-    const InlineLevelBox& parentInlineBox(const LineRun& lineRun) const LIFETIME_BOUND { return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    const InlineLevelBox& parentInlineBox(const LineRun& lineRun) const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
     InlineLevelBox& parentInlineBox(const LineRun&) LIFETIME_BOUND;
 
     InlineLevelBox& inlineLevelBoxFor(const LineRun&) LIFETIME_BOUND;

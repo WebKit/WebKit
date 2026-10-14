@@ -127,7 +127,8 @@ RefPtr<Element> DocumentFragment::getElementById(const AtomString& id) const
         return protect(treeScope())->getElementById(id);
 
     // Otherwise, fall back to iterating all of the element descendants.
-    for (auto& element : descendantsOfType<Element>(*const_cast<DocumentFragment*>(this))) {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST for (auto& element : descendantsOfType<Element>(*const_cast<DocumentFragment*>(this))) {
         if (element.getIdAttribute() == id)
             return &element;
     }

@@ -729,7 +729,8 @@ ColorInterpolation SVGElement::colorInterpolation() const
         return renderer->style().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
-    if (auto value = Style::Extractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyID::ColorInterpolationFilters, Style::Extractor::UpdateLayout::No))
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST if (auto value = Style::Extractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyID::ColorInterpolationFilters, Style::Extractor::UpdateLayout::No))
         return fromCSSValue<ColorInterpolation>(*value);
 
     return ColorInterpolation::Auto;
@@ -870,7 +871,8 @@ String SVGElement::title() const
     if (isOutermostSVGSVGElement() && page->topDocumentHasDocumentClass(DocumentClass::SVG))
         return String();
     RefPtr firstTitle = childrenOfType<SVGTitleElement>(*this).first();
-    return firstTitle ? const_cast<SVGTitleElement&>(*firstTitle).innerText() : String();
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return firstTitle ? const_cast<SVGTitleElement&>(*firstTitle).innerText() : String();
 }
 
 bool SVGElement::rendererIsNeeded(const Style::ComputedStyle& style)

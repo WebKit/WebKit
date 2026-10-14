@@ -118,7 +118,8 @@ static Vector<uint8_t> combineSegmentsData(const FragmentedSharedBuffer::DataSeg
 
 Ref<SharedBuffer> FragmentedSharedBuffer::makeContiguous() const
 {
-    if (RefPtr sharedBuffer = dynamicDowncast<SharedBuffer>(*const_cast<FragmentedSharedBuffer*>(this)))
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST if (RefPtr sharedBuffer = dynamicDowncast<SharedBuffer>(*const_cast<FragmentedSharedBuffer*>(this)))
         return sharedBuffer.releaseNonNull();
     if (!m_segments.size())
         return SharedBuffer::create();

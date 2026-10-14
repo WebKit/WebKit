@@ -197,10 +197,11 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
                 borderBox.width() + renderInline.horizontalMarginExtent(), borderBox.height());
         }
 
-        FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
-        FloatQuad absPaddingQuad = renderer->localToAbsoluteQuad(FloatRect(paddingBox));
-        FloatQuad absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
-        FloatQuad absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
+        SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad absPaddingQuad = renderer->localToAbsoluteQuad(FloatRect(paddingBox));
+        SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
+        SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
 
         contentsQuadToCoordinateSystem(mainView, *containingView, absContentQuad, coordinateSystem);
         contentsQuadToCoordinateSystem(mainView, *containingView, absPaddingQuad, coordinateSystem);
@@ -343,7 +344,8 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 
     if (paths.shape.isEmpty()) {
         LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
-        FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
         contentsQuadToCoordinateSystem(mainView, *containingView, shapeQuad, InspectorOverlay::CoordinateSystem::Document);
         drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparentBlack, bounds);
         return;

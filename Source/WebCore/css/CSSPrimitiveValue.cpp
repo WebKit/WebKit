@@ -62,7 +62,8 @@ static HashMap<const CSSPrimitiveValue*, String>& LEGACY_NODELETE serializedPrim
 
 CSSUnitType CSSPrimitiveValue::primitiveType() const
 {
-    if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue()))
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue()))
         return CSS::UnevaluatedCalcBase { calcValue.releaseNonNull() }.primitiveType();
     return primitiveUnitType();
 }
@@ -333,7 +334,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
     case CSSUnitType::X:
         return formatNumberValue(unitTypeString(type));
     case CSSUnitType::Calc:
-        return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) }.serializationForCSS(context);
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) }.serializationForCSS(context);
     case CSSUnitType::Integer:
         return formatIntegerValue(""_s);
     case CSSUnitType::QuirkyEm:
@@ -449,7 +451,8 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::Cqmax:
         return m_value.number == other.m_value.number;
     case CSSUnitType::Calc:
-        return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) } == CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*other.cssCalcValue())) };
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) } == CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*other.cssCalcValue())) };
     case CSSUnitType::CalcPercentageWithAngle:
     case CSSUnitType::CalcPercentageWithLength:
         // FIXME: seems like these should be handled.
@@ -548,7 +551,8 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
 // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
 void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
-    if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue())) {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue())) {
         CSS::UnevaluatedCalcBase { calcValue.releaseNonNull() }.collectComputedStyleDependencies(dependencies);
         return;
     }

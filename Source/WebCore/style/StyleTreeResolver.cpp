@@ -105,8 +105,10 @@ TreeResolver::Scope::Scope(Document& document, Update& update)
     document.setIsResolvingTreeStyle(true);
 
     // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
-    for (Ref shadowRoot : document.inDocumentShadowRoots())
-        const_cast<ShadowRoot&>(shadowRoot.get()).styleScope().resolver();
+    for (Ref shadowRoot : document.inDocumentShadowRoots()) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST const_cast<ShadowRoot&>(shadowRoot.get()).styleScope().resolver();
+    }
 
     selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }

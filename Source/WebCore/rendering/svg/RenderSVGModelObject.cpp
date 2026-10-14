@@ -182,10 +182,12 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
 
     if (repaintContainer != this) {
         FloatQuad containerRelativeQuad;
-        if (geometryMap)
+        if (geometryMap) {
             containerRelativeQuad = geometryMap->mapToContainer(outlineBounds, repaintContainer);
-        else
-            containerRelativeQuad = localToContainerQuad(FloatRect(outlineBounds), repaintContainer);
+        } else {
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST containerRelativeQuad = localToContainerQuad(FloatRect(outlineBounds), repaintContainer);
+        }
 
         outlineBounds = LayoutRect(containerRelativeQuad.boundingBox());
     }

@@ -214,7 +214,8 @@ std::optional<MonotonicTime> WindowEventLoop::nextScheduledWorkTime() const
 std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
 {
     std::optional<MonotonicTime> nextRenderingTime;
-    const_cast<WindowEventLoop*>(this)->forEachAssociatedContext([&](ScriptExecutionContext& context) {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<WindowEventLoop*>(this)->forEachAssociatedContext([&](ScriptExecutionContext& context) {
         RefPtr document = dynamicDowncast<Document>(context);
         if (!document)
             return;

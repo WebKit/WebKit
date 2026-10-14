@@ -2047,7 +2047,8 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
         if (layerCount == 1)
             return const_cast<CSSValue&>(shorthandValue);
         auto& list = downcast<CSSValueList>(shorthandValue);
-        return const_cast<CSSValue&>(*list.item(layerIndex % list.size()));
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<CSSValue&>(*list.item(layerIndex % list.size()));
     };
 
     CSSValueListBuilder layers;

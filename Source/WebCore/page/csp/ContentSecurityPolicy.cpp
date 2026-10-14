@@ -881,7 +881,8 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
     bool directiveIsSafe = violatedDirective != ContentSecurityPolicyDirectiveNames::frameSrc
         && violatedDirective != ContentSecurityPolicyDirectiveNames::objectSrc
         && violatedDirective != ContentSecurityPolicyDirectiveNames::blockAllMixedContent;
-    auto securityOrigin = static_cast<SecurityOriginData>(*m_selfSource).securityOrigin();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto securityOrigin = static_cast<SecurityOriginData>(*m_selfSource).securityOrigin();
 
     if (!url.isValid())
         return { };

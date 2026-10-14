@@ -1232,8 +1232,10 @@ Editor& Document::editor()
 
 const Editor& Document::editor() const
 {
-    if (!m_editor)
-        return const_cast<Document&>(*this).ensureEditor();
+    if (!m_editor) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureEditor();
+    }
     return *m_editor;
 }
 
@@ -4009,7 +4011,8 @@ AXObjectCache* Document::axObjectCache() const
         return m_topAXObjectCache.get();
 #endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
-    m_axObjectCache = makeUnique<AXObjectCache>(*protect(m_frame), const_cast<Document*>(this));
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST m_axObjectCache = makeUnique<AXObjectCache>(*protect(m_frame), const_cast<Document*>(this));
     Document::hasEverCreatedAnAXObjectCache = true;
     return m_axObjectCache.get();
 }
@@ -5429,7 +5432,8 @@ bool Document::usesStyleBasedEditability() const
     ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
     ASSERT(!m_inStyleRecalc);
 
-    auto& styleScope = const_cast<Style::DocumentScope&>(this->styleScope());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto& styleScope = const_cast<Style::DocumentScope&>(this->styleScope());
     styleScope.flushPendingUpdate();
     return styleScope.usesStyleBasedEditability();
 }
@@ -7279,7 +7283,8 @@ Document& Document::contextDocument() const
 {
     if (m_contextDocument)
         return *m_contextDocument.get();
-    return const_cast<Document&>(*this);
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this);
 }
 
 void Document::setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& attributeValue, DOMWrapperWorld& isolatedWorld)
@@ -8260,10 +8265,12 @@ Document* Document::mainFrameDocument() const
         Document* localMainDocument = nullptr;
         if (RefPtr localMainFrame = this->localMainFrame())
             localMainDocument = localMainFrame->document();
-        return localMainDocument ? localMainDocument : const_cast<Document*>(this);
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return localMainDocument ? localMainDocument : const_cast<Document*>(this);
     }
 
-    Document* document = const_cast<Document*>(this);
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST Document* document = const_cast<Document*>(this);
     while (HTMLFrameOwnerElement* element = document->ownerElement())
         document = &element->document();
     return document;
@@ -9398,8 +9405,10 @@ DocumentFullscreen& Document::fullscreen()
 
 const DocumentFullscreen& Document::fullscreen() const
 {
-    if (!m_fullscreen)
-        return const_cast<Document&>(*this).ensureFullscreen();
+    if (!m_fullscreen) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureFullscreen();
+    }
     return *m_fullscreen;
 }
 #endif

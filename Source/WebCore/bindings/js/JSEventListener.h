@@ -145,7 +145,8 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
         return nullptr;
 
     JSC::VM& vm = m_world->vm();
-    Ref protect = const_cast<JSEventListener&>(*this);
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST Ref protect = const_cast<JSEventListener&>(*this);
     JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());
 
     if (!m_isInitialized) {

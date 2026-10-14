@@ -585,7 +585,8 @@ void RuleSet::traverseRuleDatas(NOESCAPE const Function& function)
 
 template<typename Function> void RuleSet::traverseRuleDatas(NOESCAPE const Function& function) const
 {
-    const_cast<RuleSet&>(*this).traverseRuleDatas([&](const RuleData& ruleData) {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST const_cast<RuleSet&>(*this).traverseRuleDatas([&](const RuleData& ruleData) {
         function(ruleData);
     });
 }

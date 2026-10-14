@@ -92,7 +92,8 @@ public:
         m_pushedClip = true;
     }
 
-    RegionContext* context() const { return const_cast<RegionContext*>(m_context.get()); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    RegionContext* context() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RegionContext*>(m_context.get()); }
 
 private:
     CheckedPtr<RegionContext> m_context;

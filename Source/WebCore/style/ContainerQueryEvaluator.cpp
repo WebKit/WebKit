@@ -125,7 +125,8 @@ auto ContainerQueryEvaluator::featureEvaluationContextForCondition(const CQ::Con
 
     // Give the condition an element context, which is what the functions that resolve against the
     // query container need.
-    m_builderState = BuilderState::create(const_cast<ComputedStyle&>(*containerStyle), BuilderContext {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST m_builderState = BuilderState::create(const_cast<ComputedStyle&>(*containerStyle), BuilderContext {
         .document = document.get(),
         .parentStyle = containerParentStyle.get(),
         .rootElementStyle = rootStyle.get(),

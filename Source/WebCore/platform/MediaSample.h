@@ -110,7 +110,8 @@ public:
     virtual Ref<MediaSample> createCopyWithAdjustedStartTime(const MediaTime& /*offset*/) const
     {
         ASSERT_NOT_REACHED();
-        return const_cast<MediaSample&>(*this);
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<MediaSample&>(*this);
     }
 
     enum SampleFlags {

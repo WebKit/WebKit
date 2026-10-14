@@ -250,7 +250,8 @@ RefPtr<ShareableBitmap> Image::toShareableBitmap(ConcreteObjectSize concreteObje
     if (!graphicsContext)
         return nullptr;
 
-    graphicsContext->drawImage(const_cast<Image&>(*this), concreteObjectSize, IntPoint());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST graphicsContext->drawImage(const_cast<Image&>(*this), concreteObjectSize, IntPoint());
     return bitmap;
 }
 

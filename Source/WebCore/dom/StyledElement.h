@@ -63,7 +63,8 @@ public:
     bool removeInlineStyleCustomProperty(const AtomString&);
     void removeAllInlineStyleProperties();
 
-    void synchronizeStyleAttributeInternal() const { const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    void synchronizeStyleAttributeInternal() const { SUPPRESS_MEMORY_UNSAFE_CAST const_cast<StyledElement*>(this)->synchronizeStyleAttributeInternalImpl(); }
     
     WEBCORE_EXPORT CSSStyleProperties& cssomStyle();
     StylePropertyMap& ensureAttributeStyleMap();

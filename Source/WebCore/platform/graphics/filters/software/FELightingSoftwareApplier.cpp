@@ -187,7 +187,8 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, std::span<const Ref<
     // output for various kernelUnitLengths, and I am not sure they are reliable.
     // Anyway, feConvolveMatrix should also use the implementation
 
-    auto size = IntSize(result.absoluteImageRect().size());
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST auto size = IntSize(result.absoluteImageRect().size());
 
     // FIXME: do something if width or height (or both) is 1 pixel.
     // The W3 spec does not define this case. Now the filter just returns.

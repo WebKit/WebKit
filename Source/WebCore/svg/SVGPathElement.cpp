@@ -246,7 +246,8 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
             return SVGPathByteStream::empty();
         }
 
-        if (CheckedPtr style = const_cast<SVGPathElement&>(*this).computedStyle()) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST if (CheckedPtr style = const_cast<SVGPathElement&>(*this).computedStyle()) {
             if (auto& pathFunction = style->d().tryPath())
                 return pathFunction->parameters.data.byteStream;
             return SVGPathByteStream::empty();

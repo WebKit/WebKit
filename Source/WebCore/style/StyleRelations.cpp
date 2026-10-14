@@ -85,7 +85,8 @@ void commitRelations(std::unique_ptr<Relations> relations, Update& update)
     if (!relations)
         return;
     for (auto& relation : *relations) {
-        Ref element = const_cast<Element&>(*relation.element);
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST Ref element = const_cast<Element&>(*relation.element);
         switch (relation.type) {
         case Relation::AffectedByEmpty:
             element->setStyleAffectedByEmpty();

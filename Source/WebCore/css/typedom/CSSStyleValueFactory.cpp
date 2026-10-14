@@ -172,8 +172,10 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValueFor
         // https://drafts.css-houdini.org/css-typed-om/#subdivide-into-iterations
         if (CSSProperty::isListValuedProperty(propertyID)) {
             if (auto* values = dynamicDowncast<CSSValueContainingVector>(*cssValue)) {
-                for (Ref value : *values)
-                    cssValues.append(protect(const_cast<CSSValue&>(value.get())));
+                for (Ref value : *values) {
+                    // FIXME: Remove suppression once rdar://189998365 is fixed.
+                    SUPPRESS_MEMORY_UNSAFE_CAST cssValues.append(protect(const_cast<CSSValue&>(value.get())));
+                }
             }
         }
         if (cssValues.isEmpty())

@@ -733,16 +733,20 @@ struct DistanceToCorner {
 static DistanceToCorner LEGACY_NODELETE findDistanceToClosestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
-    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
 
     FloatPoint topRight(size.width(), 0);
-    float topRightDistance = FloatSize(p - topRight).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float topRightDistance = FloatSize(p - topRight).diagonalLength();
 
     FloatPoint bottomLeft(0, size.height());
-    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
 
     FloatPoint bottomRight(size.width(), size.height());
-    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
     FloatPoint corner = topLeft;
     float minDistance = topLeftDistance;
@@ -767,16 +771,20 @@ static DistanceToCorner LEGACY_NODELETE findDistanceToClosestCorner(const FloatP
 static DistanceToCorner LEGACY_NODELETE findDistanceToFarthestCorner(const FloatPoint& p, const FloatSize& size)
 {
     FloatPoint topLeft;
-    float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float topLeftDistance = FloatSize(p - topLeft).diagonalLength();
 
     FloatPoint topRight(size.width(), 0);
-    float topRightDistance = FloatSize(p - topRight).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float topRightDistance = FloatSize(p - topRight).diagonalLength();
 
     FloatPoint bottomLeft(0, size.height());
-    float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float bottomLeftDistance = FloatSize(p - bottomLeft).diagonalLength();
 
     FloatPoint bottomRight(size.width(), size.height());
-    float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST float bottomRightDistance = FloatSize(p - bottomRight).diagonalLength();
 
     FloatPoint corner = topLeft;
     float maxDistance = topLeftDistance;

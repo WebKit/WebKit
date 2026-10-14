@@ -903,7 +903,8 @@ void GraphicsLayer::dumpLayer(TextStream& ts, OptionSet<LayerTreeAsTextOptions> 
     ts << indent << '(' << "GraphicsLayer"_s;
 
     if (options & LayerTreeAsTextOptions::Debug) {
-        ts << ' ' << static_cast<void*>(const_cast<GraphicsLayer*>(this));
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST ts << ' ' << static_cast<void*>(const_cast<GraphicsLayer*>(this));
         ts << " \"" << m_name << '"';
     }
 

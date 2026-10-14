@@ -65,7 +65,8 @@ private:
     void updateAssociatedAttributeFromTokens();
 
     WEBCORE_EXPORT Vector<AtomString, 1>& tokens() LIFETIME_BOUND;
-    const Vector<AtomString, 1>& tokens() const LIFETIME_BOUND { return const_cast<DOMTokenList&>(*this).tokens(); }
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    const Vector<AtomString, 1>& tokens() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<DOMTokenList&>(*this).tokens(); }
 
     static ExceptionOr<void> validateToken(StringView);
     static ExceptionOr<void> validateTokens(std::span<const AtomString> tokens);

@@ -65,8 +65,10 @@ inline ExtensionStyleSheets& Document::extensionStyleSheets()
 
 inline VisitedLinkState& Document::visitedLinkState() const
 {
-    if (!m_visitedLinkState)
-        return const_cast<Document&>(*this).ensureVisitedLinkState();
+    if (!m_visitedLinkState) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureVisitedLinkState();
+    }
     return *m_visitedLinkState;
 }
 
@@ -86,8 +88,10 @@ inline ScriptModuleLoader& Document::moduleLoader()
 
 inline CSSFontSelector& Document::fontSelector() const
 {
-    if (!m_fontSelector)
-        return const_cast<Document&>(*this).ensureFontSelector();
+    if (!m_fontSelector) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureFontSelector();
+    }
     return *m_fontSelector;
 }
 
@@ -121,15 +125,19 @@ inline bool Document::wasLastFocusByClick() const { return m_latestFocusTrigger 
 
 inline UndoManager& Document::undoManager() const
 {
-    if (!m_undoManager)
-        return const_cast<Document&>(*this).ensureUndoManager();
+    if (!m_undoManager) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureUndoManager();
+    }
     return *m_undoManager;
 }
 
 inline ReportingScope& Document::reportingScope() const
 {
-    if (!m_reportingScope)
-        return const_cast<Document&>(*this).ensureReportingScope();
+    if (!m_reportingScope) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<Document&>(*this).ensureReportingScope();
+    }
     return *m_reportingScope;
 }
 

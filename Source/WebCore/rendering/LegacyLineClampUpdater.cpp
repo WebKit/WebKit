@@ -78,7 +78,8 @@ static CheckedPtr<RenderBlockFlow> blockContainerForLastFormattedLine(RenderBloc
                     return { };
                 }
                 auto blockBox = lineBox->blockLevelBox();
-                return blockBox ? dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockBox->renderer())) : nullptr;
+                // FIXME: Remove suppression once rdar://189998365 is fixed.
+                SUPPRESS_MEMORY_UNSAFE_CAST return blockBox ? dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockBox->renderer())) : nullptr;
             }
             return { };
         };

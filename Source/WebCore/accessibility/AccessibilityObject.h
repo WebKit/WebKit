@@ -919,9 +919,10 @@ public:
         { }
 
         explicit operator bool() const { return m_current; }
-        AccessibilityObject& operator*() const { return const_cast<AccessibilityObject&>(*m_current); }
-        AccessibilityObject* operator->() const { return const_cast<AccessibilityObject*>(m_current.get()); }
-        AccessibilityObject* ptr() const { return const_cast<AccessibilityObject*>(m_current.get()); }
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        AccessibilityObject& operator*() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AccessibilityObject&>(*m_current); }
+        AccessibilityObject* operator->() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AccessibilityObject*>(m_current.get()); }
+        AccessibilityObject* ptr() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<AccessibilityObject*>(m_current.get()); }
         bool operator==(const iterator& other) const { return other.m_current == m_current; }
 
         // Prefix increment operator (++iterator).

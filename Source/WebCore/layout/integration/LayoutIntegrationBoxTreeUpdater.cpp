@@ -155,7 +155,8 @@ void BoxTreeUpdater::tearDown()
 
     Vector<CheckedRef<Layout::Box>> boxesToDetach;
     for (CheckedRef constLayoutBox : formattingContextBoxes(rootLayoutBox())) {
-        CheckedRef layoutBox = const_cast<Layout::Box&>(constLayoutBox.get());
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef layoutBox = const_cast<Layout::Box&>(constLayoutBox.get());
         CheckedPtr renderer = layoutBox->rendererForIntegration();
         if (!renderer)
             continue;
@@ -302,7 +303,8 @@ void BoxTreeUpdater::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& 
     CheckedPtr beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
 
     childRenderer.setLayoutBox(childBox);
-    parentBox->insertChild(WTF::move(childBox), const_cast<Layout::Box*>(beforeChildBox.get()));
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST parentBox->insertChild(WTF::move(childBox), const_cast<Layout::Box*>(beforeChildBox.get()));
 }
 
 static void updateContentCharacteristic(const RenderText& rendererText, Layout::InlineTextBox& inlineTextBox)
@@ -333,7 +335,8 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
 
 void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
 {
-    CheckedPtr layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedPtr layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
     if (!layoutBox) {
         ASSERT_NOT_REACHED();
         return;

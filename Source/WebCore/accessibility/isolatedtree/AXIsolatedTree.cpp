@@ -1335,8 +1335,10 @@ void AXIsolatedTree::updateFrameGeometryAndScrollPositionIfNeeded(AXObjectCache&
 {
     if (std::optional geometry = cache.getAndUpdateFrameGeometry()) {
         IntPoint viewOriginScrollPosition;
-        if (CheckedPtr view = protect(cache.document())->view())
-            viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
+        if (CheckedPtr view = protect(cache.document())->view()) {
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
+        }
         setFrameGeometry(AXFrameGeometry { *geometry }, viewOriginScrollPosition);
     }
 }

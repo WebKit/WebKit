@@ -250,7 +250,8 @@ bool RenderFragmentedFlow::absoluteQuadsForBox(Vector<FloatQuad>& quads, bool* w
     forEachFragmentInRange(m_fragmentList, *startFragment, *endFragment, [&](auto& fragment) {
         auto rectsInFragment = fragment.fragmentRectsForFlowContentRect(boxRectInFlowCoordinates);
         for (auto rect : rectsInFragment) {
-            auto absoluteQuad = fragment.localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, wasFixed);
+            // FIXME: Remove suppression once rdar://189998444 is fixed.
+            SUPPRESS_MEMORY_UNSAFE_CAST auto absoluteQuad = fragment.localToAbsoluteQuad(FloatRect(rect), MapCoordinatesMode::UseTransforms, wasFixed);
             quads.append(absoluteQuad);
         }
     });
@@ -309,15 +310,19 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
     if (m_fragmentList.isEmptyIgnoringNullReferences())
         return nullptr;
 
-    if (m_fragmentList.computeSize() == 1 && extendLastFragment)
-        return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+    if (m_fragmentList.computeSize() == 1 && extendLastFragment) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+    }
 
     auto clamp = [clampBox](RenderFragmentContainer* fragment)  {
         return clampBox ? clampBox->clampToStartAndEndFragments(fragment) : fragment;
     };
 
-    if (offset <= 0)
-        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.first()));
+    if (offset <= 0) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.first()));
+    }
 
     FragmentSearchAdapter adapter(offset);
     m_fragmentIntervalTree.allOverlapsWithAdapter(adapter);
@@ -326,8 +331,10 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
 
     // If no fragment was found, the offset is in the flow thread overflow.
     // The last fragment will contain the offset if extendLastFragment is set or if the last fragment is a set.
-    if (extendLastFragment || m_fragmentList.last().isRenderFragmentContainerSet())
-        return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
+    if (extendLastFragment || m_fragmentList.last().isRenderFragmentContainerSet()) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
+    }
 
     return nullptr;
 }
@@ -508,14 +515,16 @@ RenderFragmentContainer* RenderFragmentedFlow::firstFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
 }
 
 RenderFragmentContainer* RenderFragmentedFlow::lastFragment() const
 {
     if (!hasFragments())
         return nullptr;
-    return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<RenderFragmentContainer*>(&m_fragmentList.last());
 }
 
 void RenderFragmentedFlow::clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox& box,
@@ -588,7 +597,8 @@ bool RenderFragmentedFlow::getFragmentRangeForBox(const RenderBox& box, RenderFr
         return false;
 
     if (m_fragmentList.computeSize() == 1) {
-        startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST startFragment = endFragment = const_cast<RenderFragmentContainer*>(&m_fragmentList.first());
         return true;
     }
 

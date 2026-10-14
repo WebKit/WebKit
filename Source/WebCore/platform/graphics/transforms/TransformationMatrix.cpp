@@ -934,7 +934,8 @@ IntRect TransformationMatrix::mapRect(const IntRect &rect) const
 
 LayoutRect TransformationMatrix::mapRect(const LayoutRect& r) const
 {
-    return enclosingLayoutRect(mapRect(FloatRect(r)));
+    // FIXME: Remove suppression once rdar://189998444 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return enclosingLayoutRect(mapRect(FloatRect(r)));
 }
 
 FloatRect TransformationMatrix::mapRect(const FloatRect& r) const

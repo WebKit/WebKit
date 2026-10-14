@@ -1490,8 +1490,10 @@ inline bool RenderObject::usesBoundaryCaching() const
 
 inline CachedImageClient& RenderObject::cachedImageClient() const
 {
-    if (!m_cachedImageClient)
-        lazyInitialize(m_cachedImageClient, CachedImageListener::create(*const_cast<RenderObject*>(this)));
+    if (!m_cachedImageClient) {
+        // FIXME: Remove suppression once rdar://189998365 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST lazyInitialize(m_cachedImageClient, CachedImageListener::create(*const_cast<RenderObject*>(this)));
+    }
     return *m_cachedImageClient.get();
 }
 

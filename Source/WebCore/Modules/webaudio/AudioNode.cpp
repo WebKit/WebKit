@@ -677,7 +677,8 @@ void AudioNode::ref() const
 
 void AudioNode::deref() const
 {
-    Ref context = const_cast<BaseAudioContext&>(this->context());
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST Ref context = const_cast<BaseAudioContext&>(this->context());
 
     // The actual work for deref happens completely within the audio context's graph lock.
     // In the case of the audio thread, we must use a tryLock to avoid glitches.

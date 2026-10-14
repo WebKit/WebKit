@@ -210,7 +210,8 @@ std::optional<NSRange> AXIsolatedObject::visibleCharacterRange() const
         return NSMakeRange(0, markerRange.length());
     }
 
-    RefPtr current = const_cast<AXIsolatedObject*>(this);
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST RefPtr current = const_cast<AXIsolatedObject*>(this);
     const auto* currentRuns = textRuns();
     std::optional stopAtID = idOfNextSiblingIncludingIgnoredOrParent();
     auto advanceCurrent = [&] () {
@@ -487,7 +488,8 @@ String AXIsolatedObject::computedRoleString() const
 {
     AX_ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
 
-    return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] () -> String {
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] -> String {
         if (RefPtr object = context.axObjectOnMainThread())
             return object->computedRoleString().isolatedCopy();
         return { };

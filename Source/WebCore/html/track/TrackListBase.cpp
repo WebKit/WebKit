@@ -63,7 +63,8 @@ WebCoreOpaqueRoot TrackListBase::opaqueRoot() const
     // Cannot ref the observer as this gets called on a GC thread.
     SUPPRESS_UNCOUNTED_LOCAL if (auto* rootObserver = m_opaqueRootObserver.get())
         return (*rootObserver)();
-    return WebCoreOpaqueRoot { const_cast<TrackListBase*>(this) };
+    // FIXME: Remove suppression once rdar://189998365 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST return WebCoreOpaqueRoot { const_cast<TrackListBase*>(this) };
 }
 
 unsigned TrackListBase::length() const
