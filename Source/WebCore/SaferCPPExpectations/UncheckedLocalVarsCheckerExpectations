@@ -103,7 +103,6 @@ style/ChildChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/InlineTextBoxStyle.cpp
 style/StyleAdjuster.cpp
-style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
 style/StyleBuilderStateInlines.h
 style/StyleDifference.cpp
