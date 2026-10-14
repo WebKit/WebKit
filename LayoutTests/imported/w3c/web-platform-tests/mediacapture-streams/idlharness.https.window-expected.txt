@@ -3,10 +3,9 @@ PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface Navigator: original interface defined
 PASS Partial interface Navigator: member names are unique
-PASS Partial interface Navigator[2]: original interface defined
-PASS Partial interface Navigator[2]: member names are unique
 PASS Partial interface MediaDevices: original interface defined
 PASS Partial interface MediaDevices: member names are unique
+PASS Partial interface Navigator[2]: member names are unique
 PASS Partial interface mixin NavigatorID: member names are unique
 PASS Navigator includes NavigatorID: member names are unique
 PASS Navigator includes NavigatorLanguage: member names are unique
@@ -176,9 +175,14 @@ PASS MediaDeviceInfo interface: videoinput must inherit property "label" with th
 PASS MediaDeviceInfo interface: videoinput must inherit property "groupId" with the proper type
 PASS MediaDeviceInfo interface: videoinput must inherit property "toJSON()" with the proper type
 PASS MediaDeviceInfo interface: default toJSON operation on videoinput
+FAIL DeviceChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface object length assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface object name assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface: attribute devices assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
+FAIL DeviceChangeEvent interface: attribute userInsertedDevices assert_own_property: self does not have own property "DeviceChangeEvent" expected property "DeviceChangeEvent" missing
 PASS Navigator interface: attribute mediaDevices
-FAIL Navigator interface: operation getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) assert_own_property: interface prototype object missing non-static operation expected property "getUserMedia" missing
 PASS Navigator interface: navigator must inherit property "mediaDevices" with the proper type
-FAIL Navigator interface: navigator must inherit property "getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback)" with the proper type assert_inherits: property "getUserMedia" not found in prototype chain
-FAIL Navigator interface: calling getUserMedia(MediaStreamConstraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback) on navigator with too few arguments must throw TypeError assert_inherits: property "getUserMedia" not found in prototype chain
 

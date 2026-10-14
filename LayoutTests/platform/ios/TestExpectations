@@ -9097,12 +9097,6 @@ webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/obs
 
 webkit.org/b/321701 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/button-in-popover.html [ Pass Failure Timeout ] # rdar://178158790, rdar://179387420
 
-# webkit.org/b/321110 NEW TEST(317810@main): [iOS macOS]4 tests in imported/w3c/web-platform-tests/webtransport/idlharness are constant failure
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
-
 editing/input/cocoa/writing-suggestions-in-anonymous-renderer.html [ ImageOnlyFailure ]
 fast/events/ios/contenteditable-autocapitalize.html [ Pass Failure Timeout ]
 imported/w3c/web-platform-tests/webtransport/in-removed-iframe.https.html [ Pass Crash ]

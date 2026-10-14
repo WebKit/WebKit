@@ -1,6 +1,14 @@
 
 PASS idl_test setup
 PASS idl_test validation
+PASS QuotaExceededError interface: existence and properties of interface object
+PASS QuotaExceededError interface object length
+PASS QuotaExceededError interface object name
+PASS QuotaExceededError interface: existence and properties of interface prototype object
+PASS QuotaExceededError interface: existence and properties of interface prototype object's "constructor" property
+PASS QuotaExceededError interface: existence and properties of interface prototype object's @@unscopables property
+PASS QuotaExceededError interface: attribute quota
+PASS QuotaExceededError interface: attribute requested
 PASS DOMException interface: existence and properties of interface object
 PASS DOMException interface object length
 PASS DOMException interface object name
