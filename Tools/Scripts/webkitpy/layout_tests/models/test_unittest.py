@@ -73,3 +73,71 @@ class TestNeedsServer(unittest.TestCase):
         self.assertTrue(t.needs_wpt_server)
         self.assertTrue(t.needs_websocket_server)
         self.assertTrue(t.needs_any_server)
+
+
+class TestFilePathAndVariant(unittest.TestCase):
+    def test_no_variant(self):
+        t = Test(test_path='fast/dom/foo.html')
+        self.assertEqual(t.file_path, 'fast/dom/foo.html')
+        self.assertEqual(t.variant, '')
+
+    def test_query_variant(self):
+        t = Test(test_path='imported/w3c/web-platform-tests/css/foo.html?1-100')
+        self.assertEqual(t.file_path, 'imported/w3c/web-platform-tests/css/foo.html')
+        self.assertEqual(t.variant, '?1-100')
+
+    def test_fragment_variant(self):
+        t = Test(test_path='fast/dom/foo.html#bar')
+        self.assertEqual(t.file_path, 'fast/dom/foo.html')
+        self.assertEqual(t.variant, '#bar')
+
+    def test_query_before_fragment(self):
+        t = Test(test_path='foo.html?a=1#frag')
+        self.assertEqual(t.file_path, 'foo.html')
+        self.assertEqual(t.variant, '?a=1#frag')
+
+    def test_fragment_before_query(self):
+        t = Test(test_path='foo.html#frag?a=1')
+        self.assertEqual(t.file_path, 'foo.html')
+        self.assertEqual(t.variant, '#frag?a=1')
+
+    def test_slash_in_query_variant(self):
+        t = Test(test_path='foo.html?a/b')
+        self.assertEqual(t.file_path, 'foo.html')
+        self.assertEqual(t.variant, '?a/b')
+
+    def test_slash_in_fragment_variant(self):
+        t = Test(test_path='foo.html#frag/sub')
+        self.assertEqual(t.file_path, 'foo.html')
+        self.assertEqual(t.variant, '#frag/sub')
+
+    def test_repeated_and_empty_separators(self):
+        # The variant starts at the earliest '?' or '#', and everything after
+        # it, including further separators, belongs to the variant.
+        for test_path, file_path, variant in (
+            ('foo.html?a?b', 'foo.html', '?a?b'),
+            ('foo.html#a#b', 'foo.html', '#a#b'),
+            ('foo.html?a#b#c', 'foo.html', '?a#b#c'),
+            ('foo.html#a?b#c', 'foo.html', '#a?b#c'),
+            ('foo.html?', 'foo.html', '?'),
+            ('foo.html#', 'foo.html', '#'),
+            ('foo.html?#', 'foo.html', '?#'),
+            ('foo.html#?', 'foo.html', '#?'),
+            ('foo.html?a%20b', 'foo.html', '?a%20b'),
+            ('a.b/c.d/foo.html?x', 'a.b/c.d/foo.html', '?x'),
+            ('', '', ''),
+        ):
+            with self.subTest(test_path):
+                t = Test(test_path=test_path)
+                self.assertEqual((t.file_path, t.variant), (file_path, variant))
+
+    def test_file_path_and_variant_always_reassemble_to_the_test_path(self):
+        for test_path in (
+            'foo.html', 'dir/foo.html?a', 'dir/foo.html#a', 'dir/foo.html?a#b', 'dir/foo.html#a?b',
+            'dir/foo.html?a?b', 'dir/foo.html#a#b', 'dir/foo.html?', 'dir/foo.html#', 'dir/foo.html?a/b#c/d',
+        ):
+            with self.subTest(test_path):
+                t = Test(test_path=test_path)
+                self.assertEqual(t.file_path + t.variant, test_path)
+                self.assertNotIn('?', t.file_path)
+                self.assertNotIn('#', t.file_path)

@@ -30,6 +30,16 @@
 import attr
 
 
+def test_name_and_variant(test_name):
+    """Splits a test name into the filename part and the variant part."""
+    idx = len(test_name)
+    for sep in ('?', '#'):
+        pos = test_name.find(sep)
+        if pos != -1 and pos < idx:
+            idx = pos
+    return (test_name[:idx], test_name[idx:])
+
+
 @attr.s(frozen=True, slots=True)
 class Test(object):
     """Data about a test and its expectations.
@@ -44,6 +54,14 @@ class Test(object):
     is_websocket_test = attr.ib(default=False, type=bool)
     is_wpt_test = attr.ib(default=False, type=bool)
     is_wpt_crash_test = attr.ib(default=False, type=bool)
+
+    @property
+    def file_path(self):
+        return test_name_and_variant(self.test_path)[0]
+
+    @property
+    def variant(self):
+        return test_name_and_variant(self.test_path)[1]
 
     @property
     def needs_http_server(self):

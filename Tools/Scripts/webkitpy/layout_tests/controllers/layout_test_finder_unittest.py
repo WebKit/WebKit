@@ -20,6 +20,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import ntpath
+import posixpath
 import unittest
 
 from pyfakefs.fake_filesystem import OSType
@@ -34,6 +36,7 @@ from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.layout_tests.controllers.layout_test_finder import (
     LayoutTestFinder,
 )
+from webkitpy.layout_tests.models.test import test_name_and_variant
 from webkitpy.port.test import (
     TestPort,
     add_unit_tests_to_mock_filesystem,
@@ -113,6 +116,50 @@ class LayoutTestFinderTestsBase(object):
 
         v = list(self.finder._split_glob("a/#b"))
         self.assertEqual([], v)
+
+        v = list(self.finder._split_glob("a/b?c/d"))
+        self.assertEqual([("a", "b", "?c/d"), ("a/b?c", "d", "")], v)
+
+        v = list(self.finder._split_glob("a/b#c/d"))
+        self.assertEqual([("a", "b", "#c/d")], v)
+
+    def test_split_glob_agrees_with_test_name_and_variant(self):
+        # Every way of writing a variant must be split into the same file and
+        # variant by _split_glob as by test_name_and_variant, since one is
+        # used to find tests on disk and the other to name them.
+        for name in (
+            "a/b.html?x",
+            "a/b.html#x",
+            "a/b.html?x#y",
+            "a/b.html#x?y",
+            "a/b.html?x?y",
+            "a/b.html?",
+            "a/b.html#",
+            "a/b.html?x/y",
+            "a/b.html#x/y",
+            "a/b.html?x#y/z",
+            "a/b.html?a%20b",
+            "a.b/c.d/e.html?x",
+            "a/b.html#x#y",
+            "a/b.html?x#y#z",
+            "a/b#c/d#e",
+        ):
+            with self.subTest(name):
+                file_path, variant = test_name_and_variant(name)
+                dirname, basename = posixpath.split(file_path)
+                self.assertIn((dirname, basename, variant), list(self.finder._split_glob(name)))
+
+    def test_split_glob_agrees_with_test_name_and_variant_backslashes(self):
+        if self.fs_os != OSType.WINDOWS:
+            self.skipTest("a backslash is only a separator on Windows")
+        for name in (
+            "a\\b.html#x#y",
+            "a\\b#c\\d#e",
+        ):
+            with self.subTest(name):
+                file_path, variant = test_name_and_variant(name)
+                dirname, basename = ntpath.split(file_path)
+                self.assertIn((dirname, basename, variant), list(self.finder._split_glob(name)))
 
 
 class LayoutTestFinderLinuxTests(PyFakefsLinuxTestCaseMixin, LayoutTestFinderTestsBase, unittest.TestCase):

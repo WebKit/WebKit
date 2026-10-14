@@ -262,6 +262,13 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.test_exists('passes/does_not_exist.html'))
         self.assertTrue(port.test_exists('variant/variant.any.html?1-100'))
         self.assertTrue(port.test_exists('variant/variant.any.html?val=2.3'))
+        self.assertTrue(port.test_exists('variant/variant.any.html#frag'))
+        self.assertTrue(port.test_exists('variant/variant.any.html#frag?1-100'))
+        self.assertTrue(port.test_exists('variant/variant.any.html?a.b.c'))
+        self.assertTrue(port.test_exists('variant/variant.any.html#frag.name'))
+        self.assertTrue(port.test_exists('variant/variant.any.html?a.b#c.d'))
+        self.assertFalse(port.test_exists('passes/does_not_exist.html?variant'))
+        self.assertFalse(port.test_exists('passes/does_not_exist.html#frag'))
 
     def test_test_isfile(self):
         port = self.make_port(with_tests=True)
@@ -402,3 +409,59 @@ class KeyCompareTest(unittest.TestCase):
         self.assert_cmp('/foo!bar/baz', '/foo/bar/baz', -1)
         self.assert_cmp('/foo-bar/baz', '/foo/bar/baz', -1)
         self.assert_cmp('/foo_bar/baz', '/foo/bar/baz', 1)
+
+
+class TestNameAndVariantTest(unittest.TestCase):
+    def test_no_variant(self):
+        self.assertEqual(Port.test_name_and_variant('fast/dom/foo.html'), ('fast/dom/foo.html', ''))
+
+    def test_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a=1'), ('foo.html', '?a=1'))
+
+    def test_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#bar'), ('foo.html', '#bar'))
+
+    def test_query_before_fragment(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a=1#frag'), ('foo.html', '?a=1#frag'))
+
+    def test_fragment_before_query(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag?a=1'), ('foo.html', '#frag?a=1'))
+
+    def test_slash_in_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a/b'), ('foo.html', '?a/b'))
+
+    def test_slash_in_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag/sub'), ('foo.html', '#frag/sub'))
+
+    def test_dot_in_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a.b.c'), ('foo.html', '?a.b.c'))
+
+    def test_dot_in_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#frag.name'), ('foo.html', '#frag.name'))
+
+    def test_dot_in_query_and_fragment_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a.b#c.d'), ('foo.html', '?a.b#c.d'))
+
+    def test_dot_in_fragment_and_query_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html#c.d?a.b'), ('foo.html', '#c.d?a.b'))
+
+    def test_repeated_separators_belong_to_the_variant(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a?b'), ('foo.html', '?a?b'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#a#b'), ('foo.html', '#a#b'))
+        self.assertEqual(Port.test_name_and_variant('foo.html?a#b#c'), ('foo.html', '?a#b#c'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#a?b#c'), ('foo.html', '#a?b#c'))
+
+    def test_empty_variants(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?'), ('foo.html', '?'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#'), ('foo.html', '#'))
+        self.assertEqual(Port.test_name_and_variant('foo.html?#'), ('foo.html', '?#'))
+        self.assertEqual(Port.test_name_and_variant('foo.html#?'), ('foo.html', '#?'))
+        self.assertEqual(Port.test_name_and_variant(''), ('', ''))
+
+    def test_percent_encoding_is_left_alone(self):
+        self.assertEqual(Port.test_name_and_variant('foo.html?a%20b'), ('foo.html', '?a%20b'))
+        # An encoded separator is not a separator.
+        self.assertEqual(Port.test_name_and_variant('foo.html%3Fa'), ('foo.html%3Fa', ''))
+
+    def test_dots_in_the_directory_do_not_start_a_variant(self):
+        self.assertEqual(Port.test_name_and_variant('a.b/c.d/foo.html?x'), ('a.b/c.d/foo.html', '?x'))

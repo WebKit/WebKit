@@ -246,6 +246,28 @@ class SingleTestRunnerTest(unittest.TestCase):
         fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fast/resources/common-ref.html')
         self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
 
+    def test_fuzzy_matching_values_for_variant_test_name(self):
+        # The reference is resolved relative to the test file, which doesn't
+        # include the variant.
+        test_name = 'fast/borders/fuzzy-test.html?variant'
+        single_test_runner = self._make_test_runner(test_name)
+        self._add_file(single_test_runner._port, 'fast/borders/fuzzy-test.html', """<html><head>
+            <meta name=fuzzy content="fuzzy-ref.html:maxDifference=5-8;totalPixels=78-84">
+        """)
+        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fast/borders/fuzzy-ref.html')
+        self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
+
+    def test_fuzzy_matching_values_for_fragment_before_query_test_name(self):
+        # Splitting at the first '?' rather than the earliest separator left
+        # '#frag' on the file name, so the test file wasn't found.
+        test_name = 'fast/borders/fuzzy-test.html#frag?variant'
+        single_test_runner = self._make_test_runner(test_name)
+        self._add_file(single_test_runner._port, 'fast/borders/fuzzy-test.html', """<html><head>
+            <meta name=fuzzy content="fuzzy-ref.html:maxDifference=5-8;totalPixels=78-84">
+        """)
+        fuzzy_data = single_test_runner._fuzzy_tolerance_for_reference('/test.checkout/LayoutTests/fast/borders/fuzzy-ref.html')
+        self.assertEqual(fuzzy_data, {'max_difference': [5, 8], 'total_pixels': [78, 84]})
+
     def test_fuzzy_matching_values_for_xml_document(self):
         test_name = 'fuzzy-test.svg'
         single_test_runner = self._make_test_runner(test_name)

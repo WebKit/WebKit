@@ -355,6 +355,11 @@ class LayoutTestFinderTestsBase(object):
         tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/image.html?variant'])]
         self.assertEqual(tests, ['failures/expected/image.html?variant'])
 
+    def test_find_glob_fragment_with_repeated_separator(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['failures/expected/image.html#x#y'])]
+        self.assertEqual(tests, ['failures/expected/image.html#x#y'])
+
     def test_find_glob_double_star(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['**/*test-crash-crash*'])]
