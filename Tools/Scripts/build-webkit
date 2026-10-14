@@ -36,6 +36,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Find;
+use File::Path qw(make_path);
 use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through no_auto_abbrev);
@@ -46,6 +47,8 @@ use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
 use Text::ParseWords;
 
+sub setUpCCacheStatsLog();
+sub ccacheSummary();
 sub writeCongrats();
 
 maybeEnterWebKitContainerSDK();
@@ -82,6 +85,7 @@ my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
 my $startTime = time();
+my $ccacheStatsLog;
 my $archs32bit = 0;
 my $useCCache = -1;
 my $exportCompileCommands = 0;
@@ -311,6 +315,7 @@ if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
 
     # Allow ccache to hit when building on different directories
     $ENV{"CCACHE_BASEDIR"} //= sourceDir();
+    setUpCCacheStatsLog();
 
     if (isGtk() || isWPE()) {
         use constant VIDEO_DECODING_LIMIT => "-DVIDEO_DECODING_LIMIT=7680x4320\@60";
@@ -348,6 +353,7 @@ if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
         # Allow ccache to hit when building on different directories
         $ENV{"CCACHE_BASEDIR"} //= sourceDir();
     }
+    setUpCCacheStatsLog();
 
     chdirWebKit();
     if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @featureArgs, @cmakeArgs))) {
@@ -443,9 +449,55 @@ sub writeCongrats()
     print "\n";
     print "====================================================================\n";
     print " $projectName is now built ($buildTime). \n";
+    if (my $ccacheSummary = ccacheSummary()) {
+        print " $ccacheSummary\n";
+    }
     if ($launcherCommand && $launcherName) {
         print " To run $launcherName with this newly-built code, use\n";
         print " the command \"$launcherCommand\".\n";
     }
     print "====================================================================\n";
+}
+
+sub setUpCCacheStatsLog()
+{
+    # Keep a per-build ccache stats log so writeCongrats() can report the hits of this build only.
+    return if ($ENV{'WK_USE_CCACHE'} // "") eq "NO" || defined $ENV{'CCACHE_STATSLOG'};
+    return unless webkitdirs::commandExists("ccache");
+
+    my $productDir = File::Spec->rel2abs(productDir());
+    make_path($productDir);
+    $ccacheStatsLog = File::Spec->catfile($productDir, "ccache-stats.log");
+    unlink $ccacheStatsLog;
+    $ENV{'CCACHE_STATSLOG'} = $ccacheStatsLog;
+}
+
+sub ccacheSummary()
+{
+    return unless $ccacheStatsLog && -s $ccacheStatsLog;
+
+    # --print-log-stats needs ccache 4.10; older versions just print no summary.
+    my $devnull = File::Spec->devnull();
+    open(my $statsOutput, "-|", "ccache --print-log-stats 2>$devnull") or return;
+    my %counters;
+    while (my $line = <$statsOutput>) {
+        chomp $line;
+        my ($name, $value) = split(/\t/, $line);
+        $counters{$name} = $value if defined $value;
+    }
+    close($statsOutput) or return;
+
+    my $hits = ($counters{'direct_cache_hit'} // 0) + ($counters{'preprocessed_cache_hit'} // 0);
+    my $misses = $counters{'cache_miss'} // 0;
+    my $total = $hits + $misses;
+    return unless $total;
+
+    my $summary = sprintf("ccache: %d/%d hits (%.1f%%)", $hits, $total, 100 * $hits / $total);
+    my $remoteHits = $counters{'remote_storage_hit'} // 0;
+    if ($remoteHits || $counters{'remote_storage_miss'}) {
+        $summary .= sprintf(", %d local and %d remote", $counters{'local_storage_hit'} // 0, $remoteHits);
+    }
+    my $remoteFailures = ($counters{'remote_storage_error'} // 0) + ($counters{'remote_storage_timeout'} // 0);
+    $summary .= "; remote storage errors: $remoteFailures" if $remoteFailures;
+    return $summary;
 }
