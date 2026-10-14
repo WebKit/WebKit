@@ -49,13 +49,35 @@ PASS SVGTransformList (gradientTransform on linearGradient): a shrink detaches t
 PASS SVGTransformList (gradientTransform on linearGradient): the truncated item stops reaching the element and stops being read only
 PASS SVGTransformList (gradientTransform on linearGradient): the list interface object survives the change
 PASS SVGTransformList (gradientTransform on linearGradient): an empty string empties the list and detaches every item
-FAIL SVGTransformList (transform): a changed transform function keeps the held item in the list assert_equals: the object at index 0 is unchanged expected object "[object SVGTransform]" but got object "[object SVGTransform]"
-FAIL SVGTransformList (transform): a changed transform function updates the held item's type and matrix assert_equals: type expected 3 but got 2
-FAIL SVGTransformList (transform): swapping two transform functions keeps both held items assert_equals: index 0 expected object "[object SVGTransform]" but got object "[object SVGTransform]"
+PASS SVGTransformList (transform): a changed transform function keeps the held item in the list
+PASS SVGTransformList (transform): a changed transform function updates the held item's type and matrix
+PASS SVGTransformList (transform): swapping two transform functions keeps both held items
+PASS SVGTransformList (transform): rotate(30 5 5) changed to translate(1,2) updates the held item's type, angle and matrix
+PASS SVGTransformList (transform): translate(1,2) changed to rotate(45 10 10) updates the held item's type, angle and matrix
+PASS SVGTransformList (transform): translate(1,2) changed to skewX(20) updates the held item's type, angle and matrix
+PASS SVGTransformList (transform): rotate(30) changed to skewY(20) updates the held item's type, angle and matrix
+PASS SVGTransformList (transform): rotate(30) changed to matrix(1 0 0 1 7 8) updates the held item's type, angle and matrix
+PASS SVGTransformList (transform): the held item is still attached after a changed transform function
+PASS SVGTransformList (transform): a grow with a changed transform function updates the held item and sets the appended one
 PASS SVGTransformList (transform): an empty list detaches every item
-FAIL SVGTransformList (gradientTransform): a changed transform function keeps the held item in the list assert_equals: the object at index 0 is unchanged expected object "[object SVGTransform]" but got object "[object SVGTransform]"
-FAIL SVGTransformList (gradientTransform): a changed transform function updates the held item's type and matrix assert_equals: type expected 3 but got 2
-FAIL SVGTransformList (gradientTransform): swapping two transform functions keeps both held items assert_equals: index 0 expected object "[object SVGTransform]" but got object "[object SVGTransform]"
+PASS SVGTransformList (transform): an unparsable value after a changed transform function detaches every item, which keeps its old value
+PASS SVGTransformList (transform): an unparsable value after an unchanged transform function detaches every item, which keeps its old value
+PASS SVGTransformList (transform): a trailing comma makes a shrinking value unparsable
+PASS SVGTransformList (transform): a trailing comma after an unchanged transform function detaches every item, which keeps its old value
+PASS SVGTransformList (gradientTransform): a changed transform function keeps the held item in the list
+PASS SVGTransformList (gradientTransform): a changed transform function updates the held item's type and matrix
+PASS SVGTransformList (gradientTransform): swapping two transform functions keeps both held items
+PASS SVGTransformList (gradientTransform): rotate(30 5 5) changed to translate(1,2) updates the held item's type, angle and matrix
+PASS SVGTransformList (gradientTransform): translate(1,2) changed to rotate(45 10 10) updates the held item's type, angle and matrix
+PASS SVGTransformList (gradientTransform): translate(1,2) changed to skewX(20) updates the held item's type, angle and matrix
+PASS SVGTransformList (gradientTransform): rotate(30) changed to skewY(20) updates the held item's type, angle and matrix
+PASS SVGTransformList (gradientTransform): rotate(30) changed to matrix(1 0 0 1 7 8) updates the held item's type, angle and matrix
+PASS SVGTransformList (gradientTransform): the held item is still attached after a changed transform function
+PASS SVGTransformList (gradientTransform): a grow with a changed transform function updates the held item and sets the appended one
 PASS SVGTransformList (gradientTransform): an empty list detaches every item
+PASS SVGTransformList (gradientTransform): an unparsable value after a changed transform function detaches every item, which keeps its old value
+PASS SVGTransformList (gradientTransform): an unparsable value after an unchanged transform function detaches every item, which keeps its old value
+PASS SVGTransformList (gradientTransform): a trailing comma makes a shrinking value unparsable
+PASS SVGTransformList (gradientTransform): a trailing comma after an unchanged transform function detaches every item, which keeps its old value
 PASS SVGStringList: a change replaces the list rather than updating items
 

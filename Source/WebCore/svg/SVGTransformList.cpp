@@ -121,13 +121,56 @@ std::optional<AffineTransform> SVGTransformList::concatenate() const
     return result;
 }
 
-template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsingBuffer<CharacterType>& buffer, ListReplacement listReplacement)
+void SVGTransformList::setTransformValue(SVGTransformValue& transform, const ParsedTransform& parsedTransform)
+{
+    auto& values = parsedTransform.values;
+
+    switch (parsedTransform.type) {
+    case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
+        ASSERT_NOT_REACHED();
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_SKEWX:
+        transform.setSkewX(values[0]);
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_SKEWY:
+        transform.setSkewY(values[0]);
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_SCALE:
+        // Spec: if only one param given, assume uniform scaling.
+        if (parsedTransform.valueCount == 1)
+            transform.setScale(values[0], values[0]);
+        else
+            transform.setScale(values[0], values[1]);
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
+        // Spec: if only one param given, assume 2nd param to be 0.
+        if (parsedTransform.valueCount == 1)
+            transform.setTranslate(values[0], 0);
+        else
+            transform.setTranslate(values[0], values[1]);
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_ROTATE:
+        if (parsedTransform.valueCount == 1)
+            transform.setRotate(values[0], 0, 0);
+        else
+            transform.setRotate(values[0], values[1], values[2]);
+        return;
+
+    case SVGTransformValue::SVG_TRANSFORM_MATRIX:
+        transform.setMatrix(AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]));
+        return;
+    }
+}
+
+template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsingBuffer<CharacterType>& buffer, ParsedTransforms& transforms)
 {
     bool delimParsed = false;
     skipOptionalSVGSpaces(buffer);
-
-    size_t itemIndex = 0;
-    auto currentListReplacement = listReplacement;
 
     while (buffer.hasCharactersRemaining()) {
         delimParsed = false;
@@ -136,22 +179,11 @@ template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsi
         if (!parsedTransformType)
             return false;
 
-        if (currentListReplacement == ListReplacement::Replace && itemIndex < m_items.size() && parsedTransformType == m_items[itemIndex]->type()) {
-            if (!parseAndReplaceTransform(*parsedTransformType, buffer, m_items[itemIndex]))
-                return false;
-        } else {
-            // Switch to `Append` mode and remove the existing SVGTransforms starting from `itemIndex`.
-            if (currentListReplacement == ListReplacement::Replace) {
-                currentListReplacement = ListReplacement::Append;
-                resize(itemIndex);
-            }
+        auto parsedTransform = parseTransform(*parsedTransformType, buffer);
+        if (!parsedTransform)
+            return false;
 
-            RefPtr parsedTransform = parseTransform(*parsedTransformType, buffer);
-            if (!parsedTransform)
-                return false;
-
-            append(parsedTransform.releaseNonNull());
-        }
+        transforms.append(*parsedTransform);
 
         skipOptionalSVGSpaces(buffer);
 
@@ -159,37 +191,55 @@ template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsi
             delimParsed = true;
 
         skipOptionalSVGSpaces(buffer);
-
-        ++itemIndex;
-    }
-
-    if (itemIndex < m_items.size()) {
-        ASSERT(currentListReplacement == ListReplacement::Replace);
-        resize(itemIndex);
     }
 
     return !delimParsed;
 }
 
+template<typename CharacterType> bool SVGTransformList::parseAndAppend(StringParsingBuffer<CharacterType>& buffer)
+{
+    ParsedTransforms transforms;
+    bool parsingSucceeded = parseGeneric(buffer, transforms);
+
+    // SVGViewSpec stops parsing at the ')' that closes transform(...), so keep
+    // the transforms read before the parsing stopped.
+    for (auto& parsedTransform : transforms) {
+        SVGTransformValue transform;
+        setTransformValue(transform, parsedTransform);
+        append(SVGTransform::create(WTF::move(transform)));
+    }
+    return parsingSucceeded;
+}
+
 bool SVGTransformList::parse(StringView value)
 {
-    bool parsingSucceeded = readCharactersForParsing(value, [&](auto buffer) {
-        return parseGeneric(buffer, ListReplacement::Replace);
-    });
+    ParsedTransforms transforms;
 
-    if (!parsingSucceeded)
+    bool parsingSucceeded = readCharactersForParsing(value, [&](auto buffer) {
+        return parseGeneric(buffer, transforms);
+    });
+    if (!parsingSucceeded) {
         clearItems();
-    return parsingSucceeded;
+        return false;
+    }
+
+    // Spec: the steps for synchronizing a list interface object. The existing
+    // SVGTransforms, and their SVGMatrix, are reused whatever their transform
+    // function, so a value that changes only its numbers costs no memory.
+    resize(transforms.size());
+    for (size_t index = 0; index < transforms.size(); ++index)
+        setTransformValue(protect(m_items[index])->value(), transforms[index]);
+    return true;
 }
 
 bool SVGTransformList::parse(StringParsingBuffer<Latin1Character>& buffer)
 {
-    return parseGeneric(buffer, ListReplacement::Append);
+    return parseAndAppend(buffer);
 }
 
 bool SVGTransformList::parse(StringParsingBuffer<char16_t>& buffer)
 {
-    return parseGeneric(buffer, ListReplacement::Append);
+    return parseAndAppend(buffer);
 }
 
 String SVGTransformList::valueAsString() const
