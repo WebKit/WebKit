@@ -26,5 +26,12 @@
 #if JSC_SUPPORTS_SWIFT
 
 @_exported public import JavaScriptCore
+internal import wtf
+internal import wtf.Core.text.WTFString
+
+// WTF is statically linked into JavaScriptCore, so JavaScriptCore's TBD embeds WTF's Swift symbols.
+// Before Swift 6.5, that omits members of WTF's extensions on C++ types unless this module references
+// each such type.
+private func referenceWTFTypesExtendedInSwift(_: WTF.String) {}
 
 #endif

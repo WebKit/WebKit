@@ -87,7 +87,7 @@ SWIFT_INSTALL_OBJC_HEADER = NO;
 SWIFT_LIBRARY_LEVEL = api;
 
 // Use handwritten SPI modules on public SDKs.
-SWIFT_INCLUDE_PATHS = $(SRCROOT)/Modules/Internal $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
+SWIFT_INCLUDE_PATHS = $(SRCROOT)/Modules/Internal $(BUILT_PRODUCTS_DIR)/swift $(DSTROOT)$(WK_LIBRARY_INSTALL_PATH)/swift $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/swift $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
 SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/Platform/spi/visionos $(SRCROOT)/Platform/spi/ios $(SRCROOT)/Platform/spi/Cocoa $(SRCROOT)/Platform/spi/Cocoa/Modules $(inherited);
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -fmodules -fno-cxx-modules;

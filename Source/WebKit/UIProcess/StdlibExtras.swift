@@ -69,13 +69,6 @@ extension WTF.String {
             return unsafe WTF.String.fromUTF8(cppspan)
         }
     }
-
-    /// Return a `Swift.String` from this `WTF.String`.
-    var description: Swift.String {
-        // We could possibly make this quicker by treating a C++ span as
-        // a Sequence. For now, we want to avoid unsafe as much as possible.
-        Swift.String(utf8(WTF.LenientConversion).toStdString())
-    }
 }
 
 // FIXME(rdar://164119356)): conform to ExpressibleByStringLiteral

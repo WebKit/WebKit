@@ -23,8 +23,15 @@
 
 // The Swift module shadows the Clang module and the Swift module therefore needs to publicly import and re-export the underlying Clang module.
 
-#if WTF_SWIFT_CXX_INTEROP
-
+internal import CxxStdlib
 @_exported public import wtf
+public import wtf.Core.text.WTFString
 
-#endif
+extension WTF.String {
+    /// Return a `Swift.String` from this `WTF.String`.
+    public var description: Swift.String {
+        // We could possibly make this quicker by treating a C++ span as
+        // a Sequence. For now, we want to avoid unsafe as much as possible.
+        Swift.String(utf8(WTF.LenientConversion).toStdString())
+    }
+}
