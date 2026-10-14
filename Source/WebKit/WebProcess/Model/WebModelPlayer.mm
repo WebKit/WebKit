@@ -1026,7 +1026,8 @@ float WebModelPlayer::computeContentsHeadroom()
 
 void WebModelPlayer::updateContentsHeadroom()
 {
-    constexpr auto visionProHeadroom = 2.f;
+    const float visionProHeadroom = [[NSUserDefaults standardUserDefaults] floatForKey:@"WebKitVisionProHeadroom"] ?: 2.f;
+
     auto contentsHeadroom = std::min(visionProHeadroom, computeContentsHeadroom());
     if (fabs(contentsHeadroom - m_lastSentContentsHeadroom) < 0.01f)
         return;
