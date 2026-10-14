@@ -654,6 +654,9 @@ class TestDriver(Driver):
             self.pid = TestDriver.next_pid
             TestDriver.next_pid += 1
 
+        if test_input.url is not None:
+            self._url_to_test_name[test_input.url] = test_input.test_name
+
         start_time = time.time()
         test_name = test_input.test_name
         test_args = test_input.args or []
@@ -718,16 +721,34 @@ class TestDriver(Driver):
         if not self._port.get_option('world_leaks'):
             return None
 
-        test_world_leaks_output = """TEST: file:///test.checkout/LayoutTests/failures/expected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/flaky-leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/flaky-leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak.html
-TEST: file:///test.checkout/LayoutTests/failures/unexpected/leak.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leak-subframe.html
-TEST: file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html
-ABANDONED DOCUMENT: file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html"""
+        # The mock emits world-leak output in the production WKTR format
+        # (full file:// URIs in TEST: lines). In production, WKTR only emits
+        # TEST: lines for tests it actually ran, so the corresponding URIs
+        # are guaranteed to be present in self._url_to_test_name (populated
+        # by run_test). The mock pre-populates the dict here for the URIs
+        # it is about to emit so the resolution works in tests without
+        # requiring that every leak test happen to have run on the current
+        # Driver instance (drivers get re-created on crashes, and on
+        # pixel_tests toggles within a DriverProxy).
+        leak_emissions = [
+            ('failures/expected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak.html'),
+            ('failures/unexpected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/flaky-leak.html'),
+            ('failures/unexpected/flaky-leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak.html'),
+            ('failures/unexpected/leak.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leak-subframe.html'),
+            ('failures/expected/leaky-reftest.html',
+             'file:///test.checkout/LayoutTests/failures/expected/leaky-reftest.html'),
+        ]
+        lines = []
+        for test_name, abandoned_uri in leak_emissions:
+            test_uri = 'file:///test.checkout/LayoutTests/' + test_name
+            self._url_to_test_name.setdefault(test_uri, test_name)
+            lines.append('TEST: ' + test_uri)
+            lines.append('ABANDONED DOCUMENT: ' + abandoned_uri)
+        test_world_leaks_output = '\n'.join(lines)
         return self._parse_world_leaks_output(test_world_leaks_output)
 
     def stop(self):

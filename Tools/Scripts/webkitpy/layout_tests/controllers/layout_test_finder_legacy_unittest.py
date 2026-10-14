@@ -41,7 +41,7 @@ from webkitpy.layout_tests.controllers.layout_test_finder_legacy import (
     _is_reference_html_file,
 )
 from webkitpy.layout_tests.models.server_routing import ServerType
-from webkitpy.layout_tests.models.test import Test, _file_path_sort_key
+from webkitpy.layout_tests.models.test import Reference, Test, _file_path_sort_key
 from webkitpy.port.test import (
     TestPort,
     add_unit_tests_to_mock_filesystem,
@@ -1047,6 +1047,47 @@ class LayoutTestFinderTestsBase(object):
             ],
         )
 
+    def test_protocol(self):
+        finder = self.finder
+        fs = finder._filesystem
+
+        expected = [
+            ("foo/a.https.html", ServerType.FILE, "https"),
+            # A flag needs a "." on both sides: these are all plain names.
+            ("foo/b-https.html", ServerType.FILE, "http"),
+            ("foo/https.html", ServerType.FILE, "http"),
+            ("foo/c.httpsfoo.html", ServerType.FILE, "http"),
+            # An HTTP test under ssl/ is served over HTTPS...
+            ("http/tests/ssl/d.html", ServerType.HTTP, "https"),
+            ("http/tests/security/ssl/e.html", ServerType.HTTP, "https"),
+            ("http/tests/security/f.https.html", ServerType.HTTP, "https"),
+            ("http/tests/security/g.html", ServerType.HTTP, "http"),
+            # ...but ssl/ outside an HTTP root has no such meaning.
+            ("ssl/h.html", ServerType.FILE, "http"),
+            ("foo/ssl/i.html", ServerType.FILE, "http"),
+            # A directory merely containing "ssl" is not ssl/.
+            ("http/tests/sslfoo/j.html", ServerType.HTTP, "http"),
+            # A WPT test's protocol comes from the flags in its name; h2 wins over https.
+            ("imported/w3c/web-platform-tests/k.html", ServerType.WPT, "http"),
+            ("imported/w3c/web-platform-tests/l.https.html", ServerType.WPT, "https"),
+            ("imported/w3c/web-platform-tests/m.h2.html", ServerType.WPT, "h2"),
+            ("imported/w3c/web-platform-tests/n.h2.https.html", ServerType.WPT, "h2"),
+            ("imported/w3c/web-platform-tests/o.serviceworker.html", ServerType.WPT, "https"),
+        ]
+
+        fs.chdir(self.port.layout_tests_dir())
+        for path, _, _ in expected:
+            fs.maybe_make_directory(fs.dirname(path))
+            # Use testharness.js script so SourceFile classifies WPT files as
+            # tests rather than support files.
+            fs.write_text_file(path, '<script src="/resources/testharness.js"></script>')
+
+        tests = finder.find_tests_by_path([path for path, _, _ in expected], with_expectations=True)
+        self.assertEqual(
+            tests,
+            [Test(test_path=path, served_by=served_by, protocol=protocol) for path, served_by, protocol in expected],
+        )
+
     def test_is_websocket_test(self):
         finder = self.finder
         fs = finder._filesystem
@@ -1102,6 +1143,7 @@ class LayoutTestFinderTestsBase(object):
                 Test(
                     test_path="imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html",
                     served_by=ServerType.WPT,
+                    protocol='https',
                 ),
                 Test(
                     test_path="fast/websocket-something.html",
@@ -1401,9 +1443,9 @@ class LayoutTestFinderTestsBase(object):
                 Test(
                     test_path="foo/test.html",
                     reference_files=(
-                        (
-                            "==",
-                            fs.join(
+                        Reference(
+                            relation="==",
+                            path=fs.join(
                                 self.port.layout_tests_dir(),
                                 "foo",
                                 "test-expected.html",
@@ -1426,9 +1468,9 @@ class LayoutTestFinderTestsBase(object):
                 Test(
                     test_path="foo/test.html",
                     reference_files=(
-                        (
-                            "!=",
-                            fs.join(
+                        Reference(
+                            relation="!=",
+                            path=fs.join(
                                 self.port.layout_tests_dir(),
                                 "platform",
                                 "test-mac-snowleopard",
@@ -1462,7 +1504,7 @@ class LayoutTestFinderTestsBase(object):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.svg"),
@@ -1507,7 +1549,7 @@ class LayoutTestFinderTestsBase(object):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.xhtml"),
@@ -1548,7 +1590,7 @@ class LayoutTestFinderTestsBase(object):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.xht"),
@@ -1589,7 +1631,7 @@ class LayoutTestFinderTestsBase(object):
         tests = finder.find_tests_by_path(["foo/test.html"], with_expectations=True)
 
         expected_reference_files = tuple(
-            (reftype, fs.join(self.port.layout_tests_dir(), "foo", refpath))
+            Reference(relation=reftype, path=fs.join(self.port.layout_tests_dir(), "foo", refpath))
             for reftype, refpath in (
                 ("==", "test-expected.html"),
                 ("==", "test-expected.svg"),

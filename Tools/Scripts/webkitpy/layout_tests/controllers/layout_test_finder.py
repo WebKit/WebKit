@@ -29,7 +29,7 @@ from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models.server_routing import ServerType
-from webkitpy.layout_tests.models.test import Test
+from webkitpy.layout_tests.models.test import Reference, Test
 from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
 
@@ -437,7 +437,7 @@ class LayoutTestFinder(object):
             assert expected_image_path is None or self.fs.isabs(expected_image_path)
             assert expected_audio_path is None or self.fs.isabs(expected_audio_path)
             assert reference_files is None or all(
-                self.fs.isabs(ref_path) for (_, ref_path) in reference_files
+                self.fs.isabs(ref.path) for ref in reference_files
             )
 
             server_type = ServerType.FILE
@@ -450,6 +450,8 @@ class LayoutTestFinder(object):
 
             is_crash_test = bool(server_type & ServerType.WPT) and self.is_wpt_crash_test(trimmed_path)
 
+            protocol = self._protocol_for_test(server_type, trimmed_path, basename)
+
             yield Test(
                 test_path=trimmed_path + variant,
                 expected_text_path=expected_text_path,
@@ -460,7 +462,26 @@ class LayoutTestFinder(object):
                 ),
                 served_by=server_type,
                 is_crash_test=is_crash_test,
+                protocol=protocol,
             )
+
+    def _protocol_for_test(self, server_type, trimmed_path, basename):
+        """Returns "http", "https" or "h2", the protocol a test is loaded over."""
+        if server_type & ServerType.WPT:
+            # The same rule as the WPT manifest's item.h2 and item.https, which is
+            # what wptrunner uses to pick the server.
+            flags = SourceFile("", basename, "/").meta_flags
+            if "h2" in flags:
+                return "h2"
+            if "https" in flags or "serviceworker" in flags:
+                return "https"
+            return "http"
+        # HTTP tests in ssl/ directories are served over HTTPS.
+        if ".https." in basename or (
+            server_type & ServerType.HTTP and "/ssl/" in "/" + trimmed_path + "/"
+        ):
+            return "https"
+        return "http"
 
     def _find_variants(self, f):
         """Find variants for path `f`"""
@@ -613,8 +634,8 @@ class LayoutTestFinder(object):
                     # only run the first reference
                     # (https://bugs.webkit.org/show_bug.cgi?id=270794).
                     reference_files = [
-                        ("==", self.fs.join(dirname, m + variant)) for m in sorted(matches)
-                    ] + [("!=", self.fs.join(dirname, m + variant)) for m in sorted(mismatches)]
+                        Reference(relation="==", path=self.fs.join(dirname, m + variant)) for m in sorted(matches)
+                    ] + [Reference(relation="!=", path=self.fs.join(dirname, m + variant)) for m in sorted(mismatches)]
 
         return (
             expected_text_path or expected_webarchive_path,

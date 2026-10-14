@@ -31,7 +31,13 @@
 
 import attr
 
-from .test import Test
+from .test import Test, Reference
+
+
+@attr.s(frozen=True, slots=True)
+class ReferenceInput(object):
+    reference = attr.ib(type=Reference)
+    url = attr.ib(type=str)
 
 
 @attr.s(frozen=True, slots=True)
@@ -42,6 +48,8 @@ class TestInput(object):
     derived from TestExpectations/test execution options (e.g., timeout).
     """
     test = attr.ib(type=Test)  # ordering delegates to Test's __lt__ etc.
+    url = attr.ib(default=None, type=str, order=False)
+    reference_inputs = attr.ib(default=(), type=tuple, order=False)
     timeout = attr.ib(default=None, order=False)  # type: Union[None, int, str]
     is_slow = attr.ib(default=None, order=False)  # type: Optional[bool]
     should_dump_jsconsolelog_in_stderr = attr.ib(default=None, order=False)  # type: Optional[bool]

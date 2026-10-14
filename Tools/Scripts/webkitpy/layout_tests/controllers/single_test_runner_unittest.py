@@ -27,7 +27,8 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models.test_input import Test, TestInput
+from webkitpy.layout_tests.models.test import Reference
+from webkitpy.layout_tests.models.test_input import ReferenceInput, Test, TestInput
 from webkitpy.layout_tests.run_webkit_tests import parse_args
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
@@ -383,3 +384,48 @@ class SingleTestRunnerTest(unittest.TestCase):
             'worse-match-ref.html': [[15, 15], [30, 30]]
         }
         self.assertEqual(actual_fuzzy, expected_fuzzy, 'fuzzy data did not match expected')
+
+    def test_run_reftest_uses_reference_urls_from_test_input(self):
+        class RecordingDriver:
+            def __init__(self):
+                self.driver_inputs = []
+
+            def run_test(self, driver_input, stop_when_done):
+                self.driver_inputs.append(driver_input)
+                return DriverOutput('', b'image', 'hash', '')
+
+            def stop(self):
+                """do nothing"""
+
+        runner = self._make_test_runner('http/tests/foo/test.html')
+        d = runner._port.layout_tests_dir()
+        reference = Reference('==', os.path.join(d, 'http/tests/foo/ref.html'))
+        runner._test_input = TestInput(
+            Test('http/tests/foo/test.html', reference_files=(reference,)),
+            url='http://127.0.0.1:8000/foo/test.html',
+            reference_inputs=(ReferenceInput(reference, 'http://127.0.0.1:8000/foo/ref.html'),),
+        )
+        runner._options.additional_header = None
+        runner._driver = RecordingDriver()
+
+        runner._run_reftest()
+
+        self.assertEqual(
+            [(i.test_name, i.url) for i in runner._driver.driver_inputs],
+            [
+                ('http/tests/foo/test.html', 'http://127.0.0.1:8000/foo/test.html'),
+                ('http/tests/foo/ref.html', 'http://127.0.0.1:8000/foo/ref.html'),
+            ],
+        )
+
+    def test_driver_input_passes_test_input_url_through(self):
+        # The URL (including any cross-origin rewrite) is computed by Manager;
+        # SingleTestRunner must not alter it.
+        runner = self._make_test_runner('fast/foo.html')
+        url = 'file:///layout-tests/fast/foo.html'
+        runner._test_input = TestInput(Test('fast/foo.html'), url=url)
+        runner._options.additional_header = 'runInCrossOriginFrame=true'
+
+        driver_input = runner._driver_input()
+        self.assertEqual(driver_input.url, url)
+        self.assertEqual(driver_input.additional_header, 'runInCrossOriginFrame=true')

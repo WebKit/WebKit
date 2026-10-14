@@ -77,6 +77,22 @@ class TestNeedsServer(unittest.TestCase):
         self.assertTrue(t.needs_any_server)
 
 
+class TestProtocol(unittest.TestCase):
+    def test_default(self):
+        self.assertEqual(Test(test_path='foo/bar.html').protocol, 'http')
+
+    def test_protocol(self):
+        self.assertEqual(Test(test_path='a.https.html', protocol='https').protocol, 'https')
+        self.assertEqual(Test(test_path='a.h2.html', protocol='h2').protocol, 'h2')
+
+    def test_protocol_does_not_affect_ordering(self):
+        t1 = Test(test_path='a.html', protocol='https')
+        t2 = Test(test_path='a.html', protocol='h2')
+        self.assertFalse(t1 < t2)
+        self.assertFalse(t2 < t1)
+        self.assertNotEqual(t1, t2)
+
+
 class TestFilePathAndVariant(unittest.TestCase):
     def test_no_variant(self):
         t = Test(test_path='fast/dom/foo.html')

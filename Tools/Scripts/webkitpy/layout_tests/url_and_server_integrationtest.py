@@ -179,6 +179,10 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
             # TestList.__getitem__ synthesizing a TestInstance for any name
             # not in the canned unit_test_list().
             ('fast/brand/new.html', '{d}/fast/brand/new.html'),
+            # media/ is aliased to /media-resources by Apache, but that alias
+            # does not make it a test root; the test loads from disk.
+            ('media/brand-new.html', '{d}/media/brand-new.html'),
+            ('ipc/brand-new.html', '{d}/ipc/brand-new.html'),
             # Classified as needing HTTP but deliberately loaded from disk —
             # the one case here where an http(s):// URL is NOT implied by
             # needing http.
@@ -213,9 +217,8 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
                 'imported/w3c/web-platform-tests/some/new.h2.html',
                 'https://localhost:9000/some/new.h2.html',
             ),
-            # _wpt_path_to_uri checks h2 before https/serviceworker: when a
-            # filename sets both flags, h2 wins and https is not separately
-            # observable.
+            # When a filename sets both flags, Test.protocol is h2: h2 wins
+            # over https.
             (
                 'imported/w3c/web-platform-tests/some/new.h2.https.html',
                 'https://localhost:9000/some/new.h2.https.html',
@@ -348,3 +351,32 @@ class UrlAndServerIntegrationTest(unittest.TestCase):
                 },
             )
             run.servers['start_http_server'].assert_called_once_with({'root': '.'})
+
+    def test_cross_origin_iframe_loads_aliased_dir_test_over_http_root_alias(self):
+        with recording_run(
+            ['media/brand-new.html'],
+            extra_args=['--load-in-cross-origin-iframe'],
+            extra_files={'media/brand-new.html': ''},
+        ) as run:
+            self.assertEqual(
+                run.events,
+                {
+                    'media/brand-new.html': ['http://127.0.0.1:8000/root/media/brand-new.html'],
+                },
+            )
+
+    def test_cross_origin_iframe_keeps_http_local_test_at_http_root(self):
+        # http/tests/local is normally loaded from file://, but a cross-origin
+        # frame needs HTTP, so it is served at the Apache root like any other
+        # http/tests test (not under /root/http/tests/).
+        with recording_run(
+            ['http/tests/local/foo.html'],
+            extra_args=['--load-in-cross-origin-iframe'],
+            extra_files={'http/tests/local/foo.html': ''},
+        ) as run:
+            self.assertEqual(
+                run.events,
+                {
+                    'http/tests/local/foo.html': ['http://127.0.0.1:8000/local/foo.html'],
+                },
+            )
