@@ -532,6 +532,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
+        std::nullopt, /* hitTestJSHandleInfo */
 #endif
         m_frame->info(),
         std::nullopt, /* originatingPageID */
@@ -1048,6 +1049,9 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
     auto listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::No, WebFrame::PolicyCheckKind::NewWindow, initiatingDocument);
 
     auto& mouseEventData = navigationAction.mouseEventData();
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    auto hitTestJSHandleInfo = jsHandleInfoForHitTestResult(hitTestResult);
+#endif
     NavigationActionData navigationActionData {
         navigationAction.type(),
         modifiersForNavigationAction(navigationAction),
@@ -1082,6 +1086,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         hitTestResult ? std::optional(WebKit::WebHitTestResultData(WTF::move(*hitTestResult), false)) : std::nullopt,
+        WTF::move(hitTestJSHandleInfo),
 #endif
         m_frame->info(),
         std::nullopt, /* originatingPageID */

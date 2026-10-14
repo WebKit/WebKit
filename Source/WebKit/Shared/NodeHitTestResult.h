@@ -26,17 +26,30 @@
 #pragma once
 
 #include "JSHandleInfo.h"
+#include "WebHitTestResultData.h"
 #include <WebCore/FloatPoint.h>
 #include <wtf/Variant.h>
 
 namespace WebKit {
+
+enum class HitTestAtPointError : uint8_t {
+    FrameNotFound,
+    WebViewInvalidated,
+    WebContentProcessTerminated,
+    Unknown,
+};
 
 struct NodeHitTestResult {
     struct RemoteFrameInfo {
         WebCore::FrameIdentifier remoteFrameIdentifier;
         WebCore::FloatPoint transformedPoint;
     };
-    Variant<std::monostate, RemoteFrameInfo, JSHandleInfo> variant;
+    struct HitNode {
+        std::optional<JSHandleInfo> jsHandleInfo;
+        WebHitTestResultData hitTestResultData;
+    };
+    // std::monostate means that no reply was received.
+    Variant<std::monostate, HitTestAtPointError, RemoteFrameInfo, HitNode> variant;
 };
 
 }

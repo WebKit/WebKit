@@ -42,6 +42,8 @@
 #import "InstanceMethodSwizzler.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKHitTestResult.h>
+#import <WebKit/WKJSHandle.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -2509,5 +2511,107 @@ TEST(SiteIsolation, ProofreadingDetailsPopoverInFrameNestedInScrolledCrossOrigin
 }
 
 #endif // ENABLE(WRITING_TOOLS)
+
+TEST(SiteIsolation, HitTestResultAPI)
+{
+    HTTPServer server({
+        { "/example"_s, { "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<body style='margin: 0'>"
+            "<a id=mainframelink href='/destination' title='Main frame title' style='display: block; width: 200px; height: 100px'>Main frame <b>link</b></a>"
+            "<a id=untitledlink href='/untitled' style='display: block; width: 200px; height: 50px'>Untitled link</a>"
+            "<a id=emptylink href='/empty' title='' style='display: block; width: 200px; height: 50px'></a>"
+            "<iframe style='position: absolute; left: 0; top: 200px; width: 300px; height: 150px; border: none' src='https://webkit.org/iframe'></iframe>"
+            "</body>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0'>"
+            "<a id=iframelink href='/iframedestination' title='Iframe title' style='display: block; width: 200px; height: 100px'>Iframe link</a>"
+            "</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto hitTest = [](WKWebView *webView, CGPoint point, WKContentWorld *world = WKContentWorld.pageWorld) -> RetainPtr<WKHitTestResult> {
+        __block bool done { false };
+        __block RetainPtr<WKHitTestResult> result;
+        [webView hitTestAtPoint:point inCoordinateSpaceOfFrame:nil inContentWorld:world completionHandler:^(WKHitTestResult *hitTestResult, NSError *error) {
+            EXPECT_NE(!hitTestResult, !error);
+            result = hitTestResult;
+            done = true;
+        }];
+        Util::run(&done);
+        return result;
+    };
+
+    auto idOfHitElement = [](TestWKWebView *webView, WKHitTestResult *result, WKContentWorld *world = WKContentWorld.pageWorld) -> NSString * {
+        RetainPtr handle = [result domNodeHandle];
+        if (!handle)
+            return @"(no handle)";
+        return [webView objectByCallingAsyncFunction:@"return (n.nodeType == Node.ELEMENT_NODE ? n : n.parentElement).id" withArguments:@{ @"n" : handle.get() } inFrame:[handle sourceFrame] inContentWorld:world];
+    };
+
+    auto runTest = [&](bool withSiteIsolation) {
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        if (withSiteIsolation)
+            enableSiteIsolation(configuration.get());
+
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [webView _test_waitForDidFinishNavigationWhileIgnoringSSLErrors];
+
+        auto mainFrameLinkResult = hitTest(webView.get(), CGPointMake(50, 50));
+        EXPECT_NOT_NULL(mainFrameLinkResult.get());
+        EXPECT_WK_STREQ([mainFrameLinkResult absoluteLinkURL].absoluteString, "https://example.com/destination");
+        EXPECT_WK_STREQ([mainFrameLinkResult linkTitle], "Main frame title");
+        EXPECT_WK_STREQ([mainFrameLinkResult linkLabel], "Main frame link");
+        EXPECT_EQ([mainFrameLinkResult domNodeHandle].contentWorld, WKContentWorld.pageWorld);
+        EXPECT_TRUE([mainFrameLinkResult domNodeHandle].sourceFrame.isMainFrame);
+        EXPECT_WK_STREQ(idOfHitElement(webView.get(), mainFrameLinkResult.get()), "mainframelink");
+
+        auto mainFrameNonLinkResult = hitTest(webView.get(), CGPointMake(350, 50));
+        EXPECT_NOT_NULL(mainFrameNonLinkResult.get());
+        EXPECT_NULL([mainFrameNonLinkResult absoluteLinkURL]);
+        EXPECT_NULL([mainFrameNonLinkResult linkTitle]);
+        EXPECT_NULL([mainFrameNonLinkResult linkLabel]);
+        EXPECT_NOT_NULL([mainFrameNonLinkResult domNodeHandle]);
+
+        // A link without a title attribute has a nil title.
+        auto untitledLinkResult = hitTest(webView.get(), CGPointMake(50, 125));
+        EXPECT_WK_STREQ([untitledLinkResult absoluteLinkURL].absoluteString, "https://example.com/untitled");
+        EXPECT_NULL([untitledLinkResult linkTitle]);
+        EXPECT_WK_STREQ([untitledLinkResult linkLabel], "Untitled link");
+
+        // A link with an empty title attribute and no text content has an empty title and label.
+        auto emptyLinkResult = hitTest(webView.get(), CGPointMake(50, 175));
+        EXPECT_WK_STREQ([emptyLinkResult absoluteLinkURL].absoluteString, "https://example.com/empty");
+        EXPECT_NOT_NULL([emptyLinkResult linkTitle]);
+        EXPECT_WK_STREQ([emptyLinkResult linkTitle], "");
+        EXPECT_NOT_NULL([emptyLinkResult linkLabel]);
+        EXPECT_WK_STREQ([emptyLinkResult linkLabel], "");
+
+        // The hit test continues into the iframe, even when it is cross-origin.
+        RetainPtr<WKHitTestResult> iframeLinkResult;
+        EXPECT_TRUE(Util::waitFor([&] {
+            iframeLinkResult = hitTest(webView.get(), CGPointMake(50, 250));
+            return [[iframeLinkResult absoluteLinkURL].absoluteString isEqualToString:@"https://webkit.org/iframedestination"];
+        }));
+        EXPECT_WK_STREQ([iframeLinkResult linkTitle], "Iframe title");
+        EXPECT_WK_STREQ([iframeLinkResult linkLabel], "Iframe link");
+        EXPECT_FALSE([iframeLinkResult domNodeHandle].sourceFrame.isMainFrame);
+        EXPECT_WK_STREQ([iframeLinkResult domNodeHandle].sourceFrame.securityOrigin.host, "webkit.org");
+        EXPECT_WK_STREQ(idOfHitElement(webView.get(), iframeLinkResult.get()), "iframelink");
+
+        // The handle can only be used in the content world that was hit tested in.
+        RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"HitTestResultAPI"];
+        auto worldResult = hitTest(webView.get(), CGPointMake(50, 50), world.get());
+        EXPECT_EQ([worldResult domNodeHandle].contentWorld, world.get());
+        EXPECT_WK_STREQ([worldResult absoluteLinkURL].absoluteString, "https://example.com/destination");
+        EXPECT_WK_STREQ(idOfHitElement(webView.get(), worldResult.get(), world.get()), "mainframelink");
+
+        // A nil content world means the page world.
+        auto nilWorldResult = hitTest(webView.get(), CGPointMake(50, 50), nil);
+        EXPECT_EQ([nilWorldResult domNodeHandle].contentWorld, WKContentWorld.pageWorld);
+        EXPECT_WK_STREQ([nilWorldResult absoluteLinkURL].absoluteString, "https://example.com/destination");
+        EXPECT_WK_STREQ(idOfHitElement(webView.get(), nilWorldResult.get()), "mainframelink");
+    };
+    runTest(true);
+    runTest(false);
+}
 
 } // namespace TestWebKitAPI

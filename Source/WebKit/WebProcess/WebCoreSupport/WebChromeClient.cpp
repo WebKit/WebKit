@@ -455,6 +455,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
+        std::nullopt, /* hitTestJSHandleInfo */
 #endif
         webFrame->info(), /* originatingFrameInfoData */
         webFrame->page()->webPageProxyIdentifier(),

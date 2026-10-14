@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKFindConfiguration;
 @class WKFindResult;
 @class WKFrameInfo;
+@class WKHitTestResult;
 @class WKImmersiveEnvironment;
 @class WKNavigation;
 @class WKPDFConfiguration;
@@ -370,6 +371,26 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  The above function text will create a promise that will fulfull with the value 42 after a one second delay, wait for it to resolve, then return the fulfillment value of 42.
 */
 - (void)callAsyncJavaScript:(NSString *)functionBody arguments:(nullable NSDictionary<NSString *, id> *)arguments inFrame:(nullable WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(WK_SWIFT_UI_ACTOR void (^ _Nullable)(id WK_NULLABLE_RESULT result, NSError * _Nullable error))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
+
+/*! @abstract Finds the content at the given point in the webpage.
+ @param point The point to hit test, in the coordinate space of the given frame.
+ @param frame A WKFrameInfo identifying the frame whose coordinate space the point is in.
+ @param contentWorld The WKContentWorld in which the resulting WKHitTestResult's domNodeHandle can be used.
+ @param completionHandler A block to invoke when the hit test completes or fails.
+ @discussion Passing nil for the frame is equivalent to targeting the main frame.
+ Passing nil for the content world is equivalent to using the page's content world.
+ If the point is over a child frame, including a child frame from a different origin, the hit test continues into that child frame.
+
+ The completionHandler is passed a WKHitTestResult describing the content at the point, or an error if the hit test could not be performed.
+ The result's domNodeHandle refers to the DOM node that was hit and can be used as an argument to JavaScript run via
+ `callAsyncJavaScript:arguments:inFrame:inContentWorld:completionHandler:` in the handle's sourceFrame and the given contentWorld.
+ If no DOM node is at the point, the result's domNodeHandle is nil.
+
+ If the frame argument does not represent a valid frame in this web view, the completionHandler is passed a WKErrorJavaScriptInvalidFrameTarget error.
+ If the web view is closed or its web content process terminates before the hit test completes, the completionHandler is passed a
+ WKErrorWebViewInvalidated or WKErrorWebContentProcessTerminated error.
+*/
+- (void)hitTestAtPoint:(CGPoint)point inCoordinateSpaceOfFrame:(nullable WKFrameInfo *)frame inContentWorld:(nullable WKContentWorld *)contentWorld completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKHitTestResult * _Nullable result, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(hitTest(at:inCoordinateSpaceOf:contentWorld:completionHandler:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract Closes all out-of-window media presentations in a WKWebView.
  @discussion Includes picture-in-picture and fullscreen.

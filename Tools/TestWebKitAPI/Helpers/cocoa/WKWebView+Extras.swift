@@ -102,6 +102,8 @@ extension WKWebView {
     /// - Parameters:
     ///   - type: The type the function body is expected to return.
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
+    ///   - contentWorld: The content world to call the function body in.
+    ///   - arguments: The arguments to pass to the function body, available in it as local variables.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Returns: The value the function body returned.
     /// - Throws: ``UnexpectedJavaScriptResult`` if the function body returned a value of a
@@ -109,10 +111,12 @@ extension WKWebView {
     public func callJavaScript<Result>(
         returning type: Result.Type,
         in frame: WKFrameInfo? = nil,
+        contentWorld: WKContentWorld = .page,
+        arguments: [String: Any] = [:],
         _ functionBody: () -> String
     ) async throws -> Result {
         let script = functionBody()
-        let result = try await __callAsyncJavaScript(script, arguments: [:], inFrame: frame, in: .page)
+        let result = try await __callAsyncJavaScript(script, arguments: arguments, inFrame: frame, in: contentWorld)
 
         guard let value = result as? Result else {
             throw UnexpectedJavaScriptResult(
@@ -129,10 +133,17 @@ extension WKWebView {
     ///
     /// - Parameters:
     ///   - frame: The frame to call the function body in, or `nil` for the main frame.
+    ///   - contentWorld: The content world to call the function body in.
+    ///   - arguments: The arguments to pass to the function body, available in it as local variables.
     ///   - functionBody: A closure producing the JavaScript function body to call.
     /// - Throws: Any error raised while running the function body.
-    public func callJavaScript(in frame: WKFrameInfo? = nil, _ functionBody: () -> String) async throws {
-        _ = try await __callAsyncJavaScript(functionBody(), arguments: [:], inFrame: frame, in: .page)
+    public func callJavaScript(
+        in frame: WKFrameInfo? = nil,
+        contentWorld: WKContentWorld = .page,
+        arguments: [String: Any] = [:],
+        _ functionBody: () -> String
+    ) async throws {
+        _ = try await __callAsyncJavaScript(functionBody(), arguments: arguments, inFrame: frame, in: contentWorld)
     }
 
     /// Creates a handle for the first element matching a selector.

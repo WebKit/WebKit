@@ -35,6 +35,8 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestProtocol.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKHitTestResult.h>
+#import <WebKit/WKJSHandle.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -647,6 +649,9 @@ static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEn
     CGRect elementBoundingBox = hitTestResult.elementBoundingBox;
     EXPECT_FALSE(CGSizeEqualToSize(elementBoundingBox.size, CGSizeZero));
 
+    RetainPtr<WKJSHandle> linkDOMNodeHandle = [action hitTestResult].domNodeHandle;
+    EXPECT_NOT_NULL(linkDOMNodeHandle.get());
+
     // Wait to decide policy for redirect.
     decidedPolicy = false;
     TestWebKitAPI::Util::run(&decidedPolicy);
@@ -660,9 +665,67 @@ static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEn
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
     EXPECT_TRUE([action _isRedirect]);
 
+    // The redirect's navigation action describes the same activated link as the original navigation action.
+    EXPECT_WK_STREQ("http://redirect/?result", [action hitTestResult].absoluteLinkURL.absoluteString);
+    EXPECT_TRUE([[action hitTestResult].domNodeHandle isEqual:linkDOMNodeHandle.get()]);
+
     [TestProtocol unregister];
     newWebView = nullptr;
     action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionHitTestResult)
+{
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadHTMLString:@"<a id=link style='display: block; height: 100%' href='https://webkit.org/destination.html' title='Link title'>Link <b>label</b></a>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKNavigationAction> linkAction;
+    __block bool decidedLinkPolicy = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        linkAction = navigationAction;
+        decidedLinkPolicy = true;
+        // Stay on the page so the handle can still be used.
+        decisionHandler(WKNavigationActionPolicyCancel);
+    };
+
+    NSPoint clickPoint = NSMakePoint(100, 100);
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    TestWebKitAPI::Util::run(&decidedLinkPolicy);
+
+    EXPECT_EQ(WKNavigationTypeLinkActivated, [linkAction navigationType]);
+
+    RetainPtr<WKHitTestResult> hitTestResult = [linkAction hitTestResult];
+    EXPECT_NOT_NULL(hitTestResult.get());
+    EXPECT_WK_STREQ("https://webkit.org/destination.html", [hitTestResult absoluteLinkURL].absoluteString);
+    EXPECT_WK_STREQ("Link title", [hitTestResult linkTitle]);
+    EXPECT_WK_STREQ("Link label", [hitTestResult linkLabel]);
+
+    // The SPI result is a WKHitTestResult describing the same hit.
+    EXPECT_TRUE([[linkAction _hitTestResult] isKindOfClass:WKHitTestResult.class]);
+    EXPECT_WK_STREQ("https://webkit.org/destination.html", [linkAction _hitTestResult].absoluteLinkURL.absoluteString);
+
+    RetainPtr<WKJSHandle> domNodeHandle = [hitTestResult domNodeHandle];
+    EXPECT_NOT_NULL(domNodeHandle.get());
+    EXPECT_EQ([domNodeHandle contentWorld], WKContentWorld.pageWorld);
+    EXPECT_TRUE([domNodeHandle sourceFrame].isMainFrame);
+    EXPECT_TRUE([[linkAction hitTestResult].domNodeHandle isEqual:domNodeHandle.get()]);
+    EXPECT_TRUE([[linkAction _hitTestResult].domNodeHandle isEqual:domNodeHandle.get()]);
+
+    __block bool done = false;
+    [webView callAsyncJavaScript:@"return (n.nodeType == Node.ELEMENT_NODE ? n : n.parentElement).closest('a').id" arguments:@{ @"n" : domNodeHandle.get() } inFrame:[domNodeHandle sourceFrame] inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ("link", result);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirectsWithoutPSON)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIJSHandle.h"
 #include "APIObject.h"
 #include "APIWebsitePolicies.h"
 #include "FrameInfoData.h"
@@ -157,8 +158,13 @@ public:
     WTF::String clientRedirectSourceForHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->clientRedirectSourceForHistory : WTF::String(); }
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_lastNavigationAction ? m_lastNavigationAction->ownerPermissionsPolicy : std::nullopt; }
 
-    void setLastNavigationAction(const WebKit::NavigationActionData& navigationAction) { m_lastNavigationAction = navigationAction; }
+    void setLastNavigationAction(const WebKit::NavigationActionData& navigationAction, RefPtr<JSHandle>&& hitTestJSHandle = nullptr)
+    {
+        m_lastNavigationAction = navigationAction;
+        m_lastNavigationActionHitTestJSHandle = WTF::move(hitTestJSHandle);
+    }
     const std::optional<WebKit::NavigationActionData>& lastNavigationAction() const LIFETIME_BOUND { return m_lastNavigationAction; }
+    JSHandle* lastNavigationActionHitTestJSHandle() const { return m_lastNavigationActionHitTestJSHandle.get(); }
 
     void setOriginatingFrameInfo(const WebKit::FrameInfoData& frameInfo) { m_originatingFrameInfo = frameInfo; }
     const std::optional<WebKit::FrameInfoData>& originatingFrameInfo() const LIFETIME_BOUND { return m_originatingFrameInfo; }
@@ -252,6 +258,7 @@ private:
     std::optional<WebCore::FrameLoadType> m_backForwardFrameLoadType;
     const std::unique_ptr<SubstituteData> m_substituteData;
     std::optional<WebKit::NavigationActionData> m_lastNavigationAction;
+    RefPtr<JSHandle> m_lastNavigationActionHitTestJSHandle;
     std::optional<WebKit::FrameInfoData> m_originatingFrameInfo;
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };

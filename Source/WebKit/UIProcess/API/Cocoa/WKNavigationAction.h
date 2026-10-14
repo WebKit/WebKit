@@ -34,6 +34,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKFrameInfo;
+@class WKHitTestResult;
 @class WKNavigation;
 
 /*! @enum WKNavigationType
@@ -90,6 +91,14 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @discussion If this WKNavigationAction represents a request to open a new WKWebView or it represents a frame load that is not in the main frame of an existing WKWebView, then mainFrameNavigation will be nil.
  */
 @property (nonatomic, readonly, nullable) WKNavigation *mainFrameNavigation WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+
+/*! @abstract Information about the content at the location of the mouse event that caused this navigation action.
+ @discussion When the user clicks a link or form submission button, this describes that link or button.
+ This is nil if the navigation action was not caused by a mouse event, for example if it was caused by `window.open()`.
+ If the mouse event was synthesized, for example by JavaScript calling `click()` on an element, its location might not be over the element that was activated.
+ The domNodeHandle of the result can be used in WKContentWorld.pageWorld.
+ */
+@property (nonatomic, readonly, nullable) WKHitTestResult *hitTestResult WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #if TARGET_OS_IPHONE
 

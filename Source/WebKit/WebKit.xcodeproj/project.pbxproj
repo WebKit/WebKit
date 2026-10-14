@@ -1333,6 +1333,8 @@
 		519261782950EA3F00A975D1 /* WKSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 519261772950EA3E00A975D1 /* WKSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5192DDB92AB54ED700E88DE7 /* WebPushMessageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */; };
 		51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51933DEB1965EB24008AC3EA /* MenuUtilities.h */; };
+		5195A7C32FE5000100A1B2C3 /* WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 5195A7C02FE5000100A1B2C3 /* WKHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5195A7C42FE5000100A1B2C3 /* WKHitTestResultInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5195A7C22FE5000100A1B2C3 /* WKHitTestResultInternal.h */; };
 		5197FAE42AFD33CF009180C5 /* CoreIPCNSCFObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5197FACE2AFD33AF009180C5 /* CoreIPCNSCFObject.h */; };
 		5197FAE52AFD33CF009180C5 /* CoreIPCString.h in Headers */ = {isa = PBXBuildFile; fileRef = 5197FACC2AFD33AE009180C5 /* CoreIPCString.h */; };
 		5197FAE62AFD33CF009180C5 /* CoreIPCURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5197FADB2AFD33B2009180C5 /* CoreIPCURL.h */; };
@@ -6260,6 +6262,9 @@
 		51933DEB1965EB24008AC3EA /* MenuUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUtilities.h; sourceTree = "<group>"; };
 		51933DEC1965EB24008AC3EA /* MenuUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuUtilities.mm; sourceTree = "<group>"; };
 		5194B3861F192FB900FA4708 /* CookieStorageUtilsCF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CookieStorageUtilsCF.h; sourceTree = "<group>"; };
+		5195A7C02FE5000100A1B2C3 /* WKHitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKHitTestResult.h; sourceTree = "<group>"; };
+		5195A7C12FE5000100A1B2C3 /* WKHitTestResult.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKHitTestResult.mm; sourceTree = "<group>"; };
+		5195A7C22FE5000100A1B2C3 /* WKHitTestResultInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKHitTestResultInternal.h; sourceTree = "<group>"; };
 		5197FAC92AFD33AE009180C5 /* CoreIPCURL.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCURL.serialization.in; sourceTree = "<group>"; };
 		5197FACC2AFD33AE009180C5 /* CoreIPCString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCString.h; sourceTree = "<group>"; };
 		5197FACD2AFD33AF009180C5 /* CoreIPCArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCArray.h; sourceTree = "<group>"; };
@@ -13308,6 +13313,9 @@
 				2DF9EEE71A78245500B6CFBE /* WKFrameInfoInternal.h */,
 				1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */,
 				1A422F8A18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h */,
+				5195A7C02FE5000100A1B2C3 /* WKHitTestResult.h */,
+				5195A7C12FE5000100A1B2C3 /* WKHitTestResult.mm */,
+				5195A7C22FE5000100A1B2C3 /* WKHitTestResultInternal.h */,
 				51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */,
 				51D124851E734AE3002B2820 /* WKHTTPCookieStore.mm */,
 				51D124861E734AE3002B2820 /* WKHTTPCookieStoreInternal.h */,
@@ -19744,6 +19752,8 @@
 				0753932C2DC94A2B0002EBCD /* WKGroupSession.h in Headers */,
 				F4DB54E62319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h in Headers */,
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
+				5195A7C32FE5000100A1B2C3 /* WKHitTestResult.h in Headers */,
+				5195A7C42FE5000100A1B2C3 /* WKHitTestResultInternal.h in Headers */,
 				B62E7312143047B00069EC35 /* WKHitTestResultRef.h in Headers */,
 				51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */,
 				DF462E0F23F22F5500EFF35F /* WKHTTPCookieStorePrivate.h in Headers */,

@@ -768,6 +768,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/WKWebExtensionMatchPattern.swift
     Tests/WebKit/WKWebView/WKWebExtensionTab.swift
     Tests/WebKit/WKWebView/WKWebExtensionWindow.swift
+    Tests/WebKit/WKWebView/WKWebViewHitTestTests.swift
     Tests/WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift
 
     Tests/WebKit/WebPage/ControlledByExternalAgent.swift

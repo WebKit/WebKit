@@ -41,6 +41,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKHTTPCookieStore.h>
+#import <WebKit/WKHitTestResult.h>
 #import <WebKit/WKImmersiveEnvironment.h>
 #import <WebKit/WKImmersiveEnvironmentDelegate.h>
 #import <WebKit/WKJSHandle.h>

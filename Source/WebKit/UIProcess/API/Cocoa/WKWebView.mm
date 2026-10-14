@@ -303,6 +303,24 @@ static RetainPtr<NSError> unknownError()
     return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
 }
 
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+static RetainPtr<NSError> nsErrorFromHitTestAtPointError(WebKit::HitTestAtPointError error)
+{
+    switch (error) {
+    case WebKit::HitTestAtPointError::FrameNotFound:
+        return createNSError(WKErrorJavaScriptInvalidFrameTarget);
+    case WebKit::HitTestAtPointError::WebViewInvalidated:
+        return createNSError(WKErrorWebViewInvalidated);
+    case WebKit::HitTestAtPointError::WebContentProcessTerminated:
+        return createNSError(WKErrorWebContentProcessTerminated);
+    case WebKit::HitTestAtPointError::Unknown:
+        return createNSError(WKErrorUnknown);
+    }
+    ASSERT_NOT_REACHED();
+    return createNSError(WKErrorUnknown);
+}
+#endif
+
 RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::ExceptionDetails>& details)
 {
     if (!details)
@@ -1291,6 +1309,30 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 {
     THROW_IF_SUSPENDED;
     [self _evaluateJavaScript:javaScriptString asAsyncFunction:YES withSourceURL:nil withArguments:arguments forceUserGesture:YES inFrame:frame inWorld:contentWorld completionHandler:completionHandler];
+}
+
+- (void)hitTestAtPoint:(CGPoint)point inCoordinateSpaceOfFrame:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(WKHitTestResult *, NSError *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    RefPtr mainFrame = _page->mainFrame();
+    if (!frame && !mainFrame)
+        return completionHandler(nil, nsErrorFromHitTestAtPointError(WebKit::HitTestAtPointError::FrameNotFound).get());
+    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, protect(contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorldSingleton()), [completionHandler = makeBlockPtr(completionHandler), page = WeakPtr { _page.get() }](auto&& jsHandleInfo, auto&& hitTestResultData) mutable {
+        if (!jsHandleInfo)
+            return completionHandler(nil, nsErrorFromHitTestAtPointError(jsHandleInfo.error()).get());
+        RefPtr<API::JSHandle> jsHandle;
+        if (*jsHandleInfo)
+            jsHandle = API::JSHandle::create(WTF::move(**jsHandleInfo));
+        RefPtr protectedPage = page.get();
+        completionHandler(wrapper(API::HitTestResult::create(hitTestResultData, protectedPage.get(), WTF::move(jsHandle))).get(), nil);
+    });
+#else
+    UNUSED_PARAM(point);
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(contentWorld);
+    completionHandler(nil, unknownError().get());
+#endif
 }
 
 static bool validateArgument(id argument)
@@ -4968,10 +5010,10 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     RefPtr mainFrame = _page->mainFrame();
     if (!frame && !mainFrame)
         return completionHandler(nil, unknownError().get());
-    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, protect(*contentWorld->_contentWorld), [completionHandler = makeBlockPtr(completionHandler)] (auto&& result) mutable {
-        if (!result)
+    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, protect(*contentWorld->_contentWorld), [completionHandler = makeBlockPtr(completionHandler)](auto&& jsHandleInfo, auto&&) mutable {
+        if (!jsHandleInfo || !*jsHandleInfo)
             return completionHandler(nil, unknownError().get());
-        completionHandler(wrapper(API::JSHandle::create(WTF::move(*result))).get(), nil);
+        completionHandler(wrapper(API::JSHandle::create(WTF::move(**jsHandleInfo))).get(), nil);
     });
 }
 

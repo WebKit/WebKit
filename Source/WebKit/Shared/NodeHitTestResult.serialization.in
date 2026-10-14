@@ -20,11 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+header: "NodeHitTestResult.h"
+enum class WebKit::HitTestAtPointError : uint8_t {
+    FrameNotFound,
+    WebViewInvalidated,
+    WebContentProcessTerminated,
+    Unknown,
+};
+
 [Nested] struct WebKit::NodeHitTestResult::RemoteFrameInfo {
     WebCore::FrameIdentifier remoteFrameIdentifier;
     WebCore::FloatPoint transformedPoint;
 };
 
+[Nested] struct WebKit::NodeHitTestResult::HitNode {
+    std::optional<WebKit::JSHandleInfo> jsHandleInfo;
+    WebKit::WebHitTestResultData hitTestResultData;
+};
+
 struct WebKit::NodeHitTestResult {
-    Variant<std::monostate, WebKit::NodeHitTestResult::RemoteFrameInfo, WebKit::JSHandleInfo> variant;
+    Variant<std::monostate, WebKit::HitTestAtPointError, WebKit::NodeHitTestResult::RemoteFrameInfo, WebKit::NodeHitTestResult::HitNode> variant;
 };

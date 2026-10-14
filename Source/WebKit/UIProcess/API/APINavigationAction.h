@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIFrameInfo.h"
+#include "APIJSHandle.h"
 #include "APINavigation.h"
 #include "APIObject.h"
 #include "APIUserInitiatedAction.h"
@@ -57,6 +58,8 @@ public:
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     const std::optional<WebKit::WebHitTestResultData>& webHitTestResultData() const LIFETIME_BOUND { return m_navigationActionData.webHitTestResultData; }
 #endif
+    JSHandle* hitTestJSHandle() const { return m_hitTestJSHandle.get(); }
+    void setHitTestJSHandle(RefPtr<JSHandle>&& handle) { m_hitTestJSHandle = WTF::move(handle); }
     WebCore::FloatPoint clickLocationInRootViewCoordinates() const { return m_navigationActionData.clickLocationInRootViewCoordinates; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
     bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks; }
@@ -116,6 +119,7 @@ private:
     const RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
     const WebKit::NavigationActionData m_navigationActionData;
+    RefPtr<JSHandle> m_hitTestJSHandle;
     const RefPtr<Navigation> m_mainFrameNavigation;
     std::optional<WebCore::FrameIdentifier> m_mainFrameIDBeforeNavigationDecision;
 };

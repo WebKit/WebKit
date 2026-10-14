@@ -628,6 +628,7 @@
 				WebKit/WKWebView/WKWebExtensionMatchPattern.swift,
 				WebKit/WKWebView/WKWebExtensionTab.swift,
 				WebKit/WKWebView/WKWebExtensionWindow.swift,
+				WebKit/WKWebView/WKWebViewHitTestTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;

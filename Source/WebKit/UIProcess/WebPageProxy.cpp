@@ -10640,8 +10640,21 @@ RefPtr<FrameState> WebPageProxy::frameStateForBackForwardChildFrame(WebFrameProx
     return frameState;
 }
 
+static RefPtr<API::JSHandle> takeHitTestJSHandle(NavigationActionData& navigationActionData)
+{
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    if (auto jsHandleInfo = std::exchange(navigationActionData.hitTestJSHandleInfo, std::nullopt))
+        return API::JSHandle::create(WTF::move(*jsHandleInfo));
+#else
+    UNUSED_PARAM(navigationActionData);
+#endif
+    return nullptr;
+}
+
 void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, NavigationActionData&& navigationActionData, CompletionHandler<void(PolicyDecision&&)>&& originalCompletionHandler)
 {
+    RefPtr hitTestJSHandle = takeHitTestJSHandle(navigationActionData);
+
     RefPtr<FrameState> frameStateForBackForwardNavigation;
     if (protect(preferences())->useUIProcessForBackForwardItemLoading() && navigationActionData.navigationType == WebCore::NavigationType::BackForward && navigationActionData.targetBackForwardItemIdentifier) {
         if (RefPtr frameState = frameStateForBackForwardChildFrame(frame, *navigationActionData.targetBackForwardItemIdentifier)) {
@@ -10697,6 +10710,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         auto redirectResponse = WTF::move(navigationActionData.redirectResponse);
         navigationActionData = *navigation->lastNavigationAction();
         navigationActionData.redirectResponse = WTF::move(redirectResponse);
+        hitTestJSHandle = navigation->lastNavigationActionHitTestJSHandle();
         navigationActionData.canHandleRequest = canHandleRequest;
         frameInfo.securityOrigin = navigation->destinationFrameSecurityOrigin();
     }
@@ -10750,7 +10764,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         provisionalPage->setNavigation(*navigation);
 
     navigation->setCurrentRequest(ResourceRequest(request));
-    navigation->setLastNavigationAction(navigationActionData);
+    navigation->setLastNavigationAction(navigationActionData, RefPtr { hitTestJSHandle });
     if (!navigationActionData.redirectResponse.isNull() && !SecurityOrigin::create(navigationActionData.redirectResponse.url())->isSameOriginAs(SecurityOrigin::create(request.url())))
         navigation->setHasCrossOriginRedirect();
     if (!navigation->originatingFrameInfo())
@@ -10782,6 +10796,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     if (frame.isMainFrame() && m_mainFrame)
         currentMainFrameIdentifier = m_mainFrame->frameID();
     Ref navigationAction = API::NavigationAction::create(WTF::move(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), String(), ResourceRequest(request), originalRequest.url(), shouldOpenAppLinks, WTF::move(userInitiatedActivity), mainFrameNavigation.get(), currentMainFrameIdentifier);
+    navigationAction->setHitTestJSHandle(WTF::move(hitTestJSHandle));
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request)) {
@@ -11171,6 +11186,8 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
 
 void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, NavigationActionData&& navigationActionData, const String& frameName, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    RefPtr hitTestJSHandle = takeHitTestJSHandle(navigationActionData);
+
     RefPtr protectedPageClient { pageClient() };
     auto frameInfo = navigationActionData.frameInfo;
     auto request = navigationActionData.request;
@@ -11190,6 +11207,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(IPC::Connection& connection, N
     auto userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
     bool shouldOpenAppLinks = m_mainFrame && m_mainFrame->url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTF::move(navigationActionData), sourceFrameInfo.get(), nullptr, frameName, ResourceRequest(request), URL { }, shouldOpenAppLinks, WTF::move(userInitiatedActivity));
+    navigationAction->setHitTestJSHandle(WTF::move(hitTestJSHandle));
 
     Ref listener = frame->setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), navigationAction] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
@@ -16936,18 +16954,28 @@ void WebPageProxy::updateWebsitePolicies(const API::WebsitePolicies& policies)
     });
 }
 
-void WebPageProxy::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, API::ContentWorld& world, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completionHandler)
+void WebPageProxy::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, API::ContentWorld& world, CompletionHandler<void(std::expected<std::optional<JSHandleInfo>, HitTestAtPointError>&&, WebHitTestResultData&&)>&& completionHandler)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point, world.worldDataForProcess(processContainingFrame(frameID))), [weakThis = WeakPtr { *this }, world = Ref { world }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
-        WTF::switchOn(WTF::move(result.variant), [&] (std::monostate) {
-            completionHandler(std::nullopt);
-        }, [&] (WebKit::NodeHitTestResult::RemoteFrameInfo&& info) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return completionHandler(std::nullopt);
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != this)
+        return completionHandler(makeUnexpected(HitTestAtPointError::FrameNotFound), { });
+
+    Ref process = frame->process();
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point, world.worldDataForProcess(process)), [weakThis = WeakPtr { *this }, process, world = Ref { world }, completionHandler = WTF::move(completionHandler)](auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->isClosed())
+            return completionHandler(makeUnexpected(HitTestAtPointError::WebViewInvalidated), { });
+
+        WTF::switchOn(WTF::move(result.variant), [&](std::monostate) {
+            // No reply was received. The connection is marked invalid before pending replies are cancelled.
+            bool processTerminated = !process->hasConnection() || !protect(process->connection())->isValid();
+            completionHandler(makeUnexpected(processTerminated ? HitTestAtPointError::WebContentProcessTerminated : HitTestAtPointError::Unknown), { });
+        }, [&](HitTestAtPointError error) {
+            completionHandler(makeUnexpected(error), { });
+        }, [&](WebKit::NodeHitTestResult::RemoteFrameInfo&& info) {
             protectedThis->hitTestAtPoint(info.remoteFrameIdentifier, info.transformedPoint, world, WTF::move(completionHandler));
-        }, [&] (JSHandleInfo&& nodeAndFrame) {
-            completionHandler(WTF::move(nodeAndFrame));
+        }, [&](NodeHitTestResult::HitNode&& hitNode) {
+            completionHandler(WTF::move(hitNode.jsHandleInfo), WTF::move(hitNode.hitTestResultData));
         });
     });
 }

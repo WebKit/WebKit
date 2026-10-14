@@ -11095,18 +11095,18 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
 {
     RefPtr frame = WebFrame::webFrame(frameID);
     if (!frame)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::FrameNotFound });
 
     auto options = WebFrame::defaultHitTestRequestTypes();
     options.remove(HitTestRequest::Type::AllowChildFrameContent);
     options.add(HitTestRequest::Type::SkipTransformToRootFrameCoordinates);
     RefPtr result = frame->hitTest(roundedIntPoint(point), options);
     if (!result)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::FrameNotFound });
 
     RefPtr node = result->coreHitTestResult().innerNonSharedNode();
     if (!node)
-        return completionHandler({ });
+        return completionHandler({ NodeHitTestResult::HitNode { std::nullopt, WebHitTestResultData { result->coreHitTestResult(), false } } });
 
     if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(node.get())) {
         if (RefPtr contentFrame = frameOwner->contentFrame()) {
@@ -11122,22 +11122,22 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
 
     RefPtr nodeFrame = node->document().frame();
     if (!nodeFrame)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::Unknown });
 
     RefPtr nodeWebFrame = WebFrame::fromCoreFrame(*nodeFrame);
     if (!nodeWebFrame)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::Unknown });
 
     m_userContentController->addContentWorldIfNecessary(worldData);
     RefPtr world = m_userContentController->worldForIdentifier(worldData.identifier);
     if (!world)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::Unknown });
 
     auto handleAndInfo = nodeWebFrame->createAndPrepareToSendJSHandle(*node, *world);
     if (!handleAndInfo)
-        return completionHandler({ });
+        return completionHandler({ HitTestAtPointError::Unknown });
 
-    completionHandler({ WTF::move(handleAndInfo->second) });
+    completionHandler({ NodeHitTestResult::HitNode { WTF::move(handleAndInfo->second), WebHitTestResultData { result->coreHitTestResult(), false } } });
 }
 
 void WebPage::adjustVisibilityForTargetedElements(Vector<TargetedElementAdjustment>&& adjustments, CompletionHandler<void(bool)>&& completion)
