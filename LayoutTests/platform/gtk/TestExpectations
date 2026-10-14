@@ -974,11 +974,9 @@ webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 media/media-source/media-detachablemse-append.html [ Skip ]
 
 # Tests failing while still having the right values in expected related to the import in webkit.org/b/252516
-imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-cell-dynamic-color.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
 
 webkit.org/b/234726 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ ImageOnlyFailure ]
 
@@ -1015,7 +1013,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/unrelated-gesture-scroll-during-snap.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin-focus.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/initial-snap-matches-scroll.html [ Failure ]
 

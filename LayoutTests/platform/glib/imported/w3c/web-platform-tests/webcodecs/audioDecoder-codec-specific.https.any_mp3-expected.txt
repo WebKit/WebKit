@@ -1,0 +1,11 @@
+
+PASS Test isConfigSupported()
+PASS Test that AudioDecoder.isConfigSupported() returns a parsed configuration
+PASS Test configure()
+PASS Verify closed AudioDecoder operations
+PASS Test decoding
+PASS Test decoding a with negative timestamp
+FAIL Test decoding after flush assert_equals: outputs expected 3 but got 2
+PASS Test reset during flush
+PASS AudioDecoder decodeQueueSize test
+
