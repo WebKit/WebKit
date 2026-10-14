@@ -9710,7 +9710,7 @@ imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross
 imported/w3c/web-platform-tests/css/filter-effects/idlharness.any.html [ Pass Timeout ] # rdar://178172538
 imported/w3c/web-platform-tests/css/filter-effects/idlharness.any.worker.html [ Pass Timeout ] # rdar://178172538
 
-imported/w3c/web-platform-tests/FileAPI/FileReader/Progress_event_bubbles_cancelable.html [ Pass Timeout ] # rdar://178172356
+imported/w3c/web-platform-tests/FileAPI/FileReader/progress_event_bubbles_cancelable.html [ Pass Timeout ] # rdar://178172356
 
 imported/w3c/web-platform-tests/hr-time/clamped-time-origin.html [ Pass Timeout ] # rdar://178172558
 

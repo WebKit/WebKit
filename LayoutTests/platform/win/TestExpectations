@@ -219,7 +219,7 @@ webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
 webkit.org/b/86914 media/W3C/audio [ Skip ]
 webaudio [ Skip ]
-imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-audioworklet.https.html [ Skip ]
+imported/w3c/web-platform-tests/webidl/ecmascript-binding/es-exceptions/DOMException-audioworklet.https.html [ Skip ]
 
 # WEB_RTC is disabled
 webrtc [ Skip ]

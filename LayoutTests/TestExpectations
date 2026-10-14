@@ -7589,12 +7589,12 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCEncodedFrame-copy-co
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
 
 # Dump `rendertree` rather than proper test expectation as `testharness` test
-imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototype.any.html [ Skip ]
-imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototype.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webidl/ecmascript-binding/global-mutable-prototype.any.html [ Skip ]
+imported/w3c/web-platform-tests/webidl/ecmascript-binding/global-mutable-prototype.any.worker.html [ Skip ]
 
 # Below tests give `Error fetching /interfaces/webidl.idl` in test output
-imported/w3c/web-platform-tests/WebIDL/idlharness.any.html [ Skip ]
-imported/w3c/web-platform-tests/WebIDL/idlharness.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webidl/idlharness.any.html [ Skip ]
+imported/w3c/web-platform-tests/webidl/idlharness.any.worker.html [ Skip ]
 
 # Platform-specific tests enabled on macOS and iOS separately.
 webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html [ Skip ]

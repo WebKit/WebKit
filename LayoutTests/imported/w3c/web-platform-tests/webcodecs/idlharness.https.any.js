@@ -29,7 +29,7 @@ var defaultVideoChunkInit = {
   data: new Uint8Array([9, 10, 11, 12])
 };
 
-idl_test(['webcodecs'], ['dom', 'html', 'WebIDL'], async idlArray => {
+idl_test(['webcodecs'], ['dom', 'html', 'webidl'], async idlArray => {
   self.imageBody =
       await fetch('four-colors.png').then(response => response.arrayBuffer());
 
