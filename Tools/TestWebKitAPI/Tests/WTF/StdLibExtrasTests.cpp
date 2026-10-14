@@ -25,7 +25,10 @@
 
 #include "config.h"
 
+#include <array>
+#include <string>
 #include <tuple>
+#include <utility>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -368,6 +371,155 @@ TEST(WTF_StdLibExtras, VisitTupleElementAtIndex)
         1, tuple
     );
     EXPECT_DOUBLE_EQ(2.5, result);
+}
+
+namespace {
+
+struct ZipTestPair {
+    int first;
+    double second;
+};
+
+template<std::size_t I> auto& get(ZipTestPair& pair)
+{
+    if constexpr (!I)
+        return pair.first;
+    else
+        return pair.second;
+}
+
+template<std::size_t I> const auto& get(const ZipTestPair& pair)
+{
+    if constexpr (!I)
+        return pair.first;
+    else
+        return pair.second;
+}
+
+} // namespace
+
+} // namespace TestWebKitAPI
+
+template<> struct std::tuple_size<TestWebKitAPI::ZipTestPair> : std::integral_constant<std::size_t, 2> {
+};
+
+template<> struct std::tuple_element<0, TestWebKitAPI::ZipTestPair> {
+    using type = int;
+};
+
+template<> struct std::tuple_element<1, TestWebKitAPI::ZipTestPair> {
+    using type = double;
+};
+
+namespace TestWebKitAPI {
+
+TEST(WTF_StdLibExtras, TupleZipTransposes)
+{
+    std::tuple<int, std::string, double> a { 1, "hello", 1.5 };
+    std::tuple<double, char, float> b { 0.5, 'i', 0.1f };
+
+    auto zipped = WTF::tuple_zip(a, b);
+    static_assert(std::tuple_size_v<decltype(zipped)> == 3);
+
+    EXPECT_EQ(1, std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(0.5, std::get<1>(std::get<0>(zipped)));
+    EXPECT_EQ("hello", std::get<0>(std::get<1>(zipped)));
+    EXPECT_EQ('i', std::get<1>(std::get<1>(zipped)));
+    EXPECT_EQ(1.5, std::get<0>(std::get<2>(zipped)));
+    EXPECT_EQ(0.1f, std::get<1>(std::get<2>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipBindsReferencesToLvalues)
+{
+    std::tuple<int, std::string> a { 1, "a" };
+    std::tuple<int, std::string> b { 2, "b" };
+
+    auto zipped = WTF::tuple_zip(a, b);
+    static_assert(std::is_same_v<decltype(zipped), std::tuple<std::tuple<int&, int&>, std::tuple<std::string&, std::string&>>>);
+
+    // Elements alias the sources rather than copying them.
+    EXPECT_EQ(&std::get<0>(a), &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&std::get<0>(b), &std::get<1>(std::get<0>(zipped)));
+    EXPECT_EQ(&std::get<1>(a), &std::get<0>(std::get<1>(zipped)));
+    EXPECT_EQ(&std::get<1>(b), &std::get<1>(std::get<1>(zipped)));
+
+    // Writes through the zipped view are visible in the sources.
+    std::get<0>(std::get<0>(zipped)) = 10;
+    std::get<1>(std::get<1>(zipped)) = "changed";
+    EXPECT_EQ(10, std::get<0>(a));
+    EXPECT_EQ("changed", std::get<1>(b));
+}
+
+TEST(WTF_StdLibExtras, TupleZipPreservesConst)
+{
+    const std::tuple<int, double> a { 1, 2.0 };
+    std::tuple<int, double> b { 3, 4.0 };
+
+    auto zipped = WTF::tuple_zip(a, b);
+    static_assert(std::is_same_v<decltype(zipped), std::tuple<std::tuple<const int&, int&>, std::tuple<const double&, double&>>>);
+    EXPECT_EQ(&std::get<0>(a), &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&std::get<0>(b), &std::get<1>(std::get<0>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipSingleElement)
+{
+    std::tuple<int> a { 1 };
+    std::tuple<int> b { 2 };
+
+    // A one-element input must still produce a one-element outer tuple.
+    auto zipped = WTF::tuple_zip(a, b);
+    static_assert(std::is_same_v<decltype(zipped), std::tuple<std::tuple<int&, int&>>>);
+    EXPECT_EQ(&std::get<0>(a), &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&std::get<0>(b), &std::get<1>(std::get<0>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipSingleOperand)
+{
+    std::tuple<int, double> a { 1, 2.0 };
+
+    auto zipped = WTF::tuple_zip(a);
+    static_assert(std::is_same_v<decltype(zipped), std::tuple<std::tuple<int&>, std::tuple<double&>>>);
+    EXPECT_EQ(&std::get<0>(a), &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&std::get<1>(a), &std::get<0>(std::get<1>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipMixedTupleLikes)
+{
+    std::pair<int, double> pair { 1, 2.0 };
+    std::array<int, 2> array { 3, 4 };
+
+    auto zipped = WTF::tuple_zip(pair, array);
+    static_assert(std::tuple_size_v<decltype(zipped)> == 2);
+    EXPECT_EQ(&pair.first, &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&array[0], &std::get<1>(std::get<0>(zipped)));
+    EXPECT_EQ(&array[1], &std::get<1>(std::get<1>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipUserDefinedTupleLike)
+{
+    ZipTestPair a { 1, 2.0 };
+    const ZipTestPair b { 3, 4.0 };
+
+    auto zipped = WTF::tuple_zip(a, b);
+    static_assert(std::is_same_v<decltype(zipped), std::tuple<std::tuple<int&, const int&>, std::tuple<double&, const double&>>>);
+    EXPECT_EQ(&a.first, &std::get<0>(std::get<0>(zipped)));
+    EXPECT_EQ(&b.first, &std::get<1>(std::get<0>(zipped)));
+    EXPECT_EQ(&a.second, &std::get<0>(std::get<1>(zipped)));
+    EXPECT_EQ(&b.second, &std::get<1>(std::get<1>(zipped)));
+}
+
+TEST(WTF_StdLibExtras, TupleZipWithApply)
+{
+    std::tuple<int, int> a { 1, 2 };
+    std::tuple<int, int> b { 10, 20 };
+
+    // This is how the Style blending helpers consume the result.
+    auto sum = WTF::apply([](auto&&... zippedElements) {
+        return (WTF::apply([](auto& x, auto& y) {
+            return x + y;
+        }, zippedElements) + ...);
+    }, WTF::tuple_zip(a, b));
+    EXPECT_EQ(33, sum);
 }
 
 } // namespace TestWebKitAPI
