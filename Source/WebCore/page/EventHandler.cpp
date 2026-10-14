@@ -3488,6 +3488,40 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     return true;
 }
 
+bool EventHandler::fetchLatchedWheelEventTarget(const PlatformWheelEvent& wheelEvent, RefPtr<Element>& wheelEventTarget, WeakPtr<ScrollableArea>& scrollableArea)
+{
+#if ENABLE(WHEEL_EVENT_LATCHING)
+    // Use the latched state only when this thread won't scroll the event. Scrolls need up-to-date
+    // layout, which we skip when fetching the latched element below.
+    if (m_currentWheelEventAllowsScrolling)
+        return false;
+
+    Ref frame = m_frame.get();
+    RefPtr page = frame->page();
+
+    // FIXME(rdar://188839922): Enable this optimization for all configs.
+    if (!page || !page->settings().siteIsolationEnabled())
+        return false;
+
+    bool isOverWidget = false;
+    if (!protect(page->scrollLatchingController())->fetchLatchedStateIfIndependentOfHitTest(frame, wheelEvent, wheelEventTarget, scrollableArea, isOverWidget))
+        return false;
+
+    // When over an iframe or plugin, the caller forwards the event using a hit test result.
+    if (isOverWidget)
+        return false;
+
+    if (scrollableArea && page->isMonitoringWheelEvents())
+        scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
+    return true;
+#else
+    UNUSED_PARAM(wheelEvent);
+    UNUSED_PARAM(wheelEventTarget);
+    UNUSED_PARAM(scrollableArea);
+    return false;
+#endif
+}
+
 #if !PLATFORM(MAC)
 
 void EventHandler::determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<Element>&, WeakPtr<ScrollableArea>&, bool&)
@@ -3650,18 +3684,21 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
         page->wheelEventDeltaFilter()->updateFromEvent(event);
     }
 
-    HitTestRequest request;
     DoublePoint position = event.position();
     HitTestResult result(view->windowToContents(flooredIntPoint(position)));
-    document->hitTest(request, result);
-
-    RefPtr<Element> element = result.targetElement();
+    RefPtr<Element> element;
     WeakPtr<ScrollableArea> scrollableArea;
-    bool isOverWidget = result.isOverWidget();
+    bool isOverWidget = false;
 
-    // FIXME: Despite doing this up-front search for the correct scrollable area, we dispatch events via elements which
-    // itself finds and tries to scroll overflow scrollers.
-    determineWheelEventTarget(event, element, scrollableArea, isOverWidget);
+    if (!fetchLatchedWheelEventTarget(event, element, scrollableArea)) {
+        document->hitTest(HitTestRequest { }, result);
+        element = result.targetElement();
+        isOverWidget = result.isOverWidget();
+
+        // FIXME: Despite doing this up-front search for the correct scrollable area, we dispatch events via elements which
+        // itself finds and tries to scroll overflow scrollers.
+        determineWheelEventTarget(event, element, scrollableArea, isOverWidget);
+    }
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
     std::unique_ptr<WheelEventTestMonitorCompletionDeferrer> deferrer;

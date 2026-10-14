@@ -170,6 +170,22 @@ void ScrollLatchingController::updateAndFetchLatchingStateForFrame(LocalFrame& f
     }
 }
 
+bool ScrollLatchingController::fetchLatchedStateIfIndependentOfHitTest(const LocalFrame& frame, const PlatformWheelEvent& wheelEvent, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>& scrollableArea, bool& isOverWidget) const
+{
+    // These events either start, reset, or don't use latching, so they require a hit test.
+    if (!wheelEvent.useLatchedEventElement() || wheelEvent.isGestureStart() || wheelEvent.shouldResetLatching() || wheelEvent.isNonGestureEvent())
+        return false;
+
+    auto* state = stateForFrame(frame);
+    if (!state || !state->scrollableArea)
+        return false;
+
+    latchedElement = state->wheelEventElement.get();
+    scrollableArea = state->scrollableArea;
+    isOverWidget = state->isOverWidget;
+    return true;
+}
+
 void ScrollLatchingController::removeLatchingStateForTarget(const Element& element)
 {
     if (m_frameStateStack.isEmpty())

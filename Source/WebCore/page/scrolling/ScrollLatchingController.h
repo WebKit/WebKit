@@ -70,6 +70,8 @@ public:
 
     void updateAndFetchLatchingStateForFrame(LocalFrame&, const PlatformWheelEvent&, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>&, bool& isOverWidget);
 
+    bool fetchLatchedStateIfIndependentOfHitTest(const LocalFrame&, const PlatformWheelEvent&, RefPtr<Element>& latchedElement, WeakPtr<ScrollableArea>&, bool& isOverWidget) const;
+
     void removeLatchingStateForTarget(const Element&);
     void removeLatchingStateForFrame(const LocalFrame&);
 
