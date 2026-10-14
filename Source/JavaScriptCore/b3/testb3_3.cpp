@@ -87,9 +87,8 @@ void testCSEStoreWithLoop()
 void testCSELoadAfterStoreDiamond(bool flag)
 {
     // Two predecessors each store a distinct value to the same address, then a
-    // load at the merge point reads it. CSE has more than one reaching store, so
-    // it must build a Phi of the stored values and forward the load to it (rather
-    // than re-reading memory). This exercises the multi-match Phi/Upsilon path.
+    // load at the merge point reads it. Neither store alone reaches the load, so
+    // it must not be forwarded from either one.
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     BasicBlock* thenCase = proc.addBlock();
@@ -119,18 +118,15 @@ void testCSELoadAfterStoreDiamond(bool flag)
     int64_t storage = -1;
     int64_t result = invoke<int64_t>(*code, std::bit_cast<intptr_t>(&storage), flag ? 1 : 0);
     CHECK_EQ(result, flag ? 42 : 7);
-    // The store still wrote through to memory regardless of forwarding.
     CHECK_EQ(storage, flag ? 42 : 7);
 }
 
 void testCSELoadAcrossLoopBackEdge(unsigned count)
 {
     // The load and one of its reaching stores live in the same block (the loop
-    // body), but the store is logically *after* the load on the next iteration,
-    // reached via the back edge. So the load's def-block equals its use-block,
-    // yet the in-block store must not be forwarded directly: it has to flow
-    // through a loop-header Phi. This is the loop analogue of the old Get/Set
-    // interleaving in one block.
+    // body), but the store executes *after* the load and reaches it only on the
+    // next iteration, via the back edge. Neither the store before the loop nor
+    // the one in the body may be forwarded to the load.
     //
     //   *p = 1
     //   for (i = 0; i < count; ++i) {
@@ -176,12 +172,10 @@ void testCSELoadAcrossLoopBackEdge(unsigned count)
 
 void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count)
 {
-    // The redundant load sits in the loop *header*, but one of its reaching
-    // stores lives in a separate *body* block reached via the back edge. In
-    // reverse-post-order the header is processed before the body, so on the
-    // first sweep the header's backward query can't yet see the post-edit body
-    // summary. This is exactly the case the loop re-sweep exists to catch; the
-    // test pins down that it stays correct regardless of which sweep fires.
+    // The load sits in the loop *header*, but one of its reaching stores lives
+    // in a separate *body* block reached via the back edge, which a walk in
+    // reverse post-order visits only after the header. The store before the
+    // loop must not be forwarded to the header load.
     //
     //   *p = 1
     //   for (i = 0; i < count; ++i)   // header: acc = load(p)
