@@ -101,12 +101,17 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(CryptoAlgorithmIdentifier ha
         return std::nullopt;
     }
 
-    // Return MPI data of the embedded value integer.
+    // Return the embedded value data.
     PAL::GCrypt::Handle<gcry_sexp_t> valueSexp(gcry_sexp_find_token(plainSexp, "value", 0));
     if (!valueSexp)
         return std::nullopt;
 
-    return mpiData(valueSexp);
+    size_t dataLength = 0;
+    const char* data = gcry_sexp_nth_data(valueSexp, 1, &dataLength);
+    if (!data)
+        return std::nullopt;
+
+    return Vector<uint8_t>(unsafeMakeSpan(byteCast<uint8_t>(data), dataLength));
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)

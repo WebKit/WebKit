@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test decrypting using RSA-OAEP SHA-1 plain texts that start with zero bytes");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var leadingZerosCipherText = hexStringToUint8Array("2245b068f856dd7ce800a4d18d3ea669c4566724aea94bd8bdc1f754d6fcfd51647fa7cfa60bf94ebb1e26d3da73e40e207a7df57139923ceaaa92801dbe0ffd0b0cbdb7e6b53a268bd14d10caa503477788730703bd967f7ad047ebb514299c259c4e65e3bc7f0dc0b622a383bc4d3c260b5c16114490cb704e030466ac1c10d2890692aa2659ffcee7f3e4c3535783ad31671bd6ab8abfeac733c5d11b777b20ba84cdad88d47fd09750aa88da122c117ebd49fe65b882e28ac56553a3b6907e6f4b8745448d9e613b7b19bc8aff846f917a2f5829ac0184ed86d22d4910299f7e1324faa665def248c734fe10537585e02ef68db793a4165cf6920186d392");
+var allZerosCipherText = hexStringToUint8Array("7077c6d7e0f228867db148c6a531336c5c3332597710eff63bf52e616cc53e3b68fb6de7a277a7e2c5e7d7b10c8c7eded46d0f2ad4fbe6a40bf2aa65af501a8752cd6d80e0a77be8f1a2b742ffb077dc7e10a7b63b566792da3b24f34e57dbd1ef10cef0e841d6221e1eed3ef78259c2059622e34379fef0b620eae0b0b85a5254d8e6fcf118966081132cea24b464605229af9dc99036f8aeb7ae831f6328630a27512b5fc824f23fa2087ebe9c4c7fb29c291b8f1cfeb59ccdf3082882198dddbc22ab762f337dfc357aa32d3a4968d7c5171a2ac31ad13cf662cc34119afce6f62888d58b4b2c0ddb44f5e680f25371c7e1882bf44f3d7fe22a87cb6c3f13");
+var jwkKey = {
+    kty: "RSA",
+    alg: "RSA-OAEP",
+    use: "enc",
+    key_ops: ["decrypt", "unwrapKey"],
+    ext: true,
+    n: "lxHN0N9VRZ0_pl0xv3-NXx70WnjkODSkQ5LjHXTFy3DOQsvkagFzD9HqYQezCmcewLjdK5PLwSesDoMdfL6tusBHcvyit1kvydYFQ3NLbENNkYsiBG5_nW4IQGL6JKbZ5iGdUop98QHKm6YZR1u4zrAtxM6bVEo05VvhjRS0M8yWoZVi-7Vdsc0LqI0Qdq_NoctX5Fu-AqiBN7Uo1HkYGcP2oC82J_J5cjw98BQiP5kDWThq9RK-X6S-EUALx_m4iG6iOYKTA3SQyf1xBqFaXXoEJjcckbOqkegecz5b-YWUh8iZPvhwnt-RZwpIbLJgKwz19ndkn9KvoEEw7YbEow",
+    e: "AQAB",
+    d: "cj5DkDakjM2bKduGWJREO-_zyEtuA1dD9doqKMd7IRuA0CDS7puEAS20-oXRDwfmyMXEdEUDrGGtCxh6fzDPvs_T-JA3GUK4EgHo3xZcrlXDXlKCeil6Fnr0gISZOIh5dkBrcdVL4quBJe4ZZc5mVuAC7Ld13et0TxMJ4iALGrPuqPVUOGSYIcZ9idx5zKKBWhY3tPggEdKpnHBmPfTRO4yZaf0Nw1QXrgSMZY9ejeuaurAh4Q8o4-6-r8O2LUe7ufMh_ccKkXISEh4KdOnT17EM9BQTn9UNS9GoK2ZZU0U3io5DSu_kpasr4uOVWcGlE2wczOv2nkGwG39F3sFF0Q",
+    p: "x5vnco5j-TD6hTOzyN4DhkZ44m05NycxT6SUE2qTurT3-uze_L7TYutLRIRkovRMhTHZAr2pziRlasEs13PEz9Zvx1I_T68srsonrdbak-SFMecM7EjHc5C-J13gXhw9HIW28_Sx9rQ-JkGwEwE9PEdIUfuvdqpgh3SmXwPJrEs",
+    q: "wb9vllg_2n-kNge0bThg_7xu1UwTzipM8vxSUkkV2IipJKIAekkU3aAB8LoPhUI0-17pSGw3ETOO27t163TI9qIPpzLbhTH9aUi7qLGbKlzPlgnqP43Z0LHxc3xKDgit-Ar29QLaX2uoJBX6VVWvhmh7BIPDHNVM5GZjwWORYgk",
+    dp: "C2c8sa6wx2uk5Dcv7inAycr83PKgciYrCwG78-AC0IfGIu-lTYsZSG1ov2FQ3n5WYMWYQC_Vo5EwugiPJz_V3onBmQF53HOFefbSjXvYwNotQcyRUG5X9qIuOtGCH949H4QED6vK_u0NH-JgzLUlamwoFYbrXzwch6CCYKs2ukE",
+    dq: "hbtRloDLclHwUqr2yvzDV0IFbozYjtF706x-VfXEcnXB6ls34TBYirFLJZIH7H9KeseEVkz7pY_k5555QlCV9kbebxYXl9RtiiJ-BW6yH4d4caPeYIfU9MweUQxVQWKUUkWfOHcDrCFvKZlR9Vzzjt7HKtKX9mr0bCKQcIf9baE",
+    qi: "a-7hUTTnclUPKOfSgH8zEKGJ-AvdFEzxvZ5sq46Qf2MbORxVjN4dJamVvM-FoqcwN-9cuUlyr9bSFTwUBW4vXa8Xj9a8JfViuMCqzR-mL1rGIUQ5ARGhNcSsRlyKTqz5BlWlVKmXIx_p-DeVwPWiJJy4k_FqyBxrnxkzomHfrxk",
+};
+var rsaOaepParams = {
+    name: "rsa-oaep"
+}
+var expectedLeadingZerosPlainText = "0000010203";
+var expectedAllZerosPlainText = "00000000000000000000000000000000";
+
+crypto.subtle.importKey("jwk", jwkKey, {name: "RSA-OAEP", hash: "SHA-1"}, extractable, ["decrypt"]).then(function(result) {
+    key = result;
+    return crypto.subtle.decrypt(rsaOaepParams, key, leadingZerosCipherText);
+}).then(function(result) {
+    plainText = result;
+    shouldBe("bytesToHexString(plainText)", "expectedLeadingZerosPlainText");
+    return crypto.subtle.decrypt(rsaOaepParams, key, allZerosCipherText);
+}).then(function(result) {
+    plainText = result;
+    shouldBe("bytesToHexString(plainText)", "expectedAllZerosPlainText");
+
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

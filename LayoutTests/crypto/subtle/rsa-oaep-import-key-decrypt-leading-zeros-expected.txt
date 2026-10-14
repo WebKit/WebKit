@@ -1,0 +1,11 @@
+Test decrypting using RSA-OAEP SHA-1 plain texts that start with zero bytes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToHexString(plainText) is expectedLeadingZerosPlainText
+PASS bytesToHexString(plainText) is expectedAllZerosPlainText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
