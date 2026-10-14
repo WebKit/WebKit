@@ -77,7 +77,7 @@ template<typename CharType> static std::optional<String> parseString(StringParsi
         if (skipExactly(buffer, '"'))
             return builder.toString();
         CharType c = buffer.consume();
-        if ((c >= 0x00 && c <= 0x1F) || (c >= 0x7F && c <= 0xFF))
+        if (c < 0x20 || c > 0x7E)
             return std::nullopt;
         builder.append(c);
     }
@@ -394,6 +394,6 @@ std::optional<String> escapeString(StringView input)
             builder.append(static_cast<Latin1Character>(codeUnit));
     }
     return builder.toString();
-};
+}
 
 } // namespace RFC8941
