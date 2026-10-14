@@ -104,3 +104,28 @@ enum class Inspector::NetworkInterceptOwner : uint8_t {
 [CustomHeader] struct Inspector::NetworkInterception {
     Vector<Inspector::InterceptPattern> patterns;
 };
+
+enum class Inspector::NetworkInterceptionAction : uint8_t {
+    Continue,
+    Fulfill,
+    Fail,
+};
+
+enum class Inspector::NetworkInterceptionErrorType : uint8_t {
+    General,
+    AccessControl,
+    Cancellation,
+    Timeout,
+};
+
+[CustomHeader] struct Inspector::NetworkInterceptionResolution {
+    Inspector::NetworkInterceptionAction action;
+    std::optional<URL> url;
+    String method;
+    std::optional<Vector<std::pair<String, String>>> headers;
+    RefPtr<WebCore::SharedBuffer> body;
+    std::optional<int> statusCode;
+    String reasonPhrase;
+    String mimeType;
+    Inspector::NetworkInterceptionErrorType errorType;
+};

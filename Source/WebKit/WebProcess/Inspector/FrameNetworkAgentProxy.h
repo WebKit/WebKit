@@ -99,7 +99,7 @@ public:
     void mainFrameNavigated(WebCore::DocumentLoader&) final;
     void setInitialScriptContent(WebCore::ResourceLoaderIdentifier, const String& sourceString) final;
 
-    // FIXME: Forward interception to ProxyingNetworkAgent. https://bugs.webkit.org/show_bug.cgi?id=324383
+    // Web Inspector interception under Site Isolation; see NetworkInterceptionSink.
     bool willIntercept(const WebCore::ResourceRequest&) final;
     bool shouldInterceptRequest(const WebCore::ResourceLoader&) final;
     bool shouldInterceptResponse(const WebCore::ResourceResponse&) final;

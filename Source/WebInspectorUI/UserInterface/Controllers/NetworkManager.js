@@ -316,7 +316,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._interceptionEnabled = enabled;
 
-        for (let target of WI.targets) {
+        for (let target of this._interceptionTargets()) {
             // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
             if (target.hasCommand("Network.setInterceptionEnabled"))
                 target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
@@ -1713,12 +1713,23 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         };
     }
 
+    _interceptionTargets()
+    {
+        // Under Site Isolation, the Network domain (and with it interception) lives on the
+        // multiplexing backend target, which WI.targets leaves out. Frame targets have no Network
+        // domain; the backend target intercepts the loads of every frame of the page.
+        let targets = WI.targets;
+        if (this._enabledNetworkForSiteIsolation && WI.backendTarget && !targets.includes(WI.backendTarget))
+            targets = [WI.backendTarget, ...targets];
+        return targets;
+    }
+
     _addInterception(localResourceOverride, specificTarget)
     {
         console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
         console.assert(!localResourceOverride.disabled, localResourceOverride);
 
-        let targets = specificTarget ? [specificTarget] : WI.targets;
+        let targets = specificTarget ? [specificTarget] : this._interceptionTargets();
         for (let target of targets) {
             // COMPATIBILITY (iOS 13.0): Network.addInterception did not exist yet.
             if (!target.hasCommand("Network.addInterception"))
@@ -1732,7 +1743,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
 
-        let targets = specificTarget ? [specificTarget] : WI.targets;
+        let targets = specificTarget ? [specificTarget] : this._interceptionTargets();
         for (let target of targets) {
             // COMPATIBILITY (iOS 13.0): Network.removeInterception did not exist yet.
             if (!target.hasCommand("Network.removeInterception"))

@@ -1,0 +1,149 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/network/resources/intercept-fetch-iframe.html`;
+    document.body.appendChild(iframe);
+}
+
+function fetchInIFrame() {
+    iframe.contentWindow.postMessage({type: "Fetch", url: "intercepted-data.txt?" + Math.random()}, "*");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data.type === "Ready")
+        TestPage.dispatchEventToFrontend("IFrameReady");
+    else if (event.data.type === "FetchResult")
+        TestPage.dispatchEventToFrontend("FetchResult", event.data);
+});
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.InterceptRequest");
+
+    const urlPattern = "intercepted-data\\.txt";
+
+    // Record which target each paused request is reported on. Under Site Isolation the Network
+    // domain lives on the multiplexing backend target, which intercepts the loads of every frame.
+    let originalRequestIntercepted = WI.NetworkManager.prototype.requestIntercepted;
+    WI.networkManager.requestIntercepted = function(target, requestId, request) {
+        InspectorTest.expectEqual(target, WI.backendTarget, "Network.requestIntercepted should be dispatched on the backend target.");
+        InspectorTest.expectThat(request.url.includes("/site-isolation/inspector/network/resources/intercepted-data.txt?"), "Intercepted request should be the cross-origin iframe's fetch.");
+        return originalRequestIntercepted.apply(this, arguments);
+    };
+
+    async function fetchInIFrame() {
+        let [event] = await Promise.all([
+            InspectorTest.awaitEvent("FetchResult"),
+            InspectorTest.evaluateInPage("fetchInIFrame()"),
+        ]);
+        return event.data;
+    }
+
+    async function withLocalResourceOverride(localResourceOverride, callback) {
+        WI.networkManager.addLocalResourceOverride(localResourceOverride);
+        try {
+            await callback();
+        } finally {
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptRequest.CrossOriginIFrameTargetExists",
+        description: "A separate-process cross-origin iframe should exist before interception is configured.",
+        async test() {
+            let [targetAddedEvent] = await Promise.all([
+                WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded),
+                InspectorTest.awaitEvent("IFrameReady"),
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()"),
+            ]);
+            InspectorTest.expectThat(targetAddedEvent.data.target instanceof WI.FrameTarget, "Added target should be a FrameTarget, proving a separate-process OOPIF.");
+            InspectorTest.expectThat(WI.networkManager.enabledNetworkForSiteIsolation, "Network should be enabled on the backend target.");
+            InspectorTest.expectThat(WI.backendTarget.hasCommand("Network.interceptRequestWithResponse"), "Backend target should support Network.interceptRequestWithResponse.");
+
+            let result = await fetchInIFrame();
+            InspectorTest.expectEqual(result.text, "original content", "Fetch without an override should load the original content.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptRequest.WithResponse",
+        description: "A request paused in the cross-origin iframe's process should be fulfilled by Network.interceptRequestWithResponse.",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create(urlPattern, WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork, {
+                responseMIMEType: "text/plain",
+                responseContent: "overridden without network",
+                responseBase64Encoded: false,
+                responseStatusCode: 200,
+                responseStatusText: "OK",
+                responseHeaders: {},
+                isRegex: true,
+            });
+
+            await withLocalResourceOverride(localResourceOverride, async () => {
+                let result = await fetchInIFrame();
+                InspectorTest.expectEqual(result.status, 200, "Status should come from the override.");
+                InspectorTest.expectEqual(result.text, "overridden without network", "Content should come from the override.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptRequest.WithRequest",
+        description: "A request paused in the cross-origin iframe's process should be redirected by Network.interceptWithRequest.",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create(urlPattern, WI.LocalResourceOverride.InterceptType.Request, {
+                requestURL: "intercepted-data-alternate.txt",
+                isRegex: true,
+            });
+
+            await withLocalResourceOverride(localResourceOverride, async () => {
+                let result = await fetchInIFrame();
+                InspectorTest.expectEqual(result.text, "alternate content", "Content should come from the URL the override sent the request to.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptRequest.WithError",
+        description: "A request paused in the cross-origin iframe's process should be failed by Network.interceptRequestWithError.",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create(urlPattern, WI.LocalResourceOverride.InterceptType.Block, {
+                resourceErrorType: WI.LocalResourceOverride.ResourceErrorType.General,
+                isRegex: true,
+            });
+
+            await withLocalResourceOverride(localResourceOverride, async () => {
+                let result = await fetchInIFrame();
+                InspectorTest.expectEqual(result.error, "TypeError", "Fetch should fail.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.InterceptRequest.RemovedOverride",
+        description: "Once the override is removed, the cross-origin iframe's request should no longer pause.",
+        async test() {
+            WI.networkManager.requestIntercepted = function() {
+                InspectorTest.fail("No request should be intercepted.");
+                return originalRequestIntercepted.apply(this, arguments);
+            };
+
+            let result = await fetchInIFrame();
+            InspectorTest.expectEqual(result.text, "original content", "Fetch should load the original content.");
+
+            delete WI.networkManager.requestIntercepted;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Web Inspector request interception pauses and resolves a request made by a cross-origin iframe in another process.</p>
+</body>

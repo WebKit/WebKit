@@ -215,7 +215,6 @@ public:
     // patterns of every consumer; see WebPageProxy::networkInterception().
     Inspector::NetworkInterception networkInterception;
     Vector<Inspector::InterceptPattern> inspectorInterceptPatterns;
-    bool inspectorInterceptionEnabled { false };
     Vector<Inspector::InterceptPattern> automationInterceptPatterns;
 
     uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }

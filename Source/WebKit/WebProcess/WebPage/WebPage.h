@@ -182,7 +182,10 @@ class SharedBufferReference;
 }
 
 namespace Inspector {
+enum class NetworkInterceptOwner : uint8_t;
+enum class NetworkInterceptionPhase : uint8_t;
 struct NetworkInterception;
+struct NetworkInterceptionResolution;
 }
 
 namespace WebCore {
@@ -1794,6 +1797,7 @@ public:
     bool LEGACY_NODELETE isControlledByAutomation() const;
     void LEGACY_NODELETE setControlledByAutomation(bool);
     void setNetworkInterception(Inspector::NetworkInterception&&, CompletionHandler<void()>&&);
+    void resolveNetworkInterception(WebCore::ResourceLoaderIdentifier, Inspector::NetworkInterceptOwner, Inspector::NetworkInterceptionPhase, Inspector::NetworkInterceptionResolution&&);
 
     void connectInspector(Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector();

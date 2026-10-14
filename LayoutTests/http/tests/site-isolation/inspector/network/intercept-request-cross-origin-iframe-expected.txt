@@ -1,0 +1,29 @@
+Test that Web Inspector request interception pauses and resolves a request made by a cross-origin iframe in another process.
+
+
+== Running test suite: SiteIsolation.Network.InterceptRequest
+-- Running test case: SiteIsolation.Network.InterceptRequest.CrossOriginIFrameTargetExists
+PASS: Added target should be a FrameTarget, proving a separate-process OOPIF.
+PASS: Network should be enabled on the backend target.
+PASS: Backend target should support Network.interceptRequestWithResponse.
+PASS: Fetch without an override should load the original content.
+
+-- Running test case: SiteIsolation.Network.InterceptRequest.WithResponse
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Intercepted request should be the cross-origin iframe's fetch.
+PASS: Status should come from the override.
+PASS: Content should come from the override.
+
+-- Running test case: SiteIsolation.Network.InterceptRequest.WithRequest
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Intercepted request should be the cross-origin iframe's fetch.
+PASS: Content should come from the URL the override sent the request to.
+
+-- Running test case: SiteIsolation.Network.InterceptRequest.WithError
+PASS: Network.requestIntercepted should be dispatched on the backend target.
+PASS: Intercepted request should be the cross-origin iframe's fetch.
+PASS: Fetch should fail.
+
+-- Running test case: SiteIsolation.Network.InterceptRequest.RemovedOverride
+PASS: Fetch should load the original content.
+
