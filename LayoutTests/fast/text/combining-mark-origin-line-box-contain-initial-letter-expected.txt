@@ -1,0 +1,14 @@
+With -webkit-line-box-contain: initial-letter the line box descent includes the vertical offset shaping gives a combining mark.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS height('base') is 70
+PASS height('raised') is 70
+PASS height('lowered') is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+A
+Á
+A̖
