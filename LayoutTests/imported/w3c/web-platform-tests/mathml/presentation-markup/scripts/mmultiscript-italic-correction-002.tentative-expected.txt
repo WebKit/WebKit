@@ -1,0 +1,6 @@
+
+PASS Inline size of mmultiscripts with italic correction
+⫿
+
+⫿
+

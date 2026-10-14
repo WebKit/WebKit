@@ -1,0 +1,17 @@
+
+PASS Postscript pairs fit in the box when the italic correction reduces the first pair width
+PASS Postscript pairs fit in the box when the superscript is wider
+PASS Postscript pairs advance with italic correction
+PASS Postscript pairs fit in a shrink-to-fit container when the italic correction reduces the first pair width
+PASS Postscript pairs fit in the box when the italic correction reduces the first pair width (RTL)
+PASS Prescripts are not affected by the italic correction
+⫿
+
+⫿
+
+⫿
+
+⫿
+
+⫿
+
