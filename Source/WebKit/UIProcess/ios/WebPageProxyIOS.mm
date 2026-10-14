@@ -439,13 +439,20 @@ bool WebPageProxy::requestAutocorrectionContextAndWaitForReply(Seconds timeout)
     RefPtr frame = focusedOrMainFrame();
     auto frameID = frame ? std::optional(frame->frameID()) : std::nullopt;
     Ref process = processContainingFrame(frameID);
+    if (!process->hasConnection())
+        return false;
+
     auto pageID = webPageIDInProcessForFrame(frameID);
     process->send(Messages::WebPage::HandleAutocorrectionContextRequest(), pageID);
     return protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(pageID, timeout, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting) == IPC::Error::NoError;
 }
 
-void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
+void WebPageProxy::handleAutocorrectionContext(IPC::Connection& connection, const WebAutocorrectionContext& context)
 {
+    RefPtr frame = focusedOrMainFrame();
+    if (processContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt).ptr() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
     if (RefPtr pageClient = this->pageClient())
         pageClient->handleAutocorrectionContext(context);
 }

@@ -805,6 +805,7 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/HTTP2Server.swift
     Tests/WebKit/WKWebView/HTTP3Server.swift
     Tests/WebKit/WKWebView/PDFLookUpTests.swift
+    Tests/WebKit/WKWebView/SiteIsolationAutocorrectionTests.swift
     Tests/WebKit/WKWebView/SiteIsolationContentsOfAllFramesTests.swift
     Tests/WebKit/WKWebView/SiteIsolationCookieTests.swift
     Tests/WebKit/WKWebView/SiteIsolationDataDetectionTests.swift
