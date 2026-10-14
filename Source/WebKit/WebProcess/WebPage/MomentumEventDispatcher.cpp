@@ -211,8 +211,10 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
 
     tracePoint(SyntheticMomentumStart);
 
+    auto inputSourceIsAutomation = event.inputSource() == WebEventInputSource::Automation;
+
     m_currentGesture.active = true;
-    m_currentGesture.momentumCurve = event.inputSource() == WebEventInputSource::Automation ? MomentumCurve::Simple : MomentumCurve::Default;
+    m_currentGesture.momentumCurve = inputSourceIsAutomation ? MomentumCurve::Simple : MomentumCurve::Default;
     m_currentGesture.pageIdentifier = pageIdentifier;
     m_currentGesture.initiatingEvent = &event;
     m_currentGesture.currentOffset = { };
@@ -228,12 +230,23 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     float idealCurveMultiplier = m_currentGesture.accelerationCurve->frameRate() / idealCurveFrameRate;
     buildOffsetTableWithInitialDelta(*event.rawPlatformDelta() * idealCurveMultiplier * event.momentumFastScrollMultiplier());
 
-    WebCore::FloatSize consumedDelta = event.delta();
-    if (m_currentGesture.initiatingEvent->directionInvertedFromDevice())
-        consumedDelta.scale(-1);
-    m_currentGesture.currentOffset += consumedDelta;
-    
-    dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Began, event.delta());
+    WebCore::FloatSize beganDelta;
+
+    // When there is no backing platform momentum event to carry over
+    // the first frame from, we take it from the scrolling curve.
+    auto eventDelta = event.delta();
+    ASSERT_IMPLIES(inputSourceIsAutomation, eventDelta.isZero());
+    if (eventDelta.isZero())
+        beganDelta = consumeDeltaForCurrentTime().value_or(WebCore::FloatSize { });
+    else {
+        auto consumedDelta = eventDelta;
+        if (m_currentGesture.initiatingEvent->directionInvertedFromDevice())
+            consumedDelta.scale(-1);
+        m_currentGesture.currentOffset += consumedDelta;
+        beganDelta = eventDelta;
+    }
+
+    dispatchSyntheticMomentumEvent(WebWheelEvent::Phase::Began, beganDelta);
 }
 
 void MomentumEventDispatcher::didEndMomentumPhase()
