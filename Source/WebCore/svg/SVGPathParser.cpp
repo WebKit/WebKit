@@ -432,17 +432,33 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, const F
     pointTransform.rotate(-angle);
 
     FloatPoint transformedMidPoint = pointTransform.mapPoint(FloatPoint(midPointDistance.width(), midPointDistance.height()));
+
     float squareRx = rx * rx;
     float squareRy = ry * ry;
     float squareX = transformedMidPoint.x() * transformedMidPoint.x();
     float squareY = transformedMidPoint.y() * transformedMidPoint.y();
 
     // Check if the radii are big enough to draw the arc, scale radii if not.
-    // http://www.w3.org/TR/SVG/implnote.html#ArcCorrectionOutOfRangeRadii
+    // https://w3c.github.io/svgwg/svg2-draft/implnote.html#ArcCorrectionOutOfRangeRadii
     float radiiScale = squareX / squareRx + squareY / squareRy;
-    if (radiiScale > 1) {
-        rx *= sqrtf(radiiScale);
-        ry *= sqrtf(radiiScale);
+    if (std::isfinite(radiiScale)) {
+        if (radiiScale > 1) {
+            rx *= sqrtf(radiiScale);
+            ry *= sqrtf(radiiScale);
+        }
+    } else {
+        // Squaring a tiny radius underflows to 0, so compute sqrt(radiiScale) from the ratios instead.
+        float sqrtRadiiScale = std::hypot(transformedMidPoint.x() / rx, transformedMidPoint.y() / ry);
+        if (sqrtRadiiScale > 1) {
+            rx *= sqrtRadiiScale;
+            ry *= sqrtRadiiScale;
+        }
+    }
+
+    // Scaling can still overflow for extreme inputs; there is no meaningful ellipse then, so draw a line.
+    if (!std::isfinite(rx) || !std::isfinite(ry) || !rx || !ry) {
+        m_consumer->lineTo(end, AbsoluteCoordinates);
+        return true;
     }
 
     pointTransform.makeIdentity();
@@ -473,6 +489,11 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, const F
         thetaArc += 2 * std::numbers::pi_v<float>;
     else if (thetaArc > 0 && !sweepFlag)
         thetaArc -= 2 * std::numbers::pi_v<float>;
+
+    if (!std::isfinite(thetaArc)) {
+        m_consumer->lineTo(end, AbsoluteCoordinates);
+        return true;
+    }
 
     pointTransform.makeIdentity();
     pointTransform.rotate(angle);
