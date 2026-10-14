@@ -49,6 +49,8 @@ https://www.cbssports.com/
     (none)
 https://www.cnn.com/
     (none)
+https://configurator.audi.com/
+    ShouldRenderModelElementFallbackContentQuirk
 https://www.digitaltrends.com/
     (none)
 https://discord.com/

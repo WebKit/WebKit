@@ -1,0 +1,13 @@
+Tests that the fallback content of a model element with no source renders on configurator.audi.com, which uses model as an unknown element, and that model elements elsewhere, or with a source, render as usual.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createElement('model').constructor.name is "HTMLModelElement"
+PASS sectionHasBox(audiURL) is true
+PASS sectionHasBox(audiURL, modelSource) is usualResult
+PASS sectionHasBoxAfterAddingSource() is usualResult
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

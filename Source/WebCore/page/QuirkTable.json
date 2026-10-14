@@ -75,6 +75,11 @@
             "behaviors": [{ "id": "ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk" }]
         },
         {
+            "bugs": ["https://webkit.org/b/327442", "rdar://181630431"],
+            "matches": ["*://configurator.audi.com/*"],
+            "behaviors": [{ "id": "ShouldRenderModelElementFallbackContentQuirk" }]
+        },
+        {
             "bugs": ["rdar://104938789"],
             "matches": ["*://*.bankofamerica.com/*"],
             "behaviors": [

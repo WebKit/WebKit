@@ -202,6 +202,10 @@ static constexpr Quirk fullTable[] = {
         .behaviors = { shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk },
         .isAvailable = iOSFamily },
 
+    // configurator.audi.com https://webkit.org/b/327442 rdar://181630431
+    { .matches = "*://configurator.audi.com/*"_s,
+        .behaviors = { shouldRenderModelElementFallbackContentQuirk } },
+
     // Login issue on bankofamerica.com (rdar://104938789).
     { .matches = "*://*.bankofamerica.com/*"_s,
         .behaviors = {

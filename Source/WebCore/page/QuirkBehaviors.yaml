@@ -674,6 +674,11 @@ ShouldPreventKeyframeEffectAccelerationQuirk:
 ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk:
   accessor: shouldPreventOrientationMediaQueryFromEvaluatingToLandscape
 
+# configurator.audi.com rdar://181630431
+# The site uses <model> as an unknown element and expects its children to render.
+ShouldRenderModelElementFallbackContentQuirk:
+  available: modelElement
+
 ShouldReportDocumentAsVisibleIfActivePIPQuirk:
   available: pictureInPictureAPI
   accessor: shouldReportVisibleDueToActivePictureInPictureContent

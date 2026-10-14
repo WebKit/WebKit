@@ -56,6 +56,8 @@ https://www.cnn.com/
     NeedsCNNCaptionQuirk
     NeedsFullscreenObjectFitQuirk
     ShouldDisableThreadedAnimationsQuirk
+https://configurator.audi.com/
+    ShouldRenderModelElementFallbackContentQuirk
 https://www.digitaltrends.com/
     (none)
 https://discord.com/
@@ -167,7 +169,7 @@ https://www.carrentals.com/
 https://www.cheaptickets.com/
     NeedsExpediaGroupAnimationQuirk
 https://www.chess.com/
-    (none)
+    ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
 https://www.ebookers.de/
     NeedsExpediaGroupAnimationQuirk
 https://www.expedia.com/
@@ -268,6 +270,7 @@ https://www.netflix.com/
 https://www.nba.com/
     NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+    ShouldEnterNativeFullscreenWhenCallingElementRequestFullscreen
 https://www.nfl.com/
     ShouldSuppressHLSSubtitles
 https://www.nhl.com/

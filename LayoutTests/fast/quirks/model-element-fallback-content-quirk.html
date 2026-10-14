@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that the fallback content of a model element with no source renders on configurator.audi.com, which uses model as an unknown element, and that model elements elsewhere, or with a source, render as usual.");
+
+const audiURL = "https://configurator.audi.com/acc/configurator/v1/nzl/eng/configuration/engine";
+const modelSource = "../../model-element/resources/heart.usdz";
+
+function createModel(url, src) {
+    internals.setTopDocumentURLForQuirks(url);
+    const model = document.createElement("model");
+    if (src)
+        model.src = src;
+    const section = document.createElement("section");
+    section.textContent = "All engines overview";
+    model.appendChild(section);
+    document.body.appendChild(model);
+    return { model, section };
+}
+
+function sectionHasBox(url, src) {
+    const { model, section } = createModel(url, src);
+    const result = section.getClientRects().length > 0;
+    model.remove();
+    return result;
+}
+
+function sectionHasBoxAfterAddingSource() {
+    const { model, section } = createModel(audiURL);
+    section.getClientRects();
+    model.src = modelSource;
+    const result = section.getClientRects().length > 0;
+    model.remove();
+    return result;
+}
+
+shouldBeEqualToString("document.createElement('model').constructor.name", "HTMLModelElement");
+
+// Whether a model element shows its children without the quirk depends on the platform's model support.
+const usualResult = sectionHasBox("https://www.example.com/");
+
+shouldBeTrue("sectionHasBox(audiURL)");
+shouldBe("sectionHasBox(audiURL, modelSource)", "usualResult");
+shouldBe("sectionHasBoxAfterAddingSource()", "usualResult");
+</script>
+</body>
+</html>

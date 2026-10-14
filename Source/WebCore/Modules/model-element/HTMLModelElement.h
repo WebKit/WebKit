@@ -283,7 +283,8 @@ private:
 
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
-    bool isReplaced(const Style::ComputedStyle* = nullptr) const final { return true; }
+    bool isReplaced(const Style::ComputedStyle* = nullptr) const final;
+    bool rendersFallbackContent() const;
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     void didAttachRenderers() final;
     void willDetachRenderers() final;
@@ -407,6 +408,7 @@ private:
     bool m_isDragging { false };
     bool m_shouldCreateModelPlayerUponRendererAttachment { false };
     bool m_isIntersectingViewport { false };
+    bool m_hasFallbackContentQuirk { false };
 #if ENABLE(MODEL_PROCESS)
     bool m_didIncrementModelElementCount { false };
 #endif
