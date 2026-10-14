@@ -79,6 +79,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "ClassMethodSwizzler.h"
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/mac/LocalEventMonitorSwizzler.h"
 #import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
@@ -1184,6 +1185,145 @@ TEST(SiteIsolation, DeviceScaleFactorChangeUpdatesCrossOriginIframeCompositingSc
     EXPECT_TRUE(Util::waitFor([&] {
         return [[webView stringByEvaluatingJavaScript:layerTreeScript inFrame:childFrame.get()] containsString:@"(contentsScale 1.00)"];
     }));
+}
+
+static NSScrollerStyle siteIsolationScrollerStyle;
+
+static NSScrollerStyle siteIsolationPreferredScrollerStyle(id, SEL)
+{
+    return siteIsolationScrollerStyle;
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesCrossOriginIframe)
+{
+    static constexpr auto scrollerHTML = "<div id='scroller' style='width: 200px; height: 200px; overflow: scroll'><div id='content' style='height: 1000px'></div></div>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "<iframe id='iframe' style='width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+        { "/iframe"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "</body>"_s) } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        // Web processes take their initial scroller style from the UI process, so they all start with legacy scroll bars.
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        RetainPtr childFrame = [webView firstChildFrame];
+
+        // AppKit restyles scrollers that aren't scrolled asynchronously by itself, so wait until both are.
+        NSString *controllerTypeScript = @"internals.scrollbarsControllerTypeForNode(document.getElementById('scroller'))";
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView stringByEvaluatingJavaScript:controllerTypeScript] isEqualToString:@"RemoteScrollbarsController"]
+                && [[webView stringByEvaluatingJavaScript:controllerTypeScript inFrame:childFrame.get()] isEqualToString:@"RemoteScrollbarsController"];
+        }));
+
+        // The content only gets the vertical scroll bar's space back once its scroller is laid out again for the new style.
+        NSString *contentWidthScript = @"document.getElementById('content').offsetWidth";
+        EXPECT_LT([webView stringByEvaluatingJavaScript:contentWidthScript].intValue, 200);
+        EXPECT_LT([webView stringByEvaluatingJavaScript:contentWidthScript inFrame:childFrame.get()].intValue, 200);
+
+        siteIsolationScrollerStyle = NSScrollerStyleOverlay;
+        [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+
+        // The main frame checks that the new style reaches web processes at all, so a failure below is specific to the iframe.
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [webView stringByEvaluatingJavaScript:contentWidthScript].intValue == 200;
+        }));
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [webView stringByEvaluatingJavaScript:contentWidthScript inFrame:childFrame.get()].intValue == 200;
+        }));
+    }
+
+    // Put anything that observed the swizzled style back on the real one.
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
+static void checkScrollerStyleChangeUpdatesNestedIframes(bool siteIsolationEnabled)
+{
+    static constexpr auto scrollerHTML = "<div id='scroller' style='width: 200px; height: 200px; overflow: scroll'><div id='content' style='height: 1000px'></div></div>"_s;
+    static constexpr auto nestedIframeHTML = "<iframe style='width: 200px; height: 200px; border: none;' src='/nested'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { makeString("<body style='margin: 0; display: flex'>"_s, scrollerHTML, nestedIframeHTML, "<iframe style='width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s) } },
+        { "/iframe"_s, { makeString("<body style='margin: 0; display: flex'>"_s, scrollerHTML, nestedIframeHTML, "</body>"_s) } },
+        { "/nested"_s, { makeString("<body style='margin: 0'>"_s, scrollerHTML, "</body>"_s) } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    {
+        siteIsolationScrollerStyle = NSScrollerStyleLegacy;
+        ClassMethodSwizzler swizzler(NSScroller.class, @selector(preferredScrollerStyle), reinterpret_cast<IMP>(siteIsolationPreferredScrollerStyle));
+
+        RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+        RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+        [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+        auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600), siteIsolationEnabled);
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        // Under Site Isolation the main frame and the cross-site iframe are local roots. The two /nested iframes never are.
+        RetainPtr<WKFrameInfo> sameSiteIframe;
+        RetainPtr<WKFrameInfo> crossSiteIframe;
+        RetainPtr<WKFrameInfo> iframeInCrossSiteIframe;
+        ASSERT_TRUE(Util::waitFor([&] {
+            RetainPtr<NSArray<_WKFrameTreeNode *>> childFrames = [webView mainFrame].childFrames;
+            if ([childFrames count] != 2 || ![childFrames.get()[1] childFrames].count)
+                return false;
+            sameSiteIframe = [childFrames.get()[0] info];
+            crossSiteIframe = [childFrames.get()[1] info];
+            iframeInCrossSiteIframe = [childFrames.get()[1] childFrames].firstObject.info;
+            return [[webView stringByEvaluatingJavaScript:@"location.href" inFrame:iframeInCrossSiteIframe.get()] isEqualToString:@"https://webkit.org/nested"];
+        }));
+        EXPECT_WK_STREQ("https://example.com/nested", [webView stringByEvaluatingJavaScript:@"location.href" inFrame:sameSiteIframe.get()]);
+        EXPECT_WK_STREQ("https://webkit.org/iframe", [webView stringByEvaluatingJavaScript:@"location.href" inFrame:crossSiteIframe.get()]);
+
+        std::array<std::pair<const char*, RetainPtr<WKFrameInfo>>, 4> frames { {
+            { "main frame", nil },
+            { "same-site iframe", sameSiteIframe },
+            { "cross-site iframe", crossSiteIframe },
+            { "iframe in cross-site iframe", iframeInCrossSiteIframe },
+        } };
+
+        auto contentWidth = [&](WKFrameInfo *frame) {
+            return [webView stringByEvaluatingJavaScript:@"document.getElementById('content').offsetWidth" inFrame:frame].intValue;
+        };
+        for (auto& [name, frame] : frames) {
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView stringByEvaluatingJavaScript:@"internals.scrollbarsControllerTypeForNode(document.getElementById('scroller'))" inFrame:frame.get()] isEqualToString:@"RemoteScrollbarsController"];
+            })) << name;
+            EXPECT_LT(contentWidth(frame.get()), 200) << name;
+        }
+
+        siteIsolationScrollerStyle = NSScrollerStyleOverlay;
+        [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+
+        Util::waitFor([&] {
+            return std::ranges::all_of(frames, [&](auto& entry) {
+                return contentWidth(entry.second.get()) == 200;
+            });
+        });
+        for (auto& [name, frame] : frames)
+            EXPECT_EQ(contentWidth(frame.get()), 200) << name;
+    }
+
+    [NSNotificationCenter.defaultCenter postNotificationName:NSPreferredScrollerStyleDidChangeNotification object:nil];
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesNestedIframes)
+{
+    checkScrollerStyleChangeUpdatesNestedIframes(true);
+}
+
+TEST(SiteIsolation, ScrollerStyleChangeUpdatesNestedIframesWithoutSiteIsolation)
+{
+    checkScrollerStyleChangeUpdatesNestedIframes(false);
 }
 
 #endif // PLATFORM(MAC)
