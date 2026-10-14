@@ -793,7 +793,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishDocumentLoad()
 #if ASSERT_ENABLED
     if (RefPtr document = m_localFrame->document()) {
         auto& url = document->url();
-        ASSERT_WITH_MESSAGE(document->agentClusterIdentifier() || protect(document->securityOrigin())->isOpaque() || !(url.protocolIsInHTTPFamily() || url.protocolIsBlob()), "The UI process did not assign an agent cluster to %s", url.string().utf8());
+        ASSERT_WITH_MESSAGE(document->agentClusterIdentifier() || protect(document->securityOrigin())->isOpaque() || !url.protocolIsInHTTPFamilyOrBlob(), "The UI process did not assign an agent cluster to %s", url.string().utf8());
     }
 #endif
 

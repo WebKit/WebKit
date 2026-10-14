@@ -188,6 +188,7 @@ public:
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     bool protocolIsInFTPFamily() const { return protocolIs("ftp"_s) || protocolIs("ftps"_s); }
     bool protocolIsInHTTPFamily() const { return m_protocolIsInHTTPFamily; }
+    bool protocolIsInHTTPFamilyOrBlob() const { return protocolIsInHTTPFamily() || protocolIsBlob(); }
     WTF_EXPORT_PRIVATE bool protocolIsSecure() const;
     bool hasOpaquePath() const { return m_hasOpaquePath; }
 

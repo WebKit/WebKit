@@ -490,7 +490,7 @@ AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::Re
     auto isSecureContext = origin->isPotentiallyTrustworthy() && WebCore::SecurityOrigin::create(topLevelCreationURL)->isPotentiallyTrustworthy() ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
     AgentClusterRequest request { Source::NavigationResponse, origin->data(), topLevelCreationURL };
     // The WebContent process only applies these policies to http(s) and blob: documents.
-    bool hasPolicyHeaders = response.url().protocolIsInHTTPFamily() || response.url().protocolIsBlob();
+    bool hasPolicyHeaders = response.url().protocolIsInHTTPFamilyOrBlob();
     if (hasPolicyHeaders && preferences.documentIsolationPolicyEnabled() && preferences.siteIsolationEnabled())
         request.documentIsolationPolicy = WebCore::obtainDocumentIsolationPolicy(response, isSecureContext);
     if (preferences.originAgentClusterEnabled())

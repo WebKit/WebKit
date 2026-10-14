@@ -885,7 +885,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
         if (document->url().protocolIsBlob())
             protect(document->contentSecurityPolicy())->updateSourceSelf(SecurityOrigin::create(document->url()));
 
-        if (document->url().protocolIsInHTTPFamily() || document->url().protocolIsBlob()) {
+        if (document->url().protocolIsInHTTPFamilyOrBlob()) {
             auto isSecureContext = document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No;
             document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), isSecureContext, document.ptr()));
 

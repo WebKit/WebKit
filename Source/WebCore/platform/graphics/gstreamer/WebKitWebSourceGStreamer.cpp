@@ -871,7 +871,7 @@ static gboolean webKitWebSrcUnLockStop(GstBaseSrc* baseSrc)
 
 static bool urlHasSupportedProtocol(const URL& url)
 {
-    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIsBlob());
+    return url.isValid() && url.protocolIsInHTTPFamilyOrBlob();
 }
 
 // uri handler interface
