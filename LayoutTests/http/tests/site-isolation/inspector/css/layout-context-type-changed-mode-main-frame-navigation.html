@@ -1,0 +1,193 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function showGrid(id)
+{
+    document.getElementById(id).style.display = "grid";
+    return document.body.offsetTop;
+}
+
+function addCrossOriginIFrame()
+{
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/css/resources/frame-with-layout-flags.html`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation");
+
+    let frameTarget = null;
+
+    function knownLayoutContextIds({frame} = {})
+    {
+        let filter = (node) => node.layoutContextType && node.getAttribute("id") && (frame ? node.owningTarget === frameTarget : !(node.owningTarget instanceof WI.FrameTarget));
+        return Array.from(WI.domManager.attachedNodes({filter})).map((node) => node.getAttribute("id"));
+    }
+
+    async function flush()
+    {
+        await InspectorTest.evaluateInPage(`document.body.offsetTop`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        await InspectorTest.evaluateInPage(`1`);
+        await InspectorTest.evaluateInPage(`1`);
+        if (frameTarget) {
+            await frameTarget.DOMAgent.getSupportedEventNames();
+            await frameTarget.DOMAgent.getSupportedEventNames();
+        }
+    }
+
+    async function showGridInPage(id)
+    {
+        InspectorTest.log(`Changing #${id} to \`display: grid\`...`);
+        await InspectorTest.evaluateInPage(`showGrid("${id}")`);
+        await flush();
+    }
+
+    async function navigate(expression)
+    {
+        let pageLoaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+        let documentArrived = (async () => {
+            while (true) {
+                let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.DocumentUpdated);
+                if (event.data.document)
+                    return;
+            }
+        })();
+        await InspectorTest.evaluateInPage(expression);
+        await Promise.all([pageLoaded, documentArrived]);
+        await flush();
+    }
+
+    function expectKnown(id, message, options)
+    {
+        let ids = knownLayoutContextIds(options);
+        InspectorTest.expectThat(ids.includes(id), message);
+        InspectorTest.log(`Known ${options?.frame ? "frame" : "page"} layout context nodes: [${ids.join(", ")}]`);
+    }
+
+    async function awaitFrameDocumentForURL(substring) {
+        while (true) {
+            let target = WI.targets.find((target) => WI.domManager.frameTargetDocumentForTarget(target)?.documentURL?.includes(substring));
+            if (target)
+                return target;
+            await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+        }
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.BeforeNavigation",
+        description: "With `All` set, a deep grid is sent, and a grid made later is sent live.",
+        async test() {
+            await WI.domManager.requestDocument();
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid should be sent live.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterReload",
+        description: "After a reload, the backend should still send grids without the mode being set again.",
+        async test() {
+            let pageTarget = WI.pageTarget;
+            InspectorTest.log("Reloading the page...");
+            await navigate(`location.reload()`);
+            InspectorTest.log(`Page target changed: ${WI.pageTarget !== pageTarget}`);
+            expectKnown("present-grid", "#present-grid of the new document should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid made after the reload should be sent live.");
+
+            InspectorTest.log("Control: changing `layoutContextTypeChangedMode` to `All` again...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent after the mode is set again.");
+            expectKnown("late-grid", "#late-grid should be sent after the mode is set again.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterSameOriginNavigation",
+        description: "After a same-origin navigation to a new URL, the backend should still send grids without the mode being set again.",
+        async test() {
+            let pageTarget = WI.pageTarget;
+            InspectorTest.log("Navigating to a new same-origin URL...");
+            await navigate(`location.href = location.pathname + "?navigated"`);
+            InspectorTest.log(`Page target changed: ${WI.pageTarget !== pageTarget}`);
+            InspectorTest.expectThat(WI.networkManager.mainFrame.url.includes("?navigated"), "The main frame should have navigated.");
+            expectKnown("present-grid", "#present-grid of the new document should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid made after the navigation should be sent live.");
+
+            InspectorTest.log("Control: changing `layoutContextTypeChangedMode` to `All` again...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent after the mode is set again.");
+            expectKnown("late-grid", "#late-grid should be sent after the mode is set again.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.CSS.LayoutContextTypeChangedMode.MainFrameNavigation.FrameTargetReloadKeepsMode",
+        description: "A cross-origin iframe that reloads in place keeps its frame target, and its FrameCSSAgent keeps `All`.",
+        async test() {
+            let pageDocument = await WI.domManager.requestDocument();
+            await new Promise((resolve) => pageDocument.body.getChildNodes(resolve));
+
+            InspectorTest.log("Adding a cross-origin iframe...");
+            await InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            frameTarget = await awaitFrameDocumentForURL("frame-with-layout-flags.html");
+            InspectorTest.assert(await waitForExpressionInTarget(frameTarget, `document.readyState === "complete"`, 50));
+            await flush();
+            expectKnown("deep-grid", "#deep-grid in the iframe should be sent.", {frame: true});
+
+            let previousDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.log("Reloading the cross-origin iframe in place...");
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "location.reload()", objectGroup: "test"});
+            InspectorTest.assert(await waitForExpressionInTarget(frameTarget, `performance.getEntriesByType("navigation")[0]?.type === "reload" && document.readyState === "complete"`, 50));
+            while (WI.domManager.frameTargetDocumentForTarget(frameTarget) === previousDocument || !WI.domManager.frameTargetDocumentForTarget(frameTarget))
+                await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            InspectorTest.expectThat(WI.targets.includes(frameTarget), "The iframe should keep its frame target.");
+            await flush();
+
+            let addGridInFrame = async (id, parentId) => {
+                InspectorTest.log(`Adding grid #${id} inside the iframe's #${parentId}, whose children the frontend does not have...`);
+                await frameTarget.RuntimeAgent.evaluate.invoke({expression: `(() => { let span = document.createElement("span"); span.id = "${id}"; span.style.display = "grid"; document.getElementById("${parentId}").appendChild(span); return document.body.offsetTop; })()`, objectGroup: "test"});
+                await flush();
+            };
+
+            await addGridInFrame("frame-late-grid", "shown");
+            expectKnown("frame-late-grid", "The iframe's #frame-late-grid added after the reload should be sent live.", {frame: true});
+
+            InspectorTest.log("Control: setting the frame target to `Observed` directly...");
+            await frameTarget.CSSAgent.setLayoutContextTypeChangedMode(WI.CSSManager.LayoutContextTypeChangedMode.Observed);
+            await addGridInFrame("frame-observed-grid", "grid");
+            InspectorTest.expectFalse(knownLayoutContextIds({frame: true}).includes("frame-observed-grid"), "In `Observed` mode, #frame-observed-grid should not be sent.");
+        },
+        async teardown() {
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that the `All` layout context type changed mode survives a main-frame navigation on the page target under Site Isolation.</p>
+    <div><div><div id="present-grid" style="display: grid"><div></div></div></div></div>
+    <div><div><div id="late-grid" style="display: none"><div></div></div></div></div>
+</body>
+</html>
