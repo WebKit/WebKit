@@ -365,7 +365,6 @@ private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
     std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
-    std::optional<WebCore::PageIdentifier> LEGACY_NODELETE pageIdentifier() const;
 
     void updateDocumentSecurityOrigin(WebFrameProxy*);
     WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;

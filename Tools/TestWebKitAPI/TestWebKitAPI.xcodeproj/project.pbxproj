@@ -601,6 +601,7 @@
 				WebKit/WKWebView/SiteIsolationCookieTests.swift,
 				WebKit/WKWebView/SiteIsolationEditingTests.swift,
 				WebKit/WKWebView/SiteIsolationNavigationTests.swift,
+				WebKit/WKWebView/SiteIsolationServiceWorkerTests.swift,
 				WebKit/WKWebView/SiteIsolationSessionStateTests.swift,
 				WebKit/WKWebView/SiteIsolationUIDelegateTests.swift,
 				WebKit/WKWebView/SiteIsolationUserAgentTests.swift,
