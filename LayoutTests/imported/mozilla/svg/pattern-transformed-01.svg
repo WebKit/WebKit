@@ -4,7 +4,7 @@
 -->
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
 
-  <meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-7" />
+  <meta xmlns="http://www.w3.org/1999/xhtml" name="fuzzy" content="maxDifference=0-5; totalPixels=0-7" />
 
   <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=773595 -->
 

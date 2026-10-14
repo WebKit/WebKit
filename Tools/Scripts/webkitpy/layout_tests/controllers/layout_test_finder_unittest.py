@@ -477,8 +477,15 @@ class WptTestsForPathTestsBase(object):
         # backslashes under pyfakefs's Windows emulation (https://github.com/pytest-dev/pyfakefs/issues/1348).
         self.assertEqual(test.expected_text_path, baseline)
 
-    def test_reftest_fuzzy_keyed_by_relative_path(self):
-        """Fuzzy dict keys must be relative-to-test-dir strings, not abs paths."""
+    def test_reftest_fuzzy_keyed_by_absolute_path(self):
+        """Fuzzy dict keys must match Reference.path's format: absolute
+        filesystem paths (see _wpt_references_for_item's docstring). The
+        consumer, single_test_runner._fuzzy_tolerance_for_reference, looks
+        tolerances up by exactly that absolute path -- a relative-path key
+        here would never match, silently falling back to the None-default
+        tolerance (or none at all) for every WPT reftest with a per-reference
+        fuzzy value.
+        """
         self._write_wpt_file(
             "foo/reftest.html",
             '<html><head>'
@@ -493,14 +500,40 @@ class WptTestsForPathTestsBase(object):
         self.assertEqual(len(tests), 1)
         t = tests[0]
         self.assertIsNotNone(t.fuzzy)
-        # The key must be the relative path from the test's directory.
-        # (A later change in this series keys by absolute reference path
-        # instead, and rewrites this test accordingly.)
-        self.assertIn("some-ref.html", t.fuzzy,
-                      f"Expected 'some-ref.html' key in fuzzy dict, got: {list(t.fuzzy.keys())}")
-        # Must NOT be an absolute path key
-        abs_keys = [k for k in t.fuzzy if k is not None and k.startswith("/")]
-        self.assertEqual(abs_keys, [], f"Found absolute path key(s) in fuzzy dict: {abs_keys}")
+        # The key must be the same absolute path used as the Reference's own
+        # `path`, since that's what the consumer looks tolerances up by.
+        self.assertEqual(len(t.reference_files), 1)
+        ref_path = t.reference_files[0].path
+        self.assertIn(ref_path, t.fuzzy,
+                      f"Expected {ref_path!r} key in fuzzy dict, got: {list(t.fuzzy.keys())}")
+        self.assertTrue(self.filesystem.isabs(ref_path), f"Expected an absolute path, got: {ref_path!r}")
+
+    def test_reftest_fuzzy_moves_to_the_sibling_with_the_same_relation(self):
+        for rel, relation, suffix in (("match", "==", "expected"), ("mismatch", "!=", "expected-mismatch")):
+            with self.subTest(rel):
+                rel_path = "foo/%s.html" % rel
+                self._write_wpt_file(
+                    rel_path,
+                    '<link rel=%s href="some-ref.html"><meta name=fuzzy content="some-ref.html:0-5;0-100">\n' % rel,
+                )
+                self._write_wpt_file("foo/some-ref.html", "<html></html>\n")
+                sibling = self._write_wpt_file("foo/%s-%s.html" % (rel, suffix), "<html></html>\n")
+                (test,) = self._get_wpt_tests(rel_path)
+                self.assertEqual(self._reference_pairs(test), [(relation, self.filesystem.normpath(sibling))])
+                self.assertEqual({self.filesystem.normpath(k): v for k, v in test.fuzzy.items()},
+                                 {self.filesystem.normpath(sibling): [[0, 5], [0, 100]]})
+
+    def test_reftest_fuzzy_is_dropped_when_the_sibling_replacement_is_ambiguous(self):
+        self._write_wpt_file(
+            "foo/reftest.html",
+            '<link rel=match href="a-ref.html"><link rel=match href="b-ref.html">'
+            '<meta name=fuzzy content="0-1;0-2"><meta name=fuzzy content="a-ref.html:0-5;0-100">\n',
+        )
+        self._write_wpt_file("foo/a-ref.html", "<html></html>\n")
+        self._write_wpt_file("foo/b-ref.html", "<html></html>\n")
+        self._write_wpt_file("foo/reftest-expected.html", "<html></html>\n")
+        (test,) = self._get_wpt_tests("foo/reftest.html")
+        self.assertEqual(test.fuzzy, {None: [[0, 1], [0, 2]]})
 
     def test_reftest_reference_keeps_its_query(self):
         self._write_wpt_file(
@@ -784,7 +817,8 @@ class WptTestsForPathTestsBase(object):
             '<link rel=match href="about:blank"><meta name=fuzzy content="about:blank:0-5;0-100">\n',
         )
         (test,) = self._get_wpt_tests("foo/reftest.html")
-        self.assertEqual(test.fuzzy, {"../common/blank.html": [[0, 5], [0, 100]]})
+        blank = self.filesystem.normpath(self.filesystem.join(self.layout_tests_dir, self.WPT_PREFIX, "common/blank.html"))
+        self.assertEqual({self.filesystem.normpath(k): v for k, v in test.fuzzy.items()}, {blank: [[0, 5], [0, 100]]})
 
     def test_reftest_reference_in_another_directory(self):
         self._write_wpt_file("css/foo/bar/reftest.html", '<link rel=match href="../../common/ref.html">\n')
