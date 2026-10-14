@@ -25,7 +25,7 @@ FAIL path with stroke assert_approx_equals: path1.getBBox().x {"fill":false,"str
 FAIL path with markers assert_approx_equals: path1.getBBox().width {"fill":false,"stroke":false,"markers":true,"clipped":false} expected 112 +/- 0.1 but got 100
 PASS use with fill
 FAIL use with fill, stroke, markers and clipping assert_approx_equals: use1.getBBox().y {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 66 +/- 0.1 but got 70
-FAIL foreignObject with fill assert_approx_equals: fo1.getBBox().x {"fill":true,"stroke":false,"markers":false,"clipped":false} expected 2 +/- 0.1 but got 0
-FAIL foreignObject with fill, stroke, markers and clipping assert_approx_equals: fo1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 53 +/- 0.1 but got 0
+PASS foreignObject with fill
+FAIL foreignObject with fill, stroke, markers and clipping assert_approx_equals: fo1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 53 +/- 0.1 but got 2
 FAIL masking-path-07-b.html with fill, stroke, markers and clipping assert_approx_equals: rect-1.getBBox().x {"fill":true,"stroke":true,"markers":true,"clipped":true} expected 10 +/- 0.1 but got 0
 

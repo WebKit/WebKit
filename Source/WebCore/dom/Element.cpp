@@ -139,6 +139,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
+#include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "SVGScriptElement.h"
 #include "ScriptDisallowedScope.h"
@@ -1980,7 +1981,7 @@ IntRect Element::boundsInRootViewSpace()
 
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
-            quads.append(protect(renderer())->localToAbsoluteQuad(*localRect));
+            quads.append(SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*protect(renderer()), *localRect));
     } else if (shouldObtainBoundsFromBoxModel(this)) {
         // Get the bounding rectangle from the box model.
         protect(renderer())->absoluteQuads(quads);
@@ -2051,7 +2052,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
     LayoutRect result;
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
-            result = LayoutRect(protect(renderer())->localToAbsoluteQuad(*localRect, MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
+            result = LayoutRect(SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*protect(renderer()), *localRect, MapCoordinatesMode::UseTransforms, &includesFixedPositionElements).boundingBox());
     } else {
         CheckedPtr renderer = this->renderer();
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer.get())) {
@@ -2147,7 +2148,7 @@ Ref<DOMRectList> Element::getClientRects()
 
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
-            quads.append(renderer->localToAbsoluteQuad(*localRect));
+            quads.append(SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*renderer, *localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = WTF::move(pair.value().first);
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
@@ -2172,7 +2173,7 @@ std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::bounding
     Vector<FloatQuad> quads;
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {
         if (auto localRect = svgElement->getBoundingBox())
-            quads.append(renderer->localToAbsoluteQuad(*localRect));
+            quads.append(SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*renderer, *localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = WTF::move(pair.value().first);
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
