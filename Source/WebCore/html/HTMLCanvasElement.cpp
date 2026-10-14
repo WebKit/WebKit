@@ -698,11 +698,11 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
             if (renderingContext->isSurfaceBufferTransparentBlack(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer)) {
                 const bool skipTransparentBlackDraw = context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal };
                 if (!skipTransparentBlackDraw)
-                    context.fillRect(snappedIntRect(r), Color::transparentBlack);
+                    context.fillRect(snapRectToDevicePixels(r, protect(document())->pixelSnappingScaleFactor()), Color::transparentBlack);
             } else {
                 RefPtr buffer = renderingContext->surfaceBufferToImageBuffer(CanvasRenderingContext::SurfaceBuffer::DisplayBuffer);
                 if (buffer)
-                    context.drawImageBuffer(*buffer, snappedIntRect(r), { context.compositeOperation() });
+                    context.drawImageBuffer(*buffer, snapRectToDevicePixels(r, protect(document())->pixelSnappingScaleFactor()), { context.compositeOperation() });
             }
         }
     }
