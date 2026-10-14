@@ -39,6 +39,15 @@ export function parseBugId(string)
     if (match)
         return match[1];
 
+    // A bare decimal is equally a plausible svn revision or an abbreviated hash, so this
+    // is bounded to the width bug numbers actually have. Once they reach seven digits this
+    // stops matching and extractRevision claims the number as a short hash instead, so the
+    // request fails with "Please provide a reason or a bug URL" rather than reverting or
+    // filing the wrong thing.
+    let trimmed = stripTokenDecoration(string.trim());
+    if (/^\d{6}$/.test(trimmed))
+        return trimmed;
+
     return null;
 }
 
@@ -51,6 +60,26 @@ export function parsePRUrl(string)
     return match ? match[0] : null;
 }
 
+export function parsePullRequestAction(string)
+{
+    if (!string)
+        return null;
+
+    let match = string.match(/^(Created|Updated) 'PR \d+ \| .*'!$/m);
+    return match ? match[1].toLowerCase() : null;
+}
+
+// Strip the decoration Slack messages accumulate around an identifier: a commits.webkit.org
+// prefix, trailing sentence punctuation (e.g. "319904@main.") so it isn't captured as part of
+// the identifier or branch name, and a leading "(" or "[" left unbalanced by that strip
+// (e.g. "(319904@main)" or "(319904@main.").
+function stripTokenDecoration(candidate)
+{
+    candidate = candidate.replace(/^https?:\/\/commits\.webkit\.org\//, "");
+    candidate = candidate.replace(/[.;!?)\]]+$/, "");
+    return candidate.replace(/^[(\[]+/, "");
+}
+
 function extractRevision(text)
 {
     let revisions = [];
@@ -59,14 +88,7 @@ function extractRevision(text)
         if (!candidate)
             continue;
 
-        // Accept identifiers pasted as commits.webkit.org links, which is what webkitbot itself posts.
-        candidate = candidate.replace(/^https?:\/\/commits\.webkit\.org\//, "");
-
-        // Strip trailing sentence punctuation (e.g. "319904@main.") so it isn't captured as part
-        // of the identifier or branch name, along with a leading "(" or "[" left unbalanced by
-        // that strip (e.g. "(319904@main)" or "(319904@main.").
-        candidate = candidate.replace(/[.;!?)\]]+$/, "");
-        candidate = candidate.replace(/^[(\[]+/, "");
+        candidate = stripTokenDecoration(candidate);
 
         let match = candidate.match(/^r?(\d{5,6}|\d+@[^:\s]+|[0-9a-f]{6,40}):?$/);
         if (!match)
@@ -75,6 +97,15 @@ function extractRevision(text)
         revisions.push(match[1]);
     }
     return revisions;
+}
+
+function namesRevisionUnambiguously(candidate)
+{
+    candidate = stripTokenDecoration(candidate.trim());
+    if (!candidate || /^\d+:?$/.test(candidate))
+        return false;
+
+    return extractRevision(candidate) !== null;
 }
 
 export function buildGitWebkitRevertCommand(gitWebkitPath, revisions, reason, issueUrl)
@@ -100,10 +131,15 @@ export function extractRevisionsAndReason(args)
 {
     let revisions = [];
     let reason = "";
+    let sawUnambiguousRevision = false;
     for (let i = 0; i < args.length; ++i) {
         let arg = args[i];
         let extracted = extractRevision(arg);
-        if (!extracted) {
+
+        let isTrailingBugNumber = sawUnambiguousRevision && i === args.length - 1
+            && /^\d{6}$/.test(stripTokenDecoration(arg.trim()));
+
+        if (!extracted || isTrailingBugNumber) {
             let reasons = [];
             for (; i < args.length; ++i)
                 reasons.push(args[i]);
@@ -111,6 +147,8 @@ export function extractRevisionsAndReason(args)
             break;
         }
         revisions.push(...extracted);
+        if (arg.split(",").some(namesRevisionUnambiguously))
+            sawUnambiguousRevision = true;
     }
 
     // If reason starts with quote and ends with the same quote, remove them once.
