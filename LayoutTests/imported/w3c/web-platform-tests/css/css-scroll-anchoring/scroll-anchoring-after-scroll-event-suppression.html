@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Scroll anchoring still functions after an adjustment suppressed during a scroll event</title>
+<link rel="help" href="https://drafts.csswg.org/css-scroll-anchoring/#scroll-adjustment">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  body { margin: 0; }
+  #adjuster { height: 100px; }
+  #anchor { height: 100px; }
+  #filler { height: 3000px; }
+  #dirtier { height: 50px; }
+</style>
+<div id="adjuster"></div>
+<div id="anchor"></div>
+<div id="filler"></div>
+<div id="dirtier"></div>
+<script>
+const scroller = document.scrollingElement;
+
+function forceLayout() { return scroller.scrollTop; }
+
+promise_test(async t => {
+  // Trigger anchoring.
+  scroller.scrollTop = 1010;
+  await new Promise(requestAnimationFrame);
+
+  // Trigger adjustment inside a scroll event handler.
+  await new Promise(resolve => {
+    window.addEventListener("scroll", function onScroll() {
+      document.getElementById("dirtier").style.height = "60px"; // dirty layout (below the viewport)
+      forceLayout();
+      resolve();
+    }, { once: true });
+    scroller.scrollTop = 1020;
+  });
+
+  await new Promise(requestAnimationFrame);
+
+  // Verify that anchoring is active.
+  const before = scroller.scrollTop;
+  document.getElementById("adjuster").style.height = "300px";
+  const after = forceLayout();
+
+  assert_equals(after - before, 200, "scroll anchoring should have adjusted the scroll position");
+  document.getElementById("filler").style.height = "0px";
+}, "Scroll anchoring still functions after an adjustment is suppressed inside a scroll event handler");
+</script>
