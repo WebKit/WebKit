@@ -245,6 +245,10 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_lastPageLoadNetworkActivityCompletionCodeForTesting:(void(^)(NSNumber * _Nullable completionCode))completionHandler;
 
+// Runs the handler when the UI process decides whether a navigation response swaps processes.
+// The network process gets the decision when the handler calls sendReply, or releases it.
+- (void)_setNavigationResponseProcessSwapReplyHandlerForTesting:(NS_SWIFT_UI_ACTOR void (^ _Nullable)(BOOL swapsProcess, void (^sendReply)(void)))handler;
+
 - (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *topDocumentURLs))completionHandler;
 
 #if TARGET_OS_IPHONE

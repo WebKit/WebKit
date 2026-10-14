@@ -73,6 +73,7 @@
 #include "WebNotificationManagerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyTesting.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -663,6 +664,9 @@ void NetworkProcessProxy::considerProcessSwapForNavigationResponse(WebPageProxyI
     RefPtr page = WebProcessProxy::webPage(pageID);
     if (!page)
         return completionHandler(std::nullopt);
+
+    if (RefPtr pageForTesting = page->pageForTesting())
+        completionHandler = pageForTesting->holdNavigationResponseProcessSwapReply(WTF::move(completionHandler));
 
     switch (reason) {
     case NavigationResponseProcessSwapReason::EnhancedSecurity:

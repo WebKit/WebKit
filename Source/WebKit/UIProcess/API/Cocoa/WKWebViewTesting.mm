@@ -1573,6 +1573,27 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_setNavigationResponseProcessSwapReplyHandlerForTesting:(void (^)(BOOL, void (^)(void)))handler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return;
+
+    if (!handler) {
+        pageForTesting->setNavigationResponseProcessSwapReplyHandler(nullptr);
+        return;
+    }
+
+    pageForTesting->setNavigationResponseProcessSwapReplyHandler([handler = makeBlockPtr(handler)](bool swapsProcess, Function<void()>&& sendReply) {
+        // Keeps the block alive if it clears the handler.
+        auto protectedHandler = handler;
+        protectedHandler(swapsProcess, makeBlockPtr([sendReply = WTF::move(sendReply)] mutable {
+            if (auto reply = std::exchange(sendReply, nullptr))
+                reply();
+        }).get());
+    });
+}
+
 - (void)_topDocumentURLsInBackForwardCacheAtIndexForTesting:(NSInteger)relativeIndex completionHandler:(void(^)(NSArray<NSURL *> *))completionHandler
 {
     _page->getBackForwardCacheEntryTopDocumentURLsForTesting(static_cast<int>(relativeIndex), [completionHandler = makeBlockPtr(completionHandler)] (Vector<URL>&& topDocumentURLs) {
