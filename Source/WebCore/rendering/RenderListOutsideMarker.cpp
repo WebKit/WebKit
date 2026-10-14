@@ -220,7 +220,6 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
         // otherwise the content's line-box half-leading shifts it off the list item's baseline. Logical
         // setters keep this correct in vertical writing modes.
         auto markerAscent = LayoutUnit { style().metricsOfPrimaryFont().ascent(BaselineAlignment::dominantBaseline(writingMode())) };
-        container.setLogicalTop(markerAscent - contentBaseline);
 
         if (hasContentProperty()) {
             setLogicalHeight(container.logicalHeight());
@@ -229,6 +228,9 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
             setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
             m_layoutBounds = layoutBoundForTextContent(m_listItem->markerText());
         }
+
+        auto baselineOffset = writingMode().prefersCentralBaseline() ? logicalHeight() / 2 : markerAscent;
+        container.setLogicalTop(baselineOffset - contentBaseline);
     }
 
     // The content box can extend outside the marker's border box (its baseline offset may be
