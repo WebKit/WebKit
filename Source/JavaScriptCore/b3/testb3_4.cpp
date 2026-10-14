@@ -1868,16 +1868,6 @@ void testDiamondFold(int value)
     CHECK_EQ(compileAndRun<int32_t>(proc), !!value);
 }
 
-static unsigned valueCount(Procedure& proc, B3::Opcode opcode)
-{
-    unsigned count = 0;
-    for (Value* value : proc.values()) {
-        if (value->opcode() == opcode)
-            count++;
-    }
-    return count;
-}
-
 static Value* onlyReturnedValue(Procedure& proc)
 {
     Value* result = nullptr;

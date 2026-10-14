@@ -195,12 +195,12 @@ private:
     {
         const_cast<RangeSet*>(this)->compact();
 
-        // FIXME: Once we start using this in anger, we will want this to be a binary search.
-        for (unsigned i = 0; i < m_ranges.size(); ++i) {
-            if (overlapsNonEmpty(m_ranges[i], range))
-                return i;
-        }
-        
+        // Compacted ranges are sorted and disjoint, so their ends are sorted too.
+        auto iterator = std::ranges::partition_point(m_ranges, [&](const Range& candidate) {
+            return candidate.end() <= range.begin();
+        });
+        if (iterator != m_ranges.end() && overlapsNonEmpty(*iterator, range))
+            return iterator - m_ranges.begin();
         return UINT_MAX;
     }
     
