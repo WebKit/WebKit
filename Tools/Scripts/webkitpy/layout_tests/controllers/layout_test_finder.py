@@ -652,18 +652,6 @@ class LayoutTestFinder(object):
             if wanted_variants is not None and item_variant not in wanted_variants:
                 continue
 
-            if test_file_part != file_path:
-                # Generated variant from .any.js/.window.js/.worker.js. TEMPORARY:
-                # only yield it when its variantless stub (test_file_part) exists
-                # on disk, as the importer writes it, so that filesystem-based
-                # existence checks, such as the ones that validate TestExpectations
-                # entries, still resolve every discovered test. Variants without a
-                # stub are skipped, as they were before discovery moved to
-                # SourceFile.manifest_items().
-                stub_rel = test_file_part[len(wpt_prefix) + 1:].replace("/", self.fs.sep)
-                if not self.fs.exists(self.fs.join(wpt_base_dir, stub_rel)):
-                    continue
-
             kwargs = dict(
                 test_path=test_path,
                 file_path=file_path,
