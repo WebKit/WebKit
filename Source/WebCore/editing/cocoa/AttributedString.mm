@@ -56,7 +56,6 @@ OBJC_CLASS NSTextTab;
 SPECIALIZE_OBJC_TYPE_TRAITS(UIImage, PAL::getUIImageClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(NSShadow, PAL::getNSShadowClassSingleton())
 SPECIALIZE_OBJC_TYPE_TRAITS(NSPresentationIntent, PAL::getNSPresentationIntentClassSingleton())
-SPECIALIZE_OBJC_TYPE_TRAITS(NSTextTableBlock, WebCore::getNSTextTableBlockClassSingleton())
 #endif
 
 namespace WebCore {

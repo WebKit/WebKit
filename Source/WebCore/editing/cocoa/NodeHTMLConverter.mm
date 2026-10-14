@@ -1708,7 +1708,7 @@ void HTMLConverter::_addTableCellForElement(Element* element)
     CGFloat cellSpacingVal = [[_textTableSpacings lastObject] floatValue];
     if ([color isEqual:[PlatformColorClass clearColor]]) color = nil;
     for (NSUInteger i = 0; i < count; i++) {
-        RetainPtr<NSTextTableBlock> previousBlock = [rowArray objectAtIndex:i];
+        RetainPtr previousBlock = checked_objc_cast<NSTextTableBlock>([rowArray objectAtIndex:i]);
         if (columnNumber >= [previousBlock startingColumn] && columnNumber < [previousBlock startingColumn] + [previousBlock columnSpan])
             columnNumber = [previousBlock startingColumn] + [previousBlock columnSpan];
     }

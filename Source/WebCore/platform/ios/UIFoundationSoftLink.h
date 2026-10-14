@@ -41,6 +41,7 @@ SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTable)
 SOFT_LINK_CLASS_FOR_HEADER(WebCore, NSTextTab)
 
 SPECIALIZE_OBJC_TYPE_TRAITS(NSTextAttachment, WebCore::getNSTextAttachmentClassSingleton())
+SPECIALIZE_OBJC_TYPE_TRAITS(NSTextTableBlock, WebCore::getNSTextTableBlockClassSingleton())
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
