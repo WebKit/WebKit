@@ -151,7 +151,7 @@ class GLibTestRunner(object):
                     self._process_message(message)
 
     def _read_from_stderr(self, fd):
-        data = ''
+        chunks = []
         read_set = [fd]
         while True:
             try:
@@ -162,13 +162,15 @@ class GLibTestRunner(object):
                 raise
 
             if fd not in rlist:
-                return data
+                break
 
             buffer = os.read(fd, 4096)
             if not buffer:
-                return data
+                break
 
-            data += buffer.decode('utf-8')
+            chunks.append(buffer)
+
+        return b''.join(chunks).decode('utf-8', errors='replace')
 
     @staticmethod
     def _start_timeout(timeout):
