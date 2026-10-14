@@ -2719,7 +2719,7 @@ void MediaPlayerPrivateGStreamer::configureParsebin(GstElement* parsebin)
             static auto skipAutoPlug = *gstGetAutoplugSelectResult("skip"_s);
 
             auto name = StringView::fromLatin1(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factory)));
-            if (name == "webkitthunderparser"_s && player->m_url.protocolIsBlob())
+            if (name == "webkitthunderparser"_s && !player->isMediaSource())
                 return skipAutoPlug;
 
             auto* structure = gst_caps_get_structure(caps, 0);
