@@ -20,14 +20,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import re
 import time
+from typing import Any, Iterable, TYPE_CHECKING
 
 from .base import Base
 
 from webkitbugspy import User, Issue, github
 from webkitcorepy import mocks
+
+if TYPE_CHECKING:
+    from requests.auth import HTTPBasicAuth
+    from webkitcorepy.mocks.environment import Environment
+    from webkitcorepy.mocks.requests_ import Response
 
 
 class GitHub(Base, mocks.Requests):
@@ -45,7 +53,9 @@ class GitHub(Base, mocks.Requests):
     }
 
     @classmethod
-    def transform_user(cls, user):
+    def transform_user(cls, user: User) -> User:
+        # GitHub users in the test data all have emails, whose names are their usernames.
+        assert user.email
         return User(
             name=user.name,
             username=user.email.split('@')[0],
@@ -53,11 +63,14 @@ class GitHub(Base, mocks.Requests):
         )
 
     @classmethod
-    def time_string(cls, timestamp):
+    def time_string(cls, timestamp: float | int) -> str:
         from datetime import datetime, timedelta, timezone
         return datetime.fromtimestamp(timestamp - timedelta(hours=7).seconds, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None, projects=None, labels=None):
+    def __init__(
+        self, hostname: str = 'github.example.com/WebKit/WebKit', users: User.Mapping | Iterable[User] | None = None, issues: Iterable[dict[str, Any]] | None = None,
+        environment: Environment | None = None, projects: dict[str, dict[str, Any]] | None = None, labels: dict[str, dict[str, str]] | None = None,
+    ) -> None:
         hostname, repo = hostname.split('/', 1)
         self.api_remote = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
@@ -74,16 +87,16 @@ class GitHub(Base, mocks.Requests):
 
         self.labels = labels or self.DEFAULT_LABELS
 
-    def __enter__(self):
+    def __enter__(self) -> GitHub:
         self._environment.__enter__()
         return super(GitHub, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
         result = super(GitHub, self).__exit__(*args, **kwargs)
         self._environment.__exit__(*args, **kwargs)
         return result
 
-    def _user(self, url, username):
+    def _user(self, url: str, username: int | str | None) -> Response:
         user = self.users.get(username)
         if not user:
             return mocks.Response.create404(url)
@@ -93,7 +106,7 @@ class GitHub(Base, mocks.Requests):
             email=user.email,
         ), url=url)
 
-    def _labels_for_issue(self, issue):
+    def _labels_for_issue(self, issue: dict[str, Any]) -> list[Any]:
         ref_labels = self._labels(None).json()
         labels = issue.get('labels', [])
 
@@ -111,7 +124,7 @@ class GitHub(Base, mocks.Requests):
                 labels.append(ref)
         return labels
 
-    def _issue(self, url, id, data=None):
+    def _issue(self, url: str, id: int, data: dict[str, Any] | None = None) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -137,17 +150,17 @@ class GitHub(Base, mocks.Requests):
         return mocks.Response.fromJson(dict(
             title=issue['title'],
             body=issue['description'],
-            user=dict(login=self.users[issue['creator'].name].username),
+            user=dict(login=self._fixture_user(issue['creator'].name).username),
             created_at=self.time_string(issue['timestamp']),
             updated_at=self.time_string(issue['modified' if issue.get('modified') else 'timestamp']),
             state='opened' if issue['opened'] else 'closed',
             labels=self._labels_for_issue(issue),
             milestone=dict(title=issue['milestone']) if issue.get('milestone') else None,
-            assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
-            assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
+            assignee=dict(login=self._fixture_user(issue['assignee'].name).username) if issue['assignee'] else None,
+            assignees=[dict(login=self._fixture_user(user.name).username) for user in issue.get('watchers', [])],
         ))
 
-    def _comments(self, url, id):
+    def _comments(self, url: str, id: int) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -160,12 +173,12 @@ class GitHub(Base, mocks.Requests):
             dict(
                 body=comment.content,
                 created_at=self.time_string(comment.timestamp),
-                user=dict(login=self.users[comment.user.name].username),
+                user=dict(login=self._fixture_user(comment.user.name).username),
 
             ) for comment in issue['comments']
         ])
 
-    def _post_comment(self, url, id, credentials, data):
+    def _post_comment(self, url: str, id: int, credentials: HTTPBasicAuth | None, data: dict[str, Any]) -> Response:
         user = self.users.get(credentials.username) if credentials else None
         body = data.get('body')
 
@@ -188,7 +201,7 @@ class GitHub(Base, mocks.Requests):
             ),
         )
 
-    def _timelines(self, url, id):
+    def _timelines(self, url: str, id: int) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -201,7 +214,7 @@ class GitHub(Base, mocks.Requests):
             dict(
                 body=comment.content,
                 created_at=self.time_string(comment.timestamp),
-                actor=dict(login=self.users[comment.user.name].username),
+                actor=dict(login=self._fixture_user(comment.user.name).username),
             ) for comment in issue['comments']
         ] + [
             dict(
@@ -210,7 +223,7 @@ class GitHub(Base, mocks.Requests):
             ) for reference in issue.get('references', [])
         ], url=url)
 
-    def _labels(self, url):
+    def _labels(self, url: str | None) -> Response:
         result = [dict(
             name=name,
             color=details['color'],
@@ -232,7 +245,7 @@ class GitHub(Base, mocks.Requests):
 
         return mocks.Response.fromJson(list(sorted(result, key=lambda v: v['name'])), url=url)
 
-    def _create(self, url, credentials, data):
+    def _create(self, url: str, credentials: HTTPBasicAuth | None, data: dict[str, Any]) -> Response:
         user = self.users.get(credentials.username) if credentials else None
         assignee = self.users.get(data['assignee']) if 'assignee' in data else None
 
@@ -268,17 +281,17 @@ class GitHub(Base, mocks.Requests):
             number=id,
             title=issue['title'],
             body=issue['description'],
-            user=dict(login=self.users[issue['creator'].name].username),
+            user=dict(login=self._fixture_user(issue['creator'].name).username),
             created_at=self.time_string(issue['timestamp']),
             updated_at=self.time_string(issue['modified' if issue.get('modified') else 'timestamp']),
             state='opened' if issue['opened'] else 'closed',
             milestone=None,
             labels=self._labels_for_issue(issue),
-            assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
-            assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
+            assignee=dict(login=self._fixture_user(issue['assignee'].name).username) if issue['assignee'] else None,
+            assignees=[dict(login=self._fixture_user(user.name).username) for user in issue.get('watchers', [])],
         ), url=url)
 
-    def _add_assignees(self, url, id, credentials, data):
+    def _add_assignees(self, url: str, id: int, credentials: HTTPBasicAuth | None, data: dict[str, Any]) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -298,7 +311,7 @@ class GitHub(Base, mocks.Requests):
         return mocks.Response.fromJson(dict(
             title=issue['title'],
             body=issue['description'],
-            user=dict(login=self.users[issue['creator'].name].username),
+            user=dict(login=self._fixture_user(issue['creator'].name).username),
             created_at=self.time_string(issue['timestamp']),
             updated_at=self.time_string(issue['modified' if issue.get('modified') else 'timestamp']),
             state='opened' if issue['opened'] else 'closed',
@@ -307,7 +320,7 @@ class GitHub(Base, mocks.Requests):
             assignees=[dict(login=assignee) for assignee in issue['assignees']],
         ))
 
-    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+    def request(self, method: str, url: str, data: Any = None, params: dict[str, Any] | None = None, auth: HTTPBasicAuth | None = None, json: Any = None, **kwargs: Any) -> Response:
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 

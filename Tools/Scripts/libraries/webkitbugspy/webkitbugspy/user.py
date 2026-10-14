@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
+from typing import Any, Iterator, Optional, Sequence, Union
 
 from collections import defaultdict
 from webkitcorepy import string_utils
@@ -29,7 +32,7 @@ from webkitcorepy import string_utils
 class User(object):
     class Encoder(json.JSONEncoder):
 
-        def default(self, obj):
+        def default(self, obj: Any) -> Any:
             if isinstance(obj, dict):
                 return {key: self.default(value) for key, value in obj.items()}
             if isinstance(obj, list):
@@ -37,7 +40,7 @@ class User(object):
             if not isinstance(obj, User):
                 return super(User.Encoder, self).default(obj)
 
-            result = {}
+            result: dict[str, Any] = {}
             if obj._name:
                 result['name'] = obj._name
             if obj.emails:
@@ -47,17 +50,19 @@ class User(object):
 
             return result
 
-    class Mapping(defaultdict):
-        def __init__(self):
+    # Maps each of a user's names, usernames and emails to that user.
+    class Mapping(defaultdict[Union[str, int, None], Optional['User']]):
+        def __init__(self) -> None:
             super(User.Mapping, self).__init__(lambda: None)
 
-        def add(self, user):
+        def add(self, user: User) -> User:
             return self.create(name=user._name, username=user.username, emails=user.emails)
 
-        def create(self, name=None, username=None, emails=None):
+        def create(self, name: str | None = None, username: int | str | None = None, emails: Sequence[str | None] | None = None) -> User:
             matched_key = None
             user = None
-            for key in [name, username] + (emails or []):
+            keys: list[str | int | None] = [name, username, *(emails or [])]
+            for key in keys:
                 if not key:
                     continue
                 candidate = self.get(key)
@@ -77,33 +82,33 @@ class User(object):
                 if username:
                     user.username = username
                 for email in emails or []:
-                    if email not in user.emails:
+                    if email and email not in user.emails:
                         user.emails.append(email)
             else:
                 user = User(name=name, username=username, emails=emails)
 
-            for key in [name, username] + (emails or []):
+            for key in keys:
                 self[key] = user
 
             return user
 
-        def __iter__(self):
+        # Iterating over a mapping yields each of its users once, rather than its keys.
+        def __iter__(self) -> Iterator[User]:  # type: ignore[override]
             yielded = set()
             for user in self.values():
-                if hash(user) in yielded:
+                if user is None or hash(user) in yielded:
                     continue
                 yielded.add(hash(user))
                 yield user
 
-    def __init__(self, name=None, username=None, emails=None):
+    def __init__(self, name: str | None = None, username: int | str | None = None, emails: Sequence[str | None] | None = None) -> None:
         self._name = name
-        self.emails = list(filter(string_utils.decode, emails or []))
+        self.emails: list[str] = [email for email in emails or [] if email]
         self.username = username
-        if not self.name:
+        if not self._name_or_none():
             raise TypeError('Not enough arguments to define user')
 
-    @property
-    def name(self):
+    def _name_or_none(self) -> str | None:
         if self._name:
             return self._name
         if self.username and isinstance(self.username, string_utils.basestring):
@@ -115,12 +120,19 @@ class User(object):
         return None
 
     @property
-    def email(self):
+    def name(self) -> str:
+        name = self._name_or_none()
+        # Users can't be created without something to call them by.
+        assert name is not None
+        return name
+
+    @property
+    def email(self) -> str | None:
         if not self.emails:
             return None
         return self.emails[0]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         if self.username:
             return hash(self.username)
         if self._name:
@@ -129,7 +141,7 @@ class User(object):
             return hash(self.email)
         return 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         address = None
         for candidate in [self.username, self.email]:
             if isinstance(candidate, string_utils.basestring) and candidate != self.name:
@@ -139,7 +151,7 @@ class User(object):
             return self.name
         return u'{} <{}>'.format(self.name, address)
 
-    def __cmp__(self, other):
+    def __cmp__(self, other: object) -> int:
         if isinstance(other, str):
             ref_value = other
         elif isinstance(other, User):
@@ -152,20 +164,20 @@ class User(object):
             return 0
         return 1 if str(self.username or self.name or '') > ref_value else -1
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return self.__cmp__(other) == 0
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return self.__cmp__(other) != 0
 
-    def __lt__(self, other):
+    def __lt__(self, other: User | str | None) -> bool:
         return self.__cmp__(other) < 0
 
-    def __le__(self, other):
+    def __le__(self, other: User | str | None) -> bool:
         return self.__cmp__(other) <= 0
 
-    def __gt__(self, other):
+    def __gt__(self, other: User | str | None) -> bool:
         return self.__cmp__(other) > 0
 
-    def __ge__(self, other):
+    def __ge__(self, other: User | str | None) -> bool:
         return self.__cmp__(other) >= 0

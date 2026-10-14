@@ -20,11 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import base64
 import json
 import re
 import time
 import urllib
+from typing import Any, Iterable, TYPE_CHECKING
 
 from .base import Base
 
@@ -32,25 +35,32 @@ from webkitbugspy import User, Issue
 from webkitbugspy.mocks.radar import Radar as RadarMock
 from webkitcorepy import mocks, string_utils
 
+if TYPE_CHECKING:
+    from webkitcorepy.mocks.environment import Environment
+    from webkitcorepy.mocks.requests_ import Response
+
 
 class Bugzilla(Base, mocks.Requests):
     top = None
     CREDENTIAL_RE = re.compile(r'\??login=(?P<login>\S+)\&password=(?P<password>\S+)\&?$')
 
     @classmethod
-    def time_string(cls, timestamp):
+    def time_string(cls, timestamp: int) -> str:
         from datetime import datetime, timedelta, timezone
         return datetime.fromtimestamp(timestamp - timedelta(hours=7).seconds, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     @classmethod
-    def transform_user(cls, user):
+    def transform_user(cls, user: User) -> User:
         return User(
             name=user.name,
             username=user.email,
             emails=user.emails,
         )
 
-    def __init__(self, hostname='bugs.example.com', users=None, issues=None, environment=None, projects=None):
+    def __init__(
+        self, hostname: str = 'bugs.example.com', users: User.Mapping | Iterable[User] | None = None, issues: Iterable[dict[str, Any]] | None = None,
+        environment: Environment | None = None, projects: dict[str, dict[str, Any]] | None = None,
+    ) -> None:
         Base.__init__(self, users=users, issues=issues, projects=projects)
         mocks.Requests.__init__(self, hostname)
         self._comment_count = 1
@@ -64,16 +74,15 @@ class Bugzilla(Base, mocks.Requests):
         for issue in self.issues.values():
             self._comment_count += (1 + len(issue.get('comments', [])))
 
-    def __enter__(self):
+    def __enter__(self) -> Bugzilla:
         self._environment.__enter__()
         return super(Bugzilla, self).__enter__()
 
-    def __exit__(self, *args, **kwargs):
-        result = super(Bugzilla, self).__exit__(*args, **kwargs)
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
+        super(Bugzilla, self).__exit__(*args, **kwargs)
         self._environment.__exit__(*args, **kwargs)
-        return result
 
-    def _user(self, url, username):
+    def _user(self, url: str, username: str) -> Response:
         user = self.users[username]
         if not user:
             return mocks.Response(
@@ -93,7 +102,7 @@ class Bugzilla(Base, mocks.Requests):
             )],
         ), url=url)
 
-    def _user_for_credentials(self, credentials):
+    def _user_for_credentials(self, credentials: str | None) -> User | None:
         if not credentials:
             return None
         match = self.CREDENTIAL_RE.match(credentials)
@@ -101,7 +110,7 @@ class Bugzilla(Base, mocks.Requests):
             return None
         return self.users.get(match.group('login'))
 
-    def _issue(self, url, id, credentials=None, data=None):
+    def _issue(self, url: str, id: int, credentials: str | None = None, data: Any = None) -> Response:
         user = self._user_for_credentials(credentials)
 
         if id not in self.issues:
@@ -169,7 +178,7 @@ class Bugzilla(Base, mocks.Requests):
                 'regressions': 'regressed_by',
             }
 
-            def related_for(number, relation):
+            def related_for(number: int, relation: str) -> list[int]:
                 related = self.issues[number].setdefault('related', {key: [] for key in INVERSE})
                 return related.setdefault(relation, [])
 
@@ -236,7 +245,7 @@ class Bugzilla(Base, mocks.Requests):
                 status='REOPENED' if issue['opened'] else 'RESOLVED',
                 resolution='' if issue['opened'] else 'FIXED',
                 dupe_of=issue['original']['id'] if issue.get('original', None) else None,
-                creator=self.users[issue['creator'].name].username,
+                creator=self._fixture_user(issue['creator'].name).username,
                 product=issue.get('project'),
                 component=issue.get('component'),
                 version=issue.get('version'),
@@ -247,18 +256,18 @@ class Bugzilla(Base, mocks.Requests):
                 keywords=issue.get('keywords', []),
                 creator_detail=dict(
                     email=issue['creator'].email,
-                    name=self.users[issue['creator'].name].username,
+                    name=self._fixture_user(issue['creator'].name).username,
                     real_name=issue['creator'].name,
-                ), assigned_to=self.users[issue['assignee'].name].username,
+                ), assigned_to=self._fixture_user(issue['assignee'].name).username,
                 assigned_to_detail=dict(
                     email=issue['assignee'].email,
-                    name=self.users[issue['assignee'].name].username,
+                    name=self._fixture_user(issue['assignee'].name).username,
                     real_name=issue['assignee'].name,
-                ), cc=[self.users[user.name].username for user in issue.get('watchers', [])],
+                ), cc=[self._fixture_user(user.name).username for user in issue.get('watchers', [])],
                 cc_detail=[
                     dict(
                         email=user.email,
-                        name=self.users[user.name].username,
+                        name=self._fixture_user(user.name).username,
                         real_name=user.name,
                     ) for user in issue.get('watchers', [])
                 ], see_also=[
@@ -267,7 +276,7 @@ class Bugzilla(Base, mocks.Requests):
             )],
         ), url=url)
 
-    def _see_also(self, url, id):
+    def _see_also(self, url: str, id: int) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -289,7 +298,7 @@ class Bugzilla(Base, mocks.Requests):
             )],
         ), url=url)
 
-    def _attachment_records(self):
+    def _attachment_records(self) -> list[tuple[int, int, dict[str, Any]]]:
         records = []
         global_id = 0
         for bug_id in sorted(self.issues.keys()):
@@ -298,7 +307,7 @@ class Bugzilla(Base, mocks.Requests):
                 records.append((global_id, bug_id, attachment))
         return records
 
-    def _attachment_json(self, attachment_id, bug_id, attachment, include_data=True):
+    def _attachment_json(self, attachment_id: int, bug_id: int, attachment: dict[str, Any], include_data: bool = True) -> dict[str, Any]:
         result = dict(
             id=attachment_id,
             bug_id=bug_id,
@@ -311,7 +320,7 @@ class Bugzilla(Base, mocks.Requests):
             result['data'] = base64.b64encode(string_utils.encode(attachment.get('data', b''))).decode('ascii')
         return result
 
-    def _attachments(self, url, id, query=None):
+    def _attachments(self, url: str, id: int, query: str | None = None) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -332,7 +341,7 @@ class Bugzilla(Base, mocks.Requests):
             ]},
         ), url=url)
 
-    def _attachment(self, url, attachment_id):
+    def _attachment(self, url: str, attachment_id: int) -> Response:
         for record_id, bug_id, attachment in self._attachment_records():
             if record_id == attachment_id:
                 return mocks.Response.fromJson(dict(
@@ -340,7 +349,7 @@ class Bugzilla(Base, mocks.Requests):
                 ), url=url)
         return mocks.Response.create404(url)
 
-    def _comments(self, url, id):
+    def _comments(self, url: str, id: int) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -358,7 +367,7 @@ class Bugzilla(Base, mocks.Requests):
             bugs={str(id): dict(comments=[
                 dict(
                     bug_id=id,
-                    creator=self.users[issue['creator'].name].username,
+                    creator=self._fixture_user(issue['creator'].name).username,
                     creation_time=self.time_string(issue['timestamp']),
                     time=self.time_string(issue['timestamp']),
                     text=issue['description'],
@@ -366,7 +375,7 @@ class Bugzilla(Base, mocks.Requests):
             ] + [
                 dict(
                     bug_id=id,
-                    creator=self.users[comment.user.name].username,
+                    creator=self._fixture_user(comment.user.name).username,
                     creation_time=self.time_string(comment.timestamp),
                     time=self.time_string(comment.timestamp),
                     text=comment.content,
@@ -374,7 +383,7 @@ class Bugzilla(Base, mocks.Requests):
             ])},
         ), url=url)
 
-    def _post_comment(self, url, id, credentials, data):
+    def _post_comment(self, url: str, id: int, credentials: str | None, data: dict[str, Any]) -> Response:
         comment = data.get('comment', None)
         user = self._user_for_credentials(credentials)
 
@@ -396,7 +405,7 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
-    def _product_details(self, url, id):
+    def _product_details(self, url: str, id: int) -> Response:
         for name, product in self.projects.items():
             if product['id'] != id:
                 continue
@@ -422,7 +431,7 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
-    def _fields(self, url, id):
+    def _fields(self, url: str, id: str) -> Response:
         return mocks.Response.fromJson(
             dict(fields=[dict(
                 id=10,
@@ -433,7 +442,7 @@ class Bugzilla(Base, mocks.Requests):
             )]), url=url
         )
 
-    def _create(self, url, credentials, data):
+    def _create(self, url: str, credentials: str | None, data: dict[str, Any]) -> Response:
         user = self._user_for_credentials(credentials)
         assignee = self.users.get(data['assigned_to']) if 'assigned_to' in data else None
         if not user:
@@ -495,7 +504,7 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
-    def _bug_html(self, url, id):
+    def _bug_html(self, url: str, id: int) -> Response:
         if id not in self.issues:
             return mocks.Response(
                 url=url,
@@ -531,7 +540,7 @@ class Bugzilla(Base, mocks.Requests):
             text=html + '</body>\n</html>\n',
         )
 
-    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+    def request(self, method: str, url: str, data: Any = None, params: Any = None, auth: Any = None, json: Any = None, **kwargs: Any) -> Response:
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
