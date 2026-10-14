@@ -500,7 +500,7 @@ private:
                 // prediction propagation logic and rely solely on the result type.
                 if (isFullNumberOrBooleanSpeculationExpectingDefined(left)
                     && isFullNumberOrBooleanSpeculationExpectingDefined(right)) {
-                    if (m_graph.binaryArithShouldSpeculateInt32(node, m_pass))
+                    if (m_graph.mulShouldSpeculateInt32(node, m_pass))
                         changed |= mergePrediction(SpecInt32Only);
                     else if (m_graph.binaryArithShouldSpeculateInt52(node, m_pass))
                         changed |= mergePrediction(SpecInt52Any);
@@ -835,7 +835,7 @@ private:
                 
             if (isFullNumberSpeculation(left)
                 && isFullNumberSpeculation(right)
-                && !m_graph.binaryArithShouldSpeculateInt32(node, m_pass)
+                && !m_graph.mulShouldSpeculateInt32(node, m_pass)
                 && !m_graph.binaryArithShouldSpeculateInt52(node, m_pass))
                 ballot = VoteDouble;
             else
