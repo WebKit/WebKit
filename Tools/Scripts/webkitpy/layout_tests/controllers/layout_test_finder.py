@@ -231,9 +231,9 @@ class LayoutTestFinder(object):
         This deals with the ambiguity inherent in passing a name like foo?bar: is this
         mean to match fooXbar, or is it the ?bar variant of the foo test.
         """
-        # Ignore everything after a # (this is always a variant).
+        # Ignore everything after the first # (this is always a variant).
         if "#" in glob:
-            name, variant = glob.rsplit("#", 1)
+            name, variant = glob.split("#", 1)
             variant = "#" + variant
         else:
             name, variant = glob, ""
