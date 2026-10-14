@@ -78,9 +78,14 @@ GStreamerVideoFrameConverter::Pipeline::Pipeline(Type type)
         auto glcolorconvert = makeGStreamerElement("glcolorconvert"_s);
         auto gldownload = makeGStreamerElement("gldownload"_s);
         auto videoconvert = makeGStreamerElement("videoconvert"_s);
+        // glupload can import a DMABuf as an external-oes texture, which gldownload is unable to
+        // map. Make glcolorconvert output a 2D texture so the frame can be read back.
+        auto textureTargetFilter = gst_element_factory_make("capsfilter", nullptr);
+        GRefPtr textureTargetCaps = adoptGRef(gst_caps_from_string("video/x-raw(memory:GLMemory), format=(string)RGBA, texture-target=(string)2D"));
+        g_object_set(textureTargetFilter, "caps", textureTargetCaps.get(), nullptr);
         m_pipeline = gst_element_factory_make("pipeline", "video-frame-converter-dmabuf");
-        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), glupload, m_capsfilter.get(), glcolorconvert, gldownload, videoconvert, m_sink.get(), nullptr);
-        gst_element_link_many(m_src.get(), glupload, m_capsfilter.get(), glcolorconvert, gldownload, videoconvert, m_sink.get(), nullptr);
+        gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), m_src.get(), glupload, m_capsfilter.get(), glcolorconvert, textureTargetFilter, gldownload, videoconvert, m_sink.get(), nullptr);
+        gst_element_link_many(m_src.get(), glupload, m_capsfilter.get(), glcolorconvert, textureTargetFilter, gldownload, videoconvert, m_sink.get(), nullptr);
         break;
     }
 #endif
