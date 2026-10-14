@@ -345,20 +345,33 @@ Inspector::Protocol::BidiBrowsingContext::BrowsingContext BidiBrowsingContextAge
     return session->handleForWebFrameID(frameID);
 }
 
-Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::createNavigableInfoWithoutChildren(const WebCore::FrameIdentifier& frameID, const String& url)
 {
     // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
+    String clientWindow = "unknown-window"_s;
+    String userContext = "default"_s;
+    if (RefPtr session = m_session.get()) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+            if (RefPtr page = frame->page())
+                std::tie(clientWindow, userContext) = session->clientWindowAndUserContextForPage(*page);
+        }
+    }
 
-    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
-    // https://bugs.webkit.org/show_bug.cgi?id=288104
-    auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
-        .setContext(getBrowsingContextID(tree.info.frameID))
-        .setUrl(tree.info.request.url().string())
-        .setClientWindow("placeholder_window"_s)
-        .setUserContext("default"_s)
+    return Inspector::Protocol::BidiBrowsingContext::Info::create()
+        .setContext(getBrowsingContextID(frameID))
+        .setUrl(url)
+        .setClientWindow(clientWindow)
+        .setUserContext(userContext)
         .setChildrenIsNull()
         .setOriginalOpenerIsNull()
         .release();
+}
+
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+{
+    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
+    // https://bugs.webkit.org/show_bug.cgi?id=288104
+    auto info = createNavigableInfoWithoutChildren(tree.info.frameID, tree.info.request.url().string());
 
     // FIXME: Support originalOpener attribute.
     // https://w3c.github.io/webdriver-bidi/#original-opener
