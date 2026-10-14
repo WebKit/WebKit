@@ -104,7 +104,12 @@ void serialize(StringBuilder& builder, const Feature& feature)
         serializeIdentifier(builder, feature.name);
         break;
 
-    case Syntax::Plain:
+    case Syntax::Plain: {
+        StringView name = feature.name;
+        if (feature.rightComparison->op != MQ::ComparisonOperator::Equal && name.startsWith("-webkit-"_s)) {
+            builder.append("-webkit-"_s);
+            name = name.substring(8);
+        }
         switch (feature.rightComparison->op) {
         case MQ::ComparisonOperator::LessThanOrEqual:
             builder.append("max-"_s);
@@ -119,11 +124,12 @@ void serialize(StringBuilder& builder, const Feature& feature)
             ASSERT_NOT_REACHED();
             break;
         }
-        serializeIdentifier(builder, feature.name);
+        serializeIdentifier(builder, name);
 
         builder.append(": "_s);
         serialize(builder, *feature.rightComparison->value);
         break;
+    }
 
     case Syntax::Range:
         if (feature.leftComparison) {
