@@ -3104,8 +3104,12 @@ void WebsiteDataStore::restoreLocalStorage(HashMap<WebCore::ClientOrigin, HashMa
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 bool WebsiteDataStore::builtInNotificationsEnabled() const
 {
+    RefPtr serviceWorkerPreferences = serviceWorkerOverridePreferences();
+    if (serviceWorkerPreferences && serviceWorkerPreferences->builtInNotificationsEnabled())
+        return true;
+
     if (!m_pages.computeSize())
-        return defaultBuiltInNotificationsEnabled();
+        return DEFAULT_VALUE_FOR_BuiltInNotificationsEnabled;
 
     for (Ref page : m_pages) {
         if (protect(page->preferences())->builtInNotificationsEnabled())

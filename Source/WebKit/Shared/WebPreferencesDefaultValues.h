@@ -166,10 +166,6 @@ bool defaultPeerConnectionEnabledAvailable();
 #endif
 bool LEGACY_NODELETE defaultWebRTCSocketsServiceClassEnabled();
 
-#if ENABLE(WEB_PUSH_NOTIFICATIONS)
-bool LEGACY_NODELETE defaultBuiltInNotificationsEnabled();
-#endif
-
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
 bool defaultHorizontalBannerViewOverlaysEnabled();
 #endif

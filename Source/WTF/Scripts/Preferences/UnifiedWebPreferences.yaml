@@ -776,14 +776,15 @@ BuiltInNotificationsEnabled:
   type: bool
   status: unstable
   category: dom
+  defaultsOverridable: true
   humanReadableName: "Built-In Web Notifications"
   humanReadableDescription: "Enable built-in WebKit managed notifications"
   webcoreDeprecatedGlobalSettings: true
   condition: ENABLE(WEB_PUSH_NOTIFICATIONS)
   excludeFrom: [ WebKitLegacy ]
   defaultValue:
-    default: defaultBuiltInNotificationsEnabled()
-    WebCore: false
+    "PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)": true
+    default: false
   sharedPreferenceForWebProcess: true
 
 CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
