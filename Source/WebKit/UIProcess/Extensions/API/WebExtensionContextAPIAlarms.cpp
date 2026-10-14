@@ -43,6 +43,9 @@ void WebExtensionContext::alarmsCreate(const String& name, Seconds initialInterv
 {
     m_alarmMap.set(name, WebExtensionAlarm::create(name, initialInterval, repeatInterval, [this, protectedThis = Ref { *this }](const WebExtensionAlarm& alarm) {
         fireAlarmsEventIfNeeded(alarm);
+
+        if (!alarm.repeatInterval())
+            m_alarmMap.remove(alarm.name());
     }));
 
     completionHandler();

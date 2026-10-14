@@ -49,6 +49,8 @@ void WebExtensionAlarm::schedule()
 
 void WebExtensionAlarm::fire()
 {
+    Ref protectedThis { *this };
+
     // Calculate the next scheduled time now, so the handler's work time does not count against it.
     auto nextScheduledTime = MonotonicTime::now() + repeatInterval();
     if (!m_hasFiredInitialTimer) {

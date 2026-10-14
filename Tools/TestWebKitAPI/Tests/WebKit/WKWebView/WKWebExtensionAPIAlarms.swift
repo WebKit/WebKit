@@ -341,6 +341,25 @@ struct WKWebExtensionAPIAlarmsTests {
     }
 
     @Test
+    func singleShotRemovedAfterFiring() async throws {
+        try await loadAndRun(
+            backgroundScript: """
+                browser.alarms.onAlarm.addListener(async (alarmInfo) => {
+                  browser.test.assertEq(alarmInfo.name, 'single')
+
+                  browser.test.assertEq(await browser.alarms.get('single'), undefined, 'Should not return an alarm that already fired.')
+                  browser.test.assertEq((await browser.alarms.getAll()).length, 0, 'Should not include an alarm that already fired.')
+                  browser.test.assertFalse(await browser.alarms.clear('single'), 'Should return false for an alarm that already fired.')
+
+                  browser.test.notifyPass()
+                })
+
+                browser.alarms.create('single', { delayInMinutes: (100 / 1000 / 60) })
+                """
+        )
+    }
+
+    @Test
     func unnamedAlarm() async throws {
         try await loadAndRun(
             backgroundScript: """
