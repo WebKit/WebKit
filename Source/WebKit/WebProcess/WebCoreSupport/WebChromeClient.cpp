@@ -339,6 +339,16 @@ void WebChromeClient::focusedSelectElementDidChangeOptions(const WebCore::HTMLSe
 
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+
+void WebChromeClient::focusedElementDidChangeReadOnly(Element& element)
+{
+    if (RefPtr page = m_page.get())
+        page->focusedElementDidChangeReadOnly(element);
+}
+
+#endif
+
 #if PLATFORM(COCOA)
 
 void WebChromeClient::makeFirstResponder()
