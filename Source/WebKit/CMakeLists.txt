@@ -746,6 +746,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 set(WebCore_GENERATED_SERIALIZATION_IN_FILES
     CSSValueKeywords.serialization.in
     HTTPHeaderNames.serialization.in
+    QuirkBehaviorID.serialization.in
 )
 
 set(WebCore_SERIALIZATION_IN_FILES

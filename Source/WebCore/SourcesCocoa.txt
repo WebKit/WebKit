@@ -231,6 +231,7 @@ page/cocoa/EventHandlerCocoa.mm @nonARC
 page/cocoa/MemoryReleaseCocoa.mm @nonARC
 page/cocoa/PageCocoa.mm @nonARC
 page/cocoa/PerformanceLoggingCocoa.mm @nonARC
+page/cocoa/QuirkTableCocoa.mm @nonARC
 page/cocoa/ResourceUsageOverlayCocoa.mm @nonARC
 page/cocoa/ResourceUsageThreadCocoa.mm @nonARC
 page/cocoa/SettingsBaseCocoa.mm @nonARC

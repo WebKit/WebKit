@@ -56,11 +56,15 @@ namespace TestWebKitAPI {
 
 using namespace WebCore::QuirkSelectors;
 
+static String shippedQuirkTableJSON();
+
 class QuirksTest : public testing::Test {
 public:
     virtual void SetUp()
     {
         WTF::initializeMainThread();
+
+        WebCore::setQuirkTable(WebCore::parseQuirkTable(shippedQuirkTableJSON()).table);
     }
 };
 

@@ -1020,6 +1020,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	CSSValueKeywords.serialization.in \
 	HTTPHeaderNames.serialization.in \
+	QuirkBehaviorID.serialization.in \
 	ActivityState.serialization.in \
 	DocumentSyncData.serialization.in \
 	DragActions.serialization.in \

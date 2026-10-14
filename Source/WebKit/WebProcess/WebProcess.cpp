@@ -146,6 +146,7 @@
 #include <WebCore/RemoteCommandListener.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/RuntimeQuirkTable.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
@@ -792,6 +793,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     }
 #endif
 
+    setQuirkTable(WTF::move(parameters.quirkTable));
     updateStorageAccessUserAgentStringQuirks(WTF::move(parameters.storageAccessUserAgentStringQuirksData));
     updateDomainsWithStorageAccessQuirks(WTF::move(parameters.storageAccessPromptQuirksDomains));
     updateScriptTrackingPrivacyFilter(WTF::move(parameters.scriptTrackingPrivacyRules));

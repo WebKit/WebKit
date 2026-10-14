@@ -81,6 +81,10 @@ class QuirkMatchPattern {
 public:
     WEBCORE_EXPORT static std::optional<QuirkMatchPattern> parse(StringView);
 
+    WEBCORE_EXPORT explicit QuirkMatchPattern(String&&);
+
+    bool isValid() const { return m_pattern.isValid(); }
+
     WEBCORE_EXPORT bool matches(const URLMatchContext&) const;
 
     const String& string() const LIFETIME_BOUND { return m_string; }

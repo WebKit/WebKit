@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-enum class QuirkBehaviorID {
+enum class QuirkBehaviorID : uint16_t {
 <%- @behaviors.each do |behavior| -%>
     <%= behavior.id %>,
 <%- end -%>
@@ -79,7 +79,7 @@ constexpr bool isEnabled(BuildConditionID condition)
 
 namespace WTF {
 template<> struct EnumTraits<WebCore::QuirkBehaviorID> {
-    static constexpr int min = 0;
-    static constexpr int max = static_cast<int>(WebCore::QuirkBehaviorID::NumberOfIDs) - 1;
+    static constexpr uint16_t min = 0;
+    static constexpr uint16_t max = static_cast<uint16_t>(WebCore::QuirkBehaviorID::NumberOfIDs) - 1;
 };
 } // namespace WTF
