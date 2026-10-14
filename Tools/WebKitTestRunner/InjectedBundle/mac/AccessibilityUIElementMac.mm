@@ -244,12 +244,12 @@ static id attributeValue(id element, NSString *attribute)
     return [element accessibilityAttributeValue:attribute];
 }
 
-void setAttributeValue(id element, NSString* attribute, id value, bool synchronous = false)
+void setAttributeValue(id element, NSString* attribute, id value, Synchronous synchronous = Synchronous::No)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     AccessibilityUIElementMac::s_controller->executeOnAXThreadAndWait([&element, &attribute, &value, &synchronous] {
         // FIXME: should always be asynchronous, fix tests.
-        synchronous ? [element _accessibilitySetValue:value forAttribute:attribute] :
+        synchronous == Synchronous::Yes ? [element _accessibilitySetValue:value forAttribute:attribute] :
             [element accessibilitySetValue:value forAttribute:attribute];
     });
     END_AX_OBJC_EXCEPTIONS
@@ -955,7 +955,7 @@ void AccessibilityUIElementMac::attributeValueAsync(JSContextRef context, JSStri
 
 void AccessibilityUIElementMac::setBoolAttributeValue(JSStringRef attribute, bool value)
 {
-    setAttributeValue(m_element.get(), [NSString stringWithJSStringRef:attribute], @(value), /* synchronous */ true);
+    setAttributeValue(m_element.get(), [NSString stringWithJSStringRef:attribute], @(value), Synchronous::Yes);
 }
 
 void AccessibilityUIElementMac::setValue(JSStringRef value)
@@ -2041,7 +2041,7 @@ void AccessibilityUIElementMac::setSelectedChildAtIndex(unsigned index) const
     if (selectedChildren)
         array = [selectedChildren arrayByAddingObjectsFromArray:array];
 
-    setAttributeValue(m_element.get(), NSAccessibilitySelectedChildrenAttribute, array, /* synchronous */ true);
+    setAttributeValue(m_element.get(), NSAccessibilitySelectedChildrenAttribute, array, Synchronous::Yes);
 }
 
 void AccessibilityUIElementMac::removeSelectionAtIndex(unsigned index) const
@@ -2057,11 +2057,12 @@ void AccessibilityUIElementMac::removeSelectionAtIndex(unsigned index) const
     NSMutableArray *array = [NSMutableArray arrayWithArray:selectedChildren.get()];
     [array removeObject:static_cast<AccessibilityUIElementMac*>(element.get())->platformUIElement()];
 
-    setAttributeValue(m_element.get(), NSAccessibilitySelectedChildrenAttribute, array, /* synchronous */ true);
+    setAttributeValue(m_element.get(), NSAccessibilitySelectedChildrenAttribute, array, Synchronous::Yes);
 }
 
 void AccessibilityUIElementMac::clearSelectedChildren() const
 {
+    setAttributeValue(m_element.get(), NSAccessibilitySelectedChildrenAttribute, @[], Synchronous::Yes);
 }
 
 RefPtr<OpaqueJSString> AccessibilityUIElementMac::accessibilityValue() const
@@ -2600,7 +2601,7 @@ void AccessibilityUIElementMac::resetSelectedTextMarkerRange()
     if (!textMarkerRange)
         return;
 
-    setAttributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute, textMarkerRange.get(), /* synchronous */ true);
+    setAttributeValue(m_element.get(), NSAccessibilitySelectedTextMarkerRangeAttribute, textMarkerRange.get(), Synchronous::Yes);
 }
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementMac::textInputMarkedTextMarkerRange() const

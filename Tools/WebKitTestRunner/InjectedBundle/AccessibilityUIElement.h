@@ -57,11 +57,15 @@ namespace WTR {
 
 class AccessibilityController;
 
+#if PLATFORM(COCOA)
+enum class Synchronous : bool { No, Yes };
+#endif
+
 class AccessibilityUIElement : public JSWrappable {
 #if PLATFORM(COCOA)
     // Helper functions that dispatch the corresponding AccessibilityObjectWrapper method to the AX secondary thread when appropriate.
     friend RetainPtr<NSArray> supportedAttributes(id);
-    friend void setAttributeValue(id, NSString *, id, bool synchronous);
+    friend void setAttributeValue(id, NSString *, id, Synchronous);
 #endif
 
 public:

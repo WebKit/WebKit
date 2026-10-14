@@ -41,7 +41,7 @@ class AccessibilityUIElementMac final : public AccessibilityUIElement {
     // Helper functions that dispatch to AX secondary thread
     friend RetainPtr<NSArray> supportedAttributes(id);
     friend RetainPtr<NSArray> supportedParameterizedAttributes(id);
-    friend void setAttributeValue(id, NSString *, id, bool synchronous);
+    friend void setAttributeValue(id, NSString *, id, Synchronous);
 
 public:
     static Ref<AccessibilityUIElementMac> create(PlatformUIElement);
