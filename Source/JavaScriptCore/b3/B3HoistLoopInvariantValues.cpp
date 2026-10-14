@@ -31,10 +31,12 @@
 #include "B3BackwardsDominators.h"
 #include "B3Dominators.h"
 #include "B3EnsureLoopPreHeaders.h"
+#include "B3MemoryValue.h"
 #include "B3NaturalLoops.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
+#include <wtf/HashMap.h>
 #include <wtf/RangeSet.h>
 
 namespace JSC { namespace B3 {
@@ -172,7 +174,18 @@ bool hoistLoopInvariantValues(Procedure& proc)
     }
     
     bool changed = false;
-    
+
+    // Nothing hoisted writes memory, so two loads hoisted into the same pre-header with equal keys
+    // read the same value.
+    using HoistedLoadKey = std::tuple<BasicBlock*, Value*, Kind, uint32_t, int32_t, uint64_t, uint64_t>;
+    UncheckedKeyHashMap<HoistedLoadKey, Value*> hoistedLoads;
+    auto hoistedLoadKey = [](BasicBlock* preHeader, Value* value) -> std::optional<HoistedLoadKey> {
+        MemoryValue* load = value->as<MemoryValue>();
+        if (!load || !load->isLoad())
+            return std::nullopt;
+        return HoistedLoadKey { preHeader, load->lastChild(), load->kind(), load->type().hash(), load->offset(), load->range().begin(), load->range().end() };
+    };
+
     // Pre-order ensures that we visit our dominators before we visit ourselves. Otherwise we'd miss some
     // hoisting opportunities in complex CFGs.
     for (BasicBlock* block : proc.blocksInPreOrder()) {
@@ -229,6 +242,16 @@ bool hoistLoopInvariantValues(Procedure& proc)
 
                     if (data[loop].writes.overlaps(effects.reads))
                         continue;
+
+                    if (auto key = hoistedLoadKey(data[loop].preHeader, value)) {
+                        auto addResult = hoistedLoads.add(*key, value);
+                        if (!addResult.isNewEntry) {
+                            value->replaceWithIdentity(addResult.iterator->value);
+                            changed = true;
+                            hoisted = true;
+                            break;
+                        }
+                    }
 
                     data[loop].preHeader->appendNonTerminal(value);
                     value = proc.add<Value>(Nop, Void, value->origin());

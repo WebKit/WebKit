@@ -31,6 +31,7 @@
 #include "AirStackSlot.h"
 #include "AirValidate.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "B3AbstractHeapRepository.h"
 #include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
@@ -45,11 +46,14 @@
 #include "B3FenceValue.h"
 #include "B3FixSSA.h"
 #include "B3Generate.h"
+#include "B3HeapRangeTree.h"
+#include "B3HoistLoopInvariantValues.h"
 #include "B3LowerToAir.h"
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
 #include "B3MoveConstants.h"
 #include "B3NativeTraits.h"
+#include "B3NaturalLoops.h"
 #include "B3Procedure.h"
 #include "B3ReduceStrength.h"
 #include "B3SlotBaseValue.h"
@@ -61,6 +65,7 @@
 #include "B3ValueInlines.h"
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
+#include "B3WasmArrayLengthValue.h"
 #include "B3WasmBoundsCheckValue.h"
 #include "CCallHelpers.h"
 #include "FPRInfo.h"
@@ -264,6 +269,16 @@ inline void lowerToAirForTesting(Procedure& proc)
         dataLog("Air after lowering:\n", proc.code());
     
     Air::validate(proc.code());
+}
+
+inline unsigned valueCount(Procedure& proc, B3::Opcode opcode)
+{
+    unsigned count = 0;
+    for (Value* value : proc.values()) {
+        if (value->opcode() == opcode)
+            count++;
+    }
+    return count;
 }
 
 template<typename Func>
@@ -1462,6 +1477,44 @@ void testFloatMaxMin();
 void testDoubleMaxMin();
 
 void testWasmAddressDoesNotCSE();
+void testReduceStrengthWasmAddressReuse();
+void testReduceStrengthWasmArrayLengthIgnoresTraps();
+void testReduceStrengthWasmAddressAcrossDiamond();
+void testReduceStrengthWasmAddressKilledByPinnedWrite();
+void testReduceStrengthWasmAddressLoop();
+void testReduceStrengthWasmAddressDifferentPinnedGPR();
+void testReduceStrengthLoadLoadSameBlock();
+void testReduceStrengthLoadLoadAcrossDiamond();
+void testReduceStrengthLoadKilledOnOneArm();
+void testReduceStrengthLoadKilledByNestedWrite();
+void testReduceStrengthLoadSurvivesDisjointWrite();
+void testReduceStrengthLoadFromStoreOfDifferentRange();
+void testReduceStrengthStoreToLoadFixups();
+void testReduceStrengthRedundantStore();
+void testReduceStrengthImmutableLoadKeptAcrossCall();
+void testReduceStrengthImmutableLoadNotFromMutableAcrossStore();
+void testReduceStrengthMutableLoadNotFromImmutableAcrossCall();
+void testReduceStrengthLoadsAcrossLoweredMemoryFill();
+void testReduceStrengthLoadLoopHeader();
+void testReduceStrengthFencedLoadNotForwarded();
+void testReduceStrengthLoadIrreducibleEntry();
+void testReduceStrengthLoadThroughReusedWasmAddress();
+void testReduceStrengthLoadForwardingAfterCFGFold();
+void testReduceStrengthDeadStoreSameBlock();
+void testReduceStrengthDeadStoreKeptAcrossLoad();
+void testReduceStrengthDeadStoreKeptAcrossCheck();
+void testReduceStrengthDeadStoreKeptWhenNarrower();
+void testReduceStrengthDeadStoreKeptWhenTrapping();
+void testReduceStrengthDeadStoreKeptWhenKillerTraps();
+void testReduceStrengthDeadStoreDisjointBetween();
+void testReduceStrengthDeadStoreAcrossBlocks();
+void testReduceStrengthDeadStoreAcrossBlocksKeptOnPathToExit();
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossLoad();
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossCheck();
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenKillerTraps();
+void testReduceStrengthDeadStoreAcrossBlocksKeptInLoop();
+void testReduceStrengthDeadStoreThenLoadForwardsKiller();
+void testReduceStrengthDeadStoreKeptAcrossFence();
 void testWasmAddressWithOffset();
 void testStoreAfterClobberExitsSideways();
 void testStoreAfterClobberDifferentWidth();
@@ -1649,5 +1702,18 @@ void testRotRFromShiftOrChainSHA256Sigma1_32(int32_t);
 void testRotRFromShiftXorChainSharedShiftOperand(int32_t);
 void testShiftOrDifferentBasesNoRotate(int32_t, int32_t, int32_t);
 void testShiftOrMismatchedAmountsNoRotate(int32_t);
+
+void testHeapRangeTreeNested();
+void testHeapRangeTreeSingleChild();
+void testHeapRangeTreeOverlapImpliesAncestry();
+void testHeapRangeTreeFromAbstractHeaps();
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenBaseAdvances();
+void testReduceStrengthIdentityReplacementKeepsRootOrder();
+void testReduceStrengthLoadFromOffsetConstantAddress();
+void testReduceStrengthStoreToLoadFixupNumbered();
+void testHoistLoopInvariantValuesMergesHoistedLoads();
+void testReduceStrengthSparseMemoryEpochs();
+void testReduceStrengthAbstractHeapRanges();
+void testReduceStrengthDeadStoreAcrossBlocksPastDisjointAccesses();
 
 #endif // ENABLE(B3_JIT)

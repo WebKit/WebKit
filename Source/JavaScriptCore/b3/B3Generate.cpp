@@ -29,10 +29,10 @@
 #if ENABLE(B3_JIT)
 
 #include "AirGenerate.h"
+#include "B3AbstractHeapRepository.h"
 #include "B3CanonicalizePrePostIncrements.h"
 #include "B3Common.h"
 #include "B3DuplicateTails.h"
-#include "B3EliminateCommonSubexpressions.h"
 #include "B3EliminateDeadCode.h"
 #include "B3EliminateWasmGCAllocations.h"
 #include "B3FixSSA.h"
@@ -84,13 +84,19 @@ void generateToAir(Procedure& procedure)
         validate(procedure);
     
     if (procedure.optLevel() >= 2) {
+        // Memory value numbering needs the range tree. A client that never decorated anything
+        // through the repository still gets one, so that every procedure is optimized alike.
+        if (!procedure.heaps().rangeTree())
+            procedure.heaps().computeRangesAndDecorateInstructions();
         reduceDoubleToFloat(procedure);
         if (Options::useB3SpecializeSelect())
             specializeSelect(procedure);
         reduceStrength(procedure, ReduceStrengthPass::Initial);
+        // FIXME: Nothing numbers memory accesses after hoisting. A load on a conditional path in a
+        // loop is not hoisted, and it still reloads on every iteration even when an identical load
+        // was hoisted out of that loop.
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);
-        eliminateCommonSubexpressions(procedure);
         eliminateDeadCode(procedure);
 
         // Wasm has br_table instruction, so intent of the switch is already represented
@@ -135,7 +141,7 @@ void generateToAir(Procedure& procedure)
     if (Options::useB3CanonicalizePrePostIncrements() && procedure.optLevel() >= 2)
         canonicalizePrePostIncrements(procedure);
 
-    // FIXME: We should run pureCSE here to clean up some platform specific changes from the previous phases.
+    // FIXME: We should run CSE here to clean up some platform specific changes from the previous phases.
     // https://bugs.webkit.org/show_bug.cgi?id=164873
 
     if (shouldValidateIR())

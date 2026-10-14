@@ -39,8 +39,13 @@ namespace JSC { namespace B3 {
 class PhiChildren {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(PhiChildren);
 public:
-    PhiChildren(Procedure&);
+    // With Collect::No it starts empty, for a caller that already visits every value and passes
+    // each Upsilon to add().
+    enum class Collect : bool { No, Yes };
+    PhiChildren(Procedure&, Collect = Collect::Yes);
     ~PhiChildren();
+
+    void add(UpsilonValue*);
 
     class ValueCollection {
     public:

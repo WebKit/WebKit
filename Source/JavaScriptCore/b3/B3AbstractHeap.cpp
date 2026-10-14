@@ -47,6 +47,11 @@ AbstractHeap::AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t
 
 void AbstractHeap::changeParent(AbstractHeap* parent)
 {
+    // The ranges, and the HeapRangeTree built from them, are a snapshot of the hierarchy, so it
+    // cannot change once they are computed.
+    ASSERT(!m_parent || !m_parent->m_range);
+    ASSERT(!parent || !parent->m_range);
+
     if (m_parent) {
         bool result = m_parent->m_children.removeFirst(this);
         RELEASE_ASSERT(result);
