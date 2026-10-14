@@ -1221,8 +1221,6 @@ function(WEBKIT_DEFINE_DAEMONS)
     if (WEBKIT_SDK_IS_MACOS AND DEVELOPER_MODE)
         target_link_options(webpushd PRIVATE
             "LINKER:-rpath,@executable_path/."
-            "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/."
-            "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/."
         )
     endif ()
 

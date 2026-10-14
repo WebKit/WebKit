@@ -701,6 +701,50 @@ macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
     endif ()
 endmacro()
 
+# Frameworks have system install names, so an executable run from the build
+# directory loads the system copies unless DYLD_FRAMEWORK_PATH points back at
+# the build. Bake that in, relative to every directory the executable can run
+# from, including any listed in ${_target}_ADDITIONAL_RUNTIME_DIRECTORIES. An
+# explicit DYLD_FRAMEWORK_PATH in the environment is searched first.
+function(_WEBKIT_ADD_DYLD_FRAMEWORK_PATH _target)
+    if (NOT DEVELOPER_MODE)
+        return ()
+    endif ()
+    # Executables placed outside the CMAKE_LIBRARY_OUTPUT_DIRECTORY live inside
+    # WebKit's bundles, which set up their own search paths or don't have paths
+    # at all. e.g. XPC services and App extensions.
+    get_target_property(_runtime_dir ${_target} RUNTIME_OUTPUT_DIRECTORY)
+    if (NOT _runtime_dir STREQUAL CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+        return ()
+    endif ()
+
+    set(_executable_dir "${_runtime_dir}")
+    get_target_property(_is_app_bundle ${_target} MACOSX_BUNDLE)
+    if (_is_app_bundle)
+        get_target_property(_output_name ${_target} OUTPUT_NAME)
+        if (NOT _output_name)
+            set(_output_name ${_target})
+        endif ()
+        string(APPEND _executable_dir "/${_output_name}.app")
+        if (WEBKIT_SDK_IS_MACOS)
+            string(APPEND _executable_dir "/Contents/MacOS")
+        endif ()
+    endif ()
+
+    set(_search_paths)
+    foreach (_dir IN ITEMS "${_executable_dir}" ${${_target}_ADDITIONAL_RUNTIME_DIRECTORIES})
+        file(RELATIVE_PATH _path "${_dir}" "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+        # Keep the trailing slash even when _path is empty to workaround bare @executable_path bug in dyld: rdar://189970045
+        list(APPEND _search_paths "@executable_path/${_path}")
+    endforeach ()
+    list(JOIN _search_paths ":" _search_paths)
+
+    target_link_options(${_target} PRIVATE
+        "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=${_search_paths}"
+        "LINKER:-dyld_env,DYLD_LIBRARY_PATH=${_search_paths}"
+    )
+endfunction()
+
 # Produce a .dSYM bundle and strips debugging symbols for a Mach-O target after
 # linking. Needs to be called before code signing.
 function(_WEBKIT_ADD_DSYM _target)
@@ -943,6 +987,7 @@ macro(WEBKIT_EXECUTABLE _target)
     endif ()
 
     if (APPLE)
+        _WEBKIT_ADD_DYLD_FRAMEWORK_PATH(${_target})
         _WEBKIT_ADD_DSYM(${_target})
         _WEBKIT_ADD_CODE_SIGN(${_target} DEPENDS ${${_target}_CODE_SIGN_INPUTS})
     endif ()

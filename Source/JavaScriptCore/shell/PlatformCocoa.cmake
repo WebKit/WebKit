@@ -25,3 +25,5 @@ if (DEVELOPER_MODE)
     WEBKIT_GENERATE_ENTITLEMENTS(testLibJSCTools USING ../Scripts/process-entitlements.sh)
 endif ()
 
+# jsc can also be placed in JavaScriptCore.framework's Helpers directory.
+set(jsc_ADDITIONAL_RUNTIME_DIRECTORIES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Helpers")
