@@ -32,7 +32,6 @@
 #include "B3CanonicalizePrePostIncrements.h"
 #include "B3Common.h"
 #include "B3DuplicateTails.h"
-#include "B3EliminateCommonSubexpressions.h"
 #include "B3EliminateDeadCode.h"
 #include "B3EliminateWasmGCAllocations.h"
 #include "B3FixSSA.h"
@@ -90,7 +89,6 @@ void generateToAir(Procedure& procedure)
         reduceStrength(procedure, ReduceStrengthPass::Initial);
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);
-        eliminateCommonSubexpressions(procedure);
         eliminateDeadCode(procedure);
 
         // Wasm has br_table instruction, so intent of the switch is already represented

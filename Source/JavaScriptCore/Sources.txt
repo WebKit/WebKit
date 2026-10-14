@@ -134,7 +134,6 @@ b3/B3ConstrainedValue.cpp
 b3/B3DataSection.cpp
 b3/B3DuplicateTails.cpp
 b3/B3Effects.cpp
-b3/B3EliminateCommonSubexpressions.cpp
 b3/B3EliminateDeadCode.cpp
 b3/B3EliminateWasmGCAllocations.cpp
 b3/B3EnsureLoopPreHeaders.cpp
@@ -145,6 +144,7 @@ b3/B3FixSSA.cpp
 b3/B3FoldPathConstants.cpp
 b3/B3FrequencyClass.cpp
 b3/B3Generate.cpp
+b3/B3HeapRangeTree.cpp
 b3/B3HoistLoopInvariantValues.cpp
 b3/B3InferSwitches.cpp
 b3/B3InsertionSet.cpp
@@ -166,7 +166,6 @@ b3/B3PatchpointValue.cpp
 b3/B3PhaseScope.cpp
 b3/B3PhiChildren.cpp
 b3/B3Procedure.cpp
-b3/B3PureCSE.cpp
 b3/B3ReduceDoubleToFloat.cpp
 b3/B3ReduceStrength.cpp
 b3/B3SIMDValue.cpp

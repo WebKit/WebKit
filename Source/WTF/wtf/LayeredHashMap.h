@@ -34,6 +34,27 @@
 
 namespace WTF {
 
+// An entry with the empty key marks where a layer starts, and its previous is the index of the
+// enclosing layer's marker. Any other entry's previous is the index of the entry for the same key
+// that it shadows. Either is UINT_MAX when there is none.
+template<typename KeyType, typename MappedType, typename KeyTraits, typename MappedTraits>
+struct LayeredHashMapEntry {
+    KeyType key { KeyTraits::emptyValue() };
+    MappedType value { MappedTraits::emptyValue() };
+    unsigned hash { 0 };
+    unsigned previous { UINT_MAX };
+
+    bool isLayerMarker() const { return isHashTraitsEmptyValue<KeyTraits>(key); }
+};
+
+// The default member initializers keep an entry from counting as trivial, which would otherwise
+// make every growth of the entry vector move one entry at a time.
+template<typename KeyType, typename MappedType, typename KeyTraits, typename MappedTraits>
+struct VectorTraits<LayeredHashMapEntry<KeyType, MappedType, KeyTraits, MappedTraits>> : VectorTraitsBase<false, void> {
+    static constexpr bool canMoveWithMemcpy = std::is_trivially_copyable_v<LayeredHashMapEntry<KeyType, MappedType, KeyTraits, MappedTraits>>;
+    static constexpr bool canCopyWithMemcpy = canMoveWithMemcpy;
+};
+
 // A hash map whose entries are grouped into layers, where dropping every entry added since the
 // most recent startLayer() costs only as much as the number of those entries. A client that pairs
 // startLayer()/dropLastLayer() with descent and ascent of the dominator tree therefore holds
@@ -157,17 +178,8 @@ private:
 
     static bool isEmptyKey(const KeyType& key) { return isHashTraitsEmptyValue<KeyTraits>(key); }
 
-    // An entry with the empty key marks where a layer starts, and its previous is the index of the
-    // enclosing layer's marker. Any other entry's previous is the index of the entry for the same
-    // key that it shadows. Either is emptyIndex when there is none.
-    struct Entry {
-        KeyType key { KeyTraits::emptyValue() };
-        MappedType value { MappedTraits::emptyValue() };
-        unsigned hash { 0 };
-        unsigned previous { emptyIndex };
-
-        bool isLayerMarker() const { return isEmptyKey(key); }
-    };
+    using Entry = LayeredHashMapEntry<KeyType, MappedType, KeyTraits, MappedTraits>;
+    static_assert(emptyIndex == UINT_MAX);
     static_assert(hasOneBitSet(KeyTraits::minimumTableSize), "findSlot() masks instead of dividing.");
 
     void appendLayerMarker()

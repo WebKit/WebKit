@@ -36,8 +36,8 @@ class Procedure;
 // the complexity of the code. In the future, it's preferable to add optimizations to this phase
 // rather than creating new optimizations because then the optimizations can feed each other.
 // However, because of the many interlocking optimizations, it can be difficult to add sophisticated
-// optimizations to it. For that reason CSE that has to synthesize Phis for values arriving on
-// several paths lives in eliminateCommonSubexpressions.
+// optimizations to it. A value that is available only along several incoming paths is
+// intentionally not reused, because that would require synthesizing Phis.
 
 enum class ReduceStrengthPass : uint8_t {
     Initial,

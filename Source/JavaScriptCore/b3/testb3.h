@@ -45,6 +45,7 @@
 #include "B3FenceValue.h"
 #include "B3FixSSA.h"
 #include "B3Generate.h"
+#include "B3HeapRangeTree.h"
 #include "B3LowerToAir.h"
 #include "B3MathExtras.h"
 #include "B3MemoryValue.h"
@@ -1428,6 +1429,44 @@ void testFloatMaxMin();
 void testDoubleMaxMin();
 
 void testWasmAddressDoesNotCSE();
+void testReduceStrengthWasmAddressReuse();
+void testReduceStrengthWasmAddressAcrossDiamond();
+void testReduceStrengthWasmAddressKilledByPinnedWrite();
+void testReduceStrengthWasmAddressLoop();
+void testReduceStrengthWasmAddressDifferentPinnedGPR();
+void testReduceStrengthLoadLoadSameBlock();
+void testReduceStrengthLoadLoadAcrossDiamond();
+void testReduceStrengthLoadKilledOnOneArm();
+void testReduceStrengthLoadKilledByNestedWrite();
+void testReduceStrengthLoadSurvivesDisjointWrite();
+void testReduceStrengthLoadKilledByPartialOverlapWrite();
+void testReduceStrengthLoadFromStoreOfDifferentRange();
+void testReduceStrengthStoreToLoadFixups();
+void testReduceStrengthRedundantStore();
+void testReduceStrengthImmutableLoadKeptAcrossCall();
+void testReduceStrengthImmutableLoadNotFromMutableAcrossStore();
+void testReduceStrengthMutableLoadNotFromImmutableAcrossCall();
+void testReduceStrengthLoadsAcrossLoweredMemoryFill();
+void testReduceStrengthLoadLoopHeader();
+void testReduceStrengthFencedLoadNotForwarded();
+void testReduceStrengthLoadIrreducibleEntry();
+void testReduceStrengthLoadThroughReusedWasmAddress();
+void testReduceStrengthLoadForwardingAfterCFGFold();
+void testReduceStrengthDeadStoreSameBlock();
+void testReduceStrengthDeadStoreKeptAcrossLoad();
+void testReduceStrengthDeadStoreKeptAcrossCheck();
+void testReduceStrengthDeadStoreKeptWhenNarrower();
+void testReduceStrengthDeadStoreKeptWhenTrapping();
+void testReduceStrengthDeadStoreKeptWhenKillerTraps();
+void testReduceStrengthDeadStoreDisjointBetween();
+void testReduceStrengthDeadStoreAcrossBlocks();
+void testReduceStrengthDeadStoreAcrossBlocksKeptOnPathToExit();
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossLoad();
+void testReduceStrengthDeadStoreAcrossBlocksKeptAcrossCheck();
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenKillerTraps();
+void testReduceStrengthDeadStoreAcrossBlocksKeptInLoop();
+void testReduceStrengthDeadStoreThenLoadForwardsKiller();
+void testReduceStrengthDeadStoreKeptAcrossFence();
 void testWasmAddressWithOffset();
 void testStoreAfterClobberExitsSideways();
 void testStoreAfterClobberDifferentWidth();
@@ -1601,5 +1640,16 @@ void testRotRFromShiftOrChainSHA256Sigma1_32(int32_t);
 void testRotRFromShiftXorChainSharedShiftOperand(int32_t);
 void testShiftOrDifferentBasesNoRotate(int32_t, int32_t, int32_t);
 void testShiftOrMismatchedAmountsNoRotate(int32_t);
+
+void testHeapRangeTreeNested();
+void testHeapRangeTreePartialOverlapWrite();
+void testHeapRangeTreeCollapse();
+void testHeapRangeTreeDuplicates();
+void testHeapRangeTreePartialOverlapNotANode();
+void testHeapRangeTreeOverlapImpliesAncestry();
+void testHeapRangeTreeOverlapsAnyBuiltRange();
+void testHeapRangeTreeCoversRange();
+void testReduceStrengthDeadStoreAcrossBlocksKeptWhenBaseAdvances();
+void testReduceStrengthIdentityReplacementKeepsRootOrder();
 
 #endif // ENABLE(B3_JIT)
