@@ -172,7 +172,7 @@ public:
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 
-    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier> initiatorFrameID, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
 
     WebCore::IPAddressSpace classifyConnectionAddressSpace(const std::optional<WebCore::IPAddress>&, const URL&) const;
 

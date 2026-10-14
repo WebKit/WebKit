@@ -333,9 +333,9 @@ NetworkSession::~NetworkSession()
         loader->abort();
 }
 
-void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, std::optional<WebCore::FrameIdentifier> initiatorFrameID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
-    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(m_sessionID, pageID, origin, addressSpace), WTF::move(completionHandler));
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(m_sessionID, pageID, initiatorFrameID, origin, addressSpace), WTF::move(completionHandler));
 }
 
 static std::optional<WebCore::IPAddressSpace> addressSpaceFromName(StringView name)
