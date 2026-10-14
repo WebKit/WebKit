@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>A space that the font's shaping replaces with another glyph takes that glyph's advance</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-feature-resolution">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: "SpaceSubstitution";
+  src: url(support/fonts/space-substitution.ttf) format("truetype");
+}
+p { font: 100px/1 "SpaceSubstitution"; margin: 0; }
+</style>
+<!-- support/fonts/space-substitution.ttf has 1000 units per em and box glyphs as in Ahem. A and B
+     are 1000 units wide, the space is 500 units wide, and U+0301 is a zero-width mark. Its only
+     GSUB rule is "feature calt { sub space by space.zero; } calt;", where space.zero has no advance.
+     So at 100px "A B" is 200px wide when the substituted advance is used, and 250px when it is not. -->
+<p id="target">A&#x301; B</p>
+<script>
+const fontLoaded = document.fonts.load('100px "SpaceSubstitution"').then(() => document.fonts.ready);
+
+promise_test(async () => {
+  await fontLoaded;
+  const range = document.createRange();
+  range.selectNodeContents(document.getElementById("target").firstChild);
+  assert_approx_equals(range.getBoundingClientRect().width, 200, 0.5);
+}, "Laid out text with a combining mark uses the advance of the glyph that replaced the space");
+
+promise_test(async () => {
+  await fontLoaded;
+  const context = document.createElement("canvas").getContext("2d");
+  context.font = '100px "SpaceSubstitution"';
+  assert_approx_equals(context.measureText("A B").width, 200, 0.5);
+}, "Canvas measureText uses the advance of the glyph that replaced the space");
+</script>
