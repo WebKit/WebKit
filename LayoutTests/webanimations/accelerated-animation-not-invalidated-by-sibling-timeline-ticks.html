@@ -1,0 +1,29 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="threaded-animations/threaded-animations-utils.js"></script>
+<div id="pump" style="width: 100px; height: 100px;"></div>
+<div id="test" style="width: 100px; height: 100px;"></div>
+<script>
+
+promise_test(async () => {
+    // #pump can never run accelerated (animates layout-affecting "width"), so it keeps ticking the shared timeline;
+    // #test must not invalidate style only because it shares that timeline.
+
+    document.getElementById("pump").animate({ width: ["100px", "200px"] }, { duration: 50, iterations: Infinity });
+
+    const testElement = document.getElementById("test");
+    const testAnimation = testElement.animate({ opacity: [1, 0.4] }, { duration: 50, iterations: Infinity });
+    await animationAcceleration(testAnimation);
+
+    assert_equals(internals.acceleratedAnimationsForElement(testElement).length, 1, "The animation should be running accelerated.");
+
+    // It takes two frames for the style update to settle after the accelerated animation starts.
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    assert_equals(internals.lastStyleUpdateSize, 1, "Only the non-accelerated #pump element should have had its style resolved.");
+}, "A fully accelerated animation must not invalidate style only because another non-accelerated animation is running.");
+
+</script>
+</body>
+</html>

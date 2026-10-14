@@ -2126,7 +2126,21 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
 
 void KeyframeEffect::animationDidTick()
 {
-    invalidate();
+    auto canSkipInvalidation = [this] {
+        if (!isCompletelyAccelerated() || !isRunningAccelerated())
+            return false;
+        if (getBasicTiming().phase != m_phaseAtLastApplication)
+            return false;
+#if ENABLE(THREADED_ANIMATIONS)
+        if (canHaveAcceleratedRepresentation() && m_isAssociatedWithProgressBasedTimeline)
+            return false;
+#endif
+        return true;
+    };
+
+    if (!canSkipInvalidation())
+        invalidate();
+
     updateAcceleratedActions();
 
 #if ENABLE(THREADED_ANIMATIONS)
