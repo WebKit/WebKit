@@ -162,8 +162,8 @@ class ComputeTestUrlFromFinderTest(unittest.TestCase):
         host = MockHost()
         host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/http/tests/local/foo.html', '')
         host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/media/brand-new.html', '')
-        host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/http/wpt/bar.html', '')
-        host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/http/wpt/bar.https.html', '')
+        host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/http/wpt/foo/bar.html', '<script src="/resources/testharness.js"></script>')
+        host.filesystem.write_text_file(LAYOUT_TEST_DIR + '/http/wpt/foo/bar.https.html', '<script src="/resources/testharness.js"></script>')
         self.port = host.port_factory.get('test-mac-leopard')
         self.finder = LayoutTestFinder(self.port, None)
         self.manager = Manager(self.port, options=MockOptions(test_list=None, http=True, verbose=False, additional_header=None, driver_names=list(self.port.DEFAULT_SUPPORTED_DRIVERS)), printer=Mock())
@@ -181,8 +181,8 @@ class ComputeTestUrlFromFinderTest(unittest.TestCase):
         self.assertEqual(self._url_for('http/tests/local/foo.html'), 'file://%s/http/tests/local/foo.html' % d)
         self.assertEqual(self._url_for('imported/w3c/web-platform-tests/some/new.html'), 'http://localhost:8800/some/new.html')
         self.assertEqual(self._url_for('imported/w3c/web-platform-tests/some/test-pass-crash.https.html'), 'https://localhost:8800/some/test-pass-crash.https.html')
-        self.assertEqual(self._url_for('http/wpt/bar.html'), 'http://localhost:8800/WebKit/bar.html')
-        self.assertEqual(self._url_for('http/wpt/bar.https.html'), 'https://localhost:8800/WebKit/bar.https.html')
+        self.assertEqual(self._url_for('http/wpt/foo/bar.html'), 'http://localhost:8800/WebKit/foo/bar.html')
+        self.assertEqual(self._url_for('http/wpt/foo/bar.https.html'), 'https://localhost:8800/WebKit/foo/bar.https.html')
         self.assertEqual(self._url_for('websocket/tests/passes/text.html'), 'file://%s/websocket/tests/passes/text.html' % d)
 
     def test_compute_url_for_test_name_specificity_sort(self):
