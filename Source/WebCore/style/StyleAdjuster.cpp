@@ -490,8 +490,10 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (style.display() == DisplayType::InlineFlow && !style.pseudoElementType() && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
             style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlowRoot);
 
-        // FIXME: according to the specification this should apply as well to -webkit-line-clamp.
-        if (!style.hasLegacyLineClamp() && style.overflowContinue() != OverflowContinue::Normal && style.boxOrient() == BoxOrient::Vertical) {
+        // A vertical -webkit-box with continue: -webkit-legacy (as set by -webkit-line-clamp) is a line-clamp container too:
+        // https://drafts.csswg.org/css-overflow-4/#webkit-line-clamp
+        // FIXME: Remove the preference check once the legacy -webkit-line-clamp implementation is gone.
+        if ((!style.hasLegacyLineClamp() || m_document->settings().cssWebkitLineClampAsLineClampEnabled()) && style.overflowContinue() != OverflowContinue::Normal && style.boxOrient() == BoxOrient::Vertical) {
             if (style.display() == DisplayType::BlockDeprecatedFlex)
                 style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlowRoot);
             else if (style.display() == DisplayType::InlineDeprecatedFlex)
