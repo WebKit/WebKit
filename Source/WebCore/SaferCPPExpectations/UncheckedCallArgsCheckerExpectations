@@ -204,7 +204,6 @@ rendering/RenderTextControlMultiLine.cpp
 rendering/RenderTextControlSingleLine.cpp
 rendering/RenderTextControlSingleLine.h
 rendering/RenderTextFragment.cpp
-rendering/RenderTreeAsText.cpp
 rendering/RenderVTTCue.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
@@ -248,7 +247,6 @@ rendering/svg/RenderSVGViewportContainer.cpp
 rendering/svg/SVGBoundingBoxComputation.cpp
 rendering/svg/SVGContainerLayout.cpp
 [ macOS ] rendering/svg/SVGRenderSupport.cpp
-rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextLayoutEngine.cpp

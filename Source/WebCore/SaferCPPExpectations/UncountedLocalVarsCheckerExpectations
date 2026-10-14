@@ -2,7 +2,6 @@ rendering/RenderCounter.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
-rendering/RenderTreeAsText.cpp
 style/ElementRuleCollector.cpp
 style/StyleBuilderCustom.h
 style/StyleDocumentScope.cpp

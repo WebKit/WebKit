@@ -59,7 +59,6 @@ rendering/RenderText.cpp
 rendering/RenderText.h
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.cpp
-rendering/RenderTreeAsText.cpp
 rendering/RenderVTTCue.cpp
 rendering/RenderView.cpp
 rendering/StyledMarkedText.cpp
@@ -85,7 +84,6 @@ rendering/svg/SVGContainerLayout.cpp
 rendering/svg/SVGPaintServerHandlingInlines.h
 rendering/svg/SVGPathFromElement.cpp
 rendering/svg/SVGRenderSupport.cpp
-rendering/svg/SVGRenderTreeAsText.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.cpp

@@ -190,9 +190,9 @@ static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& re
     ts << " [fill={"_s << s;
     writeSVGPaintingResource(ts, fillPaintingResource);
 
-    auto& style = renderer.style();
-    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style.fillOpacity()), 1.0f);
-    writeIfNotDefault(ts, "fill rule"_s, style.fillRule(), WindRule::NonZero);
+    CheckedRef style = renderer.style();
+    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style->fillOpacity()), 1.0f);
+    writeIfNotDefault(ts, "fill rule"_s, style->fillRule(), WindRule::NonZero);
     ts << "}]"_s;
 }
 
@@ -202,21 +202,21 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& 
     ts << " [stroke={"_s << s;
     writeSVGPaintingResource(ts, strokePaintingResource);
 
-    auto& style = renderer.style();
+    CheckedRef style = renderer.style();
 
     SVGLengthContext lengthContext(&shape);
-    auto zoom = style.usedZoomForLength();
-    double dashOffset = lengthContext.valueForLength(style.strokeDashOffset(), zoom);
-    double strokeWidth = lengthContext.valueForLength(style.strokeWidth(), zoom);
-    auto dashArray = DashArray::map(style.strokeDashArray(), [&](const Style::SVGStrokeDasharrayValue& length) -> DashArrayElement {
+    auto zoom = style->usedZoomForLength();
+    double dashOffset = lengthContext.valueForLength(style->strokeDashOffset(), zoom);
+    double strokeWidth = lengthContext.valueForLength(style->strokeWidth(), zoom);
+    auto dashArray = DashArray::map(style->strokeDashArray(), [&](const Style::SVGStrokeDasharrayValue& length) -> DashArrayElement {
         return lengthContext.valueForLength(length, zoom);
     });
 
-    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style.strokeOpacity()), 1.0f);
+    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style->strokeOpacity()), 1.0f);
     writeIfNotDefault(ts, "stroke width"_s, strokeWidth, 1.0);
-    writeIfNotDefault(ts, "miter limit"_s, Style::evaluate<float>(style.strokeMiterLimit()), 4.0f);
-    writeIfNotDefault(ts, "line cap"_s, style.capStyle(), LineCap::Butt);
-    writeIfNotDefault(ts, "line join"_s, style.joinStyle(), LineJoin::Miter);
+    writeIfNotDefault(ts, "miter limit"_s, Style::evaluate<float>(style->strokeMiterLimit()), 4.0f);
+    writeIfNotDefault(ts, "line cap"_s, style->capStyle(), LineCap::Butt);
+    writeIfNotDefault(ts, "line join"_s, style->joinStyle(), LineJoin::Miter);
     writeIfNotDefault(ts, "dash offset"_s, dashOffset, 0.0);
     if (!dashArray.isEmpty())
         writeNameValuePair(ts, "dash array"_s, dashArray);
@@ -231,31 +231,31 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& 
 
 void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, OptionSet<RenderAsTextFlag>)
 {
-    auto& style = renderer.style();
+    CheckedRef style = renderer.style();
 
     if (!renderer.localTransform().isIdentity() && !renderer.document().settings().layerBasedSVGEngineEnabled())
         writeNameValuePair(ts, "transform"_s, renderer.localTransform());
-    writeIfNotDefault(ts, "image rendering"_s, style.imageRendering(), Style::ComputedStyle::initialImageRendering());
-    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style.opacity()), 1.0f);
+    writeIfNotDefault(ts, "image rendering"_s, style->imageRendering(), Style::ComputedStyle::initialImageRendering());
+    writeIfNotDefault(ts, "opacity"_s, Style::evaluate<float>(style->opacity()), 1.0f);
 
     if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(renderer)) {
         Color fallbackColor;
-        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), shape->style(), fallbackColor))
+        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), style, fallbackColor))
             writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, protect(shape->graphicsElement()));
 
-        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), shape->style(), fallbackColor))
+        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<LegacyRenderSVGShape&>(*shape), style, fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
 
-        writeIfNotDefault(ts, "clip rule"_s, style.clipRule(), WindRule::NonZero);
+        writeIfNotDefault(ts, "clip rule"_s, style->clipRule(), WindRule::NonZero);
     } else if (auto* shape = dynamicDowncast<RenderSVGShape>(renderer)) {
         Color fallbackColor;
-        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(*shape), shape->style(), fallbackColor))
+        if (auto* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(const_cast<RenderSVGShape&>(*shape), style, fallbackColor))
             writeSVGStrokePaintingResource(ts, renderer, *strokePaintingResource, protect(shape->graphicsElement()));
 
-        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(*shape), shape->style(), fallbackColor))
+        if (auto* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(const_cast<RenderSVGShape&>(*shape), style, fallbackColor))
             writeSVGFillPaintingResource(ts, renderer, *fillPaintingResource);
 
-        writeIfNotDefault(ts, "clip rule"_s, style.clipRule(), WindRule::NonZero);
+        writeIfNotDefault(ts, "clip rule"_s, style->clipRule(), WindRule::NonZero);
     }
 
     auto writeMarker = [&](ASCIILiteral name, const Style::SVGMarkerResource& value) {
@@ -267,9 +267,9 @@ void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, Opt
         writeIfNotEmpty(ts, name, fragment);
     };
 
-    writeMarker("start marker"_s, style.markerStart());
-    writeMarker("middle marker"_s, style.markerMid());
-    writeMarker("end marker"_s, style.markerEnd());
+    writeMarker("start marker"_s, style->markerStart());
+    writeMarker("middle marker"_s, style->markerMid());
+    writeMarker("end marker"_s, style->markerEnd());
 }
 
 static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& renderer, OptionSet<RenderAsTextFlag> behavior = { })
@@ -338,8 +338,11 @@ static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
     // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
     ts << " contains 1 chunk(s)"_s;
 
-    if (text.parent() && (text.parent()->style().visitedDependentColor() != text.style().visitedDependentColor()))
-        writeNameValuePair(ts, "color"_s, serializationForRenderTreeAsText(text.style().visitedDependentColor()));
+    if (CheckedPtr parent = text.parent()) {
+        auto color = protect(text.style())->visitedDependentColor();
+        if (protect(parent->style())->visitedDependentColor() != color)
+            writeNameValuePair(ts, "color"_s, serializationForRenderTreeAsText(color));
+    }
 }
 
 static inline void writeSVGTextBox(TextStream& ts, const InlineIterator::SVGTextBox& textBox)
@@ -348,7 +351,7 @@ static inline void writeSVGTextBox(TextStream& ts, const InlineIterator::SVGText
     if (fragments.isEmpty())
         return;
 
-    auto& style = textBox.renderer().style();
+    CheckedRef style = textBox.renderer().style();
     String text = textBox.renderer().text();
 
     TextStream::IndentScope indentScope(ts);
@@ -363,7 +366,7 @@ static inline void writeSVGTextBox(TextStream& ts, const InlineIterator::SVGText
 
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 "_s;
-        auto anchor = style.textAnchor();
+        auto anchor = style->textAnchor();
         bool isVerticalText = textBox.renderer().writingMode().isVertical();
         if (anchor == TextAnchor::Middle) {
             ts << "(middle anchor"_s;
@@ -423,8 +426,8 @@ static void writeChildren(TextStream& ts, const RenderElement& parent, OptionSet
 {
     TextStream::IndentScope indentScope(ts);
 
-    for (auto& child : childrenOfType<RenderObject>(parent)) {
-        if (parent.document().settings().layerBasedSVGEngineEnabled() && child.hasLayer())
+    for (CheckedRef child : childrenOfType<RenderObject>(parent)) {
+        if (parent.document().settings().layerBasedSVGEngineEnabled() && child->hasLayer())
             continue;
         write(ts, child, behavior);
     }
@@ -578,15 +581,15 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, Opt
 
 void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
-    const Style::ComputedStyle& style = renderer.style();
+    CheckedRef style = renderer.style();
 
     // FIXME: We want to use SVGResourcesCache to determine which resources are present, instead of quering the resource <-> id cache.
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
-    if (style.hasPositionedMask()) {
-        if (RefPtr maskImage = style.maskLayers().usedFirst().image().tryStyleImage()) {
+    if (style->hasPositionedMask()) {
+        if (RefPtr maskImage = style->maskLayers().usedFirst().image().tryStyleImage()) {
             Ref document = renderer.document();
             auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage->url(), document);
-            if (auto* masker = getRenderSVGResourceById<LegacyRenderSVGResourceMasker>(protect(renderer.treeScopeForSVGReferences()), resourceID)) {
+            if (CheckedPtr masker = getRenderSVGResourceById<LegacyRenderSVGResourceMasker>(protect(renderer.treeScopeForSVGReferences()), resourceID)) {
                 ts << indent << ' ';
                 writeNameAndQuotedValue(ts, "masker"_s, resourceID);
                 ts << ' ';
@@ -595,10 +598,10 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             }
         }
     }
-    WTF::switchOn(style.clipPath(),
+    WTF::switchOn(style->clipPath(),
         [&](const Style::ReferencePath& clipPath) {
             auto id = clipPath.fragment();
-            if (auto* clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(protect(renderer.treeScopeForSVGReferences()), id)) {
+            if (CheckedPtr clipper = getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(protect(renderer.treeScopeForSVGReferences()), id)) {
                 ts << indent << ' ';
                 writeNameAndQuotedValue(ts, "clipPath"_s, id);
                 ts << ' ';
@@ -608,11 +611,11 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
         },
         [&](const auto&) { }
     );
-    if (style.filter().size() == 1) {
-        WTF::switchOn(style.filter().first(),
+    if (style->filter().size() == 1) {
+        WTF::switchOn(style->filter().first(),
             [&](const Style::FilterReference& filterReference) {
                 auto& id = filterReference.cachedFragment;
-                if (LegacyRenderSVGResourceFilter* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(protect(renderer.treeScopeForSVGReferences()), id)) {
+                if (CheckedPtr filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(protect(renderer.treeScopeForSVGReferences()), id)) {
                     ts << indent << ' ';
                     writeNameAndQuotedValue(ts, "filter"_s, id);
                     ts << ' ';

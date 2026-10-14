@@ -117,7 +117,6 @@ rendering/RenderReplica.cpp
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.h
 [ macOS ] rendering/RenderTheme.cpp
-rendering/RenderTreeAsText.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
