@@ -576,8 +576,11 @@ class LayoutTestFinder(object):
             len(variant) > 1 and variant[0] in ("?", "#") and variant != "?#"
         )
 
-    def _expectations_for_test(self, basename, variant, non_test_files_by_search_path):
-        """Given a test basename, find expectations in non_test_files_by_search_path"""
+    def _baselines_for_test(self, basename, variant, non_test_files_by_search_path):
+        """Find -expected.{txt,webarchive,png,wav} siblings for a test in the
+        layered search paths. Returns
+        (expected_text_path, expected_image_path, expected_audio_path) —
+        the text slot prefers .txt over .webarchive when both exist."""
 
         expected_without_ext = TestResultWriter.expected_filename(
             basename + variant, self.fs, suffix=""
@@ -589,12 +592,37 @@ class LayoutTestFinder(object):
         expected_webarchive_path = None
         expected_image_path = None
         expected_audio_path = None
-        reference_files = None
 
         txt_name = expected_without_ext + ".txt"
         webarchive_name = expected_without_ext + ".webarchive"
         png_name = expected_without_ext + ".png"
         wav_name = expected_without_ext + ".wav"
+
+        # This is inefficient. We search all non-test files in the directory for each variant of each test!
+        for dirname, basename_set in reversed(non_test_files_by_search_path.items()):
+            if expected_text_path is None and txt_name in basename_set:
+                expected_text_path = self.fs.normpath(self.fs.join(dirname, txt_name))
+
+            if expected_webarchive_path is None and webarchive_name in basename_set:
+                expected_webarchive_path = self.fs.normpath(self.fs.join(dirname, webarchive_name))
+
+            if expected_image_path is None and png_name in basename_set:
+                expected_image_path = self.fs.normpath(self.fs.join(dirname, png_name))
+
+            if expected_audio_path is None and wav_name in basename_set:
+                expected_audio_path = self.fs.normpath(self.fs.join(dirname, wav_name))
+
+        return (
+            expected_text_path or expected_webarchive_path,
+            expected_image_path,
+            expected_audio_path,
+        )
+
+    def _sibling_references_for_test(self, basename, variant, non_test_files_by_search_path):
+        """Find -expected.{html,htm,svg,xht,xhtml,xml} sibling reference files
+        in the layered search paths. Returns a list of Reference objects
+        from the most-specific directory containing any siblings, or None
+        when no siblings exist."""
 
         reference_base = TestResultWriter.expected_filename(
             basename, self.fs, suffix=""
@@ -605,44 +633,38 @@ class LayoutTestFinder(object):
         match_reference_basenames = {
             reference_base + ext for ext in supported_reference_extensions
         }
-
         mismatch_reference_basenames = {
             "".join((reference_base, "-mismatch", ext))
             for ext in supported_reference_extensions
         }
 
-        # This is inefficient. We search all non-test files in the directory for each variant of each test!
         for dirname, basename_set in reversed(non_test_files_by_search_path.items()):
-            if expected_text_path is None and txt_name in basename_set:
-                expected_text_path = self.fs.join(dirname, txt_name)
+            matches = basename_set & match_reference_basenames
+            mismatches = basename_set & mismatch_reference_basenames
+            if matches or mismatches:
+                # For historic reasons, we return matches first, and we sort them by
+                # the filename of the match. This is significant when we currently
+                # only run the first reference
+                # (https://bugs.webkit.org/show_bug.cgi?id=270794).
+                return [
+                    Reference(relation="==", path=self.fs.join(dirname, m + variant)) for m in sorted(matches)
+                ] + [Reference(relation="!=", path=self.fs.join(dirname, m + variant)) for m in sorted(mismatches)]
 
-            if expected_webarchive_path is None and webarchive_name in basename_set:
-                expected_webarchive_path = self.fs.join(dirname, webarchive_name)
+        return None
 
-            if expected_image_path is None and png_name in basename_set:
-                expected_image_path = self.fs.join(dirname, png_name)
+    def _expectations_for_test(self, basename, variant, non_test_files_by_search_path):
+        """Find both baselines and sibling references for a test. Returns
+        (expected_text_path, expected_image_path, expected_audio_path,
+         reference_files) — see _baselines_for_test and
+        _sibling_references_for_test for the per-half semantics."""
 
-            if expected_audio_path is None and wav_name in basename_set:
-                expected_audio_path = self.fs.join(dirname, wav_name)
-
-            if reference_files is None:
-                matches = basename_set & match_reference_basenames
-                mismatches = basename_set & mismatch_reference_basenames
-                if matches or mismatches:
-                    # For historic reasons, we return matches first, and we sort them by
-                    # the filename of the match. This is significant when we currently
-                    # only run the first reference
-                    # (https://bugs.webkit.org/show_bug.cgi?id=270794).
-                    reference_files = [
-                        Reference(relation="==", path=self.fs.join(dirname, m + variant)) for m in sorted(matches)
-                    ] + [Reference(relation="!=", path=self.fs.join(dirname, m + variant)) for m in sorted(mismatches)]
-
-        return (
-            expected_text_path or expected_webarchive_path,
-            expected_image_path,
-            expected_audio_path,
-            reference_files,
+        text, image, audio = self._baselines_for_test(
+            basename, variant, non_test_files_by_search_path
         )
+        references = self._sibling_references_for_test(
+            basename, variant, non_test_files_by_search_path
+        )
+        return (text, image, audio, references)
 
     def is_wpt_crash_test(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
