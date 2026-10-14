@@ -142,6 +142,29 @@ class TestResultWriterTest(unittest.TestCase):
             "css/css-backgrounds/box-shadow-radius-generated_width=200&height=40&spread=50&radius=100px_20__2020px-expected.txt", expected
         )
 
+    def test_expected_filename_for_unusual_variants(self):
+        fs = MockHost().filesystem
+        for test_name, expected in (
+            # The variant starts at the earliest '?' or '#', so a fragment
+            # before a query keeps the query in the variant.
+            ("dir/foo.html#a?b", "dir/foo_a?b-expected.txt"),
+            ("dir/foo.html#a#b", "dir/foo_a#b-expected.txt"),
+            ("dir/foo.html?a?b", "dir/foo_a?b-expected.txt"),
+            # A '/' in a variant must not become a directory.
+            ("dir/foo.html?a/b", "dir/foo_a_b-expected.txt"),
+            ("dir/foo.html#a/b", "dir/foo_a_b-expected.txt"),
+            ("dir/foo.html?a#b/c", "dir/foo_a#b_c-expected.txt"),
+            # Characters that aren't valid in file names on every platform.
+            ("dir/foo.html?a:b|c*d<e>f g", "dir/foo_a_b_c_d_e_f_g-expected.txt"),
+            # Empty variants.
+            ("dir/foo.html?", "dir/foo_-expected.txt"),
+            ("dir/foo.html#", "dir/foo_-expected.txt"),
+            # A dot in the directory is not an extension.
+            ("a.b/foo.html?x", "a.b/foo_x-expected.txt"),
+        ):
+            with self.subTest(test_name):
+                self.assertEqual(expected, test_result_writer.TestResultWriter.expected_filename(test_name, fs))
+
     def test_actual_filename(self):
         host = MockHost()
         port = TestPort(host)
