@@ -35,7 +35,7 @@ namespace WebKit {
 
 Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(WPEEvent* event, const String& text, bool isAutorepeat)
 {
-    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat)));
+    return adoptRef(*new NativeWebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat), event));
 }
 
 Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, std::optional<Vector<WebCore::CompositionUnderline>>&& preeditUnderlines, std::optional<EditingRange>&& preeditSelectionRange)
@@ -56,6 +56,12 @@ Ref<NativeWebKeyboardEvent> NativeWebKeyboardEvent::create(const String& text, s
             .isKeypad = false,
         }
     }));
+}
+
+NativeWebKeyboardEvent::NativeWebKeyboardEvent(WebKeyboardEventInit&& init, WPEEvent* event)
+    : WebKeyboardEvent(WTF::move(init.event), WTF::move(init.keyboard))
+    , m_nativeEvent(event)
+{
 }
 
 } // namespace WebKit
