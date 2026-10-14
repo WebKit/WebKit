@@ -92,16 +92,16 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result;
 }
 
-inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection) const
+inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, TextDirection textDirection, DirectionalOverride directionalOverride) const
 {
     if (text.isEmpty())
         return 0;
     ASSERT(codePath(TextRun(text)) != CodePath::Complex);
-    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { });
+    auto* cacheEntry = fonts()->glyphGeometryCache().add(text, { }, textDirection, directionalOverride);
     if (cacheEntry && cacheEntry->width)
         return *cacheEntry->width;
 
-    return widthForSimpleTextSlow(text, textDirection, cacheEntry);
+    return widthForSimpleTextSlow(text, textDirection, directionalOverride, cacheEntry);
 }
 
 inline bool FontCascade::isPlatformFont() const
