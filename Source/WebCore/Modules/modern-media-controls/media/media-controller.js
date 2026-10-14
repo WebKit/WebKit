@@ -253,6 +253,9 @@ class MediaController
 
     iOSInlineMediaControlsRecognizedPinchInGesture()
     {
+        if (this._supportingObjects.some(supportingObject => supportingObject instanceof SpatialVideoSupport && supportingObject.active))
+            return;
+
         this.media.webkitEnterFullscreen();
     }
 

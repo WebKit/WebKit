@@ -1,0 +1,46 @@
+Testing that the spatial video renderer maps a recognized pinch onto the camera's field of view, and suspends panning while one is in progress.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS support._active is true
+PASS support._cameraFieldOfView is 80
+PASS recognizer instanceof PinchGestureRecognizer is true
+PASS recognizer.scaleThreshold is SpatialVideoSupport.PinchScaleThreshold
+
+Driving the recognizer's states directly, so that the pointer events below only exercise panning:
+PASS recognizer.enabled is false
+
+Starting a drag, then beginning a pinch:
+PASS support._dragging is true
+PASS support._pinching is true
+PASS support._dragging is false
+PASS support._pinchStartFieldOfView is 80
+
+Scaling up halves the field of view:
+PASS support._cameraFieldOfView is 40
+
+Scaling down clamps at the maximum:
+PASS support._cameraFieldOfView is SpatialVideoSupport.MaximumCameraFieldOfView
+
+A pointer going down mid-pinch does not start a drag:
+PASS support._dragging is false
+
+Moving a pointer mid-pinch does not pan:
+PASS support._yaw is 0
+
+Ending the pinch asks for a fresh pan anchor:
+PASS support._pinching is false
+PASS support._needsPanAnchor is true
+
+The first move after a pinch re-anchors instead of panning:
+PASS support._yaw is 0
+PASS support._lastX is 300
+PASS support._needsPanAnchor is false
+
+The next move pans from there:
+PASS support._yaw is 50 * SpatialVideoSupport.DragSpeed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
