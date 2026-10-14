@@ -179,7 +179,6 @@ class DisplayEGL : public DisplayGL, public ThreadSafeDisplayEGL
 
     bool mHasEXTCreateContextRobustness   = false;
     bool mHasNVRobustnessVideoMemoryPurge = false;
-    bool mIsSamsungXclipse                = false;
 
     bool mSupportsSurfaceless      = false;
     bool mSupportsNoConfigContexts = false;

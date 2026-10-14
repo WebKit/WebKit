@@ -344,6 +344,7 @@ bool X11Window::initializeImpl(const std::string &name, int width, int height)
 {
     destroy();
 
+    XInitThreads();
     mDisplay = XOpenDisplay(nullptr);
     if (!mDisplay)
     {

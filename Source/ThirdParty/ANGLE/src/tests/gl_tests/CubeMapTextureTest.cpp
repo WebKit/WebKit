@@ -6,7 +6,6 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
@@ -107,10 +106,14 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
     // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsFuchsia());
 
-    const GLfloat faceColors[] = {
-        1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-    };
+    constexpr std::array<std::array<GLfloat, 4>, 6> faceColors = {{
+        {1.0f, 0.0f, 0.0f, 1.0f},
+        {0.0f, 1.0f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 0.0f, 1.0f},
+        {1.0f, 0.0f, 1.0f, 1.0f},
+        {0.0f, 1.0f, 1.0f, 1.0f},
+    }};
 
     GLuint tex = 0;
     glGenTextures(1, &tex);
@@ -135,15 +138,13 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
 
         glUseProgram(mProgram);
 
-        const GLfloat *faceColor = ANGLE_UNSAFE_TODO(faceColors + (face * 4));
-        ANGLE_UNSAFE_TODO(
-            glUniform4f(mColorLocation, faceColor[0], faceColor[1], faceColor[2], faceColor[3]));
+        const auto &color = faceColors[face];
+        glUniform4fv(mColorLocation, 1, color.data());
 
         drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
         EXPECT_GL_NO_ERROR();
 
-        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_EQ(0, 0, faceColor[0] * 255, faceColor[1] * 255,
-                                          faceColor[2] * 255, faceColor[3] * 255));
+        EXPECT_PIXEL_EQ(0, 0, color[0] * 255, color[1] * 255, color[2] * 255, color[3] * 255);
         EXPECT_GL_NO_ERROR();
     }
 
@@ -153,9 +154,8 @@ TEST_P(CubeMapTextureTest, RenderToFacesConsecutively)
                                GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, tex, 0);
         EXPECT_GL_NO_ERROR();
 
-        const GLfloat *faceColor = ANGLE_UNSAFE_TODO(faceColors + (face * 4));
-        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_EQ(0, 0, faceColor[0] * 255, faceColor[1] * 255,
-                                          faceColor[2] * 255, faceColor[3] * 255));
+        const auto &color = faceColors[face];
+        EXPECT_PIXEL_EQ(0, 0, color[0] * 255, color[1] * 255, color[2] * 255, color[3] * 255);
         EXPECT_GL_NO_ERROR();
     }
 

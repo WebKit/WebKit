@@ -670,11 +670,11 @@ void main()
     ANGLE_GL_COMPUTE_PROGRAM(program1, kCS1);
 
     constexpr unsigned int kBufferSize              = 2;
-    constexpr unsigned int kBufferData[kBufferSize] = {10, 20};
+    constexpr std::array<unsigned int, kBufferSize> kBufferData = {10, 20};
 
     GLBuffer blockIn;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, blockIn);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(kBufferData), kBufferData.data(), GL_STATIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, blockIn);
 
     GLBuffer blockOut;
@@ -740,7 +740,7 @@ void main()
 
     glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT);
 
-    GLuint outputValues[kWidth][kHeight];
+    std::array<std::array<GLuint, kHeight>, kWidth> outputValues;
 
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
@@ -748,7 +748,7 @@ void main()
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
     EXPECT_GL_NO_ERROR();
 
-    glReadPixels(0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT, outputValues);
+    glReadPixels(0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT, outputValues.data());
     EXPECT_GL_NO_ERROR();
 
     constexpr GLuint kExpectedValue = 100u;
@@ -832,7 +832,7 @@ void main()
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
-    GLuint outputValues[kWidth][kHeight];
+    std::array<std::array<GLuint, kHeight>, kWidth> outputValues;
 
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
@@ -840,7 +840,7 @@ void main()
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
     EXPECT_GL_NO_ERROR();
 
-    glReadPixels(0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT, outputValues);
+    glReadPixels(0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT, outputValues.data());
     EXPECT_GL_NO_ERROR();
 
     constexpr GLuint kExpectedValue = 100u;
@@ -1191,7 +1191,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, kWidth, kHeight);
-    GLuint texels[kHeight][kWidth] = {{0}};
+    std::array<std::array<GLuint, kWidth>, kHeight> texels = {};
     for (unsigned int y = 0; y < kHeight; ++y)
     {
         for (unsigned int x = 0; x < kWidth; ++x)
@@ -1201,7 +1201,7 @@ void main()
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT,
-                    texels);
+                    texels.data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // The array stride are rounded up to the base alignment of a vec4 for std140 layout.
@@ -1263,7 +1263,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, kWidth, kHeight);
-    GLuint texels[kHeight][kWidth] = {{0}};
+    std::array<std::array<GLuint, kWidth>, kHeight> texels = {};
     for (unsigned int y = 0; y < kHeight; ++y)
     {
         for (unsigned int x = 0; x < kWidth; ++x)
@@ -1273,7 +1273,7 @@ void main()
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT,
-                    texels);
+                    texels.data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // The array stride are rounded up to the base alignment of a vec4 for std140 layout.
@@ -3369,7 +3369,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, kWidth, kHeight);
-    GLuint texels[kHeight][kWidth] = {{0}};
+    std::array<std::array<GLuint, kWidth>, kHeight> texels = {};
     for (unsigned int y = 0; y < kHeight; ++y)
     {
         for (unsigned int x = 0; x < kWidth; ++x)
@@ -3379,7 +3379,7 @@ void main()
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_RED_INTEGER, GL_UNSIGNED_INT,
-                    texels);
+                    texels.data());
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // The array stride are rounded up to the base alignment of a vec4 for std140 layout.

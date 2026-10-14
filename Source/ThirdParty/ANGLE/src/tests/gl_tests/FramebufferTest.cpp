@@ -7764,6 +7764,131 @@ TEST_P(FramebufferTest_ES3, InvalidateClearDraw)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
 }
 
+// Test that detaching attachments and deleting them without an intervening draw or clear
+// safely updates the framebuffer state and allows subsequently reattaching new buffers and drawing.
+TEST_P(FramebufferTest_ES3, DetachAndDeleteAttachmentsWithoutDraw)
+{
+    constexpr GLsizei kSize = 16;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // 1. Create and attach color and depth/stencil renderbuffers.
+    GLRenderbuffer colorRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRb);
+
+    GLRenderbuffer depthRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthRb);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // 2. Draw while keeping the render pass encoder actively recording (no readback or flush).
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
+
+    // 3. Detach attachments while the encoder is actively open, then delete the renderbuffers
+    // without drawing.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    colorRb.reset();
+    depthRb.reset();
+
+    // 4. Re-attach new color and depth renderbuffers and verify subsequent drawing succeeds.
+    GLRenderbuffer newColorRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, newColorRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, newColorRb);
+
+    GLRenderbuffer newDepthRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, newDepthRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              newDepthRb);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test detaching depth attachment while stencil remains attached on a combined depth-stencil
+// buffer.
+TEST_P(FramebufferTest_ES3, DetachDepthWhileStencilRemainsAttached)
+{
+    constexpr GLsizei kSize = 16;
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLoc = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorLoc, -1);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer colorRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRb);
+
+    GLRenderbuffer depthStencilRb;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilRb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRb);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencilRb);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Clear color to black, depth to 1.0, and stencil to 1, and commit that state.
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearDepthf(1.0f);
+    glClearStencil(1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glUniform4fv(colorLoc, 1, GLColor::transparentBlack.toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // 1. First draw at z = 0.0 (depth 0.5) passes both depth (0.5 < 1.0) and stencil (== 1),
+    // updating depth to 0.5.
+    glUniform4fv(colorLoc, 1, GLColor(16, 32, 0, 64).toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    // 2. Detach only depth while the render pass encoder is active.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw at z = 0.5 (depth 0.75): would have failed depth (0.75 < 0.5) if depth were still
+    // attached, and passes stencil (== 1).
+    glUniform4fv(colorLoc, 1, GLColor(32, 0, 64, 64).toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // 3. Re-attach depth from the packed depth-stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRb);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Draw at z = -0.5 (depth 0.25): passes both depth (0.25 < 0.5) and stencil (== 1).
+    glUniform4fv(colorLoc, 1, GLColor(64, 64, 32, 127).toNormalizedVector().data());
+    drawQuad(program, essl1_shaders::PositionAttrib(), -0.5f);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(112, 96, 96, 255), 2);
+}
+
 // Produces VUID-VkImageMemoryBarrier-oldLayout-01197 VVL error with a "Render pass closed due to
 // framebuffer change" command buffer label. As seen in Black Desert Mobile.
 // The application draws 2 passes to produce the issue. First pass draws to a depth only frame

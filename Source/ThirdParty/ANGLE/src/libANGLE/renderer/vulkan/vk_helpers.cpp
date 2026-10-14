@@ -391,11 +391,9 @@ gl::Box MakeUpdateBoundingBox(const Offset &offset,
                               uint32_t layerCount)
 {
     gl::Box updateBoundingBox = {offset, extents};
-    if (layerIndex.get() > 0 || layerCount > 1)
-    {
-        updateBoundingBox.z     = layerIndex.get();
-        updateBoundingBox.depth = layerCount;
-    }
+    // 3D-image updates use the layer index/count for z/depth.
+    updateBoundingBox.z     = layerIndex.get();
+    updateBoundingBox.depth = layerCount;
     return updateBoundingBox;
 }
 
@@ -580,8 +578,13 @@ constexpr VkImageUsageFlags kQCOMTileMemoryAllowedImageUsageBits =
     VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT |
     VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
 
-// Returns true if it is compatible with VK_QCOM_tile_memory_heap
-bool IsTileMemoryCompatible(const vk::Renderer *renderer, const VkImageCreateInfo &createInfo)
+// Returns true if it is compatible with VK_QCOM_tile_memory_heap.
+// If compatible and |transferSrcSupported| is non-null, also probes whether
+// TRANSFER_SRC_BIT can be combined with tile memory for this format, and sets
+// *transferSrcSupported accordingly.
+bool IsTileMemoryCompatible(const vk::Renderer *renderer,
+                            const VkImageCreateInfo &createInfo,
+                            bool *transferSrcSupported)
 {
     // First check general conditions specified in
     // https://github.com/KhronosGroup/Vulkan-Docs/blob/main/proposals/VK_QCOM_tile_memory_heap.adoc
@@ -600,6 +603,17 @@ bool IsTileMemoryCompatible(const vk::Renderer *renderer, const VkImageCreateInf
             renderer, createInfo.format, createInfo.imageType, createInfo.tiling, usage,
             createInfo.flags, nullptr, nullptr,
             vk::ImageHelper::FormatSupportCheck::OnlyQuerySuccess);
+
+        if (compatible && transferSrcSupported != nullptr)
+        {
+            // Probe whether TRANSFER_SRC_BIT is also supported alongside tile memory.
+            // If so, vkCmdCopyImage can be used during fallback instead of a shader-based blit.
+            VkImageUsageFlags transferSrcUsage = usage | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+            *transferSrcSupported              = vk::ImageHelper::FormatSupportsUsage(
+                renderer, createInfo.format, createInfo.imageType, createInfo.tiling,
+                transferSrcUsage, createInfo.flags, nullptr, nullptr,
+                vk::ImageHelper::FormatSupportCheck::OnlyQuerySuccess);
+        }
     }
 
     return compatible;
@@ -5665,31 +5679,32 @@ ImageHelper::~ImageHelper()
 
 void ImageHelper::resetCachedProperties()
 {
-    mImageType                   = VK_IMAGE_TYPE_2D;
-    mTilingMode                  = VK_IMAGE_TILING_OPTIMAL;
-    mCreateFlags                 = kVkImageCreateFlagsNone;
-    mRequestedUsage              = 0;
-    mExtents                     = {};
-    mRotatedAspectRatio          = false;
-    mIntendedFormatID            = angle::FormatID::NONE;
-    mActualFormatID              = angle::FormatID::NONE;
-    mSamples                     = 1;
-    mImageSerial                 = kInvalidImageSerial;
-    mCurrentAccess               = ImageAccess::Undefined;
-    mCurrentDeviceQueueIndex     = kInvalidDeviceQueueIndex;
-    mIsReleasedToExternal        = false;
-    mIsForeignImage              = false;
-    mLastNonShaderReadOnlyAccess = ImageAccess::Undefined;
-    mCurrentShaderReadStageMask  = 0;
-    mFirstAllocatedLevel         = gl::OwnerLevel(0);
-    mLayerCount                  = 0;
-    mLevelCount                  = 0;
-    mTotalStagedBufferUpdateSize = 0;
-    mAllocationSize              = 0;
-    mMemoryAllocationType        = MemoryAllocationType::InvalidEnum;
-    mMemoryTypeIndex             = kInvalidMemoryTypeIndex;
-    mTileMemoryCompatible        = false;
-    mUseTileMemory               = false;
+    mImageType                     = VK_IMAGE_TYPE_2D;
+    mTilingMode                    = VK_IMAGE_TILING_OPTIMAL;
+    mCreateFlags                   = kVkImageCreateFlagsNone;
+    mRequestedUsage                = 0;
+    mExtents                       = {};
+    mRotatedAspectRatio            = false;
+    mIntendedFormatID              = angle::FormatID::NONE;
+    mActualFormatID                = angle::FormatID::NONE;
+    mSamples                       = 1;
+    mImageSerial                   = kInvalidImageSerial;
+    mCurrentAccess                 = ImageAccess::Undefined;
+    mCurrentDeviceQueueIndex       = kInvalidDeviceQueueIndex;
+    mIsReleasedToExternal          = false;
+    mIsForeignImage                = false;
+    mLastNonShaderReadOnlyAccess   = ImageAccess::Undefined;
+    mCurrentShaderReadStageMask    = 0;
+    mFirstAllocatedLevel           = gl::OwnerLevel(0);
+    mLayerCount                    = 0;
+    mLevelCount                    = 0;
+    mTotalStagedBufferUpdateSize   = 0;
+    mAllocationSize                = 0;
+    mMemoryAllocationType          = MemoryAllocationType::InvalidEnum;
+    mMemoryTypeIndex               = kInvalidMemoryTypeIndex;
+    mTileMemoryCompatible          = false;
+    mUseTileMemory                 = false;
+    mTileMemorySupportsTransferSrc = false;
     mViewFormats.clear();
     mYcbcrConversionDesc.reset();
     mCurrentSingleClearValue.reset();
@@ -6066,14 +6081,19 @@ angle::Result ImageHelper::initExternal(ErrorContext *context,
         ASSERT(imageCreateInfoPNext == nullptr);
 
         // Remove transfer bits when determining tile memory compatible or not, since tile memory
-        // does not support transfers.
+        // does not support transfers by default.
         imageInfo.usage &= ~kImageUsageTransferBits;
-        mTileMemoryCompatible = IsTileMemoryCompatible(renderer, imageInfo);
+        mTileMemoryCompatible =
+            IsTileMemoryCompatible(renderer, imageInfo, &mTileMemorySupportsTransferSrc);
         if (mTileMemoryCompatible)
         {
             if (renderer->getFeatures().supportsTileMemoryHeap.enabled)
             {
                 imageInfo.usage |= VK_IMAGE_USAGE_TILE_MEMORY_BIT_QCOM;
+                if (mTileMemorySupportsTransferSrc)
+                {
+                    imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+                }
             }
             mUseTileMemory = true;
         }
@@ -6709,7 +6729,37 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
             aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
         ASSERT(aspectFlags != 0);
-        ANGLE_TRY(utilsVk.copyImageFromTileMemory(contextVk, aspectFlags, this, prevImage.get()));
+
+        if (prevImage->mTileMemorySupportsTransferSrc)
+        {
+            // Use vkCmdCopyImage for a bit-exact copy instead of sampling tile memory through a
+            // shader.
+            CommandResources resources;
+            resources.onImageTransferRead(aspectFlags, prevImage.get());
+            resources.onImageTransferWrite(gl::OwnerLevel(0), 1, gl::OwnerLayer(0), 1, aspectFlags,
+                                           this);
+
+            OutsideRenderPassCommandBuffer *commandBuffer;
+            ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(resources, &commandBuffer));
+
+            VkImageCopy region                   = {};
+            region.srcSubresource.aspectMask     = aspectFlags;
+            region.srcSubresource.mipLevel       = 0;
+            region.srcSubresource.baseArrayLayer = 0;
+            region.srcSubresource.layerCount     = 1;
+            region.dstSubresource                = region.srcSubresource;
+            region.extent.width                  = mExtents.width;
+            region.extent.height                 = mExtents.height;
+            region.extent.depth                  = 1;
+
+            commandBuffer->copyImage(prevImage->getImage(), prevImage->getCurrentLayout(renderer),
+                                     getImage(), getCurrentLayout(renderer), 1, &region);
+        }
+        else
+        {
+            ANGLE_TRY(
+                utilsVk.copyImageFromTileMemory(contextVk, aspectFlags, this, prevImage.get()));
+        }
 
         // If RenderPassLoadStoreOpNone is not supported, load/store will be used and it will result
         // in both aspect data being valid. It is less optimal, but most driver supports it already.
@@ -8852,7 +8902,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
             gl_vk::GetOffset(planeOffset, &copy.imageOffset);
             gl_vk::GetExtent(yuvInfo.planeExtent[plane], &copy.imageExtent);
             copy.imageSubresource.baseArrayLayer = 0;
-            copy.imageSubresource.aspectMask     = ANGLE_UNSAFE_TODO(kPlaneAspectFlags[plane]);
+            copy.imageSubresource.aspectMask     = kPlaneAspectFlags[plane];
             appendSubresourceUpdate(
                 gl::OwnerLevel(0),
                 SubresourceUpdate(stagingBuffer.get(), currentBuffer, copy, storageFormatID));
@@ -10327,11 +10377,12 @@ void ImageHelper::copyStateAndMoveStorageFrom(ImageHelper *other)
     mVkImageContentDefined        = other->mVkImageContentDefined;
     mVkImageStencilContentDefined = other->mVkImageStencilContentDefined;
 
-    mAllocationSize       = other->mAllocationSize;
-    mMemoryAllocationType = other->mMemoryAllocationType;
-    mMemoryTypeIndex      = other->mMemoryTypeIndex;
-    mTileMemoryCompatible = other->mTileMemoryCompatible;
-    mUseTileMemory        = other->mUseTileMemory;
+    mAllocationSize                = other->mAllocationSize;
+    mMemoryAllocationType          = other->mMemoryAllocationType;
+    mMemoryTypeIndex               = other->mMemoryTypeIndex;
+    mTileMemoryCompatible          = other->mTileMemoryCompatible;
+    mUseTileMemory                 = other->mUseTileMemory;
+    mTileMemorySupportsTransferSrc = other->mTileMemorySupportsTransferSrc;
 
     mSubresourcesWrittenSinceBarrier = other->mSubresourcesWrittenSinceBarrier;
 
@@ -10345,8 +10396,9 @@ void ImageHelper::copyStateAndMoveStorageFrom(ImageHelper *other)
     other->mImageSerial                 = kInvalidImageSerial;
     other->mMemoryAllocationType        = MemoryAllocationType::InvalidEnum;
     other->setEntireContentUndefined();
-    other->mTileMemoryCompatible = false;
-    other->mUseTileMemory        = false;
+    other->mTileMemoryCompatible          = false;
+    other->mUseTileMemory                 = false;
+    other->mTileMemorySupportsTransferSrc = false;
 }
 
 void ImageHelper::stageSelfAsSubresourceUpdates(

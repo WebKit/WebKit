@@ -101,6 +101,9 @@
 //     passed a Pointer at the call site.  For that matter, do the same for user function calls too.
 //   - Instruction result / operand types are correct and consistent. For example:
 //     BinaryOpCode::Equal should return a bool type.
+//   - There is no foldable control flow (`If constant`, `Switch constant ...`, `Loop`+`LoopIf
+//     false`)
+//   - A NameSource::Internal interface block or struct variable is never given an empty ("") name.
 
 use crate::ir::*;
 use crate::traverser::BlockKind;
@@ -2459,21 +2462,17 @@ impl<'a> Validator<'a> {
         {
             validate_name_prefix(variable.name, USER_VARIABLE_PREFIX, TEMP_VARIABLE_PREFIX);
         }
-        // Check all struct and field names
+        // Check all struct names.  Struct fields are unrestricted as they do cannot collide with
+        // user defined variables, given ANGLE internal structs and interface blocks are always
+        // given a variable name themselves (so the field is accessed as something.field, not just
+        // field alone).
         for ir_type in self.ir.meta.all_types().iter().filter(|t| !t.is_dead_code_eliminated()) {
-            if let &Type::Struct(struct_name, ref fields, specialization) = ir_type {
+            if let &Type::Struct(struct_name, _, specialization) = ir_type {
                 let user_prefix = match specialization {
                     StructSpecialization::Struct => USER_VARIABLE_PREFIX,
                     StructSpecialization::InterfaceBlock => USER_BLOCK_PREFIX,
                 };
                 validate_name_prefix(struct_name, user_prefix, TEMP_STRUCT_PREFIX);
-                for field in fields {
-                    validate_name_prefix(
-                        field.name,
-                        USER_VARIABLE_PREFIX,
-                        TEMP_STRUCT_FIELD_PREFIX,
-                    );
-                }
             }
         }
         // Check all function names

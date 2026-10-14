@@ -1326,7 +1326,10 @@ impl<'options> Generator<'options> {
     // For global structs, an id of 0 is always used to make sure names match across shader
     // interfaces.
     fn struct_id_to_append(name: &Name, specialization: StructSpecialization, id: u32) -> u32 {
-        if name.name.is_empty() || specialization == StructSpecialization::InterfaceBlock {
+        if name.source == NameSource::Internal
+            || name.name.is_empty()
+            || specialization == StructSpecialization::InterfaceBlock
+        {
             SYMBOL_NAME_NO_ID
         } else if name.source == NameSource::Temporary {
             id

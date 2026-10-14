@@ -96,10 +96,25 @@ class ImageMemorySuballocator : angle::NonCopyable
     bool needsDedicatedMemory(VkDeviceSize size) const;
 
     // Initializes a custom memory pool with a specific type index (if needed) and returns it.
-    VkResult getMemoryPool(Renderer *renderer, uint32_t poolMemoryTypeIndex, Pool **poolOut);
+    VkResult getInitMemoryPool(Renderer *renderer, uint32_t poolMemoryTypeIndex, Pool **poolOut);
+    VkResult getDefaultMemoryPool(Renderer *renderer, uint32_t poolMemoryTypeIndex, Pool **poolOut);
 
   private:
-    std::array<Pool, VK_MAX_MEMORY_TYPES> mMemoryPools;
+    VkResult getMemoryPoolImpl(Renderer *renderer,
+                               std::array<Pool, VK_MAX_MEMORY_TYPES> &poolGroup,
+                               size_t maxBlockCount,
+                               VkDeviceSize blockSize,
+                               uint32_t poolMemoryTypeIndex,
+                               Pool **poolOut);
+
+    // Gets the block size for a specific memory pool.
+    VkDeviceSize getInitialPoolBlockSize(Renderer *renderer, uint32_t poolMemoryTypeIndex);
+    VkDeviceSize getDefaultPoolBlockSize(Renderer *renderer);
+
+    // Initial memory pools are smaller and have a max block count. If allocation fails on them, the
+    // allocator moves to the default memory pools.
+    std::array<Pool, VK_MAX_MEMORY_TYPES> mInitMemoryPools;
+    std::array<Pool, VK_MAX_MEMORY_TYPES> mDefaultMemoryPools;
 };
 
 // Supports one semaphore from current surface, and one semaphore passed to
@@ -554,6 +569,7 @@ class Renderer : angle::NonCopyable
     }
 
     VkDeviceSize getPreferredInitialBufferBlockSize(uint32_t memoryTypeIndex) const;
+    VkDeviceSize getPreferredInitialImageBlockSize(uint32_t memoryTypeIndex) const;
     VkDeviceSize getPreferredLargeBufferBlockSize(uint32_t memoryTypeIndex) const;
 
     size_t getDefaultBufferAlignment() const { return mDefaultBufferAlignment; }
@@ -993,6 +1009,7 @@ class Renderer : angle::NonCopyable
     vk::MemoryProperties mMemoryProperties;
     uint32_t mTileMemoyTypeIndex;
     VkDeviceSize mPreferredInitialBufferBlockSize;
+    VkDeviceSize mPreferredInitialImageBlockSize;
     VkDeviceSize mPreferredLargeHeapBlockSize;
 
     // The default alignment for BufferVk object

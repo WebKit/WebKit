@@ -156,7 +156,6 @@ DE_DECLARE_COMMAND_LINE_OPT(VideoDecodeOutputDump, VideoDecodeOutput);
 DE_DECLARE_COMMAND_LINE_OPT(VideoEncodeOutputDump, VideoEncodeOutput);
 DE_DECLARE_COMMAND_LINE_OPT(VendorSpecific, bool);
 DE_DECLARE_COMMAND_LINE_OPT(DeviceFaultSubprocessCount, std::string);
-DE_DECLARE_COMMAND_LINE_OPT(SubprocessCaseMarker, int);
 
 static void parseIntList(const char *src, std::vector<int> *dst)
 {
@@ -1455,12 +1454,6 @@ const char *CommandLine::getDeviceFaultSubprocessCount() const
     return m_cmdLine.hasOption<opt::DeviceFaultSubprocessCount>() ?
                m_cmdLine.getOption<opt::DeviceFaultSubprocessCount>().c_str() :
                s.c_str();
-}
-
-const char *CommandLine::getCasePath() const
-{
-    static std::string emptyString;
-    return m_cmdLine.hasOption<opt::CasePath>() ? m_cmdLine.getOption<opt::CasePath>().c_str() : emptyString.c_str();
 }
 
 const char *CommandLine::getGLContextType(void) const

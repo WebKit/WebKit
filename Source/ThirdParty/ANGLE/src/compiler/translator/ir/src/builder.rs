@@ -1005,16 +1005,18 @@ impl Builder {
                 false,
                 Decorations::new_none(),
             );
-            let wrapped_main = self.ir.add_function(wrapped_main);
+            let wrapped_main = self.ir.meta.add_function(wrapped_main);
 
             // Move the body of `main` to `wrapped_main`.
-            self.ir.function_entries.swap(wrapped_main.id as usize, main_id.id as usize);
+            let main_body =
+                std::mem::take(&mut self.ir.function_entries[main_id.id as usize]).unwrap();
+            self.ir.set_function_entry(wrapped_main, main_body);
 
             // Set a new body for `main` that calls `wrapped_main`.
             let mut body = Block::new();
             body.add_void_instruction(OpCode::Call(wrapped_main, vec![]));
             body.terminate(OpCode::Return(None));
-            self.ir.function_entries[main_id.id as usize] = Some(body);
+            self.ir.set_function_entry(main_id, body);
         }
     }
 
@@ -1285,7 +1287,7 @@ impl Builder {
         );
         let is_main = name == "main";
 
-        let id = self.ir.add_function(function);
+        let id = self.ir.meta.add_function(function);
 
         // If this is the main() function, remember its id.
         if is_main {
@@ -4486,7 +4488,7 @@ impl BuilderWrapper {
             .map(|field| {
                 Field::new(
                     if is_internal {
-                        Name::new_exact(field.name)
+                        Name::new_exact_struct_field(field.name)
                     } else if is_part_of_interface {
                         Name::new_interface(field.name)
                     } else {

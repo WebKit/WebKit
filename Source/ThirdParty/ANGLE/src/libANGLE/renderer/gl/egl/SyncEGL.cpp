@@ -9,7 +9,9 @@
 #include "libANGLE/renderer/gl/egl/SyncEGL.h"
 
 #include "libANGLE/AttributeMap.h"
+#include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/egl/FunctionsEGL.h"
 
 namespace rx
@@ -60,6 +62,13 @@ egl::Error SyncEGL::initialize(const egl::ThreadSafeDisplay *display,
         nativeAttribs.push_back(fenceFd);
     }
     nativeAttribs.push_back(EGL_NONE);
+
+    // Creating a fence adds a command to flush; importing a native fence does not.
+    if (attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID) ==
+        EGL_NO_NATIVE_FENCE_FD_ANDROID)
+    {
+        GetImplAs<ContextGL>(context)->markWorkSubmitted();
+    }
 
     egl::Display::GetCurrentThreadUnlockedTailCall()->add(
         [egl = mEGL, syncRef = mSync, type, attribs = nativeAttribs](void *resultOut) {

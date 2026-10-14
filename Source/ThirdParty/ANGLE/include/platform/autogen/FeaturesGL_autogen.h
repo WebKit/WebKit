@@ -800,6 +800,18 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo doubleClearForRobustInit = {
+        "doubleClearForRobustInit",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo deferGlDeleteBuffers = {
+        "deferGlDeleteBuffers",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

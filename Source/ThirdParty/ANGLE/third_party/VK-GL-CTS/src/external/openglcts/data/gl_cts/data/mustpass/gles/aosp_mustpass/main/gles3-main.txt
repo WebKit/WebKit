@@ -3743,6 +3743,7 @@ dEQP-GLES3.functional.fbo.invalidate.format.rgba8i
 dEQP-GLES3.functional.fbo.invalidate.format.rgba8ui
 dEQP-GLES3.functional.fbo.invalidate.format.srgb8_alpha8
 dEQP-GLES3.functional.fbo.invalidate.format.stencil_index8
+dEQP-GLES3.functional.fbo.invalidate.incomplete.depth_stencil
 dEQP-GLES3.functional.fbo.invalidate.sub.render_all
 dEQP-GLES3.functional.fbo.invalidate.sub.render_color
 dEQP-GLES3.functional.fbo.invalidate.sub.render_depth
@@ -8901,6 +8902,10 @@ dEQP-GLES3.functional.occlusion_query.depth_write_depth_clear_stencil_write_sten
 dEQP-GLES3.functional.occlusion_query.depth_write_stencil_clear
 dEQP-GLES3.functional.occlusion_query.depth_write_stencil_write
 dEQP-GLES3.functional.occlusion_query.depth_write_stencil_write_stencil_clear
+dEQP-GLES3.functional.occlusion_query.fbo_delete_conservative
+dEQP-GLES3.functional.occlusion_query.fbo_delete_conservative_nodraw
+dEQP-GLES3.functional.occlusion_query.fbo_delete_strict
+dEQP-GLES3.functional.occlusion_query.fbo_delete_strict_nodraw
 dEQP-GLES3.functional.occlusion_query.scissor
 dEQP-GLES3.functional.occlusion_query.scissor_depth_clear
 dEQP-GLES3.functional.occlusion_query.scissor_depth_clear_stencil_clear
@@ -35528,6 +35533,9 @@ dEQP-GLES3.functional.texture.specification.texstorage2d.format.srgb8_2d
 dEQP-GLES3.functional.texture.specification.texstorage2d.format.srgb8_alpha8_2d
 dEQP-GLES3.functional.texture.specification.texstorage2d.format.srgb8_alpha8_cube
 dEQP-GLES3.functional.texture.specification.texstorage2d.format.srgb8_cube
+dEQP-GLES3.functional.texture.specification.texstorage2d.generate_mipmap.rgba8_3x2048_base_10_sub_level_1
+dEQP-GLES3.functional.texture.specification.texstorage2d.generate_mipmap.rgba8_3x256_base_7_sub_level_3
+dEQP-GLES3.functional.texture.specification.texstorage2d.generate_mipmap.rgba8_3x64_base_5_sub_level_2
 dEQP-GLES3.functional.texture.specification.texstorage2d.size.2d_1x1_1_levels
 dEQP-GLES3.functional.texture.specification.texstorage2d.size.2d_2x2_2_levels
 dEQP-GLES3.functional.texture.specification.texstorage2d.size.2d_32x64_4_levels

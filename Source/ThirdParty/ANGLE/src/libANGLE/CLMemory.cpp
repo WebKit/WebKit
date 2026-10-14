@@ -151,6 +151,73 @@ bool Memory::isUseHostPtr() const
     return mFlags.intersects(CL_MEM_USE_HOST_PTR);
 }
 
+// Sub-buffers do not track regions themselves; all queries and updates are
+// forwarded to the parent buffer with the region translated into the parent's
+// coordinate space (shifted by mOffset along x).
+bool Memory::isRegionMappedForWrite(const cl::MemoryRegion &region) const
+{
+    if (hasParent())
+    {
+        const cl::Offset childOffset = region.getOffset();
+        cl::MemoryRegion parentRegion(
+            cl::Offset(childOffset.x + mOffset, childOffset.y, childOffset.z), region.getExtents());
+        return mParent->isRegionMappedForWrite(parentRegion);
+    }
+    return mMappedRegionTracker->hasWriteConflict(region);
+}
+
+bool Memory::isPtrMapped(const void *mappedPtr) const
+{
+    if (hasParent())
+    {
+        return mParent->isPtrMapped(mappedPtr);
+    }
+    return mMappedRegionTracker->hasKey(mappedPtr);
+}
+
+angle::Result Memory::addMappedRegion(const MapFlags flags,
+                                      const void *mappedPtr,
+                                      cl::MemoryRegion region)
+{
+    if (hasParent())
+    {
+        const cl::Offset childOffset = region.getOffset();
+        cl::MemoryRegion parentRegion(
+            cl::Offset(childOffset.x + mOffset, childOffset.y, childOffset.z), region.getExtents());
+        return mParent->addMappedRegion(flags, mappedPtr, parentRegion);
+    }
+
+    const bool isWrite = flags.intersects(CL_MAP_WRITE | CL_MAP_WRITE_INVALIDATE_REGION);
+    auto tracker       = mMappedRegionTracker.synchronize();
+
+    if (isWrite)
+    {
+        tracker->addWriter(mappedPtr, region);
+    }
+    else
+    {
+        tracker->addReader(mappedPtr, region);
+    }
+    return angle::Result::Continue;
+}
+
+// For sub-buffers, the parent stores regions in parent coords, so translate
+// back by mOffset on x before returning to the caller.
+cl::MappedRegionInfo<const void *> Memory::popMappedRegion(const void *mappedPtr)
+{
+    if (hasParent())
+    {
+        const cl::MappedRegionInfo<const void *> parentInfo = mParent->popMappedRegion(mappedPtr);
+        const cl::Offset parentOffset                       = parentInfo.region.getOffset();
+        return cl::MappedRegionInfo<const void *>{
+            parentInfo.key,
+            cl::MemoryRegion(cl::Offset(parentOffset.x - mOffset, parentOffset.y, parentOffset.z),
+                             parentInfo.region.getExtents()),
+            parentInfo.isWrite};
+    }
+    return mMappedRegionTracker->popRegion(mappedPtr);
+}
+
 Memory::~Memory()
 {
     mDestructorCallbacks.invoke(this);

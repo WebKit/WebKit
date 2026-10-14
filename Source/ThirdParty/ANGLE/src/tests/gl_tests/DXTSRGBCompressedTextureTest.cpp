@@ -9,7 +9,6 @@
 
 #include <array>
 
-#include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 
@@ -76,8 +75,9 @@ class DXTSRGBCompressedTextureTest : public ANGLETest<>
         {
             for (GLsizei x = 0; x < test.width; ++x)
             {
-                GLColor exp = ANGLE_UNSAFE_TODO(
-                    reinterpret_cast<const GLColor *>(test.expected)[y * test.width + x]);
+                const size_t offset = (y * test.width + x) * 4;
+                GLColor exp(test.expected[offset], test.expected[offset + 1],
+                            test.expected[offset + 2], test.expected[offset + 3]);
                 size_t x_actual = (x * kWindowSize + kWindowSize / 2) / test.width;
                 size_t y_actual =
                     ((test.height - y - 1) * kWindowSize + kWindowSize / 2) / test.height;
@@ -105,7 +105,7 @@ class DXTSRGBCompressedTextureTest : public ANGLETest<>
         ASSERT_GL_NO_ERROR();
 
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, format, test.width, test.height, 0, test.dataSize,
-                               test.data);
+                               test.data.data());
         ASSERT_GL_NO_ERROR() << "glCompressedTexImage2D(format=" << format << ")";
         runTestChecks(test);
 
@@ -113,7 +113,7 @@ class DXTSRGBCompressedTextureTest : public ANGLETest<>
                                nullptr);
         ASSERT_GL_NO_ERROR() << "glCompressedTexImage2D(format=" << format << ", data=null)";
         glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, test.width, test.height, format,
-                                  test.dataSize, test.data);
+                                  test.dataSize, test.data.data());
         ASSERT_GL_NO_ERROR() << "glCompressedTexSubImage2D(format=" << format << ")";
         runTestChecks(test);
 

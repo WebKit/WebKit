@@ -1485,7 +1485,7 @@ bool ValidateSurfaceBadAccess(const ValidationContext *val,
                               const gl::Context *previousContext,
                               const Surface *surface)
 {
-    if (surface->isReferenced() &&
+    if (surface->isCurrentOnAnyContext() &&
         (previousContext == nullptr || (surface != previousContext->getCurrentDrawSurface() &&
                                         surface != previousContext->getCurrentReadSurface())))
     {

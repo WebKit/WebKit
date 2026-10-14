@@ -250,8 +250,19 @@ bool RewriteModifiedStructFieldSelectionExpression(TCompiler *compiler,
     else
     {
         const TVariable *baseUniformVar = &baseUniform->variable();
-        ASSERT(structureUniformMap.find(baseUniformVar) != structureUniformMap.end());
-        *rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+        if (structureUniformMap.find(baseUniformVar) != structureUniformMap.end())
+        {
+            *rewritten = new TIntermSymbol(structureUniformMap.at(baseUniformVar));
+        }
+        else
+        {
+            // If the struct contains only samplers, it's entirely eliminated.  Normally a reference
+            // to the struct itself gets removed as dead-code, but it may survive in some cases
+            // (such as |(side_effect, struct_uniform)|.  The result of such a comma expression
+            // cannot be used, so it's safe to just replace the |struct_uniform| with anything.
+            *rewritten = CreateZeroNode(TType(EbtInt, EbpMedium));
+            return true;
+        }
     }
 
     // Iterate again and build the expression from bottom up.

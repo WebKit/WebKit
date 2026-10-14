@@ -9,9 +9,9 @@ void SetupReplayContext8(void)
     UpdateCurrentContext(8);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, gTransformFeedbackMap[0]);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     glViewport(0, 0, 128, 128);
     glScissor(0, 0, 128, 128);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 void ReplayFrame1(void)
@@ -44,6 +44,7 @@ void ReplayFrame4(void)
 
 void ResetReplayContextShared(void)
 {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
 void ResetReplayContext8(void)

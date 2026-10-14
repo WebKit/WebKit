@@ -805,7 +805,7 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(
                 auto iter = fieldsStaticallyUsedWithTexelFetch->subfields.find(fieldIndex);
                 if (iter != fieldsStaticallyUsedWithTexelFetch->subfields.end())
                 {
-                    subfieldsStaticallyUsedWithTexelFetch = &iter->second;
+                    subfieldsStaticallyUsedWithTexelFetch = iter->second;
                 }
             }
 

@@ -4465,6 +4465,35 @@ TEST_P(ClearTestES3, RepeatedColorClearWithDrawInBetween)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that reclearing color to the same value works after draw, clear, and invalidate.
+TEST_P(ClearTestES3, DrawClearInvalidateClear)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    const GLenum discard = GL_COLOR_ATTACHMENT0;
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &discard);
+
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that reclearing depth to the same value works if depth was written to in between with a draw
 // call.
 TEST_P(ClearTestES3, RepeatedDepthClearWithDrawInBetween)

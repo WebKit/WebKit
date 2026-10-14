@@ -66,6 +66,7 @@ class VulkanHelper
                                 VkImageUsageFlags usageFlags,
                                 VkExternalMemoryHandleTypeFlagBits handleType) const;
     VkResult createImage2DExternal(VkFormat format,
+                                   VkImageTiling tiling,
                                    VkImageCreateFlags createFlags,
                                    VkImageUsageFlags usageFlags,
                                    const void *imageCreateInfoPNext,
@@ -82,6 +83,7 @@ class VulkanHelper
                                 VkImageCreateFlags createFlags,
                                 VkImageUsageFlags usageFlags) const;
     VkResult createImage2DOpaqueFd(VkFormat format,
+                                   VkImageTiling tiling,
                                    VkImageCreateFlags createFlags,
                                    VkImageUsageFlags usageFlags,
                                    const void *imageCreateInfoPNext,
@@ -98,6 +100,7 @@ class VulkanHelper
                                  VkImageCreateFlags createFlags,
                                  VkImageUsageFlags usageFlags) const;
     VkResult createImage2DZirconVmo(VkFormat format,
+                                    VkImageTiling tiling,
                                     VkImageCreateFlags createFlags,
                                     VkImageUsageFlags usageFlags,
                                     const void *imageCreateInfoPNext,

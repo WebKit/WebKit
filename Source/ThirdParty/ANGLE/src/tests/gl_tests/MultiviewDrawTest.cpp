@@ -1312,8 +1312,17 @@ void main()
 
     resolveMultisampledFBO();
 
-    const GLubyte expectedGreenChannel[kNumViews][kViewHeight][kViewWidth] = {{{0, 255}, {0, 255}},
-                                                                              {{255, 0}, {255, 0}}};
+    constexpr std::array<std::array<std::array<GLubyte, kViewWidth>, kViewHeight>, kNumViews>
+        expectedGreenChannel = {{
+            {{
+                {0, 255},
+                {0, 255},
+            }},
+            {{
+                {255, 0},
+                {255, 0},
+            }},
+        }};
 
     for (int view = 0; view < kNumViews; ++view)
     {
@@ -1321,9 +1330,9 @@ void main()
         {
             for (int x = 0; x < kViewWidth; ++x)
             {
-                ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(0, expectedGreenChannel[view][y][x], 0,
-                                                    expectedGreenChannel[view][y][x]),
-                                            GetViewColor(x, y, view)));
+                EXPECT_EQ(GLColor(0, expectedGreenChannel[view][y][x], 0,
+                                  expectedGreenChannel[view][y][x]),
+                          GetViewColor(x, y, view));
             }
         }
     }
@@ -1531,18 +1540,30 @@ void main()
 
     resolveMultisampledFBO();
 
-    const GLubyte expectedGreenChannel[kNumViews][kViewHeight][kViewWidth] = {
-        {{255, 0, 0, 0}, {255, 0, 0, 0}, {255, 0, 0, 0}, {0, 255, 0, 0}},
-        {{0, 0, 255, 0}, {0, 0, 255, 0}, {0, 0, 255, 0}, {0, 0, 0, 255}}};
+    constexpr std::array<std::array<std::array<GLubyte, kViewWidth>, kViewHeight>, kNumViews>
+        expectedGreenChannel = {{
+            {{
+                {255, 0, 0, 0},
+                {255, 0, 0, 0},
+                {255, 0, 0, 0},
+                {0, 255, 0, 0},
+            }},
+            {{
+                {0, 0, 255, 0},
+                {0, 0, 255, 0},
+                {0, 0, 255, 0},
+                {0, 0, 0, 255},
+            }},
+        }};
     for (int view = 0; view < 2; ++view)
     {
         for (int row = 0; row < 4; ++row)
         {
             for (int col = 0; col < 4; ++col)
             {
-                ANGLE_UNSAFE_TODO(EXPECT_EQ(GLColor(0, expectedGreenChannel[view][row][col], 0,
-                                                    expectedGreenChannel[view][row][col]),
-                                            GetViewColor(col, row, view)));
+                EXPECT_EQ(GLColor(0, expectedGreenChannel[view][row][col], 0,
+                                  expectedGreenChannel[view][row][col]),
+                          GetViewColor(col, row, view));
             }
         }
     }

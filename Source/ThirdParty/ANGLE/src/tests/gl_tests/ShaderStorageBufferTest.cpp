@@ -1343,11 +1343,12 @@ void main()
     constexpr unsigned int kBytesPerComponent = sizeof(unsigned int);
     constexpr unsigned int kArrayStride       = 8;
     constexpr unsigned int kComponentCount    = kArrayStride / kBytesPerComponent;
-    constexpr unsigned int kExpectedValues[kElementCount][kComponentCount] = {{1u, 2u}, {3u, 4u}};
+    constexpr std::array<std::array<unsigned int, kComponentCount>, kElementCount> kExpectedValues =
+        {{{1u, 2u}, {3u, 4u}}};
     // Create shader storage buffer
     GLBuffer shaderStorageBuffer[2];
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, kElementCount * kArrayStride, kExpectedValues,
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kElementCount * kArrayStride, kExpectedValues.data(),
                  GL_STATIC_DRAW);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[1]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, kElementCount * kArrayStride, nullptr, GL_STATIC_DRAW);

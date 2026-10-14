@@ -647,88 +647,14 @@ bool ValidateES3TexImageParametersBase(const Context *context,
     }
 
     GLenum sizeCheckFormat = isSubImage ? format : internalformat;
-    if (!ValidImageDataSize(context, entryPoint, texType, width, height, depth, sizeCheckFormat,
-                            type, pixels, outImageSize))
+    if (!ValidImageDataSize(context, entryPoint, texType, width, height, depth, isSubImage,
+                            sizeCheckFormat, type, pixels, outImageSize))
     {
         return false;
     }
 
-    // Check for pixel unpack buffer related API errors
-    Buffer *pixelUnpackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelUnpack);
-    if (pixelUnpackBuffer != nullptr)
-    {
-        if (context->isHardenedContext() && pixelUnpackBuffer->hasTFBBindingConflict())
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
-                                   kPixelUnpackBufferBoundForTransformFeedback);
-            return false;
-        }
-
-        // ...data is not evenly divisible into the number of bytes needed to store in memory a
-        // datum
-        // indicated by type.
-        {
-            size_t offset            = reinterpret_cast<size_t>(pixels);
-            size_t dataBytesPerPixel = static_cast<size_t>(GetTypeInfo(type).bytes);
-
-            if ((offset % dataBytesPerPixel) != 0)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kDataTypeNotAligned);
-                return false;
-            }
-        }
-
-        // ...the buffer object's data store is currently mapped but not persistently.
-        if (pixelUnpackBuffer->isMapped() && !pixelUnpackBuffer->isPersistentlyMapped())
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferMapped);
-            return false;
-        }
-    }
-
     if (context->isHardenedContext())
     {
-        // Define:
-        //   DataStoreWidth  = (GL_UNPACK_ROW_LENGTH ? GL_UNPACK_ROW_LENGTH : width)
-        //   DataStoreHeight = (GL_UNPACK_IMAGE_HEIGHT ? GL_UNPACK_IMAGE_HEIGHT : height)
-        //
-        // WebGL 2.0 imposes the following additional constraints:
-        //
-        // 1) texImage2D and texSubImage2D generate INVALID_OPERATION if:
-        //      GL_UNPACK_SKIP_PIXELS + width > DataStoreWidth
-        //    except for texImage2D if no GL_PIXEL_UNPACK_BUFFER is
-        //    bound and _pixels_ is null.
-        //
-        // 2) texImage3D and texSubImage3D generate INVALID_OPERATION if:
-        //      GL_UNPACK_SKIP_PIXELS + width > DataStoreWidth
-        //      GL_UNPACK_SKIP_ROWS + height > DataStoreHeight
-        //    except for texImage3D if no GL_PIXEL_UNPACK_BUFFER is
-        //    bound and _pixels_ is null.
-        if (!pixelUnpackBuffer && !pixels && !isSubImage)
-        {
-            // Exception case for texImage2D or texImage3D, above.
-        }
-        else
-        {
-            const auto &unpack   = context->getState().getUnpackState();
-            GLint dataStoreWidth = unpack.rowLength ? unpack.rowLength : width;
-            if (unpack.skipPixels + width > dataStoreWidth)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidUnpackParametersForWebGL);
-                return false;
-            }
-            if (target == TextureTarget::_3D || target == TextureTarget::_2DArray)
-            {
-                // Note that CubeMapArray is not supported as a texture target in WebGL.
-                GLint dataStoreHeight = unpack.imageHeight ? unpack.imageHeight : height;
-                if (unpack.skipRows + height > dataStoreHeight)
-                {
-                    ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidUnpackParametersForWebGL);
-                    return false;
-                }
-            }
-        }
-
         if (!isSubImage &&
             !ValidateHardenedContextTextureLevelRedefine(context, entryPoint, texture, level, width,
                                                          height, depth, actualFormatInfo))

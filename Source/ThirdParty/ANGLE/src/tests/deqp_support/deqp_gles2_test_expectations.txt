@@ -373,7 +373,7 @@
 356399840 WGPU : dEQP-GLES2.functional.shaders.indexing.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.linkage.* = FAIL
 // This variation times out
-356399840 WGPU : dEQP-GLES2.functional.shaders.loops.for_constant_iterations.mixed_break_continue_* = SKIP
+356399840 WGPU MAC AMD : dEQP-GLES2.functional.shaders.loops.for_constant_iterations.mixed_break_continue_* = SKIP
 356399840 WGPU : dEQP-GLES2.functional.shaders.loops.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.matrix.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.misc.compound_assignment.* = FAIL

@@ -20,4 +20,16 @@ pub fn generate(ir: &mut IR, _options: &compile::Options) {
     }
 
     transform::run!(rewrite_struct_samplers, ir);
+
+    {
+        let transform_options = transform::add_driver_uniforms::Options {
+            // Only needed for SPIR-V
+            add_transform_xy: false,
+            add_xfb_emulation: false,
+            // Only needed for MSL
+            declare_as_struct: false,
+            add_coverage_mask: false,
+        };
+        transform::run!(add_driver_uniforms, ir, &transform_options);
+    }
 }

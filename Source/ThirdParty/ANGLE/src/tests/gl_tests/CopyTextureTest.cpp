@@ -1575,7 +1575,7 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
     // http://anglebug.com/42261821
     ANGLE_SKIP_TEST_IF(IsFuchsia() && IsIntel() && IsVulkan());
 
-    constexpr uint8_t pixels[16 * 7] = {
+    constexpr std::array<uint8_t, 16 * 7> pixels = {
         0u,   3u,   6u,   10u,  13u,  16u,  0, 0, 20u,  23u,  26u,  30u,  33u,  36u,  0, 0,  // 2x2
         40u,  43u,  46u,  50u,  53u,  56u,  0, 0, 60u,  63u,  66u,  70u,  73u,  76u,  0, 0,  // 2x2
         80u,  83u,  86u,  90u,  93u,  96u,  0, 0, 100u, 103u, 106u, 110u, 113u, 116u, 0, 0,  // 2x2
@@ -1599,10 +1599,11 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
         for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
              face++)
         {
+            auto faceData =
+                angle::Span(pixels).subspan((face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i) * 16, 16);
             glBindTexture(GL_TEXTURE_2D, textures[0]);
-            glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                &ANGLE_UNSAFE_TODO(pixels[(face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i) * 16]));
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                         faceData.data());
 
             glCopySubTextureCHROMIUM(textures[0], 0, face, textures[1], 0, 0, 0, 0, 0, 2, 2, false,
                                      false, false);
@@ -1621,16 +1622,12 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
             // Check that FB is complete.
             EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-            const uint8_t *faceData =
-                &ANGLE_UNSAFE_TODO(pixels[(face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i) * 16]);
-            ANGLE_UNSAFE_TODO(
-                EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(faceData[0], faceData[1], faceData[2], 255)));
-            ANGLE_UNSAFE_TODO(
-                EXPECT_PIXEL_COLOR_EQ(1, 0, GLColor(faceData[3], faceData[4], faceData[5], 255)));
-            ANGLE_UNSAFE_TODO(
-                EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor(faceData[8], faceData[9], faceData[10], 255)));
-            ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_EQ(
-                1, 1, GLColor(faceData[11], faceData[12], faceData[13], 255)));
+            auto faceData =
+                angle::Span(pixels).subspan((face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i) * 16, 16);
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(faceData[0], faceData[1], faceData[2], 255));
+            EXPECT_PIXEL_COLOR_EQ(1, 0, GLColor(faceData[3], faceData[4], faceData[5], 255));
+            EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor(faceData[8], faceData[9], faceData[10], 255));
+            EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor(faceData[11], faceData[12], faceData[13], 255));
 
             EXPECT_GL_NO_ERROR();
         }

@@ -1,6 +1,7 @@
 // Copyright 2024 The ANGLE Project Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+pub mod add_driver_uniforms;
 pub mod astify;
 pub mod broadcast_fragcolor;
 pub mod clamp_frag_depth;

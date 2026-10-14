@@ -11,6 +11,8 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include <array>
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/gl_raii.h"
@@ -82,9 +84,9 @@ GLubyte kLinearColorCube[] = {75, 135, 205, 255, 201, 89,  133, 255, 111, 201, 1
                               30, 90,  230, 255, 180, 210, 70,  255, 77,  111, 99,  255};
 GLubyte kSrgbColorCube[]   = {148, 192, 232, 255, 230, 159, 191, 255, 176, 230, 174, 255,
                               96,  160, 244, 255, 219, 234, 143, 255, 149, 176, 167, 255};
-GLfloat kCubeFaceX[]       = {1.0, -1.0, 0.0, 0.0, 0.0, 0.0};
-GLfloat kCubeFaceY[]       = {0.0, 0.0, 1.0, -1.0, 0.0, 0.0};
-GLfloat kCubeFaceZ[]       = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
+constexpr std::array<GLfloat, 6> kCubeFaceX = {1.0, -1.0, 0.0, 0.0, 0.0, 0.0};
+constexpr std::array<GLfloat, 6> kCubeFaceY = {0.0, 0.0, 1.0, -1.0, 0.0, 0.0};
+constexpr std::array<GLfloat, 6> kCubeFaceZ = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
 // YUV texture data - ensure they are narrow range compatible values
 GLubyte kYUVColorBlackY[]   = {16, 16, 16, 16};
 GLubyte kYUVColorBlackCb[]  = {128};
@@ -1263,6 +1265,13 @@ void main()
     void SourceAHBTarget2DArray_helper(const EGLint *attribs);
     void SourceAHBTargetExternal_helper(const EGLint *attribs);
     void SourceAHBTargetExternalESSL3_helper(const EGLint *attribs);
+    enum class AHBDrawType
+    {
+        Arrays,
+        ElementsInstanced,
+        ElementsIndirect,
+    };
+    void testAHBDrawFlush(AHBDrawType drawType, bool flushBeforeFence);
     void SourceNativeClientBufferTargetExternal_helper(const EGLint *attribs);
     void SourceNativeClientBufferTargetRenderbuffer_helper(const EGLint *attribs);
     void Source2DTarget2D_helper(const EGLint *attribs);
@@ -8970,7 +8979,7 @@ TEST_P(ImageTest, MipLevels)
     const std::vector<GLColor> mip0Data(kTextureSize * kTextureSize, GLColor::red);
     const std::vector<GLColor> mip1Data(mip0Data.size() >> 2, GLColor::green);
     const std::vector<GLColor> mip2Data(mip0Data.size() >> 4, GLColor::blue);
-    const GLColor *data[kMipLevels] = {
+    std::array<const GLColor *, kMipLevels> data = {
         mip0Data.data(),
         mip1Data.data(),
         mip2Data.data(),
@@ -9062,7 +9071,7 @@ TEST_P(ImageTestES3, MipLevelsNonZeroBaseLevel)
     const std::vector<GLColor> mip0Data(kTextureSize * kTextureSize, GLColor::red);
     const std::vector<GLColor> mip1Data(mip0Data.size() >> 2, GLColor::green);
     const std::vector<GLColor> mip2Data(mip0Data.size() >> 4, GLColor::blue);
-    const GLColor *data[kMipLevels] = {
+    std::array<const GLColor *, kMipLevels> data = {
         mip0Data.data(),
         mip1Data.data(),
         mip2Data.data(),
@@ -9329,6 +9338,152 @@ TEST_P(ImageTest, UpdatedData)
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
+}
+
+// Verify AHB contents on the CPU after flushing a draw and waiting for an EGL fence.
+void ImageTest::testAHBDrawFlush(AHBDrawType drawType, bool flushBeforeFence)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_KHR_fence_sync") ||
+                       !IsGLExtensionEnabled("GL_OES_EGL_sync"));
+
+    constexpr uint32_t kWidth  = 16;
+    constexpr uint32_t kHeight = 16;
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage));
+
+    // Avoid vertex uploads that could independently require a flush.
+    constexpr char kVS[] = R"(#version 300 es
+void main()
+{
+    const vec2 positions[3] = vec2[3](vec2(-1, -1), vec2(3, -1), vec2(-1, 3));
+    gl_Position = vec4(positions[gl_VertexID], 0, 1);
+})";
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform vec4 color;
+out vec4 fragColor;
+void main()
+{
+    fragColor = color;
+})";
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    GLint colorLocation = glGetUniformLocation(program, "color");
+    ASSERT_NE(-1, colorLocation);
+    glUniform4f(colorLocation, 1, 0, 0, 1);
+
+    GLVertexArray vao;
+    glBindVertexArray(vao);
+    GLBuffer indexBuffer;
+    constexpr GLushort kIndices[] = {0, 1, 2};
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices, GL_STATIC_DRAW);
+
+    GLBuffer indirectBuffer;
+    if (drawType == AHBDrawType::ElementsIndirect)
+    {
+        // count, instanceCount, firstIndex, baseVertex, reservedMustBeZero.
+        constexpr GLuint kCommand[] = {3, 2, 0, 0, 0};
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(kCommand), kCommand, GL_STATIC_DRAW);
+    }
+
+    AHardwareBuffer *source = nullptr;
+    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+    ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+        kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+        kDefaultAttribs, {}, &source, &image));
+
+    // Keep image and AHB cleanup reachable if an assertion returns from this lambda.
+    [&]() {
+        ASSERT_NE(image, EGL_NO_IMAGE_KHR);
+        GLTexture target;
+        createEGLImageTargetTexture2D(image, target);
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        glViewport(0, 0, kWidth, kHeight);
+
+        const auto draw = [drawType]() {
+            switch (drawType)
+            {
+                case AHBDrawType::Arrays:
+                    glDrawArrays(GL_TRIANGLES, 0, 3);
+                    break;
+                case AHBDrawType::ElementsInstanced:
+                    glDrawElementsInstanced(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, nullptr, 2);
+                    break;
+                case AHBDrawType::ElementsIndirect:
+                    glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, nullptr);
+                    break;
+            }
+        };
+
+        // Finish setup and the red draw to clear any pending flush before drawing green.
+        draw();
+        ASSERT_GL_NO_ERROR();
+        glUniform4f(colorLocation, 0, 1, 0, 1);
+        glFinish();
+        ASSERT_GL_NO_ERROR();
+
+        draw();
+        ASSERT_GL_NO_ERROR();
+        if (flushBeforeFence)
+        {
+            // Flush the draw first so the fence must independently require a flush.
+            glFlush();
+        }
+
+        EGLSyncKHR fence = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+        ASSERT_NE(fence, EGL_NO_SYNC_KHR);
+        EXPECT_EGL_SUCCESS();
+        glFlush();
+        EXPECT_GL_NO_ERROR();
+
+        // Requesting a flush here could hide a missing submission by glFlush.
+        EGLint result = eglClientWaitSyncKHR(display, fence, 0, 1'000'000'000);
+        EXPECT_EGL_SUCCESS();
+        EXPECT_EGL_TRUE(eglDestroySyncKHR(display, fence));
+        ASSERT_EQ(EGL_CONDITION_SATISFIED_KHR, result);
+
+        const std::vector<GLColor> expected(kWidth * kHeight, GLColor::green);
+        verifyResultAHB(source,
+                        {{reinterpret_cast<const GLubyte *>(expected.data()), sizeof(GLColor)}});
+    }();
+
+    EXPECT_EGL_TRUE(eglDestroyImageKHR(display, image));
+    destroyAndroidHardwareBuffer(source);
+}
+
+// Tests that glDrawArrays rendering to an AHB is visible to the CPU after flushing
+// and waiting for an EGL fence.
+TEST_P(ImageTestES3, AHBDrawArraysFlush)
+{
+    testAHBDrawFlush(AHBDrawType::Arrays, false);
+}
+
+// Tests that glDrawElementsInstanced rendering to an AHB is visible to the CPU after flushing
+// and waiting for an EGL fence.
+TEST_P(ImageTestES3, AHBDrawElementsInstancedFlush)
+{
+    testAHBDrawFlush(AHBDrawType::ElementsInstanced, false);
+}
+
+// Tests that glDrawElementsIndirect rendering to an AHB is visible to the CPU after flushing
+// and waiting for an EGL fence.
+TEST_P(ImageTestES31, AHBDrawElementsIndirectFlush)
+{
+    testAHBDrawFlush(AHBDrawType::ElementsIndirect, false);
+}
+
+// Tests that an EGL fence created after flushing an AHB draw is submitted by the next glFlush.
+TEST_P(ImageTestES3, AHBFenceAfterDrawFlush)
+{
+    testAHBDrawFlush(AHBDrawType::Arrays, true);
 }
 
 // Check that the external texture is successfully updated when only glTexSubImage2D is called.
@@ -9618,7 +9773,7 @@ TEST_P(ImageTest, SourceCubeAndSameTargetTextureWithEachCubeFace)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     ASSERT_GL_NO_ERROR();
 
-    EGLImageKHR images[6];
+    std::array<EGLImageKHR, 6> images;
     GLTexture targetTexture;
     glBindTexture(GL_TEXTURE_2D, targetTexture);
 

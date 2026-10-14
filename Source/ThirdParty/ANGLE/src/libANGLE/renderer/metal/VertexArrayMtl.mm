@@ -178,10 +178,11 @@ VertexArrayMtl::VertexArrayMtl(const gl::VertexArrayState &state,
     reset(context);
 
     mDynamicVertexData.initialize(context, 0, mtl::kVertexAttribBufferStrideAlignment,
-                                  /** maxBuffers */ 10 * mtl::kMaxVertexAttribs);
+                                  /** maxBuffers */ 10 * mtl::kMaxVertexAttribs,
+                                  mtl::TrackBufferInContext::Yes);
 
     mDynamicIndexData.initialize(context, kDynamicIndexDataSize, mtl::kIndexBufferOffsetAlignment,
-                                 0);
+                                 0, mtl::TrackBufferInContext::Yes);
 }
 VertexArrayMtl::~VertexArrayMtl() {}
 

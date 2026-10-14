@@ -156,6 +156,7 @@ void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::Compi
     opt->scalarize_vec_and_mat_constructor_args      = options.scalarizeVecAndMatConstructorArgs;
     opt->clamp_indirect_indices                      = options.clampIndirectArrayBounds;
     opt->expand_fragment_outputs_to_vec4             = options.expandFragmentOutputsToVec4;
+    opt->add_vulkan_xfb_emulation_support_code       = options.addVulkanXfbEmulationSupportCode;
 
     opt->rewrite_pixel_local_storage = compiler->hasPixelLocalStorageUniforms();
     opt->pls_options.implementation  = static_cast<ffi::PixelLocalStorageImpl>(options.pls.type);

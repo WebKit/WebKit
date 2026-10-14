@@ -257,6 +257,98 @@ TEST(StringUtilsTest, NamesMatchWithWildcard)
     EXPECT_TRUE(NamesMatchWithWildcard("*?*", "ASDF"));
 }
 
+// Test HexStringToUintVector
+TEST(StringUtilsTest, HexStringToUintVector)
+{
+    {
+        constexpr std::string_view kHex        = "";
+        constexpr std::vector<uint8_t> kExpect = {};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "0";
+        const std::vector<uint8_t> kExpect = {0};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "a";
+        const std::vector<uint8_t> kExpect = {0xA};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "B";
+        const std::vector<uint8_t> kExpect = {0xB};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "2C";
+        const std::vector<uint8_t> kExpect = {0x2C};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "902";
+        const std::vector<uint8_t> kExpect = {0x90, 0x02};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+
+    {
+        constexpr std::string_view kHex    = "12F0BC875DE7A460";
+        const std::vector<uint8_t> kExpect = {0x12, 0xF0, 0xBC, 0x87, 0x5D, 0xE7, 0xA4, 0x60};
+        EXPECT_EQ(HexStringToUintVector(kHex), kExpect);
+    }
+}
+
+// Test UintStreamToHexString
+TEST(StringUtilsTest, UintStreamToHexString)
+{
+    {
+        constexpr std::array<uint8_t, 0> kStream = {};
+        constexpr std::string_view kExpect       = "";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 1> kStream = {0};
+        constexpr std::string_view kExpect   = "00";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 1> kStream = {0xA};
+        constexpr std::string_view kExpect   = "0A";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 1> kStream = {0xB};
+        constexpr std::string_view kExpect   = "0B";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 1> kStream = {0x2C};
+        constexpr std::string_view kExpect   = "2C";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 2> kStream = {0x90, 0x02};
+        constexpr std::string_view kExpect   = "9002";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+
+    {
+        const std::array<uint8_t, 8> kStream = {0x12, 0xF0, 0xBC, 0x87, 0x5D, 0xE7, 0xA4, 0x60};
+        constexpr std::string_view kExpect   = "12F0BC875DE7A460";
+        EXPECT_EQ(UintStreamToHexString(kStream), kExpect);
+    }
+}
+
 // Note: ReadFileToString is harder to test
 
 class BeginsWithTest : public testing::Test

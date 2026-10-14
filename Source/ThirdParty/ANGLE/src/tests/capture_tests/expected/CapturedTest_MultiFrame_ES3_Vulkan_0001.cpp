@@ -168,6 +168,7 @@ glDeleteBuffers(1, gResourceIDBuffer);
 
 void ResetReplayContextShared(void)
 {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     UpdateResourceIDBuffer(0, gTextureMap[3]);
     glDeleteTextures(1, gResourceIDBuffer);
 }

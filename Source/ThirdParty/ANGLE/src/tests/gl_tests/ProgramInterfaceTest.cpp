@@ -682,13 +682,13 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
                               GL_REFERENCED_BY_COMPUTE_SHADER};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
-    GLint params[kBufSize];
+    std::array<GLint, kBufSize> params;
     GLint magic = 0xBEEF;
 
     // Tests bufSize is respected even some prop returns more than one value.
-    ANGLE_UNSAFE_TODO(params[propCount]) = magic;
+    params[propCount] = magic;
     glGetProgramResourceiv(program, GL_UNIFORM_BLOCK, index, propCount, props, propCount, &length,
-                           params);
+                           params.data());
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(propCount, length);
     EXPECT_EQ(2, params[0]);   // buffer_binding
@@ -702,7 +702,7 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
     EXPECT_EQ(magic, params[8]);
 
     glGetProgramResourceiv(program, GL_UNIFORM_BLOCK, index, propCount, props, kBufSize, &length,
-                           params);
+                           params.data());
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(propCount + 1, length);
     EXPECT_EQ(0, params[8]);  // referenced_by_compute_shader
@@ -711,7 +711,7 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
     GLenum actvieVariablesProperty = GL_ACTIVE_VARIABLES;
     params[1]                      = magic;
     glGetProgramResourceiv(program, GL_UNIFORM_BLOCK, index, 1, &actvieVariablesProperty, 1,
-                           &length, params);
+                           &length, params.data());
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(1, length);
     EXPECT_LE(0, params[0]);  // index of 'f1' or 'f2'

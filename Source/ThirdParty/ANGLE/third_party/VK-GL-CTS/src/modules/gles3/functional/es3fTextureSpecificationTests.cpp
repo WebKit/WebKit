@@ -3662,6 +3662,93 @@ private:
     int m_numIterations;
 };
 
+// TexStorage2D with non-zero BASE_LEVEL mipmap generation and sub-image update case
+class TexStorage2DGenerateMipmapSubImageCase : public TestCase
+{
+public:
+    TexStorage2DGenerateMipmapSubImageCase(Context &context, const char *name, const char *desc, int width, int height,
+                                           int numLevels, int baseLevel, int updateLevel, int updateWidth,
+                                           int updateHeight)
+        : TestCase(context, name, desc)
+        , m_width(width)
+        , m_height(height)
+        , m_numLevels(numLevels)
+        , m_baseLevel(baseLevel)
+        , m_updateLevel(updateLevel)
+        , m_updateWidth(updateWidth)
+        , m_updateHeight(updateHeight)
+    {
+    }
+
+    IterateResult iterate(void)
+    {
+        const glw::Functions &gl         = m_context.getRenderContext().getFunctions();
+        tcu::TestLog &log                = m_testCtx.getLog();
+        const glw::GLenum internalFormat = GL_RGBA8;
+
+        log << tcu::TestLog::Message << "Testing glTexStorage2D with size " << m_width << "x" << m_height << ", "
+            << m_numLevels << " levels, format " << glu::getTextureFormatStr(internalFormat)
+            << ", glGenerateMipmap with BASE_LEVEL " << m_baseLevel << ", followed by glTexSubImage2D at level "
+            << m_updateLevel << "." << tcu::TestLog::EndMessage;
+
+        glw::GLint maxTexSize = 0;
+        gl.getIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+        if (m_width > maxTexSize || m_height > maxTexSize)
+        {
+            log << tcu::TestLog::Message << "Texture dimension exceeds GL_MAX_TEXTURE_SIZE (" << maxTexSize
+                << "), skipping." << tcu::TestLog::EndMessage;
+            m_testCtx.setTestResult(QP_TEST_RESULT_NOT_SUPPORTED, "Texture size not supported");
+            return STOP;
+        }
+
+        glu::TransferFormat transferFmt = glu::getTransferFormat(glu::mapGLInternalFormat(internalFormat));
+        int pixelSize                   = glu::mapGLInternalFormat(internalFormat).getPixelSize();
+        std::vector<uint8_t> dummyData(m_updateWidth * m_updateHeight * pixelSize, 0x55);
+
+        glu::Texture tex(gl);
+        glu::Framebuffer fbo(gl);
+
+        gl.bindTexture(GL_TEXTURE_2D, *tex);
+        gl.texStorage2D(GL_TEXTURE_2D, m_numLevels, internalFormat, m_width, m_height);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glTexStorage2D failed");
+
+        // Attach to framebuffer and clear to establish texture residency
+        gl.bindFramebuffer(GL_FRAMEBUFFER, *fbo);
+        gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *tex, 0);
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glFramebufferTexture2D failed");
+        TCU_CHECK(gl.checkFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+        gl.clear(GL_COLOR_BUFFER_BIT);
+        gl.finish();
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glClear failed");
+
+        // Set BASE_LEVEL and generate mipmaps
+        gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, m_baseLevel);
+        gl.generateMipmap(GL_TEXTURE_2D);
+        gl.finish();
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glGenerateMipmap failed");
+
+        // Reset BASE_LEVEL and update sub-image data
+        gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+        gl.texSubImage2D(GL_TEXTURE_2D, m_updateLevel, 0, 0, m_updateWidth, m_updateHeight, transferFmt.format,
+                         transferFmt.dataType, dummyData.data());
+        gl.finish();
+        GLU_EXPECT_NO_ERROR(gl.getError(), "glTexSubImage2D failed");
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+        return STOP;
+    }
+
+private:
+    int m_width;
+    int m_height;
+    int m_numLevels;
+    int m_baseLevel;
+    int m_updateLevel;
+    int m_updateWidth;
+    int m_updateHeight;
+};
+
 void TextureSpecificationTests::init(void)
 {
     struct
@@ -4854,6 +4941,24 @@ void TextureSpecificationTests::init(void)
                 baseLevelGroup->addChild(new TexStorage2DBaseLevelFboCase(m_context, name.c_str(), desc.c_str(), width,
                                                                           height, levels, newBaseLevel));
             }
+        }
+
+        // Mipmap generation with non-zero BASE_LEVEL and sub-image updates on immutable textures.
+        {
+            tcu::TestCaseGroup *genMipmapGroup = new tcu::TestCaseGroup(
+                m_testCtx, "generate_mipmap", "glTexStorage2D() with non-zero BASE_LEVEL glGenerateMipmap()");
+            texStorageGroup->addChild(genMipmapGroup);
+
+            genMipmapGroup->addChild(new TexStorage2DGenerateMipmapSubImageCase(
+                m_context, "rgba8_3x64_base_5_sub_level_2",
+                "BASE_LEVEL 5 glGenerateMipmap and level 2 glTexSubImage2D on 3x64 RGBA8", 3, 64, 7, 5, 2, 1, 16));
+            genMipmapGroup->addChild(new TexStorage2DGenerateMipmapSubImageCase(
+                m_context, "rgba8_3x256_base_7_sub_level_3",
+                "BASE_LEVEL 7 glGenerateMipmap and level 3 glTexSubImage2D on 3x256 RGBA8", 3, 256, 9, 7, 3, 1, 32));
+            genMipmapGroup->addChild(new TexStorage2DGenerateMipmapSubImageCase(
+                m_context, "rgba8_3x2048_base_10_sub_level_1",
+                "BASE_LEVEL 10 glGenerateMipmap and level 1 glTexSubImage2D on 3x2048 RGBA8", 3, 2048, 12, 10, 1, 1,
+                1024));
         }
     }
 

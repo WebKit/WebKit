@@ -1054,6 +1054,22 @@
                 "For non-power-of-two textures, upload via TexSubImage2D instead of TexImage2D when uploading client-side data."
             ],
             "issue": "http://crbug.com/553172761"
+        },
+        {
+            "name": "double_clear_for_robust_init",
+            "category": "Workarounds",
+            "description": [
+                "Issue a two-step clear with distinct values during robust resource init to prevent value-collision driver clear-dedup elision on invalidate."
+            ],
+            "issue": "http://crbug.com/550489336"
+        },
+        {
+            "name": "defer_gl_delete_buffers",
+            "category": "Workarounds",
+            "description": [
+                "Defer glDeleteBuffers calls until previous GPU work has completed."
+            ],
+            "issue": "http://crbug.com/558870371"
         }
     ]
 }

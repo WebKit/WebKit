@@ -147,10 +147,7 @@ fn flatten_array_of_array_uniforms(
             // Only looking for opaque uniforms
             let base_type_id = ir_meta.get_pointee_type(variable.type_id);
             let base_type_id = ir_meta.get_base_element_type(base_type_id);
-            if !matches!(
-                ir_meta.get_type(base_type_id),
-                Type::Image(..) | Type::Scalar(BasicType::AtomicCounter)
-            ) {
+            if !ir_meta.get_type(base_type_id).is_opaque() {
                 continue;
             }
 

@@ -29,10 +29,12 @@
 #include "tcuRenderTarget.hpp"
 #include "gluShaderProgram.hpp"
 #include "gluPixelTransfer.hpp"
+#include "gluStrUtil.hpp"
 #include "deRandom.hpp"
 #include "deString.h"
 
 #include "glw.h"
+#include "gluObjectWrapper.hpp"
 
 namespace deqp
 {
@@ -450,6 +452,168 @@ OcclusionQueryCase::IterateResult OcclusionQueryCase::iterate(void)
     return (++m_iterNdx < NUM_CASE_ITERATIONS) ? CONTINUE : STOP;
 }
 
+class OcclusionQueryFboDeleteCase : public TestCase
+{
+public:
+    OcclusionQueryFboDeleteCase(Context &context, const char *name, const char *description, GLenum queryTarget,
+                                bool skipDraw);
+    ~OcclusionQueryFboDeleteCase(void);
+
+    void init(void);
+    void deinit(void);
+    IterateResult iterate(void);
+
+private:
+    OcclusionQueryFboDeleteCase(const OcclusionQueryFboDeleteCase &other);
+    OcclusionQueryFboDeleteCase &operator=(const OcclusionQueryFboDeleteCase &other);
+
+    GLenum m_queryTarget;
+    bool m_skipDraw;
+    glu::ShaderProgram *m_program;
+};
+
+OcclusionQueryFboDeleteCase::OcclusionQueryFboDeleteCase(Context &context, const char *name, const char *description,
+                                                         GLenum queryTarget, bool skipDraw)
+    : TestCase(context, name, description)
+    , m_queryTarget(queryTarget)
+    , m_skipDraw(skipDraw)
+    , m_program(nullptr)
+{
+}
+
+OcclusionQueryFboDeleteCase::~OcclusionQueryFboDeleteCase(void)
+{
+    OcclusionQueryFboDeleteCase::deinit();
+}
+
+void OcclusionQueryFboDeleteCase::init(void)
+{
+    const char *vertShaderSource = "#version 300 es\n"
+                                   "layout(location = 0) in mediump vec4 a_position;\n"
+                                   "\n"
+                                   "void main (void)\n"
+                                   "{\n"
+                                   "    gl_Position = a_position;\n"
+                                   "}\n";
+
+    const char *fragShaderSource = "#version 300 es\n"
+                                   "layout(location = 0) out mediump vec4 dEQP_FragColor;\n"
+                                   "\n"
+                                   "void main (void)\n"
+                                   "{\n"
+                                   "    dEQP_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+                                   "}\n";
+
+    DE_ASSERT(!m_program);
+    m_program = new glu::ShaderProgram(m_context.getRenderContext(),
+                                       glu::makeVtxFragSources(vertShaderSource, fragShaderSource));
+
+    if (!m_program->isOk())
+    {
+        m_testCtx.getLog() << *m_program;
+        delete m_program;
+        m_program = nullptr;
+        TCU_FAIL("Failed to compile shader program");
+    }
+
+    GLU_CHECK_MSG("Case initialization finished");
+}
+
+void OcclusionQueryFboDeleteCase::deinit(void)
+{
+    delete m_program;
+    m_program = nullptr;
+}
+
+OcclusionQueryFboDeleteCase::IterateResult OcclusionQueryFboDeleteCase::iterate(void)
+{
+    tcu::TestLog &log = m_testCtx.getLog();
+
+    const int width  = 64;
+    const int height = 64;
+
+    static const float vertices[] = {
+        -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    };
+
+    const glw::Functions &gl = m_context.getRenderContext().getFunctions();
+
+    glu::VertexArray vao(gl);
+    glu::Buffer vbo(gl);
+    glu::Texture tex(gl);
+    GLuint fbo = 0;
+    glu::Query query(gl);
+
+    glBindVertexArray(*vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glBindTexture(GL_TEXTURE_2D, *tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *tex, 0);
+
+    GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+    {
+        glDeleteFramebuffers(1, &fbo);
+        m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Framebuffer is incomplete");
+        return STOP;
+    }
+
+    glViewport(0, 0, width, height);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(m_program->getProgram());
+    glBeginQuery(m_queryTarget, *query);
+    if (!m_skipDraw)
+    {
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+    glEndQuery(m_queryTarget);
+
+    // Delete the framebuffer object on which the query was executed while result is still pending
+    glDeleteFramebuffers(1, &fbo);
+
+    // Retrieve query result
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuiv(*query, GL_QUERY_RESULT, &result);
+
+    GLenum err = glGetError();
+
+    if (err != GL_NO_ERROR)
+    {
+        m_testCtx.setTestResult(QP_TEST_RESULT_FAIL,
+                                ("Unexpected GL error: " + glu::getErrorStr(err).toString()).c_str());
+        return STOP;
+    }
+
+    GLuint expectedResult = m_skipDraw ? GL_FALSE : GL_TRUE;
+    if ((result == GL_FALSE) != (expectedResult == GL_FALSE))
+    {
+        std::string expectedStr = m_skipDraw ? "GL_FALSE" : "non-zero";
+        std::string gotStr      = (result == GL_FALSE) ? "GL_FALSE" : "non-zero";
+
+        m_testCtx.setTestResult(QP_TEST_RESULT_FAIL,
+                                ("Expected query result to be " + expectedStr + ", got " + gotStr).c_str());
+        return STOP;
+    }
+
+    log << tcu::TestLog::Message << "Query result successfully returned expected value without errors."
+        << tcu::TestLog::EndMessage;
+    m_testCtx.setTestResult(QP_TEST_RESULT_PASS, "Pass");
+    return STOP;
+}
+
 OcclusionQueryTests::OcclusionQueryTests(Context &context)
     : TestCaseGroup(context, "occlusion_query", "Occlusion Query Tests")
 {
@@ -668,6 +832,26 @@ void OcclusionQueryTests::init(void)
                                     3, 5, 0.6f, GL_ANY_SAMPLES_PASSED_CONSERVATIVE,
                                     OCCLUDER_SCISSOR | OCCLUDER_DEPTH_WRITE | OCCLUDER_DEPTH_CLEAR |
                                         OCCLUDER_STENCIL_WRITE | OCCLUDER_STENCIL_CLEAR));
+
+    // fbo occlusion query cases
+    {
+        addChild(new OcclusionQueryFboDeleteCase(
+            m_context, "fbo_delete_strict",
+            "Test retrieving query result after deleting framebuffer object with GL_ANY_SAMPLES_PASSED",
+            GL_ANY_SAMPLES_PASSED, false));
+        addChild(new OcclusionQueryFboDeleteCase(
+            m_context, "fbo_delete_conservative",
+            "Test retrieving query result after deleting framebuffer object with GL_ANY_SAMPLES_PASSED_CONSERVATIVE",
+            GL_ANY_SAMPLES_PASSED_CONSERVATIVE, false));
+        addChild(new OcclusionQueryFboDeleteCase(
+            m_context, "fbo_delete_strict_nodraw",
+            "Test retrieving query result after deleting framebuffer object with GL_ANY_SAMPLES_PASSED and no draw",
+            GL_ANY_SAMPLES_PASSED, true));
+        addChild(new OcclusionQueryFboDeleteCase(m_context, "fbo_delete_conservative_nodraw",
+                                                 "Test retrieving query result after deleting framebuffer "
+                                                 "object with GL_ANY_SAMPLES_PASSED_CONSERVATIVE and no draw",
+                                                 GL_ANY_SAMPLES_PASSED_CONSERVATIVE, true));
+    }
 }
 
 } // namespace Functional

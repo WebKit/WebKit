@@ -1109,7 +1109,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
                       uint32_t regionCount,
                       const VkImageResolve *regions);
 
-    void setBlendConstants(const float blendConstants[4]);
+    void setBlendConstants(const gl::ColorF &blendConstants);
     void setCullMode(VkCullModeFlags cullMode);
     void setDepthBias(float depthBiasConstantFactor,
                       float depthBiasClamp,
@@ -2151,15 +2151,12 @@ ANGLE_INLINE void SecondaryCommandBuffer::resolveImage(const Image &srcImage,
     paramStruct->dstImageLayout     = dstImageLayout;
 }
 
-ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const float blendConstants[4])
+ANGLE_INLINE void SecondaryCommandBuffer::setBlendConstants(const gl::ColorF &blendConstants)
 {
     SetBlendConstantsParams *paramStruct =
         initCommand<SetBlendConstantsParams>(CommandID::SetBlendConstants);
-    for (uint32_t channel = 0; channel < 4; ++channel)
-    {
-        ANGLE_UNSAFE_TODO(paramStruct->blendConstants[channel]) =
-            ANGLE_UNSAFE_TODO(blendConstants[channel]);
-    }
+    paramStruct->blendConstants = {blendConstants.red, blendConstants.green, blendConstants.blue,
+                                   blendConstants.alpha};
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::setCullMode(VkCullModeFlags cullMode)

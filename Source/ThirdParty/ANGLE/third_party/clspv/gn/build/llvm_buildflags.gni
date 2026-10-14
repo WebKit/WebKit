@@ -21,5 +21,5 @@ declare_args() {
   llvm_enable_libxar = host_os == "mac"
   llvm_enable_libxml2 = current_os != "win" && current_os != "android"
   llvm_enable_terminfo = false
-  llvm_enable_zlib = host_os != "win"
+  llvm_enable_zlib = current_os != "win"
 }

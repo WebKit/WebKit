@@ -271,6 +271,95 @@ angle::Result CheckIfAttachmentNeedsClearing(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+angle::Result RobustClear(const gl::Context *context,
+                          StateManagerGL *stateManager,
+                          const FunctionsGL *functions,
+                          GLbitfield clearMask)
+{
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    if (features.doubleClearForRobustInit.enabled)
+    {
+        // Clear once with a different value, as a workaround for drivers that cache the cleared
+        // value and drop subsequent clears with the same value.
+        if ((clearMask & GL_COLOR_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearColor(gl::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+        if ((clearMask & GL_DEPTH_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearDepth(0.0f);
+        }
+        if ((clearMask & GL_STENCIL_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearStencil(1);
+        }
+        ANGLE_GL_TRY(context, functions->clear(clearMask));
+
+        // Clear with the desired robust-init clear value after the driver-internal cache is
+        // modified by the previous clear.
+        if ((clearMask & GL_COLOR_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearColor(gl::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+        }
+        if ((clearMask & GL_DEPTH_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearDepth(1.0f);
+        }
+        if ((clearMask & GL_STENCIL_BUFFER_BIT) != 0)
+        {
+            stateManager->setClearStencil(0);
+        }
+    }
+
+    ANGLE_GL_TRY(context, functions->clear(clearMask));
+    return angle::Result::Continue;
+}
+
+template <typename T>
+angle::Result RobustClearBuffer(const gl::Context *context,
+                                const FunctionsGL *functions,
+                                GLenum buffer,
+                                GLint drawbuffer,
+                                bool emulatedAlpha)
+{
+    auto clearBuffer = [&](const T *val) {
+        if constexpr (std::is_same_v<T, GLfloat>)
+        {
+            ANGLE_GL_TRY(context, functions->clearBufferfv(buffer, drawbuffer, val));
+        }
+        else if constexpr (std::is_same_v<T, GLint>)
+        {
+            ANGLE_GL_TRY(context, functions->clearBufferiv(buffer, drawbuffer, val));
+        }
+        else if constexpr (std::is_same_v<T, GLuint>)
+        {
+            ANGLE_GL_TRY(context, functions->clearBufferuiv(buffer, drawbuffer, val));
+        }
+        else
+        {
+            UNREACHABLE();
+            return angle::Result::Stop;
+        }
+        return angle::Result::Continue;
+    };
+
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    if (features.doubleClearForRobustInit.enabled)
+    {
+        // Clear once with a different value, as a workaround for drivers that cache the cleared
+        // value and drop subsequent clears with the same value.
+        constexpr T kBurnValue[] = {static_cast<T>(1), static_cast<T>(1), static_cast<T>(1),
+                                    static_cast<T>(1)};
+        ANGLE_TRY(clearBuffer(kBurnValue));
+    }
+
+    // Clear with the desired robust-init clear value after the driver-internal cache is modified
+    // by the previous clear.
+    const T clearValue[] = {static_cast<T>(0), static_cast<T>(0), static_cast<T>(0),
+                            emulatedAlpha ? static_cast<T>(1) : static_cast<T>(0)};
+    return clearBuffer(clearValue);
+}
+
 }  // anonymous namespace
 
 BlitGL::BlitGL(const FunctionsGL *functions,
@@ -989,7 +1078,7 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
         GLenum status = ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
         if (status == GL_FRAMEBUFFER_COMPLETE)
         {
-            ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+            ANGLE_TRY(RobustClear(context, mStateManager, mFunctions, clearMask));
         }
         else
         {
@@ -1016,7 +1105,7 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
                 ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
             if (status == GL_FRAMEBUFFER_COMPLETE)
             {
-                ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+                ANGLE_TRY(RobustClear(context, mStateManager, mFunctions, clearMask));
             }
             else
             {
@@ -1048,7 +1137,7 @@ angle::Result BlitGL::clearRenderableTexture(const gl::Context *context,
                     ANGLE_GL_TRY(context, mFunctions->checkFramebufferStatus(GL_FRAMEBUFFER));
                 if (status == GL_FRAMEBUFFER_COMPLETE)
                 {
-                    ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+                    ANGLE_TRY(RobustClear(context, mStateManager, mFunctions, clearMask));
                 }
                 else
                 {
@@ -1095,15 +1184,15 @@ angle::Result BlitGL::clearRenderbuffer(const gl::Context *context,
         {
             case GL_INT:
             {
-                constexpr GLint clearValue[] = {0, 0, 0, 0};
-                ANGLE_GL_TRY(context, mFunctions->clearBufferiv(GL_COLOR, 0, clearValue));
+                ANGLE_TRY(RobustClearBuffer<GLint>(context, mFunctions, GL_COLOR, 0,
+                                                   /*emulatedAlpha=*/false));
             }
             break;
 
             case GL_UNSIGNED_INT:
             {
-                constexpr GLuint clearValue[] = {0, 0, 0, 0};
-                ANGLE_GL_TRY(context, mFunctions->clearBufferuiv(GL_COLOR, 0, clearValue));
+                ANGLE_TRY(RobustClearBuffer<GLuint>(context, mFunctions, GL_COLOR, 0,
+                                                    /*emulatedAlpha=*/false));
             }
             break;
 
@@ -1114,7 +1203,7 @@ angle::Result BlitGL::clearRenderbuffer(const gl::Context *context,
     }
     else
     {
-        ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+        ANGLE_TRY(RobustClear(context, mStateManager, mFunctions, clearMask));
     }
 
     // Unbind
@@ -1198,28 +1287,25 @@ angle::Result BlitGL::clearFramebuffer(const gl::Context *context,
                 case GL_SIGNED_NORMALIZED:
                 case GL_FLOAT:
                 {
-                    const GLfloat clearValue[] = {0.0f, 0.0f, 0.0f, emulatedAlpha ? 1.0f : 0.0f};
-                    ANGLE_GL_TRY(context,
-                                 mFunctions->clearBufferfv(
-                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                    ANGLE_TRY(RobustClearBuffer<GLfloat>(context, mFunctions, GL_COLOR,
+                                                         static_cast<GLint>(colorAttachmentIdx),
+                                                         emulatedAlpha));
                 }
                 break;
 
                 case GL_INT:
                 {
-                    const GLint clearValue[] = {0, 0, 0, emulatedAlpha ? 1 : 0};
-                    ANGLE_GL_TRY(context,
-                                 mFunctions->clearBufferiv(
-                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                    ANGLE_TRY(RobustClearBuffer<GLint>(context, mFunctions, GL_COLOR,
+                                                       static_cast<GLint>(colorAttachmentIdx),
+                                                       emulatedAlpha));
                 }
                 break;
 
                 case GL_UNSIGNED_INT:
                 {
-                    const GLuint clearValue[] = {0, 0, 0, emulatedAlpha ? 1u : 0u};
-                    ANGLE_GL_TRY(context,
-                                 mFunctions->clearBufferuiv(
-                                     GL_COLOR, static_cast<GLint>(colorAttachmentIdx), clearValue));
+                    ANGLE_TRY(RobustClearBuffer<GLuint>(context, mFunctions, GL_COLOR,
+                                                        static_cast<GLint>(colorAttachmentIdx),
+                                                        emulatedAlpha));
                 }
                 break;
 
@@ -1235,7 +1321,7 @@ angle::Result BlitGL::clearFramebuffer(const gl::Context *context,
 
     if (clearMask != 0)
     {
-        ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
+        ANGLE_TRY(RobustClear(context, mStateManager, mFunctions, clearMask));
     }
 
     return angle::Result::Continue;
@@ -1288,7 +1374,7 @@ angle::Result BlitGL::generateMipmap(const gl::Context *context,
     // Copy source to an intermediate texture.
     GLuint intermediateTexture = mScratchTextures[0];
     mStateManager->bindTexture(sourceType, intermediateTexture);
-    mStateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0);
+    mStateManager->bindBuffer(gl::BufferBinding::PixelUnpack, 0, context->isHardenedContext());
     ANGLE_GL_TRY(context, mFunctions->texParameteri(ToGLenum(sourceTarget), GL_TEXTURE_MIN_FILTER,
                                                     GL_NEAREST));
     ANGLE_GL_TRY(context, mFunctions->texParameteri(ToGLenum(sourceTarget), GL_TEXTURE_MAG_FILTER,
@@ -1381,7 +1467,8 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
     ANGLE_GL_TRY(context, mFunctions->genFramebuffers(1, &mScratchFBO));
 
     ANGLE_GL_TRY(context, mFunctions->genBuffers(1, &mVertexBuffer));
-    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
+    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer,
+                              context->isHardenedContext());
 
     // Use a single, large triangle, to avoid arithmetic precision issues where fragments
     // with the same Y coordinate don't get exactly the same interpolated texcoord Y.
@@ -1497,7 +1584,8 @@ angle::Result BlitGL::setVAOState(const gl::Context *context)
 
 angle::Result BlitGL::initializeVAOState(const gl::Context *context)
 {
-    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer);
+    mStateManager->bindBuffer(gl::BufferBinding::Array, mVertexBuffer,
+                              context->isHardenedContext());
 
     ANGLE_GL_TRY(context, mFunctions->enableVertexAttribArray(mTexcoordAttribLocation));
     ANGLE_GL_TRY(context, mFunctions->vertexAttribPointer(mTexcoordAttribLocation, 2, GL_FLOAT,
