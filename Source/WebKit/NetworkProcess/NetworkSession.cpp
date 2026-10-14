@@ -867,6 +867,11 @@ Vector<std::unique_ptr<NetworkSession::CachedNetworkResourceLoader::PendingClaim
     return std::exchange(m_pendingClaims, { });
 }
 
+bool NetworkSession::CachedNetworkResourceLoader::isLoadOf(const NetworkConnectionToWebProcess& connection, WebCore::ResourceLoaderIdentifier identifier) const
+{
+    return m_loader && &m_loader->connectionToWebProcess() == &connection && m_loader->coreIdentifier() == identifier;
+}
+
 void NetworkSession::setParkedLoaderDestinationAndResolvePendingClaims(NetworkResourceLoadIdentifier identifier, WebCore::ProcessIdentifier destinationWebProcess)
 {
     auto entry = m_loadersAwaitingWebProcessTransfer.find(identifier);
@@ -916,7 +921,25 @@ NetworkSession::LoaderAwaitingWebProcessTransferClaim NetworkSession::takeLoader
 RefPtr<NetworkResourceLoader> NetworkSession::takeParkedLoaderForOriginalProcess(NetworkResourceLoadIdentifier identifier)
 {
     auto cachedResourceLoader = m_loadersAwaitingWebProcessTransfer.take(identifier);
-    return cachedResourceLoader ? cachedResourceLoader->takeLoader() : nullptr;
+    if (!cachedResourceLoader)
+        return nullptr;
+    RefPtr loader = cachedResourceLoader->takeLoader();
+    if (loader && cachedResourceLoader->wasCancelledByOriginalProcess()) {
+        loader->abort();
+        return nullptr;
+    }
+    return loader;
+}
+
+std::optional<NetworkResourceLoadIdentifier> NetworkSession::markParkedLoaderCancelledByOriginalProcess(const NetworkConnectionToWebProcess& connection, WebCore::ResourceLoaderIdentifier identifier)
+{
+    for (auto& [parkedIdentifier, cachedResourceLoader] : m_loadersAwaitingWebProcessTransfer) {
+        if (cachedResourceLoader->isLoadOf(connection, identifier)) {
+            cachedResourceLoader->setWasCancelledByOriginalProcess();
+            return parkedIdentifier;
+        }
+    }
+    return std::nullopt;
 }
 
 bool NetworkSession::queuePendingLoaderClaim(NetworkResourceLoadIdentifier identifier, WeakPtr<NetworkConnectionToWebProcess> connection, NetworkResourceLoadParameters&& loadParameters)
