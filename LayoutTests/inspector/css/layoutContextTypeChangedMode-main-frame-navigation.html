@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function showGrid(id)
+{
+    document.getElementById(id).style.display = "grid";
+    return document.body.offsetTop;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.LayoutContextTypeChangedMode.MainFrameNavigation");
+
+    function knownLayoutContextIds()
+    {
+        return Array.from(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType && node.getAttribute("id")})).map((node) => node.getAttribute("id"));
+    }
+
+    async function flush()
+    {
+        await InspectorTest.evaluateInPage(`document.body.offsetTop`);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        await InspectorTest.evaluateInPage(`1`);
+        await InspectorTest.evaluateInPage(`1`);
+    }
+
+    async function showGridInPage(id)
+    {
+        InspectorTest.log(`Changing #${id} to \`display: grid\`...`);
+        await InspectorTest.evaluateInPage(`showGrid("${id}")`);
+        await flush();
+    }
+
+    async function navigate(expression)
+    {
+        let pageLoaded = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+        let documentArrived = (async () => {
+            while (true) {
+                let event = await WI.domManager.awaitEvent(WI.DOMManager.Event.DocumentUpdated);
+                if (event.data.document)
+                    return;
+            }
+        })();
+        await InspectorTest.evaluateInPage(expression);
+        await Promise.all([pageLoaded, documentArrived]);
+        await flush();
+    }
+
+    function expectKnown(id, message)
+    {
+        let ids = knownLayoutContextIds();
+        InspectorTest.expectThat(ids.includes(id), message);
+        InspectorTest.log(`Known layout context nodes: [${ids.join(", ")}]`);
+    }
+
+    suite.addTestCase({
+        name: "CSS.LayoutContextTypeChangedMode.MainFrameNavigation.BeforeNavigation",
+        description: "With `All` set, a deep grid is sent, and a grid made later is sent live.",
+        async test() {
+            await WI.domManager.requestDocument();
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid should be sent live.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterReload",
+        description: "After a reload, the backend should still send grids without the mode being set again.",
+        async test() {
+            InspectorTest.log("Reloading the page...");
+            await navigate(`location.reload()`);
+            expectKnown("present-grid", "#present-grid of the new document should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid made after the reload should be sent live.");
+
+            InspectorTest.log("Control: changing `layoutContextTypeChangedMode` to `All` again...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent after the mode is set again.");
+            expectKnown("late-grid", "#late-grid should be sent after the mode is set again.");
+
+            await showGridInPage("later-grid");
+            expectKnown("later-grid", "#later-grid made after the mode is set again should be sent live.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.LayoutContextTypeChangedMode.MainFrameNavigation.AfterNavigation",
+        description: "After a same-origin navigation to a new URL, the backend should still send grids without the mode being set again.",
+        async test() {
+            InspectorTest.log("Navigating to a new URL...");
+            await navigate(`location.href = location.pathname + "?navigated"`);
+            InspectorTest.expectThat(WI.networkManager.mainFrame.url.includes("?navigated"), "The main frame should have navigated.");
+            expectKnown("present-grid", "#present-grid of the new document should be sent.");
+
+            await showGridInPage("late-grid");
+            expectKnown("late-grid", "#late-grid made after the navigation should be sent live.");
+
+            InspectorTest.log("Control: changing `layoutContextTypeChangedMode` to `All` again...");
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
+            await flush();
+            expectKnown("present-grid", "#present-grid should be sent after the mode is set again.");
+            expectKnown("late-grid", "#late-grid should be sent after the mode is set again.");
+        },
+        async teardown() {
+            WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that the `All` layout context type changed mode survives a main-frame navigation on the page target.</p>
+    <div><div><div id="present-grid" style="display: grid"><div></div></div></div></div>
+    <div><div><div id="late-grid" style="display: none"><div></div></div></div></div>
+    <div><div><div id="later-grid" style="display: none"><div></div></div></div></div>
+</body>
+</html>
