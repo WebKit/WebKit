@@ -1037,13 +1037,19 @@ static void webkitWebViewConstructed(GObject* object)
     if (priv->isControlledByAutomation) {
         if (!webkit_web_context_is_automation_allowed(priv->context.get()))
             g_critical("WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.");
-        priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
+        priv->networkSession = webkitWebContextNetworkSessionForPendingAutomationWebView(priv->context.get());
+        if (!priv->networkSession)
+            priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
     }
 #endif
     if (!priv->networkSession)
         priv->networkSession = webkit_network_session_get_default();
 #else
-    if (priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get())) {
+#if ENABLE(REMOTE_INSPECTOR)
+    if (priv->isControlledByAutomation)
+        priv->websiteDataManager = webkitWebContextWebsiteDataManagerForPendingAutomationWebView(priv->context.get());
+#endif
+    if (!priv->websiteDataManager && priv->isEphemeral && !webkit_web_context_is_ephemeral(priv->context.get())) {
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
         auto* contextDataManager = webkit_web_context_get_website_data_manager(priv->context.get());
         webkit_website_data_manager_set_tls_errors_policy(priv->websiteDataManager.get(), webkit_website_data_manager_get_tls_errors_policy(contextDataManager));

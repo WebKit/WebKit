@@ -45,8 +45,13 @@ AutomationSessionClient::AutomationSessionClient(const String& sessionIdentifier
 {
 }
 
-void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
+void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, WebKit::WebsiteDataStore* websiteDataStore, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
 {
+    if (websiteDataStore) {
+        completionHandler(nullptr);
+        return;
+    }
+
     RefPtr<WebProcessPool> processPool = protect(session.processPool());
     if (processPool && processPool->processes().size()) {
         auto& processProxy = processPool->processes()[0];

@@ -34,7 +34,11 @@
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
-typedef struct _WebKitWebContext WebKitWebContext;
+#if ENABLE(2022_GLIB_API)
+typedef struct _WebKitNetworkSession WebKitNetworkSession;
+#else
+typedef struct _WebKitWebsiteDataManager WebKitWebsiteDataManager;
+#endif
 #endif
 
 namespace WebKit {
@@ -48,7 +52,13 @@ class BidiUserContext {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BidiUserContext);
 public:
 #if USE(GLIB)
-    BidiUserContext(WebsiteDataStore&, WebProcessPool&, GRefPtr<WebKitWebContext>&&);
+#if ENABLE(2022_GLIB_API)
+    BidiUserContext(WebsiteDataStore&, WebProcessPool&, GRefPtr<WebKitNetworkSession>&&);
+    WebKitNetworkSession* networkSession() const { return m_networkSession.get(); }
+#else
+    BidiUserContext(WebsiteDataStore&, WebProcessPool&, GRefPtr<WebKitWebsiteDataManager>&&);
+    WebKitWebsiteDataManager* websiteDataManager() const { return m_websiteDataManager.get(); }
+#endif
 #else
     BidiUserContext(WebsiteDataStore&, WebProcessPool&);
 #endif
@@ -59,12 +69,20 @@ public:
 
     Vector<Ref<WebPageProxy>> allPages() const;
 
-private:
+    unsigned pendingPageCreationCount() const { return m_pendingPageCreationCount; }
+    void didStartPageCreation() { ++m_pendingPageCreationCount; }
+    void didFinishPageCreation();
 
+private:
     const Ref<WebsiteDataStore> m_dataStore;
     const Ref<WebProcessPool> m_processPool;
+    unsigned m_pendingPageCreationCount { 0 };
 #if USE(GLIB)
-    GRefPtr<WebKitWebContext> m_context;
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> m_networkSession;
+#else
+    GRefPtr<WebKitWebsiteDataManager> m_websiteDataManager;
+#endif
 #endif
 };
 

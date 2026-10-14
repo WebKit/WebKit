@@ -54,9 +54,15 @@ public:
     BidiBrowserAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
     ~BidiBrowserAgent() override;
 
-    void didCreatePage(WebPageProxy&);
+    // Returns false for a page in a user context being removed: the page is being closed and must not be exposed.
+    [[nodiscard]] bool didCreatePage(WebPageProxy&);
     void willClosePage(const WebPageProxy&);
+    // A creation in flight keeps its user context from being removed before the creation has settled.
+    [[nodiscard]] bool willCreatePageInWebsiteDataStore(const WebsiteDataStore&);
+    void didFinishCreatingPageInWebsiteDataStore(const WebsiteDataStore&);
     String userContextIDForPage(const WebPageProxy&) const;
+    BidiUserContext* userContext(const String& userContextID) const;
+    BidiUserContext* userContextForWebsiteDataStore(const WebsiteDataStore&) const;
 
     bool isValidUserContext(const String& userContextID) const;
 
@@ -70,6 +76,7 @@ private:
     void removeUserContext(const String& userContext, Inspector::CommandCallback<void>&&) override;
 
     std::unique_ptr<BidiUserContext> platformCreateUserContext(String& error);
+    void resolveUserContextRemovalIfComplete(const String& userContextID);
 
     WeakPtr<WebAutomationSession> m_session;
     const Ref<Inspector::BidiBrowserBackendDispatcher> m_browserDomainDispatcher;

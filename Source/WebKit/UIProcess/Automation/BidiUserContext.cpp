@@ -29,37 +29,59 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "WebPageProxy.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 #include <wtf/Borrow.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
 #if USE(GLIB)
-BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebContext>&& context)
+#if ENABLE(2022_GLIB_API)
+BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitNetworkSession>&& networkSession)
     : m_dataStore(dataStore)
     , m_processPool(processPool)
-    , m_context(WTF::move(context))
+    , m_networkSession(WTF::move(networkSession))
 {
-};
+}
+#else
+BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool, GRefPtr<WebKitWebsiteDataManager>&& websiteDataManager)
+    : m_dataStore(dataStore)
+    , m_processPool(processPool)
+    , m_websiteDataManager(WTF::move(websiteDataManager))
+{
+}
+#endif
 #else
 BidiUserContext::BidiUserContext(WebsiteDataStore& dataStore, WebProcessPool& processPool)
     : m_dataStore(dataStore)
     , m_processPool(processPool)
 {
-};
-#endif // PLATFORM(GTK)
+}
+#endif // USE(GLIB)
 
 BidiUserContext::~BidiUserContext() = default;
 
+void BidiUserContext::didFinishPageCreation()
+{
+    ASSERT(m_pendingPageCreationCount);
+    --m_pendingPageCreationCount;
+}
+
 Vector<Ref<WebPageProxy>> BidiUserContext::allPages() const
 {
+    // Each top-level page once: a process also lists the pages whose remote frames it hosts.
+    HashSet<WebPageProxyIdentifier> listedPages;
     Vector<Ref<WebPageProxy>> pages;
     for (Ref process : borrow(m_processPool->processes()).get()) {
-        for (Ref page : process->pages()) {
-            if (page->websiteDataStore() == m_dataStore.get())
-                pages.append(WTF::move(page));
+        for (Ref page : process->mainPages()) {
+            if (page->websiteDataStore() != m_dataStore.get())
+                continue;
+            if (!listedPages.add(page->identifier()).isNewEntry)
+                continue;
+            pages.append(WTF::move(page));
         }
     }
     return pages;
