@@ -62,6 +62,14 @@ ATTACHMENT_ISSUES = [
 ]
 
 
+def error_response(url, status_code, code, message):
+    return wkmocks.Response(url=url, headers={'Content-Type': 'text/json'}, status_code=status_code, text=json.dumps(dict(
+        code=code,
+        error=True,
+        message=message,
+    )))
+
+
 class TestBugzilla(unittest.TestCase):
     URL = 'https://bugs.example.com'
 
@@ -513,12 +521,14 @@ What component in 'WebKit' should the bug be associated with?:
                 BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
                 BUGS_EXAMPLE_COM_PASSWORD='password',
         ), projects=mocks.PROJECTS, issues=mocks.ISSUES), patch.object(bugzilla.Tracker, 'MAX_SUMMARY_LENGTH', 1000):
+            tracker = bugzilla.Tracker(self.URL)
             with OutputCapture() as captured:
-                created = bugzilla.Tracker(self.URL).create(
+                created = tracker.create(
                     'A' * 300, 'Creating new bug',
                     project='WebKit', component='Tables', version='Other',
                 )
             self.assertIsNone(created)
+            self.assertEqual(tracker._logins_left, 4)
             self.assertEqual(
                 captured.stderr.getvalue(),
                 'Failed to create bug: The text you entered in the Summary field is too long (300 characters, above the maximum length allowed of 255 characters).\n',
@@ -600,14 +610,72 @@ What component in 'WebKit' should the bug be associated with?:
                 return wkmocks.Response(status_code=500, url=url)
             return product_details(mock, url, id)
 
-        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS), \
-                patch.object(mocks.Bugzilla, '_product_details', failing_product_details), \
-                OutputCapture() as captured:
-            self.assertEqual(list(bugzilla.Tracker(self.URL).projects.keys()), ['WebKit'])
-        self.assertEqual(
-            captured.stderr.getvalue(),
-            "Failed to query bugzilla about prod '{}'\n".format(mocks.PROJECTS['CFNetwork']['id']),
-        )
+        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
+            tracker = bugzilla.Tracker(self.URL)
+            with patch.object(mocks.Bugzilla, '_product_details', failing_product_details), OutputCapture() as captured:
+                self.assertEqual(list(tracker.projects.keys()), ['WebKit'])
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                "Failed to query bugzilla about prod '{}'\n".format(mocks.PROJECTS['CFNetwork']['id']),
+            )
+            self.assertEqual(sorted(tracker.projects.keys()), ['CFNetwork', 'WebKit'])
+
+    def test_projects_complete_list_cached(self):
+        request = mocks.Bugzilla.request
+        urls = []
+
+        def recording_request(mock, method, url, **kwargs):
+            urls.append(url)
+            return request(mock, method, url, **kwargs)
+
+        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
+            tracker = bugzilla.Tracker(self.URL)
+            with patch.object(mocks.Bugzilla, 'request', recording_request):
+                tracker.projects
+                first_read = len(urls)
+                tracker.projects
+            self.assertEqual(len(urls), first_read)
+
+    def test_create_reads_partial_projects_once(self):
+        product_details = mocks.Bugzilla._product_details
+        request = mocks.Bugzilla.request
+        urls = []
+
+        def failing_product_details(mock, url, id):
+            if id == mocks.PROJECTS['CFNetwork']['id']:
+                return wkmocks.Response(status_code=500, url=url)
+            return product_details(mock, url, id)
+
+        def recording_request(mock, method, url, **kwargs):
+            urls.append(url)
+            return request(mock, method, url, **kwargs)
+
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES), patch.object(mocks.Bugzilla, '_product_details', failing_product_details), \
+                patch.object(mocks.Bugzilla, 'request', recording_request), OutputCapture():
+            created = bugzilla.Tracker(self.URL).create(
+                'Example issue', 'Creating new bug',
+                project='WebKit', component='Tables', version='Other',
+            )
+        self.assertIsNotNone(created)
+        self.assertEqual(len([url for url in urls if '/rest/product_enterable' in url]), 1)
+
+    def test_projects_failed_list_query(self):
+        request = mocks.Bugzilla.request
+
+        def failing_request(mock, method, url, **kwargs):
+            if '/rest/product_enterable' in url:
+                return wkmocks.Response(status_code=500, url=url)
+            return request(mock, method, url, **kwargs)
+
+        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
+            tracker = bugzilla.Tracker(self.URL)
+            with patch.object(mocks.Bugzilla, 'request', failing_request), OutputCapture() as captured:
+                self.assertEqual(tracker.projects, {})
+            self.assertEqual(captured.stderr.getvalue(), "Failed to retrieve project list'\n")
+            self.assertEqual(sorted(tracker.projects.keys()), ['CFNetwork', 'WebKit'])
 
     def test_projects_excludes_inactive_versions(self):
         projects = copy.deepcopy(mocks.PROJECTS)
@@ -671,6 +739,83 @@ What component in 'WebKit' should the bug be associated with?:
                 'Exhausted login attempts\n'
                 'Failed to create bug: Login attempts exhausted\n',
             )
+
+    def test_missing_bug_keeps_login_attempts(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertIsNone(tracker.issue(100).title)
+            self.assertEqual(tracker._logins_left, 4)
+        self.assertEqual(captured.stderr.getvalue(), 'Bug #100 does not exist.\n')
+
+    def test_inaccessible_bug_keeps_login_attempts(self):
+        def inaccessible_issue(mock, url, id, credentials=None, data=None):
+            return error_response(url, 401, 102, 'You are not authorized to access bug #{}.'.format(id))
+
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), patch.object(mocks.Bugzilla, '_issue', inaccessible_issue), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertIsNone(tracker.issue(1).title)
+            self.assertEqual(tracker._logins_left, 4)
+        self.assertEqual(captured.stderr.getvalue(), "Failed to fetch 'https://bugs.example.com/show_bug.cgi?id=1'\n")
+
+    def test_refused_login_uses_login_attempt(self):
+        def refused_login(mock, url, id, credentials=None, data=None):
+            return error_response(url, 401, 300, 'The username or password you entered is not valid.')
+
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), patch.object(mocks.Bugzilla, '_issue', refused_login), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertIsNone(tracker.issue(1).title)
+            self.assertEqual(tracker._logins_left, 3)
+        self.assertEqual(captured.stderr.getvalue(), "Failed to fetch 'https://bugs.example.com/show_bug.cgi?id=1'\n")
+
+    def test_refused_logins_exhaust_login_attempts(self):
+        def refused_login(mock, url, id, credentials=None, data=None):
+            return error_response(url, 401, 300, 'The username or password you entered is not valid.')
+
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), patch.object(mocks.Bugzilla, '_issue', refused_login), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            for _ in range(5):
+                tracker.issue(1).title
+            self.assertEqual(tracker._logins_left, 0)
+            self.assertIsNone(tracker.issue(1).add_comment('Failed comment'))
+        self.assertIn('Exhausted login attempts\n', captured.stderr.getvalue())
+
+    def test_count_failed_login(self):
+        for status_code, text, expected in (
+            (401, json.dumps(dict(code=300)), 3),
+            (401, json.dumps(dict(code=301)), 3),
+            (401, json.dumps(dict(code=102)), 4),
+            (404, json.dumps(dict(code=101)), 4),
+            (400, json.dumps(dict(code=32000)), 4),
+            (401, '', 4),
+            (403, '<html></html>', 4),
+            (401, json.dumps([300]), 4),
+            (500, json.dumps(dict(code=300)), 4),
+        ):
+            tracker = bugzilla.Tracker(self.URL)
+            tracker._count_failed_login(wkmocks.Response(url=self.URL, status_code=status_code, text=text))
+            self.assertEqual(tracker._logins_left, expected, '{} {}'.format(status_code, text))
+        tracker = bugzilla.Tracker(self.URL)
+        tracker._count_failed_login(None)
+        self.assertEqual(tracker._logins_left, 4)
+
+    def test_missing_bug_with_exhausted_logins(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            tracker._logins_left = 0
+            self.assertIsNone(tracker.issue(100).title)
+        self.assertEqual(captured.stderr.getvalue(), 'Bug #100 does not exist.\n')
 
     def test_redaction(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
