@@ -1800,6 +1800,27 @@ struct WebCore::ViewportProximityInfo {
     float viewportCoverage;
 }
 
+header: <WebCore/TextManipulationGroup.h>
+enum class WebCore::TextManipulationGroupKind : uint8_t {
+    PageHeading,
+    Prose,
+    Navigation,
+    Banner,
+    Footer,
+    Sidebar,
+    ViewportConstrained,
+    Dialog,
+    Other,
+};
+
+header: <WebCore/TextManipulationGroup.h>
+[CustomHeader] struct WebCore::TextManipulationGroupUpdate {
+    Markable<WebCore::FrameIdentifier> frameID;
+    WebCore::TextManipulationGroupIdentifier identifier;
+    WebCore::TextManipulationGroupKind kind;
+    Vector<WebCore::TextManipulationItemIdentifier> itemIdentifiers;
+}
+
 struct WebCore::TextManipulationItem {
     Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;

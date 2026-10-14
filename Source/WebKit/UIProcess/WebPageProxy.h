@@ -387,6 +387,7 @@ struct TextManipulationControllerExclusionRule;
 struct TextManipulationControllerManipulationFailure;
 struct TextManipulationControllerManipulationResult;
 struct TextManipulationItem;
+struct TextManipulationGroupUpdate;
 struct TextRecognitionResult;
 struct TranslationContextMenuInfo;
 struct UserGestureTokenData;
@@ -2542,9 +2543,9 @@ public:
 #endif
 #endif
 
-    using TextManipulationItemCallback = Function<void(const Vector<WebCore::TextManipulationItem>&)>;
-    void startTextManipulations(const Vector<WebCore::TextManipulationControllerExclusionRule>&, bool includeSubframes, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
-    void didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>&);
+    using TextManipulationItemCallback = Function<void(const Vector<WebCore::TextManipulationItem>&, const Vector<WebCore::TextManipulationGroupUpdate>&)>;
+    void startTextManipulations(const Vector<WebCore::TextManipulationControllerExclusionRule>&, bool includeSubframes, bool includesGroups, TextManipulationItemCallback&&, WTF::CompletionHandler<void()>&&);
+    void didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>&, const Vector<WebCore::TextManipulationGroupUpdate>&);
     void completeTextManipulation(const Vector<WebCore::TextManipulationItem>&, CompletionHandler<void(Vector<WebCore::TextManipulationControllerManipulationFailure>&&)>&&);
 
     const String& overriddenMediaType() const LIFETIME_BOUND { return m_overriddenMediaType; }

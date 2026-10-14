@@ -943,6 +943,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     if (parameters.textManipulationParameters) {
         m_textManipulationIncludesSubframes = parameters.textManipulationParameters->includeSubframes;
+        m_textManipulationIncludesGroups = parameters.textManipulationParameters->includesGroups;
         m_internals->textManipulationExclusionRules = WTF::move(parameters.textManipulationParameters->exclusionRules);
     }
 
@@ -9763,13 +9764,14 @@ std::optional<WebCore::ElementContext> WebPage::contextForElement(const WebCore:
     return WebCore::ElementContext { element.boundingBoxInRootViewCoordinates(), m_identifier, document->identifier(), element.nodeIdentifier() };
 }
 
-void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, bool includeSubframes, CompletionHandler<void()>&& completionHandler)
+void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule>&& exclusionRules, bool includeSubframes, bool includesGroups, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_page)
         return completionHandler();
 
     m_internals->textManipulationExclusionRules = WTF::move(exclusionRules);
     m_textManipulationIncludesSubframes = includeSubframes;
+    m_textManipulationIncludesGroups = includesGroups;
     if (m_textManipulationIncludesSubframes) {
         for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNext())
             startTextManipulationForFrame(*frame);
@@ -9788,7 +9790,7 @@ void WebPage::startTextManipulationForFrame(WebCore::Frame& frame)
         return;
 
     auto exclusionRules = *m_internals->textManipulationExclusionRules;
-    protect(document->textManipulationController())->startObservingParagraphs([webPage = WeakPtr { *this }] (Document& document, const Vector<WebCore::TextManipulationItem>& items) {
+    protect(document->textManipulationController())->startObservingParagraphs([webPage = WeakPtr { *this }](Document& document, const Vector<WebCore::TextManipulationItem>& items, const Vector<WebCore::TextManipulationGroupUpdate>& groupUpdates) {
         RefPtr frame = document.frame();
         if (!webPage || !frame)
             return;
@@ -9797,8 +9799,8 @@ void WebPage::startTextManipulationForFrame(WebCore::Frame& frame)
         if (!webFrame)
             return;
 
-        webPage->send(Messages::WebPageProxy::DidFindTextManipulationItems(items));
-    }, WTF::move(exclusionRules));
+        webPage->send(Messages::WebPageProxy::DidFindTextManipulationItems(items, groupUpdates));
+    }, WTF::move(exclusionRules), m_textManipulationIncludesGroups ? TextManipulationController::IncludeGroups::Yes : TextManipulationController::IncludeGroups::No);
 }
 
 void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationItem>& items,

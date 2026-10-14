@@ -307,6 +307,7 @@
 #include <WebCore/TextExtractionTypes.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextManipulationController.h>
+#include <WebCore/TextManipulationGroup.h>
 #include <WebCore/TextManipulationItem.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <WebCore/ValidationBubble.h>
@@ -19306,22 +19307,22 @@ void WebPageProxy::setMockWebAuthenticationConfiguration(MockWebAuthenticationCo
 }
 #endif
 
-void WebPageProxy::startTextManipulations(const Vector<TextManipulationController::ExclusionRule>& exclusionRules, bool includeSubframes, TextManipulationItemCallback&& callback, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::startTextManipulations(const Vector<TextManipulationController::ExclusionRule>& exclusionRules, bool includeSubframes, bool includesGroups, TextManipulationItemCallback&& callback, CompletionHandler<void()>&& completionHandler)
 {
     m_textManipulationItemCallback = WTF::move(callback);
-    m_internals->textManipulationParameters = { includeSubframes, exclusionRules };
+    m_internals->textManipulationParameters = { includeSubframes, includesGroups, exclusionRules };
 
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        webProcess.sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules, includeSubframes), [callbackAggregator] { }, pageID);
+        webProcess.sendWithAsyncReply(Messages::WebPage::StartTextManipulations(exclusionRules, includeSubframes, includesGroups), [callbackAggregator] { }, pageID);
     });
 }
 
-void WebPageProxy::didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>& items)
+void WebPageProxy::didFindTextManipulationItems(const Vector<WebCore::TextManipulationItem>& items, const Vector<WebCore::TextManipulationGroupUpdate>& groupUpdates)
 {
     if (!m_textManipulationItemCallback)
         return;
-    m_textManipulationItemCallback(items);
+    m_textManipulationItemCallback(items, groupUpdates);
 }
 
 void WebPageProxy::completeTextManipulation(const Vector<TextManipulationItem>& items, CompletionHandler<void(Vector<TextManipulationControllerManipulationFailure>&&)>&& completionHandler)
