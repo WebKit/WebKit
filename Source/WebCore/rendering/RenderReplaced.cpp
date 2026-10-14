@@ -308,6 +308,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintInfo.axCustomColorBackdropContext()->recordBackdrop(*this, FloatRect { LayoutRect(adjustedPaintOffset, borderBoxSize()) }, paintInfo.paintBehavior);
         return;
     }
+
+    if (paintInfo.phase == PaintPhase::AXCustomColorComputeBackdrops)
+        paintInfo.axCustomColorBackdropContext()->updateImageBackdrop(*this, FloatRect { LayoutRect(adjustedPaintOffset, borderBoxSize()) });
 #endif
 
     SetLayoutNeededForbiddenScope scope(*this);
