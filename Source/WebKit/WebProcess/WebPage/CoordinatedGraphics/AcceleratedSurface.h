@@ -178,6 +178,10 @@ private:
     void frameDone();
     void releaseUnusedBuffersTimerFired();
 
+#if USE(WPE_RENDERER)
+    bool isLegacyWPERenderer() const { return m_swapChain.type() == SwapChain::Type::WPEBackend; }
+#endif
+
 #if ENABLE(DAMAGE_TRACKING)
     class SwapChainDamageTracker;
 #endif
