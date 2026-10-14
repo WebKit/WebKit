@@ -264,8 +264,17 @@ SystemSettingsManagerProxy::SystemSettingsManagerProxy()
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink-time", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-overlay-scrolling", G_CALLBACK(settingsChangedCallback), this);
-    g_signal_connect_swapped(m_settings, "notify::gtk-enable-animations", G_CALLBACK(settingsChangedCallback), this);
+#if GTK_CHECK_VERSION(4, 20, 0)
+    g_signal_connect_swapped(m_settings, "notify::gtk-interface-contrast", G_CALLBACK(settingsChangedCallback), this);
+    g_signal_connect_swapped(m_settings, "notify::gtk-interface-color-scheme", G_CALLBACK(settingsChangedCallback), this);
+#else
     g_signal_connect_swapped(m_settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(settingsChangedCallback), this);
+#endif
+#if GTK_CHECK_VERSION(4, 22, 0)
+    g_signal_connect_swapped(m_settings, "notify::gtk-interface-reduced-motion", G_CALLBACK(settingsChangedCallback), this);
+#else
+    g_signal_connect_swapped(m_settings, "notify::gtk-enable-animations", G_CALLBACK(settingsChangedCallback), this);
+#endif
 
     settingsDidChange();
 }
