@@ -380,7 +380,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                     Ref descendantStyleResolver = descendant->styleResolver();
                     if (auto* extensionStyleSheets = descendantStyleResolver->document().extensionStyleSheetsIfExists())
                         descendantStyleResolver->inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
-                    descendantStyleResolver->inspectorCSSOMWrappers().collectScopeWrappers(Style::Scope::forNode(*element));
+                    descendantStyleResolver->inspectorCSSOMWrappers().collectScopeWrappers(protect(Style::Scope::forNode(*element)));
                     auto partMatchedRules = descendantStyleResolver->styleRulesForElement(descendant.ptr(), Style::Resolver::AllCSSRules);
                     if (partMatchedRules.isEmpty())
                         continue;
