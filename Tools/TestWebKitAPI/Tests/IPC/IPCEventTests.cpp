@@ -156,6 +156,18 @@ TEST(IPCEventTests, MovingSignalDoesNotInterruptWait)
     EXPECT_TRUE(pair->event.waitFor(longTimeout));
 }
 
+TEST(IPCEventTests, SignalAfterEventIsDestroyedDoesNotBlock)
+{
+    auto pair = IPC::createEventSignalPair();
+    ASSERT_TRUE(pair.has_value());
+    { auto event = WTF::move(pair->event); }
+    // The peer that would wait may go away at any time, so signalling nobody is a normal case.
+    auto start = MonotonicTime::now();
+    for (int i = 0; i < 100; ++i)
+        pair->signal.signal();
+    EXPECT_LT(MonotonicTime::now() - start, shortTimeout);
+}
+
 #if PLATFORM(COCOA)
 
 // The Signal is a Mach send right and the Event the matching receive right, so losing the last

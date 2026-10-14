@@ -71,7 +71,9 @@ void Signal::signal()
     message.msgh_id = inlineBodyMessageID;
 
     auto ret = mach_msg(&message, MACH_SEND_MSG | MACH_SEND_TIMEOUT, sizeof(message), 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
-    if (ret != KERN_SUCCESS && ret != MACH_SEND_TIMED_OUT)
+    // MACH_SEND_TIMED_OUT: the queue length is 1, so a pending signal coalesces this one.
+    // MACH_SEND_INVALID_DEST: the Event has been destroyed and nobody waits for the signal anymore.
+    if (ret != KERN_SUCCESS && ret != MACH_SEND_TIMED_OUT && ret != MACH_SEND_INVALID_DEST)
         RELEASE_LOG_ERROR(Process, "IPC::Signal::signal Could not send mach message, error %x", ret);
 }
 
