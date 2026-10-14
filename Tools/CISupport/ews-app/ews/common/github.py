@@ -35,7 +35,7 @@ import ews.common.util as util
 _log = logging.getLogger(__name__)
 
 GITHUB_URL = 'https://github.com/'
-GITHUB_PROJECTS = ['WebKit/WebKit', 'WebKit/WebKit-security']
+GITHUB_PROJECTS = util.load_password('GITHUB_PROJECTS', default=['WebKit/WebKit', 'WebKit/WebKit-security'])
 
 is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
 is_dev_instance = (util.get_custom_suffix() != '')
