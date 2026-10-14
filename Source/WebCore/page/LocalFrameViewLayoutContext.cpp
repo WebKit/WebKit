@@ -738,6 +738,9 @@ void LocalFrameViewLayoutContext::scheduleLayout()
     if (!needsLayout())
         return;
 
+    if (view().isCrossOriginFrameWithHiddenOwner())
+        return;
+
 #if !LOG_DISABLED
     if (!document->ownerElement())
         LOG(Layout, "LocalFrameView %p layout timer scheduled at %.3fs", this, document->timeSinceDocumentCreation().value());
@@ -773,6 +776,11 @@ void LocalFrameViewLayoutContext::scheduleSubtreeLayout(RenderElement& layoutRoo
     // Try to catch unnecessary work during render tree teardown.
     ASSERT(!renderView->renderTreeBeingDestroyed());
     ASSERT(frame().view() == &view());
+
+    if (view().isCrossOriginFrameWithHiddenOwner()) {
+        layoutRoot.markContainingBlocksForLayout(renderView.ptr());
+        return;
+    }
 
     if (renderView->needsLayout() && !subtreeLayoutRoot()) {
         layoutRoot.markContainingBlocksForLayout(renderView.ptr());
