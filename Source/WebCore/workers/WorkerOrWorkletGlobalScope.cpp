@@ -48,7 +48,7 @@ WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PA
     : ScriptExecutionContext(Type::WorkerOrWorkletGlobalScope, contextIdentifier)
     , m_contextThreadUID(Thread::currentSingleton().uid())
     , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTF::move(vm), this))
-    , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
+    , m_moduleLoader(makeUniqueRef<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
     , m_inspectorController(makeUniqueRef<WorkerInspectorController>(*this))
     , m_sessionID(sessionID)

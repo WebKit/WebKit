@@ -8312,7 +8312,7 @@ ScriptRunner& Document::ensureScriptRunner()
 ScriptModuleLoader& Document::ensureModuleLoader()
 {
     ASSERT(!m_moduleLoader);
-    m_moduleLoader = makeUnique<ScriptModuleLoader>(this, ScriptModuleLoader::OwnerType::Document);
+    m_moduleLoader = makeUnique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::Document);
     return *m_moduleLoader;
 }
 
