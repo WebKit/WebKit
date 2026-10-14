@@ -103,3 +103,14 @@ class TestFindFiles(unittest.TestCase):
             ),
             ["/".join(i) for i in itertools.product(test_subset, "12345")],
         )
+
+    def test_question_mark_is_a_glob_and_hash_is_literal(self):
+        fs = MockFileSystem(files={"a1.html": "", "a#1.html": ""})
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a?.html"])),
+            ["a1.html"],
+        )
+        self.assertEqual(
+            list(find_files.find(fs, "", paths=["a#1.html"])),
+            ["a#1.html"],
+        )
