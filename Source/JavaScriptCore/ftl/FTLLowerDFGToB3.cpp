@@ -3625,19 +3625,16 @@ private:
             LBasicBlock doubleExponentPowBlockEntry = m_out.newBlock();
             LBasicBlock nanExceptionBaseIsOne = m_out.newBlock();
             LBasicBlock nanExceptionExponentIsInfinity = m_out.newBlock();
+            LBasicBlock testBaseIsOne = m_out.newBlock();
             LBasicBlock testExponentIsOneHalf = m_out.newBlock();
             LBasicBlock handleBaseZeroExponentIsOneHalf = m_out.newBlock();
             LBasicBlock handleInfinityForExponentIsOneHalf = m_out.newBlock();
             LBasicBlock exponentIsOneHalfNormal = m_out.newBlock();
-            LBasicBlock exponentIsOneHalfInfinity = m_out.newBlock();
             LBasicBlock testExponentIsNegativeOneHalf = m_out.newBlock();
             LBasicBlock testBaseZeroExponentIsNegativeOneHalf = m_out.newBlock();
-            LBasicBlock handleBaseZeroExponentIsNegativeOneHalf = m_out.newBlock();
             LBasicBlock handleInfinityForExponentIsNegativeOneHalf = m_out.newBlock();
             LBasicBlock exponentIsNegativeOneHalfNormal = m_out.newBlock();
-            LBasicBlock exponentIsNegativeOneHalfInfinity = m_out.newBlock();
             LBasicBlock powBlock = m_out.newBlock();
-            LBasicBlock nanExceptionResultIsNaN = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
             LValue integerExponent = m_out.doubleToInt32(exponent);
@@ -3662,7 +3659,8 @@ private:
                 exponentIsNaN = m_out.doubleNotEqualOrUnordered(exponent, exponent);
             else
                 exponentIsNaN = m_out.booleanFalse;
-            m_out.branch(exponentIsNaN, rarely(nanExceptionResultIsNaN), usually(nanExceptionBaseIsOne));
+            ValueFromBlock nanResultExponentIsNaN = m_out.anchor(m_out.constDouble(PNaN));
+            m_out.branch(exponentIsNaN, rarely(continuation), usually(nanExceptionBaseIsOne));
 
             // If abs(x) is 1 and y is +infinity, the result is NaN.
             // If abs(x) is 1 and y is -infinity, the result is NaN.
@@ -3671,13 +3669,19 @@ private:
             m_out.appendTo(nanExceptionBaseIsOne, nanExceptionExponentIsInfinity);
             LValue absoluteBase = m_out.doubleAbs(base);
             LValue absoluteBaseIsOne = m_out.doubleEqual(absoluteBase, m_out.constDouble(1));
-            m_out.branch(absoluteBaseIsOne, rarely(nanExceptionExponentIsInfinity), usually(testExponentIsOneHalf));
+            m_out.branch(absoluteBaseIsOne, unsure(nanExceptionExponentIsInfinity), unsure(testExponentIsOneHalf));
 
             //     Test if abs(y) == Infinity.
-            m_out.appendTo(nanExceptionExponentIsInfinity, testExponentIsOneHalf);
+            m_out.appendTo(nanExceptionExponentIsInfinity, testBaseIsOne);
             LValue absoluteExponent = m_out.doubleAbs(exponent);
             LValue absoluteExponentIsInfinity = m_out.doubleEqual(absoluteExponent, m_out.constDouble(std::numeric_limits<double>::infinity()));
-            m_out.branch(absoluteExponentIsInfinity, rarely(nanExceptionResultIsNaN), usually(testExponentIsOneHalf));
+            ValueFromBlock nanResultExponentIsInfinity = m_out.anchor(m_out.constDouble(PNaN));
+            m_out.branch(absoluteExponentIsInfinity, rarely(continuation), usually(testBaseIsOne));
+
+            //     If x == 1 and y is neither NaN nor infinite, the result is 1.
+            m_out.appendTo(testBaseIsOne, testExponentIsOneHalf);
+            ValueFromBlock baseIsOneResult = m_out.anchor(m_out.constDouble(1));
+            m_out.branch(m_out.doubleEqual(base, m_out.constDouble(1)), unsure(continuation), unsure(testExponentIsOneHalf));
 
             // If y == 0.5 or y == -0.5, handle it through SQRT.
             // We have be carefuly with -0 and -Infinity.
@@ -3693,19 +3697,15 @@ private:
             ValueFromBlock zeroResultExponentIsOneHalf = m_out.anchor(m_out.doubleZero);
             m_out.branch(baseIsZeroExponentIsOneHalf, rarely(continuation), usually(handleInfinityForExponentIsOneHalf));
 
-            //     Test if abs(x) == Infinity.
+            //     Test if abs(x) == Infinity. If so, the result is always infinite.
             m_out.appendTo(handleInfinityForExponentIsOneHalf, exponentIsOneHalfNormal);
             LValue absoluteBaseIsInfinityOneHalf = m_out.doubleEqual(absoluteBase, m_out.constDouble(std::numeric_limits<double>::infinity()));
-            m_out.branch(absoluteBaseIsInfinityOneHalf, rarely(exponentIsOneHalfInfinity), usually(exponentIsOneHalfNormal));
+            ValueFromBlock sqrtInfinityResult = m_out.anchor(m_out.constDouble(std::numeric_limits<double>::infinity()));
+            m_out.branch(absoluteBaseIsInfinityOneHalf, rarely(continuation), usually(exponentIsOneHalfNormal));
 
             //     The exponent is 0.5, the base is finite or NaN, we can use SQRT.
-            m_out.appendTo(exponentIsOneHalfNormal, exponentIsOneHalfInfinity);
+            m_out.appendTo(exponentIsOneHalfNormal, testExponentIsNegativeOneHalf);
             ValueFromBlock sqrtResult = m_out.anchor(m_out.doubleSqrt(base));
-            m_out.jump(continuation);
-
-            //     The exponent is 0.5, the base is infinite, the result is always infinite.
-            m_out.appendTo(exponentIsOneHalfInfinity, testExponentIsNegativeOneHalf);
-            ValueFromBlock sqrtInfinityResult = m_out.anchor(m_out.constDouble(std::numeric_limits<double>::infinity()));
             m_out.jump(continuation);
 
             //     Test if y == -0.5
@@ -3714,40 +3714,29 @@ private:
             m_out.branch(exponentIsNegativeOneHalf, rarely(testBaseZeroExponentIsNegativeOneHalf), usually(powBlock));
 
             //     Handle x == -0.
-            m_out.appendTo(testBaseZeroExponentIsNegativeOneHalf, handleBaseZeroExponentIsNegativeOneHalf);
+            m_out.appendTo(testBaseZeroExponentIsNegativeOneHalf, handleInfinityForExponentIsNegativeOneHalf);
             LValue baseIsZeroExponentIsNegativeOneHalf = m_out.doubleEqual(base, m_out.doubleZero);
-            m_out.branch(baseIsZeroExponentIsNegativeOneHalf, rarely(handleBaseZeroExponentIsNegativeOneHalf), usually(handleInfinityForExponentIsNegativeOneHalf));
-
-            m_out.appendTo(handleBaseZeroExponentIsNegativeOneHalf, handleInfinityForExponentIsNegativeOneHalf);
             ValueFromBlock oneOverSqrtZeroResult = m_out.anchor(m_out.constDouble(std::numeric_limits<double>::infinity()));
-            m_out.jump(continuation);
+            m_out.branch(baseIsZeroExponentIsNegativeOneHalf, rarely(continuation), usually(handleInfinityForExponentIsNegativeOneHalf));
 
-            //     Test if abs(x) == Infinity.
+            //     Test if abs(x) == Infinity. If so, the result is always zero.
             m_out.appendTo(handleInfinityForExponentIsNegativeOneHalf, exponentIsNegativeOneHalfNormal);
             LValue absoluteBaseIsInfinityNegativeOneHalf = m_out.doubleEqual(absoluteBase, m_out.constDouble(std::numeric_limits<double>::infinity()));
-            m_out.branch(absoluteBaseIsInfinityNegativeOneHalf, rarely(exponentIsNegativeOneHalfInfinity), usually(exponentIsNegativeOneHalfNormal));
+            ValueFromBlock oneOverSqrtInfinityResult = m_out.anchor(m_out.doubleZero);
+            m_out.branch(absoluteBaseIsInfinityNegativeOneHalf, rarely(continuation), usually(exponentIsNegativeOneHalfNormal));
 
             //     The exponent is -0.5, the base is finite or NaN, we can use 1/SQRT.
-            m_out.appendTo(exponentIsNegativeOneHalfNormal, exponentIsNegativeOneHalfInfinity);
+            m_out.appendTo(exponentIsNegativeOneHalfNormal, powBlock);
             LValue sqrtBase = m_out.doubleSqrt(base);
             ValueFromBlock oneOverSqrtResult = m_out.anchor(m_out.div(m_out.constDouble(1.), sqrtBase));
             m_out.jump(continuation);
 
-            //     The exponent is -0.5, the base is infinite, the result is always zero.
-            m_out.appendTo(exponentIsNegativeOneHalfInfinity, powBlock);
-            ValueFromBlock oneOverSqrtInfinityResult = m_out.anchor(m_out.doubleZero);
-            m_out.jump(continuation);
-
-            m_out.appendTo(powBlock, nanExceptionResultIsNaN);
+            m_out.appendTo(powBlock, continuation);
             ValueFromBlock powResult = m_out.anchor(m_out.doubleStdPow(base, exponent));
             m_out.jump(continuation);
 
-            m_out.appendTo(nanExceptionResultIsNaN, continuation);
-            ValueFromBlock pureNan = m_out.anchor(m_out.constDouble(PNaN));
-            m_out.jump(continuation);
-
             m_out.appendTo(continuation, lastNext);
-            setDouble(m_out.phi(Double, powDoubleIntResult, zeroResultExponentIsOneHalf, sqrtResult, sqrtInfinityResult, oneOverSqrtZeroResult, oneOverSqrtResult, oneOverSqrtInfinityResult, powResult, pureNan));
+            setDouble(m_out.phi(Double, powDoubleIntResult, nanResultExponentIsNaN, nanResultExponentIsInfinity, baseIsOneResult, zeroResultExponentIsOneHalf, sqrtResult, sqrtInfinityResult, oneOverSqrtZeroResult, oneOverSqrtResult, oneOverSqrtInfinityResult, powResult));
         }
     }
 
