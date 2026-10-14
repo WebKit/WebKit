@@ -58,6 +58,10 @@
 
 #include <pal/cg/CoreGraphicsSoftLink.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/IOSurfaceAdditionsBefore.mm>)
+#include <WebKitAdditions/IOSurfaceAdditionsBefore.mm>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
@@ -1661,5 +1665,9 @@ void GraphicsContextCG::setMaxEDRHeadroom(std::optional<float> headroom)
 
 
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/IOSurfaceAdditionsAfter.mm>)
+#include <WebKitAdditions/IOSurfaceAdditionsAfter.mm>
+#endif
 
 #endif

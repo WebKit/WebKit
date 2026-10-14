@@ -1542,3 +1542,7 @@
 #if ENABLE(LLVM_PROFILE_GENERATION)
 (allow file-write* (subpath "/private/tmp/WebKitPGO"))
 #endif
+
+#if __has_include(<WebKitAdditions/com.apple.WebKit.GPUProcess.sb.in>)
+#include <WebKitAdditions/com.apple.WebKit.GPUProcess.sb.in>
+#endif

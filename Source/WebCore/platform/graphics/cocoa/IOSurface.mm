@@ -53,6 +53,10 @@
 #import <pal/cg/CoreGraphicsSoftLink.h>
 #import <pal/cocoa/QuartzCoreSoftLink.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/IOSurfaceAdditionsBefore.mm>)
+#import <WebKitAdditions/IOSurfaceAdditionsBefore.mm>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IOSurface);
@@ -1099,3 +1103,7 @@ TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 }
 
 } // namespace WebCore
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/IOSurfaceAdditionsAfter.mm>)
+#import <WebKitAdditions/IOSurfaceAdditionsAfter.mm>
+#endif
