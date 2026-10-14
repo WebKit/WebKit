@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<style>
+text { font: 40px serif; }
+/* Gets its own width cache, with the same font for "To". */
+.reference { font-family: serif, monospace; }
+</style>
+<svg width="600" height="300">
+    <text id="ltrFirst" x="10" y="50">To</text>
+    <text id="rtlSecond" x="10" y="100" direction="rtl" unicode-bidi="bidi-override">To</text>
+    <text id="rtlReference" class="reference" x="10" y="150" direction="rtl" unicode-bidi="bidi-override">To</text>
+    <text id="rtlFirst" x="200" y="50" style="font-size: 50px" direction="rtl" unicode-bidi="bidi-override">To</text>
+    <text id="ltrSecond" x="200" y="100" style="font-size: 50px">To</text>
+    <text id="ltrReference" class="reference" x="200" y="150" style="font-size: 50px">To</text>
+</svg>
+<script>
+description("Tests that the text width cache keeps widths measured with and without a directional override apart.");
+
+// The width cache only stores widths after about 20 lookups, so measure 100 times.
+function measure(id)
+{
+    let width;
+    for (let i = 0; i < 100; ++i)
+        width = document.getElementById(id).getSubStringLength(0, 2);
+    return width;
+}
+
+measure("ltrFirst");
+shouldBe("measure('rtlSecond')", "measure('rtlReference')");
+
+measure("rtlFirst");
+shouldBe("measure('ltrSecond')", "measure('ltrReference')");
+</script>
