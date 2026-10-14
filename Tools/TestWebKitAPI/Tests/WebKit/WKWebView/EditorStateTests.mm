@@ -45,6 +45,7 @@
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 #endif
 
 static void* const SelectionAttributesObservationContext = (void*)&SelectionAttributesObservationContext;
@@ -620,7 +621,7 @@ TEST(EditorStateTests, MarkedTextRange_VerticalRangeSelection)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && HAVE(APPKIT_SIRI_AFFORDANCE) && ENABLE(WRITING_TOOLS)
 
 static RetainPtr<WKWebViewConfiguration> configurationWithTextInputClientSelectionUpdatesEnabled()
 {
@@ -633,6 +634,11 @@ static RetainPtr<WKWebViewConfiguration> configurationWithTextInputClientSelecti
     }
     return configuration;
 }
+
+#define FORCE_ENHANCED_SIRI_AVAILABLE() \
+ClassMethodSwizzler enhancedSiriAvailabilitySwizzler(PAL::getWTWritingToolsViewControllerClassSingleton(), @selector(isEnhancedSiriAvailable), imp_implementationWithBlock(^{ \
+    return YES; \
+}));
 
 TEST(EditorStateTests, UnionRectInVisibleSelectedRangeAndDocumentVisibleRect)
 {
@@ -664,6 +670,7 @@ TEST(EditorStateTests, UnionRectInVisibleSelectedRangeAndDocumentVisibleRect)
         })
     };
 
+    FORCE_ENHANCED_SIRI_AVAILABLE()
     RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
 
     RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
@@ -723,6 +730,7 @@ TEST(EditorStateTests, UnionRectInVisibleSelectedRangeForEditableCaretSelection)
         })
     };
 
+    FORCE_ENHANCED_SIRI_AVAILABLE()
     RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
 
     RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
@@ -765,6 +773,7 @@ TEST(EditorStateTests, UnionRectInVisibleSelectedRangeForNonEditableRangeSelecti
         })
     };
 
+    FORCE_ENHANCED_SIRI_AVAILABLE()
     RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
 
     RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
@@ -813,6 +822,7 @@ TEST(EditorStateTests, NotifyTextInputClientAfterMagnificationChange)
         })
     };
 
+    FORCE_ENHANCED_SIRI_AVAILABLE()
     RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
     RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
     [webView setAllowsMagnification:YES];
@@ -842,8 +852,6 @@ TEST(EditorStateTests, NotifyTextInputClientAfterMagnificationChange)
     }, 3, @"Timed out waiting for second call to -textInputClientDidUpdateSelection");
 }
 
-#if HAVE(APPKIT_SIRI_AFFORDANCE)
-
 TEST(EditorStateTests, DismissSiriAffordanceWhenSelectionScrollsAwayFromCursor)
 {
     RetainPtr affordanceController = adoptNS([TestSiriAffordanceController new]);
@@ -870,6 +878,7 @@ TEST(EditorStateTests, DismissSiriAffordanceWhenSelectionScrollsAwayFromCursor)
         imp_implementationWithBlock(^NSPoint(id) { return cursorLocationInWindow; })
     };
 
+    FORCE_ENHANCED_SIRI_AVAILABLE()
     RetainPtr configuration = configurationWithTextInputClientSelectionUpdatesEnabled();
     RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient> alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration]);
     [webView _setEditable:YES];
@@ -903,8 +912,6 @@ TEST(EditorStateTests, DismissSiriAffordanceWhenSelectionScrollsAwayFromCursor)
     EXPECT_EQ([affordanceController dismissCount], 1u);
 }
 
-#endif // HAVE(APPKIT_SIRI_AFFORDANCE)
-
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(MAC) && HAVE(APPKIT_SIRI_AFFORDANCE) && ENABLE(WRITING_TOOLS)
 
 } // namespace TestWebKitAPI

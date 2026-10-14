@@ -49,11 +49,13 @@
 #import <WebKit/WKContentWorldPrivate.h>
 #import <WebKit/WKJSHandle.h>
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKContentWorldConfiguration.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKTextPreview.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
@@ -172,6 +174,15 @@ ClassMethodSwizzler availabilitySwizzler(PAL::getWTWritingToolsViewControllerCla
 #define FORCE_WRITING_TOOLS_AVAILABLE()
 #endif
 
+#if PLATFORM(MAC) && HAVE(APPKIT_SIRI_AFFORDANCE)
+#define FORCE_ENHANCED_SIRI_UNAVAILABLE() \
+ClassMethodSwizzler enhancedSiriAvailabilitySwizzler(PAL::getWTWritingToolsViewControllerClassSingleton(), @selector(isEnhancedSiriAvailable), imp_implementationWithBlock(^{ \
+    return NO; \
+}));
+#else
+#define FORCE_ENHANCED_SIRI_UNAVAILABLE()
+#endif
+
 @interface WritingToolsWKWebView : TestWKWebView
 
 @end
@@ -197,7 +208,11 @@ ClassMethodSwizzler availabilitySwizzler(PAL::getWTWritingToolsViewControllerCla
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [configuration setWritingToolsBehavior:behavior];
     [configuration _setAttachmentElementEnabled:attachmentElementEnabled];
+    return [self initWithHTMLString:string configuration:configuration];
+}
 
+- (instancetype)initWithHTMLString:(NSString *)string configuration:(WKWebViewConfiguration *)configuration
+{
     if (!(self = [super initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]))
         return nil;
 
@@ -2826,6 +2841,21 @@ static bool didCallScheduleShowAffordanceForSelectionRect = false;
 
 #endif
 
+static RetainPtr<WKWebViewConfiguration> configurationForWritingToolsBehaviorTest(CocoaWritingToolsBehavior behavior)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration setWritingToolsBehavior:behavior];
+#if PLATFORM(MAC)
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"TextInputClientSelectionUpdatesEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+#endif
+    return configuration;
+}
+
 static void expectScheduleShowAffordanceForSelectionRectCalled(bool expectation)
 {
 #if PLATFORM(MAC)
@@ -2848,6 +2878,8 @@ TEST(WritingTools, APIWithBehaviorNone)
 {
     // If `CocoaWritingToolsBehaviorNone`, there should be no affordance, no context menu item, and no inline editing support.
 
+    FORCE_ENHANCED_SIRI_UNAVAILABLE()
+
 #if PLATFORM(MAC)
     InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClassSingleton(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
         didCallScheduleShowAffordanceForSelectionRect = true;
@@ -2866,7 +2898,7 @@ TEST(WritingTools, APIWithBehaviorNone)
     }];
 #endif
 
-    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:CocoaWritingToolsBehaviorNone]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" configuration:configurationForWritingToolsBehaviorTest(CocoaWritingToolsBehaviorNone)]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -2897,6 +2929,7 @@ TEST(WritingTools, APIWithBehaviorDefault)
     // If `CocoaWritingToolsBehaviorDefault` (or `Limited`), there should be a context menu item, but no affordance nor inline editing support.
 
     FORCE_WRITING_TOOLS_AVAILABLE()
+    FORCE_ENHANCED_SIRI_UNAVAILABLE()
 
 #if PLATFORM(MAC)
     InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClassSingleton(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
@@ -2916,7 +2949,7 @@ TEST(WritingTools, APIWithBehaviorDefault)
     }];
 #endif
 
-    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:CocoaWritingToolsBehaviorDefault]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" configuration:configurationForWritingToolsBehaviorTest(CocoaWritingToolsBehaviorDefault)]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -2947,6 +2980,7 @@ TEST(WritingTools, APIWithBehaviorComplete)
     // If `CocoaWritingToolsBehaviorComplete`, there should be a context menu item, an affordance, and inline editing support.
 
     FORCE_WRITING_TOOLS_AVAILABLE()
+    FORCE_ENHANCED_SIRI_UNAVAILABLE()
 
 #if PLATFORM(MAC)
     InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClassSingleton(), @selector(scheduleShowAffordanceForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
@@ -2966,7 +3000,7 @@ TEST(WritingTools, APIWithBehaviorComplete)
     }];
 #endif
 
-    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" writingToolsBehavior:CocoaWritingToolsBehaviorComplete]);
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" configuration:configurationForWritingToolsBehaviorTest(CocoaWritingToolsBehaviorComplete)]);
     [webView setUIDelegate:delegate.get()];
 
     [webView focusDocumentBodyAndSelectAll];
@@ -2991,6 +3025,43 @@ TEST(WritingTools, APIWithBehaviorComplete)
 #endif
 #endif
 }
+
+#if PLATFORM(MAC) && HAVE(APPKIT_SIRI_AFFORDANCE)
+
+static void testWritingToolsBehaviorWithEnhancedSiri(CocoaWritingToolsBehavior behavior, bool expectsAffordance)
+{
+    ClassMethodSwizzler enhancedSiriAvailabilitySwizzler(PAL::getWTWritingToolsViewControllerClassSingleton(), @selector(isEnhancedSiriAvailable), imp_implementationWithBlock(^{
+        return YES;
+    }));
+
+    __block unsigned didUpdateSelectionCount = 0;
+    InstanceMethodSwizzler didUpdateSelectionSwizzler(NSTextInputContext.class, @selector(textInputClientDidUpdateSelection), imp_implementationWithBlock(^{
+        didUpdateSelectionCount++;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>" configuration:configurationForWritingToolsBehaviorTest(behavior)]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    EXPECT_EQ(didUpdateSelectionCount > 0, expectsAffordance);
+    EXPECT_EQ(static_cast<bool>([webView allowsWritingToolsAffordance]), expectsAffordance);
+}
+
+TEST(WritingTools, APIWithBehaviorNoneAndEnhancedSiri)
+{
+    testWritingToolsBehaviorWithEnhancedSiri(CocoaWritingToolsBehaviorNone, false);
+}
+
+TEST(WritingTools, APIWithBehaviorDefaultAndEnhancedSiri)
+{
+    testWritingToolsBehaviorWithEnhancedSiri(CocoaWritingToolsBehaviorDefault, true);
+}
+
+TEST(WritingTools, APIWithBehaviorCompleteAndEnhancedSiri)
+{
+    testWritingToolsBehaviorWithEnhancedSiri(CocoaWritingToolsBehaviorComplete, true);
+}
+
+#endif // PLATFORM(MAC) && HAVE(APPKIT_SIRI_AFFORDANCE)
 
 @interface IsWritingToolsAvailableKVOWrapper : NSObject
 
@@ -3706,6 +3777,12 @@ TEST(WritingTools, ShouldAllowAffordance)
         [webView focusDocumentBodyAndSelectAll];
         [webView waitForNextPresentationUpdate];
         EXPECT_TRUE([webView allowsWritingToolsAffordance]);
+    }
+    {
+        RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA BBBB CCCC</p></body>" writingToolsBehavior:CocoaWritingToolsBehaviorNone]);
+        [webView focusDocumentBodyAndSelectAll];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_FALSE([webView allowsWritingToolsAffordance]);
     }
 }
 

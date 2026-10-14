@@ -990,6 +990,10 @@ private:
 
     NSRect convertFromViewToScreen(NSRect rectInView) const;
 
+#if ENABLE(WRITING_TOOLS)
+    bool shouldSendSelectionUpdatesForWritingToolsAffordance() const;
+#endif
+
     bool supportsArbitraryLayoutModes() const;
     float intrinsicDeviceScaleFactor() const;
 

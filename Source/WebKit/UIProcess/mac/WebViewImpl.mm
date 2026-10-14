@@ -3197,15 +3197,20 @@ void WebViewImpl::selectionDidChange()
         requestCandidatesForSelectionIfNeeded();
 #endif
 
+#if ENABLE(WRITING_TOOLS)
     bool alreadyNotifiedClient = false;
+#endif
+
     if (page->editorState().hasPostLayoutData()) {
 #if HAVE(REDESIGNED_TEXT_CURSOR)
         updateCursorAccessoryPlacement();
 #endif
-        if (protect(page->preferences())->textInputClientSelectionUpdatesEnabled()) {
+#if ENABLE(WRITING_TOOLS)
+        if (shouldSendSelectionUpdatesForWritingToolsAffordance()) {
             alreadyNotifiedClient = true;
             [protect(inputContextForSelectionUpdates()) textInputClientDidUpdateSelection];
         }
+#endif
     }
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
@@ -5545,7 +5550,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 bool WebViewImpl::shouldAllowWritingToolsAffordance() const
 {
-    return m_page->editorState().isEditableOrRanged() && !isSingleLineInputType(m_focusedElementInputType);
+    return m_page->writingToolsBehavior() != WebCore::WritingTools::Behavior::None
+        && m_page->editorState().isEditableOrRanged()
+        && !isSingleLineInputType(m_focusedElementInputType);
 }
 
 void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::TextAnimationData& data)
@@ -6382,10 +6389,35 @@ NSTextInputContext *WebViewImpl::inputContext()
     return [protect(m_view) _web_superInputContext];
 }
 
-NSTextInputContext *WebViewImpl::inputContextForSelectionUpdates()
+#if ENABLE(WRITING_TOOLS)
+
+bool WebViewImpl::shouldSendSelectionUpdatesForWritingToolsAffordance() const
 {
     if (!protect(m_page->preferences())->textInputClientSelectionUpdatesEnabled())
+        return false;
+
+    if (!isEditable() && m_page->configuration().writingToolsBehavior() == WebCore::WritingTools::Behavior::None)
+        return false;
+
+#if HAVE(APPKIT_SIRI_AFFORDANCE)
+    if (!PAL::isWritingToolsUIFrameworkAvailable())
+        return false;
+
+    // FIXME: We shouldn't need to consult `isEnhancedSiriAvailable` once rdar://189956835 is fixed.
+    return [PAL::getWTWritingToolsViewControllerClassSingleton() isEnhancedSiriAvailable];
+#else
+    return false;
+#endif
+}
+
+#endif
+
+NSTextInputContext *WebViewImpl::inputContextForSelectionUpdates()
+{
+#if ENABLE(WRITING_TOOLS)
+    if (!shouldSendSelectionUpdatesForWritingToolsAffordance())
         return inputContext();
+#endif
 
     if (!m_page->editorState().isEditableOrRanged() && !m_lastEditorStateWasEditableOrRanged)
         return nil;
