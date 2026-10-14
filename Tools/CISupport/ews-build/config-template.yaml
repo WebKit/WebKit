@@ -325,6 +325,7 @@
       "name": "macOS-Tahoe-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
       "factory": "macOSBuildOnlyFactory", "platform": "mac-tahoe",
       "configuration": "debug", "architectures": ["arm64"],
+      "additionalArguments": ["--cmake"],
       "triggers": ["macos-tahoe-debug-api-tests-ews", "macos-tahoe-debug-wk2-tests-ews"],
       "workernames": ["ews171", "ews172", "ews173", "ews174"]
     },

@@ -298,6 +298,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
+            'install-cmake',
+            'install-ninja',
             'compile-webkit',
             'trigger'
         ],

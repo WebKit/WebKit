@@ -195,6 +195,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-pull-request',
             'validate-change-content',
             'kill-old-processes',
+            'install-cmake',
+            'install-ninja',
             'validate-change',
             'compile-webkit'
         ],
