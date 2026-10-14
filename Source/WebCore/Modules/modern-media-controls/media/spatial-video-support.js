@@ -109,7 +109,7 @@ class SpatialVideoSupport extends MediaControllerSupport
 
     _resolveProjection(media, host)
     {
-        const declared = ProjectionAttributeValues[media.getAttribute("x-webkit-projection")?.trim().toLowerCase()];
+        const declared = ProjectionAttributeValues[media.getAttribute("projection")?.trim().toLowerCase()];
         if (declared === "none")
             return null;
         if (declared)

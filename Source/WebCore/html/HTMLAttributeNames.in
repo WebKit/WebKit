@@ -147,6 +147,7 @@ expanded
 exportparts
 face
 fetchpriority
+fieldofview
 filename
 focused
 for
@@ -374,6 +375,7 @@ optimum
 part
 pattern
 ping
+pitch
 placeholder
 playcount
 playsinline
@@ -383,6 +385,7 @@ popovertargetaction
 poster
 preload
 progress
+projection
 readonly
 referrerpolicy
 rel
@@ -461,8 +464,5 @@ x-apple-data-detectors-type
 x-apple-pdf-annotation
 x-itunes-inherit-uri-query-component
 x-webkit-airplay
-x-webkit-fieldofview
-x-webkit-pitch
-x-webkit-projection
 x-webkit-wirelessvideoplaybackdisabled
-x-webkit-yaw
+yaw

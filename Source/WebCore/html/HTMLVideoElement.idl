@@ -39,10 +39,10 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean playsInline;
 
     // Non-standard
-    [CEReactions=NotNeeded, Reflect="webkitprojection", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString projection;
-    [CEReactions=NotNeeded, ReflectSetter="webkityaw", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultYaw;
-    [CEReactions=NotNeeded, ReflectSetter="webkitpitch", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultPitch;
-    [CEReactions=NotNeeded, ReflectSetter="webkitfieldofview", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultFieldOfView;
+    [CEReactions=NotNeeded, Reflect, EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString projection;
+    [CEReactions=NotNeeded, ReflectSetter="yaw", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultYaw;
+    [CEReactions=NotNeeded, ReflectSetter="pitch", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultPitch;
+    [CEReactions=NotNeeded, ReflectSetter="fieldofview", EnabledBySetting=SpatialVideoRenderingEnabled] attribute double defaultFieldOfView;
     [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double yaw;
     [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double pitch;
     [EnabledBySetting=SpatialVideoRenderingEnabled] readonly attribute double fieldOfView;

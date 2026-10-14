@@ -241,10 +241,10 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
     } else {
         HTMLMediaElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-        if (name == webkitprojectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled())
+        if (name == projectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled())
             scheduleEvent(eventNames().webkitprojectionchangedEvent);
 
-        if ((name == webkitfieldofviewAttr || name == webkityawAttr || name == webkitpitchAttr) && document().settings().spatialVideoRenderingEnabled())
+        if ((name == fieldofviewAttr || name == yawAttr || name == pitchAttr) && document().settings().spatialVideoRenderingEnabled())
             scheduleEvent(eventNames().webkitcameraviewchangedEvent);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -268,17 +268,17 @@ void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fie
 
 double HTMLVideoElement::defaultYaw() const
 {
-    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkityawAttr), 0);
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(yawAttr), 0);
 }
 
 double HTMLVideoElement::defaultPitch() const
 {
-    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkitpitchAttr), 0);
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(pitchAttr), 0);
 }
 
 double HTMLVideoElement::defaultFieldOfView() const
 {
-    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(webkitfieldofviewAttr), defaultSpatialCameraFieldOfView);
+    return parseHTMLFloatingPointNumberValue(attributeWithoutSynchronization(fieldofviewAttr), defaultSpatialCameraFieldOfView);
 }
 
 double HTMLVideoElement::yaw() const
