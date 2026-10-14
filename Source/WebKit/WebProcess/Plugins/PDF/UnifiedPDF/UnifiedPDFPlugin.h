@@ -510,6 +510,7 @@ private:
     void didChangeSettings() override;
 
     PDFAccessibilityDisplayModeState defaultAccessibilityDisplayModeStateForCurrentSettings() const;
+    void updateAccessibilityDisplayModeEligibility();
     void setAccessibilityDisplayModeState(PDFAccessibilityDisplayModeState);
 #if ENABLE(PDF_HUD) && ENABLE(AX_PDF_SUPPORT)
     void updateHUDAccessibilityDisplayMode();

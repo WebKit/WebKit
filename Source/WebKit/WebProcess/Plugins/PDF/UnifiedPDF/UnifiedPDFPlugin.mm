@@ -803,7 +803,10 @@ void UnifiedPDFPlugin::didChangeSettings()
         propagateSettingsToLayer(*layerForScrollCorner);
 
     protect(m_presentationController)->updateDebugBorders(showDebugBorders, showRepaintCounter);
+}
 
+void UnifiedPDFPlugin::updateAccessibilityDisplayModeEligibility()
+{
     auto defaultDisplayModeState = defaultAccessibilityDisplayModeStateForCurrentSettings();
     auto isEligible = defaultDisplayModeState != PDFAccessibilityDisplayModeState::Ineligible;
     auto wasEligible = m_accessibilityDisplayModeState != PDFAccessibilityDisplayModeState::Ineligible;
@@ -816,10 +819,13 @@ void UnifiedPDFPlugin::setAccessibilityDisplayModeState(PDFAccessibilityDisplayM
     if (m_accessibilityDisplayModeState == state)
         return;
 
+    auto previousDisplayMode = accessibilityDisplayMode();
     m_accessibilityDisplayModeState = state;
 
-    RefPtr presentationController = m_presentationController;
-    presentationController->updateForAccessibilityDisplayModeChange();
+    if (accessibilityDisplayMode() != previousDisplayMode) {
+        RefPtr presentationController = m_presentationController;
+        presentationController->updateForAccessibilityDisplayModeChange();
+    }
 
     if (RefPtr rootLayer = m_rootLayer)
         rootLayer->setBackgroundColor(pluginBackgroundColor());
@@ -5251,6 +5257,8 @@ bool UnifiedPDFPlugin::delegatesScrollingToMainFrame() const
 
 void UnifiedPDFPlugin::effectiveAppearanceDidChange()
 {
+    updateAccessibilityDisplayModeEligibility();
+
     if (!isFullMainFramePlugin())
         return;
 
