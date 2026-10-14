@@ -5048,6 +5048,12 @@ class RunWebKit1Tests(RunWebKitTests):
         defer.returnValue(rc)
 
 
+def results_db_pre_existing_failures(step):
+    # A test the results database reports as failing on the base commit would most likely fail without
+    # the change too, so repeating it with and without the change would only reach that verdict after a rebuild.
+    return set(step.getProperty('results-db_first_run_pre_existing', None) or [])
+
+
 # This is a specialized class designed to cope with a tree that is not always green.
 # It tries hard to avoid reporting any false positive, so it will only report new
 # consistent failures (fail always with the patch and pass always without it).
@@ -5064,7 +5070,8 @@ class RunWebKitTestsRedTree(RunWebKitTests):
         return False
 
     def evaluateCommand(self, cmd):
-        first_results_failing_tests = set(self.getProperty('first_run_failures', []))
+        first_run_failures = set(self.getProperty('first_run_failures', []))
+        first_results_failing_tests = first_run_failures - results_db_pre_existing_failures(self)
         first_results_flaky_tests = set(self.getProperty('first_run_flakies', []))
         platform = self.getProperty('platform')
         rc = self.evaluateResult(cmd)
@@ -5088,6 +5095,15 @@ class RunWebKitTestsRedTree(RunWebKitTests):
             steps_to_add.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
         elif first_results_flaky_tests:
             steps_to_add.append(AnalyzeLayoutTestsResultsRedTree())
+        elif first_run_failures:
+            # Every failure is one the results database reports as failing on main.
+            rc = WARNINGS
+            message = self.results_db_ignore_message()
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('force_build_success', True)
+            if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in self.getProperty('build_summary', ''):
+                self.setProperty('build_summary', message)
         elif rc == SUCCESS or rc == WARNINGS:
             steps_to_add = None
             message = 'Passed layout tests'
@@ -5130,7 +5146,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         super().setLayoutTestCommand()
         # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
         self.command = [arg for arg in self.command if arg != '--enable-core-dumps-nolimit']
-        first_results_failing_tests = set(self.getProperty('first_run_failures', []))
+        first_results_failing_tests = set(self.getProperty('first_run_failures', [])) - results_db_pre_existing_failures(self)
         self.command += ['--fully-parallel', '--repeat-each=%s' % self.NUM_REPEATS_PER_TEST] + sorted(first_results_failing_tests)
 
     def evaluateCommand(self, cmd):
@@ -5224,7 +5240,7 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
         # On the repeat steps we don't enable coredump generation (makes the run much slower if there are crashes)
         self.command = [arg for arg in self.command if arg != '--enable-core-dumps-nolimit']
         with_change_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
-        first_run_failures = set(self.getProperty('first_run_failures', []))
+        first_run_failures = set(self.getProperty('first_run_failures', [])) - results_db_pre_existing_failures(self)
         with_change_repeat_failures_timedout = self.getProperty('with_change_repeat_failures_timedout', False)
         failures_to_repeat = first_run_failures if with_change_repeat_failures_timedout else with_change_nonflaky_failures
         # Pass '--skipped=always' to ensure that any test passed via command line arguments
@@ -5388,8 +5404,9 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         first_results_exceed_failure_limit = self.getProperty('first_results_exceed_failure_limit', False)
         first_run_failures = set(self.getProperty('first_run_failures', []))
         first_run_flakies = set(self.getProperty('first_run_flakies', []))
+        first_run_failures_not_pre_existing_in_results_db = first_run_failures - results_db_pre_existing_failures(self)
 
-        # Run with change, running first_run_failures 10 times each test
+        # Run with change, running first_run_failures_not_pre_existing_in_results_db 10 times each test
         with_change_repeat_failures_results_exceed_failure_limit = self.getProperty('with_change_repeat_failures_results_exceed_failure_limit', False)
         with_change_repeat_failures_results_nonflaky_failures = set(self.getProperty('with_change_repeat_failures_results_nonflaky_failures', []))
         with_change_repeat_failures_results_flakies = set(self.getProperty('with_change_repeat_failures_results_flakies', []))
@@ -5429,7 +5446,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             # The change is causing the step 'layout-tests-repeat-failures-with-change' to timeout, likely the change is adding many failures or long timeouts needing lot of time to test the repeats.
             # Report the tests that failed on the first run as we don't have the information of the ones that failed on 'layout-tests-repeat-failures-with-change' because it was interrupted due to the timeout.
             # There is no point in repeating this run, it would happen the same on next runs and consume lot of time.
-            likely_new_non_flaky_failures = first_run_failures - without_change_repeat_failures_results_nonflaky_failures.union(without_change_repeat_failures_results_flakies)
+            likely_new_non_flaky_failures = first_run_failures_not_pre_existing_in_results_db - without_change_repeat_failures_results_nonflaky_failures.union(without_change_repeat_failures_results_flakies)
             self.send_email_for_infrastructure_issue('The step "layout-tests-repeat-failures-with-change" reached the timeout but the step "layout-tests-repeat-failures-without-change" ended. Not trying to repeat this. Reporting {} failures from the first run.'.format(len(likely_new_non_flaky_failures)))
             rc = yield self.report_failure(likely_new_non_flaky_failures, first_results_exceed_failure_limit)
             return defer.returnValue(rc)
@@ -5437,7 +5454,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         # The checks below need to be after the timeout ones (above) because when a timeout is trigerred no results will be generated for the step.
         # The step with_change_repeat_failures generated an error code. That means there should be either tests failing or tests flakies. Check that.
         with_change_repeat_failures_retcode = self.getProperty('with_change_repeat_failures_retcode', FAILURE)
-        if first_run_failures and with_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
+        if first_run_failures_not_pre_existing_in_results_db and with_change_repeat_failures_retcode not in [SUCCESS, WARNINGS]:
             if not with_change_repeat_failures_results_nonflaky_failures and not with_change_repeat_failures_results_flakies:
                 return defer.returnValue(self.report_infrastructure_issue_and_maybe_retry_build('The step "layout-tests-repeat-failures" failed to generate any list of failures or flakies and returned an error code.'))
             elif with_change_repeat_failures_results_nonflaky_failures:
@@ -5450,7 +5467,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         # Warn EWS bot watchers about flakies so they can garden those. Include the step where the flaky was found in the e-mail to know if it was found with change or without it.
         # Due to the way this class works most of the flakies are filtered on the step with change even when those were pre-existent issues (so this is also useful for bot watchers).
         all_flaky_failures = first_run_flakies.union(with_change_repeat_failures_results_flakies).union(without_change_repeat_failures_results_flakies)
-        all_flaky_failures.update(first_run_failures - with_change_repeat_failures_results_nonflaky_failures)
+        all_flaky_failures.update(first_run_failures_not_pre_existing_in_results_db - with_change_repeat_failures_results_nonflaky_failures)
         flaky_steps_dict = {}
         for flaky_failure in all_flaky_failures:
             step_names = []
