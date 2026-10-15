@@ -1,0 +1,16 @@
+HAR Priorities Test.
+
+
+== Running test suite: HAR.Page
+-- Running test case: HAR.Page.Priority
+PASS: HTML http://127.0.0.1:8000/inspector/network/har/har-page-priority.html should start with a VeryHigh priority
+PASS: - HTML should still have VeryHigh priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css should start with a High priority
+PASS: - Screen stylesheet should stay at a High priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css?print should start with a High priority
+PASS: - Print stylesheet should be reduced to a VeryLow priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css?low should start with a High priority
+PASS: - Priority was only reduced to Medium
+PASS: JavaScript http://127.0.0.1:8000/inspector/resources/inspector-test.js should start with a High priority
+PASS: - JavaScript should still have a High priority
+
