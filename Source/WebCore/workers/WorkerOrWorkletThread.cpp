@@ -89,12 +89,12 @@ void WorkerOrWorkletThread::startRunningDebuggerTasks()
     m_pausedForDebugger = true;
 
     // FIXME: Add support for debugging workers running on the main thread.
-    if (!is<WorkerDedicatedRunLoop>(m_runLoop.get()))
+    if (!is<WorkerDedicatedRunLoop>(m_runLoop))
         return;
 
     MessageQueueWaitResult result;
     do {
-        result = downcast<WorkerDedicatedRunLoop>(m_runLoop.get()).runInDebuggerMode(*protect(globalScope()));
+        result = downcast<WorkerDedicatedRunLoop>(m_runLoop).runInDebuggerMode(*protect(globalScope()));
     } while (result != MessageQueueTerminated && m_pausedForDebugger);
 }
 
@@ -106,7 +106,7 @@ void WorkerOrWorkletThread::stopRunningDebuggerTasks()
 void WorkerOrWorkletThread::runEventLoop()
 {
     // Does not return until terminated.
-    if (auto* runLoop = dynamicDowncast<WorkerDedicatedRunLoop>(m_runLoop.get()))
+    if (auto* runLoop = dynamicDowncast<WorkerDedicatedRunLoop>(m_runLoop))
         runLoop->run(protect(globalScope()).get());
 }
 
@@ -119,7 +119,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
         if (!m_globalScope)
             return;
 
-        downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*globalScope());
+        downcast<WorkerMainRunLoop>(m_runLoop).setGlobalScope(*globalScope());
 
         String exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
@@ -281,7 +281,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
         if (CheckedPtr script = globalScope()->script())
             script->scheduleExecutionTermination();
 
-        if (is<WorkerMainRunLoop>(m_runLoop.get())) {
+        if (is<WorkerMainRunLoop>(m_runLoop)) {
             auto globalScope = std::exchange(m_globalScope, nullptr);
             globalScope->prepareForDestruction();
             globalScope->clearScript();
@@ -314,7 +314,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
 void WorkerOrWorkletThread::suspend()
 {
     m_isSuspended = true;
-    if (is<WorkerMainRunLoop>(m_runLoop.get()))
+    if (is<WorkerMainRunLoop>(m_runLoop))
         return;
 
     m_runLoop->postTask([protectedThis = Ref { *this }](ScriptExecutionContext&) {
@@ -332,7 +332,7 @@ void WorkerOrWorkletThread::resume()
 {
     ASSERT(m_isSuspended);
     m_isSuspended = false;
-    if (is<WorkerMainRunLoop>(m_runLoop.get()))
+    if (is<WorkerMainRunLoop>(m_runLoop))
         return;
 
     m_suspensionSemaphore.signal();

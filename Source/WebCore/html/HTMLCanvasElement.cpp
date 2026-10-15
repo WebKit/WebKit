@@ -328,7 +328,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
-        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get())) {
+        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context)) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
             return { context.releaseNonNull() };
@@ -463,7 +463,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
     invalidateStyleAndLayerComposition();
 #endif
 
-    return downcast<CanvasRenderingContext2D>(m_context.get());
+    return downcast<CanvasRenderingContext2D>(m_context);
 }
 
 CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
@@ -472,7 +472,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, Ca
 
     if (!m_context)
         return createContext2d(type, WTF::move(settings));
-    return dynamicDowncast<CanvasRenderingContext2D>(m_context.get());
+    return dynamicDowncast<CanvasRenderingContext2D>(m_context);
 }
 
 #if ENABLE(WEBGL)
@@ -523,7 +523,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
 #endif
     }
 
-    return downcast<WebGLRenderingContextBase>(m_context.get());
+    return downcast<WebGLRenderingContextBase>(m_context);
 }
 
 RefPtr<WebGLRenderingContextBase> HTMLCanvasElement::getContextWebGL(WebGLVersion type, WebGLContextAttributes&& attrs)
@@ -572,7 +572,7 @@ ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const S
 
     if (!m_context)
         return createContextBitmapRenderer(type, WTF::move(settings));
-    return dynamicDowncast<ImageBitmapRenderingContext>(m_context.get());
+    return dynamicDowncast<ImageBitmapRenderingContext>(m_context);
 }
 
 bool HTMLCanvasElement::isWebGPUType(const String& type)
@@ -599,7 +599,7 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
     }
 
-    return downcast<GPUCanvasContext>(m_context.get());
+    return downcast<GPUCanvasContext>(m_context);
 }
 
 GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* gpu)
@@ -612,7 +612,7 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* g
     if (!m_context)
         return createContextWebGPU(type, gpu);
 
-    return dynamicDowncast<GPUCanvasContext>(m_context.get());
+    return dynamicDowncast<GPUCanvasContext>(m_context);
 }
 
 void HTMLCanvasElement::willUpdateContents(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
@@ -818,7 +818,7 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get());
+    RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context);
     if (!context)
         return nullptr;
 
@@ -844,7 +844,7 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 #if PLATFORM(COCOA) || USE(GSTREAMER)
     Ref document = this->document();
 #if ENABLE(WEBGL)
-    if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get())) {
+    if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_context)) {
         if (document->settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::singleton().logCanvasRead(document.get());
         return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
@@ -913,7 +913,7 @@ bool HTMLCanvasElement::virtualHasPendingActivity() const
 #if ENABLE(WEBGL)
     if (m_hasRelevantWebGLEventListener) {
         // This runs on a GC thread.
-        SUPPRESS_UNCOUNTED_LOCAL auto* context = dynamicDowncast<WebGLRenderingContextBase>(m_context.get());
+        SUPPRESS_UNCOUNTED_LOCAL auto* context = dynamicDowncast<WebGLRenderingContextBase>(m_context);
         // WebGL rendering context may fire contextlost / contextrestored events at any point.
         return context && !context->isContextUnrecoverablyLost();
     }

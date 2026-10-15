@@ -96,4 +96,53 @@ TEST(WTF, UniqueRef)
     UNUSED_PARAM(k);
 }
 
+class UniqueRefCastBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UniqueRefCastBase);
+public:
+    virtual ~UniqueRefCastBase() = default;
+    virtual bool isUniqueRefCastDerived() const { return false; }
+};
+
+class UniqueRefCastDerived final : public UniqueRefCastBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UniqueRefCastDerived);
+private:
+    bool isUniqueRefCastDerived() const final { return true; }
+};
+
+} // namespace TestWebKitAPI
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(TestWebKitAPI::UniqueRefCastDerived)
+    static bool isType(const TestWebKitAPI::UniqueRefCastBase& object) { return object.isUniqueRefCastDerived(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace TestWebKitAPI {
+
+template<typename T> concept CanDowncastToUniqueRefCastDerived = requires(T&& source) { downcast<UniqueRefCastDerived>(std::forward<T>(source)); };
+
+TEST(WTF_UniqueRef, DowncastAndDynamicDowncast)
+{
+    UniqueRef<UniqueRefCastBase> derived = makeUniqueRef<UniqueRefCastDerived>();
+    UniqueRef<UniqueRefCastBase> base = makeUniqueRef<UniqueRefCastBase>();
+    EXPECT_EQ(&downcast<UniqueRefCastDerived>(derived), derived.ptr());
+    EXPECT_EQ(&downcast<UniqueRefCastDerived>(std::as_const(derived)), derived.ptr());
+    EXPECT_EQ(dynamicDowncast<UniqueRefCastDerived>(derived), derived.ptr());
+    EXPECT_FALSE(dynamicDowncast<UniqueRefCastDerived>(std::as_const(base)));
+    EXPECT_EQ(&uncheckedDowncast<UniqueRefCastDerived>(derived), derived.ptr());
+    static_assert(!CanDowncastToUniqueRefCastDerived<UniqueRef<UniqueRefCastBase>>);
+}
+
+TEST(WTF_UniquePtr, DowncastAndDynamicDowncast)
+{
+    std::unique_ptr<UniqueRefCastBase> derived = makeUnique<UniqueRefCastDerived>();
+    std::unique_ptr<UniqueRefCastBase> base = makeUnique<UniqueRefCastBase>();
+    std::unique_ptr<UniqueRefCastBase> null;
+    EXPECT_EQ(downcast<UniqueRefCastDerived>(derived), derived.get());
+    EXPECT_EQ(downcast<UniqueRefCastDerived>(std::as_const(derived)), derived.get());
+    EXPECT_EQ(dynamicDowncast<UniqueRefCastDerived>(derived), derived.get());
+    EXPECT_FALSE(dynamicDowncast<UniqueRefCastDerived>(std::as_const(base)));
+    EXPECT_FALSE(dynamicDowncast<UniqueRefCastDerived>(null));
+    EXPECT_EQ(uncheckedDowncast<UniqueRefCastDerived>(derived), derived.get());
+    static_assert(!CanDowncastToUniqueRefCastDerived<std::unique_ptr<UniqueRefCastBase>>);
+}
+
 } // namespace TestWebKitAPI

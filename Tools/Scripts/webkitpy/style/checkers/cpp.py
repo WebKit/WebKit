@@ -3185,9 +3185,9 @@ _SMART_POINTER_TYPES = '|'.join(list(_SMART_POINTER_SOURCES) + ['unique_ptr', 'U
 # Each cast and the smart pointer types it takes.
 _SMART_POINTER_CAST_SOURCES = {
     'is': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef', 'unique_ptr', 'UniqueRef'),
-    'downcast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef'),
-    'dynamicDowncast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef'),
-    'uncheckedDowncast': ('RefPtr', 'Ref'),
+    'downcast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef', 'unique_ptr', 'UniqueRef'),
+    'dynamicDowncast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef', 'unique_ptr', 'UniqueRef'),
+    'uncheckedDowncast': ('RefPtr', 'Ref', 'unique_ptr', 'UniqueRef'),
 }
 
 # 'RefPtr<Node> m_node;', 'const WeakPtr<Frame>& frame,', or 'CheckedPtr renderer = ...'.

@@ -145,6 +145,47 @@ inline bool isAnyOf(const UniqueRef<ArgType>& source)
     return isAnyOf<ExpectedTypes...>(source.get());
 }
 
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& uncheckedDowncast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& uncheckedDowncast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& downcast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>& downcast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source>
+inline match_constness_t<Source, Target>* dynamicDowncast(const UniqueRef<Source>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+// The cast result doesn't own the object, so it can't take over from an rvalue.
+template<typename Target, typename Source> void uncheckedDowncast(UniqueRef<Source>&&) = delete;
+template<typename Target, typename Source> void downcast(UniqueRef<Source>&&) = delete;
+template<typename Target, typename Source> void dynamicDowncast(UniqueRef<Source>&&) = delete;
+
 template<typename T>
 inline bool arePointingToEqualData(const UniqueRef<T>& a, const UniqueRef<T>& b)
 {

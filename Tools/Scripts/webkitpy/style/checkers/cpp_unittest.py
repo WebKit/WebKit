@@ -6737,7 +6737,11 @@ class WebKitStyleTest(CppStyleTestBase):
         assert_redundant_get('void run(Ref<Client>&& client)\n{\n    ThreadSafeWeakPtr weakClient { client.get() };\n}', '')
         dynamic_downcast = "Omit '.get()': 'dynamicDowncast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
         is_ = "Omit '.get()': 'is<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
-        assert_redundant_get('auto* context = dynamicDowncast<GPUCanvasContext>(m_context.get());', '', '    std::unique_ptr<CanvasRenderingContext> m_context;')
+        downcast = "Omit '.get()': 'downcast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        unchecked_downcast = "Omit '.get()': 'uncheckedDowncast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        assert_redundant_get('auto* context = dynamicDowncast<GPUCanvasContext>(m_context.get());', dynamic_downcast, '    std::unique_ptr<CanvasRenderingContext> m_context;')
+        assert_redundant_get('auto& runLoop = downcast<WorkerMainRunLoop>(m_runLoop.get());', downcast, '    const UniqueRef<WorkerRunLoop> m_runLoop;')
+        assert_redundant_get('auto& node = uncheckedDowncast<Expression>(m_node.get());', unchecked_downcast, '    std::unique_ptr<Node> m_node;')
         assert_redundant_get('bool isGPU = is<GPUCanvasContext>(m_context.get());', is_, '    std::unique_ptr<CanvasRenderingContext> m_context;')
         assert_redundant_get('auto* element = dynamicDowncast<Element>(m_node.get());', dynamic_downcast, '    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;')
         assert_redundant_get('auto& element = uncheckedDowncast<Element>(m_node.get());', '', '    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;')

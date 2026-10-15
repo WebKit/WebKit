@@ -177,6 +177,47 @@ inline bool isAnyOf(const std::unique_ptr<ArgType, Deleter>& source)
     return isAnyOf<ExpectedTypes...>(source.get());
 }
 
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* uncheckedDowncast(std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* uncheckedDowncast(const std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return uncheckedDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* downcast(std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* downcast(const std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return downcast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* dynamicDowncast(std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+template<typename Target, typename Source, typename Deleter>
+inline match_constness_t<Source, Target>* dynamicDowncast(const std::unique_ptr<Source, Deleter>& source LIFETIME_BOUND)
+{
+    return dynamicDowncast<Target>(source.get());
+}
+
+// The cast result doesn't own the object, so it can't take over from an rvalue.
+template<typename Target, typename Source, typename Deleter> void uncheckedDowncast(std::unique_ptr<Source, Deleter>&&) = delete;
+template<typename Target, typename Source, typename Deleter> void downcast(std::unique_ptr<Source, Deleter>&&) = delete;
+template<typename Target, typename Source, typename Deleter> void dynamicDowncast(std::unique_ptr<Source, Deleter>&&) = delete;
+
 } // namespace WTF
 
 using WTF::TypeCastTraits;
