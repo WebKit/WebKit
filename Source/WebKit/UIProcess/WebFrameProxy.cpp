@@ -823,6 +823,9 @@ void WebFrameProxy::setProcess(FrameProcess& process)
     if (RefPtr provisionalPage = m_page ? m_page->provisionalPageProxy() : nullptr)
         provisionalPage->updateFrameProcess();
     m_frameProcess->incrementFrameCount();
+
+    if (m_page)
+        m_page->inspectorController().frameDidChangeProcess(m_frameID, process.process().coreProcessIdentifier());
 }
 
 void WebFrameProxy::removeChildFrames()

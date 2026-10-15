@@ -13,10 +13,6 @@ function test() {
 
     let crossProcessTarget;
 
-    function sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
     async function evaluate(target, expression) {
         let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
         return result.value;

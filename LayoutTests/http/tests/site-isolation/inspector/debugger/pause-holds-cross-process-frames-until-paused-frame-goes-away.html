@@ -1,0 +1,108 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ignoreWebProcessTermination=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway");
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function processIdentifier(target) {
+        return target.identifier.split("-").pop();
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pause(target) {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        target.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function appendCrossSiteFrame(id, query) {
+        await evaluate(InspectorTest.mainFrameTarget, `(() => {
+            let iframe = document.createElement("iframe");
+            iframe.id = "${id}";
+            iframe.src = "http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?${query}";
+            document.body.appendChild(iframe);
+        })()`);
+    }
+
+    async function pauseCrossSiteFrameAndExpectMainFrameHeld(urlSubstring) {
+        let target = await waitForFrameTargetForURLContaining(urlSubstring);
+        InspectorTest.expectNotNull(target, "Should find the frame target of the cross-site frame.");
+        InspectorTest.expectThat(await waitForExpressionInTarget(target, "window.ticks > 2"), "The cross-site frame's interval should be running.");
+
+        await pause(target);
+        let before = await evaluate(InspectorTest.mainFrameTarget, "window.mainTicks");
+        await sleep(300);
+        InspectorTest.expectEqual(await evaluate(InspectorTest.mainFrameTarget, "window.mainTicks"), before, "The main frame's interval should not advance while the cross-site frame is paused.");
+        return {target, before};
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausedFrameNavigatesIntoMainFrameProcess",
+        description: "If the paused cross-site frame navigates into the main frame's process, its old process never reports that it continued, and the main frame should run again.",
+        async test() {
+            let {before} = await pauseCrossSiteFrameAndExpectMainFrameHeld("same-process-frame.html?X");
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameX').src = 'http://127.0.0.1:8000/site-isolation/inspector/debugger/resources/frame-without-scripts.html'");
+
+            let newTarget = await waitForFrameTargetForURLContaining("frame-without-scripts.html");
+            InspectorTest.expectNotNull(newTarget, "Should find the frame target of the frame's new document.");
+            InspectorTest.expectEqual(processIdentifier(newTarget), processIdentifier(InspectorTest.mainFrameTarget), "The frame's new document should be in the main frame's process.");
+
+            // DebuggerManager asks a target that appears during a pause to pause too. Requesting and cancelling it again resumes the new document if it already paused in the main frame's process, and otherwise cancels the request, which the agent forgot when the global object was replaced but JSC keeps.
+            await newTarget.DebuggerAgent.pause();
+            await newTarget.DebuggerAgent.resume();
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.mainTicks > ${before}`), "The main frame's interval should advance after the paused frame leaves its process.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausedFrameRemoved",
+        description: "If the paused cross-site frame is removed, its process never reports that it continued, and the main frame should run again.",
+        async test() {
+            await appendCrossSiteFrame("frameY", "Y");
+            let {before} = await pauseCrossSiteFrameAndExpectMainFrameHeld("same-process-frame.html?Y");
+
+            await evaluate(InspectorTest.mainFrameTarget, "document.getElementById('frameY').remove()");
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.mainTicks > ${before}`), "The main frame's interval should advance after the paused frame is removed.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesUntilPausedFrameGoesAway.PausingProcessTerminated",
+        description: "If the paused cross-site frame's process exits, it never reports that the frame continued, and the main frame should run again.",
+        async test() {
+            await appendCrossSiteFrame("frameZ", "Z");
+            let {target, before} = await pauseCrossSiteFrameAndExpectMainFrameHeld("same-process-frame.html?Z");
+
+            target.RuntimeAgent.evaluate.invoke({expression: "internals.terminateWebContentProcess()", objectGroup: "test"}).catch(() => { });
+            InspectorTest.expectThat(await waitForExpressionInTarget(InspectorTest.mainFrameTarget, `window.mainTicks > ${before}`), "The main frame's interval should advance after the paused frame's process exits.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that the frames held for a paused cross-site frame run again when the paused frame leaves its process, is removed, or its process exits, since its process then never reports that it continued.</p>
+<iframe id="frameX" src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?X"></iframe>
+</body>

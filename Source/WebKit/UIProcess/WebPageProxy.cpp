@@ -71,7 +71,6 @@
 #include "CallbackID.h"
 #include "ColorControlSupportsAlpha.h"
 #include "Connection.h"
-#include "DebuggerPauseCoordinator.h"
 #include "DidFilterKnownLinkDecoration.h"
 #include "DigitalCredentialsCoordinatorMessages.h"
 #include "DownloadManager.h"
@@ -2038,7 +2037,6 @@ void WebPageProxy::close()
     m_inspector->invalidate();
 
     backForwardList().pageClosed();
-    m_debuggerPauseCoordinator = nullptr;
     m_inspectorController->pageClosed();
 #if ENABLE(REMOTE_INSPECTOR)
     if (RefPtr inspectorDebuggable = std::exchange(m_inspectorDebuggable, nullptr))
@@ -3360,21 +3358,12 @@ void WebPageProxy::frameDidPauseForDebugger(IPC::Connection& connection, WebCore
         return;
     MESSAGE_CHECK_BASE(frame->page() == this, connection);
 
-    if (!m_debuggerPauseCoordinator)
-        m_debuggerPauseCoordinator = makeUnique<DebuggerPauseCoordinator>(*this);
-    m_debuggerPauseCoordinator->frameDidPause(process, frameID);
+    m_inspectorController->frameDidPauseForDebugger(process, frameID);
 }
 
 void WebPageProxy::frameDidContinueForDebugger(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
 {
-    if (m_debuggerPauseCoordinator)
-        m_debuggerPauseCoordinator->frameDidContinue(WebProcessProxy::fromConnection(connection), frameID);
-}
-
-void WebPageProxy::lastInspectorFrontendDidDisconnect()
-{
-    if (m_debuggerPauseCoordinator)
-        m_debuggerPauseCoordinator->closeSession();
+    m_inspectorController->frameDidContinueForDebugger(WebProcessProxy::fromConnection(connection), frameID);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -15100,6 +15089,8 @@ void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, Process
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
 
     revokeOutstandingForcedUserActivationsForProcess(process);
+
+    m_inspectorController->processDidTerminate(process);
 
     if (protect(preferences())->siteIsolationEnabled()) {
         processDidBecomeResponsive(process); // Check if all other processes are responsive.

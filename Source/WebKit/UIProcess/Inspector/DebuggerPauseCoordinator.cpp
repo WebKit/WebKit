@@ -59,6 +59,41 @@ void DebuggerPauseCoordinator::frameDidContinue(WebProcessProxy& process, WebCor
         closeSession();
 }
 
+// A frame that leaves its process, or is removed, may never report that it continued: the process can lose the
+// page that would send the report, and stay alive.
+void DebuggerPauseCoordinator::frameDidChangeProcess(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier newProcessID)
+{
+    removeStoppingFramesIf([&](auto& entry) {
+        return entry.second == frameID && entry.first != newProcessID;
+    });
+}
+
+void DebuggerPauseCoordinator::frameWillBeDestroyed(WebCore::FrameIdentifier frameID)
+{
+    removeStoppingFramesIf([&](auto& entry) {
+        return entry.second == frameID;
+    });
+}
+
+void DebuggerPauseCoordinator::processDidTerminate(WebProcessProxy& process)
+{
+    m_suspendedPages.removeAllMatching([&](auto& entry) {
+        return !entry.first || entry.first.get() == &process;
+    });
+
+    // A process that dies while one of its frames is paused never reports that the frame continued.
+    removeStoppingFramesIf([&](auto& entry) {
+        return entry.first == process.coreProcessIdentifier();
+    });
+}
+
+template<typename Predicate>
+void DebuggerPauseCoordinator::removeStoppingFramesIf(NOESCAPE const Predicate& predicate)
+{
+    if (m_stoppingFrames.removeIf(predicate) && m_stoppingFrames.isEmpty())
+        closeSession();
+}
+
 void DebuggerPauseCoordinator::openSession(WebProcessProxy& pausingProcess)
 {
     ASSERT(!m_sessionID);
