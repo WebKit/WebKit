@@ -50,6 +50,7 @@ class CSSStyleSheet;
 class Document;
 class Element;
 class EventTarget;
+class FrameDOMAgent;
 class LocalFrame;
 class Node;
 class StyledElement;
@@ -112,6 +113,7 @@ public:
 
     // FrameDOMAgent
     RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);
+    void didBindDocument();
 
 private:
     void reset();
@@ -133,6 +135,7 @@ private:
     Inspector::Protocol::CSS::StyleSheetOrigin detectOrigin(CSSStyleSheet*, Document*);
     void nodeHasLayoutFlagsChange(Node&);
     void nodesWithPendingLayoutFlagsChangeDispatchTimerFired();
+    void pushLayoutContextNodesToFrontend(FrameDOMAgent&);
 
     const UniqueRef<Inspector::CSSFrontendDispatcher> m_frontendDispatcher;
     const Ref<Inspector::CSSBackendDispatcher> m_backendDispatcher;
@@ -152,6 +155,7 @@ private:
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
+    bool m_needsLayoutContextNodesPush { false };
 };
 
 } // namespace WebCore

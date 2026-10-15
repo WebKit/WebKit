@@ -49,14 +49,20 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._defaultUserPreferences = new Map;
         this._overriddenUserPreferences = new Map;
         this._propertyNameCompletions = null;
+        this._layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
     }
 
     // Target
 
     initializeTarget(target)
     {
-        if (target.hasDomain("CSS"))
+        if (target.hasDomain("CSS")) {
             target.CSSAgent.enable();
+
+            // Page targets request their document later, and InspectorCSSAgent does not push nodes once it arrives.
+            if (target instanceof WI.FrameTarget && this._layoutContextTypeChangedMode !== WI.CSSManager.LayoutContextTypeChangedMode.Observed)
+                this._setLayoutContextTypeChangedModeForTarget(target, this._layoutContextTypeChangedMode);
+        }
     }
 
     initializeCSSPropertyNameCompletions(target)
@@ -353,11 +359,10 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     set layoutContextTypeChangedMode(layoutContextTypeChangedMode)
     {
-        for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 14.5): CSS.setLayoutContextTypeChangedMode did not exist.
-            if (target.hasCommand("CSS.setLayoutContextTypeChangedMode"))
-                target.CSSAgent.setLayoutContextTypeChangedMode(layoutContextTypeChangedMode);
-        }
+        this._layoutContextTypeChangedMode = layoutContextTypeChangedMode;
+
+        for (let target of WI.targets)
+            this._setLayoutContextTypeChangedModeForTarget(target, layoutContextTypeChangedMode);
     }
 
     canForcePseudoClass(pseudoClass)
@@ -621,6 +626,13 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (target instanceof WI.FrameTarget)
             return `${target.identifier}:${rawId}`;
         return rawId;
+    }
+
+    _setLayoutContextTypeChangedModeForTarget(target, mode)
+    {
+        // COMPATIBILITY (iOS 14.5): CSS.setLayoutContextTypeChangedMode did not exist.
+        if (target.hasCommand("CSS.setLayoutContextTypeChangedMode"))
+            target.CSSAgent.setLayoutContextTypeChangedMode(mode);
     }
 
     _handleTargetRemoved(event)
