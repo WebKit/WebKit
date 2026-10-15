@@ -782,6 +782,16 @@ public:
     ExceptionOr<void> startTrackingLayoutUpdates();
     ExceptionOr<unsigned> layoutUpdateCount();
 
+    struct InlineLayoutInfo {
+        uint64_t sequenceNumber { 0 };
+        String range;
+        bool isFromMaximumIntrinsicWidthLine { false };
+        unsigned laidOutLineCount { 0 };
+        unsigned reusedLineCount { 0 };
+    };
+    void setInlineLayoutInfoCollectionEnabled(bool);
+    ExceptionOr<InlineLayoutInfo> lastInlineLayoutInfo(Element&);
+
     ExceptionOr<void> startTrackingRenderLayerPositionUpdates();
     ExceptionOr<unsigned> renderLayerPositionUpdateCount();
 

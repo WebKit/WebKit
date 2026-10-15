@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<style>
+.container {
+    font: 20px/1 Ahem;
+    width: 10em;
+}
+.first-line::first-line {
+    font-size: 30px;
+}
+</style>
+<!-- Each content is laid out, changed and laid out again. The log shows whether the change ran an inline layout, which lines
+     it laid out and which it kept from the previous layout. A result that does not match a fresh layout of the same content is
+     marked FAIL.
+     Cases without a change show the first layout. -->
+<pre id="log"></pre>
+<div id="styleUpdateTrigger"></div>
+<script>
+window.testRunner?.dumpAsText();
+window.internals?.setInlineLayoutInfoCollectionEnabled(true);
+
+function lines(count)
+{
+    return Array.from({ length: count }, (_, index) => `line ${index}`).join("<br>");
+}
+
+function textNode(container, data)
+{
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+        if (walker.currentNode.data.startsWith(data))
+            return walker.currentNode;
+    }
+    throw new Error(`No text node starting with "${data}"`);
+}
+
+function updateStyleWithoutLayout()
+{
+    // Builds the renderers for new content without laying it out. Computed style only updates the document when the queried
+    // element itself needs a style update.
+    styleUpdateTrigger.style.color = styleUpdateTrigger.style.color ? "" : "black";
+    getComputedStyle(styleUpdateTrigger).color;
+}
+
+function geometry(container)
+{
+    // Every character, line break and atomic inline-level box, relative to the container.
+    const origin = container.getBoundingClientRect();
+    const position = rect => `${rect.x - origin.x},${rect.y - origin.y},${rect.width},${rect.height}`;
+    const result = [];
+    const range = document.createRange();
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node.nodeType != Node.TEXT_NODE) {
+            result.push(`${node.nodeName} ${position(node.getBoundingClientRect())}`);
+            continue;
+        }
+        for (let offset = 0; offset < node.length; ++offset) {
+            range.setStart(node, offset);
+            range.setEnd(node, offset + 1);
+            result.push([...range.getClientRects()].map(position).join(" "));
+        }
+    }
+    return result.join("\n");
+}
+
+function describe(layoutInfo)
+{
+    const origin = layoutInfo.isFromMaximumIntrinsicWidthLine ? " from the maximum intrinsic width line" : "";
+    return `${layoutInfo.range}${origin}, laid out lines: ${layoutInfo.laidOutLineCount}, reused lines: ${layoutInfo.reusedLineCount}`;
+}
+
+const tallImage = `<img style="width: 20px; height: 50px; vertical-align: top">`;
+const longText = "aaaa bbbb cccc dddd eeee ffff gggg hhhh iiii jjjj kkkk llll";
+
+const testCases = [
+    {
+        description: "Insert a text node",
+        content: lines(8),
+        change: container => textNode(container, "line 3").after("!"),
+    },
+    {
+        description: "Insert a text node before all content",
+        content: lines(8),
+        change: container => container.prepend("!"),
+    },
+    {
+        description: "Insert a line break where the line wraps",
+        // Comments keep the words in separate text nodes.
+        content: ["aaaa aaaa ", "bbbb bbbb ", "cccc cccc ", "dddd dddd ", "eeee eeee ", "ffff ffff ", "gggg gggg ", "hhhh hhhh"].join("<!---->"),
+        change: container => textNode(container, "dddd").after(document.createElement("br")),
+    },
+    {
+        description: "Insert an image",
+        content: lines(8),
+        change: container => textNode(container, "line 3").after(Object.assign(document.createElement("img"), { style: "width: 20px; height: 10px" })),
+    },
+    {
+        description: "Append text to a text node",
+        content: lines(8),
+        change: container => textNode(container, "line 3").appendData("!"),
+    },
+    {
+        description: "Append text to a text node that spans lines",
+        content: `first<br>aaaa bbbb cccc dddd eeee<br>${lines(4)}`,
+        change: container => textNode(container, "aaaa").appendData(" ff"),
+    },
+    {
+        description: "Insert text on the first line",
+        content: longText,
+        change: container => textNode(container, "aaaa").insertData(2, "x"),
+    },
+    {
+        description: "Insert text in the middle of a text node",
+        content: `first<br>${longText}`,
+        change: container => textNode(container, "aaaa").insertData(11, "x"),
+    },
+    {
+        description: "Replace the text of a text node",
+        content: lines(8),
+        change: container => textNode(container, "line 3").data = "LINE 3",
+    },
+    {
+        description: "Insert a text node that adds lines",
+        content: lines(8),
+        change: container => textNode(container, "line 3").after(" aaaa bbbb cccc"),
+    },
+    {
+        description: "Append a text node",
+        content: lines(8),
+        change: container => container.append("!"),
+    },
+    {
+        description: "Append two text nodes",
+        content: lines(8),
+        change: container => {
+            container.append("!");
+            updateStyleWithoutLayout();
+            container.append("?");
+        },
+    },
+    {
+        description: "Append a text node and insert another one",
+        content: lines(8),
+        change: container => {
+            container.append(" end");
+            textNode(container, "line 3").after("!");
+        },
+    },
+    {
+        description: "Remove a text node",
+        content: lines(8),
+        change: container => textNode(container, "line 3").remove(),
+    },
+    {
+        description: "Remove a line break",
+        content: lines(8),
+        change: container => textNode(container, "line 3").nextSibling.remove(),
+    },
+    {
+        description: "Delete text on the first line",
+        content: longText,
+        change: container => textNode(container, "aaaa").deleteData(2, 1),
+    },
+    {
+        description: "Delete text in the middle of a text node",
+        content: `first<br>${longText}`,
+        change: container => textNode(container, "aaaa").deleteData(11, 3),
+    },
+    {
+        description: "Remove a text node and change another one",
+        content: lines(8),
+        change: container => {
+            textNode(container, "line 3").remove();
+            textNode(container, "line 5").appendData("!");
+        },
+    },
+    {
+        description: "Remove a text node that was never laid out",
+        content: lines(8),
+        change: container => {
+            const text = new Text("!");
+            container.append(text);
+            updateStyleWithoutLayout();
+            text.remove();
+        },
+    },
+    {
+        description: "Remove an image that was never laid out",
+        content: lines(8),
+        change: container => {
+            const image = Object.assign(document.createElement("img"), { style: "width: 20px; height: 10px" });
+            container.append(image);
+            updateStyleWithoutLayout();
+            image.remove();
+        },
+    },
+    {
+        description: "Insert a text node that moves a tall image to the next line",
+        style: "text-align: right",
+        content: `${lines(3)}<br>aaaaaaa${tallImage}${tallImage}bb<br>${lines(3)}`,
+        change: container => textNode(container, "aaaa").after("xx"),
+    },
+    {
+        description: "Insert a text node with text-overflow: ellipsis",
+        style: "white-space: nowrap; overflow: hidden; text-overflow: ellipsis",
+        content: "aaaa aaaa aaaa<br>bbbb<br>cccc<br>dddd dddd dddd<br>eeee<br>ffff ffff ffff<br>gggg gggg gggg<br>hhhh hhhh hhhh",
+        change: container => textNode(container, "dddd").after("!"),
+    },
+    {
+        description: "Insert a text node in vertical writing mode",
+        style: "writing-mode: vertical-rl; height: 10em; width: auto",
+        content: lines(8),
+        change: container => textNode(container, "line 3").after("!"),
+    },
+    {
+        description: "Insert a text node with a ::first-line style",
+        className: "first-line",
+        content: lines(8),
+        change: container => textNode(container, "line 1").after("!"),
+    },
+    {
+        description: "Insert a text node into line clamped content",
+        wrapperStyle: "display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden",
+        content: lines(8),
+        change: container => textNode(container, "line 3").after("!"),
+    },
+    {
+        description: "Insert a text node into multi-column content",
+        wrapperStyle: "columns: 2; column-gap: 0; column-fill: auto; height: 90px; width: 20em",
+        content: lines(8),
+        change: container => textNode(container, "line 1").after("!"),
+    },
+    {
+        description: "Append text to a text node inside an inline box",
+        content: "line 0<br>line 1<br><span>line 2</span><br>line 3<br>line 4",
+        change: container => textNode(container, "line 2").appendData("!"),
+    },
+    {
+        description: "Change the color",
+        content: lines(8),
+        change: container => container.style.color = "green",
+    },
+    {
+        description: "Change the color and insert a text node",
+        content: lines(8),
+        change: container => {
+            container.style.color = "green";
+            textNode(container, "line 3").after("!");
+        },
+    },
+    {
+        description: "Add a text shadow",
+        content: lines(8),
+        change: container => container.style.textShadow = "2px 2px green",
+    },
+    {
+        description: "Change the letter spacing",
+        content: lines(8),
+        change: container => container.style.letterSpacing = "1px",
+    },
+    {
+        description: "Change the font size of an inline box",
+        content: "line 0<br>line 1<br><span>line 2</span><br>line 3<br>line 4",
+        change: container => container.querySelector("span").style.fontSize = "30px",
+    },
+    {
+        description: "Change the size of an image",
+        content: "line 0<br>line 1<br>line 2<img style='width: 20px; height: 10px'><br>line 3<br>line 4",
+        change: container => container.querySelector("img").style.width = "40px",
+    },
+    {
+        description: "Change the content of an inline-block",
+        content: "line 0<br>line 1<br><span style='display: inline-block'>box</span><br>line 3<br>line 4",
+        change: container => textNode(container, "box").appendData("!"),
+    },
+    {
+        description: "Move a relatively positioned container",
+        style: "position: relative; top: 0",
+        content: lines(8),
+        change: container => container.style.top = "10px",
+    },
+    {
+        description: "Move an absolutely positioned container",
+        style: "position: absolute; top: 0",
+        content: lines(8),
+        change: container => container.style.top = "10px",
+    },
+    {
+        description: "Change the margin of the preceding block",
+        precedingSiblingStyle: "height: 10px",
+        content: lines(8),
+        change: container => container.previousElementSibling.style.marginBottom = "20px",
+    },
+    {
+        description: "Lay out a float that fits on one line",
+        style: "display: flow-root",
+        content: "<div style='float: left'>aaaa bbbb</div>",
+        target: container => container.firstChild,
+    },
+    {
+        description: "Lay out an inline-block that fits on one line",
+        content: "<span style='display: inline-block'>aaaa bbbb</span>",
+        target: container => container.firstChild,
+    },
+    {
+        description: "Lay out a float that does not fit on one line",
+        style: "display: flow-root",
+        content: "<div style='float: left; max-width: 6em'>aaaa bbbb</div>",
+        target: container => container.firstChild,
+    },
+    {
+        description: "Change the height of a float that fits on one line",
+        style: "display: flow-root",
+        content: "<div style='float: left'>aaaa bbbb</div>",
+        target: container => container.firstChild,
+        change: container => container.firstChild.style.height = "50px",
+    },
+    {
+        description: "Change the padding of a float that fits on one line",
+        style: "display: flow-root",
+        content: "<div style='float: left'>aaaa bbbb</div>",
+        target: container => container.firstChild,
+        change: container => container.firstChild.style.paddingLeft = "10px",
+    },
+];
+
+const log = [];
+for (const testCase of testCases) {
+    const container = document.createElement("div");
+    container.className = `container ${testCase.className ?? ""}`;
+    container.style.cssText = testCase.style ?? "";
+    container.innerHTML = testCase.content;
+
+    const hasWrapper = testCase.wrapperStyle || testCase.precedingSiblingStyle;
+    const root = hasWrapper ? document.createElement("div") : container;
+    if (hasWrapper) {
+        root.style.cssText = testCase.wrapperStyle ?? "";
+        if (testCase.precedingSiblingStyle)
+            root.append(Object.assign(document.createElement("div"), { style: testCase.precedingSiblingStyle }));
+        root.append(container);
+    }
+    document.body.append(root);
+    document.body.offsetHeight;
+
+    const target = testCase.target?.(container) ?? container;
+    const sequenceNumberBeforeChange = window.internals?.lastInlineLayoutInfo(target).sequenceNumber;
+
+    testCase.change?.(container);
+
+    let result = "internals is not available";
+    if (window.internals) {
+        const layoutInfo = internals.lastInlineLayoutInfo(target);
+        result = testCase.change && layoutInfo.sequenceNumber == sequenceNumberBeforeChange ? "No inline layout" : describe(layoutInfo);
+    }
+
+    const freshRoot = root.cloneNode(true);
+    document.body.append(freshRoot);
+    const freshContainer = hasWrapper ? freshRoot.lastElementChild : freshRoot;
+    const matchesFreshLayout = geometry(container) == geometry(freshContainer);
+
+    log.push(`${testCase.description}: ${result}.${matchesFreshLayout ? "" : " FAIL: The result does not match a fresh layout."}`);
+    root.remove();
+    freshRoot.remove();
+}
+document.getElementById("log").textContent = log.join("\n");
+</script>

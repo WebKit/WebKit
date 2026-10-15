@@ -575,6 +575,7 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     auto canUseSimplifiedDisplayContentBuild = mayUseSimplifiedDisplayContentBuild && lineContent.hasContentfulInFlowContent();
     auto lineBox = canUseSimplifiedDisplayContentBuild ? LineBoxBuilder { *this, lineContent }.buildForRootInlineBoxOnly({ }) : LineBoxBuilder { *this, lineContent }.build({ });
     createDisplayContentForInlineContent(lineBox, lineContent, constraints, layoutResult.displayContent, canUseSimplifiedDisplayContentBuild);
+    layoutResult.isFromMaximumIntrinsicWidthLine = true;
     return true;
 }
 

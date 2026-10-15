@@ -680,7 +680,10 @@ FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLa
 {
     ensureInlineContent().setContentMayHaveInkOverflow(inlineLayoutState.contentMayHaveInkOverflow());
     m_inlineContent->setContentFitsWithinMaximumLines(layoutResult && layoutResult->lineClamp.contentFitsWithinMaximumLines);
+    auto layoutInfoForTesting = collectLayoutInfoForTesting(layoutResult.get());
     auto damagedRect = InlineContentBuilder { flow() }.build(WTF::move(layoutResult), *m_inlineContent, m_lineDamage.get());
+    if (layoutInfoForTesting) [[unlikely]]
+        setLayoutInfoForTesting(WTF::move(layoutInfoForTesting));
 
     m_inlineContent->setClearGapBeforeFirstLine(inlineLayoutState.clearGapBeforeFirstLine());
     m_inlineContent->setClearGapAfterLastLine(inlineLayoutState.clearGapAfterLastLine());
@@ -700,6 +703,37 @@ static void relayoutAfterPaginationOffset(RenderBox& renderer)
     // The box's own content may break differently at the position it moved to.
     renderer.markForPaginationRelayoutIfNeeded();
     renderer.layoutIfNeeded();
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LineLayout::LayoutInfoForTesting);
+
+static bool collectsLayoutInfoForTesting { false };
+
+void LineLayout::setCollectsLayoutInfoForTesting(bool collects)
+{
+    collectsLayoutInfoForTesting = collects;
+}
+
+std::unique_ptr<LineLayout::LayoutInfoForTesting> LineLayout::collectLayoutInfoForTesting(const Layout::InlineLayoutResult* layoutResult)
+{
+    if (!collectsLayoutInfoForTesting) [[likely]]
+        return { };
+
+    static uint64_t layoutSequenceNumber;
+    return makeUnique<LayoutInfoForTesting>(LayoutInfoForTesting {
+        ++layoutSequenceNumber,
+        layoutResult ? layoutResult->range : Layout::InlineLayoutResult::Range::Full,
+        layoutResult && layoutResult->isFromMaximumIntrinsicWidthLine,
+        layoutResult ? layoutResult->displayContent.lines.size() : 0uz,
+        0
+    });
+}
+
+void LineLayout::setLayoutInfoForTesting(std::unique_ptr<LayoutInfoForTesting>&& layoutInfo)
+{
+    auto lineCount = m_inlineContent->displayContent().lines.size();
+    layoutInfo->reusedLineCount = lineCount - std::min(layoutInfo->laidOutLineCount, lineCount);
+    m_layoutInfoForTesting = WTF::move(layoutInfo);
 }
 
 void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent)

@@ -151,6 +151,7 @@
 #include "JSFile.h"
 #include "JSInternals.h"
 #include "JSNode.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
@@ -210,6 +211,7 @@
 #include "RTCNetworkManager.h"
 #include "Range.h"
 #include "ReadableStream.h"
+#include "RenderBlockFlow.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -638,6 +640,7 @@ Internals::~Internals()
 void Internals::resetToConsistentState(Page& page)
 {
     page.setPageScaleFactor(1, IntPoint(0, 0));
+    LayoutIntegration::LineLayout::setCollectsLayoutInfoForTesting(false);
     page.setPagination(Pagination());
 
     CachedMatchFinder::setMaximumRunCountForTesting(std::nullopt);
@@ -4689,6 +4692,42 @@ ExceptionOr<unsigned> Internals::layoutUpdateCount()
         return Exception { ExceptionCode::InvalidAccessError };
 
     return document->view()->layoutUpdateCount();
+}
+
+void Internals::setInlineLayoutInfoCollectionEnabled(bool enabled)
+{
+    LayoutIntegration::LineLayout::setCollectsLayoutInfoForTesting(enabled);
+}
+
+ExceptionOr<Internals::InlineLayoutInfo> Internals::lastInlineLayoutInfo(Element& element)
+{
+    protect(element.document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(element.renderer());
+    CheckedPtr inlineLayout = blockFlow ? blockFlow->inlineLayout() : nullptr;
+    auto* layoutInfo = inlineLayout ? inlineLayout->layoutInfoForTesting() : nullptr;
+    if (!layoutInfo)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto range = [&] {
+        switch (layoutInfo->range) {
+        case Layout::InlineLayoutResult::Range::Full:
+            return "Full"_s;
+        case Layout::InlineLayoutResult::Range::FullFromDamage:
+            return "FullFromDamage"_s;
+        case Layout::InlineLayoutResult::Range::PartialFromDamage:
+            return "PartialFromDamage"_s;
+        }
+        ASSERT_NOT_REACHED();
+        return ""_s;
+    };
+    return InlineLayoutInfo {
+        layoutInfo->sequenceNumber,
+        range(),
+        layoutInfo->isFromMaximumIntrinsicWidthLine,
+        static_cast<unsigned>(layoutInfo->laidOutLineCount),
+        static_cast<unsigned>(layoutInfo->reusedLineCount)
+    };
 }
 
 ExceptionOr<void> Internals::startTrackingRenderLayerPositionUpdates()

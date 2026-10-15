@@ -1,0 +1,43 @@
+Insert a text node: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert a text node before all content: FullFromDamage, laid out lines: 8, reused lines: 0.
+Insert a line break where the line wraps: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert an image: FullFromDamage, laid out lines: 6, reused lines: 2.
+Append text to a text node: FullFromDamage, laid out lines: 7, reused lines: 1.
+Append text to a text node that spans lines: FullFromDamage, laid out lines: 8, reused lines: 0.
+Insert text on the first line: FullFromDamage, laid out lines: 6, reused lines: 0.
+Insert text in the middle of a text node: FullFromDamage, laid out lines: 6, reused lines: 1.
+Replace the text of a text node: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert a text node that adds lines: FullFromDamage, laid out lines: 8, reused lines: 2.
+Append a text node: FullFromDamage, laid out lines: 1, reused lines: 7.
+Append two text nodes: FullFromDamage, laid out lines: 1, reused lines: 7.
+Append a text node and insert another one: Full, laid out lines: 8, reused lines: 0.
+Remove a text node: FullFromDamage, laid out lines: 6, reused lines: 2.
+Remove a line break: FullFromDamage, laid out lines: 5, reused lines: 3.
+Delete text on the first line: FullFromDamage, laid out lines: 6, reused lines: 0.
+Delete text in the middle of a text node: FullFromDamage, laid out lines: 5, reused lines: 2.
+Remove a text node and change another one: Full, laid out lines: 8, reused lines: 0.
+Remove a text node that was never laid out: FullFromDamage, laid out lines: 1, reused lines: 7.
+Remove an image that was never laid out: Full, laid out lines: 8, reused lines: 0.
+Insert a text node that moves a tall image to the next line: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert a text node with text-overflow: ellipsis: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert a text node in vertical writing mode: FullFromDamage, laid out lines: 6, reused lines: 2.
+Insert a text node with a ::first-line style: FullFromDamage, laid out lines: 8, reused lines: 0.
+Insert a text node into line clamped content: Full, laid out lines: 8, reused lines: 0.
+Insert a text node into multi-column content: Full, laid out lines: 8, reused lines: 0.
+Append text to a text node inside an inline box: Full, laid out lines: 5, reused lines: 0.
+Change the color: No inline layout.
+Change the color and insert a text node: Full, laid out lines: 8, reused lines: 0.
+Add a text shadow: No inline layout.
+Change the letter spacing: Full, laid out lines: 8, reused lines: 0.
+Change the font size of an inline box: Full, laid out lines: 5, reused lines: 0.
+Change the size of an image: Full, laid out lines: 5, reused lines: 0.
+Change the content of an inline-block: Full, laid out lines: 5, reused lines: 0.
+Move a relatively positioned container: Full, laid out lines: 8, reused lines: 0.
+Move an absolutely positioned container: No inline layout.
+Change the margin of the preceding block: No inline layout.
+Lay out a float that fits on one line: Full from the maximum intrinsic width line, laid out lines: 1, reused lines: 0.
+Lay out an inline-block that fits on one line: Full from the maximum intrinsic width line, laid out lines: 1, reused lines: 0.
+Lay out a float that does not fit on one line: Full, laid out lines: 2, reused lines: 0.
+Change the height of a float that fits on one line: Full from the maximum intrinsic width line, laid out lines: 1, reused lines: 0.
+Change the padding of a float that fits on one line: Full, laid out lines: 1, reused lines: 0.
+

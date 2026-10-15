@@ -449,6 +449,20 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+] dictionary InlineLayoutInfo {
+    // Increases with every inline layout of any block container. Compare it before and after a change to see if this block laid out its inline content.
+    unsigned long long sequenceNumber = 0;
+    DOMString range = "";
+    // The layout reused the line built while computing the maximum intrinsic width.
+    boolean isFromMaximumIntrinsicWidthLine = false;
+    unsigned long laidOutLineCount = 0;
+    // Lines kept from the previous layout.
+    unsigned long reusedLineCount = 0;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
 ] dictionary PDFAnnotationRect {
     float x = 0;
     float y = 0;
@@ -995,6 +1009,10 @@ enum ContentsFormat {
 
     undefined startTrackingLayoutUpdates();
     unsigned long layoutUpdateCount();
+
+    // Inline layouts record their info only while enabled. Reset between tests.
+    undefined setInlineLayoutInfoCollectionEnabled(boolean enabled);
+    InlineLayoutInfo lastInlineLayoutInfo(Element element);
 
     undefined startTrackingRenderLayerPositionUpdates();
     unsigned long renderLayerPositionUpdateCount();
