@@ -599,6 +599,13 @@ PlatformDisplayID Chrome::displayID() const
     return m_page->displayID();
 }
 
+#if HAVE(IOSURFACE)
+bool Chrome::useIOSurfaceWebKitBehavior() const
+{
+    return m_client->useIOSurfaceWebKitBehavior();
+}
+#endif
+
 void Chrome::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFrameInterval)
 {
     protect(m_page)->windowScreenDidChange(displayID, nominalFrameInterval);

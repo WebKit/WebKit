@@ -73,6 +73,7 @@ struct ImageBufferCreationContext {
 #if HAVE(IOSURFACE)
     RefPtr<IOSurfacePool> surfacePool;
     PlatformDisplayID displayID { 0 };
+    bool useIOSurfaceWebKitBehavior { false };
 #endif
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     DynamicContentScalingResourceCache dynamicContentScalingResourceCache;

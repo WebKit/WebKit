@@ -774,7 +774,11 @@ void GPUProcess::sinkCompletedSnapshotToIOSurface(RemoteSnapshotIdentifier ident
             completionHandler({ });
             return;
         }
-        completionHandler(snapshot->drawToIOSurface(snapshot->size(), scale, colorSpace, rootFrameIdentifier, connection->webProcessIdentity()));
+        bool useIOSurfaceWebKitBehavior = false;
+#if USE(APPLE_INTERNAL_SDK)
+        useIOSurfaceWebKitBehavior = connection->sharedPreferencesForWebProcessValue().useIOSurfaceWebKitBehavior;
+#endif
+        completionHandler(snapshot->drawToIOSurface(snapshot->size(), scale, colorSpace, rootFrameIdentifier, connection->webProcessIdentity(), useIOSurfaceWebKitBehavior));
     });
 }
 

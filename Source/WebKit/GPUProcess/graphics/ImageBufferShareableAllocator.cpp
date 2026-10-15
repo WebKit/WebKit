@@ -44,9 +44,10 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferShareableAllocator);
 
 #if HAVE(IOSURFACE)
-ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdentity& resourceOwner, IOSurfacePool* ioSurfacePool)
+ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdentity& resourceOwner, IOSurfacePool* ioSurfacePool, bool useIOSurfaceWebKitBehavior)
     : m_resourceOwner(resourceOwner)
     , m_ioSurfacePool(ioSurfacePool)
+    , m_useIOSurfaceWebKitBehavior(useIOSurfaceWebKitBehavior)
 {
 }
 #else
@@ -64,6 +65,7 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
         creationContext.resourceOwner = m_resourceOwner;
         if (m_ioSurfacePool)
             creationContext.surfacePool = m_ioSurfacePool.get();
+        creationContext.useIOSurfaceWebKitBehavior = m_useIOSurfaceWebKitBehavior;
 
         return ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, 1, colorSpace, { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified, creationContext);
     }

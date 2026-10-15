@@ -56,7 +56,7 @@ public:
     void submitDrawingCommands() override;
 
 protected:
-    ImageBufferIOSurfaceBackend(const ImageBufferParameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*);
+    ImageBufferIOSurfaceBackend(const ImageBufferParameters&, std::unique_ptr<IOSurface>, RetainPtr<CGContextRef> platformContext, PlatformDisplayID, IOSurfacePool*, bool useIOSurfaceWebKitBehavior = false);
     CGContextRef ensurePlatformContext();
     // Returns true if flush happened.
     bool flushContextDraws();
@@ -93,6 +93,7 @@ protected:
     std::unique_ptr<IOSurface> m_surface;
     RetainPtr<CGContextRef> m_platformContext;
     const PlatformDisplayID m_displayID;
+    const bool m_useIOSurfaceWebKitBehavior;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
     RefPtr<IOSurfacePool> m_ioSurfacePool;

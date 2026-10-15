@@ -79,20 +79,21 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (!surface)
         return nullptr;
 
-    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(creationContext.displayID);
+    RetainPtr<CGContextRef> cgContext = surface->createPlatformContext(creationContext.displayID, std::nullopt, creationContext.useIOSurfaceWebKitBehavior);
     if (!cgContext)
         return nullptr;
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), creationContext.displayID, creationContext.surfacePool.get() } };
+    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTF::move(surface), WTF::move(cgContext), creationContext.displayID, creationContext.surfacePool.get(), creationContext.useIOSurfaceWebKitBehavior } };
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const ImageBufferParameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const ImageBufferParameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool, bool useIOSurfaceWebKitBehavior)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTF::move(surface))
     , m_platformContext(WTF::move(platformContext))
     , m_displayID(displayID)
+    , m_useIOSurfaceWebKitBehavior(useIOSurfaceWebKitBehavior)
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
@@ -153,7 +154,7 @@ bool ImageBufferIOSurfaceBackend::flushContextDraws()
 CGContextRef ImageBufferIOSurfaceBackend::ensurePlatformContext()
 {
     if (!m_platformContext) {
-        m_platformContext = m_surface->createPlatformContext(m_displayID);
+        m_platformContext = m_surface->createPlatformContext(m_displayID, std::nullopt, m_useIOSurfaceWebKitBehavior);
         RELEASE_ASSERT(m_platformContext);
     }
     return m_platformContext.get();

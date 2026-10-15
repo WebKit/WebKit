@@ -279,11 +279,12 @@ std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatS
 
 #if HAVE(IOSURFACE)
 
-std::optional<ImageBufferBackendHandle> RemoteSnapshot::drawToIOSurface(const FloatSize& size, float scale, const ColorSpace& colorSpace, FrameIdentifier rootFrameIdentifier, const ProcessIdentity& resourceOwner)
+std::optional<ImageBufferBackendHandle> RemoteSnapshot::drawToIOSurface(const FloatSize& size, float scale, const ColorSpace& colorSpace, FrameIdentifier rootFrameIdentifier, const ProcessIdentity& resourceOwner, bool useIOSurfaceWebKitBehavior)
 {
     ASSERT(isComplete());
     ImageBufferCreationContext creationContext;
     creationContext.resourceOwner = resourceOwner;
+    creationContext.useIOSurfaceWebKitBehavior = useIOSurfaceWebKitBehavior;
     RefPtr buffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend>(size, scale, colorSpace, ImageBufferFormat { PixelFormat::BGRA8 }, RenderingPurpose::Snapshot, creationContext);
     if (!buffer)
         return std::nullopt;

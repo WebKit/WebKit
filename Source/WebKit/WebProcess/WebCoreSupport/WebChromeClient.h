@@ -288,6 +288,9 @@ private:
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat) const final;
+#if HAVE(IOSURFACE)
+    bool useIOSurfaceWebKitBehavior() const final;
+#endif
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
     RefPtr<WebCore::ImageBuffer> createImageBufferFromTransferHandle(const WebCore::ImageBufferTransferHandle&) final;
 #if ENABLE(OFFSCREEN_CANVAS)

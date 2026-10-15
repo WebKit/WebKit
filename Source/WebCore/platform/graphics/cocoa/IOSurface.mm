@@ -745,15 +745,22 @@ RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsign
     return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, protect(m_colorSpace->platformColorSpace()).get(), configuration.bitmapInfo));
 }
 
-RetainPtr<CGContextRef> IOSurface::createPlatformContext(PlatformDisplayID displayID, std::optional<CGImageAlphaInfo> overrideAlphaInfo)
+RetainPtr<CGContextRef> IOSurface::createPlatformContext(PlatformDisplayID displayID, std::optional<CGImageAlphaInfo> overrideAlphaInfo, bool useWebKitBehavior)
 {
     auto configuration = bitmapConfiguration();
     if (overrideAlphaInfo)
         configuration.bitmapInfo = (configuration.bitmapInfo & ~kCGBitmapAlphaInfoMask) | *overrideAlphaInfo;
     auto bitsPerPixel = configuration.bitsPerComponent * 4;
 
+    RetainPtr<CFDictionaryRef> options;
+    if (useWebKitBehavior) {
+        const void* keys[] = { CFSTR("useWebKitBehavior") };
+        const void* values[] = { kCFBooleanTrue };
+        options = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    }
+
     ensureColorSpace();
-    auto cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, protect(m_colorSpace->platformColorSpace()).get(), configuration.bitmapInfo));
+    RetainPtr cgContext = adoptCF(CGIOSurfaceContextCreateWithOptions(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, protect(m_colorSpace->platformColorSpace()).get(), configuration.bitmapInfo, options.get()));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {

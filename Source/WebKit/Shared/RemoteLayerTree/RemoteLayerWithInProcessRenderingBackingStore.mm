@@ -35,6 +35,7 @@
 #import "RemoteImageBufferSetProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
+#import "WebPage.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/PixelFormat.h>
@@ -229,6 +230,12 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allo
 {
     ImageBufferCreationContext creationContext;
     creationContext.surfacePool = WebCore::IOSurfacePool::sharedPoolSingleton();
+#if USE(APPLE_INTERNAL_SDK)
+    if (RefPtr context = m_layer->context()) {
+        auto preferences = context->webPage().sharedPreferencesForWebProcess();
+        creationContext.useIOSurfaceWebKitBehavior = preferences && preferences->useIOSurfaceWebKitBehavior;
+    }
+#endif
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     if (m_parameters.includeDisplayList == WebCore::IncludeDynamicContentScalingDisplayList::Yes) {

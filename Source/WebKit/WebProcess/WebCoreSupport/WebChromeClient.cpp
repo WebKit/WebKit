@@ -1218,6 +1218,21 @@ WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFac
 }
 
 #if ENABLE(GPU_PROCESS)
+#if HAVE(IOSURFACE)
+bool WebChromeClient::useIOSurfaceWebKitBehavior() const
+{
+#if USE(APPLE_INTERNAL_SDK)
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+    auto preferences = page->sharedPreferencesForWebProcess();
+    return preferences && preferences->useIOSurfaceWebKitBehavior;
+#else
+    return false;
+#endif
+}
+#endif
+
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose)) {

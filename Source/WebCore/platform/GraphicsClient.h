@@ -58,6 +58,9 @@ public:
     virtual ~GraphicsClient() = default;
 
     virtual PlatformDisplayID displayID() const = 0;
+#if HAVE(IOSURFACE)
+    virtual bool useIOSurfaceWebKitBehavior() const { return false; }
+#endif
 
 #if ENABLE(OFFSCREEN_CANVAS)
     // The source for an OffscreenCanvas whose placeholder is in another process. Null when this

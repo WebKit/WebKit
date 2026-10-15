@@ -546,7 +546,7 @@ symbols = [
     "CGGStateGetStrokeColor",
     "CGGStateGetStyle",
     "CGGradientCreateWithColorComponentsAndOptions",
-    "CGIOSurfaceContextCreate",
+    "CGIOSurfaceContextCreateWithOptions",
     "CGIOSurfaceContextCreateImage",
     "CGIOSurfaceContextCreateImageReference",
     "CGIOSurfaceContextGetColorSpace",

@@ -377,7 +377,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
 
     if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
 #if HAVE(IOSURFACE)
-        FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool()));
+        FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool(), useIOSurfaceWebKitBehavior()));
 #else
         FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner()));
 #endif
@@ -393,7 +393,7 @@ void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResou
 
     auto& results = cachedSVGFilter->ensureResults([&]() {
 #if HAVE(IOSURFACE)
-        auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool());
+        auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner(), &m_sharedResourceCache->ioSurfacePool(), useIOSurfaceWebKitBehavior());
 #else
         auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner());
 #endif
@@ -749,6 +749,18 @@ std::optional<SharedPreferencesForWebProcess> RemoteGraphicsContext::sharedPrefe
 {
     return m_renderingBackend->sharedPreferencesForWebProcess();
 }
+
+#if HAVE(IOSURFACE)
+bool RemoteGraphicsContext::useIOSurfaceWebKitBehavior() const
+{
+#if USE(APPLE_INTERNAL_SDK)
+    auto preferences = sharedPreferencesForWebProcess();
+    return preferences && preferences->useIOSurfaceWebKitBehavior;
+#else
+    return false;
+#endif
+}
+#endif
 
 } // namespace WebKit
 

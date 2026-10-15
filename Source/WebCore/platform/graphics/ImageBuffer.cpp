@@ -93,8 +93,10 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
 #if HAVE(IOSURFACE)
         if (ProcessCapabilities::canUseAcceleratedBuffers()) {
             ImageBufferCreationContext creationContext;
-            if (graphicsClient)
+            if (graphicsClient) {
                 creationContext.displayID = graphicsClient->displayID();
+                creationContext.useIOSurfaceWebKitBehavior = graphicsClient->useIOSurfaceWebKitBehavior();
+            }
             if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
                 return imageBuffer;
         }

@@ -457,6 +457,7 @@ CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
 
 #if HAVE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
+CGContextRef CGIOSurfaceContextCreateWithOptions(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo, CFDictionaryRef);
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);

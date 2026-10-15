@@ -353,6 +353,9 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     }
 
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
+#if HAVE(IOSURFACE) && USE(APPLE_INTERNAL_SDK)
+    creationContext.useIOSurfaceWebKitBehavior = m_sharedPreferencesForWebProcess.useIOSurfaceWebKitBehavior;
+#endif
 
     // Backing store the web process allocated is adopted as-is. Its geometry is
     // attacker-controlled, so the backends validate it against what was requested and
@@ -364,7 +367,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
         switch (renderingMode) {
         case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
-            if (auto backend = ImageBufferShareableMappedIOSurfaceBackend::create(parameters, WTF::move(*providedBackingStore)))
+            if (auto backend = ImageBufferShareableMappedIOSurfaceBackend::create(parameters, WTF::move(*providedBackingStore), creationContext.useIOSurfaceWebKitBehavior))
                 return ImageBuffer::create(parameters, creationContext, WTF::move(backend));
 #endif
             return nullptr;

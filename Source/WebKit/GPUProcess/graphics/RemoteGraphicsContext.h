@@ -156,6 +156,9 @@ public:
 #endif
     void applyDeviceScaleFactor(float);
     std::optional<WebKit::SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
+#if HAVE(IOSURFACE)
+    bool useIOSurfaceWebKitBehavior() const;
+#endif
 
     void beginPage(const WebCore::FloatRect&);
     void endPage();

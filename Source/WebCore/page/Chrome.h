@@ -154,6 +154,9 @@ public:
     RefPtr<ShapeDetection::TextDetector> createTextDetector() const;
 
     PlatformDisplayID LEGACY_NODELETE displayID() const override;
+#if HAVE(IOSURFACE)
+    bool useIOSurfaceWebKitBehavior() const override;
+#endif
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond>) override;
 
     FloatSize screenSize() const override;
