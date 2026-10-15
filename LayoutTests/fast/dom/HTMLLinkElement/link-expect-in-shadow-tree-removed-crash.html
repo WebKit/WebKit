@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"><template shadowrootmode="open"><video id="video"><link rel="expect" href="#nonexistent"></video></template></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// <link rel=expect> registers an IdTargetObserver with the tree scope it is in, here the
+// shadow root. Removing the shadow host destroys that tree scope, while the <video> (and
+// with it the <link>) stays alive until the media element's pending task is released when
+// this document is torn down. The observer used to outlive its registry and crash then.
+onload = () => {
+    if (location.search === "?second") {
+        // Tear down the first document, releasing the media element's pending task.
+        if (window.internals)
+            internals.clearBackForwardCache();
+        if (window.GCController)
+            GCController.collect();
+        setTimeout(() => {
+            document.body.textContent = "PASS if the web process did not crash.";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+        return;
+    }
+
+    const host = document.getElementById("host");
+    host.shadowRoot.getElementById("video").remove();
+    host.remove();
+    if (window.GCController)
+        GCController.collect();
+
+    location.search = "?second";
+};
+</script>
+</body>
+</html>
