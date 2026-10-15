@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g transform="scale(2)"><rect id="target" x="10" y="32" width="24" height="23" fill="green"/></g>
+</svg>
+<script>
+    // The rect is repainted at its old and its new position.
+    function repaintTest() {
+        document.getElementById("target").setAttribute("x", "100");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

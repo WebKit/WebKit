@@ -75,9 +75,6 @@ svg/foreignObject/vertical-foreignObject.html                  [ ImageOnlyFailur
 svg/in-html/overflow-svg-root-attr.html  [ ImageOnlyFailure ]
 svg/in-html/overflow-svg-root-style.html [ ImageOnlyFailure ]
 
-# Non-scaling stroke issues
-svg/repaint/non-scaling-stroke-transform-animation.html               [ ImageOnlyFailure ]
-
 ###############
 # Buggy tests #
 ###############

@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <mask id="mask" x="0" y="0" width="0.4" height="1"><rect width="400" height="400" fill="white"/></mask>
+    <g mask="url(#mask)"><rect x="50" y="50" width="100" height="100" fill="green"/></g>
+    <rect x="250" y="50" width="100" height="100" fill="green" mask="url(#mask)"/>
+</svg>
+<script>
+    // The group on the left and the rect on the right use the same resource. Both repaint the area the mask reveals.
+    function repaintTest() {
+        document.getElementById("mask").setAttribute("width", "1");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

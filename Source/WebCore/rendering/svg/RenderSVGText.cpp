@@ -55,6 +55,7 @@
 #include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
+#include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthList.h"
 #include "SVGRenderingContext.h"
@@ -916,9 +917,8 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
         m_objectBoundingBox = boundaries;
         m_cachedVisualOverflowRect = std::nullopt;
 
-        auto boundingRect = enclosingLayoutRect(m_objectBoundingBox);
-        setLocation(boundingRect.location());
-        setBorderBoxSize(boundingRect.size());
+        setLocation(SVGContainerLayout::layoutLocationRelativeToContainer(*this));
+        setBorderBoxSize(enclosingLayoutRect(m_objectBoundingBox).size());
 
         auto overflowRect = visualOverflowRectEquivalent();
         if (auto& textShadow = style().textShadow(); !textShadow.isNone())

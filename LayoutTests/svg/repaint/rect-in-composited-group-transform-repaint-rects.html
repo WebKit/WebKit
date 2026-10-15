@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g id="group" style="transform: translate3d(10px, 20px, 0)"><rect x="10" y="10" width="20" height="20" fill="green"/></g>
+</svg>
+<script>
+    // The group is composited, so moving it needs no repaint.
+    function repaintTest() {
+        document.getElementById("group").style.transform = "translate3d(100px, 20px, 0)";
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

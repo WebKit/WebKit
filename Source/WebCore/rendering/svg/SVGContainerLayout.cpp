@@ -32,6 +32,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceGradient.h"
@@ -46,6 +47,9 @@ namespace WebCore {
 
 SVGContainerLayout::SVGContainerLayout(RenderLayerModelObject& container)
     : m_container(container)
+#if ASSERT_ENABLED
+    , m_containerLayoutLocationBeforeLayout(containerLayoutLocation(container))
+#endif
 {
 }
 
@@ -107,6 +111,33 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
     }
 }
 
+LayoutPoint SVGContainerLayout::containerLayoutLocation(const RenderLayerModelObject& container)
+{
+    // The nominal SVG layout location (== flooredLayoutPoint(objectBoundingBoxWithoutTransformsTopLeft), where
+    // objectBoundingBoxWithoutTransforms = union of child boxes, not mapped through their tranforms) is
+    // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
+    // the CSS box model object, where we need to respect border & padding, encoded in the contentBoxLocation().
+    // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
+    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(container))
+        return -svgRoot->contentBoxLocation();
+
+    // For (inner) RenderSVGViewportContainer nominalSVGLayoutLocation() returns the viewport boundaries,
+    // including the effect of the 'x'/'y' attribute values. Do not subtract the location, otherwise the
+    // effect of the x/y translation is removed.
+    if (is<RenderSVGViewportContainer>(container) && !container.isAnonymous())
+        return { };
+
+    return container.nominalSVGLayoutLocation();
+}
+
+LayoutPoint SVGContainerLayout::layoutLocationRelativeToContainer(const RenderLayerModelObject& child)
+{
+    // The container positions its children only after they repainted, so compute that position now.
+    CheckedRef container = downcast<RenderLayerModelObject>(*child.parent());
+    ASSERT(!is<RenderSVGRoot>(container));
+    return toLayoutPoint(child.nominalSVGLayoutLocation() - containerLayoutLocation(container));
+}
+
 void SVGContainerLayout::positionChildrenRelativeToContainer()
 {
     if (m_positionedChildren.isEmpty())
@@ -128,31 +159,15 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
 #endif
     };
 
-    auto computeContainerLayoutLocation = [&]() -> LayoutPoint {
-        // The nominal SVG layout location (== flooredLayoutPoint(objectBoundingBoxWithoutTransformsTopLeft), where
-        // objectBoundingBoxWithoutTransforms = union of child boxes, not mapped through their tranforms) is
-        // only meaningful for the children of the RenderSVGRoot. RenderSVGRoot itself is positioned according to
-        // the CSS box model object, where we need to respect border & padding, encoded in the contentBoxLocation().
-        // -> Position all RenderSVGRoot children relative to the contentBoxLocation() to avoid intruding border/padding area.
-        if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(m_container.get()))
-            return -svgRoot->contentBoxLocation();
-
-        // For (inner) RenderSVGViewportContainer nominalSVGLayoutLocation() returns the viewport boundaries,
-        // including the effect of the 'x'/'y' attribute values. Do not subtract the location, otherwise the
-        // effect of the x/y translation is removed.
-        if (is<RenderSVGViewportContainer>(m_container) && !m_container->isAnonymous())
-            return { };
-
-        return protect(m_container)->nominalSVGLayoutLocation();
-    };
-
     // Arrange layout location for all child renderers relative to the container layout location.
-    auto parentLayoutLocation = computeContainerLayoutLocation();
+    CheckedRef container = m_container.get();
+    auto parentLayoutLocation = containerLayoutLocation(container);
     for (auto& childReference : m_positionedChildren) {
         CheckedRef child = childReference.get();
         verifyPositionedChildRendererExpectation(child);
 
         auto desiredLayoutLocation = toLayoutPoint(child->nominalSVGLayoutLocation() - parentLayoutLocation);
+        ASSERT(!(isAnyOf<RenderSVGText, RenderSVGImage, RenderSVGShape>(child.get())) || parentLayoutLocation != m_containerLayoutLocationBeforeLayout || child->currentSVGLayoutLocation() == desiredLayoutLocation);
         if (child->currentSVGLayoutLocation() != desiredLayoutLocation)
             child->setCurrentSVGLayoutLocation(desiredLayoutLocation);
     }

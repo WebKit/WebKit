@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <svg id="inner" width="200" height="200" viewBox="0 0 200 200"><rect x="10" y="10" width="20" height="20" fill="green"/></svg>
+</svg>
+<script>
+    // The rect is repainted at its old and its new scale.
+    function repaintTest() {
+        document.getElementById("inner").setAttribute("viewBox", "0 0 100 100");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

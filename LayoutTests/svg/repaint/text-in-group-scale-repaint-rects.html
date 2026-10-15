@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 400px; height: 400px">
+    <g id="group" transform="scale(2)"><text x="10" y="50" font-size="20" fill="green">Hg</text></g>
+</svg>
+<script>
+    // The text at its old scale and at its new one is repainted, at the right place.
+    function repaintTest() {
+        document.getElementById("group").setAttribute("transform", "scale(4)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

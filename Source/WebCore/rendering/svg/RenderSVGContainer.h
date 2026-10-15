@@ -46,6 +46,8 @@ public:
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     bool didTransformToRootUpdate() const { return m_didTransformToRootUpdate; }
 
+    TransformationMatrix transformToParentUserSpace() const;
+
     FloatRect objectBoundingBox() const final
     {
         updateSVGTransformDependentBoundingBoxesIfNeeded();

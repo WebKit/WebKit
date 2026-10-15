@@ -310,8 +310,28 @@ bool RenderLayer::shouldSkipRepaintAfterLayoutForSVG() const
     ASSERT(m_svgData);
     ASSERT(renderer().document().settings().layerBasedSVGEngineEnabled());
 
-    // The SVG containers themselves never trigger repaints, only their contents are allowed to.
-    return is<RenderSVGContainer>(renderer()) && !shouldPaintWithFilters();
+    // SVG containers leave repaints to their contents, unless they changed themselves.
+    if (!is<RenderSVGContainer>(renderer()) || shouldPaintWithFilters())
+        return false;
+    return m_repaintStatus != RepaintStatus::NeedsFullRepaint || is<RenderSVGHiddenContainer>(renderer());
+}
+
+std::optional<TransformationMatrix> RenderLayer::containerTransformForRepaintForSVG() const
+{
+    // Hidden containers never paint, so their transform needs no repaint.
+    CheckedPtr container = dynamicDowncast<RenderSVGContainer>(renderer());
+    if (!container || is<RenderSVGHiddenContainer>(*container))
+        return std::nullopt;
+    return container->transformToParentUserSpace();
+}
+
+void RenderLayer::setNeedsFullRepaintIfSVGContainerTransformChanged(const RenderLayerModelObject* repaintContainer)
+{
+    // The children of a container cannot repaint the area under its old transform.
+    if (!m_svgData || !m_svgData->containerTransformForRepaintRects || repaintContainer == &renderer())
+        return;
+    if (m_svgData->containerTransformForRepaintRects != containerTransformForRepaintForSVG())
+        m_repaintStatus = RepaintStatus::NeedsFullRepaint;
 }
 
 bool RenderLayer::isCompositedSVGPaintOrderChild() const
