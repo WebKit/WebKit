@@ -65,7 +65,7 @@ public:
 
     size_t codeSize() const final;
     void reconcileWeakReferencesAtGCEnd() final;
-    CompilationResult finalize() override;
+    CompilationResult finalize() final;
 
     void notifyReady() final;
     void cancel() final;
@@ -106,7 +106,7 @@ public:
     std::unique_ptr<JITData> tryFinalizeJITData(const DFG::JITCode&);
 
 private:
-    CompilationPath compileInThreadImpl() override;
+    CompilationPath compileInThreadImpl() final;
     void finalizeInThread(Ref<JSC::JITCode>);
     
     bool isStillValidCodeBlock();

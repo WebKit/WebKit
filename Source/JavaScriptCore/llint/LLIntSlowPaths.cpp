@@ -383,14 +383,18 @@ static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock)
     DeferGCForAWhile deferGC(vm); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(Options::useJIT());
 
-    if (codeBlock->jitType() != JITType::BaselineJIT) {
-        if (RefPtr<BaselineJITCode> baselineRef = codeBlock->unlinkedCodeBlock()->m_unlinkedBaselineCode) {
-            codeBlock->setupWithUnlinkedBaselineCode(baselineRef.releaseNonNull());
-            codeBlock->ownerExecutable()->installCode(codeBlock);
-            codeBlock->jitNextInvocation();
-            return true;
-        }
-    }
+    auto installSharedBaselineCode = [&] {
+        RefPtr<BaselineJITCode> baselineRef = codeBlock->unlinkedCodeBlock()->m_unlinkedBaselineCode;
+        if (!baselineRef)
+            return false;
+        codeBlock->setupWithUnlinkedBaselineCode(baselineRef.releaseNonNull());
+        codeBlock->ownerExecutable()->installCode(codeBlock);
+        codeBlock->jitNextInvocation();
+        return true;
+    };
+
+    if (codeBlock->jitType() != JITType::BaselineJIT && installSharedBaselineCode())
+        return true;
 
     if (!codeBlock->checkIfJITThresholdReached()) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayJITCompile", ("threshold not reached, counter = ", codeBlock->llintExecuteCounter()));
@@ -398,20 +402,30 @@ static inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock)
         return false;
     }
 
+    // Must precede the worklist query so that a plan becoming ready afterwards can still force the slow path. finalize() overrides it.
+    codeBlock->jitSoon();
+
     JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(vm, JITCompilationKey(codeBlock->unlinkedCodeBlock(), JITCompilationMode::Baseline));
 
     if (codeBlock->jitType() == JITType::BaselineJIT) {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
-        codeBlock->jitSoon();
+        codeBlock->jitNextInvocation();
         return true;
     }
 
-    if (worklistState == JITWorklist::NotKnown) {
+    switch (worklistState) {
+    case JITWorklist::NotKnown: {
         Ref<BaselineJITPlan> plan = adoptRef(*new BaselineJITPlan(codeBlock));
         JITWorklist::ensureGlobalWorklist().enqueue(WTF::move(plan));
         return codeBlock->jitType() == JITType::BaselineJIT;
     }
-
+    case JITWorklist::Compiled:
+        // Either our compile failed, or the plan belonged to another CodeBlock sharing this UnlinkedCodeBlock.
+        return installSharedBaselineCode();
+    case JITWorklist::Compiling:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
     return false;
 }
 

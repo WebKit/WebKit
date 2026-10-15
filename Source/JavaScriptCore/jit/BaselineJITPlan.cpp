@@ -82,6 +82,12 @@ size_t BaselineJITPlan::codeSize() const
     return 0;
 }
 
+void BaselineJITPlan::notifyReady()
+{
+    Base::notifyReady();
+    m_codeBlock->unlinkedCodeBlock()->llintExecuteCounter().forceSlowPathConcurrently();
+}
+
 bool BaselineJITPlan::isKnownToBeLiveAfterGC()
 {
     // If stage is not JITPlanStage::Canceled, we should keep this alive and mark underlying CodeBlock anyway.
@@ -110,7 +116,8 @@ CompilationResult BaselineJITPlan::finalize()
         WTF::crossModifyingCodeFence();
         dataLogLnIf(Options::verboseOSR(), "    JIT compilation successful.");
         m_codeBlock->ownerExecutable()->installCode(m_codeBlock);
-        m_codeBlock->jitSoon();
+        // Frames still in LLInt (entered before the install, or arriving via OSR exit) should switch at their next check.
+        m_codeBlock->jitNextInvocation();
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

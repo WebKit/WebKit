@@ -43,7 +43,8 @@ public:
 
     CompilationPath compileInThreadImpl() final;
     size_t codeSize() const final;
-    CompilationResult finalize() override;
+    void notifyReady() final;
+    CompilationResult finalize() final;
 
     CompilationPath compileSync(JITCompilationEffort);
 
