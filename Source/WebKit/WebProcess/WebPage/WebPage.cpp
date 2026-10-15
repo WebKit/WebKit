@@ -1269,7 +1269,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updateThrottleState();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    updateImageAnimationEnabled();
+    if (parameters.imageAnimationEnabledOverride)
+        page->setImageAnimationEnabled(*parameters.imageAnimationEnabledOverride);
+    else
+        updateImageAnimationEnabled();
 #endif
 #if ENABLE(ACCESSIBILITY_VIDEO_AUTOPLAY_CONTROL)
     updateVideoAutoplayPreviewsEnabled();
@@ -1780,6 +1783,10 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     setObscuredContentInsets(parameters.obscuredContentInsets);
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (parameters.imageAnimationEnabledOverride)
+        protect(m_page)->setImageAnimationEnabled(*parameters.imageAnimationEnabledOverride);
+#endif
 
     if (m_activityState != parameters.activityState)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });

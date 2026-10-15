@@ -308,6 +308,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     bool shouldForceSiteIsolationAlwaysOnForTesting;
     bool shouldEnableNetworkInstrumentation;
     bool shouldEnablePageInstrumentation;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    std::optional<bool> imageAnimationEnabledOverride;
+#endif
 }
 
 [Nested] struct WebKit::RemotePageParameters {
