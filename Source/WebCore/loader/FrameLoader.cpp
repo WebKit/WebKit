@@ -509,13 +509,17 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, ContentPo
     protect(client())->dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), activeDocumentLoader()->downloadAttribute(), WTF::move(function));
 }
 
-FrameLoadRequest FrameLoader::createFrameLoadRequest(URL&& url)
+FrameLoadRequest FrameLoader::createFrameLoadRequest(URL&& url, const String& referrer)
 {
     RefPtr frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
 
+    ResourceRequest request { WTF::move(url) };
+    if (!referrer.isEmpty())
+        request.setHTTPReferrer(referrer);
+
     Ref document = *m_frame->document();
-    return FrameLoadRequest(document.copyRef(), protect(document->securityOrigin()), { WTF::move(url) }, selfTargetFrameName(), initiatedByMainFrame, { });
+    return FrameLoadRequest(document.copyRef(), protect(document->securityOrigin()), WTF::move(request), selfTargetFrameName(), initiatedByMainFrame, { });
 }
 
 void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, NavigationHistoryBehavior historyBehavior, Element* sourceElement)

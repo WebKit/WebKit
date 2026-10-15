@@ -7313,6 +7313,47 @@ TEST(SiteIsolation, GoBackToNestedCrossSiteIframeAfterPersistedSessionRestore)
     EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
 }
 
+static void testCrossSiteIframeReferrerAfterPersistedSessionRestore(ASCIILiteral referrerPolicy, NSString *expectedReferrer)
+{
+    // The iframe is created during the back/forward load and gets a new name on every load,
+    // so the restored item has no saved state for it.
+    HTTPServer server({
+        { "/main"_s, { makeString("<body><script>"
+            "let iframe = document.createElement('iframe');"
+            "iframe.name = 'frame' + Math.random();"
+            "iframe.referrerPolicy = '"_s, referrerPolicy, "';"
+            "iframe.src = 'https://webkit.org/frame';"
+            "document.body.appendChild(iframe);"
+            "</script></body>"_s) } },
+        { "/frame"_s, { "<script> alert(document.referrer); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    EXPECT_WK_STREQ(expectedReferrer, [webView _test_waitForAlert]);
+
+    RetainPtr persistedSessionState = adoptNS([[_WKSessionState alloc] initWithData:[[webView _sessionState] data]]);
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:persistedSessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ(expectedReferrer, [newWebView _test_waitForAlert]);
+    EXPECT_NE([newWebView mainFrame].info._processIdentifier, [newWebView firstChildFrame]._processIdentifier);
+}
+
+TEST(SiteIsolation, CrossSiteIframeReferrerAfterPersistedSessionRestore)
+{
+    testCrossSiteIframeReferrerAfterPersistedSessionRestore(""_s, @"https://example.com/");
+}
+
+TEST(SiteIsolation, CrossSiteIframeNoReferrerPolicyAfterPersistedSessionRestore)
+{
+    testCrossSiteIframeReferrerAfterPersistedSessionRestore("no-referrer"_s, @"");
+}
+
+TEST(SiteIsolation, CrossSiteIframeUnsafeURLReferrerPolicyAfterPersistedSessionRestore)
+{
+    testCrossSiteIframeReferrerAfterPersistedSessionRestore("unsafe-url"_s, @"https://example.com/main");
+}
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];

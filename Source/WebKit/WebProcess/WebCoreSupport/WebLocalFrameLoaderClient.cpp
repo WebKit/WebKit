@@ -1258,7 +1258,7 @@ void WebLocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, c
         return;
     }
 
-    auto frameLoadRequest = loader->createFrameLoadRequest(URL { url });
+    auto frameLoadRequest = loader->createFrameLoadRequest(URL { url }, referer);
     frameLoadRequest.setTargetBackForwardItemIdentifier(item->itemID());
     childClient->dispatchDecidePolicyForBackForwardNavigationAction(WTF::move(frameLoadRequest), referer, loader->loadType());
 }

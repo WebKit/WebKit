@@ -392,7 +392,7 @@ public:
 
     bool loadChildHistoryItemIntoFrame(LocalFrame&);
     WEBCORE_EXPORT void continueLoadURLIntoChildFrame(const URL&, const String& referer, LocalFrame&);
-    WEBCORE_EXPORT FrameLoadRequest createFrameLoadRequest(URL&&);
+    WEBCORE_EXPORT FrameLoadRequest createFrameLoadRequest(URL&&, const String& referrer);
 
     bool isDispatchingPageSwapEvent() const  { return m_isDispatchingPageSwapEvent; }
 
