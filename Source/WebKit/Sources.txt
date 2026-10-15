@@ -616,6 +616,7 @@ UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
 UIProcess/Extensions/WebExtensionDataRecord.cpp
 UIProcess/Extensions/WebExtensionDeclarativeNetRequestSQLiteStore.cpp
+UIProcess/Extensions/WebExtensionDynamicScripts.cpp
 UIProcess/Extensions/WebExtensionMatchPattern.cpp
 UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp
 
