@@ -557,52 +557,36 @@ public:
         // The reaching def of a local at the head of a block is the one at the tail of its immediate
         // dominator, so walk the dominator tree keeping the defs reaching the current block's tail,
         // and undo each block's defs when leaving its subtree.
-        auto& dominators = m_graph.ensureSSADominators();
-        IndexMap<BasicBlock*, Vector<BasicBlock*>> dominatorTreeChildren(m_graph.numBlocks());
-        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-            if (BasicBlock* idom = dominators.idom(block))
-                dominatorTreeChildren[idom].append(block);
-        }
-
         Operands<Node*> reachingDefs(OperandsLike, m_graph.block(0)->variablesAtHead, nullptr);
         Vector<std::pair<size_t, Node*>> undoLog;
-        struct WorklistEntry {
-            BasicBlock* block;
-            size_t undoLogSizeToRestore;
-        };
-        Vector<WorklistEntry, 16> worklist;
+        Vector<size_t, 16> undoLogSizeAtEntry;
 #if ASSERT_ENABLED
         BitVector visited(m_graph.numBlocks());
 #endif
-        worklist.append({ m_graph.block(0), notFound });
-        while (!worklist.isEmpty()) {
-            WorklistEntry entry = worklist.takeLast();
-            if (entry.undoLogSizeToRestore != notFound) {
-                while (undoLog.size() > entry.undoLogSizeToRestore) {
+        m_graph.ensureSSADominators().forAllBlocksInDominatorTreePreOrder(
+            [&](BasicBlock* block) {
+#if ASSERT_ENABLED
+                visited.set(block->index());
+#endif
+                sinkInBlock(block, reachingDefs);
+
+                undoLogSizeAtEntry.append(undoLog.size());
+                auto setReachingDef = [&](size_t index, Node* value) {
+                    undoLog.append({ index, reachingDefs.at(index) });
+                    reachingDefs.at(index) = value;
+                };
+                for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(block))
+                    setReachingDef(reachingDefs.operandIndex(indexToOperand[phiDef->variable()->index()]), phiDef->value());
+                for (auto [index, value] : defsInBlock[block])
+                    setReachingDef(index, value);
+            },
+            [&](BasicBlock*) {
+                size_t undoLogSize = undoLogSizeAtEntry.takeLast();
+                while (undoLog.size() > undoLogSize) {
                     auto [index, previous] = undoLog.takeLast();
                     reachingDefs.at(index) = previous;
                 }
-                continue;
-            }
-
-            BasicBlock* block = entry.block;
-#if ASSERT_ENABLED
-            visited.set(block->index());
-#endif
-            sinkInBlock(block, reachingDefs);
-
-            worklist.append({ block, undoLog.size() });
-            auto setReachingDef = [&](size_t index, Node* value) {
-                undoLog.append({ index, reachingDefs.at(index) });
-                reachingDefs.at(index) = value;
-            };
-            for (SSACalculator::Def* phiDef : ssaCalculator.phisForBlock(block))
-                setReachingDef(reachingDefs.operandIndex(indexToOperand[phiDef->variable()->index()]), phiDef->value());
-            for (auto [index, value] : defsInBlock[block])
-                setReachingDef(index, value);
-            for (BasicBlock* child : dominatorTreeChildren[block])
-                worklist.append({ child, notFound });
-        }
+            });
 
 #if ASSERT_ENABLED
         for (BasicBlock* block : m_graph.blocksInNaturalOrder())

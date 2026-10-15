@@ -227,6 +227,245 @@ void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count)
     CHECK_EQ(storage, expected);
 }
 
+static void checkFixSSAResult(Procedure& proc, unsigned expectedPhis)
+{
+    validate(proc);
+    CHECK(proc.variables().isEmpty());
+    unsigned phis = 0;
+    for (Value* value : proc.values()) {
+        CHECK(value->opcode() != B3::Get);
+        CHECK(value->opcode() != B3::Set);
+        CHECK(value->opcode() != Identity);
+        if (value->opcode() == Phi)
+            ++phis;
+    }
+    CHECK_EQ(phis, expectedPhis);
+}
+
+void testFixSSALocalOnly()
+{
+    // x = a; r = x; x = r + 1; return x + r
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x, a);
+    Value* r = root->appendNew<VariableValue>(proc, B3::Get, Origin(), x);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x,
+        root->appendNew<Value>(proc, Add, Origin(), r, root->appendIntConstant(proc, Origin(), Int64, 1)));
+    root->appendNew<Value>(proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), root->appendNew<VariableValue>(proc, B3::Get, Origin(), x), r));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 0);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, 20), 41);
+}
+
+void testFixSSADiamondSetInOneArm(bool flag)
+{
+    // x = a
+    // if (c) { x = 42; goto thenTail; thenTail: return x }
+    // else return x
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* thenTail = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x, a);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), c);
+
+    thenCase->appendNew<VariableValue>(proc, B3::Set, Origin(), x, thenCase->appendIntConstant(proc, Origin(), Int64, 42));
+    thenCase->setSuccessors(FrequentedBlock(thenTail));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+
+    thenTail->appendNew<Value>(proc, Return, Origin(), thenTail->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+
+    elseCase->appendNew<Value>(proc, Return, Origin(), elseCase->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 0);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, 7, flag ? 1 : 0), flag ? 42 : 7);
+}
+
+void testFixSSADiamondJoinPhi(bool flag)
+{
+    // x = a
+    // if (c) x = 42
+    // return x
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x, a);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), c);
+
+    thenCase->appendNew<VariableValue>(proc, B3::Set, Origin(), x, thenCase->appendIntConstant(proc, Origin(), Int64, 42));
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    join->appendNew<Value>(proc, Return, Origin(), join->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 1);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, 7, flag ? 1 : 0), flag ? 42 : 7);
+}
+
+void testFixSSADominatorChain(bool flag)
+{
+    // root:   x = a
+    // middle: y = x + 1; if (c) goto inner else goto side
+    // inner:  x = y * 2; goto bottom
+    // bottom: return x + y
+    // side:   return x
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* middle = proc.addBlock();
+    BasicBlock* inner = proc.addBlock();
+    BasicBlock* bottom = proc.addBlock();
+    BasicBlock* side = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+    Variable* y = proc.addVariable(Int64);
+
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x, a);
+    root->setSuccessors(FrequentedBlock(middle));
+    root->appendNew<Value>(proc, Jump, Origin());
+
+    middle->appendNew<VariableValue>(proc, B3::Set, Origin(), y,
+        middle->appendNew<Value>(proc, Add, Origin(),
+            middle->appendNew<VariableValue>(proc, B3::Get, Origin(), x),
+            middle->appendIntConstant(proc, Origin(), Int64, 1)));
+    middle->setSuccessors(FrequentedBlock(inner), FrequentedBlock(side));
+    middle->appendNew<Value>(proc, Branch, Origin(), c);
+
+    inner->appendNew<VariableValue>(proc, B3::Set, Origin(), x,
+        inner->appendNew<Value>(proc, Mul, Origin(),
+            inner->appendNew<VariableValue>(proc, B3::Get, Origin(), y),
+            inner->appendIntConstant(proc, Origin(), Int64, 2)));
+    inner->setSuccessors(FrequentedBlock(bottom));
+    inner->appendNew<Value>(proc, Jump, Origin());
+
+    bottom->appendNew<Value>(proc, Return, Origin(),
+        bottom->appendNew<Value>(proc, Add, Origin(),
+            bottom->appendNew<VariableValue>(proc, B3::Get, Origin(), x),
+            bottom->appendNew<VariableValue>(proc, B3::Get, Origin(), y)));
+
+    side->appendNew<Value>(proc, Return, Origin(), side->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 0);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, 7, flag ? 1 : 0), flag ? 24 : 7);
+}
+
+void testFixSSAGetBeforeSet(bool flag)
+{
+    // Both arms read x before anything assigns it, so each needs its own Bottom: one created in
+    // thenCase does not dominate elseCase.
+    //
+    // if (c) { y = x; x = 42 } else y = x + 7
+    // return x + y
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+    Variable* y = proc.addVariable(Int64);
+
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+    root->appendNew<Value>(proc, Branch, Origin(), c);
+
+    thenCase->appendNew<VariableValue>(proc, B3::Set, Origin(), y, thenCase->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+    thenCase->appendNew<VariableValue>(proc, B3::Set, Origin(), x, thenCase->appendIntConstant(proc, Origin(), Int64, 42));
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+
+    elseCase->appendNew<VariableValue>(proc, B3::Set, Origin(), y,
+        elseCase->appendNew<Value>(proc, Add, Origin(),
+            elseCase->appendNew<VariableValue>(proc, B3::Get, Origin(), x),
+            elseCase->appendIntConstant(proc, Origin(), Int64, 7)));
+    elseCase->setSuccessors(FrequentedBlock(join));
+    elseCase->appendNew<Value>(proc, Jump, Origin());
+
+    join->appendNew<Value>(proc, Return, Origin(),
+        join->appendNew<Value>(proc, Add, Origin(),
+            join->appendNew<VariableValue>(proc, B3::Get, Origin(), x),
+            join->appendNew<VariableValue>(proc, B3::Get, Origin(), y)));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 2);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, flag ? 1 : 0), flag ? 42 : 7);
+}
+
+void testFixSSASetFromGetInSameBlock(bool flag)
+{
+    // x = a + 1; y = x
+    // if (c) x = 3
+    // return x + y
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* join = proc.addBlock();
+    Variable* x = proc.addVariable(Int64);
+    Variable* y = proc.addVariable(Int64);
+
+    Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), x,
+        root->appendNew<Value>(proc, Add, Origin(), a, root->appendIntConstant(proc, Origin(), Int64, 1)));
+    root->appendNew<VariableValue>(proc, B3::Set, Origin(), y, root->appendNew<VariableValue>(proc, B3::Get, Origin(), x));
+    root->setSuccessors(FrequentedBlock(thenCase), FrequentedBlock(join));
+    root->appendNew<Value>(proc, Branch, Origin(), c);
+
+    thenCase->appendNew<VariableValue>(proc, B3::Set, Origin(), x, thenCase->appendIntConstant(proc, Origin(), Int64, 3));
+    thenCase->setSuccessors(FrequentedBlock(join));
+    thenCase->appendNew<Value>(proc, Jump, Origin());
+
+    join->appendNew<Value>(proc, Return, Origin(),
+        join->appendNew<Value>(proc, Add, Origin(),
+            join->appendNew<VariableValue>(proc, B3::Get, Origin(), x),
+            join->appendNew<VariableValue>(proc, B3::Get, Origin(), y)));
+
+    proc.resetReachability();
+    fixSSA(proc);
+    checkFixSSAResult(proc, 1);
+
+    auto code = compileProc(proc);
+    CHECK_EQ(invoke<int64_t>(*code, 7, flag ? 1 : 0), flag ? 11 : 16);
+}
+
 void testLoadPreIndex32()
 {
     if (Options::defaultB3OptLevel() < 2)
@@ -4900,6 +5139,18 @@ void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testCSELoopHeaderLoadFromBackEdgeStore(0));
     RUN(testCSELoopHeaderLoadFromBackEdgeStore(1));
     RUN(testCSELoopHeaderLoadFromBackEdgeStore(5));
+
+    RUN(testFixSSALocalOnly());
+    RUN(testFixSSADiamondSetInOneArm(true));
+    RUN(testFixSSADiamondSetInOneArm(false));
+    RUN(testFixSSADiamondJoinPhi(true));
+    RUN(testFixSSADiamondJoinPhi(false));
+    RUN(testFixSSADominatorChain(true));
+    RUN(testFixSSADominatorChain(false));
+    RUN(testFixSSAGetBeforeSet(true));
+    RUN(testFixSSAGetBeforeSet(false));
+    RUN(testFixSSASetFromGetInSameBlock(true));
+    RUN(testFixSSASetFromGetInSameBlock(false));
 
     RUN(testLoadPreIndex32());
     RUN(testLoadPreIndex64());

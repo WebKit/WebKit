@@ -59,6 +59,11 @@ namespace WTF {
 //    processing basic blocks in forward order. If a block has multiple Defs of a variable, this
 //    "just works" because each block will then remember the last Def of each variable.
 //
+//    If you will compute reaching defs yourself in step (4), call newDefBlock() instead. It only
+//    records that the block assigns the variable, which is all computePhis() needs, and creates no
+//    Def. reachingDefAtHead(), reachingDefAtTail(), and nonLocalReachingDef() cannot be used for a
+//    variable registered this way, since they would find only its Phis.
+//
 // 3) Call SSACalculator::computePhis(). This takes a functor that will create the Phi nodes. The
 //    functor returns either the Phi node it created, or nullptr, if it chooses to prune. (As an
 //    aside, it's always sound not to prune, and the safest reason for pruning is liveness.) The
@@ -68,16 +73,18 @@ namespace WTF {
 //    doing Graph::addNode() and return them. It's then best to insert all Phi nodes for a block
 //    in bulk as part of the pass you do below, in step (4).
 //
-// 4) Modify the graph to create the SSA data flow. For each block, this should:
+// 4) Modify the graph to create the SSA data flow. The cheapest way is to visit the blocks with
+//    Dominators::forAllBlocksInDominatorTreePreOrder(), keeping one table of the available value of
+//    each variable. A block's reaching defs at head are its immediate dominator's at tail, so on
+//    entering a block the table is already correct, and on exiting it you undo the block's updates
+//    (for example with an undo log). This is the only option if you used newDefBlock() in step (2).
+//    For each block:
 //
-//    4.0) Compute the set of reaching defs (aka available values) for each variable by calling
-//         SSACalculator::reachingDefAtHead() for each variable. Record this in a local table that
-//         will be incrementally updated as you proceed through the block in forward order in the
-//         next steps:
-//
-//         FIXME: It might be better to compute reaching defs for all live variables in one go, to
-//         avoid doing repeated dom tree traversals.
-//         https://bugs.webkit.org/show_bug.cgi?id=136610
+//    4.0) Have the reaching defs (aka available values) for each variable at the head of the block.
+//         With the walk above you already do. Otherwise, call SSACalculator::reachingDefAtHead() for
+//         each variable, which walks up the dominator tree, and record the results in a local table.
+//         Either way, the table is incrementally updated as you proceed through the block in forward
+//         order in the next steps.
 //
 //    4.1) Insert all of the Phi nodes for the block by using SSACalculator::phisForBlock(), and
 //         record those Phi nodes as being available values.
@@ -91,15 +98,15 @@ namespace WTF {
 //         you run GCSE after your phase. Or, you can replace all uses of the load with the SSA
 //         value yourself (using the Graph::performSubstitution() idiom), but that requires that
 //         your loop over basic blocks proceeds in the appropriate graph order, for example
-//         preorder.
+//         dominator tree preorder.
 //
 //         FIXME: Make it easier to do this, that doesn't involve rerunning GCSE.
 //         https://bugs.webkit.org/show_bug.cgi?id=136639
 //
 //    4.3) Insert Upsilons at the end of the current block for the corresponding Phis in each successor block.
-//         Use the available values table to decide the source value for each Phi's variable. Note that
-//         you could also use SSACalculator::reachingDefAtTail() instead of the available values table,
-//         though your local available values table is likely to be more efficient.
+//         Use the available values table to decide the source value for each Phi's variable. Unless you
+//         used newDefBlock(), you could also use SSACalculator::reachingDefAtTail() instead of the
+//         available values table, though your local available values table is likely to be more efficient.
 //
 // The most obvious use of SSACalculator is for the CPS->SSA conversion itself, but it's meant to
 // also be used for SSA update and for things like the promotion of heap fields to local SSA
@@ -167,6 +174,9 @@ public:
 
         Vector<Node, 4> m_blocksWithDefs;
         unsigned m_index { UINT_MAX };
+#if ASSERT_ENABLED
+        bool m_hasDefsWithoutValues { false };
+#endif
     };
 
     class Def {
@@ -213,6 +223,15 @@ public:
         else
             result.iterator->value = def;
         return def;
+    }
+
+    void newDefBlock(Variable* variable, Node block)
+    {
+#if ASSERT_ENABLED
+        variable->m_hasDefsWithoutValues = true;
+#endif
+        if (variable->m_blocksWithDefs.isEmpty() || variable->m_blocksWithDefs.last() != block)
+            variable->m_blocksWithDefs.append(block);
     }
 
     Variable* variable(unsigned index) { return &m_variables[index]; }
@@ -305,6 +324,8 @@ public:
     // Considers the def within the given block, but only works at the tail of the block.
     Def* reachingDefAtTail(Node startingBlock, Variable* variable)
     {
+        // A variable whose defs came from newDefBlock() has no Def records, so only its Phis would be found.
+        ASSERT(!variable->m_hasDefsWithoutValues);
         auto& dominators = this->dominators();
         for (Node block = startingBlock; block; block = dominators.idom(block)) {
             if (Def* def = m_data[block].m_defs.get(variable)) {

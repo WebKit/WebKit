@@ -1311,6 +1311,7 @@
 				WTF/darwin/WeakLinking.cpp,
 				WTF/DateMath.cpp,
 				WTF/Deque.cpp,
+				WTF/DominatorsTests.cpp,
 				WTF/DragonBoxTest.cpp,
 				WTF/EmbeddedFixedVector.cpp,
 				WTF/EnumeratedArray.cpp,

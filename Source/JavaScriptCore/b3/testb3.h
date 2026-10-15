@@ -1411,6 +1411,13 @@ void testCSELoadAfterStoreDiamond(bool flag);
 void testCSELoadAcrossLoopBackEdge(unsigned count);
 void testCSELoopHeaderLoadFromBackEdgeStore(unsigned count);
 
+void testFixSSALocalOnly();
+void testFixSSADiamondSetInOneArm(bool flag);
+void testFixSSADiamondJoinPhi(bool flag);
+void testFixSSADominatorChain(bool flag);
+void testFixSSAGetBeforeSet(bool flag);
+void testFixSSASetFromGetInSameBlock(bool flag);
+
 bool shouldRun(const TestConfig*, UTF8CStringView testName);
 
 void testLoadPreIndex32();

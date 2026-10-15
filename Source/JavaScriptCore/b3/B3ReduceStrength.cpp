@@ -726,61 +726,35 @@ public:
     // in any other child order gives the first but not the second.
     void reduceAllBlocksStrengthInDominatorPreOrder()
     {
-        // Three children is the common case: a diamond head dominates both arms and the join.
-        Vector<Vector<BasicBlock*, 3>> children(m_proc.size());
-        BasicBlock* root = nullptr;
-        for (BasicBlock* block : m_proc.blocksInPostOrder() | std::views::reverse) {
-            BasicBlock* parent = m_dominators->idom(block);
-            ASSERT(parent != block);
-            if (parent)
-                children[parent->index()].append(block);
-            else {
-                ASSERT(!root);
-                root = block;
-            }
-        }
-        RELEASE_ASSERT(root);
+        m_dominators->forAllBlocksInDominatorTreePreOrder<DominatorTreeChildOrder::ReversePostOrder>(
+            [&](BasicBlock* block) {
+                m_layeredCSE.startLayer();
 
-        Vector<BasicBlock*, 16> stack;
-        stack.append(root);
-        while (!stack.isEmpty()) {
-            BasicBlock* block = stack.takeLast();
+                m_block = block;
+                m_blockState = computeBlockReachability();
 
-            // A null entry closes the layer that the block pushing it opened.
-            if (!block) {
+                if (m_trackWasmGCAccesses) {
+                    m_wasmGCMap.startLayer();
+                    beginWasmGCBlock(block);
+                }
+
+                // Every block an unreachable block dominates is unreachable too, and the whole region is
+                // deleted right after the walk, so only the Upsilons feeding Phis elsewhere matter.
+                if (m_blockState == BlockState::Unreachable)
+                    removeUpsilonsFromUnreachableBlock();
+                else
+                    reduceBlockStrength();
+
+                if (m_trackWasmGCAccesses)
+                    endWasmGCBlock(block);
+
+                finishBlock(block);
+            },
+            [&](BasicBlock*) {
                 m_layeredCSE.dropLastLayer();
                 if (m_trackWasmGCAccesses)
                     m_wasmGCMap.dropLastLayer();
-                continue;
-            }
-            stack.append(nullptr);
-
-            m_layeredCSE.startLayer();
-
-            m_block = block;
-            m_blockState = computeBlockReachability();
-
-            if (m_trackWasmGCAccesses) {
-                m_wasmGCMap.startLayer();
-                beginWasmGCBlock(block);
-            }
-
-            // Every block an unreachable block dominates is unreachable too, and the whole region is
-            // deleted right after the walk, so only the Upsilons feeding Phis elsewhere matter.
-            if (m_blockState == BlockState::Unreachable)
-                removeUpsilonsFromUnreachableBlock();
-            else
-                reduceBlockStrength();
-
-            if (m_trackWasmGCAccesses)
-                endWasmGCBlock(block);
-
-            finishBlock(block);
-
-            auto& kids = children[block->index()];
-            for (unsigned i = kids.size(); i--;)
-                stack.append(kids[i]);
-        }
+            });
     }
 
 private:

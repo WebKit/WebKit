@@ -30,9 +30,15 @@
 #include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/GraphNodeWorklist.h>
+#include <wtf/GraphOrdering.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
+
+enum class DominatorTreeChildOrder : uint8_t {
+    Any,
+    ReversePostOrder,
+};
 
 // This is a utility for finding the dominators of a graph. Dominators are almost universally used
 // for control flow graph analysis, so this code will refer to the graph's "nodes" as "blocks". In
@@ -193,7 +199,45 @@ public:
             worklist.appendVector(m_data[block].idomKids);
         }
     }
-    
+
+    // Calls enter(block) before visiting the blocks it dominates and exit(block) after them. With
+    // ReversePostOrder, each block also comes after every predecessor not reached by a back edge.
+    template<DominatorTreeChildOrder childOrder = DominatorTreeChildOrder::Any>
+    void forAllBlocksInDominatorTreePreOrder(NOESCAPE const Invocable<void(typename Graph::Node)> auto& enter, NOESCAPE const Invocable<void(typename Graph::Node)> auto& exit) const
+    {
+        using Node = typename Graph::Node;
+        auto walk = [&](NOESCAPE const auto& childrenOf) {
+            Vector<GraphNodeWithOrder<Node>, 16> worklist;
+            worklist.append(GraphNodeWithOrder<Node>(m_graph.root(), GraphVisitOrder::Pre));
+            while (!worklist.isEmpty()) {
+                GraphNodeWithOrder<Node> item = worklist.takeLast();
+                if (item.order == GraphVisitOrder::Post) {
+                    exit(item.node);
+                    continue;
+                }
+                enter(item.node);
+                worklist.append(GraphNodeWithOrder<Node>(item.node, GraphVisitOrder::Post));
+                for (Node child : childrenOf(item.node) | std::views::reverse)
+                    worklist.append(GraphNodeWithOrder<Node>(child, GraphVisitOrder::Pre));
+            }
+        };
+
+        if constexpr (childOrder == DominatorTreeChildOrder::Any)
+            walk([&](Node block) -> const auto& { return m_data[block].idomKids; });
+        else {
+            Vector<Node> postOrder;
+            postOrder.reserveInitialCapacity(m_graph.numNodes());
+            appendNodesInOrder(m_graph, GraphOrder::PostOrder, postOrder);
+            // Three children is the common case: a diamond head dominates both arms and the join.
+            auto children = m_graph.template newMap<Vector<Node, 3>>();
+            for (Node block : postOrder | std::views::reverse) {
+                if (Node parent = idom(block))
+                    children[parent].append(block);
+            }
+            walk([&](Node block) -> const auto& { return children[block]; });
+        }
+    }
+
     typename Graph::Set strictDominatorsOf(typename Graph::Node to) const
     {
         typename Graph::Set result;
@@ -929,4 +973,5 @@ private:
 
 } // namespace WTF
 
+using WTF::DominatorTreeChildOrder;
 using WTF::Dominators;
