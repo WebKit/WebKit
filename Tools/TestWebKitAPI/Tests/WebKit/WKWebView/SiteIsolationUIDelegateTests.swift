@@ -25,7 +25,6 @@ import Foundation
 private import TestWebKitAPILibrary
 import Testing
 import WebKit
-private import WebKit_Private.WKUIDelegatePrivate
 
 import struct Foundation.URL
 import struct Swift.String
@@ -33,20 +32,6 @@ import struct Swift.String
 // A page has a single UI delegate, and a frame's web content process needs to know about it to show dialogs for the
 // frame. With site isolation, that includes processes of cross-site iframes that were created before the delegate was
 // set. These tests set the delegate after such an iframe loads.
-
-// Its method is never called. A frame only dispatches beforeunload if its page can run a beforeunload panel, which
-// takes a UI delegate that implements this method, so having one is what makes the iframe's process dispatch it.
-@MainActor
-private final class BeforeUnloadDelegate: NSObject, @preconcurrency WKUIDelegatePrivate {
-    // swift-format-ignore: NoLeadingUnderscores
-    func _webView(
-        _ webView: WKWebView,
-        runBeforeUnloadConfirmPanelWithMessage message: String,
-        initiatedByFrame frame: WKFrameInfo
-    ) async -> Bool {
-        true
-    }
-}
 
 @MainActor
 struct SiteIsolationUIDelegateTests {
@@ -78,7 +63,7 @@ struct SiteIsolationUIDelegateTests {
             try await navigationDelegate.waitForDidFinishNavigation()
 
             // A web view only holds its UI delegate weakly, so keep it alive until the end of the test.
-            let uiDelegate = BeforeUnloadDelegate()
+            let uiDelegate = BeforeUnloadAlertRecorder()
             defer { withExtendedLifetime(uiDelegate) {} }
             webView.uiDelegate = uiDelegate
 

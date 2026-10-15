@@ -1,0 +1,11 @@
+Tests that beforeunload fires once when a navigation leaves the frame's process and a redirect brings it back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS beforeUnloadCounts.navigate is 1
+PASS beforeUnloadCounts.location is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
