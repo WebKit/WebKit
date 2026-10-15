@@ -48,7 +48,7 @@ public:
 
 private:
     TrackSizes sizeColumnTracks(const PlacedGridItems&, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
-    TrackSizes sizeRowTracks(const PlacedGridItems&, const TrackSizes& columnSizes, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
+    TrackSizes sizeRowTracks(const PlacedGridItems&, const TrackSizes& columnSizes, const TrackSizingFunctionsList& columnTrackSizingFunctions, const TrackSizingFunctionsList& rowTrackSizingFunctions) const;
 
     const GridFormattingContext& formattingContext() const LIFETIME_BOUND { return m_gridFormattingContext; }
     const GridLayoutState& layoutState() const LIFETIME_BOUND { return m_gridLayoutState; }

@@ -268,7 +268,7 @@ static LayoutUnit minimumContribution(const TrackSizingItemList& trackSizingItem
     auto& trackSizingItem = trackSizingItems[gridItemIndex];
     auto& preferredSize = trackSizingItem.computedSizes.preferredSize;
     if (GridLayoutUtils::preferredSizeBehavesAsAuto(preferredSize) || GridLayoutUtils::sizeDependsOnContainingBlockSize(preferredSize))
-        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, trackSizingItem.usedMargins, trackSizingItem.oppositeAxisConstraint, gapSize, axisConstraint).value;
+        return gridItemSizingFunctions.usedMinimumSize(trackSizingItem.gridItem, trackSizingFunctions, trackSizingItem.borderAndPadding, trackSizingItem.usedMargins, trackSizingItem.oppositeAxisConstraint, gapSize, axisConstraint, trackSizingItem.oppositeAxisGridAreaMaximumSize).value;
     return gridItemSizingFunctions.minContentContribution(trackSizingItem.gridItem, trackSizingItem.oppositeAxisConstraint).value;
 }
 

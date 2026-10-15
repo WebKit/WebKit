@@ -48,6 +48,7 @@ class ElementBox;
 class GridFormattingContext;
 class IntegrationUtils;
 class PlacedGridItem;
+struct AxisConstraint;
 struct BorderBoxSize;
 struct GridItemSizingFunctions;
 struct MarginBoxSize;
@@ -68,6 +69,8 @@ namespace GridLayoutUtils {
 
 LayoutUnit LEGACY_NODELETE totalGuttersSize(size_t tracksCount, const BitVector& collapsedTracksList, LayoutUnit gapsSize);
 
+std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t endLine, const TrackSizingFunctionsList&, LayoutUnit gapSize, const AxisConstraint&);
+
 // https://drafts.csswg.org/css-grid-1/#track-sizes
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);
 
@@ -84,8 +87,8 @@ LayoutUnit blockMinimumSize(const PlacedGridItem&, const TrackSizingFunctionsLis
 // no specified size suggestion; it is present once the available space is known. The grid area's
 // maximum size is absent when the item does not span only fixed-maximum tracks, or when the caller
 // does not clamp to it.
-BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaMaximumInlineSize, const IntegrationUtils&, std::optional<LayoutUnit> gridAreaBlockSize, const UsedMargins&);
-BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, std::optional<LayoutUnit> gridAreaBlockSize, std::optional<LayoutUnit> gridAreaMaximumBlockSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, const UsedMargins&);
+BorderBoxSize automaticMinimumInlineSize(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, std::optional<LayoutUnit> gridAreaInlineSize, std::optional<LayoutUnit> gridAreaMaximumInlineSize, const IntegrationUtils&, std::optional<LayoutUnit> gridAreaBlockSize, std::optional<LayoutUnit> gridAreaMaximumBlockSize, const UsedMargins&);
+BorderBoxSize automaticMinimumBlockSize(const PlacedGridItem&, LayoutUnit borderAndPadding, const TrackSizingFunctionsList&, std::optional<LayoutUnit> gridAreaBlockSize, std::optional<LayoutUnit> gridAreaMaximumBlockSize, const GridFormattingContext&, LayoutUnit gridAreaInlineSize, std::optional<LayoutUnit> gridAreaMaximumInlineSize, const UsedMargins&);
 LayoutUnit inlineMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit blockMaximumSize(const PlacedGridItem&, LayoutUnit borderAndPadding);
 LayoutUnit inlineUsedSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, LayoutUnit gridAreaInlineSize, const IntegrationUtils&, LayoutUnit gridAreaBlockSize, const UsedMargins&);

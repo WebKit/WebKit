@@ -51,6 +51,12 @@ struct TrackSizingItem {
     const UsedMargins usedMargins;
     const WTF::Range<size_t> spannedLines;
     const std::optional<LayoutUnit> oppositeAxisConstraint;
+    // https://drafts.csswg.org/css-grid-1/#min-size-auto
+    // The maximum size of the grid area in the opposite axis: the sum of the spanned tracks' max track
+    // sizing functions plus any intervening fixed gutters, computed by GridLayoutUtils::gridAreaMaximumSize().
+    // Absent unless every spanned track has a fixed max track sizing function. It clamps the opposite-axis
+    // input to the transferred size suggestion of the automatic minimum size.
+    const std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize;
 };
 
 struct UnsizedTrack {

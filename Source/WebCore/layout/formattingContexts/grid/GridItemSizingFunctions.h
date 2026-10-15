@@ -47,7 +47,7 @@ struct UsedMargins;
 // All three are outer sizes.
 struct GridItemSizingFunctions {
     GridItemSizingFunctions(Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContributionFunction, Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContributionFunction,
-        Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSizeFunction)
+        Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&, std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize)> usedMinimumSizeFunction)
             : minContentContribution(WTF::move(minContentContributionFunction))
             , maxContentContribution(WTF::move(maxContentContributionFunction))
             , usedMinimumSize(WTF::move(usedMinimumSizeFunction))
@@ -59,7 +59,7 @@ struct GridItemSizingFunctions {
 
     Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> minContentContribution;
     Function<MarginBoxSize(const PlacedGridItem&, std::optional<LayoutUnit> oppositeAxisConstraint)> maxContentContribution;
-    Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&)> usedMinimumSize;
+    Function<MarginBoxSize(const PlacedGridItem&, const TrackSizingFunctionsList&, LayoutUnit borderAndPadding, const UsedMargins&, std::optional<LayoutUnit> oppositeAxisConstraint, LayoutUnit gapSize, const AxisConstraint&, std::optional<LayoutUnit> oppositeAxisGridAreaMaximumSize)> usedMinimumSize;
 };
 
 } // namespace Layout
