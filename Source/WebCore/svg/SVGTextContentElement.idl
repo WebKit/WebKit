@@ -36,7 +36,7 @@
     [SameObject] readonly attribute SVGAnimatedLength textLength;
     [SameObject] readonly attribute SVGAnimatedEnumeration lengthAdjust;
 
-    long getNumberOfChars();
+    [ImplementedAs=numberOfCharsForBindings] long getNumberOfChars();
     float getComputedTextLength();
     float getSubStringLength(unsigned long charnum, unsigned long nchars);
     // FIXME: SVGPoint/SVGRect should be DOMPoint/DOMRect as per web-spec.

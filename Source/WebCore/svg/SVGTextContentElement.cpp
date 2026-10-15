@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -41,6 +41,7 @@
 #include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -59,7 +60,12 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     }
 }
 
-unsigned SVGTextContentElement::getNumberOfChars()
+int SVGTextContentElement::numberOfCharsForBindings()
+{
+    return clampTo<int>(numberOfChars());
+}
+
+unsigned SVGTextContentElement::numberOfChars()
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
     return SVGTextQuery(protect(renderer()).get()).numberOfCharacters();
@@ -73,7 +79,7 @@ float SVGTextContentElement::getComputedTextLength()
 
 ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, unsigned nchars)
 {
-    unsigned numberOfChars = getNumberOfChars();
+    unsigned numberOfChars = this->numberOfChars();
     if (charnum >= numberOfChars)
         return Exception { ExceptionCode::IndexSizeError };
 
@@ -83,7 +89,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
 {
-    if (charnum >= getNumberOfChars())
+    if (charnum >= numberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(protect(renderer()).get()).startPositionOfCharacter(charnum));
@@ -91,7 +97,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
 
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
 {
-    if (charnum >= getNumberOfChars())
+    if (charnum >= numberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(protect(renderer()).get()).endPositionOfCharacter(charnum));
@@ -99,7 +105,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
 {
-    if (charnum >= getNumberOfChars())
+    if (charnum >= numberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
     return SVGRect::create(SVGTextQuery(protect(renderer()).get()).extentOfCharacter(charnum));
@@ -107,7 +113,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
 
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 {
-    if (charnum >= getNumberOfChars())
+    if (charnum >= numberOfChars())
         return Exception { ExceptionCode::IndexSizeError };
 
     return SVGTextQuery(protect(renderer()).get()).rotationOfCharacter(charnum);
@@ -122,7 +128,7 @@ int SVGTextContentElement::getCharNumAtPosition(DOMPointInit&& pointInit)
 
 ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars)
 {
-    unsigned numberOfChars = getNumberOfChars();
+    unsigned numberOfChars = this->numberOfChars();
     if (charnum >= numberOfChars)
         return Exception { ExceptionCode::IndexSizeError };
 
