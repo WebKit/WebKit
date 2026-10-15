@@ -144,6 +144,123 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
     });
 }
 
+static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case NetworkLoadPriority::Verylow:
+        return Inspector::Protocol::Network::Metrics::Priority::Verylow;
+    case NetworkLoadPriority::Low:
+        return Inspector::Protocol::Network::Metrics::Priority::Low;
+    case NetworkLoadPriority::Medium:
+        return Inspector::Protocol::Network::Metrics::Priority::Medium;
+    case NetworkLoadPriority::High:
+        return Inspector::Protocol::Network::Metrics::Priority::High;
+    case NetworkLoadPriority::Veryhigh:
+        return Inspector::Protocol::Network::Metrics::Priority::Veryhigh;
+    case NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::Metrics::Priority::Medium;
+}
+
+static Inspector::Protocol::Network::Metrics::InitialPriority NODELETE toInitialProtocolValue(NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case NetworkLoadPriority::Verylow:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Verylow;
+    case NetworkLoadPriority::Low:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Low;
+    case NetworkLoadPriority::Medium:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
+    case NetworkLoadPriority::High:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::High;
+    case NetworkLoadPriority::Veryhigh:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Veryhigh;
+    case NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
+}
+
+Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+{
+    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
+
+    if (!networkLoadMetrics.protocol.isNull())
+        metrics->setProtocol(networkLoadMetrics.protocol);
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (additionalMetrics->initialPriority.has_value())
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
+        else
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
+        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
+            metrics->setPriority(toProtocol(additionalMetrics->priority));
+        if (!additionalMetrics->remoteAddress.isNull())
+            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
+        if (!additionalMetrics->connectionIdentifier.isNull())
+            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
+        if (!additionalMetrics->requestHeaders.isEmpty())
+            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
+        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
+        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
+            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
+        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
+    }
+
+    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
+    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
+
+    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
+        .release();
+
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (!additionalMetrics->tlsProtocol.isEmpty())
+            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
+        if (!additionalMetrics->tlsCipher.isEmpty())
+            connectionPayload->setCipher(additionalMetrics->tlsCipher);
+    }
+
+    metrics->setSecurityConnection(WTF::move(connectionPayload));
+
+    return metrics;
+}
+
+static Inspector::Protocol::Network::ReferrerPolicy NODELETE toProtocol(ReferrerPolicy referrerPolicy)
+{
+    switch (referrerPolicy) {
+    case ReferrerPolicy::EmptyString:
+        return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
+    case ReferrerPolicy::NoReferrer:
+        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrer;
+    case ReferrerPolicy::NoReferrerWhenDowngrade:
+        return Inspector::Protocol::Network::ReferrerPolicy::NoReferrerWhenDowngrade;
+    case ReferrerPolicy::SameOrigin:
+        return Inspector::Protocol::Network::ReferrerPolicy::SameOrigin;
+    case ReferrerPolicy::Origin:
+        return Inspector::Protocol::Network::ReferrerPolicy::Origin;
+    case ReferrerPolicy::StrictOrigin:
+        return Inspector::Protocol::Network::ReferrerPolicy::StrictOrigin;
+    case ReferrerPolicy::OriginWhenCrossOrigin:
+        return Inspector::Protocol::Network::ReferrerPolicy::OriginWhenCrossOrigin;
+    case ReferrerPolicy::StrictOriginWhenCrossOrigin:
+        return Inspector::Protocol::Network::ReferrerPolicy::StrictOriginWhenCrossOrigin;
+    case ReferrerPolicy::UnsafeUrl:
+        return Inspector::Protocol::Network::ReferrerPolicy::UnsafeUrl;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::ReferrerPolicy::EmptyString;
+}
+
 static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, ResourceLoader* resourceLoader)
 {
     return ResourceUtilities::buildObjectForResourceRequest(request, ResourceUtilities::copyRequestExtras(request, resourceLoader));
@@ -351,7 +468,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     // 'Raw' is used for loading worker scripts, and those should stay as 'Script' and not change to 'XHR' type.
     if (type != newType && newType != ResourceType::XHR && newType != ResourceType::Other)
         type = newType;
-    
+
     // FIXME: <webkit.org/b/216125> 304 Not Modified responses for XHR/Fetch do not have all their information from the cache.
     if (isNotModified && (type == ResourceType::XHR || type == ResourceType::Fetch) && (!cachedResource || !cachedResource->encodedSize())) {
         if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string())) {
@@ -362,12 +479,12 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                     m_resourcesData->maybeAddResourceData(requestId, buffer);
                 });
             }
-            
+
             resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
-            
+
             resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
             resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
-            
+
             resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }

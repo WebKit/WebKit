@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/resources/dummy.css" media="screen" />
+<link rel="stylesheet" href="/resources/dummy.css?print" media="print" />
+<link rel="stylesheet" href="/resources/dummy.css?low" media="screen" fetchpriority="low" />
+<script src="../../resources/inspector-test.js"></script>
+<script src="../../../cookies/resources/cookie-utilities.js?async" async></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HAR.Page");
+
+    suite.addTestCase({
+        name: "HAR.Page.Priorities",
+        description: "Should be able to generate a HAR with all of this test page's resources.",
+        async test() {
+            await NetworkAgent.setResourceCachingDisabled(false);
+
+            await Promise.all([
+                InspectorTest.awaitEvent("LoadComplete"),
+                WI.networkManager.mainFrame.removeAllResources(),
+                WI.networkManager.mainFrame.clearProvisionalLoad(false),
+                InspectorTest.reloadPage({ignoreCache: true}),
+            ]);
+
+            let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
+            let har = await WI.HARBuilder.buildArchive(resources);
+            let localResources = WI.networkManager.processHAR({json: har});
+            let firstDuplicate = true;
+
+            localResources.forEach((entry) => {
+                if ((/html$/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
+                        "VeryHigh",
+                        `HTML ${entry.url} should start with a VeryHigh priority`);
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                        "VeryHigh",
+                        "- HTML should still have VeryHigh priority");
+                } else if ((/duplicate$/).test(entry.url)) {
+                    if (firstDuplicate) {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
+                            "Low",
+                            `First duplicate ${entry.url} should start with a Low priority`);
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "Medium",
+                            "- First duplicate priority has been boosted");
+                        firstDuplicate = false;
+                    } else {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "Low",
+                            "- Second duplicate image has not been boosted");
+                        firstDuplicate = true;
+                    }
+                } else if ((/image\/png/).test(entry.mimeType)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                        "Low",
+                        `Image ${entry.url} should have a Low priority`);
+                } else if ((/javascript$/).test(entry.mimeType)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
+                        "High",
+                        `JavaScript ${entry.url} should start with a High priority`);
+                    if ((/async$/).test(entry.url)) {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "Medium",
+                            `- Async JavaScript should be reduced to Medium priority`);
+                    } else {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "High",
+                            `- JavaScript should still have a High priority`);
+                    }
+                } else if ((/beacon/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                        "VeryLow",
+                        `Beacon ${entry.url} should have VeryLow priority`);
+                } else if ((/\.css/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
+                        "High",
+                        `Stylesheet ${entry.url} should start with a High priority`);
+                    if ((/print$/).test(entry.url)) {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "VeryLow",
+                            `- Print stylesheet should be reduced to a VeryLow priority`);
+                    } else if ((/low$/).test(entry.url)) {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "Medium",
+                            `- Priority was only reduced to Medium`);
+                    } else {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                            "High",
+                            `- Screen stylesheet should stay at a High priority`);
+                    }
+                } else if ((/\.woff$/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
+                        "Medium",
+                        `Font ${entry.url} should start with a Medium priority`);
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
+                        "Medium",
+                        `- Font should stay with a Medium priority`);
+                }
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    @font-face { font-family: 'WebFont'; src: url('/resources/Ahem.woff') format('woff'); }
+    h2 { font-family: 'WebFont'; }
+</style>
+</head>
+<body onload="runTest()">
+<h1>HAR Priorities Test.</h1>
+<h2>First image</h2>
+<img src="/resources/square100.png?1" width="100" height="100" alt="A 100x100 Square" />
+<h2>Boosted image</h2>
+<img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" fetchpriority="high" />
+<h2>Another image</h2>
+<img src="/resources/square100.png?3" width="100" height="100" alt="A 100x100 Square" />
+<h2>Duplicate request</h2>
+<img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" />
+<script>
+navigator.sendBeacon("https://localhost:8443/resources/save-beacon.py?name=same-origin", "SameOrigin");
+
+window.addEventListener("load", () => {
+    TestPage.dispatchEventToFrontend("LoadComplete");
+});
+</script>
+</body>
+</html>
