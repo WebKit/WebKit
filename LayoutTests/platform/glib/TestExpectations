@@ -2125,15 +2125,7 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across
 http/tests/push-api [ Skip ]
 
 # <CR>same-origin<CR> seems to be parsed as same-origin instead of failing
-# Uncomment when webkit.org/b/268068 is fixed
-#webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
-
-# Slight difference where the failure happens in relation to mac's baseline
-# Uncomment when webkit.org/b/268068 is fixed
-#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
-#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?7-8 [ Failure ]
-#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?5-6 [ Failure ]
-#webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
+webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
 
 webkit.org/b/202750 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Failure ]
 
@@ -3282,9 +3274,26 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 
 http/tests/xmlhttprequest/gzip-content-type.html [ Failure Pass ]
 
-# TestExpectations doesn't seem to support test names containing space characters, so skip the whole
-# xhr test suite for now. See also webkit.org/b/264596.
-webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/ [ Skip ]
+# Tests that fail after unskipping imported/w3c/web-platform-tests/xhr.
+imported/w3c/web-platform-tests/xhr/access-control-preflight-request-must-not-contain-cookie.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
+
+# Timing-sensitive tests that fail with a harness timeout under load.
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-aborted.html?only%20open()ed,%20not%20aborted [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted%20immediately%20after%20send() [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call%20abort()%20after%20TIME_NORMAL_LOAD [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?only%20open()ed,%20not%20aborted [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20expired%20value%20before%20load%20fires [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20expiring%20value%20after%20load%20fires [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20non-expiring%20value%20after%20timeout%20fires [ Pass Failure ]
+
+# Times out on GTK and fails on WPE.
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Skip ]
+
+# Crashes on an assertion in SubresourceLoader::didReceiveResponse.
+imported/w3c/web-platform-tests/xhr/send-redirect.htm [ Skip ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
 
@@ -3959,7 +3968,7 @@ webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/177937 fast/text/unknown-char-notdef.html [ ImageOnlyFailure ]
-webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
+webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure Timeout ]
 webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
 
 # Imported css-text test suite from WPT.
@@ -4245,7 +4254,14 @@ webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
 
 webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
-webkit.org/b/268068 imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
+# Tests that fail after unskipping imported/w3c/web-platform-tests/html/cross-origin-opener-policy.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html?0-1 [ Pass Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html?2-3 [ Pass Failure ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html?4-last [ Pass Failure ]
+
+# Flaky crashes in Debug.
+webkit.org/b/268068 [ Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy [ Skip ]
 
 # Skip Merchant-Validation API test cases from GTK / WPE
 webkit.org/b/268238  imported/w3c/web-platform-tests/merchant-validation/complete-method.tentative.https.html [ Skip ]

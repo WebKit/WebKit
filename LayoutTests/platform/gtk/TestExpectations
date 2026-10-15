@@ -531,9 +531,6 @@ webkit.org/b/257624 imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/
 webkit.org/b/257624 imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-big5-hkscs.html?13001-14000 [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html?21001-last [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Failure Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html [ Failure Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html [ Failure Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Failure Pass ]
 webkit.org/b/257624 media/video-audio-session-mode.html [ Timeout ]
 
 webkit.org/b/308032 [ Release ] fast/events/popup-allowed-from-gesture-initiated-event.html [ Pass Failure Timeout ]
@@ -950,7 +947,6 @@ webkit.org/b/160119 [ Release ] editing/selection/caret-at-bidi-boundary.html [ 
 
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 
 webkit.org/b/252953 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width.html [ ImageOnlyFailure ]
 webkit.org/b/252953 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-width-constrained-by-max-height.html [ ImageOnlyFailure ]

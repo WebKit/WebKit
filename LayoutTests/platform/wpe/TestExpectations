@@ -171,7 +171,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tenta
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-area.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Skip ]
 
 # Ping attribute
 
@@ -180,14 +179,6 @@ webkit.org/b/298589 http/tests/navigation/ping-attribute [ Skip ]
 # Repaint
 
 webkit.org/b/212233 [ Release ] fast/repaint/iframe-on-subpixel-position.html [ Pass Failure ]
-
-# Timeout.
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted_immediately_after_send() [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call_abort()_after_TIME_NORMAL_LOAD [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?only_open()ed,_not_aborted [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_expired_value_before_load_fires [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_expiring_value_after_load_fires [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_non-expiring_value_after_timeout_fires [ Skip ]
 
 # WebXR
 
