@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -44,6 +45,8 @@ public:
     explicit BlockLayout(RenderBlockFlow&);
 
     void layout();
+    // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
+    static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
 
 private:
     void updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
