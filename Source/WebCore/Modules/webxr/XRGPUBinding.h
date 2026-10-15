@@ -89,6 +89,7 @@ private:
     XRGPUBinding(WebXRSession&, GPUDevice&);
 
     ExceptionOr<Ref<XRGPUSubImage>> getSubImage(XRProjectionLayer&, XREye);
+    std::optional<GPUTextureFormat> depthStencilFormat() const;
 
     const RefPtr<::WebGPU::XRBinding> m_backing;
     const RefPtr<WebXRSession> m_session;

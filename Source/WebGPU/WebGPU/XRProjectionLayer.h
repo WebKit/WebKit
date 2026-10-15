@@ -74,6 +74,8 @@ private:
     XRProjectionLayer(const WebGPU::XRProjectionLayerDescriptor&, Device&);
     XRProjectionLayer(Device&);
 
+    void clearDepthTexture();
+
     NSMutableDictionary<NSNumber*, id<MTLTexture>>* m_colorTextures { nil };
     NSMutableDictionary<NSNumber*, id<MTLTexture>>* m_depthTextures { nil };
     id<MTLTexture> m_colorTexture { nil };

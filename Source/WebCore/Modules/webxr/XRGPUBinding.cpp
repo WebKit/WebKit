@@ -89,7 +89,14 @@ ExceptionOr<Ref<XRProjectionLayer>> XRGPUBinding::createProjectionLayer(ScriptEx
         return Exception { ExceptionCode::AbortError };
 
     m_init = init;
-    return XRProjectionLayer::create(scriptExecutionContext, *m_session, WebGPUXRLayerBacking::create(projectionLayer.releaseNonNull()), { });
+    Ref layer = XRProjectionLayer::create(scriptExecutionContext, *m_session, WebGPUXRLayerBacking::create(projectionLayer.releaseNonNull()), { });
+    layer->setIgnoreDepthValues(!depthStencilFormat());
+    return WTF::move(layer);
+}
+
+std::optional<GPUTextureFormat> XRGPUBinding::depthStencilFormat() const
+{
+    return m_init ? m_init->depthStencilFormat : std::nullopt;
 }
 
 double XRGPUBinding::nativeProjectionScaleFactor() const
@@ -121,7 +128,7 @@ ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& pro
 
     // Every layer that an XRGPUBinding creates is backed by a WebGPUXRLayerBacking.
     RefPtr subImage = m_backing->getViewSubImage(static_cast<WebGPUXRLayerBacking&>(projectionLayer.backing()).projectionLayer());
-    return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(eye), WTF::move(actualSize), WTF::move(viewport), m_device);
+    return XRGPUSubImage::create(subImage.releaseNonNull(), convertToBacking(eye), WTF::move(actualSize), WTF::move(viewport), m_device, depthStencilFormat());
 }
 
 ExceptionOr<Ref<XRGPUSubImage>> XRGPUBinding::getSubImage(XRProjectionLayer& projectionLayer, WebXRFrame&, std::optional<XREye> eye)
