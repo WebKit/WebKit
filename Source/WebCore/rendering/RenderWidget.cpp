@@ -31,6 +31,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
+#include "NaturalDimensions.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
 #include "RenderBox.h"
@@ -155,26 +156,42 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     if (!weakThis)
         return true;
 
+    // An embedded SVG document can also move within the content box, which moves its composited layers.
     bool sizeChanged = oldFrameRect.size() != newFrameRect.size();
-    if (sizeChanged)
+    if (sizeChanged || (boundsChanged && embeddedSVGRoot()))
         view().compositor().widgetDidChangeSize(*this);
 
     return sizeChanged;
 }
 
+NaturalDimensions RenderWidget::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::none();
+}
+
+LayoutPoint RenderWidget::widgetContentLocation() const
+{
+    return replacedContentPaintRect().location();
+}
+
 bool RenderWidget::updateWidgetGeometry()
 {
-    if (!protect(m_widget)->transformsAffectFrameRect())
-        return setWidgetGeometry(absoluteContentBox());
+    auto contentRect = replacedContentPaintRect();
 
-    LayoutRect contentBox = contentBoxRect();
-    LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    if (is<FrameView>(m_widget)) {
-        contentBox.setLocation(absoluteContentBox.location());
-        return setWidgetGeometry(contentBox);
+    if (!protect(m_widget)->transformsAffectFrameRect()) {
+        LayoutRect frame { absoluteContentBox() };
+        frame.move(contentRect.location() - contentBoxRect().location());
+        frame.setSize(contentRect.size());
+        return setWidgetGeometry(frame);
     }
 
-    return setWidgetGeometry(absoluteContentBox);
+    LayoutRect absoluteContentRect(localToAbsoluteQuad(FloatQuad(contentRect)).boundingBox());
+    if (is<FrameView>(m_widget)) {
+        contentRect.setLocation(absoluteContentRect.location());
+        return setWidgetGeometry(contentRect);
+    }
+
+    return setWidgetGeometry(absoluteContentRect);
 }
 
 void RenderWidget::setWidget(RefPtr<Widget>&& widget)
@@ -242,6 +259,9 @@ void RenderWidget::styleDidChange(Style::Difference diff, const Style::ComputedS
             cache->onWidgetVisibilityChanged(*this);
     }
 
+    if (oldStyle && embeddedSVGRoot() && (oldStyle->objectFit() != style().objectFit() || oldStyle->objectPosition() != style().objectPosition() || oldStyle->objectViewBox() != style().objectViewBox()))
+        setNeedsLayout();
+
     // If this is an iframe and the zoom property changed, notify the iframe's content frame
     // to trigger a resize event since devicePixelRatio will have changed.
     if (oldStyle && oldStyle->zoom() != style().zoom()) {
@@ -273,8 +293,18 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
             return;
     }
 
-    auto contentPaintOffset = paintOffset + location() + contentBoxRect().location();
+    auto contentBoxRect = this->contentBoxRect();
+    auto contentPaintRect = replacedContentPaintRect();
+
+    auto contentPaintOffset = paintOffset + location() + contentPaintRect.location();
     auto snappedPaintOffset = roundPointToDevicePixels(contentPaintOffset, protect(document())->deviceScaleFactor());
+
+    bool clip = !contentBoxRect.contains(contentPaintRect);
+    GraphicsContextStateSaver stateSaver(paintInfo.context(), clip);
+    if (clip) {
+        contentBoxRect.moveBy(paintOffset + location());
+        paintInfo.context().clip(snapRectToDevicePixels(contentBoxRect, protect(document())->deviceScaleFactor()));
+    }
 
     // Tell the widget to paint now. This is the only time the widget is allowed
     // to paint itself. That way it will composite properly with z-indexed layers.
@@ -439,9 +469,17 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 {
     auto shouldHitTestChildFrameContent = request.allowsChildFrameContent() || (request.allowsVisibleChildFrameContent() && visibleToHitTesting(request));
     RefPtr childFrameView = dynamicDowncast<LocalFrameView>(widget());
-    if (shouldHitTestChildFrameContent && childFrameView && childFrameView->renderView()) {
+    auto visibleWidgetRect = intersection(replacedContentPaintRect(), contentBoxRect());
+    auto childFrameContentIsVisibleAtLocation = [&] {
+        if (request.ignoreClipping())
+            return true;
+        auto rect = visibleWidgetRect;
+        rect.moveBy(accumulatedOffset + location());
+        return locationInContainer.intersects(rect);
+    };
+    if (shouldHitTestChildFrameContent && childFrameView && childFrameView->renderView() && childFrameContentIsVisibleAtLocation()) {
         LayoutPoint adjustedLocation = accumulatedOffset + location();
-        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - toIntSize(childFrameView->scrollPosition());
+        LayoutPoint contentOffset = widgetContentLocation() - toIntSize(childFrameView->scrollPosition());
         HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
         HitTestRequest newHitTestRequest(request.type() | HitTestRequest::Type::ChildFrameHitTest);
         HitTestResult childFrameResult(newHitTestLocation);
@@ -463,9 +501,10 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     bool hadResult = result.innerNode();
     bool inside = RenderReplaced::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 
-    // Check to see if we are really over the widget itself (and not just in the border/padding area).
+    // Check to see if we are really over the widget itself (and not just in the border/padding area or the part of
+    // the content box that 'object-fit' and 'object-position' leave uncovered).
     if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == &frameOwnerElement())
-        result.setIsOverWidget(contentBoxRect().contains(result.localPoint()));
+        result.setIsOverWidget(visibleWidgetRect.contains(result.localPoint()));
     return inside;
 }
 

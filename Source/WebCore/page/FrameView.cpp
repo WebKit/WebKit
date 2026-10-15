@@ -153,7 +153,7 @@ void FrameView::invalidateRect(const IntRect& rect)
         return;
 
     IntRect repaintRect = rect;
-    repaintRect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
+    repaintRect.moveBy(roundedIntPoint(renderer->widgetContentLocation()));
     renderer->repaintRectangle(repaintRect);
 }
 
@@ -338,7 +338,7 @@ IntPoint FrameView::convertToContainingView(IntPoint localPoint) const
                 return localPoint;
 
             auto point = localPoint;
-            point.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
+            point.moveBy(roundedIntPoint(renderer->widgetContentLocation()));
             return parentView->convertFromRendererToContainingView(renderer, point);
         }
         return Widget::convertToContainingView(localPoint);
@@ -356,7 +356,7 @@ FloatPoint FrameView::convertToContainingView(FloatPoint localPoint) const
                 return localPoint;
 
             auto point = localPoint;
-            point.moveBy(renderer->contentBoxLocation());
+            point.moveBy(renderer->widgetContentLocation());
             return parentView->convertFromRendererToContainingView(renderer, point);
         }
         return Widget::convertToContainingView(localPoint);
@@ -374,7 +374,7 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
                 return localRect;
 
             auto rect = localRect;
-            rect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
+            rect.moveBy(roundedIntPoint(renderer->widgetContentLocation()));
             return parentView->convertFromRendererToContainingView(renderer, rect);
         }
         return Widget::convertToContainingView(localRect);
@@ -392,7 +392,7 @@ FloatRect FrameView::convertToContainingView(const FloatRect& localRect) const
                 return localRect;
 
             auto rect = localRect;
-            rect.moveBy(renderer->contentBoxLocation());
+            rect.moveBy(renderer->widgetContentLocation());
             return parentView->convertFromRendererToContainingView(renderer, rect);
         }
         return Widget::convertToContainingView(localRect);
@@ -412,7 +412,7 @@ IntPoint FrameView::convertFromContainingView(IntPoint parentPoint) const
                 return parentPoint;
 
             auto point = parentView->convertFromContainingViewToRenderer(renderer, parentPoint);
-            point.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
+            point.moveBy(-roundedIntPoint(renderer->widgetContentLocation()));
             return point;
         }
         return Widget::convertFromContainingView(parentPoint);
@@ -430,7 +430,7 @@ FloatPoint FrameView::convertFromContainingView(FloatPoint parentPoint) const
                 return parentPoint;
 
             auto point = parentView->convertFromContainingViewToRenderer(renderer, parentPoint);
-            point.moveBy(-renderer->contentBoxLocation());
+            point.moveBy(-renderer->widgetContentLocation());
             return point;
         }
         return Widget::convertFromContainingView(parentPoint);
@@ -448,8 +448,8 @@ DoublePoint FrameView::convertFromContainingView(DoublePoint parentPoint) const
                 return parentPoint;
 
             auto point = parentView->convertFromContainingViewToRenderer(renderer.get(), parentPoint);
-            auto contentBoxLocation = renderer->contentBoxLocation();
-            point.move(-contentBoxLocation.x(), -contentBoxLocation.y());
+            auto widgetContentLocation = renderer->widgetContentLocation();
+            point.move(-widgetContentLocation.x(), -widgetContentLocation.y());
             return point;
         }
         return Widget::convertFromContainingView(parentPoint);
@@ -467,7 +467,7 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
                 return parentRect;
 
             auto rect = parentView->convertFromContainingViewToRenderer(renderer, parentRect);
-            rect.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
+            rect.moveBy(-roundedIntPoint(renderer->widgetContentLocation()));
             return rect;
         }
         return Widget::convertFromContainingView(parentRect);
@@ -485,7 +485,7 @@ FloatRect FrameView::convertFromContainingView(const FloatRect& parentRect) cons
                 return parentRect;
 
             auto rect = parentView->convertFromContainingViewToRenderer(renderer, parentRect);
-            rect.moveBy(-renderer->contentBoxLocation());
+            rect.moveBy(-renderer->widgetContentLocation());
             return rect;
         }
         return Widget::convertFromContainingView(parentRect);

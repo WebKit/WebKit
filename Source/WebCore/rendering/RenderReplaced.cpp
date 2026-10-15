@@ -661,13 +661,17 @@ std::optional<FloatRect> RenderReplaced::resolvedObjectViewBox(const FloatSize& 
 
 bool RenderReplaced::objectViewBoxIsContainedWithinNaturalSize() const
 {
+    auto naturalSize = zoomedNaturalSize();
+    if (!naturalSize)
+        return true;
+
     // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST auto viewBox = resolvedObjectViewBox(FloatSize(intrinsicSize()));
+    SUPPRESS_MEMORY_UNSAFE_CAST auto viewBox = resolvedObjectViewBox(FloatSize(*naturalSize));
     if (!viewBox)
         return true;
 
     // FIXME: Remove suppression once rdar://189998444 is fixed.
-    SUPPRESS_MEMORY_UNSAFE_CAST return FloatRect({ }, FloatSize(intrinsicSize())).contains(*viewBox);
+    SUPPRESS_MEMORY_UNSAFE_CAST return FloatRect({ }, FloatSize(*naturalSize)).contains(*viewBox);
 }
 
 LayoutRect RenderReplaced::computePaintRectForObjectViewBox(const LayoutRect& destRect) const
@@ -730,6 +734,11 @@ LayoutRect RenderReplaced::replacedContentRect(NaturalDimensions zoomedNaturalDi
     auto concreteObjectSize = ReplacedElementSizing { contentRect.size(), style().objectFit() }.resolve(zoomedNaturalDimensions);
 
     return placeConcreteObject(style(), contentRect, LayoutSize { concreteObjectSize.size() });
+}
+
+LayoutRect RenderReplaced::replacedContentPaintRect() const
+{
+    return computePaintRectForObjectViewBox(replacedContentRect());
 }
 
 std::optional<double> RenderReplaced::preferredAspectRatio() const

@@ -45,6 +45,7 @@
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "Path.h"
@@ -124,6 +125,13 @@ static RefPtr<SVGSVGElement> embeddedSVGElement(const RenderWidget& renderer)
     if (CheckedPtr legacyRoot = dynamicDowncast<LegacyRenderSVGRoot>(svgRoot.get()))
         return &legacyRoot->svgSVGElement();
     return nullptr;
+}
+
+NaturalDimensions RenderEmbeddedObject::zoomedNaturalDimensions() const
+{
+    if (RefPtr element = embeddedSVGElement(*this))
+        return element->naturalDimensions().zoomed(style().usedZoom());
+    return RenderWidget::zoomedNaturalDimensions();
 }
 
 bool RenderEmbeddedObject::shouldRespectZeroIntrinsicWidth() const

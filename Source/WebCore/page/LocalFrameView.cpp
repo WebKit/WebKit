@@ -2224,7 +2224,7 @@ LayoutPoint LocalFrameView::childFrameOwnerContentBoxLocation(const Frame& child
     ASSERT(child.tree().parent()->frameID() == m_frame->frameID());
     ASSERT(childOwnerRenderer->frame().frameID() == m_frame->frameID());
 
-    return childOwnerRenderer->contentBoxLocation();
+    return childOwnerRenderer->widgetContentLocation();
 }
 
 TransformationMatrix LocalFrameView::childFrameOwnerToRootContentTransform(const Frame& child) const
@@ -3108,9 +3108,7 @@ void LocalFrameView::scrollContentsSlowPath(const IntRect& updateRect)
 
     if (!usesCompositedScrolling() && isEnclosedInCompositingLayer()) {
         if (RefPtr frameRenderer = m_frame->ownerRenderer()) {
-            LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(), frameRenderer->borderTop() + frameRenderer->paddingTop(),
-                visibleWidth(), visibleHeight());
-            frameRenderer->repaintRectangle(rect);
+            frameRenderer->repaintRectangle({ frameRenderer->widgetContentLocation(), LayoutSize(visibleWidth(), visibleHeight()) });
             return;
         }
     }

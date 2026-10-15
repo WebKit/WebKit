@@ -4143,8 +4143,8 @@ LayoutRect RenderLayerBacking::contentsBox() const
 
     if (CheckedPtr renderViewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(*renderBox))
         contentsRect = renderViewTransitionCapture->captureLocalOverflowRect();
-    else if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderBox); renderReplaced && !is<RenderWidget>(*renderReplaced))
-        contentsRect = renderReplaced->replacedContentRect();
+    else if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderBox))
+        contentsRect = renderReplaced->replacedContentPaintRect();
     else
         contentsRect = renderBox->contentBoxRect();
 

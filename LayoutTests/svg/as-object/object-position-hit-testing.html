@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hit testing into an SVG document in &lt;object&gt; follows 'object-fit' and 'object-position'</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body { margin: 0; }
+object {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    border: 10px solid black;
+    padding: 10px;
+    object-fit: none;
+    object-position: right bottom;
+}
+</style>
+</head>
+<body>
+<object id="small" type="image/svg+xml" data="resources/rect-50x50.svg" style="top: 0"></object>
+<object id="large" type="image/svg+xml" data="resources/visible-quadrant-400x400.svg" style="top: 300px"></object>
+<script>
+const loaded = new Promise(resolve => window.addEventListener("load", resolve));
+
+// Resolves with the id of the element in the SVG document that receives a mousedown, "svg" for its root, or null.
+async function targetAt(object, x, y)
+{
+    await loaded;
+    let target = null;
+    let root = object.contentDocument.documentElement;
+    let listener = event => target ??= event.target.id || event.target.localName;
+    root.addEventListener("mousedown", listener);
+    await UIHelper.activateAt(x, y);
+    for (let start = performance.now(); target === null && performance.now() - start < 500;)
+        await UIHelper.renderingUpdate();
+    root.removeEventListener("mousedown", listener);
+    return target;
+}
+
+// The 50x50 SVG is at (170, 170) in the 200x200 content box at (20, 20).
+promise_test(async () => {
+    assert_equals(await targetAt(small, 195, 195), "rect");
+}, "A point on the SVG hits it");
+
+promise_test(async () => {
+    assert_equals(await targetAt(small, 50, 50), null);
+}, "A point in the content box away from the SVG does not reach it");
+
+// The 400x400 SVG is at (-180, 120), overflowing the content box at (20, 320) to the top and left, so only its
+// bottom right quadrant is visible.
+promise_test(async () => {
+    assert_equals(await targetAt(large, 120, 420), "visible");
+}, "A point on the visible part of an overflowing SVG hits it");
+
+promise_test(async () => {
+    assert_not_equals(await targetAt(large, 5, 305), "hidden");
+}, "A point on the border, where the overflowing SVG is clipped, does not hit it");
+</script>
+</body>
+</html>

@@ -100,7 +100,6 @@ public:
     bool isMultiRepresentationHEIC() const;
 #endif
 
-    LayoutRect imagePaintRect() const;
     WEBCORE_EXPORT std::optional<FloatSize> usedImageSize() const final;
 
     WEBCORE_EXPORT virtual RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const;

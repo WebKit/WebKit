@@ -526,7 +526,10 @@ static LayoutRect mapRepaintRectToOwnerCoordinates(LayoutRect rect, const Render
     Ref frameView = renderView.frameView();
     rect.moveBy(-renderView.viewRect().location());
     rect.scale(frameView->frameScaleFactor());
-    rect.moveBy(ownerRenderer.contentBoxRect().location());
+    if (auto* ownerWidget = dynamicDowncast<RenderWidget>(ownerRenderer))
+        rect.moveBy(ownerWidget->widgetContentLocation());
+    else
+        rect.moveBy(ownerRenderer.contentBoxRect().location());
     if (frameView->verticalScrollbar() && frameView->shouldPlaceVerticalScrollbarOnLeft())
         rect.move(LayoutSize(protect(frameView->verticalScrollbar())->occupiedWidth(), 0));
     return rect;

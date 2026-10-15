@@ -78,6 +78,7 @@ private:
 
     ASCIILiteral renderName() const final { return "RenderEmbeddedObject"_s; }
 
+    NaturalDimensions zoomedNaturalDimensions() const final;
     bool shouldRespectZeroIntrinsicWidth() const final;
     bool shouldRespectZeroIntrinsicHeight() const final;
 

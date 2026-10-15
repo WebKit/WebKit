@@ -467,20 +467,7 @@ NaturalDimensions SVGImage::unorientedNaturalDimensions() const
     RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return NaturalDimensions::none();
-
-    NaturalDimensions naturalDimensions;
-
-    if (rootElement->hasIntrinsicWidth())
-        naturalDimensions.width = rootElement->intrinsicWidth();
-    if (rootElement->hasIntrinsicHeight())
-        naturalDimensions.height = rootElement->intrinsicHeight();
-
-    if (naturalDimensions.width && naturalDimensions.height)
-        naturalDimensions.aspectRatio = FloatSize { *naturalDimensions.width, *naturalDimensions.height };
-    else if (auto viewBoxSize = rootElement->viewBox().size(); !viewBoxSize.isEmpty())
-        naturalDimensions.aspectRatio = viewBoxSize;
-
-    return naturalDimensions;
+    return rootElement->naturalDimensions();
 }
 
 void SVGImage::startAnimation()

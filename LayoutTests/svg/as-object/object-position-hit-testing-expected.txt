@@ -1,0 +1,7 @@
+
+
+PASS A point on the SVG hits it
+PASS A point in the content box away from the SVG does not reach it
+PASS A point on the visible part of an overflowing SVG hits it
+PASS A point on the border, where the overflowing SVG is clipped, does not hit it
+

@@ -369,11 +369,6 @@ IntSize RenderImage::imageContainerSize() const
     return flooredIntSize(replacedContentRect().size());
 }
 
-LayoutRect RenderImage::imagePaintRect() const
-{
-    return computePaintRectForObjectViewBox(replacedContentRect());
-}
-
 NaturalDimensions RenderImage::zoomedNaturalDimensions() const
 {
     return imageResource().naturalDimensions().zoomed(style().usedZoom());
@@ -757,7 +752,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     auto replacedContentRect = this->replacedContentRect();
     replacedContentRect.moveBy(paintOffset);
 
-    auto paintRect = imagePaintRect();
+    auto paintRect = replacedContentPaintRect();
     paintRect.moveBy(paintOffset);
 
     float snappingScaleFactor = protect(document())->pixelSnappingScaleFactor();
@@ -865,7 +860,7 @@ RefPtr<NativeImage> RenderImage::createNativeImageAsPainted(float deviceScaleFac
     auto& context = imageBuffer->context();
     context.translate(-contentBoxRect.x().toFloat(), -contentBoxRect.y().toFloat());
 
-    auto paintRect = imagePaintRect();
+    auto paintRect = replacedContentPaintRect();
     if (!contentBoxRect.contains(paintRect))
         context.clip(snapRectToDevicePixels(contentBoxRect, scaleFactor));
 

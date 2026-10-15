@@ -30,6 +30,7 @@
 namespace WebCore {
 
 struct DOMMatrix2DInit;
+struct NaturalDimensions;
 class RenderElement;
 class SMILTimeContainer;
 class SVGAngle;
@@ -108,6 +109,9 @@ public:
     float intrinsicHeight() const;
 
     bool hasIntrinsicDimensions() const;
+
+    // https://drafts.csswg.org/css-images-3/#natural-dimensions
+    NaturalDimensions naturalDimensions() const;
 
     FloatSize currentViewportSizeExcludingZoom() const;
     void invalidateCachedViewportSizes() const

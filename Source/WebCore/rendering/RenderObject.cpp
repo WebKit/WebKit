@@ -1319,8 +1319,8 @@ static std::optional<LayoutRect> computeClippedRectInMainFrameContentCoordinates
     absoluteClippedRect = LayoutRect { enclosingFrameView->contentsToView(*absoluteClippedRect) };
 
     if (RefPtr ownerRenderer = enclosingFrame->ownerRenderer()) {
-        // Adjust for borders and/or padding of the owner renderer box.
-        absoluteClippedRect->moveBy(ownerRenderer->contentBoxLocation());
+        // Adjust for where the owner renderer places the frame.
+        absoluteClippedRect->moveBy(ownerRenderer->widgetContentLocation());
         return computeClippedRectInMainFrameContentCoordinates(*absoluteClippedRect, ownerRenderer.get(), clipRectAdjuster);
     }
 

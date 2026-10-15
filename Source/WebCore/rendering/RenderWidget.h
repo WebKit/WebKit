@@ -73,6 +73,9 @@ public:
     [[nodiscard]] ChildWidgetState updateWidgetPosition();
     WEBCORE_EXPORT IntRect windowClipRect() const;
 
+    // The widget's content location after applying 'object-fit' and 'object-position'.
+    LayoutPoint widgetContentLocation() const;
+
     virtual bool requiresAcceleratedCompositing() const;
 
     RemoteFrame* LEGACY_NODELETE remoteFrame() const;
@@ -86,6 +89,8 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     bool requiresLayer() const override;
+
+    NaturalDimensions zoomedNaturalDimensions() const override;
 
 private:
     void element() const = delete;
