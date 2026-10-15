@@ -77,6 +77,10 @@ private:
     ValueType m_value { noLimitValue };
 };
 
+WEBCORE_EXPORT PlatformDynamicRangeLimit effectiveDynamicRangeLimit(PlatformDynamicRangeLimit, bool suppressEDR, PlatformDynamicRangeLimit limitWhenSuppressing = PlatformDynamicRangeLimit::constrained());
+
+WEBCORE_EXPORT float headroomForDynamicRangeLimit(PlatformDynamicRangeLimit, float currentEDRHeadroom, bool suppressEDR);
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformDynamicRangeLimit);
 
 } // namespace WebCore

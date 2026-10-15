@@ -8621,7 +8621,7 @@ PlatformDynamicRangeLimit HTMLMediaElement::computePlayerDynamicRangeLimit() con
 
         return false;
     }();
-    return shouldSuppressHDR ? maxLimitWhenSuppressingHDR : m_platformDynamicRangeLimit;
+    return effectiveDynamicRangeLimit(m_platformDynamicRangeLimit, shouldSuppressHDR, maxLimitWhenSuppressingHDR);
 }
 
 // Use WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function does conditional locking of m_audioSourceNode->processLock()

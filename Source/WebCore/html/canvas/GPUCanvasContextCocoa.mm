@@ -46,6 +46,7 @@
 #include "NativeImage.h"
 #include "Page.h"
 #include "PlatformCALayerDelegatedContents.h"
+#include "PlatformDynamicRangeLimit.h"
 #include "PlatformScreen.h"
 #include "RenderBox.h"
 #include "RenderingUpdateScheduler.h"
@@ -221,47 +222,12 @@ GPUCanvasContextCocoa::~GPUCanvasContextCocoa()
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
-static float LEGACY_NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
-{
-    if (headroomForHigh <= headroomForLow || limitHigh <= limitLow)
-        return headroomForHigh;
-    return std::lerp(headroomForLow, headroomForHigh, (limit - limitLow) / (limitHigh - limitLow));
-}
-
-float GPUCanvasContextCocoa::computeContentsHeadroom()
-{
-    if (m_currentEDRHeadroom <= 1.f)
-        return m_currentEDRHeadroom;
-
-    if (m_dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
-        return m_currentEDRHeadroom;
-
-    constexpr auto forcedStandardHeadroom = 1.0000001f;
-
-    if (m_dynamicRangeLimit == PlatformDynamicRangeLimit::standard())
-        return forcedStandardHeadroom;
-
-    auto limitValue = m_dynamicRangeLimit.value();
-
-    if (m_suppressEDR) {
-        if (limitValue >= PlatformDynamicRangeLimit::constrained().value())
-            return m_currentEDRHeadroom;
-        return interpolateHeadroom(forcedStandardHeadroom, m_currentEDRHeadroom, limitValue, PlatformDynamicRangeLimit::standard().value(), PlatformDynamicRangeLimit::constrained().value());
-    }
-
-    constexpr auto maxConstrainedHeadroom = 1.6f;
-    auto suppressedHeadroom = std::min(maxConstrainedHeadroom, m_currentEDRHeadroom);
-    if (limitValue <= PlatformDynamicRangeLimit::constrained().value())
-        return interpolateHeadroom(forcedStandardHeadroom, suppressedHeadroom, limitValue, PlatformDynamicRangeLimit::standard().value(), PlatformDynamicRangeLimit::constrained().value());
-    return interpolateHeadroom(suppressedHeadroom, m_currentEDRHeadroom, limitValue, PlatformDynamicRangeLimit::constrained().value(), PlatformDynamicRangeLimit::noLimit().value());
-}
-
 void GPUCanvasContextCocoa::updateContentsHeadroom()
 {
     if (!m_layerContentsDisplayDelegate->hasExtendedRange())
         return;
 
-    m_compositorIntegration->updateContentsHeadroom(computeContentsHeadroom());
+    m_compositorIntegration->updateContentsHeadroom(headroomForDynamicRangeLimit(m_dynamicRangeLimit, m_currentEDRHeadroom, m_suppressEDR));
 }
 
 void GPUCanvasContextCocoa::updateHeadroomFromScreenProperties()
@@ -324,9 +290,7 @@ void GPUCanvasContextCocoa::setDynamicRangeLimit(PlatformDynamicRangeLimit dynam
 
 std::optional<double> GPUCanvasContextCocoa::getEffectiveDynamicRangeLimitValue() const
 {
-    auto limitValue = m_dynamicRangeLimit.value();
-    auto suppressValue = m_suppressEDR ? PlatformDynamicRangeLimit::constrained().value() : PlatformDynamicRangeLimit::noLimit().value();
-    return std::min(limitValue, suppressValue);
+    return effectiveDynamicRangeLimit(m_dynamicRangeLimit, m_suppressEDR).value();
 }
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 #endif // HAVE(SUPPORT_HDR_DISPLAY)

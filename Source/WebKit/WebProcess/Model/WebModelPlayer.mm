@@ -52,6 +52,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
+#import <WebCore/PlatformDynamicRangeLimit.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ScreenProperties.h>
 #import <wtf/BlockPtr.h>
@@ -989,45 +990,10 @@ std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> WebModelPlaye
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
-static float interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
-{
-    if (headroomForHigh <= headroomForLow || limitHigh <= limitLow)
-        return headroomForHigh;
-    return std::lerp(headroomForLow, headroomForHigh, (limit - limitLow) / (limitHigh - limitLow));
-}
-
-float WebModelPlayer::computeContentsHeadroom()
-{
-    if (m_currentEDRHeadroom <= 1.f)
-        return m_currentEDRHeadroom;
-
-    if (m_dynamicRangeLimit == WebCore::PlatformDynamicRangeLimit::noLimit())
-        return m_currentEDRHeadroom;
-
-    constexpr auto forcedStandardHeadroom = 1.0000001f;
-
-    if (m_dynamicRangeLimit == WebCore::PlatformDynamicRangeLimit::standard())
-        return forcedStandardHeadroom;
-
-    auto limitValue = m_dynamicRangeLimit.value();
-
-    if (m_suppressEDR) {
-        if (limitValue >= WebCore::PlatformDynamicRangeLimit::constrained().value())
-            return m_currentEDRHeadroom;
-        return interpolateHeadroom(forcedStandardHeadroom, m_currentEDRHeadroom, limitValue, WebCore::PlatformDynamicRangeLimit::standard().value(), WebCore::PlatformDynamicRangeLimit::constrained().value());
-    }
-
-    constexpr auto maxConstrainedHeadroom = 1.6f;
-    auto suppressedHeadroom = std::min(maxConstrainedHeadroom, m_currentEDRHeadroom);
-    if (limitValue <= WebCore::PlatformDynamicRangeLimit::constrained().value())
-        return interpolateHeadroom(forcedStandardHeadroom, suppressedHeadroom, limitValue, WebCore::PlatformDynamicRangeLimit::standard().value(), WebCore::PlatformDynamicRangeLimit::constrained().value());
-    return interpolateHeadroom(suppressedHeadroom, m_currentEDRHeadroom, limitValue, WebCore::PlatformDynamicRangeLimit::constrained().value(), WebCore::PlatformDynamicRangeLimit::noLimit().value());
-}
-
 void WebModelPlayer::updateContentsHeadroom()
 {
     constexpr auto visionProHeadroom = 2.f;
-    auto contentsHeadroom = std::min(visionProHeadroom, computeContentsHeadroom());
+    auto contentsHeadroom = std::min(visionProHeadroom, WebCore::headroomForDynamicRangeLimit(m_dynamicRangeLimit, m_currentEDRHeadroom, m_suppressEDR));
     if (fabs(contentsHeadroom - m_lastSentContentsHeadroom) < 0.01f)
         return;
     if (RefPtr model = m_currentModel; model && m_didFinishLoading) {
@@ -1073,9 +1039,7 @@ void WebModelPlayer::setDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit dyn
 
 std::optional<double> WebModelPlayer::getEffectiveDynamicRangeLimitValue() const
 {
-    auto limitValue = m_dynamicRangeLimit.value();
-    auto suppressValue = m_suppressEDR ? WebCore::PlatformDynamicRangeLimit::constrained().value() : WebCore::PlatformDynamicRangeLimit::noLimit().value();
-    return std::min(limitValue, suppressValue);
+    return WebCore::effectiveDynamicRangeLimit(m_dynamicRangeLimit, m_suppressEDR).value();
 }
 
 void WebModelPlayer::dynamicRangeLimitDidChange()

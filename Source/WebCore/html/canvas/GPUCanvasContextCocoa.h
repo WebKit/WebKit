@@ -99,7 +99,6 @@ private:
     void updateFramePacing();
     Page* page() const;
 #if HAVE(SUPPORT_HDR_DISPLAY)
-    float computeContentsHeadroom();
     void updateContentsHeadroom();
     void updateScreenHeadroom(float, bool suppressEDR);
     void updateScreenHeadroomFromScreenPropertiesIfNeeded();

@@ -146,7 +146,6 @@ private:
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit, float currentEDRHeadroom, bool suppressEDR) final;
     std::optional<double> getEffectiveDynamicRangeLimitValue() const final;
-    float computeContentsHeadroom();
     void updateContentsHeadroom();
     void updateScreenHeadroom(float currentEDRHeadroom, bool suppressEDR);
     void updateScreenHeadroomFromPage();
