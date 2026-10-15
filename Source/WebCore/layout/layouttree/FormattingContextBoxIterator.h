@@ -34,23 +34,30 @@ class FormattingContextBoxIterator : public LayoutDescendantIterator<Box> {
 public:
     FormattingContextBoxIterator(const ElementBox& root)
         : LayoutDescendantIterator<Layout::Box>(root)
+        , m_isInlineFormattingContext(root.establishesInlineFormattingContext())
     {
     }
 
     enum FirstTag { First };
     FormattingContextBoxIterator(const ElementBox& root, FirstTag)
         : LayoutDescendantIterator<Box>(root, Traversal::firstWithin<Box>(root))
+        , m_isInlineFormattingContext(root.establishesInlineFormattingContext())
     {
     }
 
     FormattingContextBoxIterator& operator++()
     {
-        if (get().establishesFormattingContext())
+        // Inline formatting context content is reachable through inline boxes only. Other boxes are leaves, including block-level boxes that do not establish a formatting context.
+        auto skipsChildren = m_isInlineFormattingContext ? !get().isInlineBox() : get().establishesFormattingContext();
+        if (skipsChildren)
             traverseNextSkippingChildren();
         else
             traverseNext();
         return *this;
     }
+
+private:
+    bool m_isInlineFormattingContext { false };
 };
 
 class FormattingContextBoxIteratorAdapter {
