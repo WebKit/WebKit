@@ -78,6 +78,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shorthand-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-valid.html

@@ -1,6 +1,10 @@
 
-PASS Property corner-top value '0px round'
+FAIL Property corner-top value '0px round' assert_equals: expected "0px" but got "normal"
+FAIL Property corner-top value 'round' assert_true: 'round' is a supported value for corner-top. expected true got false
+FAIL Property corner-top value 'bevel' assert_true: 'bevel' is a supported value for corner-top. expected true got false
 PASS Property corner-top value '10px bevel'
-PASS Property corner-top value 'normal / 2px round'
-PASS Property corner-top value '4px 2% squircle / 1em scoop'
+PASS Property corner-top value '4px 2% squircle'
+PASS Property corner-top value '1em scoop'
+FAIL Property corner-top value '10px 20px / 5px bevel scoop' assert_true: '10px 20px / 5px bevel scoop' is a supported value for corner-top. expected true got false
+PASS Property corner-top value '0% bevel'
 

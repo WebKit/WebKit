@@ -4836,6 +4836,12 @@ imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 
+# Windows WK2 release crashes while parsing some invalid corner shorthand declarations.
+# Skip until the shared parser is corrected in 326108.
+webkit.org/b/327293 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-invalid.html [ Skip ]
+webkit.org/b/327293 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-invalid.html [ Skip ]
+webkit.org/b/327293 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-top-left-invalid.html [ Skip ]
+
 # Consistent text failures, in every run
 compositing/geometry/composited-bounds-single-axis-clip-taller-than-document.html [ Failure ]
 compositing/geometry/composited-bounds-with-single-axis-clip.html [ Failure ]
