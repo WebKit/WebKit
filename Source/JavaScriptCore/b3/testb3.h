@@ -1222,6 +1222,7 @@ void testSwitchSameCaseAsDefault();
 void testSwitchChillDiv(unsigned degree, unsigned gap);
 void testSwitchTargettingSameBlock();
 void testSwitchTargettingSameBlockFoldPathConstant();
+void testBranchOnPhiOfTakenComparesFoldPathConstant();
 void testSwitchOnConstant(int64_t key, bool is64Bit);
 void testSwitchSparseI64RangeOverflow();
 void testTruncFold(int64_t value);

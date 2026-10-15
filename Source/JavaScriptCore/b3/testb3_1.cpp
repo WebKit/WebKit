@@ -941,6 +941,7 @@ void run(const TestConfig* config)
 
     RUN(testSwitchTargettingSameBlock());
     RUN(testSwitchTargettingSameBlockFoldPathConstant());
+    RUN(testBranchOnPhiOfTakenComparesFoldPathConstant());
     for (bool is64Bit : { false, true }) {
         RUN(testSwitchOnConstant(3, is64Bit));
         RUN(testSwitchOnConstant(13, is64Bit));

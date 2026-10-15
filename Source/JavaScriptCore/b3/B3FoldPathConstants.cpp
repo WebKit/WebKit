@@ -95,7 +95,9 @@ public:
                     continue;
                 addOverride(
                     block, branch->child(0),
-                    Override::nonZero(block->successorBlock(0)));
+                    branch->child(0)->returnsBool()
+                        ? Override::constant(block->successorBlock(0), 1)
+                        : Override::nonZero(block->successorBlock(0)));
                 addOverride(
                     block, branch->child(0),
                     Override::constant(block->successorBlock(1), 0));
