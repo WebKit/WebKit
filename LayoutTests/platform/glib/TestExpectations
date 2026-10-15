@@ -488,7 +488,6 @@ imported/w3c/web-platform-tests/html/editing/editing-0/spelling-and-grammar-chec
 # Drag-and-drop testdriver automation is not supported on GTK/WPE.
 webkit.org/b/66547 imported/w3c/web-platform-tests/html/editing/dnd/events/dragenter-dragleave-related-target.html [ Skip ]
 webkit.org/b/66547 fast/events/drag-relatedTarget.html [ Skip ]
-imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-clear-read-only.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-pre-N-between-Rs.html [ Pass ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-N-between-Rs.html [ Pass ]
@@ -1334,8 +1333,6 @@ accessibility/dynamic-table-row-column-indices.html [ Skip ]
 # Failing since added in webkit.org/b/274607
 accessibility/cells-inside-contenteditable.html [ Skip ]
 
-http/wpt/service-workers/mac [ Skip ]
-
 # TextMarkerRangeForElement is only implemented on Cocoa platforms.
 accessibility/full-size-kana-untransformed.html [ Skip ]
 
@@ -1721,7 +1718,6 @@ webkit.org/b/313980 imported/w3c/web-platform-tests/html/user-activation/propaga
 # `scrollend` events are not supported on gtk/wpe
 webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html [ Skip ]
 webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html [ Skip ]
-webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html [ Skip ]
 webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fires-to-iframe-window.html [ Skip ]
 webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-after-removing-scroller.tentative.html [ Skip ]
 webkit.org/b/201556 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
@@ -2305,7 +2301,6 @@ webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 webkit.org/b/212202 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 
 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
-css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Scrolling-related bugs
@@ -2956,7 +2951,6 @@ webrtc/processIceTransportStateChange-gc.html [ Skip ]
 # The GstWebRTC backend doesn't support transforms yet.
 webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Pass ]
 webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]
-http/wpt/webrtc/video-rtpTimestamp-transform.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-change-transform.https.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-bad-chunk.https.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-generateKeyFrame.https.html [ Skip ]
@@ -3440,7 +3434,6 @@ fast/visual-viewport/watchos [ Skip ]
 
 # Needs site isolation drawing implementation
 http/tests/site-isolation [ Skip ]
-http/tests/contentextensions/cross-origin-content-rules.html [ Skip ]
 http/wpt/site-isolation [ Skip ]
 
 # Tests behavior specific to MediaSessionManagerCocoa
@@ -3477,7 +3470,6 @@ media/modern-media-controls/watchos-media-controls [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-sorted-before-dispatch.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime-move-within-document.html [ Skip ]
 
 # PiP / presentation-mode is not supported yet
@@ -3630,10 +3622,8 @@ editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-data-url.html [ S
 # PDF as image source
 fast/hidpi/pdf-image-scaled.html [ Skip ]
 fast/images/displaced-non-cached-pdf.html [ Skip ]
-fast/images/pdf-as-background.html [ Skip ]
 fast/images/pdf-as-image-landscape.html [ Skip ]
 fast/images/pdf-as-image.html [ Skip ]
-fast/images/pdf-as-tiled-background.html [ Skip ]
 fast/images/pdf-in-canvas.html [ Skip ]
 fast/replaced/pdf-as-image.html [ Skip ]
 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailure ]
@@ -4248,7 +4238,6 @@ imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSel
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/286131 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Pass Crash ImageOnlyFailure Timeout ]
 
-imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-invoker-inside-popover.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-scroll-within.html [ Skip ]
 

@@ -127,12 +127,6 @@ webkit.org/b/298585 fast/forms/validation-message-on-textarea.html [ Failure ]
 # HTML Media Capture
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Skip ]
 
-# Input
-webkit.org/b/298525 fast/forms/date/date-validity-badinput.html [ Skip ]
-webkit.org/b/298525 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
-webkit.org/b/298525 fast/forms/time/time-validity-badinput.html [ Skip ]
-webkit.org/b/298525 fast/forms/time-input-svg-font.html [ Skip ]
-
 # Link target
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html
 webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html
@@ -251,9 +245,6 @@ webkit.org/b/299429 loader/go-back-to-different-window-size.html [ Failure ]
 # 2. EXPECTED FAILURES
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# These are Mac specific for now.
-fast/url/user-visible [ Skip ]
-
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 
 # These drag-and-drop tests need features not yet supported on WPE (autoscroll,
@@ -363,12 +354,6 @@ webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/var
 
 # Test failing since async overflow scrolling was activated in WPE.
 webkit.org/b/315291 [ Release ] css3/filters/composited-during-animation.html [ Pass Timeout ]
-webkit.org/b/298634 fast/repaint/vertical-overflow-child.html [ Skip ]
-webkit.org/b/298634 fast/repaint/vertical-overflow-parent.html [ Skip ]
-webkit.org/b/298634 fast/repaint/vertical-overflow-same.html [ Skip ]
-webkit.org/b/298634 fast/repaint/horizontal-bt-overflow-child.html [ Skip ]
-webkit.org/b/298634 fast/repaint/horizontal-bt-overflow-parent.html [ Skip ]
-webkit.org/b/298634 fast/repaint/horizontal-bt-overflow-same.html [ Skip ]
 
 webkit.org/b/252954 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width.html [ ImageOnlyFailure ]
 webkit.org/b/252954 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-width-constrained-by-max-height.html [ ImageOnlyFailure ]
@@ -412,27 +397,18 @@ http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
 
 Bug(WPE) fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Skip ]
-Bug(WPE) fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]
-Bug(WPE) fast/dom/Geolocation/startUpdatingOnlyWhenPageVisible.html [ Skip ]
-Bug(WPE) fast/dom/Geolocation/stopUpdatingForHiddenPage.html [ Skip ]
 
 # Failure.
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouseevent_key_pressed.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/persistentDeviceId/get-persistendeviceid-from-pointer-mouse-event.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_auxclick_is_a_pointerevent.html?pen [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_click_on_chorded_mouse_button.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_movementxy.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_getCoalescedEvents_when_pointerlocked.https.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.https.html [ Skip ]
 
 # Crash.
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-nonstandard [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-right [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?mouse-right-nonstandard [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-nonstandard [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-right [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?pen-right-nonstandard [ Skip ]
-imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes.html?touch-nonstandard [ Skip ]
 
 css3/scroll-snap/resnap-after-layout.html [ Skip ] # Timeout.
 
@@ -449,7 +425,6 @@ webkit.org/b/204112 editing/async-clipboard/clipboard-change-data-while-reading.
 # Event timing: times out, probably missing automation
 webkit.org/b/244186 imported/w3c/web-platform-tests/event-timing/disconnect-target.html [ Skip ]
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-pointerdown-pointerup.html [ Pass Failure ]
-webkit.org/b/244186 imported/w3c/web-platform-tests/event-timing/retrievability.html [ Skip ]
 
 webkit.org/b/304407 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
 
@@ -595,10 +570,6 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
 
-webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.sub.htm [ Skip ]
-webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
-webkit.org/b/127676 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
-
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
 # features in WPE.
@@ -656,9 +627,6 @@ webkit.org/b/178578 http/tests/images/hidpi-srcset-copy.html [ Failure ]
 
 Bug(WPE) svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 Bug(WPE) svg/animations/animations-paused-in-background-page.html [ Skip ]
-Bug(WPE) svg/animations/animations-paused-page-non-visible.html [ Skip ]
-Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document.html [ Skip ]
-Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
@@ -815,8 +783,6 @@ webkit.org/b/309572 compositing/video/video-object-view-box-writing-mode-no-post
 
 media/media-source/media-detachablemse-append.html [ Timeout Pass ]
 
-imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
-
 imported/w3c/web-platform-tests/css/css-overflow/clip-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/clip-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/clip-005.html [ ImageOnlyFailure ]
@@ -829,9 +795,6 @@ webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/frame-hover-update.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure  ]
 webkit.org/b/278719 fast/events/touch/touch-event-pageXY.html [ Failure ]
-
-# The assertion failure occurs to WPE only.
-webkit.org/b/279178 fast/scrolling/scroll-into-view-on-composited-scrollable-overflow-layer-crash.html [ Skip ]
 
 fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure ]
 fast/multicol/layers-split-across-columns.html [ ImageOnlyFailure ]
@@ -1002,15 +965,8 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/in
 # Crash due to unimplemented event type
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary-viewport-covering.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/overscroll-snap.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/common-to-both-axes-supercedes-first-in-tree-order.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-common-to-both-axes.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-first-in-tree-order.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-element.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-nested-containers.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-inner-target.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-events/scrollsnapchanging/scrollsnapchanging-on-user-scroll.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/unrelated-gesture-scroll-during-snap.html [ Skip ]
 
 webkit.org/b/306466 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-arabic-002.html [ ImageOnlyFailure Pass ]
 
@@ -1079,9 +1035,6 @@ webkit.org/b/312150 [ arm64 ] imported/w3c/web-platform-tests/encoding/textdecod
 webkit.org/b/312150 [ arm64 ] imported/w3c/web-platform-tests/encoding/textdecoder-mistakes.any.worker.html [ Failure ]
 
 webkit.org/b/309575 imported/w3c/web-platform-tests/uievents/textInput/enter-textarea-contenteditable.html [ Pass Failure ]
-
-imported/w3c/web-platform-tests/screen-wake-lock/chrome-bug-1348019.https.html [ Skip ]
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-document-hidden.https.html [ Skip ]
 
 webkit.org/b/310273 imported/w3c/web-platform-tests/uievents/textInput/basic.html [ Pass Failure ]
 
