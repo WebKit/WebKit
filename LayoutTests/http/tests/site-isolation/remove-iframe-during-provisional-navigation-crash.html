@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<body>
+<iframe src="http://localhost:8000/site-isolation/resources/green-background.html"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+function nextFrame() { return new Promise(resolve => requestAnimationFrame(resolve)); }
+
+onload = async () => {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/resources/delayed-response.py";
+    document.body.append(iframe);
+
+    await nextFrame();
+    iframe.remove();
+
+    await wait(100);
+    document.body.style.height = "2000px";
+    await wait(100);
+
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>

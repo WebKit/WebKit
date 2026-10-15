@@ -87,7 +87,6 @@ private:
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void addRootFrame(WebCore::FrameIdentifier) final;
     void removeRootFrame(WebCore::FrameIdentifier) final;
-    bool hasRootFrame(WebCore::FrameIdentifier) const final;
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;

@@ -135,7 +135,6 @@ public:
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
     virtual void removeRootFrame(WebCore::FrameIdentifier) { }
-    virtual bool hasRootFrame(WebCore::FrameIdentifier) const { return false; }
 
     // Cause a rendering update to happen as soon as possible.
     virtual void triggerRenderingUpdate() = 0;
