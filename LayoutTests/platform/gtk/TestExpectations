@@ -60,6 +60,8 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_nowrap.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_pre-wrap_wrapped.html [ Pass ]
 
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_white-space_normal_wrapped.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_white-space_pre-line_wrapped.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_allowed_properties.html [ ImageOnlyFailure ]
 
 webkit.org/b/320062 imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html [ ImageOnlyFailure Pass ]

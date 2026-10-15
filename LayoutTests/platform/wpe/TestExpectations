@@ -1004,6 +1004,8 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-v
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_text-decoration_line-through.html [ ImageOnlyFailure ]
 webkit.org/b/287572 [ Release ] imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_timestamp_future.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_white-space_normal_wrapped.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_white-space_pre-line_wrapped.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_with_class.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_with_class_object_specific_selector.html [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_background_properties.html [ ImageOnlyFailure ]
