@@ -76,12 +76,12 @@ void WebScreenOrientationManagerProxy::setCurrentOrientation(WebCore::ScreenOrie
         return;
     m_currentOrientation = orientation;
 
-    if (!m_shouldSendChangeNotifications)
+    if (m_processesNeedingChangeNotifications.isEmptyIgnoringNullReferences())
         return;
 
     Ref protectedPage { m_page.get() };
-    protectedPage->forEachWebContentProcess([orientation](auto& process, auto pageID) {
-        if (!process.hasConnection())
+    protectedPage->forEachWebContentProcess([&](auto& process, auto pageID) {
+        if (!process.hasConnection() || !m_processesNeedingChangeNotifications.contains(process))
             return;
         process.send(Messages::WebScreenOrientationManager::OrientationDidChange(orientation), pageID);
     });
@@ -179,9 +179,13 @@ void WebScreenOrientationManagerProxy::unlock()
     m_currentlyLockedOrientation = std::nullopt;
 }
 
-void WebScreenOrientationManagerProxy::setShouldSendChangeNotification(bool shouldSend)
+void WebScreenOrientationManagerProxy::setShouldSendChangeNotification(IPC::Connection& connection, bool shouldSend)
 {
-    m_shouldSendChangeNotifications = shouldSend;
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (shouldSend)
+        m_processesNeedingChangeNotifications.add(process);
+    else
+        m_processesNeedingChangeNotifications.remove(process);
 }
 
 void WebScreenOrientationManagerProxy::unlockIfNecessary()
