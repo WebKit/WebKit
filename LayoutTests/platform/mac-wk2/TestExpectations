@@ -2646,8 +2646,6 @@ webkit.org/b/326746 [ Sequoia x86_64 Debug ] media/modern-media-controls/icon-se
 
 webkit.org/b/326748 [ Debug ] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-rtl-volume-button-no-overlap.html [ Pass Timeout ]
 
-webkit.org/b/326894 [ Sequoia+ ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Pass Failure ]
-
 webkit.org/b/326895 [ Debug ] http/tests/security/registerBlobURL.html [ Skip ] 
 
 webkit.org/b/326899 [ Sequoia+ ] http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Failure ]

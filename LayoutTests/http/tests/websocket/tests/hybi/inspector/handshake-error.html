@@ -24,7 +24,8 @@ function test()
             let {resource} = resourceWasAddedEvent.data;
             InspectorTest.expectThat(resource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
 
-            await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+            if (!resource.hasResponse())
+                await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
             InspectorTest.expectEqual(resource.statusCode, 403, "Should have correct status code.");
             InspectorTest.expectEqual(resource.statusText, "Forbidden", "Should have correct status text.");
         },
