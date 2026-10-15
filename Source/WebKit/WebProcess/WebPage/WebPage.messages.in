@@ -95,6 +95,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetDeviceOrientation(WebCore::IntDegrees deviceOrientation)
     SetOverrideViewportArguments(struct std::optional<WebCore::ViewportArguments> arguments)
     DynamicViewportSizeUpdate(struct WebKit::DynamicViewportSizeUpdate target)
+    SetUnobscuredSafeAreaInsets(WebCore::FloatBoxExtent insets)
 
     SetScreenIsBeingCaptured(bool captured)
 

@@ -3006,6 +3006,11 @@ void WebPage::setDeviceOrientation(IntDegrees deviceOrientation)
 #endif
 }
 
+void WebPage::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
+{
+    protect(m_page)->setUnobscuredSafeAreaInsets(insets);
+}
+
 void WebPage::setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>& arguments)
 {
     protect(m_page)->setOverrideViewportArguments(arguments);
