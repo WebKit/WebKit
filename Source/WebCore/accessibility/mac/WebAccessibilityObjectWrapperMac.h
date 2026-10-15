@@ -54,6 +54,8 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 // When a plugin uses a WebKit control to act as a surrogate view (e.g. PDF use WebKit to create text fields).
 - (id)_associatedPluginParent;
+// Hit-tests a point in screen space, as received from an AX client.
+- (id)_accessibilityHitTestForScreenPoint:(NSPoint)point;
 // For testing use only.
 - (void)_accessibilityHitTestResolvingRemoteFrame:(NSPoint)point callback:(void(^)(NSString *))callback;
 - (NSArray *)_accessibilityChildrenFromIndex:(NSUInteger)index maxCount:(NSUInteger)maxCount returnPlatformElements:(BOOL)returnPlatformElements;

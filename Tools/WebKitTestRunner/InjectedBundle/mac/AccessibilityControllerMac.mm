@@ -33,6 +33,7 @@
 #import "AccessibilityCommonCocoa.h"
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElementClientMac.h"
+#import "DictionaryFunctions.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
 #import "JSBasics.h"
@@ -46,6 +47,7 @@
 #import <WebKit/WKBundlePrivate.h>
 
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/MonotonicTime.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
@@ -154,6 +156,31 @@ void AccessibilityController::clientNotificationReceived(uint64_t elementToken, 
     arguments[1] = JSValueMakeString(context, notificationName);
     arguments[2] = JSValueMakeUndefined(context);
     JSObjectCallAsFunction(context, const_cast<JSObjectRef>(m_clientNotificationCallback), 0, 3, arguments, 0);
+}
+
+WKRetainPtr<WKTypeRef> AccessibilityController::sendClientAccessibilityRequest(const char* name, WKTypeRef body)
+{
+    auto requestID = m_nextClientAccessibilityRequestID++;
+    WKRetainPtr request = adoptWK(WKMutableDictionaryCreate());
+    setValue(request, "requestID", requestID);
+    setValue(request, "name", name);
+    if (body)
+        WKDictionarySetItem(request.get(), toWK("body").get(), body);
+    postPageMessage("AXAsyncRequest", request);
+
+    // Spin rather than block: serving the request can need this process's main thread, e.g. for a
+    // hit test, or for a search that reaches a remote frame.
+    auto timeout = MonotonicTime::now() + 10_s;
+    while (!m_clientAccessibilityReplies.contains(requestID) && MonotonicTime::now() < timeout)
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, .001, false);
+
+    return m_clientAccessibilityReplies.take(requestID);
+}
+
+void AccessibilityController::clientAccessibilityReplyReceived(uint64_t requestID, WKTypeRef result)
+{
+    if (requestID < m_nextClientAccessibilityRequestID)
+        m_clientAccessibilityReplies.set(requestID, result);
 }
 
 void AccessibilityController::resetToConsistentState()

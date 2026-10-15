@@ -320,6 +320,13 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
 #if PLATFORM(MAC)
+    if (WKStringIsEqualToUTF8CString(messageName, "AXAsyncReply")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        if (m_accessibilityController)
+            m_accessibilityController->clientAccessibilityReplyReceived(uint64Value(messageBodyDictionary, "requestID"), value(messageBodyDictionary, "result"));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "AXClientNotification")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         if (m_accessibilityController)

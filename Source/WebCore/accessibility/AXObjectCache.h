@@ -722,7 +722,10 @@ public:
     FrameIdentifier frameID() const { return m_frameID; }
 
     RefPtr<Page> LEGACY_NODELETE page() const;
-    IntPoint mapScreenPointToPagePoint(const IntPoint&) const;
+    WEBCORE_EXPORT IntPoint mapScreenPointToPagePoint(const IntPoint&) const;
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    std::optional<IntPoint> mapScreenPointToContentPointUsingFrameGeometry(const IntPoint&) const;
+#endif
 
     void objectBecameIgnored(const AccessibilityObject&);
     void objectBecameUnignored(const AccessibilityObject&);

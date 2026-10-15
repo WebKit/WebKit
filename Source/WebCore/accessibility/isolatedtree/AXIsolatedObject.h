@@ -57,6 +57,9 @@ public:
     ~AXIsolatedObject();
 
     RefPtr<AXIsolatedObject> approximateHitTest(const IntPoint&) const;
+    // For hit tests that come from an AX client through the page object, whose point is always
+    // in screen space, even when the client is a test client.
+    RefPtr<AXCoreObject> accessibilityHitTestForScreenPoint(const IntPoint&) const;
 
     std::optional<AXTreeID> treeID() const final { return tree().treeID(); }
     String debugDescriptionInternal(bool, std::optional<OptionSet<AXDebugStringOption>> = std::nullopt) const final;

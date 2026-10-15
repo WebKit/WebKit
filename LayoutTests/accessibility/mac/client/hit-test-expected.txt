@@ -1,0 +1,9 @@
+Tests hit-testing the center of an element via the client accessibility APIs.
+
+First: PASS
+Second: PASS
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

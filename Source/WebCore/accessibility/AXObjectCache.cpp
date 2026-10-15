@@ -972,6 +972,15 @@ IntPoint AXObjectCache::mapScreenPointToPagePoint(const IntPoint& screenRelative
     RefPtr frame = m_document ? protect(m_document)->frame() : nullptr;
     RefPtr frameView = frame ? frame->view() : nullptr;
 
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // In a cross-site iframe's process, the root view is the main frame's, so converting through it
+    // lands in main-frame coordinates. Use this frame's own screen position instead.
+    if (frame && !frame->isMainFrame()) {
+        if (auto contentPoint = mapScreenPointToContentPointUsingFrameGeometry(screenRelativePoint))
+            return *contentPoint;
+    }
+#endif
+
     // Try to use cached accessibility position to avoid sync IPC (macOS only).
     IntPoint convertedPoint;
     if (auto localResult = page->chrome().client().screenToRootViewUsingCachedPosition(screenRelativePoint, frameView ? frameView->size() : IntSize()))
@@ -986,6 +995,40 @@ IntPoint AXObjectCache::mapScreenPointToPagePoint(const IntPoint& screenRelative
     convertedPoint.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
     return convertedPoint;
 }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+// The inverse of AccessibilityObject::convertFrameToSpace() for screen space.
+std::optional<IntPoint> AXObjectCache::mapScreenPointToContentPointUsingFrameGeometry(const IntPoint& screenPoint) const
+{
+    if (!m_frameGeometry)
+        return std::nullopt;
+
+    auto inverseScreenTransform = m_frameGeometry->screenTransform.inverse();
+    if (!inverseScreenTransform)
+        return std::nullopt;
+
+    // screenPosition has the scroll position at the time it was taken baked in, so correct for
+    // any scrolling since then.
+    IntPoint currentScroll;
+    if (RefPtr frame = m_document ? protect(m_document)->frame() : nullptr) {
+        if (CheckedPtr frameView = frame->view())
+            currentScroll = frameView->documentScrollPositionRelativeToViewOrigin();
+    }
+    auto scrollDelta = m_frameGeometry->screenTransform.mapPoint(FloatPoint(m_frameViewOriginScrollPosition));
+    scrollDelta.moveBy(-m_frameGeometry->screenTransform.mapPoint(FloatPoint(currentScroll)));
+
+    auto screenPosition = m_frameGeometry->screenPosition;
+#if PLATFORM(MAC)
+    // macOS screen coordinates have a bottom-left origin.
+    screenPosition.move(roundToInt(scrollDelta.x()), -roundToInt(scrollDelta.y()));
+    FloatPoint offset { static_cast<float>(screenPoint.x() - screenPosition.x()), static_cast<float>(screenPosition.y() - screenPoint.y()) };
+#else
+    screenPosition.move(roundToInt(scrollDelta.x()), roundToInt(scrollDelta.y()));
+    FloatPoint offset { static_cast<float>(screenPoint.x() - screenPosition.x()), static_cast<float>(screenPoint.y() - screenPosition.y()) };
+#endif
+    return roundedIntPoint(inverseScreenTransform->mapPoint(offset));
+}
+#endif
 
 RefPtr<Page> AXObjectCache::page() const
 {

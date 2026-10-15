@@ -336,8 +336,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 // PDF plug-in handles the scroll view offset natively as part of the layer conversions, so don't
                 // do a coordinate conversion for those hit tests.
                 convertedPoint = WebCore::IntPoint { point };
+            } else if (RefPtr webPage = protectedSelf->m_page; !webPage->localMainFrameView()) {
+                // This process hosts a cross-site iframe, and the root view belongs to the main frame,
+                // so let the frame's cache convert using the frame's own screen position.
+                RefPtr localFocusedFrame = [protectedSelf localFocusedFrame];
+                RefPtr document = localFocusedFrame ? localFocusedFrame->document() : nullptr;
+                if (CheckedPtr cache = document ? document->axObjectCache() : nullptr)
+                    convertedPoint = cache->mapScreenPointToPagePoint(WebCore::IntPoint(point));
             } else {
-                RefPtr webPage = protectedSelf->m_page.get();
                 convertedPoint = webPage->screenToRootView(WebCore::IntPoint(point));
                 if (CheckedPtr localFrameView = webPage->localMainFrameView())
                     convertedPoint.moveBy(localFrameView->scrollPosition());
@@ -356,8 +362,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     }
 
     // If we're here, we are doing a hit-test off the main-thread. Accessibility thread hit tests
-    // can handle the screen-relative point given to us by ATs, so pass it along with any conversion.
-    return [retainPtr([protectedSelf accessibilityRootObjectWrapper:protect([protectedSelf localFocusedFrame]).get()]) accessibilityHitTest:WebCore::IntPoint(point)];
+    // can handle the screen-relative point given to us by ATs, so pass it along without any conversion.
+    RetainPtr rootWrapper = [protectedSelf accessibilityRootObjectWrapper:protect([protectedSelf localFocusedFrame]).get()];
+    if ([rootWrapper respondsToSelector:@selector(_accessibilityHitTestForScreenPoint:)])
+        return [rootWrapper _accessibilityHitTestForScreenPoint:point];
+    return [rootWrapper accessibilityHitTest:point];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 

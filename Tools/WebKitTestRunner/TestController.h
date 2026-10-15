@@ -36,9 +36,11 @@
 #include <vector>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
@@ -633,6 +635,8 @@ private:
     uint64_t storeAXElement(CFTypeRef);
     CFTypeRef getAXElement(uint64_t token);
     CFDataRef getRemoteAccessibilityToken();
+    std::optional<WKRetainPtr<WKTypeRef>> handleAXRequest(WKStringRef messageName, WKTypeRef messageBody);
+    void handleAXAsyncRequest(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXGetRoot();
     RetainPtr<CFTypeRef> axCopyAttributeValue(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsString(WKDictionaryRef);
@@ -644,6 +648,7 @@ private:
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsPoint(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXCopyAttributeValueAsSize(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXSearchPredicate(WKDictionaryRef);
+    WKRetainPtr<WKTypeRef> handleAXElementAtPosition(WKDictionaryRef);
     void handleAXPerformAction(WKDictionaryRef);
     WKRetainPtr<WKTypeRef> handleAXAddNotificationListener();
     void handleAXRemoveNotificationListener();
@@ -965,7 +970,11 @@ private:
 #if PLATFORM(MAC)
     // Client accessibility testing support
     std::atomic<uint64_t> m_nextAXElementToken { 1 };
-    HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens;
+    // Client AX requests run on m_axRequestQueue (see handleAXAsyncRequest), so the token map is shared with it.
+    Lock m_axElementTokensLock;
+    HashMap<uint64_t, RetainPtr<CFTypeRef>> m_axElementTokens WTF_GUARDED_BY_LOCK(m_axElementTokensLock);
+    RetainPtr<CFTypeRef> m_axWebContentElement WTF_GUARDED_BY_LOCK(m_axElementTokensLock);
+    RefPtr<WorkQueue> m_axRequestQueue;
     // One AXObserver per observed web content process, keyed by pid, with the application element it
     // observes. Non-empty only while a client-mode test has a notification listener installed.
     struct AXApplicationObserver {
@@ -973,7 +982,7 @@ private:
         RetainPtr<CFTypeRef> application;
     };
     HashMap<pid_t, AXApplicationObserver> m_axObservers;
-    bool m_isListeningForAXNotifications { false };
+    std::atomic<bool> m_isListeningForAXNotifications { false };
 #endif
 
 #if ENABLE(WPE_PLATFORM)

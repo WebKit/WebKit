@@ -67,6 +67,8 @@ public:
     double y() override;
     double width() override;
     double height() override;
+    RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y) override;
+    bool isFrameGeometryInitialized() const override;
 
     // Actions.
     void showMenu() override;
