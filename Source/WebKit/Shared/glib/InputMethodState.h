@@ -59,7 +59,8 @@ struct InputMethodState {
         UppercaseChars = 1 << 2,
         UppercaseWords = 1 << 3,
         UppercaseSentences = 1 << 4,
-        InhibitOnScreenKeyboard = 1 << 5
+        InhibitOnScreenKeyboard = 1 << 5,
+        Private = 1 << 6,
     };
 
     void setPurposeOrHintForInputMode(WebCore::InputMode);

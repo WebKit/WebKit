@@ -187,6 +187,8 @@ static WebKitInputHints toWebKitHints(const OptionSet<InputMethodState::Hint>& h
         wkHints |= WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES;
     if (hints.contains(InputMethodState::Hint::InhibitOnScreenKeyboard))
         wkHints |= WEBKIT_INPUT_HINT_INHIBIT_OSK;
+    if (hints.contains(InputMethodState::Hint::Private))
+        wkHints |= WEBKIT_INPUT_HINT_PRIVATE;
     return static_cast<WebKitInputHints>(wkHints);
 }
 

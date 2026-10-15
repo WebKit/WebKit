@@ -347,6 +347,12 @@ void WebChromeClient::focusedElementDidChangeReadOnly(Element& element)
         page->focusedElementDidChangeReadOnly(element);
 }
 
+void WebChromeClient::focusedElementDidChangeType(Element& element)
+{
+    if (RefPtr page = m_page.get())
+        page->focusedElementDidChangeType(element);
+}
+
 #endif
 
 #if PLATFORM(COCOA)

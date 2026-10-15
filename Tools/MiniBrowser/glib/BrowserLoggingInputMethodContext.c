@@ -77,6 +77,7 @@ static char *hintsDescription(WebKitInputHints hints)
     APPEND_HINT(WEBKIT_INPUT_HINT_UPPERCASE_WORDS, "UppercaseWords");
     APPEND_HINT(WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES, "UppercaseSentences");
     APPEND_HINT(WEBKIT_INPUT_HINT_INHIBIT_OSK, "InhibitOSK");
+    APPEND_HINT(WEBKIT_INPUT_HINT_PRIVATE, "Private");
 #undef APPEND_HINT
 
     return g_string_free(description, FALSE);

@@ -1708,7 +1708,7 @@ static void testWebKitInputMethodContextContentType(InputMethodTest* test, gcons
     test->waitUntilLoadFinished();
     test->focusEditableAndWaitUntilInputMethodEnabled();
     g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PASSWORD);
-    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_PRIVATE | WEBKIT_INPUT_HINT_INHIBIT_OSK);
     test->unfocusEditableAndWaitUntilInputMethodDisabled();
 
     test->loadHtml("<input id='editable' type='search' spellcheck='false'>", nullptr);
@@ -1849,8 +1849,8 @@ static void testWebKitInputMethodContextInputMode(InputMethodTest* test, gconstp
     checkInput("type='tel' inputmode='invalid'", WEBKIT_INPUT_PURPOSE_PHONE, 0);
 
     // A password field keeps its purpose, but inputmode="none" still inhibits the keyboard.
-    checkInput("type='password' inputmode='numeric'", WEBKIT_INPUT_PURPOSE_PASSWORD, 0);
-    checkInput("type='password' inputmode='none'", WEBKIT_INPUT_PURPOSE_PASSWORD, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+    checkInput("type='password' inputmode='numeric'", WEBKIT_INPUT_PURPOSE_PASSWORD, WEBKIT_INPUT_HINT_PRIVATE);
+    checkInput("type='password' inputmode='none'", WEBKIT_INPUT_PURPOSE_PASSWORD, WEBKIT_INPUT_HINT_PRIVATE | WEBKIT_INPUT_HINT_INHIBIT_OSK);
 }
 
 static void testWebKitInputMethodContextReadOnly(InputMethodTest* test, gconstpointer)
@@ -1976,6 +1976,114 @@ static void testWebKitInputMethodContextInputModeChange(InputMethodTest* test, g
     }
 }
 
+static void testWebKitInputMethodContextTypeChange(InputMethodTest* test, gconstpointer)
+{
+    // The button toggles the type of the field between password and text from its click handler, like a
+    // "show password" button. It does not take the focus.
+    for (auto* type : { "password", "text" }) {
+        GUniquePtr<char> html(g_strdup_printf("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+            "<input id='editable' type='%s' spellcheck='false'>"
+            "<button style='top:50px' onmousedown='event.preventDefault()' onclick=\"editable.type = editable.type == 'password' ? 'text' : 'password'\"></button>"
+            "<script>var editable = document.getElementById('editable')</script>", type));
+        test->loadHtml(html.get(), nullptr);
+        test->waitUntilLoadFinished();
+        test->clickMouseButton(20, 15);
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->waitUntilInputMethodEnabled();
+        bool isPassword = !g_strcmp0(type, "password");
+        g_assert_cmpuint(test->purpose(), ==, isPassword ? WEBKIT_INPUT_PURPOSE_PASSWORD : WEBKIT_INPUT_PURPOSE_FREE_FORM);
+        g_assert_cmpuint(test->hints(), ==, isPassword ? WEBKIT_INPUT_HINT_PRIVATE : 0);
+        test->clearInputMethodCounters();
+
+        // Once the field has been a password field, the input method is asked not to learn from it,
+        // even after its password is revealed.
+        test->clickMouseButton(20, 65);
+        test->waitForContentType(isPassword ? WEBKIT_INPUT_PURPOSE_FREE_FORM : WEBKIT_INPUT_PURPOSE_PASSWORD, WEBKIT_INPUT_HINT_PRIVATE);
+        test->clickMouseButton(20, 65);
+        test->waitForContentType(isPassword ? WEBKIT_INPUT_PURPOSE_PASSWORD : WEBKIT_INPUT_PURPOSE_FREE_FORM, WEBKIT_INPUT_HINT_PRIVATE);
+
+        // The embedder is told about the change of content type only, not about a new focus.
+        g_assert_cmpuint(test->focusInCount(), ==, 0);
+        g_assert_cmpuint(test->focusOutCount(), ==, 0);
+        g_assert_true(test->isInputMethodEnabled());
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    }
+
+    // The button runs the given script from its click handler. It does not take the focus.
+    auto changeByClick = [&](const char* script) {
+        GUniquePtr<char> action(g_strdup_printf("action = () => { %s }", script));
+        test->runJavaScriptAndWaitUntilFinished(action.get(), nullptr);
+        test->clickMouseButton(20, 65);
+    };
+    auto loadAndFocus = [&](const char* type) {
+        GUniquePtr<char> html(g_strdup_printf("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+            "<input id='editable' type='%s' spellcheck='false'>"
+            "<button style='top:50px' onmousedown='event.preventDefault()' onclick='action()'></button>"
+            "<script>var action, editable = document.getElementById('editable')</script>", type));
+        test->loadHtml(html.get(), nullptr);
+        test->waitUntilLoadFinished();
+        test->clickMouseButton(20, 15);
+        test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+        test->waitUntilInputMethodEnabled();
+        test->clearInputMethodCounters();
+    };
+
+    // inputmode is ignored for a password field, but applies again once the password is revealed.
+    loadAndFocus("password");
+    changeByClick("editable.setAttribute('inputmode', 'numeric')");
+    test->assertJavaScriptBecomesTrue("editable.inputMode === 'numeric'");
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_PASSWORD);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_PRIVATE);
+    changeByClick("editable.type = 'text'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_DIGITS, WEBKIT_INPUT_HINT_PRIVATE);
+    changeByClick("editable.removeAttribute('inputmode')");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, WEBKIT_INPUT_HINT_PRIVATE);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+
+    // A revealed password field is still private when it gets the focus again.
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+    test->clickMouseButton(20, 15);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_PRIVATE);
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+
+    // The purpose follows the other text types, and a field that has never been a password field is not private.
+    loadAndFocus("text");
+    changeByClick("editable.type = 'email'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_EMAIL, 0);
+    changeByClick("editable.type = 'tel'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_PHONE, 0);
+    changeByClick("editable.type = 'number'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_NUMBER, 0);
+    changeByClick("editable.type = 'url'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_URL, 0);
+    changeByClick("editable.type = 'search'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_SEARCH, 0);
+    changeByClick("editable.type = 'text'");
+    test->waitForContentType(WEBKIT_INPUT_PURPOSE_FREE_FORM, 0);
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->focusOutCount(), ==, 0);
+
+    // A field that stops being a text field loses the input method, which the embedder sees as a focus out,
+    // and gets it again when it becomes a text field again.
+    changeByClick("editable.type = 'checkbox'");
+    test->waitUntilInputMethodDisabled();
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    changeByClick("editable.type = 'text'");
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->focusOutCount(), ==, 1);
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, 0);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    test->unfocusEditableAndWaitUntilInputMethodDisabled();
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -2008,6 +2116,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "read-only-change", testWebKitInputMethodContextReadOnlyChange);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode", testWebKitInputMethodContextInputMode);
     InputMethodTest::add("WebKitInputMethodContext", "input-mode-change", testWebKitInputMethodContextInputModeChange);
+    InputMethodTest::add("WebKitInputMethodContext", "type-change", testWebKitInputMethodContextTypeChange);
 }
 
 void afterAll()

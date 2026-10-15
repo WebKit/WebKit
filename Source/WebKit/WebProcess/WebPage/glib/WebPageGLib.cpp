@@ -195,6 +195,9 @@ static std::optional<InputMethodState> inputMethodStateForElement(Element* eleme
         auto inputMode = inputElement.canonicalInputMode();
         if (inputMode == InputMode::None || (inputMode != InputMode::Unspecified && !inputElement.isPasswordField()))
             state.setPurposeOrHintForInputMode(inputMode);
+        // A password revealed by changing the type of the field to text should not be learned either.
+        if (inputElement.hasEverBeenPasswordField())
+            state.hints.add(InputMethodState::Hint::Private);
 #if ENABLE(AUTOCAPITALIZE)
         state.addHintsForAutocapitalizeType(inputElement.autocapitalizeType());
 #endif
@@ -236,6 +239,14 @@ void WebPage::setInputMethodState(Element* element)
 }
 
 void WebPage::focusedElementDidChangeReadOnly(Element& element)
+{
+    if (m_focusedElement != &element)
+        return;
+
+    setInputMethodState(&element);
+}
+
+void WebPage::focusedElementDidChangeType(Element& element)
 {
     if (m_focusedElement != &element)
         return;

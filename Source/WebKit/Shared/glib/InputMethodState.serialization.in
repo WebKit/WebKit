@@ -42,6 +42,7 @@ header: "InputMethodState.h"
     UppercaseWords,
     UppercaseSentences,
     InhibitOnScreenKeyboard,
+    Private,
 };
 
 struct WebKit::InputMethodState {

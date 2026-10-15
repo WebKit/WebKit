@@ -632,8 +632,13 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
     if (renderer())
         invalidateStyleAndRenderersForSubtree();
 
-    if (document().focusedElement() == this)
+    if (Ref document = this->document(); document->focusedElement() == this) {
         updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        if (RefPtr page = document->page())
+            page->chrome().client().focusedElementDidChangeType(*this);
+#endif
+    }
 
     setChangedSinceLastFormControlChangeEvent(false);
 

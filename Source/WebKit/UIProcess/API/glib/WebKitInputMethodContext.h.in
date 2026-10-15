@@ -86,7 +86,15 @@ typedef enum {
  * @WEBKIT_INPUT_HINT_UPPERCASE_CHARS: Suggest to capitalize all text
  * @WEBKIT_INPUT_HINT_UPPERCASE_WORDS: Suggest to capitalize the first character of each word
  * @WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES: Suggest to capitalize the first word of each sentence
- * @WEBKIT_INPUT_HINT_INHIBIT_OSK: Suggest to not show an onscreen keyboard
+ * @WEBKIT_INPUT_HINT_INHIBIT_OSK: Suggest to not show an onscreen keyboard. It is set when the
+ *   editable element has inputmode="none", and when the input hints are set while the user is not
+ *   interacting with the page, for example when a script focuses the element or changes its type or
+ *   inputmode outside of a mouse, keyboard or touch event handler. The user might have closed the
+ *   onscreen keyboard, so it should not be opened again automatically in that case.
+ * @WEBKIT_INPUT_HINT_PRIVATE: Request that the input method should not update personalized data
+ *   (like typing history). It is set for a password field, and kept after its type is changed, for
+ *   example to text to reveal the password.
+ *   Since: 2.56
  *
  * Enum values used to describe hints that might be taken into account by input methods.
  *
@@ -99,7 +107,8 @@ typedef enum {
     WEBKIT_INPUT_HINT_UPPERCASE_CHARS     = 1 << 2,
     WEBKIT_INPUT_HINT_UPPERCASE_WORDS     = 1 << 3,
     WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES = 1 << 4,
-    WEBKIT_INPUT_HINT_INHIBIT_OSK         = 1 << 5
+    WEBKIT_INPUT_HINT_INHIBIT_OSK         = 1 << 5,
+    WEBKIT_INPUT_HINT_PRIVATE             = 1 << 6
 } WebKitInputHints;
 
 typedef struct _WebKitInputMethodUnderline      WebKitInputMethodUnderline;

@@ -388,6 +388,7 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void focusedElementDidChangeReadOnly(WebCore::Element&) final;
+    void focusedElementDidChangeType(WebCore::Element&) final;
 #endif
 
 #if PLATFORM(COCOA)

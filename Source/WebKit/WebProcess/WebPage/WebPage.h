@@ -1758,6 +1758,7 @@ public:
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setInputMethodState(WebCore::Element*);
     void focusedElementDidChangeReadOnly(WebCore::Element&);
+    void focusedElementDidChangeType(WebCore::Element&);
 #endif
 
     void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&);

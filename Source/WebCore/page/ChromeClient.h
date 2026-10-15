@@ -475,6 +475,7 @@ public:
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
 #if PLATFORM(GTK) || PLATFORM(WPE)
     virtual void focusedElementDidChangeReadOnly(Element&) { }
+    virtual void focusedElementDidChangeType(Element&) { }
 #endif
     virtual void focusedSelectElementDidChangeOptions(const HTMLSelectElement&) { }
 

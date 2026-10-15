@@ -73,6 +73,10 @@ static GtkInputHints toGtkInputHints(WebKitInputHints hints)
         gtkHints |= GTK_INPUT_HINT_UPPERCASE_SENTENCES;
     if (hints & WEBKIT_INPUT_HINT_INHIBIT_OSK)
         gtkHints |= GTK_INPUT_HINT_INHIBIT_OSK;
+#if USE(GTK4)
+    if (hints & WEBKIT_INPUT_HINT_PRIVATE)
+        gtkHints |= GTK_INPUT_HINT_PRIVATE;
+#endif
     return static_cast<GtkInputHints>(gtkHints);
 }
 
