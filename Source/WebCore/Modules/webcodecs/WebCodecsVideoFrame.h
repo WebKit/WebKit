@@ -118,6 +118,7 @@ public:
     struct CopyToOptions {
         std::optional<DOMRectInit> rect;
         std::optional<Vector<PlaneLayout>> layout;
+        std::optional<VideoPixelFormat> format;
     };
     ExceptionOr<size_t> allocationSize(const CopyToOptions&);
 

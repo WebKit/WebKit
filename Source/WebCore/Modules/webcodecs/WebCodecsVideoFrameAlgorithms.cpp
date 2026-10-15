@@ -298,7 +298,10 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
     if (parsedRect.hasException())
         return parsedRect.releaseException();
 
-    return computeLayoutAndAllocationSize(parsedRect.returnValue(), options.layout, *frame.format());
+    if (options.format && *options.format != VideoPixelFormat::RGBA && *options.format != VideoPixelFormat::RGBX && *options.format != VideoPixelFormat::BGRA && *options.format != VideoPixelFormat::BGRX)
+        return Exception { ExceptionCode::NotSupportedError, "Format is not supported"_s };
+
+    return computeLayoutAndAllocationSize(parsedRect.returnValue(), options.layout, options.format ? *options.format : *frame.format());
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-visible-rect-and-display-size

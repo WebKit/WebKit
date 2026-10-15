@@ -111,4 +111,5 @@ typedef (HTMLImageElement
 ] dictionary VideoFrameCopyToOptions {
   DOMRectInit rect;
   sequence<PlaneLayout> layout;
+  VideoPixelFormat format;
 };

@@ -402,6 +402,9 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
         VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationColorPrimaries, kCMFormatDescriptionColorPrimaries_ITU_R_709_2);
         VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationTransferFunction, kCMFormatDescriptionTransferFunction_ITU_R_709_2);
         VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationYCbCrMatrix, kCMFormatDescriptionYCbCrMatrix_ITU_R_709_2);
+    } else if (colorSpace == DestinationColorSpace::SRGB) {
+        VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationColorPrimaries, kCMFormatDescriptionColorPrimaries_ITU_R_709_2);
+        VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationTransferFunction, PAL::kCMFormatDescriptionTransferFunction_sRGB);
     }
 
     CVPixelBufferRef rawTarget = nullptr;

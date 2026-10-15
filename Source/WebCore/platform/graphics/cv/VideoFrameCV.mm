@@ -496,18 +496,43 @@ static Vector<PlaneLayout> copyI420OrI420A(std::span<uint8_t> span, const Comput
 void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
     // FIXME: We should get the pixel buffer and copy the bytes asynchronously.
+    RetainPtr pixelBuffer = this->pixelBuffer();
+    auto currentVideoFramePixelFormat = convertVideoFramePixelFormat(pixelFormat());
+
+    if (isRGBVideoPixelFormat(format)) {
+        auto shouldConvert = [](auto sourceFormat, auto destinationFormat) -> std::optional<OSType> {
+            bool isDestinationFormatRGB = destinationFormat == VideoPixelFormat::RGBA || destinationFormat == VideoPixelFormat::RGBX;
+            if (!sourceFormat || !isRGBVideoPixelFormat(*sourceFormat))
+                return isDestinationFormatRGB ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_32BGRA;
+
+            // FIXME: We could directly support RGBA -> BGRA at copyTo without doing a conversion.
+            bool isSourceFormatRGB = *sourceFormat == VideoPixelFormat::RGBA || *sourceFormat == VideoPixelFormat::RGBX;
+            if (isSourceFormatRGB != isDestinationFormatRGB)
+                return isDestinationFormatRGB ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_32BGRA;
+
+            return { };
+        };
+        if (auto conversionFormat = shouldConvert(currentVideoFramePixelFormat, format))
+            pixelBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, *conversionFormat, ImageTransferSessionVT::DestinationColorSpace::SRGB);
+    }
+
+    if (!pixelBuffer) {
+        callback({ });
+        return;
+    }
+
     if (format == VideoPixelFormat::NV12) {
-        callback(copyNV12(span, computedPlaneLayout[0], computedPlaneLayout[1], protect(this->pixelBuffer()).get()));
+        callback(copyNV12(span, computedPlaneLayout[0], computedPlaneLayout[1], pixelBuffer));
         return;
     }
 
     if (format == VideoPixelFormat::I420) {
-        callback(copyI420OrI420A(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], nullptr, protect(this->pixelBuffer()).get()));
+        callback(copyI420OrI420A(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], nullptr, pixelBuffer));
         return;
     }
 
     if (format == VideoPixelFormat::I420A) {
-        callback(copyI420OrI420A(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], &computedPlaneLayout[3], protect(this->pixelBuffer()).get()));
+        callback(copyI420OrI420A(span, computedPlaneLayout[0], computedPlaneLayout[1], computedPlaneLayout[2], &computedPlaneLayout[3], pixelBuffer));
         return;
     }
 
@@ -516,8 +541,8 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
         // The pixel buffer is ARGB: convert to RGBA. For RGBX, the X byte is set to 255.
-        auto makeOpaque = format == VideoPixelFormat::RGBX ? MakeOpaque::Yes : MakeOpaque::No;
-        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
+        auto makeOpaque = format == VideoPixelFormat::RGBX || shouldIgnoreAlpha() ? MakeOpaque::Yes : MakeOpaque::No;
+        auto planeLayouts = copyRGBData(span, planeLayout, pixelBuffer, [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
             const uint8_t channelMap[4] = { 1, 2, 3, 0 };
             copyRGBRow(destination, source, channelMap, makeOpaque);
         });
@@ -531,8 +556,8 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
             planeLayout = computedPlaneLayout[0];
 
         // For BGRX, the X byte is set to 255.
-        auto makeOpaque = format == VideoPixelFormat::BGRX ? MakeOpaque::Yes : MakeOpaque::No;
-        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
+        auto makeOpaque = format == VideoPixelFormat::BGRX || shouldIgnoreAlpha() ? MakeOpaque::Yes : MakeOpaque::No;
+        auto planeLayouts = copyRGBData(span, planeLayout, pixelBuffer, [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
             if (makeOpaque == MakeOpaque::No) {
                 memcpySpan(destination, source);
                 return;

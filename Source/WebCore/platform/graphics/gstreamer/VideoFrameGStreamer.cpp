@@ -621,6 +621,13 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     ensureVideoFrameDebugCategoryInitialized();
     auto& self = downcast<VideoFrameGStreamer>(*this);
 
+    // Converting the frame to another RGB pixel format is not supported.
+    if (isRGBVideoPixelFormat(pixelFormat) && convertVideoFramePixelFormat(self.pixelFormat()) != pixelFormat) {
+        GST_WARNING("Converting a frame to %s is not supported", convertVideoPixelFormatToString(pixelFormat).ascii().data());
+        callback({ });
+        return;
+    }
+
     GRefPtr<GstSample> inputSample;
     switch (self.memoryType()) {
     case VideoFrameGStreamer::MemoryType::Unsupported:
