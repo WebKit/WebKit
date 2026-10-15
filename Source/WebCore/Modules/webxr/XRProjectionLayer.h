@@ -33,6 +33,10 @@
 #include <WebCore/IntRect.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(WEBGPU)
+#include "GPUTextureFormat.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h>
 #endif
@@ -57,6 +61,13 @@ public:
 
     bool ignoreDepthValues() const;
     void setIgnoreDepthValues(bool ignoreDepthValues) { m_ignoreDepthValues = ignoreDepthValues; }
+
+#if ENABLE(WEBGPU)
+    // The depthStencilFormat this layer was created with, if any. std::nullopt is what makes this
+    // layer's sub-images report a null depthStencilTexture.
+    std::optional<GPUTextureFormat> depthStencilFormat() const { return m_depthStencilFormat; }
+    void setDepthStencilFormat(std::optional<GPUTextureFormat> format) { m_depthStencilFormat = format; }
+#endif
 
     std::optional<float> fixedFoveation() const;
     void setFixedFoveation(std::optional<float>);
@@ -85,6 +96,7 @@ private:
 
     bool m_ignoreDepthValues { false };
 #if ENABLE(WEBGPU)
+    std::optional<GPUTextureFormat> m_depthStencilFormat;
     std::optional<PlatformXR::FrameData::LayerData> m_layerData;
 #endif
     RefPtr<WebXRRigidTransform> m_deltaPose;
