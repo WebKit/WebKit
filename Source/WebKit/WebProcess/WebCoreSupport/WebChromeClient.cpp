@@ -1473,6 +1473,12 @@ void WebChromeClient::renderingUpdateFramesPerSecondChanged()
         drawingArea->renderingUpdateFramesPerSecondChanged();
 }
 
+void WebChromeClient::syncLocalFrameInfoToRemote()
+{
+    if (RefPtr page = m_page.get())
+        page->broadcastFrameGeometryUpdatesIfNeeded();
+}
+
 unsigned WebChromeClient::remoteImagesCountForTesting() const
 {
     RefPtr page = m_page.get();

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<iframe id="child" style="position: absolute; left: 0; top: 0; width: 50px; height: 50px; border: none"></iframe>
+<script>
+
+// Has a child frame in this frame's own process. Post "move" to move the child, which changes this
+// frame's geometry. The reply comes once the move has rendered.
+
+let childIsOffset = false;
+
+window.addEventListener("message", event => {
+    if (event.data !== "move")
+        return;
+    childIsOffset = !childIsOffset;
+    child.style.top = childIsOffset ? "10px" : "0px";
+    requestAnimationFrame(() => requestAnimationFrame(() => event.source.postMessage("moved", "*")));
+});
+
+</script>

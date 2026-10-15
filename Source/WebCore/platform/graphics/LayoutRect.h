@@ -188,7 +188,7 @@ public:
     bool contains(const LayoutPoint& point) const { return contains(point.x(), point.y()); }
 
     WEBCORE_EXPORT void intersect(const LayoutRect&);
-    bool edgeInclusiveIntersect(const LayoutRect&);
+    WEBCORE_EXPORT bool edgeInclusiveIntersect(const LayoutRect&);
     WEBCORE_EXPORT void unite(const LayoutRect&);
     void uniteEvenIfEmpty(const LayoutRect&);
     void uniteXEvenIfEmpty(const LayoutRect&);

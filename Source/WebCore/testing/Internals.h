@@ -790,6 +790,8 @@ public:
 
     ExceptionOr<void> startTrackingRenderingUpdates();
     ExceptionOr<unsigned> renderingUpdateCount();
+    ExceptionOr<unsigned> sentFrameViewportInfoCount();
+    ExceptionOr<unsigned> sentFrameGeometryCount();
 
     ExceptionOr<std::optional<double>> timeToNextRenderingUpdate();
 

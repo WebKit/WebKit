@@ -223,6 +223,9 @@ void RemotePageProxy::injectPageIntoNewProcess()
             })
         ), 0
     );
+
+    // frameTreeCreationParameters above contains the main frame's current frameViewportInfo.
+    m_lastSentMainFrameViewportInfo = protect(page->mainFrame())->frameViewportInfo();
 }
 
 void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
@@ -386,6 +389,9 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
             })
         ), 0
     );
+
+    // frameTreeCreationParameters above contains the main frame's current frameViewportInfo.
+    m_lastSentMainFrameViewportInfo = mainFrame->frameViewportInfo();
 }
 
 void RemotePageProxy::setCurrentOrientation(WebCore::ScreenOrientationType orientation)

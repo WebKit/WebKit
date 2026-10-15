@@ -331,7 +331,9 @@ public:
     std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
     void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
 
+    const WebCore::FrameGeometrySyncData& frameGeometry() const LIFETIME_BOUND { return m_frameGeometry; }
     void setFrameGeometry(const WebCore::FrameGeometrySyncData& geometry) { m_frameGeometry = geometry; }
+    const WebCore::FrameViewportInfo& frameViewportInfo() const LIFETIME_BOUND { return m_frameViewportInfo; }
     void setFrameViewportInfo(const WebCore::FrameViewportInfo& viewportInfo) { m_frameViewportInfo = viewportInfo; }
 
     void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);

@@ -53,8 +53,9 @@ WEBCORE_EXPORT bool operator==(const FrameGeometrySyncData&, const FrameGeometry
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameGeometrySyncData&);
 
-// Unlike FrameGeometrySyncData, the data in this struct does change while scrolling. However, we
-// suppress broadcasting this if all remote frames are offscreen for consecutive rendering updates.
+// Unlike FrameGeometrySyncData, the data in this struct does change while scrolling. However, the
+// UIProcess doesn't relay the main frame's FrameViewportInfo to remote processes if all remote
+// frames are outside of the viewport.
 struct FrameViewportInfo {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(FrameViewportInfo, WEBCORE_EXPORT);
 
@@ -65,5 +66,13 @@ struct FrameViewportInfo {
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameViewportInfo&);
+
+// The geometry of a local frame that changed since the last layer tree commit. This is sent as part
+// of RemoteLayerTreeCommitBundle.
+struct FrameGeometryUpdate {
+    FrameIdentifier frameID;
+    std::optional<FrameGeometrySyncData> geometry;
+    std::optional<FrameViewportInfo> viewportInfo;
+};
 
 } // namespace WebCore

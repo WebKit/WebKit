@@ -28,7 +28,6 @@
 #include "SameDocumentNavigationType.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPageProxyIdentifier.h"
-#include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/PageIdentifier.h>
@@ -50,8 +49,6 @@ class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, 
 public:
     WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
-
-    void clearLastBroadcastFrameTreeSyncData();
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
@@ -296,7 +293,6 @@ private:
 
     void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&) final;
     void broadcastFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncSerializationData&&) final;
-    void broadcastFrameViewportInfoToOtherProcessesIfNeeded(const WebCore::FrameViewportInfo&, bool hasOnScreenRemoteDescendant) final;
 
     void didNotifyUserActivation(MonotonicTime, std::optional<WebCore::UserGestureTokenIdentifier> forcedActivationToken) final;
     void didConsumeUserActivation() final;
@@ -321,10 +317,6 @@ private:
     bool m_frameCameFromBackForwardCache { false };
     std::optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
     WeakRef<WebCore::LocalFrame> m_localFrame;
-
-    std::optional<WebCore::FrameGeometrySyncData> m_lastBroadcastFrameGeometry;
-    std::optional<WebCore::FrameViewportInfo> m_lastBroadcastFrameViewportInfo;
-    bool m_lastAllRemoteDescendantsWereOffscreen { false };
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

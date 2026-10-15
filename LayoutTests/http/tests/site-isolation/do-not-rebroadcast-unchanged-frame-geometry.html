@@ -1,20 +1,12 @@
-<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <!DOCTYPE html>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <body style="margin: 0">
-<iframe style="width: 100px; height: 100px;" src="http://localhost:8000/site-isolation/resources/frame-with-text.html"></iframe>
+<iframe style="position: absolute; left: 0; top: 300px; width: 100px; height: 100px; border: none"
+    src="http://localhost:8000/site-isolation/resources/frame-with-text.html"></iframe>
 <div id="spacer" style="height: 3000px"></div>
 <script>
-
-let broadcastCount = 0;
-
-if (window.IPC) {
-    IPC.addOutgoingMessageListener("UI", message => {
-        if (message.description === "WebPageProxy_BroadcastFrameTreeSyncData")
-            broadcastCount++;
-    });
-}
 
 async function settle()
 {
@@ -23,32 +15,57 @@ async function settle()
     await new Promise(resolve => setTimeout(resolve, 0));
 }
 
-async function countBroadcastsFor(action)
+async function countSentFor(counter, action)
 {
     await settle();
-    broadcastCount = 0;
+    const countBefore = counter();
     action();
     await settle();
-    return broadcastCount;
+    return counter() - countBefore;
 }
 
-promise_test(async t => {
-    // IPC interception only works in debug builds.
-    if (!window.IPC)
-        return;
+const countSentGeometryFor = action => countSentFor(() => internals.sentFrameGeometryCount(), action);
+const countSentViewportInfoFor = action => countSentFor(() => internals.sentFrameViewportInfoCount(), action);
 
+promise_test(async t => {
     await new Promise(resolve => window.addEventListener("load", resolve));
 
-    assert_equals(await countBroadcastsFor(() => { }), 0,
-        "a rendering update that changes nothing must not rebroadcast the frame geometry");
+    assert_equals(await countSentGeometryFor(() => { }), 0,
+        "a rendering update that changes nothing must not resend the frame geometry");
 
-    assert_equals(await countBroadcastsFor(() => spacer.style.height = "3100px"), 1,
-        "changing the geometry must broadcast it exactly once");
+    assert_equals(await countSentGeometryFor(() => spacer.style.height = "3100px"), 1,
+        "changing the geometry must send it exactly once");
 
-    assert_equals(await countBroadcastsFor(() => { }), 0,
-        "the rendering updates after a geometry change must not rebroadcast the same geometry");
+    assert_equals(await countSentGeometryFor(() => { }), 0,
+        "the rendering updates after a geometry change must not resend the same geometry");
 
-    assert_equals(await countBroadcastsFor(() => spacer.style.height = "3100px"), 0,
-        "re-applying a style that leaves the geometry alone must not broadcast it");
-}, "Frame geometry is only broadcast when it has changed");
+    assert_equals(await countSentGeometryFor(() => spacer.style.height = "3100px"), 0,
+        "re-applying a style that leaves the geometry alone must not send it");
+}, "Frame geometry is only sent when it has changed");
+
+promise_test(async t => {
+    t.add_cleanup(() => window.scrollTo(0, 0));
+
+    // The frame is at 300-400px, and the viewport is 600px tall.
+    assert_equals(await countSentGeometryFor(() => window.scrollTo(0, 100)), 0,
+        "a scroll that keeps the cross-site frame fully on screen must not send the frame geometry");
+
+    assert_equals(await countSentGeometryFor(() => window.scrollTo(0, 350)), 1,
+        "a scroll that moves the edge of the viewport across the cross-site frame must send the frame geometry");
+
+    assert_equals(await countSentGeometryFor(() => window.scrollTo(0, 1000)), 1,
+        "a scroll that takes the cross-site frame off screen must send the frame geometry");
+
+    assert_equals(await countSentGeometryFor(() => window.scrollTo(0, 1100)), 0,
+        "a scroll that keeps the cross-site frame fully off screen must not send the frame geometry");
+
+    assert_equals(await countSentViewportInfoFor(() => {
+        window.scrollTo(0, 1200);
+        window.scrollTo(0, 1300);
+        window.scrollTo(0, 1400);
+    }), 1, "several scrolls in one task must send the viewport info once");
+
+    assert_equals(await countSentViewportInfoFor(() => window.scrollTo(0, 1400)), 0,
+        "scrolling to the current scroll position must not send the viewport info");
+}, "Scrolling only sends the frame geometry when the visible part of a cross-site frame changes");
 </script>

@@ -1,3 +1,0 @@
-
-PASS Frame geometry is only broadcast by frames that have a cross-process descendant
-

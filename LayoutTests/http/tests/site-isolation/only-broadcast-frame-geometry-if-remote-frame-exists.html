@@ -1,23 +1,12 @@
-<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
 <!DOCTYPE html>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<body>
+<body style="margin: 0">
+<div style="height: 3000px"></div>
 <script>
 
-let broadcastCount = 0;
 let bodyIsPadded = false;
-
-const perRenderingUpdateMessages = [
-    "WebPageProxy_BroadcastFrameTreeSyncData",
-];
-
-if (window.IPC) {
-    IPC.addOutgoingMessageListener("UI", message => {
-        if (perRenderingUpdateMessages.includes(message.description))
-            broadcastCount++;
-    });
-}
 
 function animationFrame()
 {
@@ -34,12 +23,47 @@ async function renderingUpdates(count)
         await animationFrame();
 }
 
-async function countBroadcastsDuringRenderingUpdates(count)
+async function settle()
 {
-    broadcastCount = 0;
+    for (let i = 0; i < 2; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+function sentCount()
+{
+    return internals.sentFrameViewportInfoCount() + internals.sentFrameGeometryCount();
+}
+
+// Adding or removing a frame keeps sending geometry for a few rendering updates as the layout and
+// frame rects propagate. Wait for that to stop.
+async function settleUntilQuiescent()
+{
+    for (let i = 0; i < 20; i++) {
+        await settle();
+        const countBefore = sentCount();
+        await settle();
+        if (sentCount() == countBefore)
+            return;
+    }
+    assert_unreached("frame geometry never stopped being sent");
+}
+
+async function countSentValuesDuringRenderingUpdates(count)
+{
+    const countBefore = sentCount();
     await renderingUpdates(count);
     await new Promise(resolve => setTimeout(resolve, 0));
-    return broadcastCount;
+    return sentCount() - countBefore;
+}
+
+async function countSentViewportInfoForScrollTo(y)
+{
+    await settleUntilQuiescent();
+    const countBefore = internals.sentFrameViewportInfoCount();
+    window.scrollTo(0, y);
+    await settle();
+    return internals.sentFrameViewportInfoCount() - countBefore;
 }
 
 function addIframe(url)
@@ -53,28 +77,33 @@ function addIframe(url)
 }
 
 promise_test(async t => {
-    // IPC interception only works in debug builds.
-    if (!window.IPC)
-        return;
-
     // Leave the page with no frames in it, so that the text this test dumps is the same whether or
     // not the frames below were ever added.
-    t.add_cleanup(() => document.querySelectorAll("iframe").forEach(iframe => iframe.remove()));
+    t.add_cleanup(() => {
+        document.querySelectorAll("iframe").forEach(iframe => iframe.remove());
+        window.scrollTo(0, 0);
+    });
 
     const sameSiteIframe = await addIframe("http://127.0.0.1:8000/site-isolation/resources/frame-with-text.html");
     await renderingUpdates(5);
 
-    assert_equals(await countBroadcastsDuringRenderingUpdates(5), 0,
+    assert_equals(await countSentValuesDuringRenderingUpdates(5), 0,
         "a page with a fully local frame tree must not send frame tree layout state");
+    assert_equals(await countSentViewportInfoForScrollTo(100), 0,
+        "a page with a fully local frame tree must not send its scroll position");
 
     const crossSiteIframe = await addIframe("http://localhost:8000/site-isolation/resources/frame-with-text.html");
 
-    assert_greater_than(await countBroadcastsDuringRenderingUpdates(5), 0,
+    assert_greater_than(await countSentValuesDuringRenderingUpdates(5), 0,
         "a page with a remote frame must send frame tree layout state");
+    assert_equals(await countSentViewportInfoForScrollTo(200), 1,
+        "a page with a remote frame must send its scroll position");
 
     crossSiteIframe.remove();
 
-    assert_equals(await countBroadcastsDuringRenderingUpdates(5), 0,
+    assert_equals(await countSentValuesDuringRenderingUpdates(5), 0,
         "a page must stop sending frame tree layout state once its last remote frame is gone");
-}, "Frame tree layout state is only broadcast to other processes when the frame tree has a remote frame");
+    assert_equals(await countSentViewportInfoForScrollTo(300), 0,
+        "a page must stop sending its scroll position once its last remote frame is gone");
+}, "Frame tree layout state is only sent to other processes when the frame tree has a remote frame");
 </script>

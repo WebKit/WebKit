@@ -262,6 +262,7 @@ private:
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
+    void syncLocalFrameInfoToRemote() final;
     unsigned remoteImagesCountForTesting() const final;
     void registerBlobPathForTesting(const String& path, CompletionHandler<void()>&&) final;
 

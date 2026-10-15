@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<body style="margin: 0">
+<script>
+
+// Counts the frame geometry messages the UI process relays to this frame's process. Post "count" to
+// read the counts, or "reset" to zero them and then read them.
+
+let relayCount = 0;
+let relaySizes = [];
+
+if (window.IPC) {
+    IPC.addIncomingMessageListener("UI", message => {
+        if (message.description !== "WebPage_FrameGeometryChangedInAnotherProcess")
+            return;
+        relayCount++;
+        relaySizes.push(message.buffer.byteLength);
+    });
+}
+
+window.addEventListener("message", event => {
+    if (event.data === "reset") {
+        relayCount = 0;
+        relaySizes = [];
+    }
+    event.source.postMessage({ hasIPC: !!window.IPC, relayCount, relaySizes }, "*");
+});
+
+</script>

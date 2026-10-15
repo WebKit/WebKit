@@ -98,8 +98,4 @@ void LocalFrameLoaderClient::dispatchBackForwardItemLoading(const URL& url, cons
     loader->continueLoadURLIntoChildFrame(url, referer, childFrame);
 }
 
-void LocalFrameLoaderClient::broadcastFrameViewportInfoToOtherProcessesIfNeeded(const FrameViewportInfo&, bool)
-{
-}
-
 } // namespace WebCore

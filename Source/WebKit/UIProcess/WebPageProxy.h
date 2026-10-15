@@ -333,6 +333,7 @@ struct ExceptionDetails;
 struct FileChooserSettings;
 struct FocusOptions;
 struct FontAttributes;
+struct FrameGeometryUpdate;
 struct FrameIdentifierType;
 struct FrameTreeSyncSerializationData;
 struct GrammarDetail;
@@ -2799,6 +2800,7 @@ public:
 
     void broadcastFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
     void broadcastAllFrameTreeSyncData(IPC::Connection&, WebCore::FrameIdentifier,  Ref<WebCore::FrameTreeSyncData>&&);
+    void handleFrameGeometryUpdates(IPC::Connection&, const Vector<WebCore::FrameGeometryUpdate>&);
 
     void didNotifyUserActivation(IPC::Connection&, WebCore::FrameIdentifier, MonotonicTime, std::optional<WebCore::UserGestureTokenIdentifier>);
     void didConsumeUserActivation(IPC::Connection&, WebCore::FrameIdentifier);

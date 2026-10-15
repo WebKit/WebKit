@@ -4748,6 +4748,24 @@ ExceptionOr<unsigned> Internals::renderingUpdateCount()
     return document->page()->renderingUpdateCount();
 }
 
+ExceptionOr<unsigned> Internals::sentFrameViewportInfoCount()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->page()->sentFrameViewportInfoCountForTesting();
+}
+
+ExceptionOr<unsigned> Internals::sentFrameGeometryCount()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->page()->sentFrameGeometryCountForTesting();
+}
+
 ExceptionOr<std::optional<double>> Internals::timeToNextRenderingUpdate()
 {
     RefPtr document = contextDocument();

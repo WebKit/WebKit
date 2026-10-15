@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<iframe id="frameWithLocalChild" style="position: absolute; left: 0; top: 0; width: 200px; height: 200px; border: none"
+    src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/frame-geometry/resources/frame-with-movable-local-child.html"></iframe>
+<iframe id="countingFrame" style="position: absolute; left: 0; top: 300px; width: 100px; height: 100px; border: none"
+    src="http://127.0.0.1:{{ports[http][0]}}/WebKit/site-isolation/frame-geometry/resources/count-relayed-frame-geometry.html"></iframe>
+<div style="height: 6000px"></div>
+<script>
+
+function askFrame(frame, command)
+{
+    return new Promise(resolve => {
+        window.addEventListener("message", function listener(event) {
+            if (event.source !== frame.contentWindow)
+                return;
+            window.removeEventListener("message", listener);
+            resolve(event.data);
+        });
+        frame.contentWindow.postMessage(command, "*");
+    });
+}
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function settleUntilQuiescent()
+{
+    for (let i = 0; i < 20; i++) {
+        await askFrame(countingFrame, "reset");
+        await settle();
+        if (!(await askFrame(countingFrame, "count")).relayCount)
+            return;
+    }
+    assert_unreached("frame geometry never stopped being relayed");
+}
+
+async function relaysFor(action)
+{
+    await settleUntilQuiescent();
+    await askFrame(countingFrame, "reset");
+    await action();
+    await settle();
+    return askFrame(countingFrame, "count");
+}
+
+promise_test(async t => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+
+    // IPC interception only works in debug builds.
+    if (!(await askFrame(countingFrame, "count")).hasIPC)
+        return;
+
+    // The counting frame is under the main frame, so the main frame's geometry is relayed to its
+    // process.
+    let counts = await relaysFor(() => countingFrame.style.top = "310px");
+    assert_greater_than(counts.relayCount, 0,
+        "a process with a frame under the main frame should be sent the main frame's geometry");
+
+    // The other cross-site frame's child is in that frame's own process, so no other process reads
+    // the geometry that moving the child changes.
+    counts = await relaysFor(() => askFrame(frameWithLocalChild, "move"));
+    assert_equals(counts.relayCount, 0,
+        "a process with no frame under a frame should not be sent that frame's geometry");
+}, "A frame's geometry is only relayed to processes with a frame under it");
+</script>

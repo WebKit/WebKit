@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+
+<iframe id="frame" style="position: absolute; left: 0; top: 1000px; width: 200px; height: 200px; border: none"
+    src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/intersection-observer/resources/report-target-intersection-frame.html"></iframe>
+<div style="height: 20000px"></div>
+
+<script>
+
+let latestReport = null;
+window.addEventListener("message", event => latestReport = JSON.parse(event.data));
+
+async function settle()
+{
+    for (let i = 0; i < 20; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+}
+
+async function scrollToAndSettle(y)
+{
+    window.scrollTo(0, y);
+    await settle();
+}
+
+promise_test(async t => {
+    t.add_cleanup(() => window.scrollTo(0, 0));
+
+    while (!latestReport)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await settle();
+
+    await scrollToAndSettle(1000);
+    assert_true(latestReport.isIntersecting, "the frame is fully within the viewport");
+
+    // The viewport now ends up at 2000-2600, which is the last viewport the frame's process sees
+    // before it stops being sent the main frame's viewport.
+    await scrollToAndSettle(2000);
+    assert_false(latestReport.isIntersecting, "the target is fully offscreen");
+
+    await scrollToAndSettle(15000);
+    assert_false(latestReport.isIntersecting, "the target is still offscreen");
+
+    // Move the frame into the last viewport its process saw, but far from the current one.
+    frame.style.top = "2100px";
+    await settle();
+    assert_false(latestReport.isIntersecting,
+        "a frame that moves while offscreen must be checked against the current viewport, not the last one its process saw");
+
+    await scrollToAndSettle(2000);
+    assert_true(latestReport.isIntersecting, "the frame is back in the viewport");
+}, "Remote intersection observations stay correct when a frame moves while the viewport is not replicated");
+
+</script>

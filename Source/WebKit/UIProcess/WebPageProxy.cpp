@@ -9864,21 +9864,23 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
     if (!webFrameProxy)
         return;
 
+    auto dataType = static_cast<WebCore::FrameTreeSyncDataType>(data.value.index());
+
+    // Frame geometry is sent through handleFrameGeometryUpdates instead.
+    // FIXME: remove FrameGeometry and FrameViewportInfo as syncable data types.
+    MESSAGE_CHECK(process, dataType != WebCore::FrameTreeSyncDataType::FrameGeometry && dataType != WebCore::FrameTreeSyncDataType::FrameViewportInfo);
+
     // FIXME: This could instead be an option in FrameTreeSyncData.in to allow
     // certain properties to be mutable from non-frame-owning processes.
-    if (frameTreePropertyIsRestrictedToFrameOwningProcess(static_cast<WebCore::FrameTreeSyncDataType>(data.value.index()))) {
+    if (frameTreePropertyIsRestrictedToFrameOwningProcess(dataType)) {
         if (&webFrameProxy->process() != &process.get()) {
             // FIXME: make this a MESSAGE_CHECK.
             return;
         }
     }
 
-    if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::FrameRect))
+    if (dataType == WebCore::FrameTreeSyncDataType::FrameRect)
         webFrameProxy->setRemoteFrameRect(std::get<IntRect>(data.value));
-    else if (auto* frameGeometry = std::get_if<WebCore::FrameGeometrySyncData>(&data.value))
-        webFrameProxy->setFrameGeometry(*frameGeometry);
-    else if (auto* viewportInfo = std::get_if<WebCore::FrameViewportInfo>(&data.value))
-        webFrameProxy->setFrameViewportInfo(*viewportInfo);
 
     // The sender may not have seen site isolation being disabled yet.
     if (!protect(preferences())->siteIsolationEnabled())
@@ -9889,6 +9891,113 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
             return;
         webProcess.send(Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(frameID, WebCore::FrameTreeSyncSerializationData { data }), pageID);
     });
+}
+
+// FIXME: modify WebFrameProxy to make it so that this doesn't require a frame tree walk.
+static bool processHostsDescendantOfFrame(const WebProcessProxy& process, const WebFrameProxy& frame)
+{
+    for (auto* descendant = frame.traverseNext(&frame); descendant; descendant = descendant->traverseNext(&frame)) {
+        if (&descendant->process() == &process)
+            return true;
+    }
+    return false;
+}
+
+static bool processHasFrameInViewport(const WebProcessProxy& process, const WebFrameProxy& mainFrame, const WebCore::LayoutRect& mainFrameLayoutViewport)
+{
+    auto& childrenFrameLayoutInfo = mainFrame.frameGeometry().childrenFrameLayoutInfo;
+    for (Ref child : mainFrame.childFrames()) {
+        RefPtr layoutInfo = childrenFrameLayoutInfo.get(child->frameID());
+        if (!layoutInfo)
+            continue;
+
+        // Use edgeInclusiveIntersect here to match the behavior of IntersectionObserver.
+        auto visibleRectInParent = layoutInfo->visibleRectInParent();
+        if (!visibleRectInParent || !visibleRectInParent->edgeInclusiveIntersect(mainFrameLayoutViewport))
+            continue;
+
+        if (&child->process() == &process || processHostsDescendantOfFrame(process, child))
+            return true;
+    }
+    return false;
+}
+
+static bool shouldSendMainFrameViewportInfo(WebFrameProxy& mainFrame, RemotePageProxy& remotePage)
+{
+    auto& viewportInfo = mainFrame.frameViewportInfo();
+    auto& lastSentViewportInfo = remotePage.lastSentMainFrameViewportInfo();
+    if (lastSentViewportInfo == viewportInfo)
+        return false;
+
+    // As a perf optimization, suppress sending the main frame's FrameViewportInfo if all remote
+    // frames in the destination process are outside of the viewport for consecutive updates.
+    Ref process = remotePage.process();
+    bool shouldSend = !lastSentViewportInfo
+        || processHasFrameInViewport(process, mainFrame, viewportInfo.layoutViewportRect)
+        || processHasFrameInViewport(process, mainFrame, lastSentViewportInfo->layoutViewportRect);
+    if (shouldSend)
+        remotePage.setLastSentMainFrameViewportInfo(viewportInfo);
+    return shouldSend;
+}
+
+void WebPageProxy::handleFrameGeometryUpdates(IPC::Connection& connection, const Vector<WebCore::FrameGeometryUpdate>& updates)
+{
+    // The sender may not have seen site isolation being disabled yet.
+    if (!protect(preferences())->siteIsolationEnabled())
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    RefPtr mainFrame = m_mainFrame;
+
+    Vector<std::pair<Ref<WebFrameProxy>, WebCore::FrameGeometryUpdate>> updatesToRelay;
+    std::optional<WebCore::FrameGeometryUpdate> mainFrameUpdateToRelay;
+    for (auto& update : updates) {
+        RefPtr frame = WebFrameProxy::webFrame(update.frameID);
+        if (!frame || frame->page() != this || &frame->process() != process.ptr())
+            continue;
+
+        if (update.viewportInfo)
+            frame->setFrameViewportInfo(*update.viewportInfo);
+        if (update.geometry)
+            frame->setFrameGeometry(*update.geometry);
+
+        if (frame == mainFrame) {
+            mainFrameUpdateToRelay = { update.frameID, update.geometry, mainFrame->frameViewportInfo() };
+            continue;
+        }
+
+        updatesToRelay.append({ frame.releaseNonNull(), update });
+    }
+
+    auto sendFrameGeometryUpdatesToProcess = [&](WebProcessProxy& webProcess, PageIdentifier pageID, RemotePageProxy* remotePage) {
+        if (webProcess == process)
+            return;
+
+        Vector<WebCore::FrameGeometryUpdate> updatesForProcess;
+        for (auto& [frame, update] : updatesToRelay) {
+            std::optional<WebCore::FrameGeometrySyncData> geometry;
+            if (update.geometry && processHostsDescendantOfFrame(webProcess, frame))
+                geometry = update.geometry;
+            if (geometry || update.viewportInfo)
+                updatesForProcess.append({ update.frameID, WTF::move(geometry), update.viewportInfo });
+        }
+
+        if (mainFrameUpdateToRelay) {
+            auto mainFrameUpdate = *mainFrameUpdateToRelay;
+            if (remotePage && !shouldSendMainFrameViewportInfo(*mainFrame, *remotePage))
+                mainFrameUpdate.viewportInfo = std::nullopt;
+            if (mainFrameUpdate.geometry || mainFrameUpdate.viewportInfo)
+                updatesForProcess.append(WTF::move(mainFrameUpdate));
+        }
+
+        if (!updatesForProcess.isEmpty())
+            webProcess.send(Messages::WebPage::FrameGeometryChangedInAnotherProcess(updatesForProcess), pageID);
+    };
+
+    protect(browsingContextGroup())->forEachRemotePage(*this, [&](auto& remotePage) {
+        sendFrameGeometryUpdatesToProcess(remotePage.process(), remotePage.pageID(), &remotePage);
+    });
+    sendFrameGeometryUpdatesToProcess(protect(legacyMainFrameProcess()), webPageIDInMainFrameProcess(), nullptr);
 }
 
 void WebPageProxy::broadcastAllFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)

@@ -42,6 +42,7 @@
 #include <WebCore/DragActions.h>
 #include <WebCore/Element.h>
 #include <WebCore/FocusOptions.h>
+#include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameTreeSyncData.h>
 #include <WebCore/HighlightVisibility.h>
@@ -91,6 +92,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/UUID.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -903,7 +905,10 @@ public:
     void allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&&);
 
     void frameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void frameGeometryChangedInAnotherProcess(Vector<WebCore::FrameGeometryUpdate>&&);
     void allFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
+
+    void broadcastFrameGeometryUpdatesIfNeeded();
 
     // Updates visible rect state (e.g. windowClipRect and exposedContentRect) in this process using
     // clipping rects from a parent frame process.
@@ -3244,6 +3249,12 @@ private:
     };
     PendingEditorStateUpdateStatus m_pendingEditorStateUpdateStatus { PendingEditorStateUpdateStatus::NotScheduled };
     bool m_needsEditorStateVisualDataUpdate { false };
+
+    struct LastSentFrameGeometry {
+        std::optional<WebCore::FrameGeometrySyncData> geometry;
+        std::optional<WebCore::FrameViewportInfo> viewportInfo;
+    };
+    WeakHashMap<WebCore::Frame, LastSentFrameGeometry> m_lastSentFrameGeometry;
 
     WebCore::DevicePostureType m_devicePostureType { WebCore::DevicePostureType::Continuous };
 

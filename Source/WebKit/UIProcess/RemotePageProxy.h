@@ -31,6 +31,7 @@
 #include "ProcessActivityGroup.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
+#include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -117,6 +118,9 @@ public:
     WebCore::MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void setDrawingArea(DrawingAreaProxy*);
 
+    const std::optional<WebCore::FrameViewportInfo>& lastSentMainFrameViewportInfo() const LIFETIME_BOUND { return m_lastSentMainFrameViewportInfo; }
+    void setLastSentMainFrameViewportInfo(const WebCore::FrameViewportInfo& viewportInfo) { m_lastSentMainFrameViewportInfo = viewportInfo; }
+
     void setCurrentOrientation(WebCore::ScreenOrientationType);
 
     bool hasNetworkRequestsInProgress() const { return m_hasNetworkRequestsInProgress; }
@@ -153,6 +157,7 @@ private:
     const WebCore::Site m_site;
     const UniqueRef<WebProcessActivityState> m_processActivityState;
     RefPtr<RemotePageDrawingAreaProxy> m_drawingArea;
+    std::optional<WebCore::FrameViewportInfo> m_lastSentMainFrameViewportInfo;
 #if ENABLE(FULLSCREEN_API)
     RefPtr<RemotePageFullscreenManagerProxy> m_fullscreenManager;
 #endif

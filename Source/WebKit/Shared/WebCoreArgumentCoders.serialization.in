@@ -1370,6 +1370,13 @@ header: <WebCore/FrameGeometrySyncData.h>
     WebCore::ScrollPosition scrollPosition;
 };
 
+header: <WebCore/FrameGeometrySyncData.h>
+[CustomHeader] struct WebCore::FrameGeometryUpdate {
+    WebCore::FrameIdentifier frameID;
+    std::optional<WebCore::FrameGeometrySyncData> geometry;
+    std::optional<WebCore::FrameViewportInfo> viewportInfo;
+};
+
 header: <WebCore/VP9Utilities.h>
 [CustomHeader] struct WebCore::ScreenDataOverrides {
     double width;

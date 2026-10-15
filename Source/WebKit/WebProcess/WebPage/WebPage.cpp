@@ -1387,19 +1387,28 @@ void WebPage::allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::Documen
         page->updateTopDocumentSyncData(WTF::move(data));
 }
 
-void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+static RefPtr<WebFrame> webFrameInPage(WebPage& page, FrameIdentifier frameID)
 {
-    ASSERT(m_page->settings().siteIsolationEnabled());
-
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
-        return;
+        return nullptr;
 
     // Multi-process BFCache lifecycle can route a cross-process frame-tree sync message
     // to a WebPage that no longer owns this WebFrame (e.g. when a sibling WebPage in the
     // same process holds the frame after a suspend/restore transition). Silently ignore
     // such mis-routed updates rather than acting on a frame in a different WebPage.
-    if (frame->page() != this)
+    if (frame->page() != &page)
+        return nullptr;
+
+    return frame;
+}
+
+void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+{
+    ASSERT(m_page->settings().siteIsolationEnabled());
+
+    RefPtr frame = webFrameInPage(*this, frameID);
+    if (!frame)
         return;
 
     RefPtr coreFrame = frame->coreFrame();
@@ -1407,38 +1416,49 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
         return;
 
     coreFrame->updateFrameTreeSyncData(data);
-    auto dataType = static_cast<FrameTreeSyncDataType>(data.value.index());
 
-    switch (dataType) {
-    case FrameTreeSyncDataType::FrameRect:
-        frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
-        break;
+    // Frame geometry arrives through frameGeometryChangedInAnotherProcess instead.
+    // FIXME: consider moving FrameRect to FrameGeometryUpdate.
+    if (data.value.index() != std::to_underlying(FrameTreeSyncDataType::FrameRect))
+        return;
 
-    case FrameTreeSyncDataType::FrameGeometry:
-        updateChildFrameVisibleRectsFromParent(*coreFrame);
-        updateRemoteIntersectionObservers();
-        break;
-
-    case FrameTreeSyncDataType::FrameViewportInfo:
-        if (RefPtr view = coreFrame->virtualView())
-            view->scrollTo(coreFrame->frameTreeSyncData().frameViewportInfo.scrollPosition);
-        updateRemoteIntersectionObservers();
-        break;
-
-    default:
-        break;
-    }
-
+    frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
 #if ENABLE(PDF_HUD)
-    switch (dataType) {
-    case FrameTreeSyncDataType::FrameRect:
-    case FrameTreeSyncDataType::FrameViewportInfo:
-    case FrameTreeSyncDataType::FrameGeometry:
-        updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
-        break;
-    default:
-        break;
+    updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
+#endif
+}
+
+void WebPage::frameGeometryChangedInAnotherProcess(Vector<FrameGeometryUpdate>&& updates)
+{
+    ASSERT(m_page->settings().siteIsolationEnabled());
+
+    bool didApplyUpdate = false;
+    for (auto& update : updates) {
+        RefPtr frame = webFrameInPage(*this, update.frameID);
+        RefPtr coreFrame = frame ? frame->coreFrame() : nullptr;
+        if (!coreFrame)
+            continue;
+
+        if (update.viewportInfo) {
+            coreFrame->updateFrameTreeSyncData(FrameTreeSyncSerializationData { WTF::move(*update.viewportInfo) });
+            if (RefPtr view = coreFrame->virtualView())
+                view->scrollTo(coreFrame->frameTreeSyncData().frameViewportInfo.scrollPosition);
+        }
+
+        if (update.geometry) {
+            coreFrame->updateFrameTreeSyncData(FrameTreeSyncSerializationData { WTF::move(*update.geometry) });
+            updateChildFrameVisibleRectsFromParent(*coreFrame);
+        }
+
+        didApplyUpdate = true;
     }
+
+    if (!didApplyUpdate)
+        return;
+
+    updateRemoteIntersectionObservers();
+#if ENABLE(PDF_HUD)
+    updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
 #endif
 }
 
@@ -1461,17 +1481,49 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     }
 
     // UIProcess sends this message when the frame associated with frameID navigates or is newly
-    // added to this page. Since UIProcess doesn't store any geometry, the FrameGeometrySyncData and
-    // FrameViewportInfo in this message are empty, and we have to re-send our geometry to the new
-    // frame process.
+    // added to this page. The FrameGeometrySyncData and FrameViewportInfo in this message can be
+    // empty, and we have to re-send our geometry to the new frame process.
     //
     // FIXME: this scales quadratically with the number of frames.
-    page->forEachLocalFrame([](LocalFrame& localFrame) {
-        if (RefPtr client = dynamicDowncast<WebLocalFrameLoaderClient>(localFrame.loader().client()))
-            client->clearLastBroadcastFrameTreeSyncData();
+    m_lastSentFrameGeometry.clear();
+    page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
+}
+
+template<typename T>
+static std::optional<T> valueToSendIfChanged(std::optional<T>& lastSentValue, T&& value)
+{
+    if (lastSentValue == value)
+        return std::nullopt;
+    lastSentValue = value;
+    return WTF::move(value);
+}
+
+void WebPage::broadcastFrameGeometryUpdatesIfNeeded()
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    Vector<FrameGeometryUpdate> updates;
+    page->enumerateLocalFrameGeometry([&](LocalFrame& frame, FrameViewportInfo&& viewportInfo, FrameGeometrySyncData&& geometry) {
+        auto& lastSentGeometry = m_lastSentFrameGeometry.ensure(frame, [] {
+            return LastSentFrameGeometry { };
+        }).iterator->value;
+
+        auto viewportInfoToSend = valueToSendIfChanged(lastSentGeometry.viewportInfo, WTF::move(viewportInfo));
+        auto geometryToSend = valueToSendIfChanged(lastSentGeometry.geometry, WTF::move(geometry));
+        if (!viewportInfoToSend && !geometryToSend)
+            return;
+
+        if (viewportInfoToSend)
+            page->didSendFrameViewportInfoForTesting();
+        if (geometryToSend)
+            page->didSendFrameGeometryForTesting();
+        updates.append({ frame.frameID(), WTF::move(geometryToSend), WTF::move(viewportInfoToSend) });
     });
 
-    page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
+    if (!updates.isEmpty())
+        send(Messages::WebPageProxy::HandleFrameGeometryUpdates(updates));
 }
 
 void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreFrame)
@@ -1520,7 +1572,7 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
             needsViewportContentsChanged = true;
 
             // FIXME: if this frame has a remote descendant, then we have to propagate this frame's
-            // windowClipRect to it via Page::syncLocalFrameInfoToRemote(), and that currently only
+            // windowClipRect to it via broadcastFrameGeometryUpdatesIfNeeded(), and that currently only
             // happens in updateRendering. We should see if we can figure out a more efficient way
             // of doing this.
             if (!needsRenderingUpdate && localChild->tree().hasRemoteFrameDescendant())

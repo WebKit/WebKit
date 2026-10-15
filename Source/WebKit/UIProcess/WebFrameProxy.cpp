@@ -608,6 +608,7 @@ void WebFrameProxy::disconnect()
         }
 #endif
         parentFrame->m_childFrames.remove(*this);
+        parentFrame->m_frameGeometry.childrenFrameLayoutInfo.remove(m_frameID);
     }
     m_parentFrame = nullptr;
 }
@@ -925,6 +926,12 @@ void WebFrameProxy::broadcastFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
     webPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPage::AllFrameTreeSyncDataChangedInAnotherProcess(m_frameID, data), pageID);
     });
+
+    if (isMainFrame()) {
+        protect(webPage->browsingContextGroup())->forEachRemotePage(*webPage, [&](auto& remotePage) {
+            remotePage.setLastSentMainFrameViewportInfo(data->frameViewportInfo);
+        });
+    }
 }
 
 void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess)

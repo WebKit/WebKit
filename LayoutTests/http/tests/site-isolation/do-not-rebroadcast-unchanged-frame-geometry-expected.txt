@@ -1,4 +1,5 @@
 
 
-PASS Frame geometry is only broadcast when it has changed
+PASS Frame geometry is only sent when it has changed
+PASS Scrolling only sends the frame geometry when the visible part of a cross-site frame changes
 

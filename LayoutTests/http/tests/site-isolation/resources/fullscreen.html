@@ -9,12 +9,14 @@
         if (window.testRunner) { await testRunner.updatePresentation() }
         window.parent.postMessage("Size after exiting fullscreen: " + document.body.clientHeight + "x" + document.body.clientWidth, "*");
     }
-    if (window.internals) {
+    addEventListener("message", event => {
+        if (event.data !== "start" || !window.internals)
+            return;
         internals.withUserGesture(async () => {
             await enterFullScreen();
             await exitFullScreen();
         });
-    }
+    });
     function becomeUnresponsive() {
         while (1);
     }

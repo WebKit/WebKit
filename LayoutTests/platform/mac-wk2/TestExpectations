@@ -2608,7 +2608,6 @@ webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/express
 [ GoldenGate Debug ] accessibility/isolated-tree/element-reflection-ariaowns.html [ Pass Failure ]
 [ GoldenGate Debug ] fast/webgpu/nocrash/fuzz-291168.html [ Pass Failure ]
 [ GoldenGate Debug ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Timeout ]
-[ GoldenGate Debug ] http/tests/site-isolation/only-broadcast-frame-geometry-from-frames-with-cross-process-descendants.html [ Pass Failure ]
 [ GoldenGate Debug ] http/wpt/webauthn/public-key-credential-get-success-u2f.https.html [ Pass Failure ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/css/filter-effects/crashtests/fecomponenttransfer-tablevalues-crash.html [ Pass Timeout ]
 [ GoldenGate Debug ] imported/w3c/web-platform-tests/wasm/core/float_literals.wast.js.html [ Pass Timeout ]

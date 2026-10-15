@@ -1485,6 +1485,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::FoundElementInRemoteFrame': ['<WebCore/FocusControllerTypes.h>'],
         'WebCore::FragmentedSharedBuffer': ['<WebCore/SharedBuffer.h>'],
         'WebCore::AXFrameGeometry': ['<WebCore/AXObjectTypes.h>'],
+        'WebCore::FrameGeometryUpdate': ['<WebCore/FrameGeometrySyncData.h>'],
         'WebCore::FrameIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::FrameTreeSyncSerializationData': ['<WebCore/FrameTreeSyncData.h>'],

@@ -96,6 +96,7 @@
 #include "FontCache.h"
 #include "FragmentDirectiveGenerator.h"
 #include "FrameConsoleClient.h"
+#include "FrameGeometrySyncData.h"
 #include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -2381,17 +2382,17 @@ unsigned LEGACY_NODELETE Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
-void Page::syncLocalFrameInfoToRemote()
+void Page::enumerateLocalFrameGeometry(NOESCAPE const Function<void(LocalFrame&, FrameViewportInfo&&, FrameGeometrySyncData&&)>& function)
 {
-    ASSERT(mainFrame().tree().containsRemoteFrame());
+    if (!mainFrame().tree().containsRemoteFrame())
+        return;
 
-    forEachLocalFrame([] (LocalFrame& frame) {
+    forEachLocalFrame([&](LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
         if (!frameView)
             return;
 
         auto layoutViewportRect = frameView->layoutViewportRect();
-        bool hasOnScreenRemoteDescendant = false;
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
 
         auto windowClipRectInContentCoordinates = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
@@ -2408,9 +2409,6 @@ void Page::syncLocalFrameInfoToRemote()
 #endif
 
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-            if (!child->tree().containsRemoteFrame())
-                continue;
-
             auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
             auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
 
@@ -2422,15 +2420,6 @@ void Page::syncLocalFrameInfoToRemote()
             };
 
             auto visibleRectInParent = frameView->visibleRectOfChild(*child.get());
-
-            if (visibleRectInParent) {
-                auto onScreenRectInParent = *visibleRectInParent;
-
-                // Use edgeInclusiveIntersect instead of intersects with layoutViewportRect to match
-                // how IntersectionObserver performs intersections.
-                if (onScreenRectInParent.edgeInclusiveIntersect(layoutViewportRect))
-                    hasOnScreenRemoteDescendant = true;
-            }
 
             auto onScreenRectInChildView = [&] {
                 if (!visibleRectInParent)
@@ -2479,20 +2468,7 @@ void Page::syncLocalFrameInfoToRemote()
             ));
         }
 
-        frame.loader().client().broadcastFrameViewportInfoToOtherProcessesIfNeeded({
-            layoutViewportRect,
-            frameView->scrollPosition()
-        }, hasOnScreenRemoteDescendant);
-
-        if (childrenFrameLayoutInfo.isEmpty()) {
-            ASSERT(!frame.tree().containsRemoteFrame());
-            return;
-        }
-
-        frame.loader().client().broadcastFrameGeometryToOtherProcesses({
-            frameView->contentsSize(),
-            WTF::move(childrenFrameLayoutInfo)
-        });
+        function(frame, { layoutViewportRect, frameView->scrollPosition() }, { frameView->contentsSize(), WTF::move(childrenFrameLayoutInfo) });
     });
 }
 
@@ -2809,7 +2785,7 @@ void Page::doAfterUpdateRendering()
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
 
     if (mainFrame().tree().containsRemoteFrame())
-        syncLocalFrameInfoToRemote();
+        chrome().client().syncLocalFrameInfoToRemote();
 }
 
 void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)

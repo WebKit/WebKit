@@ -1,0 +1,85 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<iframe id="upperFrame" style="position: absolute; left: 0; top: 1000px; width: 100px; height: 100px; border: none"
+    src="http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/frame-geometry/resources/count-relayed-frame-geometry.html"></iframe>
+<iframe id="lowerFrame" style="position: absolute; left: 0; top: 3000px; width: 100px; height: 100px; border: none"
+    src="http://127.0.0.1:{{ports[http][0]}}/WebKit/site-isolation/frame-geometry/resources/count-relayed-frame-geometry.html"></iframe>
+<div style="height: 6000px"></div>
+<script>
+
+function askFrame(frame, command)
+{
+    return new Promise(resolve => {
+        window.addEventListener("message", function listener(event) {
+            if (event.source !== frame.contentWindow)
+                return;
+            window.removeEventListener("message", listener);
+            resolve(event.data);
+        });
+        frame.contentWindow.postMessage(command, "*");
+    });
+}
+
+function askFrames(command)
+{
+    return Promise.all([askFrame(upperFrame, command), askFrame(lowerFrame, command)]);
+}
+
+async function settle()
+{
+    for (let i = 0; i < 3; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function settleUntilQuiescent()
+{
+    for (let i = 0; i < 20; i++) {
+        await askFrames("reset");
+        await settle();
+        const [upper, lower] = await askFrames("count");
+        if (!upper.relayCount && !lower.relayCount)
+            return;
+    }
+    assert_unreached("frame geometry never stopped being relayed");
+}
+
+async function relaysFor(action)
+{
+    await settleUntilQuiescent();
+    await askFrames("reset");
+    action();
+    await settle();
+    return askFrames("count");
+}
+
+promise_test(async t => {
+    await new Promise(resolve => window.addEventListener("load", resolve));
+
+    // IPC interception only works in debug builds.
+    if (!(await askFrame(upperFrame, "count")).hasIPC)
+        return;
+
+    t.add_cleanup(() => window.scrollTo(0, 0));
+
+    await relaysFor(() => window.scrollTo(0, 950));
+
+    // The upper frame stays fully in view, so only the main frame's viewport changes.
+    let [upper, lower] = await relaysFor(() => window.scrollTo(0, 960));
+    assert_equals(upper.relayCount, 1,
+        "the process with a frame in the viewport should be sent the main frame's viewport");
+    assert_equals(lower.relayCount, 0,
+        "the process with no frame in the viewport should not be sent the main frame's viewport");
+
+    await relaysFor(() => window.scrollTo(0, 2950));
+
+    [upper, lower] = await relaysFor(() => window.scrollTo(0, 2960));
+    assert_equals(upper.relayCount, 0,
+        "the process whose frame left the viewport should not be sent the main frame's viewport");
+    assert_equals(lower.relayCount, 1,
+        "the process whose frame entered the viewport should be sent the main frame's viewport");
+}, "The main frame's viewport is only relayed to processes with a frame in it");
+</script>

@@ -1,0 +1,4 @@
+
+
+PASS Remote intersection observations stay correct when a frame moves while the viewport is not replicated
+

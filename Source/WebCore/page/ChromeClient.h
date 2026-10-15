@@ -534,6 +534,7 @@ public:
     // Schedule a rendering update that coordinates with display refresh. Returns true if scheduled. (This is only used by SVGImageChromeClient.)
     virtual bool scheduleRenderingUpdate() { return false; }
     virtual void renderingUpdateFramesPerSecondChanged() { }
+    virtual void syncLocalFrameInfoToRemote() { }
 
     virtual unsigned remoteImagesCountForTesting() const { return 0; }
 

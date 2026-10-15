@@ -113,7 +113,6 @@ struct BackForwardFrameItemIdentifierType;
 using BackForwardFrameItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardFrameItemIdentifierType>>;
 
 struct BackForwardItemIdentifierType;
-struct FrameViewportInfo;
 struct StringWithDirection;
 
 using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
@@ -397,8 +396,6 @@ public:
     virtual void applyMonitorUnloadToOwnerFrame(IFrameUnloadReason);
 
     virtual bool shouldSuppressLayoutMilestones() const { return false; }
-
-    virtual void broadcastFrameViewportInfoToOtherProcessesIfNeeded(const FrameViewportInfo&, bool hasOnScreenRemoteDescendant);
 
 protected:
     explicit LocalFrameLoaderClient(FrameLoader&);

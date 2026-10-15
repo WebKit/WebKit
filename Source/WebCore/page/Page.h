@@ -247,6 +247,8 @@ struct ClientOrigin;
 struct CueMatch;
 struct DocumentSyncSerializationData;
 struct FixedContainerEdges;
+struct FrameGeometrySyncData;
+struct FrameViewportInfo;
 struct ResolvedCaptionDisplaySettingsOptions;
 struct SystemPreviewInfo;
 struct TextRecognitionResult;
@@ -1471,7 +1473,13 @@ public:
     AcceleratedTimelinesUpdater& ensureAcceleratedTimelinesUpdater() LIFETIME_BOUND;
 #endif
 
-    void syncLocalFrameInfoToRemote();
+    WEBCORE_EXPORT void enumerateLocalFrameGeometry(NOESCAPE const Function<void(LocalFrame&, FrameViewportInfo&&, FrameGeometrySyncData&&)>&);
+
+    void didSendFrameViewportInfoForTesting() { ++m_sentFrameViewportInfoCountForTesting; }
+    void didSendFrameGeometryForTesting() { ++m_sentFrameGeometryCountForTesting; }
+    unsigned sentFrameViewportInfoCountForTesting() const { return m_sentFrameViewportInfoCountForTesting; }
+    unsigned sentFrameGeometryCountForTesting() const { return m_sentFrameGeometryCountForTesting; }
+
     RenderingUpdateScheduler& renderingUpdateScheduler() LIFETIME_BOUND;
 
 private:
@@ -1728,6 +1736,9 @@ private:
 
     unsigned m_renderingUpdateCount { 0 };
     bool m_isTrackingRenderingUpdates { false };
+
+    unsigned m_sentFrameViewportInfoCountForTesting { 0 };
+    unsigned m_sentFrameGeometryCountForTesting { 0 };
 
     bool m_isRestoringCachedPage { false };
 

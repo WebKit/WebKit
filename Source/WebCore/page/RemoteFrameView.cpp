@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-// Page::syncLocalFrameInfoToRemote running in a parent frame process only sends transforms for
-// child frame subtrees containing a remote frame. From our perspective, that means that the
+// UIProcess only relays a frame's geometry to processes that host a frame under it (see
+// WebPageProxy::handleFrameGeometryUpdates). From our perspective, that means that the
 // transforms are only valid on child subtrees containing a local frame.
 //
 // As an example, the absoluteToChildFrameOwnerLocalTransform for a child frame whose subtree is

@@ -1005,6 +1005,9 @@ enum ContentsFormat {
     undefined startTrackingRenderingUpdates();
     unsigned long renderingUpdateCount();
 
+    unsigned long sentFrameViewportInfoCount();
+    unsigned long sentFrameGeometryCount();
+
     double? timeToNextRenderingUpdate();
 
     attribute CompositingPolicy? compositingPolicyOverride;
