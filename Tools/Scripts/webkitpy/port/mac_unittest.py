@@ -341,3 +341,20 @@ class MacTest(darwin_testcase.DarwinTest):
         # genuinely new crash and is still appended.
         merged = port._merge_crash_logs({}, {'com.apple.WebKit.WebContent-9999': 'other-pid-log'}, crashed_processes)
         self.assertEqual('other-pid-log', merged['com.apple.WebKit.WebContent-9999'])
+
+    def test_look_for_new_crash_logs_skips_known_crashes(self):
+        port = self.make_port()
+        all_logs = {
+            'com.apple.WebKit.WebContent.Development-4242': 'expected-crash-log',
+            'com.apple.WebKit.GPU.Development-4243': 'unrelated-log',
+        }
+        port._look_for_all_crash_logs_in_log_dir = lambda newer_than: dict(all_logs)
+        known_crashed_processes = [['http/tests/workers/service/basic.https', 'ServiceWorkerProcess', 4242]]
+
+        crash_logs = port.look_for_new_crash_logs([], 0, known_crashed_processes)
+        self.assertNotIn('com.apple.WebKit.WebContent.Development-4242', crash_logs)
+        self.assertEqual('unrelated-log', crash_logs['com.apple.WebKit.GPU.Development-4243'])
+
+        # Without the known crashes, the same report is reported as a new crash.
+        crash_logs = port.look_for_new_crash_logs([], 0)
+        self.assertEqual('expected-crash-log', crash_logs['com.apple.WebKit.WebContent.Development-4242'])
