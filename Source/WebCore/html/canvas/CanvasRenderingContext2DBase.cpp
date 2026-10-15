@@ -479,7 +479,7 @@ CanvasRenderingContext2DBase::FontProxy::~FontProxy()
 }
 
 CanvasRenderingContext2DBase::FontProxy::FontProxy(const FontProxy& other)
-    : m_font(other.m_font)
+    : m_font(protect(other.m_font))
 {
     if (realized())
         protect(m_font.fontSelector())->registerForInvalidationCallbacks(*this);

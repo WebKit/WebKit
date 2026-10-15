@@ -223,7 +223,7 @@ bool HTMLFormControlElement::isKeyboardFocusable(const FocusEventData& focusEven
         return Element::isKeyboardFocusable(focusEventData);
     return isFocusable()
         && document().frame()
-        && document().frame()->eventHandler().tabsToAllFormControls(focusEventData);
+        && protect(document().frame()->eventHandler())->tabsToAllFormControls(focusEventData);
 }
 
 bool HTMLFormControlElement::isMouseFocusable() const

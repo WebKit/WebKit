@@ -44,11 +44,6 @@ dom/ShadowRoot.cpp
 [ macOS ] editing/FrameSelection.cpp
 [ macOS ] fileapi/Blob.cpp
 [ macOS ] history/CachedFrame.cpp
-[ macOS ] html/BaseDateAndTimeInputType.cpp
-[ macOS ] html/HTMLFormControlElement.cpp
-[ macOS ] html/HTMLSelectElement.cpp
-[ macOS ] html/SearchInputType.cpp
-[ macOS ] html/canvas/CanvasRenderingContext2DBase.cpp
 [ macOS ] inspector/agents/InspectorCSSAgent.cpp
 [ macOS ] inspector/agents/frame/FrameCSSAgent.cpp
 layout/floats/FloatingContext.cpp

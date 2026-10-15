@@ -423,7 +423,7 @@ void BaseDateAndTimeInputType::updateInnerTextValue()
         return;
     }
 
-    DateTimeEditElement::LayoutParameters layoutParameters(input->locale());
+    DateTimeEditElement::LayoutParameters layoutParameters(protect(input->locale()));
 
     auto date = parseToDateComponents(input->value().get());
     if (date)
