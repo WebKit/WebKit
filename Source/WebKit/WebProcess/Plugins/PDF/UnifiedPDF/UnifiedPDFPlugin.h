@@ -190,14 +190,17 @@ public:
     void installDataDetectorOverlay(WebCore::PageOverlay&);
     void uninstallDataDetectorOverlay(WebCore::PageOverlay&);
 
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint& clickPointInMainFrameView);
 
     bool LEGACY_NODELETE canShowDataDetectorHighlightOverlays() const;
+
+    WebCore::IntRect rectForSelectionInRootViewContentsSpace(PDFSelection *) const;
 #endif
 
     void scheduleRenderingUpdate(OptionSet<WebCore::RenderingUpdateStep> = WebCore::RenderingUpdateStep::LayerFlush);
     RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient&); // Why public?
     float deviceScaleFactor() const override;
+    WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
 
     WebCore::FloatRect rectForSelectionInMainFrameContentsSpace(PDFSelection *) const;
 
@@ -442,7 +445,6 @@ private:
     String selectionString() const override;
     std::pair<String, String> stringsBeforeAndAfterSelection(int characterCount) const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
-    WebCore::FloatRect rectForSelectionInRootView(PDFSelection *) const override;
 
     // Find in PDF
     enum class HideFindIndicator : bool { No, Yes };
