@@ -51,6 +51,12 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
     m_matches.set(*frameID, FrameMatchResult { matchCount, didWrap });
 }
 
+void FindStringCallbackAggregator::foundMatchCountsByFrame(Vector<std::pair<FrameIdentifier, uint32_t>>&& counts)
+{
+    for (auto& [frameID, count] : counts)
+        m_matchCountsByFrame.set(frameID, count);
+}
+
 RefPtr<WebFrameProxy> FindStringCallbackAggregator::incrementFrame(WebFrameProxy& frame)
 {
     auto canWrap = m_options.contains(FindOptions::WrapAround) ? CanWrap::Yes : CanWrap::No;
@@ -81,8 +87,7 @@ uint32_t FindStringCallbackAggregator::globalIndexOffsetForFrame(const WebFrameP
     uint32_t offset = 0;
     RefPtr mainFrame = m_page->mainFrame();
     for (RefPtr frame = mainFrame; frame && frame != &targetFrame; frame = frame->traverseNext(mainFrame)) {
-        if (auto it = m_matches.find(frame->frameID()); it != m_matches.end())
-            offset += it->value.matchCount;
+        offset += m_matchCountsByFrame.get(frame->frameID());
     }
     return offset;
 }
