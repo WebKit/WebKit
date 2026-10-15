@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/spatial-video-render-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the fisheye and wide-field-of-view projections sample the direction the camera is aimed at. The texture encodes the longitude and latitude of each texel's direction, so the colour at the centre of the view should decode back to the camera's own yaw and pitch.");
+
+const TOLERANCE_DEGREES = 4;
+
+// A fisheye texture is a disc: distance from the centre is the angle from the view axis, and the
+// angle around the centre is the angle around that axis. Texels outside the disc are unused.
+function fisheyeGrid(fovDegrees)
+{
+    const limit = fovDegrees / 2 * Math.PI / 180;
+    return SpatialRenderTest.paintGrid(512, 512, (u, v) => {
+        const acrossTexture = u - 0.5;
+        const upTexture = 0.5 - v;
+        const radius = Math.hypot(acrossTexture, upTexture);
+        if (radius > 0.5)
+            return null;
+        const theta = radius / 0.5 * limit;
+        const phi = Math.atan2(upTexture, acrossTexture);
+        return [
+            Math.sin(theta) * Math.cos(phi),
+            Math.sin(theta) * Math.sin(phi),
+            -Math.cos(theta),
+        ];
+    });
+}
+
+window.errors = {};
+
+function measure(name, projection, fovDegrees, aims)
+{
+    const support = SpatialRenderTest.createRenderer(projection);
+    if (!support) {
+        errors[name] = null;
+        return;
+    }
+    SpatialRenderTest.uploadGrid(support, fisheyeGrid(fovDegrees));
+    let worst = 0;
+    for (const [yaw, pitch] of aims)
+        worst = Math.max(worst, SpatialRenderTest.aimErrorDegrees(support, yaw, pitch));
+    errors[name] = worst;
+    SpatialRenderTest.destroy(support);
+}
+
+// Both lenses only carry a cone of the sphere, so the camera stays inside it: half of 180 for
+// fisheye and half of 150 for wide field of view, which are the defaults _buildMesh applies.
+measure("fisheye", "fisheye", 180, [
+    [0, 0], [30, 0], [-30, 0], [60, 0], [-60, 0],
+    [0, 30], [0, -30], [40, 25], [-40, -25],
+]);
+
+measure("wideFOV", "wideFOV", 150, [
+    [0, 0], [20, 0], [-20, 0], [45, 0], [-45, 0],
+    [0, 20], [0, -20], [30, 20], [-30, -20],
+]);
+
+shouldBeTrue("errors.fisheye !== null");
+shouldBeTrue("errors.wideFOV !== null");
+shouldBeTrue(`errors.fisheye < ${TOLERANCE_DEGREES}`);
+shouldBeTrue(`errors.wideFOV < ${TOLERANCE_DEGREES}`);
+
+</script>
+</body>
