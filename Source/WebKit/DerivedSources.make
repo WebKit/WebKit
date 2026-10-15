@@ -705,6 +705,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Authentication/AuthenticationChallengeDisposition.serialization.in \
+	Shared/Automation/ComputedAccessibilityProperties.serialization.in \
 	Shared/BackgroundFetchChange.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \
 	Shared/CacheModel.serialization.in \
