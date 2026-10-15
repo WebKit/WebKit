@@ -43,6 +43,7 @@
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/NodeDocument.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PointerCharacteristics.h>
@@ -226,9 +227,17 @@ void WebPage::setInputMethodState(Element* element)
     if (!element && m_recentlyBlurredElement)
         return;
 
+    // Any other change of the state, such as a script moving the focus while the page has no focus, replaces what
+    // resetInputMethodStateAfterBlur() remembered.
+    m_inputMethodStateBeforePageBlur = std::nullopt;
+    sendInputMethodState(element, !m_userIsInteracting);
+}
+
+void WebPage::sendInputMethodState(Element* element, bool inhibitOnScreenKeyboard)
+{
     auto state = inputMethodStateForElement(element);
 
-    if (state && !m_userIsInteracting)
+    if (state && inhibitOnScreenKeyboard)
         state->hints.add(InputMethodState::Hint::InhibitOnScreenKeyboard);
 
     if (m_inputMethodState == state)
@@ -236,6 +245,44 @@ void WebPage::setInputMethodState(Element* element)
 
     m_inputMethodState = state;
     send(Messages::WebPageProxy::SetInputMethodState(state));
+}
+
+// FocusController dispatches blur and focus events on the focused element when the page stops or starts being both
+// active and focused, see FocusController::setActivityState().
+static constexpr OptionSet activeAndFocused { ActivityState::IsFocused, ActivityState::WindowIsActive };
+
+void WebPage::resetInputMethodStateAfterBlur(Element& element)
+{
+    // When the page loses the focus, as when switching to another tab, the focused element gets a blur event but stays
+    // the focused element of its document, and it gets a focus event again when the page gets the focus back. Remember
+    // whether its on-screen keyboard was inhibited then. See restoreInputMethodStateAfterPageFocus().
+    m_inputMethodStateBeforePageBlur = std::nullopt;
+    if (!m_activityState.containsAll(activeAndFocused) && m_inputMethodState && protect(element.document())->focusedElement() == &element)
+        m_inputMethodStateBeforePageBlur = InputMethodStateBeforePageBlur { element, m_inputMethodState->hints.contains(InputMethodState::Hint::InhibitOnScreenKeyboard) };
+
+    sendInputMethodState(nullptr, false);
+}
+
+void WebPage::restoreInputMethodStateAfterPageFocus(Element& element)
+{
+    // When the page gets the focus back, its focused element gets a focus event, but WebCore does not update the input
+    // method state because the focused element does not change. resetInputMethodStateAfterBlur() reset the state when
+    // the page lost the focus, so send it again for that element, unless something set the state meanwhile, which
+    // forgets the element. Other elements focused meanwhile, for example from a window focus event handler, get their
+    // state like any other focus change.
+    bool isBecomingActiveAndFocused = m_lastActivityStateChanges.containsAny(activeAndFocused) && m_activityState.containsAll(activeAndFocused);
+    if (!isBecomingActiveAndFocused || !m_inputMethodStateBeforePageBlur || m_inputMethodStateBeforePageBlur->element.get() != &element)
+        return;
+
+    sendInputMethodState(&element, shouldInhibitOnScreenKeyboardAfterPageFocus());
+    m_inputMethodStateBeforePageBlur = std::nullopt;
+}
+
+bool WebPage::shouldInhibitOnScreenKeyboardAfterPageFocus() const
+{
+    // The page getting the focus back is not a user interaction: the on-screen keyboard is inhibited or not as it was
+    // when the page lost the focus.
+    return m_inputMethodStateBeforePageBlur->inhibitsOnScreenKeyboard;
 }
 
 void WebPage::focusedElementDidChangeReadOnly(Element& element)

@@ -8117,6 +8117,11 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
         updateInputContextAfterBlurringAndRefocusingElementIfNeeded(element);
         m_focusedElement = element;
         m_recentlyBlurredElement = nullptr;
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        // The element can already be m_focusedElement when the page gets the focus back, if a script focused it
+        // again while the page had no focus.
+        restoreInputMethodStateAfterPageFocus(element);
+#endif
         return;
     }
 
@@ -8161,6 +8166,8 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
         // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.
         // This also doesn't take other noneditable controls into account, such as input type color.
         send(Messages::WebPageProxy::SetFocusedElementInputType(inputTypeForElement(element)));
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+        restoreInputMethodStateAfterPageFocus(element);
 #endif
         m_recentlyBlurredElement = nullptr;
     }
@@ -8180,9 +8187,8 @@ void WebPage::elementDidBlur(WebCore::Element& element)
 #elif PLATFORM(MAC)
                 protectedThis->send(Messages::WebPageProxy::SetFocusedElementInputType(InputType::None));
 #elif PLATFORM(GTK) || PLATFORM(WPE)
-                // Clear it first so that setInputMethodState() does not hold the reset back again.
-                protectedThis->m_recentlyBlurredElement = nullptr;
-                protectedThis->setInputMethodState(nullptr);
+                RefPtr element = std::exchange(protectedThis->m_recentlyBlurredElement, nullptr);
+                protectedThis->resetInputMethodStateAfterBlur(*element);
 #endif
             }
             protectedThis->m_recentlyBlurredElement = nullptr;
