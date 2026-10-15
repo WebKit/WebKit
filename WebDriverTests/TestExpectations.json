@@ -423,17 +423,6 @@
         }
     },
 
-    "imported/selenium/py/test/selenium/webdriver/common/form_handling_tests.py": {
-        "subtests": {
-            "test_should_be_able_to_enter_text_into_atext_area_by_setting_its_value": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/279342"}}
-            },
-            "test_sending_keyboard_events_should_append_text_in_inputs": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/279342"}}
-            }
-        }
-    },
-
     "imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py": {
         "subtests": {
             "test_should_focus_on_the_replacement_when_aframe_follows_alink_to_a_top_targeted_page": {
@@ -569,36 +558,6 @@
 
     "imported/selenium/py/test/selenium/webdriver/common/typing_tests.py": {
         "subtests": {
-            "test_should_be_able_to_mix_upper_and_lower_case_letters": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_should_be_able_to_type_capital_letters": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_should_be_able_to_type_quote_marks": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_should_be_able_to_type_the_at_character": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_should_be_able_to_use_arrow_keys": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_should_type_into_input_elements_that_have_no_type_attribute": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_will_simulate_akey_down_when_entering_text_into_input_elements": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_will_simulate_akey_down_when_entering_text_into_text_areas": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_will_simulate_akey_up_when_entering_text_into_input_elements": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_will_simulate_akey_up_when_entering_text_into_text_areas": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_numeric_shift_keys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
             },
@@ -619,14 +578,12 @@
             },
             "test_will_simulate_akey_press_when_entering_text_into_input_elements" : {
                 "expected": {
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"},
-                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
                 }
             },
             "test_will_simulate_akey_press_when_entering_text_into_text_areas" : {
                 "expected": {
-                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"},
-                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}
                 }
             }
         }
@@ -1061,9 +1018,6 @@
 
     "imported/w3c/webdriver/tests/classic/perform_actions/key_events.py": {
         "subtests": {
-            "test_special_key_sends_keydown[CLEAR-expected4]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_special_key_sends_keydown[F11-expected16]": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
@@ -1108,24 +1062,6 @@
             },
             "test_printable_key_sends_correct_events[,-Comma]": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
-            },
-            "test_printable_key_sends_correct_events[@-Digit2]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/279342"}}
-            },
-            "test_printable_key_sends_correct_events[\"-Quote]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/279342"}}
-            },
-            "test_printable_key_sends_correct_events[\\u0416-]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303836"}}
-            },
-            "test_printable_key_sends_correct_events[\\u2603-]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303836"}}
-            },
-            "test_printable_key_sends_correct_events[\\uf6c2-]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303836"}}
-            },
-            "test_printable_key_sends_correct_events[\\xe0-]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303836"}}
             },
             "test_special_key_sends_keydown[ADD-expected0]": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
@@ -1275,12 +1211,6 @@
     },
     "imported/w3c/webdriver/tests/classic/perform_actions/key_special_keys.py": {
         "subtests": {
-            "test_codepoint_keys_behave_correctly[\\U0001f604]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
-            "test_codepoint_keys_behave_correctly[\\U0001f60d]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            },
             "test_codepoint_keys_behave_correctly[\\u0ba8\\u0bbf]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
