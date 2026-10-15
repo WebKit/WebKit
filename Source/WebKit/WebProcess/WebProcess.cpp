@@ -298,7 +298,7 @@ static const Seconds nonVisibleProcessEarlyMemoryCleanupDelay { 10_s };
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
 // This should be long enough to support a workload where a user is actively switching between multiple tabs,
 // since our memory cleanup routine could potentially delete a good amount of JIT code.
-static const Seconds nonVisibleProcessMemoryCleanupDelay { 120_s };
+static const Seconds nonVisibleProcessMemoryCleanupDelay { 60_s };
 #endif
 
 namespace WebKit {
