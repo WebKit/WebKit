@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "TrackPrivateBaseGStreamer.h"
+#include <optional>
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -588,6 +589,7 @@ struct AsyncSeekData {
     GRefPtr<GstEvent> event;
     bool isSegmentSeek;
     bool isSeamlessSeekingEnabled;
+    RefPtr<MediaPlayerPrivateGStreamer> playerPrivate;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(AsyncSeekData);
 
@@ -656,6 +658,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
         data->event = WTF::move(event);
         data->isSegmentSeek = isSegment;
         data->isSeamlessSeekingEnabled = isSeamlessSeekingEnabled();
+        data->playerPrivate = this;
         gst_element_call_async(m_pipeline.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement* pipeline, gpointer userData) {
             auto data = reinterpret_cast<AsyncSeekData*>(userData);
 
@@ -665,6 +668,8 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
             GstSeekType startType, stopType;
             int64_t start, stop;
             gst_event_parse_seek(data->event.get(), &rate, &format, &flags, &startType, &start, &stopType, &stop);
+            if (data->playerPrivate && !data->playerPrivate->m_supportsLifetimeStats.value_or(false))
+                data->playerPrivate->updateVideoSinkStatistics();
             if (!gst_element_send_event(pipeline, data->event.leakRef()))
                 return;
 
@@ -673,18 +678,24 @@ bool MediaPlayerPrivateGStreamer::doSeek(const SeekTarget& target, float rate, b
 
             GST_DEBUG_OBJECT(pipeline, "Resuming segment playback");
             flags = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_ACCURATE);
+            if (data->playerPrivate && !data->playerPrivate->m_supportsLifetimeStats.value_or(false))
+                data->playerPrivate->updateVideoSinkStatistics();
             gst_element_send_event(pipeline, gst_event_new_seek(rate, format, flags, startType, start, stopType, stop));
         }), data, reinterpret_cast<GDestroyNotify>(destroyAsyncSeekData));
 
         return true;
     }
 
+    if (!m_supportsLifetimeStats.value_or(false))
+        updateVideoSinkStatistics();
     auto result = gst_element_send_event(m_pipeline.get(), event.leakRef());
     if (isSegment || !isSeamlessSeekingEnabled() || !result)
         return result;
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming segment playback");
     seekFlags = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_ACCURATE);
+    if (!m_supportsLifetimeStats.value_or(false))
+        updateVideoSinkStatistics();
     return gst_element_send_event(m_pipeline.get(), gst_event_new_seek(rate, GST_FORMAT_TIME, seekFlags, GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_SET, seekStop));
 }
 
@@ -4524,17 +4535,55 @@ bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
     if (!stats)
         return false;
 
-    auto totalVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
-    auto droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
+    // The total-* stats might not be available until https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/12704
+    // lands, so we have code in place to fallback to the partial versions in that case. As a negative
+    // side effect, the partial versions may skip a couple of frames between the moment a seek/flush starts
+    // and it gets to the videosink, because its streaming thread might run a couple of cycles more.
+    // We don't want to be asking for the total and partial families of fields every time, so we cache
+    // the support (or lack of it) in m_supportsLifetimeStats tri-state boolean.
+    std::optional<uint64_t> decodedVideoFrames;
+    std::optional<uint64_t> droppedVideoFrames;
 
-    if (!totalVideoFrames || !droppedVideoFrames)
+    // Force this branch the first time we don't know if the total-* fields are supported.
+    if (m_supportsLifetimeStats.value_or(true)) {
+        decodedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "total-rendered"_s);
+        droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "total-dropped"_s);
+        m_supportsLifetimeStats = decodedVideoFrames.has_value();
+    }
+
+    // Default to partial stats if the support for totals is not conclusive.
+    if (!m_supportsLifetimeStats.value_or(false)) {
+        decodedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "rendered"_s);
+        droppedVideoFrames = gstStructureGet<uint64_t>(stats.get(), "dropped"_s);
+    }
+
+    if (!decodedVideoFrames || !droppedVideoFrames)
         return false;
 
-    // Caching is required so that metrics queries performed after EOS still return valid values.
-    if (*totalVideoFrames)
-        m_totalVideoFrames = *totalVideoFrames;
-    if (*droppedVideoFrames)
-        m_droppedVideoFrames = *droppedVideoFrames;
+    if (m_supportsLifetimeStats.value_or(false)) {
+        // Easy case, we directly get the stats we need from basesink.
+        if (*decodedVideoFrames)
+            m_totalDecodedVideoFrames = *decodedVideoFrames;
+        if (*droppedVideoFrames)
+            m_totalDroppedVideoFrames = *droppedVideoFrames;
+    } else {
+        // Caching is required so that metrics queries performed after EOS still return valid values, and to
+        // avoid resetting the count after seek/flush.
+        // In this complex case we need to measure differences and account for stats reset.
+        if (*decodedVideoFrames) {
+            // Seek/flush has reset the count if the figure is now lower.
+            if (*decodedVideoFrames < m_decodedVideoFrames)
+                m_decodedVideoFrames = 0;
+            m_totalDecodedVideoFrames += *decodedVideoFrames - m_decodedVideoFrames;
+            m_decodedVideoFrames = *decodedVideoFrames;
+        }
+        if (*droppedVideoFrames) {
+            if (*droppedVideoFrames < m_droppedVideoFrames)
+                m_droppedVideoFrames = 0;
+            m_totalDroppedVideoFrames += *droppedVideoFrames - m_droppedVideoFrames;
+            m_droppedVideoFrames = *droppedVideoFrames;
+        }
+    }
 
     return true;
 }
@@ -4548,8 +4597,8 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPla
     double totalFrameDelay = 0;
     uint32_t displayCompositedVideoFrames = 0;
     return VideoPlaybackQualityMetrics {
-        static_cast<uint32_t>(m_totalVideoFrames),
-        static_cast<uint32_t>(m_droppedVideoFrames),
+        static_cast<uint32_t>(m_totalDecodedVideoFrames + m_totalDroppedVideoFrames),
+        static_cast<uint32_t>(m_totalDroppedVideoFrames),
         corruptedVideoFrames,
         totalFrameDelay,
         displayCompositedVideoFrames,

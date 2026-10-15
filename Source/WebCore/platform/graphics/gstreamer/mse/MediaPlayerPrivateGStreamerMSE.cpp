@@ -283,6 +283,9 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
     // to the source element, rather than letting playbin do the routing.
     RELEASE_ASSERT(m_source);
     {
+        if (!m_supportsLifetimeStats.value_or(false))
+            updateVideoSinkStatistics();
+
         // Take the STATE_LOCK of the __pipeline__.
         //
         // gst_element_send_event() [which is called by gst_element_seek()] already takes the STATE_LOCK of the element
@@ -298,6 +301,10 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
 
     if (!isSegment && player->isLooping()) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming segment playback");
+
+        if (!m_supportsLifetimeStats.value_or(false))
+            updateVideoSinkStatistics();
+
         seekFlags = static_cast<GstSeekFlags>(GST_SEEK_FLAG_SEGMENT | GST_SEEK_FLAG_ACCURATE);
         gst_element_send_event(m_pipeline.get(), gst_event_new_seek(rate, GST_FORMAT_TIME, seekFlags, GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_SET, seekStop));
     }
