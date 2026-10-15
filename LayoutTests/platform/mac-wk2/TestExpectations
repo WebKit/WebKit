@@ -2660,6 +2660,11 @@ webkit.org/b/327433 [ arm64 ] http/wpt/background-fetch/background-fetch-click.w
 [ Sequoia x86_64 ] css3/images/cross-fade-svg-size-diff.html [ ImageOnlyFailure ]
 [ GoldenGate ] css3/images/cross-fade-svg-size-diff.html [ ImageOnlyFailure ]
 
+# webkit.org/b/324109 The drop-shadow of a filtered ancestor does not sample the backing store of a composited
+# descendant here, so the shadow is missing entirely. Passes on macOS Sequoia Release and iOS 26.
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child.html [ ImageOnlyFailure ]
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child-preserve-3d.html [ ImageOnlyFailure ]
+
 webkit.org/b/327445 [ Debug arm64 ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-path-ignored.window.html [ Pass Failure ]
 
 webkit.org/b/319930 [ Release ] media/video-webkit-playsinline.html [ Pass Timeout ]
