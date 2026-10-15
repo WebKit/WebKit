@@ -1,0 +1,9 @@
+Test that pausing a frame does not hold frames in other processes when the global debugger pause preference is off.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesDisabled
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFramesDisabled.PauseMainFrame
+PASS: The cross-site frame's interval should be running.
+PASS: The cross-site frame's interval should keep advancing while the main frame is paused.
+

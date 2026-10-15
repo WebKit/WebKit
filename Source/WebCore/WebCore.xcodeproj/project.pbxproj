@@ -7604,6 +7604,7 @@
 		4A3A479BAB413F796EF38438 /* ProofOfPossessionCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */; };
 		A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */; };
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
+		63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -24330,6 +24331,7 @@
 		0970201322E546E9A5B1334A /* FrameIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameIndexedDBAgent.cpp; sourceTree = "<group>"; };
 		E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageIndexedDBAgent.h; sourceTree = "<group>"; };
 		9E05DE2045A04C30A1A879F9 /* PageIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageIndexedDBAgent.cpp; sourceTree = "<group>"; };
+		8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPauseSessionIdentifier.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26575,6 +26577,7 @@
 				A584FE291863870F00843B10 /* CommandLineAPIModule.cpp */,
 				A584FE2A1863870F00843B10 /* CommandLineAPIModule.h */,
 				A584FE2718637DCA00843B10 /* CommandLineAPIModuleSource.js */,
+				8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */,
 				2EA33ABA0CA84C378492C732 /* DebuggerSuspensionController.cpp */,
 				E1DEC3457E95468589B6727B /* DebuggerSuspensionController.h */,
 				7AABA25714BC613300AA9A11 /* DOMEditor.cpp */,
@@ -45673,6 +45676,7 @@
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
 				E5F06AEB24D49BF700BBC4F8 /* DateTimeNumericFieldElement.h in Headers */,
 				E5F06AEF24D4A63700BBC4F8 /* DateTimeSymbolicFieldElement.h in Headers */,
+				63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */,
 				86721D4F7D1D46A6B80B9F9A /* DebuggerSuspensionController.h in Headers */,
 				BC4A532D256056D50028C592 /* DebugOverlayRegions.h in Headers */,
 				0F6A12BE1A00923700C6DE72 /* DebugPageOverlays.h in Headers */,

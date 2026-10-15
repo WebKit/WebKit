@@ -2860,6 +2860,7 @@
 		FF0F70902E8242DB00D52BE1 /* WasmDebuggerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F708D2E8242DB00D52BE1 /* WasmDebuggerDebuggable.h */; };
 		FFCC7DFE2E95876C00D4A715 /* WasmDebuggerDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC7DFB2E95876C00D4A715 /* WasmDebuggerDispatcher.h */; };
 		FFFED26F705F4826140E9F75 /* WebExtensionContentRuleListBlockedLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */; };
+		0249BDC0FEEC456883870262 /* DebuggerPauseCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 664CC3BB9C9D449AAB97EE3B /* DebuggerPauseCoordinator.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -9457,6 +9458,8 @@
 		FFCC7DFB2E95876C00D4A715 /* WasmDebuggerDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmDebuggerDispatcher.h; sourceTree = "<group>"; };
 		FFCC7DFC2E95876C00D4A715 /* WasmDebuggerDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmDebuggerDispatcher.cpp; sourceTree = "<group>"; };
 		FFF3D089B182017C30B8FA78 /* WebExtensionContentRuleListBlockedLoadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionContentRuleListBlockedLoadInfo.h; sourceTree = "<group>"; };
+		664CC3BB9C9D449AAB97EE3B /* DebuggerPauseCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPauseCoordinator.h; sourceTree = "<group>"; };
+		1FF8EBEC18894289B30381A4 /* DebuggerPauseCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerPauseCoordinator.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -15463,6 +15466,8 @@
 				919793FE23DBC47400257892 /* Cocoa */,
 				91D970D723DA6D5B0057DBC3 /* ios */,
 				91D970D623DA6D550057DBC3 /* mac */,
+				1FF8EBEC18894289B30381A4 /* DebuggerPauseCoordinator.cpp */,
+				664CC3BB9C9D449AAB97EE3B /* DebuggerPauseCoordinator.h */,
 				F30EE4752E72227800935B60 /* FrameInspectorTargetProxy.cpp */,
 				F30EE4732E72226D00935B60 /* FrameInspectorTargetProxy.h */,
 				AA1057000000000000000003 /* InspectorCookieStoreHelpers.cpp */,
@@ -18569,6 +18574,7 @@
 				5C1579EE27172A8B00ED5280 /* DaemonEncoder.h in Headers */,
 				C55F91711C59676E0029E92D /* DataDetectionResult.h in Headers */,
 				99036AE923A970870000B06A /* DebuggableInfoData.h in Headers */,
+				0249BDC0FEEC456883870262 /* DebuggerPauseCoordinator.h in Headers */,
 				BC032DA610F437D10058C15A /* Decoder.h in Headers */,
 				74C2F54129AC9C44006C5F97 /* DeferredPaymentRequest.h in Headers */,
 				07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */,

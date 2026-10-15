@@ -80,6 +80,9 @@ private:
     void showPaintRect(const WebCore::FloatRect&) override;
     void showPaintRect(WebCore::LocalFrame&, const WebCore::FloatRect&) override;
     void willDestroyFrameOverlays(WebCore::FrameIdentifier) override;
+
+    void frameDebuggerDidPause(WebCore::FrameIdentifier) override;
+    void frameDebuggerDidContinue(WebCore::FrameIdentifier) override;
     unsigned paintRectCount() const override;
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;

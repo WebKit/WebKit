@@ -1,0 +1,94 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsCrossProcessFrames");
+
+    let mainTarget;
+    let crossProcessTarget;
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    async function pause(target) {
+        let paused = new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (event.data.target !== target || !WI.debuggerManager.dataForTarget(target).paused)
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.CallFramesDidChange, listener);
+                resolve();
+            });
+        });
+        target.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+        await paused;
+    }
+
+    async function expectHeld(target, counter, description) {
+        let before = await evaluate(target, counter);
+        await sleep(300);
+        InspectorTest.expectEqual(await evaluate(target, counter), before, `${description} should not advance while a frame in another process is paused.`);
+        return before;
+    }
+
+    async function resumeAndExpectRunning(target, counter, before, description) {
+        let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+        await WI.debuggerManager.resume();
+        await resumed;
+        InspectorTest.expectThat(await waitForExpressionInTarget(target, `${counter} > ${before}`), `${description} should advance after resuming.`);
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.Setup",
+        description: "Find the frame target of a cross-site iframe, which runs in another process.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            crossProcessTarget = await frameTargetForURLContaining("same-process-frame.html?X");
+            InspectorTest.expectNotNull(crossProcessTarget, "Should find the cross-site frame target.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, "window.ticks > 2"), "The cross-site frame's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.PauseMainFrame",
+        description: "Pausing the main frame should hold the cross-site frame until resuming.",
+        async test() {
+            await pause(mainTarget);
+            let before = await expectHeld(crossProcessTarget, "window.ticks", "The cross-site frame's interval");
+            await resumeAndExpectRunning(crossProcessTarget, "window.ticks", before, "The cross-site frame's interval");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.PauseCrossSiteFrame",
+        description: "Pausing the cross-site frame should hold the main frame until resuming.",
+        async test() {
+            await pause(crossProcessTarget);
+            let before = await expectHeld(mainTarget, "window.mainTicks", "The main frame's interval");
+            await resumeAndExpectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that pausing a frame holds the frames of the same page in other processes until resuming.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?X"></iframe>
+</body>

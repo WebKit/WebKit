@@ -706,6 +706,18 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
     m_framePageAgentProxies.add(frameID, WTF::move(proxy));
 }
 
+void WebInspectorBackend::suspendForDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
+{
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr)
+        corePage->inspectorController().suspendForDebuggerSession(sessionID);
+}
+
+void WebInspectorBackend::resumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
+{
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr)
+        corePage->inspectorController().resumeFromDebuggerSession(sessionID);
+}
+
 void WebInspectorBackend::enablePageInstrumentation()
 {
     if (!m_page || !m_page->corePage())

@@ -115,7 +115,7 @@ void FrameDebugger::didPause(JSGlobalObject* globalObject)
     ASSERT(!s_pausedFrameDebugger);
     s_pausedFrameDebugger = this;
 
-    DebuggerSuspensionController::frameDebuggerDidPause();
+    DebuggerSuspensionController::frameDebuggerDidPause(protect(m_frame.get()));
 }
 
 void FrameDebugger::didContinue(JSGlobalObject* globalObject)

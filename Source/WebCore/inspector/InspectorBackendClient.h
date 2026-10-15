@@ -79,6 +79,9 @@ public:
     // Tear down any per-frame paint-rect overlay owned by a local root frame that is going away, so
     // it isn't retained past the frame's lifetime. No-op for clients without per-frame overlays.
     virtual void willDestroyFrameOverlays(FrameIdentifier) { }
+
+    virtual void frameDebuggerDidPause(FrameIdentifier) { }
+    virtual void frameDebuggerDidContinue(FrameIdentifier) { }
     virtual unsigned paintRectCount() const { return 0; }
     virtual void didSetSearchingForNode(bool) { }
     virtual void elementSelectionChanged(bool) { }

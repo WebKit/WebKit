@@ -1764,6 +1764,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/track/WebVTTParser.h
 
     inspector/CommandLineAPIHost.h
+    inspector/DebuggerPauseSessionIdentifier.h
     inspector/FrameInspectorController.h
     inspector/InspectorBackendClient.h
     inspector/InspectorDebuggableType.h

@@ -1,0 +1,17 @@
+Test that pausing a frame holds the frames of the same page in other processes until resuming.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseHoldsCrossProcessFrames
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.Setup
+PASS: Should find the cross-site frame target.
+PASS: The cross-site frame's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.PauseMainFrame
+PASS: The cross-site frame's interval should not advance while a frame in another process is paused.
+PASS: The cross-site frame's interval should advance after resuming.
+
+-- Running test case: SiteIsolation.Debugger.PauseHoldsCrossProcessFrames.PauseCrossSiteFrame
+PASS: The main frame's interval should not advance while a frame in another process is paused.
+PASS: The main frame's interval should advance after resuming.
+

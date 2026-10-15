@@ -27,8 +27,10 @@
 #include "WebInspectorBackendClient.h"
 
 #include "DrawingArea.h"
+#include "MessageSenderInlines.h"
 #include "WebInspectorBackend.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/FrameInspectorController.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerAnimation.h>
@@ -405,6 +407,18 @@ void WebInspectorBackendClient::animationEndedForLayer(LocalFrame* frame, const 
     GraphicsLayer* nonConstLayer = const_cast<GraphicsLayer*>(layer);
     nonConstLayer->removeFromParent();
     it->value.layers.remove(*nonConstLayer);
+}
+
+void WebInspectorBackendClient::frameDebuggerDidPause(WebCore::FrameIdentifier frameID)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::FrameDidPauseForDebugger(frameID));
+}
+
+void WebInspectorBackendClient::frameDebuggerDidContinue(WebCore::FrameIdentifier frameID)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::FrameDidContinueForDebugger(frameID));
 }
 
 void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifier frameID)

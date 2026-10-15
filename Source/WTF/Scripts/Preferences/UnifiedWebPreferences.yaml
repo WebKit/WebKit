@@ -5860,6 +5860,14 @@ SiteIsolationEnabled:
   defaultValue: false
   sharedPreferenceForWebProcess: true
 
+SiteIsolationGlobalDebuggerPauseEnabled:
+  type: bool
+  status: unstable
+  category: security
+  humanReadableName: "Site Isolation: hold all frames while debugging"
+  humanReadableDescription: "While Web Inspector is paused in a frame, hold the frames of the same page in other processes"
+  defaultValue: false
+
 SiteIsolationHighValueFraudTargetDomainsEnabled:
   type: bool
   status: unstable

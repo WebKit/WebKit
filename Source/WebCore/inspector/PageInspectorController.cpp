@@ -113,6 +113,16 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     m_agents.append(WTF::move(consoleAgent));
 }
 
+void PageInspectorController::suspendForDebuggerSession(DebuggerPauseSessionIdentifier sessionID)
+{
+    CheckedRef { m_debuggerSuspensionController.get() }->addSessionHold(sessionID);
+}
+
+void PageInspectorController::resumeFromDebuggerSession(DebuggerPauseSessionIdentifier sessionID)
+{
+    CheckedRef { m_debuggerSuspensionController.get() }->removeSessionHold(sessionID);
+}
+
 PageInspectorController::~PageInspectorController()
 {
     m_instrumentingAgents->reset();

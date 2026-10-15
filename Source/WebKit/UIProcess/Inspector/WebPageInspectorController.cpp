@@ -109,6 +109,11 @@ bool WebPageInspectorController::hasLocalFrontend() const
     return m_frontendRouter->hasLocalFrontend();
 }
 
+bool WebPageInspectorController::hasFrontends() const
+{
+    return m_frontendRouter->hasFrontends();
+}
+
 void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& frontendChannel, bool, bool)
 {
     createLazyAgents();
@@ -149,6 +154,8 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    if (disconnectingLastFrontend)
+        inspectedPage->lastInspectorFrontendDidDisconnect();
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (disconnectingLastFrontend)
@@ -175,6 +182,7 @@ void WebPageInspectorController::disconnectAllFrontends()
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    inspectedPage->lastInspectorFrontendDidDisconnect();
 
 #if ENABLE(REMOTE_INSPECTOR)
     inspectedPage->remoteInspectorInformationDidChange();

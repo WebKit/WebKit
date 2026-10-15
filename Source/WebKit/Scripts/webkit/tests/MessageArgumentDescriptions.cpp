@@ -521,6 +521,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BrowsingContextGroupIdentifier"_s,
         "WebCore::DOMCacheIdentifierID"_s,
+        "WebCore::DebuggerPauseSessionIdentifier"_s,
         "WebCore::DictationContext"_s,
         "WebCore::NodeIdentifier"_s,
         "WebCore::FetchIdentifier"_s,

@@ -737,6 +737,8 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame::name()
 #endif
         || decoder.messageName() == Messages::WebPageProxy::SendMessageToInspectorFrontend::name()
+        || decoder.messageName() == Messages::WebPageProxy::FrameDidPauseForDebugger::name()
+        || decoder.messageName() == Messages::WebPageProxy::FrameDidContinueForDebugger::name()
 #if PLATFORM(GTK) || PLATFORM(WPE)
         || decoder.messageName() == Messages::WebPageProxy::DidInitiateLoadForResource::name()
         || decoder.messageName() == Messages::WebPageProxy::DidSendRequestForResource::name()

@@ -53,6 +53,9 @@ messages -> WebInspectorBackend {
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 
+    SuspendForDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
+    ResumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
+
     # Fan out the "show paint rects" toggle. Under Site Isolation the Page domain is served by the
     # UIProcess ProxyingPageAgent, so this never reaches the per-process InspectorPageAgent; each
     # process instead draws in its own frame's coordinate space.

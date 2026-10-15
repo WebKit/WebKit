@@ -28,6 +28,7 @@
 #include "BackendResourceDataStore.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include <WebCore/DebuggerPauseSessionIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorBackendClient.h>
@@ -110,6 +111,9 @@ public:
 
     void enablePageInstrumentation();
     void disablePageInstrumentation();
+
+    void suspendForDebugger(WebCore::DebuggerPauseSessionIdentifier);
+    void resumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier);
     void getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&&);
     void getFrameResourceContent(WebCore::FrameIdentifier, String url, CompletionHandler<void(String content, bool base64Encoded, String errorString)>&&);
 

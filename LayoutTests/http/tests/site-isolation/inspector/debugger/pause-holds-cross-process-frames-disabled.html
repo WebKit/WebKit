@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=false ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseHoldsCrossProcessFramesDisabled");
+
+    let crossProcessTarget;
+
+    function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function evaluate(target, expression) {
+        let {result} = await target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", returnByValue: true});
+        return result.value;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseHoldsCrossProcessFramesDisabled.PauseMainFrame",
+        description: "Without the preference, pausing the main frame should not hold a cross-site frame in another process.",
+        async test() {
+            let mainTarget = InspectorTest.mainFrameTarget;
+            crossProcessTarget = await frameTargetForURLContaining("same-process-frame.html?X");
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, "window.ticks > 2"), "The cross-site frame's interval should be running.");
+
+            let paused = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            mainTarget.RuntimeAgent.evaluate.invoke({expression: "pauseHere()", objectGroup: "test"}).catch(() => { });
+            await paused;
+
+            let before = await evaluate(crossProcessTarget, "window.ticks");
+            InspectorTest.expectThat(await waitForExpressionInTarget(crossProcessTarget, `window.ticks > ${before}`), "The cross-site frame's interval should keep advancing while the main frame is paused.");
+
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await WI.debuggerManager.resume();
+            await resumed;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that pausing a frame does not hold frames in other processes when the global debugger pause preference is off.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?X"></iframe>
+</body>

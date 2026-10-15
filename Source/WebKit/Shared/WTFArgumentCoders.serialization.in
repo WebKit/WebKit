@@ -121,6 +121,7 @@ template: struct WebCore::AttributedStringTextTableIDType
 template: struct WebCore::BackForwardFrameItemIdentifierType
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::BrowsingContextGroupIdentifierType
+template: struct WebCore::DebuggerPauseSessionIdentifierType
 template: struct WebCore::DictationContextType
 template: struct WebCore::FrameIdentifierType
 template: struct WebCore::HTMLMediaElementType

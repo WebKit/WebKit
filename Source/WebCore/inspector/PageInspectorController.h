@@ -33,6 +33,7 @@
 
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
+#include <WebCore/DebuggerPauseSessionIdentifier.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorOverlay.h>
@@ -139,6 +140,8 @@ public:
     Inspector::BackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
     WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
     DebuggerSuspensionController& debuggerSuspensionController() const { return m_debuggerSuspensionController.get(); }
+    WEBCORE_EXPORT void suspendForDebuggerSession(DebuggerPauseSessionIdentifier);
+    WEBCORE_EXPORT void resumeFromDebuggerSession(DebuggerPauseSessionIdentifier);
 
     Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();

@@ -634,6 +634,7 @@ UIProcess/GPU/GPUProcessProxy.cpp @cost:4
 
 UIProcess/Model/ModelProcessProxy.cpp
 
+UIProcess/Inspector/DebuggerPauseCoordinator.cpp
 UIProcess/Inspector/FrameInspectorTargetProxy.cpp
 UIProcess/Inspector/InspectorTargetProxy.cpp @cost:3
 UIProcess/Inspector/InspectorCookieStoreHelpers.cpp

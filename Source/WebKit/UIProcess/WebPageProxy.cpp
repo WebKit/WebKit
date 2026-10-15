@@ -71,6 +71,7 @@
 #include "CallbackID.h"
 #include "ColorControlSupportsAlpha.h"
 #include "Connection.h"
+#include "DebuggerPauseCoordinator.h"
 #include "DidFilterKnownLinkDecoration.h"
 #include "DigitalCredentialsCoordinatorMessages.h"
 #include "DownloadManager.h"
@@ -2037,6 +2038,7 @@ void WebPageProxy::close()
     m_inspector->invalidate();
 
     backForwardList().pageClosed();
+    m_debuggerPauseCoordinator = nullptr;
     m_inspectorController->pageClosed();
 #if ENABLE(REMOTE_INSPECTOR)
     if (RefPtr inspectorDebuggable = std::exchange(m_inspectorDebuggable, nullptr))
@@ -3341,6 +3343,38 @@ RefPtr<WebAutomationSession> WebPageProxy::activeAutomationSession() const
 void WebPageProxy::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
     m_inspectorController->sendMessageToInspectorFrontend(targetId, message);
+}
+
+void WebPageProxy::frameDidPauseForDebugger(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
+{
+    if (m_isClosed || !protect(preferences())->siteIsolationGlobalDebuggerPauseEnabled() || !m_inspectorController->hasFrontends())
+        return;
+
+    // A report can arrive after the frame is removed or leaves the sender's process, or before the commit that
+    // moves the frame into the sender's process.
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (&frame->process() != process.ptr() && &frame->provisionalLoadProcess() != process.ptr())
+        return;
+    MESSAGE_CHECK_BASE(frame->page() == this, connection);
+
+    if (!m_debuggerPauseCoordinator)
+        m_debuggerPauseCoordinator = makeUnique<DebuggerPauseCoordinator>(*this);
+    m_debuggerPauseCoordinator->frameDidPause(process, frameID);
+}
+
+void WebPageProxy::frameDidContinueForDebugger(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
+{
+    if (m_debuggerPauseCoordinator)
+        m_debuggerPauseCoordinator->frameDidContinue(WebProcessProxy::fromConnection(connection), frameID);
+}
+
+void WebPageProxy::lastInspectorFrontendDidDisconnect()
+{
+    if (m_debuggerPauseCoordinator)
+        m_debuggerPauseCoordinator->closeSession();
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
