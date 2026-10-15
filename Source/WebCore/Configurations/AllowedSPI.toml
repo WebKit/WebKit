@@ -189,7 +189,7 @@ classes = ["WCRBrowserEngineClient"]
 selectors = [
     { name = "askToBrowseURL:referrerURL:withCompletion:", class = "WCRBrowserEngineClient" },
 ]
-requires = ["HAVE_WEBCONTENTRESTRICTIONS_ASK_TO"]
+requires = ["HAVE_WEBCONTENTRESTRICTIONS_ASK_TO", "WTF_PLATFORM_MAC"]
 
 [[temporary-usage]]
 requires = [ "HAVE_CGPATTERN_CREATE_WITH_IMAGE_TRANSFORM_STEP" ]
