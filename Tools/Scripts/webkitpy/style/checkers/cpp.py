@@ -1333,6 +1333,7 @@ class _FileState(object):
     def __init__(self, clean_lines, file_extension):
         self._did_inside_namespace_indent_warning = False
         self._clean_lines = clean_lines
+        self._smart_pointer_declarations = None
         if file_extension == 'm':
             self._is_objective_cpp = False
             self._is_objective_c = True
@@ -1393,6 +1394,26 @@ class _FileState(object):
     def is_c_or_objective_c(self):
         """Return whether the file extension corresponds to C or Objective-C."""
         return self.is_c() or self.is_objective_c()
+
+    def smart_pointer_type(self, filename, name):
+        """Returns the smart pointer type that name is declared with in this file or its primary header, if there's just one."""
+        if self._smart_pointer_declarations is None:
+            lines = list(self._clean_lines.elided)
+            header = os.path.splitext(filename)[0] + '.h'
+            if header != filename:
+                io = _unit_test_config.get(INCLUDE_IO_INJECTION_KEY, codecs)
+                try:
+                    header_lines = [line.rstrip('\r\n') for line in io.open(header, 'r', 'utf8', 'replace')]
+                    lines += CleansedLines(header_lines).elided
+                except IOError:
+                    pass
+            self._smart_pointer_declarations = {}
+            for line in lines:
+                for pattern in (_RE_PATTERN_SMART_POINTER_DECLARATION, _RE_PATTERN_SMART_POINTER_INITIALIZATION):
+                    for declaration in pattern.finditer(line):
+                        self._smart_pointer_declarations.setdefault(declaration.group('name'), set()).add(declaration.group('type'))
+        types = self._smart_pointer_declarations.get(name, set())
+        return next(iter(types)) if len(types) == 1 else None
 
 
 class _EnumState(object):
@@ -3128,6 +3149,122 @@ def check_unsafe_get(clean_lines, line_number, file_state, error):
     using_unsafe_ptr = search(r'\bunsafePtr\s*\(\s*\)', line)
     if using_unsafe_ptr:
         error(line_number, 'runtime/unsafe_get_ptr', 5, "Avoid using 'unsafePtr()' by extending the lifetime of the Ref.")
+
+
+# A smart pointer, such as 'm_frame', 'weakThis', 'protectedThis->m_page', 'm_items[i]', or 'map.get(key)'.
+_SMART_POINTER_EXPRESSION = r'(?:\b\w+(?:\([^()]*\)|\[[^\[\]]*\])*(?:\.|->|::))*\b\w+(?:\([^()]*\)|\[[^\[\]]*\])*'
+_TEMPLATE_ARGUMENTS = r'<[^<>;]*(?:<[^<>;]*(?:<[^<>;]*>[^<>;]*)*>[^<>;]*)*>'
+
+# Each smart pointer type and the smart pointer types it can be constructed from.
+_SMART_POINTER_SOURCES = {
+    'RefPtr': ('RefPtr', 'CheckedPtr', 'WeakPtr', 'SingleThreadWeakPtr', 'ThreadSafeWeakPtr', 'unique_ptr'),
+    'Ref': ('Ref', 'CheckedRef', 'WeakRef', 'SingleThreadWeakRef', 'ThreadSafeWeakRef', 'UniqueRef'),
+    'CheckedPtr': ('CheckedPtr', 'CheckedRef', 'WeakPtr', 'SingleThreadWeakPtr', 'unique_ptr'),
+    'CheckedRef': ('CheckedRef', 'WeakRef', 'SingleThreadWeakRef', 'UniqueRef'),
+    'WeakPtr': ('WeakPtr', 'RefPtr', 'Ref'),
+    'WeakRef': ('WeakRef',),
+    'SingleThreadWeakPtr': ('SingleThreadWeakPtr', 'RefPtr', 'Ref'),
+    'SingleThreadWeakRef': ('SingleThreadWeakRef',),
+    'ThreadSafeWeakPtr': ('ThreadSafeWeakPtr',),
+    'ThreadSafeWeakRef': ('ThreadSafeWeakRef',),
+    'RetainPtr': ('RetainPtr',),
+    'OSObjectPtr': ('OSObjectPtr',),
+    'GRefPtr': ('GRefPtr',),
+}
+
+# More smart pointer types that these can be constructed from, but only with explicit template arguments.
+_SMART_POINTER_SOURCES_WITH_TEMPLATE_ARGUMENTS = {
+    'WeakPtr': ('WeakRef',),
+    'SingleThreadWeakPtr': ('SingleThreadWeakRef',),
+    'ThreadSafeWeakPtr': ('RefPtr', 'Ref'),
+    'ThreadSafeWeakRef': ('Ref',),
+}
+
+_SMART_POINTER_TYPES = '|'.join(list(_SMART_POINTER_SOURCES) + ['unique_ptr', 'UniqueRef'])
+
+# Each cast and the smart pointer types it takes.
+_SMART_POINTER_CAST_SOURCES = {
+    'is': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef', 'unique_ptr', 'UniqueRef'),
+    'downcast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef'),
+    'dynamicDowncast': ('RefPtr', 'Ref', 'CheckedPtr', 'CheckedRef', 'WeakPtr', 'WeakRef', 'SingleThreadWeakPtr', 'SingleThreadWeakRef'),
+    'uncheckedDowncast': ('RefPtr', 'Ref'),
+}
+
+# 'RefPtr<Node> m_node;', 'const WeakPtr<Frame>& frame,', or 'CheckedPtr renderer = ...'.
+_RE_PATTERN_SMART_POINTER_DECLARATION = re.compile(
+    r'(?<![\w:])(?:WTF::|std::)?(?P<type>' + _SMART_POINTER_TYPES + r')\s*(?:' + _TEMPLATE_ARGUMENTS + r')?\s*&{0,2}\s*(?P<name>\w+)\s*(?:[;={,)]|:(?!:))')
+
+# '[weakThis = WeakPtr { *this }]'.
+_RE_PATTERN_SMART_POINTER_INITIALIZATION = re.compile(
+    r'(?<![\w.>])(?P<name>\w+)\s*=\s*(?:WTF::|std::)?(?P<type>' + _SMART_POINTER_TYPES + r')\s*(?:' + _TEMPLATE_ARGUMENTS + r')?\s*[{(]')
+
+# 'RefPtr frame = m_frame.get();', 'Ref { m_page.get() }', or 'CheckedPtr<Node>(m_node.get())', but not
+# 'Vector<RefPtr<Node>> nodes { m_node.get() }'.
+_RE_PATTERN_SMART_POINTER_FROM_GET = re.compile(
+    r'(?<![\w:<,])(?:WTF::)?(?P<type>' + '|'.join(_SMART_POINTER_SOURCES) + r')\s*(?P<arguments>' + _TEMPLATE_ARGUMENTS + r')?'
+    r'(?:\s+\w+\s*=\s*(?P<initializer>' + _SMART_POINTER_EXPRESSION + r')\.get\(\)\s*[;)]'
+    r'|\s*(?:\w+\s*)?\{\s*(?P<braced>' + _SMART_POINTER_EXPRESSION + r')\.get\(\)\s*\}'
+    r'|\s*(?:\w+\s*)?\(\s*(?P<parenthesized>' + _SMART_POINTER_EXPRESSION + r')\.get\(\)\s*\))')
+
+# 'dynamicDowncast<Element>(m_node.get())'.
+_RE_PATTERN_CAST_OF_GET = re.compile(
+    r'(?<![\w.>])(?P<cast>is|downcast|dynamicDowncast|uncheckedDowncast)\s*' + _TEMPLATE_ARGUMENTS
+    + r'\s*\(\s*(?P<source>' + _SMART_POINTER_EXPRESSION + r')\.get\(\)\s*\)')
+
+
+def _declared_smart_pointer_type(filename, file_state, source):
+    name = search(r'\w+$', source)
+    return file_state.smart_pointer_type(filename, name.group(0)) if name else None
+
+
+def check_redundant_get(filename, clean_lines, line_number, file_state, error):
+    """Looks for '.get()' on a smart pointer that initializes another smart pointer or is passed to a cast,
+    where the smart pointer itself would do.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
+      error: The function to call with any errors found.
+    """
+
+    # WTF implements the smart pointer constructors and casts in terms of get().
+    if file_state.is_c() or filename.startswith('Source/WTF/'):
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if '.get()' not in line:
+        return
+
+    construction = _RE_PATTERN_SMART_POINTER_FROM_GET.search(line)
+    if construction:
+        target = construction.group('type')
+        source = construction.group('initializer') or construction.group('braced') or construction.group('parenthesized')
+        source_type = _declared_smart_pointer_type(filename, file_state, source)
+        if source_type:
+            redundant = source_type in _SMART_POINTER_SOURCES[target]
+            if construction.group('arguments'):
+                redundant = redundant or source_type in _SMART_POINTER_SOURCES_WITH_TEMPLATE_ARGUMENTS.get(target, ())
+        else:
+            # Without a declaration, flag only RefPtr and Ref: nearly every get() that initializes one comes from
+            # a smart pointer it can be constructed from.
+            redundant = target in ('RefPtr', 'Ref')
+        if redundant:
+            error(line_number, 'readability/redundant_get', 4,
+                  "Omit '.get()': construct the '%s' from the smart pointer itself." % target)
+
+    # In JavaScriptCore, get() mostly unwraps a WriteBarrier or a Strong, which the casts don't take.
+    if _is_javascriptcore_file(filename):
+        return
+
+    cast = _RE_PATTERN_CAST_OF_GET.search(line)
+    if cast:
+        source_type = _declared_smart_pointer_type(filename, file_state, cast.group('source'))
+        if not source_type or source_type in _SMART_POINTER_CAST_SOURCES[cast.group('cast')]:
+            error(line_number, 'readability/redundant_get', 4,
+                  "Omit '.get()': '%s<>()' takes the smart pointer itself." % cast.group('cast'))
 
 
 def check_callonmainthread(filename, clean_lines, line_number, file_state, error):
@@ -5866,6 +6003,7 @@ def process_line(filename, file_extension,
     check_os_version_checks(filename, clean_lines, line, error)
     check_safe_logging_macros(filename, clean_lines, line, file_state, error)
     check_objc_annotation_macros(filename, clean_lines, line, error)
+    check_redundant_get(filename, clean_lines, line, file_state, error)
     check_callonmainthread(filename, clean_lines, line, file_state, error)
     check_ismainthread(filename, clean_lines, line, file_state, error)
     check_mainthreadneverdestroyed(filename, clean_lines, line, file_state, error)
@@ -5992,6 +6130,7 @@ class CppChecker(object):
         'readability/null',
         'readability/checked_getter',
         'readability/protected_getter',
+        'readability/redundant_get',
         'readability/streams',
         'readability/todo',
         'readability/utf8',

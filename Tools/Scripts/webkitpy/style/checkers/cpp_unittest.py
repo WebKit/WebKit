@@ -6663,6 +6663,86 @@ class WebKitStyleTest(CppStyleTestBase):
             "  [runtime/unsafe_get_ptr] [5]",
             'foo.mm')
 
+    def test_redundant_get(self):
+        construct_ref_ptr = "Omit '.get()': construct the 'RefPtr' from the smart pointer itself.  [readability/redundant_get] [4]"
+        construct_ref = "Omit '.get()': construct the 'Ref' from the smart pointer itself.  [readability/redundant_get] [4]"
+        dynamic_downcast = "Omit '.get()': 'dynamicDowncast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        downcast = "Omit '.get()': 'downcast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        is_ = "Omit '.get()': 'is<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        unchecked_downcast = "Omit '.get()': 'uncheckedDowncast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        self.assert_lint('    RefPtr protectedThis = weakThis.get();', construct_ref_ptr)
+        self.assert_lint('    RefPtr<Frame> frame = protectedThis->m_frame.get();', construct_ref_ptr)
+        self.assert_lint('    if (RefPtr page = m_page.get())', construct_ref_ptr)
+        self.assert_lint('    if (RefPtr page = m_page.get(); page && !page->isClosed())', construct_ref_ptr)
+        self.assert_lint('    for (RefPtr node = m_nodes[0].get(); node; node = node->parentNode())', construct_ref_ptr)
+        self.assert_lint('    RefPtr connection = m_connections.get(identifier).get();', construct_ref_ptr)
+        self.assert_lint('    WTF::RefPtr<Node> node(m_node.get());', construct_ref_ptr)
+        self.assert_lint('    completionHandler(RefPtr { m_node.get() });', construct_ref_ptr)
+        self.assert_lint('    Ref document = m_document.get();', construct_ref)
+        self.assert_lint('    Ref { m_instrumentingAgents.get() }->enable();', construct_ref)
+        self.assert_lint('    if (RefPtr element = dynamicDowncast<Element>(m_node.get()))', dynamic_downcast)
+        self.assert_lint('    auto& input = downcast<HTMLInputElement>(m_element.get());', downcast)
+        self.assert_lint('    if (is<HTMLInputElement>(m_element.get()))', is_)
+        self.assert_lint('    auto& input = uncheckedDowncast<HTMLInputElement>(m_element.get());', unchecked_downcast)
+        self.assert_lint('    RefPtr element = dynamicDowncast<Element>(m_node.get());', dynamic_downcast)
+        self.assert_lint('    RefPtr protectedThis = weakThis.get();', construct_ref_ptr, 'foo.mm')
+        self.assert_lint('    RefPtr protectedThis = weakThis;', '')
+        self.assert_lint('    if (RefPtr element = dynamicDowncast<Element>(m_node))', '')
+        self.assert_lint('    auto ptr = obj.get();', '')
+        self.assert_lint('    auto* node = m_node.get();', '')
+        self.assert_lint('    const RefPtr<Node>& node = m_node.get();', '')
+        self.assert_lint('    append(Vector<RefPtr<Node>> { m_node.get() });', '')
+        self.assert_lint('    append(HashMap<String, RefPtr<Node>> { { name, m_node.get() } });', '')
+        self.assert_lint('    RefPtr frame = m_page.get()->mainFrame();', '')
+        self.assert_lint('    RefPtr node = m_node.get() ? m_node.get() : m_parent.get();', '')
+        self.assert_lint('    RefPtr node = *m_node.get();', '')
+        self.assert_lint('    CheckedPtr renderer = m_renderer.get();', '')
+        self.assert_lint('    process(m_node.get());', '')
+        self.assert_lint('    return m_node.get();', '')
+        self.assert_lint('    if (m_node.get() == node)', '')
+        self.assert_lint('    auto* element = dynamicDowncast<Element>(m_node.get()->parentNode());', '')
+        self.assert_lint('    auto* title = dynamic_objc_cast<NSString>(m_object.get());', '', 'foo.mm')
+        self.assert_lint('    RefPtr page = [webView _page].get();', '', 'foo.mm')
+        self.assert_lint('    if (value.is<String>(m_node.get()))', '')
+        self.assert_lint('    // RefPtr protectedThis = weakThis.get();', '')
+        self.assert_lint('    RefPtr protectedThis = weakThis.get();', construct_ref_ptr, 'Source/JavaScriptCore/runtime/Foo.cpp')
+        self.assert_lint('    auto* function = dynamicDowncast<JSFunction>(m_callee.get());', '', 'Source/JavaScriptCore/runtime/Foo.cpp')
+        self.assert_lint('    return downcast<Target>(source.get());', '', 'Source/WTF/wtf/Foo.h')
+
+    def test_redundant_get_declared_source(self):
+        def assert_redundant_get(code, expected, header=None):
+            unit_test_config = {cpp_style.INCLUDE_IO_INJECTION_KEY: MockIo(header.split('\n'))} if header is not None else {}
+            self.assertEqual(expected, self.perform_lint(code, 'foo.cpp', ('-', '+readability/redundant_get'), unit_test_config))
+
+        def construct(type):
+            return "Omit '.get()': construct the '%s' from the smart pointer itself.  [readability/redundant_get] [4]" % type
+
+        assert_redundant_get('CheckedPtr<RenderObject> m_renderer;\nCheckedPtr renderer = m_renderer.get();', construct('CheckedPtr'))
+        assert_redundant_get('CheckedPtr renderer = m_renderer.get();', construct('CheckedPtr'), '    std::unique_ptr<RenderObject> m_renderer;')
+        assert_redundant_get('CheckedRef layer = m_layer.get();', construct('CheckedRef'), '    const UniqueRef<RenderLayer> m_layer;')
+        assert_redundant_get('void run(const RefPtr<Node>& node)\n{\n    WeakPtr weakNode = node.get();\n}', construct('WeakPtr'))
+        assert_redundant_get('void run(Ref<Node>&& node)\n{\n    SingleThreadWeakPtr weakNode = node.get();\n}', construct('SingleThreadWeakPtr'))
+        assert_redundant_get('ThreadSafeWeakPtr<Client> m_client;\nThreadSafeWeakPtr<Client> client = m_client.get();', construct('ThreadSafeWeakPtr'))
+        assert_redundant_get('auto task = [weakThis = WeakPtr { *this }] {\n    CheckedPtr checkedThis = weakThis.get();\n};', construct('CheckedPtr'))
+        assert_redundant_get('CheckedPtr layer = m_layer.get();', '')
+        assert_redundant_get('CheckedPtr layer = m_layer.get();', '', '    InlineWeakPtr<RenderLayer> m_layer;')
+        assert_redundant_get('CheckedPtr<Frame> m_frame;\nWeakPtr frame = m_frame.get();', '')
+        assert_redundant_get('RefPtr<Node> m_node;\nWeakPtr<Node> m_node;\nCheckedPtr node = m_node.get();', '')
+        assert_redundant_get('RefPtr document = m_document.get();', '', '    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;')
+        assert_redundant_get('RefPtr document = m_document.get();', construct('RefPtr'), '    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;')
+        assert_redundant_get('Ref page = m_page.get();', '', '    RefPtr<Page> m_page;')
+        assert_redundant_get('RetainPtr<NSString> m_title;\nRetainPtr title = m_title.get();', construct('RetainPtr'))
+        assert_redundant_get('RetainPtr view = m_view.get();', '', '    WeakObjCPtr<NSView> m_view;')
+        assert_redundant_get('void run(Ref<Client>&& client)\n{\n    ThreadSafeWeakPtr<Client> weakClient { client.get() };\n}', construct('ThreadSafeWeakPtr'))
+        assert_redundant_get('void run(Ref<Client>&& client)\n{\n    ThreadSafeWeakPtr weakClient { client.get() };\n}', '')
+        dynamic_downcast = "Omit '.get()': 'dynamicDowncast<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        is_ = "Omit '.get()': 'is<>()' takes the smart pointer itself.  [readability/redundant_get] [4]"
+        assert_redundant_get('auto* context = dynamicDowncast<GPUCanvasContext>(m_context.get());', '', '    std::unique_ptr<CanvasRenderingContext> m_context;')
+        assert_redundant_get('bool isGPU = is<GPUCanvasContext>(m_context.get());', is_, '    std::unique_ptr<CanvasRenderingContext> m_context;')
+        assert_redundant_get('auto* element = dynamicDowncast<Element>(m_node.get());', dynamic_downcast, '    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;')
+        assert_redundant_get('auto& element = uncheckedDowncast<Element>(m_node.get());', '', '    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;')
+        assert_redundant_get('auto& part = downcast<ButtonPart>(m_owningPart.get());', '', '    ThreadSafeWeakRef<ControlPart> m_owningPart;')
+
     def test_wtf_never_destroyed(self):
         self.assert_lint(
              'static NeverDestroyed<Foo> foo;',

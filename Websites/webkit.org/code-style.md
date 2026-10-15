@@ -1661,6 +1661,34 @@ auto origin2 = adoptRef(new SecurityOrigin);
 auto synchronousFileLoadingGroup = adoptOSObject(dispatch_group_create());
 ```
 
+[](#smart-pointer-get) Don't call `get()` on a smart pointer to construct another smart pointer from it, or to pass it to `is<>()`, `downcast<>()`, `dynamicDowncast<>()`, or `uncheckedDowncast<>()`, if they can take the smart pointer itself.
+
+###### Right:
+
+```cpp
+RefPtr frame = m_frame;
+
+Ref document = m_document;
+
+CheckedPtr renderer = m_renderer;
+
+if (RefPtr element = dynamicDowncast<Element>(m_node))
+    element->focus();
+```
+
+###### Wrong:
+
+```cpp
+RefPtr frame = m_frame.get();
+
+Ref document = m_document.get();
+
+CheckedPtr renderer = m_renderer.get();
+
+if (RefPtr element = dynamicDowncast<Element>(m_node.get()))
+    element->focus();
+```
+
 ### Python
 
 [](#python) For Python use PEP8 style.
