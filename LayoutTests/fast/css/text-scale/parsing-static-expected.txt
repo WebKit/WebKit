@@ -1,0 +1,27 @@
+
+PASS No text-scale meta gives legacy
+PASS Unrelated meta gives legacy
+PASS content=scale gives scale
+PASS content=SCALE gives scale
+PASS content=Scale gives scale
+PASS content=legacy gives legacy
+PASS content=LEGACY gives legacy
+PASS Invalid content gives legacy
+PASS content=scaled gives legacy
+PASS Empty content gives legacy
+PASS Missing content gives legacy
+PASS name=TEXT-SCALE is matched
+PASS name=Text-Scale is matched
+PASS name=text-scale-foo is not matched
+PASS name=textscale is not matched
+PASS http-equiv=text-scale is not matched
+PASS First meta wins: legacy then scale
+PASS First meta wins: scale then legacy
+PASS First meta wins even when its content is invalid
+PASS First meta wins even when its content is empty
+PASS First meta wins even when it has no content attribute
+PASS Unrelated meta before a text-scale meta is ignored
+PASS Meta in body counts
+PASS Meta in head comes before meta in body
+PASS Meta inside template content is ignored
+

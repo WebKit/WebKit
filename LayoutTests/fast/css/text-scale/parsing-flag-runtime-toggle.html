@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSTextScaleMetaEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="text-scale" content="scale">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    assert_equals(internals.textScaleMetaMode(), "legacy");
+    internals.settings.setCSSTextScaleMetaEnabled(true);
+    assert_equals(internals.textScaleMetaMode(), "scale");
+    internals.settings.setCSSTextScaleMetaEnabled(false);
+    assert_equals(internals.textScaleMetaMode(), "legacy");
+}, "Toggling the flag at runtime updates the mode without a meta change");
+</script>
+</body>
+</html>

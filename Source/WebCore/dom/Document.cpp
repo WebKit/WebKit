@@ -5751,6 +5751,26 @@ void Document::metaElementColorSchemeChanged()
 }
 #endif
 
+void Document::metaElementTextScaleChanged()
+{
+    auto textScaleMeta = TextScaleMeta::Legacy;
+    for (CheckedRef metaElement : descendantsOfType<HTMLMetaElement>(rootNode())) {
+        if (!equalLettersIgnoringASCIICase(metaElement->attributeWithoutSynchronization(nameAttr), "text-scale"_s))
+            continue;
+        if (equalLettersIgnoringASCIICase(metaElement->attributeWithoutSynchronization(contentAttr), "scale"_s))
+            textScaleMeta = TextScaleMeta::Scale;
+        break;
+    }
+    m_textScaleMeta = textScaleMeta;
+}
+
+TextScaleMeta Document::textScaleMeta() const
+{
+    if (!settings().cssTextScaleMetaEnabled())
+        return TextScaleMeta::Legacy;
+    return m_textScaleMeta;
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 void Document::processFormatDetection(const String& features)

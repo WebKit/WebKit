@@ -1,0 +1,4 @@
+
+PASS Parser-inserted meta with content=scale gives legacy when the feature is disabled
+PASS Dynamic changes give legacy when the feature is disabled
+

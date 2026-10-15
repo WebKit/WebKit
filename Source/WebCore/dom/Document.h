@@ -422,6 +422,8 @@ enum class CustomElementNameValidationStatus : uint8_t {
 
 enum class ClonedDocumentType : uint8_t { XMLDocument, XHTMLDocument, HTMLDocument, SVGDocument, Document };
 
+enum class TextScaleMeta : bool { Legacy, Scale };
+
 using RenderingContext = Variant<
 #if ENABLE(WEBGL)
     Ref<WebGLRenderingContext>,
@@ -1208,6 +1210,9 @@ public:
     void processColorScheme(const String& colorScheme);
     void metaElementColorSchemeChanged();
 #endif
+
+    void metaElementTextScaleChanged();
+    WEBCORE_EXPORT TextScaleMeta textScaleMeta() const;
 
 #if ENABLE(APPLICATION_MANIFEST)
     void processApplicationManifest(const ApplicationManifest&);
@@ -2804,6 +2809,8 @@ private:
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
 #endif
+
+    TextScaleMeta m_textScaleMeta { TextScaleMeta::Legacy };
 
     DocumentCompatibilityMode m_compatibilityMode { DocumentCompatibilityMode::NoQuirksMode };
 

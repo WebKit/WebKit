@@ -434,6 +434,8 @@ public:
 
     ExceptionOr<String> documentBackgroundColor();
 
+    ExceptionOr<String> textScaleMetaMode() const;
+
     ExceptionOr<String> paintedCaretColor();
 
     ExceptionOr<bool> displayP3Available()

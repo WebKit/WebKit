@@ -1248,6 +1248,14 @@ CSSTextJustifyEnabled:
   humanReadableDescription: "Enable the property text-justify, defined in CSS Text 3"
   defaultValue: false
 
+CSSTextScaleMetaEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-scale meta tag"
+  humanReadableDescription: "Enable parsing of the text-scale meta element, defined in CSS Fonts 5"
+  defaultValue: false
+
 CSSTextSpacingTrimEnabled:
   type: bool
   status: testable

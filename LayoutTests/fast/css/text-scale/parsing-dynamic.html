@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+const container = document.getElementById("container");
+
+function mode() {
+    return internals.textScaleMetaMode();
+}
+
+function createMeta(attributes) {
+    const meta = document.createElement("meta");
+    for (const [name, value] of Object.entries(attributes))
+        meta.setAttribute(name, value);
+    return meta;
+}
+
+function cleanUp() {
+    for (const meta of [...document.querySelectorAll("meta")]) {
+        if (meta.getAttribute("charset") === null)
+            meta.remove();
+    }
+    container.replaceChildren();
+}
+
+function dynamicTest(func, description) {
+    test(t => {
+        t.add_cleanup(cleanUp);
+        assert_equals(mode(), "legacy", "starts as legacy");
+        func(t);
+    }, description);
+}
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "scale", "after insertion");
+    meta.remove();
+    assert_equals(mode(), "legacy", "after removal");
+}, "Inserting and removing a meta in head");
+
+dynamicTest(() => {
+    const meta = container.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "scale", "after insertion");
+    meta.remove();
+    assert_equals(mode(), "legacy", "after removal");
+}, "Inserting and removing a meta in body");
+
+dynamicTest(() => {
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    container.appendChild(wrapper);
+    assert_equals(mode(), "scale", "after inserting the ancestor");
+    wrapper.remove();
+    assert_equals(mode(), "legacy", "after removing the ancestor");
+}, "Inserting and removing an ancestor of a meta");
+
+dynamicTest(() => {
+    const meta = createMeta({ name: "text-scale", content: "legacy" });
+    meta.setAttribute("content", "scale");
+    assert_equals(mode(), "legacy", "changes on a disconnected meta have no effect");
+    document.head.appendChild(meta);
+    assert_equals(mode(), "scale", "after insertion");
+}, "Changing a disconnected meta has no effect until it is inserted");
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta({ name: "text-scale", content: "legacy" }));
+    assert_equals(mode(), "legacy", "content=legacy");
+    meta.setAttribute("content", "scale");
+    assert_equals(mode(), "scale", "content=scale");
+    meta.setAttribute("content", "invalid");
+    assert_equals(mode(), "legacy", "content=invalid");
+    meta.setAttribute("content", "SCALE");
+    assert_equals(mode(), "scale", "content=SCALE");
+    meta.setAttribute("content", "");
+    assert_equals(mode(), "legacy", "content is empty");
+    meta.setAttribute("content", "Scale");
+    assert_equals(mode(), "scale", "content=Scale");
+    meta.removeAttribute("content");
+    assert_equals(mode(), "legacy", "content attribute removed");
+    meta.content = "scale";
+    assert_equals(mode(), "scale", "content set through the IDL attribute");
+}, "Changing the content attribute");
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta({ name: "foo", content: "scale" }));
+    assert_equals(mode(), "legacy", "name=foo");
+    meta.setAttribute("name", "text-scale");
+    assert_equals(mode(), "scale", "name=text-scale");
+    meta.setAttribute("name", "TEXT-SCALE");
+    assert_equals(mode(), "scale", "name=TEXT-SCALE");
+    meta.setAttribute("name", "bar");
+    assert_equals(mode(), "legacy", "name changed away from text-scale");
+    meta.name = "Text-Scale";
+    assert_equals(mode(), "scale", "name set through the IDL attribute");
+    meta.removeAttribute("name");
+    assert_equals(mode(), "legacy", "name attribute removed");
+}, "Changing the name attribute");
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta({ name: "text-scale" }));
+    assert_equals(mode(), "legacy", "no content");
+    meta.setAttribute("name", "foo");
+    meta.setAttribute("content", "scale");
+    assert_equals(mode(), "legacy", "name=foo content=scale");
+    meta.setAttribute("name", "text-scale");
+    assert_equals(mode(), "scale", "name changed to text-scale");
+}, "Changing the name and content attributes of a meta that starts with no content");
+
+dynamicTest(() => {
+    const second = document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "scale", "only the scale meta");
+    const first = document.head.insertBefore(createMeta({ name: "text-scale", content: "legacy" }), second);
+    assert_equals(mode(), "legacy", "legacy meta inserted before");
+    first.remove();
+    assert_equals(mode(), "scale", "legacy meta removed");
+}, "Inserting a meta before the first one replaces it");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta({ name: "text-scale", content: "legacy" }));
+    const second = document.head.appendChild(createMeta({ name: "text-scale", content: "legacy" }));
+    second.setAttribute("content", "scale");
+    assert_equals(mode(), "legacy", "change to the second meta is ignored");
+    first.setAttribute("content", "scale");
+    assert_equals(mode(), "scale", "change to the first meta applies");
+    first.setAttribute("content", "invalid");
+    assert_equals(mode(), "legacy", "first meta becomes invalid");
+}, "Only the first meta decides");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta({ name: "text-scale" }));
+    document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "legacy", "first meta has no content");
+    first.remove();
+    assert_equals(mode(), "scale", "first meta removed");
+}, "Removing a first meta with no content attribute lets the second meta apply");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta({ name: "text-scale", content: "legacy" }));
+    document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "legacy", "first meta is legacy");
+    first.setAttribute("name", "foo");
+    assert_equals(mode(), "scale", "first meta renamed");
+    first.setAttribute("name", "text-scale");
+    assert_equals(mode(), "legacy", "first meta renamed back");
+}, "Changing the name of the first meta lets the second meta apply");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta({ name: "text-scale" }));
+    document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "legacy", "first meta has no content");
+    first.setAttribute("name", "foo");
+    assert_equals(mode(), "scale", "first meta renamed");
+}, "Changing the name of a first meta with no content attribute lets the second meta apply");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    first.replaceWith(createMeta({ name: "text-scale", content: "legacy" }));
+    assert_equals(mode(), "legacy", "after replaceWith");
+}, "Replacing the first meta");
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    container.appendChild(meta);
+    assert_equals(mode(), "scale", "after moving to body");
+    document.head.appendChild(createMeta({ name: "text-scale", content: "legacy" }));
+    assert_equals(mode(), "legacy", "legacy meta in head comes first");
+}, "Moving a meta between head and body");
+
+dynamicTest(() => {
+    const host = container.appendChild(document.createElement("div"));
+    const shadowRoot = host.attachShadow({ mode: "open" });
+    shadowRoot.appendChild(createMeta({ name: "text-scale", content: "scale" }));
+    assert_equals(mode(), "legacy", "meta in a shadow tree is ignored");
+    host.remove();
+    assert_equals(mode(), "legacy", "after removing the shadow host");
+}, "Meta in a shadow tree is ignored");
+dynamicTest(() => {
+    const frameless = document.implementation.createHTMLDocument("");
+    frameless.head.innerHTML = `<meta name="text-scale" content="scale">`;
+    const meta = frameless.querySelector("meta");
+    document.head.appendChild(meta);
+    assert_equals(mode(), "scale", "after moving into this document");
+    frameless.head.appendChild(meta);
+    assert_equals(mode(), "legacy", "after moving back to the frameless document");
+}, "Moving a meta from a frameless document into this document and back");
+</script>
+</body>
+</html>

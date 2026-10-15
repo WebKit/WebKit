@@ -651,6 +651,8 @@ enum ContentsFormat {
 
     DOMString documentBackgroundColor();
 
+    DOMString textScaleMetaMode();
+
     DOMString paintedCaretColor();
 
     boolean displayP3Available();

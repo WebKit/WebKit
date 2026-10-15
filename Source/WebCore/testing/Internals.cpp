@@ -2635,6 +2635,22 @@ ExceptionOr<String> Internals::documentBackgroundColor()
     return serializationForCSS(protect(document->view())->documentBackgroundColor());
 }
 
+ExceptionOr<String> Internals::textScaleMetaMode() const
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    switch (document->textScaleMeta()) {
+    case TextScaleMeta::Legacy:
+        return "legacy"_str;
+    case TextScaleMeta::Scale:
+        return "scale"_str;
+    }
+    ASSERT_NOT_REACHED();
+    return "legacy"_str;
+}
+
 ExceptionOr<String> Internals::paintedCaretColor()
 {
     RefPtr document = contextDocument();

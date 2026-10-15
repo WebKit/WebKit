@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+// Each case loads its markup in a fresh iframe, so the meta elements are inserted by the parser.
+function textScaleMetaModeFor(head, body = "") {
+    return new Promise(resolve => {
+        const frame = document.createElement("iframe");
+        frame.onload = () => {
+            const mode = frame.contentWindow.internals.textScaleMetaMode();
+            frame.remove();
+            resolve(mode);
+        };
+        frame.srcdoc = `<!DOCTYPE html><html><head>${head}</head><body>${body}</body></html>`;
+        document.body.appendChild(frame);
+    });
+}
+
+function testMode(head, body, expected, description) {
+    promise_test(async () => {
+        assert_equals(await textScaleMetaModeFor(head, body), expected);
+    }, description);
+}
+
+// No meta.
+testMode("", "", "legacy", "No text-scale meta gives legacy");
+testMode(`<meta name="viewport" content="width=device-width">`, "", "legacy", "Unrelated meta gives legacy");
+
+// Content values.
+testMode(`<meta name="text-scale" content="scale">`, "", "scale", "content=scale gives scale");
+testMode(`<meta name="text-scale" content="SCALE">`, "", "scale", "content=SCALE gives scale");
+testMode(`<meta name="text-scale" content="Scale">`, "", "scale", "content=Scale gives scale");
+testMode(`<meta name="text-scale" content="legacy">`, "", "legacy", "content=legacy gives legacy");
+testMode(`<meta name="text-scale" content="LEGACY">`, "", "legacy", "content=LEGACY gives legacy");
+testMode(`<meta name="text-scale" content="invalid">`, "", "legacy", "Invalid content gives legacy");
+testMode(`<meta name="text-scale" content="scaled">`, "", "legacy", "content=scaled gives legacy");
+testMode(`<meta name="text-scale" content="">`, "", "legacy", "Empty content gives legacy");
+testMode(`<meta name="text-scale">`, "", "legacy", "Missing content gives legacy");
+
+// Name matching.
+testMode(`<meta name="TEXT-SCALE" content="scale">`, "", "scale", "name=TEXT-SCALE is matched");
+testMode(`<meta name="Text-Scale" content="scale">`, "", "scale", "name=Text-Scale is matched");
+testMode(`<meta name="text-scale-foo" content="scale">`, "", "legacy", "name=text-scale-foo is not matched");
+testMode(`<meta name="textscale" content="scale">`, "", "legacy", "name=textscale is not matched");
+testMode(`<meta http-equiv="text-scale" content="scale">`, "", "legacy", "http-equiv=text-scale is not matched");
+
+// First meta in tree order wins.
+testMode(`<meta name="text-scale" content="legacy"><meta name="text-scale" content="scale">`, "", "legacy", "First meta wins: legacy then scale");
+testMode(`<meta name="text-scale" content="scale"><meta name="text-scale" content="legacy">`, "", "scale", "First meta wins: scale then legacy");
+testMode(`<meta name="text-scale" content="invalid"><meta name="text-scale" content="scale">`, "", "legacy", "First meta wins even when its content is invalid");
+testMode(`<meta name="text-scale" content=""><meta name="text-scale" content="scale">`, "", "legacy", "First meta wins even when its content is empty");
+testMode(`<meta name="text-scale"><meta name="text-scale" content="scale">`, "", "legacy", "First meta wins even when it has no content attribute");
+testMode(`<meta name="viewport" content="width=device-width"><meta name="text-scale" content="scale">`, "", "scale", "Unrelated meta before a text-scale meta is ignored");
+
+// Meta in body.
+testMode("", `<meta name="text-scale" content="scale">`, "scale", "Meta in body counts");
+testMode(`<meta name="text-scale" content="legacy">`, `<meta name="text-scale" content="scale">`, "legacy", "Meta in head comes before meta in body");
+
+// Inert content.
+testMode(`<template><meta name="text-scale" content="scale"></template>`, "", "legacy", "Meta inside template content is ignored");
+</script>
+</body>
+</html>
