@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Generate the dSYM of an image for mya heap, which needs every Clang module's types.
+
+dsymutil reads each Clang module that an object's debug info refers to once, for
+the first object that refers to it, and links the module's types only when it
+links that object. It skips an object that holds no code or data, such as a
+Swift file with only imports. A module that such an object refers to first is
+then never linked, and other modules' types that come from it stay declarations.
+So the objects that hold nothing go last in the debug map dsymutil links from.
+"""
+
+import argparse
+import os
+import re
+import subprocess
+import sys
+import tempfile
+
+OBJECT_START = re.compile(r'(?m)^  - filename:')
+SYMBOL_SIZE = re.compile(r'size:\s*0x([0-9A-Fa-f]+)')
+
+
+def holds_contents(entry):
+    return any(int(size, 16) for size in SYMBOL_SIZE.findall(entry))
+
+
+def reorder(debug_map):
+    if debug_map.count('\n---\n') + debug_map.startswith('---\n') != 1:
+        # More than one architecture, which mya heap does not build.
+        return None
+    head, objects = debug_map.split('objects:\n', 1)
+    starts = [match.start() for match in OBJECT_START.finditer(objects)]
+    end = objects.rindex('\n...') + 1
+    entries = [objects[start:next_start] for start, next_start in zip(starts, starts[1:] + [end])]
+    ordered = [entry for entry in entries if holds_contents(entry)] + [entry for entry in entries if not holds_contents(entry)]
+    return head + 'objects:\n' + ''.join(ordered) + objects[end:]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument('--dsymutil', default='dsymutil')
+    parser.add_argument('image')
+    parser.add_argument('-o', dest='output', required=True)
+    args = parser.parse_args()
+
+    debug_map = subprocess.run([args.dsymutil, '--dump-debug-map', args.image], check=True, capture_output=True, text=True).stdout
+    reordered = reorder(debug_map)
+    if reordered is None:
+        return subprocess.run([args.dsymutil, args.image, '-o', args.output]).returncode
+
+    with tempfile.TemporaryDirectory() as directory:
+        # dsymutil names the dSYM's DWARF file after the map, and liblldb looks there for the image's name.
+        map_path = os.path.join(directory, os.path.basename(args.image))
+        with open(map_path, 'w') as map_file:
+            map_file.write(reordered)
+        return subprocess.run([args.dsymutil, '-y', map_path, '-o', args.output]).returncode
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,9 @@
+module testLibJSCTools {
+    header "../HeapWalkSwiftModule.h"
+    export *
+}
+
+module HeapWalkModule {
+    header "../HeapWalkModule.h"
+    export *
+}

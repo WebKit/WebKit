@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,52 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#ifdef __OBJC__
+
+#import <Foundation/Foundation.h>
+
+// A class an Objective-C compile unit defines.
+@interface HeapWalkPlainObject : NSObject {
+@public
+    id other;
+    long value;
+}
+@end
+
+#endif // __OBJC__
+
+#ifdef __cplusplus
+
+#include <cstdint>
+
+#if OS(DARWIN) && ENABLE(MYA_HEAP)
 
 namespace JSCToolsTest {
 
-void testByteParser();
+// Only an Objective-C++ compile unit defines the class of this object, which the walk finds from its vtable.
+class ObjectiveCHolderInterface {
+public:
+    virtual ~ObjectiveCHolderInterface();
+};
+
+struct ObjectiveCHolderLeaf {
+    uint64_t value { 0 };
+};
+
+struct ObjectiveCHolderAddresses {
+    uint64_t holder;
+    // The Objective-C objects and the block the holder points to.
+    uint64_t object;
+    uint64_t plainObject;
+    uint64_t block;
+    // Held only by a lambda declared in an Objective-C method.
+    uint64_t leaf;
+};
+
+ObjectiveCHolderInterface* createObjectiveCHolder(ObjectiveCHolderAddresses&);
 
 } // namespace JSCToolsTest
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // OS(DARWIN) && ENABLE(MYA_HEAP)
+
+#endif // __cplusplus

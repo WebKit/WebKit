@@ -27,6 +27,11 @@ WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifde
 
 WEBKIT_OPTION_END()
 
+# testLibJSCTools' heap walk holds Swift objects through Swift's C++ interoperability.
+if (APPLE AND ENABLE_MYA_HEAP AND DEVELOPER_MODE)
+    set(SWIFT_REQUIRED ON)
+endif ()
+
 set(ALL_EVENT_LOOP_TYPES
     GLib
     Generic

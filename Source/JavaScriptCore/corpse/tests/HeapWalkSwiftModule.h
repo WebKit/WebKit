@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,4 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-
-namespace JSCToolsTest {
-
-// Builds a range of memory with a known page layout, takes a corpse of the running
-// test, and checks what Memory makes of it.
-
-void testMemory();
-
-} // namespace JSCToolsTest
-
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+// The C and C++ side of testLibJSCTools that its Swift code imports. HeapWalkSwift.swift needs nothing from it.

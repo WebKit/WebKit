@@ -25,14 +25,23 @@
 
 #include "config.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseClient.h>
+#include <JavaScriptCore/CorpseError.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseRegion.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <JavaScriptCore/CorpseThread.h>
+#if ENABLE(MYA_HEAP)
+#include <JavaScriptCore/CorpseHeapWalk.h>
+#include <JavaScriptCore/CorpseSnapshotDebugInfo.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/VMManager.h>
+#endif
 #include <algorithm>
 #include <ctype.h>
 #include <errno.h>
@@ -56,7 +65,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 #if HAVE(READLINE)
 // readline/history.h has a Function typedef that conflicts with WTF::Function;
@@ -69,12 +81,12 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+namespace Mya {
+
 using JSC::Corpse::Address;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
 using JSC::Corpse::Thread;
-
-namespace Mya {
 
 // A lexer over a null-terminated string. Parsing methods skip leading
 // whitespace and advance past whatever they consume; a failed parse leaves the
@@ -161,6 +173,95 @@ private:
     const char* m_at;
 };
 
+#if ENABLE(MYA_HEAP)
+
+// Counts what a heap walk reached, for `heap`.
+class HeapSummary final : public JSC::Corpse::HeapAnalyzer {
+public:
+    void analyzeNode(const JSC::Corpse::TargetObject& object) final
+    {
+        ++m_nodes;
+        m_bytes += JSC::Corpse::byteSize(object.type);
+        if (std::holds_alternative<JSC::Corpse::TargetClass>(object.type))
+            ++m_objectsOfClass.add(&object.type, 0).iterator->value;
+    }
+
+    void analyzeEdge(const JSC::Corpse::TargetObject&, const JSC::Corpse::TargetCanonicalPointer&) final
+    {
+        ++m_edges;
+    }
+
+    void analyzeNeedsReader(const JSC::Corpse::TargetObject&, const JSC::Corpse::TargetObject& subobject) final
+    {
+        auto& subobjectClass = std::get<JSC::Corpse::TargetClass>(subobject.type);
+        ++m_needsReader.add(makeString(nameOf(subobjectClass.needsReader), '\t', subobjectClass.name), 0).iterator->value;
+    }
+
+    void analyzeOpaqueEdge(const JSC::Corpse::TargetObject&, Address, const JSC::Corpse::TargetOpaque& pointee) final
+    {
+        ++m_opaquePointers.add(makeString(nameOf(pointee.kind), '\t', pointee.name), 0).iterator->value;
+    }
+
+    void print(FILE* out)
+    {
+        fprintf(out, "%llu objects, %llu bytes, %llu edges\n", m_nodes, m_bytes, m_edges);
+        printTop(out, "Subobjects that need a reader, by reason and class", m_needsReader);
+        printTop(out, "Opaque pointers, by kind and what they point to", m_opaquePointers);
+
+        // Every opaque field of the objects reached, counting each object of a class once.
+        HashMap<String, uint64_t> kinds;
+        for (auto& [type, objects] : m_objectsOfClass)
+            countOpaque(*type, objects, kinds);
+        printTop(out, "Opaque fields of the objects reached, by kind", kinds);
+    }
+
+private:
+    template<typename T> static String nameOf(T value)
+    {
+        return WTF::toString(value);
+    }
+
+    static void countOpaque(const JSC::Corpse::TargetType& type, uint64_t objects, HashMap<String, uint64_t>& kinds)
+    {
+        WTF::switchOn(type,
+            [&](const JSC::Corpse::TargetOpaque& opaque) {
+                kinds.add(nameOf(opaque.kind), 0).iterator->value += objects;
+            },
+            [&](const JSC::Corpse::TargetArray& array) {
+                countOpaque(array.element, objects, kinds);
+            },
+            [&](const JSC::Corpse::TargetClass& targetClass) {
+                for (const JSC::Corpse::TargetMember& member : targetClass.members)
+                    countOpaque(member.type, objects, kinds);
+                for (const JSC::Corpse::TargetBase& base : targetClass.virtualBases)
+                    countOpaque(base.type, objects, kinds);
+            },
+            [](const auto&) { });
+    }
+
+    static void printTop(FILE* out, const char* title, const HashMap<String, uint64_t>& counts)
+    {
+        Vector<std::pair<String, uint64_t>> sorted;
+        for (auto& [key, count] : counts)
+            sorted.append({ key, count });
+        std::ranges::sort(sorted, [](auto& a, auto& b) {
+            return a.second > b.second;
+        });
+        fprintf(out, "\n%s (%zu distinct):\n", title, sorted.size());
+        for (size_t i = 0; i < sorted.size() && i < 60; ++i)
+            fprintf(out, "  %10llu  %s\n", sorted[i].second, sorted[i].first.utf8().legacyCStringPointer());
+    }
+
+    uint64_t m_nodes { 0 };
+    uint64_t m_bytes { 0 };
+    uint64_t m_edges { 0 };
+    HashMap<const JSC::Corpse::TargetType*, uint64_t> m_objectsOfClass;
+    HashMap<String, uint64_t> m_needsReader;
+    HashMap<String, uint64_t> m_opaquePointers;
+};
+
+#endif // ENABLE(MYA_HEAP)
+
 class Shell {
 public:
     ~Shell()
@@ -213,6 +314,9 @@ private:
         fputs("  snapshot (sn, snap) ...   Capture and manage snapshots\n", out);
         fputs("  thread (th) ...           Inspect the threads in a snapshot\n", out);
         fputs("  p[/x] &<symbol>           Print a symbol's address, /x for hex\n", out);
+#if ENABLE(MYA_HEAP)
+        fputs("  heap                      Walk the C++ heap from the VM and summarize it\n", out);
+#endif
         fputs("  history (hi, hist) ...    Show and manage the command history\n", out);
         fputs("  help [<command>]          Show this help, or help for <command>\n", out);
         fputs("  quit (q, exit)            Exit mya\n", out);
@@ -594,16 +698,16 @@ private:
             snprintf(buffer, sizeof(buffer), "%.3f", thread.systemTimeUsec() / 1000.0);
             row.cells[4] = buffer;
             if (thread.stackPointer()) {
-                snprintf(buffer, sizeof(buffer), "0x%llx",
-                    thread.stackPointer().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx",
+                    static_cast<unsigned long long>(thread.stackPointer().toTargetVMAddress()));
                 row.cells[5] = buffer;
             } else
                 row.cells[5] = "-";
             if (thread.hasStack()) {
                 const auto& stack = thread.stackRegion();
-                snprintf(buffer, sizeof(buffer), "0x%llx-0x%llx",
-                    stack.base().toMachVMAddress(),
-                    stack.end().toMachVMAddress());
+                SAFE_SPRINTF(std::span { buffer }, "0x%llx-0x%llx",
+                    static_cast<unsigned long long>(stack.base().toTargetVMAddress()),
+                    static_cast<unsigned long long>(stack.end().toTargetVMAddress()));
                 row.cells[6] = buffer;
                 formatByteSize(stack.size(), buffer, sizeof(buffer));
                 row.cells[7] = buffer;
@@ -676,6 +780,51 @@ private:
             static_cast<int>(token.length()), token.data());
     }
 
+#if ENABLE(MYA_HEAP)
+    // Walks the C++ heap from the first VM JavaScriptCore constructed, and summarizes what the walk reached.
+    void handleHeap(Lexer lex)
+    {
+        if (!lex.atEnd()) {
+            fputs("Usage: heap\n", stderr);
+            return;
+        }
+        // FIXME: we should take a cooperative snapshot.
+        Snapshot* snapshot = snapshotById(m_currentSnapshot);
+        if (!snapshot) {
+            fputs("No snapshot in use. Capture one with `snapshot`, or select one with `snapshot <n>`.\n", stderr);
+            return;
+        }
+        Address rootVM = snapshot->addressOf(&JSC::g_myaRootVM);
+        // JavaScriptCore's debug info gives this function's parameter as JavaScriptCore's VM.
+        Address takesVM = snapshot->addressOf(reinterpret_cast<const void*>(&JSC::sanitizeStackForVM));
+        if (!rootVM || !takesVM)
+            return;
+        auto vm = snapshot->memory().ptr<uint64_t>(rootVM);
+        if (!vm || !*vm) {
+            fputs("JavaScriptCore has no VM in this snapshot.\n", stderr);
+            return;
+        }
+        Ref debugInfo = JSC::Corpse::SnapshotDebugInfo::create(*snapshot);
+        const JSC::Corpse::TargetType* vmType = nullptr;
+        Vector<JSC::Corpse::TargetTypeRef> parameters = debugInfo->parameterTypes(takesVM);
+        if (!parameters.isEmpty()) {
+            WTF::switchOn(parameters[0].get(),
+                [&](const JSC::Corpse::TargetPointer& pointer) {
+                    if (const JSC::Corpse::TargetType* pointee = debugInfo->pointee(pointer); pointee && std::holds_alternative<JSC::Corpse::TargetClass>(*pointee))
+                        vmType = pointee;
+                },
+                [](const auto&) { });
+        }
+        if (!vmType) {
+            fputs("JavaScriptCore's debug info does not describe its VM.\n", stderr);
+            return;
+        }
+        HeapSummary summary;
+        JSC::Corpse::walkHeap(*snapshot, debugInfo.get(), { Address { *vm }, *vmType }, summary);
+        summary.print(stdout);
+    }
+#endif
+
     // Dispatches `p[/<format>] <expression>`. The only expression understood so
     // far is `&<symbol>`, which resolves the symbol in the snapshot in use.
     // `format` is the text after the '/', empty when none was given.
@@ -709,16 +858,14 @@ private:
             return;
         }
 
-        std::string name(token);
-        Address address = snapshot->symbol(name.c_str());
-        if (!address) {
-            fprintf(stderr, "mya: No symbol '%s' in snapshot #%u\n", name.c_str(), snapshot->id());
+        CString name = UTF8CString::fromUTF8(std::span { token });
+        Address address = snapshot->symbol(name.legacyCStringPointer());
+        if (!address)
             return;
-        }
         if (hex)
-            printf("&%s = 0x%llx\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = 0x%llx\n", name, static_cast<unsigned long long>(address.toTargetVMAddress()));
         else
-            printf("&%s = %llu\n", name.c_str(), address.toMachVMAddress());
+            SAFE_PRINTF("&%s = %llu\n", name, static_cast<unsigned long long>(address.toTargetVMAddress()));
     }
 
     // Releases resources without extra output. Dropping the current selection
@@ -1265,6 +1412,7 @@ private:
         Lexer lex(line);
         if (lex.atEnd())
             return; // Blank line: not a command, not an error.
+        CORPSE_DIAGNOSTICS(diagnostics, "running the command '%s'", line);
 
         // History replay ("!!" / "!<n>") is expanded before command dispatch.
         if (lex.consumeChar('!'))
@@ -1333,6 +1481,13 @@ private:
             handleThread(lex);
             return;
         }
+#if ENABLE(MYA_HEAP)
+        if (is("heap")) {
+            recordCommand(line);
+            handleHeap(lex);
+            return;
+        }
+#endif
         if (command == "p" || command == "print") {
             recordCommand(line);
             handlePrint(format, lex);
@@ -1392,16 +1547,16 @@ private:
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 
 int main(int argc, char** argv)
 {
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
     return Mya::Shell().run(argc, argv);
 #else
     UNUSED_PARAM(argc);
     UNUSED_PARAM(argv);
-    printf("Not supported platform for mya\n");
+    SAFE_PRINTF("Not supported platform for mya\n");
     return 1;
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
 }
