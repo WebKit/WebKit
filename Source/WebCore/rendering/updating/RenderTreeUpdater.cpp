@@ -519,7 +519,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
             // elements handle their own styles, including inherited highlight changes.
             SingleThreadWeakHashSet<RenderBlock> containingBlocks;
             for (Ref node : composedTreeChildren(element)) {
-                if (auto* text = dynamicDowncast<Text>(node.get())) {
+                if (auto* text = dynamicDowncast<Text>(node)) {
                     if (CheckedPtr renderer = text->renderer()) {
                         renderer->repaint();
                         if (CheckedPtr containingBlock = renderer->containingBlock())
