@@ -244,6 +244,10 @@ public:
         }
 
         auto pulledBuffer = gst_sample_get_buffer(pulledSample.get());
+        if (!GST_BUFFER_DURATION(pulledBuffer)) {
+            GST_TRACE_OBJECT(pipeline(), "Ignoring buffer without duration: %" GST_PTR_FORMAT, pulledBuffer);
+            return WEBRTC_VIDEO_CODEC_OK;
+        }
         uint32_t rtpTimestamp = inputImage.RtpTimestamp();
         if (!m_requireParse) {
             if (auto meta = gst_buffer_get_reference_timestamp_meta(pulledBuffer, m_rtpTimestampCaps.get()))
