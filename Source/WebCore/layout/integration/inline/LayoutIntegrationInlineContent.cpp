@@ -218,8 +218,7 @@ void InlineContent::clearFormattingContextRoot()
 
 void InlineContent::shrinkToFit()
 {
-    m_displayContent.boxes.shrinkToFit();
-    m_displayContent.lines.shrinkToFit();
+    m_displayContent.shrinkToFit();
 }
 
 }
