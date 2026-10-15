@@ -68,8 +68,12 @@ public:
     // We have an extra size class for size zero.
     static constexpr size_t numSizeClasses = largeCutoff / sizeStep + 1;
     
-    static constexpr HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
-    static constexpr HeapVersion initialVersion = 2; // The version that the heap starts out with. Set to make sure that nextVersion(nullVersion) != initialVersion.
+    // Versions identify which collection a block's bits belong to. A heap's versions are
+    // never nullVersion or nextVersion(nullVersion): they start at initialVersion and
+    // wrap back to it. So a block at nullVersion (new, or reset at a wrap) can never look
+    // current, or look one version behind, by accident.
+    static constexpr HeapVersion nullVersion = 0;
+    static constexpr HeapVersion initialVersion = 2;
     
     static HeapVersion nextVersion(HeapVersion version)
     {

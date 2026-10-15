@@ -408,7 +408,7 @@ void MarkedSpace::beginMarking()
         if (nextVersion(m_markingVersion) == initialVersion) [[unlikely]] {
             forEachBlock(
                 [&] (MarkedBlock::Handle* handle) {
-                    handle->block().resetMarks();
+                    handle->block().resetMarksForVersionWrap();
                 });
         }
 
@@ -438,7 +438,7 @@ void MarkedSpace::endMarking()
     if (nextVersion(m_newlyAllocatedVersion) == initialVersion) [[unlikely]] {
         forEachBlock(
             [&] (MarkedBlock::Handle* handle) {
-                handle->block().resetAllocated();
+                handle->block().resetNewlyAllocatedForVersionWrap();
             });
     }
     

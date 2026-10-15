@@ -67,7 +67,7 @@ public:
 
     void notifyNeedsDestruction() const;
 
-    // isPendingDestruction returns true iff the cell is no longer alive but has not yet
+    // isPendingDestruction returns true iff the cell is no longer live but has not yet
     // been swept and therefore its destructor (if it has one) has not yet run.
     bool isPendingDestruction();
 

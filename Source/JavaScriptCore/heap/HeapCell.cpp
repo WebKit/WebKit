@@ -40,12 +40,15 @@ bool HeapCell::isPendingDestruction()
         return !preciseAllocation().isLive();
     auto& markedBlockHandle = markedBlock().handle();
     // If the block is freelisted then either:
-    // (1) The cell is not on the FreeList, in which case it is newly allocated or
+    // (1) The cell is not on the FreeList, in which case it is live: it survived the last
+    //     collection or was allocated after it, or
     // (2) The cell is on the FreeList, in which case it is free.
     // In either case, the destructor is not pending.
     // (And as indicated above, it's not legal to call this method in state #2).
     if (markedBlockHandle.isFreeListed())
         return false;
+    // Otherwise the cell has not been freed, so it is either live or dead and awaiting the
+    // sweep: its destructor is pending exactly when it is not live.
     return !markedBlockHandle.isLive(this);
 }
 

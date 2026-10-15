@@ -66,25 +66,23 @@ inline MarkedSpace* MarkedBlock::Handle::space() const
     return &heap()->objectSpace();
 }
 
-inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVersion)
+inline bool MarkedBlock::staleMarksStillRecordSurvivors(HeapVersion markingVersion)
 {
-    return marksConveyLivenessDuringMarking(header().m_markingVersion, markingVersion);
+    return staleMarksStillRecordSurvivors(header().m_markingVersion, markingVersion);
 }
 
-inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion)
+inline bool MarkedBlock::staleMarksStillRecordSurvivors(HeapVersion myMarkingVersion, HeapVersion markingVersion)
 {
-    // This returns true if any of these is true:
-    // - We just created the block and so the bits are clear already.
-    // - This block has objects marked during the last GC, and so its version was up-to-date just
-    //   before the current collection did beginMarking(). This means that any objects that have
-    //   their mark bit set are valid objects that were never deleted, and so are candidates for
-    //   marking in any conservative scan. Using our jargon, they are "live".
-    // - We did ~2^32 collections and rotated the version back to null, so we needed to hard-reset
-    //   everything. If the marks had been stale, we would have cleared them. So, we can be sure that
-    //   any set mark bit reflects objects marked during last GC, i.e. "live" objects.
-    // It would be absurd to use this method when not collecting, since this special "one version
-    // back" state only makes sense when we're in a concurrent collection and have to be
-    // conservative.
+    // Whether this block's stale marks still record the survivors. Only during a Full
+    // collection, whose Begin made them stale:
+    // - nullVersion: yes. A new block has no survivors and marks are clear; a block reset
+    //   at a version wrap kept the marks as survivors.
+    // - Exactly one version behind: yes. These are the marks made since the previous Full
+    //   collection began, which are the survivors.
+    // - Anything older: no. The block has no survivors.
+    // An Eden collection does not advance the marking version, so marks stale then
+    // predate the last Full collection. Between collections, marks one version behind
+    // mean the last Full collection did not mark that block. Neither records survivors.
     ASSERT(space()->isMarking());
     if (heap()->collectionScope() != CollectionScope::Full)
         return false;
@@ -98,6 +96,9 @@ inline bool MarkedBlock::Handle::isAllocated()
     return m_directory->isAllocated(this);
 }
 
+// Whether the cell survived the last collection or was allocated after it. Cells the last
+// collection found unreachable are dead: not live, even though their memory is not freed
+// until the block is swept. Must not be called while the block is free-listed.
 ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
 {
     m_directory->assertIsMutatorOrMutatorIsStopped();
@@ -118,12 +119,12 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
     //
     // Another thread is doing:
     //
-    // 1) AboutToMarkSlow: This is the entire aboutToMarkSlow function, and let's say it's atomic. It
+    // 1) ResetStaleMarks: This is the entire resetStaleMarks function, and let's say it's atomic. It
     //    sorta is since it holds a lock, but that doesn't actually make it atomic with respect to
     //    IsLiveChecksNewlyAllocated, since that does not hold a lock in our scenario.
     //
     // The harmful interleaving happens if we start out with a block that has stale mark bits that
-    // nonetheless convey liveness during marking (the off-by-one version trick). The interleaving is
+    // nonetheless still record survivors (staleMarksStillRecordSurvivors()). The interleaving is
     // just:
     //
     // IsLiveChecksNewlyAllocated AboutToMarkSlow IsLiveChecksMarks
@@ -160,7 +161,7 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
         } else {
             HeapVersion myMarkingVersion = fencedHeader.m_markingVersion;
             if (myMarkingVersion != markingVersion
-                && (!isMarking || !fencedBlock.marksConveyLivenessDuringMarking(myMarkingVersion, markingVersion))) {
+                && (!isMarking || !fencedBlock.staleMarksStillRecordSurvivors(myMarkingVersion, markingVersion))) {
                 if (header.m_lock.fencelessValidate(count.value, Dependency::fence(myMarkingVersion)))
                     return false;
             } else {
@@ -180,9 +181,12 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
         return block.isNewlyAllocated(cell);
 
     if (block.areMarksStale(markingVersion)) {
+        // Both of these cases mean nothing survived the last collection, and since
+        // m_newlyAllocated is not current, nothing has been allocated in the block since
+        // either: the cell is not live.
         if (!isMarking)
             return false;
-        if (!block.marksConveyLivenessDuringMarking(markingVersion))
+        if (!block.staleMarksStillRecordSurvivors(markingVersion))
             return false;
     }
 
@@ -519,7 +523,7 @@ inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()
     HeapVersion markingVersion = space()->markingVersion();
     bool marksAreUseful = !block().areMarksStale(markingVersion);
     if (space()->isMarking())
-        marksAreUseful |= block().marksConveyLivenessDuringMarking(markingVersion);
+        marksAreUseful |= block().staleMarksStillRecordSurvivors(markingVersion);
     return marksAreUseful ? MarksNotStale : MarksStale;
 }
 
@@ -527,10 +531,10 @@ template <typename Functor>
 inline IterationStatus MarkedBlock::Handle::forEachLiveCell(NOESCAPE const Functor& functor)
 {
     // FIXME: This is not currently efficient to use in the constraint solver because isLive() grabs a
-    // lock to protect itself from concurrent calls to aboutToMarkSlow(). But we could get around this by
+    // lock to protect itself from concurrent calls to resetStaleMarks(). But we could get around this by
     // having this function grab the lock before and after the iteration, and check if the marking version
     // changed. If it did, just run again. Inside the loop, we only need to ensure that if a race were to
-    // happen, we will just overlook objects. I think that because of how aboutToMarkSlow() does things,
+    // happen, we will just overlook objects. I think that because of how resetStaleMarks() does things,
     // a race ought to mean that it just returns false when it should have returned true - but this is
     // something that would have to be verified carefully.
     //

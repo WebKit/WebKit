@@ -271,13 +271,16 @@ inline void MarkedBlock::setupTestForDumpInfoAndCrash() { }
 
 #endif // ENABLE(MARKEDBLOCK_TEST_DUMP_INFO)
 
-void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
+// Called the first time a collection marks a cell in this block while its marks are stale.
+// Resets the marks for this collection without losing the survivors they may still record.
+void MarkedBlock::resetStaleMarks(HeapVersion markingVersion, HeapCell* cell)
 {
     ASSERT(vm().heap.objectSpace().isMarking());
     setupTestForDumpInfoAndCrash();
 
     Locker locker { header().m_lock };
-    
+
+    // Another marker may have reset them since aboutToMark() checked.
     if (!areMarksStale(markingVersion))
         return;
 
@@ -292,36 +295,42 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
         isAllocated = directory->isAllocated(handle);
     }
 
-    if (isAllocated || !marksConveyLivenessDuringMarking(markingVersion)) {
+    if (isAllocated || !staleMarksStillRecordSurvivors(markingVersion)) {
         if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": Clearing marks without doing anything else.\n");
-        // We already know that the block is full and is already recognized as such, or that the
-        // block did not survive the previous GC. So, we can clear mark bits the old fashioned
-        // way. Note that it's possible for such a block to have newlyAllocated with an up-to-
-        // date version! If it does, then we want to leave the newlyAllocated alone, since that
-        // means that we had allocated in this previously empty block but did not fill it up, so
-        // we created a newlyAllocated.
+        // When the block is full, its directory's allocated bit says every cell is live
+        // until this collection's End, so the marks are not needed. Otherwise, the
+        // block's marking version indicated that nothing in it was marked as of the last
+        // collection's End, so it has no survivors and the old mark bits are leftovers.
+        // Either way, the marks can just be cleared. m_newlyAllocated is left alone: if
+        // it is current, it records the cells allocated since the last collection.
         header().m_marks.clearAll();
     } else {
+        // The stale marks record the survivors, which must stay live: make sure
+        // m_newlyAllocated holds them before the marks are cleared.
         if (MarkedBlockInternal::verbose)
             dataLog(RawPointer(this), ": Doing things.\n");
         HeapVersion newlyAllocatedVersion = space()->newlyAllocatedVersion();
         if (header().m_newlyAllocatedVersion == newlyAllocatedVersion) {
-            // When do we get here? The block could not have been filled up. The newlyAllocated bits would
-            // have had to be created since the end of the last collection. The only things that create
-            // them are aboutToMarkSlow, lastChanceToFinalize, and stopAllocating. If it had been
-            // aboutToMarkSlow, then we shouldn't be here since the marks wouldn't be stale anymore. It
-            // cannot be lastChanceToFinalize. So it must be stopAllocating. That means that we just
-            // computed the newlyAllocated bits just before the start of an increment. When we are in that
-            // mode, it seems as if newlyAllocated should subsume marks.
+            // stopAllocating() rebuilt m_newlyAllocated during this collection by setting
+            // every cell not on the free list. Survivors are never on a free list, so
+            // m_newlyAllocated already holds them.
             ASSERT(header().m_newlyAllocated.subsumes(header().m_marks));
             header().m_marks.clearAll();
         } else {
+            // m_newlyAllocated is stale, so stopAllocating() has not run on the block
+            // since the last collection's End. Either nothing has been allocated in it
+            // since, and the survivors are its only live cells, or the mutator is
+            // allocating from it right now, and the next stopAllocating() rebuilds
+            // m_newlyAllocated to include both the survivors and the cells allocated from
+            // the free list. Either way, move the survivors into m_newlyAllocated, which
+            // isLive() consults for the rest of this collection.
             header().m_newlyAllocated.setAndClear(header().m_marks);
             header().m_newlyAllocatedVersion = newlyAllocatedVersion;
         }
     }
     clearHasAnyMarked();
+    // Store the new version last, so that a racing reader never pairs it with the old bits.
     WTF::storeStoreFence();
     header().m_markingVersion = markingVersion;
     
@@ -338,20 +347,20 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
 #endif
 }
 
-void MarkedBlock::resetAllocated()
+// Called when the heap's newly-allocated version is about to wrap, at a collection's End,
+// when these bits are retired anyway. Clears them and sets the version to nullVersion, so
+// they can never look current by accident.
+void MarkedBlock::resetNewlyAllocatedForVersionWrap()
 {
     header().m_newlyAllocated.clearAll();
     header().m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 }
 
-void MarkedBlock::resetMarks()
+// Called when the heap's marking version is about to wrap, at a collections's Begin. Keeps the marks of the
+// survivors, those from the version about to be replaced, clears any older stale marks,
+// and sets the version to nullVersion which staleMarksStillRecordSurvivors() has a special case for.
+void MarkedBlock::resetMarksForVersionWrap()
 {
-    // We want aboutToMarkSlow() to see what the mark bits were after the last collection. It uses
-    // the version number to distinguish between the marks having already been stale before
-    // beginMarking(), or just stale now that beginMarking() bumped the version. If we have a version
-    // wraparound, then we will call this method before resetting the version to null. When the
-    // version is null, aboutToMarkSlow() will assume that the marks were not stale as of before
-    // beginMarking(). Hence the need to whip the marks into shape.
     if (areMarksStale())
         header().m_marks.clearAll();
     header().m_markingVersion = MarkedSpace::nullVersion;
