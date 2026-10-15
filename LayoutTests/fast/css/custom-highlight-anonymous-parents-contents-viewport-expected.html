@@ -10,6 +10,8 @@ body { font: 20px Ahem; color: black; background: white; }
 window.testRunner?.waitUntilDone();
 const nextFrame = () => new Promise(requestAnimationFrame);
 const resizeToAndWait = async (width, height) => {
+    // Leave the rendering update before synchronously resizing the view.
+    await new Promise(resolve => setTimeout(resolve, 0));
     if (window.testRunner?.isWebKit2)
         testRunner.setViewSize(width, height);
     else
