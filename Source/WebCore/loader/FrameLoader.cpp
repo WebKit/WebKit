@@ -2033,6 +2033,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     const String& httpMethod = loader->request().httpMethod();
 
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker().loadType(), newURL) && !loader->substituteData().isValid()) {
+        RefPtr policyDocumentLoader = m_policyDocumentLoader;
+        // A navigation that a listener starts replaces this one.
+        if (dispatchNavigateEventForNavigationFromAnotherProcess(*loader, type, historyHandling, IsSameDocumentNavigation::Yes).isNotCompleted() || m_policyDocumentLoader != policyDocumentLoader || !frame->page())
+            return;
 
         RefPtr oldDocumentLoader = m_documentLoader;
         NavigationAction action { protect(frame->document()).releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
@@ -2067,6 +2071,13 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     protect(frame->navigationScheduler())->cancel(NewLoadInProgress::Yes);
 
     if (shouldTreatCurrentLoadAsContinuingLoad()) {
+        auto result = dispatchNavigateEventForNavigationFromAnotherProcess(*loader, type, historyHandling, IsSameDocumentNavigation::No);
+        if (m_policyDocumentLoader != loader || !frame->page())
+            return;
+        if (result.isNotCompleted()) {
+            setPolicyDocumentLoader(nullptr);
+            return;
+        }
         continueLoadAfterNavigationPolicy(loader->request(), formSubmission.get(), NavigationPolicyDecision::ContinueLoad, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         return;
     }
@@ -2094,6 +2105,25 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         completionHandler();
     }, IsSameDocumentNavigation::No, PolicyDecisionMode::Asynchronous, determineNavigationType(type, historyHandling));
+}
+
+NavigateEventDispatchResult FrameLoader::dispatchNavigateEventForNavigationFromAnotherProcess(const DocumentLoader& loader, FrameLoadType type, NavigationHistoryBehavior historyHandling, IsSameDocumentNavigation isSameDocument)
+{
+    auto& requester = loader.crossSiteRequester();
+    RefPtr document = m_frame->document();
+    if (!requester || !loader.isContinuingLoadAfterNavigationPolicyDecision() || !document)
+        return NavigateEventDispatchResult::completed();
+
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
+    if (isSameDocument == IsSameDocumentNavigation::No && (type == FrameLoadType::Reload || m_stateMachine.isDisplayingInitialEmptyDocument() || !protect(requester->securityOrigin)->isSameOriginDomain(protect(document->securityOrigin()).get())))
+        return NavigateEventDispatchResult::completed();
+
+    // FIXME: Expose the form data of a POST navigation as formData.
+    FrameLoadRequest frameLoadRequest { protect(m_frame), ResourceRequest { loader.request() } };
+    frameLoadRequest.setNavigationHistoryBehavior(historyHandling);
+    // A navigation that a listener starts is a new one, not a continuation of this one.
+    SetForScope notContinuing { m_currentLoadContinuingState, LoadContinuingState::NotContinuing };
+    return dispatchNavigateEvent(type, frameLoadRequest, isSameDocument == IsSameDocumentNavigation::Yes);
 }
 
 // navigate() must fire these before it returns, but its policy check must stay asynchronous: the UI process may

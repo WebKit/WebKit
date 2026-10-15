@@ -6265,6 +6265,31 @@ TEST(SiteIsolation, AlternateHTMLStringCannotAccessSameOriginFrameWithDocumentIs
     EXPECT_WK_STREQ([webView _test_waitForAlert], "null");
 }
 
+TEST(SiteIsolation, NavigationStartedByNavigateEventFromAnotherProcessGetsPolicyDecision)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe name='child' src='https://webkit.org/frame'></iframe>"_s } },
+        { "/frame"_s, { "<script>navigation.onnavigate = event => { if (!event.hashChange) return; const link = document.createElement('a'); link.href = 'https://apple.com/target'; document.body.append(link); link.click(); }</script>"_s } },
+        { "/target"_s, { "<script>alert('target')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t frameProcess = [webView firstChildFrame]._processIdentifier;
+
+    __block bool decidedPolicyForTarget = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.absoluteString isEqualToString:@"https://apple.com/target"])
+            decidedPolicyForTarget = true;
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
+    [webView evaluateJavaScript:@"const link = document.createElement('a'); link.target = 'child'; link.href = 'https://webkit.org/frame#fragment'; document.body.append(link); link.click()" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "target");
+    EXPECT_TRUE(decidedPolicyForTarget);
+    EXPECT_NE([webView firstChildFrame]._processIdentifier, frameProcess);
+}
+
 TEST(SiteIsolation, WebsitePoliciesCustomUserAgentDuringSameSiteProvisionalNavigation)
 {
     auto mainframeHTML = "<iframe id='frame' src='https://domain2.com/subframe'></iframe>"_s;

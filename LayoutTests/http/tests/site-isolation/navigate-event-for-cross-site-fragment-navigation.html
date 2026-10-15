@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("A link that navigates a cross-site frame to a fragment fires a navigate event in that frame.");
+jsTestIsAsync = true;
+
+const frameURL = "http://localhost:8000/site-isolation/resources/post-navigate-event.html";
+
+onmessage = event => {
+    if (event.data == "ready") {
+        const link = document.createElement("a");
+        link.target = "child";
+        link.href = frameURL + "#fragment";
+        document.body.append(link);
+        link.click();
+        return;
+    }
+    navigateEvent = event.data;
+    shouldBeEqualToString("navigateEvent.url", frameURL + "#fragment");
+    shouldBeTrue("navigateEvent.sameDocument");
+    shouldBeEqualToString("navigateEvent.navigationType", "push");
+    shouldBeTrue("navigateEvent.hashChange");
+    shouldBeTrue("navigateEvent.cancelable");
+    shouldBeTrue("navigateEvent.canIntercept");
+    shouldBeEqualToString("navigateEvent.sourceElement", "null");
+    finishJSTest();
+};
+</script>
+<iframe name="child" src="http://localhost:8000/site-isolation/resources/post-navigate-event.html"></iframe>

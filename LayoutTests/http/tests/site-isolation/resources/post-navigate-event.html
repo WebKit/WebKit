@@ -1,0 +1,12 @@
+<script>
+navigation.onnavigate = event => parent.postMessage({
+    url: event.destination.url,
+    sameDocument: event.destination.sameDocument,
+    navigationType: event.navigationType,
+    hashChange: event.hashChange,
+    cancelable: event.cancelable,
+    canIntercept: event.canIntercept,
+    sourceElement: event.sourceElement ? "element" : "null",
+}, "*");
+onload = () => parent.postMessage("ready", "*");
+</script>

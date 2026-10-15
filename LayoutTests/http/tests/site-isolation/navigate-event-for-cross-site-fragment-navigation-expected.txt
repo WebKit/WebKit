@@ -1,0 +1,16 @@
+A link that navigates a cross-site frame to a fragment fires a navigate event in that frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigateEvent.url is "http://localhost:8000/site-isolation/resources/post-navigate-event.html#fragment"
+PASS navigateEvent.sameDocument is true
+PASS navigateEvent.navigationType is "push"
+PASS navigateEvent.hashChange is true
+PASS navigateEvent.cancelable is true
+PASS navigateEvent.canIntercept is true
+PASS navigateEvent.sourceElement is "null"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
