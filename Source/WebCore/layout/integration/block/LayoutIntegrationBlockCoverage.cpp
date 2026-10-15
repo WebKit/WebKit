@@ -173,12 +173,18 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     auto isAuto = [](auto& size) {
         return size.isAuto() && !size.isCalcSize();
     };
+    // Block sizes may also be min-content, max-content or fit-content, which are the automatic block size (css-sizing-3 §3.2). Min and max
+    // block sizes resolve those to the content's block size, which only an automatic block size reaches.
+    auto isSupportedBlockSize = [&](auto& size, bool resolvesToContentBlockSize) {
+        return isSupportedSize(size) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
+    };
+    auto blockSizeIsAutomatic = isAuto(style->logicalHeight()) || (style->logicalHeight().isIntrinsic() && !style->logicalHeight().isCalcSize());
     if ((!isAuto(style->logicalWidth()) && !isSupportedSize(style->logicalWidth()))
         || (!isAuto(style->logicalMinWidth()) && !isSupportedSize(style->logicalMinWidth()))
         || (!style->logicalMaxWidth().isNone() && !isSupportedSize(style->logicalMaxWidth()))
-        || (!isAuto(style->logicalHeight()) && !isSupportedSize(style->logicalHeight()))
-        || (!isAuto(style->logicalMinHeight()) && !isSupportedSize(style->logicalMinHeight()))
-        || (!style->logicalMaxHeight().isNone() && !isSupportedSize(style->logicalMaxHeight()))
+        || (!isAuto(style->logicalHeight()) && !isSupportedBlockSize(style->logicalHeight(), true))
+        || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight(), blockSizeIsAutomatic))
+        || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight(), blockSizeIsAutomatic))
         || style->aspectRatio().hasRatio() || blockContainer->shouldApplySizeContainment())
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
     // In quirks mode a percentage height resolves against the nearest ancestor with a height (RenderBox::computePercentageLogicalHeight).
