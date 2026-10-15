@@ -354,7 +354,7 @@ if (GENERATE_DSYM)
 
     # Sanity check that the build will produce debug info.
     string(TOUPPER "${CMAKE_BUILD_TYPE}" _dsym_config)
-    if (NOT "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_dsym_config}}" MATCHES "(^| )-g($| )")
+    if (NOT "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_dsym_config}}" MATCHES "(^| )-g(line-tables-only)?($| )")
         message(WARNING "GENERATE_DSYM is enabled but ${CMAKE_BUILD_TYPE} emits no debug info.")
     endif ()
 

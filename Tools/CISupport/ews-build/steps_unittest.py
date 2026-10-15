@@ -1330,7 +1330,29 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=3600,
                         log_environ=False,
                         env={'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'},
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --debug --cmake --architecture "arm64" -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES WK_ENABLE_SLOW_BUILD_VERIFICATION=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --debug --cmake --architecture "arm64" 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.run_step()
+
+    def test_success_cmake_mac_build_only(self):
+        self.setup_step(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-tahoe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('buildOnly', True)
+        self.setProperty('deployment_target', '15.0')
+        self.setProperty('additionalArguments', ['--cmake'])
+        self.setProperty('builddir', 'BuildDir')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        log_environ=False,
+                        env={'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:BuildDir'},
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'perl Tools/Scripts/build-webkit --release --cmake --architecture "arm64" --dsym --cmakeargs="-DCMAKE_C_FLAGS=-gline-tables-only -DCMAKE_CXX_FLAGS=-gline-tables-only -DCMAKE_OBJC_FLAGS=-gline-tables-only -DCMAKE_OBJCXX_FLAGS=-gline-tables-only -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0" 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
                         )
             .exit(0),
         )

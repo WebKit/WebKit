@@ -3257,26 +3257,39 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         if '--cmake' in (additionalArguments or []):
             self.env['PATH'] = cmake_tools_path(self.getProperty('builddir'))
         if platform in self.APPLE_PLATFORMS:
-            # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
-            # be removed here. We can't have build-webkit pass this by default
-            # without invalidating local builds made by Xcode, and we set it
-            # via xcconfigs until all building of Xcode-based webkit is done in
-            # workspaces (rdar://88135402).
+            use_cmake = '--cmake' in (additionalArguments or [])
             if architecture:
                 build_command += ['--architecture', f'"{architecture}"']
-            if CompileJSC.name not in self.name:
-                build_command += ['-hideShellScriptEnvironment']
-            build_command += ['WK_VALIDATE_DEPENDENCIES=YES']
-            build_command += ['WK_ENABLE_SLOW_BUILD_VERIFICATION=YES']
-            if buildOnly:
-                # For build-only bots, the expectation is that tests will be run on separate machines,
-                # so we need to package debug info as dSYMs. Only generating line tables makes
-                # this much faster than full debug info, and crash logs still have line numbers.
-                # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
-                build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
             deployment_target = self.getProperty('deployment_target')
-            if deployment_target and platform == 'mac':
-                build_command += [f'MACOSX_DEPLOYMENT_TARGET={deployment_target}']
+            if use_cmake:
+                cmake_args = []
+                if buildOnly:
+                    # Tests run on separate machines. Package debug info as
+                    # dSYMs and only include line tables to reduce size.
+                    build_command += ['--dsym']
+                    cmake_args += [f'-DCMAKE_{lang}_FLAGS=-gline-tables-only' for lang in ('C', 'CXX', 'OBJC', 'OBJCXX')]
+                if deployment_target and platform == 'mac':
+                    cmake_args += [f'-DCMAKE_OSX_DEPLOYMENT_TARGET={deployment_target}']
+                if cmake_args:
+                    build_command += [f'--cmakeargs="{" ".join(cmake_args)}"']
+            else:
+                # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
+                # be removed here. We can't have build-webkit pass this by default
+                # without invalidating local builds made by Xcode, and we set it
+                # via xcconfigs until all building of Xcode-based webkit is done in
+                # workspaces (rdar://88135402).
+                if CompileJSC.name not in self.name:
+                    build_command += ['-hideShellScriptEnvironment']
+                build_command += ['WK_VALIDATE_DEPENDENCIES=YES']
+                build_command += ['WK_ENABLE_SLOW_BUILD_VERIFICATION=YES']
+                if buildOnly:
+                    # For build-only bots, the expectation is that tests will be run on separate machines,
+                    # so we need to package debug info as dSYMs. Only generating line tables makes
+                    # this much faster than full debug info, and crash logs still have line numbers.
+                    # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
+                    build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
+                if deployment_target and platform == 'mac':
+                    build_command += [f'MACOSX_DEPLOYMENT_TARGET={deployment_target}']
 
         build_command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
