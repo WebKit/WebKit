@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 400px">
+<clipPath id="groupClip"><rect x="50" y="50" width="40" height="100"/></clipPath>
+<clipPath id="shapeClip"><rect x="250" y="50" width="40" height="100"/></clipPath>
+<g clip-path="url(#groupClip)"><rect x="50" y="50" width="100" height="100" fill="green"/></g>
+<rect x="250" y="50" width="100" height="100" fill="green" clip-path="url(#shapeClip)"/>
+</svg>
+<script>
+    // The group on the left and the rect on the right have their clip moved, and repaint the old and the new clipped area.
+    function repaintTest() {
+        for (const clip of [groupClip, shapeClip])
+            clip.setAttribute("transform", "translate(60, 0)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

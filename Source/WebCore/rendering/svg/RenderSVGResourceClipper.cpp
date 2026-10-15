@@ -321,14 +321,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
     auto clipContentRepaintRect = protect(clipPathElement())->calculateClipContentRepaintRect(repaintRectCalculation);
-    if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        AffineTransform contentTransform;
-        contentTransform.translate(targetBoundingBox.location());
-        contentTransform.scale(targetBoundingBox.size());
-        return contentTransform.mapRect(clipContentRepaintRect);
-    }
-
-    return clipContentRepaintRect;
+    return clipContentTransform(targetBoundingBox).mapRect(clipContentRepaintRect);
 }
 
 void RenderSVGResourceClipper::updateFromStyle()
