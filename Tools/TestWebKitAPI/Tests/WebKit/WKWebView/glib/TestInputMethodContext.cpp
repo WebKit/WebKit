@@ -1367,6 +1367,29 @@ static void testWebKitInputMethodContextPreeditOverSelection(InputMethodTest* te
     }
 }
 
+static void testWebKitInputMethodContextCommitWithoutPreedit(InputMethodTest* test, gconstpointer)
+{
+    test->loadHtml(testHTML, nullptr);
+    test->waitUntilLoadFinished();
+
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    test->runJavaScriptAndWaitUntilFinished("window.inputEvents = [];"
+        "for (let type of ['compositionstart', 'compositionupdate', 'compositionend'])"
+        "    input.addEventListener(type, event => inputEvents.push(event.type));"
+        "input.addEventListener('beforeinput', event => inputEvents.push(event.type + ':' + event.inputType));", nullptr);
+
+    // An input method can commit text that was never shown as a preedit, for example a whole word suggestion.
+    // No composition is in progress, so the text is inserted as typing, without any composition events.
+    g_signal_emit_by_name(test->m_context.get(), "committed", "hello", nullptr);
+    {
+        auto editableValue = test->editableValue();
+        g_assert_cmpstr(editableValue.get(), ==, "hello");
+        auto* jsResult = test->runJavaScriptAndWaitUntilFinished("JSON.stringify(inputEvents)", nullptr);
+        GUniquePtr<char> inputEvents(WebViewTest::javascriptResultToCString(jsResult));
+        g_assert_cmpstr(inputEvents.get(), ==, "[\"beforeinput:insertText\"]");
+    }
+}
+
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
 // A contenteditable, because an <input> clips the bottom row of its line, where the preedit underline is painted.
 // The caret is set inside the text, so that an underline running past the end of the preedit is painted under it.
@@ -2100,6 +2123,7 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "cursor-area", testWebKitInputMethodContextCursorArea);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-cursor", testWebKitInputMethodContextPreeditCursor);
     InputMethodTest::add("WebKitInputMethodContext", "preedit-over-selection", testWebKitInputMethodContextPreeditOverSelection);
+    InputMethodTest::add("WebKitInputMethodContext", "commit-without-preedit", testWebKitInputMethodContextCommitWithoutPreedit);
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
     InputMethodTest::add("WebKitInputMethodContext", "preedit-underlines", testWebKitInputMethodContextPreeditUnderlines);
 #endif
