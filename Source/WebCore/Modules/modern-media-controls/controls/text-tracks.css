@@ -83,6 +83,9 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     display: inline-block;
     width: stretch;
     height: stretch;
+
+    /* The backdrop breaks propogation of styles like text-decoration. Explicitly propogate those styles by declaring them as `inherit`: */
+    text-decoration: inherit;
 }
 
 ::-webkit-media-text-track-region {
