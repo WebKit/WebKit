@@ -1,0 +1,15 @@
+Test that disabling the Network and Page domains does not crash a process that hosts a frame whose remote parent was removed by another process.
+
+
+== Running test suite: SiteIsolation.Network.RemoveCrossOriginIFrameWithThirdSiteGrandchild
+-- Running test case: SiteIsolation.Network.RemoveCrossOriginIFrameWithThirdSiteGrandchild.DisableAfterRemoval
+PASS: Parent frame should be in the frame model.
+PASS: Grandchild frame should be in the frame model.
+PASS: Sibling frame should be in the frame model.
+PASS: Sibling frame should have a frame target.
+PASS: Removing the iframe should remove the parent frame.
+Disabling the Network and Page domains...
+PASS: The sibling frame's process should still respond.
+Re-enabling the Network and Page domains...
+PASS: The sibling frame's process should still respond after re-enabling.
+

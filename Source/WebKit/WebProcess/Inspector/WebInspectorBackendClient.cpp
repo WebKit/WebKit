@@ -478,6 +478,17 @@ void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifie
     });
 }
 
+void WebInspectorBackendClient::willDestroyFrame(LocalFrame& frame)
+{
+    // Covers a frame destroyed without detachedFromParent2(), such as one destroyed with a remote ancestor.
+    if (RefPtr page = m_page) {
+        if (RefPtr backend = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+            backend->removeInstrumentationForDestroyedFrame(frame);
+    }
+
+    willDestroyFrameOverlays(frame.frameID());
+}
+
 #if PLATFORM(IOS_FAMILY)
 void WebInspectorBackendClient::showInspectorIndication()
 {

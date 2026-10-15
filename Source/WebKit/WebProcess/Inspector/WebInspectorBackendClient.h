@@ -83,6 +83,7 @@ private:
 
     void frameDebuggerDidPause(WebCore::FrameIdentifier) override;
     void frameDebuggerDidContinue(WebCore::FrameIdentifier) override;
+    void willDestroyFrame(WebCore::LocalFrame&) override;
     unsigned paintRectCount() const override;
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;
