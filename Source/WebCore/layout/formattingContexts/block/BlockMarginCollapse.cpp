@@ -46,8 +46,9 @@ bool BlockMarginCollapse::marginsCollapseThrough(const RenderBox& box, const Box
     auto& minimumBlockSize = style->logicalMinHeight(writingMode);
     if (minimumBlockSize.isKnownPositive() || minimumBlockSize.isCalculated())
         return false;
+    // A zero or auto computed height (CSS 2.2 §8.3.1): not the sizing keywords, whose used size is the automatic one (like RenderBlock::isSelfCollapsingBlock).
     auto& blockSize = style->logicalHeight(writingMode);
-    return blockSize.isKnownZero() || BlockFormattingUtils::blockSizeBehavesAsAuto(blockSize, containingBlockContentBoxBlockSize);
+    return blockSize.isKnownZero() || (!blockSize.isIntrinsic() && BlockFormattingUtils::blockSizeBehavesAsAuto(blockSize, containingBlockContentBoxBlockSize));
 }
 
 void MarginsWithQuirk::add(LayoutUnit margin, std::optional<bool> isQuirky)
