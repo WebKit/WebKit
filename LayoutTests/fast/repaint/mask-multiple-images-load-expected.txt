@@ -1,0 +1,9 @@
+When the dot mask image finishes loading, the whole masked area should be repainted, not just the dot's rect. bug 241079.
+
+(repaint rects
+  (rect 8 8 100 100)
+  (rect 8 8 100 100)
+  (rect 8 8 100 100)
+  (rect 8 8 100 100)
+)
+
