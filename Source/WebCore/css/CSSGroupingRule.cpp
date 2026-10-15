@@ -103,6 +103,8 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
+    if (styleSheet)
+        protect(styleSheet->contents())->adoptScopeRules(*newRule);
     protect(m_groupRule)->wrapperInsertRule(index, newRule.releaseNonNull());
 
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
