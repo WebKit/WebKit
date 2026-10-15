@@ -10237,17 +10237,20 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
             if (!page)
                 return;
 
+            Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>> completionHandlers;
             page->m_elementsPendingTextRecognition.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
-                auto& [element, completionHandlers] = elementAndCompletionHandlers;
+                auto& [element, pendingCompletionHandlers] = elementAndCompletionHandlers;
                 if (element.get() && originalElement != element)
                     return false;
 
-                for (auto& completionHandler : completionHandlers) {
-                    if (completionHandler)
-                        completionHandler({ });
-                }
+                completionHandlers.appendVector(WTF::move(pendingCompletionHandlers));
                 return true;
             });
+
+            for (auto& completionHandler : borrow(completionHandlers)) {
+                if (completionHandler)
+                    completionHandler({ });
+            }
         };
 
         if (!weakThis || !result || !weakElement) {
@@ -10294,10 +10297,11 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
                 return;
 
             RefPtr imageOverlayHost = ImageOverlay::hasOverlay(*htmlElement) ? htmlElement.get() : nullptr;
-            for (auto& completionHandler : protectedThis->m_elementsPendingTextRecognition[matchIndex].second)
-                completionHandler(imageOverlayHost.copyRef());
-
+            auto elementAndCompletionHandlers = WTF::move(borrow(protectedThis->m_elementsPendingTextRecognition)[matchIndex]);
             protectedThis->m_elementsPendingTextRecognition.removeAt(matchIndex);
+
+            for (auto& completionHandler : borrow(elementAndCompletionHandlers.second))
+                completionHandler(imageOverlayHost.copyRef());
         });
     });
 }
