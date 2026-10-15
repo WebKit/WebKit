@@ -452,7 +452,7 @@ WI.HARBuilder = class HARBuilder
 
     static protocolFromHARProtocol(protocol)
     {
-        switch (protocol.toUpperCase()) {
+        switch (typeof protocol === "string" ? protocol.toUpperCase() : null) {
         case "HTTP/2":
         case "HTTP/2.0":
         case "H2":
@@ -499,7 +499,7 @@ WI.HARBuilder = class HARBuilder
 
     static networkPriorityFromHARPriority(priority)
     {
-        switch (priority?.toLowerCase()) {
+        switch (typeof priority === "string" ? priority.toLowerCase() : null) {
         case "verylow":
         case "lowest": // Gecko based HAR tooling equivalent
             return WI.Resource.NetworkPriority.Verylow;
@@ -513,12 +513,10 @@ WI.HARBuilder = class HARBuilder
         case "veryhigh":
         case "highest": // Gecko based HAR tooling equivalent
             return WI.Resource.NetworkPriority.Veryhigh;
-        case undefined:
-            return WI.Resource.NetworkPriority.Unknown;
-        default:
-            console.warn("Unknown HAR priority value", priority);
         }
 
+        if (priority)
+            console.warn("Unknown HAR priority value", priority);
         return WI.Resource.NetworkPriority.Unknown;
     }
 };
