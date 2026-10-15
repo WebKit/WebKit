@@ -807,24 +807,14 @@
         thread_resume
         thread_suspend))
 
-(when (defined? 'syscall-mig)
+(deny syscall-mig)
 #if HAVE(MACH_RANGE_CREATE)
-    (when (defined? 'mach_vm_range_create)
-        (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
+(when (defined? 'mach_vm_range_create)
+    (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
 #endif
-    (allow syscall-mig (allowed-mig-syscalls)))
+(allow syscall-mig (allowed-mig-syscalls))
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
-    (allow mach-kernel-endpoint
-        (apply-message-filter
-            (deny mach-message-send (with telemetry))
-#if HAVE(MACH_RANGE_CREATE)
-            (when (defined? 'mach_vm_range_create)
-                (allow mach-message-send (kernel-mig-routine mach_vm_range_create))) ;; <rdar://105161083>
-#endif
-            (allow mach-message-send (allowed-mig-syscalls)))))
-
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
     (allow syscall-mach

@@ -1332,33 +1332,18 @@
         mach_eventlink_destroy))
 #endif
 
-(when (defined? 'syscall-mig)
+(deny syscall-mig)
 #if HAVE(MACH_EVENTLINK)
-    (when (defined? 'mach_eventlink_associate)
-        (allow syscall-mig (mach-eventlink-routines)))
+(when (defined? 'mach_eventlink_associate)
+    (allow syscall-mig (mach-eventlink-routines)))
 #endif
 #if HAVE(MACH_RANGE_CREATE)
-    (when (defined? 'mach_vm_range_create)
-        (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
+(when (defined? 'mach_vm_range_create)
+    (allow syscall-mig (kernel-mig-routine mach_vm_range_create)))
 #endif
-    (allow syscall-mig (allowed-mig-routines)))
+(allow syscall-mig (allowed-mig-routines))
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (and (defined? 'mach-kernel-endpoint) (not (defined? 'syscall-mig))))
-    (allow mach-kernel-endpoint
-        (apply-message-filter
-            (deny mach-message-send (with telemetry))
-#if HAVE(MACH_EVENTLINK)
-            (when (defined? 'mach_eventlink_associate)
-                (allow mach-message-send (mach-eventlink-routines)))
-#endif
-#if HAVE(MACH_RANGE_CREATE)
-            ;; <rdar://105161083>
-            (when (defined? 'mach_vm_range_create)
-                (allow mach-message-send (kernel-mig-routine mach_vm_range_create)))
-#endif
-            (allow mach-message-send (allowed-mig-routines)))))
-
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'syscall-mach))
     (deny syscall-mach)
     (allow syscall-mach (machtrap-number

@@ -54,10 +54,7 @@
 (allow process-info-codesignature (with telemetry) (with report))
 #endif
 (allow mach-bootstrap)
-(if (defined? 'syscall-mig)
-    (allow syscall-mig)
-    ;; else
-    (allow mach-kernel-endpoint))
+(allow syscall-mig)
 (allow file-test-existence)
 (allow syscall-mach)
 (allow system-memorystatus-control)
