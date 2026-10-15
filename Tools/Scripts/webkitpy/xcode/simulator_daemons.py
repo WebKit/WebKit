@@ -229,3 +229,22 @@ def disabled_launchd_jobs():
     launchd_sim reads that list as it starts, so a daemon named here never launches at all, rather than launching
     during boot and being stopped again afterwards."""
     return {label: True for label in UNNEEDED_DAEMONS}
+
+
+QUIET_LOG_SUBSYSTEMS = [
+    'com.apple.WebKit',
+    'com.apple.runningboard',
+    'com.apple.UIKit',
+    'com.apple.securityd',
+    'com.apple.BackBoard',
+    'com.apple.network',
+    'com.apple.CFNetwork',
+    'com.apple.locationd.Core',
+    'com.apple.xpc',
+    'com.apple.Safari.SafeBrowsing',
+]
+
+
+def quiet_logging_preferences():
+    """The subsystems above in the form `log config --mode level:off` writes them."""
+    return {'{}.plist'.format(subsystem): {'DEFAULT-OPTIONS': {'Level': {'Enable': 'off', 'Persist': 'off'}}} for subsystem in QUIET_LOG_SUBSYSTEMS}

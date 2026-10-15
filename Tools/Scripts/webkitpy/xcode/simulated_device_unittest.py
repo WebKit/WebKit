@@ -32,7 +32,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode import simulated_device
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
-from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs, quiet_logging_preferences
 
 simctl_json_output = """{
  "devicetypes" : [
@@ -753,6 +753,38 @@ class LaunchdConfigurationDefaultTest(unittest.TestCase):
     def test_daemons_testing_needs_are_not_disabled(self):
         for label in ('com.apple.sharingd', 'com.apple.eligibilityd', 'com.apple.sleepd'):
             self.assertNotIn(label, disabled_launchd_jobs())
+
+
+class LoggingConfigurationTest(unittest.TestCase):
+
+    def tearDown(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+
+    def _device(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        return host, SimulatedDeviceManager.available_devices(host)[0].platform_device
+
+    def test_logging_configuration_is_written_where_log_config_writes_it(self):
+        host, device = self._device()
+        device.write_quiet_logging_preferences()
+        path = '/Users/mock/Library/Developer/CoreSimulator/Devices/{}/data/Library/Preferences/Logging/Subsystems/com.apple.WebKit.plist'.format(device.udid)
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(path)), {'DEFAULT-OPTIONS': {'Level': {'Enable': 'off', 'Persist': 'off'}}})
+
+    def test_every_quiet_subsystem_is_written(self):
+        host, device = self._device()
+        device.write_quiet_logging_preferences()
+        directory = '/Users/mock/Library/Developer/CoreSimulator/Devices/{}/data/Library/Preferences/Logging/Subsystems'.format(device.udid)
+        self.assertEqual(sorted(host.filesystem.listdir(directory)), sorted(quiet_logging_preferences()))
+
+    def test_failure_to_write_is_not_fatal(self):
+        host, device = self._device()
+
+        def refuse(path, contents):
+            raise IOError('read-only')
+
+        host.filesystem.write_binary_file = refuse
+        device.write_quiet_logging_preferences()
 
 
 class SimulatorUIAppTest(unittest.TestCase):
