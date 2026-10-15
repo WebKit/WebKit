@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Text shaping must not be broken across inline box boundaries when there is no change in formatting (CJK kerning)</title>
+<link rel="help" href="https://drafts.csswg.org/css-text/#boundary-shaping">
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-kerning-prop">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: kana-test;
+  src: url(../../css-fonts/resources/NotoSansJP-kana_test-subset.otf);
+}
+.test {
+  font: 64px kana-test; /* this font kerns the pair "すペ" */
+  margin: 0;
+  white-space: nowrap;
+}
+.nokern {
+  font-kerning: none;
+}
+</style>
+</head>
+<body>
+<div class="test" id="split">す<span>ペ</span>す</div>
+<div class="test" id="joined">すペす</div>
+<div class="test nokern" id="unkerned">すペす</div>
+<script>
+function charLefts(element) {
+  const lefts = [];
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  let node;
+  while ((node = walker.nextNode())) {
+    for (let i = 0; i < node.length; i++) {
+      range.setStart(node, i);
+      range.setEnd(node, i + 1);
+      lefts.push(range.getBoundingClientRect().left);
+    }
+  }
+  return lefts;
+}
+
+promise_test(async () => {
+  await document.fonts.ready;
+  const joined = charLefts(document.getElementById("joined"));
+  const unkerned = charLefts(document.getElementById("unkerned"));
+  assert_greater_than(unkerned[1] - joined[1], 1, "kerning should move the second character");
+}, "The test font applies kerning to the pair \"すペ\"");
+
+promise_test(async () => {
+  await document.fonts.ready;
+  const split = charLefts(document.getElementById("split"));
+  const joined = charLefts(document.getElementById("joined"));
+  assert_equals(split.length, joined.length);
+  for (let i = 0; i < joined.length; i++)
+    assert_approx_equals(split[i], joined[i], 0.5, `position of character ${i}`);
+}, "Kerning is applied across an inline box boundary with no change in formatting");
+</script>
+</body>
+</html>

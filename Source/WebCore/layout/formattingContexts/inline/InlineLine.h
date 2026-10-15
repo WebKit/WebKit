@@ -85,6 +85,7 @@ public:
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
     InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
+    void remeasureTextRunsWithKerningOrLigatures();
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     const Box* removeOverflowingOutOfFlowContent();
@@ -105,6 +106,7 @@ public:
     Result close(TrailingContentAction hangingTrailingWhitespace = TrailingContentAction::Preserve);
 
     static bool restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhitespaceWidth, RunList&, InlineItemRange, const InlineItemList&);
+    static InlineLayoutUnit remeasureTextRunsWithKerningOrLigatures(RunList&, const InlineFormattingContext&);
     static bool LEGACY_NODELETE hasTrailingForcedLineBreak(const RunList&);
 
 private:
@@ -112,6 +114,7 @@ private:
 
     void LEGACY_NODELETE resetTrailingContent();
     void removeHangingTrailingWhitespace();
+    void trackTextRunForRemeasuring(const InlineTextItem&, bool isNewRun);
 
     bool lineHasVisuallyNonEmptyContent() const;
 
@@ -189,6 +192,9 @@ private:
     bool m_hasNonDefaultBidiLevelRun { false };
     bool m_isFirstFormattedLine { false };
     bool m_hasRubyContent { false };
+    bool m_mayNeedTextRemeasuring { false };
+    bool m_lastTextEndsWithNonWhitespace { false };
+    bool m_hasInlineBoxBoundarySinceLastTextRun { false };
     InlineLayoutUnit m_rubyAlignContentRightOffset { 0.f };
     Vector<InlineLayoutUnit> m_inlineBoxLogicalLeftStack;
 };

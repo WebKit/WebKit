@@ -116,6 +116,7 @@ struct LineLayoutResult {
     std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     std::optional<BlockOverflowEllipsis> blockEllipsis { };
     bool isLastLineWithoutBlockEllipsis { false };
+    bool hasRemeasuredTextRuns { false };
 };
 
 }

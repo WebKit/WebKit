@@ -27,13 +27,20 @@
 #include "InlineLine.h"
 
 #include "FontCascade.h"
+#include "FontCascadeFonts.h"
+#include "FontInlines.h"
+#include "GlyphPage.h"
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutBoxGeometry.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextFlags.h"
 #include "TextUtil.h"
+#include "UnicodeBidi.h"
 #include <ranges>
+#include <wtf/MainThread.h>
+#include <wtf/MemoryPressureHandler.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -53,6 +60,9 @@ void Line::initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool
     m_nonSpanningInlineLevelBoxCount = 0;
     m_hasNonDefaultBidiLevelRun = false;
     m_hasRubyContent = false;
+    m_mayNeedTextRemeasuring = false;
+    m_lastTextEndsWithNonWhitespace = false;
+    m_hasInlineBoxBoundarySinceLastTextRun = false;
     m_contentLogicalWidth = { };
     m_inlineBoxLogicalLeftStack.shrink(0);
     m_runs.clear();
@@ -125,6 +135,357 @@ InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trai
     auto trimmedWidth = m_trimmableTrailingContent.remove();
     m_contentLogicalWidth -= trimmedWidth;
     return trimmedWidth;
+}
+
+// A whole text box shaped once, so that the kerned width of a line's run of joined items is a difference of prefix sums
+// instead of another measurement of the line's text. Layout boxes are rebuilt with their renderers while the content
+// string and the fonts survive, so those are the key.
+struct ShapedTextAdvances {
+    RefPtr<FontCascadeFonts> fonts;
+    unsigned fontsGeneration { 0 };
+    bool enableKerning { false };
+    bool requiresShaping { false };
+    // prefixWidths[i] is the advance of the characters before i, or NaN when no glyph cluster starts at i. Doubles, since
+    // a line's width is the difference of two sums that grow with the length of the text. Empty when the text or its
+    // fonts cannot be measured this way, so the check is not repeated.
+    Vector<double> prefixWidths;
+};
+
+struct ShapedTextAdvancesCache {
+    // Keyed by identity: comparing the contents of a long text on every line would cost more than measuring the line.
+    HashMap<RefPtr<StringImpl>, Vector<ShapedTextAdvances, 1>, PtrHash<RefPtr<StringImpl>>> entries;
+    size_t characterCount { 0 };
+    unsigned missesWhileFull { 0 };
+};
+
+// The budget bounds memory; once it is spent, new text is measured line by line until enough misses show the content
+// has moved on, which is cheaper than shaping whole text boxes again and again.
+static constexpr size_t maximumShapedTextCharacters = 256 * 1024;
+static constexpr unsigned maximumShapedTextLength = 64 * 1024;
+static constexpr unsigned missesBeforeClearingShapedTextAdvances = 4096;
+
+static ShapedTextAdvancesCache& shapedTextAdvancesCache()
+{
+    static NeverDestroyed<ShapedTextAdvancesCache> cache;
+    return cache;
+}
+
+static Vector<double> computeShapedTextPrefixWidths(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade)
+{
+    // Whole text shaping and measuring a line's text agree for plain kerned text; feature settings, variants and disabled
+    // kerning are measured the way they always were. These are part of the fonts' cache key, so they are checked once here.
+    auto& fontDescription = fontCascade.fontDescription();
+    if (!fontDescription.featureSettings().isEmpty() || !fontDescription.variantSettings().isAllNormal())
+        return { };
+    auto& content = inlineTextBox.content();
+    auto textRun = TextRun { StringView { content }, 0, 0, ExpansionBehavior::defaultBehavior(), TextDirection::LTR, false, !inlineTextBox.canUseSimpleFontCodePath() };
+    textRun.disableSpacing();
+    auto shapedText = fontCascade.layoutText(fontCascade.codePath(textRun), textRun, 0, textRun.length());
+    auto& glyphs = shapedText.glyphBuffer;
+
+    auto length = content.length();
+    Vector<double> advances;
+    advances.fill(0., length);
+    Vector<bool> startsCluster;
+    startsCluster.fill(false, length + 1);
+    startsCluster[length] = true;
+    auto previousOffset = 0u;
+    for (unsigned index = 0; index < glyphs.size(); ++index) {
+        auto offset = glyphs.uncheckedStringOffsetAt(index);
+        // Out of order glyphs mean reordered or decomposed text, where a character's advance is not its own.
+        if (offset == GlyphBuffer::noOffset || offset >= length || offset < previousOffset)
+            return { };
+        previousOffset = offset;
+        advances[offset] += width(glyphs.advanceAt(index));
+        startsCluster[offset] = true;
+    }
+
+    Vector<double> prefixWidths;
+    prefixWidths.fill(0., length + 1);
+    auto total = 0.;
+    for (unsigned index = 0; index < length; ++index) {
+        prefixWidths[index] = startsCluster[index] ? total : std::numeric_limits<double>::quiet_NaN();
+        total += advances[index];
+    }
+    prefixWidths[length] = total;
+    return prefixWidths;
+}
+
+static const Vector<double>* shapedTextPrefixWidths(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade)
+{
+    if (!isMainThread() || !fontCascade.enableKerning())
+        return nullptr;
+    RefPtr fonts = fontCascade.fonts();
+    RefPtr text = inlineTextBox.content().impl();
+    if (!fonts || !text || !text->length() || text->length() > maximumShapedTextLength)
+        return nullptr;
+
+    auto& cache = shapedTextAdvancesCache();
+    auto matches = [&](const ShapedTextAdvances& entry) {
+        return entry.fonts == fonts && entry.fontsGeneration == fonts->generation() && entry.enableKerning == fontCascade.enableKerning() && entry.requiresShaping == fontCascade.requiresShaping();
+    };
+    auto iterator = cache.entries.find(text);
+    if (iterator != cache.entries.end()) {
+        for (auto& entry : iterator->value) {
+            if (matches(entry))
+                return entry.prefixWidths.isEmpty() ? nullptr : &entry.prefixWidths;
+        }
+    }
+
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        cache = { };
+        return nullptr;
+    }
+    if (cache.characterCount + text->length() > maximumShapedTextCharacters) {
+        if (++cache.missesWhileFull < missesBeforeClearingShapedTextAdvances)
+            return nullptr;
+        cache = { };
+    }
+
+    cache.characterCount += text->length();
+    auto& entries = cache.entries.add(text, Vector<ShapedTextAdvances, 1> { }).iterator->value;
+    entries.append({ fonts, fonts->generation(), fontCascade.enableKerning(), fontCascade.requiresShaping(), computeShapedTextPrefixWidths(inlineTextBox, fontCascade) });
+    return entries.last().prefixWidths.isEmpty() ? nullptr : &entries.last().prefixWidths;
+}
+
+void Line::trackTextRunForRemeasuring(const InlineTextItem& inlineTextItem, bool isNewRun)
+{
+    auto isWhitespace = inlineTextItem.isWhitespace();
+    if (isNewRun) {
+        // Text after an inline box boundary may kern against the text before it, unless whitespace separates them.
+        m_mayNeedTextRemeasuring = m_mayNeedTextRemeasuring || (m_hasInlineBoxBoundarySinceLastTextRun && m_lastTextEndsWithNonWhitespace && !isWhitespace);
+        m_hasInlineBoxBoundarySinceLastTextRun = false;
+    }
+    m_lastTextEndsWithNonWhitespace = !isWhitespace;
+}
+
+void Line::remeasureTextRunsWithKerningOrLigatures()
+{
+    // Checked once per line rather than on every append, which is the hot path for text only content.
+    if (!m_mayNeedTextRemeasuring && std::ranges::none_of(m_runs, [](auto& run) { return run.m_hasAdjacentNonWhitespaceItems; }))
+        return;
+    m_contentLogicalWidth += remeasureTextRunsWithKerningOrLigatures(m_runs, formattingContext());
+}
+
+InlineLayoutUnit Line::remeasureTextRunsWithKerningOrLigatures(RunList& runs, const InlineFormattingContext& formattingContext)
+{
+    auto& rootBox = formattingContext.root();
+    if (!rootBox.writingMode().isHorizontal())
+        return { };
+    // The ruby base end run was widened against the annotation using the summed base width, and ruby alignment takes that width back using the current one.
+    auto rootIsRubyAnnotation = rootBox.isRubyAnnotationBox();
+    CheckedPtr<const ElementBox> lastParent;
+    auto lastParentIsInsideRubyBase = false;
+    auto isInsideRubyBaseOrAnnotation = [&](const Run& run) {
+        if (rootIsRubyAnnotation)
+            return true;
+        auto& parent = run.layoutBox().parent();
+        if (&parent != lastParent.get()) {
+            lastParent = &parent;
+            lastParentIsInsideRubyBase = false;
+            for (CheckedPtr ancestor = &parent; ancestor != &rootBox; ancestor = &ancestor->parent()) {
+                if (ancestor->isRubyBase()) {
+                    lastParentIsInsideRubyBase = true;
+                    break;
+                }
+            }
+        }
+        return lastParentIsInsideRubyBase;
+    };
+    auto isEligibleText = [&](const Run& run) {
+        if (!run.isText() || !run.textContent().length || run.isShapingBoundary() || run.textContent().needsHyphen)
+            return false;
+        // Line adjusts the summed width for letter-spacing at inline box edges and at the line end, which measuring the run again would undo.
+        if (run.letterSpacing())
+            return false;
+        auto& style = run.style();
+        if (!style.textAutospace().isNoAutospace())
+            return false;
+        auto& fontCascade = style.fontCascade();
+        if (!fontCascade.enableKerning() && !fontCascade.requiresShaping())
+            return false;
+        CheckedRef inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
+        if (inlineTextBox->isCombined() || inlineTextBox->hasSynthesizedGlyph())
+            return false;
+        return !isInsideRubyBaseOrAnnotation(run);
+    };
+    auto isEligibleTextCached = [&](const Run& run, std::optional<bool>& isEligible) {
+        if (!isEligible)
+            isEligible = isEligibleText(run);
+        return *isEligible;
+    };
+    auto isWhitespace = [](char16_t character) {
+        return character == space || character == newlineCharacter || character == tabCharacter;
+    };
+    // Text items are measured one at a time, but a run made of several of them is painted as one string, kerned across item boundaries.
+    auto remeasuredWidth = [&](const Run& run) {
+        CheckedRef inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
+        auto& fontCascade = run.style().fontCascade();
+        auto content = StringView { inlineTextBox->content() };
+        auto preservesSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
+        auto start = run.textContent().start;
+        // Trimming and hanging take trailing whitespace back by the width it was placed with.
+        auto end = start + run.textContent().length - run.m_trailingWhitespace.length;
+        if (!run.m_hasInnerWhitespace) {
+            // The last item's own width leaves out its kerning with the text after the run, which painting the run does not apply either.
+            auto widthFromShapedText = [&] -> std::optional<InlineLayoutUnit> {
+                if (run.bidiLevel() % 2 || !run.m_lastNonWhitespaceContentStart)
+                    return { };
+                auto* prefixWidths = shapedTextPrefixWidths(inlineTextBox, fontCascade);
+                if (!prefixWidths)
+                    return { };
+                auto startWidth = (*prefixWidths)[start];
+                auto lastItemStartWidth = (*prefixWidths)[*run.m_lastNonWhitespaceContentStart];
+                if (std::isnan(startWidth) || std::isnan(lastItemStartWidth))
+                    return { };
+                return static_cast<InlineLayoutUnit>(lastItemStartWidth - startWidth) + run.m_lastNonWhitespaceItemWidth;
+            };
+            if (auto shapedWidth = widthFromShapedText())
+                return *shapedWidth + run.trailingWhitespaceWidth();
+            return TextUtil::width(inlineTextBox, fontCascade, start, end, run.logicalLeft()) + run.trailingWhitespaceWidth();
+        }
+        auto width = InlineLayoutUnit { };
+        // Whitespace is measured on its own, as its inline items were, because painting does not kern a space's advance while simplified measuring of a longer string does.
+        for (auto position = start; position < end;) {
+            auto segmentStart = position;
+            auto isWhitespaceSegment = isWhitespace(content[position]);
+            while (position < end && isWhitespace(content[position]) == isWhitespaceSegment)
+                ++position;
+            if (isWhitespaceSegment && !preservesSpacesAndTabs)
+                width += (position - segmentStart) * TextUtil::singleSpaceWidth(fontCascade, inlineTextBox->canUseSimplifiedContentMeasuring());
+            else
+                width += TextUtil::width(inlineTextBox, fontCascade, segmentStart, position, run.logicalLeft() + width);
+        }
+        return width + run.trailingWhitespaceWidth();
+    };
+
+    auto keepsShaping = [&](const Run& inlineBoxRun) {
+        auto& style = inlineBoxRun.style();
+        if (isIsolated(style.unicodeBidi()) || !WTF::holdsAlternative<CSS::Keyword::Baseline>(style.verticalAlign()))
+            return false;
+        auto& boxGeometry = formattingContext.geometryForBox(inlineBoxRun.layoutBox());
+        if (inlineBoxRun.isInlineBoxStart())
+            return !boxGeometry.marginStart() && !boxGeometry.borderStart() && !boxGeometry.paddingStart();
+        return !boxGeometry.marginEnd() && !boxGeometry.borderEnd() && !boxGeometry.paddingEnd();
+    };
+    auto textContent = [](const Run& run) {
+        CheckedRef inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
+        return StringView { inlineTextBox->content() }.substring(run.textContent().start, run.textContent().length);
+    };
+    auto lastCharacterOf = [](StringView text) {
+        auto length = text.length() > 1 && U16_IS_TRAIL(text[text.length() - 1]) && U16_IS_LEAD(text[text.length() - 2]) ? 2 : 1;
+        return text.right(length);
+    };
+    auto firstCharacterOf = [](StringView text) {
+        return text.left(U16_LENGTH(text.codePointAt(0)));
+    };
+    auto mayKernAcrossInlineBoxBoundary = [&](const Run& previousRun, const Run& run) {
+        if (previousRun.bidiLevel() % 2 || previousRun.bidiLevel() != run.bidiLevel())
+            return false;
+        // Whitespace is a shape breaking gap, as in LineBuilder::collectShapeRanges.
+        if (isWhitespace(lastCharacterOf(textContent(previousRun))[0]) || isWhitespace(firstCharacterOf(textContent(run))[0]))
+            return false;
+        auto& previousFontCascade = previousRun.style().fontCascade();
+        auto& fontCascade = run.style().fontCascade();
+        // Equal font cascades share their fonts, which is much cheaper to check than the descriptions.
+        if (&previousFontCascade == &fontCascade)
+            return true;
+        return previousFontCascade.fonts() == fontCascade.fonts() && previousFontCascade == fontCascade;
+    };
+    // Each text box keeps painting its own glyphs, which is only right when the pair kerns and does not form a ligature or a contextual alternate.
+    auto kerningAcrossInlineBoxBoundary = [&](const Run& previousRun, const Run& run) -> InlineLayoutUnit {
+        auto& fontCascade = run.style().fontCascade();
+        auto lastCharacter = lastCharacterOf(textContent(previousRun));
+        auto firstCharacter = firstCharacterOf(textContent(run));
+        auto shape = [&](StringView characters) {
+            auto textRun = TextRun { characters };
+            textRun.disableSpacing();
+            return fontCascade.layoutText(fontCascade.codePath(textRun), textRun, 0, textRun.length());
+        };
+        std::array<char16_t, 4> pairCharacters { };
+        size_t pairLength = 0;
+        for (unsigned index = 0; index < lastCharacter.length(); ++index)
+            pairCharacters[pairLength++] = lastCharacter[index];
+        for (unsigned index = 0; index < firstCharacter.length(); ++index)
+            pairCharacters[pairLength++] = firstCharacter[index];
+        auto shapedPair = shape(StringView { std::span<const char16_t> { pairCharacters }.first(pairLength) });
+
+        // Most pairs neither kern nor form a ligature, which the cached glyph advances show without shaping each character.
+        auto glyphAdvance = [&](StringView character) -> std::optional<float> {
+            auto glyphData = fontCascade.glyphDataForCharacter(character.codePointAt(0), false);
+            if (!glyphData.isValid())
+                return { };
+            return glyphData.font->widthForGlyph(glyphData.glyph);
+        };
+        auto lastCharacterAdvance = glyphAdvance(lastCharacter);
+        auto firstCharacterAdvance = glyphAdvance(firstCharacter);
+        if (lastCharacterAdvance && firstCharacterAdvance && std::abs(shapedPair.width - *lastCharacterAdvance - *firstCharacterAdvance) < 0.01f)
+            return { };
+
+        auto shapedLastCharacter = shape(lastCharacter);
+        auto shapedFirstCharacter = shape(firstCharacter);
+        auto shapesToSameGlyphs = [&] {
+            auto& pairGlyphs = shapedPair.glyphBuffer;
+            auto& lastCharacterGlyphs = shapedLastCharacter.glyphBuffer;
+            auto& firstCharacterGlyphs = shapedFirstCharacter.glyphBuffer;
+            if (pairGlyphs.size() != lastCharacterGlyphs.size() + firstCharacterGlyphs.size())
+                return false;
+            for (unsigned index = 0; index < lastCharacterGlyphs.size(); ++index) {
+                if (pairGlyphs.glyphAt(index) != lastCharacterGlyphs.glyphAt(index))
+                    return false;
+            }
+            for (unsigned index = 0; index < firstCharacterGlyphs.size(); ++index) {
+                if (pairGlyphs.glyphAt(lastCharacterGlyphs.size() + index) != firstCharacterGlyphs.glyphAt(index))
+                    return false;
+            }
+            return true;
+        };
+        if (!shapesToSameGlyphs())
+            return { };
+        return shapedPair.width - shapedLastCharacter.width - shapedFirstCharacter.width;
+    };
+
+    auto isLeftToRight = rootBox.writingMode().isBidiLTR();
+    auto previousTextRunIndex = std::optional<size_t> { };
+    auto previousTextRunIsEligible = std::optional<bool> { };
+    auto hasInlineBoxBoundaryBetween = false;
+    auto widthChange = InlineLayoutUnit { };
+    for (size_t index = 0; index < runs.size(); ++index) {
+        auto& run = runs[index];
+        run.moveHorizontally(widthChange);
+        if (run.isWordBreakOpportunity() || run.isOutOfFlow())
+            continue;
+        if ((run.isInlineBoxStart() || run.isInlineBoxEnd()) && keepsShaping(run)) {
+            hasInlineBoxBoundaryBetween = true;
+            continue;
+        }
+        if (!run.isText()) {
+            previousTextRunIndex = { };
+            continue;
+        }
+        auto runIsEligible = std::optional<bool> { };
+        if (isLeftToRight && previousTextRunIndex && hasInlineBoxBoundaryBetween) {
+            auto& previousRun = runs[*previousTextRunIndex];
+            if (mayKernAcrossInlineBoxBoundary(previousRun, run) && isEligibleTextCached(previousRun, previousTextRunIsEligible) && isEligibleTextCached(run, runIsEligible)) {
+                if (auto kerning = kerningAcrossInlineBoxBoundary(previousRun, run)) {
+                    previousRun.shrinkHorizontally(-kerning);
+                    for (auto runIndex = *previousTextRunIndex + 1; runIndex <= index; ++runIndex)
+                        runs[runIndex].moveHorizontally(kerning);
+                    widthChange += kerning;
+                }
+            }
+        }
+        previousTextRunIndex = index;
+        hasInlineBoxBoundaryBetween = false;
+
+        if (run.m_hasAdjacentNonWhitespaceItems && isEligibleTextCached(run, runIsEligible)) {
+            auto runWidthChange = remeasuredWidth(run) - run.logicalWidth();
+            run.shrinkHorizontally(-runWidthChange);
+            widthChange += runWidthChange;
+        }
+        previousTextRunIsEligible = runIsEligible;
+    }
+    return widthChange;
 }
 
 void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingContentAction, InlineLayoutUnit overflowingWidth)
@@ -336,6 +697,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const Style::Compu
 
     m_hasRubyContent = m_hasRubyContent || inlineItem.layoutBox().isRubyBase();
     m_runs.append({ inlineItem, style, logicalLeft, logicalWidth, textSpacingAdjustment });
+    m_hasInlineBoxBoundarySinceLastTextRun = true;
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
         m_inlineBoxListWithClonedDecorationEnd.append(&inlineItem.layoutBox());
 }
@@ -361,6 +723,7 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const Style::Compute
         logicalLeft = std::max(logicalLeft, m_inlineBoxLogicalLeftStack.isEmpty() ? 0.f : m_inlineBoxLogicalLeftStack.takeLast());
     }
     m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
+    m_hasInlineBoxBoundarySinceLastTextRun = true;
     // Do not let negative margin make the content shorter than it already is.
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, logicalLeft + logicalWidth);
     if (style.boxDecorationBreak() == BoxDecorationBreak::Clone) {
@@ -465,6 +828,7 @@ void Line::appendText(const InlineTextItem& inlineTextItem, const Style::Compute
             contentLogicalRight = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
         }
     }
+    trackTextRunForRemeasuring(inlineTextItem, needsNewRun);
     // Ensure that property values that act like negative margin are not making the line wider.
     m_contentLogicalWidth = std::max(oldContentLogicalWidth, contentLogicalRight);
 
@@ -933,9 +1297,15 @@ void LineRun::expand(const InlineTextItem& inlineTextItem, InlineLayoutUnit logi
     auto whitespaceType = trailingWhitespaceType(inlineTextItem);
 
     if (!whitespaceType) {
+        // Only a join of two non-whitespace items can lose kerning or a ligature between them.
+        if (!hasTrailingWhitespace())
+            m_hasAdjacentNonWhitespaceItems = true;
+        else
+            m_hasInnerWhitespace = true;
         m_trailingWhitespace = { };
         m_textContent.length += inlineTextItem.length();
         m_lastNonWhitespaceContentStart = inlineTextItem.start();
+        m_lastNonWhitespaceItemWidth = logicalWidth;
 
         auto glyphOverflow = inlineTextItem.glyphOverflow();
         if (glyphOverflow.first || glyphOverflow.second)
@@ -964,6 +1334,8 @@ std::optional<LineRun> LineRun::detachTrailingWhitespace()
 
     trailingWhitespaceRun.m_trailingWhitespace = { };
     trailingWhitespaceRun.m_lastNonWhitespaceContentStart = { };
+    trailingWhitespaceRun.m_hasAdjacentNonWhitespaceItems = false;
+    trailingWhitespaceRun.m_hasInnerWhitespace = false;
 
     m_logicalWidth -= trailingWhitespaceRun.logicalWidth();
     m_textContent.length = leadingNonWhitespaceContentLength;

@@ -434,6 +434,9 @@ void TextOnlySimpleLineBuilder::handleLineEnding(const Style::ComputedStyle& roo
         return rootStyle.lineBreak() == LineBreak::AfterWhiteSpace && intrinsicWidthMode() != IntrinsicWidthMode::Minimum && (!isLastInlineContent || horizontalAvailableSpace < m_line.contentLogicalWidth());
     };
     m_trimmedTrailingWhitespaceWidth = m_line.handleTrailingTrimmableContent(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+    // Line breaking uses the summed widths, so intrinsic widths have to as well or content sized to them would wrap.
+    if (!isInIntrinsicWidthMode())
+        m_line.remeasureTextRunsWithKerningOrLigatures();
     if (formattingContext().quirks().trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), horizontalAvailableSpace < m_line.contentLogicalWidth()))
         m_line.handleOverflowingNonBreakingSpace(shouldPreserveTrailingWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 
