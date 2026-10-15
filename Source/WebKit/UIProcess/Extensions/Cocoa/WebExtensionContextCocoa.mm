@@ -37,6 +37,7 @@
 #import "APIContentRuleListStore.h"
 #import "APIData.h"
 #import "APIPageConfiguration.h"
+#import "APIWebsitePolicies.h"
 #import "CocoaHelpers.h"
 #import "ContextMenuContextData.h"
 #import "FormDataReference.h"
@@ -2611,6 +2612,10 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
 
     // By default extension URLs are masked, for extension pages we can relax this.
     configuration._maskedURLSchemes = [NSSet set];
+
+    Ref pageConfiguration = *configuration->_pageConfiguration;
+    pageConfiguration->setDefaultWebsitePolicies(protect(pageConfiguration->defaultWebsitePolicies())->copy());
+    [configuration.defaultWebpagePreferences _setContentRuleListsEnabled:NO exceptions:[NSSet setWithObject:uniqueIdentifier().createNSString().get()]];
 
     configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 

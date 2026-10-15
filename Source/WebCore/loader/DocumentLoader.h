@@ -334,6 +334,8 @@ public:
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
 
+    WEBCORE_EXPORT void copyContentRuleListPoliciesFrom(const DocumentLoader&);
+
     const Vector<TargetedElementSelectors>& visibilityAdjustmentSelectors() const LIFETIME_BOUND { return m_visibilityAdjustmentSelectors; }
     void setVisibilityAdjustmentSelectors(Vector<TargetedElementSelectors>&& selectors) { m_visibilityAdjustmentSelectors = WTF::move(selectors); }
 

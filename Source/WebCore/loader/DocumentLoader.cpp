@@ -2809,6 +2809,12 @@ bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& cont
     return false;
 }
 
+void DocumentLoader::copyContentRuleListPoliciesFrom(const DocumentLoader& other)
+{
+    m_contentExtensionEnablement = other.m_contentExtensionEnablement;
+    m_activeContentRuleListActionPatterns = other.m_activeContentRuleListActionPatterns;
+}
+
 void DocumentLoader::setHTTPSByDefaultMode(HTTPSByDefaultMode mode)
 {
     if (mode == HTTPSByDefaultMode::Disabled) {

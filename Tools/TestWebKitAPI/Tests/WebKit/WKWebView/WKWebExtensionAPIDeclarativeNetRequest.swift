@@ -39,6 +39,11 @@ private import WebKit_Private.WKWebExtensionControllerConfigurationPrivate
 import struct Foundation.URL
 import struct Swift.String
 
+#if ENABLE_WK_WEB_EXTENSIONS_SIDEBAR
+private import TestWebKitAPILibrary.Helpers.cocoa.TestWebExtensionsDelegate
+private import WebKit_Private._WKWebExtensionSidebar
+#endif
+
 @MainActor
 struct WKWebExtensionAPIDeclarativeNetRequestTests {
     @Test
@@ -4934,6 +4939,346 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
 
         try await manager.run()
     }
+
+    private func makeScopedRulesServer() throws -> HTTPServer {
+        let headerFields = ["Content-Type": "text/plain", "Access-Control-Allow-Origin": "*"]
+        return try HTTPServer(protocol: .http) {
+            Route("/blocked-by-self", headerFields: headerFields) { "ok" }
+            Route("/blocked-by-other", headerFields: headerFields) { "ok" }
+            Route("/allowed", headerFields: headerFields) { "ok" }
+        }
+    }
+
+    private func scopedRulesManifest(overriding overrides: [String: Any] = [:]) -> [String: Any] {
+        var manifest: [String: Any] = [
+            "manifest_version": 3,
+            "name": "Scoped Rules Test",
+            "description": "Scoped Rules Test",
+            "version": "1",
+
+            "permissions": ["declarativeNetRequest"],
+            "host_permissions": ["*://localhost/*"],
+
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+
+            "declarative_net_request": [
+                "rule_resources": [
+                    [
+                        "id": "blockRules",
+                        "enabled": true,
+                        "path": "rules.json",
+                    ]
+                ]
+            ],
+        ]
+
+        manifest.merge(overrides) { _, override in override }
+        return manifest
+    }
+
+    private func blockRules(forURLFilter urlFilter: String) -> [[String: Any]] {
+        [
+            [
+                "id": 1,
+                "priority": 1,
+                "action": ["type": "block"],
+                "condition": ["urlFilter": urlFilter],
+            ]
+        ]
+    }
+
+    private func scopedRulesChecksScript(address: URL) -> String {
+        """
+        const baseURL = '\(address.absoluteString)'
+
+        const isBlocked = async (path) => {
+            try {
+                await fetch(new URL(path, baseURL))
+                return false
+            } catch {
+                return true
+            }
+        }
+
+        const waitUntilBlocked = async (path) => {
+            for (let i = 0; i < 100; ++i) {
+                if (await isBlocked(path))
+                    return true
+
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+
+            return false
+        }
+
+        const runChecks = async () => {
+            browser.test.assertTrue(await waitUntilBlocked('/blocked-by-self'), 'The extension\\'s own rules should apply')
+            browser.test.assertFalse(await isBlocked('/blocked-by-other'), 'Another extension\\'s rules should not apply')
+            browser.test.assertFalse(await isBlocked('/allowed'), 'Unmatched requests should not be blocked')
+        }
+
+        """
+    }
+
+    private func loadOtherBlockingExtension(into manager: TestWebExtensionManager, address: URL) async throws {
+        let backgroundScript =
+            scopedRulesChecksScript(address: address)
+                + """
+                await waitUntilBlocked('/blocked-by-other')
+                browser.test.sendMessage('Other Ready')
+                """
+
+        let otherManager = parseWebExtension(
+            manifest: scopedRulesManifest(overriding: ["name": "Other Scoped Rules Test"]),
+            resources: ["background.js": backgroundScript, "rules.json": blockRules(forURLFilter: "blocked-by-other")]
+        )
+
+        let otherContext = WKWebExtensionContext(for: otherManager.extension)
+        otherContext.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+        otherContext.setPermissionStatus(.grantedExplicitly, for: address)
+
+        try manager.controller.load(otherContext)
+
+        try await manager.waitForTestMessage("Other Ready")
+    }
+
+    @Test
+    func ownRulesOnlyApplyToBackgroundPage() async throws {
+        var server = try makeScopedRulesServer()
+
+        try await server.run { configuration in
+            let address = configuration.localhostAddress
+
+            let backgroundScript =
+                scopedRulesChecksScript(address: address)
+                    + """
+                    browser.test.onMessage.addListener(async (message) => {
+                        if (message !== 'Run test')
+                            return
+
+                        await runChecks()
+                        browser.test.notifyPass()
+                    })
+
+                    browser.test.sendMessage('Background Ready')
+                    """
+
+            let manager = try loadWebExtension(
+                manifest: scopedRulesManifest(),
+                resources: ["background.js": backgroundScript, "rules.json": blockRules(forURLFilter: "blocked-by-self")]
+            )
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+            context.setPermissionStatus(.grantedExplicitly, for: address)
+
+            try await manager.waitForTestMessage("Background Ready")
+            try await loadOtherBlockingExtension(into: manager, address: address)
+
+            manager.sendTestMessage("Run test")
+
+            try await manager.run()
+        }
+    }
+
+    @Test
+    func ownRulesOnlyApplyToServiceWorker() async throws {
+        var server = try makeScopedRulesServer()
+
+        try await server.run { configuration in
+            let address = configuration.localhostAddress
+
+            let backgroundScript =
+                scopedRulesChecksScript(address: address)
+                    + """
+                    browser.test.onMessage.addListener(async (message) => {
+                        if (message !== 'Run test')
+                            return
+
+                        await runChecks()
+                        browser.test.notifyPass()
+                    })
+
+                    browser.test.sendMessage('Background Ready')
+                    """
+
+            let manager = try loadWebExtension(
+                manifest: scopedRulesManifest(overriding: ["background": ["service_worker": "background.js", "type": "module"]]),
+                resources: ["background.js": backgroundScript, "rules.json": blockRules(forURLFilter: "blocked-by-self")]
+            )
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+            context.setPermissionStatus(.grantedExplicitly, for: address)
+
+            try await manager.waitForTestMessage("Background Ready")
+            try await loadOtherBlockingExtension(into: manager, address: address)
+
+            manager.sendTestMessage("Run test")
+
+            try await manager.run()
+        }
+    }
+
+    @Test
+    func ownRulesOnlyApplyToPopupPage() async throws {
+        var server = try makeScopedRulesServer()
+
+        try await server.run { configuration in
+            let address = configuration.localhostAddress
+
+            let popupScript =
+                scopedRulesChecksScript(address: address)
+                    + """
+                    await runChecks()
+                    browser.test.notifyPass()
+                    """
+
+            let manager = try loadWebExtension(
+                manifest: scopedRulesManifest(overriding: ["action": ["default_popup": "popup.html"]]),
+                resources: [
+                    "background.js": "browser.test.sendMessage('Background Ready')",
+                    "popup.html": "<script type='module' src='popup.js'></script>",
+                    "popup.js": popupScript,
+                    "rules.json": blockRules(forURLFilter: "blocked-by-self"),
+                ]
+            )
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+            context.setPermissionStatus(.grantedExplicitly, for: address)
+
+            try await manager.waitForTestMessage("Background Ready")
+            try await loadOtherBlockingExtension(into: manager, address: address)
+
+            context.performAction(for: manager.defaultTab)
+
+            try await manager.run()
+        }
+    }
+
+    #if ENABLE_WK_WEB_EXTENSIONS_OFFSCREEN
+    @Test
+    func ownRulesOnlyApplyToOffscreenDocument() async throws {
+        var server = try makeScopedRulesServer()
+
+        let configuration: WKWebExtensionController.Configuration = .nonPersistent()
+        for feature in WKPreferences._features() where feature.key == "WebExtensionOffscreenEnabled" {
+            configuration.webViewConfiguration.preferences._setEnabled(true, for: feature)
+        }
+
+        try await server.run { serverConfiguration in
+            let address = serverConfiguration.localhostAddress
+
+            let backgroundScript = """
+                browser.test.onMessage.addListener(async (message) => {
+                    if (message !== 'Run test')
+                        return
+
+                    await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })
+                })
+
+                browser.test.sendMessage('Background Ready')
+                """
+
+            let offscreenScript =
+                scopedRulesChecksScript(address: address)
+                    + """
+                    await runChecks()
+                    browser.test.notifyPass()
+                    """
+
+            let manager = try loadWebExtension(
+                manifest: scopedRulesManifest(overriding: [
+                    "permissions": ["declarativeNetRequest", "offscreen"],
+                    "background": ["service_worker": "background.js", "type": "module"],
+                ]),
+                resources: [
+                    "background.js": backgroundScript,
+                    "offscreen.html": "<script type='module' src='offscreen.js'></script>",
+                    "offscreen.js": offscreenScript,
+                    "rules.json": blockRules(forURLFilter: "blocked-by-self"),
+                ],
+                configuration: configuration
+            )
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+            context.setPermissionStatus(.grantedExplicitly, for: address)
+
+            try await manager.waitForTestMessage("Background Ready")
+            try await loadOtherBlockingExtension(into: manager, address: address)
+
+            manager.sendTestMessage("Run test")
+
+            try await manager.run()
+        }
+    }
+    #endif
+
+    #if ENABLE_WK_WEB_EXTENSIONS_SIDEBAR
+    @Test
+    func ownRulesOnlyApplyToSidebarPage() async throws {
+        var server = try makeScopedRulesServer()
+
+        let configuration: WKWebExtensionController.Configuration = .nonPersistent()
+        for feature in WKPreferences._features() where feature.key == "WebExtensionSidebarEnabled" {
+            configuration.webViewConfiguration.preferences._setEnabled(true, for: feature)
+        }
+
+        try await server.run { serverConfiguration in
+            let address = serverConfiguration.localhostAddress
+
+            let backgroundScript = """
+                browser.test.onMessage.addListener(async (message) => {
+                    if (message !== 'Run test')
+                        return
+
+                    await browser.test.runWithUserGesture(() => browser.sidebarAction.open())
+                })
+
+                browser.test.sendMessage('Background Ready')
+                """
+
+            let sidebarScript =
+                scopedRulesChecksScript(address: address)
+                    + """
+                    await runChecks()
+                    browser.test.notifyPass()
+                    """
+
+            let manager = try loadWebExtension(
+                manifest: scopedRulesManifest(overriding: ["sidebar_action": ["default_panel": "sidebar.html", "open_at_install": false]]),
+                resources: [
+                    "background.js": backgroundScript,
+                    "sidebar.html": "<script type='module' src='sidebar.js'></script>",
+                    "sidebar.js": sidebarScript,
+                    "rules.json": blockRules(forURLFilter: "blocked-by-self"),
+                ],
+                configuration: configuration
+            )
+            let context = try #require(manager.context)
+
+            context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+            context.setPermissionStatus(.grantedExplicitly, for: address)
+
+            manager.internalDelegate.presentSidebar = { sidebar in
+                _ = sidebar.webView
+            }
+
+            try await manager.waitForTestMessage("Background Ready")
+            try await loadOtherBlockingExtension(into: manager, address: address)
+
+            manager.sendTestMessage("Run test")
+
+            try await manager.run()
+        }
+    }
+    #endif
 }
 
 #endif // ENABLE_WK_WEB_EXTENSIONS
