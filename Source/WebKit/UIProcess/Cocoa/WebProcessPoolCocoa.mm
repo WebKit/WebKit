@@ -661,6 +661,12 @@ void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCente
     auto pool = extractWebProcessPool(observer);
     if (!pool)
         return;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    for (Ref process : pool->m_processes) {
+        for (Ref page : process->pages())
+            page->clearImageAnimationEnabledOverride();
+    }
+#endif
     pool->sendToAllProcesses(Messages::WebProcess::AccessibilityPreferencesDidChange(accessibilityPreferences()));
 }
 
