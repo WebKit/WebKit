@@ -52,13 +52,14 @@ static auto makeTextureViewDescriptor(WebGPU::XREye eye)
     };
 }
 
-XRGPUSubImage::XRGPUSubImage(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
+XRGPUSubImage::XRGPUSubImage(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device, std::optional<GPUTextureFormat> depthStencilFormat)
     : m_backing(WTF::move(backing))
     , m_device(device)
     , m_descriptor(makeTextureViewDescriptor(eye))
     , m_viewport(WebXRViewport::create(WTF::move(viewport)))
     , m_width(physicalSize[0])
     , m_height(physicalSize[1])
+    , m_depthStencilFormat(depthStencilFormat)
 {
 }
 
@@ -87,11 +88,14 @@ ExceptionOr<Ref<GPUTexture>> XRGPUSubImage::colorTexture()
 
 RefPtr<GPUTexture> XRGPUSubImage::depthStencilTexture()
 {
+    if (!m_depthStencilFormat)
+        return nullptr;
+
     RefPtr texture = m_backing->depthStencilTexture();
     if (!texture)
         return nullptr;
 
-    return GPUTexture::create(texture.releaseNonNull(), textureDescriptor(GPUTextureFormat::Depth24plus, m_width, m_height), m_device);
+    return GPUTexture::create(texture.releaseNonNull(), textureDescriptor(*m_depthStencilFormat, m_width, m_height), m_device);
 }
 
 RefPtr<GPUTexture> XRGPUSubImage::motionVectorTexture()

@@ -179,7 +179,7 @@ uint32_t XRProjectionLayer::textureArrayLength() const
 
 bool XRProjectionLayer::ignoreDepthValues() const
 {
-    return false;
+    return m_ignoreDepthValues;
 }
 
 std::optional<float> XRProjectionLayer::fixedFoveation() const

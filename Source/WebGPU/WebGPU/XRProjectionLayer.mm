@@ -99,6 +99,45 @@ XRProjectionLayer::XRProjectionLayer(Device& device)
 
 XRProjectionLayer::~XRProjectionLayer() = default;
 
+void XRProjectionLayer::clearDepthTexture()
+{
+    id<MTLTexture> depthTexture = m_depthTexture;
+    if (!depthTexture)
+        return;
+
+    Ref queue = m_device->getQueue();
+    queue->finalizeBlitCommandEncoder();
+    id<MTLCommandBuffer> commandBuffer = queue->commandBufferWithDescriptor([MTLCommandBufferDescriptor new]);
+    if (!commandBuffer)
+        return;
+
+    bool hasStencilAspect = depthTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8;
+    for (NSUInteger slice = 0; slice < depthTexture.arrayLength; ++slice) {
+        MTLRenderPassDescriptor *descriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+        descriptor.depthAttachment.texture = depthTexture;
+        descriptor.depthAttachment.slice = slice;
+        descriptor.depthAttachment.loadAction = MTLLoadActionClear;
+        descriptor.depthAttachment.storeAction = MTLStoreActionStore;
+        descriptor.depthAttachment.clearDepth = 1.0;
+        if (hasStencilAspect) {
+            descriptor.stencilAttachment.texture = depthTexture;
+            descriptor.stencilAttachment.slice = slice;
+            descriptor.stencilAttachment.loadAction = MTLLoadActionLoad;
+            descriptor.stencilAttachment.storeAction = MTLStoreActionStore;
+        }
+        descriptor.renderTargetWidth = depthTexture.width;
+        descriptor.renderTargetHeight = depthTexture.height;
+        descriptor.defaultRasterSampleCount = depthTexture.sampleCount;
+
+        if (id<MTLRenderCommandEncoder> clearEncoder = [commandBuffer renderCommandEncoderWithDescriptor:descriptor]) {
+            queue->setEncoderForBuffer(commandBuffer, clearEncoder);
+            queue->endEncoding(clearEncoder, commandBuffer);
+        }
+    }
+
+    queue->commitMTLCommandBuffer(commandBuffer);
+}
+
 void XRProjectionLayer::setLabel(String&&)
 {
 }
@@ -147,6 +186,8 @@ void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& color
         [m_depthTextures setObject:m_depthTexture forKey:textureKey];
     } else
         m_depthTexture = [m_depthTextures objectForKey:textureKey];
+
+    clearDepthTexture();
 
     if (completionSyncEvent.sendRight())
         m_sharedEvent = std::make_pair([(id<MTLDeviceSPI>)device newSharedEventWithMachPort:completionSyncEvent.sendRight()], frameIndex);
