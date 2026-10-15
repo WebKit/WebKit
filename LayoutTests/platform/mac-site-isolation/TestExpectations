@@ -48,6 +48,7 @@ imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-s
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 inspector/runtime/executionContextCreated-onEnable.html [ Failure ]
 http/tests/inspector/dom/cross-domain-inspected-node-access.html [ Failure ]
+webkit.org/b/327622 http/tests/inspector/network/intercept-request-with-response.html [ Failure ]
 
 #########################
 # Tests that Image fail #
