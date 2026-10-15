@@ -35,11 +35,17 @@ import {DOM, EventStream, REF, FP} from '/library/js/Ref.js';
 
 
 const DEFAULT_LIMIT = 100;
+const MAX_CONDENSED_RUN_COUNT = 1000;
+const CONDENSED_TOOLTIP_DELAY = 200;
+const CONDENSED_TOOLTIP_STOP_RADIUS = 4;
+const CONDENSED_DOT_MARGIN = 1;
+const CONDENSED_CLICKED_COMMIT_GAP = 6;
 
 let willFilterExpected = false;
 let showTestTimes = false;
 let showTestFlakiness = false;
 let showNumberOfFlakyTests = false;
+let showCondensedView = false;
 
 const BUG_TRACKER_COLORS = {
     radar: 'var(--purple)',
@@ -1103,6 +1109,7 @@ class TimelineFromEndpoint {
 
         let children = [];
         let allConfigResults = [];
+        let condensedRows = [];
         this.configurations.forEach(configuration => {
             if (!this.results[configuration.toKey()] || Object.keys(this.results[configuration.toKey()]).length === 0)
                 return;
@@ -1142,9 +1149,11 @@ class TimelineFromEndpoint {
                 queueParams['suite'] = [this.suite];
                 if (branch)
                     queueParams['branch'] = branch;
+                const queueLink = `<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`;
+                condensedRows.push({configuration: config, label: queueLink, results: resultsForConfig});
                 const uuidsInThisSeries = new Set(resultsForConfig.map(r => r.uuid));
                 let myTimeline = Timeline.SeriesWithHeaderComponent(
-                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}<a href="/urls/queue?${paramsToQuery(queueParams)}" target="_blank">${config}</a>`,
+                    `${childrenConfigsBySDK[config.toKey()].length > 1 ? ' | ' : ''}${queueLink}`,
                     Timeline.CanvasSeriesComponent(resultsForConfig, this.scale, {
                         getScaleFunc: options.getScaleFunc,
                         compareFunc: options.compareFunc,
@@ -1233,6 +1242,21 @@ class TimelineFromEndpoint {
                 {expanded: this.configurations.length <= 1},
                 ...collapsedTimelines
             ));
+        });
+
+        const minimumUuid = minimumUuidForResults(this.results, limit);
+        const condensedViewRef = REF.createRef({
+            state: {show: showCondensedView, runCount: null, expanded: false, clickedRun: null},
+            onStateUpdate: (element, stateDiff, state) => {
+                const runWidth = parseInt(getComputedStyle(document.body).getPropertyValue('--smallSize')) + 2 * CONDENSED_DOT_MARGIN;
+                const runsPerLine = Math.max(1, Math.floor((element.getBoundingClientRect().width - CONDENSED_CLICKED_COMMIT_GAP) / runWidth));
+                const view = {...state, ...stateDiff, runsPerLine, lineWidth: runsPerLine * runWidth + CONDENSED_CLICKED_COMMIT_GAP};
+                DOM.inject(element, view.show ? CondensedView(condensedRows, minimumUuid, view, {
+                    failureTypeFor: (result) => this.getTestResultStatus(result, willFilterExpected).failureType,
+                    handlersFor: (configuration) => ({onDotEnter: onDotEnterFactory(configuration), onDotClick: onDotClickFactory(configuration)}),
+                    setView: (viewDiff) => condensedViewRef.setState(viewDiff),
+                }) : '');
+            },
         });
 
         let top = true;
@@ -1467,6 +1491,10 @@ class TimelineFromEndpoint {
             searchBarRef.element.style.width = `${containnerRef.element.getBoundingClientRect().width}px`;
         };
         const containnerRef = REF.createRef({
+            state: {collapsed: showCondensedView},
+            onStateUpdate: (element, stateDiff) => {
+                element.classList.toggle('collapsed', stateDiff.collapsed);
+            },
             onElementMount: (element) => {
                 window.addEventListener("scroll", onScrollAction);
                 window.addEventListener("resize", onResizeAction);
@@ -1477,7 +1505,12 @@ class TimelineFromEndpoint {
                 window.addEventListener("resize", onResizeAction);
             }
         });
-        return `<div ref="${containnerRef}" style="position: relative">
+        this.updates.push(() => {
+            condensedViewRef.setState({show: showCondensedView});
+            containnerRef.setState({collapsed: showCondensedView});
+        });
+        return `<div ref="${condensedViewRef}"></div>
+        <div ref="${containnerRef}" style="position: relative">
             <div ref="${searchBarRef}" class="next-regress-bar">
                 <button class="button" ref="${findRegressButtonRef}">
                     Find Regression Point
@@ -1514,6 +1547,170 @@ class TimelineFromEndpoint {
     }
 }
 
+let toolTipDot = null;
+let waitingDot = null;
+let waitStartPoint = null;
+let openWaitingToolTip = null;
+let toolTipTimer = null;
+
+function startToolTipWait(point) {
+    waitStartPoint = point;
+    clearTimeout(toolTipTimer);
+    toolTipTimer = setTimeout(finishToolTipWait, CONDENSED_TOOLTIP_DELAY);
+}
+
+function cancelToolTipWait() {
+    clearTimeout(toolTipTimer);
+    waitingDot = null;
+    waitStartPoint = null;
+    openWaitingToolTip = null;
+}
+
+function finishToolTipWait() {
+    if (waitingDot.isConnected) {
+        toolTipDot = waitingDot;
+        openWaitingToolTip();
+    }
+    cancelToolTipWait();
+}
+
+function closeToolTip() {
+    cancelToolTipWait();
+    ToolTip.unset();
+    toolTipDot = null;
+}
+
+function updateToolTipForCursor(event) {
+    const point = {x: event.clientX, y: event.clientY};
+    const dot = event.target.closest('.condensed-view .dot');
+    if (waitingDot && dot !== waitingDot)
+        cancelToolTipWait();
+    else if (waitingDot && Math.hypot(point.x - waitStartPoint.x, point.y - waitStartPoint.y) > CONDENSED_TOOLTIP_STOP_RADIUS)
+        startToolTipWait(point);
+    if (toolTipDot && !dot && !event.target.closest('.tooltip, .tooltip-content') && !ToolTip.isIn(point)) {
+        const dotBox = toolTipDot.getBoundingClientRect();
+        const isInDotBox = point.x >= dotBox.left && point.x <= dotBox.right && point.y >= dotBox.top && point.y <= dotBox.bottom;
+        if (!isInDotBox)
+            closeToolTip();
+    }
+    if (!waitingDot && !toolTipDot)
+        document.removeEventListener('mousemove', updateToolTipForCursor);
+}
+
+function isUnderToolTipArrow(dot) {
+    const dotBox = dot.getBoundingClientRect();
+    const elementOverDotCenter = document.elementFromPoint(dotBox.left + dotBox.width / 2, dotBox.top + dotBox.height / 2);
+    return !!(elementOverDotCenter && elementOverDotCenter.closest('.tooltip'));
+}
+
+function CondensedView(rows, minimumUuid, view, {failureTypeFor, handlersFor, setView}) {
+    const runCount = view.runCount || view.runsPerLine;
+    const maxLines = Math.floor(MAX_CONDENSED_RUN_COUNT / view.runsPerLine);
+    const strips = rows.map(row => {
+        const runs = row.results.filter(result => result.uuid >= minimumUuid).slice(0, runCount);
+        return {row, runs, types: runs.map(result => failureTypeFor(result) || 'success')};
+    });
+    const stripsWithFailures = strips.filter(strip => strip.types.some(type => type !== 'success'));
+    const stripsWithoutFailures = strips.filter(strip => !stripsWithFailures.includes(strip));
+    const unexpectedly = willFilterExpected ? ' unexpectedly' : '';
+
+    const runCountNumberRef = REF.createRef({
+        onElementMount: (element) => {
+            element.onchange = () => {
+                const typedCount = parseInt(element.value, 10);
+                if (typedCount > 0)
+                    setView({runCount: Math.min(typedCount, MAX_CONDENSED_RUN_COUNT)});
+                else
+                    element.value = runCount;
+            };
+        },
+    });
+    const runCountSliderRef = REF.createRef({
+        onElementMount: (element) => {
+            element.oninput = () => {
+                runCountNumberRef.element.value = element.value;
+            };
+            element.onchange = () => setView({runCount: parseInt(element.value, 10)});
+        },
+    });
+    const highlightClassFor = (row, runs, index) => {
+        const clickedRun = view.clickedRun;
+        if (!clickedRun)
+            return '';
+        const isOlderThanClickedRun = run => run.uuid < clickedRun.uuid;
+        const run = runs[index];
+        const nextOlderRun = runs[index + 1];
+        if (run.uuid === clickedRun.uuid)
+            return row === clickedRun.row ? ' selected' : ' highlighted';
+        if (isOlderThanClickedRun(run))
+            return index ? '' : ' line-before';
+        return nextOlderRun && !isOlderThanClickedRun(nextOlderRun) ? '' : ' line-after';
+    };
+    const Strip = ({row, runs, types}) => {
+        const {onDotEnter, onDotClick} = handlersFor(row.configuration);
+        const runsRef = REF.createRef({
+            onElementMount: (element) => {
+                [...element.children].forEach((dot, index) => {
+                    dot.onmouseenter = (event) => {
+                        if (toolTipDot) {
+                            if (dot === toolTipDot || isUnderToolTipArrow(dot))
+                                return;
+                            closeToolTip();
+                        }
+                        waitingDot = dot;
+                        openWaitingToolTip = () => {
+                            const dotCenterX = dot.offsetWidth / 2;
+                            const arrowHalfDiagonal = parseFloat(getComputedStyle(document.body).getPropertyValue('--largeSize')) * Math.SQRT1_2;
+                            onDotEnter({...runs[index], tipPoints: [{x: dotCenterX, y: -arrowHalfDiagonal}, {x: dotCenterX, y: arrowHalfDiagonal}]}, event, dot.getBoundingClientRect());
+                        };
+                        startToolTipWait({x: event.clientX, y: event.clientY});
+                        document.addEventListener('mousemove', updateToolTipForCursor);
+                    };
+                    dot.onclick = () => {
+                        closeToolTip();
+                        onDotClick(runs[index]);
+                        setView({clickedRun: {row, uuid: runs[index].uuid}});
+                    };
+                });
+            },
+        });
+        const failures = types.filter(type => type !== 'success').length;
+        const failuresText = runs.length ? `${failures} of ${runs.length} run${runs.length === 1 ? '' : 's'} failed${unexpectedly}` : 'no runs in range';
+        return `<div class="strip">
+                <div class="text tiny">${row.label} (${failuresText})</div>
+                <div ref="${runsRef}" style="max-width: ${view.lineWidth}px">${types.map((type, index) => `<div class="dot small ${type}${highlightClassFor(row, runs, index)}"><div class="text">${Expectations.symbolMap[type]}</div></div>`).join('')}</div>
+            </div>`;
+    };
+    const StripsWithoutFailures = () => {
+        const expanderRef = REF.createRef({
+            onElementMount: (element) => {
+                element.onclick = () => setView({expanded: !view.expanded});
+            },
+        });
+        const stripsWithoutRuns = stripsWithoutFailures.filter(strip => !strip.runs.length);
+        const ranCount = stripsWithoutFailures.length - stripsWithoutRuns.length;
+        const configurations = count => `${count} configuration${count === 1 ? '' : 's'}`;
+        let foldText = ranCount ? `${configurations(ranCount)} with no${unexpectedly ? ' unexpected' : ''} failures` : `${configurations(stripsWithoutRuns.length)} with no runs in range`;
+        if (ranCount && stripsWithoutRuns.length)
+            foldText += `, ${stripsWithoutRuns.length} with no runs in range`;
+        return `<div class="text tiny">
+                <a class="link-button" href="javascript:void(0)" ref="${expanderRef}">${view.expanded ? '-' : '+'}</a>
+                ${foldText}
+            </div>
+            ${view.expanded ? stripsWithoutFailures.map(Strip).join('') : ''}`;
+    };
+
+    return `<div class="condensed-view">
+            <div class="text tiny">Up to ${runCount} run${runCount === 1 ? '' : 's'} per configuration, newest first</div>
+            <div class="input text tiny">
+                <label>Runs:</label>
+                <input type="range" min="${view.runsPerLine}" max="${maxLines * view.runsPerLine}" step="${view.runsPerLine}" value="${runCount}" ref="${runCountSliderRef}" style="--notches: ${maxLines}">
+                <input type="number" min="1" max="${MAX_CONDENSED_RUN_COUNT}" value="${runCount}" ref="${runCountNumberRef}">
+            </div>
+            ${stripsWithFailures.map(Strip).join('')}
+            ${stripsWithoutFailures.length ? StripsWithoutFailures() : ''}
+        </div>`;
+}
 
 function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     let ref = REF.createRef({
@@ -1527,7 +1724,7 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     return `<div class="label" style="font-size: var(--smallSize)" ref="${ref}"></div>`;
 } 
 
-function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false) {
+function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false, condensedViewSwitch=false) {
     willFilterExpected = defaultWillFilterExpected;
     InvestigateDrawer.willFilterExpected = willFilterExpected;
     let updateLabelEvents = new EventStream();
@@ -1635,6 +1832,17 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 };
             },
         });
+        const showCondensedViewSwitch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked)
+                        showCondensedView = true;
+                    else
+                        showCondensedView = false;
+                    callback();
+                };
+            },
+        });
         result += `<div class="input">
             <label>Filter expected results</label>
             <label class="switch">
@@ -1663,6 +1871,14 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false, fl
                 <label>Number of flakes</label>
                 <label class="switch">
                     <input type="checkbox"${showNumberOfFlakyTests ? ' checked': ''} ref="${showNumberOfFlakyTestsSwitch}">
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+        if (condensedViewSwitch)
+            result += `<div class="input">
+                <label>Show condensed view</label>
+                <label class="switch">
+                    <input type="checkbox"${showCondensedView ? ' checked': ''} ref="${showCondensedViewSwitch}">
                     <span class="slider"></span>
                 </label>
             </div>`;

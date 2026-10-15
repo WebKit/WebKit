@@ -260,6 +260,33 @@ class SearchView {
             child.timeline.notifyRerender();
         });
     }
+    updateTimelinesKeepingPlace() {
+        const headerBottom = document.querySelector('.header.fixed').getBoundingClientRect().bottom;
+        const sections = [...this.ref.element.children];
+        const topOf = section => section.getBoundingClientRect().top;
+        const isTopOnScreen = section => topOf(section) >= headerBottom && topOf(section) < window.innerHeight;
+        const isTopAboveScreen = section => topOf(section) < headerBottom;
+        const anchor = sections.find(isTopOnScreen) || sections.filter(isTopAboveScreen).pop();
+        const anchorBoxBefore = anchor ? anchor.getBoundingClientRect() : null;
+        const keepAnchorInPlace = () => {
+            if (!anchor)
+                return;
+            const anchorBox = anchor.getBoundingClientRect();
+            const anchorHeightChanged = anchorBox.height !== anchorBoxBefore.height;
+            const targetTop = anchorHeightChanged ? Math.max(anchorBoxBefore.top, headerBottom) : anchorBoxBefore.top;
+            window.scrollBy(0, anchorBox.top - targetTop);
+        };
+        const sectionResizeObserver = new ResizeObserver(keepAnchorInPlace);
+        sections.forEach(section => sectionResizeObserver.observe(section));
+
+        this.ref.state.children.forEach(child => {
+            child.timeline.update();
+        });
+        setTimeout(() => {
+            keepAnchorInPlace();
+            sectionResizeObserver.disconnect();
+        });
+    }
 }
 
 let view = new SearchView();
@@ -278,10 +305,8 @@ DOM.inject(
     ${Drawer([
         CommitSearchBar((searchValue) => onCommitSearch.add(searchValue)),
         Legend(() => {
-            view.ref.state.children.forEach((child) => {
-                child.timeline.update();
-            });
-        }, false, false, true, false),
+            view.updateTimelinesKeepingPlace();
+        }, false, false, true, false, true),
         LimitSlider(() => {view.reload()}, TESTS_LIMITS.max, TESTS_LIMITS.default),
         BranchSelector(() => {
             CommitBank.reload();
