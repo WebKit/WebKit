@@ -96,6 +96,9 @@ class Results(View):
         pr_number = data.get('pr_number', data.get('pr_id')) or -1
         pr_project = data.get('pr_project', '') or ''
         pr_author = data.get('pr_author')
+        failing_tests = data.get('failing_tests') or []
+        failing_tests_count = data.get('failing_tests_count') or len(failing_tests)
+        failing_tests_category = data.get('failing_tests_category') or ''
 
         _log.info(f'Build {data["status"]}, change_id: {change_id}, build_id: {data["build_id"]}, pr_number: {pr_number}, pr_project: {pr_project}')
         if not change_id:
@@ -104,7 +107,8 @@ class Results(View):
 
         rc = Build.save_build(change_id=change_id, hostname=data['hostname'], build_id=data['build_id'], builder_id=data['builder_id'], builder_name=data['builder_name'],
                               builder_display_name=data['builder_display_name'], number=data['number'], result=data['result'],
-                              state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_number=pr_number, pr_project=pr_project)
+                              state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_number=pr_number, pr_project=pr_project,
+                              failing_tests='\n'.join(failing_tests), failing_tests_count=failing_tests_count, failing_tests_category=failing_tests_category)
         if rc == SUCCESS and pr_number and pr_number != -1:
             # For PR builds leave comment on PR
             allow_new_comment = (data['status'] == 'started' and data['builder_display_name'] in ['services', 'ios-wk2'])
