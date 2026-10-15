@@ -74,6 +74,8 @@ public:
     BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
     BlockLayoutResult layout(const ConstraintsForBlockContent&);
+    // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
+    IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
 
 private:
     void handleBlockContainerStart(const RenderBox&);
@@ -86,8 +88,6 @@ private:
 
     BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
-    // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
-    IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
