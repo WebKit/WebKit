@@ -131,6 +131,23 @@ if (DEVELOPER_MODE)
         )
         set(testLibJSCTools_FRAMEWORKS ${jsc_FRAMEWORKS})
         set(testLibJSCTools_LIBRARIES JavaScriptCoreTools)
+        if (APPLE)
+            set(_testLibJSCTools_OBJC_SOURCES
+                ../corpse/tests/HeapWalkObjectiveC.m
+                ../corpse/tests/HeapWalkObjectiveCPlusPlus.mm
+            )
+            list(APPEND testLibJSCTools_SOURCES ${_testLibJSCTools_OBJC_SOURCES})
+            set_source_files_properties(${_testLibJSCTools_OBJC_SOURCES} PROPERTIES COMPILE_OPTIONS -fobjc-arc)
+            list(APPEND testLibJSCTools_LIBRARIES "-framework Foundation")
+        endif ()
+        if (SWIFT_REQUIRED)
+            list(APPEND testLibJSCTools_DEFINITIONS JSC_SUPPORTS_SWIFT=1)
+            # Links every object of the library in order, so that HeapWalkImportsOnly.swift's comes first.
+            list(APPEND testLibJSCTools_LIBRARIES "$<LINK_LIBRARY:WHOLE_ARCHIVE,testLibJSCToolsSwift>")
+            # These include the C++ header that compiling the Swift sources generates.
+            set(testLibJSCToolsSwift_SWIFT_INTEROP_SOURCES ../corpse/tests/HeapWalkTest.cpp)
+            list(REMOVE_ITEM testLibJSCTools_SOURCES ${testLibJSCToolsSwift_SWIFT_INTEROP_SOURCES})
+        endif ()
     endif ()
 
     set(testwasmdebugger_SOURCES
@@ -231,6 +248,21 @@ if (DEVELOPER_MODE)
 
     if (ENABLE_MYA)
         WEBKIT_EXECUTABLE(testLibJSCTools)
+        if (SWIFT_REQUIRED)
+            # An executable emits no Swift module, so the Swift sources are a library that names its module after the
+            # executable, as Xcode does.
+            add_library(testLibJSCToolsSwift STATIC
+                ../corpse/tests/HeapWalkImportsOnly.swift
+                ../corpse/tests/HeapWalkSwift.swift
+            )
+            WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(testLibJSCToolsSwift testLibJSCTools
+                "${JAVASCRIPTCORE_DIR}/corpse/tests/Modules"
+                "testLibJSCTools-Swift.h")
+            webkit_target_add_swift_options(testLibJSCToolsSwift "-D JSC_SUPPORTS_SWIFT" "-g")
+            WEBKIT_DEFINE_SUBTARGET(testLibJSCToolsSwift_SwiftInterop testLibJSCTools ${testLibJSCToolsSwift_SWIFT_INTEROP_SOURCES})
+            target_include_directories(testLibJSCToolsSwift_SwiftInterop PRIVATE $<TARGET_PROPERTY:testLibJSCToolsSwift,INTERFACE_INCLUDE_DIRECTORIES>)
+            target_sources(testLibJSCTools PRIVATE $<TARGET_OBJECTS:testLibJSCToolsSwift_SwiftInterop>)
+        endif ()
     endif ()
 
     WEBKIT_ADD_PREFIX_HEADER(testapi ../JavaScriptCorePrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX)

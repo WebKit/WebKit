@@ -45,6 +45,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <bmalloc/pas_root.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #include <dlfcn.h>
+#if OS(DARWIN)
+#include <mach-o/dyld.h>
+#endif
 #include <lldb/API/LLDB.h>
 #include <string>
 #include <string_view>
@@ -223,7 +226,8 @@ lldb::SBType globalVariableType(lldb::SBTarget target, lldb::SBModule module, ll
     return { };
 }
 
-// Every class of each image of the build a heap walk reads is described: this executable and JavaScriptCore.
+// Every class of each image of the build a heap walk reads is described: this executable, JavaScriptCore and,
+// with --webcore, WebCore.
 void describeImages()
 {
     Dl_info executable { };
@@ -233,6 +237,20 @@ void describeImages()
     if (!executable.dli_fbase || !javaScriptCore.dli_fname)
         return;
     Vector<const void*> headers { executable.dli_fbase, javaScriptCore.dli_fbase };
+
+    if (describeWebCore) {
+#if OS(DARWIN)
+        std::string_view javaScriptCorePath { javaScriptCore.dli_fname };
+        std::string webCorePath { javaScriptCorePath.substr(0, javaScriptCorePath.rfind("JavaScriptCore.framework")) };
+        webCorePath += "WebCore.framework/WebCore";
+        void* webCore = dlopen(webCorePath.c_str(), RTLD_NOW);
+        TEST_ASSERT(webCore, "WebCore loads beside the JavaScriptCore it was built with");
+        if (webCore)
+            headers.append(_dyld_get_dlopen_image_header(webCore));
+#else
+        TEST_ASSERT(false, "WebCore is described only on Darwin");
+#endif
+    }
 
     auto snapshot = takeSnapshot(getpid());
     if (!snapshot)

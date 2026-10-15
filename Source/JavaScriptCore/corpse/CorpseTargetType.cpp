@@ -266,6 +266,12 @@ void printInternal(PrintStream& out, JSC::Corpse::TargetClass::NeedsReader needs
     case NeedsReader::ObjectiveCObject:
         out.print("ObjectiveCObject");
         return;
+    case NeedsReader::SwiftPointer:
+        out.print("SwiftPointer");
+        return;
+    case NeedsReader::SwiftValue:
+        out.print("SwiftValue");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

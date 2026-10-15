@@ -35,3 +35,6 @@ OTHER_LDFLAGS = $(inherited) $(WK_LIB_JSC_TOOLS_LDFLAGS_$(WK_LIB_JSC_TOOLS_SUPPO
 WK_LIB_JSC_TOOLS_LDFLAGS_YES = -lJavaScriptCoreTools;
 
 SYSTEM_HEADER_SEARCH_PATHS = $(inherited) $(WK_LLDB_SYSTEM_HEADER_SEARCH_PATHS);
+
+// HeapWalkSwift.swift imports the module this defines.
+SWIFT_INCLUDE_PATHS = $(inherited) $(SRCROOT)/corpse/tests/Modules;

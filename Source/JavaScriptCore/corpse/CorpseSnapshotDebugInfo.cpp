@@ -65,6 +65,9 @@ constexpr std::array classTemplatesNeedingReaders {
     ClassTemplateNeedingReader { "WTF::SentinelLinkedList", NeedsReader::Container },
     ClassTemplateNeedingReader { "WTF::Vector", NeedsReader::Container },
     ClassTemplateNeedingReader { "std::__1::__cxx_atomic_base_impl", NeedsReader::Atomic },
+    // Swift's C++ interoperability holds Swift memory through these, from <swift/_SwiftCxxInteroperability.h>.
+    ClassTemplateNeedingReader { "swift::_impl::RefCountedClass", NeedsReader::SwiftPointer },
+    ClassTemplateNeedingReader { "swift::_impl::OpaqueStorage", NeedsReader::SwiftPointer },
 };
 
 } // anonymous namespace
@@ -127,12 +130,32 @@ static std::optional<NeedsReader> needsReaderByName(lldb::SBType& type)
     return std::nullopt;
 }
 
+// The class Swift's C++ interoperability generates for a Swift value of fixed layout holds the value's bytes in a
+// `_storage` array, and gives them out through _getOpaquePointer().
+static bool isSwiftInlineValue(lldb::SBType& type)
+{
+    if (type.GetNumberOfFields() != 1 || type.GetNumberOfDirectBaseClasses())
+        return false;
+    lldb::SBTypeMember field = type.GetFieldAtIndex(0);
+    const char* fieldName = field.GetName();
+    if (!fieldName || std::string_view { fieldName } != "_storage" || canonicalType(field.GetType()).GetTypeClass() != lldb::eTypeClassArray)
+        return false;
+    for (uint32_t i = 0; i < type.GetNumberOfMemberFunctions(); ++i) {
+        const char* functionName = type.GetMemberFunctionAtIndex(i).GetName();
+        if (functionName && std::string_view { functionName } == "_getOpaquePointer")
+            return true;
+    }
+    return false;
+}
+
 static NeedsReader needsReaderOf(lldb::SBType& type)
 {
     if (type.GetTypeClass() == lldb::eTypeClassUnion)
         return NeedsReader::Union;
     if (std::optional<NeedsReader> byName = needsReaderByName(type))
         return *byName;
+    if (isSwiftInlineValue(type))
+        return NeedsReader::SwiftValue;
     for (uint32_t i = 0; i < type.GetNumberOfFields(); ++i) {
         lldb::SBTypeMember field = type.GetFieldAtIndex(i);
         if (field.IsBitfield())

@@ -1857,6 +1857,10 @@
 		1AB0DEAD00000006000D0001 /* CorpseVMTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000007000D0001 /* CorpseVMTest.cpp */; };
 		D3A136540ED9A8225E725A10 /* DebugInfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DC88677BF82BE487A460D27 /* DebugInfoTest.cpp */; };
 		12AC5C88EEC074310352A2AA /* HeapWalkTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E7BC8806CBAB87DFEC4DA990 /* HeapWalkTest.cpp */; };
+		46133BB1E4CA4C8A85D67C09 /* HeapWalkSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528A7C6DA96943E2BCA3E94F /* HeapWalkSwift.swift */; };
+		DC0394288C9541EAA48B76D5 /* HeapWalkImportsOnly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E38B7D6DBA45808883976C /* HeapWalkImportsOnly.swift */; };
+		3B4EE088EFF04E11B57B0D81 /* HeapWalkObjectiveC.m in Sources */ = {isa = PBXBuildFile; fileRef = A5893F2E52404E2DB52CDF25 /* HeapWalkObjectiveC.m */; };
+		DB8C73FE3EB542389EDBE4BA /* HeapWalkObjectiveCPlusPlus.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6C02C7084B24BFF907021E2 /* HeapWalkObjectiveCPlusPlus.mm */; };
 		1AB0DEAD00000004000D0001 /* TypeinfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */; };
 		D68DA6DA907546EFA429D8D2 /* CorpseDiagnosticsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 203DFA350D3248B0A8E7376B /* CorpseDiagnosticsTest.cpp */; };
 		7E83C43717D785F3003DC41B /* CorpseExportsTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E83C43517D785F3003DC41B /* CorpseExportsTrie.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4546,6 +4550,14 @@
 		1AB0DEAD00000007000D0001 /* CorpseVMTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseVMTest.cpp; sourceTree = "<group>"; };
 		9DC88677BF82BE487A460D27 /* DebugInfoTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugInfoTest.cpp; sourceTree = "<group>"; };
 		E7BC8806CBAB87DFEC4DA990 /* HeapWalkTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapWalkTest.cpp; sourceTree = "<group>"; };
+		528A7C6DA96943E2BCA3E94F /* HeapWalkSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeapWalkSwift.swift; sourceTree = "<group>"; };
+		05E38B7D6DBA45808883976C /* HeapWalkImportsOnly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeapWalkImportsOnly.swift; sourceTree = "<group>"; };
+		65805278AE114AF8B61EA186 /* HeapWalkModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapWalkModule.h; sourceTree = "<group>"; };
+		6AC008E11F514002806D0DF6 /* HeapWalkSwiftModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapWalkSwiftModule.h; sourceTree = "<group>"; };
+		C3987FD9CAAF4BE58FD9E880 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; name = module.modulemap; path = Modules/module.modulemap; sourceTree = "<group>"; };
+		B34CF1CAB2D748D5B0AB53D0 /* HeapWalkObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapWalkObjectiveC.h; sourceTree = "<group>"; };
+		A5893F2E52404E2DB52CDF25 /* HeapWalkObjectiveC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeapWalkObjectiveC.m; sourceTree = "<group>"; };
+		A6C02C7084B24BFF907021E2 /* HeapWalkObjectiveCPlusPlus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HeapWalkObjectiveCPlusPlus.mm; sourceTree = "<group>"; };
 		203DFA350D3248B0A8E7376B /* CorpseDiagnosticsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CorpseDiagnosticsTest.cpp; sourceTree = "<group>"; };
 		1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeinfoTest.cpp; sourceTree = "<group>"; };
 		44F93E0D2AE71F9F00FFA37C /* JavaScriptCoreFramework.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCoreFramework.cpp; sourceTree = "<group>"; };
@@ -6975,9 +6987,17 @@
 				7E83C43217D785F3003DC41B /* CorpseThreadTest.cpp */,
 				1AB0DEAD00000007000D0001 /* CorpseVMTest.cpp */,
 				9DC88677BF82BE487A460D27 /* DebugInfoTest.cpp */,
+				05E38B7D6DBA45808883976C /* HeapWalkImportsOnly.swift */,
+				65805278AE114AF8B61EA186 /* HeapWalkModule.h */,
+				B34CF1CAB2D748D5B0AB53D0 /* HeapWalkObjectiveC.h */,
+				A5893F2E52404E2DB52CDF25 /* HeapWalkObjectiveC.m */,
+				A6C02C7084B24BFF907021E2 /* HeapWalkObjectiveCPlusPlus.mm */,
+				528A7C6DA96943E2BCA3E94F /* HeapWalkSwift.swift */,
+				6AC008E11F514002806D0DF6 /* HeapWalkSwiftModule.h */,
 				E7BC8806CBAB87DFEC4DA990 /* HeapWalkTest.cpp */,
 				7E83C40417D785F3003DC41B /* LibJSCToolsTestUtilities.cpp */,
 				7E83C40317D785F3003DC41B /* LibJSCToolsTestUtilities.h */,
+				C3987FD9CAAF4BE58FD9E880 /* module.modulemap */,
 				7E83C40017D785F3003DC41B /* testLibJSCTools.cpp */,
 				1AB0DEAD00000005000D0001 /* TypeinfoTest.cpp */,
 			);
@@ -14802,6 +14822,10 @@
 				7E83C43417D785F3003DC41B /* CorpseThreadTest.cpp in Sources */,
 				1AB0DEAD00000006000D0001 /* CorpseVMTest.cpp in Sources */,
 				D3A136540ED9A8225E725A10 /* DebugInfoTest.cpp in Sources */,
+				DC0394288C9541EAA48B76D5 /* HeapWalkImportsOnly.swift in Sources */,
+				3B4EE088EFF04E11B57B0D81 /* HeapWalkObjectiveC.m in Sources */,
+				DB8C73FE3EB542389EDBE4BA /* HeapWalkObjectiveCPlusPlus.mm in Sources */,
+				46133BB1E4CA4C8A85D67C09 /* HeapWalkSwift.swift in Sources */,
 				12AC5C88EEC074310352A2AA /* HeapWalkTest.cpp in Sources */,
 				7E83C40C17D785F3003DC41B /* LibJSCToolsTestUtilities.cpp in Sources */,
 				7E83C40A17D785F3003DC41B /* testLibJSCTools.cpp in Sources */,

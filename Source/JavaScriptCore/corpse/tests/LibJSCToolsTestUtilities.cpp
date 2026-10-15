@@ -76,6 +76,7 @@ unsigned assertionsFailed = 0;
 unsigned suitesSkipped = 0;
 const char* suiteFilter = nullptr;
 bool verbose = false;
+bool describeWebCore = false;
 
 static Seconds s_totalSuiteTime;
 

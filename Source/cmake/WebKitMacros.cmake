@@ -524,7 +524,7 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
         if (_webkit_target_type MATCHES "^(SHARED_LIBRARY|MODULE_LIBRARY|EXECUTABLE)$")
             # WEBKIT_FRAMEWORK sets FRAMEWORK after this macro runs, so read it at generate time.
             add_custom_command(TARGET ${_target} POST_BUILD
-                COMMAND dsymutil $<TARGET_FILE:${_target}> -o $<IF:$<BOOL:$<TARGET_PROPERTY:${_target},FRAMEWORK>>,$<TARGET_FILE_DIR:${_target}>/../../../$<TARGET_FILE_NAME:${_target}>.framework.dSYM,$<TARGET_FILE:${_target}>.dSYM>
+                COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/generate-mya-heap-dsym $<TARGET_FILE:${_target}> -o $<IF:$<BOOL:$<TARGET_PROPERTY:${_target},FRAMEWORK>>,$<TARGET_FILE_DIR:${_target}>/../../../$<TARGET_FILE_NAME:${_target}>.framework.dSYM,$<TARGET_FILE:${_target}>.dSYM>
                 VERBATIM)
         endif ()
     endif ()

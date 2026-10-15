@@ -87,6 +87,10 @@ public:
         Atomic,
         // The Objective-C runtime describes the object.
         ObjectiveCObject,
+        // The class holds a pointer to memory the Swift runtime describes.
+        SwiftPointer,
+        // The class holds the bytes of a Swift value.
+        SwiftValue,
     };
 
     TargetClass(String&& name, String&& image, size_t byteSize, bool hasVTable, NeedsReader, Vector<TargetMember>&& members, Vector<TargetBase>&& virtualBases);

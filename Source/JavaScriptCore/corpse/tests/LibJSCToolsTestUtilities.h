@@ -72,6 +72,8 @@ extern unsigned suitesSkipped;
 extern const char* suiteFilter;
 
 extern bool verbose;
+// Whether Typeinfo also describes every class of WebCore, which takes minutes and gigabytes.
+extern bool describeWebCore;
 
 void skipSuite(const char* name, const char* why);
 

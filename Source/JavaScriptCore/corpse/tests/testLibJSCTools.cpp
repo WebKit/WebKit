@@ -53,12 +53,13 @@ constexpr unsigned defaultFuzzIterations = 20000;
 
 void printUsage()
 {
-    dataLogLn("Usage: testLibJSCTools [--verbose] [<suite filter>]");
+    dataLogLn("Usage: testLibJSCTools [--verbose] [--webcore] [<suite filter>]");
     dataLogLn("       testLibJSCTools --fuzz-trie [<seed> [<iterations>]]");
     dataLogLn("       testLibJSCTools --target <offset>");
     dataLogLn("");
     dataLogLn("  Runs the tests for libJavaScriptCoreTools. With a filter, only the");
-    dataLogLn("  suites whose name contains it run.");
+    dataLogLn("  suites whose name contains it run. --webcore also describes every class of");
+    dataLogLn("  the WebCore beside JavaScriptCore, which takes minutes and gigabytes.");
 }
 
 bool parseUint64(std::string_view text, uint64_t& out)
@@ -130,6 +131,10 @@ int main(int argc, char** argv)
         }
         if (argument == "--verbose") {
             JSCToolsTest::verbose = true;
+            continue;
+        }
+        if (argument == "--webcore") {
+            JSCToolsTest::describeWebCore = true;
             continue;
         }
         if (argument == "--target") {

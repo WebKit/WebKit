@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "HeapWalkObjectiveC.h"
 #include "LibJSCToolsTestUtilities.h"
 #include <JavaScriptCore/CorpsePlatform.h>
 
@@ -51,6 +52,11 @@
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
+
+#if JSC_SUPPORTS_SWIFT
+#include "HeapWalkModule.h"
+#include "testLibJSCTools-Swift.h"
+#endif
 
 #endif // ENABLE(MYA_HEAP)
 
@@ -216,6 +222,14 @@ public:
     PolymorphicHoldsLeaf* secondOfPolymorphicDiamond { static_cast<SecondPolymorphicParent*>(polymorphicDiamond) };
     Leaf** pointerToPointer { &holdsLeaf->leaf };
     const char* string { "heap walk" };
+#if OS(DARWIN)
+    ObjectiveCHolderAddresses objectiveCAddresses;
+    ObjectiveCHolderInterface* objectiveCHolder { createObjectiveCHolder(objectiveCAddresses) };
+#endif
+#if JSC_SUPPORTS_SWIFT
+    testLibJSCTools::HeapWalkSwiftObject swiftObject { testLibJSCTools::makeHeapWalkSwiftObject() };
+    testLibJSCTools::HeapWalkSwiftValue swiftValue { testLibJSCTools::makeHeapWalkSwiftValue() };
+#endif
     std::atomic<Leaf*> atomicLeaf { new Leaf };
     std::atomic<uint64_t> atomicScalar { 0 };
     // Its vtable is JavaScriptCore's, whose WeakGCMap points to the VM.
@@ -248,6 +262,9 @@ struct HeapWalkFixture {
     uint64_t secondOfDiamondLeaf;
     uint64_t byValue;
     uint64_t memberOfByValue;
+#if OS(DARWIN)
+    ObjectiveCHolderAddresses objectiveC;
+#endif
     uint64_t pointerToPointerSlot;
     uint64_t pointerToPointerLeaf;
     uint64_t polymorphicDiamond;
@@ -301,6 +318,9 @@ Address createFixture()
         Address { roots->secondOfDiamond->leaf }.toTargetVMAddress(),
         Address { roots->byValue }.toTargetVMAddress(),
         Address { roots->memberOfByValue }.toTargetVMAddress(),
+#if OS(DARWIN)
+        roots->objectiveCAddresses,
+#endif
         Address { roots->pointerToPointer }.toTargetVMAddress(),
         Address { *roots->pointerToPointer }.toTargetVMAddress(),
         Address { roots->polymorphicDiamond }.toTargetVMAddress(),
@@ -467,6 +487,14 @@ void analyze(Snapshot& snapshot, Address fixtureAddress)
     TEST_ASSERT_EQ(analyzer.opaqueInRoot.size(), 1u, "nothing else in the roots is opaque");
     TEST_ASSERT(analyzer.reachedFromRoot(fixture->pointerToPointerSlot, "JSCToolsTest::(anonymous namespace)::Leaf *"_s), "a pointer to a pointer reaches the pointer it points to as a node");
     TEST_ASSERT(analyzer.sources.get(fixture->pointerToPointerLeaf).contains(fixture->pointerToPointerSlot), "the walk reads that pointer too");
+#if OS(DARWIN)
+    auto holder = analyzer.reached(fixture->objectiveC.holder, "JSCToolsTest::(anonymous namespace)::ObjectiveCHolder"_s);
+    TEST_ASSERT(holder && std::get<TargetClass>(holder->get()).image.endsWith("/testLibJSCTools"_s), "the walk reads an object whose class only an Objective-C++ compile unit defines");
+    TEST_ASSERT(analyzer.needsReaderAt(fixture->objectiveC.object, NeedsReader::ObjectiveCObject) && analyzer.sources.get(fixture->objectiveC.object).contains(fixture->objectiveC.holder), "an object of a class Objective-C++ defines is a node that needs a reader");
+    TEST_ASSERT(analyzer.needsReaderAt(fixture->objectiveC.plainObject, NeedsReader::ObjectiveCObject) && analyzer.sources.get(fixture->objectiveC.plainObject).contains(fixture->objectiveC.holder), "an object of a class Objective-C defines is a node that needs a reader");
+    TEST_ASSERT(analyzer.needsReaderAt(fixture->objectiveC.block, NeedsReader::ObjectiveCObject) && analyzer.sources.get(fixture->objectiveC.block).contains(fixture->objectiveC.holder), "a block is a node that needs a reader");
+    TEST_ASSERT(analyzer.reached(fixture->objectiveC.leaf, "JSCToolsTest::ObjectiveCHolderLeaf"_s), "the walk reads a lambda declared in an Objective-C method");
+#endif
     TEST_ASSERT(analyzer.fromRoot.containsIf([&](auto& to) {
         return to.address.toTargetVMAddress() == fixture->fireDetail && JSC::Corpse::name(to.type) == "JSC::StringFireDetail"_s && std::get<TargetClass>(to.type).image.endsWith("/JavaScriptCore"_s);
     }), "the walk reads an object as the class the image of its vtable defines");
@@ -490,6 +518,7 @@ void analyze(Snapshot& snapshot, Address fixtureAddress)
     TEST_ASSERT(analyzer.reached(fixture->templateInstanceLeaf, "JSCToolsTest::(anonymous namespace)::Leaf"_s), "the walk reads a class it reached that liblldb cannot find by name");
     TEST_ASSERT(analyzer.reachedFromRoot(fixture->arrayLeaves[1], "JSCToolsTest::(anonymous namespace)::Leaf"_s), "the walk reads the last element of an array");
 
+    size_t needsReaderInRoot = 8;
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, vector)), NeedsReader::Container), "a Vector needs a reader");
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, deque)), NeedsReader::Container), "a Deque needs a reader");
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, hashMap)), NeedsReader::Container), "a HashMap's table needs a reader");
@@ -498,7 +527,12 @@ void analyze(Snapshot& snapshot, Address fixtureAddress)
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, withBitfield)), NeedsReader::Bitfield), "a class with a bitfield needs a reader");
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, atomicLeaf)), NeedsReader::Atomic), "a std::atomic of a pointer needs a reader");
     TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, atomicScalar)), NeedsReader::Atomic), "a std::atomic of a scalar needs a reader");
-    TEST_ASSERT_EQ(analyzer.needsReaderIn(fixture->roots, sizeof(MyaRoots)), 8u, "nothing else in the roots needs a reader");
+#if JSC_SUPPORTS_SWIFT
+    needsReaderInRoot += 2;
+    TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, swiftObject)), NeedsReader::SwiftPointer), "a Swift object that C++ holds needs a reader");
+    TEST_ASSERT(analyzer.needsReaderAt(rootOffset(OBJECT_OFFSETOF(MyaRoots, swiftValue)), NeedsReader::SwiftValue), "a Swift value that C++ holds inline needs a reader");
+#endif
+    TEST_ASSERT_EQ(analyzer.needsReaderIn(fixture->roots, sizeof(MyaRoots)), needsReaderInRoot, "nothing else in the roots needs a reader");
     for (auto& types : analyzer.nodes.values()) {
         for (const TargetType& type : types) {
             if (JSC::Corpse::name(type).contains("Unreached"_s))
