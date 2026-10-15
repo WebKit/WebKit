@@ -143,17 +143,16 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     canvasEl->setIsSnapshotting(false);
 }
 
-DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElement& element, GraphicsContext& context) const
+DisplayList::RecorderImpl* RenderHTMLCanvas::canvasDrawableRecorder(RenderElement& element, GraphicsContext& context, const IntRect& elementRelativeBounds) const
 {
     if (!element.isCanvasDrawable())
         return nullptr;
 
     // FIXME: Clearing the recorder should happen only when a repaint or a layout happens.
     auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
-    auto boundingRect = element.absoluteBoundingBoxRect();
     auto initialCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, boundingRect, initialCTM, context.colorSpace());
-    snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
+    Ref snapshotRecorder = DisplayList::RecorderImpl::create(initialState, elementRelativeBounds, initialCTM, context.colorSpace());
+    snapshotRecorder->translate(-elementRelativeBounds.x(), -elementRelativeBounds.y());
 
     m_canvasDrawableRecorderMap.set(element, WTF::move(snapshotRecorder));
     return m_canvasDrawableRecorderMap.get(element);

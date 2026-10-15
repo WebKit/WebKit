@@ -3419,7 +3419,7 @@ static inline bool LEGACY_NODELETE paintForFixedRootBackground(const RenderLayer
     return layer->renderer().isDocumentElementRenderer() && (paintFlags & RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly);
 }
 
-static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLayer& layer, GraphicsContext& context)
+static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLayer& layer, GraphicsContext& context, const RenderLayer* rootLayer)
 {
     if (!layer.renderer().isCanvasDrawable())
         return nullptr;
@@ -3428,7 +3428,8 @@ static inline DisplayList::RecorderImpl* canvasDrawableRecorder(const RenderLaye
     if (!canvasRenderer)
         return nullptr;
 
-    return canvasRenderer->canvasDrawableRecorder(layer.renderer(), context);
+    auto elementRelativeBounds = enclosingIntRect(LayoutRect { LayoutPoint { layer.offsetFromAncestor(rootLayer) }, layer.renderer().absoluteBoundingBoxRect().size() });
+    return canvasRenderer->canvasDrawableRecorder(layer.renderer(), context, elementRelativeBounds);
 }
 
 void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags)
@@ -3464,7 +3465,7 @@ void RenderLayer::paintLayer(GraphicsContext& context, const LayerPaintingInfo& 
         return;
     }
 
-    if (RefPtr recorder = canvasDrawableRecorder(*this, context)) {
+    if (RefPtr recorder = canvasDrawableRecorder(*this, context, paintingInfo.rootLayer)) {
         paintLayerWithEffects(*recorder, paintingInfo, paintFlags);
         return;
     }

@@ -22,10 +22,10 @@
 <body>
 <p>Tests that a small canvas with content="drawable" gets its own composited layer, with or without a 2D context. The last canvas is not drawable and should not be composited.</p>
 <canvas id="drawable-without-context" width="20" height="20" content="drawable">
-    <div drawable>Hello</div>
+    <div drawable style="width: 10px; height: 10px;"></div>
 </canvas>
 <canvas id="drawable-with-context" width="20" height="20" content="drawable">
-    <div drawable>Hello</div>
+    <div drawable style="width: 10px; height: 10px;"></div>
 </canvas>
 <canvas id="not-drawable" width="20" height="20"></canvas>
 
