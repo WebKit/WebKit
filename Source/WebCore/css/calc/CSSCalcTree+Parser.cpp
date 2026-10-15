@@ -1507,15 +1507,19 @@ std::optional<TypedChild> parseCalcProduct(CSSParserTokenRange& tokens, int dept
             auto invert = [](TypedChild& next, ParserState& state) -> std::optional<TypedChild> {
                 Invert invert { WTF::move(next.child) };
                 auto invertType = Type::invert(next.type);
+                if (!invertType)
+                    return std::nullopt;
 
                 if (auto* simplificationOptions = state.simplificationOptions) {
                     if (auto replacement = simplify(invert, *simplificationOptions))
-                        return TypedChild { WTF::move(*replacement), invertType };
+                        return TypedChild { WTF::move(*replacement), *invertType };
                 }
-                return TypedChild { makeChild(WTF::move(invert), invertType), invertType };
+                return TypedChild { makeChild(WTF::move(invert), *invertType), *invertType };
             };
 
             nextValue = invert(*nextValue, state);
+            if (!nextValue)
+                return std::nullopt;
         }
 
         if (firstValue) {

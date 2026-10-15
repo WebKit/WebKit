@@ -1,0 +1,5 @@
+
+PASS inverting a type with exponent -127 is accepted
+PASS inverting a type with exponent -128 is rejected rather than wrapping
+PASS wrapped exponent does not cancel against other exponents
+

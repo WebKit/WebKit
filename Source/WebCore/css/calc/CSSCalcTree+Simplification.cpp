@@ -841,7 +841,10 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                     },
                     [&](const Percentage& percentage) -> bool {
                         auto invertedPercentageChildType = Type::invert(getType(percentage));
-                        auto multipliedType = Type::multiply(productResult.type, invertedPercentageChildType);
+                        if (!invertedPercentageChildType)
+                            return false;
+
+                        auto multipliedType = Type::multiply(productResult.type, *invertedPercentageChildType);
                         if (!multipliedType)
                             return false;
 
@@ -851,7 +854,10 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                     },
                     [&](const CanonicalDimension& canonicalDimension) -> bool {
                         auto invertedCanonicalDimensionType = Type::invert(getType(canonicalDimension));
-                        auto multipliedType = Type::multiply(productResult.type, invertedCanonicalDimensionType);
+                        if (!invertedCanonicalDimensionType)
+                            return false;
+
+                        auto multipliedType = Type::multiply(productResult.type, *invertedCanonicalDimensionType);
                         if (!multipliedType)
                             return false;
 

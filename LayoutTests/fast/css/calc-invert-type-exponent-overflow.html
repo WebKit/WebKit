@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const inverseLengths = count => Array(count).fill("1 / 1px").join(" * ");
+
+test(() => {
+    assert_true(CSS.supports("opacity", `calc(1 / (${inverseLengths(127)}) * (${inverseLengths(127)}))`));
+}, "inverting a type with exponent -127 is accepted");
+
+test(() => {
+    assert_false(CSS.supports("opacity", `calc(1 / (${inverseLengths(128)}))`));
+}, "inverting a type with exponent -128 is rejected rather than wrapping");
+
+test(() => {
+    assert_false(CSS.supports("opacity", `calc(1 / (${inverseLengths(128)}) / (${inverseLengths(127)}) * 1px)`));
+}, "wrapped exponent does not cancel against other exponents");
+</script>

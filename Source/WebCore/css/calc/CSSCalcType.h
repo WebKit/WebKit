@@ -121,7 +121,7 @@ struct Type {
     static std::optional<Type> add(std::optional<Type> a, Type b) { if (!a) return a; return add(*a, b); }
     static std::optional<Type> LEGACY_NODELETE multiply(Type, Type);
     static std::optional<Type> multiply(std::optional<Type> a, Type b) { if (!a) return a; return multiply(*a, b); }
-    static Type LEGACY_NODELETE invert(Type);
+    static std::optional<Type> LEGACY_NODELETE invert(Type);
 
     static std::optional<Type> LEGACY_NODELETE sameType(Type, Type);
     static std::optional<Type> LEGACY_NODELETE consistentType(Type, Type);

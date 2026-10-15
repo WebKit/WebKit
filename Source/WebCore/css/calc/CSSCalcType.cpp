@@ -153,7 +153,7 @@ std::optional<Type> Type::multiply(Type type1, Type type2)
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#cssnumericvalue-invert-a-type
-Type Type::invert(Type type)
+std::optional<Type> Type::invert(Type type)
 {
     // To invert a type `type`, perform the following steps:
 
@@ -162,8 +162,12 @@ Type Type::invert(Type type)
     result.percentHint = type.percentHint;
 
     // 2. For each unit → exponent of type, set result[unit] to (-1 * exponent).
-    for (auto unit : Type::allBaseTypes())
-        result[unit] = -1 * type[unit];
+    for (auto unit : Type::allBaseTypes()) {
+        if (type[unit] == std::numeric_limits<Exponent>::min())
+            return std::nullopt;
+
+        result[unit] = -type[unit];
+    }
 
     // 3. Return result.
     return result;
