@@ -177,7 +177,6 @@ webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-picker.html [ Sk
 
 # DataTransferItems is not yet implemented.
 webkit.org/b/98940 editing/pasteboard/data-transfer-items.html [ Skip ]
-webkit.org/b/98940 editing/pasteboard/data-transfer-items-image-png.html [ Skip ]
 webkit.org/b/98940 editing/pasteboard/data-transfer-items-drag-drop-file.html [ Skip ]
 webkit.org/b/98940 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Skip ]
 webkit.org/b/98940 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
@@ -241,9 +240,6 @@ webkit.org/b/152379 editing/pasteboard/emacs-killring-backward-delete-prepend.ht
 webkit.org/b/152620 css3/font-variant-all.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
-
-# Requires ENABLE(SAMPLING_PROFILER)
-webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
@@ -984,7 +980,6 @@ imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-rgb.html [ Pas
 # Timeout
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ]
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
-http/tests/inspector/network/intercept-request-main-resource.html [ Skip ]
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
@@ -1002,14 +997,7 @@ webkit.org/b/264680 scrollbars/scrollbar-selectors.html [ Pass Timeout ]
 # Crash due to unimplemented event type.
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary-viewport-covering.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/overscroll-snap.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/common-to-both-axes-supercedes-first-in-tree-order.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-common-to-both-axes.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-first-in-tree-order.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-element.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-nested-containers.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-inner-target.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/unrelated-gesture-scroll-during-snap.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/initial-snap-matches-scroll.html [ Failure ]
@@ -1027,8 +1015,6 @@ webkit.org/b/309572 compositing/video/video-object-view-box-no-poster.html [ Fai
 webkit.org/b/309572 compositing/video/video-object-view-box-object-position-no-poster.html [ Failure ]
 webkit.org/b/309572 compositing/video/video-object-view-box-writing-mode-no-poster.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
-
-imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
 
 webkit.org/b/278719 fast/events/touch/emulate-touch-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]
