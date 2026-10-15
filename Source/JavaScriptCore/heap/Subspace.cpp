@@ -113,7 +113,7 @@ void Subspace::sweepBlocks()
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) {
-            directory.sweep();
+            directory.sweepAll();
         });
 }
 

@@ -1424,6 +1424,7 @@
 				WTF/VariantList.cpp,
 				WTF/Vector.cpp,
 				WTF/VectorBorrow.cpp,
+				WTF/VersionedField.cpp,
 				WTF/WeakPtr.cpp,
 				WTF/WorkerPool.cpp,
 				WTF/WorkQueue.cpp,

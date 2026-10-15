@@ -230,7 +230,7 @@ void MarkedSpace::sweepBlocks()
     heap().sweeper().stopSweeping();
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
-            directory.sweep();
+            directory.sweepAll();
             return IterationStatus::Continue;
         });
 }
@@ -375,6 +375,7 @@ MarkedBlock::Handle* MarkedSpace::findMarkedBlockHandleDebug(MarkedBlock* block)
 
 void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
 {
+    heap().assertIsMutatorOrMutatorIsStopped();
     m_capacity -= MarkedBlock::blockSize;
     m_blocks.remove(&block->block());
     delete block;
@@ -566,7 +567,8 @@ void MarkedSpace::dumpBits(PrintStream& out)
 {
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
-            directory.assertIsMutatorOrMutatorIsStopped();
+            // A diagnostic, so it may be reached from any thread.
+            Locker locker { directory.bitvectorLock().mutate() };
             out.print("Bits for ", directory, ":\n");
             directory.dumpBits(out);
             return IterationStatus::Continue;

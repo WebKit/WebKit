@@ -377,6 +377,11 @@ public:
     bool hasHeapAccess() const { return m_worldState.load() & hasAccessBit; }
     bool worldIsStopped() const { return m_worldIsStopped; }
     bool worldIsRunning() const { return !worldIsStopped(); }
+#if ASSERT_ENABLED
+    JS_EXPORT_PRIVATE void assertIsMutatorOrMutatorIsStopped() const;
+#else
+    ALWAYS_INLINE void assertIsMutatorOrMutatorIsStopped() const { }
+#endif
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
     // helping heap.

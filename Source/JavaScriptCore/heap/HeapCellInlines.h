@@ -101,7 +101,7 @@ ALWAYS_INLINE void HeapCell::notifyNeedsDestruction() const
 {
     ASSERT(!isPreciseAllocation());
     ASSERT(destructionMode() == MayNeedDestruction);
-    markedBlock().handle().setIsDestructible(true);
+    markedBlock().handle().noteNeedsDestruction();
 }
 
 } // namespace JSC

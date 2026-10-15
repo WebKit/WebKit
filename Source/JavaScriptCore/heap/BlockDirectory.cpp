@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,46 +64,83 @@ void BlockDirectory::setSubspace(Subspace* subspace)
     m_subspace = subspace;
 }
 
-void BlockDirectory::noteBlockMayBeStealable(unsigned index)
+void BlockDirectory::releaseAndNoteIfStealable(unsigned index)
 {
-    if (!isStealable(index))
-        return;
+    assertInUse(index);
 
-    // The cursor only moves forward, so a block that falls empty behind it would stay invisible for
-    // the rest of the collection cycle and the heap would grow instead of reusing it.
-    m_emptyCursor = std::min<unsigned>(m_emptyCursor, index);
+    // Read while the block is still ours; once it is released these bits could be modified by whoever claims it next.
+    bool stealable = isStealable(index);
+    // Must stay the last bit written for this block; see the comment above m_bits.
+    releaseInUse(index);
+    if (!stealable)
+        return;
+    // The cursor normally only moves forward; rewind it so stealers can see this block.
+    // Pairs with the fence in findEmptyBlockToSteal(): either the stealer's scan sees our release, or our
+    // minimize() sees their watch and fails their publish.
+    WTF::storeLoadFence();
+    // FIXME: If we move the allocation cursor into the directory we should reset it here too.
+    m_emptyCursor.minimize(index, std::memory_order_relaxed);
     subspace()->alignedMemoryAllocator()->addDirectoryWithEmptyBlocks(this);
 }
 
 MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 {
-    Locker locker(bitvectorLock());
-    m_emptyCursor = stealableBits().findBit(m_emptyCursor, true);
-    if (m_emptyCursor >= m_blocks.size())
-        return nullptr;
+    Locker locker { m_bitvectorLock.mutate() };
+    // A block that becomes stealable behind us while we search rewinds the cursor, and publishing our
+    // result over that would hide the block until prepareForAllocation(). Watching the cursor makes the
+    // publish fail instead.
+    auto watched = m_emptyCursor.watch(std::memory_order_relaxed);
+    // Pairs with the fence in releaseAndNoteIfStealable(): either our scan sees a block released after the
+    // watch, or that releaser's minimize() sees the watch and fails our publish.
+    // FIXME: We could make this not have a storeLoadFence (on X86_64 and ARM64 with LSE) by having:
+    // 1) watch do a seq_cst load/exchangeOr
+    // 2) releaseAndNoteIfStealable do a seq_cst releaseInUse and minimize (including the transaction's load).
+    // This is probably faster on Apple Silicon.
+    WTF::storeLoadFence();
+    for (unsigned cursor = watched.value;; ++cursor) {
+        cursor = (stealableBits() & ~inUseBitsView()).findBit(cursor, true);
+        if (cursor >= m_blocks.size()) {
+            m_emptyCursor.tryUpdateWatched(watched, cursor, std::memory_order_relaxed);
+            return nullptr;
+        }
+        if (!claimInUse(cursor))
+            continue;
+        assertInUse(cursor);
 
-    dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", m_emptyCursor, " in use (findEmptyBlockToSteal) for ", *this);
-    setIsInUse(m_emptyCursor, true);
-    return m_blocks[m_emptyCursor].first;
+        // Recheck under the claim; see claimInUse().
+        if (isStealable(cursor)) [[likely]] {
+            dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", cursor, " in use (findEmptyBlockToSteal) for ", *this);
+            m_emptyCursor.tryUpdateWatched(watched, cursor, std::memory_order_relaxed);
+            return m_blocks[cursor].first;
+        }
+        releaseInUse(cursor);
+    }
 }
 
 MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
 {
-    Locker locker(bitvectorLock());
+    Locker locker { m_bitvectorLock.mutate() };
     for (;;) {
-        allocator.m_allocationCursor = (canAllocateBits() & ~inUseBits()).findBit(allocator.m_allocationCursor, true);
+        // FIXME: Maybe this should be a shared cursor on the directory, if we do that we should update releaseAndNoteIfStealable.
+        allocator.m_allocationCursor = (canAllocateBitsView() & ~inUseBitsView()).findBit(allocator.m_allocationCursor, true);
         if (allocator.m_allocationCursor >= m_blocks.size())
             return nullptr;
         
         unsigned blockIndex = allocator.m_allocationCursor++;
-        auto [result, block] = m_blocks[blockIndex];
+        if (!claimInUse(blockIndex))
+            continue;
+        // Recheck under the claim; see claimInUse().
+        if (!isCanAllocate(blockIndex)) [[unlikely]] {
+            releaseInUse(blockIndex);
+            continue;
+        }
+        assertInUse(blockIndex);
         // This block is about to be swept to build a free list, which reads the header. Start the
         // fetch here so it overlaps the bitvector updates and the lock release below.
-        __builtin_prefetch(block);
+        __builtin_prefetch(m_blocks[blockIndex].second);
         setIsCanAllocate(blockIndex, false);
         dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", blockIndex, " in use (findBlockForAllocation) for ", *this);
-        setIsInUse(blockIndex, true);
-        return result;
+        return m_blocks[blockIndex].first;
     }
 }
 
@@ -120,7 +157,9 @@ MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(JSC::Heap& heap)
 
 void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
-    Locker locker { m_bitvectorLock };
+    ASSERT(markedSpace().heap().vm().currentThreadIsHoldingAPILock());
+
+    Locker locker { m_bitvectorLock.grow() };
     unsigned index;
     if (m_freeBlockIndices.isEmpty()) {
         index = m_blocks.size();
@@ -148,30 +187,30 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
     // This is the point at which the block learns of its cellSize() and attributes().
     block->didAddToDirectory(this, index);
     
+    dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (addBlock) for ", *this);
+    // Plain rather than claimInUse(): growth is exclusive, so no other thread can be holding the bits
+    // for mutate, and a block being added has no previous holder whose writes we would need to see.
+    setIsInUse(index, true);
+    assertInUse(index);
+
     setIsLive(index, true);
     setIsEmpty(index, true);
-    dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (addBlock) for ", *this);
-    setIsInUse(index, true);
 }
 
 void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
 {
-    assertIsMutatorOrMutatorIsStopped();
+    markedSpace().heap().assertIsMutatorOrMutatorIsStopped();
+    Locker locker { m_bitvectorLock.grow() };
     ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()].first == block);
-    ASSERT(isInUse(block));
-    
+    assertInUse(block->index());
+
     subspace()->didRemoveBlock(block->index());
-    
+
     m_blocks[block->index()] = { nullptr, nullptr };
     m_freeBlockIndices.append(block->index());
-    
-    releaseAssertAcquiredBitVectorLock();
-    Locker locker(bitvectorLock());
-    forEachBitVector(
-        [&](auto vectorRef) {
-            vectorRef[block->index()] = false;
-        });
+
+    clearBitsForRemovedBlock(block->index());
 
     if (willDelete == WillDeleteBlock::No)
         block->didRemoveFromDirectory();
@@ -215,10 +254,10 @@ void BlockDirectory::prepareForAllocation()
             allocator->prepareForAllocation();
         });
 
-    m_unsweptCursor = 0;
-    m_emptyCursor = 0;
+    m_unsweptCursor.set(0, std::memory_order_relaxed);
+    m_emptyCursor.set(0, std::memory_order_relaxed);
 
-    assertSweeperIsSuspended();
+    assertWorldIsStopped();
     // endMarking recomputes the empty bits wholesale rather than block by block, so none of the blocks
     // that fell empty there announced themselves the way didFinishUsingBlock does. Re-derive
     // membership from the bits here, once m_emptyCursor above has been rewound to match them.
@@ -266,7 +305,7 @@ void BlockDirectory::resumeAllocating()
 
 void BlockDirectory::beginMarkingForFullCollection()
 {
-    assertSweeperIsSuspended();
+    assertWorldIsStopped();
 
     // Mark bits are sticky and so is our summary of mark bits. We only clear these during full
     // collections, so if you survived the last collection you will survive the next one so long
@@ -277,7 +316,7 @@ void BlockDirectory::beginMarkingForFullCollection()
 
 void BlockDirectory::endMarking()
 {
-    assertSweeperIsSuspended();
+    assertWorldIsStopped();
 
     allocatedBits().clearAll();
     
@@ -294,7 +333,6 @@ void BlockDirectory::endMarking()
     // know what kind of collection it is. That knowledge is already encoded in the m_markingXYZ
     // vectors.
     
-    // Sweeper is suspended so we don't need the lock here.
     emptyBits() = liveBits() & ~markingNotEmptyBits();
     canAllocateBits() = liveBits() & ~markingRetiredBits();
 
@@ -328,76 +366,73 @@ void BlockDirectory::endMarking()
 
 void BlockDirectory::snapshotUnsweptForEdenCollection()
 {
-    assertSweeperIsSuspended();
+    assertWorldIsStopped();
     unsweptBits() |= edenBits();
 }
 
 void BlockDirectory::snapshotUnsweptForFullCollection()
 {
-    assertSweeperIsSuspended();
+    assertWorldIsStopped();
     unsweptBits() = liveBits();
 }
 
 MarkedBlock::Handle* BlockDirectory::findBlockToSweep(unsigned& unsweptCursor)
 {
-    Locker locker(bitvectorLock());
-    unsweptCursor = (unsweptBits() & ~inUseBits()).findBit(unsweptCursor, true);
-    if (unsweptCursor >= m_blocks.size())
-        return nullptr;
-    dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", unsweptCursor, " in use (findBlockToSweep) for ", *this);
-    setIsInUse(unsweptCursor, true);
-    return m_blocks[unsweptCursor].first;
+    Locker locker { m_bitvectorLock.mutate() };
+    for (;; ++unsweptCursor) {
+        unsweptCursor = (unsweptBitsView() & ~inUseBitsView()).findBit(unsweptCursor, true);
+        if (unsweptCursor >= m_blocks.size())
+            return nullptr;
+        if (!claimInUse(unsweptCursor))
+            continue;
+
+        // Recheck under the claim; see claimInUse().
+        if (isUnswept(unsweptCursor)) [[likely]] {
+            dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", unsweptCursor, " in use (findBlockToSweep) for ", *this);
+            // We could just do m_blocks[unsweptCursor++] here but that would mean it's now an invariant of the API to always
+            // sweep the block when it's returned here though. All it would save is one extra bit check so it's probably not
+            // worth it.
+            return m_blocks[unsweptCursor].first;
+        }
+
+        // Even though whoever swept this should have reset the cursor, someone could have moved the cursor over this block
+        // while we briefly held the inUse.
+        releaseAndNoteIfStealable(unsweptCursor);
+    }
 }
 
-void BlockDirectory::sweep()
+void BlockDirectory::sweepAll()
 {
-    // We need to be careful of a weird race where while we are sweeping a block
-    // the concurrent sweeper comes along and takes the inUse bit for a block
-    // in the same bit vector word as we're currently scanning. If we did't
-    // refresh our view into the word we could see stale data and try to scan
-    // a block already in use.
-
-    Locker locker(bitvectorLock());
-    for (size_t index = 0; index < m_blocks.size(); ++index) {
-        index = (unsweptBits() & ~inUseBits()).findBit(index, true);
-        if (index >= m_blocks.size())
-            break;
-
-        MarkedBlock::Handle* block = m_blocks[index].first;
-        ASSERT(!isInUse(index));
-        dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (sweep) for ", *this);
-        setIsInUse(index, true);
-        {
-            DropLockForScope scope(locker);
-            block->sweep(nullptr);
-        }
-        ASSERT(!isUnswept(index));
-        didFinishUsingBlock(locker, block);
+    unsigned cursor = 0;
+    while (MarkedBlock::Handle* block = findBlockToSweep(cursor)) {
+        block->sweep(nullptr);
+        didFinishUsingBlock(block);
+        ++cursor;
     }
 }
 
 void BlockDirectory::shrink()
 {
-    // We need to be careful of a weird race where while we are sweeping a block
-    // the concurrent sweeper comes along and takes the inUse bit for a block
-    // in the same bit vector word as we're currently scanning. If we did't
-    // refresh our view into the word we could see stale data and try to scan
-    // a block already in use.
-
-    Locker locker(bitvectorLock());
+    Locker locker { m_bitvectorLock.mutate() };
     for (size_t index = 0; index < m_blocks.size(); ++index) {
-        index = stealableBits().findBit(index, true);
+        index = (stealableBits() & ~inUseBitsView()).findBit(index, true);
         if (index >= m_blocks.size())
             break;
 
-        ASSERT(!isInUse(index));
-        dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (shrink) for ", *this);
-        setIsInUse(index, true);
-        {
-            DropLockForScope scope(locker);
-            markedSpace().freeBlock(m_blocks[index].first);
+        if (!claimInUse(index))
+            continue;
+        assertInUse(index);
+        // Recheck under the claim; see claimInUse().
+        if (!isStealable(index)) [[unlikely]] {
+            releaseInUse(index);
+            continue;
         }
-        setIsInUse(index, false);
+        dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (shrink) for ", *this);
+        MarkedBlock::Handle* block = m_blocks[index].first;
+
+        DropLockForScope drop(locker);
+        // removeBlock() clears every bit for the index on its way out, so there is no inUse to clear after.
+        markedSpace().freeBlock(block);
     }
 }
 
@@ -417,7 +452,7 @@ void BlockDirectory::assertNoUnswept()
     if (!ASSERT_ENABLED)
         return;
 
-    assertIsMutatorOrMutatorIsStopped();
+    Locker locker { m_bitvectorLock.mutate() };
 
     if (unsweptBitsView().isEmpty())
         return;
@@ -429,21 +464,20 @@ void BlockDirectory::assertNoUnswept()
 
 void BlockDirectory::didFinishUsingBlock(MarkedBlock::Handle* handle)
 {
-    Locker locker(bitvectorLock());
+    Locker locker { m_bitvectorLock.mutate() };
     didFinishUsingBlock(locker, handle);
 }
 
 void BlockDirectory::didFinishUsingBlock(AbstractLocker&, MarkedBlock::Handle* handle)
 {
-    if (!isInUse(handle)) [[unlikely]] {
+    if (!isInUse(handle->index())) [[unlikely]] {
         dataLogLn("Finish using on a block that's not in use: ", handle->index());
         dumpBits();
         RELEASE_ASSERT_NOT_REACHED();
     }
 
     dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", handle->index(), " not in use (didFinishUsingBlock) for ", *this);
-    setIsInUse(handle, false);
-    noteBlockMayBeStealable(handle->index());
+    releaseAndNoteIfStealable(handle->index());
 }
 
 RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlockSource()
@@ -515,20 +549,13 @@ MarkedSpace& BlockDirectory::markedSpace() const
 #if ASSERT_ENABLED
 void BlockDirectory::assertIsMutatorOrMutatorIsStopped() const
 {
-    auto& heap = markedSpace().heap();
-    if (!heap.worldIsStopped()) {
-        if (auto owner = heap.vm().apiLock().ownerThread())
-            ASSERT(owner->get() == &Thread::currentSingleton());
-        else {
-            // FIXME: It feels like heap access should be tied to holding the API lock.
-            ASSERT(heap.hasAccess());
-        }
-    }
+    markedSpace().heap().assertIsMutatorOrMutatorIsStopped();
 }
 
-void BlockDirectory::assertSweeperIsSuspended() const
+void BlockDirectory::assertWorldIsStopped() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
-    assertIsMutatorOrMutatorIsStopped();
+    ASSERT(markedSpace().heap().worldIsStopped());
+    ASSERT(inUseBitsView().isEmpty());
 }
 #endif
 } // namespace JSC

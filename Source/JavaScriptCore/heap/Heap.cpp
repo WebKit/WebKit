@@ -485,6 +485,20 @@ void Heap::lastChanceToFinalize()
     m_objectSpace.freeMemory();
 }
 
+#if ASSERT_ENABLED
+void Heap::assertIsMutatorOrMutatorIsStopped() const
+{
+    if (worldIsStopped())
+        return;
+    if (auto owner = vm().apiLock().ownerThread())
+        ASSERT(owner->get() == &Thread::currentSingleton());
+    else {
+        // FIXME: It feels like heap access should be tied to holding the API lock.
+        ASSERT(hasAccess());
+    }
+}
+#endif
+
 void Heap::releaseDelayedReleasedObjects()
 {
 #if USE(FOUNDATION) || defined(JSC_GLIB_API_ENABLED)

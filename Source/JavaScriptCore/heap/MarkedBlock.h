@@ -130,7 +130,7 @@ public:
         void* cellAlign(void*);
             
         bool isEmpty();
-        void setIsDestructible(bool);
+        void noteNeedsDestruction();
 
         void lastChanceToFinalize();
 
@@ -153,6 +153,7 @@ public:
         // and the block is freshly created, then we'll make the mistake of running destructors in
         // the block. If it's not set and the block has nothing marked, then we'll make the
         // mistake of making a pop freelist rather than a bump freelist.
+        // Takes bitvectorLock().mutate() itself, so callers must not hold it.
         void sweep(FreeList*);
         
         // This is to be called by Subspace.

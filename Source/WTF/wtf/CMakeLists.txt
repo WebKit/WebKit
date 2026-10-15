@@ -413,6 +413,7 @@ set(WTF_PUBLIC_HEADERS
     VariantListOperations.h
     Vector.h
     VectorTraits.h
+    VersionedField.h
     WTFConfig.h
     WTFProcess.h
     WTFSemaphore.h

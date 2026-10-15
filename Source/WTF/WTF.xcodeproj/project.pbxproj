@@ -550,6 +550,7 @@
 		DD3DC95127A4BF8E007E5B61 /* VMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47372151A825B004123FF /* VMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC95227A4BF8E007E5B61 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC95327A4BF8E007E5B61 /* VectorTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47371151A825B004123FF /* VectorTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4907B0E583B4F9D4194C008C /* VersionedField.h in Headers */ = {isa = PBXBuildFile; fileRef = C229C9EB9A21C2015E068B7F /* VersionedField.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC95427A4BF8E007E5B61 /* CagedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC95527A4BF8E007E5B61 /* CagedUniquePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5BF1681F23D49A0029D91D /* CagedUniquePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC95627A4BF8E007E5B61 /* ProcessPrivilege.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF023B32061E16C00A8EFD6 /* ProcessPrivilege.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1749,6 +1750,7 @@
 		A8A4736F151A825B004123FF /* ValueCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueCheck.h; sourceTree = "<group>"; };
 		A8A47370151A825B004123FF /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		A8A47371151A825B004123FF /* VectorTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorTraits.h; sourceTree = "<group>"; };
+		C229C9EB9A21C2015E068B7F /* VersionedField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VersionedField.h; sourceTree = "<group>"; };
 		A8A47372151A825B004123FF /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		AA11GRAPHORDERING0000002 /* GraphOrdering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphOrdering.h; sourceTree = "<group>"; };
@@ -2917,6 +2919,7 @@
 				0F95B63420CB53C100479635 /* Vector.cpp */,
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
+				C229C9EB9A21C2015E068B7F /* VersionedField.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
 				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
 				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
@@ -4122,6 +4125,7 @@
 				DDF3079727C086CD006A526F /* VectorCocoa.h in Headers */,
 				DD3DC95327A4BF8E007E5B61 /* VectorTraits.h in Headers */,
 				07F5EA742EE8A7710085B185 /* VerifyModuleTask.py in Headers */,
+				4907B0E583B4F9D4194C008C /* VersionedField.h in Headers */,
 				DD3DC95127A4BF8E007E5B61 /* VMTags.h in Headers */,
 				DD3DC8EE27A4BF8E007E5B61 /* WallTime.h in Headers */,
 				E36DC1762DF0F9C20091549D /* WasmSIMD128.h in Headers */,
