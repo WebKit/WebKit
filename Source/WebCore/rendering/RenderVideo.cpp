@@ -210,7 +210,7 @@ NaturalDimensions RenderVideo::zoomedNaturalDimensions() const
 {
     if (protect(videoElement())->shouldDisplayPosterImage())
         return RenderImage::zoomedNaturalDimensions();
-    return RenderReplaced::zoomedNaturalDimensions();
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
 }
 
 IntRect RenderVideo::videoBox() const

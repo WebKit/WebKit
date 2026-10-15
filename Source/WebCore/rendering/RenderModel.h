@@ -50,6 +50,8 @@ private:
     void element() const = delete;
     ASCIILiteral renderName() const final { return "RenderModel"_s; }
 
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     bool LEGACY_NODELETE requiresLayer() const final;
     void updateFromElement() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;

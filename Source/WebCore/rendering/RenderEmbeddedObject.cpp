@@ -134,27 +134,6 @@ NaturalDimensions RenderEmbeddedObject::zoomedNaturalDimensions() const
     return RenderWidget::zoomedNaturalDimensions();
 }
 
-bool RenderEmbeddedObject::shouldRespectZeroIntrinsicWidth() const
-{
-    if (RefPtr svgElement = embeddedSVGElement(*this))
-        return svgElement->hasIntrinsicWidth();
-    return false;
-}
-
-bool RenderEmbeddedObject::shouldRespectZeroIntrinsicHeight() const
-{
-    RefPtr svgElement = embeddedSVGElement(*this);
-    if (!svgElement || !svgElement->hasIntrinsicHeight())
-        return false;
-    // A natural height of 0 is respected unless a natural width together with an
-    // aspect ratio can derive a non-zero height, in which case the derived height
-    // wins. The ratio may come from the SVG's viewBox or the CSS aspect-ratio
-    // property; see https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765.
-    if (!svgElement->hasIntrinsicWidth())
-        return true;
-    return svgElement->currentViewBoxRect().isEmpty() && !style().aspectRatio().hasRatio();
-}
-
 ScrollableArea* RenderEmbeddedObject::scrollableArea() const
 {
     RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());

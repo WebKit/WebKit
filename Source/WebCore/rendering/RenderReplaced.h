@@ -33,8 +33,8 @@ class RenderReplaced : public RenderBox {
 public:
     virtual ~RenderReplaced();
 
-    virtual bool shouldRespectZeroIntrinsicWidth() const;
-    virtual bool shouldRespectZeroIntrinsicHeight() const;
+    bool shouldRespectZeroIntrinsicWidth() const;
+    bool shouldRespectZeroIntrinsicHeight() const;
 
     void computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues&) const;
     void computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValues&) const;
@@ -116,7 +116,7 @@ protected:
     LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
 
-    virtual NaturalDimensions zoomedNaturalDimensions() const;
+    virtual NaturalDimensions zoomedNaturalDimensions() const = 0;
 
 private:
     std::optional<LayoutSize> zoomedNaturalSize() const;

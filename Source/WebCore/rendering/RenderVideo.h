@@ -76,6 +76,8 @@ private:
     void willBeDestroyed() override;
     void mediaElement() const = delete;
 
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     void intrinsicSizeChanged() final;
     LayoutSize calculateIntrinsicSizeInternal();
     LayoutSize calculateIntrinsicSize();
@@ -83,7 +85,6 @@ private:
 
     std::optional<LayoutRect> objectFitContentsRectForFullscreenCompositing(const LayoutRect&) const;
     LayoutSize posterAwareIntrinsicSize() const;
-    NaturalDimensions zoomedNaturalDimensions() const final;
 
     void imageChanged(WrappedImagePtr, const IntRect*) final;
 

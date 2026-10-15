@@ -35,6 +35,7 @@
 #include "ImageQualityController.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
@@ -204,6 +205,11 @@ void RenderHTMLCanvas::styleDidChange(Style::Difference difference, const Style:
 
     if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
         protect(canvasElement())->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+}
+
+NaturalDimensions RenderHTMLCanvas::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
 }
 
 } // namespace WebCore

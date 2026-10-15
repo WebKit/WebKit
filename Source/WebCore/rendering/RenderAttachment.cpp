@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
+#include "NaturalDimensions.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
@@ -165,6 +166,11 @@ bool RenderAttachment::paintWideLayoutAttachmentOnly(const PaintInfo& paintInfo,
         return true;
     }
     return false;
+}
+
+NaturalDimensions RenderAttachment::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
 }
 
 } // namespace WebCore

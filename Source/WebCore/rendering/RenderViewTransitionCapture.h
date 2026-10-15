@@ -67,6 +67,9 @@ public:
 
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }
+
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     String debugDescription() const override;
 
     void updateFromStyle() override;

@@ -28,6 +28,7 @@
 
 #include "ImageOverlayController.h"
 #include "ImageQualityController.h"
+#include "NaturalDimensions.h"
 #include "PaintInfo.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
@@ -206,6 +207,11 @@ String RenderViewTransitionCapture::debugDescription() const
     builder.append(" ::view-transition-"_s, style().pseudoElementType() == PseudoElementType::ViewTransitionNew ? "new("_s : "old("_s);
     builder.append(style().pseudoElementNameArgument(), ')');
     return builder.toString();
+}
+
+NaturalDimensions RenderViewTransitionCapture::zoomedNaturalDimensions() const
+{
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
 }
 
 } // namespace WebCore

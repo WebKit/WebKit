@@ -118,12 +118,15 @@ RenderReplaced::~RenderReplaced() = default;
 
 bool RenderReplaced::shouldRespectZeroIntrinsicWidth() const
 {
-    return false;
+    return zoomedNaturalDimensions().width.has_value();
 }
 
 bool RenderReplaced::shouldRespectZeroIntrinsicHeight() const
 {
-    return false;
+    auto naturalDimensions = zoomedNaturalDimensions();
+    if (!naturalDimensions.height)
+        return false;
+    return !naturalDimensions.width || !(naturalDimensions.hasUsableAspectRatio() || style().aspectRatio().hasRatio());
 }
 
 void RenderReplaced::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -701,11 +704,6 @@ static LayoutRect placeConcreteObject(const Style::ComputedStyle& style, const L
     return { contentRect.location() + LayoutSize { xOffset, yOffset }, concreteObjectSize };
 }
 
-NaturalDimensions RenderReplaced::zoomedNaturalDimensions() const
-{
-    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
-}
-
 std::optional<LayoutSize> RenderReplaced::zoomedNaturalSize() const
 {
     auto naturalDimensions = zoomedNaturalDimensions();
@@ -722,13 +720,13 @@ LayoutRect RenderReplaced::replacedContentRect() const
 LayoutRect RenderReplaced::replacedContentRect(NaturalDimensions zoomedNaturalDimensions) const
 {
     LayoutRect contentRect = contentBoxRect();
-    if (zoomedNaturalDimensions.width && zoomedNaturalDimensions.height) {
-        FloatSize naturalSize { *zoomedNaturalDimensions.width, *zoomedNaturalDimensions.height };
-        if (naturalSize.isEmpty())
-            return contentRect;
-
-        if (auto viewBox = resolvedObjectViewBox(naturalSize))
+    if (zoomedNaturalDimensions.width.value_or(0) > 0 && zoomedNaturalDimensions.height.value_or(0) > 0) {
+        if (auto viewBox = resolvedObjectViewBox(FloatSize { *zoomedNaturalDimensions.width, *zoomedNaturalDimensions.height }))
             zoomedNaturalDimensions = NaturalDimensions::fixed(FloatSize { LayoutSize(viewBox->size()) });
+    } else if (zoomedNaturalDimensions.width && zoomedNaturalDimensions.height) {
+        // An SVG with a width or height of 0 still has its viewBox's aspect ratio.
+        if (!zoomedNaturalDimensions.hasUsableAspectRatio())
+            return contentRect;
     }
 
     auto concreteObjectSize = ReplacedElementSizing { contentRect.size(), style().objectFit() }.resolve(zoomedNaturalDimensions);

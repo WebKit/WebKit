@@ -63,6 +63,9 @@ private:
 
     bool requiresLayer() const override;
     ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
+
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     bool canHaveChildren() const override;
 
     void layout() override;

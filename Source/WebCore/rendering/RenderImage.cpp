@@ -549,22 +549,6 @@ bool RenderImage::shouldDisplayBrokenImageIcon() const
     return imageResource().errorOccurred();
 }
 
-// A width or height of 0 is a natural dimension of 0 rather than an absent one,
-// except that a natural height of 0 is superseded by one derived from the natural
-// width and aspect ratio. See:
-// https://github.com/w3c/csswg-drafts/issues/6286#issuecomment-866986544 and
-// https://github.com/w3c/csswg-drafts/issues/11236#issuecomment-2718502765
-bool RenderImage::shouldRespectZeroIntrinsicWidth() const
-{
-    return imageResource().naturalDimensions().width.has_value();
-}
-
-bool RenderImage::shouldRespectZeroIntrinsicHeight() const
-{
-    auto naturalDimensions = imageResource().naturalDimensions();
-    return naturalDimensions.height && !naturalDimensions.width;
-}
-
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 bool RenderImage::isMultiRepresentationHEIC() const
 {

@@ -96,6 +96,9 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderSVGRoot"_s; }
+
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     bool requiresLayer() const final { return true; }
 
     bool updateLayoutSizeIfNeeded();

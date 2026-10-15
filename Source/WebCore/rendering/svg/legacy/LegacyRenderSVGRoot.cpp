@@ -31,6 +31,7 @@
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
+#include "NaturalDimensions.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
@@ -612,4 +613,9 @@ void LegacyRenderSVGRoot::addResourceForClientInvalidation(LegacyRenderSVGResour
     svgRoot->m_resourcesNeedingToInvalidateClients.add(*resource);
 }
 
+NaturalDimensions LegacyRenderSVGRoot::zoomedNaturalDimensions() const
+{
+    return protect(svgSVGElement())->naturalDimensions().zoomed(style().usedZoom());
 }
+
+} // namespace WebCore

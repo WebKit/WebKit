@@ -30,6 +30,7 @@
 
 #include "HTMLAnchorElement.h"
 #include "HTMLModelElement.h"
+#include "NaturalDimensions.h"
 #include "NodeInlines.h"
 #include "PaintInfo.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -128,6 +129,12 @@ void RenderModel::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #endif
 }
 
+NaturalDimensions RenderModel::zoomedNaturalDimensions() const
+{
+    // FIXME: Decide what natural dimensions a <model> has.
+    return NaturalDimensions::fixed(FloatSize { intrinsicSize() });
 }
+
+} // namespace WebCore
 
 #endif

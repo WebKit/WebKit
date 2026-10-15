@@ -56,6 +56,9 @@ public:
 private:
     void element() const = delete;
     ASCIILiteral renderName() const override { return "RenderAttachment"_s; }
+
+    NaturalDimensions zoomedNaturalDimensions() const final;
+
     LayoutSize layoutWideLayoutAttachmentOnly();
     void layoutShadowContent(const LayoutSize&) override;
 

@@ -823,7 +823,9 @@ NaturalDimensions SVGSVGElement::naturalDimensions() const
     if (hasIntrinsicHeight())
         naturalDimensions.height = intrinsicHeight();
 
-    if (naturalDimensions.width && naturalDimensions.height)
+    // A ratio from a width or height of 0 would count as degenerate so the viewBox's size is used instead.
+    // See https://github.com/w3c/csswg-drafts/issues/6286#issuecomment-866986544.
+    if (naturalDimensions.width.value_or(0) > 0 && naturalDimensions.height.value_or(0) > 0)
         naturalDimensions.aspectRatio = FloatSize { *naturalDimensions.width, *naturalDimensions.height };
     else if (auto viewBoxSize = viewBox().size(); !viewBoxSize.isEmpty())
         naturalDimensions.aspectRatio = viewBoxSize;
