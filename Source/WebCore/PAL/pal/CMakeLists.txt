@@ -112,10 +112,6 @@ if (SWIFT_REQUIRED AND APPLE)
 
     webkit_target_add_swift_options(PAL
         "-library-level spi"
-        # SafeInteropWrappers imports a lifetimebound std::span return as a Swift Span,
-        # which is what lets the byte views hand Swift a lifetime-dependent view rather
-        # than a raw pointer.
-        "-enable-experimental-feature SafeInteropWrappers"
         "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
         "-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}"
         "-Xcc -I${CMAKE_BINARY_DIR}/WTF/Headers"

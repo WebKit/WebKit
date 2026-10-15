@@ -168,7 +168,6 @@ if (SWIFT_REQUIRED)
 
     webkit_target_add_swift_options(WebGPU
         -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
-        "-enable-experimental-feature SafeInteropWrappers"
         "-library-level spi"
         "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
     )

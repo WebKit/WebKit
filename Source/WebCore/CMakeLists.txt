@@ -3352,7 +3352,6 @@ if (SWIFT_REQUIRED AND APPLE)
 
     webkit_target_add_swift_options(WebCore
         "-library-level spi"
-        "-enable-experimental-feature SafeInteropWrappers"
         "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
     )
 
