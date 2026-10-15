@@ -674,8 +674,14 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
         });
 
         page->chrome().client().handleSelectionServiceClick(focusedOrMainFrame->frameID(), protect(focusedOrMainFrame->selection()), WTF::move(selectedTelephoneNumbers), windowPoint);
-    } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
-        page->chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, frameView->contentsToWindow(protect(focusedOrMainFrame->editor())->firstRectForRange(highlight.range())));
+    } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber) {
+        RefPtr rangeFrame { highlight.range().start.document().frame() };
+        RefPtr rangeFrameView { rangeFrame ? rangeFrame->view() : nullptr };
+        if (!rangeFrameView)
+            return;
+
+        page->chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint, rangeFrameView->contentsToMainFrameView(protect(rangeFrame->editor())->firstRectForRange(highlight.range())));
+    }
 }
 
 #pragma mark - DataDetectorHighlightClient
