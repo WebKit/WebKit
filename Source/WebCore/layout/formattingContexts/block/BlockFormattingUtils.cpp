@@ -39,6 +39,8 @@ namespace Layout {
 template<typename SizeType>
 static std::optional<LayoutUnit> borderBoxBlockSizeFor(const SizeType& size, const Style::ComputedStyle& style, LayoutUnit borderAndPaddingBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)
 {
+    // The sizing keywords coverage lets in resolve to the automatic block size or to the content's, which an automatic block size does not go
+    // past (css-sizing-3 §3.2).
     if (!size.isSpecified())
         return { };
     // A percentage of an indefinite height behaves as auto (CSS 2.2 §10.5).
@@ -63,7 +65,7 @@ LayoutUnit BlockFormattingUtils::borderBoxBlockSize(const RenderBox& box, Layout
 
 bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)
 {
-    return blockSize.isAuto() || (blockSize.isPercentOrCalculated() && !containingBlockContentBoxBlockSize);
+    return blockSize.isAuto() || blockSize.isIntrinsic() || (blockSize.isPercentOrCalculated() && !containingBlockContentBoxBlockSize);
 }
 
 std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(const RenderBox& box, const BoxGeometry& geometry, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode writingMode)
