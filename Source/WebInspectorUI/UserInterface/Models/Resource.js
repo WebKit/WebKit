@@ -259,7 +259,7 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         switch (priority) {
         case WI.Resource.NetworkPriority.Verylow:
-            return WI.UIString("Very Low", "Verylow @ Network Priority", "Very Low network request priority");
+            return WI.UIString("Very Low", "Very low @ Network Priority", "Very Low network request priority");
         case WI.Resource.NetworkPriority.Low:
             return WI.UIString("Low", "Low @ Network Priority", "Low network request priority");
         case WI.Resource.NetworkPriority.Medium:
@@ -267,7 +267,7 @@ WI.Resource = class Resource extends WI.SourceCode
         case WI.Resource.NetworkPriority.High:
             return WI.UIString("High", "High @ Network Priority", "High network request priority");
         case WI.Resource.NetworkPriority.Veryhigh:
-            return WI.UIString("Very High", "Veryhigh @ Network Priority", "Very High network request priority");
+            return WI.UIString("Very High", "Very high @ Network Priority", "Very High network request priority");
         default:
             return null;
         }

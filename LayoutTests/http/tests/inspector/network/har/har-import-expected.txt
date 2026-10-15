@@ -93,7 +93,7 @@ PASS: Should fail to import invalid JSON: {"pages":[],"entries":[]}.
 
 -- Running test case: HAR.Import.Chromium
 PASS: Should be able to import a HAR from Chromium.
-PASS: Priority of HTML of the website should be 'VeryHigh'
+PASS: Priority of HTML of the website should be 'Very High'
 PASS: HTTP Version http/2.0 should be shown as 'h2'
 PASS: Image has 'High' priority
 PASS: Image has 'High' priority
@@ -104,7 +104,7 @@ PASS: Chevron image has 'Low' priority
 
 -- Running test case: HAR.Import.Gecko
 PASS: Should be able to import a HAR from Gecko.
-PASS: Priority 'Highest' for HTML of the website should be shown as 'VeryHigh'
+PASS: Priority 'Highest' for HTML of the website should be shown as 'Very High'
 PASS: HTTP Version HTTP/2 should be shown as 'h2'
 PASS: Font CSS as 'Normal' should be shown as 'Medium' priority
 PASS: Font CSS as 'Normal' should be shown as 'Medium' priority
