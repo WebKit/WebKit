@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +26,22 @@
 
 #pragma once
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA)
 
 #include <JavaScriptCore/CorpseAddress.h>
+#include <JavaScriptCore/CorpseImage.h>
 #include <JavaScriptCore/CorpseMemory.h>
 #include <JavaScriptCore/CorpseProcess.h>
+#include <JavaScriptCore/CorpseRegion.h>
 #include <JavaScriptCore/CorpseSymbol.h>
 #include <JavaScriptCore/CorpseThread.h>
-#include <mach/mach.h>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <wtf/DoublyLinkedList.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -46,10 +51,19 @@
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
+#if OS(DARWIN)
+struct dyld_all_image_infos;
+struct dyld_image_info;
+#endif
+
 namespace JSC {
+
+class VM;
+
 namespace Corpse {
 
-// Owns a corpse (a read-only Mach snapshot of a process)
+// Owns a corpse: a read-only Mach snapshot of a process on Darwin, and on Linux
+// a copy of it that the process forked.
 // Check isValid() to see whether acquisition succeeded.
 //
 // Snapshots are linked into a DoublyLinkedList by their owner. The list is
@@ -61,18 +75,30 @@ public:
     explicit Snapshot(RefPtr<Process>);
     ~Snapshot();
 
+    // A snapshot of a target that cooperates. The target calls offer(), or
+    // offerSafepoint() at a GC safepoint of its VM, and stops there; receive()
+    // waits for it to stop, takes the snapshot, and continues it. On Linux the
+    // target first forks a copy, which keeps its memory as it was at the fork and
+    // lives until the snapshot ends or the target exits. offer() runs on WTF's main thread.
+    static void offer();
+    static void offerSafepoint(VM&);
+    static std::unique_ptr<Snapshot> receive(pid_t target);
+
     Snapshot(const Snapshot&) = delete;
     Snapshot& operator=(const Snapshot&) = delete;
     Snapshot(Snapshot&& other) = delete;
 
-    bool isValid() const { return MACH_PORT_VALID(m_corpsePort); }
+    bool isValid() const { return isValidTaskHandle(corpsePort()); }
 
     // A monotonically increasing identifier assigned at construction. IDs are
     // never reused, so they stay stable as snapshots are added and removed.
     unsigned id() const { return m_id; }
 
     Process* process() const { return m_process.get(); }
-    mach_port_t corpsePort() const { return m_corpsePort; }
+    // The path of the process's executable, read when the snapshot was taken.
+    const UTF8CString& executablePath() const { return m_executablePath; }
+    // On Linux, the pid of the copy.
+    TaskHandle corpsePort() const { return taskHandle(m_corpsePort); }
 
     Memory& memory() LIFETIME_BOUND
     {
@@ -80,20 +106,40 @@ public:
         return m_memory;
     }
 
-    // The threads captured in this corpse, read and cached on the first call.
+    // The threads and images captured in this corpse, read and cached on the first call.
     const Vector<Thread>& threads();
+    const Vector<Image>& images();
+    // The regions of the snapshot's memory, listed and cached on the first call.
+    const Vector<Region>& regions();
+
+#if OS(DARWIN)
+    // dyld's record of the loaded images, and the image list it points to.
+    Memory::Ptr<dyld_all_image_infos> dyldAllImageInfos();
+    Memory::Span<dyld_image_info> dyldImageInfos(const Memory::Ptr<dyld_all_image_infos>&);
+#endif
 
     // The address of `name` in this corpse, null if it is not there.
     Address symbol(const char* name);
+    // The address in this corpse of `local`, which points into an image of this process.
+    // Null, and reported, unless the corpse maps the same build of that image.
+    Address addressOf(const void* local);
 
 private:
+    static std::unique_ptr<Snapshot> snapshotOfStopped(pid_t target);
+#if !OS(DARWIN)
+    Snapshot(RefPtr<Process>, pid_t copy);
+#endif
+
     static unsigned s_nextId;
 
     RefPtr<Process> m_process;
-    mach_port_t m_corpsePort { MACH_PORT_NULL };
+    OwnedTaskHandle m_corpsePort;
+    UTF8CString m_executablePath;
     unsigned m_id;
 
     std::optional<Vector<Thread>> m_threads;
+    std::optional<Vector<Image>> m_images;
+    std::optional<Vector<Region>> m_regions;
     HashMap<String, std::unique_ptr<Symbol>> m_symbols;
     Memory m_memory;
 
@@ -106,4 +152,4 @@ private:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)

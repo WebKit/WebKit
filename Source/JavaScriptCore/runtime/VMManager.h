@@ -410,6 +410,11 @@ private:
     friend class LazyNeverDestroyed<VMManager>;
 };
 
+#if ENABLE(MYA)
+// The first VM constructed in this process, while it lives. mya walks the heap from it.
+JS_EXPORT_PRIVATE extern VM* g_myaRootVM;
+#endif
+
 #undef FOR_EACH_STOP_THE_WORLD_REASON
 
 // RAII scope for a VM about to block in a blocking operation (memory.atomic.wait,
