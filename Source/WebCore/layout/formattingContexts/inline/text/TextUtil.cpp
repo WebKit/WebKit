@@ -182,11 +182,11 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForText(StringView textContent
 
         if (textRun.is8Bit()) {
             Latin1TextIterator textIterator { textRun.span8(), 0, textRun.length() };
-            fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
+            fallbackFontsForRunWithIterator(fallbackFonts, protect(style.fontCascade()), textRun, textIterator);
             return;
         }
         SurrogatePairAwareTextIterator textIterator { textRun.span16(), 0, textRun.length() };
-        fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
+        fallbackFontsForRunWithIterator(fallbackFonts, protect(style.fontCascade()), textRun, textIterator);
     };
 
     if (includeHyphen == IncludeHyphen::Yes)

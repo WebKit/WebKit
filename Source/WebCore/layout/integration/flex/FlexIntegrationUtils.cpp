@@ -368,7 +368,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     // Don't resolve percentages in children. This is especially important for the min-height calculation,
     // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
     // by definition we have an indefinite flex basis here and thus percentages should not resolve.
-    auto percentResolveDisableScope = FlexPercentResolveDisabler { flexBox().view().frameView().layoutContext(), renderer };
+    auto percentResolveDisableScope = FlexPercentResolveDisabler { protect(flexBox().view().frameView().layoutContext()), renderer };
     renderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     renderer->layoutIfNeeded();
     flexLayoutState().setFlexItemHasCompletedLayout(renderer);

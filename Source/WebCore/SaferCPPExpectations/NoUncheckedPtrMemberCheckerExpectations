@@ -12,7 +12,6 @@ layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.h
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.h
 layout/integration/inline/LayoutIntegrationInlineContentPainter.h
-[ macOS ] layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutChildIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutDescendantIterator.h

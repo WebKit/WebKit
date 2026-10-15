@@ -59,7 +59,7 @@ GridLayout::~GridLayout()
 
 void GridLayout::updateFormattingContextGeometries()
 {
-    auto boxGeometryUpdater = BoxGeometryUpdater { layoutState(), gridBox() };
+    auto boxGeometryUpdater = BoxGeometryUpdater { protect(layoutState()), gridBox() };
     CheckedPtr gridBoxContainingBlock = CheckedRef { gridBoxRenderer() }->containingBlock();
 
     boxGeometryUpdater.setFormattingContextRootGeometry(gridBoxContainingBlock->contentBoxLogicalWidth());
@@ -257,7 +257,7 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
         minimumSizeConstraint(gridContainerStyle->minHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom),
         maximumSizeConstraint(gridContainerStyle->maxHeight(), containingBlockHeight, boxSizing, borderAndPaddingHeight, gridContainerZoom) };
 
-    auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), layoutState() };
+    auto gridFormattingContext = Layout::GridFormattingContext { gridBox(), protect(layoutState()) };
     auto intrinsicWidths = gridFormattingContext.computeIntrinsicWidths(inlineAxisAutoRepeatConstraint, blockAxisAutoRepeatConstraint);
     return { intrinsicWidths.minimum, intrinsicWidths.maximum };
 }
@@ -270,7 +270,7 @@ void GridLayout::layout()
 
     auto [ usedTrackSizes, gridItemRects, usedBlockContentSize,
         autoRepeatColumnsCount, autoRepeatRowsCount,
-        leadingImplicitColumnsCount, leadingImplicitRowsCount ] = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
+        leadingImplicitColumnsCount, leadingImplicitRowsCount ] = Layout::GridFormattingContext { gridBox(), protect(layoutState()) }.layout(gridLayoutConstraints);
     updateGridItemRenderers(previousGridItemRects);
     updateFormattingContextRootRenderer(usedBlockContentSize, gridItemRects, autoRepeatColumnsCount, autoRepeatRowsCount, leadingImplicitColumnsCount, leadingImplicitRowsCount);
     layoutOutOfFlowBoxes(usedTrackSizes);

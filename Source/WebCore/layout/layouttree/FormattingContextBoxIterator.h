@@ -70,7 +70,7 @@ public:
     FormattingContextBoxIterator end() { return { m_root }; }
 
 private:
-    const ElementBox& m_root;
+    const CheckedRef<const ElementBox> m_root;
 };
 
 inline FormattingContextBoxIteratorAdapter formattingContextBoxes(const ElementBox& root)

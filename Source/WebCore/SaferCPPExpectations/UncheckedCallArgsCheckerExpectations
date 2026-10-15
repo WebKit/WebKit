@@ -66,13 +66,10 @@ layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp
 [ macOS ] layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
-[ macOS ] layout/formattingContexts/inline/text/TextUtil.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
-[ macOS ] layout/integration/flex/FlexIntegrationUtils.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
-[ macOS ] layout/integration/grid/LayoutIntegrationGridLayout.cpp
 layout/integration/inline/InlineIteratorBox.cpp
 layout/integration/inline/InlineIteratorLineBox.h
 layout/integration/inline/InlineIteratorLineBoxInlines.h
