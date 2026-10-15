@@ -33,6 +33,7 @@ class RenderView;
 namespace LayoutIntegration {
 
 bool canUseForBlockLayout(const RenderBlockFlow&);
+bool canUseForIntrinsicInlineSizes(const RenderBlockFlow&);
 
 struct BlockLayoutCoverage {
     unsigned coveredBoxes { 0 };
