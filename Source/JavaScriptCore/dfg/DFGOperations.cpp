@@ -2982,6 +2982,11 @@ JSC_DEFINE_JIT_OPERATION(operationNewTypedArrayBufferWithSize, JSObject*, (JSGlo
     OPERATION_RETURN(scope, constructArrayBufferWithSize(structure, length));
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTypedArraySet, void, (uint8_t* target, const uint8_t* source, size_t byteLength))
+{
+    memmoveSpan(unsafeMakeSpan(target, byteLength), unsafeMakeSpan(source, byteLength));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM* vmPointer, Structure* structure))
 {
     VM& vm = *vmPointer;

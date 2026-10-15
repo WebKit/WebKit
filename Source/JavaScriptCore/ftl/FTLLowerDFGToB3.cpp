@@ -1999,6 +1999,9 @@ private:
         case DataViewSet:
             compileDataViewSet();
             break;
+        case TypedArraySet:
+            compileTypedArraySet();
+            break;
 
         case ResolvePromiseFirstResolving:
             compileResolvePromiseFirstResolving();
@@ -22378,6 +22381,34 @@ IGNORE_CLANG_WARNINGS_END
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
+    }
+
+    void compileTypedArraySet()
+    {
+        LValue base = lowCell(m_node->child1());
+        LValue source = lowCell(m_node->child2());
+        LValue offset = lowInt32(m_node->child3());
+
+        TypedArrayType type = m_node->typedArrayType();
+        FTL_TYPE_CHECK(jsValueValue(source), m_node->child2(), speculationFromTypedArrayType(type), isNotType(source, typeForTypedArrayType(type)));
+
+        LValue baseLength = typedArrayLength(base, false, type, m_node->child1());
+        LValue sourceLength = typedArrayLength(source, false, type, m_node->child2());
+        speculate(OutOfBounds, noValue(), nullptr, m_out.lessThan(offset, m_out.int32Zero));
+        LValue offsetPtr = m_out.zeroExtPtr(offset);
+        speculate(OutOfBounds, noValue(), nullptr, m_out.above(m_out.add(offsetPtr, sourceLength), baseLength));
+
+        LValue baseVector = m_out.loadPtr(base, m_heaps.JSArrayBufferView_vector);
+        LValue sourceVector = m_out.loadPtr(source, m_heaps.JSArrayBufferView_vector);
+        speculate(BadIndexingType, jsValueValue(base), m_node->child1().node(), m_out.isNull(baseVector));
+        speculate(BadIndexingType, jsValueValue(source), m_node->child2().node(), m_out.isNull(sourceVector));
+
+        LValue shift = m_out.constInt32(logElementSize(type));
+        LValue basePointer = m_out.add(caged(Gigacage::Primitive, baseVector, base), m_out.shl(offsetPtr, shift));
+        LValue sourcePointer = caged(Gigacage::Primitive, sourceVector, source);
+        vmCall(Void, operationTypedArraySet, basePointer, sourcePointer, m_out.shl(sourceLength, shift));
+        ensureStillAliveHere(base);
+        ensureStillAliveHere(source);
     }
 
     void compileDateNow()

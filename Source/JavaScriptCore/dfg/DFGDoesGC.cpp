@@ -267,6 +267,7 @@ bool doesGC(Graph& graph, Node* node)
     case DateGetTime:
     case DataViewGetFloat:
     case DataViewSet:
+    case TypedArraySet:
     case PutByOffset:
     case WeakMapGet:
     case MapOrSetSize:

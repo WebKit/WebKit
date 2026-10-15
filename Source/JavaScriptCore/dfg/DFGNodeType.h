@@ -665,6 +665,7 @@ namespace JSC { namespace DFG {
     macro(DataViewSet, NodeMustGenerate | NodeMustGenerate | NodeHasVarArgs) \
     macro(DataViewGetByteLength, NodeResultInt32) \
     macro(DataViewGetByteLengthAsInt52, NodeResultInt52) \
+    macro(TypedArraySet, NodeMustGenerate) \
     /* Date access */ \
     macro(DateNow, NodeMustGenerate | NodeResultDouble) \
     macro(DateGetStorage, NodeResultStorage) \

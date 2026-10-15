@@ -5914,6 +5914,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case TypedArraySet: {
+        filter(node->child2(), speculationFromTypedArrayType(node->typedArrayType()));
+        break;
+    }
+
     case ResolvePromiseFirstResolving:
     case RejectPromiseFirstResolving:
     case FulfillPromiseFirstResolving: {

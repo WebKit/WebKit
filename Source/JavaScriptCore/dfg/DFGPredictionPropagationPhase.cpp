@@ -1852,6 +1852,7 @@ private:
         case FilterSetPrivateBrandStatus:
         case ClearCatchLocals:
         case DataViewSet:
+        case TypedArraySet:
         case InvalidationPoint:
         case ObjectAssign:
         case ResolvePromiseFirstResolving:

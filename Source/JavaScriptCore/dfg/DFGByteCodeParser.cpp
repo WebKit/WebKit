@@ -3144,6 +3144,31 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case TypedArraySetIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedResizableArrayBufferView))
+                return CallOptimizationResult::DidNothing;
+
+            ArrayMode mode = getArrayMode(Array::Write);
+            if (!mode.isSomeTypedArrayView() || mode.type() == Array::AnyTypedArray || mode.mayBeResizableOrGrowableSharedTypedArray())
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* source = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* offset = argumentCountIncludingThis > 2 ? get(virtualRegisterForArgumentIncludingThis(2, registerOffset)) : jsConstant(jsNumber(0));
+            addToGraph(CheckArray, OpInfo(mode.asWord()), base);
+            addToGraph(TypedArraySet, OpInfo(mode.typedArrayType()), base, source, offset);
+            setResult(addToGraph(JSConstant, OpInfo(m_constantUndefined)));
+            return CallOptimizationResult::Inlined;
+        }
+
         case ArrayPushIntrinsic: {
             if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
                 return CallOptimizationResult::DidNothing;

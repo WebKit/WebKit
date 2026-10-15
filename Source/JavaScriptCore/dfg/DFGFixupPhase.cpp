@@ -3743,6 +3743,13 @@ private:
             break;
         }
 
+        case TypedArraySet: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<CellUse>(node->child2());
+            fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
         case ForwardVarargs:
             fixEdge<KnownInt32Use>(node->child1());
             break;
