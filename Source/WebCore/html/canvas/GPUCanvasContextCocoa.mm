@@ -45,15 +45,17 @@
 #include "InspectorInstrumentation.h"
 #include "NativeImage.h"
 #include "Page.h"
+#include "PlaceholderRenderingContextSource.h"
 #include "PlatformCALayerDelegatedContents.h"
 #include "PlatformDynamicRangeLimit.h"
 #include "PlatformScreen.h"
 #include "RenderBox.h"
 #include "RenderingUpdateScheduler.h"
 #include "ScreenProperties.h"
+#include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/threads/BinarySemaphore.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -100,6 +102,8 @@ public:
     {
         m_contentsFormat = contentsFormat;
     }
+    ContentsFormat contentsFormat() const { return m_contentsFormat; }
+    bool isOpaque() const { return m_isOpaque; }
     void LEGACY_NODELETE setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
@@ -123,6 +127,64 @@ private:
     bool m_isOpaque;
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 };
+
+#if HAVE(SUPPORT_HDR_DISPLAY)
+struct ScreenHeadroom {
+    float maxEDRHeadroom { 1.f };
+    bool suppressEDR { false };
+
+    friend bool operator==(const ScreenHeadroom&, const ScreenHeadroom&) = default;
+};
+
+static ScreenHeadroom gatherScreenHeadroom()
+{
+    assertIsMainThread();
+    ScreenHeadroom result;
+    auto screen = PlatformScreen::singleton();
+    for (const auto& screenData : screen->screenProperties().screenDataMap.values()) {
+        result.maxEDRHeadroom = std::max(result.maxEDRHeadroom, screenData.currentEDRHeadroom);
+        result.suppressEDR |= screenData.suppressEDR;
+    }
+    return result;
+}
+
+class GPUOffMainThreadScreenHeadroom final : public ThreadSafeRefCounted<GPUOffMainThreadScreenHeadroom> {
+public:
+    static Ref<GPUOffMainThreadScreenHeadroom> create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
+
+    // Screen properties are only available on the main thread, but this must never wait on it: the main
+    // thread can itself be blocked on the calling worker, e.g. while terminating it. Returns the last
+    // value the main thread gathered, if any, and asks it for a fresh one. didChange runs on the main
+    // thread when the fresh value differs from the one returned.
+    std::optional<ScreenHeadroom> read(Function<void(ScreenHeadroom)>&& didChange)
+    {
+        Locker locker { m_lock };
+        if (!m_isRefreshing) {
+            m_isRefreshing = true;
+            callOnMainThread([protectedThis = Ref { *this }, didChange = WTF::move(didChange)] {
+                auto headroom = gatherScreenHeadroom();
+                bool changed;
+                {
+                    Locker locker { protectedThis->m_lock };
+                    changed = protectedThis->m_headroom != headroom;
+                    protectedThis->m_headroom = headroom;
+                    protectedThis->m_isRefreshing = false;
+                }
+                if (changed)
+                    didChange(headroom);
+            });
+        }
+        return m_headroom;
+    }
+
+private:
+    GPUOffMainThreadScreenHeadroom() = default;
+
+    Lock m_lock;
+    std::optional<ScreenHeadroom> m_headroom WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isRefreshing WTF_GUARDED_BY_LOCK(m_lock) { false };
+};
+#endif // HAVE(SUPPORT_HDR_DISPLAY)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
@@ -250,29 +312,28 @@ void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
     if (!m_layerContentsDisplayDelegate->hasExtendedRange())
         return;
 
-    float maxEDRHeadroom = 1.f;
-    bool suppressEDR = false;
-
-    auto gatherScreenProperties = [&] {
-        auto screen = PlatformScreen::singleton();
-        for (const auto& screenData : screen->screenProperties().screenDataMap.values()) {
-            maxEDRHeadroom = std::max(maxEDRHeadroom, screenData.currentEDRHeadroom);
-            suppressEDR |= screenData.suppressEDR;
-        }
-    };
-
+    ScreenHeadroom headroom;
     if (isMainThread())
-        gatherScreenProperties();
+        headroom = gatherScreenHeadroom();
     else {
-        BinarySemaphore semaphore;
-        callOnMainThread([&gatherScreenProperties, &semaphore] {
-            gatherScreenProperties();
-            semaphore.signal();
+        if (!m_offMainThreadScreenHeadroom)
+            m_offMainThreadScreenHeadroom = GPUOffMainThreadScreenHeadroom::create();
+        RefPtr scriptExecutionContext = protect(canvasBase())->scriptExecutionContext();
+        if (!scriptExecutionContext)
+            return;
+        auto cachedHeadroom = protect(m_offMainThreadScreenHeadroom)->read([contextIdentifier = scriptExecutionContext->identifier(), weakThis = WeakPtr { *this }](ScreenHeadroom headroom) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [weakThis = WTF::move(weakThis), headroom](ScriptExecutionContext&) {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->updateScreenHeadroom(headroom.maxEDRHeadroom, headroom.suppressEDR);
+            });
         });
-        semaphore.wait();
+        // Until the main thread first answers, keep the current headroom; didChange applies its answer.
+        if (!cachedHeadroom)
+            return;
+        headroom = *cachedHeadroom;
     }
 
-    updateScreenHeadroom(maxEDRHeadroom, suppressEDR);
+    updateScreenHeadroom(headroom.maxEDRHeadroom, headroom.suppressEDR);
 }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -446,6 +507,22 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
     }
     return bufferRef;
 }
+
+#if ENABLE(OFFSCREEN_CANVAS)
+bool GPUCanvasContextCocoa::commitToPlaceholder(PlaceholderRenderingContextSource& source)
+{
+    if (!m_configuration || !m_configuration->lastPresentedFrameIndex)
+        return false;
+    auto frameIndex = *m_configuration->lastPresentedFrameIndex;
+    if (frameIndex >= m_configuration->renderBuffers.size())
+        return false;
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    updateScreenHeadroomFromScreenPropertiesIfNeeded();
+#endif
+    Ref canvas = canvasBase();
+    return source.setPlaceholderSurface(m_configuration->renderBuffers[frameIndex], m_layerContentsDisplayDelegate->contentsFormat(), canvas->size(), canvas->originClean(), m_layerContentsDisplayDelegate->isOpaque());
+}
+#endif
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
 {

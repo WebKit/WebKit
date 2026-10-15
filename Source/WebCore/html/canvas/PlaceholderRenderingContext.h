@@ -39,6 +39,7 @@ namespace WebCore {
 
 class GraphicsLayerAsyncContentsDisplayDelegate;
 class PlaceholderRenderingContext;
+enum class ContentsFormat : uint8_t;
 
 // What a placeholder's compositor layer shows. Shared with a source in the same process, so that it
 // can update the layer straight from the OffscreenCanvas's thread.
@@ -49,6 +50,12 @@ public:
 
     // Shows the frame unless a newer one is already shown. On any thread.
     void copyFrame(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
+#if PLATFORM(COCOA)
+    bool displaySurface(const MachSendRight&, ContentsFormat, bool opaque, PlaceholderFrameIdentifier);
+#endif
+    bool needsFrameBuffers() const;
+    void requestFrameBuffers();
+    void setRecommitHandler(Function<void()>&&);
     // Like copyFrame(), for a buffer that nothing will draw into again. It reaches the compositor
     // with the next rendering update. On the main thread.
     void setFrameForNextDisplay(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
@@ -59,9 +66,11 @@ public:
 private:
     PlaceholderLayerContents() = default;
 
-    Lock m_lock;
+    mutable Lock m_lock;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
     PlaceholderFrameIdentifier m_frame WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_frameBuffersRequested WTF_GUARDED_BY_LOCK(m_lock) { false };
+    Function<void()> m_recommitHandler WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 // The source for an OffscreenCanvas in the same process as its placeholder, on any thread. Only the
@@ -73,9 +82,15 @@ public:
     static Ref<LocalPlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
 
     void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) final;
+#if PLATFORM(COCOA)
+    bool setPlaceholderSurface(const MachSendRight&, ContentsFormat, const IntSize&, bool originClean, bool opaque) final;
+#endif
+    void setRecommitHandler(Function<void()>&&) final;
 
 private:
     explicit LocalPlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+
+    void setPlaceholderFrameWithoutBuffer(const IntSize&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
 
     WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
     const Ref<PlaceholderLayerContents> m_layerContents;
@@ -95,6 +110,7 @@ public:
     void setPlaceholderBuffer(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
     // A frame from a source in another process, whose buffer nothing will draw into again.
     void setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
+    void setPlaceholderFrameWithoutBuffer(const IntSize&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
 
     PlaceholderRenderingContextIdentifier identifier() const { return m_identifier; }
     PlaceholderLayerContents& layerContents() const { return m_layerContents; }
@@ -110,6 +126,8 @@ private:
     void setContentsToLayer(GraphicsLayer&) final;
     PixelFormat pixelFormat() const final;
     bool isOpaque() const final { return m_opaque; }
+    void updateCanvasForFrame(const IntSize&, bool originClean);
+    void requestFrameBuffersIfStale();
 
     const PlaceholderRenderingContextIdentifier m_identifier;
     const Ref<PlaceholderLayerContents> m_layerContents;
@@ -118,6 +136,7 @@ private:
     RefPtr<ImageBuffer> m_buffer; // Temporary until content is provided as NativeImage.
     RefPtr<NativeImage> m_bufferNativeImage;
     bool m_opaque { false };
+    bool m_bufferIsStale { false };
 };
 
 }

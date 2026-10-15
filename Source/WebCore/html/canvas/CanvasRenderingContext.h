@@ -50,6 +50,7 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class NativeImage;
+class PlaceholderRenderingContextSource;
 class SVGImageElement;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
@@ -110,6 +111,10 @@ public:
 
     // Returns the drawing buffer and runs the compositing steps of transferToImageBitmap.
     virtual RefPtr<ImageBuffer> transferToImageBuffer();
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    virtual bool commitToPlaceholder(PlaceholderRenderingContextSource&) { return false; }
+#endif
 
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
     void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }
