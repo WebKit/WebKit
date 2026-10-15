@@ -490,7 +490,7 @@ const Style::ComputedStyle* RenderText::highlightPseudoStyle(const AtomString& n
         return lazyPseudoElementStyle(identifier);
 
     // A boxless originating element cannot be found by walking render ancestors.
-    CheckedPtr originatingStyle = element->renderOrDisplayContentsStyle();
+    CheckedPtr originatingStyle = element->mutableDisplayContentsStyle();
     if (!originatingStyle || !originatingStyle->hasPseudoStyle(PseudoElementType::Highlight))
         return nullptr;
     if (auto* cachedStyle = originatingStyle->pseudoElementStyle(identifier))
@@ -502,7 +502,7 @@ const Style::ComputedStyle* RenderText::highlightPseudoStyle(const AtomString& n
         return nullptr;
 
     Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.get());
-    return const_cast<Style::ComputedStyle&>(*originatingStyle).addPseudoElementStyle(WTF::move(resolvedStyle->style));
+    return originatingStyle->addPseudoElementStyle(WTF::move(resolvedStyle->style));
 }
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
