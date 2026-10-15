@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            position: relative;
+            overflow-y: scroll;
+            margin: 10px;
+            height: 300px;
+            width: 400px;
+            border: 1px solid black;
+        }
+
+        .inner.scroller {
+            z-index: 0;
+            height: 200px;
+            width: 300px;
+        }
+
+        .trigger {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            will-change: transform;
+            background-color: blue;
+        }
+
+        .overlapper {
+            position: relative;
+            top: -60px;
+            left: 50px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+
+        .spacer {
+            height: 500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <!-- The green box paints above the composited blue box and overlaps it, so it must be composited. -->
+    <div class="scroller">
+        <div class="inner scroller">
+            <div class="trigger"></div>
+            <div class="overlapper"></div>
+            <div class="spacer"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>
