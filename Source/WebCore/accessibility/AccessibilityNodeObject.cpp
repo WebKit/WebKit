@@ -116,6 +116,7 @@
 #include "RenderListBox.h"
 #include "RenderListItem.h"
 #include "RenderListOutsideMarker.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RuleFeature.h"
@@ -967,42 +968,37 @@ bool AccessibilityNodeObject::canHaveChildren() const
 AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildren()
 {
     // Only listboxes are asked for their visible children.
-    CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderer());
-    if (!renderListBox && ariaRoleAttribute() == AccessibilityRole::ListBox) {
-        AccessibilityChildrenVector result;
-        for (const auto& child : unignoredChildren()) {
-            if (!child->isOffScreen())
-                result.append(child);
-        }
-        return result;
-    }
-
-    // For HTMLSelectElement with arbitrary renderer use the size attribute as approximation.
-    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->isDropdownBox()) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
-        AccessibilityChildrenVector result;
-        size_t count = std::min(static_cast<size_t>(selectElement->preferredSize()), children.size());
-        result.reserveInitialCapacity(count);
-        for (size_t i = 0; i < count; i++)
-            result.append(children[i]);
-        return result;
-    }
-
-    // Handle native listboxes (RenderListBox).
-    if (renderListBox && role() == AccessibilityRole::ListBox) {
-        // FIXME: Remove suppression once rdar://189998365 is fixed.
-        SUPPRESS_MEMORY_UNSAFE_CAST const auto& children = const_cast<AccessibilityNodeObject*>(this)->unignoredChildren();
-        AccessibilityChildrenVector result;
-        size_t size = children.size();
-        for (size_t i = 0; i < size; i++) {
+    AccessibilityChildrenVector result;
+    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(renderer())) {
+        const auto& children = unignoredChildren();
+        for (size_t i = 0; i < children.size(); i++) {
             if (renderListBox->listIndexIsVisible(i))
                 result.append(children[i]);
         }
         return result;
     }
 
-    return { };
+    if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(node()); selectElement && !selectElement->isDropdownBox()) {
+        CheckedPtr selectBox = dynamicDowncast<RenderBox>(renderer());
+        if (!selectBox)
+            return result;
+        // A child is visible when its box intersects the scrollport, which is the padding box of the select.
+        auto scrollport = selectBox->paddingBoxRect();
+        for (const auto& child : unignoredChildren()) {
+            CheckedPtr childBox = dynamicDowncast<RenderBox>(downcast<AccessibilityObject>(child).renderer());
+            if (childBox && scrollport.intersects(LayoutRect { childBox->localToContainerQuad(FloatQuad { childBox->borderBoxRect() }, selectBox.get()).boundingBox() }))
+                result.append(child);
+        }
+        return result;
+    }
+
+    if (ariaRoleAttribute() == AccessibilityRole::ListBox) {
+        for (const auto& child : unignoredChildren()) {
+            if (!child->isOffScreen())
+                result.append(child);
+        }
+    }
+    return result;
 }
 
 bool AccessibilityNodeObject::isValidTree() const

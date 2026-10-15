@@ -1284,9 +1284,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::VerticalScrollBar:
         stream << "VerticalScrollBar";
         break;
-    case AXProperty::VisibleChildren:
-        stream << "VisibleChildren";
-        break;
     case AXProperty::VisibleRows:
         stream << "VisibleRows";
         break;

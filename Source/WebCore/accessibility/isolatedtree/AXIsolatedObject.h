@@ -425,7 +425,7 @@ private:
     unsigned computedHeadingLevel() const final { return unsignedAttributeValue(AXProperty::HeadingLevel); }
     String language() const final { return stringAttributeValue(AXProperty::Language); }
     void setSelectedChildren(const AccessibilityChildrenVector&) final;
-    AccessibilityChildrenVector visibleChildren() final { return tree().objectsForIDs(vectorAttributeValue<AXID>(AXProperty::VisibleChildren)); }
+    AccessibilityChildrenVector visibleChildren() final;
     void setChildrenIDs(Vector<AXID>&&);
     const String explicitLiveRegionStatus() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionStatus); }
     const String explicitLiveRegionRelevant() const final { return stringAttributeValue(AXProperty::ExplicitLiveRegionRelevant); }

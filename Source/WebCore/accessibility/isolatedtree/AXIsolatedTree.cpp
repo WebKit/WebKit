@@ -2677,10 +2677,6 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         if (object.isImage())
             setProperty(AXProperty::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 
-        // On macOS, we only advertise support for the visible children attribute for lists and listboxes.
-        if (object.isList() || object.isListBox())
-            setObjectVectorProperty(AXProperty::VisibleChildren, object.visibleChildren());
-
         if (object.isDateTime()) {
             setProperty(AXProperty::DateTimeValue, object.dateTimeValue().isolatedCopy());
             setProperty(AXProperty::DateTimeComponentsType, object.dateTimeComponentsType());

@@ -1,0 +1,11 @@
+This test ensures that the visible children of a list box follow its scroll position.
+
+PASS: visibleChildren(axSelect) === "native1 native2 native3"
+PASS: visibleChildren(axSelect) === "native4 native5 native6"
+PASS: visibleChildren(axSelect) === "base1 base2 base3"
+PASS: visibleChildren(axSelect) === "base4 base5 base6"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

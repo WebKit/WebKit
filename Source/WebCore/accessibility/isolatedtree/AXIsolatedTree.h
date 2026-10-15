@@ -312,7 +312,6 @@ enum class AXProperty : uint16_t {
     ValueDescription,
     ValueForRange,
     VerticalScrollBar,
-    VisibleChildren,
     VisibleRows,
     WebAreaTitle
 };

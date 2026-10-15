@@ -1965,6 +1965,20 @@ String AXIsolatedObject::doAXStringForRange(const CharacterRange& range) const
     return textMarkerRange().toString().substring(range.location, range.length);
 }
 
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::visibleChildren()
+{
+    // Which children are visible depends on the scroll position, which isn't cached.
+    auto childIDs = Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([context = mainThreadContext()] -> Vector<AXID> {
+        RefPtr object = context.axObjectOnMainThread();
+        if (!object)
+            return { };
+        return object->visibleChildren().map([](auto& child) {
+            return child->objectID();
+        });
+    }, Accessibility::GeneralPropertyTimeout, Vector<AXID> { });
+    return tree().objectsForIDs(childIDs);
+}
+
 CharacterRange AXIsolatedObject::characterRangeForPoint(const IntPoint& point) const
 {
     return Accessibility::retrieveValueFromMainThreadWithTimeoutAndDefault([&point, context = mainThreadContext()] () -> CharacterRange {

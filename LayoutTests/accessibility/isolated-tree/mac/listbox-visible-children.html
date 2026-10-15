@@ -1,0 +1,58 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="native" size="3">
+    <option id="native1">One</option>
+    <option id="native2">Two</option>
+    <option id="native3">Three</option>
+    <option id="native4">Four</option>
+    <option id="native5">Five</option>
+    <option id="native6">Six</option>
+</select>
+
+<select id="base" class="base" size="3">
+    <option id="base1">One</option>
+    <option id="base2">Two</option>
+    <option id="base3">Three</option>
+    <option id="base4">Four</option>
+    <option id="base5">Five</option>
+    <option id="base6">Six</option>
+</select>
+
+<script>
+var output = "This test ensures that the visible children of a list box follow its scroll position.\n\n";
+
+function visibleChildren(axElement) {
+    return axElement?.uiElementArrayAttributeValue("AXVisibleChildren").map(child => child.domIdentifier).join(" ");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (const id of ["native", "base"]) {
+            window.axSelect = await waitForElementById(id);
+            output += await expectAsync("visibleChildren(axSelect)", `"${id}1 ${id}2 ${id}3"`);
+            document.getElementById(id).scrollTop = 10000;
+            output += await expectAsync("visibleChildren(axSelect)", `"${id}4 ${id}5 ${id}6"`);
+        }
+
+        for (const select of document.querySelectorAll("select"))
+            select.style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
