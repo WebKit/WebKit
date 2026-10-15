@@ -60,6 +60,7 @@ private:
     void touchEnd(double) override;
     void touchCancel(double) override;
     void setTouchModifier(WKEventModifiers, bool);
+    void sendTouchEvent(int type, double time);
 
     struct TouchPoint {
         enum class State { Down, Up, Move, Cancel, Stationary };
@@ -71,8 +72,6 @@ private:
     };
 
     struct TouchPointContext;
-
-    std::function<bool(TouchPoint&)> pointProcessor(const TouchPointContext&);
 
     Vector<TouchPoint> m_touchPoints;
     unsigned m_touchModifiers { 0 };
