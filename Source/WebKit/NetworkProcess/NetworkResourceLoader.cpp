@@ -561,6 +561,7 @@ void NetworkResourceLoader::continueStartNetworkLoad(ResourceRequest&& request, 
     parameters.request = WTF::move(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = NetworkLoad::create(*this, WTF::move(parameters), *networkSession);
+
     WeakPtr weakThis { *this };
     RefPtr networkLoad = m_networkLoad;
     if (isSynchronous())
@@ -1711,7 +1712,11 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         if (m_parameters.request.initialPriority().has_value())
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
 
-        ResourceLoadPriority currentPriority = m_networkLoad ? m_networkLoad->currentRequest().priority() : m_parameters.request.priority();
+        ResourceLoadPriority currentPriority;
+        if (m_networkLoad)
+            currentPriority = m_networkLoad->currentRequest().priority();
+        else
+            currentPriority = m_parameters.request.priority();
 
         if (!(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority == currentPriority))
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(currentPriority);

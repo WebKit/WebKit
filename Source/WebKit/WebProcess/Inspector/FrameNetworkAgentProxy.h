@@ -87,6 +87,7 @@ public:
 
     void willSendRequest(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, const WebCore::CachedResource*, WebCore::ResourceLoader*) final;
     void willSendRequestOfType(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, WebCore::ResourceRequest&, Inspector::UncachedLoadType) final;
+    void setRequestResourceType(const WebCore::ResourceResponse&, WebCore::ResourceLoaderIdentifier, const WebCore::CachedResource*);
     void didReceiveResponse(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::ResourceResponse&, WebCore::ResourceLoader*) final;
     void didReceiveData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer*, int expectedDataLength, int encodedDataLength) final;
     void didFinishLoading(WebCore::ResourceLoaderIdentifier, WebCore::DocumentLoader*, const WebCore::NetworkLoadMetrics&, WebCore::ResourceLoader*) final;

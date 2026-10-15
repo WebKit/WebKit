@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "BackendResourceDataStore.h"
-
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/InspectorResourceUtilities.h>
@@ -173,7 +172,7 @@ void BackendResourceDataStore::resourceCreated(ResourceLoaderIdentifier resource
     ensureNoDataForId(resourceID);
     auto entry = makeUniqueRef<ResourceData>(resourceID, type);
     entry->setFrameID(frameID);
-    entry->setRequestResourceType(resourceType);
+    entry->setTypeRequestResource(resourceType);
     m_resourceDataMap.set(resourceID, WTF::move(entry));
 }
 
@@ -211,6 +210,14 @@ void BackendResourceDataStore::setResourceType(ResourceLoaderIdentifier resource
     if (!resourceData)
         return;
     resourceData->setType(type);
+}
+
+void BackendResourceDataStore::setRequestResourceType(ResourceLoaderIdentifier resourceID, WebCore::CachedResource::Type type)
+{
+    ResourceData* resourceData = resourceDataForId(resourceID);
+    if (!resourceData)
+        return;
+    resourceData->setTypeRequestResource(type);
 }
 
 void BackendResourceDataStore::setResourceContent(ResourceLoaderIdentifier resourceID, const String& content, bool base64Encoded)

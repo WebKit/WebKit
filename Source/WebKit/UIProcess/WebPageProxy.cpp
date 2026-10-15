@@ -8966,6 +8966,7 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request)
     }
     request.setFirstPartyForCookies(request.url());
     request.setPriority(WebCore::ResourceLoadPriority::VeryHigh);
+    request.setInitialPriority(WebCore::ResourceLoadPriority::VeryHigh);
     protect(websiteDataStore->networkProcess())->preconnectTo(sessionID(), identifier(), webPageIDInMainFrameProcess(), WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain());
 }
 

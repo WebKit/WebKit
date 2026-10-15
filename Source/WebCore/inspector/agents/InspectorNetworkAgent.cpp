@@ -39,7 +39,6 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CookieJar.h"
-#include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -264,7 +263,6 @@ void InspectorNetworkAgent::willSendRequestInternal(ResourceLoaderIdentifier ide
     auto frameId = frameIdentifier(loader);
     auto loaderId = loaderIdentifier(loader);
     String targetId = request.initiatorIdentifier();
-
 
     m_resourcesData->resourceCreated(requestId, loaderId, type, resourceType);
 

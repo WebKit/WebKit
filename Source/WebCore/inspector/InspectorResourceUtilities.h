@@ -60,6 +60,7 @@ namespace Inspector {
 namespace Protocol {
 using ErrorString = String;
 namespace Network {
+enum class LoadPriority;
 }
 namespace Page {
 enum class ResourceType : int;

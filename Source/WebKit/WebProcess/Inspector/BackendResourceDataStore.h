@@ -109,8 +109,9 @@ public:
         Inspector::ResourceType type() const { return m_type; }
         void setType(Inspector::ResourceType type) { m_type = type; }
 
+        void setTypeRequestResource(WebCore::CachedResource::Type type) { m_cachedResourceType = type; }
+
         WebCore::CachedResource::Type requestResourceType() const { return m_cachedResourceType; }
-        void setRequestResourceType(WebCore::CachedResource::Type type) { m_cachedResourceType = type; }
 
         RefPtr<WebCore::TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
         void setDecoder(RefPtr<WebCore::TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
@@ -168,6 +169,7 @@ public:
     void resourceCreated(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, Inspector::ResourceType, WebCore::CachedResource::Type);
     void responseReceived(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&, Inspector::ResourceType);
     void setResourceType(WebCore::ResourceLoaderIdentifier, Inspector::ResourceType);
+    void setRequestResourceType(WebCore::ResourceLoaderIdentifier, WebCore::CachedResource::Type);
     void setResourceContent(WebCore::ResourceLoaderIdentifier, const String& content, bool base64Encoded = false);
     ResourceData const* maybeAddResourceData(WebCore::ResourceLoaderIdentifier, const WebCore::SharedBuffer&);
     void maybeDecodeDataToContent(WebCore::ResourceLoaderIdentifier);
