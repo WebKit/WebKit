@@ -1,0 +1,15 @@
+PASS featureAdvertised is true
+PASS texture.createView({ swizzle: "" }) threw a TypeError.
+PASS texture.createView({ swizzle: "rgb" }) threw a TypeError.
+PASS texture.createView({ swizzle: "rgbaa" }) threw a TypeError.
+PASS texture.createView({ swizzle: "rgbx" }) threw a TypeError.
+PASS texture.createView({ swizzle: "RGBA" }) threw a TypeError.
+PASS identityError is null
+PASS ungatedError instanceof GPUValidationError is true
+PASS gatedError is null
+PASS attachmentError instanceof GPUValidationError is true
+PASS storageError instanceof GPUValidationError is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

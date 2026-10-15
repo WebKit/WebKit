@@ -53,6 +53,7 @@ enum class FeatureName : uint8_t {
     TextureFormatsTier2,
     PrimitiveIndex,
     Subgroups,
+    TextureComponentSwizzle,
 };
 
 } // namespace WebCore::WebGPU

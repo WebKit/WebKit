@@ -372,6 +372,46 @@ constexpr WGPUCompilationMessageType toAPI(WebGPU::CompilationMessageType value)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+constexpr std::optional<WebGPU::ComponentSwizzle> fromAPI(WGPUComponentSwizzle value)
+{
+    switch (value) {
+    case WGPUComponentSwizzle_Zero:
+        return WebGPU::ComponentSwizzle::Zero;
+    case WGPUComponentSwizzle_One:
+        return WebGPU::ComponentSwizzle::One;
+    case WGPUComponentSwizzle_R:
+        return WebGPU::ComponentSwizzle::R;
+    case WGPUComponentSwizzle_G:
+        return WebGPU::ComponentSwizzle::G;
+    case WGPUComponentSwizzle_B:
+        return WebGPU::ComponentSwizzle::B;
+    case WGPUComponentSwizzle_A:
+        return WebGPU::ComponentSwizzle::A;
+    default:
+        return std::nullopt;
+    }
+}
+
+// WGPUComponentSwizzle_Undefined selects the channel's own component, so a zero-initialized
+// WGPUTextureComponentSwizzle is the identity swizzle.
+constexpr std::optional<WebGPU::TextureComponentSwizzle> fromAPI(const WGPUTextureComponentSwizzle& swizzle)
+{
+    auto component = [](WGPUComponentSwizzle value, WebGPU::ComponentSwizzle identity) -> std::optional<WebGPU::ComponentSwizzle> {
+        if (value == WGPUComponentSwizzle_Undefined)
+            return identity;
+        return fromAPI(value);
+    };
+
+    auto r = component(swizzle.r, WebGPU::ComponentSwizzle::R);
+    auto g = component(swizzle.g, WebGPU::ComponentSwizzle::G);
+    auto b = component(swizzle.b, WebGPU::ComponentSwizzle::B);
+    auto a = component(swizzle.a, WebGPU::ComponentSwizzle::A);
+    if (!r || !g || !b || !a)
+        return std::nullopt;
+
+    return WebGPU::TextureComponentSwizzle { *r, *g, *b, *a };
+}
+
 constexpr std::optional<WebGPU::CullMode> fromAPI(WGPUCullMode value)
 {
     switch (value) {
@@ -498,6 +538,8 @@ constexpr std::optional<WebGPU::FeatureName> fromAPI(WGPUFeatureName value)
         return WebGPU::FeatureName::PrimitiveIndex;
     case WGPUFeatureName_Subgroups:
         return WebGPU::FeatureName::Subgroups;
+    case WGPUFeatureName_TextureComponentSwizzle:
+        return WebGPU::FeatureName::TextureComponentSwizzle;
     default:
         return std::nullopt;
     }
@@ -552,6 +594,8 @@ constexpr WGPUFeatureName toAPI(WebGPU::FeatureName value)
         return WGPUFeatureName_PrimitiveIndex;
     case WebGPU::FeatureName::Subgroups:
         return WGPUFeatureName_Subgroups;
+    case WebGPU::FeatureName::TextureComponentSwizzle:
+        return WGPUFeatureName_TextureComponentSwizzle;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -2027,7 +2071,8 @@ inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureVie
 
     auto aspect = fromAPI(descriptor.aspect);
     auto usage = textureUsageFromAPI(descriptor.usage);
-    if (!aspect || !usage)
+    auto swizzle = fromAPI(descriptor.swizzle);
+    if (!aspect || !usage || !swizzle)
         return std::nullopt;
 
     return WebGPU::TextureViewDescriptor {
@@ -2040,6 +2085,7 @@ inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureVie
         .arrayLayerCount = descriptor.arrayLayerCount == WGPU_ARRAY_LAYER_COUNT_UNDEFINED ? std::nullopt : std::optional<uint32_t> { descriptor.arrayLayerCount },
         .aspect = *aspect,
         .usage = *usage,
+        .swizzle = *swizzle,
     };
 }
 
