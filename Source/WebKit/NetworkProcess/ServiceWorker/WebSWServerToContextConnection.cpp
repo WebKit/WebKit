@@ -133,8 +133,12 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
     return 0;
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin, Vector<URL>&& blobURLs)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSourceOrigin, Vector<URL>&& blobURLs)
 {
+    // FIXME: This becomes MessageEvent.origin in the client, so it should be checked
+    // against the origin of the service worker named by sourceIdentifier.
+    auto sourceOrigin = WTF::move(untrustedSourceOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr server = this->server();
     RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr;
     if (!connection)
