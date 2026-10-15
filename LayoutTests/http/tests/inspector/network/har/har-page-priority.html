@@ -27,8 +27,9 @@ function test()
 
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
-                InspectorTest.reloadPage({ignoreCache: true}),
             ]);
+
+            window.location = window.location.href; // Manually reload
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
@@ -77,6 +78,8 @@ function test()
                         }
                     }
                 });
+            } else {
+                console.log('Got no resources');
             }
         }
     });
