@@ -192,8 +192,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     preferences->setAllowTopNavigationToDataURLs(true);
     preferences->setJavaScriptRuntimeFlags({
     });
-    if (m_underTest)
-        preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
+    preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
     Ref inspectedPagePreferences = protect(inspectedPage())->preferences();
     preferences->setAcceleratedCompositingEnabled(inspectedPagePreferences->acceleratedCompositingEnabled());
     preferences->setForceCompositingMode(inspectedPagePreferences->forceCompositingMode());

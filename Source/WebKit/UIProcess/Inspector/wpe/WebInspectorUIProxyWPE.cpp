@@ -127,8 +127,7 @@ RefPtr<WebPageProxy> WebInspectorUIProxy::platformCreateFrontendPage()
     preferences->setAcceleratedCompositingEnabled(true);
     preferences->setForceCompositingMode(true);
     preferences->setThreadedScrollingEnabled(true);
-    if (m_underTest)
-        preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
+    preferences->setHiddenPageDOMTimerThrottlingEnabled(false);
 
     auto pageGroup = WebPageGroup::create(WebKit::defaultInspectorPageGroupIdentifierForPage(protect(inspectedPage()).get()));
     auto websiteDataStore = inspectorWebsiteDataStore();
