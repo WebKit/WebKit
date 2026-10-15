@@ -128,6 +128,8 @@ const std::error_category& contentExtensionErrorCategory()
                 return "A modify-headers operation must have a header";
             case ContentExtensionError::JSONModifyHeadersMissingValue:
                 return "A modify-headers operation of \"set\" or \"append\" must have a value";
+            case ContentExtensionError::JSONModifyHeadersAppendNotAllowed:
+                return "A modify-headers operation of \"append\" on a request header is only allowed for headers that support multiple values";
             case ContentExtensionError::JSONModifyHeadersNotArray:
                 return "A headers member must be an array";
             case ContentExtensionError::JSONModifyHeadersInvalidPriority:

@@ -357,6 +357,9 @@ void LinkLoader::preconnectIfNeeded(const LinkLoadParameters& params, Document& 
         auto results = userContentProvider->processContentRuleListsForLoad(*page, params.href, ContentExtensions::ResourceType::Ping, *documentLoader);
         if (results.shouldBlock())
             return;
+
+        frame->loader().applyUserAgentIfNeeded(request);
+
         ContentExtensions::applyResultsToRequest(WTF::move(results), page.get(), request);
     }
 #endif

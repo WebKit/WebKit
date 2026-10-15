@@ -42,6 +42,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/MakeString.h>
@@ -1014,6 +1015,68 @@ CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header
         return CrossOriginResourcePolicy::CrossOrigin;
 
     return CrossOriginResourcePolicy::Invalid;
+}
+
+String defaultAcceptLanguageHeaderValue()
+{
+    // CFNetwork lists the first five minimized languages, with decreasing q-values after the first, or "en" if there are none.
+    static constexpr size_t maximumLanguageCount = 5;
+
+    auto languages = userPreferredLanguages(ShouldMinimizeLanguages::Yes);
+    if (languages.isEmpty())
+        return "en"_s;
+
+    StringBuilder builder;
+    builder.append(languages[0]);
+
+    for (size_t i = 1; i < languages.size() && i < maximumLanguageCount; ++i)
+        builder.append(',', languages[i], ";q=0."_s, 10 - i);
+
+    return builder.toString();
+}
+
+String defaultAcceptEncodingHeaderValue(const URL& url)
+{
+    // CFNetwork leaves Brotli out of insecure requests.
+    if (url.protocolIs("https"_s))
+        return "gzip, deflate, br"_s;
+
+    return "gzip, deflate"_s;
+}
+
+// Request headers that can be appended to, and the delimiter placed between values.
+std::optional<ASCIILiteral> requestHeaderAppendDelimiter(const String& header)
+{
+    static constexpr std::pair<ASCIILiteral, ASCIILiteral> appendableHeaders[] {
+        { "accept"_s, ", "_s },
+        { "accept-encoding"_s, ", "_s },
+        { "accept-language"_s, ", "_s },
+        { "access-control-request-headers"_s, ", "_s },
+        { "cache-control"_s, ", "_s },
+        { "connection"_s, ", "_s },
+        { "content-language"_s, ", "_s },
+        { "cookie"_s, "; "_s },
+        { "forwarded"_s, ", "_s },
+        { "if-match"_s, ", "_s },
+        { "if-none-match"_s, ", "_s },
+        { "keep-alive"_s, ", "_s },
+        { "range"_s, ", "_s },
+        { "te"_s, ", "_s },
+        { "trailer"_s, ""_s },
+        { "transfer-encoding"_s, ", "_s },
+        { "upgrade"_s, ", "_s },
+        { "user-agent"_s, " "_s },
+        { "via"_s, ", "_s },
+        { "want-digest"_s, ", "_s },
+        { "x-forwarded-for"_s, ", "_s }
+    };
+
+    for (auto& [name, delimiter] : appendableHeaders) {
+        if (equalIgnoringASCIICase(header, name))
+            return delimiter;
+    }
+
+    return std::nullopt;
 }
 
 }

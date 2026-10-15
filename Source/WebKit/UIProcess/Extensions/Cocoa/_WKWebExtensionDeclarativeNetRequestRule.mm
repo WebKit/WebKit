@@ -38,6 +38,7 @@ NSString * const dynamicRulesetID = @"_dynamic";
 #import "CocoaHelpers.h"
 #import "WKContentRuleListInternal.h"
 #import "WebExtensionUtilities.h"
+#import <WebCore/HTTPParsers.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -543,7 +544,7 @@ using namespace WebKit;
         }
 
         for (NSDictionary *headerInfo in requestHeadersInfo) {
-            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo];
+            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo isRequestHeader:YES];
             if (errorString) {
                 if (outErrorString)
                     *outErrorString = errorString;
@@ -553,7 +554,7 @@ using namespace WebKit;
         }
 
         for (NSDictionary *headerInfo in responseHeadersInfo) {
-            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo];
+            NSString *errorString = [self _validateHeaderInfoDictionary:headerInfo isRequestHeader:NO];
             if (errorString) {
                 if (outErrorString)
                     *outErrorString = errorString;
@@ -566,7 +567,7 @@ using namespace WebKit;
     return self;
 }
 
-- (NSString *)_validateHeaderInfoDictionary:(NSDictionary *)headerInfo
+- (NSString *)_validateHeaderInfoDictionary:(NSDictionary *)headerInfo isRequestHeader:(BOOL)isRequestHeader
 {
     static NSArray *requiredKeysInModifyHeadersDictionary = @[
         declarativeNetRequestRuleHeaderKey,
@@ -601,6 +602,9 @@ using namespace WebKit;
 
     if ((isSetOperation || isAppendOperation) && !headerValue)
         return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. You must provide a value when modifying a header.", (long)_ruleID];
+
+    if (isRequestHeader && isAppendOperation && !WebCore::requestHeaderAppendDelimiter(headerName))
+        return [[NSString alloc] initWithFormat:@"Rule with id %ld is invalid. The request header `%@` does not support the `append` operation.", (long)_ruleID, headerName];
 
     return nil;
 }
