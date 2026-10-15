@@ -60,6 +60,8 @@
 
 // The looked-up text and highlight rect, in root view coordinates. Pass nil to clear.
 - (void)_setDidPerformDictionaryLookupHandlerForTesting:(void (^)(NSString *text, CGRect textBoundingRect))handler;
+// Looks up the text at a point in view coordinates, as the Look Up gesture does.
+- (void)_performDictionaryLookupAtLocationForTesting:(CGPoint)point;
 
 @property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
 @property (nonatomic, readonly) NSRect _windowRelativeBoundsForCustomSwipeViewsForTesting;

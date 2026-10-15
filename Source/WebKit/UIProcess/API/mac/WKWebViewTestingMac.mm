@@ -171,6 +171,11 @@
     });
 }
 
+- (void)_performDictionaryLookupAtLocationForTesting:(CGPoint)point
+{
+    _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(point));
+}
+
 - (void)_createFlagsChangedEventMonitorForTesting
 {
     _impl->createFlagsChangedEventMonitor();
