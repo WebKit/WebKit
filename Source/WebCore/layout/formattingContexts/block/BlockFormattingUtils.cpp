@@ -63,6 +63,26 @@ LayoutUnit BlockFormattingUtils::borderBoxBlockSize(const RenderBox& box, Layout
     return blockSize;
 }
 
+std::optional<LayoutUnit> BlockFormattingUtils::aspectRatioBorderBoxBlockSize(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, WritingMode writingMode)
+{
+    CheckedRef style = box.style();
+    if (!style->aspectRatio().hasRatio() || !style->logicalHeight(writingMode).isAuto())
+        return { };
+    auto ratio = style->logicalAspectRatio();
+    if (!ratio || std::isnan(ratio))
+        return { };
+    // With box-sizing: border-box the ratio is the border box's, unless it is auto && <ratio>, which is the content box's.
+    if (style->boxSizingForAspectRatio() == BoxSizing::BorderBox && style->aspectRatio().isRatio())
+        return std::max(verticalBorderAndPadding, LayoutUnit(borderBoxInlineSize / ratio));
+    return LayoutUnit((borderBoxInlineSize - horizontalBorderAndPadding) / ratio) + verticalBorderAndPadding;
+}
+
+bool BlockFormattingUtils::hasPercentageBlockSize(const RenderBox& box, WritingMode writingMode)
+{
+    CheckedRef style = box.style();
+    return style->logicalHeight(writingMode).isPercentOrCalculated() || style->logicalMinHeight(writingMode).isPercentOrCalculated() || style->logicalMaxHeight(writingMode).isPercentOrCalculated();
+}
+
 bool BlockFormattingUtils::blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize)
 {
     return blockSize.isAuto() || blockSize.isIntrinsic() || (blockSize.isPercentOrCalculated() && !containingBlockContentBoxBlockSize);
