@@ -44,7 +44,7 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const AtomString& charset)
 
 CachedResourceHandle<CachedResource> CachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
-    return requestResourceWithCache(document, sourceURL, destination, String { }, WTF::move(integrity), { }, serviceWorkersMode, referrer);
+    return requestResourceWithCache(document, sourceURL, destination, defaultCrossOriginModeForModule, WTF::move(integrity), { }, serviceWorkersMode, referrer);
 }
 
 RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& document, const URL& sourceURL, FetchOptionsDestination destination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority> resourceLoadPriority, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const

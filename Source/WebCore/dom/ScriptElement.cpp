@@ -423,7 +423,7 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
     auto nonce = element->nonce();
     auto crossOriginMode = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
-        crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
+        crossOriginMode = CachedScriptFetcher::defaultCrossOriginModeForModule;
 
     if (hasSourceAttribute()) {
         ASSERT(element->isConnected());

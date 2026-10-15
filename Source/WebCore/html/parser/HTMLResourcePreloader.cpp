@@ -67,7 +67,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     String crossOriginMode = m_crossOriginMode;
     if (m_scriptType == ScriptType::Module) {
         if (crossOriginMode.isNull())
-            crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
+            crossOriginMode = CachedScriptFetcher::defaultCrossOriginModeForModule;
     }
     if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::Text || m_resourceType == CachedResource::Type::ImageResource)
         options.referrerPolicy = m_referrerPolicy;

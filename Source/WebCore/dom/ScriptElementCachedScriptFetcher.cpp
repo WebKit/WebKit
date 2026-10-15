@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-const ASCIILiteral ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule { "anonymous"_s };
-
 CachedResourceHandle<CachedResource> ScriptElementCachedScriptFetcher::requestModuleResource(Document& document, const URL& sourceURL, FetchOptionsDestination destination, String&& integrity, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer) const
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
