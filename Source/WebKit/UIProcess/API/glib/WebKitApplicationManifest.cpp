@@ -96,20 +96,6 @@ using ApplicationManifestColor = GdkRGBA;
 using ApplicationManifestColor = WebKitColor;
 #endif
 
-static std::optional<ApplicationManifestColor> applicationManifestColor(const WebCore::Color& webCoreColor)
-{
-    if (!webCoreColor.isValid())
-        return std::nullopt;
-
-    ApplicationManifestColor color;
-#if PLATFORM(GTK)
-    color = WebKit::colorToGdkRGBA(webCoreColor);
-#elif PLATFORM(WPE)
-    webkitColorFillFromWebCoreColor(webCoreColor, &color);
-#endif
-    return color;
-}
-
 struct _WebKitApplicationManifestPrivate {
     String rawJSON;
     GRefPtr<GVariant> fullManifest;
@@ -312,6 +298,20 @@ static GRefPtr<GVariant> variantFromJSONValue(JSON::Value& value)
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
+static std::optional<ApplicationManifestColor> applicationManifestColor(const WebCore::Color& webCoreColor)
+{
+    if (!webCoreColor.isValid())
+        return std::nullopt;
+
+    ApplicationManifestColor color;
+#if PLATFORM(GTK)
+    color = WebKit::colorToGdkRGBA(webCoreColor);
+#elif PLATFORM(WPE)
+    webkitColorFillFromWebCoreColor(webCoreColor, &color);
+#endif
+    return color;
+}
+
 static ASCIILiteral displayMode(WebCore::ApplicationManifest::Display display)
 {
     using enum WebCore::ApplicationManifest::Display;
