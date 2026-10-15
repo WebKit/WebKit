@@ -121,7 +121,7 @@ static LayoutRect logicalPaddingBoxRect(const RenderBox& box)
 }
 
 // The static position the in-flow layout of its parent gave the box (RenderLayer::staticInlinePosition, staticBlockPosition), relative to the
-// border box of its block container, moved through the positions of the boxes in between (like PositionedLayoutConstraints::computedInlineStaticDistance)
+// border box of its block container, moved through the positions of the boxes in between, relative offsets included (like PositionedLayoutConstraints::computedInlineStaticDistance)
 // to the padding box of its containing block. Coverage keeps those boxes in the containing block's writing mode.
 static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox& outOfFlowBox, const RenderBlock& containingBlock)
 {
@@ -133,8 +133,11 @@ static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox&
     auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? layer->staticInlinePosition() : blockContainer->logicalWidth() - layer->staticInlinePosition(), layer->staticBlockPosition() };
     // An out-of-flow box between them is positioned in its own containing block, which is where container() goes.
     for (CheckedPtr<const RenderElement> box = blockContainer.ptr(); box != &containingBlock; box = box->container()) {
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box))
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box)) {
             position.move(renderBox->logicalLeft(), renderBox->logicalTop());
+            auto inFlowOffset = renderBox->offsetForInFlowPosition();
+            position.move(renderBox->isHorizontalWritingMode() ? inFlowOffset : inFlowOffset.transposedSize());
+        }
     }
     auto paddingBox = logicalPaddingBoxRect(containingBlock);
     auto inlinePosition = containingBlock.writingMode().isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
