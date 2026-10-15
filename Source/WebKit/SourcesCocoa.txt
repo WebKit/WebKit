@@ -805,7 +805,6 @@ WebProcess/Extensions/Bindings/Cocoa/JSWebExtensionWrapperCocoa.mm
 
 WebProcess/Extensions/Cocoa/_WKWebExtensionWebNavigationURLFilter.mm
 WebProcess/Extensions/Cocoa/_WKWebExtensionWebRequestFilter.mm
-WebProcess/Extensions/Cocoa/WebExtensionContextProxyCocoa.mm
 WebProcess/Extensions/Cocoa/WebExtensionControllerProxyCocoa.mm
 
 WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp

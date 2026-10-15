@@ -5464,7 +5464,6 @@
 		3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCookieManager.messages.in; sourceTree = "<group>"; };
 		330934581315B9980097A7BC /* WKCookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKCookieManager.cpp; sourceTree = "<group>"; };
 		330934591315B9980097A7BC /* WKCookieManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCookieManager.h; sourceTree = "<group>"; };
-		330A30E42951112200F84419 /* WebExtensionContextProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextProxyCocoa.mm; sourceTree = "<group>"; };
 		331102392B17AFD800B21C8C /* WebExtensionAPIDeclarativeNetRequest.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIDeclarativeNetRequest.idl; sourceTree = "<group>"; };
 		3311023A2B17B49E00B21C8C /* WebExtensionAPIDeclarativeNetRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIDeclarativeNetRequest.h; sourceTree = "<group>"; };
 		3311023C2B17B4EE00B21C8C /* WebExtensionAPIDeclarativeNetRequestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIDeclarativeNetRequestCocoa.mm; sourceTree = "<group>"; };
@@ -11299,7 +11298,6 @@
 				337822412947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.mm */,
 				337042072B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.h */,
 				337042082B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.mm */,
-				330A30E42951112200F84419 /* WebExtensionContextProxyCocoa.mm */,
 				1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */,
 			);
 			path = Cocoa;
