@@ -1,0 +1,13 @@
+Tests that clicking a non-focusable area of the main frame blurs the focused element inside a cross-origin iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerInputBlurred is true
+PASS innerInputFocusedOut is true
+PASS innerActiveElement is "BODY"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

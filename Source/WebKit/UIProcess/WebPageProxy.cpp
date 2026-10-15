@@ -14804,22 +14804,6 @@ void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp
     }
 }
 
-void WebPageProxy::focusedElementChanged(IPC::Connection& connection, const std::optional<FrameIdentifier>& frameID, FocusOptions options)
-{
-    if (!frameID)
-        return;
-
-    RefPtr frame = WebFrameProxy::webFrame(*frameID);
-    if (!frame)
-        return;
-
-    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-        if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
-            return;
-        webProcess.send(Messages::WebPage::ElementWasFocusedInAnotherProcess(*frameID, options), pageID);
-    });
-}
-
 void WebPageProxy::focusedFrameChanged(IPC::Connection& connection, std::optional<FrameIdentifier>&& frameID)
 {
     RefPtr frame = frameID ? WebFrameProxy::webFrame(*frameID) : nullptr;

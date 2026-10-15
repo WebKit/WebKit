@@ -10898,19 +10898,25 @@ void WebPage::addResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrame
     WebCore::ResourceTimingInformation::addResourceTimingToDocument(*protect(localFrame->document()), WTF::move(resourceTiming));
 }
 
-void WebPage::elementWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::FocusOptions options)
-{
-    RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
-        return;
-    protect(corePage())->focusController().setFocusedElement(nullptr, protect(frame->coreFrame()).get(), options, WebCore::BroadcastFocusedElement::No);
-}
-
 void WebPage::frameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdentifier>&& frameID)
 {
     RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
     RefPtr coreFrame = frame ? frame->coreFrame() : nullptr;
-    protect(corePage()->focusController())->setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
+    CheckedRef focusController { corePage()->focusController() };
+    if (RefPtr oldFrame = focusController->localFocusedFrame(); oldFrame && oldFrame != coreFrame) {
+        if (RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(coreFrame))
+            focusController->remoteFrameWillGainFocus(*remoteFrame);
+        focusController->setFocusedElement(nullptr, oldFrame.get(), { }, WebCore::BroadcastFocusedElement::No);
+        if (focusController->focusedFrame() != oldFrame.get())
+            return;
+        // A blur handler refocused an element in oldFrame without broadcasting, since the focused
+        // frame didn't change. Reassert it so the refocus wins over the other process's focus.
+        if (RefPtr oldDocument = oldFrame->document(); oldDocument && oldDocument->focusedElement()) {
+            send(Messages::WebPageProxy::FocusedFrameChanged(oldFrame->frameID()));
+            return;
+        }
+    }
+    focusController->setFocusedFrame(coreFrame.get(), WebCore::BroadcastFocusedFrame::No);
 }
 
 void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
