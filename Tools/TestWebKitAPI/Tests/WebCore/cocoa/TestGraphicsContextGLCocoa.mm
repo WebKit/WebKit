@@ -37,6 +37,7 @@
 #import <atomic>
 #import <limits>
 #import <optional>
+#import <wtf/Deque.h>
 #import <wtf/HashSet.h>
 #import <wtf/MemoryFootprint.h>
 #import <wtf/StdLibExtras.h>
@@ -71,6 +72,21 @@ public:
         return context;
     }
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }
+
+    using GraphicsContextGLCocoa::maxSpareDrawingBuffers;
+
+    size_t spareDrawingBufferCount() const { return m_spareDrawingBuffers.size(); }
+    // As the kernel has it, rather than as WebCore::IOSurface last set it.
+    size_t volatileSpareDrawingBufferCount() const
+    {
+        size_t count = 0;
+        for (auto& spare : m_spareDrawingBuffers) {
+            uint32_t state = 0;
+            IOSurfaceSetPurgeable(spare.surface->surface(), kIOSurfacePurgeableKeepCurrent, &state);
+            count += state == kIOSurfacePurgeableVolatile || state == kIOSurfacePurgeableEmpty;
+        }
+        return count;
+    }
 private:
     TestedGraphicsContextGLCocoa(GraphicsContextGLAttributes attributes)
         : GraphicsContextGLCocoa(WTF::move(attributes), { })
@@ -635,8 +651,103 @@ TEST_P(AnyContextAttributeTest, DisplayBuffersAreNotRecycledWhedInUse)
         seenSurfaceRefs.add(surfaceRef);
 
         IOSurfaceIncrementUseCount(surfaceRef);
+        EXPECT_LE(context->spareDrawingBufferCount(), TestedGraphicsContextGLCocoa::maxSpareDrawingBuffers);
     }
     ASSERT_EQ(seenSurfaceRefs.size(), 50u);
+}
+
+TEST_P(AnyContextAttributeTest, DisplayBuffersInUseAreReusedOnceReleased)
+{
+    auto context = createTestContext({ 20, 20 });
+    ASSERT_NE(context, nullptr);
+    constexpr size_t framesHeld = 4;
+    constexpr IntPoint samplePoint { 10, 10 };
+    Deque<RetainPtr<IOSurfaceRef>> heldSurfaceRefs;
+    HashSet<RetainPtr<IOSurfaceRef>> seenSurfaceRefs;
+    size_t surfacesSeenHalfway = 0;
+    for (int i = 0; i < 50; ++i) {
+        EXPECT_TRUE(changeContextContents(*context, i));
+        context->prepareForDisplay();
+        auto* surface = context->displayBufferSurface();
+        ASSERT_NE(surface, nullptr);
+        RefPtr image = context->copyNativeImage(GraphicsContextGL::SurfaceBuffer::DisplayBuffer);
+        ASSERT_NE(image, nullptr);
+        EXPECT_TRUE(nativeImagePixelsIs(i % 2 ? Color::green : Color::yellow, *image, samplePoint)) << "frame " << i;
+
+        RetainPtr surfaceRef = surface->surface();
+        seenSurfaceRefs.add(surfaceRef);
+        IOSurfaceIncrementUseCount(surfaceRef.get());
+        heldSurfaceRefs.append(WTF::move(surfaceRef));
+        if (heldSurfaceRefs.size() > framesHeld)
+            IOSurfaceDecrementUseCount(heldSurfaceRefs.takeFirst().get());
+        if (i == 24)
+            surfacesSeenHalfway = seenSurfaceRefs.size();
+    }
+    for (auto& surfaceRef : heldSurfaceRefs)
+        IOSurfaceDecrementUseCount(surfaceRef.get());
+
+    EXPECT_EQ(seenSurfaceRefs.size(), surfacesSeenHalfway);
+    EXPECT_LE(seenSurfaceRefs.size(), expectedDisplayBufferPoolSize + TestedGraphicsContextGLCocoa::maxSpareDrawingBuffers);
+}
+
+static void displayFramesKeepingBuffersInUse(TestedGraphicsContextGLCocoa& context, int frames, Vector<RetainPtr<IOSurfaceRef>>& heldSurfaceRefs)
+{
+    for (int i = 0; i < frames; ++i) {
+        EXPECT_TRUE(changeContextContents(context, i));
+        context.prepareForDisplay();
+        auto* surface = context.displayBufferSurface();
+        ASSERT_NE(surface, nullptr);
+        RetainPtr surfaceRef = surface->surface();
+        IOSurfaceIncrementUseCount(surfaceRef.get());
+        heldSurfaceRefs.append(WTF::move(surfaceRef));
+    }
+}
+
+static void releaseBuffers(Vector<RetainPtr<IOSurfaceRef>>& heldSurfaceRefs)
+{
+    for (auto& surfaceRef : heldSurfaceRefs)
+        IOSurfaceDecrementUseCount(surfaceRef.get());
+    heldSurfaceRefs.clear();
+}
+
+TEST_P(AnyContextAttributeTest, IdleSpareDrawingBuffersAreReleased)
+{
+    auto context = createTestContext({ 20, 20 });
+    ASSERT_NE(context, nullptr);
+    Vector<RetainPtr<IOSurfaceRef>> heldSurfaceRefs;
+    displayFramesKeepingBuffersInUse(*context, 6, heldSurfaceRefs);
+    auto sparesInUse = context->spareDrawingBufferCount();
+    EXPECT_GT(sparesInUse, 1u);
+    EXPECT_TRUE(context->hasSpareDrawingBuffersInUse());
+    EXPECT_EQ(context->volatileSpareDrawingBufferCount(), 0u);
+
+    // The spares are the earliest frames' buffers. Release the first one, and keep the others in use.
+    IOSurfaceDecrementUseCount(heldSurfaceRefs[0].get());
+    context->releaseIdleSpareDrawingBuffers();
+    EXPECT_EQ(context->spareDrawingBufferCount(), 1u);
+    EXPECT_EQ(context->volatileSpareDrawingBufferCount(), 1u);
+    EXPECT_FALSE(context->hasSpareDrawingBuffersInUse());
+
+    heldSurfaceRefs.removeAt(0);
+    releaseBuffers(heldSurfaceRefs);
+}
+
+TEST_P(AnyContextAttributeTest, SpareDrawingBuffersAreDroppedOnReshapeAndColorSpaceChange)
+{
+    auto context = createTestContext({ 20, 20 });
+    ASSERT_NE(context, nullptr);
+    Vector<RetainPtr<IOSurfaceRef>> heldSurfaceRefs;
+    displayFramesKeepingBuffersInUse(*context, 6, heldSurfaceRefs);
+    EXPECT_GT(context->spareDrawingBufferCount(), 0u);
+    context->reshape(30, 30);
+    EXPECT_EQ(context->spareDrawingBufferCount(), 0u);
+    releaseBuffers(heldSurfaceRefs);
+
+    displayFramesKeepingBuffersInUse(*context, 6, heldSurfaceRefs);
+    EXPECT_GT(context->spareDrawingBufferCount(), 0u);
+    context->setDrawingBufferColorSpace(ColorSpace::DisplayP3());
+    EXPECT_EQ(context->spareDrawingBufferCount(), 0u);
+    releaseBuffers(heldSurfaceRefs);
 }
 
 // Test that drawing to GraphicsContextGL and marking the display buffer in use does not leak big
@@ -652,9 +763,10 @@ TEST_P(AnyContextAttributeTest, UnrecycledDisplayBuffersNoLeaks)
     // memory (130mb) stays resident, presumably by intention of IOKit. The test would originally leak
     // 2.7gb so the intended bug would be detected with 150mb error range.
     size_t footprintError = 150 * 1024 * 1024;
-    size_t footprintChange = 0;
+    constexpr IntSize size { 2048, 2048 };
+    size_t footprintChange = TestedGraphicsContextGLCocoa::maxSpareDrawingBuffers * size.width() * size.height() * 4;
 
-    auto context = createTestContext({ 2048, 2048 });
+    auto context = createTestContext(size);
     ASSERT_NE(context, nullptr);
 
     WTF::releaseFastMallocFreeMemory();

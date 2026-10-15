@@ -4,7 +4,7 @@ targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simula
 install-name: /System/Library/Frameworks/IOSurface.framework/IOSurface
 exports:
 -       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
-        symbols: [_IOSurfaceAlignProperty, _IOSurfaceCopyValue, _IOSurfaceCreate, _IOSurfaceCreateMachPort, _IOSurfaceGetAllocSize,
+        symbols: [_IOSurfaceAlignProperty, _IOSurfaceCopyValue, _IOSurfaceCreate, _IOSurfaceCreateMachPort, _IOSurfaceDecrementUseCount, _IOSurfaceGetAllocSize,
                 _IOSurfaceGetBaseAddress, _IOSurfaceGetBytesPerElementOfPlane, _IOSurfaceGetBytesPerRow, _IOSurfaceGetHeight,
                 _IOSurfaceGetHeightOfPlane, _IOSurfaceGetID, _IOSurfaceGetPixelFormat, _IOSurfaceGetPlaneCount, _IOSurfaceGetPropertyAlignment,
                 _IOSurfaceGetPropertyMaximum, _IOSurfaceGetSeed, _IOSurfaceGetWidth, _IOSurfaceGetWidthOfPlane, _IOSurfaceIncrementUseCount,

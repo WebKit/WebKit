@@ -80,6 +80,7 @@ extern const CFStringRef kIOSurfaceContentHeadroom;
 size_t IOSurfaceAlignProperty(CFStringRef property, size_t value);
 IOSurfaceRef IOSurfaceCreate(CFDictionaryRef properties);
 mach_port_t IOSurfaceCreateMachPort(IOSurfaceRef buffer);
+void IOSurfaceDecrementUseCount(IOSurfaceRef buffer);
 size_t IOSurfaceGetAllocSize(IOSurfaceRef buffer);
 void *IOSurfaceGetBaseAddress(IOSurfaceRef buffer);
 size_t IOSurfaceGetBytesPerRow(IOSurfaceRef buffer);

@@ -371,10 +371,9 @@ RetainPtr<IOSurfaceRef> GraphicsContextGLCocoa::copySurfaceBuffer(SurfaceBuffer 
         return nullptr;
 
     auto& destination = copyBuffer();
-    if (destination && destination.isInUse()) {
-        EGL_DestroySurface(m_displayObj, destination.pbuffer());
-        destination = { };
-    }
+    updateSpareDrawingBuffers();
+    if (destination.isInUse())
+        retireDrawingBuffer(destination);
     if (!destination) {
         destination = createDrawingBuffer();
         if (!destination)
@@ -474,6 +473,9 @@ IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
 
 IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
 {
+    if (auto spare = takeSpareDrawingBuffer())
+        return createPbuffer(WTF::move(spare));
+
     const auto size = getInternalFramebufferSize();
     IOSurface::IOSurfaceOptions options;
 #if HAVE(IOSURFACE_ALPHA_CHANNEL_MODE)
@@ -486,6 +488,12 @@ IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
     if (m_resourceOwner)
         surface->setOwnershipIdentity(m_resourceOwner);
 
+    return createPbuffer(WTF::move(surface));
+}
+
+IOSurfacePbuffer GraphicsContextGLCocoa::createPbuffer(std::unique_ptr<IOSurface>&& surface)
+{
+    const auto size = getInternalFramebufferSize();
     const bool usingAlpha = contextAttributes().alpha;
     const EGLint surfaceAttributes[] = {
         EGL_WIDTH, size.width(),
@@ -508,13 +516,16 @@ IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
 bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
+    updateSpareDrawingBuffers();
     if (auto& buffer = drawingBuffer())
         EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER);
 
     m_currentDrawingBufferIndex++;
     auto& buffer = drawingBuffer();
 
-    if (buffer && (buffer.isInUse() || m_failNextDrawingBufferAllocation)) {
+    if (buffer.isInUse())
+        retireDrawingBuffer(buffer);
+    else if (buffer && m_failNextDrawingBufferAllocation) {
         EGL_DestroySurface(m_displayObj, buffer.pbuffer());
         buffer = { };
     }
@@ -547,6 +558,59 @@ void GraphicsContextGLCocoa::freeDrawingBuffers()
             buffer = { };
         }
     }
+    m_spareDrawingBuffers.clear();
+}
+
+void GraphicsContextGLCocoa::retireDrawingBuffer(IOSurfacePbuffer& buffer)
+{
+    EGL_DestroySurface(m_displayObj, buffer.pbuffer());
+    auto surface = buffer.takeSurface();
+    buffer = { };
+    if (!surface)
+        return;
+    m_spareDrawingBuffers.append({ WTF::move(surface) });
+    if (m_spareDrawingBuffers.size() > maxSpareDrawingBuffers)
+        m_spareDrawingBuffers.removeAt(0);
+}
+
+std::unique_ptr<IOSurface> GraphicsContextGLCocoa::takeSpareDrawingBuffer()
+{
+    auto index = m_spareDrawingBuffers.findIf([](auto& spare) {
+        return spare.isAvailable;
+    });
+    if (index == notFound)
+        return nullptr;
+    auto surface = WTF::move(m_spareDrawingBuffers[index].surface);
+    m_spareDrawingBuffers.removeAt(index);
+    ASSERT(surface->size() == getInternalFramebufferSize());
+    // The contents do not matter, so neither does whether they were purged.
+    surface->setVolatile(false);
+    return surface;
+}
+
+void GraphicsContextGLCocoa::updateSpareDrawingBuffers()
+{
+    for (auto& spare : m_spareDrawingBuffers) {
+        if (spare.isAvailable || spare.surface->isInUse())
+            continue;
+        spare.isAvailable = true;
+        spare.surface->setVolatile(true);
+    }
+}
+
+bool GraphicsContextGLCocoa::hasSpareDrawingBuffersInUse() const
+{
+    return m_spareDrawingBuffers.containsIf([](auto& spare) {
+        return !spare.isAvailable;
+    });
+}
+
+void GraphicsContextGLCocoa::releaseIdleSpareDrawingBuffers()
+{
+    updateSpareDrawingBuffers();
+    m_spareDrawingBuffers.removeAllMatching([](auto& spare) {
+        return !spare.isAvailable;
+    });
 }
 
 bool GraphicsContextGLANGLE::makeCurrent(GCGLDisplay display, GCGLContext context)

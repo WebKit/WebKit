@@ -52,6 +52,8 @@ public:
     // cross-process use, and copy-on-write would not work.
     bool isInUse() const;
 
+    std::unique_ptr<IOSurface> takeSurface() { return WTF::move(m_surface); }
+
 private:
     std::unique_ptr<IOSurface> m_surface;
 };

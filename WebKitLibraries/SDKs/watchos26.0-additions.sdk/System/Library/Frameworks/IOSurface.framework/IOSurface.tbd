@@ -5,7 +5,7 @@ install-name: /System/Library/Frameworks/IOSurface.framework/IOSurface
 exports:
 -       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
         symbols: [_IOSurfaceAcceleratorCreate, _IOSurfaceAcceleratorGetRunLoopSource, _IOSurfaceAcceleratorTransformSurface,
-                _IOSurfaceAlignProperty, _IOSurfaceCopyValue, _IOSurfaceCreate, _IOSurfaceCreateMachPort, _IOSurfaceGetAllocSize,
+                _IOSurfaceAlignProperty, _IOSurfaceCopyValue, _IOSurfaceCreate, _IOSurfaceCreateMachPort, _IOSurfaceDecrementUseCount, _IOSurfaceGetAllocSize,
                 _IOSurfaceGetBaseAddress, _IOSurfaceGetBytesPerElementOfPlane, _IOSurfaceGetBytesPerRow, _IOSurfaceGetHeight,
                 _IOSurfaceGetHeightOfPlane, _IOSurfaceGetID, _IOSurfaceGetPixelFormat, _IOSurfaceGetPlaneCount, _IOSurfaceGetPropertyAlignment,
                 _IOSurfaceGetPropertyMaximum, _IOSurfaceGetSeed, _IOSurfaceGetWidth, _IOSurfaceGetWidthOfPlane, _IOSurfaceIncrementUseCount,

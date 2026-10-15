@@ -33,6 +33,7 @@
 #include <array>
 #include <memory>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(WEBXR)
 #include <WebCore/PlatformXR.h>
@@ -115,6 +116,9 @@ public:
     // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
     void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);
 
+    bool hasSpareDrawingBuffersInUse() const;
+    void releaseIdleSpareDrawingBuffers();
+
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
 
@@ -131,7 +135,11 @@ protected:
     IOSurfacePbuffer& LEGACY_NODELETE surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     IOSurfacePbuffer createDrawingBuffer();
+    IOSurfacePbuffer createPbuffer(std::unique_ptr<IOSurface>&&);
     void freeDrawingBuffers();
+    void retireDrawingBuffer(IOSurfacePbuffer&);
+    std::unique_ptr<IOSurface> takeSpareDrawingBuffer();
+    void updateSpareDrawingBuffers();
 
     // Inserts new fence that will invoke `signal` from a background thread when completed.
     // If not possible, calls the `signal`.
@@ -160,6 +168,15 @@ protected:
     static constexpr size_t maxReusedDrawingBuffers { 3 };
     size_t m_currentDrawingBufferIndex { 0 };
     std::array<IOSurfacePbuffer, maxReusedDrawingBuffers> m_drawingBuffers;
+
+    struct SpareDrawingBuffer {
+        std::unique_ptr<IOSurface> surface;
+        bool isAvailable { false };
+    };
+    Vector<SpareDrawingBuffer> m_spareDrawingBuffers;
+    // On iOS CoreAnimation keeps a displayed buffer for about 4 frames; one more for headroom.
+    static constexpr size_t maxSpareDrawingBuffers { 5 };
+
     friend class GraphicsContextGLCVCocoa;
 };
 
