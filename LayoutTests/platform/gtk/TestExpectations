@@ -1208,7 +1208,7 @@ webkit.org/b/322631 [ Release ] media/media-controller-playbackrate.html [ Pass 
 webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html [ Pass Crash ]
 webkit.org/b/322635 [ Debug ] fast/mediastream/play-newly-added-audio-track.html [ Pass Timeout ]
 webkit.org/b/322636 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Pass Timeout ]
-webkit.org/b/322638 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
+webkit.org/b/322638 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
 webkit.org/b/322640 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html?buttonType=MIDDLE&button=1&buttons=4 [ Pass Failure ]
 webkit.org/b/322643 [ Debug ] imported/w3c/web-platform-tests/webrtc/receiver-track-live.https.html [ Pass Failure ]
 webkit.org/b/322644 [ Debug ] inspector/dom-debugger/event-interval-breakpoints.html [ Pass Timeout ]
@@ -1287,6 +1287,8 @@ webkit.org/b/325943 webgl/default-framebuffer-resize-applied-at-use.html [ Failu
 webkit.org/b/327256 editing/editability/contenteditable-false-in-editable-view.html [ Pass Timeout ]
 webkit.org/b/327258 fast/css-grid-layout/grid-auto-columns-rows-get-set.html [ Failure Pass ]
 webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-new-document-navigation-iframe.html [ Failure Pass ]
+
+webkit.org/b/327677 media/video-page-visibility-restriction.html [ Pass Timeout ]
 
 # Remaining failures after unskipping directories in platform/glib.
 fast/layoutformattingcontext/table-fixed-width-colspans.html [ Failure ]
