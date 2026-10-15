@@ -74,6 +74,9 @@ JSObjectRef toJSError(JSContextRef, const String& callingAPIName, const String& 
 /// Serializes large data to JSON chunks to avoid StringBuilder overflow.
 void serializeToMultipleJSONStrings(Ref<JSON::Object>, NOESCAPE const Function<void(String&&)>&);
 
+/// Returns the maximum number of bytes that can be set or retrieved in a single storage call. Returns a lower limit for tests to avoid a timeout.
+size_t storageMaximumBytesPerCall(bool inTestingMode);
+
 enum class UseNullValue : bool { No, Yes };
 
 template<typename T>

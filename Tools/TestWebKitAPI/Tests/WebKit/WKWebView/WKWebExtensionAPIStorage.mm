@@ -898,13 +898,34 @@ TEST(WKWebExtensionAPIStorage, StorageFromSubframe)
 TEST(WKWebExtensionAPIStorage, SetExceedsMaximumDataSize)
 {
     auto *backgroundScript = Util::constructScript(@[
-        // 5120 keys × 200 KB ≈ 1GB of data, exceeding the 950 MB per-call limit.
-        @"const value = 'x'.repeat(200 * 1024)",
-        @"const data = {}",
-        @"for (let i = 0; i < 5120; i++)",
-        @"    data[`key${i}`] = value",
+        // 3 keys × 400 KB ≈ 1.2 MB of data, exceeding the 1 MB per-call limit used in testing mode.
+        @"const value = 'x'.repeat(400 * 1024)",
 
-        @"browser.test.assertThrows(() => browser.storage.local.set(data), /exceeded maximum data size allowed per call/i)",
+        @"browser.test.assertThrows(() => browser.storage.local.set({ key0: value, key1: value, key2: value }), /exceeded maximum data size allowed per call/i)",
+
+        // Data under the limit can still be set.
+        @"await browser.test.assertSafeResolve(() => browser.storage.local.set({ key0: value, key1: value }))",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(unlimitedStorageManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIStorage, GetExceedsMaximumDataSize)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        // Each call stays under the 1 MB per-call limit used in testing mode, but getting all 3 keys at once exceeds it.
+        @"const value = 'x'.repeat(400 * 1024)",
+
+        @"await browser.test.assertSafeResolve(() => browser.storage.local.set({ key0: value, key1: value }))",
+        @"await browser.test.assertSafeResolve(() => browser.storage.local.set({ key2: value }))",
+
+        @"await browser.test.assertRejects(browser.storage.local.get(), /exceeded maximum data size allowed per call/i)",
+
+        // Getting fewer keys stays under the limit.
+        @"const result = await browser.test.assertSafeResolve(() => browser.storage.local.get([ 'key0', 'key1' ]))",
+        @"browser.test.assertEq(Object.keys(result).length, 2)",
 
         @"browser.test.notifyPass()",
     ]);

@@ -48,6 +48,7 @@ static constexpr size_t webExtensionStorageAreaLocalQuotaBytes = 10 * 1024 * 102
 static constexpr size_t webExtensionStorageAreaSessionQuotaBytes = 10 * 1024 * 1024;
 static constexpr size_t webExtensionStorageAreaSyncQuotaBytes = 100 * 1024;
 static constexpr size_t webExtensionStorageAreaMaximumBytesPerCall = 995 * 1024 * 1024;
+static constexpr size_t webExtensionStorageAreaMaximumBytesPerCallForTesting = 1024 * 1024;
 
 static constexpr size_t webExtensionStorageAreaSyncQuotaBytesPerItem = 8 * 1024;
 

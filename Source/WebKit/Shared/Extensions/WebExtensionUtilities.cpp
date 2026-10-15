@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebExtensionUtilities.h"
 #include "JSWebExtensionWrapper.h"
+#include "WebExtensionConstants.h"
 #include <wtf/Borrow.h>
 #include <wtf/text/MakeString.h>
 
@@ -137,6 +138,11 @@ void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, NOESCAPE const
 
     if (currentJSON->size())
         chunkCallback(currentJSON->toJSONString());
+}
+
+size_t storageMaximumBytesPerCall(bool inTestingMode)
+{
+    return inTestingMode ? webExtensionStorageAreaMaximumBytesPerCallForTesting : webExtensionStorageAreaMaximumBytesPerCall;
 }
 
 static inline String lowercaseFirst(const String& input)

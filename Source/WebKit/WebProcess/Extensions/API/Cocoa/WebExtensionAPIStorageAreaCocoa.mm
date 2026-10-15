@@ -197,7 +197,7 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
         return;
     }
 
-    if (storageSizeOf(serializedData) > webExtensionStorageAreaMaximumBytesPerCall) {
+    if (storageSizeOf(serializedData) > storageMaximumBytesPerCall(extensionContext().inTestingMode())) {
         *outExceptionString = toErrorString(nullString(), nullString(), @"it exceeded maximum data size allowed per call").createNSString().autorelease();
         return;
     }
