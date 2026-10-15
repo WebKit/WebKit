@@ -12123,7 +12123,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
 
             Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), get(bytecode.m_iterable));
-            Node* isIteratedArray = addToGraph(IsCellWithType, OpInfo(ArrayType), iteratedObject);
+            Node* isIteratedArray = addToGraph(IsCellWithType, OpInfo(JSTypeRange { ArrayType, ArrayType }), iteratedObject);
 
             BranchData* arrayBranchData = m_graph.m_branchData.add();
             arrayBranchData->taken = BranchTarget(fastBlock);
@@ -12330,7 +12330,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             failedBlock = allocateUntargetableBlock();
 
             Node* isKnownIterFunction = addToGraph(CompareEqPtr, OpInfo(frozenMapEntriesFunction), get(bytecode.m_symbolIterator));
-            Node* isMap = addToGraph(IsCellWithType, OpInfo(JSMapType), get(bytecode.m_iterable));
+            Node* isMap = addToGraph(IsCellWithType, OpInfo(JSTypeRange { JSMapType, JSMapType }), get(bytecode.m_iterable));
 
             BranchData* branchData = m_graph.m_branchData.add();
             branchData->taken = BranchTarget(fastMapBlock);
@@ -12402,7 +12402,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             failedBlock = allocateUntargetableBlock();
 
             Node* isKnownIterFunction = addToGraph(CompareEqPtr, OpInfo(frozenSetValuesFunction), get(bytecode.m_symbolIterator));
-            Node* isSet = addToGraph(IsCellWithType, OpInfo(JSSetType), get(bytecode.m_iterable));
+            Node* isSet = addToGraph(IsCellWithType, OpInfo(JSTypeRange { JSSetType, JSSetType }), get(bytecode.m_iterable));
 
             BranchData* branchData = m_graph.m_branchData.add();
             branchData->taken = BranchTarget(fastSetBlock);
@@ -12471,7 +12471,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             failedBlock = allocateUntargetableBlock();
 
             Node* isKnownIterFunction = addToGraph(CompareEqPtr, OpInfo(frozenStringSymbolIteratorFunction), symbolIterator);
-            Node* isString = addToGraph(IsCellWithType, OpInfo(StringType), get(bytecode.m_iterable));
+            Node* isString = addToGraph(IsCellWithType, OpInfo(JSTypeRange { StringType, StringType }), get(bytecode.m_iterable));
 
             BranchData* branchData = m_graph.m_branchData.add();
             branchData->taken = BranchTarget(fastStringBlock);
@@ -13416,7 +13416,7 @@ void ByteCodeParser::handleAsyncIteratorOpen(const JSInstruction* currentInstruc
             addToGraph(CheckJSCast, OpInfo(JSAsyncGenerator::info()), get(bytecode.m_iterable));
             addToGraph(CheckIsConstant, OpInfo(primordialIter), symbolAsyncIterator);
         } else {
-            Node* isAsyncGenerator = addToGraph(IsCellWithType, OpInfo(JSAsyncGeneratorType), get(bytecode.m_iterable));
+            Node* isAsyncGenerator = addToGraph(IsCellWithType, OpInfo(JSTypeRange { JSAsyncGeneratorType, JSAsyncGeneratorType }), get(bytecode.m_iterable));
             Node* isprimordialIter = addToGraph(CompareEqPtr, OpInfo(primordialIter), symbolAsyncIterator);
             Node* eligible = addToGraph(ArithBitAnd, isAsyncGenerator, isprimordialIter);
             emitExitOK();

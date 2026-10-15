@@ -58,6 +58,7 @@ struct OpInfo {
     explicit OpInfo(ECMAMode ecmaMode) : m_value(ecmaMode.value()) { }
     explicit OpInfo(JSTypeRange range)
         : m_value(range.rawValue()) { }
+    explicit OpInfo(JSType) = delete;
     explicit OpInfo(PrivateFieldPutKind putKind) : m_value(putKind.value()) { }
     template<typename EnumType>
     explicit OpInfo(OptionSet<EnumType> optionSet) : m_value(optionSet.toRaw()) { }
