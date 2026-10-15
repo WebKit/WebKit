@@ -310,28 +310,29 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return Exception { ExceptionCode::TypeError, makeString("Data is too small "_s, data.byteLength(), " / "_s, layout.allocationSize) };
 
     auto colorSpace = videoFramePickColorSpace(init.colorSpace, pixelFormat);
+    auto rotation = parseVideoFrameRotation(init.rotation);
     RefPtr<VideoFrame> videoFrame;
     switch (pixelFormat) {
     case VideoPixelFormat::NV12:
-        videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::RGBA:
-        videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::RGBX:
-        videoFrame = VideoFrame::createRGBX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createRGBX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::BGRA:
-        videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::BGRX:
-        videoFrame = VideoFrame::createBGRX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createBGRX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::I420:
-        videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], rotation, WTF::move(colorSpace));
         break;
     case VideoPixelFormat::I420A:
-        videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], layout.computedLayouts[3], WTF::move(colorSpace));
+        videoFrame = VideoFrame::createI420A(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], layout.computedLayouts[3], rotation, WTF::move(colorSpace));
         break;
     default:
         return Exception { ExceptionCode::NotSupportedError, "VideoPixelFormat is not supported"_s };
@@ -341,6 +342,14 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return Exception { ExceptionCode::TypeError, "Unable to create internal resource from data"_s };
 
     transferList.detachAll(context.vm());
+
+    // The default display size is the visible size, in the orientation of the rotated frame.
+    if (is90DegreeRotation(rotation)) {
+        if (!init.displayWidth && !init.displayHeight) {
+            init.displayWidth = parsedRect.height;
+            init.displayHeight = parsedRect.width;
+        }
+    }
 
     return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTF::move(init));
 }
@@ -428,11 +437,15 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     result->m_data.codedWidth = videoFrame->m_data.codedWidth;
     result->m_data.codedHeight = videoFrame->m_data.codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { static_cast<double>(videoFrame->m_data.visibleLeft), static_cast<double>(videoFrame->m_data.visibleTop), static_cast<double>(videoFrame->m_data.visibleWidth), static_cast<double>(videoFrame->m_data.visibleHeight) }, videoFrame->m_data.displayWidth, videoFrame->m_data.displayHeight);
+    auto baseRotation = context.settingsValues().webCodecsVideoFrameRotationEnabled ? videoFrame->m_data.internalFrame->rotation() : VideoFrameRotation::None;
+    auto finalRotation = context.settingsValues().webCodecsVideoFrameRotationEnabled ? combineVideoFrameRotations(*protect(result->m_data.internalFrame), init.rotation) : VideoFrameRotation::None;
+    initializeVisibleRectAndDisplaySize(result.get(), init, baseRotation, finalRotation, DOMRectInit { static_cast<double>(videoFrame->m_data.visibleLeft), static_cast<double>(videoFrame->m_data.visibleTop), static_cast<double>(videoFrame->m_data.visibleWidth), static_cast<double>(videoFrame->m_data.visibleHeight) }, videoFrame->m_data.displayWidth, videoFrame->m_data.displayHeight);
 
     result->m_data.duration = init.duration ? init.duration : videoFrame->m_data.duration;
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
+    if (baseRotation != finalRotation)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, shouldCloneIfUpdating);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
@@ -455,11 +468,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     result->m_data.codedWidth = codedWidth;
     result->m_data.codedHeight = codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, result->m_data.codedWidth, result->m_data.codedHeight);
+    auto baseRotation = context.settingsValues().webCodecsVideoFrameRotationEnabled ? result->m_data.internalFrame->rotation() : VideoFrameRotation::None;
+    auto finalRotation = context.settingsValues().webCodecsVideoFrameRotationEnabled ? combineVideoFrameRotations(*protect(result->m_data.internalFrame), init.rotation) : VideoFrameRotation::None;
+    // We use a base rotation of none as we use coded width & height to compute the display size.
+    initializeVisibleRectAndDisplaySize(result.get(), init, VideoFrameRotation::None, finalRotation, DOMRectInit { 0, 0 , static_cast<double>(codedWidth), static_cast<double>(codedHeight) }, codedWidth, codedHeight);
 
     result->m_data.duration = init.duration;
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
+    if (finalRotation != baseRotation)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, shouldCloneIfUpdating);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
@@ -488,11 +506,15 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
     result->m_data.codedHeight = codedHeight;
 
     auto displaySize = defaultDisplaySize.value_or(IntSize { static_cast<int>(codedWidth), static_cast<int>(codedHeight) });
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, displaySize.width(), displaySize.height());
+    auto baseRotation = VideoFrameRotation::None;
+    auto finalRotation = parseVideoFrameRotation(init.rotation);
+    initializeVisibleRectAndDisplaySize(result.get(), init, baseRotation, finalRotation, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, displaySize.width(), displaySize.height());
 
     result->m_data.duration = init.duration;
     if (init.timestamp)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), VideoFrame::ShouldClone::No);
+    if (finalRotation != baseRotation)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateRotation(finalRotation, VideoFrame::ShouldClone::No);
     if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
         result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, VideoFrame::ShouldClone::No);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
@@ -604,6 +626,11 @@ DOMRectReadOnly* WebCodecsVideoFrame::visibleRect() const
         m_visibleRect = DOMRectReadOnly::create(m_data.visibleLeft, m_data.visibleTop, m_data.visibleWidth, m_data.visibleHeight);
 
     return m_visibleRect.get();
+}
+
+double WebCodecsVideoFrame::rotation() const
+{
+    return m_data.internalFrame ? static_cast<double>(m_data.internalFrame->rotation()) : 0;
 }
 
 void WebCodecsVideoFrame::setDisplaySize(size_t width, size_t height)

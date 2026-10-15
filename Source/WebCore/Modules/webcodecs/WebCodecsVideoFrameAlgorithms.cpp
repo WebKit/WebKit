@@ -35,6 +35,34 @@
 
 namespace WebCore {
 
+static int makeSureRotationIsBetween0And360(int rotation)
+{
+    return ((rotation % 360) + 360) % 360;
+}
+
+// https://w3c.github.io/webcodecs/#videoframe-parse-rotation
+VideoFrameRotation parseVideoFrameRotation(double rotation)
+{
+    ASSERT(std::isfinite(rotation));
+
+    int rotation360 = static_cast<int>(std::floor(std::fmod(rotation, 360)));
+    if (rotation360 < 0)
+        rotation360 += 360;
+    return static_cast<VideoFrameRotation>(makeSureRotationIsBetween0And360(((rotation360 + 45) / 90) * 90));
+}
+
+// https://w3c.github.io/webcodecs/#videoframe-add-rotations
+VideoFrame::Rotation addVideoFrameRotations(VideoFrame::Rotation baseRotation, bool baseFlip, VideoFrame::Rotation rotation)
+{
+    int combinedRotation = static_cast<int>(baseRotation) + (baseFlip ? - static_cast<int>(rotation) : static_cast<int>(rotation));
+    return static_cast<VideoFrame::Rotation>(makeSureRotationIsBetween0And360(combinedRotation));
+}
+
+VideoFrame::Rotation combineVideoFrameRotations(const VideoFrame& frame, double initRotation)
+{
+    return addVideoFrameRotations(frame.rotation(), frame.isMirrored(), parseVideoFrameRotation(initRotation));
+}
+
 // https://w3c.github.io/webcodecs/#valid-videoframebufferinit
 bool isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit& init)
 {
@@ -302,16 +330,26 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-visible-rect-and-display-size
-void initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::Init& init, const DOMRectInit& defaultVisibleRect, size_t defaultDisplayWidth, size_t defaultDisplayHeight)
+void LEGACY_NODELETE initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::Init& init, VideoFrame::Rotation baseRotation, VideoFrame::Rotation finalRotation, const DOMRectInit& defaultVisibleRect, size_t defaultDisplayWidth, size_t defaultDisplayHeight)
 {
     auto visibleRect = init.visibleRect.value_or(defaultVisibleRect);
     frame.setVisibleRect(visibleRect);
     if (init.displayWidth && init.displayHeight)
         frame.setDisplaySize(*init.displayWidth, *init.displayHeight);
     else {
+        if (is90DegreeRotation(baseRotation))
+            std::swap(defaultDisplayWidth, defaultDisplayHeight);
+
         auto widthScale = defaultDisplayWidth / defaultVisibleRect.width;
         auto heightScale = defaultDisplayHeight / defaultVisibleRect.height;
-        frame.setDisplaySize(visibleRect.width * widthScale, visibleRect.height * heightScale);
+
+        auto displayWidth = std::round(visibleRect.width * widthScale);
+        auto displayHeight = std::round(visibleRect.height * heightScale);
+
+        if (is90DegreeRotation(finalRotation))
+            std::swap(displayWidth, displayHeight);
+
+        frame.setDisplaySize(displayWidth, displayHeight);
     }
 }
 

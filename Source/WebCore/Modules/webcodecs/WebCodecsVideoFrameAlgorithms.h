@@ -31,6 +31,10 @@
 
 namespace WebCore {
 
+VideoFrameRotation parseVideoFrameRotation(double);
+VideoFrame::Rotation addVideoFrameRotations(VideoFrame::Rotation baseRotation, bool baseFlip, VideoFrame::Rotation rotation);
+VideoFrame::Rotation combineVideoFrameRotations(const VideoFrame&, double);
+
 bool LEGACY_NODELETE isValidVideoFrameBufferInit(const WebCodecsVideoFrame::BufferInit&);
 bool LEGACY_NODELETE verifyRectOffsetAlignment(VideoPixelFormat, const DOMRectInit&);
 ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit&, const std::optional<DOMRectInit>&, size_t codedWidth, size_t codedHeight, VideoPixelFormat);
@@ -48,7 +52,7 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
 
 ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVideoFrame&, const WebCodecsVideoFrame::CopyToOptions&);
 
-void LEGACY_NODELETE initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
+void LEGACY_NODELETE initializeVisibleRectAndDisplaySize(WebCodecsVideoFrame&, const WebCodecsVideoFrame::Init&, VideoFrame::Rotation baseRotation, VideoFrame::Rotation finalRotation, const DOMRectInit&, size_t defaultDisplayWidth, size_t defaultDisplayHeight);
 
 VideoColorSpaceInit LEGACY_NODELETE videoFramePickColorSpace(const std::optional<VideoColorSpaceInit>&, VideoPixelFormat);
 

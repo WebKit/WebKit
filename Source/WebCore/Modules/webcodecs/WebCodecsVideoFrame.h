@@ -73,6 +73,7 @@ public:
         WebCodecsAlphaOption alpha { WebCodecsAlphaOption::Keep };
 
         std::optional<DOMRectInit> visibleRect;
+        double rotation { 0 };
 
         std::optional<size_t> displayWidth;
         std::optional<size_t> displayHeight;
@@ -87,6 +88,7 @@ public:
         std::optional<Vector<PlaneLayout>> layout { };
 
         std::optional<DOMRectInit> visibleRect { };
+        double rotation { 0 };
 
         std::optional<size_t> displayWidth { };
         std::optional<size_t> displayHeight { };
@@ -114,6 +116,8 @@ public:
     std::optional<uint64_t> duration() const { return m_data.duration; }
     int64_t timestamp() const { return m_data.timestamp; }
     VideoColorSpace& colorSpace() const;
+
+    double rotation() const;
 
     struct CopyToOptions {
         std::optional<DOMRectInit> rect;

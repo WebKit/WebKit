@@ -68,6 +68,16 @@ Ref<VideoFrame> VideoFrame::updateTimestamp(MediaTime mediaTime, ShouldClone sho
     return updatedVideoFrame;
 }
 
+Ref<VideoFrame> VideoFrame::updateRotation(Rotation rotation, ShouldClone shouldCloneIfUpdating)
+{
+    if (m_rotation == rotation)
+        return *this;
+
+    Ref updatedVideoFrame = shouldCloneIfUpdating == ShouldClone::Yes ? clone() : Ref { *this };
+    const_cast<Rotation&>(updatedVideoFrame->m_rotation) = rotation;
+    return updatedVideoFrame;
+}
+
 Ref<VideoFrame> VideoFrame::updateShouldIgnoreAlpha(bool shouldIgnore, ShouldClone shouldCloneIfUpdating)
 {
     if (shouldIgnoreAlpha() == shouldIgnore)
@@ -101,43 +111,43 @@ RefPtr<VideoFrame> createFromPixelBuffer(Ref<PixelBuffer>&&, PlatformVideoColorS
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, Rotation, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.
     return nullptr;

@@ -249,7 +249,14 @@ static void copyToGstBufferPlane(std::span<uint8_t> destination, const GstVideoI
     }
 }
 
-RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, PlatformVideoColorSpace&& colorSpace)
+static VideoFrameGStreamer::CreateOptions createOptionsWithRotation(size_t width, size_t height, const GstVideoInfo& info, VideoFrame::Rotation rotation)
+{
+    VideoFrameGStreamer::CreateOptions options { { static_cast<int>(width), static_cast<int>(height) }, { { info } } };
+    options.rotation = rotation;
+    return options;
+}
+
+RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from NV12 raw buffer");
@@ -269,7 +276,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
 
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace));
+    return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithRotation(width, height, info, rotation), WTF::move(colorSpace));
 }
 
 #define CREATE_RGBA_FRAME(format)                                                                   \
@@ -281,16 +288,16 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);      \
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));                                           \
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));            \
-    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace))
+    return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithRotation(width, height, info, rotation), WTF::move(colorSpace))
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from RGBA raw buffer");
     CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_RGBA);
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from BGRA raw buffer");
@@ -298,14 +305,14 @@ RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t 
 }
 
 // The fourth byte of RGBX and BGRX is padding: it is kept as is but ignored, frames are always opaque.
-RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from RGBX raw buffer");
     CREATE_RGBA_FRAME(GST_VIDEO_FORMAT_RGBx);
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from BGRX raw buffer");
@@ -314,7 +321,7 @@ RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t 
 
 #undef CREATE_RGBA_FRAME
 
-RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     ensureVideoFrameDebugCategoryInitialized();
     GST_TRACE("Creating VideoFrame from I420 raw buffer");
@@ -339,10 +346,10 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
 
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace));
+    return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithRotation(width, height, info, rotation), WTF::move(colorSpace));
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, const ComputedPlaneLayout& planeA, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, const ComputedPlaneLayout& planeA, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     GstVideoInfo info;
     gst_video_info_set_format(&info, GST_VIDEO_FORMAT_A420, width, height);
@@ -364,7 +371,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
 
     GRefPtr caps = adoptGRef(gst_video_info_to_caps(&info));
     GRefPtr sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return VideoFrameGStreamer::create(WTF::move(sample), { { static_cast<int>(width), static_cast<int>(height) }, { { info } } }, WTF::move(colorSpace));
+    return VideoFrameGStreamer::create(WTF::move(sample), createOptionsWithRotation(width, height, info, rotation), WTF::move(colorSpace));
 }
 
 static inline void setBufferFields(GstBuffer* buffer, const MediaTime& presentationTime, double frameRate)

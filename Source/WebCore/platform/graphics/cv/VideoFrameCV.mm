@@ -104,7 +104,7 @@ static vImage_Buffer makeVImageBuffer8888(CVPixelBufferRef buffer)
         CVPixelBufferGetBytesPerRow(buffer));
 }
 
-RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
 
@@ -139,7 +139,7 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
         copyToCVPixelBufferPlane(pixelBuffer.get(), 1, data, height / 2, planeUV.sourceWidthBytes);
     }
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
 static RetainPtr<CVPixelBufferRef> createRGBABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
@@ -170,22 +170,22 @@ static RetainPtr<CVPixelBufferRef> createRGBABuffer(std::span<const uint8_t> spa
     return pixelBuffer;
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
 }
 
 static RetainPtr<CVPixelBufferRef> createBGRABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
@@ -214,25 +214,25 @@ static RetainPtr<CVPixelBufferRef> createBGRABuffer(std::span<const uint8_t> spa
     return pixelBuffer;
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
     RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
     // Plane offsets must step over the full coded plane heights (layout*.sourceHeight), not the
@@ -250,7 +250,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(width);
@@ -258,12 +258,13 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
     UNUSED_PARAM(layoutY);
     UNUSED_PARAM(layoutU);
     UNUSED_PARAM(layoutV);
+    UNUSED_PARAM(rotation);
     UNUSED_PARAM(colorSpace);
     return nullptr;
 #endif
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, const ComputedPlaneLayout& layoutA, Rotation rotation, PlatformVideoColorSpace&& colorSpace)
 {
 #if USE(LIBWEBRTC)
     size_t offsetLayoutU = layoutY.sourceLeftBytes + layoutY.sourceWidthBytes * layoutY.sourceHeight;
@@ -282,7 +283,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+    return VideoFrameCV::create({ }, false, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(width);
@@ -291,6 +292,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
     UNUSED_PARAM(layoutU);
     UNUSED_PARAM(layoutV);
     UNUSED_PARAM(layoutA);
+    UNUSED_PARAM(rotation);
     UNUSED_PARAM(colorSpace);
     return nullptr;
 #endif
