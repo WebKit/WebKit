@@ -301,6 +301,9 @@ void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const UR
         }).get()];
         return;
     }
+#else
+    UNUSED_PARAM(url);
+    UNUSED_PARAM(referrerURL);
 #endif
 
     RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::requestPermissionForURL falls back to allow.");
