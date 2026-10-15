@@ -499,23 +499,21 @@ WI.HARBuilder = class HARBuilder
 
     static networkPriorityFromHARPriority(priority)
     {
-        if (priority) {
-            switch (priority.toLowerCase()) {
-            case "verylow":
-            case "lowest": // Gecko based HAR tooling equivalent
-                return WI.Resource.NetworkPriority.Verylow;
-            case "low":
-                return WI.Resource.NetworkPriority.Low;
-            case "medium":
-            case "normal":
-                return WI.Resource.NetworkPriority.Medium;
-            case "high":
-                return WI.Resource.NetworkPriority.High;
-            case "veryhigh":
-            case "highest": // Gecko based HAR tooling equivalent
-                return WI.Resource.NetworkPriority.Veryhigh;
-            }
-
+        switch (priority?.toLowerCase()) {
+        case "verylow":
+        case "lowest": // Gecko based HAR tooling equivalent
+            return WI.Resource.NetworkPriority.Verylow;
+        case "low":
+            return WI.Resource.NetworkPriority.Low;
+        case "medium":
+        case "normal":
+            return WI.Resource.NetworkPriority.Medium;
+        case "high":
+            return WI.Resource.NetworkPriority.High;
+        case "veryhigh":
+        case "highest": // Gecko based HAR tooling equivalent
+            return WI.Resource.NetworkPriority.Veryhigh;
+        default:
             console.warn("Unknown HAR priority value", priority);
         }
 
