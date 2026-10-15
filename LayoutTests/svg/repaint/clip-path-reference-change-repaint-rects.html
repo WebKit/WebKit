@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 400px; font-family: Ahem; font-size: 100px">
+<clipPath id="narrow" clipPathUnits="objectBoundingBox"><rect width="0.4" height="1"/></clipPath>
+<clipPath id="wide" clipPathUnits="objectBoundingBox"><rect width="1" height="1"/></clipPath>
+<g id="group" clip-path="url(#narrow)"><rect x="50" y="50" width="100" height="100" fill="green"/></g>
+<rect id="shape" x="250" y="50" width="100" height="100" fill="green" clip-path="url(#narrow)"/>
+<text id="label" x="50" y="330" fill="green" clip-path="url(#narrow)">X</text>
+</svg>
+<script>
+    // The group and the rect switch to a wider clip and repaint the area it reveals. The text repaints its whole bounding box either way, a clip never shrinks its repaint rect.
+    function repaintTest() {
+        for (const element of [group, shape, label])
+            element.setAttribute("clip-path", "url(#wide)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

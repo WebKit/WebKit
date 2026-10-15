@@ -253,8 +253,18 @@ void RenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::C
             return false;
         };
 
-        if (visualOverflowStyleChanged(protect(style()), *oldStyle))
+        if (visualOverflowStyleChanged(protect(style()), *oldStyle)) {
             m_cachedVisualOverflowRect = std::nullopt;
+            // The old area was repainted before the change. Unless layout follows, repaint the new one too.
+            CheckedPtr layer = this->layer();
+            if (layer) {
+                layer->setSelfAndDescendantsNeedPositionUpdate();
+                layer->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
+            }
+            // A layer position update never repaints an SVG container itself, only its contents.
+            if ((!layer || layer->shouldSkipRepaintAfterLayoutForSVG()) && !needsLayout())
+                repaint();
+        }
     }
 
     // SVG masks are painted independent of the target renderers visibility.

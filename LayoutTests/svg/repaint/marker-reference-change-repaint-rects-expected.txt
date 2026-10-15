@@ -1,0 +1,6 @@
+(repaint rects
+  (rect 45 70 135 60)
+  (rect 45 70 135 60)
+  (rect 245 70 135 60)
+)
+

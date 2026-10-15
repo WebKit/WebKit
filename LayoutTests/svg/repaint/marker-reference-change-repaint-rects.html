@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 400px; font-family: Ahem; font-size: 100px">
+<marker id="small" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" refX="5" refY="5"><rect width="10" height="10" fill="green"/></marker>
+<marker id="large" markerUnits="userSpaceOnUse" markerWidth="60" markerHeight="60" refX="30" refY="30"><rect width="60" height="60" fill="green"/></marker>
+<g id="group" marker-end="url(#small)"><path d="M 50 100 L 150 100" stroke="green" stroke-width="10"/></g>
+<path id="shape" d="M 250 100 L 350 100" stroke="green" stroke-width="10" marker-end="url(#small)"/>
+</svg>
+<script>
+    // The path in the group and the path on the right switch to a larger end marker, and repaint the area it covers.
+    function repaintTest() {
+        for (const element of [group, shape])
+            element.setAttribute("marker-end", "url(#large)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>

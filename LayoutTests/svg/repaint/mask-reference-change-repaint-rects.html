@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+</head>
+<body>
+<svg style="position: absolute; top: 0px; left: 0px; width: 500px; height: 400px; font-family: Ahem; font-size: 100px">
+<mask id="narrow" x="0" y="0" width="0.4" height="1"><rect width="500" height="400" fill="white"/></mask>
+<mask id="wide" x="0" y="0" width="1" height="1"><rect width="500" height="400" fill="white"/></mask>
+<g id="group" mask="url(#narrow)"><rect x="50" y="50" width="100" height="100" fill="green"/></g>
+<rect id="shape" x="250" y="50" width="100" height="100" fill="green" mask="url(#narrow)"/>
+<text id="label" x="50" y="330" fill="green" mask="url(#narrow)">X</text>
+</svg>
+<script>
+    // The group and the rect switch to a wider mask and repaint the area it reveals. The text repaints its whole bounding box either way, a mask never shrinks its repaint rect.
+    function repaintTest() {
+        for (const element of [group, shape, label])
+            element.setAttribute("mask", "url(#wide)");
+    }
+    onload = runRepaintTest;
+</script>
+</body>
+</html>
