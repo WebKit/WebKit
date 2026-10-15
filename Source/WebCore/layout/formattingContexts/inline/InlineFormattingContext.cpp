@@ -566,6 +566,14 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         return false;
     }
 
+    // The cached line was built in intrinsic width mode, which keeps the summed text widths. It stays cached, so this happens once.
+    if (!lineContent.hasRemeasuredTextRuns) {
+        auto widthChange = Line::remeasureTextRunsWithKerningOrLigatures(lineContent.runs, *this);
+        lineContent.contentGeometry.logicalWidth += widthChange;
+        lineContent.contentGeometry.logicalRightIncludingNegativeMargin += widthChange;
+        lineContent.hasRemeasuredTextRuns = true;
+    }
+
     auto logicalTopLeft = InlineLayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
     lineContent.lineGeometry.logicalTopLeft = logicalTopLeft;
     lineContent.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;

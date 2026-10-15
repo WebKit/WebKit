@@ -95,7 +95,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     } else {
         CheckedRef style = inlineTextBox.style();
         auto directionalOverride = isOverride(style->unicodeBidi());
-        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
+        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride, !inlineTextBox.canUseSimpleFontCodePath() };
         if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
             run.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
         // FIXME: consider moving this to TextRun ctor

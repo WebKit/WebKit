@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kerning is applied across an inline box boundary with no change in formatting (Latin kerning)</title>
+<link rel="help" href="https://drafts.csswg.org/css-text/#boundary-shaping">
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-kerning-prop">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+@font-face {
+  font-family: kern-test;
+  src: url(../../css-fonts/resources/NotoSansJP-Regular.subset.otf);
+}
+.test {
+  font: 64px kern-test; /* this font kerns the pair "Ye" */
+  font-kerning: normal;
+  margin: 0;
+  white-space: nowrap;
+}
+.nokern {
+  font-kerning: none;
+}
+</style>
+</head>
+<body>
+<div class="test" id="split">Y<span>e</span>Ye</div>
+<div class="test" id="joined">YeYe</div>
+<div class="test nokern" id="unkerned">YeYe</div>
+<script>
+function charRects(element) {
+  const rects = [];
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  let node;
+  while ((node = walker.nextNode())) {
+    for (let i = 0; i < node.length; i++) {
+      range.setStart(node, i);
+      range.setEnd(node, i + 1);
+      rects.push(range.getBoundingClientRect());
+    }
+  }
+  return rects;
+}
+
+function charLefts(element) {
+  return charRects(element).map(rect => rect.left);
+}
+
+promise_test(async () => {
+  await document.fonts.ready;
+  const joined = charLefts(document.getElementById("joined"));
+  const unkerned = charLefts(document.getElementById("unkerned"));
+  assert_greater_than(unkerned[1] - joined[1], 1, "kerning should move the second character");
+}, "The test font applies kerning to the pair \"Ye\"");
+
+promise_test(async () => {
+  await document.fonts.ready;
+  // Compare the content after the kerned pair: a position inside one text box may be reported rounded to the pixel.
+  const split = charRects(document.getElementById("split"));
+  const joined = charRects(document.getElementById("joined"));
+  assert_equals(split.length, joined.length);
+  for (let i = 2; i < joined.length; i++)
+    assert_approx_equals(split[i].left, joined[i].left, 0.5, `position of character ${i}`);
+  assert_approx_equals(split[split.length - 1].right, joined[joined.length - 1].right, 0.5, "end of the line");
+}, "Kerning is applied across an inline box boundary with no change in formatting");
+</script>
+</body>
+</html>
