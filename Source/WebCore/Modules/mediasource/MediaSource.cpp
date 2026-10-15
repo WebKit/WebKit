@@ -228,6 +228,10 @@ MediaSource::~MediaSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+#if !RELEASE_LOG_DISABLED
+    m_logger->removeObserver(*this);
+#endif
+
     m_detachable = false;
 
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
