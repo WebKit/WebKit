@@ -1287,3 +1287,11 @@ webkit.org/b/325943 webgl/default-framebuffer-resize-applied-at-use.html [ Failu
 webkit.org/b/327256 editing/editability/contenteditable-false-in-editable-view.html [ Pass Timeout ]
 webkit.org/b/327258 fast/css-grid-layout/grid-auto-columns-rows-get-set.html [ Failure Pass ]
 webkit.org/b/327259 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pagereveal/order-in-new-document-navigation-iframe.html [ Failure Pass ]
+
+# Remaining failures after unskipping directories in platform/glib.
+fast/layoutformattingcontext/table-fixed-width-colspans.html [ Failure ]
+fast/layoutformattingcontext/table-flex-width-border-collapse.html [ Failure ]
+fast/layoutformattingcontext/table-flex-width-colspans.html [ Failure ]
+fast/layoutformattingcontext/table-simple-with-fixed-widht-and-inline-content.html [ Failure ]
+fast/layoutformattingcontext/table-with-column-spanner-first-row.html [ Failure ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-document.html [ Pass Failure ]

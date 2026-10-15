@@ -1278,3 +1278,15 @@ webkit.org/b/326562 [ x86_64 ] css3/viewport-percentage-lengths/css3-viewport-pe
 webkit.org/b/326564 [ arm64 ] fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ Pass Timeout ]
 webkit.org/b/326565 [ arm64 ] fast/pdf-plugin-destruction-dispatches-print-event-crash.html [ Pass Timeout ]
 webkit.org/b/326566 [ arm64 ] fast/backgrounds/angled-background-repeating-gradient-rendering-vertical.html [ Pass Timeout ]
+
+# Remaining failures after unskipping directories in platform/glib.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-active.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-button-after-option.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-button-after-span.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-disabled-option.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-font-inheriting.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-hover.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-switching-invalidation.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-open-invalidation.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-images.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-second-child-button.html [ ImageOnlyFailure ]
