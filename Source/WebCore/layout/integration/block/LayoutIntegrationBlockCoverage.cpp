@@ -71,7 +71,7 @@ enum class BlockAvoidanceReason : uint8_t {
     ContentHasUnsupportedRenderer,
     ContentHasFormattingContextRoot,
     ContentHasLayer,
-    ContentHasRelativeOrStickyPositioning,
+    ContentHasStickyPositioning,
     ContentHasBlockInInline,
     ContentHasAtomicInlineLevelBox,
     ContentHasUnsupportedInlineBox,
@@ -252,10 +252,11 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasBlockInInline;
     if (blockContainer->createsNewFormattingContext() && !isSupportedBlockFormattingContextRoot(*blockContainer))
         return BlockAvoidanceReason::ContentHasFormattingContextRoot;
-    // Its layer is positioned once layout is done, and BlockLayout::updateRenderers updates its transform; relative and sticky positioning
-    // also offset the box.
-    if (blockContainer->isInFlowPositioned())
-        return BlockAvoidanceReason::ContentHasRelativeOrStickyPositioning;
+    // Its layer is positioned once layout is done, which also offsets a relatively positioned box without moving anything else (CSS 2.2 §9.4.3),
+    // and BlockLayout::updateRenderers updates its transform.
+    // FIXME: Sticky positioning.
+    if (blockContainer->isStickilyPositioned())
+        return BlockAvoidanceReason::ContentHasStickyPositioning;
 
     CheckedRef style = blockContainer->style();
     // Lengths, percentages and calc(); not the sizing keywords or calc-size().
