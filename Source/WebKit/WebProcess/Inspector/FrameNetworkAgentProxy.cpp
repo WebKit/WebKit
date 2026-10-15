@@ -37,7 +37,6 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
-#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -353,11 +352,6 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     if (!page)
         return;
 
-    auto mutableMetrics = networkLoadMetrics;
-
-    if (resourceData && networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector && !networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority.has_value())
-        mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = WebCore::DefaultResourceLoadPriority::forResourceType(resourceData->requestResourceType());
-
     // The Network domain's sourceMapURL is CSS-only by design; scripts flow through
     // the Debugger domain. Mirror ResourceUtilities::sourceMapURLForResource: prefer the
     // SourceMap/X-SourceMap response header (captured at response time), then fall back to
@@ -384,6 +378,9 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // Isolation, which is what keeps it out of the way.
     ASSERT(isMainRunLoop());
     auto completeMetrics = networkLoadMetrics.isComplete() ? networkLoadMetrics : platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(resourceID);
+
+    if (resourceData && completeMetrics.additionalNetworkLoadMetricsForWebInspector && !completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority.has_value())
+        completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = WebCore::DefaultResourceLoadPriority::forResourceType(resourceData->requestResourceType());
 
     // responseEnd is when the load actually completed; now() would charge the bookkeeping above to
     // the resource's load time.

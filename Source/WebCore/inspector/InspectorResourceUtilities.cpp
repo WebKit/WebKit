@@ -31,6 +31,7 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
+#include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
@@ -74,7 +75,7 @@ namespace Inspector {
 namespace Protocol {
 namespace Network {
 
-LoadPriority NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
+static LoadPriority LEGACY_NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
 {
     switch (priority) {
     case WebCore::ResourceLoadPriority::VeryLow:
@@ -92,7 +93,7 @@ LoadPriority NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
     return LoadPriority::Verylow;
 }
 
-LoadPriority NODELETE toProtocol(WebCore::NetworkLoadPriority priority)
+static LoadPriority LEGACY_NODELETE toProtocol(WebCore::NetworkLoadPriority priority)
 {
     switch (priority) {
     case WebCore::NetworkLoadPriority::Verylow:
@@ -568,23 +569,6 @@ Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeade
     return headersValue;
 }
 
-static Inspector::Protocol::Network::Metrics::Priority LEGACY_NODELETE toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::Priority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::Priority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::Priority::High;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::Priority::Medium;
-}
-
 Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
@@ -600,7 +584,7 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
         else
             metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
         if (!additionalMetrics->connectionIdentifier.isNull())
