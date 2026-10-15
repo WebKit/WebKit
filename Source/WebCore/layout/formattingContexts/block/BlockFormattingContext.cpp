@@ -221,6 +221,12 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
 {
     auto borderAndPaddingBlockSize = geometry.verticalBorderAndPadding();
     auto blockSize = BlockFormattingUtils::borderBoxBlockSize(box, borderAndPaddingBlockSize, intrinsicContentBlockSize, containingBlockState.contentBoxBlockSize, root().writingMode());
+    if (auto aspectRatioBlockSize = BlockFormattingUtils::aspectRatioBorderBoxBlockSize(box, geometry.borderBoxWidth(), geometry.horizontalBorderAndPadding(), borderAndPaddingBlockSize, root().writingMode())) {
+        blockSize = *aspectRatioBlockSize;
+        // The automatic minimum block size of a box that is not a scroll container is its content's (css-sizing-4 §5.1).
+        if (box.effectiveOverflowBlockDirection() == Overflow::Visible)
+            blockSize = std::max(blockSize, borderAndPaddingBlockSize + intrinsicContentBlockSize);
+    }
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
 }
 
