@@ -58,7 +58,7 @@ public:
 
     virtual WebCore::Frame* frameForId(const Protocol::Network::FrameId&) = 0;
     WEBCORE_EXPORT virtual Protocol::Network::FrameId frameId(const WebCore::Frame*) = 0;
-    virtual Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) = 0;
+    WEBCORE_EXPORT Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*);
     virtual RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) = 0;
 
     // Assigning an ID is what makes frameForId() / assertFrame() able to resolve a frame, so a
@@ -72,7 +72,7 @@ public:
     // but the reverse map (identifier-to-frame) would retain stale entries without this call.
     virtual Protocol::Network::FrameId takeFrame(const WebCore::Frame&) = 0;
     // Called when a document loader is detached; returns the protocol ID that was assigned.
-    virtual Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&) = 0;
+    Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&);
 
     // Protocol ID helpers for Site Isolation. These produce type-prefixed strings that
     // encode the ProcessIdentifier, so both UIProcess and WebContent process can
@@ -174,6 +174,12 @@ public:
             WebCore::FrameIdentifier(*frameValue)
         };
     }
+
+private:
+    // FIXME: DocumentLoader should use a smart pointer key (CheckedPtr or RefPtr).
+    // It currently holds raw DocumentLoader* which prevents making loaderId/takeLoader
+    // parameters const. See webkit.org/b/310162 for follow-up.
+    HashMap<WebCore::DocumentLoader*, String> m_loaderToIdentifier;
 };
 
 // Default implementation using IdentifiersFactory sequential counters.
@@ -188,19 +194,13 @@ public:
     // IdentifierRegistry
     WebCore::Frame* frameForId(const Protocol::Network::FrameId&) final;
     WEBCORE_EXPORT Protocol::Network::FrameId frameId(const WebCore::Frame*) final;
-    Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) final;
     RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
     Protocol::Network::FrameId takeFrame(const WebCore::Frame&) final;
-    Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&) final;
 
 private:
     LegacyIdentifierRegistry();
     WeakHashMap<WebCore::Frame, String> m_frameToIdentifier;
     MemoryCompactRobinHoodHashMap<String, WeakPtr<WebCore::Frame>> m_identifierToFrame;
-    // FIXME: DocumentLoader should use a smart pointer key (CheckedPtr or RefPtr).
-    // It currently holds raw DocumentLoader* which prevents making loaderId/takeLoader
-    // parameters const. See webkit.org/b/310162 for follow-up.
-    HashMap<WebCore::DocumentLoader*, String> m_loaderToIdentifier;
 };
 
 // Deterministic implementation for Site Isolation. Produces type-prefixed IDs
@@ -215,19 +215,14 @@ public:
     // IdentifierRegistry
     WebCore::Frame* frameForId(const Protocol::Network::FrameId&) final;
     WEBCORE_EXPORT Protocol::Network::FrameId frameId(const WebCore::Frame*) final;
-    Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) final;
     RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
     Protocol::Network::FrameId takeFrame(const WebCore::Frame&) final;
-    Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&) final;
 
 private:
     BackendIdentifierRegistry();
 
     // Reverse map for frameForId() lookups. Populated by frameId().
     MemoryCompactRobinHoodHashMap<String, WeakPtr<WebCore::Frame>> m_identifierToFrame;
-    // FIXME: DocumentLoader should use a smart pointer key (CheckedPtr or RefPtr).
-    // See webkit.org/b/310162 for follow-up.
-    HashMap<WebCore::DocumentLoader*, String> m_loaderToIdentifier;
 };
 
 } // namespace Inspector
