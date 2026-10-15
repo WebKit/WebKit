@@ -3,7 +3,6 @@
 ####################
 # Tests that crash #
 ####################
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash ]
 
 #######################
 # Tests that time out #
@@ -12,12 +11,12 @@ http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Timeout ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html [ Timeout ]
 http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-requests.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
-platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
 
 ########################
 # Tests that Text fail #
 ########################
+webkit.org/b/326717 imported/w3c/web-platform-tests/fetch/http-cache/status.any.sharedworker.html [ Pass Failure ]
 fast/forms/ios/focus-input-via-button-no-scaling.html [ Failure ]
 fast/viewport/ios/viewport-fit-auto.html [ Pass Failure ]
 http/tests/fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state.html [ Failure ]

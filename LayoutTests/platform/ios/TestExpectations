@@ -6219,7 +6219,7 @@ webkit.org/b/162645 imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fra
 
 webkit.org/b/162524 [ Release ] http/tests/cache/disk-cache/disk-cache-redirect.html [ Pass Timeout ]
 
-webkit.org/b/163362 platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
+webkit.org/b/163362 platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure Timeout ]
 
 webkit.org/b/164960 http/tests/security/module-correct-mime-types.html [ Slow ]
 
@@ -8290,7 +8290,7 @@ fast/snapshot/positioned-abs-relative-body.html [ Skip ]
 
 webkit.org/b/295432 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-clip-rect-zoom.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/295559 [ Release ] media/video-unmuted-after-play-holds-sleep-assertion.html [ Pass Failure ]
+webkit.org/b/295559 media/video-unmuted-after-play-holds-sleep-assertion.html [ Pass Failure ]
 
 webkit.org/b/295604 http/tests/blink/sendbeacon/beacon-cookie.html [ Pass Failure ]
 
@@ -8980,7 +8980,7 @@ fast/forms/ios/click-should-not-suppress-misspelling.html [ Failure Timeout ] # 
 fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html [ Failure ] # webkit.org/b/318249
 fast/forms/ios/insert-autofill-suggestion.html [ Failure ] # webkit.org/b/318249
 fast/forms/ios/suppress-software-keyboard-while-focusing-input.html [ Failure ] # webkit.org/b/318249
-editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Timeout ] # webkit.org/b/318250
+webkit.org/b/326103 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 editing/selection/ios/update-selection-after-iframe-scroll.html [ Timeout ] # webkit.org/b/318250
 fast/events/ios/autocorrect-with-apostrophe.html [ Timeout ] # webkit.org/b/318251
 fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html [ Pass Failure Timeout ] # webkit.org/b/318251
@@ -10291,9 +10291,12 @@ webkit.org/b/325197 css3/filters/backdrop/backdrop-filter-fractional-translation
 
 webkit.org/b/246372 [ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Pass Failure ]
 
-webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash ]
-webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash ]
-webkit.org/b/322847 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ Crash ]
+webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash ]
+webkit.org/b/326104 [ Release ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ ImageOnlyFailure ]
+webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash ]
+webkit.org/b/326104 [ Release ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ ImageOnlyFailure ]
+webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ Crash ]
+webkit.org/b/326104 [ Release ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ ImageOnlyFailure ]
 
 webkit.org/b/321524 [ Debug ] imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ Pass Crash ]
 
@@ -10379,3 +10382,18 @@ fast/text-extraction/debug-text-extraction-role-suppression.html [ Pass Timeout 
 fast/visual-viewport/ios/interactive-widget/overlays-content-orientation-rotations.html  [ Pass Failure ]
 
 webkit.org/b/327433 http/wpt/background-fetch/background-fetch-click.window.html [ Pass Failure ]
+
+
+webkit.org/b/326550 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Pass Failure ]
+
+webkit.org/b/326709 [ Debug ] http/tests/site-isolation/fullscreen-resize-event.html [ Pass Failure ]
+
+webkit.org/b/326710 [ Debug ] media/adopt-node-crash.html [ Pass Crash ]
+
+webkit.org/b/326712 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html [ Pass Timeout ]
+
+webkit.org/b/326713 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/cross-shadow-boundary-selection-remove-splittext-crash.html [ Pass Timeout ]
+
+webkit.org/b/326714 [ Debug ] imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html [ Pass Timeout ]
+
+webkit.org/b/326715 [ Debug ] compositing/contents-format/deep-color-backing-store.html [ Pass Crash ]
