@@ -55,6 +55,10 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
+
 namespace WebCore {
 
 OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
@@ -65,6 +69,16 @@ OutlinePainter::OutlinePainter(const PaintInfo& paintInfo)
 static float deviceScaleFactor(const RenderElement& renderer)
 {
     return protect(renderer.document())->deviceScaleFactor();
+}
+
+static Color outlineColor(const RenderElement& renderer, const Style::ComputedStyle& style)
+{
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    return AXCustomColorModeController::adjustedOutlineColor(renderer, style);
+#else
+    UNUSED_PARAM(renderer);
+    return style.visitedDependentOutlineColorApplyingColorFilter();
+#endif
 }
 
 void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRect& paintRect) const
@@ -111,7 +125,7 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
 
     auto bleedAvoidance = BleedAvoidance::ShrinkBackground;
     auto appliedClipAlready = false;
-    auto edges = borderEdgesForOutline(styleToUse, *borderStyle, deviceScaleFactor(renderer));
+    auto edges = borderEdgesForOutline(styleToUse, outlineColor(renderer, styleToUse), *borderStyle, deviceScaleFactor(renderer));
     auto haveAllSolidEdges = BorderPainter::decorationHasAllSolidEdges(edges);
 
     BorderPainter { renderer, m_paintInfo }.paintSides(outlineShape, {
@@ -226,7 +240,7 @@ void OutlinePainter::paintOutlineWithLineRects(const RenderBoxModelObject& rende
     }
 
     auto& graphicsContext = m_paintInfo.context();
-    auto outlineColor = styleToUse->visitedDependentOutlineColorApplyingColorFilter();
+    auto outlineColor = WebCore::outlineColor(renderer, styleToUse);
     auto useTransparencyLayer = !outlineColor.isOpaque();
     if (useTransparencyLayer) {
         graphicsContext.beginTransparencyLayer(outlineColor.alphaAsFloat());

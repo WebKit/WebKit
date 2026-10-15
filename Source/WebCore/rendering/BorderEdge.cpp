@@ -67,9 +67,8 @@ BorderEdges borderEdges(const UsedStyle& usedStyle, float deviceScaleFactor, Rec
     };
 }
 
-BorderEdges borderEdgesForOutline(const Style::ComputedStyle& style, BorderStyle borderStyle, float deviceScaleFactor)
+BorderEdges borderEdgesForOutline(const Style::ComputedStyle& style, const Color& color, BorderStyle borderStyle, float deviceScaleFactor)
 {
-    auto color = style.visitedDependentOutlineColorApplyingColorFilter();
     auto isTransparent = color.isValid() && !color.isVisible();
     auto size = Style::evaluate<float>(style.usedOutlineWidth(), style.usedZoomForLength(), deviceScaleFactor);
     return {
