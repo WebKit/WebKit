@@ -287,7 +287,7 @@ std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<Lexer
     if (!sourceElements || !validEnding)
         return makeUnexpected(hasError() ? m_errorMessage : "Parser error"_s);
 
-    if (!m_lexer->isReparsingFunction() && m_seenPrivateNameUseInNonReparsingFunctionMode) {
+    if (!m_lexer->isReparsingFunction() && m_seenPrivateNameUse) {
         String errorMessage;
         scope->forEachUsedVariable([&] (UniquedStringImpl* impl) {
             if (!isPrivateFieldName(impl))
@@ -301,6 +301,15 @@ std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<Lexer
         });
         if (!errorMessage.isNull())
             return makeUnexpected(errorMessage);
+    }
+
+    UniquedStringImplPtrSet usedPrivateNames;
+    if (m_seenPrivateNameUse) {
+        scope->forEachUsedVariable([&](UniquedStringImpl* impl) {
+            if (isPrivateFieldName(impl))
+                usedPrivateNames.add(impl);
+            return IterationStatus::Continue;
+        });
     }
 
     // It's essential to finalize the hoisting before computing captured variables.
@@ -350,7 +359,7 @@ std::expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<Lexer
     }
 #endif // ASSERT_ENABLED
 
-    return ParseInnerResult { parameters, sourceElements, scope->takeFunctionDeclarations(), scope->takeDeclaredVariables(), scope->takeLexicalEnvironment(), features };
+    return ParseInnerResult { parameters, sourceElements, scope->takeFunctionDeclarations(), scope->takeDeclaredVariables(), scope->takeLexicalEnvironment(), features, usedPrivateNames.size() };
 }
 
 template <typename LexerType>
@@ -4509,7 +4518,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
             const Identifier* ident = m_token.m_data.ident;
             ASSERT(ident);
             currentScope()->usePrivateName(*ident);
-            m_seenPrivateNameUseInNonReparsingFunctionMode = true;
+            m_seenPrivateNameUse = true;
             next();
             semanticFailIfTrue(m_token.m_type != INTOKEN || previousOperator >= INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
             current = context.createPrivateIdentifierNode(location, *ident);
@@ -5654,7 +5663,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                     if (currentScope()->evalContextType() == EvalContextType::InstanceFieldEvalContext) [[unlikely]]
                         semanticFailIfFalse(currentScope()->hasPrivateName(*ident), "Cannot reference undeclared private field '", ident->impl(), "'");
                     currentScope()->usePrivateName(*ident);
-                    m_seenPrivateNameUseInNonReparsingFunctionMode = true;
+                    m_seenPrivateNameUse = true;
                     m_parserState.lastPrivateName = ident;
                     type = DotType::PrivateMember;
                     m_token.m_type = IDENT;
