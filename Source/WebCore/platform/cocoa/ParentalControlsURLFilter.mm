@@ -275,6 +275,7 @@ void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const UR
     if (!wcrBrowserEngineClient)
         return completionHandler(true);
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if ([wcrBrowserEngineClient respondsToSelector:@selector(askToBrowseURL:referrerURL:withCompletion:)]) {
         [wcrBrowserEngineClient askToBrowseURL:url.createNSURL().get() referrerURL:referrerURL.createNSURL().get() withCompletion:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WCRAskToBrowseResponse result, NSError *) mutable {
             switch (result) {
@@ -300,6 +301,7 @@ void ParentalControlsURLFilter::requestPermissionForURL(const URL& url, const UR
         }).get()];
         return;
     }
+#endif
 
     RELEASE_LOG(ContentFiltering, "ParentalControlsURLFilter::requestPermissionForURL falls back to allow.");
     return completionHandler(true);
