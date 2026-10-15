@@ -24,36 +24,36 @@
  */
 
 #include "config.h"
-#include "ProofOfPossessionRequest.h"
+#include "PhoneNumberPossessionRequest.h"
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #include "Exception.h"
 
 namespace WebCore {
 
 // Upper bounds that keep the IPC payload small. Callers apply any stricter rules before making a request.
-static constexpr unsigned maximumSubjectHintLength = 15;
-static constexpr size_t maximumIdentifierHintLength = 64;
-static constexpr size_t maximumIssuerPublicKeyLength = 1024;
+static constexpr unsigned maximumPhoneNumberSuffixHintLength = 15;
+static constexpr size_t maximumPNPISuffixHintLength = 64;
+static constexpr size_t maximumCarrierPubKeyLength = 1024;
 
-std::optional<Exception> validateProofOfPossessionRequest(const ProofOfPossessionRequest& request)
+std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberPossessionRequest& request)
 {
     if (!request.challenge.byteLength())
         return Exception { ExceptionCode::TypeError, "The challenge must not be empty."_s };
 
-    if (!request.subjectHint.isNull() && (request.subjectHint.isEmpty() || request.subjectHint.length() > maximumSubjectHintLength))
-        return Exception { ExceptionCode::TypeError, "The subject hint must contain between 1 and 15 characters."_s };
+    if (!request.phoneNumberSuffixHint.isNull() && (request.phoneNumberSuffixHint.isEmpty() || request.phoneNumberSuffixHint.length() > maximumPhoneNumberSuffixHintLength))
+        return Exception { ExceptionCode::TypeError, "The phoneNumberSuffixHint must contain between 1 and 15 characters."_s };
 
-    if (request.identifierHint && (!request.identifierHint->byteLength() || request.identifierHint->byteLength() > maximumIdentifierHintLength))
-        return Exception { ExceptionCode::TypeError, "The identifier hint must be between 1 and 64 bytes long."_s };
+    if (request.pnpiSuffixHint && (!request.pnpiSuffixHint->byteLength() || request.pnpiSuffixHint->byteLength() > maximumPNPISuffixHintLength))
+        return Exception { ExceptionCode::TypeError, "The pnpiSuffixHint must be between 1 and 64 bytes long."_s };
 
-    if (request.knownIssuerPublicKey && (!request.knownIssuerPublicKey->byteLength() || request.knownIssuerPublicKey->byteLength() > maximumIssuerPublicKeyLength))
-        return Exception { ExceptionCode::TypeError, "The known issuer public key must be between 1 and 1024 bytes long."_s };
+    if (request.knownCarrierPubKey && (!request.knownCarrierPubKey->byteLength() || request.knownCarrierPubKey->byteLength() > maximumCarrierPubKeyLength))
+        return Exception { ExceptionCode::TypeError, "The knownCarrierPubKey must be between 1 and 1024 bytes long."_s };
 
     return std::nullopt;
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

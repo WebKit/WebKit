@@ -85,7 +85,7 @@ class MediaSessionManagerInterface;
 class ModelPlayerProvider;
 class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
-class ProofOfPossessionCoordinatorClient;
+class PhoneNumberPossessionCoordinatorClient;
 class PluginInfoProvider;
 class DocumentSyncClient;
 class ProgressTrackerClient;
@@ -174,8 +174,8 @@ public:
     std::unique_ptr<AuthenticatorCoordinatorClient> authenticatorCoordinatorClient;
 #endif
 
-#if ENABLE(PROOF_OF_POSSESSION)
-    std::unique_ptr<ProofOfPossessionCoordinatorClient> proofOfPossessionCoordinatorClient;
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    std::unique_ptr<PhoneNumberPossessionCoordinatorClient> phoneNumberPossessionCoordinatorClient;
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

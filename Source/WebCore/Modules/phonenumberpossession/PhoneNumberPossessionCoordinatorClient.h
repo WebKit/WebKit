@@ -25,15 +25,33 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+
+#include <WebCore/ExceptionData.h>
+#include <WebCore/PhoneNumberPossessionResponse.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-enum class ProofOfPossessionResponseScope : uint8_t {
-    Identifier,
-    IdentifierAndSubject
+class LocalFrame;
+struct PhoneNumberPossessionRequest;
+
+class PhoneNumberPossessionCoordinatorClient {
+    WTF_MAKE_TZONE_ALLOCATED(PhoneNumberPossessionCoordinatorClient);
+    WTF_MAKE_NONCOPYABLE(PhoneNumberPossessionCoordinatorClient);
+public:
+    using RequestCompletionHandler = CompletionHandler<void(std::expected<PhoneNumberPossessionResponse, ExceptionData>&&)>;
+
+    PhoneNumberPossessionCoordinatorClient() = default;
+    virtual ~PhoneNumberPossessionCoordinatorClient() = default;
+
+    virtual void requestPhoneNumberPossession(const LocalFrame&, const PhoneNumberPossessionRequest&, RequestCompletionHandler&&) = 0;
+    virtual void isAvailable(CompletionHandler<void(bool)>&&) = 0;
+    virtual void cancel(CompletionHandler<void()>&&) = 0;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

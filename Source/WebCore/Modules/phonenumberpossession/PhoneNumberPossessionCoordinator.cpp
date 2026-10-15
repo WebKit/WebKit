@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "ProofOfPossessionCoordinator.h"
+#include "PhoneNumberPossessionCoordinator.h"
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #include "AbortSignal.h"
 #include "DocumentPage.h"
@@ -44,41 +44,41 @@
 #include "LocalFrame.h"
 #include "MediationRequirement.h"
 #include "Page.h"
-#include "ProofOfPossessionCoordinatorClient.h"
-#include "ProofOfPossessionCredential.h"
-#include "ProofOfPossessionRequest.h"
-#include "ProofOfPossessionResponse.h"
+#include "PhoneNumberPossessionCoordinatorClient.h"
+#include "PhoneNumberPossessionCredential.h"
+#include "PhoneNumberPossessionRequest.h"
+#include "PhoneNumberPossessionResponse.h"
 #include "SecurityOrigin.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ProofOfPossessionCoordinatorClient);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ProofOfPossessionCoordinator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PhoneNumberPossessionCoordinatorClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PhoneNumberPossessionCoordinator);
 
-ProofOfPossessionCoordinator::ProofOfPossessionCoordinator(Page& page, std::unique_ptr<ProofOfPossessionCoordinatorClient>&& client)
+PhoneNumberPossessionCoordinator::PhoneNumberPossessionCoordinator(Page& page, std::unique_ptr<PhoneNumberPossessionCoordinatorClient>&& client)
     : m_page(page)
     , m_client(WTF::move(client))
 {
 }
 
-ProofOfPossessionCoordinator::~ProofOfPossessionCoordinator() = default;
+PhoneNumberPossessionCoordinator::~PhoneNumberPossessionCoordinator() = default;
 
-void ProofOfPossessionCoordinator::ref() const
+void PhoneNumberPossessionCoordinator::ref() const
 {
     m_page->ref();
 }
 
-void ProofOfPossessionCoordinator::deref() const
+void PhoneNumberPossessionCoordinator::deref() const
 {
     m_page->deref();
 }
 
-void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& document, ProofOfPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
+void PhoneNumberPossessionCoordinator::discoverFromExternalSource(const Document& document, PhoneNumberPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
 {
     if (mediation == MediationRequirement::Conditional) {
-        promise.reject(Exception { ExceptionCode::TypeError, "Conditional mediation is not supported for proof of possession credentials."_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "Conditional mediation is not supported for phone number possession credentials."_s });
         return;
     }
 
@@ -88,7 +88,7 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
     }
 
     if (m_hasPendingRequest) {
-        promise.reject(Exception { ExceptionCode::NotAllowedError, "A proof of possession request is already in progress."_s });
+        promise.reject(Exception { ExceptionCode::NotAllowedError, "A phone number possession request is already in progress."_s });
         return;
     }
 
@@ -99,7 +99,7 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
     }
 
     if (!m_client) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError, "Proof of possession is not supported."_s });
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "Phone number possession is not supported."_s });
         return;
     }
 
@@ -120,7 +120,7 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
         return;
     }
 
-    if (auto exception = validateProofOfPossessionRequest(request)) {
+    if (auto exception = validatePhoneNumberPossessionRequest(request)) {
         promise.reject(WTF::move(*exception));
         return;
     }
@@ -149,7 +149,7 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
     std::optional<uint32_t> abortAlgorithmIdentifier;
     if (signal) {
         abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
-            RefPtr protectedThis = weakThis.get();
+            RefPtr protectedThis = weakThis;
             if (!protectedThis || !protectedThis->m_hasPendingRequest)
                 return;
             // The UI process answers the pending request once it is cancelled, and that answer rejects the promise.
@@ -157,8 +157,8 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
         });
     }
 
-    m_client->requestProofOfPossession(*frame, request, [weakThis = WeakPtr { *this }, promise = WTF::move(promise), signal = WTF::move(signal), abortAlgorithmIdentifier](std::expected<ProofOfPossessionResponse, ExceptionData>&& result) mutable {
-        if (RefPtr protectedThis = weakThis.get())
+    m_client->requestPhoneNumberPossession(*frame, request, [weakThis = WeakPtr { *this }, promise = WTF::move(promise), signal = WTF::move(signal), abortAlgorithmIdentifier](std::expected<PhoneNumberPossessionResponse, ExceptionData>&& result) mutable {
+        if (RefPtr protectedThis = weakThis)
             protectedThis->m_hasPendingRequest = false;
 
         if (abortAlgorithmIdentifier)
@@ -174,11 +174,11 @@ void ProofOfPossessionCoordinator::discoverFromExternalSource(const Document& do
             return;
         }
 
-        promise.resolve(ProofOfPossessionCredential::create(WTF::move(*result)).ptr());
+        promise.resolve(PhoneNumberPossessionCredential::create(WTF::move(*result)).ptr());
     });
 }
 
-void ProofOfPossessionCoordinator::isAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
+void PhoneNumberPossessionCoordinator::isAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (!m_client || !document.isFullyActive() || document.securityOrigin().isOpaque() || !document.isSameOriginWithAncestors()) {
         promise.resolve(false);
@@ -192,4 +192,4 @@ void ProofOfPossessionCoordinator::isAvailable(const Document& document, DOMProm
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

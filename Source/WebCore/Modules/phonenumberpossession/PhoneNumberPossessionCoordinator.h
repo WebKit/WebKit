@@ -25,28 +25,45 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <WebCore/BufferSource.h>
-#include <WebCore/ProofOfPossessionResponseScope.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <WebCore/IDLTypes.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class Exception;
+class AbortSignal;
+class BasicCredential;
+class Document;
+class Page;
+class PhoneNumberPossessionCoordinatorClient;
+enum class MediationRequirement : uint8_t;
+struct PhoneNumberPossessionRequest;
+template<typename IDLType> class DOMPromiseDeferred;
 
-struct ProofOfPossessionRequest {
-    BufferSource challenge;
-    String relyingPartyIdentifier;
-    ProofOfPossessionResponseScope scope { ProofOfPossessionResponseScope::Identifier };
-    String subjectHint;
-    std::optional<BufferSource> identifierHint;
-    std::optional<BufferSource> knownIssuerPublicKey;
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
+
+class PhoneNumberPossessionCoordinator final : public CanMakeWeakPtr<PhoneNumberPossessionCoordinator> {
+    WTF_MAKE_TZONE_ALLOCATED(PhoneNumberPossessionCoordinator);
+    WTF_MAKE_NONCOPYABLE(PhoneNumberPossessionCoordinator);
+public:
+    PhoneNumberPossessionCoordinator(Page&, std::unique_ptr<PhoneNumberPossessionCoordinatorClient>&&);
+    ~PhoneNumberPossessionCoordinator();
+
+    void LEGACY_NODELETE ref() const;
+    void deref() const;
+
+    void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
+    void isAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&);
+
+private:
+    WeakRef<Page> m_page;
+    std::unique_ptr<PhoneNumberPossessionCoordinatorClient> m_client;
+    bool m_hasPendingRequest { false };
 };
-
-WEBCORE_EXPORT std::optional<Exception> validateProofOfPossessionRequest(const ProofOfPossessionRequest&);
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

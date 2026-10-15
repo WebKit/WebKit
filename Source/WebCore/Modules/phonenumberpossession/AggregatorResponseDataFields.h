@@ -25,31 +25,17 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <WebCore/ProofOfPossessionProviderData.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TZoneMalloc.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 
-class ProofOfPossessionProviderInfo final : public RefCounted<ProofOfPossessionProviderInfo> {
-    WTF_MAKE_TZONE_ALLOCATED(ProofOfPossessionProviderInfo);
-public:
-    static Ref<ProofOfPossessionProviderInfo> create(ProofOfPossessionProviderData&& data) { return adoptRef(*new ProofOfPossessionProviderInfo(WTF::move(data))); }
-
-    RefPtr<ArrayBuffer> encryptedErrorInfo() const { return m_data.encryptedErrorInfo; }
-    RefPtr<ArrayBuffer> encryptedKey() const { return m_data.encryptedKey; }
-
-private:
-    explicit ProofOfPossessionProviderInfo(ProofOfPossessionProviderData&& data)
-        : m_data(WTF::move(data))
-    {
-    }
-
-    const ProofOfPossessionProviderData m_data;
+struct AggregatorResponseDataFields {
+    RefPtr<ArrayBuffer> encryptedProviderErrorInfo;
+    RefPtr<ArrayBuffer> encryptedZKPEncryptionKey;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

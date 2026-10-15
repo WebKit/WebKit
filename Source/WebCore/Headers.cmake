@@ -663,14 +663,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionState.h
     Modules/permissions/Permissions.h
 
+    Modules/phonenumberpossession/AggregatorResponseDataFields.h
+    Modules/phonenumberpossession/PhoneNumberPossessionCoordinatorClient.h
+    Modules/phonenumberpossession/PhoneNumberPossessionRequest.h
+    Modules/phonenumberpossession/PhoneNumberPossessionResponse.h
+    Modules/phonenumberpossession/PhoneNumberPossessionResponseType.h
+
     Modules/plugins/PluginReplacement.h
     Modules/plugins/YouTubePluginReplacement.h
-
-    Modules/proofofpossession/ProofOfPossessionCoordinatorClient.h
-    Modules/proofofpossession/ProofOfPossessionProviderData.h
-    Modules/proofofpossession/ProofOfPossessionRequest.h
-    Modules/proofofpossession/ProofOfPossessionResponse.h
-    Modules/proofofpossession/ProofOfPossessionResponseScope.h
 
     Modules/push-api/PushCrypto.h
     Modules/push-api/PushDatabase.h

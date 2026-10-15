@@ -25,45 +25,31 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <WebCore/IDLTypes.h>
-#include <wtf/Noncopyable.h>
+#include <WebCore/AggregatorResponseDataFields.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class AbortSignal;
-class BasicCredential;
-class Document;
-class Page;
-class ProofOfPossessionCoordinatorClient;
-enum class MediationRequirement : uint8_t;
-struct ProofOfPossessionRequest;
-template<typename IDLType> class DOMPromiseDeferred;
-
-using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
-
-class ProofOfPossessionCoordinator final : public CanMakeWeakPtr<ProofOfPossessionCoordinator> {
-    WTF_MAKE_TZONE_ALLOCATED(ProofOfPossessionCoordinator);
-    WTF_MAKE_NONCOPYABLE(ProofOfPossessionCoordinator);
+class AggregatorResponseData final : public RefCounted<AggregatorResponseData> {
+    WTF_MAKE_TZONE_ALLOCATED(AggregatorResponseData);
 public:
-    ProofOfPossessionCoordinator(Page&, std::unique_ptr<ProofOfPossessionCoordinatorClient>&&);
-    ~ProofOfPossessionCoordinator();
+    static Ref<AggregatorResponseData> create(AggregatorResponseDataFields&& data) { return adoptRef(*new AggregatorResponseData(WTF::move(data))); }
 
-    void LEGACY_NODELETE ref() const;
-    void deref() const;
-
-    void discoverFromExternalSource(const Document&, ProofOfPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
-    void isAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&);
+    RefPtr<ArrayBuffer> encryptedProviderErrorInfo() const { return m_data.encryptedProviderErrorInfo; }
+    RefPtr<ArrayBuffer> encryptedZKPEncryptionKey() const { return m_data.encryptedZKPEncryptionKey; }
 
 private:
-    WeakRef<Page> m_page;
-    std::unique_ptr<ProofOfPossessionCoordinatorClient> m_client;
-    bool m_hasPendingRequest { false };
+    explicit AggregatorResponseData(AggregatorResponseDataFields&& data)
+        : m_data(WTF::move(data))
+    {
+    }
+
+    const AggregatorResponseDataFields m_data;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

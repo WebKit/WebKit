@@ -24,65 +24,65 @@
  */
 
 #include "config.h"
-#include "ProofOfPossessionCredential.h"
+#include "PhoneNumberPossessionCredential.h"
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
 #include "AbortSignal.h"
 #include "DocumentPage.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediationRequirement.h"
 #include "Page.h"
-#include "ProofOfPossessionCoordinator.h"
-#include "ProofOfPossessionRequest.h"
-#include "ProofOfPossessionResponse.h"
+#include "PhoneNumberPossessionCoordinator.h"
+#include "PhoneNumberPossessionRequest.h"
+#include "PhoneNumberPossessionResponse.h"
 #include <wtf/UUID.h>
 
 namespace WebCore {
 
-Ref<ProofOfPossessionCredential> ProofOfPossessionCredential::create(ProofOfPossessionResponse&& response)
+Ref<PhoneNumberPossessionCredential> PhoneNumberPossessionCredential::create(PhoneNumberPossessionResponse&& response)
 {
-    return adoptRef(*new ProofOfPossessionCredential(WTF::move(response)));
+    return adoptRef(*new PhoneNumberPossessionCredential(WTF::move(response)));
 }
 
-ProofOfPossessionCredential::ProofOfPossessionCredential(ProofOfPossessionResponse&& response)
-    : BasicCredential(createVersion4UUIDString(), Type::ProofOfPossession, Discovery::Remote)
-    , m_encryptedIdentifierWithProof(WTF::move(response.encryptedIdentifierWithProof))
-    , m_providerData(response.providerData ? RefPtr { ProofOfPossessionProviderInfo::create(WTF::move(*response.providerData)) } : nullptr)
-    , m_issuerPublicKey(WTF::move(response.issuerPublicKey))
-    , m_encryptedSubject(WTF::move(response.encryptedSubject))
+PhoneNumberPossessionCredential::PhoneNumberPossessionCredential(PhoneNumberPossessionResponse&& response)
+    : BasicCredential(createVersion4UUIDString(), Type::PhoneNumberPossession, Discovery::Remote)
+    , m_encryptedPNPIWithProof(WTF::move(response.encryptedPNPIWithProof))
+    , m_aggregatorData(response.aggregatorData ? RefPtr { AggregatorResponseData::create(WTF::move(*response.aggregatorData)) } : nullptr)
+    , m_carrierPubKey(WTF::move(response.carrierPubKey))
+    , m_encryptedMSISDN(WTF::move(response.encryptedMSISDN))
     , m_clientDataJSON(WTF::move(response.clientDataJSON))
-    , m_transferProof(WTF::move(response.transferProof))
+    , m_portingZKP(WTF::move(response.portingZKP))
 {
 }
 
-ProofOfPossessionCredential::~ProofOfPossessionCredential() = default;
+PhoneNumberPossessionCredential::~PhoneNumberPossessionCredential() = default;
 
-void ProofOfPossessionCredential::discoverFromExternalSource(const Document& document, ProofOfPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
+void PhoneNumberPossessionCredential::discoverFromExternalSource(const Document& document, PhoneNumberPossessionRequest&& request, MediationRequirement mediation, RefPtr<AbortSignal>&& signal, CredentialPromise&& promise)
 {
     RefPtr page = document.page();
     if (!page) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s });
         return;
     }
-    page->proofOfPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));
+    page->phoneNumberPossessionCoordinator().discoverFromExternalSource(document, WTF::move(request), mediation, WTF::move(signal), WTF::move(promise));
 }
 
-void ProofOfPossessionCredential::isAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
+void PhoneNumberPossessionCredential::isAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     RefPtr page = document.page();
     if (!page) {
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
-    page->proofOfPossessionCoordinator().isAvailable(document, WTF::move(promise));
+    page->phoneNumberPossessionCoordinator().isAvailable(document, WTF::move(promise));
 }
 
-void ProofOfPossessionCredential::isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&& promise)
+void PhoneNumberPossessionCredential::isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     promise.resolve(false);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

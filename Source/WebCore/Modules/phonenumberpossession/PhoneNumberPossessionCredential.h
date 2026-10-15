@@ -25,55 +25,54 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
+#include <WebCore/AggregatorResponseData.h>
 #include <WebCore/BasicCredential.h>
 #include <WebCore/IDLTypes.h>
-#include <WebCore/ProofOfPossessionProviderInfo.h>
 
 namespace WebCore {
 
 class AbortSignal;
 class Document;
 enum class MediationRequirement : uint8_t;
-struct ProofOfPossessionRequest;
-struct ProofOfPossessionResponse;
+struct PhoneNumberPossessionRequest;
+struct PhoneNumberPossessionResponse;
 template<typename IDLType> class DOMPromiseDeferred;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-class ProofOfPossessionCredential : public BasicCredential {
+class PhoneNumberPossessionCredential final : public BasicCredential {
 public:
-    static Ref<ProofOfPossessionCredential> create(ProofOfPossessionResponse&&);
-    virtual ~ProofOfPossessionCredential();
+    static Ref<PhoneNumberPossessionCredential> create(PhoneNumberPossessionResponse&&);
+    virtual ~PhoneNumberPossessionCredential();
 
-    static void discoverFromExternalSource(const Document&, ProofOfPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
+    static void discoverFromExternalSource(const Document&, PhoneNumberPossessionRequest&&, MediationRequirement, RefPtr<AbortSignal>&&, CredentialPromise&&);
     static void isAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
     static void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&);
 
-    Ref<ArrayBuffer> encryptedIdentifierWithProof() const { return m_encryptedIdentifierWithProof; }
-    RefPtr<ProofOfPossessionProviderInfo> providerData() const { return m_providerData; }
-    RefPtr<ArrayBuffer> issuerPublicKey() const { return m_issuerPublicKey; }
-    RefPtr<ArrayBuffer> encryptedSubject() const { return m_encryptedSubject; }
+    Ref<ArrayBuffer> encryptedPNPIWithProof() const { return m_encryptedPNPIWithProof; }
+    RefPtr<AggregatorResponseData> aggregatorData() const { return m_aggregatorData; }
+    RefPtr<ArrayBuffer> carrierPubKey() const { return m_carrierPubKey; }
+    RefPtr<ArrayBuffer> encryptedMSISDN() const { return m_encryptedMSISDN; }
     Ref<ArrayBuffer> clientDataJSON() const { return m_clientDataJSON; }
-    RefPtr<ArrayBuffer> transferProof() const { return m_transferProof; }
-
-protected:
-    explicit ProofOfPossessionCredential(ProofOfPossessionResponse&&);
+    RefPtr<ArrayBuffer> portingZKP() const { return m_portingZKP; }
 
 private:
-    Type credentialType() const final { return Type::ProofOfPossession; }
+    explicit PhoneNumberPossessionCredential(PhoneNumberPossessionResponse&&);
 
-    const Ref<ArrayBuffer> m_encryptedIdentifierWithProof;
-    const RefPtr<ProofOfPossessionProviderInfo> m_providerData;
-    const RefPtr<ArrayBuffer> m_issuerPublicKey;
-    const RefPtr<ArrayBuffer> m_encryptedSubject;
+    Type credentialType() const final { return Type::PhoneNumberPossession; }
+
+    const Ref<ArrayBuffer> m_encryptedPNPIWithProof;
+    const RefPtr<AggregatorResponseData> m_aggregatorData;
+    const RefPtr<ArrayBuffer> m_carrierPubKey;
+    const RefPtr<ArrayBuffer> m_encryptedMSISDN;
     const Ref<ArrayBuffer> m_clientDataJSON;
-    const RefPtr<ArrayBuffer> m_transferProof;
+    const RefPtr<ArrayBuffer> m_portingZKP;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(ProofOfPossessionCredential, BasicCredential::Type::ProofOfPossession)
+SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PhoneNumberPossessionCredential, BasicCredential::Type::PhoneNumberPossession)
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

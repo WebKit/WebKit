@@ -25,33 +25,28 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <WebCore/ExceptionData.h>
-#include <WebCore/ProofOfPossessionResponse.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/TZoneMalloc.h>
+#include <WebCore/BufferSource.h>
+#include <WebCore/PhoneNumberPossessionResponseType.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class LocalFrame;
-struct ProofOfPossessionRequest;
+class Exception;
 
-class ProofOfPossessionCoordinatorClient {
-    WTF_MAKE_TZONE_ALLOCATED(ProofOfPossessionCoordinatorClient);
-    WTF_MAKE_NONCOPYABLE(ProofOfPossessionCoordinatorClient);
-public:
-    using RequestCompletionHandler = CompletionHandler<void(std::expected<ProofOfPossessionResponse, ExceptionData>&&)>;
-
-    ProofOfPossessionCoordinatorClient() = default;
-    virtual ~ProofOfPossessionCoordinatorClient() = default;
-
-    virtual void requestProofOfPossession(const LocalFrame&, const ProofOfPossessionRequest&, RequestCompletionHandler&&) = 0;
-    virtual void isAvailable(CompletionHandler<void(bool)>&&) = 0;
-    virtual void cancel(CompletionHandler<void()>&&) = 0;
+struct PhoneNumberPossessionRequest {
+    BufferSource challenge;
+    String relyingPartyIdentifier;
+    PhoneNumberPossessionResponseType desiredResponseType { PhoneNumberPossessionResponseType::PossessionIdentifier };
+    String phoneNumberSuffixHint;
+    std::optional<BufferSource> pnpiSuffixHint;
+    std::optional<BufferSource> knownCarrierPubKey;
 };
+
+WEBCORE_EXPORT std::optional<Exception> validatePhoneNumberPossessionRequest(const PhoneNumberPossessionRequest&);
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

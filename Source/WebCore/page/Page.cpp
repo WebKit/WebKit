@@ -148,6 +148,8 @@
 #include "PerformanceLogging.h"
 #include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
+#include "PhoneNumberPossessionCoordinator.h"
+#include "PhoneNumberPossessionCoordinatorClient.h"
 #include "PlatformMediaEngineConfigurationFactory.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -158,8 +160,6 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
-#include "ProofOfPossessionCoordinator.h"
-#include "ProofOfPossessionCoordinatorClient.h"
 #include "Quirks.h"
 #include "RTCController.h"
 #include "Range.h"
@@ -480,8 +480,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_authenticatorCoordinator(makeUniqueRefWithoutRefCountedCheck<AuthenticatorCoordinator>(*this, WTF::move(pageConfiguration.authenticatorCoordinatorClient)))
     , m_credentialRequestCoordinator(CredentialRequestCoordinator::create(WTF::move(pageConfiguration.credentialRequestCoordinatorClient), *this))
 #endif
-#if ENABLE(PROOF_OF_POSSESSION)
-    , m_proofOfPossessionCoordinator(makeUniqueRefWithoutRefCountedCheck<ProofOfPossessionCoordinator>(*this, WTF::move(pageConfiguration.proofOfPossessionCoordinatorClient)))
+#if ENABLE(PHONE_NUMBER_POSSESSION)
+    , m_phoneNumberPossessionCoordinator(makeUniqueRefWithoutRefCountedCheck<PhoneNumberPossessionCoordinator>(*this, WTF::move(pageConfiguration.phoneNumberPossessionCoordinatorClient)))
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     , m_applicationManifest(pageConfiguration.applicationManifest)

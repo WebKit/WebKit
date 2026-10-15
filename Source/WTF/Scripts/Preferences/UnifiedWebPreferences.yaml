@@ -4801,6 +4801,18 @@ PermissionsAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+PhoneNumberPossessionEnabled:
+  type: bool
+  status: internal
+  category: dom
+  humanReadableName: "Phone Number Possession credentials"
+  humanReadableDescription: "Enable requesting phone number possession credentials with navigator.credentials.get()"
+  condition: ENABLE(PHONE_NUMBER_POSSESSION)
+  defaultValue: false
+  sharedPreferenceForWebProcess: true
+  disableInLockdownMode: true
+  richJavaScript: true
+
 PhotoPickerPrefersOriginalImageFormat:
   type: bool
   status: internal
@@ -4989,18 +5001,6 @@ PromiseIsPromiseEnabled:
   sharedPreferenceForWebProcess: true
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: false
-
-ProofOfPossessionEnabled:
-  type: bool
-  status: internal
-  category: dom
-  humanReadableName: "Proof of Possession credentials"
-  humanReadableDescription: "Enable requesting proof of possession credentials with navigator.credentials.get()"
-  condition: ENABLE(PROOF_OF_POSSESSION)
-  defaultValue: false
-  sharedPreferenceForWebProcess: true
-  disableInLockdownMode: true
-  richJavaScript: true
 
 PropagateDamagingInformation:
   type: bool

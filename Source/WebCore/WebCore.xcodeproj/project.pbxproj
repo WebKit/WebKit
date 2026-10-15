@@ -7593,15 +7593,15 @@
 		FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D500CEA949700D89466 /* RenderThemeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3DFFF0BE5E7CD9C96015563F /* ProofOfPossessionResponseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9AC1967DFE9A22161E6BD4 /* ProofOfPossessionResponseScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E63623DC255F2C4598C1A823 /* ProofOfPossessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 02235505DADB0D826D6C1822 /* ProofOfPossessionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		78A65BD34B9DD5A88EE00085 /* ProofOfPossessionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 79387C77602AF736321E16F6 /* ProofOfPossessionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1EDD4EAC360A2C058339C9A8 /* ProofOfPossessionProviderData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3DFFF0BE5E7CD9C96015563F /* PhoneNumberPossessionResponseType.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9AC1967DFE9A22161E6BD4 /* PhoneNumberPossessionResponseType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E63623DC255F2C4598C1A823 /* PhoneNumberPossessionResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 02235505DADB0D826D6C1822 /* PhoneNumberPossessionResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		78A65BD34B9DD5A88EE00085 /* PhoneNumberPossessionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 79387C77602AF736321E16F6 /* PhoneNumberPossessionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EDD4EAC360A2C058339C9A8 /* AggregatorResponseDataFields.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D6204E043248DA5C91B85A3 /* AggregatorResponseDataFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86721D4F7D1D46A6B80B9F9A /* DebuggerSuspensionController.h in Headers */ = {isa = PBXBuildFile; fileRef = E1DEC3457E95468589B6727B /* DebuggerSuspensionController.h */; };
-		EFC21B040B76E5E705ECE268 /* ProofOfPossessionProviderInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3880493C91656A8729182D70 /* ProofOfPossessionProviderInfo.h */; };
-		68CE9AC93F8595E11D22A3A7 /* ProofOfPossessionCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7B361F603AFEAC82C3843733 /* ProofOfPossessionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4A3A479BAB413F796EF38438 /* ProofOfPossessionCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */; };
+		EFC21B040B76E5E705ECE268 /* AggregatorResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3880493C91656A8729182D70 /* AggregatorResponseData.h */; };
+		68CE9AC93F8595E11D22A3A7 /* PhoneNumberPossessionCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B361F603AFEAC82C3843733 /* PhoneNumberPossessionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = F0112C63F1D28E3E5CB8AE34 /* PhoneNumberPossessionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4A3A479BAB413F796EF38438 /* PhoneNumberPossessionCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = F6EF1185B9BFEAED5D815C1E /* PhoneNumberPossessionCredential.h */; };
 		A4C507AADDFB428EA96A5E75 /* FrameIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */; };
 		B1EA5351EAA94AFA936F8771 /* PageIndexedDBAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */; };
 		63CF7B735BFB48D09CC3FA61 /* DebuggerPauseSessionIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8673CA88C6A741C6B689B59A /* DebuggerPauseSessionIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -24313,20 +24313,20 @@
 		FFEFAB2D183BCC6F00514565 /* MapperCallback.h */ = {isa = PBXFileReference; lastKnownFileType = text; path = MapperCallback.h; sourceTree = "<group>"; };
 		FFEFAB2D183BCC6F00514566 /* InternalObserverMap.h */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalObserverMap.h; sourceTree = "<group>"; };
 		FFEFAB2D183BCC6F00514567 /* InternalObserverMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = text; path = InternalObserverMap.cpp; sourceTree = "<group>"; };
-		FA9AC1967DFE9A22161E6BD4 /* ProofOfPossessionResponseScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionResponseScope.h; sourceTree = "<group>"; };
-		02235505DADB0D826D6C1822 /* ProofOfPossessionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionResponse.h; sourceTree = "<group>"; };
-		79387C77602AF736321E16F6 /* ProofOfPossessionRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionRequest.h; sourceTree = "<group>"; };
-		72F9298930D273388DAE57C3 /* ProofOfPossessionRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionRequest.cpp; sourceTree = "<group>"; };
-		3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionProviderData.h; sourceTree = "<group>"; };
+		FA9AC1967DFE9A22161E6BD4 /* PhoneNumberPossessionResponseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionResponseType.h; sourceTree = "<group>"; };
+		02235505DADB0D826D6C1822 /* PhoneNumberPossessionResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionResponse.h; sourceTree = "<group>"; };
+		79387C77602AF736321E16F6 /* PhoneNumberPossessionRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionRequest.h; sourceTree = "<group>"; };
+		72F9298930D273388DAE57C3 /* PhoneNumberPossessionRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneNumberPossessionRequest.cpp; sourceTree = "<group>"; };
+		3D6204E043248DA5C91B85A3 /* AggregatorResponseDataFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatorResponseDataFields.h; sourceTree = "<group>"; };
 		E1DEC3457E95468589B6727B /* DebuggerSuspensionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerSuspensionController.h; sourceTree = "<group>"; };
 		2EA33ABA0CA84C378492C732 /* DebuggerSuspensionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerSuspensionController.cpp; sourceTree = "<group>"; };
-		9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionCoordinatorClient.h; sourceTree = "<group>"; };
-		F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionCoordinator.h; sourceTree = "<group>"; };
-		84AD81E546C7B42E0F61A830 /* ProofOfPossessionCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionCoordinator.cpp; sourceTree = "<group>"; };
-		5730C2E5A2794FD7C14E0734 /* ProofOfPossessionCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionCredential.cpp; sourceTree = "<group>"; };
-		542FC0C1FBF0776D292FF8D6 /* ProofOfPossessionProviderInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProofOfPossessionProviderInfo.cpp; sourceTree = "<group>"; };
-		3880493C91656A8729182D70 /* ProofOfPossessionProviderInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionProviderInfo.h; sourceTree = "<group>"; };
-		F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProofOfPossessionCredential.h; sourceTree = "<group>"; };
+		9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionCoordinatorClient.h; sourceTree = "<group>"; };
+		F0112C63F1D28E3E5CB8AE34 /* PhoneNumberPossessionCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionCoordinator.h; sourceTree = "<group>"; };
+		84AD81E546C7B42E0F61A830 /* PhoneNumberPossessionCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneNumberPossessionCoordinator.cpp; sourceTree = "<group>"; };
+		5730C2E5A2794FD7C14E0734 /* PhoneNumberPossessionCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhoneNumberPossessionCredential.cpp; sourceTree = "<group>"; };
+		542FC0C1FBF0776D292FF8D6 /* AggregatorResponseData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AggregatorResponseData.cpp; sourceTree = "<group>"; };
+		3880493C91656A8729182D70 /* AggregatorResponseData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregatorResponseData.h; sourceTree = "<group>"; };
+		F6EF1185B9BFEAED5D815C1E /* PhoneNumberPossessionCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhoneNumberPossessionCredential.h; sourceTree = "<group>"; };
 		D4D9D4D70C1F40D88DBFCA80 /* FrameIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameIndexedDBAgent.h; sourceTree = "<group>"; };
 		0970201322E546E9A5B1334A /* FrameIndexedDBAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameIndexedDBAgent.cpp; sourceTree = "<group>"; };
 		E3F630DF69544CEA9A7BE1E2 /* PageIndexedDBAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageIndexedDBAgent.h; sourceTree = "<group>"; };
@@ -34301,9 +34301,9 @@
 				333F703D0FB49C16008E12A6 /* notifications */,
 				A1F76B0E1F44C0CF0014C318 /* paymentrequest */,
 				93B0A64226CDC57400AA21E4 /* permissions */,
+				060ADCE725AA66DEC08F0842 /* phonenumberpossession */,
 				1DEF06A2233C32DB00EE228D /* pictureinpicture */,
 				072AE1DE183C0513000A5988 /* plugins */,
-				060ADCE725AA66DEC08F0842 /* proofofpossession */,
 				418FCBB82706E4BD00F96ECA /* push-api */,
 				CDC312E022FCD0B0001204EC /* remoteplayback */,
 				7ABA24E028A5BF44005D4F6D /* reporting */,
@@ -44457,24 +44457,24 @@
 			path = line;
 			sourceTree = "<group>";
 		};
-		060ADCE725AA66DEC08F0842 /* proofofpossession */ = {
+		060ADCE725AA66DEC08F0842 /* phonenumberpossession */ = {
 			isa = PBXGroup;
 			children = (
-				84AD81E546C7B42E0F61A830 /* ProofOfPossessionCoordinator.cpp */,
-				F0112C63F1D28E3E5CB8AE34 /* ProofOfPossessionCoordinator.h */,
-				9B5E23EE1515E7CBFCAF1C81 /* ProofOfPossessionCoordinatorClient.h */,
-				5730C2E5A2794FD7C14E0734 /* ProofOfPossessionCredential.cpp */,
-				F6EF1185B9BFEAED5D815C1E /* ProofOfPossessionCredential.h */,
-				3D6204E043248DA5C91B85A3 /* ProofOfPossessionProviderData.h */,
-				542FC0C1FBF0776D292FF8D6 /* ProofOfPossessionProviderInfo.cpp */,
-				3880493C91656A8729182D70 /* ProofOfPossessionProviderInfo.h */,
-				72F9298930D273388DAE57C3 /* ProofOfPossessionRequest.cpp */,
-				79387C77602AF736321E16F6 /* ProofOfPossessionRequest.h */,
-				02235505DADB0D826D6C1822 /* ProofOfPossessionResponse.h */,
-				FA9AC1967DFE9A22161E6BD4 /* ProofOfPossessionResponseScope.h */,
+				542FC0C1FBF0776D292FF8D6 /* AggregatorResponseData.cpp */,
+				3880493C91656A8729182D70 /* AggregatorResponseData.h */,
+				3D6204E043248DA5C91B85A3 /* AggregatorResponseDataFields.h */,
+				84AD81E546C7B42E0F61A830 /* PhoneNumberPossessionCoordinator.cpp */,
+				F0112C63F1D28E3E5CB8AE34 /* PhoneNumberPossessionCoordinator.h */,
+				9B5E23EE1515E7CBFCAF1C81 /* PhoneNumberPossessionCoordinatorClient.h */,
+				5730C2E5A2794FD7C14E0734 /* PhoneNumberPossessionCredential.cpp */,
+				F6EF1185B9BFEAED5D815C1E /* PhoneNumberPossessionCredential.h */,
+				72F9298930D273388DAE57C3 /* PhoneNumberPossessionRequest.cpp */,
+				79387C77602AF736321E16F6 /* PhoneNumberPossessionRequest.h */,
+				02235505DADB0D826D6C1822 /* PhoneNumberPossessionResponse.h */,
+				FA9AC1967DFE9A22161E6BD4 /* PhoneNumberPossessionResponseType.h */,
 			);
-			name = proofofpossession;
-			path = Modules/proofofpossession;
+			name = phonenumberpossession;
+			path = Modules/phonenumberpossession;
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
@@ -44609,6 +44609,8 @@
 				84D0C4061115F1EA0018AA34 /* AffineTransform.h in Headers */,
 				7A5331472C4BF45E70234B98 /* AgentClusterAssignment.h in Headers */,
 				AEB5F8B6A94A7849F63DD852 /* AgentClusterIdentifier.h in Headers */,
+				EFC21B040B76E5E705ECE268 /* AggregatorResponseData.h in Headers */,
+				1EDD4EAC360A2C058339C9A8 /* AggregatorResponseDataFields.h in Headers */,
 				AEBAFFB02D65D478008311A5 /* AllAcceptedCredentialsOptions.h in Headers */,
 				83BB5C881D5D6F45005A71F4 /* AllDescendantsCollection.h in Headers */,
 				3AD4AB8C2C3CADF700A3E7F3 /* Allowlist.h in Headers */,
@@ -48457,6 +48459,12 @@
 				93B0A65B26CDD14100AA21E4 /* PermissionState.h in Headers */,
 				93B0A65626CDD14100AA21E4 /* PermissionStatus.h in Headers */,
 				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
+				7B361F603AFEAC82C3843733 /* PhoneNumberPossessionCoordinator.h in Headers */,
+				68CE9AC93F8595E11D22A3A7 /* PhoneNumberPossessionCoordinatorClient.h in Headers */,
+				4A3A479BAB413F796EF38438 /* PhoneNumberPossessionCredential.h in Headers */,
+				78A65BD34B9DD5A88EE00085 /* PhoneNumberPossessionRequest.h in Headers */,
+				E63623DC255F2C4598C1A823 /* PhoneNumberPossessionResponse.h in Headers */,
+				3DFFF0BE5E7CD9C96015563F /* PhoneNumberPossessionResponseType.h in Headers */,
 				073930E02AC6490B00C1D1B1 /* PhotoCapabilities.h in Headers */,
 				073931172ACC6D1E00C1D1B1 /* PhotoSettings.h in Headers */,
 				1D2F8E042344751600993B68 /* PictureInPictureEvent.h in Headers */,
@@ -48625,14 +48633,6 @@
 				1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */,
 				F47A633D1FF6FD500081B3CC /* PromisedAttachmentInfo.h in Headers */,
 				A578F4351DE00EEB003DFC6A /* PromiseRejectionEvent.h in Headers */,
-				7B361F603AFEAC82C3843733 /* ProofOfPossessionCoordinator.h in Headers */,
-				68CE9AC93F8595E11D22A3A7 /* ProofOfPossessionCoordinatorClient.h in Headers */,
-				4A3A479BAB413F796EF38438 /* ProofOfPossessionCredential.h in Headers */,
-				1EDD4EAC360A2C058339C9A8 /* ProofOfPossessionProviderData.h in Headers */,
-				EFC21B040B76E5E705ECE268 /* ProofOfPossessionProviderInfo.h in Headers */,
-				78A65BD34B9DD5A88EE00085 /* ProofOfPossessionRequest.h in Headers */,
-				E63623DC255F2C4598C1A823 /* ProofOfPossessionResponse.h in Headers */,
-				3DFFF0BE5E7CD9C96015563F /* ProofOfPossessionResponseScope.h in Headers */,
 				7128CB3F271EE58A00A13DA6 /* PropertyAllowlist.h in Headers */,
 				E4ABABE42361A32900FA4345 /* PropertyCascade.h in Headers */,
 				BC2388912D8C816C00698102 /* PropertySetCSSDescriptors.h in Headers */,

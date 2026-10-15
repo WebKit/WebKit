@@ -23,17 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProofOfPossessionProviderInfo.h"
+#pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
-#include <wtf/TZoneMallocInlines.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <WebCore/AggregatorResponseDataFields.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ProofOfPossessionProviderInfo);
+struct PhoneNumberPossessionResponse {
+    Ref<ArrayBuffer> encryptedPNPIWithProof;
+    std::optional<AggregatorResponseDataFields> aggregatorData;
+    RefPtr<ArrayBuffer> carrierPubKey;
+    RefPtr<ArrayBuffer> encryptedMSISDN;
+    Ref<ArrayBuffer> clientDataJSON;
+    RefPtr<ArrayBuffer> portingZKP;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)

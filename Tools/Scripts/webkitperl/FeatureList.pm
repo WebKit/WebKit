@@ -114,9 +114,9 @@ my (
     $paymentRequestSupport,
     $pdfJS,
     $pdfkitPluginSupport,
+    $phoneNumberPossessionSupport,
     $pictureInPictureAPISupport,
     $pointerLockSupport,
-    $proofOfPossessionSupport,
     $quotaSupport,
     $remoteInspectorSupport,
     $resourceUsageSupport,
@@ -329,14 +329,14 @@ my @features = (
     { option => "pdfkit-plugin", desc => "Toggle PDFKit plugin support",
       define => "ENABLE_PDFKIT_PLUGIN", value => \$pdfkitPluginSupport },
 
+    { option => "phone-number-possession", desc => "Toggle Phone Number Possession API support",
+      define => "ENABLE_PHONE_NUMBER_POSSESSION", value => \$phoneNumberPossessionSupport },
+
     { option => "picture-in-picture-api", desc => "Toggle Picture-in-Picture API support",
       define => "ENABLE_PICTURE_IN_PICTURE_API", value => \$pictureInPictureAPISupport },
 
     { option => "pointer-lock", desc => "Toggle pointer lock support",
       define => "ENABLE_POINTER_LOCK", value => \$pointerLockSupport },
-
-    { option => "proof-of-possession", desc => "Toggle Proof of Possession API support",
-      define => "ENABLE_PROOF_OF_POSSESSION", value => \$proofOfPossessionSupport },
 
     { option => "remote-inspector", desc => "Toggle remote inspector support",
       define => "ENABLE_REMOTE_INSPECTOR", value => \$remoteInspectorSupport },

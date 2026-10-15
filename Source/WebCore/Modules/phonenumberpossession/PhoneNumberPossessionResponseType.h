@@ -25,17 +25,15 @@
 
 #pragma once
 
-#if ENABLE(PROOF_OF_POSSESSION)
-
-#include <JavaScriptCore/ArrayBuffer.h>
+#if ENABLE(PHONE_NUMBER_POSSESSION)
 
 namespace WebCore {
 
-struct ProofOfPossessionProviderData {
-    RefPtr<ArrayBuffer> encryptedErrorInfo;
-    RefPtr<ArrayBuffer> encryptedKey;
+enum class PhoneNumberPossessionResponseType : uint8_t {
+    PossessionIdentifier,
+    PossessionIdentifierAndPhoneNumber
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(PROOF_OF_POSSESSION)
+#endif // ENABLE(PHONE_NUMBER_POSSESSION)
