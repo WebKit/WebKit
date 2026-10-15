@@ -3,6 +3,6 @@ FAIL LNA Shared Worker Public to Loopback Fetch with permission assert_equals: u
 PASS LNA Shared Worker Public to Loopback Fetch without permission
 FAIL LNA Shared Worker Public to Loopback WebTransport with permission assert_equals: expected "open" but got "error"
 PASS LNA Shared Worker Public to Loopback WebTransport without permission
-PASS LNA Shared Worker Public to Loopback WebSocket with permission
-FAIL LNA Shared Worker Public to Loopback WebSocket without permission assert_equals: expected "close: code 1006" but got "open"
+FAIL LNA Shared Worker Public to Loopback WebSocket with permission assert_equals: expected "open" but got "close: code 1006"
+PASS LNA Shared Worker Public to Loopback WebSocket without permission
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/fetch/local-network-access/resources/support.sub.js"></script>
+<script>
+
+// Opens a WebSocket to a loopback handler that sends a message as soon as the connection is up, and
+// reports every event the page sees, in order.
+
+const events = [];
+const socket = new WebSocket(resolveUrl("/origin", Server.WSS_LOOPBACK));
+socket.onopen = () => events.push('open');
+socket.onmessage = () => events.push('message');
+socket.onerror = () => events.push('error');
+socket.onclose = (event) => {
+    events.push(`close ${event.code}`);
+    parent.postMessage(events, '*');
+};
+socket.addEventListener('message', () => socket.close());
+
+</script>
+</body>
+</html>

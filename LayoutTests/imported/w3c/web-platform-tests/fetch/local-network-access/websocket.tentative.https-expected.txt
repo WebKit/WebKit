@@ -1,6 +1,6 @@
 
 PASS LNA Public to loopback websocket with permission
-FAIL LNA Public to loopback websocket without permission assert_equals: expected "close: code 1006" but got "open"
+PASS LNA Public to loopback websocket without permission
 PASS LNA local to loopback websocket with permission
-PASS LNA local to loopback websocket without permission
+FAIL LNA local to loopback websocket without permission assert_equals: expected "open" but got "close: code 1006"
 
