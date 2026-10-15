@@ -2642,6 +2642,17 @@ editing/selection/select-across-readonly-input-5.html [ Failure ]
 # iOS skips these for the same reason, see platform/ios/TestExpectations.
 webkit.org/b/322505 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]
 
+# webkit.org/b/324418 Liquid glass edge colors do not include cross-site iframes with site isolation
+http/tests/site-isolation/edge-sampling-cross-site-iframe.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-indeterminate.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-clipped.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-scrolled.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-load-finish.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-main-frame-scrolled.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-color-change.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-navigated.html [ Skip ]
+http/tests/site-isolation/edge-sampling-cross-site-iframe-zoomed.html [ Skip ]
+
 webkit.org/b/326746 [ Sequoia x86_64 Debug ] media/modern-media-controls/icon-service/icon-service-bundle-load.html [ Pass Timeout ]
 
 webkit.org/b/326748 [ Debug ] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-rtl-volume-button-no-overlap.html [ Pass Timeout ]

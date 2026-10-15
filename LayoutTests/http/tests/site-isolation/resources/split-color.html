@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Paints the left and right halves with ?left=RRGGBB and ?right=RRGGBB. -->
+<style>
+html, body { margin: 0; width: 100%; height: 100%; }
+div { position: absolute; top: 0; bottom: 0; width: 50%; }
+#left { left: 0; }
+#right { right: 0; }
+</style>
+</head>
+<body>
+<div id="left"></div>
+<div id="right"></div>
+<script>
+const parameters = new URLSearchParams(location.search);
+document.getElementById("left").style.backgroundColor = "#" + (parameters.get("left") || "ff0000");
+document.getElementById("right").style.backgroundColor = "#" + (parameters.get("right") || "0000ff");
+</script>
+</body>
+</html>
