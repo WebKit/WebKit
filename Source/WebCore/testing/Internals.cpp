@@ -1682,7 +1682,7 @@ float Internals::usedOutlineOffset(Element& element)
     CheckedPtr style = element.computedStyle();
     if (!style)
         return 0;
-    return Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), style->deviceScaleFactor());
+    return Style::evaluate<float>(Style::effectiveOutlineOffset(*style), style->usedZoomForLength(), style->deviceScaleFactor());
 }
 
 String Internals::computedAppleColorFilter(Element& element)

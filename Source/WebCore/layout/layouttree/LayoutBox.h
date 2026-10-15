@@ -36,6 +36,7 @@ namespace WebCore {
 
 class LayoutShape;
 class RenderObject;
+class UsedStyle;
 
 namespace Layout {
 
@@ -207,6 +208,9 @@ public:
 
     RenderObject* rendererForIntegration() const { return m_renderer.get(); }
     void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
+
+    UsedStyle usedStyle() const;
+    UsedStyle firstLineUsedStyle() const;
 
     UniqueRef<Box> removeFromParent();
 

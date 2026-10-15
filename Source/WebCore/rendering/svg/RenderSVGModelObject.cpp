@@ -234,8 +234,8 @@ void RenderSVGModelObject::styleDidChange(Style::Difference diff, const Style::C
 
             // Outline properties
             if (newStyle.outlineStyle() != oldStyle.outlineStyle()
-                || newStyle.usedOutlineWidth() != oldStyle.usedOutlineWidth()
-                || newStyle.usedOutlineOffset() != oldStyle.usedOutlineOffset())
+                || Style::effectiveOutlineWidth(newStyle) != Style::effectiveOutlineWidth(oldStyle)
+                || Style::effectiveOutlineOffset(newStyle) != Style::effectiveOutlineOffset(oldStyle))
                 return true;
 
             // Resource references (clip-path, mask, filter)

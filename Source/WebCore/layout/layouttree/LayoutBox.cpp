@@ -33,7 +33,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutShape.h"
 #include "LayoutState.h"
-#include "RenderObject.h"
+#include "RenderElementInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -651,6 +651,16 @@ const ElementBox& containingBlock(const Box& layoutBox)
 
     ASSERT_NOT_REACHED();
     return layoutBox.parent();
+}
+
+UsedStyle Box::usedStyle() const
+{
+    return rendererForIntegration()->usedStyle();
+}
+
+UsedStyle Box::firstLineUsedStyle() const
+{
+    return rendererForIntegration()->firstLineUsedStyle();
 }
 
 }

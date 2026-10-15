@@ -526,24 +526,24 @@ WebCore::Color ComputedStyle::usedAccentColor(OptionSet<StyleColorOptions> style
     );
 }
 
-Style::LineWidth ComputedStyle::usedColumnRuleWidth() const
+Style::LineWidth effectiveColumnRuleWidth(const ComputedStyle& style)
 {
-    if (!isVisibleBorderStyle(columnRuleStyle()))
+    if (!isVisibleBorderStyle(style.columnRuleStyle()))
         return 0_css_px;
-    return columnRuleWidth();
+    return style.columnRuleWidth();
 }
 
-Style::UsedOutlineOffset ComputedStyle::usedOutlineOffset() const
+Style::UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle& style)
 {
-    auto& outline = this->outline();
+    auto& outline = style.outline();
     if (outline.outlineOffset.isInset())
-        return Style::Length<> { -usedOutlineWidth().unresolvedValue() };
+        return Style::Length<> { -effectiveOutlineWidth(style).unresolvedValue() };
     return *outline.outlineOffset.tryLength();
 }
 
-Style::LineWidth ComputedStyle::usedOutlineWidth() const
+Style::LineWidth effectiveOutlineWidth(const ComputedStyle& style)
 {
-    auto& outline = this->outline();
+    auto& outline = style.outline();
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::None)
         return 0_css_px;
     if (static_cast<OutlineStyle>(outline.outlineStyle) == OutlineStyle::Auto)
@@ -551,9 +551,9 @@ Style::LineWidth ComputedStyle::usedOutlineWidth() const
     return outline.outlineWidth;
 }
 
-float ComputedStyle::usedOutlineSize(Style::ZoomFactor zoom, float deviceScaleFactor) const
+float effectiveOutlineSize(const ComputedStyle& style, Style::ZoomFactor zoom, float deviceScaleFactor)
 {
-    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom, deviceScaleFactor));
+    return std::max(0.0f, Style::evaluate<float>(effectiveOutlineWidth(style), zoom, deviceScaleFactor) + Style::evaluate<float>(effectiveOutlineOffset(style), zoom, deviceScaleFactor));
 }
 
 BlendMode ComputedStyle::usedBlendMode() const

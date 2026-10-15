@@ -872,11 +872,10 @@ public:
 
     inline const Style::ComputedStyle& style() const LIFETIME_BOUND; // Defined in RenderObjectStyle.h.
     inline UsedStyle usedStyle() const LIFETIME_BOUND; // Defined in RenderElementInlines.h.
+    inline UsedStyle firstLineUsedStyle() const LIFETIME_BOUND; // Defined in RenderElementInlines.h.
     inline CheckedRef<const Style::ComputedStyle> firstLineStyle() const LIFETIME_BOUND;
     inline WritingMode writingMode() const; // Defined in RenderObjectStyle.h.
     // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
-
-    virtual const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 

@@ -1216,7 +1216,7 @@ auto RenderBoxModelObject::localRectsForRepaint(RepaintOutlineBounds) const -> R
         return { };
 
     auto repaintRect = visualOverflowRect();
-    repaintRect.inflate(LayoutUnit { style().usedOutlineSize(style().usedZoomForLength(), style().deviceScaleFactor()) });
+    repaintRect.inflate(LayoutUnit { usedStyle().outlineSize() });
     return { repaintRect };
 }
 

@@ -797,7 +797,7 @@ Path AccessibilityRenderObject::elementPath() const
             return { };
 
         float deviceScaleFactor = protect(renderText->document())->deviceScaleFactor();
-        auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), deviceScaleFactor);
+        auto outlineOffset = Style::evaluate<float>(Style::effectiveOutlineOffset(style), style->usedZoomForLength(), deviceScaleFactor);
         Vector<FloatRect> pixelSnappedRects;
         for (auto rect : rects) {
             rect.inflate(outlineOffset);

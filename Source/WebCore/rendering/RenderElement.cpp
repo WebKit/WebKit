@@ -521,7 +521,7 @@ bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style
             return RequiredRepaint::RendererOnly;
 
         auto deviceScaleFactor = newStyle.deviceScaleFactor();
-        if (newStyle.usedOutlineSize(newStyle.usedZoomForLength(), deviceScaleFactor) < oldStyle.usedOutlineSize(oldStyle.usedZoomForLength(), deviceScaleFactor))
+        if (Style::effectiveOutlineSize(newStyle, newStyle.usedZoomForLength(), deviceScaleFactor) < Style::effectiveOutlineSize(oldStyle, oldStyle.usedZoomForLength(), deviceScaleFactor))
             return RequiredRepaint::RendererOnly;
 
         if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(*this)) {
@@ -1190,11 +1190,10 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
 #endif
 
     bool hadOutlineAuto = oldStyle && oldStyle->outlineStyle() == OutlineStyle::Auto;
-    bool hasOutlineAuto = outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
+    bool hasOutlineAuto = style().outlineStyle() == OutlineStyle::Auto;
     if (hasOutlineAuto != hadOutlineAuto) {
         updateOutlineAutoAncestor(hasOutlineAuto);
-        auto deviceScaleFactor = style().deviceScaleFactor();
-        issueRepaintForOutlineAuto(hasOutlineAuto ? outlineStyleForRepaint().usedOutlineSize(outlineStyleForRepaint().usedZoomForLength(), deviceScaleFactor) : oldStyle->usedOutlineSize(oldStyle->usedZoomForLength(), deviceScaleFactor));
+        issueRepaintForOutlineAuto(hasOutlineAuto ? usedStyle().outlineSize() : Style::effectiveOutlineSize(*oldStyle, oldStyle->usedZoomForLength(), style().deviceScaleFactor()));
     }
 
     auto isLayoutDiff = [](Style::Difference diff) {
@@ -1670,11 +1669,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
     // It's not really correct to do math here with oldOutlineBoundsRect/newOutlineBoundsRect and local shadow/radius values, since
     // oldOutlineBoundsRect/newOutlineBoundsRect are in the coordinate space of the repaint container, and have been mapped through ancestor transforms.
 
-    auto deviceScaleFactor = style().deviceScaleFactor();
-
-    CheckedRef outlineStyle = outlineStyleForRepaint();
-    auto outlineZoom = outlineStyle->usedZoomForLength();
-    auto outlineWidth = LayoutUnit { outlineStyle->usedOutlineSize(outlineZoom, deviceScaleFactor) };
+    auto outlineWidth = LayoutUnit { usedStyle().outlineSize() };
 
     CheckedRef style = this->style();
     auto zoom = style->usedZoomForLength();
@@ -1698,7 +1693,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineRightInsetExtent = [&] -> LayoutUnit {
-                auto offset = Style::evaluate<LayoutUnit>(outlineStyle->usedOutlineOffset(), outlineZoom, deviceScaleFactor);
+                auto offset = usedStyle().outlineOffset();
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowRightInsetExtent = [&] {
@@ -1742,7 +1737,7 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 });
             };
             auto outlineBottomInsetExtent = [&] -> LayoutUnit {
-                auto offset = Style::evaluate<LayoutUnit>(outlineStyle->usedOutlineOffset(), outlineZoom, deviceScaleFactor);
+                auto offset = usedStyle().outlineOffset();
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowBottomInsetExtent = [&]() -> LayoutUnit {
@@ -2322,7 +2317,7 @@ void RenderElement::updateOutlineAutoAncestor(bool hasOutlineAuto)
         if (hasOutlineAuto == child->hasOutlineAutoAncestor())
             continue;
         child->setHasOutlineAutoAncestor(hasOutlineAuto);
-        bool childHasOutlineAuto = child->outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto;
+        bool childHasOutlineAuto = child->style().outlineStyle() == OutlineStyle::Auto;
         if (childHasOutlineAuto)
             continue;
         if (auto* element = dynamicDowncast<RenderElement>(child.get()))

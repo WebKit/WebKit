@@ -168,13 +168,6 @@ public:
     WebCore::Color visitedDependentUsedBackgroundColor(OptionSet<PaintBehavior> = { }) const;
     WEBCORE_EXPORT WebCore::Color visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> = { }) const;
 
-    Style::LineWidth LEGACY_NODELETE usedColumnRuleWidth() const;
-
-    WEBCORE_EXPORT Style::UsedOutlineOffset usedOutlineOffset() const;
-    Style::LineWidth usedOutlineWidth() const;
-    float usedOutlineSize(Style::ZoomFactor, float deviceScaleFactor) const; // used value combining `outline-width` and `outline-offset`
-
-
     // MARK: - has*()
 
     inline bool hasBackground() const;
@@ -235,6 +228,16 @@ public:
 private:
     ComputedStyle(ComputedStyle&, ComputedStyle&&);
 };
+
+// The outline and column rule widths after the used-value rules: zero for style none (and hidden for
+// column rules), the platform focus ring width for outline-style auto. Unzoomed style values.
+// Code with a renderer reads the resolved values through UsedStyle.
+LineWidth effectiveColumnRuleWidth(const ComputedStyle&);
+LineWidth effectiveOutlineWidth(const ComputedStyle&);
+// outline-offset with `inset` resolved against the effective outline width.
+WEBCORE_EXPORT UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle&);
+// How far the outline reaches outside the border box.
+float effectiveOutlineSize(const ComputedStyle&, ZoomFactor, float deviceScaleFactor);
 
 } // namespace Style
 } // namespace WebCore

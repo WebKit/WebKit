@@ -35,6 +35,7 @@
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -643,7 +644,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
         return;
 
     auto ruleColor = blockStyle.visitedDependentColumnRuleColorApplyingColorFilter();
-    auto ruleThickness = Style::evaluate<LayoutUnit>(blockStyle.usedColumnRuleWidth(), blockStyle.usedZoomForLength(), blockStyle.deviceScaleFactor());
+    auto ruleThickness = parent()->usedStyle().columnRuleWidth();
     auto colGap = columnGap();
 
     bool antialias = BorderPainter::shouldAntialiasLines(paintInfo.context());

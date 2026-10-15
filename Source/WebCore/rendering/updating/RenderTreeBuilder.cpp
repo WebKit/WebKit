@@ -557,9 +557,8 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (SUPPRESS_UNCOUNTED_ARG CheckedPtr cache = parent.document().axObjectCache())
         cache->childrenChanged(parent, newChild);
 
-    if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto)
-        if (!is<RenderMultiColumnSet>(newChild->previousSibling())) 
-            newChild->setHasOutlineAutoAncestor();
+    if ((parent.hasOutlineAutoAncestor() || parent.style().outlineStyle() == OutlineStyle::Auto) && !is<RenderMultiColumnSet>(newChild->previousSibling()))
+        newChild->setHasOutlineAutoAncestor();
 }
 
 void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)

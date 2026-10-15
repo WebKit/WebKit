@@ -26,7 +26,6 @@
 #include "config.h"
 #include "UsedStyle.h"
 
-#include "LayoutBox.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObject.h"
@@ -34,11 +33,6 @@
 #include "UsedStyleReferenceSize.h"
 
 namespace WebCore {
-
-UsedStyle::UsedStyle(const Layout::Box& layoutBox)
-    : UsedStyle(downcast<RenderElement>(*layoutBox.rendererForIntegration()))
-{
-}
 
 LayoutUnit UsedStyleProperties::resolveReferenceSize(ReferenceSize referenceSize) const
 {

@@ -7676,6 +7676,7 @@
                 "inset"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "outline"],
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "reference",
@@ -7726,6 +7727,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "computed-style-storage-path": ["m_nonInheritedData", "backgroundData", "outline"],
                 "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "reference",
@@ -10686,6 +10688,7 @@
                 "thick"
             ],
             "codegen-properties": {
+                "used-style": "custom",
                 "aliases": [
                     "-webkit-column-rule-width"
                 ],

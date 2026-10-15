@@ -347,7 +347,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
     if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
-        if (style().usedOutlineWidth())
+        if (style().hasOutline())
             paintOutline(paintInfo, paintRect);
         return;
     }

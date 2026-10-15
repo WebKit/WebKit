@@ -962,15 +962,14 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
 
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor() || originalRenderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
-            || originalRenderer->outlineStyleForRepaint().outlineStyle() == OutlineStyle::Auto);
+            || originalRenderer->style().outlineStyle() == OutlineStyle::Auto);
         if (originalRenderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
         if (rendererHasOutlineAutoAncestor)
             continue;
         // Issue repaint on the correct repaint container.
         LayoutRect adjustedRepaintRect = repaintRect;
-        CheckedRef outlineStyle = originalRenderer->outlineStyleForRepaint();
-        adjustedRepaintRect.inflate(outlineStyle->usedOutlineSize(outlineStyle->usedZoomForLength(), outlineStyle->deviceScaleFactor()));
+        adjustedRepaintRect.inflate(originalRenderer->usedStyle().outlineSize());
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
         else if (CheckedPtr rendererWithOutline = dynamicDowncast<RenderLayerModelObject>(*originalRenderer)) {
@@ -2162,11 +2161,6 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(const Position& po
 
     ASSERT(!node());
     return createPositionWithAffinity(0, Affinity::Downstream);
-}
-
-const Style::ComputedStyle& RenderObject::outlineStyleForRepaint() const
-{
-    return style();
 }
 
 CursorDirective RenderObject::getCursor(const LayoutPoint&, Cursor&) const

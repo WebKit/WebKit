@@ -241,12 +241,13 @@ inline bool ComputedStyle::hasMask() const
 
 inline bool ComputedStyle::hasOutline() const
 {
-    return !usedOutlineWidth().isZero();
+    return !effectiveOutlineWidth(*this).isZero();
 }
 
 inline bool ComputedStyle::hasOutlineInVisualOverflow() const
 {
-    return !usedOutlineWidth().isZero() && (usedOutlineWidth().unresolvedValue() + usedOutlineOffset().unresolvedValue()) > 0;
+    auto outlineWidth = effectiveOutlineWidth(*this);
+    return !outlineWidth.isZero() && (outlineWidth.unresolvedValue() + effectiveOutlineOffset(*this).unresolvedValue()) > 0;
 }
 
 inline bool ComputedStyle::hasOutOfFlowPosition() const

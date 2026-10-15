@@ -4742,7 +4742,7 @@ void RenderBox::addVisualEffectOverflow()
 {
     bool hasBoxShadow = !style().boxShadow().isNone();
     bool hasBorderImageOutsets = style().hasBorderImageOutsets();
-    bool hasOutline = outlineStyleForRepaint().hasOutlineInVisualOverflow();
+    bool hasOutline = style().hasOutlineInVisualOverflow();
     bool hasInflatingFilters = hasFilter() && !computeFilterOutsets().isZero();
 
     if (!hasBoxShadow && !hasBorderImageOutsets && !hasOutline && !hasInflatingFilters)
@@ -4802,8 +4802,8 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox, Enu
         overflowMaxY = std::max(overflowMaxY, borderBox.maxY() + borderOutsets.bottom());
     }
 
-    if (outlineStyleForRepaint().hasOutlineInVisualOverflow()) {
-        auto outlineSize = LayoutUnit { outlineStyleForRepaint().usedOutlineSize(outlineStyleForRepaint().usedZoomForLength(), outlineStyleForRepaint().deviceScaleFactor()) };
+    if (style().hasOutlineInVisualOverflow()) {
+        auto outlineSize = LayoutUnit { usedStyle().outlineSize() };
         overflowMinX = std::min(overflowMinX, borderBox.x() - outlineSize);
         overflowMaxX = std::max(overflowMaxX, borderBox.maxX() + outlineSize);
         overflowMinY = std::min(overflowMinY, borderBox.y() - outlineSize);

@@ -37,6 +37,13 @@ inline UsedStyle RenderObject::usedStyle() const
     return downcast<RenderElement>(*this).usedStyle();
 }
 
+inline UsedStyle RenderObject::firstLineUsedStyle() const
+{
+    if (isRenderText())
+        return m_parent->firstLineUsedStyle();
+    return downcast<RenderElement>(*this).firstLineUsedStyle();
+}
+
 inline UsedStyle RenderElement::usedStyle() const { return UsedStyle { *this }; }
 inline UsedStyle RenderElement::firstLineUsedStyle() const { return UsedStyle { *this, firstLineStyle() }; }
 inline Overflow RenderElement::effectiveOverflowBlockDirection() const { return writingMode().isHorizontal() ? effectiveOverflowY() : effectiveOverflowX(); }
