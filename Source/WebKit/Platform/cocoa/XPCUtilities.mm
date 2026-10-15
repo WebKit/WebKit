@@ -27,6 +27,11 @@
 #include "XPCUtilities.h"
 
 #include <wtf/spi/darwin/ReasonSPI.h>
+#include <wtf/spi/darwin/XPCSPI.h>
+
+#if HAVE(LIBPROC)
+#include <libproc.h>
+#endif
 
 namespace WebKit {
 
@@ -45,7 +50,16 @@ void terminateWithReason(xpc_connection_t connection, WebKitReasonCode reasonCod
         uint64_t code = std::to_underlying(reasonCode);
         if (invalidMessageName)
             code |= static_cast<uint64_t>(std::to_underlying(*invalidMessageName)) << 8;
-        if (!terminate_with_reason(xpc_connection_get_pid(connection), OS_REASON_WEBKIT, code, reason, 0))
+        bool isSameProcess = true;
+#if HAVE(LIBPROC)
+        // terminate_with_reason() signals by pid, and the watchdog fires 30s after the connection
+        // was cancelled, so first confirm the pid still names the connection's process.
+        audit_token_t auditToken { };
+        xpc_connection_get_audit_token(connection, &auditToken);
+        std::array<char, PROC_PIDPATHINFO_MAXSIZE> path;
+        isSameProcess = proc_pidpath_audittoken(&auditToken, path.data(), path.size()) > 0;
+#endif
+        if (isSameProcess && !terminate_with_reason(xpc_connection_get_pid(connection), OS_REASON_WEBKIT, code, reason, 0))
             return;
     }
 #else
