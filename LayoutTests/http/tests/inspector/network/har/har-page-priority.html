@@ -47,7 +47,7 @@ function test()
             let har = await buildHAR(resources);
             let localResources = WI.networkManager.processHAR({json: har});
 
-            localResources.forEach((entry) => {
+            localResources?.forEach((entry) => {
                 if ((/html$/).test(entry.url)) {
                     InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority), "Very High", `HTML ${entry.url} should start with a Very High priority`);
                     InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "Very High", "- HTML should still have Very High priority");
