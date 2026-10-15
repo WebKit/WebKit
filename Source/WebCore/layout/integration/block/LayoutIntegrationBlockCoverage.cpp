@@ -276,6 +276,11 @@ bool canUseForBlockLayout(const RenderBlockFlow& rootContainer)
     return !blockLayoutAvoidanceReason(rootContainer);
 }
 
+bool canUseForIntrinsicInlineSizes(const RenderBlockFlow& rootContainer)
+{
+    return canUseForBlockLayout(rootContainer) && canComputeContentInlineSizes(rootContainer);
+}
+
 BlockLayoutCoverage computeBlockLayoutCoverage(const RenderView& renderView)
 {
     // A block-level box is placed by the block formatting context of its block container, which the new block formatting context lays

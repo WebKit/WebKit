@@ -36,6 +36,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderDescendantIterator.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
 #include "ScrollbarUpdateScope.h"
@@ -73,6 +74,26 @@ void BlockLayout::layout()
     updateRenderers(result, paintInvalidation);
     // RenderBlockFlow::layoutBlock resolves the used block size of the root from this.
     rootRenderer().setLogicalHeight(rootRenderer().borderAndPaddingLogicalHeight() + rootRenderer().scrollbarLogicalHeight() + result.intrinsicContentBlockSize);
+}
+
+std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const RenderBlockFlow& rootRenderer)
+{
+    auto paintInvalidation = PaintInvalidation { };
+    auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
+    auto blockLayoutState = Layout::BlockLayoutState { { } };
+    auto sizes = Layout::BlockFormattingContext { rootRenderer, integrationUtils, blockLayoutState }.computeIntrinsicInlineSizes(rootRenderer);
+
+    // The render tree stops invalidating intrinsic sizes at a box whose intrinsic sizes are already invalid, expecting its ancestors to be
+    // invalid too. The block formatting context does not compute the render tree's intrinsic sizes of the boxes in the root, so those that
+    // are invalid stay invalid, while the root's become valid: let invalidation go past them (RenderObject::invalidateContentLogicalWidths).
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableRootRenderer = const_cast<RenderBlockFlow&>(rootRenderer);
+    for (CheckedRef descendant : descendantsOfType<RenderElement>(mutableRootRenderer.get())) {
+        if (!descendant->hasInvalidContentLogicalWidths())
+            continue;
+        descendant->clearContentLogicalWidthsInvalidation();
+        descendant->invalidateContentLogicalWidths(MarkingBehavior::OnlyThis);
+    }
+    return { sizes.minimum, sizes.maximum };
 }
 
 void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
