@@ -428,7 +428,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
         if (!element)
             continue;
         bool matchedButton = is<HTMLButtonElement>(*element);
-        bool matchedLabel = isLabelable && is<HTMLLabelElement>(*element);
+        RefPtr label = dynamicDowncast<HTMLLabelElement>(*element);
+        bool matchedLabel = label && (isLabelable || hasInteractiveCursorType(*label) || label->control());
         bool matchedLink = element->isLink();
         if (matchedButton || matchedLabel || matchedLink) {
             matchedElement = element;
