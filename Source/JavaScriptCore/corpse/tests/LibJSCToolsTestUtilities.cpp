@@ -34,6 +34,7 @@
 #include <JavaScriptCore/CorpseError.h>
 #include <JavaScriptCore/CorpseProcess.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#include <JavaScriptCore/CorpseSnapshotDebugInfo.h>
 #include <JavaScriptCore/DeferGCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>
@@ -625,6 +626,22 @@ void analyzeAfterExecutableReplaced(CreateTargetObject create, NOESCAPE const Fu
 const ASCIILiteral* copiedHeaderConstantInUtilities()
 {
     return &copiedHeaderConstant;
+}
+
+const JSC::Corpse::TargetType* parameterClass(JSC::Corpse::SnapshotDebugInfo& debugInfo, JSC::Corpse::Address function, unsigned index)
+{
+    Vector<JSC::Corpse::TargetTypeRef> parameters = debugInfo.parameterTypes(function);
+    const JSC::Corpse::TargetType* type = nullptr;
+    if (index < parameters.size()) {
+        WTF::switchOn(parameters[index].get(),
+            [&](const JSC::Corpse::TargetPointer& pointer) {
+                if (const JSC::Corpse::TargetType* pointee = debugInfo.pointee(pointer); pointee && std::holds_alternative<JSC::Corpse::TargetClass>(*pointee))
+                    type = pointee;
+            },
+            [](const auto&) { });
+    }
+    TEST_ASSERT(type, "the function's parameter points to a class");
+    return type;
 }
 #endif
 

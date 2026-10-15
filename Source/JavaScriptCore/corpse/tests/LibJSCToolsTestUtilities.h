@@ -27,7 +27,10 @@
 #pragma once
 
 #include <JavaScriptCore/CorpsePlatform.h>
+#include <array>
+#include <bit>
 #include <memory>
+#include <optional>
 #include <span>
 #include <stdint.h>
 #include <string_view>
@@ -52,6 +55,8 @@ class VM;
 namespace Corpse {
 class Process;
 class Snapshot;
+class SnapshotDebugInfo;
+struct TargetType;
 }
 }
 #endif
@@ -85,12 +90,30 @@ void testThreads();
 void fuzzExportsTrie(uint64_t seed, unsigned iterations);
 void testTypeinfo();
 void testDebugInfo();
+void testHeapWalk();
 
 #if ENABLE(MYA_HEAP)
 // Each compile unit that includes this header has its own copy, so a heap walk
 // must find each copy's type in the compile unit that defines it.
 constinit const ASCIILiteral copiedHeaderConstant = "copied header constant"_s;
 const ASCIILiteral* copiedHeaderConstantInUtilities();
+
+// A function of this executable whose parameter has the type T* as this executable's debug info gives it.
+template<typename T> NEVER_INLINE void takesPointerTo(T*) { }
+
+template<typename T> JSC::Corpse::Address functionTakingPointerTo()
+{
+    return JSC::Corpse::Address { reinterpret_cast<const void*>(&takesPointerTo<T>) };
+}
+
+// Itanium C++ ABI: a pointer to a non-virtual member function starts with the function's address.
+template<typename MemberFunction> JSC::Corpse::Address memberFunctionAddress(MemberFunction memberFunction)
+{
+    return JSC::Corpse::Address { std::bit_cast<std::array<const void*, 2>>(memberFunction)[0] };
+}
+
+// The class that parameter `index` of the function at `function` points to, or null, which fails the test.
+const JSC::Corpse::TargetType* parameterClass(JSC::Corpse::SnapshotDebugInfo&, JSC::Corpse::Address function, unsigned index = 0);
 #endif
 
 void testVM();

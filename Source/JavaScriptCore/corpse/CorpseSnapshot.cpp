@@ -33,10 +33,12 @@
 #include "CorpseLimits.h"
 #include "VM.h"
 
+#include <dlfcn.h>
 #include <errno.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/SafeStrerror.h>
 #if OS(DARWIN)
@@ -46,10 +48,12 @@
 #include <mach/mach_error.h>
 #include <mach/task_info.h>
 #include <sys/proc.h>
+#include <wtf/HexNumber.h>
+#include <wtf/spi/darwin/dyldSPI.h>
+#include <wtf/text/StringBuilder.h>
 #else
 #include <stdio.h>
 #include <sys/prctl.h>
-#include <wtf/FileSystem.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #endif
 #include <wtf/TZoneMallocInlines.h>
@@ -168,6 +172,44 @@ Address Snapshot::symbol(const char* name)
             CORPSE_REPORT("No symbol '%s' in pid %d, as an earlier lookup found", name, static_cast<int>(process()->pid()));
     }
     return address;
+}
+
+#if OS(DARWIN)
+// In hex, as Image::uuid() gives it.
+static UTF8CString uuidOf(const void* header)
+{
+    uuid_t bytes;
+    if (!_dyld_get_image_uuid(static_cast<const mach_header*>(header), bytes))
+        return { };
+    StringBuilder uuid;
+    for (uint8_t byte : std::span { bytes })
+        uuid.append(hex(byte, 2));
+    return uuid.toString().utf8();
+}
+#endif
+
+Address Snapshot::addressOf(const void* local)
+{
+    Address address = Address { local }.stripped();
+    Dl_info info { };
+    if (!dladdr(reinterpret_cast<const void*>(address.toTargetVMAddress()), &info) || !info.dli_fname || !info.dli_fbase) {
+        CORPSE_REPORT("No image of this process holds 0x%llx", static_cast<unsigned long long>(address.toTargetVMAddress()));
+        return { };
+    }
+    String path = FileSystem::realPath(String::fromUTF8(info.dli_fname));
+    for (const Image& image : images()) {
+        if (FileSystem::realPath(String::fromUTF8(image.path().span())) != path)
+            continue;
+#if OS(DARWIN)
+        if (image.uuid() != uuidOf(info.dli_fbase)) {
+            CORPSE_REPORT("pid %d maps another build of '%s'", static_cast<int>(process()->pid()), path.utf8().legacyCStringPointer());
+            return { };
+        }
+#endif
+        return Address { image.loadAddress().toTargetVMAddress() + (address.toTargetVMAddress() - reinterpret_cast<target_address_t>(info.dli_fbase)) };
+    }
+    CORPSE_REPORT("pid %d does not map '%s'", static_cast<int>(process()->pid()), path.utf8().legacyCStringPointer());
+    return { };
 }
 
 enum class RunState : uint8_t { Running, Stopped, Exited };

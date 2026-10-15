@@ -169,6 +169,7 @@ int main(int argc, char** argv)
         runCorpseSuite();
         JSCToolsTest::testTypeinfo();
         JSCToolsTest::testDebugInfo();
+        JSCToolsTest::testHeapWalk();
         JSCToolsTest::testVM();
     }
 

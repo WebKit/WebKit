@@ -39,6 +39,10 @@ namespace JSC {
 
 VM* VMManager::s_recentVM { nullptr };
 
+#if ENABLE(MYA)
+VM* g_myaRootVM { nullptr };
+#endif
+
 VMManager& VMManager::singleton()
 {
     static LazyNeverDestroyed<VMManager> manager;
@@ -618,6 +622,10 @@ void VMManager::notifyVMConstruction(VM& vm)
     {
         Locker locker { m_worldLock };
         s_recentVM = &vm;
+#if ENABLE(MYA)
+        if (!g_myaRootVM)
+            g_myaRootVM = &vm;
+#endif
         m_vmList.append(vm.threadContext());
         m_numberOfVMs++;
         needsStopping = m_worldMode != Mode::RunAll;
@@ -640,6 +648,10 @@ void VMManager::notifyVMDestruction(VM& vm)
         Locker locker { m_worldLock };
         if (s_recentVM == &vm)
             s_recentVM = nullptr;
+#if ENABLE(MYA)
+        if (g_myaRootVM == &vm)
+            g_myaRootVM = nullptr;
+#endif
         m_vmList.remove(vm.threadContext());
         m_numberOfVMs--;
 

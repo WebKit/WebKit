@@ -34,6 +34,7 @@
 
 #include <JavaScriptCore/CorpseAddress.h>
 #include <JavaScriptCore/CorpseSnapshot.h>
+#include <JavaScriptCore/CorpseSnapshotDebugInfo.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/VM.h>
 #include <JavaScriptCore/Watchpoint.h>
@@ -48,6 +49,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #include <string>
 #include <string_view>
 #include <wtf/FastMalloc.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -94,6 +96,38 @@ UsesWideBounds::~UsesWideBounds() = default;
 DerivesNarrowBounds::~DerivesNarrowBounds() = default;
 
 } // namespace TypeinfoTypes
+
+class SnapshotDebugInfoTester {
+public:
+    // Describes, as a heap walk would, every class the debug info of `image` defines. Each class that cannot be
+    // described is reported. Returns how many were described.
+    static size_t describeClasses(JSC::Corpse::SnapshotDebugInfo& debugInfo, const JSC::Corpse::Image& image)
+    {
+        lldb::SBTarget& target = debugInfo.m_target;
+        lldb::SBModule module;
+        for (uint32_t i = 0; i < target.GetNumModules(); ++i) {
+            lldb::SBModule candidate = target.GetModuleAtIndex(i);
+            if (candidate.GetObjectFileHeaderAddress().GetLoadAddress(target) == image.loadAddress().toTargetVMAddress())
+                module = candidate;
+        }
+        TEST_ASSERT(module.IsValid(), "liblldb opens each image of the build");
+        size_t described = 0;
+        constexpr uint32_t records = lldb::eTypeClassClass | lldb::eTypeClassStruct | lldb::eTypeClassUnion;
+        for (uint32_t i = 0; i < module.GetNumCompileUnits(); ++i) {
+            lldb::SBCompileUnit unit = module.GetCompileUnitAtIndex(i);
+            lldb::SBTypeList types = unit.GetTypes(records);
+            for (uint32_t j = 0; j < types.GetSize(); ++j) {
+                lldb::SBType type = types.GetTypeAtIndex(j);
+                // The list also has Objective-C classes, which the Objective-C runtime describes, not the debug info.
+                if (!(type.GetTypeClass() & records) || !JSC::Corpse::SnapshotDebugInfo::isDefinition(type))
+                    continue;
+                if (debugInfo.valueType(type, module))
+                    ++described;
+            }
+        }
+        return described;
+    }
+};
 
 namespace {
 
@@ -189,85 +223,36 @@ lldb::SBType globalVariableType(lldb::SBTarget target, lldb::SBModule module, ll
     return { };
 }
 
-// The number of template arguments of the last class named in a qualified name, or 0.
-size_t templateArgumentCount(std::string_view name)
+// Every class of each image of the build a heap walk reads is described: this executable and JavaScriptCore.
+void describeImages()
 {
-    if (!name.ends_with('>'))
-        return 0;
-    size_t depth = 0;
-    size_t count = 1;
-    for (size_t index = name.size(); index--;) {
-        char character = name[index];
-        if (character == '>' || character == ')')
-            ++depth;
-        else if (character == '<' || character == '(') {
-            if (!--depth)
-                return name.substr(index + 1, name.size() - index - 2).find_first_not_of(' ') == std::string_view::npos ? 0 : count;
-        } else if (character == ',' && depth == 1)
-            ++count;
-    }
-    return 0;
-}
+    Dl_info executable { };
+    Dl_info javaScriptCore { };
+    TEST_ASSERT(dladdr(reinterpret_cast<void*>(&testTypeinfo), &executable) && executable.dli_fbase, "the test's own image is known");
+    TEST_ASSERT(dladdr(reinterpret_cast<void*>(&JSContextGroupCreate), &javaScriptCore) && javaScriptCore.dli_fname, "JavaScriptCore's image is known");
+    if (!executable.dli_fbase || !javaScriptCore.dli_fname)
+        return;
+    Vector<const void*> headers { executable.dli_fbase, javaScriptCore.dli_fbase };
 
-// Every destructor of an instance of a class template whose debug info is its own
-// names that instance as its class, not another instance of the template.
-void checkDestructorClasses(lldb::SBTarget target, lldb::SBModule module)
-{
-    unsigned checked = 0;
-    unsigned mismatched = 0;
-    size_t count = module.GetNumSymbols();
-    for (size_t index = 0; index < count; ++index) {
-        lldb::SBSymbol symbol = module.GetSymbolAtIndex(index);
-        const char* name = symbol.GetName();
-        if (!name || symbol.GetType() != lldb::eSymbolTypeCode)
+    auto snapshot = takeSnapshot(getpid());
+    if (!snapshot)
+        return;
+    Ref debugInfo = JSC::Corpse::SnapshotDebugInfo::create(*snapshot);
+    for (const void* header : headers) {
+        const auto& images = snapshot->images();
+        size_t index = images.findIf([&](auto& image) {
+            return image.loadAddress() == Address { header };
+        });
+        TEST_ASSERT(index != notFound, "the snapshot lists each image of the build");
+        if (index == notFound)
             continue;
-        std::string_view symbolName { name };
-        // A thunk adjusts `this` and jumps to the destructor, so its debug info has no parameters.
-        if (symbolName.starts_with("virtual thunk to ") || symbolName.starts_with("non-virtual thunk to "))
-            continue;
-        size_t destructor = symbolName.find("::~");
-        if (destructor == std::string_view::npos || !symbolName.ends_with("()"))
-            continue;
-        std::string_view className = symbolName.substr(0, destructor);
-        size_t expected = templateArgumentCount(className);
-        if (!expected)
-            continue;
-        lldb::SBFunction function = symbol.GetStartAddress().GetFunction();
-        TEST_ASSERT(function.IsValid() && function.GetName(), "the debug info describes every destructor of an instance of a class template");
-        if (!function.IsValid() || !function.GetName())
-            continue;
-        // The debug info names a function by its linkage name, as its symbol does. clang would make a derived
-        // class's destructor an alias of its base's, which names its base, only when optimizing.
-        TEST_ASSERT(std::string_view { function.GetName() } == symbolName, "the debug info names each destructor as its symbol does");
-        if (std::string_view { function.GetName() } != symbolName)
-            continue;
-        lldb::SBValueList parameters = function.GetBlock().GetVariables(target, true, false, false);
-        // The base-object destructor of a class with a virtual base also takes a VTT.
-        const char* firstParameterName = parameters.GetSize() ? parameters.GetValueAtIndex(0).GetName() : nullptr;
-        bool hasThis = firstParameterName && std::string_view { firstParameterName } == "this";
-        TEST_ASSERT(hasThis, "the debug info gives a destructor `this` as its first parameter");
-        if (!hasThis)
-            continue;
-        lldb::SBType type = parameters.GetValueAtIndex(0).GetType().GetPointeeType();
-        TEST_ASSERT(type.IsValid() && type.GetName(), "the debug info gives a destructor's `this` a type");
-        if (!type.IsValid() || !type.GetName())
-            continue;
-        // liblldb 22 cannot parse a class whose template argument is a function pointer, such as
-        // std::unique_ptr<void*, ICUDeleter<&udat_close_72>>, and gives its `this` no class.
-        bool parsed = type.GetTypeClass() & (lldb::eTypeClassClass | lldb::eTypeClassStruct | lldb::eTypeClassUnion);
-        if (!parsed)
-            dataLogLn("liblldb cannot parse the class of the destructor ", name);
-        TEST_ASSERT(parsed, "liblldb parses the class of every destructor of an instance of a class template");
-        if (!parsed)
-            continue;
-        ++checked;
-        if (templateArgumentCount(type.GetName()) != expected) {
-            ++mismatched;
-            dataLogLn("The destructor ", name, " belongs to ", type.GetName());
-        }
+        const JSC::Corpse::Image* image = &images[index];
+        MonotonicTime start = MonotonicTime::now();
+        size_t described = SnapshotDebugInfoTester::describeClasses(debugInfo.get(), *image);
+        TEST_ASSERT(described, "each image of the build has classes to describe");
+        if (verbose)
+            dataLogLn("    described ", described, " classes of ", image->path().legacyCStringPointer(), " in ", (MonotonicTime::now() - start).milliseconds(), " ms");
     }
-    TEST_ASSERT(checked, "the image has destructors of instances of class templates");
-    TEST_ASSERT_EQ(mismatched, 0u, "the destructor of an instance of a class template belongs to that instance, not to another instance of the template");
 }
 
 void checkLLDBVersion()
@@ -312,8 +297,6 @@ void checkImage(lldb::SBDebugger debugger, const char* path, std::string_view co
     TEST_ASSERT(symbolFileDirectory && std::string_view { symbolFileDirectory }.find(".dSYM/") != std::string_view::npos,
         "liblldb reads each image of the build from its dSYM");
 #endif
-
-    checkDestructorClasses(target, module);
 
     if (copiedConstantName.empty())
         return;
@@ -502,6 +485,7 @@ void testTypeinfo()
     }, analyze);
 
     checkImages();
+    describeImages();
     enumerateLibpasHeap();
 }
 

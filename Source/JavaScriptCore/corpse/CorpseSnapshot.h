@@ -120,6 +120,9 @@ public:
 
     // The address of `name` in this corpse, null if it is not there.
     Address symbol(const char* name);
+    // The address in this corpse of `local`, which points into an image of this process.
+    // Null, and reported, unless the corpse maps the same build of that image.
+    Address addressOf(const void* local);
 
 private:
     static std::unique_ptr<Snapshot> snapshotOfStopped(pid_t target);

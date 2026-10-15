@@ -39,6 +39,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/VMManager.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdint.h>
@@ -53,6 +54,8 @@ using JSC::Corpse::Snapshot;
 
 struct VMFixture {
     int32_t sum { 0 };
+    uint64_t rootVMAddress { 0 };
+    uint64_t rootVM { 0 };
 };
 
 // Just prove we can launch and attach to JSC.
@@ -71,6 +74,8 @@ Address createFixture()
     RELEASE_ASSERT(!exception && result.isInt32());
 
     fixture.sum = result.asInt32();
+    fixture.rootVMAddress = Address { &JSC::g_myaRootVM }.toTargetVMAddress();
+    fixture.rootVM = Address { JSC::g_myaRootVM }.toTargetVMAddress();
     return Address { &fixture };
 }
 
@@ -81,6 +86,17 @@ void analyze(Snapshot& snapshot, Address fixtureAddress)
     if (!fixture)
         return;
     TEST_ASSERT_EQ(fixture->sum, 40 + 2, "the target's VM computed the sum");
+
+    Address rootVMAddress = snapshot.addressOf(&JSC::g_myaRootVM);
+    TEST_ASSERT_EQ(rootVMAddress.toTargetVMAddress(), fixture->rootVMAddress, "this process finds the target's root VM through its own copy of JavaScriptCore");
+    auto rootVM = snapshot.memory().ptr<uint64_t>(rootVMAddress);
+    TEST_ASSERT(rootVM && *rootVM && *rootVM == fixture->rootVM, "the target's root VM reads");
+
+    uint64_t onStack { 0 };
+    {
+        ExpectedErrors expected(1);
+        TEST_ASSERT(!snapshot.addressOf(&onStack), "an address in no image has no address in the target");
+    }
 }
 
 void analyzeExited(Snapshot& snapshot, Address fixtureAddress)
