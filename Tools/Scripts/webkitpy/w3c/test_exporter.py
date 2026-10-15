@@ -27,6 +27,7 @@
 import argparse
 import logging
 import re
+import string
 import sys
 import subprocess
 import textwrap
@@ -58,6 +59,7 @@ CANONICAL_LINK_RE = re.compile(r'^Canonical[ -]link:\s*(?P<link>\S+)$', re.IGNOR
 CO_AUTHORED_BY_RE = re.compile(r'^Co-authored-by:', re.IGNORECASE)
 WEBKIT_ONLY_TRAILER_RE = re.compile(r'^(Originally-landed-as|Identifier|git-svn-id):')
 WEBKIT_WPT_PATH_RE = re.compile(r'(?<![/\w])(LayoutTests/)?imported/w3c/web-platform-tests/')
+MARKDOWN_ESCAPE_TABLE = str.maketrans({c: rf'\{c}<!---->' for c in string.punctuation})
 
 
 def wpt_commit_message(message, bugs):
@@ -355,7 +357,7 @@ class WebPlatformTestExporter(object):
             _log.error('Cannot create a WPT PR since it contains webkit test runner specific changes')
             return
 
-        title = self._bug.title.replace("[", "\\[").replace("]", "\\]")
+        title = self._bug.title.translate(MARKDOWN_ESCAPE_TABLE)
         # wpt-pr-bot identifies WebKit exports by pr_title: https://github.com/web-platform-tests/wpt-pr-bot/blob/main/lib/metadata/webkit.js
         pr_title = f'WebKit export of {self._bug.link}'
         description = f'WebKit export from bug: [{title}]({self._bug.link})\n\n<pre>\n{PullRequest.escape_html(self._commit_message)}\n</pre>'

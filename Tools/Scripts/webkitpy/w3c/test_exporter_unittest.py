@@ -209,6 +209,38 @@ class TestExporterTest(testing.PathTestCase):
                 'Removing local branch wpt-export-for-webkit-1'],
         )
 
+    def test_export_escapes_bug_title(self):
+        issues = list(bmocks.ISSUES)
+        issues[0] = dict(bmocks.ISSUES[0], title=r'<select> \ [picker] :a: @user')
+        with OutputCapture(level=logging.INFO), bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=issues, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ):
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            host.web.responses.append({'status_code': 200, 'body': '{"login": "USER"}'})
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-n', 'USER', '-t', 'TOKEN', '-d', self.path])
+            WebPlatformTestExporter(host, options).do_export()
+
+            self.assertEqual(
+                wpt_remote.pull_requests[0]['body'].split('\n')[0],
+                r'WebKit export from bug: [\<<!---->select\><!----> \\<!----> \[<!---->picker\]<!----> \:<!---->a\:<!----> \@<!---->user](https://bugs.example.com/show_bug.cgi?id=1)',
+            )
+
     def test_export_no_git_commit(self):
         with mocks.local.Git(self.path), patch(
             'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
