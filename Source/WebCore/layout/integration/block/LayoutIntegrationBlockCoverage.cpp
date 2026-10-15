@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationBlockCoverage.h"
 
+#include "BlockFormattingUtils.h"
 #include "BlockMarginCollapse.h"
 #include "Document.h"
 #include "HTMLButtonElement.h"
@@ -185,8 +186,19 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         || (!isAuto(style->logicalHeight()) && !isSupportedBlockSize(style->logicalHeight(), true))
         || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight(), blockSizeIsAutomatic))
         || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight(), blockSizeIsAutomatic))
-        || style->aspectRatio().hasRatio() || blockContainer->shouldApplySizeContainment())
+        || blockContainer->shouldApplySizeContainment())
         return BlockAvoidanceReason::ContentHasUnsupportedSize;
+    // A preferred aspect ratio gives an auto block size from the inline size.
+    // FIXME: An inline size from a definite block size and the min and max sizes the ratio transfers between the axes (css-sizing-4 §5.1), and
+    // percentage block sizes of the children, which the render tree path resolves against the size the ratio gives.
+    if (style->aspectRatio().hasRatio()) {
+        if (!style->logicalHeight().isAuto() || !style->logicalMinWidth().isAuto() || !style->logicalMaxWidth().isNone() || !style->logicalMinHeight().isAuto() || !style->logicalMaxHeight().isNone())
+            return BlockAvoidanceReason::ContentHasUnsupportedSize;
+        for (CheckedRef child : childrenOfType<RenderBox>(*blockContainer)) {
+            if (Layout::BlockFormattingUtils::hasPercentageBlockSize(child, blockContainer->writingMode()))
+                return BlockAvoidanceReason::ContentHasUnsupportedSize;
+        }
+    }
     // In quirks mode a percentage height resolves against the nearest ancestor with a height (RenderBox::computePercentageLogicalHeight).
     if (blockContainer->document().inQuirksMode() && (style->logicalHeight().isPercentOrCalculated() || style->logicalMinHeight().isPercentOrCalculated() || style->logicalMaxHeight().isPercentOrCalculated()))
         return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
