@@ -4851,6 +4851,12 @@ const Style::ComputedStyle* Element::renderOrDisplayContentsStyle() const
     return renderOrDisplayContentsStyle({ });
 }
 
+Style::ComputedStyle* Element::mutableDisplayContentsStyle()
+{
+    ASSERT(hasDisplayContents());
+    return elementRareData()->displayContentsOrNoneStyle();
+}
+
 const Style::ComputedStyle* Element::renderOrDisplayContentsStyle(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
 {
     if (pseudoElementIdentifier) {
