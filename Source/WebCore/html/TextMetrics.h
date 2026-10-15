@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "CanvasDirection.h"
+#include "DOMRectReadOnly.h"
+#include "ExceptionOr.h"
+#include "FontCascade.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -33,6 +37,14 @@ namespace WebCore {
 class TextMetrics : public RefCounted<TextMetrics> {
 public:
     static Ref<TextMetrics> create() { return adoptRef(*new TextMetrics); }
+    static Ref<TextMetrics> create(const FontCascade& font, const String& text) { return adoptRef(*new TextMetrics(font, text)); }
+
+    TextMetrics() = default;
+    TextMetrics(const FontCascade& font, const String& text)
+        : m_font(font)
+        , m_text(text)
+    {
+    }
 
     double width() const { return m_width; }
     void setWidth(double w) { m_width = w; }
@@ -69,6 +81,17 @@ public:
 
     double ideographicBaseline() const { return m_ideographicBaseline; }
     void setIdeographicBaseline(double value) { m_ideographicBaseline = value; }
+
+    unsigned getIndexFromOffset(double offset);
+    ExceptionOr<Vector<Ref<DOMRectReadOnly>>> getSelectionRects(uint32_t start, uint32_t end);
+    ExceptionOr<Ref<DOMRectReadOnly>> getActualBoundingBox(uint32_t start, uint32_t end);
+
+    FontCascade m_font;
+    String m_text;
+    CanvasDirection m_direction;
+    bool m_directionalOverride;
+
+    double m_textAlignOffset;
 
 private:
     double m_width { 0 };
