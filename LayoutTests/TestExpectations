@@ -4635,13 +4635,14 @@ imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-013
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-014.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-016.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/hori-block-size-small-or-larger-than-container-with-min-or-max-content-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/max-content-input-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1.html [ ImageOnlyFailure ]
+# These references give min-height: min-content the initial value (min-height: 0), but in the block axis it is the automatic size
+# (https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content), and the compressed min-content contribution of a percentage-sized
+# input is still floored by its minimum size (https://drafts.csswg.org/css-sizing-3/#replaced-percentage-min-contribution).
+imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/block-size-with-min-or-max-content-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/block-size-with-min-or-max-content-4.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-max-inline-size.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-min-inline-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-023.html [ ImageOnlyFailure ]

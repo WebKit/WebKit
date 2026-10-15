@@ -858,9 +858,7 @@ std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minMaxMainSizesForFlexI
     auto maxExtent = computeUsedMaxMainSize(flexLayoutItem);
     auto resolvedMax = maxExtent.value_or(LayoutUnit::max());
 
-    // useContentBasedMinimumSize covers both auto-equivalent cases: min:auto with
-    // non-scrollable overflow (§ 4.5) and block-axis intrinsic keywords (CSS Sizing
-    // 3 § 5.2 makes those behave like auto, regardless of overflow).
+    // min:auto with non-scrollable overflow resolves to the content-based minimum size (§ 4.5).
     auto& minSize = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
     if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem)) {
         auto contentBasedMinMainSize = computeContentBasedMinMainSize(flexLayoutItem, maxExtent);
@@ -890,9 +888,9 @@ LayoutUnit FlexFormattingContext::computeUsedNonAutoMinMainSize(const FlexLayout
     // https://drafts.csswg.org/css-flexbox/#main-size-property
     // Resolves the used min main size for every case except min:auto. Three values
     // route here: a specified length/percentage, the stretch keyword, and intrinsic
-    // keywords (min-content/max-content/fit-content) on the inline axis. Per CSS
-    // Sizing 3 § 5.2, intrinsic keywords on the block axis behave like auto, so
-    // those go through computeContentBasedMinMainSize instead.
+    // keywords (min-content/max-content/fit-content). On the block axis the intrinsic
+    // keywords resolve to the content height, which, unlike the content-based minimum
+    // size, the max main size does not clamp.
     auto minExtent = integrationUtils().computeMainAxisExtentForFlexItem(flexLayoutItem, min, m_constraints.mainAxisSizeForLengthResolution).value_or(0_lu);
 
     // We must never return a min size smaller than the min preferred size for tables.

@@ -318,19 +318,16 @@ bool FlexFormattingUtils::useContentBasedMinimumBlockSize(const RenderBox& flexI
 // https://drafts.csswg.org/css-flexbox/#min-size-auto
 bool FlexFormattingUtils::useContentBasedMinimumSize(const RenderBox& flexItem)
 {
-    auto minSize = minMainSizeLengthForFlexItem(flexItem);
     // min, max and fit-content are equivalent to the automatic size for block sizes https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content.
-    // Unlike auto, these are explicit author values so the overflow gate does not apply.
-    bool flexItemBlockSizeIsEquivalentToAutomaticSize = !mainAxisIsFlexItemInlineAxis(flexItem) && (minSize.isMinContent() || minSize.isMaxContent() || minSize.isFitContent());
-    if (flexItemBlockSizeIsEquivalentToAutomaticSize)
-        return true;
-
+    // That is the automatic size of 'height' (the content height), not the automatic minimum size of 'min-height', so these
+    // keywords do not get the content-based minimum, which the max main size clamps. They resolve to the content height
+    // instead, and min-height then wins over max-height.
     auto computedOverflowIsNotScrollable = [&flexItem]() {
         auto overflow = mainAxisOverflowForFlexItem(flexItem);
         return overflow == Overflow::Visible || overflow == Overflow::Clip;
     };
 
-    return minSize.isAuto() && computedOverflowIsNotScrollable();
+    return minMainSizeLengthForFlexItem(flexItem).isAuto() && computedOverflowIsNotScrollable();
 }
 
 double FlexFormattingUtils::preferredAspectRatioForFlexItem(const FlexLayoutItem& flexLayoutItem) const

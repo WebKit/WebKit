@@ -29,13 +29,9 @@ PASS .test 27
 PASS .test 28
 PASS .test 29
 PASS .test 30
-FAIL .test 31 assert_equals:
-<div class="test min-height" style="min-height: min-content" data-expected-height="30">X X</div>
-height expected 30 but got 10
+PASS .test 31
 PASS .test 32
-FAIL .test 33 assert_equals:
-<div class="test min-height" style="min-height: max-content" data-expected-height="30">X X</div>
-height expected 30 but got 10
+PASS .test 33
 PASS .test 34
 PASS .test 35
 PASS .test 36
