@@ -362,6 +362,8 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeIntrinsicLogicalWidths
         }
     } else if (childrenInline())
         std::tie(minLogicalWidth, maxLogicalWidth) = computeInlineIntrinsicLogicalWidths();
+    else if (LayoutIntegration::canUseForIntrinsicInlineSizes(*this))
+        std::tie(minLogicalWidth, maxLogicalWidth) = LayoutIntegration::BlockLayout::computeIntrinsicInlineSizes(*this);
     else
         std::tie(minLogicalWidth, maxLogicalWidth) = computeBlockIntrinsicLogicalWidths();
 
