@@ -160,18 +160,18 @@ private:
     String serializeAnimationRange() const;
     String serializeSingleAnimationRange(const CSSValue&, Style::SingleAnimationRangeType, CSSValueID = CSSValueID::Invalid) const;
 
+    const CSS::SerializationContext& m_serializationContext;
     StylePropertyShorthand m_shorthand;
     std::array<RefPtr<CSSValue>, maxShorthandLength> m_longhandValues;
     String m_result;
     bool m_commonSerializationChecksSuppliedResult { false };
-    const CSS::SerializationContext& m_serializationContext;
 };
 
 template<typename PropertiesType>
 inline ShorthandSerializer::ShorthandSerializer(const CSS::SerializationContext& serializationContext, const PropertiesType& properties, CSSPropertyID shorthandID)
-    : m_shorthand(shorthandForProperty(shorthandID))
+    : m_serializationContext(serializationContext)
+    , m_shorthand(shorthandForProperty(shorthandID))
     , m_commonSerializationChecksSuppliedResult(commonSerializationChecks(properties))
-    , m_serializationContext(serializationContext)
 {
 }
 
