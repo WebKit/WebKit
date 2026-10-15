@@ -107,7 +107,7 @@ private:
     }
 
     void initialize(uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) final { webrtc::initializeLocalEncoder(m_encoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate); }
-    void encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool isKeyframeRequired) final { webrtc::encodeLocalEncoderFrame(m_encoder, pixelBuffer, timeStampNs, timeStamp, duration, toWebRTCVideoRotation(rotation), isKeyframeRequired); }
+    void encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool, bool isKeyframeRequired) final { webrtc::encodeLocalEncoderFrame(m_encoder, pixelBuffer, timeStampNs, timeStamp, duration, toWebRTCVideoRotation(rotation), isKeyframeRequired); }
     void setRates(uint32_t bitRate, uint32_t frameRate) final { webrtc::setLocalEncoderRates(m_encoder, bitRate, frameRate); }
     void flush() final { webrtc::flushLocalEncoder(m_encoder); }
 

@@ -81,7 +81,7 @@ class RemoteVideoEncoderCallbacks : public ThreadSafeRefCounted<RemoteVideoEncod
 public:
     static Ref<RemoteVideoEncoderCallbacks> create(WebCore::VideoEncoder::DescriptionCallback&& descriptionCallback, WebCore::VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new RemoteVideoEncoderCallbacks(WTF::move(descriptionCallback), WTF::move(outputCallback))); }
 
-    void notifyEncodedChunk(Vector<uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex);
+    void notifyEncodedChunk(Vector<uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex, WebCore::VideoFrameRotation, bool isMirrored);
     void notifyEncoderDescription(WebCore::VideoEncoderActiveConfiguration&&);
 
     void LEGACY_NODELETE close() { m_isClosed = true; }
@@ -265,8 +265,8 @@ RemoteVideoEncoder::RemoteVideoEncoder(LibWebRTCCodecs::Encoder& encoder, Ref<Re
     , m_callbacks(WTF::move(callbacks))
 {
     Ref libWebRTCCodecs = WebProcess::singleton().libWebRTCCodecs();
-    libWebRTCCodecs->registerEncodedVideoFrameCallback(m_internalEncoder, [callbacks = m_callbacks](auto&& encodedChunk, bool isKeyFrame, auto timestamp, auto duration, auto temporalIndex) {
-        callbacks->notifyEncodedChunk(Vector<uint8_t> { encodedChunk }, isKeyFrame, timestamp, duration, temporalIndex);
+    libWebRTCCodecs->registerEncodedVideoFrameCallback(m_internalEncoder, [callbacks = m_callbacks](auto&& encodedChunk, bool isKeyFrame, auto timestamp, auto duration, auto temporalIndex, auto rotation, bool isMirrored) {
+        callbacks->notifyEncodedChunk(Vector<uint8_t> { encodedChunk }, isKeyFrame, timestamp, duration, temporalIndex, rotation, isMirrored);
     });
     libWebRTCCodecs->registerEncoderDescriptionCallback(m_internalEncoder, [callbacks = m_callbacks](WebCore::VideoEncoderActiveConfiguration&& description) {
         callbacks->notifyEncoderDescription(WTF::move(description));
@@ -313,12 +313,12 @@ RemoteVideoEncoderCallbacks::RemoteVideoEncoderCallbacks(WebCore::VideoEncoder::
 {
 }
 
-void RemoteVideoEncoderCallbacks::notifyEncodedChunk(Vector<uint8_t>&& data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex)
+void RemoteVideoEncoderCallbacks::notifyEncodedChunk(Vector<uint8_t>&& data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex, WebCore::VideoFrameRotation rotation, bool isMirrored)
 {
     if (m_isClosed)
         return;
 
-    m_outputCallback({ WTF::move(data), isKeyFrame, timestamp, duration, temporalIndex });
+    m_outputCallback({ WTF::move(data), isKeyFrame, timestamp, duration, temporalIndex, rotation, isMirrored });
 }
 
 void RemoteVideoEncoderCallbacks::notifyEncoderDescription(WebCore::VideoEncoderActiveConfiguration&& description)

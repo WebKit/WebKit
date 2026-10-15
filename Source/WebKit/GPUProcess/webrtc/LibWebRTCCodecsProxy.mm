@@ -471,7 +471,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
 #if !PLATFORM(MACCATALYST)
     attachColorSpaceToPixelBuffer(sharedVideoFrame.colorSpace, pixelBuffer);
     encoder->encodingCallbacks.append(WTF::move(callback));
-    encoder->gpuEncoder->encodeFrame(pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, sharedVideoFrame.rotation, shouldEncodeAsKeyFrame);
+    encoder->gpuEncoder->encodeFrame(pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, sharedVideoFrame.rotation, sharedVideoFrame.mirrored, shouldEncodeAsKeyFrame);
 #else
     callback(false);
 #endif
