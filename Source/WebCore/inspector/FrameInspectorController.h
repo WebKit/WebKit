@@ -98,7 +98,7 @@ public:
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
     WEBCORE_EXPORT void siteIsolationFirstEnabled();
-    void inspectedFrameDestroyed();
+    void inspectedFrameDestroyed(LocalFrame&);
 
     // Selects the node in the frontend. A node chosen while no frontend is connected is selected once the
     // first one connects.
