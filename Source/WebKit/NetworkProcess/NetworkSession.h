@@ -173,6 +173,7 @@ public:
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 
     void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
+    void requestLocalNetworkAccessPermissionForWorker(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
 
     WebCore::IPAddressSpace classifyConnectionAddressSpace(const std::optional<WebCore::IPAddress>&, const URL&) const;
 

@@ -228,6 +228,7 @@ public:
     void setPrivateTokenIPCForTesting(bool enabled);
     void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
     void queryLocalNetworkAccessPermission(std::optional<WebPageProxyIdentifier>, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&);
+    void requestLocalNetworkAccessPermissionForWorker(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(WebCore::PermissionState)>&&);
     void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
     void clearLocalNetworkAccessPermissionsForTesting();
 

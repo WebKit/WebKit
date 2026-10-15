@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/SharedWorkerKey.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
@@ -70,12 +71,13 @@ public:
     WebCore::Site topSite() const;
     WebSharedWorkerServerToContextConnection* contextConnection() const;
 
-    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&);
+    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, std::optional<WebCore::FrameIdentifier>, const WebCore::TransferredMessagePort&);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void suspend(WebCore::SharedWorkerObjectIdentifier);
     void resume(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(NOESCAPE const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
+    Vector<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> sharedWorkerObjectFrames() const;
     std::optional<WebCore::ProcessIdentifier> LEGACY_NODELETE firstSharedWorkerObjectProcess() const;
 
     void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
@@ -94,6 +96,7 @@ public:
 
     struct SharedWorkerObjectState {
         bool isSuspended { false };
+        std::optional<WebCore::FrameIdentifier> frameID;
         std::optional<WebCore::TransferredMessagePort> port;
     };
 
