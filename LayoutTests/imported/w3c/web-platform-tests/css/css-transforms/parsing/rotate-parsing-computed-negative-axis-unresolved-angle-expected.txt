@@ -1,0 +1,6 @@
+
+PASS -1 0 0 with an unresolved angle negates the resolved angle
+PASS 0 -1 0 with an unresolved angle negates the resolved angle
+PASS 0 0 -1 with an unresolved angle negates the resolved angle
+PASS 1 0 0 with an unresolved angle resolves the angle
+

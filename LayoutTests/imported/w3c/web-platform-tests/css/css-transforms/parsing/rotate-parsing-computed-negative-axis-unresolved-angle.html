@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS Transform Module Level 2: rotate computed value with a negative axis and an unresolved angle</title>
+<link rel="help" href="https://drafts.csswg.org/css-transforms-2/#individual-transform-serialization">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="container"><div></div><div></div><div id="target"></div></div>
+<script>
+const target = document.getElementById("target");
+const angle = "calc(10deg * sibling-index())";
+
+
+function computed(value) {
+    target.style.rotate = value;
+    return getComputedStyle(target).rotate;
+}
+
+test(() => {
+    assert_equals(computed(`-1 0 0 ${angle}`), "x -30deg");
+}, "-1 0 0 with an unresolved angle negates the resolved angle");
+
+test(() => {
+    assert_equals(computed(`0 -1 0 ${angle}`), "y -30deg");
+}, "0 -1 0 with an unresolved angle negates the resolved angle");
+
+test(() => {
+    assert_equals(computed(`0 0 -1 ${angle}`), "-30deg");
+}, "0 0 -1 with an unresolved angle negates the resolved angle");
+
+test(() => {
+    assert_equals(computed(`1 0 0 ${angle}`), "x 30deg");
+}, "1 0 0 with an unresolved angle resolves the angle");
+</script>
+</body>
+</html>
