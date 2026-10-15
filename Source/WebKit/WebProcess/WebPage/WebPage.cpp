@@ -1110,6 +1110,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     page->didUpdateHardwareKeyboardAttachment(m_keyboardIsAttached);
 
     page->setTextAutosizingWidth(parameters.textAutosizingWidth);
+    page->setUnobscuredSafeAreaInsets(parameters.unobscuredSafeAreaInsets);
     setOverrideViewportArguments(parameters.overrideViewportArguments);
 
     if (!parameters.contentSizeCategory.isNull())
@@ -1847,6 +1848,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSizeToContentAutoSizeMaximumSize(parameters.sizeToContentAutoSizeMaximumSize);
 
     setObscuredContentInsets(parameters.obscuredContentInsets);
+#if PLATFORM(IOS_FAMILY)
+    protect(m_page)->setUnobscuredSafeAreaInsets(parameters.unobscuredSafeAreaInsets);
+#endif
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (parameters.imageAnimationEnabledOverride)
         protect(m_page)->setImageAnimationEnabled(*parameters.imageAnimationEnabledOverride);
