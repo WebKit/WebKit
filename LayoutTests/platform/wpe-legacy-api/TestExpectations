@@ -298,6 +298,13 @@ webkit.org/b/327440 http/tests/xmlhttprequest/access-control-repeated-failed-pre
 webkit.org/b/327441 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-starting-point.html [ Crash ]
 webkit.org/b/327443 webgl/webgl-resize-non-composited.html [ Crash ]
 
+# The legacy API has no inspector frontend page; WebInspectorUIProxy::createFrontendPage asserts.
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+
+# Skipped in platform/wpe until 2026-10; not yet triaged for the legacy API.
+editing/pasteboard [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 #//////////////////////////////////////////////////////////////////////////////////////////
