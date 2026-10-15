@@ -54,6 +54,11 @@ public:
     static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
     static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
+    // The border box block size a preferred aspect ratio gives an auto block size, from the inline size (css-sizing-4 §5.1, like
+    // RenderBox::blockSizeFromAspectRatio). None without a ratio or with a block size.
+    static std::optional<LayoutUnit> aspectRatioBorderBoxBlockSize(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit horizontalBorderAndPadding, LayoutUnit verticalBorderAndPadding, WritingMode);
+    // Its block-size, min-block-size or max-block-size is a percentage of the containing block's block size.
+    static bool hasPercentageBlockSize(const RenderBox&, WritingMode);
     // The min-content, max-content and fit-content block sizes of a block container are its automatic block size (css-sizing-3 §2.1, §3.2), and a
     // percentage block size behaves as auto when the block size of the containing block is not definite (CSS 2.2 §10.5).
     static bool blockSizeBehavesAsAuto(const Style::PreferredSize& blockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize);
