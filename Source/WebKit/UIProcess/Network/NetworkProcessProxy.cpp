@@ -351,24 +351,31 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy::getNetworkProcessConnection: Taking a background assertion because web process pid %i (core identifier %" PRIu64 ") is requesting a connection", this, webProcessProxy.processID(), webProcessProxy.coreProcessIdentifier().toUInt64());
     startResponsivenessTimer(UseLazyStop::No);
-    NetworkProcessConnectionParameters parameters;
-#if ENABLE(IPC_TESTING_API)
-    parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
-#endif
-    parameters.sharedPreferencesForWebProcess = *webProcessProxy.sharedPreferencesForWebProcess();
+    Vector<WebPageProxyIdentifier> allowedWebPageProxyIdentifiers;
+    Vector<WebPageProxyIdentifier> pagesWithRelaxedThirdPartyCookieBlocking;
     for (Ref page : webProcessProxy.pages()) {
-        parameters.allowedWebPageProxyIdentifiers.append(page->identifier());
+        allowedWebPageProxyIdentifiers.append(page->identifier());
         if (page->configuration().shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::Yes)
-            parameters.pagesWithRelaxedThirdPartyCookieBlocking.append(page->identifier());
+            pagesWithRelaxedThirdPartyCookieBlocking.append(page->identifier());
     }
+    HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
     for (Ref page : webProcessProxy.mainPages()) {
         if (!page->corsDisablingPatterns().isEmpty())
-            parameters.corsDisablingPatternsPerPage.add(page->webPageIDInMainFrameProcess(), page->corsDisablingPatterns());
+            corsDisablingPatternsPerPage.add(page->webPageIDInMainFrameProcess(), page->corsDisablingPatterns());
     }
     auto& cookiesData = webProcessProxy.allowedFirstPartiesForCookiesData();
-    parameters.loadedWebArchive = cookiesData.first;
-    parameters.allowedFirstPartiesForCookies = cookiesData.second;
-    parameters.hostedDomains = webProcessProxy.hostedDomains();
+    NetworkProcessConnectionParameters parameters {
+        .sharedPreferencesForWebProcess = *webProcessProxy.sharedPreferencesForWebProcess(),
+#if ENABLE(IPC_TESTING_API)
+        .ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting(),
+#endif
+        .pagesWithRelaxedThirdPartyCookieBlocking = WTF::move(pagesWithRelaxedThirdPartyCookieBlocking),
+        .loadedWebArchive = cookiesData.first,
+        .allowedFirstPartiesForCookies = cookiesData.second,
+        .allowedWebPageProxyIdentifiers = WTF::move(allowedWebPageProxyIdentifiers),
+        .hostedDomains = webProcessProxy.hostedDomains(),
+        .corsDisablingPatternsPerPage = WTF::move(corsDisablingPatternsPerPage),
+    };
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTF::move(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
