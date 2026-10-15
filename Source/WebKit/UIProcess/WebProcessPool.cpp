@@ -709,7 +709,7 @@ bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
 static EnhancedSecurity defaultEnhancedSecurity(WebProcessProxy::LockdownMode lockdownMode, const WebPreferences& preferences)
 {
-    if (lockdownMode == WebProcessProxy::LockdownMode::Enabled || !preferences.enhancedSecurityEnabledByDefault())
+    if (lockdownMode == WebProcessProxy::LockdownMode::Enabled || !shouldEnableEnhancedSecurityByDefault(preferences))
         return EnhancedSecurity::Disabled;
     return EnhancedSecurity::EnabledPolicy;
 }
@@ -2891,6 +2891,13 @@ bool lockdownModeEnabledBySystem()
     return false;
 }
 void setLockdownModeEnabledGloballyForTesting(std::optional<bool>)
+{
+}
+bool shouldEnableEnhancedSecurityByDefault(const WebPreferences& preferences)
+{
+    return preferences.enhancedSecurityEnabledByDefault();
+}
+void WebProcessPool::setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::optional<bool>)
 {
 }
 #endif

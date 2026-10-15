@@ -128,6 +128,7 @@ class WebCompiledContentRuleList;
 class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
+class WebPreferences;
 class WebProcessCache;
 struct GPUProcessConnectionParameters;
 struct NetworkProcessCreationParameters;
@@ -148,6 +149,7 @@ void addLockdownModeObserver(LockdownModeObserver&);
 void removeLockdownModeObserver(LockdownModeObserver&);
 bool lockdownModeEnabledBySystem();
 void setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
+bool shouldEnableEnhancedSecurityByDefault(const WebPreferences&);
 
 enum class CallDownloadDidStart : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -536,6 +538,8 @@ public:
     
     static void setUseSeparateServiceWorkerProcess(bool);
     static bool useSeparateServiceWorkerProcess() { return s_useSeparateServiceWorkerProcess; }
+
+    static void setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::optional<bool>);
 
     void addRemoteWorkerProcess(WebProcessProxy&);
     void removeRemoteWorkerProcess(WebProcessProxy&);

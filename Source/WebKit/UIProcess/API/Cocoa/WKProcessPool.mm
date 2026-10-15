@@ -599,6 +599,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     WebKit::setLockdownModeEnabledGloballyForTesting(std::nullopt);
 }
 
++ (void)_setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:(BOOL)hasEntitlement
+{
+    WebKit::WebProcessPool::setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(!!hasEntitlement);
+}
+
++ (void)_clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting
+{
+    WebKit::WebProcessPool::setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::nullopt);
+}
+
 + (void)_setEnableMetalDebugDeviceInNewGPUProcessesForTesting:(BOOL)enable
 {
     WebKit::GPUProcessProxy::setEnableMetalDebugDeviceInNewGPUProcessesForTesting(enable);

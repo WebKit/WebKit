@@ -207,6 +207,10 @@ bool LEGACY_NODELETE defaultRTCEncodedStreamsQuirkEnabled();
 
 bool defaultMutationEventsEnabled();
 
+#if PLATFORM(COCOA)
+bool isSafariOrWebApp();
+#endif
+
 bool defaultTrustedTypesEnabled();
 
 bool LEGACY_NODELETE defaultGetBoundingClientRectZoomedEnabled();

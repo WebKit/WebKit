@@ -2113,6 +2113,17 @@ EnhancedSecurityEnabledByDefault:
   excludeFrom: [ WebCore ]
   defaultValue: false
 
+EnhancedSecurityEnabledByDefaultForSystemApps:
+  type: bool
+  status: internal
+  category: security
+  defaultsOverridable: true
+  humanReadableName: "Enhanced Security enabled by default for system apps"
+  humanReadableDescription: "Enables Enhanced Security by default for WebViews that do not explicitly set it in Apple apps that ship with the OS, excluding web browsers"
+  webKitLegacyExposed: false
+  excludeFrom: [ WebCore ]
+  defaultValue: false
+
 EnhancedSecurityForceDisabled:
   type: bool
   status: internal

@@ -429,7 +429,7 @@ bool defaultRTCEncodedStreamsQuirkEnabled()
 }
 
 #if PLATFORM(COCOA)
-static bool isSafariOrWebApp()
+bool isSafariOrWebApp()
 {
 #if PLATFORM(MAC)
     return WTF::MacApplication::isSafari();
