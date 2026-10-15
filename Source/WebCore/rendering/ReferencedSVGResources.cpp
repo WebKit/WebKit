@@ -112,6 +112,16 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     // repainted along with the new one. Layered clients keep their old bounds in the layer's stored
     // repaint rect and go through the position update instead.
     bool isNonLayerSVGClient = clientLayerModelObject && clientLayerModelObject->isSVGLayerAwareRenderer() && !clientLayerModelObject->hasLayer();
+
+    // A resource that is being destroyed still applies until its renderer is gone. Repaint the area it
+    // covered now, and leave the area without it to the next layout.
+    if (isNonLayerSVGClient && element.renderer() && !element.renderer()->parent()) {
+        clientLayerModelObject->repaint();
+        clientLayerModelObject->invalidateCachedVisualOverflowRect();
+        m_clientRenderer->setNeedsLayout();
+        return;
+    }
+
     std::optional<RenderObject::RepaintRects> oldRepaintRects;
     SingleThreadWeakPtr<const RenderLayerModelObject> repaintContainer;
     if (isNonLayerSVGClient) {

@@ -59,6 +59,8 @@ void RenderSVGResourceContainer::layout()
 void RenderSVGResourceContainer::willBeDestroyed()
 {
     m_registered = false;
+    if (!renderTreeBeingDestroyed())
+        repaintAllClients();
     RenderSVGHiddenContainer::willBeDestroyed();
 }
 
