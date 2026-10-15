@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Destroys a frame owner's renderer while Document::implicitClose() holds a pointer to it.
+PASS if this does not crash.</p>
+<iframe id="frame" src="resources/subframe-smil-animation-forces-owner-layout.html"></iframe>
+<p id="result"></p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// This runs from Document::implicitClose() of the subframe, before it takes a
+// pointer to this iframe's renderer. The style change stays pending, so the
+// renderer is still alive when the pointer is taken, and is destroyed later in
+// the same implicitClose() when the subframe's SMIL animation starts and lays
+// out this document.
+document.getElementById("frame").addEventListener("load", event => {
+    event.target.style.display = "none";
+});
+
+window.addEventListener("load", () => {
+    requestAnimationFrame(() => {
+        document.getElementById("result").textContent = "PASS: did not crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+</script>
+</body>
+</html>

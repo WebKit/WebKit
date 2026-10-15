@@ -1,0 +1,3 @@
+Destroys a frame owner's renderer while Document::implicitClose() holds a pointer to it. PASS if this does not crash.
+
+PASS: did not crash.
