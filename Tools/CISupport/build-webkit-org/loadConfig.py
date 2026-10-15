@@ -45,6 +45,10 @@ webkitglib_v254_filter = ChangeFilter(branch=["webkitglib/2.54"])
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
+# Where a worker described by os/device/xcode runs: on EC2, or in Air-Cloud.
+WORKER_FLEETS = ('aws', 'air-cloud')
+WORKER_MACHINE_KEYS = ('os', 'device', 'xcode')
+
 
 def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
@@ -179,6 +183,9 @@ def checkValidWorker(worker):
 
     if not worker.get('platform'):
         raise Exception(f"Worker {worker['name']} does not have platform defined.")
+
+    if any(key in worker for key in WORKER_MACHINE_KEYS) and worker.get('fleet') not in WORKER_FLEETS:
+        raise Exception(f"Worker {worker['name']} has {'/'.join(WORKER_MACHINE_KEYS)}, so its fleet must be one of {', '.join(WORKER_FLEETS)}.")
 
 
 def checkValidBuilder(config, builder):

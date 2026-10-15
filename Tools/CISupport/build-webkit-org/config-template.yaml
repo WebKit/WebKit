@@ -2,15 +2,19 @@
   "templates": {
     "mac_tahoe_aircloud": {
       "first": 10000,
-      "worker": { "platform": "mac-tahoe", "os": "macOS Tahoe 26.6-25G72", "device": "Mac16,11", "xcode": "Xcode 26.5-17F42" }
+      "worker": { "platform": "mac-tahoe", "os": "macOS Tahoe 26.6-25G72", "device": "Mac16,11", "xcode": "Xcode 26.5-17F42", "fleet": "air-cloud" }
+    },
+    "mac_tahoe_aws": {
+      "first": 10002,
+      "worker": { "platform": "mac-tahoe", "os": "macOS Tahoe 26.6-25G72", "device": "Mac16,11", "xcode": "Xcode 26.5-17F42", "fleet": "aws" }
     },
     "mac_sequoia_aircloud": {
       "first": 10100,
-      "worker": { "platform": "mac-sequoia", "os": "macOS Sequoia 15.7.3-24G419", "device": "Mac16,11", "xcode": "Xcode 26.2-17C52" }
+      "worker": { "platform": "mac-sequoia", "os": "macOS Sequoia 15.7.3-24G419", "device": "Mac16,11", "xcode": "Xcode 26.2-17C52", "fleet": "air-cloud" }
     },
     "mac_golden_gate_aircloud": {
       "first": 10200,
-      "worker": { "platform": "mac-golden-gate", "os": "macOS Golden Gate 27.0-26A428", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a" }
+      "worker": { "platform": "mac-golden-gate", "os": "macOS Golden Gate 27.0-26A428", "device": "Mac16,11", "xcode": "Xcode 27.0-27A266a", "fleet": "air-cloud" }
     }
   }
 }
@@ -115,7 +119,11 @@
                   { "name": "bot607", "platform": "tvos-26" },
                   { "name": "bot608", "platform": "tvos-simulator-26" },
 
-                  { "template": "mac_tahoe_aircloud", "count": 7 },
+                  { "template": "mac_tahoe_aircloud", "count": 2 },
+                  { "template": "mac_tahoe_aws", "count": 1 },
+                  { "template": "mac_tahoe_aircloud", "first": 10003, "count": 1 },
+                  { "template": "mac_tahoe_aws", "first": 10004, "count": 1 },
+                  { "template": "mac_tahoe_aircloud", "first": 10005, "count": 2 },
                   { "template": "mac_sequoia_aircloud", "count": 4 },
                   { "template": "mac_golden_gate_aircloud", "count": 4 },
 
@@ -187,8 +195,11 @@
                 "each(w)": {
                   "$if": "'template' in w",
                   "then": {
-                    "$map": { "$eval": "range(0, w.count)" },
-                    "each(i)": { "$merge": [{ "name": "bot${templates[w.template].first + i}" }, { "$eval": "templates[w.template].worker" }] }
+                    "$let": { "first": { "$if": "'first' in w", "then": { "$eval": "w.first" }, "else": { "$eval": "templates[w.template].first" } } },
+                    "in": {
+                      "$map": { "$eval": "range(0, w.count)" },
+                      "each(i)": { "$merge": [{ "name": "bot${first + i}" }, { "$eval": "templates[w.template].worker" }] }
+                    }
                   },
                   "else": [{ "$eval": "w" }]
                 }

@@ -241,35 +241,40 @@
       "platform": "mac-sequoia",
       "os": "macOS Sequoia 15.7.3-24G419",
       "device": "Mac16,11",
-      "xcode": "Xcode 26.2-17C52"
+      "xcode": "Xcode 26.2-17C52",
+      "fleet": "air-cloud"
     },
     {
       "name": "ews2012",
       "platform": "mac-sequoia",
       "os": "macOS Sequoia 15.7.3-24G419",
       "device": "Mac16,11",
-      "xcode": "Xcode 26.2-17C52"
+      "xcode": "Xcode 26.2-17C52",
+      "fleet": "air-cloud"
     },
     {
       "name": "ews2013",
       "platform": "mac-sequoia",
       "os": "macOS Sequoia 15.7.3-24G419",
       "device": "Mac16,11",
-      "xcode": "Xcode 26.2-17C52"
+      "xcode": "Xcode 26.2-17C52",
+      "fleet": "air-cloud"
     },
     {
       "name": "ews2014",
       "platform": "mac-sequoia",
       "os": "macOS Sequoia 15.7.3-24G419",
       "device": "Mac16,11",
-      "xcode": "Xcode 26.2-17C52"
+      "xcode": "Xcode 26.2-17C52",
+      "fleet": "air-cloud"
     },
     {
       "name": "ews2015",
       "platform": "mac-sequoia",
       "os": "macOS Sequoia 15.7.3-24G419",
       "device": "Mac16,11",
-      "xcode": "Xcode 26.2-17C52"
+      "xcode": "Xcode 26.2-17C52",
+      "fleet": "air-cloud"
     }
   ],
   "builders": [

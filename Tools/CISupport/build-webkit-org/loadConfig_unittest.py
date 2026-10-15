@@ -130,6 +130,21 @@ class TestcheckValidWorker(unittest.TestCase):
     def test_valid_worker(self):
         loadConfig.checkValidWorker({'name': 'ews101', 'platform': 'mac-sierra'})
 
+    def test_worker_with_machine_and_missing_fleet(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidWorker({'name': 'bot10000', 'platform': 'mac-tahoe', 'device': 'Mac16,11'})
+        self.assertEqual(context.exception.args, ('Worker bot10000 has os/device/xcode, so its fleet must be one of aws, air-cloud.',))
+
+    def test_worker_with_machine_and_invalid_fleet(self):
+        for fleet in ['AWS', 'aircloud', '']:
+            with self.assertRaises(Exception) as context:
+                loadConfig.checkValidWorker({'name': 'bot10000', 'platform': 'mac-tahoe', 'os': 'macOS Tahoe 26.5-25F71', 'fleet': fleet})
+            self.assertEqual(context.exception.args, ('Worker bot10000 has os/device/xcode, so its fleet must be one of aws, air-cloud.',))
+
+    def test_valid_worker_with_machine_and_fleet(self):
+        for fleet in ['aws', 'air-cloud']:
+            loadConfig.checkValidWorker({'name': 'bot10000', 'platform': 'mac-tahoe', 'os': 'macOS Tahoe 26.5-25F71', 'device': 'Mac16,11', 'xcode': 'Xcode 26.5-17F42', 'fleet': fleet})
+
 
 class TestcheckValidBuilder(unittest.TestCase):
     def test_invalid_builder(self):
