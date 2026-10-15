@@ -78,6 +78,7 @@ private:
 
         Vector<TextManipulationToken> tokens;
         std::optional<ViewportProximityInfo> viewportProximityInfo;
+        std::optional<FloatRect> mainFrameBoundingRect;
     };
 
     struct ManipulationUnit {

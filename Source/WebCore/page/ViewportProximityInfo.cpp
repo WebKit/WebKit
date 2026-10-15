@@ -30,6 +30,7 @@
 #include "DocumentView.h"
 #include "FloatRect.h"
 #include "HTMLFrameOwnerElement.h"
+#include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Node.h"
 #include "RenderObject.h"
@@ -87,12 +88,7 @@ static ViewportProximityInfo viewportProximityInfo(const FloatRect& visibleBound
     return { ViewportRelation::Offscreen, viewportSizedDistance };
 }
 
-struct AbsoluteTextBounds {
-    IntRect unclipped;
-    IntRect visible;
-};
-
-static AbsoluteTextBounds absoluteTextBounds(const SimpleRange& range)
+AbsoluteTextBounds absoluteTextBounds(const SimpleRange& range)
 {
     AbsoluteTextBounds bounds;
     for (Ref node : intersectingNodes(range)) {
@@ -141,7 +137,7 @@ static std::optional<FloatRect> ancestorFrameClipInRootView(const Document& docu
     return clip;
 }
 
-std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleRange& range)
+std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleRange& range, const AbsoluteTextBounds& bounds)
 {
     Ref document = range.startContainer().document();
     RefPtr view = document->view();
@@ -153,7 +149,6 @@ std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleR
     if (!viewport)
         return std::nullopt;
 
-    auto bounds = absoluteTextBounds(range);
     if (bounds.unclipped.isEmpty())
         return std::nullopt;
 
@@ -162,6 +157,24 @@ std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleR
         visibleBounds.intersect(*frameClip);
 
     return viewportProximityInfo(visibleBounds, *viewport);
+}
+
+std::optional<FloatRect> boundingRectInMainFrameDocument(const Document& document, const IntRect& absoluteRect)
+{
+    if (absoluteRect.isEmpty())
+        return std::nullopt;
+
+    RefPtr view = document.view();
+    if (!view)
+        return std::nullopt;
+
+    // FIXME: Cross-origin iframes in a different process from the main frame cannot be mapped into the main frame's document coordinates.
+    RefPtr mainFrame = document.localMainFrame();
+    RefPtr mainFrameView = mainFrame ? mainFrame->view() : nullptr;
+    if (!mainFrameView)
+        return std::nullopt;
+
+    return mainFrameView->rootViewToContents(FloatRect { view->contentsToRootView(absoluteRect) });
 }
 
 } // namespace WebCore

@@ -1815,6 +1815,7 @@ struct WebCore::TextManipulationItem {
     Markable<WebCore::TextManipulationItemIdentifier> identifier;
     Vector<WebCore::TextManipulationToken> tokens;
     std::optional<WebCore::ViewportProximityInfo> viewportProximityInfo;
+    std::optional<WebCore::FloatRect> mainFrameBoundingRect;
 }
 
 header: <WebCore/TextManipulationToken.h>

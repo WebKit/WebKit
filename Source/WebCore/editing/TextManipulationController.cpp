@@ -485,10 +485,14 @@ void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& un
         tokens.appendVector(WTF::move(units[index].tokens));
 
     std::optional<ViewportProximityInfo> proximityInfo;
-    if (auto range = makeSimpleRange(startPosition, endPosition))
-        proximityInfo = viewportProximityInfoForRange(*range);
+    std::optional<FloatRect> mainFrameBoundingRect;
+    if (auto range = makeSimpleRange(startPosition, endPosition)) {
+        auto bounds = absoluteTextBounds(*range);
+        proximityInfo = viewportProximityInfoForRange(*range, bounds);
+        mainFrameBoundingRect = boundingRectInMainFrameDocument(protect(range->startContainer().document()), bounds.unclipped);
+    }
 
-    addItem(ManipulationItemData { startPosition, endPosition, nullptr, nullQName(), WTF::move(tokens), proximityInfo });
+    addItem(ManipulationItemData { startPosition, endPosition, nullptr, nullQName(), WTF::move(tokens), proximityInfo, mainFrameBoundingRect });
 }
 
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
@@ -524,19 +528,26 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
         }
 
         if (RefPtr currentElement = dynamicDowncast<Element>(*contentNode)) {
+            auto elementBoundingRect = [&] -> std::optional<FloatRect> {
+                CheckedPtr renderer = currentElement->renderer();
+                if (!renderer)
+                    return std::nullopt;
+                return boundingRectInMainFrameDocument(protect(currentElement->document()), renderer->absoluteBoundingBoxRect());
+            };
+
             if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(*currentElement))
-                addItem(ManipulationItemData { Position(), Position(), *currentElement, nullQName(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), currentElement->textContent(), tokenInfo(currentElement.get()) } }, std::nullopt });
+                addItem(ManipulationItemData { Position(), Position(), *currentElement, nullQName(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), currentElement->textContent(), tokenInfo(currentElement.get()) } }, std::nullopt, elementBoundingRect() });
 
             if (currentElement->hasAttributes()) {
                 for (auto& attribute : currentElement->attributes()) {
                     if (isAttributeForTextManipulation(attribute.name()))
-                        addItem(ManipulationItemData { Position(), Position(), *currentElement, attribute.name(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), attribute.value(), tokenInfo(currentElement.get()) } }, std::nullopt });
+                        addItem(ManipulationItemData { Position(), Position(), *currentElement, attribute.name(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), attribute.value(), tokenInfo(currentElement.get()) } }, std::nullopt, elementBoundingRect() });
                 }
             }
 
             if (RefPtr input = dynamicDowncast<HTMLInputElement>(*currentElement)) {
                 if (shouldExtractValueForTextManipulation(*input))
-                    addItem(ManipulationItemData { { }, { }, *currentElement, HTMLNames::valueAttr, { TextManipulationToken { TextManipulationTokenIdentifier::generate(), input->value(), tokenInfo(currentElement.get()) } }, std::nullopt });
+                    addItem(ManipulationItemData { { }, { }, *currentElement, HTMLNames::valueAttr, { TextManipulationToken { TextManipulationTokenIdentifier::generate(), input->value(), tokenInfo(currentElement.get()) } }, std::nullopt, elementBoundingRect() });
             }
 
             if (isEnclosingItemBoundaryElement(*currentElement)) {
@@ -681,7 +692,8 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
         !protect(protect(m_document)->topOrigin())->isSameSiteAs(protect(protect(m_document)->securityOrigin())),
         newID,
         itemData.tokens.map([](auto& token) { return token; }),
-        itemData.viewportProximityInfo
+        itemData.viewportProximityInfo,
+        itemData.mainFrameBoundingRect
     });
     m_items.add(newID, WTF::move(itemData));
 

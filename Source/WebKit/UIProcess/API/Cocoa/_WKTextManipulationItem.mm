@@ -80,6 +80,7 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
 
     _identifier = identifier;
     _tokens = tokens;
+    _webViewBoundingRect = CGRectNull;
     return self;
 }
 
@@ -92,6 +93,7 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
     _tokens = tokens;
     _isSubframe = isSubframe;
     _isCrossSiteSubframe = isCrossSiteSubframe;
+    _webViewBoundingRect = CGRectNull;
     return self;
 }
 
@@ -101,6 +103,15 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
         return nil;
 
     _viewportProximityInfo = viewportProximityInfo;
+    return self;
+}
+
+- (instancetype)initWithIdentifier:(NSString *)identifier tokens:(NSArray<_WKTextManipulationToken *> *)tokens isSubframe:(BOOL)isSubframe isCrossSiteSubframe:(BOOL)isCrossSiteSubframe viewportProximityInfo:(_WKTextManipulationViewportProximityInfo *)viewportProximityInfo webViewBoundingRect:(CGRect)webViewBoundingRect
+{
+    if (!(self = [self initWithIdentifier:identifier tokens:tokens isSubframe:isSubframe isCrossSiteSubframe:isCrossSiteSubframe viewportProximityInfo:viewportProximityInfo]))
+        return nil;
+
+    _webViewBoundingRect = webViewBoundingRect;
     return self;
 }
 
@@ -169,7 +180,8 @@ static ASCIILiteral descriptionForViewportRelation(_WKTextManipulationViewportRe
         [recursiveDescriptions addObject:description.get()];
     }];
     RetainPtr tokenDescription = adoptNS([[NSString alloc] initWithFormat:@"[\n\t%@\n]", retainPtr([recursiveDescriptions componentsJoinedByString:@",\n\t"]).get()]);
-    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ viewportProximityInfo = %@ tokens = %@>", self.class, self, retainPtr(self.identifier).get(), retainPtr(self.viewportProximityInfo).get(), tokenDescription.get()];
+    auto rect = self.webViewBoundingRect;
+    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ viewportProximityInfo = %@ webViewBoundingRect = {{%.1f, %.1f}, {%.1f, %.1f}} tokens = %@>", self.class, self, retainPtr(self.identifier).get(), retainPtr(self.viewportProximityInfo).get(), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, tokenDescription.get()];
 }
 
 @end

@@ -4639,6 +4639,24 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
     return adoptNS([[_WKTextManipulationViewportProximityInfo alloc] initWithRelation:createViewportRelation(info->relation) viewportSizedDistance:info->viewportSizedDistance viewportCoverage:info->viewportCoverage]);
 }
 
+static CGRect webViewRectForMainFrameRect(WebKit::WebPageProxy& page, const std::optional<WebCore::FloatRect>& mainFrameBoundingRect)
+{
+    if (!mainFrameBoundingRect)
+        return CGRectNull;
+
+    RefPtr pageClient = page.pageClient();
+    if (!pageClient)
+        return CGRectNull;
+
+    auto rectInRootView = *mainFrameBoundingRect;
+#if PLATFORM(MAC)
+    rectInRootView.moveBy(-page.mainFrameScrollPosition());
+    auto& obscuredContentInsets = page.obscuredContentInsets();
+    rectInRootView.move(obscuredContentInsets.left(), obscuredContentInsets.top());
+#endif
+    return pageClient->rootViewToWebView(rectInRootView);
+}
+
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)())completionHandler
 {
     THROW_IF_SUSPENDED;
@@ -4679,7 +4697,8 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
         if (!delegate)
             return;
 
-        auto createWKItem = [] (const WebCore::TextManipulationItem& item) {
+        RefPtr page = retainedSelf->_page;
+        auto createWKItem = [&page](const WebCore::TextManipulationItem& item) {
             auto tokens = createNSArray(item.tokens, [] (auto& token) {
                 auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
                 [wkToken setIdentifier:String::number(token.identifier.toUInt64()).createNSString().get()];
@@ -4689,7 +4708,8 @@ static RetainPtr<_WKTextManipulationViewportProximityInfo> createViewportProximi
                 return wkToken;
             });
             auto identifier = makeString(item.frameID ? item.frameID->toUInt64() : 0, '-', item.identifier ? item.identifier->toUInt64() : 0);
-            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString().get() tokens:tokens.get() isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo).get()]);
+            CGRect webViewBoundingRect = page ? webViewRectForMainFrameRect(*page, item.mainFrameBoundingRect) : CGRectNull;
+            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString() tokens:tokens isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo) webViewBoundingRect:webViewBoundingRect]);
         };
 
         if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])

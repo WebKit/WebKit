@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include <WebCore/FloatRect.h>
+#include <WebCore/IntRect.h>
 #include <optional>
 
 namespace WebCore {
 
+class Document;
 struct SimpleRange;
 
 enum class ViewportRelation : uint8_t {
@@ -43,6 +46,13 @@ struct ViewportProximityInfo {
     float viewportCoverage { 0 };
 };
 
-std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleRange&);
+struct AbsoluteTextBounds {
+    IntRect unclipped;
+    IntRect visible;
+};
+
+AbsoluteTextBounds absoluteTextBounds(const SimpleRange&);
+std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleRange&, const AbsoluteTextBounds&);
+std::optional<FloatRect> boundingRectInMainFrameDocument(const Document&, const IntRect& absoluteRect);
 
 } // namespace WebCore
