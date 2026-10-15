@@ -597,7 +597,6 @@
         "hw.product"
         "hw.vectorunit"
         "kern.bootargs"
-        "kern.hostname"
         "kern.hv_vmm_present"
         "kern.maxfilesperproc" ;; <rdar://problem/65900517>
         "kern.memorystatus_level"
@@ -611,6 +610,9 @@
         "kern.willshutdown" ;; <rdar://122511261>
         "sysctl.name2oid"
         "vm.footprint_suspend"))
+
+(allow sysctl-read (with report) (with telemetry-backtrace)
+    (sysctl-name "kern.hostname"))
 
 (define (sysctl-read-prefix-allowed)
     (sysctl-name-prefix

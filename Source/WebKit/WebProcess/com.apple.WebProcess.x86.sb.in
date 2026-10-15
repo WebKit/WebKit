@@ -237,7 +237,6 @@
         "hw.tbfrequency_compat"
         "hw.vectorunit"
         "kern.bootargs" ;; <rdar://problem/47738015>
-        "kern.hostname"
         "kern.hv_vmm_present"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
@@ -257,8 +256,10 @@
         "vm.footprint_suspend")
     (sysctl-name-prefix "net.routetable")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
-    (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
-)
+    (sysctl-name-prefix "hw.perflevel")) ;; <rdar://problem/76783596>
+
+(allow sysctl-read (with report) (with telemetry-backtrace)
+    (sysctl-name "kern.hostname"))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (webcontent-process-launched))
