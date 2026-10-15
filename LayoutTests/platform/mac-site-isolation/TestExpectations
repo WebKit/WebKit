@@ -15,8 +15,6 @@ http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
 fullscreen/exit-full-screen-video-crash.html [ Pass Timeout ]
 http/tests/media/media-stream/enumerate-devices-source-id.html [ Timeout ]
 http/tests/workers/service/resultingClientId.https.html [ Timeout ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Skip ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-video.html [ Pass Timeout ]
 
@@ -33,10 +31,11 @@ webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
+imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/forms/customizable-combobox/customizable-combobox-appearance.html [ Skip ] # Flaky Failure
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure ]
 imported/w3c/web-platform-tests/webmessaging/postMessage_cross_domain_image_transfer_2d.sub.htm [ Failure ]
@@ -62,30 +61,15 @@ imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/closepath/segment-completing.svg [ ImageOnlyFailure ]
 
-####################################
-# Tests with missing expectations #
-####################################
-fast/history/page-cache-clearing.html [ Skip ]
-http/tests/navigation/page-cache-video.html [ Skip ]
-http/tests/referrer-policy/no-referrer/cross-origin-pson-bfcache-restoration.html [ Skip ]
-imported/w3c/web-platform-tests/cookies/third-party-cookies/third-party-cookies.tentative.https.html [ Skip ]
-
 # Top-level navigation by a sandboxed iframe with a propagated user gesture is not blocked.
 http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html [ Failure ]
 
-# This test has different output with site isolation enabled. A copy with site isolation enabled is
-# stored and run separately at http/tests/site-isolation/inspector/unit-tests/target-manager.html.
-inspector/unit-tests/target-manager.html [ Skip ]
-
-# Inspector protocol commands (e.g. CSS.getMatchedStylesForNode) return
-# "Not yet implemented for frame targets" under site isolation.
-inspector/css/getMatchedStylesForNodeAdoptedStyleSheet.html [ Skip ]
+# This test has different output with site isolation enabled. It is symlinked and run with site isolation
+# enabled at http/tests/site-isolation/inspector/unit-tests/target-manager.html.
+inspector/unit-tests/target-manager.html [ Failure ]
 
 # rdar://178066625
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
-
-imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-non-uniform-scale.html [ Skip ]
-imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-none-preserve-aspect-ratio.html  [ Skip ]
 
 # Document-Isolation-Policy is partially implemented.
 imported/w3c/web-platform-tests/html/document-isolation-policy/agent-cluster.tentative.https.html [ Pass ]
