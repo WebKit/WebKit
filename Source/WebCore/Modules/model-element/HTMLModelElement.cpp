@@ -39,6 +39,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DocumentEventLoop.h"
 #include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
