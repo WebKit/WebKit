@@ -402,14 +402,6 @@ void GStreamerQuirksManager::setupBufferingPercentageCorrection(MediaPlayerPriva
     }
 }
 
-void GStreamerQuirksManager::processWebAudioSilentBuffer(GstBuffer* buffer) const
-{
-    for (const auto& quirk : m_quirks) {
-        if (quirk->processWebAudioSilentBuffer(buffer))
-            break;
-    }
-}
-
 bool GStreamerQuirksManager::needsCustomInstantRateChange() const
 {
     for (auto& quirk : m_quirks) {
