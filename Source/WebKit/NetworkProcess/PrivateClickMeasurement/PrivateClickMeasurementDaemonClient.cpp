@@ -59,4 +59,13 @@ bool DaemonClient::debugModeEnabled() const
 #endif
 }
 
+bool DaemonClient::privateRelayEnforcementEnabled() const
+{
+#if PLATFORM(COCOA)
+    return DaemonConnectionSet::singleton().privateRelayEnforcementEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

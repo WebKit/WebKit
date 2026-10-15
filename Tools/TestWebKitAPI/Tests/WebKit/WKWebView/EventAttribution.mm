@@ -67,6 +67,10 @@
 - (WKPageRef)_pageForTesting;
 @end
 
+@interface WKWebsiteDataStore ()
+- (void)_setPrivateClickMeasurementPrivateRelayEnforcementEnabled:(BOOL)enabled;
+@end
+
 @interface MockEventAttribution : NSObject
 
 @property (nonatomic, assign, readonly) uint8_t sourceIdentifier;
@@ -615,6 +619,28 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     cleanUpDaemon(tempDir);
 }
 
+TEST(PrivateClickMeasurement, DaemonPrivateRelayEnforcement)
+{
+    auto [tempDir, configuration] = setUpDaemon(adoptNS([WKWebViewConfiguration new]).autorelease());
+    configuration._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    __block Vector<String> consoleMessages;
+    RetainPtr delegate = adoptNS([TestUIDelegate new]);
+    delegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    auto webView = webViewWithOpenInspector(configuration, delegate.get());
+
+    [configuration.websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:YES];
+    while (consoleMessages.isEmpty())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Private Relay Enforcement on.");
+    [configuration.websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:NO];
+    while (consoleMessages.size() < 2)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Private Relay Enforcement off.");
+    cleanUpDaemon(tempDir);
+}
+
 static HTTPServer setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
 {
     HTTPServer server({ { "/app/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
@@ -747,6 +773,69 @@ TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
     while (consoleMessages.size() < 2)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
+}
+
+TEST(PrivateClickMeasurement, NetworkProcessPrivateRelayEnforcement)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    __block Vector<String> consoleMessages;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+    auto webView = webViewWithOpenInspector(configuration.get(), uiDelegate.get());
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:YES];
+    while (consoleMessages.isEmpty())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Private Relay Enforcement on.");
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:NO];
+    while (consoleMessages.size() < 2)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Private Relay Enforcement off.");
+}
+
+static void runPCMTestInDebugModeAndWaitForConsoleMessage(bool enforcePrivateRelay, const String& expectedMessage)
+{
+    RetainPtr configuration = configurationWithoutUsingDaemon();
+    configuration.get()._shouldSendConsoleLogsToUIProcessForTesting = YES;
+    configuration.get().preferences._developerExtrasEnabled = YES;
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
+    [configuration.get().websiteDataStore _setPrivateClickMeasurementPrivateRelayEnforcementEnabled:enforcePrivateRelay];
+
+    __block Vector<String> consoleMessages;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
+        consoleMessages.append(log);
+    };
+
+    RetainPtr<NSWindow> window;
+    runBasicPCMTest(configuration.get(), [&uiDelegate, &window](WKWebView *webView, const HTTPServer& server) {
+        window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
+        webView.frame = NSMakeRect(0, 0, 400, 400);
+        [[window contentView] addSubview:webView];
+        [window orderFront:nil];
+        // The network process only broadcasts console messages to web processes with an open Web Inspector.
+        [webView loadHTMLString:@"start processes" baseURL:exampleURL()];
+        [webView _test_waitForDidFinishNavigation];
+        [[webView _inspector] show];
+        [webView _test_waitForInspectorToShow];
+        webView.UIDelegate = uiDelegate.get();
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id" ephemeral:NO];
+    });
+
+    while (!consoleMessages.contains(expectedMessage))
+        Util::spinRunLoop();
+}
+
+TEST(PrivateClickMeasurement, DebugModeBypassesPrivateRelayByDefault)
+{
+    runPCMTestInDebugModeAndWaitForConsoleMessage(false, "[Private Click Measurement] Private Relay is not required for the attribution request because Debug Mode is enabled."_s);
+}
+
+TEST(PrivateClickMeasurement, DebugModeWithPrivateRelayEnforcement)
+{
+    runPCMTestInDebugModeAndWaitForConsoleMessage(true, "[Private Click Measurement] Private Relay is required for the attribution request."_s);
 }
 #endif // PLATFORM(MAC)
 

@@ -116,6 +116,11 @@ void ManagerProxy::setDebugModeIsEnabled(bool enabled)
     sendMessage<MessageType::SetDebugModeIsEnabled>(enabled);
 }
 
+void ManagerProxy::setPrivateRelayEnforcementIsEnabled(bool enabled)
+{
+    sendMessage<MessageType::SetPrivateRelayEnforcementIsEnabled>(enabled);
+}
+
 void ManagerProxy::migratePrivateClickMeasurementFromLegacyStorage(WebCore::PrivateClickMeasurement&& pcm, PrivateClickMeasurementAttributionType type)
 {
     sendMessage<MessageType::MigratePrivateClickMeasurementFromLegacyStorage>(pcm, type);

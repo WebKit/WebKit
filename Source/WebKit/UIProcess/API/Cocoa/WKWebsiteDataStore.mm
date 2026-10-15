@@ -844,6 +844,11 @@ struct WKWebsiteData {
     protect(*_websiteDataStore)->setPrivateClickMeasurementDebugMode(enabled);
 }
 
+- (void)_setPrivateClickMeasurementPrivateRelayEnforcementEnabled:(BOOL)enabled
+{
+    protect(*_websiteDataStore)->setPrivateClickMeasurementPrivateRelayEnforcement(enabled);
+}
+
 - (BOOL)_storageSiteValidationEnabled
 {
     return _websiteDataStore->storageSiteValidationEnabled();

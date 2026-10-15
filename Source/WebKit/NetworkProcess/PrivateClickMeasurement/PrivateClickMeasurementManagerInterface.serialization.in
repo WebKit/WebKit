@@ -39,8 +39,9 @@ enum class WebKit::PCM::MessageType : uint8_t {
     StartTimerImmediatelyForTesting,
     SetPrivateClickMeasurementAppBundleIDForTesting,
     DestroyStoreForTesting,
-    AllowTLSCertificateChainForLocalPCMTesting
-    FetchRegistrableDomains
+    AllowTLSCertificateChainForLocalPCMTesting,
+    FetchRegistrableDomains,
+    SetPrivateRelayEnforcementIsEnabled
 }
 
 enum class WebKit::PrivateClickMeasurementAttributionType : bool

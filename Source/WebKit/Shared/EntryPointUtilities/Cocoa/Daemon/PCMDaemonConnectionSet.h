@@ -49,12 +49,18 @@ public:
 
     void setConnectedNetworkProcessHasDebugModeEnabled(const Daemon::Connection&, bool);
     bool LEGACY_NODELETE debugModeEnabled() const;
+    void setConnectedNetworkProcessHasPrivateRelayEnforcementEnabled(const Daemon::Connection&, bool);
+    bool LEGACY_NODELETE privateRelayEnforcementEnabled() const;
     void broadcastConsoleMessage(JSC::MessageLevel, const String&);
     
 private:
-    enum class DebugModeEnabled : bool { No, Yes };
-    HashMap<OSObjectPtr<xpc_connection_t>, DebugModeEnabled> m_connections;
+    struct ConnectionState {
+        bool debugModeEnabled { false };
+        bool privateRelayEnforcementEnabled { false };
+    };
+    HashMap<OSObjectPtr<xpc_connection_t>, ConnectionState> m_connections;
     size_t m_connectionsWithDebugModeEnabled { 0 };
+    size_t m_connectionsWithPrivateRelayEnforcementEnabled { 0 };
 };
 
 } // namespace PCM

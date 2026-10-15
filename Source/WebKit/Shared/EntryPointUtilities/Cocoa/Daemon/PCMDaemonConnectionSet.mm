@@ -44,16 +44,20 @@ DaemonConnectionSet& DaemonConnectionSet::singleton()
 void DaemonConnectionSet::add(xpc_connection_t connection)
 {
     ASSERT(!m_connections.contains(connection));
-    m_connections.add(connection, DebugModeEnabled::No);
+    m_connections.add(connection, ConnectionState { });
 }
 
 void DaemonConnectionSet::remove(xpc_connection_t connection)
 {
     ASSERT(m_connections.contains(connection));
-    auto hadDebugModeEnabled = m_connections.take(connection);
-    if (hadDebugModeEnabled == DebugModeEnabled::Yes) {
+    auto state = m_connections.take(connection);
+    if (state.debugModeEnabled) {
         ASSERT(m_connectionsWithDebugModeEnabled);
         m_connectionsWithDebugModeEnabled--;
+    }
+    if (state.privateRelayEnforcementEnabled) {
+        ASSERT(m_connectionsWithPrivateRelayEnforcementEnabled);
+        m_connectionsWithPrivateRelayEnforcementEnabled--;
     }
 }
 
@@ -64,22 +68,43 @@ void DaemonConnectionSet::setConnectedNetworkProcessHasDebugModeEnabled(const Da
         ASSERT_NOT_REACHED();
         return;
     }
-    bool wasEnabled = iterator->value == DebugModeEnabled::Yes;
-    if (wasEnabled == enabled)
+
+    if (iterator->value.debugModeEnabled == enabled)
         return;
 
-    if (enabled) {
-        iterator->value = DebugModeEnabled::Yes;
+    iterator->value.debugModeEnabled = enabled;
+    if (enabled)
         m_connectionsWithDebugModeEnabled++;
-    } else {
-        iterator->value = DebugModeEnabled::No;
+    else
         m_connectionsWithDebugModeEnabled--;
+}
+
+void DaemonConnectionSet::setConnectedNetworkProcessHasPrivateRelayEnforcementEnabled(const Daemon::Connection& connection, bool enabled)
+{
+    auto iterator = m_connections.find(connection.get());
+    if (iterator == m_connections.end()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+
+    if (iterator->value.privateRelayEnforcementEnabled == enabled)
+        return;
+
+    iterator->value.privateRelayEnforcementEnabled = enabled;
+    if (enabled)
+        m_connectionsWithPrivateRelayEnforcementEnabled++;
+    else
+        m_connectionsWithPrivateRelayEnforcementEnabled--;
 }
 
 bool DaemonConnectionSet::debugModeEnabled() const
 {
     return !!m_connectionsWithDebugModeEnabled;
+}
+
+bool DaemonConnectionSet::privateRelayEnforcementEnabled() const
+{
+    return !!m_connectionsWithPrivateRelayEnforcementEnabled;
 }
 
 void DaemonConnectionSet::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)

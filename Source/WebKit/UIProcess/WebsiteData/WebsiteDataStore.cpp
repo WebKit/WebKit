@@ -2062,6 +2062,11 @@ void WebsiteDataStore::setPrivateClickMeasurementDebugMode(bool enabled)
     protect(networkProcess())->setPrivateClickMeasurementDebugMode(sessionID(), enabled);
 }
 
+void WebsiteDataStore::setPrivateClickMeasurementPrivateRelayEnforcement(bool enabled)
+{
+    protect(networkProcess())->setPrivateClickMeasurementPrivateRelayEnforcement(sessionID(), enabled);
+}
+
 void WebsiteDataStore::storePrivateClickMeasurement(const WebCore::PrivateClickMeasurement& privateClickMeasurement)
 {
     protect(networkProcess())->send(Messages::NetworkProcess::StorePrivateClickMeasurement(sessionID(), privateClickMeasurement), 0);

@@ -74,6 +74,10 @@ FUNCTION(setDebugModeIsEnabled)
 ARGUMENTS(bool)
 END
 
+FUNCTION(setPrivateRelayEnforcementIsEnabled)
+ARGUMENTS(bool)
+END
+
 FUNCTION(toStringForTesting)
 ARGUMENTS()
 REPLY(String)
@@ -169,6 +173,7 @@ bool messageTypeSendsReply(MessageType messageType)
     case MessageType::HandleAttribution:
     case MessageType::MigratePrivateClickMeasurementFromLegacyStorage:
     case MessageType::SetDebugModeIsEnabled:
+    case MessageType::SetPrivateRelayEnforcementIsEnabled:
     case MessageType::SetOverrideTimerForTesting:
     case MessageType::SetTokenPublicKeyURLForTesting:
     case MessageType::SetTokenSignatureURLForTesting:
@@ -243,6 +248,26 @@ static void handlePCMMessageSetDebugModeIsEnabled(const Daemon::Connection& conn
 #endif
 }
 
+static void handlePCMMessageSetPrivateRelayEnforcementIsEnabled(const Daemon::Connection& connection, std::span<const uint8_t> encodedMessage)
+{
+#if PLATFORM(COCOA)
+    Daemon::Decoder decoder(encodedMessage);
+    std::optional<bool> enabled;
+    decoder >> enabled;
+    if (!enabled) [[unlikely]]
+        return;
+
+    auto& connectionSet = DaemonConnectionSet::singleton();
+    bool privateRelayEnforcementWasEnabled = connectionSet.privateRelayEnforcementEnabled();
+    connectionSet.setConnectedNetworkProcessHasPrivateRelayEnforcementEnabled(connection, *enabled);
+    if (privateRelayEnforcementWasEnabled != connectionSet.privateRelayEnforcementEnabled())
+        daemonManagerSingleton().setPrivateRelayEnforcementIsEnabled(*enabled);
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(encodedMessage);
+#endif
+}
+
 template<typename Info>
 void handlePCMMessageWithReply(std::span<const uint8_t> encodedMessage, CompletionHandler<void(PCM::EncodedMessage&&)>&& replySender)
 {
@@ -283,6 +308,9 @@ void decodeMessageAndSendToManager(const Daemon::Connection& connection, Message
         break;
     case PCM::MessageType::SetDebugModeIsEnabled:
         handlePCMMessageSetDebugModeIsEnabled(connection, encodedMessage);
+        break;
+    case PCM::MessageType::SetPrivateRelayEnforcementIsEnabled:
+        handlePCMMessageSetPrivateRelayEnforcementIsEnabled(connection, encodedMessage);
         break;
     case PCM::MessageType::MigratePrivateClickMeasurementFromLegacyStorage:
         handlePCMMessage<MessageInfo::migratePrivateClickMeasurementFromLegacyStorage>(encodedMessage);

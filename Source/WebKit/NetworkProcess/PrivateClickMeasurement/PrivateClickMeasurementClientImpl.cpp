@@ -56,6 +56,11 @@ bool ClientImpl::debugModeEnabled() const
     return m_networkSession && m_networkSession->privateClickMeasurementDebugModeEnabled();
 }
 
+bool ClientImpl::privateRelayEnforcementEnabled() const
+{
+    return m_networkSession && m_networkSession->privateClickMeasurementPrivateRelayEnforcementEnabled();
+}
+
 bool ClientImpl::usesEphemeralDataStore() const
 {
     return m_networkSession && m_networkSession->sessionID().isEphemeral();

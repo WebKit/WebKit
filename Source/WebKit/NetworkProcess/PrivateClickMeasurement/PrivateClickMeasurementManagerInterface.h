@@ -62,6 +62,7 @@ public:
     virtual void clearForRegistrableDomain(RegistrableDomain&&, CompletionHandler<void()>&&) = 0;
     virtual void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
     virtual void setDebugModeIsEnabled(bool) = 0;
+    virtual void setPrivateRelayEnforcementIsEnabled(bool) = 0;
 
     virtual void toStringForTesting(CompletionHandler<void(String)>&&) const = 0;
     virtual void setOverrideTimerForTesting(bool value) = 0;
@@ -104,7 +105,8 @@ enum class MessageType : uint8_t {
     SetPrivateClickMeasurementAppBundleIDForTesting,
     DestroyStoreForTesting,
     AllowTLSCertificateChainForLocalPCMTesting,
-    FetchRegistrableDomains
+    FetchRegistrableDomains,
+    SetPrivateRelayEnforcementIsEnabled
 };
 
 constexpr auto protocolEncodedMessageKey { "encoded message"_s };

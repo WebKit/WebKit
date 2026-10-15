@@ -249,6 +249,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_persistedDomains(parameters.resourceLoadStatisticsParameters.persistedDomains)
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
+    , m_privateClickMeasurementPrivateRelayEnforcementEnabled(parameters.enablePrivateClickMeasurementPrivateRelayEnforcement)
     , m_prefetchCache(makeUniqueRef<PrefetchCache>())
     , m_broadcastChannelRegistry(NetworkBroadcastChannelRegistry::create(networkProcess))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
@@ -718,6 +719,15 @@ void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
 
     m_privateClickMeasurementDebugModeEnabled = enabled;
     m_privateClickMeasurement->setDebugModeIsEnabled(enabled);
+}
+
+void NetworkSession::setPrivateClickMeasurementPrivateRelayEnforcement(bool enabled)
+{
+    if (m_privateClickMeasurementPrivateRelayEnforcementEnabled == enabled)
+        return;
+
+    m_privateClickMeasurementPrivateRelayEnforcementEnabled = enabled;
+    m_privateClickMeasurement->setPrivateRelayEnforcementIsEnabled(enabled);
 }
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()
