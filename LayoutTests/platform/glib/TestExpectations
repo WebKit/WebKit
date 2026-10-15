@@ -5251,3 +5251,10 @@ webkit.org/b/319150 imported/w3c/web-platform-tests/loading/early-hints/iframe-p
 
 # New test in the css/css-shadow import. Fails on GTK and WPE, passes on macOS.
 imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.html [ Failure ]
+
+# Canvas paint events are not dispatched on this port yet.
+webkit.org/b/327842 fast/canvas/draw-element-image/2d-drawElementImage-composited-descendant.html [ Timeout ]
+webkit.org/b/327842 fast/canvas/draw-element-image/2d-drawElementImage-nested-drawable.html [ Timeout ]
+webkit.org/b/327842 fast/canvas/draw-element-image/2d-drawElementImage-redraw.html [ Timeout ]
+webkit.org/b/327842 fast/canvas/draw-element-image/2d-drawElementImage-rotated-text.html [ Timeout ]
+webkit.org/b/327842 fast/canvas/draw-element-image/2d-drawElementImage-transparent-rect.html [ Timeout ]

@@ -881,6 +881,7 @@ public:
     // Called when the rendering update steps are complete, but before painting.
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
     WEBCORE_EXPORT void finalizeRenderingUpdateForRootFrame(LocalFrame&, OptionSet<FinalizeRenderingUpdateFlags>);
+    WEBCORE_EXPORT void didPaintForRenderingUpdate();
 
     // Called before and after the "display" steps of the rendering update: painting, and when we push
     // layers to the platform compositor (including async painting).

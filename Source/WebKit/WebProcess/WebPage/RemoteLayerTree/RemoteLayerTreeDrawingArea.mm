@@ -434,6 +434,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         return { WTF::move(layerTransaction), WTF::move(scrollingTransaction) };
     });
 
+    webPage->didPaintForRenderingUpdate();
+
     for (auto& transaction : borrow(transactions))
         backingStoreCollection->willCommitLayerTree(CheckedRef { transaction.first });
 
