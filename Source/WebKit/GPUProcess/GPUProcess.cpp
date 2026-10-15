@@ -111,6 +111,13 @@ GPUProcess& GPUProcess::singleton()
     return gpuProcess.get().get();
 }
 
+// Dropped when the connection does not exist yet: GPUProcessConnectionParameters carries the current value.
+void GPUProcess::setHostedDomains(WebCore::ProcessIdentifier processIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains)
+{
+    if (RefPtr connection = m_webProcessConnections.get(processIdentifier))
+        connection->setHostedDomains(WTF::move(domains));
+}
+
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());

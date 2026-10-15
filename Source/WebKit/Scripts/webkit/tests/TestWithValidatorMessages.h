@@ -130,6 +130,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<String, double>;
     using Reply = CompletionHandler<void(String&&, double)>;
+    using SuppliedReply = CompletionHandler<void(String&&, double)>;
     using Promise = WTF::NativePromise<std::tuple<String, double>, IPC::Error>;
     explicit MessageWithReply(const String& url)
         : m_url(url)

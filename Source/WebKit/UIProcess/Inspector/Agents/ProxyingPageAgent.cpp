@@ -98,8 +98,9 @@ static String protocolFrameIdForFrameID(FrameIdentifier frameID)
     return IdentifierRegistry::protocolFrameId(frameID);
 }
 
-void ProxyingPageAgent::frameNavigated(IPC::Connection& connection, FrameIdentifier frameID, const URL& url, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
+void ProxyingPageAgent::frameNavigated(IPC::Connection& connection, FrameIdentifier frameID, IPC::Untrusted<URL>&& untrustedURL, const String& mimeType, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedSecurityOrigin, std::optional<FrameIdentifier> parentFrameID, const String& name, const String& loaderId)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(url, untrustedURL, ProcessSpeaksForDomain { connection });
     EXTRACT_WITH_MESSAGE_CHECK(securityOrigin, untrustedSecurityOrigin, ProcessSpeaksForDomain { connection });
 
     // Cache the committing frame's real document info so getResourceTree()/buildFrameTree()

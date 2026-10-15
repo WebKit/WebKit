@@ -396,8 +396,8 @@ public:
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
-    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
-    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -599,7 +599,7 @@ public:
     void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
     void setCaptionLanguage(const String&);
 #endif
-    void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
     void serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unwrapCryptoKey(WebCore::WrappedCryptoKey&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
@@ -718,7 +718,7 @@ private:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
     void updateSiteForMainFrameNavigation(const URL&);
-    void sendHostedDomainsToNetworkProcess();
+    void sendHostedDomains();
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -857,7 +857,7 @@ private:
     void sharedPreferencesDidChange();
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, URL&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
+    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif

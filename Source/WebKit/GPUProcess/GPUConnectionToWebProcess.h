@@ -46,6 +46,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Logger.h>
@@ -171,6 +172,10 @@ public:
     IPC::MessageReceiverMap& messageReceiverMap() LIFETIME_BOUND { return m_messageReceiverMap; }
     GPUProcess& gpuProcess() { return m_gpuProcess.get(); }
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
+
+    // std::nullopt means the process may host documents from any site.
+    void setHostedDomains(std::optional<HashSet<WebCore::RegistrableDomain>>&& domains) { m_hostedDomains = WTF::move(domains); }
+    bool hostsDomain(const WebCore::RegistrableDomain&) const;
 
     struct NowPlayingCandidate {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(NowPlayingCandidate);
@@ -484,6 +489,7 @@ private:
     const Ref<IPCTester> m_ipcTester;
 #endif
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+    std::optional<HashSet<WebCore::RegistrableDomain>> m_hostedDomains;
 };
 
 } // namespace WebKit

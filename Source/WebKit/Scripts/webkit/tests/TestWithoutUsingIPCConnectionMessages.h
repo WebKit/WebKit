@@ -77,6 +77,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     MessageWithoutArgumentAndEmptyReply()
     {
@@ -104,6 +105,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<String>;
     using Reply = CompletionHandler<void(String&&)>;
+    using SuppliedReply = CompletionHandler<void(String&&)>;
     using Promise = WTF::NativePromise<String, IPC::Error>;
     MessageWithoutArgumentAndReplyWithArgument()
     {
@@ -156,6 +158,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     explicit MessageWithArgumentAndEmptyReply(const String& argument)
         : m_argument(argument)
@@ -186,6 +189,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<String>;
     using Reply = CompletionHandler<void(String&&)>;
+    using SuppliedReply = CompletionHandler<void(String&&)>;
     using Promise = WTF::NativePromise<String, IPC::Error>;
     explicit MessageWithArgumentAndReplyWithArgument(const String& argument)
         : m_argument(argument)

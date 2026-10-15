@@ -344,6 +344,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     using Reply = CompletionHandler<void(bool)>;
+    using SuppliedReply = CompletionHandler<void(bool)>;
     using Promise = WTF::NativePromise<bool, IPC::Error>;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : m_pluginInstanceID(pluginInstanceID)
@@ -377,6 +378,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
         : m_frameID(frameID)
@@ -410,6 +412,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
     using Reply = CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>;
+    using SuppliedReply = CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>;
     using Promise = WTF::NativePromise<Vector<WebCore::PluginInfo>, IPC::Error>;
     explicit GetPlugins(bool refresh)
         : m_refresh(refresh)
@@ -439,6 +442,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Connection::Handle>;
     using Reply = CompletionHandler<void(IPC::Connection::Handle&&)>;
+    using SuppliedReply = CompletionHandler<void(IPC::Connection::Handle&&)>;
     explicit GetPluginProcessConnection(const String& pluginPath)
         : m_pluginPath(pluginPath)
     {
@@ -467,6 +471,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     TestMultipleAttributes()
     {
     }
@@ -574,6 +579,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<NotDispatchableFromWebContent>;
     using Reply = CompletionHandler<void(NotDispatchableFromWebContent&&)>;
+    using SuppliedReply = CompletionHandler<void(NotDispatchableFromWebContent&&)>;
     using Promise = WTF::NativePromise<NotDispatchableFromWebContent, IPC::Error>;
     explicit OpaqueTypeSecurityAssertion(const NotDispatchableFromWebContent& ping)
         : m_ping(ping)
@@ -636,6 +642,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
     using Reply = CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>;
+    using SuppliedReply = CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>;
     using Promise = WTF::NativePromise<Vector<WebCore::KeypressCommand>, IPC::Error>;
     explicit InterpretKeyEvent(uint32_t type)
         : m_type(type)

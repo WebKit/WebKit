@@ -248,6 +248,7 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void setHostedDomains(WebCore::ProcessIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void securityFlagsDidChange(SecurityFlags&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);

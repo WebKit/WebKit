@@ -27,9 +27,9 @@
 ]
 messages -> WebPasteboardProxy {
 #if PLATFORM(IOS_FAMILY)
-    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
-    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteURLToPasteboard(struct IPC::Untrusted<WebCore::PasteboardURL> url, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteWebContentToPasteboard(struct IPC::Untrusted<WebCore::PasteboardWebContent> content, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
+    WriteImageToPasteboard(struct IPC::Untrusted<WebCore::PasteboardImage> pasteboardImage, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
     WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID)
 #endif
@@ -57,11 +57,11 @@ messages -> WebPasteboardProxy {
     GetPasteboardURL(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String urlString) Synchronous
     AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
-    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
+    SetPasteboardURL(struct IPC::Untrusted<WebCore::PasteboardURL> pasteboardURL, String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
     SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (int64_t changeCount) Synchronous
-    WriteWebArchiveToPasteBoard(String pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives, Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers) -> (enum:uint8_t WebKit::WriteWebArchiveToPasteBoardResult result, int64_t changeCount) Synchronous
+    WriteWebArchiveToPasteBoard(String pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, IPC::Untrusted<HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>> localFrameArchives, Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers) -> (enum:uint8_t WebKit::WriteWebArchiveToPasteBoardResult result, int64_t changeCount) Synchronous
     ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (bool result) Synchronous
     URLStringSuitableForLoading(String pasteboardName, std::optional<WebKit::WebPageProxyIdentifier> pageID) -> (String url, String title) Synchronous
 
@@ -76,13 +76,13 @@ messages -> WebPasteboardProxy {
     ReadText(String pasteboardName, String pasteboardType) -> (String text) Synchronous
     ReadFilePaths(String pasteboardName) -> (Vector<String> types) Synchronous
     ReadBuffer(String pasteboardName, String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
-    WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
+    WriteToClipboard(String pasteboardName, IPC::Untrusted<WebCore::SelectionData> pasteboardContent)
     ClearClipboard(String pasteboardName)
 #endif
 
 #if USE(LIBWPE) && !PLATFORM(WPE)
     GetPasteboardTypes() -> (Vector<String> types) Synchronous
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteWebContentToPasteboard(struct IPC::Untrusted<WebCore::PasteboardWebContent> content)
     WriteStringToPasteboard(String pasteboardType, String text)
 #endif
 

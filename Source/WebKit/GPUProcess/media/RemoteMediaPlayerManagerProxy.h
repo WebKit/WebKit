@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
+#include "Untrusted.h"
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -90,12 +91,12 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    void createMediaPlayer(WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&);
+    void createMediaPlayer(WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, WebCore::MediaPlayerEnums::MediaEngineIdentifier, IPC::Untrusted<RemoteMediaPlayerProxyConfiguration>&&);
     void deleteMediaPlayer(WebCore::MediaPlayerIdentifier);
 
     // Media player factory
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, CompletionHandler<void(Vector<String>&&)>&&);
-    void supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&&, CompletionHandler<void(WebCore::MediaPlayer::SupportsType)>&&);
+    void supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, IPC::Untrusted<WebCore::MediaEngineSupportParameters>&&, CompletionHandler<void(WebCore::MediaPlayer::SupportsType)>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
     CheckedPtr<const WebCore::MediaPlayerFactory> playbackEngineForConnection(WebCore::MediaPlayerEnums::MediaEngineIdentifier) const;

@@ -31,10 +31,10 @@
     DispatchedTo=UI
 ]
 messages -> WebExtensionController {
-    [Validator=hasLoadedContexts] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
-    [Validator=hasLoadedContexts] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
-    [Validator=hasLoadedContexts] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
-    [Validator=hasLoadedContexts] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct WebKit::WebExtensionFrameParameters frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct IPC::Untrusted<WebKit::WebExtensionFrameParameters> frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct IPC::Untrusted<WebKit::WebExtensionFrameParameters> frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct IPC::Untrusted<WebKit::WebExtensionFrameParameters> frameParameters, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, struct IPC::Untrusted<WebKit::WebExtensionFrameParameters> frameParameters, WallTime timestamp)
 
     // Test APIs
     [Validator=inTestingMode] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
