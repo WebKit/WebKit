@@ -288,6 +288,11 @@ void Queue::makeInvalid()
 
     m_createdNotCommittedBuffers = nil;
     m_openCommandEncoders = nil;
+
+    m_blitCommandEncoder = nil;
+    m_stagedCopyEncoder = nil;
+    m_commandBuffer = nil;
+    m_temporaryBuffer = nil;
 }
 
 void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)

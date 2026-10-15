@@ -157,6 +157,9 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
             }
 
             protectedThis->m_commandEncoder = nullptr;
+
+            if (RefPtr instance = protectedThis->m_device->instance())
+                instance->releaseCompletedCommandBuffers();
         });
     }];
     m_lastErrorString = lastError;

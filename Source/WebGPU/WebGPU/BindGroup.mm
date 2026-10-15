@@ -32,6 +32,7 @@
 #import "Device.h"
 #import "ExternalTexture.h"
 #import "MetalSPI.h"
+#import "RenderBundle.h"
 #import "Sampler.h"
 #import "TextureView.h"
 #import <ranges>
@@ -1265,6 +1266,74 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Metal::D
     return std::nullopt;
 }
 
+template<typename Holder>
+static void addResourceHolder(const BindGroupEntryUsageData::Resource& resource, const Holder& holder)
+{
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer)
+            buffer->addResourceHolder(holder);
+    }, [&](const RefPtr<const Texture>& texture) {
+        if (texture)
+            texture->addResourceHolder(holder);
+    }, [&](const RefPtr<const TextureView>& textureView) {
+        if (textureView)
+            textureView->apiParentTexture().addResourceHolder(holder);
+    }, [&](const RefPtr<const ExternalTexture>&) {
+    });
+}
+
+template<typename Holder>
+static void registerResourceHolderImpl(const Vector<BindableResources>& resources, const Holder& holder)
+{
+    for (const auto& bindableResources : resources) {
+        for (const auto& resourceUsage : bindableResources.resourceUsages)
+            addResourceHolder(resourceUsage.resource, holder);
+    }
+}
+
+void registerResourceHolder(const Vector<BindableResources>& resources, const BindGroup& bindGroup)
+{
+    registerResourceHolderImpl(resources, bindGroup);
+}
+
+void registerResourceHolder(const Vector<BindableResources>& resources, const RenderBundle& renderBundle)
+{
+    registerResourceHolderImpl(resources, renderBundle);
+}
+
+id<MTLResource> placeholderForDestroyedResource(const BindGroupEntryUsageData::Resource& resource)
+{
+    id<MTLResource> placeholder = nil;
+    WTF::switchOn(resource, [&](const RefPtr<Buffer>& buffer) {
+        if (buffer && buffer->isDestroyed())
+            placeholder = buffer->buffer();
+    }, [&](const RefPtr<const Texture>& texture) {
+        if (texture && texture->isDestroyed() && !texture->isCanvasBacking())
+            placeholder = texture->texture();
+    }, [&](const RefPtr<const TextureView>& textureView) {
+        if (textureView && textureView->isDestroyed() && !textureView->apiParentTexture().isCanvasBacking())
+            placeholder = textureView->texture();
+    }, [&](const RefPtr<const ExternalTexture>&) {
+    });
+    return placeholder;
+}
+
+bool replaceDestroyedResourcesWithPlaceholders(Vector<BindableResources>& resources)
+{
+    bool replacedAnything = false;
+    for (auto& bindableResources : resources) {
+        auto resourceCount = std::min(bindableResources.mtlResources.size(), bindableResources.resourceUsages.size());
+        for (size_t i = 0; i < resourceCount; ++i) {
+            id<MTLResource> placeholder = placeholderForDestroyedResource(bindableResources.resourceUsages[i].resource);
+            if (!placeholder || placeholder == bindableResources.mtlResources[i])
+                continue;
+            bindableResources.mtlResources[i] = placeholder;
+            replacedAnything = true;
+        }
+    }
+    return replacedAnything;
+}
+
 Ref<BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descriptor)
 {
 #define INTERNAL_ERROR_STRING(x) [NSString stringWithFormat:@"GPUDevice.createBindGroup: %@", x]
@@ -1536,7 +1605,9 @@ Ref<BindGroup> Device::createBindGroup(const WebGPU::BindGroupDescriptor& descri
         return BindGroup::createInvalid(*this);
     }
 
-    return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplersSet), WTF::move(externalTextureIndices), ++m_bindGroupId, *this);
+    Ref bindGroup = BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTF::move(resources), bindGroupLayout, WTF::move(dynamicBuffers), WTF::move(samplersSet), WTF::move(externalTextureIndices), ++m_bindGroupId, *this);
+    registerResourceHolder(bindGroup->resources(), bindGroup);
+    return bindGroup;
 #undef VALIDATION_ERROR
 #undef INTERNAL_ERROR_STRING
 }
@@ -1725,6 +1796,11 @@ bool BindGroup::updateExternalTextures(ExternalTexture& externalTexture)
     }
 
     return true;
+}
+
+void BindGroup::releaseDestroyedResources()
+{
+    replaceDestroyedResourcesWithPlaceholders(m_resources);
 }
 
 bool BindGroup::makeSubmitInvalid(ShaderStage stage, const BindGroupLayout* pipelineLayout) const

@@ -27,8 +27,10 @@
 #import "Texture.h"
 
 #import "APIConversions.h"
+#import "BindGroup.h"
 #import "CommandEncoder.h"
 #import "Device.h"
+#import "RenderBundle.h"
 #import "TextureView.h"
 #import <bmalloc/Algorithm.h>
 #import <wtf/CheckedArithmetic.h>
@@ -3013,7 +3015,9 @@ Ref<Texture> Device::createTexture(const WebGPU::TextureDescriptor& descriptor)
     setOwnerWithIdentity(texture);
     texture.label = descriptor.label.createNSString().get();
 
-    return Texture::create(texture, descriptor, Vector<WebGPU::TextureFormat> { descriptor.viewFormats }, *this);
+    Ref result = Texture::create(texture, descriptor, Vector<WebGPU::TextureFormat> { descriptor.viewFormats }, *this);
+    addTexture(result);
+    return result;
 }
 
 Texture::Texture(id<MTLTexture> texture, const WebGPU::TextureDescriptor& descriptor, Vector<WebGPU::TextureFormat>&& viewFormats, Device& device)
@@ -3682,6 +3686,12 @@ void Texture::destroy()
             if (RefPtr view = weakView.get())
                 view->destroy();
         }
+        for (Ref bindGroup : m_bindGroups.values())
+            bindGroup->releaseDestroyedResources();
+        m_bindGroups.clear();
+        for (Ref renderBundle : m_renderBundles.values())
+            renderBundle->releaseDestroyedResources();
+        m_renderBundles.clear();
     }
     if (!m_canvasBacking)
         m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
@@ -3689,6 +3699,22 @@ void Texture::destroy()
     m_commandEncoders.clear();
 
     m_textureViews.clear();
+}
+
+void Texture::addResourceHolder(const BindGroup& bindGroup) const
+{
+    if (m_destroyed)
+        return;
+
+    m_bindGroups.add(bindGroup);
+}
+
+void Texture::addResourceHolder(const RenderBundle& renderBundle) const
+{
+    if (m_destroyed)
+        return;
+
+    m_renderBundles.add(renderBundle);
 }
 
 void Texture::setLabel(String&& label)

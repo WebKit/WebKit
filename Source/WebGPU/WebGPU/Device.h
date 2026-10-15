@@ -48,6 +48,7 @@
 #import <wtf/Ref.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -282,6 +283,7 @@ public:
         return nullptr;
     }
     void removeBufferFromCache(uint64_t address) { m_bufferMap.remove(address); }
+    void addTexture(const Texture&);
     uint32_t appleGPUFamily() const { return m_appleGPUFamily; }
     void setRasterizationMapsForTexture(MTLResourceID, id<MTLRasterizationRateMap> left, id<MTLRasterizationRateMap> right);
     static id<MTLFunction> nopVertexFunction(id<MTLDevice>);
@@ -373,6 +375,7 @@ private:
     id<MTLSharedEvent> _Nullable m_resolveTimestampsSharedEvent { nil };
     HashMap<uint64_t, CommandEncoder*, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_commandEncoderMap;
     HashMap<uint64_t, Buffer*, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_bufferMap;
+    ThreadSafeWeakHashSet<Texture> m_textures;
     mutable HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_bindGroupCompatibilityCache;
     uint64_t m_commandEncoderId { 0 };
     uint64_t m_pipelineLayoutId { 0 };

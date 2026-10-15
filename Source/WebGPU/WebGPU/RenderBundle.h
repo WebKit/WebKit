@@ -93,6 +93,7 @@ public:
     bool LEGACY_NODELETE requiresCommandReplay() const;
     bool LEGACY_NODELETE makeSubmitInvalid() const;
     bool rebindSamplersIfNeeded() const;
+    void releaseDestroyedResources();
     const Vector<WebGPU::Metal::BindableResources>& resources() LIFETIME_BOUND { return m_resources; }
 
 private:

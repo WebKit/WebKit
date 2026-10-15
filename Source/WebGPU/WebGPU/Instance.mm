@@ -205,6 +205,21 @@ void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)
 
     container.append(commandBuffer);
 
+    releaseCompletedCommandBuffers();
+}
+
+void Instance::retainCommandBuffer(CommandBuffer& commandBuffer, id<MTLCommandBuffer> mtlCommandBuffer)
+{
+    releaseCompletedCommandBuffers();
+    m_retainedCommandBufferInstances.append({ commandBuffer, mtlCommandBuffer });
+}
+
+void Instance::releaseCompletedCommandBuffers()
+{
+    m_retainedCommandBufferInstances.removeAllMatching([](auto& pair) {
+        return !pair.second;
+    });
+
     for (auto& container : retainedDeviceInstances.values()) {
         container.removeAllMatching([&](auto& pair) {
             return !pair;
@@ -213,14 +228,6 @@ void Instance::retainDevice(Device& device, id<MTLCommandBuffer> commandBuffer)
     retainedDeviceInstances.removeIf([&](auto& pair) {
         return !pair.value.size();
     });
-}
-
-void Instance::retainCommandBuffer(CommandBuffer& commandBuffer, id<MTLCommandBuffer> mtlCommandBuffer)
-{
-    m_retainedCommandBufferInstances.removeAllMatching([](auto& pair) {
-        return !pair.second;
-    });
-    m_retainedCommandBufferInstances.append({ commandBuffer, mtlCommandBuffer });
 }
 
 id<MTLDevice> Instance::device() const

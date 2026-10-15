@@ -1120,7 +1120,25 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WebGPU::RenderBundleDescript
     renderBundle->setLabel(String { descriptor.label });
     m_finished = true;
 
+    registerResourceHolder(renderBundle->resources(), renderBundle);
+
     return renderBundle;
+}
+
+void RenderBundleEncoder::releaseDestroyedResources()
+{
+    if (!m_resources)
+        return;
+
+    Vector<id<MTLResource>> destroyedResources;
+    for (id<MTLResource> mtlResource : m_resources) {
+        ResourceUsageAndRenderStage *usageAndStage = [m_resources objectForKey:mtlResource];
+        if (usageAndStage && placeholderForDestroyedResource(usageAndStage.resource))
+            destroyedResources.append(mtlResource);
+    }
+
+    for (id<MTLResource> mtlResource : destroyedResources)
+        [m_resources removeObjectForKey:mtlResource];
 }
 
 bool RenderBundleEncoder::isValid() const

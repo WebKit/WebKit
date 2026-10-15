@@ -27,8 +27,10 @@
 #import "Buffer.h"
 
 #import "APIConversions.h"
+#import "BindGroup.h"
 #import "CommandBuffer.h"
 #import "Device.h"
+#import "RenderBundle.h"
 
 #import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
@@ -254,6 +256,29 @@ void Buffer::destroy()
     m_device->makeSubmitInvalidClearingEncoders(m_commandEncoders);
     m_device->removeBufferFromCache(m_buffer.gpuAddress);
     m_buffer = m_device->placeholderBuffer();
+
+    for (Ref bindGroup : m_bindGroups.values())
+        bindGroup->releaseDestroyedResources();
+    m_bindGroups.clear();
+    for (Ref renderBundle : m_renderBundles.values())
+        renderBundle->releaseDestroyedResources();
+    m_renderBundles.clear();
+}
+
+void Buffer::addResourceHolder(const BindGroup& bindGroup) const
+{
+    if (isDestroyed())
+        return;
+
+    m_bindGroups.add(bindGroup);
+}
+
+void Buffer::addResourceHolder(const RenderBundle& renderBundle) const
+{
+    if (isDestroyed())
+        return;
+
+    m_renderBundles.add(renderBundle);
 }
 
 bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const

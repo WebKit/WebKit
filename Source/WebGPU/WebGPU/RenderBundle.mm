@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "BindGroup.h"
+#import "RenderBundleEncoder.h"
 #import "TextureOrTextureView.h"
 #import <wtf/TZoneMallocInlines.h>
 
@@ -185,6 +186,17 @@ bool RenderBundle::rebindSamplersIfNeeded() const
         result = bindGroup->rebindSamplersIfNeeded() && result;
 
     return result;
+}
+
+void RenderBundle::releaseDestroyedResources()
+{
+    if (!replaceDestroyedResourcesWithPlaceholders(m_resources))
+        return;
+
+    m_makeSubmitInvalid = true;
+
+    if (RefPtr renderBundleEncoder = m_renderBundleEncoder)
+        renderBundleEncoder->releaseDestroyedResources();
 }
 
 } // namespace WebGPU::Metal

@@ -37,6 +37,7 @@
 #import <wtf/Seconds.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
+#import <wtf/ThreadSafeWeakHashSet.h>
 #import <wtf/TypeCasts.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakHashSet.h>
@@ -44,8 +45,10 @@
 
 namespace WebGPU::Metal {
 
+class BindGroup;
 class CommandEncoder;
 class Device;
+class RenderBundle;
 class TextureView;
 struct ResolvedTextureViewDescriptor;
 
@@ -139,6 +142,8 @@ public:
     void recreateIfNeeded();
     void LEGACY_NODELETE makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;
+    void addResourceHolder(const BindGroup&) const;
+    void addResourceHolder(const RenderBundle&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
     bool isCanvasBacking() const { return m_canvasBacking; }
 
@@ -187,6 +192,8 @@ private:
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
     Vector<ThreadSafeWeakPtr<TextureView>> m_textureViews;
+    mutable ThreadSafeWeakHashSet<BindGroup> m_bindGroups;
+    mutable ThreadSafeWeakHashSet<RenderBundle> m_renderBundles;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
     mutable Lock m_gpuFrameCostLock;

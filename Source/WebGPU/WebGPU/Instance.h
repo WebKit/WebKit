@@ -77,6 +77,7 @@ public:
     bool isValid() const final { return m_isValid; }
     void retainDevice(Device&, id<MTLCommandBuffer>);
     void retainCommandBuffer(CommandBuffer&, id<MTLCommandBuffer>);
+    void releaseCompletedCommandBuffers();
     void waitForCommandBufferCompletions();
 
     // This can be called on a background thread.
