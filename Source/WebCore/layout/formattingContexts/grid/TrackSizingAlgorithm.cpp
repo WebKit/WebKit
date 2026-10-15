@@ -641,7 +641,7 @@ static void resolveIntrinsicTrackSizes(const ResolveIntrinsicTrackSizesContext& 
 // https://drafts.csswg.org/css-grid-1/#algo-terms
 // Equal to the available grid space minus the sum of the base sizes of all the grid tracks (including gutters),
 // floored at zero. If available grid space is indefinite, the free space is indefinite as well.
-static std::optional<LayoutUnit> computeFreeSpace(std::optional<LayoutUnit> availableGridSpace, const UnsizedTracks& unsizedTracks, LayoutUnit gapSize)
+static std::optional<LayoutUnit> computeFreeSpace(std::optional<LayoutUnit> availableGridSpace, const UnsizedTracks& unsizedTracks, const BitVector& collapsedTracksList, LayoutUnit gapSize)
 {
     if (!availableGridSpace)
         return { };
@@ -649,7 +649,7 @@ static std::optional<LayoutUnit> computeFreeSpace(std::optional<LayoutUnit> avai
     auto sumOfBaseSizes = std::accumulate(unsizedTracks.begin(), unsizedTracks.end(), 0_lu, [](LayoutUnit sum, const UnsizedTrack& unsizedTrack) {
         return unsizedTrack.baseSize + sum;
     });
-    auto guttersSize = GridLayoutUtils::totalGuttersSize(unsizedTracks.size(), gapSize);
+    auto guttersSize = GridLayoutUtils::totalGuttersSize(unsizedTracks.size(), collapsedTracksList, gapSize);
 
     return std::max({ }, *availableGridSpace - (sumOfBaseSizes + guttersSize));
 }
@@ -682,7 +682,7 @@ static void stretchAutoTracks(std::optional<LayoutUnit> freeSpace, UnsizedTracks
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-grow-tracks
-static void maximizeTracks(UnsizedTracks& unsizedTracks, const AxisConstraint& axisConstraint, LayoutUnit gapSize)
+static void maximizeTracks(UnsizedTracks& unsizedTracks, const AxisConstraint& axisConstraint, const BitVector& collapsedTracksList, LayoutUnit gapSize)
 {
     switch (axisConstraint.scenario()) {
     case AxisConstraint::FreeSpaceScenario::MaxContent:
@@ -707,7 +707,7 @@ static void maximizeTracks(UnsizedTracks& unsizedTracks, const AxisConstraint& a
 
         auto availableGridSpace = axisConstraint.scenario() == AxisConstraint::FreeSpaceScenario::Definite
             ? std::optional(axisConstraint.availableSpace()) : std::nullopt;
-        auto freeSpace = computeFreeSpace(availableGridSpace, unsizedTracks, gapSize);
+        auto freeSpace = computeFreeSpace(availableGridSpace, unsizedTracks, collapsedTracksList, gapSize);
         auto unfrozenTrackIndexes = determineUnfrozenTracks();
         // If the free space is positive...
         while (!unfrozenTrackIndexes.isEmpty() && freeSpace > 0) {
@@ -725,7 +725,7 @@ static void maximizeTracks(UnsizedTracks& unsizedTracks, const AxisConstraint& a
                 else
                     unfrozenTrack.baseSize += spaceRemainingUntilGrowthLimit;
             }
-            freeSpace = computeFreeSpace(availableGridSpace, unsizedTracks, gapSize);
+            freeSpace = computeFreeSpace(availableGridSpace, unsizedTracks, collapsedTracksList, gapSize);
             unfrozenTrackIndexes = determineUnfrozenTracks();
         }
     }
@@ -822,13 +822,13 @@ static double flexFactorSum(const FlexTracks& flexTracks)
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-find-fr-size
-static double findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availableSpace, const LayoutUnit gapSize)
+static double findSizeOfFr(const UnsizedTracks& tracks, const LayoutUnit availableSpace, const BitVector& collapsedTracksList, const LayoutUnit gapSize)
 {
     ASSERT(availableSpace >= 0_lu);
 
     // https://www.w3.org/TR/css-grid-1/#algo-terms
     // free space = available grid space - sum of base sizes - gutters.
-    LayoutUnit totalGutters = GridLayoutUtils::totalGuttersSize(tracks.size(), gapSize);
+    LayoutUnit totalGutters = GridLayoutUtils::totalGuttersSize(tracks.size(), collapsedTracksList, gapSize);
 
     InflexibleTrackState state;
     FrSizeComponents components;
@@ -918,7 +918,7 @@ static void applyFlexFractionToTracks(UnsizedTracks& unsizedTracks, const FlexTr
 // * For each grid item that crosses a flexible track, the result of finding the size of an fr
 //   using all the grid tracks that the item crosses and a space to fill of the item's max-content contribution.
 static double usedFlexFractionForMaxContent(const UnsizedTracks& unsizedTracks, const FlexTracks& flexTracks,
-    const AxisConstraint& axisConstraint, LayoutUnit gapSize, const TrackSizingItemList& trackSizingItems,
+    const AxisConstraint& axisConstraint, LayoutUnit gapSize, const BitVector& collapsedTracksList, const TrackSizingItemList& trackSizingItems,
     const PlacedGridItemSpanList& gridItemSpanList, const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     // The used flex fraction is the maximum of:
@@ -937,7 +937,7 @@ static double usedFlexFractionForMaxContent(const UnsizedTracks& unsizedTracks, 
 
         auto maxContentContribution = gridItemSizingFunctions.maxContentContribution(trackSizingItems[gridItemIndex].gridItem, trackSizingItems[gridItemIndex].oppositeAxisConstraint).value;
         auto itemTracks = unsizedTracks.subspan(gridItemSpan.begin(), gridItemSpan.distance());
-        double candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, gapSize);
+        double candidateFlexFraction = findSizeOfFr(itemTracks, maxContentContribution, { }, gapSize);
 
         usedFlexFraction = std::max(usedFlexFraction, candidateFlexFraction);
     }
@@ -952,17 +952,17 @@ static double usedFlexFractionForMaxContent(const UnsizedTracks& unsizedTracks, 
         return unsizedTrack.baseSize + sum;
     });
     auto gridSizeForCandidateFlexFraction = sumOfBaseSizes + std::accumulate(flexTrackIncrements.begin(), flexTrackIncrements.end(), 0_lu)
-        + GridLayoutUtils::totalGuttersSize(unsizedTracks.size(), gapSize);
+        + GridLayoutUtils::totalGuttersSize(unsizedTracks.size(), collapsedTracksList, gapSize);
 
     auto containerMinimumSize = axisConstraint.containerMinimumSize();
 
     if (auto containerMaximumSize = axisConstraint.containerMaximumSize(); containerMaximumSize && gridSizeForCandidateFlexFraction > *containerMaximumSize) {
         // A minimum size larger than the maximum size wins over it.
-        return findSizeOfFr(unsizedTracks, std::max(*containerMaximumSize, containerMinimumSize.value_or(0_lu)), gapSize);
+        return findSizeOfFr(unsizedTracks, std::max(*containerMaximumSize, containerMinimumSize.value_or(0_lu)), collapsedTracksList, gapSize);
     }
 
     if (containerMinimumSize && gridSizeForCandidateFlexFraction < *containerMinimumSize)
-        return findSizeOfFr(unsizedTracks, *containerMinimumSize, gapSize);
+        return findSizeOfFr(unsizedTracks, *containerMinimumSize, collapsedTracksList, gapSize);
 
     return usedFlexFraction;
 }
@@ -971,7 +971,7 @@ static double usedFlexFractionForMaxContent(const UnsizedTracks& unsizedTracks, 
 // Otherwise, if the free space is a definite length:
 // The used flex fraction is the result of finding the size of an fr using all of the
 // grid tracks and a space to fill of the available grid space (minus gutters).
-static double usedFlexFractionForDefiniteLength(const UnsizedTracks& unsizedTracks, LayoutUnit availableGridSpace, const LayoutUnit gapSize)
+static double usedFlexFractionForDefiniteLength(const UnsizedTracks& unsizedTracks, LayoutUnit availableGridSpace, const BitVector& collapsedTracksList, const LayoutUnit gapSize)
 {
     // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
     // "If the free space is zero...the used flex fraction is zero."
@@ -979,12 +979,12 @@ static double usedFlexFractionForDefiniteLength(const UnsizedTracks& unsizedTrac
     if (availableGridSpace == 0_lu)
         return { };
 
-    return findSizeOfFr(unsizedTracks, availableGridSpace, gapSize);
+    return findSizeOfFr(unsizedTracks, availableGridSpace, collapsedTracksList, gapSize);
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
 static void expandFlexibleTracks(UnsizedTracks& unsizedTracks, const AxisConstraint& axisConstraint,
-    LayoutUnit gapSize, const TrackSizingItemList& trackSizingItems, const GridItemSizingFunctions& gridItemSizingFunctions)
+    LayoutUnit gapSize, const BitVector& collapsedTracksList, const TrackSizingItemList& trackSizingItems, const GridItemSizingFunctions& gridItemSizingFunctions)
 {
     if (!hasFlexTracks(unsizedTracks))
         return;
@@ -1002,11 +1002,11 @@ static void expandFlexibleTracks(UnsizedTracks& unsizedTracks, const AxisConstra
 
         // Otherwise, if the free space is a definite length:
         case AxisConstraint::FreeSpaceScenario::Definite:
-            return usedFlexFractionForDefiniteLength(unsizedTracks, axisConstraint.availableSpace(), gapSize);
+            return usedFlexFractionForDefiniteLength(unsizedTracks, axisConstraint.availableSpace(), collapsedTracksList, gapSize);
 
         // Otherwise, if sizing the grid container under a max-content constraint:
         case AxisConstraint::FreeSpaceScenario::MaxContent:
-            return usedFlexFractionForMaxContent(unsizedTracks, flexTracks, axisConstraint, gapSize, trackSizingItems, spannedLinesList(trackSizingItems), gridItemSizingFunctions);
+            return usedFlexFractionForMaxContent(unsizedTracks, flexTracks, axisConstraint, gapSize, collapsedTracksList, trackSizingItems, spannedLinesList(trackSizingItems), gridItemSizingFunctions);
         }
 
         ASSERT_NOT_REACHED();
@@ -1021,17 +1021,17 @@ static void expandFlexibleTracks(UnsizedTracks& unsizedTracks, const AxisConstra
 // https://drafts.csswg.org/css-grid-1/#algo-stretch
 // If the free space is indefinite, but the grid container has a definite min-width/height,
 // use that size to calculate the free space for this step instead.
-static std::optional<LayoutUnit> freeSpaceForStretchAutoTracks(const AxisConstraint& axisConstraint, std::optional<LayoutUnit> availableGridSpace, const UnsizedTracks& unsizedTracks, LayoutUnit gapSize)
+static std::optional<LayoutUnit> freeSpaceForStretchAutoTracks(const AxisConstraint& axisConstraint, std::optional<LayoutUnit> availableGridSpace, const UnsizedTracks& unsizedTracks, const BitVector& collapsedTracksList, LayoutUnit gapSize)
 {
     auto containerMinimumSize = axisConstraint.containerMinimumSize();
     switch (axisConstraint.scenario()) {
     case AxisConstraint::FreeSpaceScenario::Definite:
-        return computeFreeSpace(availableGridSpace, unsizedTracks, gapSize);
+        return computeFreeSpace(availableGridSpace, unsizedTracks, collapsedTracksList, gapSize);
     case AxisConstraint::FreeSpaceScenario::MinContent:
     case AxisConstraint::FreeSpaceScenario::MaxContent:
         if (containerMinimumSize)
-            return computeFreeSpace(containerMinimumSize, unsizedTracks, gapSize);
-        return computeFreeSpace(availableGridSpace, unsizedTracks, gapSize);
+            return computeFreeSpace(containerMinimumSize, unsizedTracks, collapsedTracksList, gapSize);
+        return computeFreeSpace(availableGridSpace, unsizedTracks, collapsedTracksList, gapSize);
     }
     ASSERT_NOT_REACHED();
     return { };
@@ -1040,7 +1040,7 @@ static std::optional<LayoutUnit> freeSpaceForStretchAutoTracks(const AxisConstra
 // https://drafts.csswg.org/css-grid-1/#algo-track-sizing
 TrackSizes TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizingItems, const TrackSizingFunctionsList& trackSizingFunctions,
     const AxisConstraint& axisConstraint, const GridItemSizingFunctions& gridItemSizingFunctions,
-    LayoutUnit gapSize, const StyleContentAlignmentData& usedContentAlignment)
+    LayoutUnit gapSize, const BitVector& collapsedTracksList, const StyleContentAlignmentData& usedContentAlignment)
 {
     auto freeSpaceScenario = axisConstraint.scenario();
     auto availableGridSpace = freeSpaceScenario == AxisConstraint::FreeSpaceScenario::Definite
@@ -1055,15 +1055,15 @@ TrackSizes TrackSizingAlgorithm::sizeTracks(const TrackSizingItemList& trackSizi
     resolveIntrinsicTrackSizes(ResolveIntrinsicTrackSizesContext(trackSizingItems, gridItemSizingFunctions, trackSizingFunctions, axisConstraint, gapSize), unsizedTracks);
 
     // 3. Maximize Tracks
-    maximizeTracks(unsizedTracks, axisConstraint, gapSize);
+    maximizeTracks(unsizedTracks, axisConstraint, collapsedTracksList, gapSize);
 
     // 4. Expand Flexible Tracks
     // https://drafts.csswg.org/css-grid-1/#algo-flex-tracks
-    expandFlexibleTracks(unsizedTracks, axisConstraint, gapSize, trackSizingItems, gridItemSizingFunctions);
+    expandFlexibleTracks(unsizedTracks, axisConstraint, gapSize, collapsedTracksList, trackSizingItems, gridItemSizingFunctions);
 
     // https://drafts.csswg.org/css-grid-1/#algo-stretch
     // 5. Stretch ‘auto’ Tracks
-    stretchAutoTracks(freeSpaceForStretchAutoTracks(axisConstraint, availableGridSpace, unsizedTracks, gapSize), unsizedTracks, usedContentAlignment);
+    stretchAutoTracks(freeSpaceForStretchAutoTracks(axisConstraint, availableGridSpace, unsizedTracks, collapsedTracksList, gapSize), unsizedTracks, usedContentAlignment);
 
     // Each track has a base size, a <length> which grows throughout the algorithm and
     // which will eventually be the track’s final size...

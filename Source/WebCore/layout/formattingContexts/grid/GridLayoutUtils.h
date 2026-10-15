@@ -66,7 +66,7 @@ struct BaselineSharingGroup {
 
 namespace GridLayoutUtils {
 
-LayoutUnit LEGACY_NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
+LayoutUnit LEGACY_NODELETE totalGuttersSize(size_t tracksCount, const BitVector& collapsedTracksList, LayoutUnit gapsSize);
 
 // https://drafts.csswg.org/css-grid-1/#track-sizes
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize&);
@@ -99,7 +99,7 @@ std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridIt
     LayoutUnit inlineBorderAndPadding, LayoutUnit blockBorderAndPadding, LayoutUnit gridAreaInlineSize, LayoutUnit gridAreaBlockSize, const GridFormattingContext&,
     const UsedMargins& inlineMargins, const UsedMargins& blockMargins);
 
-LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, LayoutUnit gap);
+LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes&, const BitVector& collapsedTracksList, LayoutUnit gap);
 LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSizes&, LayoutUnit gap);
 
 MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem&, const IntegrationUtils&);

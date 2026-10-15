@@ -95,7 +95,7 @@ static std::optional<LayoutUnit> gridAreaBlockSizeForFirstIterationColumnSizing(
     auto sumOfRowSizes = std::accumulate(spannedRowSizes.begin(), spannedRowSizes.end(), 0_lu, [](LayoutUnit sum, auto& rowSize) {
         return sum + *rowSize;
     });
-    return sumOfRowSizes + GridLayoutUtils::totalGuttersSize(spannedRowSizes.size(), rowGap);
+    return sumOfRowSizes + GridLayoutUtils::totalGuttersSize(spannedRowSizes.size(), { }, rowGap);
 }
 
 // Runs the track sizing algorithm over the grid columns. Grid items whose inline-axis contribution
@@ -121,7 +121,7 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
 
     return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
         layoutConstraints.inlineAxis, GridItemSizingFunctions::inlineAxis(formattingContext().integrationUtils()),
-        layoutState.usedColumnGap, layoutState.usedJustifyContent);
+        layoutState.usedColumnGap, layoutState.collapsedColumnTracksList, layoutState.usedJustifyContent);
 }
 
 // Runs the track sizing algorithm over the grid rows. The given column sizes supply the inline-axis
@@ -140,7 +140,7 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
 
     return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
         layoutState.gridLayoutConstraints.blockAxis, GridItemSizingFunctions::blockAxis(formattingContext()),
-        layoutState.usedRowGap, layoutState.usedAlignContent);
+        layoutState.usedRowGap, layoutState.collapsedRowTracksList, layoutState.usedAlignContent);
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing

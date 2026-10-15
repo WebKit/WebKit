@@ -43,10 +43,14 @@ namespace WebCore {
 namespace Layout {
 namespace GridLayoutUtils {
 
-LayoutUnit totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize)
+// https://drafts.csswg.org/css-grid-1/#collapsed-gutter
+// The gutters on either side of a collapsed track coincide, and a collapsed track at either end of
+// the grid has no gutter on its outer side, so collapsing it leaves no gutter on either side. Only
+// the gutters between non-collapsed tracks remain, which may be none if every track is collapsed.
+LayoutUnit totalGuttersSize(size_t tracksCount, const BitVector& collapsedTracksList, LayoutUnit gapsSize)
 {
-    ASSERT(tracksCount);
-    return tracksCount ? gapsSize * (tracksCount - 1) : LayoutUnit { };
+    auto nonCollapsedTracksCount = tracksCount - collapsedTracksList.bitCount();
+    return nonCollapsedTracksCount ? gapsSize * (nonCollapsedTracksCount - 1) : LayoutUnit { };
 }
 
 Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize& trackSize)
@@ -946,7 +950,7 @@ std::pair<LayoutUnit, LayoutUnit> usedSizesForAspectRatioItem(const PlacedGridIt
     return { usedInlineSize, usedBlockSize };
 }
 
-LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes& trackSizes, LayoutUnit gap)
+LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes& trackSizes, const BitVector& collapsedTracksList, LayoutUnit gap)
 {
     auto trackSizesBefore = trackSizes.subspan(0, gridLineIndex);
     auto sumOfTrackSizes = std::reduce(trackSizesBefore.begin(), trackSizesBefore.end());
@@ -955,6 +959,22 @@ LayoutUnit computeGridLinePosition(size_t gridLineIndex, const TrackSizes& track
     // A grid line used as an item's start edge is preceded by gridLineIndex tracks, and a
     // gutter follows each of those tracks. So the line is offset by gridLineIndex gutters.
     auto numberOfGaps = gridLineIndex;
+
+    // https://drafts.csswg.org/css-grid-1/#collapsed-gutter
+    // A collapsed track's gutters coincide with the gutter on its other side, so no gutter follows it.
+    for (auto collapsedTrackIndex : collapsedTracksList) {
+        if (collapsedTrackIndex >= gridLineIndex)
+            break;
+        --numberOfGaps;
+    }
+    // If only collapsed tracks follow the line, the last non-collapsed track before it has no gutter
+    // on the other side of them to coincide with, so its gutter collapses away too.
+    auto tracksAfter = std::views::iota(gridLineIndex, trackSizes.size());
+    auto onlyCollapsedTracksFollow = !tracksAfter.empty() && std::ranges::all_of(tracksAfter, [&](size_t trackIndex) {
+        return collapsedTracksList.get(trackIndex);
+    });
+    if (numberOfGaps && onlyCollapsedTracksFollow)
+        --numberOfGaps;
 
     return sumOfTrackSizes + (numberOfGaps * gap);
 }

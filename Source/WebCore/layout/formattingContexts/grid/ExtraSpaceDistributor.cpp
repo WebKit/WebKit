@@ -224,7 +224,7 @@ TrackIndexes ExtraSpaceDistributor::distributeExtraSpace(ExtraSpaceDistributionT
         LayoutUnit spannedSizes;
         for (size_t trackIndex = itemSpan.begin(); trackIndex < itemSpan.end(); ++trackIndex)
             spannedSizes += unsizedTracks[trackIndex].affectedSize(spaceDistributionTarget);
-        auto spannedGutters = GridLayoutUtils::totalGuttersSize(itemSpan.distance(), gapSize);
+        auto spannedGutters = GridLayoutUtils::totalGuttersSize(itemSpan.distance(), { }, gapSize);
         auto spaceToDistribute = std::max(0_lu, sizeContributions[contributionIndex] - spannedSizes - spannedGutters);
         if (!spaceToDistribute)
             continue;

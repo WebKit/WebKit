@@ -67,7 +67,7 @@ static std::optional<LayoutUnit> gridAreaMaximumSize(size_t startLine, size_t en
         }
         maximumSize += Style::evaluate<LayoutUnit>(maximumBreadth, axisConstraint.availableSpace(), trackSizingFunction.zoom);
     }
-    return maximumSize + GridLayoutUtils::totalGuttersSize(endLine - startLine, gapSize);
+    return maximumSize + GridLayoutUtils::totalGuttersSize(endLine - startLine, { }, gapSize);
 }
 
 GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUtils& integrationUtils)
