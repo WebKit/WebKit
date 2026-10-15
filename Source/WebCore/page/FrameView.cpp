@@ -549,6 +549,11 @@ FloatRect FrameView::convertFromRootViewAcrossIsolatedFrames(FloatRect rect) con
     return transformed;
 }
 
+static float parentRenderViewScaleFactor(const FrameView& parentView)
+{
+    return protect(parentView.frame())->frameScaleFactor();
+}
+
 FloatPoint FrameView::convertToRootViewAcrossIsolatedFrames(FloatPoint point) const
 {
     RefPtr parentView = siteIsolationAwareParentView(*this);
@@ -561,7 +566,9 @@ FloatPoint FrameView::convertToRootViewAcrossIsolatedFrames(FloatPoint point) co
     else {
         Ref frame = this->frame();
         point.moveBy(parentView->childFrameOwnerContentBoxLocation(frame));
-        parentPoint = parentView->contentsToView(parentView->childFrameOwnerToRootContentTransform(frame).projectPoint(point));
+        auto projectedPoint = parentView->childFrameOwnerToRootContentTransform(frame).projectPoint(point);
+        projectedPoint.scale(parentRenderViewScaleFactor(*parentView));
+        parentPoint = parentView->contentsToView(projectedPoint);
     }
 
     return parentView->convertToRootViewAcrossIsolatedFrames(parentPoint);
@@ -579,7 +586,9 @@ FloatRect FrameView::convertToRootViewAcrossIsolatedFrames(FloatRect rect) const
     else {
         Ref frame = this->frame();
         rect.moveBy(parentView->childFrameOwnerContentBoxLocation(frame));
-        parentRect = parentView->contentsToView(parentView->childFrameOwnerToRootContentTransform(frame).projectQuad(rect).boundingBox());
+        auto projectedRect = parentView->childFrameOwnerToRootContentTransform(frame).projectQuad(rect).boundingBox();
+        projectedRect.scale(parentRenderViewScaleFactor(*parentView));
+        parentRect = parentView->contentsToView(projectedRect);
     }
 
     return parentView->convertToRootViewAcrossIsolatedFrames(parentRect);
@@ -597,7 +606,9 @@ IntPoint FrameView::convertToRootViewAcrossIsolatedFrames(IntPoint point) const
     else {
         Ref frame = this->frame();
         point.moveBy(roundedIntPoint(parentView->childFrameOwnerContentBoxLocation(frame)));
-        parentPoint = roundedIntPoint(parentView->contentsToView(parentView->childFrameOwnerToRootContentTransform(frame).projectPoint(point)));
+        auto projectedPoint = parentView->childFrameOwnerToRootContentTransform(frame).projectPoint(point);
+        projectedPoint.scale(parentRenderViewScaleFactor(*parentView));
+        parentPoint = roundedIntPoint(parentView->contentsToView(projectedPoint));
     }
 
     return parentView->convertToRootViewAcrossIsolatedFrames(parentPoint);
@@ -615,7 +626,9 @@ IntRect FrameView::convertToRootViewAcrossIsolatedFrames(IntRect rect) const
     else {
         Ref frame = this->frame();
         rect.moveBy(roundedIntPoint(parentView->childFrameOwnerContentBoxLocation(frame)));
-        parentRect = roundedIntRect(parentView->contentsToView(parentView->childFrameOwnerToRootContentTransform(frame).projectQuad(FloatQuad { rect }).boundingBox()));
+        auto projectedRect = parentView->childFrameOwnerToRootContentTransform(frame).projectQuad(FloatQuad { rect }).boundingBox();
+        projectedRect.scale(parentRenderViewScaleFactor(*parentView));
+        parentRect = roundedIntRect(parentView->contentsToView(projectedRect));
     }
 
     return parentView->convertToRootViewAcrossIsolatedFrames(parentRect);

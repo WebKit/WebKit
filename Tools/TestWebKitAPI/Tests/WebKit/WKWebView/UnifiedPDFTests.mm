@@ -61,6 +61,7 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
@@ -481,15 +482,56 @@ static std::string testName(PDFEmbedElement embedElement)
     return "";
 }
 
-template<typename Params> static std::vector<Params> withEachPDFEmbedElement()
+template<typename Params, typename SiteIsolationRange> static std::vector<Params> withEachPDFEmbedElement(const SiteIsolationRange& siteIsolationRange)
 {
     std::vector<Params> params;
     for (auto embedElement : { PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object }) {
-        for (auto& siteIsolationParameters : siteIsolationParams)
+        for (auto& siteIsolationParameters : siteIsolationRange)
             params.push_back(Params { embedElement, siteIsolationParameters });
     }
     return params;
 }
+
+template<typename Params> static std::vector<Params> withEachPDFEmbedElement()
+{
+    return withEachPDFEmbedElement<Params>(siteIsolationParams);
+}
+
+#if PLATFORM(MAC)
+
+static constexpr std::array pinchZoomParams {
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = false, .sharedProcessEnabled = false, .unifiedMacZoomEnabled = true },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false, .unifiedMacZoomEnabled = true },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = false, .sharedProcessEnabled = false, .unifiedMacZoomEnabled = false },
+    SiteIsolationParams { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false, .unifiedMacZoomEnabled = false },
+};
+
+static double pinchZoom(TestWKWebView *webView, NSPoint pointInWebView)
+{
+    auto resetAllowsMagnification = makeScopeExit([webView, originalValue = [webView allowsMagnification]] {
+        [webView setAllowsMagnification:originalValue];
+    });
+    [webView setAllowsMagnification:YES];
+
+    auto pointInWindow = [webView convertPoint:pointInWebView toView:nil];
+    [webView magnifyAtPoint:pointInWindow phase:NSEventPhaseBegan magnification:0];
+    for (unsigned i = 0; i < 20 && [webView magnification] < 1.4; ++i)
+        [webView magnifyAtPoint:pointInWindow phase:NSEventPhaseChanged magnification:0.1];
+    [webView magnifyAtPoint:pointInWindow phase:NSEventPhaseEnded magnification:0];
+
+    double previous = 0;
+    unsigned matchingReads = 0;
+    TestWebKitAPI::Util::waitFor([&] {
+        [webView waitForNextPresentationUpdate];
+        double current = [webView magnification];
+        matchingReads = current == previous ? matchingReads + 1 : 1;
+        previous = current;
+        return matchingReads >= 3;
+    });
+    return previous;
+}
+
+#endif // PLATFORM(MAC)
 
 struct EmbeddedPDFFitsToFrameParams {
     PDFEmbedElement embedElement;
@@ -621,12 +663,14 @@ public:
     static constexpr int iframeHeight = 300;
     static constexpr NSRect iframeFrame { { iframeLeft, iframeTop }, { iframeWidth, iframeHeight } };
 
+    // The spacer makes the main frame scrollable.
+    virtual String spacerHTML() const { return "<div style='height:2000px'></div>"_s; }
+
     void SetUp() override
     {
-        // The spacer makes the main frame scrollable.
         auto mainHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft,
             "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
-            "px; border:0' src='"_s, GetParam().subframeURL("/test.pdf"_s), "'></iframe><div style='height:2000px'></div>"_s);
+            "px; border:0' src='"_s, GetParam().subframeURL("/test.pdf"_s), "'></iframe>"_s, spacerHTML());
 
         server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
             { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML } },
@@ -646,35 +690,44 @@ public:
         [[webView window] orderFrontRegardless];
     }
 
-    // A point over the PDF's text, in web view coordinates. The sole annotation is the link over
-    // "our website", so its center is on text whatever the layout.
-    NSPoint loadAndFindPointOverPDFText()
+    NSRect loadAndFindLinkRect()
     {
         [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
         [navigationDelegate waitForDidFinishNavigation];
 
-        RetainPtr<NSArray> center;
+        RetainPtr<NSArray> rect;
         bool foundAnnotation = TestWebKitAPI::Util::waitFor([&] {
-            center = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+            rect = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
                 "  const plugin = document.querySelector('embed');"
                 "  const rects = plugin ? internals.pdfAnnotationRectsForTesting(plugin) : [];"
                 "  if (!rects.length) return null;"
                 "  const box = plugin.getBoundingClientRect();"
-                "  return [box.x + rects[0].x + rects[0].width / 2, box.y + rects[0].y + rects[0].height / 2];"
+                "  return [box.x + rects[0].x, box.y + rects[0].y, rects[0].width, rects[0].height];"
                 "})()" inFrame:[webView firstChildFrame]]);
-            return !!center;
+            return !!rect;
         });
         EXPECT_TRUE(foundAnnotation);
         if (!foundAnnotation)
-            return NSZeroPoint;
+            return NSZeroRect;
 
         [webView waitForNextPresentationUpdate];
-        return NSMakePoint(iframeLeft + [[center objectAtIndex:0] doubleValue], iframeTop + [[center objectAtIndex:1] doubleValue]);
+        return NSMakeRect(iframeLeft + [[rect objectAtIndex:0] doubleValue], iframeTop + [[rect objectAtIndex:1] doubleValue], [[rect objectAtIndex:2] doubleValue], [[rect objectAtIndex:3] doubleValue]);
     }
 
-    // Right-clicks and picks Look Up, returning the text indicator's bounding rect in root view
-    // coordinates. The menu is a plain NSMenu, so swizzling is the only way in.
-    NSRect lookUpAtPoint(NSPoint pointInWebView)
+    // The link's center is on text whatever the layout.
+    NSPoint loadAndFindPointOverPDFText()
+    {
+        auto linkRect = loadAndFindLinkRect();
+        return NSMakePoint(NSMidX(linkRect), NSMidY(linkRect));
+    }
+
+    struct LookUpResult {
+        RetainPtr<NSString> text;
+        NSRect textBoundingRect;
+    };
+
+    // Right-clicks and picks Look Up. The menu is a plain NSMenu, so swizzling is the only way in.
+    LookUpResult lookUpAtPoint(NSPoint pointInWebView)
     {
         __block bool lookedUp = false;
         __block RetainPtr<NSString> lookedUpText;
@@ -706,7 +759,7 @@ public:
         EXPECT_TRUE(selectedLookUp);
         EXPECT_TRUE(didLookUp);
         EXPECT_GT([lookedUpText length], 0u);
-        return textBoundingRect;
+        return { lookedUpText, textBoundingRect };
     }
 
     static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
@@ -746,7 +799,7 @@ TEST_P(EmbeddedPDFLookUp, ContextMenuIsPositionedAtTheClick)
 TEST_P(EmbeddedPDFLookUp, TextIndicatorRectCoversTheLookedUpWord)
 {
     auto pointInWebView = loadAndFindPointOverPDFText();
-    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+    auto textBoundingRect = lookUpAtPoint(pointInWebView).textBoundingRect;
 
     EXPECT_FALSE(NSIsEmptyRect(textBoundingRect));
     // Containment alone is not enough: the iframe is exactly the plugin's size, so an unconverted
@@ -768,7 +821,7 @@ TEST_P(EmbeddedPDFLookUp, TextIndicatorRectAccountsForMainFrameScroll)
     [webView waitForNextPresentationUpdate];
 
     pointInWebView.y -= scrollOffset;
-    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+    auto textBoundingRect = lookUpAtPoint(pointInWebView).textBoundingRect;
 
     // Under site isolation the plugin's transform does not move, so the offset must come from the
     // conversion; a sign error moves the highlight off the word.
@@ -1010,6 +1063,56 @@ TEST_P(EmbeddedPDFDataDetection, HighlightAndMenuAreAtThePhoneNumberInNestedFram
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFDataDetection, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFDataDetection::testNameGenerator);
 
 #endif // ENABLE(UNIFIED_PDF_DATA_DETECTION) && ENABLE(REVEAL)
+
+class EmbeddedPDFLookUpAfterPinch : public EmbeddedPDFLookUp {
+public:
+    String spacerHTML() const override { return "<div style='width:2000px; height:2000px'></div>"_s; }
+};
+
+TEST_P(EmbeddedPDFLookUpAfterPinch, LookUpTargetsTheSameWordAfterPinchZoom)
+{
+    auto linkRect = loadAndFindLinkRect();
+    NSPoint pointBeforeZoom = NSMakePoint(NSMidX(linkRect), NSMidY(linkRect));
+    auto wordBeforeZoom = lookUpAtPoint(pointBeforeZoom).text;
+
+    // A different word, so a reused selection cannot pass.
+    auto otherWord = lookUpAtPoint(NSMakePoint(NSMinX(linkRect) + 3, NSMidY(linkRect))).text;
+    EXPECT_FALSE([otherWord isEqualToString:wordBeforeZoom.get()]);
+
+    double pinchedScale = pinchZoom(webView.get(), NSMakePoint(50, 60));
+    EXPECT_GT(pinchedScale, 1.3);
+    EXPECT_LT(pinchedScale, 2);
+
+    bool iframeReceivedScale = TestWebKitAPI::Util::waitFor([&] {
+        RetainPtr iframeScale = dynamic_objc_cast<NSNumber>([webView objectByEvaluatingJavaScript:@"internals.pageScaleFactor()" inFrame:[webView firstChildFrame]]);
+        return iframeScale && std::abs([iframeScale doubleValue] - pinchedScale) < 0.01;
+    });
+    EXPECT_TRUE(iframeReceivedScale);
+
+    // Resizing recomputes the iframe plugin's geometry.
+    [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('iframe').style.height = '%dpx'", iframeHeight + 1]];
+    bool iframeResized = TestWebKitAPI::Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.innerHeight" inFrame:[webView firstChildFrame]] intValue] == iframeHeight + 1;
+    });
+    EXPECT_TRUE(iframeResized);
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr visualViewport = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"[visualViewport.pageLeft, visualViewport.pageTop, visualViewport.scale]"]);
+    double pageLeft = [[visualViewport objectAtIndex:0] doubleValue];
+    double pageTop = [[visualViewport objectAtIndex:1] doubleValue];
+    double viewportScale = [[visualViewport objectAtIndex:2] doubleValue];
+
+    NSPoint pointAfterZoom = NSMakePoint((pointBeforeZoom.x - pageLeft) * viewportScale, (pointBeforeZoom.y - pageTop) * viewportScale);
+    auto lookUp = lookUpAtPoint(pointAfterZoom);
+    EXPECT_TRUE([lookUp.text isEqualToString:wordBeforeZoom.get()]);
+
+    EXPECT_TRUE(NSPointInRect(pointAfterZoom, lookUp.textBoundingRect));
+    NSRect zoomedIframeFrame = NSMakeRect((iframeLeft - pageLeft) * viewportScale, (iframeTop - pageTop) * viewportScale, iframeWidth * viewportScale, (iframeHeight + 1) * viewportScale);
+    EXPECT_TRUE(NSContainsRect(NSInsetRect(zoomedIframeFrame, -2, -2), lookUp.textBoundingRect));
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUpAfterPinch, testing::ValuesIn(pinchZoomParams), &EmbeddedPDFLookUpAfterPinch::testNameGenerator);
 
 #endif // PLATFORM(MAC)
 
@@ -1466,6 +1569,46 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksScrolledIframe)
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::ValuesIn(withEachPDFEmbedElement<EmbeddedPDFHUDSiteIsolationParams>()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
 
+#if PLATFORM(MAC)
+
+class EmbeddedPDFHUDAfterPinch : public EmbeddedPDFHUDSiteIsolation {
+public:
+    String zoomMainHTML() const { return makeString(mainHTML(), "<div style='width:2000px; height:2000px'></div>"_s); }
+};
+
+TEST_P(EmbeddedPDFHUDAfterPinch, HUDScalesWithPinchZoom)
+{
+    server->setResponse("/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, zoomMainHTML() });
+
+    RetainPtr hud = loadAndWaitForHUD();
+    checkFrame([hud frame], 10, 28, 300, 150);
+
+    double scale = pinchZoom(webView.get(), NSMakePoint(0.5, 0.5));
+    EXPECT_GT(scale, 1.3);
+    EXPECT_LT(scale, 2);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.scrollX"] intValue], 0);
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue], 0);
+
+    static constexpr CGFloat tolerance = 2;
+    NSRect lastFrame = NSZeroRect;
+    bool scaled = TestWebKitAPI::Util::waitFor([&] {
+        [webView waitForNextPresentationUpdate];
+        RetainPtr<NSView> currentHUD = [webView _pdfHUDs].anyObject;
+        if (!currentHUD)
+            return false;
+        lastFrame = [currentHUD frame];
+        return std::abs(lastFrame.origin.x - 10 * scale) <= tolerance
+            && std::abs(lastFrame.origin.y - 28 * scale) <= tolerance
+            && std::abs(lastFrame.size.width - 300 * scale) <= tolerance
+            && std::abs(lastFrame.size.height - 150 * scale) <= tolerance;
+    });
+    EXPECT_TRUE(scaled) << "Expected the HUD frame to be around (" << 10 * scale << ", " << 28 * scale << ", " << 300 * scale << ", " << 150 * scale << "), got " << [NSStringFromRect(lastFrame) UTF8String];
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDAfterPinch, testing::ValuesIn(withEachPDFEmbedElement<EmbeddedPDFHUDSiteIsolationParams>(pinchZoomParams)), &EmbeddedPDFHUDAfterPinch::testNameGenerator);
+
+#endif // PLATFORM(MAC)
+
 UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 {
     RetainPtr configuration = configurationForWebViewTestingUnifiedPDF(true);
@@ -1480,6 +1623,131 @@ UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 }
 
 #endif // ENABLE(PDF_HUD)
+
+#if PLATFORM(IOS_FAMILY)
+
+struct EmbeddedPDFSelectionAfterZoomParams {
+    PDFEmbedElement embedElement;
+    SiteIsolationParams siteIsolationParameters;
+};
+
+static std::vector<EmbeddedPDFSelectionAfterZoomParams> selectionAfterZoomParams()
+{
+    std::vector<EmbeddedPDFSelectionAfterZoomParams> params;
+    for (auto embedElement : { PDFEmbedElement::Embed, PDFEmbedElement::Object }) {
+        for (bool siteIsolationEnabled : { false, true })
+            params.push_back({ embedElement, { .crossOrigin = true, .siteIsolationEnabled = siteIsolationEnabled, .sharedProcessEnabled = false } });
+    }
+    return params;
+}
+
+class EmbeddedPDFSelectionAfterZoom : public testing::TestWithParam<EmbeddedPDFSelectionAfterZoomParams> {
+public:
+    static constexpr int pdfLeft = 100;
+    static constexpr int pdfTop = 120;
+
+    String mainHTML() const
+    {
+        auto pdfURL = GetParam().siteIsolationParameters.subframeURL("/test.pdf"_s);
+        auto layout = makeString("id='pdf' style='position:absolute; left:"_s, pdfLeft, "px; top:"_s, pdfTop, "px; width:400px; height:300px; border:0'"_s);
+        auto plugin = GetParam().embedElement == PDFEmbedElement::Object
+            ? makeString("<object "_s, layout, " type='application/pdf' data='"_s, pdfURL, "'></object>"_s)
+            : makeString("<embed "_s, layout, " src='"_s, pdfURL, "'>"_s);
+        return makeString("<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=5'><body style='margin:0'>"_s, plugin, "<div style='width:2000px; height:2000px'></div>"_s);
+    }
+
+    void SetUp() override
+    {
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML() } },
+            { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        configuration = configurationForWebViewTestingUnifiedPDF();
+        [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
+        GetParam().siteIsolationParameters.applyTo(configuration.get());
+
+        navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+    }
+
+    static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFSelectionAfterZoomParams> info)
+    {
+        return testName(info.param.embedElement) + "_" + info.param.siteIsolationParameters.testName();
+    }
+
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
+};
+
+TEST_P(EmbeddedPDFSelectionAfterZoom, SelectionTargetsTheSameWordAfterZoom)
+{
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView becomeFirstResponder];
+
+    RetainPtr<NSArray> linkRect;
+    bool foundAnnotation = TestWebKitAPI::Util::waitFor([&] {
+        linkRect = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+            "  const plugin = document.getElementById('pdf');"
+            "  const rects = internals.pdfAnnotationRectsForTesting(plugin);"
+            "  if (!rects || !rects.length) return null;"
+            "  const box = plugin.getBoundingClientRect();"
+            "  return [box.x + rects[0].x, box.y + rects[0].y, rects[0].width, rects[0].height];"
+            "})()"]);
+        return !!linkRect;
+    });
+    ASSERT_TRUE(foundAnnotation);
+
+    double linkX = [[linkRect objectAtIndex:0] doubleValue];
+    double linkY = [[linkRect objectAtIndex:1] doubleValue];
+    double linkWidth = [[linkRect objectAtIndex:2] doubleValue];
+    double linkHeight = [[linkRect objectAtIndex:3] doubleValue];
+    CGPoint wordPoint = CGPointMake(linkX + linkWidth / 2, linkY + linkHeight / 2);
+    CGPoint otherWordPoint = CGPointMake(linkX + 3, linkY + linkHeight / 2);
+
+    auto selectAndWaitUntil = [&](CGPoint point, auto&& isExpected) {
+        [webView selectTextInGranularity:UITextGranularityWord atPoint:point];
+        return TestWebKitAPI::Util::waitFor([&] {
+            return isExpected(RetainPtr<NSString> { [[webView textInputContentView] selectedText] }.get());
+        });
+    };
+
+    RetainPtr<NSString> word;
+    EXPECT_TRUE(selectAndWaitUntil(wordPoint, [&](NSString *text) {
+        word = text;
+        return text.length > 0;
+    }));
+
+    // A different word, so an ignored selection cannot pass.
+    EXPECT_TRUE(selectAndWaitUntil(otherWordPoint, [&](NSString *text) {
+        return text.length > 0 && ![text isEqualToString:word.get()];
+    }));
+
+    [webView setZoomScaleSimulatingUserTriggeredZoom:2];
+    [webView waitForNextVisibleContentRectUpdate];
+
+    double zoomScale = [[webView scrollView] zoomScale];
+    EXPECT_GT(zoomScale, 1.5);
+
+    bool pageScaleUpdated = TestWebKitAPI::Util::waitFor([&] {
+        RetainPtr pageScale = dynamic_objc_cast<NSNumber>([webView objectByEvaluatingJavaScript:@"internals.pageScaleFactor()"]);
+        return pageScale && std::abs([pageScale doubleValue] - zoomScale) < 0.01;
+    });
+    EXPECT_TRUE(pageScaleUpdated);
+
+    EXPECT_TRUE(selectAndWaitUntil(wordPoint, [&](NSString *text) {
+        return [text isEqualToString:word.get()];
+    }));
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFSelectionAfterZoom, testing::ValuesIn(selectionAfterZoomParams()), &EmbeddedPDFSelectionAfterZoom::testNameGenerator);
+
+#endif // PLATFORM(IOS_FAMILY)
 
 UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
 {

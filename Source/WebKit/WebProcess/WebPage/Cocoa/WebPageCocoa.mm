@@ -4059,6 +4059,17 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         return;
     RefPtr frameView = *localMainFrame->view();
 
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+    auto updatePluginTransformsIfStable = makeScopeExit([this, protectedThis = Ref { *this }] {
+        if (!m_isInStableState)
+            return;
+        for (Ref pluginView : m_pluginViews) {
+            if (!pluginView->pluginHandlesPageScaleFactor())
+                pluginView->pageScaleFactorDidChange();
+        }
+    });
+#endif
+
     if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         Ref remoteScrollingCoordinator = downcast<RemoteScrollingCoordinator>(*scrollingCoordinator);
         if (auto mainFrameScrollingNodeID = frameView->scrollingNodeID()) {

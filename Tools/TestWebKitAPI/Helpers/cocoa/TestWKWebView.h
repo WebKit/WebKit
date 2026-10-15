@@ -271,6 +271,7 @@ NS_SWIFT_UI_ACTOR
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta;
 - (void)wheelEventAtPoint:(CGPoint)pointInWindow wheelDelta:(CGSize)delta phase:(CGScrollPhase)phase momentumPhase:(CGMomentumScrollPhase)momentumPhase;
 - (BOOL)acceptsFirstMouseAtPoint:(NSPoint)pointInWindow;
+- (void)magnifyAtPoint:(NSPoint)pointInWindow phase:(NSEventPhase)phase magnification:(CGFloat)magnification NS_SWIFT_UNAVAILABLE("Spins the run loop");
 - (nullable NSWindow *)hostWindow;
 - (nullable NSEvent *)_mouseEventWithType:(NSEventType)type atLocation:(NSPoint)pointInWindow;
 - (void)typeCharacter:(char)character modifiers:(NSEventModifierFlags)modifiers;

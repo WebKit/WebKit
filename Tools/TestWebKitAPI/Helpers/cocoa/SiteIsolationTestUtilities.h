@@ -66,6 +66,7 @@ struct SiteIsolationParams {
     bool crossOrigin { false };
     bool siteIsolationEnabled { false };
     bool sharedProcessEnabled { false };
+    bool unifiedMacZoomEnabled { true };
 
     bool isCrossOriginWithSiteIsolation() const { return crossOrigin && siteIsolationEnabled; }
 
@@ -75,13 +76,16 @@ struct SiteIsolationParams {
     {
         setFeatureEnabled(configuration, @"SiteIsolationEnabled", siteIsolationEnabled);
         setFeatureEnabled(configuration, @"SiteIsolationSharedProcessEnabled", sharedProcessEnabled);
+        if (!unifiedMacZoomEnabled)
+            setFeatureEnabled(configuration, @"UnifiedMacZoomEnabled", false);
     }
 
     std::string testName() const
     {
         return std::string { crossOrigin ? "CrossOrigin" : "SameOrigin" }
             + "_SiteIsolation" + (siteIsolationEnabled ? "Enabled" : "Disabled")
-            + "_SiteIsolationSharedProcess" + (sharedProcessEnabled ? "Enabled" : "Disabled");
+            + "_SiteIsolationSharedProcess" + (sharedProcessEnabled ? "Enabled" : "Disabled")
+            + (unifiedMacZoomEnabled ? "" : "_UnifiedMacZoomDisabled");
     }
 };
 
