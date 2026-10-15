@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/button-roles.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/contextual-roles.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/contextual-roles.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/empty-container-roles.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/fallback-roles.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/form-roles.html
 /LayoutTests/imported/w3c/web-platform-tests/wai-aria/role/generic-roles.html

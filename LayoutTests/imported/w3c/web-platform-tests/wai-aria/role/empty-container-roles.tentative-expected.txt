@@ -1,0 +1,8 @@
+x
+x
+
+PASS role is list (empty)
+PASS role is list (no listitem)
+PASS role is menu (empty)
+PASS role is menu (no menuitem)
+
