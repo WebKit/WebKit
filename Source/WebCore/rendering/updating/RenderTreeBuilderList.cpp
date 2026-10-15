@@ -122,7 +122,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // consulted when the marker's parent happens to be unchanged, so rebuild rather than patch the placement in place.
     auto shouldBuildInlineMarker = newStyle.listStylePosition() == ListStylePosition::Inside;
 
-    if (CheckedPtr inlineMarker = listItemRenderer.markerRenderer(); inlineMarker && !listItemRenderer.markerBox()) {
+    if (WeakPtr inlineMarker = listItemRenderer.markerRenderer(); inlineMarker && !listItemRenderer.markerBox()) {
         auto contentChanged = inlineMarker->style().content() != newStyle.content() || inlineMarker->style().textCombine() != newStyle.textCombine();
         if (shouldBuildInlineMarker && !contentChanged) {
             adjustStyleForInlineMarker(newStyle);

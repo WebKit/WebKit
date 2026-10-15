@@ -108,7 +108,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
 
 void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, RenderObject* beforeChild)
 {
-    CheckedPtr existingPseudoElement = renderer.pseudoElementRenderer(type).get();
+    WeakPtr existingPseudoElement = renderer.pseudoElementRenderer(type);
 
     if (usedAppearance != StyleAppearance::Base && !existingPseudoElement)
         return;
@@ -138,7 +138,6 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
         if (beforeChild == existingPseudoElement)
             beforeChild = existingPseudoElement->nextSibling();
         m_builder.destroy(*existingPseudoElement);
-        existingPseudoElement = nullptr;
     }
 
     if (!renderer.canHaveChildren())

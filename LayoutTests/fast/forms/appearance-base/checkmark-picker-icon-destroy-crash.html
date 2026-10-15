@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+input {
+    appearance: base;
+}
+input::checkmark {
+    display: inline-block;
+    content: "a";
+}
+input.content-change::checkmark {
+    content: "b";
+}
+input.display-change::checkmark {
+    display: none;
+}
+select {
+    appearance: base-select;
+}
+select.content-change::picker-icon,
+select option.content-change::checkmark {
+    content: "b";
+}
+</style>
+<div id="container">
+    <input id="checkmarkContentChange" type="checkbox" checked>
+    <input id="checkmarkDisplayChange" type="radio" checked>
+    <select id="pickerIconContentChange"><option>One</option></select>
+    <select size="2"><option id="optionCheckmarkContentChange" selected>One</option><option>Two</option></select>
+</div>
+<p>PASS if no crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+window.internals?.setImmediateRendererDestructionEnabled(true);
+document.body.offsetHeight;
+checkmarkContentChange.classList.add("content-change");
+checkmarkDisplayChange.classList.add("display-change");
+pickerIconContentChange.classList.add("content-change");
+optionCheckmarkContentChange.classList.add("content-change");
+document.body.offsetHeight;
+window.internals?.setImmediateRendererDestructionEnabled(false);
+container.remove();
+</script>
