@@ -116,7 +116,7 @@ public:
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
-    std::optional<WebCore::ScrollingNodeID> LEGACY_NODELETE rootScrollingNodeID() const;
+    std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* LEGACY_NODELETE layerTreeHost() const;
     WebPageProxy& LEGACY_NODELETE webPageProxy() const;
