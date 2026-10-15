@@ -3765,7 +3765,7 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
     if (m_unpackFlipY)
         adjustedSourceImageRect.setY(image.size().height() - adjustedSourceImageRect.maxY());
 
-    GraphicsContextGLImageExtractor imageExtractor(image, sourceAlphaPremultiplication, premultiplyAlpha);
+    GraphicsContextGLImageExtractor imageExtractor(image, sourceAlphaPremultiplication, premultiplyAlpha, format);
     if (!imageExtractor.extractSucceeded()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "bad image data"_s);
         return;

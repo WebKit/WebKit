@@ -192,7 +192,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
     // 4. Run the Initialize Frame From Other Frame algorithm with init, frame, and
     //    currentPlaybackFrame.
-    return initializeFrameFromOtherFrame(context, currentPlaybackFrame.releaseNonNull(), WTF::move(init), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+    return initializeFrameFromOtherFrame(context, currentPlaybackFrame.releaseNonNull(), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
 #endif
 
@@ -210,7 +210,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     // 3. Let width be image.width and height be image.height.
     // 4. Run the Initialize Frame With Resource algorithm with init, frame, resource, width,
     //    height, 0, false, width, and height.
-    return initializeFrameFromOtherFrame(context, resource.releaseNonNull(), WTF::move(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+    return initializeFrameFromOtherFrame(context, resource.releaseNonNull(), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -252,7 +252,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& image, Init&& init)
 {
     // 1. Run the Initialize Frame From Other Frame algorithm with init, frame, and image.
-    return initializeFrameFromOtherFrame(context, WTF::move(image), WTF::move(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+    return initializeFrameFromOtherFrame(context, WTF::move(image), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext&, Ref<CSSStyleImageValue>&&, Init&&)
@@ -276,7 +276,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (!videoFrame)
         return Exception { ExceptionCode::InvalidStateError,  "Unable to create frame from buffer"_s };
 
-    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTF::move(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
+    return WebCodecsVideoFrame::initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTF::move(init), VideoFrame::ShouldClone::Yes);
 }
 
 // https://w3c.github.io/webcodecs/#dom-videoframe-videoframe-data-init
@@ -316,12 +316,16 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         videoFrame = VideoFrame::createNV12(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], WTF::move(colorSpace));
         break;
     case VideoPixelFormat::RGBA:
-    case VideoPixelFormat::RGBX:
         videoFrame = VideoFrame::createRGBA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
         break;
+    case VideoPixelFormat::RGBX:
+        videoFrame = VideoFrame::createRGBX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        break;
     case VideoPixelFormat::BGRA:
-    case VideoPixelFormat::BGRX:
         videoFrame = VideoFrame::createBGRA(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
+        break;
+    case VideoPixelFormat::BGRX:
+        videoFrame = VideoFrame::createBGRX(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], WTF::move(colorSpace));
         break;
     case VideoPixelFormat::I420:
         videoFrame = VideoFrame::createI420(data.span(), parsedRect.width, parsedRect.height, layout.computedLayouts[0], layout.computedLayouts[1], layout.computedLayouts[2], WTF::move(colorSpace));
@@ -372,7 +376,7 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(ScriptExecutionContext& con
     result->m_data.displayHeight = init.displayHeight.value_or(result->m_data.visibleHeight);
 
     result->m_data.duration = init.duration;
-    result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(init.timestamp), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+    result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(init.timestamp), VideoFrame::ShouldClone::No);
     result->m_data.timestamp = init.timestamp;
 
     return result;
@@ -407,11 +411,12 @@ static VideoPixelFormat LEGACY_NODELETE computeVideoPixelFormat(VideoPixelFormat
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-frame-from-other-frame
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init, VideoFrame::ShouldCloneWithDifferentTimestamp shouldCloneWithDifferentTimestamp)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<WebCodecsVideoFrame>&& videoFrame, Init&& init, VideoFrame::ShouldClone shouldCloneIfUpdating)
 {
     auto codedWidth = videoFrame->m_data.codedWidth;
     auto codedHeight = videoFrame->m_data.codedHeight;
-    auto format = computeVideoPixelFormat(videoFrame->m_data.format.value_or(VideoPixelFormat::I420), init.alpha == WebCodecsAlphaOption::Discard);
+    auto initialFormat = videoFrame->m_data.format.value_or(VideoPixelFormat::I420);
+    auto format = computeVideoPixelFormat(initialFormat, init.alpha == WebCodecsAlphaOption::Discard);
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
 
@@ -427,17 +432,20 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 
     result->m_data.duration = init.duration ? init.duration : videoFrame->m_data.duration;
     if (init.timestamp)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneWithDifferentTimestamp);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
+    if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
 
     return result;
 }
 
-ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<VideoFrame>&& internalVideoFrame, Init&& init, VideoFrame::ShouldCloneWithDifferentTimestamp shouldCloneWithDifferentTimestamp)
+ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOtherFrame(ScriptExecutionContext& context, Ref<VideoFrame>&& internalVideoFrame, Init&& init, VideoFrame::ShouldClone shouldCloneIfUpdating)
 {
     auto codedWidth = internalVideoFrame->presentationSize().width();
     auto codedHeight = internalVideoFrame->presentationSize().height();
-    auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
+    auto initialFormat = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat());
+    auto format = initialFormat ? std::make_optional(computeVideoPixelFormat(*initialFormat, init.alpha == WebCodecsAlphaOption::Discard)) : std::nullopt;
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
 
@@ -451,7 +459,9 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
 
     result->m_data.duration = init.duration;
     if (init.timestamp)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneWithDifferentTimestamp);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), shouldCloneIfUpdating);
+    if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, shouldCloneIfUpdating);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
 
     return result;
@@ -466,7 +476,8 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 
     auto codedWidth = image->size().width();
     auto codedHeight = image->size().height();
-    auto format = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat(), init.alpha == WebCodecsAlphaOption::Discard);
+    auto initialFormat = convertVideoFramePixelFormat(internalVideoFrame->pixelFormat());
+    auto format = initialFormat ? std::make_optional(computeVideoPixelFormat(*initialFormat, init.alpha == WebCodecsAlphaOption::Discard)) : std::nullopt;
     if (!validateVideoFrameInit(init, codedWidth, codedHeight, format.value_or(VideoPixelFormat::I420)))
         return Exception { ExceptionCode::TypeError,  "VideoFrameInit is not valid"_s };
 
@@ -481,7 +492,9 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 
     result->m_data.duration = init.duration;
     if (init.timestamp)
-        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), VideoFrame::ShouldCloneWithDifferentTimestamp::No);
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateTimestamp(timestampToMediaTime(*init.timestamp), VideoFrame::ShouldClone::No);
+    if (init.alpha == WebCodecsAlphaOption::Discard && format != initialFormat)
+        result->m_data.internalFrame = protect(result->m_data.internalFrame)->updateShouldIgnoreAlpha(true, VideoFrame::ShouldClone::No);
     result->m_data.timestamp = mediaTimeToTimestamp(result->m_data.internalFrame->presentationTime());
 
     return result;

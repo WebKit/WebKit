@@ -46,7 +46,9 @@ RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
     RetainPtr buffer = pixelBuffer();
     if (!buffer)
         return nullptr;
-    return VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer.get());
+    Ref videoFrameCV = VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer.get());
+    videoFrameCV->updateShouldIgnoreAlpha(shouldIgnoreAlpha(), ShouldClone::No);
+    return videoFrameCV;
 }
 #endif // USE(AVFOUNDATION)
 

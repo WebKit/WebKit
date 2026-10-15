@@ -54,7 +54,8 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
         videoFrame.rotation(),
         expandedIntSize(videoFrame.presentationSize()),
         videoFrame.pixelFormat(),
-        videoFrame.colorSpace()
+        videoFrame.colorSpace(),
+        videoFrame.shouldIgnoreAlpha()
     };
 }
 
@@ -79,6 +80,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
     , m_referenceTracker(properties.reference)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
+    , m_shouldIgnoreAlpha(properties.shouldIgnoreAlpha)
     , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
 {
 }
@@ -88,6 +90,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameP
     , m_baseVideoFrame(&baseVideoFrame)
     , m_size(baseVideoFrame.m_size)
     , m_pixelFormat(baseVideoFrame.m_pixelFormat)
+    , m_shouldIgnoreAlpha(baseVideoFrame.m_shouldIgnoreAlpha)
 {
 }
 
@@ -158,6 +161,7 @@ TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& 
         << ", rotation=" << static_cast<int>(properties.rotation)
         << ", size=" << properties.size
         << ", pixelFormat=" << properties.pixelFormat
+        << ", shouldIgnoreAlpha=" << properties.shouldIgnoreAlpha
         << " }";
     return ts;
 }

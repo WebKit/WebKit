@@ -49,7 +49,9 @@ public:
     //    request. Platform images that do not record it hold the requested premultiplication.
     // premultiplyAlpha is the premultiplication the upload needs, and the extracted image alpha op
     // converts between the two.
-    GraphicsContextGLImageExtractor(NativeImage&, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
+    // destinationFormat is the format of the upload. When it has no alpha component, the alpha of the
+    // image is not uploaded and does not need to be made meaningful.
+    GraphicsContextGLImageExtractor(NativeImage&, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha, GCGLenum destinationFormat);
 
     // Each platform must provide an implementation of this method to deallocate or release resources
     // associated with the image if needed.
@@ -73,6 +75,10 @@ private:
     // instead, as the alpha values would not be usable for either conversion.
     static AlphaOp alphaOpForPremultiplication(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
 
+#if USE(CG)
+    bool makeAlphaChannelOpaque(size_t sourceBytesPerRow, bool pixelsAreConvertedRGBA8);
+#endif
+
 #if USE(CAIRO)
     RefPtr<cairo_surface_t> m_imageSurface;
 #elif USE(CG)
@@ -83,6 +89,7 @@ private:
     sk_sp<SkImage> m_skImage;
 #endif
     const Ref<NativeImage> m_image;
+    const bool m_destinationUsesAlpha;
     bool m_extractSucceeded;
     std::span<const uint8_t> m_imagePixelData;
     unsigned m_imageWidth;

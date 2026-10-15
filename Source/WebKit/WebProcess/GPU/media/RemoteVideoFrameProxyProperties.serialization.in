@@ -30,6 +30,7 @@
     WebCore::IntSize size;
     uint32_t pixelFormat;
     WebCore::PlatformVideoColorSpace colorSpace;
+    bool shouldIgnoreAlpha;
 };
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

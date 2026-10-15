@@ -1803,7 +1803,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     };
 
     // FIXME: Add support for srcRect
-    context->drawVideoFrame(*internalFrame, dstRect, frame.shoudlDiscardAlpha() ? ShouldDiscardAlpha::Yes : ShouldDiscardAlpha::No, options);
+    context->drawVideoFrame(*internalFrame, dstRect, ShouldDiscardAlpha::No, options);
 
     return { };
 }

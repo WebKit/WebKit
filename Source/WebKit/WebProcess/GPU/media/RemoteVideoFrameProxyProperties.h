@@ -43,6 +43,7 @@ struct RemoteVideoFrameProxyProperties {
     WebCore::IntSize size;
     uint32_t pixelFormat { 0 };
     WebCore::PlatformVideoColorSpace colorSpace;
+    bool shouldIgnoreAlpha;
 };
 
 } // namespace WebKit

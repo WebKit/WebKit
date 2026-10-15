@@ -40,8 +40,10 @@ class PixelBuffer;
 
 class VideoFrameCV : public VideoFrame {
 public:
+    enum class ShouldIgnoreAlpha : bool { No, Yes };
+
     // Create a VideoFrameCV in specific color space with data from CVPixelBuffer. Intended for constructing VideoFrameCV from new pixel data.
-    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&, ShouldIgnoreAlpha);
     // Create a VideoFrameCV in with data data and color space from CVPixelBuffer. Intended for constructing VideoFrameCV from a buffer created by
     // a component that already set the color space properties to the buffer.
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
@@ -57,15 +59,17 @@ public:
     WEBCORE_EXPORT uint32_t pixelFormat() const final;
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
     bool isCV() const final { return true; }
+    bool shouldIgnoreAlpha() const final { return m_shouldIgnoreAlpha; }
 
 private:
     friend struct IPC::ArgumentCoder<VideoFrameCV>;
-    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, std::optional<PlatformVideoColorSpace>&&);
-    VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&);
+    VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&, PlatformVideoColorSpace&&, ShouldIgnoreAlpha);
 
     Ref<VideoFrame> clone() final;
+    void setShouldIgnoreAlpha(bool shouldIgnoreAlpha) final { m_shouldIgnoreAlpha = shouldIgnoreAlpha; }
 
     const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    bool m_shouldIgnoreAlpha { false };
 };
 
 }

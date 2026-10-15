@@ -30,8 +30,29 @@
 
 namespace WebCore {
 
-GraphicsContextGLImageExtractor::GraphicsContextGLImageExtractor(NativeImage& image, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha)
+// Returns whether uploading an image in format reads the alpha of the image.
+static bool formatUsesAlpha(GCGLenum format)
+{
+    switch (format) {
+    case GraphicsContextGL::RED:
+    case GraphicsContextGL::RED_INTEGER:
+    case GraphicsContextGL::RG:
+    case GraphicsContextGL::RG_INTEGER:
+    case GraphicsContextGL::RGB:
+    case GraphicsContextGL::RGB_INTEGER:
+    case GraphicsContextGL::LUMINANCE:
+    case GraphicsContextGL::DEPTH_COMPONENT:
+    case GraphicsContextGL::DEPTH_STENCIL:
+        return false;
+    default:
+        // ALPHA, LUMINANCE_ALPHA, RGBA, RGBA_INTEGER and any unexpected value.
+        return true;
+    }
+}
+
+GraphicsContextGLImageExtractor::GraphicsContextGLImageExtractor(NativeImage& image, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha, GCGLenum destinationFormat)
     : m_image(image)
+    , m_destinationUsesAlpha(formatUsesAlpha(destinationFormat))
 {
     m_extractSucceeded = extractImage(sourceAlphaPremultiplication, premultiplyAlpha);
 }

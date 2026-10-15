@@ -31,12 +31,14 @@
 #include "GraphicsContextCG.h"
 #include "GraphicsContextGLImageExtractor.h"
 #include "Image.h"
+#include "Logging.h"
 #include "NativeImage.h"
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContextGLNEON.h"
 #endif
 
+#include <Accelerate/Accelerate.h>
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
 #include <CoreGraphics/CGDataProvider.h>
@@ -408,6 +410,7 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
     // recorded incorrectly, in which case the caller's statement wins.
     AlphaFormat alphaFormat = AlphaFormatNone;
     std::optional<AlphaPremultiplication> imageAlphaPremultiplication;
+    bool shouldMakeAlphaChannelOpaque = false;
     switch (CGImageGetAlphaInfo(decodedImage->platformImage().get())) {
     case kCGImageAlphaPremultipliedFirst:
         alphaFormat = AlphaFormatFirst;
@@ -427,10 +430,13 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
         break;
     case kCGImageAlphaNoneSkipFirst:
         // The skipped channel holds undefined values, so it must not take part in an alpha op.
+        // It is made opaque below, as the upload reads it as the alpha channel.
         alphaFormat = AlphaFormatFirst;
+        shouldMakeAlphaChannelOpaque = true;
         break;
     case kCGImageAlphaNoneSkipLast:
         alphaFormat = AlphaFormatLast;
+        shouldMakeAlphaChannelOpaque = true;
         break;
     case kCGImageAlphaNone:
         alphaFormat = AlphaFormatNone;
@@ -478,6 +484,56 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
         m_imageSourceFormat = DataFormat::RGBA8;
         m_imageSourceUnpackAlignment = 1;
     }
+
+    return !shouldMakeAlphaChannelOpaque || !m_destinationUsesAlpha || makeAlphaChannelOpaque(bytesPerRow, bitsPerComponent == 16);
+}
+
+bool GraphicsContextGLImageExtractor::makeAlphaChannelOpaque(size_t bytesPerRow, bool pixelsAreConvertedRGBA8)
+{
+    ASSERT(m_destinationUsesAlpha);
+
+    constexpr uint8_t firstByteMask = 0x8;
+    constexpr uint8_t lastByteMask = 0x1;
+
+    if (pixelsAreConvertedRGBA8) {
+        // Tightly packed RGBA8 in a buffer owned by this object, whose alpha channel is the last byte of each pixel.
+        vImage_Buffer buffer { m_formalizedRGBA8Data.mutableSpan().data(), m_imageHeight, m_imageWidth, 4 * static_cast<size_t>(m_imageWidth) };
+        return vImageOverwriteChannelsWithScalar_ARGB8888(255, &buffer, &buffer, lastByteMask, kvImageDoNotTile) == kvImageNoError;
+    }
+
+    // vImage does not check the size of the buffers, so it must be checked here.
+    size_t usefulBytesPerRow = 4 * static_cast<size_t>(m_imageWidth);
+    if (m_imagePixelData.size() < (bytesPerRow * (m_imageHeight - 1) + usefulBytesPerRow)) {
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(WebGL, "Image Pixel Data is too small");
+        return false;
+    }
+
+    uint8_t alphaMask = lastByteMask;
+    switch (m_imageSourceFormat) {
+    case DataFormat::BGRA8:
+    case DataFormat::RGBA8:
+        alphaMask = lastByteMask;
+        break;
+    case DataFormat::ARGB8:
+    case DataFormat::ABGR8:
+        alphaMask = firstByteMask;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        RELEASE_LOG_ERROR(WebGL, "Source image bad format");
+        return false;
+    }
+
+    // The pixel data is shared with the image, so we copy it and set alpha channel to opaque.
+    auto opaquePixels = MallocSpan<uint8_t>::malloc(m_imagePixelData.size());
+    vImage_Buffer source { const_cast<uint8_t*>(m_imagePixelData.data()), m_imageHeight, m_imageWidth, bytesPerRow };
+    vImage_Buffer destination { opaquePixels.mutableSpan().data(), m_imageHeight, m_imageWidth, bytesPerRow };
+    if (vImageOverwriteChannelsWithScalar_ARGB8888(255, &source, &destination, alphaMask, kvImageDoNotTile) != kvImageNoError)
+        return false;
+
+    m_formalizedRGBA8Data = WTF::move(opaquePixels);
+    m_imagePixelData = m_formalizedRGBA8Data.span();
     return true;
 }
 

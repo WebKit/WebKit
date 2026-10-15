@@ -1,0 +1,10 @@
+
+PASS Drawing a VideoFrame made from an HTMLImageElement with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an HTMLImageElement with alpha discard replaces the canvas background
+PASS Drawing a clone of a VideoFrame made from an HTMLImageElement with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an HTMLImageElement with alpha keep preserves its transparency
+PASS Drawing a VideoFrame made from an HTMLCanvasElement with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an HTMLCanvasElement with alpha discard replaces the canvas background
+PASS Drawing a clone of a VideoFrame made from an HTMLCanvasElement with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an HTMLCanvasElement with alpha keep preserves its transparency
+

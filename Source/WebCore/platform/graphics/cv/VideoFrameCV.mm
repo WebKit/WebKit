@@ -62,7 +62,7 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {
     // FIXME: Set VideoFrame colorSpace.
     auto transferSession = ImageTransferSessionVT::create(kCVPixelFormatType_32ARGB, false);
-    return transferSession->createVideoFrame(image.platformImage().get(), { }, image.size());
+    return transferSession->createVideoFrame(image.platformImage().get(), { }, image.size(), image.hasAlpha() ? ImageTransferSessionVT::ShouldPreserveAlpha::Yes : ImageTransferSessionVT::ShouldPreserveAlpha::No);
 }
 
 static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
@@ -139,10 +139,10 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
         copyToCVPixelBufferPlane(pixelBuffer.get(), 1, data, height / 2, planeUV.sourceWidthBytes);
     }
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
-RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+static RetainPtr<CVPixelBufferRef> createRGBABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
 
@@ -164,13 +164,31 @@ RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t 
     auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
     uint8_t channelMap[4] = { 3, 0, 1, 2 };
     auto error = vImagePermuteChannels_ARGB8888(&sourceBuffer, &destinationBuffer, channelMap, kvImageDoNotTile);
-    // Permutation will not fail as long as the provided arguments are valid.
-    ASSERT_UNUSED(error, error == kvImageNoError);
+    ASSERT(error == kvImageNoError);
+    RELEASE_LOG_ERROR_IF(error != kvImageNoError, WebRTC, "Unable to copy RGBA data");
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+    return pixelBuffer;
 }
 
-RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+RefPtr<VideoFrame> VideoFrame::createRGBA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+}
+
+RefPtr<VideoFrame> VideoFrame::createRGBX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createRGBABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
+}
+
+static RetainPtr<CVPixelBufferRef> createBGRABuffer(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane)
 {
     CVPixelBufferRef rawPixelBuffer = nullptr;
 
@@ -190,10 +208,28 @@ RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t 
     auto sourceBuffer = makeVImageBuffer8888(spanConstCast<uint8_t>(span), width, height, plane.sourceWidthBytes);
     auto destinationBuffer = makeVImageBuffer8888(pixelBuffer.get());
     auto error = vImageCopyBuffer(&sourceBuffer, &destinationBuffer, 4, kvImageDoNotTile);
-    // Copy will not fail as long as the provided arguments are valid.
-    ASSERT_UNUSED(error, error == kvImageNoError);
+    ASSERT(error == kvImageNoError);
+    RELEASE_LOG_ERROR_IF(error != kvImageNoError, WebRTC, "Unable to copy BGRA data");
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+    return pixelBuffer;
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRA(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
+}
+
+RefPtr<VideoFrame> VideoFrame::createBGRX(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& plane, PlatformVideoColorSpace&& colorSpace)
+{
+    RetainPtr pixelBuffer = createBGRABuffer(span, width, height, plane);
+    if (!pixelBuffer)
+        return nullptr;
+
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::Yes);
 }
 
 RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_t width, size_t height, const ComputedPlaneLayout& layoutY, const ComputedPlaneLayout& layoutU, const ComputedPlaneLayout& layoutV, PlatformVideoColorSpace&& colorSpace)
@@ -214,7 +250,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(width);
@@ -246,7 +282,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace));
+    return VideoFrameCV::create({ }, false, Rotation::None, WTF::move(pixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No);
 #else
     UNUSED_PARAM(buffer);
     UNUSED_PARAM(width);
@@ -300,6 +336,29 @@ static Vector<PlaneLayout> copyRGBData(std::span<uint8_t> span, const ComputedPl
     Vector<PlaneLayout> planeLayouts;
     planeLayouts.append(planeLayout);
     return planeLayouts;
+}
+
+enum class MakeOpaque : bool { No, Yes };
+
+// Copies a row of 4 bytes pixels, reordering their channels with channelMap, which gives for each destination byte the index of the source byte.
+static void copyRGBRow(std::span<uint8_t> destination, std::span<const uint8_t> source, const uint8_t (&channelMap)[4], MakeOpaque makeOpaque)
+{
+    ASSERT(!(source.size() % 4));
+    // vImage does not check the destination size, so it must be checked here.
+    RELEASE_ASSERT(destination.size() >= source.size());
+    vImagePixelCount pixelCount = source.size() / 4;
+    vImage_Buffer sourceBuffer { const_cast<uint8_t*>(source.data()), 1, pixelCount, source.size() };
+    vImage_Buffer destinationBuffer { destination.data(), 1, pixelCount, source.size() };
+
+    vImage_Error error;
+    if (makeOpaque == MakeOpaque::Yes) {
+        // The alpha channel is the last byte of RGBA and BGRA pixels.
+        static constexpr uint8_t vImageLastByteMask = 0x1;
+        const Pixel_8888 opaqueBackground = { 255, 255, 255, 255 };
+        error = vImagePermuteChannelsWithMaskedInsert_ARGB8888(&sourceBuffer, &destinationBuffer, channelMap, vImageLastByteMask, opaqueBackground, kvImageDoNotTile);
+    } else
+        error = vImagePermuteChannels_ARGB8888(&sourceBuffer, &destinationBuffer, channelMap, kvImageDoNotTile);
+    RELEASE_LOG_ERROR_IF(error != kvImageNoError, WebRTC, "Unable to copy RGB row");
 }
 
 static Vector<PlaneLayout> copyNV12(std::span<uint8_t> span, const ComputedPlaneLayout& spanPlaneLayoutY, const ComputedPlaneLayout& spanPlaneLayoutUV, CVPixelBufferRef pixelBuffer)
@@ -456,18 +515,11 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
         ComputedPlaneLayout planeLayout;
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
-        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [](std::span<uint8_t> destination, std::span<const uint8_t> source) {
-            ASSERT(!(source.size() % 4));
-            auto pixelCount = source.size() / 4;
-            size_t i = 0;
-            while (pixelCount-- > 0) {
-                // ARGB -> RGBA.
-                destination[i] = source[i + 1];
-                destination[i + 1] = source[i + 2];
-                destination[i + 2] = source[i + 3];
-                destination[i + 3] = source[i];
-                i += 4;
-            }
+        // The pixel buffer is ARGB: convert to RGBA. For RGBX, the X byte is set to 255.
+        auto makeOpaque = format == VideoPixelFormat::RGBX ? MakeOpaque::Yes : MakeOpaque::No;
+        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
+            const uint8_t channelMap[4] = { 1, 2, 3, 0 };
+            copyRGBRow(destination, source, channelMap, makeOpaque);
         });
         callback(WTF::move(planeLayouts));
         return;
@@ -478,8 +530,15 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
         if (!computedPlaneLayout.isEmpty())
             planeLayout = computedPlaneLayout[0];
 
-        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [](std::span<uint8_t> destination, std::span<const uint8_t> source) {
-            memcpySpan(destination, source);
+        // For BGRX, the X byte is set to 255.
+        auto makeOpaque = format == VideoPixelFormat::BGRX ? MakeOpaque::Yes : MakeOpaque::No;
+        auto planeLayouts = copyRGBData(span, planeLayout, protect(this->pixelBuffer()).get(), [makeOpaque](std::span<uint8_t> destination, std::span<const uint8_t> source) {
+            if (makeOpaque == MakeOpaque::No) {
+                memcpySpan(destination, source);
+                return;
+            }
+            const uint8_t channelMap[4] = { 0, 1, 2, 3 };
+            copyRGBRow(destination, source, channelMap, makeOpaque);
         });
         callback(WTF::move(planeLayouts));
         return;
@@ -504,7 +563,7 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     } else
         cgColorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
 
-    return NativeImage::create(WTF::move(bgraSource), kCGImageAlphaFirst, cgColorSpace.get());
+    return NativeImage::create(WTF::move(bgraSource), shouldIgnoreAlpha() ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaFirst, cgColorSpace.get());
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)
@@ -517,17 +576,17 @@ Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMi
     return VideoFrameCV::create(PAL::toMediaTime(timeStamp), isMirrored, rotation, pixelBuffer.get());
 }
 
-Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace, ShouldIgnoreAlpha shouldIgnoreAlpha)
 {
     ASSERT(pixelBuffer);
     attachColorSpaceToPixelBuffer(colorSpace, pixelBuffer.get());
-    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace)));
+    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), WTF::move(colorSpace), shouldIgnoreAlpha));
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {
     ASSERT(pixelBuffer);
-    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), computeVideoFrameColorSpace(pixelBuffer.get())));
+    return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTF::move(pixelBuffer), computeVideoFrameColorSpace(pixelBuffer.get()), ShouldIgnoreAlpha::No));
 }
 
 RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
@@ -553,12 +612,13 @@ RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuf
     pixelBuffer->ref();
 
     ASSERT_UNUSED(status, !status);
-    return RefPtr { VideoFrameCV::create({ }, false, Rotation::None, WTF::move(cvPixelBuffer), WTF::move(colorSpace)) };
+    return RefPtr { VideoFrameCV::create({ }, false, Rotation::None, WTF::move(cvPixelBuffer), WTF::move(colorSpace), VideoFrameCV::ShouldIgnoreAlpha::No) };
 }
 
-VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace, ShouldIgnoreAlpha shouldIgnoreAlpha)
     : VideoFrame(presentationTime, isMirrored, rotation, WTF::move(colorSpace))
     , m_pixelBuffer(WTF::move(pixelBuffer))
+    , m_shouldIgnoreAlpha(shouldIgnoreAlpha == ShouldIgnoreAlpha::Yes)
 {
 }
 
@@ -599,7 +659,7 @@ ImageOrientation VideoFrameCV::orientation() const
 
 Ref<VideoFrame> VideoFrameCV::clone()
 {
-    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }));
+    return adoptRef(*new VideoFrameCV(presentationTime(), isMirrored(), rotation(), pixelBuffer(), PlatformVideoColorSpace { colorSpace() }, shouldIgnoreAlpha() ? ShouldIgnoreAlpha::Yes : ShouldIgnoreAlpha::No));
 }
 
 }

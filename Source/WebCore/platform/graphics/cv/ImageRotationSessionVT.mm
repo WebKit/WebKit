@@ -176,7 +176,7 @@ RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame,
     if (!pixelBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(videoFrame.presentationTime(), false, VideoFrameRotation::None, WTF::move(pixelBuffer), PlatformVideoColorSpace { videoFrame.colorSpace() });
+    return VideoFrameCV::create(videoFrame.presentationTime(), false, VideoFrameRotation::None, WTF::move(pixelBuffer), PlatformVideoColorSpace { videoFrame.colorSpace() }, videoFrame.shouldIgnoreAlpha() ? VideoFrameCV::ShouldIgnoreAlpha::Yes : VideoFrameCV::ShouldIgnoreAlpha::No);
 }
 
 RefPtr<NativeImage> ImageRotationSessionVT::applyRotation(NativeImage& nativeImage, ImageOrientation orientation, IsCGImageCompatible cgImageCompatible)

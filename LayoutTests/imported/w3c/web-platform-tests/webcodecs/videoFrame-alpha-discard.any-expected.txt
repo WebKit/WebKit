@@ -1,0 +1,16 @@
+
+PASS Drawing a VideoFrame made from an OffscreenCanvas with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an OffscreenCanvas with alpha discard replaces the canvas background
+PASS Drawing a clone of a VideoFrame made from an OffscreenCanvas with alpha discard gives opaque pixels
+PASS An ImageBitmap of a VideoFrame made from an OffscreenCanvas with alpha discard is opaque
+PASS Drawing a VideoFrame made from an ImageBitmap with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an ImageBitmap with alpha discard replaces the canvas background
+PASS Drawing a clone of a VideoFrame made from an ImageBitmap with alpha discard gives opaque pixels
+PASS An ImageBitmap of a VideoFrame made from an ImageBitmap with alpha discard is opaque
+PASS Drawing a VideoFrame made from an VideoFrame with alpha discard gives opaque pixels
+PASS Drawing a VideoFrame made from an VideoFrame with alpha discard replaces the canvas background
+PASS Drawing a clone of a VideoFrame made from an VideoFrame with alpha discard gives opaque pixels
+PASS An ImageBitmap of a VideoFrame made from an VideoFrame with alpha discard is opaque
+PASS Discarding the alpha of a VideoFrame does not change the original frame
+PASS Drawing a VideoFrame with alpha keep preserves its transparency
+

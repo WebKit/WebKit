@@ -824,7 +824,9 @@ template<typename Frame> RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::
     if (!buffer)
         return nullptr;
 
-    SharedVideoFrame sharedVideoFrame { mediaTime, false, rotation, frameColorSpace(frame), WTF::move(*buffer) };
+    bool isMirrored = false;
+    bool shouldIgnoreAlpha = false;
+    SharedVideoFrame sharedVideoFrame { mediaTime, isMirrored, rotation, frameColorSpace(frame), shouldIgnoreAlpha, WTF::move(*buffer) };
     auto promise = connection->sendWithPromisedReply(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, WTF::move(sharedVideoFrame), timestamp, duration, shouldEncodeAsKeyFrame });
     return promise->whenSettled(workQueue(), [] (auto&& result) mutable {
         if (!result)

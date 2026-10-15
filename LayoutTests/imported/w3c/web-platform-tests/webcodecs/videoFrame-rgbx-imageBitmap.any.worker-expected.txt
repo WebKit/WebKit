@@ -1,0 +1,10 @@
+
+PASS createImageBitmap() of a RGBX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS createImageBitmap() of a RGBX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS createImageBitmap() of a RGBX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS createImageBitmap() of a BGRX VideoFrame with padding byte 0 is opaque with correct RGB
+PASS createImageBitmap() of a BGRX VideoFrame with padding byte 127 is opaque with correct RGB
+PASS createImageBitmap() of a BGRX VideoFrame with padding byte 255 is opaque with correct RGB
+PASS An ImageBitmap of an RGBX VideoFrame stays opaque after closing the frame
+PASS An ImageBitmap of a cloned BGRX VideoFrame is opaque
+

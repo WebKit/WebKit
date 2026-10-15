@@ -30,9 +30,11 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "VideoFrameCV.h"
+#import <Accelerate/Accelerate.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if !PLATFORM(MACCATALYST)
@@ -214,7 +216,7 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::convertCMSampleBuffer(CMSam
     return adoptCF(resizedSampleBuffer);
 }
 
-RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CGImageRef image, const IntSize& size)
+RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CGImageRef image, const IntSize& size, ShouldPreserveAlpha shouldPreserveAlpha)
 {
     if (!image || !setSize(size))
         return nullptr;
@@ -229,18 +231,46 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::createPixelBuffer(CGImageRef
     }
     RetainPtr rgbBuffer = adoptCF(rawRGBBuffer);
 
-    CVPixelBufferLockBaseAddress(rgbBuffer.get(), 0);
-    void* data = CVPixelBufferGetBaseAddress(rgbBuffer.get());
-    RetainPtr context = adoptCF(CGBitmapContextCreate(data, imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(rgbBuffer.get()), sRGBColorSpaceSingleton(), (CGBitmapInfo) kCGImageAlphaNoneSkipFirst));
-    if (!context) {
-        RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CGBitmapContextCreate returned nullptr");
-        return nullptr;
+    {
+        status = CVPixelBufferLockBaseAddress(rgbBuffer, 0);
+        if (status != kCVReturnSuccess) {
+            RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CVPixelBufferLockBaseAddress failed with error code: %d", static_cast<int>(status));
+            return nullptr;
+        }
+        auto scope = makeScopeExit([rgbBuffer] {
+            CVPixelBufferUnlockBaseAddress(rgbBuffer, 0);
+        });
+
+        CGBitmapInfo info = shouldPreserveAlpha == ShouldPreserveAlpha::Yes ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        RetainPtr context = adoptCF(CGBitmapContextCreate(CVPixelBufferGetBaseAddress(rgbBuffer), imageSize.width(), imageSize.height(), 8, CVPixelBufferGetBytesPerRow(rgbBuffer), sRGBColorSpaceSingleton(), info));
+        if (!context) {
+            RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: CGBitmapContextCreate failed");
+            return nullptr;
+        }
+
+        if (shouldPreserveAlpha == ShouldPreserveAlpha::Yes)
+            CGContextSetBlendMode(context, kCGBlendModeCopy);
+
+        CGContextDrawImage(context, CGRectMake(0, 0, imageSize.width(), imageSize.height()), image);
+
+        if (shouldPreserveAlpha == ShouldPreserveAlpha::Yes) {
+            // CoreGraphics only draws to premultiplied alpha contexts, so we unpremultiply to preserve alpha.
+            // FIXME: Find a better way to preserve alpha as this round trip is causing rounding errors.
+            vImage_Buffer buffer {
+                CVPixelBufferGetBaseAddress(rgbBuffer),
+                static_cast<vImagePixelCount>(imageSize.height()),
+                static_cast<vImagePixelCount>(imageSize.width()),
+                CVPixelBufferGetBytesPerRow(rgbBuffer)
+            };
+            auto error = vImageUnpremultiplyData_ARGB8888(&buffer, &buffer, kvImageNoFlags);
+            if (error != kvImageNoError) {
+                RELEASE_LOG(Media, "ImageTransferSessionVT::createPixelBuffer: vImageUnpremultiplyData_ARGB8888 failed with error code: %zd", error);
+                return nullptr;
+            }
+        }
     }
 
-    CGContextDrawImage(context.get(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), image);
-    CVPixelBufferUnlockBaseAddress(rgbBuffer.get(), 0);
-
-    return convertPixelBuffer(rgbBuffer.get(), size);
+    return convertPixelBuffer(rgbBuffer, size);
 }
 
 RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixelBufferRef sourceBuffer, const MediaTime& sampleTime, const IntSize& size)
@@ -277,9 +307,9 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CVPixe
     return adoptCF(sampleBuffer);
 }
 
-RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CGImageRef image, const MediaTime& sampleTime, const IntSize& size)
+RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(CGImageRef image, const MediaTime& sampleTime, const IntSize& size, ShouldPreserveAlpha shouldPreserveAlpha)
 {
-    auto pixelBuffer = createPixelBuffer(image, size);
+    auto pixelBuffer = createPixelBuffer(image, size, shouldPreserveAlpha);
     if (!pixelBuffer)
         return nullptr;
 
@@ -309,12 +339,13 @@ RefPtr<VideoFrame> ImageTransferSessionVT::convertVideoFrame(VideoFrame& videoFr
     if (!resizedBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), WTF::move(resizedBuffer));
+    Ref resizedFrame = VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), WTF::move(resizedBuffer));
+    return resizedFrame->updateShouldIgnoreAlpha(videoFrame.shouldIgnoreAlpha(), VideoFrame::ShouldClone::No);
 }
 
-RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const WTF::MediaTime& time, const IntSize& size)
+RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const WTF::MediaTime& time, const IntSize& size, ShouldPreserveAlpha shouldPreserveAlpha)
 {
-    return createVideoFrame(image, time, size, VideoFrame::Rotation::None);
+    return createVideoFrame(image, time, size, VideoFrame::Rotation::None, false, shouldPreserveAlpha);
 }
 RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CMSampleBufferRef image, const WTF::MediaTime& time, const IntSize& size)
 {
@@ -337,9 +368,9 @@ RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(IOSurfaceRef surface
 }
 #endif
 
-RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const MediaTime& sampleTime, const IntSize& size, VideoFrame::Rotation rotation, bool mirrored)
+RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const MediaTime& sampleTime, const IntSize& size, VideoFrame::Rotation rotation, bool mirrored, ShouldPreserveAlpha shouldPreserveAlpha)
 {
-    auto sampleBuffer = createCMSampleBuffer(image, sampleTime, size);
+    auto sampleBuffer = createCMSampleBuffer(image, sampleTime, size, shouldPreserveAlpha);
     if (!sampleBuffer)
         return nullptr;
 

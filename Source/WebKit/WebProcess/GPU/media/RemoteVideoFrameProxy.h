@@ -71,6 +71,7 @@ public:
     WebCore::IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final;
     bool isRemoteProxy() const final { return true; }
+    bool shouldIgnoreAlpha() const final { return m_shouldIgnoreAlpha; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
 #endif
@@ -82,6 +83,7 @@ private:
     RemoteVideoFrameProxy(CloneConstructor, RemoteVideoFrameProxy&);
 
     Ref<VideoFrame> clone() final;
+    void setShouldIgnoreAlpha(bool shouldIgnoreAlpha) final { m_shouldIgnoreAlpha = shouldIgnoreAlpha; }
 
     static inline Seconds defaultTimeout = 10_s;
 
@@ -90,6 +92,7 @@ private:
     std::optional<RemoteVideoFrameReferenceTracker> m_referenceTracker;
     const WebCore::IntSize m_size;
     uint32_t m_pixelFormat { 0 };
+    bool m_shouldIgnoreAlpha { false };
     // FIXME: Remove this.
     mutable RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #if PLATFORM(COCOA)
