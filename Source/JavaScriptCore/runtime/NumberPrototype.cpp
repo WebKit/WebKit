@@ -642,6 +642,8 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToLocaleString, (JSGlobalObject* globalO
     IntlNumberFormat* numberFormat = nullptr;
     if (locales.isUndefined() && options.isUndefined())
         numberFormat = globalObject->defaultNumberFormat();
+    else if (locales.isString() && options.isUndefined())
+        numberFormat = globalObject->cachedToLocaleStringNumberFormat(asString(locales));
     else {
         numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
         numberFormat->initializeNumberFormat(globalObject, locales, options);

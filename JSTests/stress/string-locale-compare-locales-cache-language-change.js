@@ -19,6 +19,9 @@ setTimeout(() => {
 
     $vm.setUserPreferredLanguages(["sv-SE"]);
 
+    for (let i = 0; i < 3; ++i)
+        shouldBe("ö".localeCompare("z", "xx") > 0, true, "sv-SE ordering in the same VM entry");
+
     setTimeout(() => {
         shouldBe(new Intl.Collator("xx").compare("ö", "z") > 0, true, "sv-SE ordering via fresh collator");
         for (let i = 0; i < 3; ++i)

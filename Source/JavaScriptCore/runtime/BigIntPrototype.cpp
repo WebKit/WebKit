@@ -136,8 +136,15 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToLocaleString, (JSGlobalObject* globalO
     JSBigInt* thisValue = toThisBigIntValue(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
-    numberFormat->initializeNumberFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
+    JSValue locales = callFrame->argument(0);
+    JSValue options = callFrame->argument(1);
+    IntlNumberFormat* numberFormat = nullptr;
+    if (locales.isString() && options.isUndefined())
+        numberFormat = globalObject->cachedToLocaleStringNumberFormat(asString(locales));
+    else {
+        numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
+        numberFormat->initializeNumberFormat(globalObject, locales, options);
+    }
     RETURN_IF_EXCEPTION(scope, { });
 
     auto value = toIntlMathematicalValue(globalObject, thisValue);
