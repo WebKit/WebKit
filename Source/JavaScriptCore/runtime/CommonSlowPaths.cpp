@@ -288,7 +288,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
     auto bytecode = pc->as<OpToThis>();
     auto& metadata = bytecode.metadata(codeBlock);
     JSValue v1 = GET(bytecode.m_srcDst).jsValue();
-    if (v1.isCell()) {
+    auto value = v1.toThis(globalObject, bytecode.m_ecmaMode);
+    if (v1.isObject() && value == v1) {
         StructureID myStructureID = v1.asCell()->structureID();
         StructureID otherStructureID = metadata.m_cachedStructureID;
         if (myStructureID != otherStructureID) {
@@ -307,7 +308,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
     // different object that still has the same structure on the fast path since it'll produce
     // the same SpeculatedType. Therefore, we don't need to worry about value profiling on the
     // fast path.
-    auto value = v1.toThis(globalObject, bytecode.m_ecmaMode);
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 

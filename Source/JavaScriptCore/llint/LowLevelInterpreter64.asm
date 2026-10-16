@@ -899,11 +899,19 @@ llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, 
     get(m_srcDst, t0)
     loadq [cfr, t0, 8], t0
     btqnz t0, notCellMask, .opToThisSlow
-    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
     loadi JSCell::m_structureID[t0], t1
     metadata(t2, t3)
-    loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
-    bineq t1, t2, .opToThisSlow
+    loadi OpToThis::Metadata::m_cachedStructureID[t2], t3
+    bineq t1, t3, .opToThisPolymorphic
+    dispatch()
+
+.opToThisPolymorphic:
+    bineq OpToThis::Metadata::m_toThisStatus[t2], constexpr ToThisConflicted, .opToThisSlow
+    loadb JSCell::m_type[t0], t1
+    bib t1, ObjectType, .opToThisSlow
+    subi constexpr FirstScopeType, t1
+    bibeq t1, constexpr (LastScopeType - FirstScopeType), .opToThisSlow
+    valueProfile(size, OpToThis, m_valueProfile, t0, t1)
     dispatch()
 
 .opToThisSlow:
