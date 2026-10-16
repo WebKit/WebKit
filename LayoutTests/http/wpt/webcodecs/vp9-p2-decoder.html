@@ -43,7 +43,6 @@ promise_test(async (test) => {
 
     const decoder = new VideoDecoder({
         output: frame => {
-           test.add_cleanup(() => frame.close());
            resolve(frame);
         },
         error: e => reject(e),
@@ -63,7 +62,14 @@ promise_test(async (test) => {
 
     const decodedFrame = await decoderPromise;
     assert_equals(decodedFrame.format, null);
-    return promise_rejects_dom(test, 'NotSupportedError', decodedFrame.copyTo(new Uint8Array(1)));
+
+    const rgba = new Uint8Array(decodedFrame.allocationSize({format: "RGBA"}));
+    await promise_rejects_dom(test, 'NotSupportedError', decodedFrame.copyTo(rgba));
+
+    promise_test(async t => {
+        t.add_cleanup(() => frame.close());
+        await decodedFrame.copyTo(rgba, {format: "RGBA"});
+    }, "copyTo with RGBA works on VideoFrame with null format");
 }, "Test copyTo on different contexts");
 </script>
 </body>

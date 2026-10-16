@@ -289,11 +289,18 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
 // https://w3c.github.io/webcodecs/#videoframe-parse-videoframecopytooptions
 ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVideoFrame& frame, const WebCodecsVideoFrame::CopyToOptions& options)
 {
-    ASSERT(!frame.isDetached());
-    ASSERT(frame.format());
+    if (frame.isDetached())
+        return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s };
+
+    auto format = frame.format();
+    if (!format || options.format)
+        format = options.format;
+    if (!format)
+        return Exception { ExceptionCode::NotSupportedError,  "No format is available"_s };
+
 
     Ref visibleRect = *frame.visibleRect();
-    auto parsedRect = parseVisibleRect({ visibleRect->x(), visibleRect->y(), visibleRect->width(), visibleRect->height() }, options.rect, frame.codedWidth(), frame.codedHeight(), *frame.format());
+    auto parsedRect = parseVisibleRect({ visibleRect->x(), visibleRect->y(), visibleRect->width(), visibleRect->height() }, options.rect, frame.codedWidth(), frame.codedHeight(), *format);
 
     if (parsedRect.hasException())
         return parsedRect.releaseException();
@@ -301,7 +308,7 @@ ExceptionOr<CombinedPlaneLayout> parseVideoFrameCopyToOptions(const WebCodecsVid
     if (options.format && *options.format != VideoPixelFormat::RGBA && *options.format != VideoPixelFormat::RGBX && *options.format != VideoPixelFormat::BGRA && *options.format != VideoPixelFormat::BGRX)
         return Exception { ExceptionCode::NotSupportedError, "Format is not supported"_s };
 
-    return computeLayoutAndAllocationSize(parsedRect.returnValue(), options.layout, options.format ? *options.format : *frame.format());
+    return computeLayoutAndAllocationSize(parsedRect.returnValue(), options.layout, *format);
 }
 
 // https://w3c.github.io/webcodecs/#videoframe-initialize-visible-rect-and-display-size

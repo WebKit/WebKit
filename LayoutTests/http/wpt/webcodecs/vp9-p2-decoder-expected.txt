@@ -1,3 +1,4 @@
 
 PASS Test copyTo on different contexts
+PASS copyTo with RGBA works on VideoFrame with null format
 

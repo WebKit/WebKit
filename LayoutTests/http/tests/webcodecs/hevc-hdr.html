@@ -37,7 +37,6 @@ promise_test(async (t) => {
 
     assert_equals(frames.length, 1, "one frame decoded");
     const frame = frames[0];
-    t.add_cleanup(() => frame.close());
 
     assert_equals(frame.codedWidth, 32, "width");
     assert_equals(frame.codedHeight, 32, "height");
@@ -50,6 +49,14 @@ promise_test(async (t) => {
     // 10-bit 4:2:0 cannot currently be represented by a VideoPixelFormat value.
     assert_equals(frame.format, null, "format is null for unrepresentable 10-bit content");
     assert_true(!window.internals?.is10bitsVideoFrame || internals.is10bitsVideoFrame(frame), "frame is actually 10 bits");
+
+    const rgba = new Uint8Array(frame.allocationSize({format: "RGBA"}));
+    await promise_rejects_dom(t, 'NotSupportedError', frame.copyTo(rgba));
+
+    promise_test(async t => {
+        t.add_cleanup(() => frame.close());
+        await frame.copyTo(rgba, {format: "RGBA"});
+    }, "copyTo with RGBA works on VideoFrame with null format");
 }, "HEVC Main 10 (BT.2020/PQ) decoding surfaces bitstream colorSpace and null format");
 </script>
 </body>

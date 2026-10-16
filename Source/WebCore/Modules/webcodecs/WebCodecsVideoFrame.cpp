@@ -503,13 +503,6 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameWithRe
 
 ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(const CopyToOptions& options)
 {
-    if (isDetached())
-        return Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s };
-
-    // FIXME: We should allow the case where m_data.format is null but options.format is not.
-    if (!m_data.format)
-        return Exception { ExceptionCode::NotSupportedError,  "No format is available"_s };
-
     auto layoutOrException = parseVideoFrameCopyToOptions(*this, options);
     if (layoutOrException.hasException())
         return layoutOrException.releaseException();
@@ -519,17 +512,6 @@ ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(const CopyToOptions& opt
 
 void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options, CopyToPromise&& promise)
 {
-    if (isDetached()) {
-        promise.reject(Exception { ExceptionCode::InvalidStateError,  "VideoFrame is detached"_s });
-        return;
-    }
-
-    // FIXME: We should allow the case where m_data.format is null but options.format is not.
-    if (!m_data.format) {
-        promise.reject(Exception { ExceptionCode::NotSupportedError,  "No format is available"_s });
-        return;
-    }
-
     auto combinedLayoutOrException = parseVideoFrameCopyToOptions(*this, options);
     if (combinedLayoutOrException.hasException()) {
         promise.reject(combinedLayoutOrException.releaseException());
