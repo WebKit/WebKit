@@ -713,6 +713,9 @@ void run(const TestConfig* config)
     RUN(testStackSlot());
     RUN(testLoadFromFramePointer());
     RUN(testStoreLoadStackSlot(50));
+    RUN(testReuseLargeStackOffset());
+    RUN(testReuseLargeStackOffsetAfterCall());
+    RUN(testReuseLargeStackOffsetZDefSpill());
     
     RUN(testBranch());
     RUN(testBranchPtr());
