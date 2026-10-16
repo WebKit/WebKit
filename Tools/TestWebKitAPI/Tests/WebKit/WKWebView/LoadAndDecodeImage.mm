@@ -437,6 +437,43 @@ TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
     Util::run(&loadAndDecodeDone);
 }
 
+TEST(WebKit, DecodeImageDataSVGSizing)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    auto decodedSize = [&](NSString *attributes, NSValue *preferredSize = nil) {
+        RetainPtr data = [[NSString stringWithFormat:@"<svg xmlns='http://www.w3.org/2000/svg' %@><rect width='100%%' height='100%%' fill='lime'/></svg>", attributes] dataUsingEncoding:NSUTF8StringEncoding];
+        __block CGSize size = CGSizeZero;
+        __block bool done = false;
+        [webView _decodeImageData:data.get() preferredSize:preferredSize completionHandler:^(CocoaImage *result, NSError *error) {
+            EXPECT_NULL(error);
+            size = result.size;
+            done = true;
+        }];
+        Util::run(&done);
+        return size;
+    };
+
+    auto size = decodedSize(@"width='40' height='30'");
+    EXPECT_EQ(size.width, 40);
+    EXPECT_EQ(size.height, 30);
+
+    size = decodedSize(@"width='200'");
+    EXPECT_EQ(size.width, 200);
+    EXPECT_EQ(size.height, 150);
+
+    size = decodedSize(@"viewBox='0 0 10 20'");
+    EXPECT_EQ(size.width, 75);
+    EXPECT_EQ(size.height, 150);
+
+    size = decodedSize(@"width='40' height='30'", [NSValue valueWithSize:NSMakeSize(100, 100)]);
+    EXPECT_EQ(size.width, 40);
+    EXPECT_EQ(size.height, 30);
+
+    size = decodedSize(@"viewBox='0 0 10 20'", [NSValue valueWithSize:NSMakeSize(100, 100)]);
+    EXPECT_EQ(size.width, 50);
+    EXPECT_EQ(size.height, 100);
+}
+
 TEST(WebKit, LoadAndDecodeImageInvalidURL)
 {
     RetainPtr webView = adoptNS([TestWKWebView new]);

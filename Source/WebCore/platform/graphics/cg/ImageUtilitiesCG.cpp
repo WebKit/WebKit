@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "ColorSpaceCG.h"
+#include "DefaultSizing.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -262,12 +263,12 @@ static void tryCreateNativeImageFromData(std::span<const uint8_t> data, std::opt
         completionHandler(WTF::move(nativeImage));
         return;
     }
-    SVGImage::tryCreateFromData(data, [completionHandler = WTF::move(completionHandler)](auto svgImage) mutable {
+    SVGImage::tryCreateFromData(data, [preferredSize, completionHandler = WTF::move(completionHandler)](auto svgImage) mutable {
         if (!svgImage) {
             completionHandler(nullptr);
             return;
         }
-        completionHandler(svgImage->nativeImage(svgImage->size()));
+        completionHandler(svgImage->nativeImage(DefaultSizing { preferredSize }.resolve(svgImage->naturalDimensions()).size()));
     });
 }
 
@@ -361,7 +362,6 @@ RefPtr<SharedBuffer> createIconDataFromBitmaps(Vector<Ref<ShareableBitmap>>&& bi
     return SharedBuffer::create(destinationData.get());
 }
 
-// FIXME: This does not implement preferredSize for SVG at the moment as there are no callers that pass preferredSize.
 void decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize, CompletionHandler<void(RefPtr<ShareableBitmap>&&)>&& completionHandler)
 {
     tryCreateNativeImageFromData(data, preferredSize, [completionHandler = WTF::move(completionHandler)](auto nativeImage) mutable {
