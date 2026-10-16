@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("DOMStorageManager.FrameTargetBinding");
+
+    let counter = 0;
+
+    function createFrameTarget()
+    {
+        // Commands sent to the stub go nowhere, e.g. IndexedDBManager asking the frame target for databases.
+        let connection = {_sendCommandToBackendWithCallback() { }};
+        let target = new WI.FrameTarget(null, `unit-test-frame-target-${++counter}`, "Frame", connection);
+        WI.targetManager.addTarget(target);
+        return target;
+    }
+
+    function reportExecutionContext(target, frameId)
+    {
+        WI.networkManager.executionContextCreated(target, {id: 1, type: "normal", name: "", frameId});
+    }
+
+    function navigateFrame(frameId, origin)
+    {
+        WI.networkManager.frameDidNavigate({
+            id: frameId,
+            parentId: WI.networkManager.mainFrame.id,
+            loaderId: `${frameId}-loader`,
+            url: `${origin}/`,
+            mimeType: "text/html",
+            securityOrigin: origin,
+            name: "",
+        });
+    }
+
+    function storageObject(origin, isLocalStorage)
+    {
+        return WI.domStorageManager.domStorageObjects.find((object) => object.id.securityOrigin === origin && object.isLocalStorage() === isLocalStorage) || null;
+    }
+
+    function expectBoundToFrameTarget(origin, target, expected)
+    {
+        for (let isLocalStorage of [true, false]) {
+            let label = isLocalStorage ? "localStorage" : "sessionStorage";
+            let object = storageObject(origin, isLocalStorage);
+            InspectorTest.expectNotNull(object, `Should have a DOMStorageObject for the frame's ${label}.`);
+            if (!object)
+                continue;
+
+            if (expected)
+                InspectorTest.expectEqual(object.target, target, `The frame's ${label} object should be bound to the frame target.`);
+            else
+                InspectorTest.expectNotEqual(object.target, target, `The frame's ${label} object should not be bound to the frame target.`);
+        }
+    }
+
+    function withFrame(name, callback)
+    {
+        let id = ++counter;
+        let frameId = `unit-test-frame-${id}`;
+        let origin = `http://${name}-${id}.test`;
+        let target = createFrameTarget();
+        try {
+            callback(frameId, origin, target);
+        } finally {
+            WI.networkManager.frameDidDetach(frameId);
+            WI.targetManager.removeTarget(target);
+        }
+    }
+
+    suite.addTestCase({
+        name: "DOMStorageManager.FrameTargetContextBeforeFrame",
+        description: "The frame target reports its execution context before the frontend knows the frame.",
+        test() {
+            withFrame("context-first", (frameId, origin, target) => {
+                reportExecutionContext(target, frameId);
+                InspectorTest.expectNull(WI.networkManager.frameForIdentifier(frameId), "The frame should not exist when the frame target reports.");
+
+                navigateFrame(frameId, origin);
+                let frame = WI.networkManager.frameForIdentifier(frameId);
+                InspectorTest.expectEqual(frame?.pageExecutionContext?.target, target, "The frame should adopt the frame target's execution context.");
+                expectBoundToFrameTarget(origin, target, true);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOMStorageManager.FrameBeforeFrameTargetContext",
+        description: "The frontend knows the frame before the frame target reports its execution context.",
+        test() {
+            withFrame("frame-first", (frameId, origin, target) => {
+                navigateFrame(frameId, origin);
+                InspectorTest.expectNotNull(WI.networkManager.frameForIdentifier(frameId), "The frame should exist when the frame target reports.");
+                expectBoundToFrameTarget(origin, target, false);
+
+                reportExecutionContext(target, frameId);
+                expectBoundToFrameTarget(origin, target, true);
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOMStorageManager.PageTargetContext",
+        description: "An execution context from the page target must not bind the storage to a frame target.",
+        test() {
+            withFrame("page-context", (frameId, origin, target) => {
+                navigateFrame(frameId, origin);
+                reportExecutionContext(WI.pageTarget, frameId);
+                let frame = WI.networkManager.frameForIdentifier(frameId);
+                InspectorTest.expectEqual(frame.pageExecutionContext?.target, WI.pageTarget, "The frame should adopt the page target's execution context.");
+                expectBoundToFrameTarget(origin, target, false);
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DOMStorageManager binds a frame's storage objects to its frame target in either order of the frame and the frame target's execution context.</p>
+</body>
+</html>

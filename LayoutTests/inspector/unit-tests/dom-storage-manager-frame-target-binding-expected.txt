@@ -1,0 +1,30 @@
+Tests that DOMStorageManager binds a frame's storage objects to its frame target in either order of the frame and the frame target's execution context.
+
+
+== Running test suite: DOMStorageManager.FrameTargetBinding
+-- Running test case: DOMStorageManager.FrameTargetContextBeforeFrame
+PASS: The frame should not exist when the frame target reports.
+PASS: The frame should adopt the frame target's execution context.
+PASS: Should have a DOMStorageObject for the frame's localStorage.
+PASS: The frame's localStorage object should be bound to the frame target.
+PASS: Should have a DOMStorageObject for the frame's sessionStorage.
+PASS: The frame's sessionStorage object should be bound to the frame target.
+
+-- Running test case: DOMStorageManager.FrameBeforeFrameTargetContext
+PASS: The frame should exist when the frame target reports.
+PASS: Should have a DOMStorageObject for the frame's localStorage.
+PASS: The frame's localStorage object should not be bound to the frame target.
+PASS: Should have a DOMStorageObject for the frame's sessionStorage.
+PASS: The frame's sessionStorage object should not be bound to the frame target.
+PASS: Should have a DOMStorageObject for the frame's localStorage.
+PASS: The frame's localStorage object should be bound to the frame target.
+PASS: Should have a DOMStorageObject for the frame's sessionStorage.
+PASS: The frame's sessionStorage object should be bound to the frame target.
+
+-- Running test case: DOMStorageManager.PageTargetContext
+PASS: The frame should adopt the page target's execution context.
+PASS: Should have a DOMStorageObject for the frame's localStorage.
+PASS: The frame's localStorage object should not be bound to the frame target.
+PASS: Should have a DOMStorageObject for the frame's sessionStorage.
+PASS: The frame's sessionStorage object should not be bound to the frame target.
+
