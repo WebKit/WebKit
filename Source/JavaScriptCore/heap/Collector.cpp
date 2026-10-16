@@ -472,7 +472,6 @@ void Collector::beginCollectionInEachHeap(CollectionScope scope, MonotonicTime s
 
 void Collector::setUpVisitors(CollectionScope scope)
 {
-    HeapVersion markingVersion = heap().objectSpace().markingVersion();
     bool isAnalyzingHeap = false;
     forEachHeap([&](Heap& heap) {
         if (heap.vm().isAnalyzingHeap())
@@ -480,7 +479,7 @@ void Collector::setUpVisitors(CollectionScope scope)
     });
     forEachSlotVisitor(
         [&](SlotVisitor& visitor) {
-            visitor.didStartMarking(scope, markingVersion, isAnalyzingHeap);
+            visitor.didStartMarking(scope, isAnalyzingHeap);
         });
     if (Options::verifyGC()) [[unlikely]] {
         m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this);

@@ -63,7 +63,7 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
         }
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion, cell);
+        dependency = block.aboutToMark(markingVersionOf(block), cell);
         if (block.isMarked(cell, dependency)) [[likely]] {
             if (!m_isAnalyzingHeap) [[likely]]
                 return;
@@ -99,7 +99,7 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
             return;
     } else {
         MarkedBlock& block = cell->markedBlock();
-        dependency = block.aboutToMark(m_markingVersion, cell);
+        dependency = block.aboutToMark(markingVersionOf(block), cell);
         if (block.isMarked(cell, dependency)) [[likely]]
             return;
     }
@@ -160,20 +160,27 @@ ALWAYS_INLINE void SlotVisitor::appendValuesHidden(const WriteBarrierBase<Unknow
         appendHidden(barriers[i]);
 }
 
+ALWAYS_INLINE HeapVersion SlotVisitor::markingVersionOf(const MarkedBlock& block)
+{
+    return block.vm().heap.objectSpace().markingVersion();
+}
+
 ALWAYS_INLINE bool SlotVisitor::isMarked(const void* p) const
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(p);
-    return cell->cellContainer().isMarked(markingVersion(), cell);
+    if (cell->isPreciseAllocation())
+        return isMarked(cell->preciseAllocation(), cell);
+    return isMarked(cell->markedBlock(), cell);
 }
 
 ALWAYS_INLINE bool SlotVisitor::isMarked(MarkedBlock& container, HeapCell* cell) const
 {
-    return container.isMarked(markingVersion(), cell);
+    return container.isMarked(markingVersionOf(container), cell);
 }
 
-ALWAYS_INLINE bool SlotVisitor::isMarked(PreciseAllocation& container, HeapCell* cell) const
+ALWAYS_INLINE bool SlotVisitor::isMarked(PreciseAllocation& container, HeapCell*) const
 {
-    return container.isMarked(markingVersion(), cell);
+    return container.isMarked();
 }
 
 inline void SlotVisitor::reportExtraMemoryVisited(size_t size)

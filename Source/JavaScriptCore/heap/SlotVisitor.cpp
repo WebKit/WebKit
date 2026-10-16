@@ -84,7 +84,6 @@ static void validate(JSCell* cell)
 
 SlotVisitor::SlotVisitor(Collector& collector, ASCIICString codeName)
     : Base(collector, WTF::move(codeName), collector.m_opaqueRoots)
-    , m_markingVersion(MarkedSpace::initialVersion)
 #if ASSERT_ENABLED
     , m_isCheckingForDefaultMarkViolation(false)
 #endif
@@ -96,7 +95,7 @@ SlotVisitor::~SlotVisitor()
     clearMarkStacks();
 }
 
-void SlotVisitor::didStartMarking(CollectionScope scope, HeapVersion markingVersion, bool isAnalyzingHeap)
+void SlotVisitor::didStartMarking(CollectionScope scope, bool isAnalyzingHeap)
 {
     // The previous collection's End reset this visitor.
     ASSERT(!m_bytesMarkedHeap);
@@ -106,7 +105,6 @@ void SlotVisitor::didStartMarking(CollectionScope scope, HeapVersion markingVers
     ASSERT(!m_extraMemoryInHeap.hasOverflowed() && !m_extraMemoryInHeap);
     ASSERT(!m_currentCell);
     Base::didStartMarking(scope, isAnalyzingHeap);
-    m_markingVersion = markingVersion;
 }
 
 void SlotVisitor::reset()
@@ -144,7 +142,8 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         return;
     
     ASSERT(!m_isCheckingForDefaultMarkViolation);
-    ASSERT(m_collector.hasHeap(*heapCell->heap()));
+    JSC::Heap& heap = *heapCell->heap();
+    ASSERT(m_collector.hasHeap(heap));
     
     auto validateCell = [&] (JSCell* jsCell) {
         StructureID structureID = jsCell->structureID();
@@ -197,7 +196,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))
         validateCell(static_cast<JSCell*>(heapCell));
     
-    if (Heap::testAndSetMarked(m_markingVersion, heapCell))
+    if (heap.testAndSetMarked(heapCell))
         return;
     
     switch (heapCell->cellKind()) {
@@ -211,12 +210,12 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         
         jsCell->setCellState(CellState::PossiblyGrey);
 
-        appendToMarkStack(jsCell);
+        appendToMarkStack(heap, jsCell);
         return;
     }
         
     case HeapCell::Auxiliary: {
-        noteLiveAuxiliaryCell(heapCell);
+        noteLiveAuxiliaryCell(heap, heapCell);
         return;
     } }
 }
@@ -265,19 +264,19 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
     // In case of eden collection: it's a new object that became grey rather than an old remembered object.
     cell->setCellState(CellState::PossiblyGrey);
     
-    appendToMarkStack(container, cell);
+    appendToMarkStack(container.vm().heap, container, cell);
 }
 
-void SlotVisitor::appendToMarkStack(JSCell* cell)
+void SlotVisitor::appendToMarkStack(JSC::Heap& heap, JSCell* cell)
 {
     if (cell->isPreciseAllocation())
-        appendToMarkStack(cell->preciseAllocation(), cell);
+        appendToMarkStack(heap, cell->preciseAllocation(), cell);
     else
-        appendToMarkStack(cell->markedBlock(), cell);
+        appendToMarkStack(heap, cell->markedBlock(), cell);
 }
 
 template<typename ContainerType>
-ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCell* cell)
+ALWAYS_INLINE void SlotVisitor::appendToMarkStack(JSC::Heap& heap, ContainerType& container, JSCell* cell)
 {
     ASSERT(isMarked(cell));
 #if CPU(X86_64)
@@ -291,7 +290,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
     container.noteMarked();
     
     m_visitCount++;
-    noteBytesMarked(container.vm().heap, container.cellSize());
+    noteBytesMarked(heap, container.cellSize());
 
     m_collectorStack.append(cell);
 }
@@ -300,15 +299,16 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = std::bit_cast<HeapCell*>(base);
     
-    ASSERT(m_collector.hasHeap(*cell->heap()));
+    JSC::Heap& heap = *cell->heap();
+    ASSERT(m_collector.hasHeap(heap));
     
-    if (Heap::testAndSetMarked(m_markingVersion, cell))
+    if (heap.testAndSetMarked(cell))
         return;
     
-    noteLiveAuxiliaryCell(cell);
+    noteLiveAuxiliaryCell(heap, cell);
 }
 
-void SlotVisitor::noteLiveAuxiliaryCell(HeapCell* cell)
+void SlotVisitor::noteLiveAuxiliaryCell(JSC::Heap& heap, HeapCell* cell)
 {
     // We get here once per GC under these circumstances:
     //
@@ -324,7 +324,7 @@ void SlotVisitor::noteLiveAuxiliaryCell(HeapCell* cell)
     m_visitCount++;
 
     size_t cellSize = container.cellSize();
-    noteBytesMarked(container.vm().heap, cellSize);
+    noteBytesMarked(heap, cellSize);
     m_nonCellVisitCount += cellSize;
 }
 

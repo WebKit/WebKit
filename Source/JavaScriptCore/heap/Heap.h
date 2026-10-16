@@ -330,7 +330,7 @@ public:
     static JSC::Heap* heap(const HeapCell*);
 
     bool isMarked(const void*);
-    static bool testAndSetMarked(HeapVersion, const void*);
+    bool testAndSetMarked(const void*);
 
     static inline size_t cellSize(const void*);
 
