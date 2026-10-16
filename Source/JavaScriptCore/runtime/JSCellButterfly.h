@@ -40,6 +40,7 @@ namespace JSC {
 
 class ClonedArguments;
 class DirectArguments;
+class JSArrayBufferView;
 class JSSet;
 class ScopedArguments;
 
@@ -150,6 +151,7 @@ public:
     static JSCellButterfly* createFromScopedArguments(JSGlobalObject*, ScopedArguments*);
     static JSCellButterfly* createFromSet(JSGlobalObject*, JSSet*);
     static JSCellButterfly* createFromString(JSGlobalObject*, JSString*);
+    static JSCellButterfly* createFromTypedArray(JSGlobalObject*, JSArrayBufferView*);
     static JSCellButterfly* tryCreateFromArgList(VM&, ArgList);
 
     unsigned publicLength() const { return m_header.publicLength(); }

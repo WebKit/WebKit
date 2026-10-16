@@ -29,6 +29,7 @@
 #include "ButterflyInlines.h"
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
+#include "JSGenericTypedArrayViewInlines.h"
 #include "JSObjectInlines.h"
 #include "JSSetInlines.h"
 #include "ScopedArguments.h"
@@ -269,6 +270,53 @@ JSCellButterfly* JSCellButterfly::createFromSet(JSGlobalObject* globalObject, JS
     }
 
     return result;
+}
+
+template<typename ViewClass>
+static ALWAYS_INLINE JSCellButterfly* createFromTypedArrayImpl(JSGlobalObject* globalObject, ViewClass* typedArray)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto elements = typedArray->typedSpan();
+    if (elements.size() > IndexingHeader::maximumLength) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    JSCellButterfly* result = JSCellButterfly::tryCreate(vm, vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), elements.size());
+    if (!result) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    auto contiguous = result->toButterfly()->contiguous();
+    for (size_t i = 0; i < elements.size(); ++i) {
+        JSValue value = ViewClass::Adaptor::toJSValue(globalObject, elements[i]);
+        if constexpr (ViewClass::Adaptor::canConvertToJSQuickly)
+            contiguous.atUnsafe(i).setWithoutWriteBarrier(value);
+        else {
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            result->setIndex(vm, i, value);
+        }
+    }
+
+    ensureStillAliveHere(typedArray);
+    return result;
+}
+
+JSCellButterfly* JSCellButterfly::createFromTypedArray(JSGlobalObject* globalObject, JSArrayBufferView* view)
+{
+    switch (view->type()) {
+#define CASE_TYPED_ARRAY_TYPE(name) \
+    case name##ArrayType: \
+        return createFromTypedArrayImpl(globalObject, uncheckedDowncast<JS##name##Array>(view));
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CASE_TYPED_ARRAY_TYPE)
+#undef CASE_TYPED_ARRAY_TYPE
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 JSCellButterfly* JSCellButterfly::tryCreateFromArgList(VM& vm, ArgList argList)

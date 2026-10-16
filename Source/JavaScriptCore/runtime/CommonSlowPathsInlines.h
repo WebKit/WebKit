@@ -29,6 +29,7 @@
 #include "ClonedArguments.h"
 #include "CommonSlowPaths.h"
 #include "DirectArguments.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSGlobalLexicalEnvironment.h"
 #include "JSSetInlines.h"
 #include "ScopedArguments.h"
@@ -207,6 +208,15 @@ ALWAYS_INLINE JSCellButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCel
         auto* set = uncheckedDowncast<JSSet>(iterable);
         if (set->isIteratorProtocolFastAndNonObservable()) [[likely]]
             return JSCellButterfly::createFromSet(globalObject, set);
+        return nullptr;
+    }
+#define CASE_TYPED_ARRAY_TYPE(name) case name##ArrayType:
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(CASE_TYPED_ARRAY_TYPE)
+#undef CASE_TYPED_ARRAY_TYPE
+    {
+        auto* view = uncheckedDowncast<JSArrayBufferView>(iterable);
+        if (!view->isOutOfBounds() && view->isIteratorProtocolFastAndNonObservable()) [[likely]]
+            return JSCellButterfly::createFromTypedArray(globalObject, view);
         return nullptr;
     }
     default:
