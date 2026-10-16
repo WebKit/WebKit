@@ -340,6 +340,50 @@ class Bugzilla(Base, mocks.Requests):
                 ), url=url)
         return mocks.Response.create404(url)
 
+    def _post_attachment(self, url, id, credentials, data):
+        user = self._user_for_credentials(credentials)
+
+        if not user:
+            return mocks.Response(status_code=401, url=url)
+        if id not in self.issues:
+            return mocks.Response(
+                url=url,
+                headers={'Content-Type': 'text/json'},
+                status_code=404,
+                text=json.dumps(dict(
+                    code=101,
+                    error=True,
+                    message="Bug #{} does not exist.".format(id),
+                )),
+            )
+        for field in ('file_name', 'summary', 'content_type'):
+            if not data.get(field):
+                return mocks.Response(
+                    status_code=400,
+                    text=json.dumps(dict(error=True, message="A value for '{}' is required.".format(field))),
+                    url=url,
+                )
+        if not data.get('data'):
+            return mocks.Response(
+                status_code=400,
+                text=json.dumps(dict(error=True, message='The attachment is empty.')),
+                url=url,
+            )
+
+        attachment = dict(
+            fileName=data['file_name'],
+            data=base64.b64decode(data['data']),
+            content_type=data['content_type'],
+        )
+        self.issues[id].setdefault('attachments', []).append(attachment)
+
+        attachment_id = next(record_id for record_id, _, candidate in self._attachment_records() if candidate is attachment)
+        return mocks.Response(
+            status_code=201,
+            text=json.dumps(dict(ids=[attachment_id])),
+            url=url,
+        )
+
     def _comments(self, url, id):
         if id not in self.issues:
             return mocks.Response(
@@ -564,6 +608,10 @@ class Bugzilla(Base, mocks.Requests):
         match = re.match(r'{}/rest/bug/(?P<id>\d+)/attachment(?:\?(?P<query>\S*))?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':
             return self._attachments(url, int(match.group('id')), query=match.group('query'))
+
+        match = re.match(r'{}/rest/bug/(?P<id>\d+)/attachment(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'POST':
+            return self._post_attachment(url, int(match.group('id')), match.group('credentials'), json)
 
         match = re.match(r'{}/rest/product_enterable(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
         if match and method == 'GET':

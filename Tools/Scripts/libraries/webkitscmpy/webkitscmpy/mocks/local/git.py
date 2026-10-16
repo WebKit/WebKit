@@ -217,6 +217,14 @@ class Git(mocks.Subprocess):
                 completion=mocks.ProcessCompletion(returncode=1, elapsed=2),
             )]
 
+        diff_name_routes = [
+            mocks.Subprocess.Route(
+                self.executable, '-c', 'diff.renames=false', 'diff', *listing, '-z',
+                cwd=self.path,
+                generator=self.diff_names,
+            ) for listing in (['--name-only'], ['--name-only', '--staged'], ['--name-status', '--staged'])
+        ]
+
         super(Git, self).__init__(
             mocks.Subprocess.Route(
                 self.executable, 'symbolic-ref', '-q', 'HEAD',
@@ -584,26 +592,7 @@ nothing to commit, working tree clean
                 completion=mocks.ProcessCompletion(
                     returncode=0,
                 ),
-            ), mocks.Subprocess.Route(
-                self.executable, 'diff', '--name-only',
-                cwd=self.path,
-                generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted([
-                        key for key, value in self.modified.items() if value.startswith('diff')
-                    ]))),
-            ), mocks.Subprocess.Route(
-                self.executable, 'diff', '--name-only', '--staged',
-                cwd=self.path,
-                generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted(self.staged.keys()))),
-            ), mocks.Subprocess.Route(
-                self.executable, 'diff', '--name-status', '--staged',
-                cwd=self.path,
-                generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0, stdout='\n'.join(sorted([
-                        '{}       {}'.format('M' if value.startswith('diff') else 'A', key) for key, value in self.staged.items()
-                    ]))),
-            ), mocks.Subprocess.Route(
+            ), *diff_name_routes, mocks.Subprocess.Route(
                 self.executable, 'diff', '--cached', '--quiet',
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
@@ -871,6 +860,13 @@ nothing to commit, working tree clean
     def __exit__(self, typ, exc, tb):
         super().__exit__(typ, exc, tb)
         local.Git.executable.clear()  # Clear the memoized cache after patching
+
+    def diff_names(self, *args, **kwargs):
+        files = self.staged if '--staged' in args else {key: value for key, value in self.modified.items() if value.startswith('diff')}
+        entries = [('M' if value.startswith('diff') else 'A', key) for key, value in sorted(files.items())]
+        if '--name-status' in args:
+            return mocks.ProcessCompletion(returncode=0, stdout=''.join('{}\0{}\0'.format(*entry) for entry in entries))
+        return mocks.ProcessCompletion(returncode=0, stdout=''.join('{}\0'.format(key) for _, key in entries))
 
     @property
     def branch(self):

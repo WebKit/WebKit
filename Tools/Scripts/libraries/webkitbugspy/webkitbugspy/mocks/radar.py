@@ -581,9 +581,12 @@ class Radar(Base, ContextStack):
 
     class exceptions(object):
         class UnsuccessfulResponseException(Exception):
-            pass
+            def __init__(self, message='', code=None, reason=None):
+                super().__init__(message)
+                self.code = code
+                self.reason = reason or message
 
-        class RadarAccessDeniedResponseException(Exception):
+        class RadarAccessDeniedResponseException(UnsuccessfulResponseException):
             pass
 
         class AttachmentLockedException(Exception):

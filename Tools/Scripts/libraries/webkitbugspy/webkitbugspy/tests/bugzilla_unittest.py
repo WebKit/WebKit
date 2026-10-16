@@ -219,6 +219,181 @@ class TestBugzilla(unittest.TestCase):
             self.assertEqual(bugzilla.Tracker(self.URL).issue(2).attachments, [])
             self.assertEqual(bugzilla.Tracker(self.URL).issue(2).patches, [])
 
+    def test_add_attachment(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual([attachment.name for attachment in issue.attachments], ['fix.patch', 'notes.txt'])
+
+            added = issue.add_attachment('screenshot.png', b'PNG BYTES', content_type='image/png', summary='A screenshot')
+            self.assertEqual(added.name, 'screenshot.png')
+            self.assertEqual(added.content_type, 'image/png')
+            self.assertEqual(added.contents(), b'PNG BYTES')
+            self.assertEqual([attachment.name for attachment in issue.attachments], ['fix.patch', 'notes.txt', 'screenshot.png'])
+
+            attachments = bugzilla.Tracker(self.URL).issue(1).attachments
+            self.assertEqual([attachment.name for attachment in attachments], ['fix.patch', 'notes.txt', 'screenshot.png'])
+            self.assertEqual(attachments[2].content_type, 'image/png')
+            self.assertEqual(attachments[2].contents(), b'PNG BYTES')
+
+    def test_add_attachment_before_listing(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            issue = bugzilla.Tracker(self.URL).issue(2)
+            issue.add_attachment('notes.txt', b'some notes')
+            self.assertEqual([attachment.name for attachment in issue.attachments], ['notes.txt'])
+            self.assertEqual(issue.attachments[0].contents(), b'some notes')
+
+    def test_add_attachment_request(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )) as mock:
+            issue = bugzilla.Tracker(self.URL).issue(2)
+            with patch.object(mock, 'request', wraps=mock.request) as request:
+                issue.add_attachment('crash.log', b'LOG', content_type='text/x-log', summary='Crash log')
+
+            posts = [call for call in request.call_args_list if call.args[0] == 'POST']
+            self.assertEqual(len(posts), 1)
+            self.assertTrue(posts[0].args[1].startswith('{}/rest/bug/2/attachment?login='.format(self.URL)))
+            self.assertEqual(
+                posts[0].kwargs['json'],
+                dict(ids=[2], data='TE9H', file_name='crash.log', summary='Crash log', content_type='text/x-log'),
+            )
+            self.assertEqual(posts[0].kwargs['timeout'], bugzilla.Tracker.DEFAULT_TIMEOUT)
+
+    def test_add_attachment_defaults(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )) as mock:
+            issue = bugzilla.Tracker(self.URL).issue(2)
+            with patch.object(mock, 'request', wraps=mock.request) as request:
+                issue.add_attachment('build-log.txt', b'LOG')
+                issue.add_attachment('artifact.unknownextension', b'DATA')
+
+            payloads = [call.kwargs['json'] for call in request.call_args_list if call.args[0] == 'POST']
+            self.assertEqual(
+                [(payload['file_name'], payload['summary'], payload['content_type']) for payload in payloads], [
+                    ('build-log.txt', 'build-log.txt', 'text/plain'),
+                    ('artifact.unknownextension', 'artifact.unknownextension', 'application/octet-stream'),
+                ],
+            )
+
+    def test_add_attachment_refused(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), OutputCapture() as captured:
+            tracker = bugzilla.Tracker(self.URL)
+            issue = tracker.issue(2)
+            self.assertEqual(issue.attachments, [])
+
+            with self.assertRaises(RuntimeError) as caught:
+                issue.add_attachment('empty.txt', b'')
+            self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 400: The attachment is empty.')
+            self.assertEqual(issue.attachments, [])
+            self.assertEqual(bugzilla.Tracker(self.URL).issue(2).attachments, [])
+            self.assertEqual(tracker._logins_left, 4)
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_add_attachment_missing_bug(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            tracker = bugzilla.Tracker(self.URL)
+            with self.assertRaises(RuntimeError) as caught:
+                tracker.issue(100).add_attachment('notes.txt', b'some notes')
+            self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 404: Bug #100 does not exist.')
+            self.assertEqual(tracker._logins_left, 4)
+
+    def test_add_attachment_refused_login(self):
+        def refused_login(mock, url, id, credentials, data):
+            response = error_response(url, 401, 300, 'The username or password you entered is not valid.')
+            response.reason = 'Unauthorized'
+            return response
+
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), patch.object(mocks.Bugzilla, '_post_attachment', refused_login):
+            tracker = bugzilla.Tracker(self.URL)
+            with self.assertRaises(RuntimeError) as caught:
+                tracker.issue(2).add_attachment('notes.txt', b'some notes')
+            self.assertEqual(
+                str(caught.exception),
+                'Bugzilla attachment POST returned 401: The username or password you entered is not valid.',
+            )
+            self.assertEqual(tracker._logins_left, 3)
+
+    def test_add_attachment_refused_without_a_message(self):
+        def refusal(text):
+            def bad_gateway(mock, url, id, credentials, data):
+                response = wkmocks.Response(url=url, status_code=502, text=text)
+                response.reason = 'Server Unavailable'
+                return response
+            return bad_gateway
+
+        for text in ('Bad Gateway', json.dumps(dict(error=True, code=32000)), json.dumps(['Bad Gateway'])):
+            with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch.object(mocks.Bugzilla, '_post_attachment', refusal(text)):
+                tracker = bugzilla.Tracker(self.URL)
+                with self.assertRaises(RuntimeError) as caught:
+                    tracker.issue(2).add_attachment('notes.txt', b'some notes')
+                self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 502: {}'.format(text))
+                self.assertEqual(tracker._logins_left, 4)
+
+    def test_add_attachment_refused_with_an_empty_body(self):
+        def unauthorized(mock, url, id, credentials, data):
+            response = wkmocks.Response(url=url, status_code=401)
+            response.reason = 'Unauthorized'
+            return response
+
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )), patch.object(mocks.Bugzilla, '_post_attachment', unauthorized):
+            tracker = bugzilla.Tracker(self.URL)
+            with self.assertRaises(RuntimeError) as caught:
+                tracker.issue(2).add_attachment('notes.txt', b'some notes')
+            self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 401: Unauthorized')
+            self.assertEqual(tracker._logins_left, 4)
+
+    def test_add_attachment_refused_with_an_empty_body_and_reason(self):
+        def refusal(reason):
+            def unauthorized(mock, url, id, credentials, data):
+                response = wkmocks.Response(url=url, status_code=401)
+                response.reason = reason
+                return response
+            return unauthorized
+
+        for reason in (None, ''):
+            with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch.object(mocks.Bugzilla, '_post_attachment', refusal(reason)):
+                tracker = bugzilla.Tracker(self.URL)
+                with self.assertRaises(RuntimeError) as caught:
+                    tracker.issue(2).add_attachment('notes.txt', b'some notes')
+                self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 401')
+                self.assertEqual(tracker._logins_left, 4)
+
+        # The mock's own answer to an unknown login has no body, and its response carries no reason at all.
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=ATTACHMENT_ISSUES, environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='nobody@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            with self.assertRaises(RuntimeError) as caught:
+                bugzilla.Tracker(self.URL).issue(2).add_attachment('notes.txt', b'some notes')
+            self.assertEqual(str(caught.exception), 'Bugzilla attachment POST returned 401')
+
     def test_watchers(self):
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             self.assertEqual(
@@ -728,6 +903,11 @@ What component in 'WebKit' should the bug be associated with?:
                 'Exhausted login attempts\n'
                 "Failed to add comment to 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1'\n",
             )
+
+            with OutputCapture() as captured, self.assertRaises(RuntimeError) as caught:
+                tracker.issue(1).add_attachment('notes.txt', b'Failed attachment')
+            self.assertEqual(str(caught.exception), 'Exhausted login attempts')
+            self.assertEqual(captured.stderr.getvalue(), '')
 
             with OutputCapture() as captured:
                 self.assertIsNone(tracker.create(

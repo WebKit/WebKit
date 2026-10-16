@@ -22,6 +22,7 @@
 
 import base64
 import calendar
+import mimetypes
 import re
 import sys
 import time
@@ -603,6 +604,34 @@ class Tracker(GenericTracker):
             self.populate(issue, 'comments')
         issue._comments.append(result)
 
+        return result
+
+    def add_attachment(self, issue, name, data, content_type=None, summary=None):
+        content_type = content_type or mimetypes.guess_type(name)[0] or 'application/octet-stream'
+        response = self.session.post(
+            '{}/rest/bug/{}/attachment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+            json=dict(
+                ids=[issue.id],
+                data=base64.b64encode(data).decode('ascii'),
+                file_name=name,
+                summary=summary or name,
+                content_type=content_type,
+            ),
+            timeout=self.timeout,
+        )
+        self._count_failed_login(response)
+        if response.status_code // 100 != 2:
+            try:
+                message = response.json().get('message') or response.text
+            except (AttributeError, ValueError):
+                message = response.text
+            message = message or getattr(response, 'reason', None)
+            description = 'Bugzilla attachment POST returned {}'.format(response.status_code)
+            raise RuntimeError('{}: {}'.format(description, message) if message else description)
+
+        result = Issue.Attachment(name=name, content_type=content_type, contents=data)
+        if issue._attachments is not None:
+            issue._attachments.append(result)
         return result
 
     RELATIONS = ('depends_on', 'blocks', 'regressed_by', 'regressions')

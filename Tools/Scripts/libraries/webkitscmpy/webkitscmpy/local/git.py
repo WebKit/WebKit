@@ -1425,28 +1425,24 @@ class Git(Scm):
         ], cwd=self.root_path).returncode
 
     def modified(self, staged=None):
+        '''Raises subprocess.CalledProcessError when git fails, lists a moved file by both of its names, and never quotes a name.'''
+        diff_command = [self.executable(), '-c', 'diff.renames=false', 'diff']
+
         if staged in [True, False]:
             command = run(
-                [self.executable(), 'diff', '--name-only'] + (['--staged'] if staged else []),
-                capture_output=True, encoding='utf-8', cwd=self.root_path,
+                diff_command + ['--name-only'] + (['--staged'] if staged else []) + ['-z'],
+                capture_output=True, encoding='utf-8', cwd=self.root_path, check=True,
             )
-            if command.returncode:
-                return []
-            return command.stdout.splitlines()
+            return [path for path in command.stdout.split('\0') if path]
 
         # When the user hasn't specified what they're looking for, we need to make some assumptions.
         # If all staged files are added, the user probably wants to include non-staged files too
         command = run(
-            [self.executable(), 'diff', '--name-status', '--staged'],
-            capture_output=True, encoding='utf-8', cwd=self.root_path,
+            diff_command + ['--name-status', '--staged', '-z'],
+            capture_output=True, encoding='utf-8', cwd=self.root_path, check=True,
         )
-        if command.returncode:
-            return []
-        added = set()
-        for line in command.stdout.splitlines():
-            state, file = line.split(None, 1)
-            if state == 'A':
-                added.add(file)
+        fields = command.stdout.split('\0')
+        added = {file for state, file in zip(fields[0::2], fields[1::2]) if state == 'A'}
 
         staged = self.modified(staged=True)
         if set(staged) - added:

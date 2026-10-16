@@ -23,11 +23,12 @@
 import copy
 import os
 import shutil
+import subprocess
 import time
 from datetime import datetime, timezone
 from unittest.mock import patch
 
-from webkitcorepy import LoggerCapture, OutputCapture, run, testing
+from webkitcorepy import LoggerCapture, OutputCapture, run, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import Commit, Contributor, local, mocks, remote
 
@@ -520,6 +521,93 @@ CommitDate: {time_c}
 
             mrepo.staged['modified.txt'] = 'diff'
             self.assertEqual(repo.modified(staged=True), ['added.txt', 'modified.txt'])
+
+    def test_modified_raises_when_name_status_fails(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+            with wkmocks.Subprocess(wkmocks.Subprocess.Route(
+                mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-status', '--staged', '-z',
+                cwd=self.path,
+                completion=wkmocks.ProcessCompletion(returncode=128, stderr='fatal: bad object HEAD\n'),
+            )):
+                with self.assertRaises(subprocess.CalledProcessError) as caught:
+                    repo.modified()
+            self.assertEqual(caught.exception.returncode, 128)
+            self.assertEqual(caught.exception.stderr, 'fatal: bad object HEAD\n')
+
+    def test_modified_raises_when_staged_diff_fails(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+            with wkmocks.Subprocess(wkmocks.Subprocess.Route(
+                mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-only', '--staged', '-z',
+                cwd=self.path,
+                completion=wkmocks.ProcessCompletion(returncode=128, stderr='fatal: index file corrupt\n'),
+            )):
+                with self.assertRaises(subprocess.CalledProcessError) as caught:
+                    repo.modified()
+                self.assertEqual(caught.exception.stderr, 'fatal: index file corrupt\n')
+
+                with self.assertRaises(subprocess.CalledProcessError):
+                    repo.modified(staged=True)
+
+    def test_modified_raises_when_unstaged_diff_fails(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+            with wkmocks.Subprocess(wkmocks.Subprocess.Route(
+                mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-only', '-z',
+                cwd=self.path,
+                completion=wkmocks.ProcessCompletion(returncode=128, stderr='fatal: index file corrupt\n'),
+            )):
+                self.assertEqual(repo.modified(staged=True), [])
+                with self.assertRaises(subprocess.CalledProcessError) as caught:
+                    repo.modified()
+                self.assertEqual(caught.exception.stderr, 'fatal: index file corrupt\n')
+
+                with self.assertRaises(subprocess.CalledProcessError):
+                    repo.modified(staged=False)
+
+    def test_modified_names_files_as_named(self):
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+            mrepo.modified['caf\u00e9.txt'] = 'diff'
+            mrepo.modified['new\nline.txt'] = 'diff'
+            mrepo.modified['untracked.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=False), ['caf\u00e9.txt', 'new\nline.txt'])
+            self.assertEqual(repo.modified(), ['caf\u00e9.txt', 'new\nline.txt'])
+
+            mrepo.staged['quote"d.txt'] = 'added'
+            self.assertEqual(repo.modified(staged=True), ['quote"d.txt'])
+            self.assertEqual(repo.modified(), ['quote"d.txt', 'caf\u00e9.txt', 'new\nline.txt'])
+
+            mrepo.staged['tab\there.txt'] = 'diff'
+            self.assertEqual(repo.modified(), ['quote"d.txt', 'tab\there.txt'])
+
+    def test_modified_lists_both_names_of_a_move(self):
+        commands = []
+
+        def listing(*args, **kwargs):
+            commands.append(args)
+            if '--name-status' in args:
+                return wkmocks.ProcessCompletion(returncode=0, stdout='D\0moved from.txt\0A\0moved\tto.txt\0')
+            return wkmocks.ProcessCompletion(returncode=0, stdout='moved from.txt\0moved\tto.txt\0')
+
+        with mocks.local.Git(self.path) as mrepo, OutputCapture():
+            repo = local.Git(self.path)
+            mrepo.modified['unstaged.txt'] = 'diff'
+            with wkmocks.Subprocess(wkmocks.Subprocess.Route(
+                mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-status', '--staged', '-z',
+                cwd=self.path,
+                generator=listing,
+            ), wkmocks.Subprocess.Route(
+                mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-only', '--staged', '-z',
+                cwd=self.path,
+                generator=listing,
+            )):
+                self.assertEqual(repo.modified(), ['moved from.txt', 'moved\tto.txt'])
+            self.assertEqual(commands, [
+                (mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-status', '--staged', '-z'),
+                (mrepo.executable, '-c', 'diff.renames=false', 'diff', '--name-only', '--staged', '-z'),
+            ])
 
     def test_rebase(self):
         with mocks.local.Git(self.path), OutputCapture():

@@ -319,6 +319,11 @@ class Issue(object):
             return None
         return [attachment for attachment in attachments if attachment.is_patch]
 
+    def add_attachment(self, name, data, content_type=None, summary=None):
+        '''Attaches `data` (bytes) as `name`; `content_type` is guessed from the name and `summary` defaults to the name.
+        Returns the new attachment; raises RuntimeError, carrying the tracker's message, if the tracker refuses it.'''
+        return self.tracker.add_attachment(self, name, data, content_type=content_type, summary=summary)
+
     def add_source_change(self, line):
         parts = line.split(', ')
         parts[-1] = parts[-1][:12]

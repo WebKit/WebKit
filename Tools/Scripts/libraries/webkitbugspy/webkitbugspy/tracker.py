@@ -189,6 +189,9 @@ class Tracker(object):
     def add_comment(self, issue, text):
         raise NotImplementedError()
 
+    def add_attachment(self, issue, name, data, content_type=None, summary=None):
+        raise NotImplementedError()
+
     @property
     def projects(self):
         raise NotImplementedError()
