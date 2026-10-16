@@ -24,8 +24,6 @@
 
 namespace WebCore {
 
-class RenderElement;
-class RenderSVGInlineText;
 class SVGTextMetrics;
 
 enum class AlignmentBaseline : uint8_t;
@@ -41,12 +39,12 @@ public:
     SVGTextLayoutEngineBaseline(const FontCascade&);
 
     float calculateBaselineShift(const Style::ComputedStyle&) const;
-    float calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const;
+    float calculateAlignmentBaselineShift(bool isVerticalText, const Style::ComputedStyle& textStyle) const;
     float calculateGlyphOrientationAngle(bool isVerticalText, const Style::ComputedStyle&, const char32_t& character) const;
     float calculateGlyphAdvanceAndOrientation(bool isVerticalText, const SVGTextMetrics&, float angle, float& xOrientationShift, float& yOrientationShift) const;
 
 private:
-    AlignmentBaseline LEGACY_NODELETE dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const;
+    AlignmentBaseline LEGACY_NODELETE dominantBaselineToAlignmentBaseline(bool isVerticalText, const Style::ComputedStyle&) const;
 
     CheckedRef<const FontCascade> m_font;
 };

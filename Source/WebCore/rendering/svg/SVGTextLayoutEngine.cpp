@@ -429,7 +429,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(const SVGTextLayoutBox& textBox
 
     float lastAngle = 0;
     float baselineShift = baselineLayout.calculateBaselineShift(style);
-    baselineShift -= baselineLayout.calculateAlignmentBaselineShift(m_isVerticalText, text);
+    baselineShift -= baselineLayout.calculateAlignmentBaselineShift(m_isVerticalText, style);
 
     CheckedPtr previousLeafRenderer = textBox.previousLeafRenderer;
     bool followsOtherTextOnLine = previousLeafRenderer && previousLeafRenderer != &text;

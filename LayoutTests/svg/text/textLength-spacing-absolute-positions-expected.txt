@@ -1,0 +1,15 @@
+abc
+abc
+😀😀😀
+😀
+XXXX
+abc
+abc
+
+PASS Absolute x positions are not moved by textLength spacing
+PASS textLength spacing is distributed between the characters of a single chunk
+PASS textLength spacing on a path counts characters, not code units
+PASS textLength with lengthAdjust=spacingAndGlyphs stretches advances and glyphs of a single chunk
+PASS Absolute x positions are not moved by textLength spacingAndGlyphs, the glyphs stretch in place
+PASS Absolute x positions at the natural advances are not moved by textLength spacingAndGlyphs
+

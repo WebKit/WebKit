@@ -55,9 +55,9 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const Style::ComputedS
     );
 }
 
-AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline(bool isVerticalText, const RenderElement& textRenderer) const
+AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline(bool isVerticalText, const Style::ComputedStyle& style) const
 {
-    DominantBaseline baseline = textRenderer.style().dominantBaseline();
+    DominantBaseline baseline = style.dominantBaseline();
     if (baseline == DominantBaseline::Auto) {
         // Per SVG2 and CSS Inline 3, auto maps to alphabetic in horizontal writing
         // modes and to central in vertical writing modes. The CSS Inline 3 spec
@@ -95,14 +95,12 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
     }
 }
 
-float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderSVGInlineText& textRenderer) const
+float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const Style::ComputedStyle& textStyle) const
 {
-    CheckedPtr textRendererParent = textRenderer.parent();
-    ASSERT(textRendererParent);
-
-    AlignmentBaseline baseline = textRenderer.style().alignmentBaseline();
+    // Text has the style of its parent, so this is also the parent's dominant-baseline.
+    AlignmentBaseline baseline = textStyle.alignmentBaseline();
     if (baseline == AlignmentBaseline::Baseline) {
-        baseline = dominantBaselineToAlignmentBaseline(isVerticalText, *textRendererParent);
+        baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textStyle);
         ASSERT(baseline != AlignmentBaseline::Baseline);
     }
 

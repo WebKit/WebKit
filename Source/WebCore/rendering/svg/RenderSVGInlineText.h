@@ -42,6 +42,10 @@ public:
     SVGTextLayoutAttributes* layoutAttributes() LIFETIME_BOUND { return &m_layoutAttributes; }
     const SVGTextLayoutAttributes* layoutAttributes() const LIFETIME_BOUND { return &m_layoutAttributes; }
 
+    // Used by SVGTextLayoutAlgorithm, which measures only when the text or the font changes.
+    bool hasValidTextMetrics() const { return m_hasValidTextMetrics; }
+    void setHasValidTextMetrics(bool value) { m_hasValidTextMetrics = value; }
+
     // computeScalingFactor() returns the font-size scaling factor, ignoring the text-rendering mode.
     // scalingFactor() takes it into account, and thus returns 1 whenever text-rendering is set to 'geometricPrecision'.
     // Therefore if you need access to the vanilla scaling factor, use this method directly (e.g. for non-scaling-stroke).
@@ -71,6 +75,7 @@ private:
     float m_scalingFactor;
     FontCascade m_scaledFont;
     SVGTextLayoutAttributes m_layoutAttributes;
+    bool m_hasValidTextMetrics { false };
 };
 
 } // namespace WebCore

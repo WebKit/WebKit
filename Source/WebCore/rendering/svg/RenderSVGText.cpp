@@ -62,6 +62,7 @@
 #include "SVGResourcesCache.h"
 #include "SVGTextBoxPainter.h"
 #include "SVGTextElement.h"
+#include "SVGTextLayoutAlgorithm.h"
 #include "SVGTextLayoutEngine.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
@@ -155,6 +156,10 @@ static inline std::tuple<SVGTextLayoutAttributes*, SVGTextLayoutAttributes*> fin
 
 inline bool RenderSVGText::shouldHandleSubtreeMutations() const
 {
+    // SVGTextLayoutAlgorithm rebuilds everything except the text metrics on each layout.
+    // FIXME: Switching back to the old path after a layout leaves m_layoutAttributes empty, and the text disappears.
+    if (usesSVGTextLayoutAlgorithm())
+        return false;
     if (beingDestroyed() || !m_hasPerformedLayout) {
         ASSERT(m_layoutAttributes.isEmpty());
         ASSERT(!m_layoutAttributesBuilder.numberOfTextPositioningElements());
@@ -276,6 +281,10 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
 {
     ASSERT(text);
     ASSERT(!beingDestroyed());
+    if (usesSVGTextLayoutAlgorithm()) {
+        setNeedsLayout();
+        return;
+    }
     if (!m_hasPerformedLayout) {
         ASSERT(m_layoutAttributes.isEmpty());
         ASSERT(!m_layoutAttributesBuilder.numberOfTextPositioningElements());
@@ -342,7 +351,25 @@ void RenderSVGText::layout()
         updateCachedBoundariesInParents = true;
     }
 
-    if (!m_hasPerformedLayout) {
+    auto isLayoutSizeChanged = [&] {
+        if (auto* legacyRootObject = lineageOfType<LegacyRenderSVGRoot>(*this).first())
+            return legacyRootObject->isLayoutSizeChanged();
+        if (auto* rootObject = lineageOfType<RenderSVGRoot>(*this).first())
+            return rootObject->isLayoutSizeChanged();
+        return false;
+    };
+
+    if (usesSVGTextLayoutAlgorithm()) {
+        if (!m_hasPerformedLayout || m_needsTextMetricsUpdate || isLayoutSizeChanged() || m_needsTransformUpdate) {
+            // Text renderers remeasure if the on-screen font changed.
+            updateFontInAllDescendants(*this);
+            updateCachedBoundariesInParents = true;
+        }
+        if (m_needsPositioningValuesUpdate)
+            updateCachedBoundariesInParents = true;
+        m_needsTextMetricsUpdate = false;
+        m_needsPositioningValuesUpdate = false;
+    } else if (!m_hasPerformedLayout) {
         // When laying out initially, collect all layout attributes, build the character data map,
         // and propogate resulting SVGLayoutAttributes to all RenderSVGInlineText children in the subtree.
         ASSERT(m_layoutAttributes.isEmpty());
@@ -363,13 +390,7 @@ void RenderSVGText::layout()
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
     } else {
-        bool isLayoutSizeChanged = false;
-        if (auto* legacyRootObject = lineageOfType<LegacyRenderSVGRoot>(*this).first())
-            isLayoutSizeChanged = legacyRootObject->isLayoutSizeChanged();
-        else if (auto* rootObject = lineageOfType<RenderSVGRoot>(*this).first())
-            isLayoutSizeChanged = rootObject->isLayoutSizeChanged();
-
-        if (m_needsTextMetricsUpdate || isLayoutSizeChanged || m_needsTransformUpdate) {
+        if (m_needsTextMetricsUpdate || isLayoutSizeChanged() || m_needsTransformUpdate) {
             // If the root layout size changed (eg. window size changes) or the transform to the root
             // context has changed then recompute the on-screen font size.
             updateFontInAllDescendants(*this);
@@ -381,7 +402,8 @@ void RenderSVGText::layout()
         m_layoutAttributesBuilder.rebuildMetricsForSubtree(*this);
     }
 
-    checkLayoutAttributesConsistency(this, m_layoutAttributes);
+    if (!usesSVGTextLayoutAlgorithm())
+        checkLayoutAttributesConsistency(this, m_layoutAttributes);
 
     // Reduced version of RenderBlock::layoutBlock(), which only takes care of SVG text.
     // All if branches that could cause early exit in RenderBlocks layoutBlock() method are turned into assertions.
@@ -556,12 +578,18 @@ void RenderSVGText::computePerCharacterLayoutInformation()
     if (!hasSVGContent)
         return;
 
-    if (m_layoutAttributes.isEmpty())
+    if (!usesSVGTextLayoutAlgorithm() && m_layoutAttributes.isEmpty())
         return;
 
     CheckedRef lineLayout = *inlineLayout();
     auto [boxes, fragmentsForBoxes] = lineLayout->resetSVGTextFragments();
     ASSERT(!boxes.isEmpty() && boxes[0].isRootInlineBox());
+
+    if (usesSVGTextLayoutAlgorithm()) {
+        SVGTextLayoutAlgorithm { *layoutBox(), boxes, fragmentsForBoxes }.layout();
+        updatePositionAndOverflow(lineLayout->applySVGTextFragments());
+        return;
+    }
 
     SVGTextLayoutEngine characterLayout(m_layoutAttributes, fragmentsForBoxes);
     auto endIndex = layoutCharactersInDisplayBoxes(boxes, 0, &characterLayout);
@@ -570,6 +598,11 @@ void RenderSVGText::computePerCharacterLayoutInformation()
     characterLayout.finishLayout();
 
     updatePositionAndOverflow(lineLayout->applySVGTextFragments());
+}
+
+bool RenderSVGText::usesSVGTextLayoutAlgorithm() const
+{
+    return document().settings().svg2TextLayoutAlgorithmEnabled();
 }
 
 bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

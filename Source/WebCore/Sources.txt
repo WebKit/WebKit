@@ -3212,6 +3212,7 @@ rendering/svg/SVGRenderingContext.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextBoxPainter.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextChunk.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextChunkBuilder.cpp
+rendering/svg/SVGTextLayoutAlgorithm.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutAttributes.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.cpp @header:RenderStyleGetters
 rendering/svg/SVGTextLayoutEngine.cpp @header:RenderStyleGetters

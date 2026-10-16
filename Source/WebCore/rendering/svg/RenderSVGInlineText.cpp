@@ -94,6 +94,7 @@ String RenderSVGInlineText::originalText() const
 void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
 {
     RenderText::setTextInternal(newText, force);
+    m_hasValidTextMetrics = false;
     if (!force)
         setRenderedText(newText);
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
@@ -104,6 +105,8 @@ void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::Co
 {
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
+    if (oldStyle && (oldStyle->writingMode() != style().writingMode() || oldStyle->unicodeBidi() != style().unicodeBidi()))
+        m_hasValidTextMetrics = false;
 
     bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     bool oldPreserves = oldStyle && oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
@@ -225,8 +228,16 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
 
 void RenderSVGInlineText::updateScaledFont()
 {
-    if (computeNewScaledFontForStyle(*this, style(), m_scalingFactor, m_scaledFont))
+    // FIXME: FontCascade comparison also compares the font list, which FontCascadeCache::invalidate() replaces,
+    // so the text metrics are dropped after complex text measurement even if the font did not change.
+    float scalingFactor = 1;
+    FontCascade scaledFont;
+    if (computeNewScaledFontForStyle(*this, style(), scalingFactor, scaledFont))
         m_canUseSimplifiedTextMeasuring = { };
+    if (scalingFactor != m_scalingFactor || scaledFont != m_scaledFont)
+        m_hasValidTextMetrics = false;
+    m_scalingFactor = scalingFactor;
+    m_scaledFont = WTF::move(scaledFont);
 }
 
 float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& renderer)
