@@ -1744,13 +1744,13 @@ void BBQJIT::pushArrayNewFromSegment(ArraySegmentOperation operation, TypeSignat
         if (isRefType(elementType.unpacked())) {
             // A reference has to move whole or the concurrent collector could read a torn JSValue, which
             // a byte-wise copy does not promise.
-            emitCCall(&operationWasmArrayCopyRefs, arguments);
+            emitCCall(&B3::operationGCSafeMemoryMove, arguments);
 
             // emitWriteBarrier() allocates its own scratches, so stage the cell somewhere they cannot take.
             emitMove(dst, Location::fromGPR(wasmScratchGPR));
             emitWriteBarrier(wasmScratchGPR);
         } else
-            emitCCall(&B3::operationMemoryCopy, arguments);
+            emitCCall(&B3::operationMemoryMove, arguments);
 
         isEmpty.link(m_jit);
     }

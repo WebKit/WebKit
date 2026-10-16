@@ -36,12 +36,14 @@ BulkMemoryValue::~BulkMemoryValue() = default;
 
 void BulkMemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "readRange = ", readRange(), comma, "writeRange = ", writeRange());
+    out.print(comma, "readRange = ", readRange(), comma, "writeRange = ", writeRange(), comma, "gcSafe = ", isGCSafe());
 }
 
-BulkMemoryValue::BulkMemoryValue(Kind kind, Origin origin, Value* child0, Value* child1, Value* child2)
+BulkMemoryValue::BulkMemoryValue(Kind kind, Origin origin, Value* child0, Value* child1, Value* child2, bool isGCSafe)
     : Value(CheckedOpcode, kind, Void, Three, origin, child0, child1, child2)
+    , m_isGCSafe(isGCSafe)
 {
+    ASSERT(!isGCSafe || kind == MemoryMove);
 }
 
 } } // namespace JSC::B3

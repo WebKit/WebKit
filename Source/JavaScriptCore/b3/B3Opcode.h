@@ -290,8 +290,9 @@ enum Opcode : uint8_t {
     // We do WasmAddress(ZExt32(ptr), ...) so that we can avoid generating extraneous moves in Air.
     WasmAddress,
 
-    // This is used for Wasm bulk memory operation `memory.copy`
-    MemoryCopy,
+    // This is used for Wasm bulk memory operation `memory.copy`. The ranges may overlap and the
+    // result is as if the source were copied to a temporary first, as with memmove.
+    MemoryMove,
 
     // This is used for Wasm bulk memory operation `memory.fill`
     MemoryFill,

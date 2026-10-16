@@ -1685,12 +1685,12 @@ void testUMulHigh32()
     }
 }
 
-void testMemoryCopy()
+void testMemoryMove()
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     auto arguments = cCallArgumentValues<void*, void*, void*>(proc, root);
-    root->appendNew<BulkMemoryValue>(proc, MemoryCopy, Origin(), arguments[0], arguments[1], arguments[2]);
+    root->appendNew<BulkMemoryValue>(proc, MemoryMove, Origin(), arguments[0], arguments[1], arguments[2]);
     root->clearSuccessors();
     root->appendNew<Value>(proc, Return, Origin());
 
@@ -1730,7 +1730,7 @@ void testMemoryCopy()
     }
 }
 
-void testMemoryCopyConstant()
+void testMemoryMoveConstant()
 {
     Vector<uint8_t> src(4096 + 1024);
     Vector<uint8_t> dst(4096 + 1024);
@@ -1739,7 +1739,7 @@ void testMemoryCopyConstant()
         Procedure proc;
         BasicBlock* root = proc.addBlock();
         auto arguments = cCallArgumentValues<void*, void*>(proc, root);
-        root->appendNew<BulkMemoryValue>(proc, MemoryCopy, Origin(), arguments[0], arguments[1], root->appendIntConstant(proc, Origin(), pointerType(), width));
+        root->appendNew<BulkMemoryValue>(proc, MemoryMove, Origin(), arguments[0], arguments[1], root->appendIntConstant(proc, Origin(), pointerType(), width));
         root->clearSuccessors();
         root->appendNew<Value>(proc, Return, Origin());
         auto code = compileProc(proc);
@@ -1813,6 +1813,39 @@ void testMemoryFillConstant()
             for (unsigned i = 0; i < width; ++i)
                 CHECK_EQ(src[i], static_cast<uint8_t>(a.value));
             CHECK_EQ(src[width], 0);
+        }
+    }
+}
+
+void testGCSafeMemoryMove()
+{
+    Vector<uint64_t> src(512 + 8);
+    for (unsigned words = 0; words <= 192; ++words) {
+        for (bool isConstant : { false, true }) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<void*, void*, size_t>(proc, root);
+            Value* count = isConstant ? root->appendIntConstant(proc, Origin(), pointerType(), words * 8) : static_cast<Value*>(root->appendNew<Value>(proc, Mul, Origin(), arguments[2], root->appendIntConstant(proc, Origin(), pointerType(), 8)));
+            root->appendNew<BulkMemoryValue>(proc, MemoryMove, Origin(), arguments[0], arguments[1], count, true);
+            root->clearSuccessors();
+            root->appendNew<Value>(proc, Return, Origin());
+            auto code = compileProc(proc);
+
+            for (unsigned shift : { 0u, 1u, 3u }) {
+                for (unsigned i = 0; i < src.size(); ++i)
+                    src[i] = i;
+                invoke<void>(*code, src.mutableSpan().data() + shift, src.span().data(), static_cast<uintptr_t>(words));
+                for (unsigned i = 0; i < words; ++i)
+                    CHECK_EQ(src[i + shift], i);
+                CHECK_EQ(src[words + shift], words + shift);
+
+                for (unsigned i = 0; i < src.size(); ++i)
+                    src[i] = i;
+                invoke<void>(*code, src.mutableSpan().data(), src.span().data() + shift, static_cast<uintptr_t>(words));
+                for (unsigned i = 0; i < words; ++i)
+                    CHECK_EQ(src[i], i + shift);
+                CHECK_EQ(src[words], words);
+            }
         }
     }
 }

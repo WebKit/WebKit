@@ -35,7 +35,7 @@ namespace JSC::B3 {
 
 class JS_EXPORT_PRIVATE BulkMemoryValue final : public Value {
 public:
-    static bool accepts(Kind kind) { return kind == MemoryCopy || kind == MemoryFill; }
+    static bool accepts(Kind kind) { return kind == MemoryMove || kind == MemoryFill; }
 
     ~BulkMemoryValue() final;
 
@@ -44,6 +44,10 @@ public:
 
     const HeapRange& writeRange() const { return m_writeRange; }
     void setWriteRange(const HeapRange& range) { m_writeRange = range; }
+
+    // A GC safe MemoryMove copies whole, 8-byte aligned words, so a concurrent collector never sees
+    // a torn JSValue. Its count is a multiple of 8.
+    bool isGCSafe() const { return m_isGCSafe; }
 
     B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(3)
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
@@ -54,10 +58,11 @@ private:
     friend class Procedure;
     friend class Value;
 
-    BulkMemoryValue(Kind, Origin, Value*, Value*, Value*);
+    BulkMemoryValue(Kind, Origin, Value*, Value*, Value*, bool isGCSafe = false);
 
     HeapRange m_readRange { HeapRange::top() };
     HeapRange m_writeRange { HeapRange::top() };
+    bool m_isGCSafe { false };
 };
 
 } // namespace JSC::B3

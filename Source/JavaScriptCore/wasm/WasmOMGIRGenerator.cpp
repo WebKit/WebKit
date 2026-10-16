@@ -2312,7 +2312,7 @@ void OMGIRGenerator::emitMemoryCopy(Value* dstAddressValue, Value* srcAddressVal
         }
 
         m_currentBlock->appendNew<BulkMemoryValue>(
-            m_proc, MemoryCopy, origin(),
+            m_proc, MemoryMove, origin(),
             m_currentBlock->appendNew<WasmAddressValue>(m_proc, origin(), dstAddressValue, GPRInfo::wasmBaseMemoryPointer),
             m_currentBlock->appendNew<WasmAddressValue>(m_proc, origin(), srcAddressValue, GPRInfo::wasmBaseMemoryPointer),
             countValue);
@@ -4178,11 +4178,10 @@ auto OMGIRGenerator::addArrayCopy(TypeSignatureIndex dstTypeIndex, TypedExpressi
         Value* byteCount = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), pointerOfInt32(sizeValue),
             m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementSize));
 
-        if (isRefType(elementType.unpacked())) {
-            callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayCopyRefs, dstAddress, srcAddress, byteCount);
+        bool isRef = isRefType(elementType.unpacked());
+        m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryMove, origin(), dstAddress, srcAddress, byteCount, isRef);
+        if (isRef)
             emitWriteBarrier(pointerOfWasmRef(dstValue));
-        } else
-            m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryCopy, origin(), dstAddress, srcAddress, byteCount);
     }
     m_currentBlock->setSuccessors(continuation);
     m_currentBlock->appendNew<Value>(m_proc, Jump, origin());

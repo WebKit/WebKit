@@ -1802,11 +1802,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillRefs, void, (uint64_t* p
     gcSafeMemfill(payload, value, elementCount * sizeof(uint64_t));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopyRefs, void, (uint64_t* dst, const uint64_t* src, size_t byteCount))
-{
-    gcSafeMemmove(dst, src, byteCount);
-}
-
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue dst, uint32_t dstOffset, uint32_t srcElementIndex, uint32_t srcOffset, uint32_t size))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);

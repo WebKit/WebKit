@@ -138,7 +138,6 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill4B, void, (void* payloa
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill8B, void, (void* payload, uint64_t value, size_t elementCount));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill16B, void, (void* payload, uint64_t lane0, uint64_t lane1, size_t elementCount));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillRefs, void, (uint64_t* payload, uint64_t value, size_t elementCount));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopyRefs, void, (uint64_t* dst, const uint64_t* src, size_t byteCount));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitData, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue));

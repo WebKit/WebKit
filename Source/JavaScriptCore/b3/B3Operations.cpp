@@ -26,6 +26,7 @@
 #include "config.h"
 #include "B3Operations.h"
 
+#include "GCMemoryOperations.h"
 #include <wtf/Int128.h>
 #include <wtf/UnalignedAccess.h>
 
@@ -55,7 +56,7 @@ ALWAYS_INLINE void fillOverlappingEnds(uint8_t* dst, T value, size_t count)
 
 } // namespace
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryCopy, void, (void* dst, const void* src, size_t count))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryMove, void, (void* dst, const void* src, size_t count))
 {
     // Short copies dominate this operation, because memory.copy is what a compiler targeting wasm
     // emits for memcpy. libc's memmove spends more on dispatching by size than a short copy costs,
@@ -91,6 +92,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t
         return;
     }
     memset(dst, target, count);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGCSafeMemoryMove, void, (void* dst, const void* src, size_t byteCount))
+{
+    gcSafeMemmove(static_cast<uint64_t*>(dst), static_cast<const uint64_t*>(src), byteCount);
 }
 
 } // namespace JSC::B3

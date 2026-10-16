@@ -30,6 +30,7 @@
 
 #include "AirArg.h"
 #include "B3BlockInsertionSet.h"
+#include "B3BulkMemoryValue.h"
 #include "B3CCallValue.h"
 #include "B3ConstDoubleValue.h"
 #include "B3ConstFloatValue.h"
@@ -205,8 +206,12 @@ private:
                 break;
             }
 
-            case MemoryCopy: {
-                Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationMemoryCopy));
+            case MemoryMove: {
+                Value* functionAddress;
+                if (m_value->as<BulkMemoryValue>()->isGCSafe())
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationGCSafeMemoryMove));
+                else
+                    functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(operationMemoryMove));
                 Value* result = m_insertionSet.insert<CCallValue>(
                     m_index,
                     m_value->type(),

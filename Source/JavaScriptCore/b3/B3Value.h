@@ -584,7 +584,7 @@ protected:
         case VectorRelaxedNMAdd:
         case VectorRelaxedLaneSelect:
         case MemoryFill:
-        case MemoryCopy:
+        case MemoryMove:
         case VectorRelaxedDotI8x16I7x16Add:
             return 3 * sizeof(Value*);
         case WasmArrayNew:
@@ -840,7 +840,7 @@ private:
         case VectorRelaxedNMAdd:
         case VectorRelaxedLaneSelect:
         case VectorRelaxedDotI8x16I7x16Add:
-        case MemoryCopy:
+        case MemoryMove:
         case MemoryFill:
             if (numArgs != 3) [[unlikely]]
                 badKind(kind, numArgs);

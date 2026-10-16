@@ -1545,10 +1545,11 @@ void run(const TestConfig* config)
         RUN(testMulHigh64());
         RUN(testUMulHigh32());
         RUN(testUMulHigh64());
-        RUN(testMemoryCopy());
+        RUN(testMemoryMove());
         RUN(testMemoryFill());
-        RUN(testMemoryCopyConstant());
+        RUN(testMemoryMoveConstant());
         RUN(testMemoryFillConstant());
+        RUN(testGCSafeMemoryMove());
     }
 
     Lock lock;

@@ -185,7 +185,7 @@ ALWAYS_INLINE bool Value::mustExecute() const
     case Store16: \
     case Store: \
         return MACRO(MemoryValue); \
-    case MemoryCopy: \
+    case MemoryMove: \
     case MemoryFill: \
         return MACRO(BulkMemoryValue); \
     case Switch: \

@@ -5012,7 +5012,7 @@ private:
             return;
         }
 
-        case MemoryCopy:
+        case MemoryMove:
         case MemoryFill: {
             // They should be lowered already.
             RELEASE_ASSERT_NOT_REACHED();

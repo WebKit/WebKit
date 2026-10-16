@@ -281,7 +281,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case WasmArrayGet:
     case WasmArraySet:
     case WasmArrayNew:
-    case MemoryCopy:
+    case MemoryMove:
     case MemoryFill:
     case Fence:
     case CCall:

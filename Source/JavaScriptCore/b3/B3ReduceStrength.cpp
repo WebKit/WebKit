@@ -2804,7 +2804,7 @@ private:
             break;
         }
 
-        case MemoryCopy: {
+        case MemoryMove: {
             if (m_value->child(2)->hasInt()) {
                 auto* memoryCopy = m_value->as<BulkMemoryValue>();
                 uint64_t count = m_value->child(2)->asInt();
@@ -2813,7 +2813,11 @@ private:
                     int32_t offset = 0;
                     Vector<MemoryValue*, 16> loads;
 
-                    if (count >= 16 && m_proc.usesSIMD()) {
+                    // Only 64-bit accesses are known to be single-copy atomic per word on every target.
+                    if (memoryCopy->isGCSafe())
+                        RELEASE_ASSERT(!(count % sizeof(uint64_t)));
+
+                    if (count >= 16 && !memoryCopy->isGCSafe() && m_proc.usesSIMD()) {
                         while (count >= 16) {
                             MemoryValue* load = m_insertionSet.insert<MemoryValue>(m_index, Load, V128, m_value->origin(), m_value->child(1), offset);
                             load->setRange(memoryCopy->readRange());
@@ -2891,7 +2895,6 @@ private:
                 constexpr uint64_t threshold = 128;
                 if (count <= threshold) {
                     int32_t offset = 0;
-
                     if (count >= 16 && m_proc.usesSIMD()) {
                         uint64_t mask64 = target << 56 | target << 48 | target << 40 | target << 32 | target << 24 | target << 16 | target << 8 | target << 0;
                         v128_t mask { mask64, mask64 };

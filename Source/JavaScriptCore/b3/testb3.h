@@ -1505,10 +1505,11 @@ void testMulHigh64();
 void testUMulHigh32();
 void testUMulHigh64();
 
-void testMemoryCopy();
-void testMemoryCopyConstant();
+void testMemoryMove();
+void testMemoryMoveConstant();
 void testMemoryFill();
 void testMemoryFillConstant();
+void testGCSafeMemoryMove();
 
 void testLoadImmutable();
 
