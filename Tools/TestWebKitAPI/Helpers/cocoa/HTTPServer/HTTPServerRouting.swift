@@ -28,6 +28,8 @@ struct HTTPResponseData: Sendable {
         case sendResponseNormally
         case terminateConnectionAfterReceivingRequest
         case neverSendResponse
+        // Declares one more byte than the body has, so the response never finishes.
+        case neverFinishResponse
     }
 
     var statusCode: UInt = 200

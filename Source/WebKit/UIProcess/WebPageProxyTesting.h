@@ -28,6 +28,9 @@
 #include "MessageSender.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -56,6 +59,10 @@ public:
     void setPermissionLevel(const String& origin, bool allowed);
     bool isEditingCommandEnabled(const String& commandName);
     void resetStateBetweenTests();
+
+    using NavigationResponseProcessSwapReplyHandler = Function<void(bool swapsProcess, Function<void()>&& sendReply)>;
+    void setNavigationResponseProcessSwapReplyHandler(NavigationResponseProcessSwapReplyHandler&& handler) { m_navigationResponseProcessSwapReplyHandler = WTF::move(handler); }
+    CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)> holdNavigationResponseProcessSwapReply(CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     void screenIsBeingCaptured(WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
@@ -109,6 +116,7 @@ private:
 
     WeakRef<WebPageProxy> m_page;
     std::optional<unsigned> m_displayNominalFramesPerSecondOverride;
+    NavigationResponseProcessSwapReplyHandler m_navigationResponseProcessSwapReplyHandler;
 };
 
 } // namespace WebKit
