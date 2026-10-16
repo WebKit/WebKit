@@ -19,6 +19,17 @@ function performActions() {
     webGLContext.readPixels(0, 0, 1, 1, webGLContext.RGBA, webGLContext.UNSIGNED_BYTE, pixels);
     TestPage.addResult("readPixels() filled its destination: " + pixels.some((component) => component));
 
+    let texture = webGLContext.createTexture();
+    webGLContext.bindTexture(webGLContext.TEXTURE_2D, texture);
+    webGLContext.texImage2D(webGLContext.TEXTURE_2D, 0, webGLContext.RGBA, 2, 2, 0, webGLContext.RGBA, webGLContext.UNSIGNED_BYTE, null);
+    webGLContext.bindTexture(webGLContext.TEXTURE_2D, null);
+    webGLContext.bindBuffer(webGLContext.ARRAY_BUFFER, null);
+    webGLContext.bindFramebuffer(webGLContext.FRAMEBUFFER, null);
+    webGLContext.bindRenderbuffer(webGLContext.RENDERBUFFER, null);
+    webGLContext.uniform1f(null, 2.5);
+    webGLContext.useProgram(null);
+    TestPage.addResult("Unbinding and texture allocation produce no WebGL error: " + (webGLContext.getError() === webGLContext.NO_ERROR));
+
     setTimeout(() => TestPage.dispatchEventToFrontend("LastFrame"), 0);
 }
 
@@ -38,9 +49,26 @@ function test() {
         name: "Canvas.recordingWebGLPreservesArguments.readPixels",
         description: "Check that recording an action leaves its typed array argument for the context to use.",
         test(resolve, reject) {
-            function checkRecording(recording) {
+            async function checkRecording(recording) {
                 let actions = recording.frames.flatMap((frame) => frame.actions);
                 InspectorTest.expectTrue(actions.some((action) => action.name === "readPixels"), "The recording should contain the readPixels() action.");
+
+                let allocation = actions.find((action) => action.name === "texImage2D");
+                InspectorTest.expectEqual(allocation.parameters[8], null, "Texture allocation should retain the null pixel source.");
+
+                let boundTexture = actions.find((action) => action.name === "bindTexture");
+                InspectorTest.expectGreaterThan(boundTexture.parameters[1], 0, "A non-null texture should retain its object identifier.");
+
+                for (let name of ["bindBuffer", "bindFramebuffer", "bindRenderbuffer", "bindTexture"]) {
+                    let action = actions.findLast((action) => action.name === name);
+                    InspectorTest.expectEqual(action.parameters[1], null, `${name} should retain its null binding.`);
+                }
+
+                let uniform = actions.find((action) => action.name === "uniform1f");
+                InspectorTest.expectShallowEqual(uniform.parameters, [null, 2.5], "A missing uniform should not shift the recorded numeric argument.");
+
+                let program = actions.find((action) => action.name === "useProgram");
+                InspectorTest.expectShallowEqual(program.parameters, [null], "Unbinding a program should retain its null argument.");
             }
 
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1, callback: checkRecording});

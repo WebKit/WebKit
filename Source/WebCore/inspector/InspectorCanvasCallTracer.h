@@ -69,13 +69,17 @@ public:
         if (!inspectorCanvas)
             return std::nullopt;
 
+        using Processor = InspectorCanvasArgumentProcessor<IDLType>;
+
         if constexpr (WTF::IsTemplate<IDLType, IDLNullable>::value || WTF::IsTemplate<IDLType, IDLOptional>::value) {
-            if (!argument)
+            if (!argument) {
+                if constexpr (WTF::IsTemplate<IDLType, IDLNullable>::value)
+                    return Processor { }(*inspectorCanvas, argument);
                 return std::nullopt;
+            }
             return processArgument<typename IDLType::InnerType>(device, *argument);
         }
 
-        using Processor = InspectorCanvasArgumentProcessor<IDLType>;
         return Processor { }(*inspectorCanvas, std::forward<ArgumentType>(argument));
     }
 

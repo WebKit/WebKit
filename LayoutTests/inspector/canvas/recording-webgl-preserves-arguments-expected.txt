@@ -4,5 +4,14 @@ Test that CanvasManager does not consume the typed array arguments it records.
 == Running test suite: Canvas.recordingWebGLPreservesArguments
 -- Running test case: Canvas.recordingWebGLPreservesArguments.readPixels
 readPixels() filled its destination: true
+Unbinding and texture allocation produce no WebGL error: true
 PASS: The recording should contain the readPixels() action.
+PASS: Texture allocation should retain the null pixel source.
+PASS: A non-null texture should retain its object identifier.
+PASS: bindBuffer should retain its null binding.
+PASS: bindFramebuffer should retain its null binding.
+PASS: bindRenderbuffer should retain its null binding.
+PASS: bindTexture should retain its null binding.
+PASS: A missing uniform should not shift the recorded numeric argument.
+PASS: Unbinding a program should retain its null argument.
 

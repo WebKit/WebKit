@@ -124,7 +124,7 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<I
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         if (!value)
-            return std::nullopt;
+            return { { context.valueIndexForData("null"_s), RecordingSwizzleType::JSON } };
         return InspectorCanvasArgumentProcessor<IDLInterface<IDLType>>{}(context, *value);
     }
 };
@@ -133,7 +133,7 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<I
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         if (!value)
-            return std::nullopt;
+            return { { context.valueIndexForData("null"_s), RecordingSwizzleType::JSON } };
         InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLType>> processor;
         // BufferSource is std::optional, Typed Arrays are RefPtr.
         if constexpr (requires { value.has_value(); })
@@ -173,7 +173,14 @@ template<typename IDLType> struct InspectorCanvasNullableArgumentProcessor {
     }
 };
 
-template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLType>> : InspectorCanvasNullableArgumentProcessor<IDLType> { };
+template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLType>> : InspectorCanvasNullableArgumentProcessor<IDLType> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
+    {
+        if (IDLType::isNullValue(value))
+            return { { context.valueIndexForData("null"_s), RecordingSwizzleType::JSON } };
+        return InspectorCanvasNullableArgumentProcessor<IDLType> { }(context, value);
+    }
+};
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLOptional<IDLType>> : InspectorCanvasNullableArgumentProcessor<IDLType> { };
 
