@@ -29,6 +29,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKTextExtraction.h>
+#import <WebKit/_WKTextManipulationItem.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 
 #if !__has_feature(modules) || (defined(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP) && WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)
@@ -792,6 +793,14 @@ struct LiveResizeSnapshotState {
 
 - (void)_insertAttachmentWithFileWrapperAsync:(NSFileWrapper *)fileWrapper contentType:(nullable NSString *)contentType completion:(void(^)(_WKAttachment *))completionHandler;
 
+@end
+
+@interface WKWebView (WKTextManipulationInternal)
+- (CGRect)_webViewRectForTextManipulationMainFrameRect:(CGRect)mainFrameBoundingRect;
+@end
+
+@interface _WKTextManipulationItem (WKInternal)
+- (void)_setWebView:(WKWebView *)webView mainFrameBoundingRect:(CGRect)mainFrameBoundingRect;
 @end
 
 @interface WKWebView (WKTextExtraction)

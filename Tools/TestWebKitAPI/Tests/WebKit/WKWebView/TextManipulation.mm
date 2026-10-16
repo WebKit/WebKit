@@ -941,9 +941,8 @@ static RetainPtr<NSArray<_WKTextManipulationItem *>> findTextManipulationItemsWi
     return findTextManipulationItems(webView, delegate);
 }
 
-static void loadAndScrollTo(TestWKWebView *webView, NSString *html, CGFloat y)
+static void scrollMainFrameTo(TestWKWebView *webView, CGFloat y)
 {
-    [webView synchronouslyLoadHTMLString:html];
     [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"scrollTo(0, %f)", y]];
     [webView waitForNextPresentationUpdate];
 }
@@ -994,15 +993,17 @@ TEST(TextManipulation, WebViewBoundingRectAfterScrolling)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadHTMLString:boundingRectHTML];
 
-    RetainPtr itemsBeforeScrolling = findTextManipulationItemsWithNewDelegate(webView);
-    CGRect firstBeforeScrolling = webViewBoundingRectForItemContaining(itemsBeforeScrolling, @"First text");
-    CGRect secondBeforeScrolling = webViewBoundingRectForItemContaining(itemsBeforeScrolling, @"Second text");
-
-    loadAndScrollTo(webView, boundingRectHTML, 1000);
-
     RetainPtr items = findTextManipulationItemsWithNewDelegate(webView);
+    CGRect firstBeforeScrolling = webViewBoundingRectForItemContaining(items, @"First text");
+    CGRect secondBeforeScrolling = webViewBoundingRectForItemContaining(items, @"Second text");
+
+    scrollMainFrameTo(webView, 1000);
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"First text"), firstBeforeScrolling, 0, -1000);
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"Second text"), secondBeforeScrolling, 0, -1000);
+
+    scrollMainFrameTo(webView, 0);
+    expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"First text"), firstBeforeScrolling, 0, 0);
+    expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"Second text"), secondBeforeScrolling, 0, 0);
 }
 
 #if PLATFORM(MAC)
@@ -1024,9 +1025,7 @@ TEST(TextManipulation, WebViewBoundingRectWithObscuredContentInsets)
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"First text"), firstReference, 0, 75);
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"Second text"), secondReference, 0, 75);
 
-    loadAndScrollTo(webView, boundingRectHTML, 1000);
-
-    items = findTextManipulationItemsWithNewDelegate(webView);
+    scrollMainFrameTo(webView, 1000);
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"First text"), firstReference, 0, 75 - 1000);
     expectRectIsOffsetBy(webViewBoundingRectForItemContaining(items, @"Second text"), secondReference, 0, 75 - 1000);
 }
