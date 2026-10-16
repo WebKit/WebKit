@@ -249,6 +249,7 @@ class Manager(object):
             if device_type is None:
                 device_type = self._port.supported_device_types()[0]
             self._port.setup_test_run(device_type=device_type)
+            self._port.install_api_tests()
         elif 'device' in self._port.port_name:
             raise RuntimeError(f'Running api tests on {self._port.port_name} is not supported')
 
