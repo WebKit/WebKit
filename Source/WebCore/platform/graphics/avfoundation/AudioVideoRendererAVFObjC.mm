@@ -316,7 +316,7 @@ void AudioVideoRendererAVFObjC::enqueueSample(TrackIdentifier trackId, Ref<Media
             videoRenderer->enqueueSample(sample, minimumUpcomingTime);
             if (!m_hasEverSubmittedVideoSample) {
                 m_hasEverSubmittedVideoSample = true;
-                m_previousRendererConfiguration.isRenderingCompressedVideo = !isUsingDecompressionSession();
+                m_previousRendererConfiguration.isRenderingCompressedVideo = !isUsingDecompressionSession() && !isReceivingDecodedSamples();
             }
         }
         break;
@@ -1807,6 +1807,11 @@ bool AudioVideoRendererAVFObjC::isUsingDecompressionSession() const
     return m_videoRenderer && m_videoRenderer->isUsingDecompressionSession();
 }
 
+bool AudioVideoRendererAVFObjC::isReceivingDecodedSamples() const
+{
+    return m_videoRenderer && m_videoRenderer->isReceivingDecodedSamples();
+}
+
 bool AudioVideoRendererAVFObjC::willUseDecompressionSessionIfNeeded() const
 {
     if (!canUseDecompressionSession())
@@ -1822,7 +1827,7 @@ Ref<GenericPromise> AudioVideoRendererAVFObjC::stageVideoRenderer(WebSampleBuffe
     RefPtr videoRenderer = m_videoRenderer;
 
     RendererConfiguration newConfiguration {
-        .isRenderingCompressedVideo = !!renderer && !willUseDecompressionSessionIfNeeded() && m_hasEverSubmittedVideoSample
+        .isRenderingCompressedVideo = !!renderer && !willUseDecompressionSessionIfNeeded() && !isReceivingDecodedSamples() && m_hasEverSubmittedVideoSample
     };
     if (renderer == videoRenderer->renderer()) {
         if (std::exchange(m_previousRendererConfiguration, newConfiguration) != newConfiguration && renderer)

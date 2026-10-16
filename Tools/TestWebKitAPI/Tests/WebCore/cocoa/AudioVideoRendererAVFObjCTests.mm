@@ -207,6 +207,29 @@ TEST_F(AudioVideoRendererAVFObjCTest, NoFlushWithDecompressionSessionForProtecte
     EXPECT_EQ(errorCount, 0);
 }
 
+// A sample holding an image buffer is already decoded: it bypasses the decompression session.
+TEST_F(AudioVideoRendererAVFObjCTest, AlreadyDecodedVideoSampleIsDisplayedWithoutDecompressionSession)
+{
+    ASSERT_TRUE(videoTrackId.has_value());
+
+    bool hasFirstFrame = false;
+    renderer->notifyFirstFrameAvailable([&] {
+        hasFirstFrame = true;
+    });
+    renderer->renderingCanBeAcceleratedChanged(true);
+
+    enqueueVideoSample();
+    Util::runFor(0.5_s);
+
+    EXPECT_TRUE(hasFirstFrame);
+    EXPECT_EQ(flushToResumeCount, 0);
+    EXPECT_EQ(errorCount, 0);
+
+    renderer->flushTrack(*videoTrackId);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(errorCount, 0);
+}
+
 // prepareToSeek's fast path is taken when the destination is within 1ms of the synchronizer's
 // current time: the synchronizer isn't moved and no time jumped notification is awaited. These
 // tests use an audio-only renderer because that is the only way to make

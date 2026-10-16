@@ -78,6 +78,8 @@ public:
     bool LEGACY_NODELETE prefersDecompressionSession() const;
     void LEGACY_NODELETE setPreferences(Preferences);
     bool isUsingDecompressionSession() const { return m_isUsingDecompressionSession; }
+    bool managesDecodedFrames() const { return m_isUsingDecompressionSession || m_isReceivingDecodedSamples; }
+    bool isReceivingDecodedSamples() const { return m_lastEnqueuedSampleWasDecoded; }
 
     void setTimebase(RetainPtr<CMTimebaseRef>&&);
     RetainPtr<CMTimebaseRef> timebase() const;
@@ -142,6 +144,7 @@ private:
     void resetReadyForMoreMediaData();
     void resolveRequestMediaDataIfNeeded();
     void initializeDecompressionSession();
+    void enqueueAlreadyDecodedSample(const MediaSample&);
     void decodeNextSampleIfNeeded();
     using FlushId = int;
     void decodedFrameAvailable(Ref<const MediaSample>&&, FlushId);
@@ -217,6 +220,8 @@ private:
     bool m_decompressionSessionBlocked WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
     bool m_decompressionSessionWasBlocked { false };
     std::atomic<bool> m_isUsingDecompressionSession { false };
+    std::atomic<bool> m_isReceivingDecodedSamples { false };
+    std::atomic<bool> m_lastEnqueuedSampleWasDecoded { false };
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_isDisplayingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_forceLateSampleToBeDisplayed WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };

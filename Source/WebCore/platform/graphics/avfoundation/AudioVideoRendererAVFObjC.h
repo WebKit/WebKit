@@ -261,6 +261,7 @@ private:
 
     bool LEGACY_NODELETE canUseDecompressionSession() const;
     bool LEGACY_NODELETE isUsingDecompressionSession() const;
+    bool LEGACY_NODELETE isReceivingDecodedSamples() const;
     bool LEGACY_NODELETE willUseDecompressionSessionIfNeeded() const;
 
     void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
