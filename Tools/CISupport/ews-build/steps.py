@@ -5994,13 +5994,24 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
         yield self._addToLog('json', '\n')
         results = self.parse_api_test_json(self.log_observer_json.getStdout().rstrip())
         failures = self.api_failures_from_json(results)
+        flakies = sorted(f.get('name') for f in results.get('Flakies', []) if f.get('name'))
         if results.get('results'):
             self.setProperty(f'{self.suffix}_results', results['results'])
+        if results.get('flaky_results'):
+            self.setProperty(f'{self.suffix}_flaky_results', results['flaky_results'])
         self.setProperty(f'{self.suffix}_failures', sorted(failures))
+        self.setProperty(f'{self.suffix}_flakies', flakies)
         defer.returnValue(failures)
 
     @defer.inlineCallbacks
     def analyze_failures_using_results_db(self, failures):
+        flaky_results = self.getProperty(f'{self.suffix}_flaky_results') or {}
+        if flaky_results:
+            yield self.report_to_results_db(
+                flaky_results,
+                flaky_type=ResultsDatabase.WITHIN_STEP_DIRTY_TREE,
+                stage='with-change',
+            )
         if failures:
             yield self._addToLog(self.test_failures_log_name, '\n'.join(failures))
             yield self.filter_api_test_failures_using_results_db(failures)

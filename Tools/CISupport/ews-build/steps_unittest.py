@@ -7801,6 +7801,18 @@ Expected failures (not blocking):
         self.expect_outcome(result=FAILURE, state_string='2 api tests failed or timed out')
         return self.run_step()
 
+    def test_run_api_tests_parses_flakies_from_json(self):
+        step = RunAPITests()
+        json_blob = json.dumps({
+            'Flakies': [{'name': 'TestWebKitAPI.FooTests.Flaky', 'output': 'first-run output', 'status': 'Failed'}],
+            'Failed': [],
+            'Crashed': [],
+            'Timedout': [],
+            'results': {},
+        })
+        parsed = step.parse_api_test_json(json_blob)
+        self.assertEqual(parsed['Flakies'][0]['name'], 'TestWebKitAPI.FooTests.Flaky')
+
 
 class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
