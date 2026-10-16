@@ -245,8 +245,9 @@ header: <WebCore/MediaPlayer.h>
     UseDecompressionSessionForProtectedContent,
     UseStereoDecoding,
 #if PLATFORM(IOS_FAMILY)
-    CanShowWhileLocked
+    CanShowWhileLocked,
 #endif
+    DecoderInContentProcess
 };
 
 header: <WebCore/MediaPlayer.h>

@@ -81,10 +81,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateWebM);
 
 static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 
-Ref<AudioVideoRenderer> MediaPlayerPrivateWebM::createRenderer(LoggerHelper& loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier)
+Ref<AudioVideoRenderer> MediaPlayerPrivateWebM::createRenderer(LoggerHelper& loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier, VideoRendererPreferences preferences)
 {
     RELEASE_ASSERT(hasPlatformStrategies());
-    RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(&loggerHelper, mediaElementIdentifier, playerIdentifier);
+    RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(&loggerHelper, mediaElementIdentifier, playerIdentifier, preferences);
     // Can't return nullptr on Cocoa.
     return renderer.releaseNonNull();
 }
@@ -104,7 +104,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer& player)
     , m_rendererSeekRequest(NativePromiseRequest::create())
     , m_stallRequest(NativePromiseRequest::create())
     , m_playerIdentifier(MediaPlayerIdentifier::generate())
-    , m_renderer(createRenderer(*this, player.clientIdentifier(), m_playerIdentifier))
+    , m_renderer(createRenderer(*this, player.clientIdentifier(), m_playerIdentifier, player.videoRendererPreferences()))
     , m_runningQueue(m_appendQueue.get())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -299,8 +299,6 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
                 protectedThis->effectiveRateChanged();
         });
     });
-
-    m_renderer->setPreferences(VideoRendererPreference::PrefersDecompressionSession);
 
     m_renderer->notifyVideoLayerSizeChanged([weakThis = ThreadSafeWeakPtr { *this }](const MediaTime&, FloatSize size) {
         ensureOnMainThread([weakThis, size] {
