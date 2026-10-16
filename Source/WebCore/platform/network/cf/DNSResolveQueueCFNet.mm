@@ -179,6 +179,8 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
         else
             callCompletionHandler(WTF::move(result));
     }).get());
+
+    ++m_prefetchedHostnameCountForTesting;
 }
 
 void DNSResolveQueueCFNet::platformResolve(const String& hostname)
