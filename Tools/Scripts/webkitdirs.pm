@@ -3547,21 +3547,35 @@ sub writeBuildSetting($$)
     touchBaseProductDir() if writeFileIfChanged(File::Spec->catfile($baseProductDir, $fileName), $value);
 }
 
+# The GTK and WPE ports, and JSCOnly on Linux, keep the builds of every port,
+# configuration and cross-target side by side in one WebKitBuild directory, so
+# for them the last build made is no better a default than any other, and a
+# cross-target build would record a configuration (e.g. Release_rpi4-32bits-mesa)
+# that tools can't run. There, only set-webkit-configuration records settings.
+sub shouldRecordBuildSettings()
+{
+    return !(isGtk() || isWPE() || (isJSCOnly() && isLinux()));
+}
+
 # Record every setting given on this command line, so that the settings of the
 # last build are the ones later commands resolve. Only what was passed is
 # written; a setting left out keeps whatever set-webkit-configuration recorded.
 # The build system is only recorded where there is a choice of one.
+# The settings are always taken out of @ARGV, even when they are not recorded.
 sub recordBuildSettings()
 {
-    writeBuildSetting("Configuration", passedConfiguration()) if passedConfiguration();
-    writeBuildSetting("BuildSystem", passedBuildSystem()) if passedBuildSystem() && isAppleCocoaWebKit();
-    for my $sanitizer ("ASan", "TSan") {
-        writeBuildSetting($sanitizer, "YES") if passedSanitizer($sanitizer);
-    }
-    if (my $level = passedForceOptimizationLevel()) {
-        die "Unknown optimization level \"$level\".\n" unless isValidForceOptimizationLevel($level);
-        recordForceOptimizationLevel($level);
-    }
+    my $configuration = passedConfiguration();
+    my $buildSystem = passedBuildSystem();
+    my @sanitizers = grep { passedSanitizer($_) } ("ASan", "TSan");
+    my $level = passedForceOptimizationLevel();
+    die "Unknown optimization level \"$level\".\n" if $level && !isValidForceOptimizationLevel($level);
+
+    return unless shouldRecordBuildSettings();
+
+    writeBuildSetting("Configuration", $configuration) if $configuration;
+    writeBuildSetting("BuildSystem", $buildSystem) if $buildSystem && isAppleCocoaWebKit();
+    writeBuildSetting($_, "YES") for @sanitizers;
+    recordForceOptimizationLevel($level) if $level;
 }
 
 sub recordBuildSystemXcodeConfiguration()
