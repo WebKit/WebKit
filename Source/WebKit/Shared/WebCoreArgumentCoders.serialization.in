@@ -7105,6 +7105,37 @@ enum class WebCore::PlatformVideoFieldDetail : uint8_t {
     SpatialFirstLineLate
 };
 
+header: <WebCore/AudioSampleFormat.h>
+enum class WebCore::AudioSampleFormat : int {
+    U8,
+    S16,
+    S32,
+    F32,
+    U8Planar,
+    S16Planar,
+    S32Planar,
+    F32Planar
+};
+
+header: <WebCore/VideoPixelFormat.h>
+enum class WebCore::VideoPixelFormat : int {
+    I420,
+    I420P10,
+    I420P12,
+    I420A,
+    I422,
+    I422P10,
+    I422P12,
+    I444,
+    I444P10,
+    I444P12,
+    NV12,
+    RGBA,
+    RGBX,
+    BGRA,
+    BGRX
+};
+
 using WebCore::TrackInfoAtomData = std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>;
 
 header: <WebCore/TrackInfo.h>
@@ -7126,6 +7157,7 @@ header: <WebCore/TrackInfo.h>
     uint8_t bitDepth;
 
     RefPtr<WebCore::SharedBuffer> cookieData;
+    std::optional<WebCore::AudioSampleFormat> sampleFormat;
 };
 using WebCore::AudioInfoData = std::pair<WebCore::TrackInfoData, WebCore::AudioSpecificInfoData>;
 
@@ -7144,6 +7176,7 @@ header: <WebCore/TrackInfo.h>
     std::optional<WebCore::PlatformVideoFieldDetail> fieldDetail;
     Vector<std::pair<WebCore::FourCC, Ref<WebCore::SharedBuffer>>> extensionAtoms;
     std::optional<uint8_t> reorderQueueMaxSize;
+    std::optional<WebCore::VideoPixelFormat> pixelFormat;
 
 #if PLATFORM(VISION)
     std::optional<WebCore::ImmersiveVideoMetadata> immersiveVideoMetadata;
