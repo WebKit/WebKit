@@ -115,7 +115,7 @@ void WebSWServerToContextConnection::terminateIdleServiceWorkers()
 
 NetworkProcess* WebSWServerToContextConnection::networkProcess()
 {
-    return m_connection ? &m_connection->networkProcess() : nullptr;
+    return m_connection ? &NetworkProcess::singleton() : nullptr;
 }
 
 IPC::Connection* WebSWServerToContextConnection::ipcConnection() const
@@ -253,7 +253,7 @@ void WebSWServerToContextConnection::fireBackgroundFetchClickEvent(ServiceWorker
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     if (!m_processingFunctionalEventCount++)
-        protect(m_connection->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
@@ -287,7 +287,7 @@ void WebSWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier se
     SWServerToContextConnection::workerTerminated(serviceWorkerIdentifier);
 
     if (!--m_processingFunctionalEventCount)
-        protect(m_connection->networkProcess().parentProcessConnection())->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
+        protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 }
 
 void WebSWServerToContextConnection::didFinishActivation(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier)

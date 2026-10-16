@@ -175,7 +175,7 @@ static void callExitSoon(IPC::Connection*)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcess);
 
-NetworkProcess& NetworkProcess::singleton()
+SUPPRESS_NODELETE NetworkProcess& NetworkProcess::singleton()
 {
     static NeverDestroyed<Ref<NetworkProcess>> networkProcess = adoptRef(*new NetworkProcess);
     return networkProcess.get().get();
@@ -418,7 +418,7 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     for (auto& domain : parameters.allowedFirstPartiesForCookies)
         currentDomains.add(domain);
 
-    auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
+    auto newConnection = NetworkConnectionToWebProcess::create(identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
     Ref connection = newConnection;
 
     ASSERT(!m_webProcessConnections.contains(identifier));

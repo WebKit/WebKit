@@ -69,7 +69,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_rtcMonitor(*this)
     , m_sharedPreferences(connection.sharedPreferencesForWebProcessValue())
 #if PLATFORM(COCOA)
-    , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
+    , m_sourceApplicationAuditToken(NetworkProcess::singleton().sourceApplicationAuditToken())
     , m_rtcNetworkThreadQueue(WorkQueue::create("NetworkRTCProvider Queue"_s, WorkQueue::QOS::UserInitiated))
 #else
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<webrtc::BasicPacketSocketFactory>(rtcNetworkThread().socketserver()))
