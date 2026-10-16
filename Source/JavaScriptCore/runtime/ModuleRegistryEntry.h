@@ -79,6 +79,7 @@ public:
 
     void setRecord(VM&, AbstractModuleRecord*);
     void setLoadPromise(VM&, JSPromise*);
+    void clearLoadPromise();
     void setFetchError(JSGlobalObject*, JSValue);
     void setInstantiationError(JSGlobalObject*, JSValue);
     void setEvaluationError(JSGlobalObject*, JSValue);

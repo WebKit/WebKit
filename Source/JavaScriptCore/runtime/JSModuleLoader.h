@@ -130,6 +130,7 @@ public:
     struct ModuleFailure {
         enum class Kind {
             Unknown,
+            Fetch,
             Instantiation,
             Evaluation,
         };
