@@ -1,0 +1,11 @@
+Tests that removing an iframe while its fetch is pending fails the fetch in the Network model, under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.IFrameRemovedWithPendingFetch
+-- Running test case: SiteIsolation.Network.IFrameRemovedWithPendingFetch.FetchSettles
+PASS: Fetch should be added.
+PASS: Fetch should fail instead of staying pending.
+PASS: Fetch should be marked as canceled.
+PASS: Fetch should be listed once.
+PASS: Removed iframe should not leave a child frame behind.
+

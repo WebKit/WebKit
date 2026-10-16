@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/frame-load-rows-test-utilities.js"></script>
+<script>
+function navigateIFrameCrossOrigin(token) {
+    document.getElementById("srcless-frame").src = `http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?srcless-${token}`;
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.SrclessIFrameCrossOriginNavigation");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.SrclessIFrameCrossOriginNavigation.DocumentAndScriptRows",
+        description: "Navigating an iframe without src to a cross-origin page should list that page's document and script once each, finished, in a single frame.",
+        timeout: 50000,
+        async test() {
+            // Navigating before the second iframe has committed would load the document in a fresh process.
+            let sameSiteFrame = await awaitChildFrame((frame) => frame.mainResource.url.includes("?static"), awaitLaunchTimeout);
+            InspectorTest.expectThat(!!sameSiteFrame, "Same-site iframe should be attached.");
+            if (!sameSiteFrame)
+                return;
+            let sameSiteState = await awaitResourceSettled(sameSiteFrame.mainResource, awaitLaunchTimeout);
+            InspectorTest.expectEqual(sameSiteState, "finished", "Same-site iframe should finish loading.");
+            if (sameSiteState !== "finished")
+                return;
+
+            // Unique per run, so repeated runs in one process never share a request.
+            let token = String(Math.random()).slice(2);
+            let recorder = new FrameLoadRowRecorder;
+
+            InspectorTest.evaluateInPage(`navigateIFrameCrossOrigin("${token}")`);
+
+            let frame = await awaitChildFrame((frame) => frame.mainResource.url.includes(`?srcless-${token}`), awaitLaunchTimeout);
+            InspectorTest.expectThat(!!frame, "Child frame should show the cross-origin document.");
+            if (frame) {
+                await expectSingleFinishedDocument(recorder, frame, "Document");
+                await expectSingleFinishedSubresource(recorder, frame, `iframe-script.js?srcless-${token}`, "Script");
+            }
+            expectNoAboutBlankRow(recorder);
+            InspectorTest.expectEqual(WI.networkManager.mainFrame.childFrameCollection.size, 2, "Main frame should have exactly the two child frames.");
+
+            recorder.stop();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that navigating an iframe without src to a cross-origin page lists its document and script once each, under Site Isolation.</p>
+<iframe id="srcless-frame"></iframe>
+<!-- FIXME: <https://webkit.org/b/328708> Remove this iframe, and the expected count of 2 child frames, once a document that loads in a fresh process has its request identifier and response. Until then it keeps a localhost process alive, so the navigation does not start in a fresh process. -->
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-script.html?static"></iframe>
+</body>
