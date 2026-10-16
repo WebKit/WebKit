@@ -788,7 +788,11 @@
 #define ENABLE_PDFKIT_PAINTED_SELECTIONS 1
 #endif
 
-#if !defined(ENABLE_PHONE_NUMBER_POSSESSION) && (PLATFORM(MAC) || PLATFORM(IOS))
+// Like ENABLE(BACK_FORWARD_LIST_SWIFT), the UI process side is Swift that uses C++ interop,
+// so it needs a newer SDK.
+#if !defined(ENABLE_PHONE_NUMBER_POSSESSION) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 260500) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 270000))
 #define ENABLE_PHONE_NUMBER_POSSESSION 1
 #endif
 
