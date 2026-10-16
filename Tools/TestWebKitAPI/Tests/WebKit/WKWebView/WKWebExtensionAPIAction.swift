@@ -1511,6 +1511,47 @@ struct WKWebExtensionAPIActionTests {
     }
 
     @Test
+    func windowOpenWithBlockedSchemeDoesNotOpenNewTabOrWindow() async throws {
+        let popupScript = """
+            browser.test.runWithUserGesture(() => {
+              window.open('file:///Users/Shared/test.html', '_blank')
+              window.open('javascript:void(0)', '_blank')
+              window.open('https://example.com/', '_blank')
+            })
+            """
+
+        let resources: [String: Any] = [
+            "background.js": "browser.test.sendMessage('Open Popup')",
+            "popup.html": "<script type='module' src='popup.js'></script>",
+            "popup.js": popupScript,
+        ]
+
+        let manager = try loadWebExtension(manifest: actionPopupManifest, resources: resources)
+        let context = try #require(manager.context)
+
+        manager.internalDelegate.presentPopupForAction = { _ in
+            // Do nothing so the popup web view will stay loaded.
+        }
+
+        try await manager.waitForTestMessage("Open Popup")
+
+        // The first requested tab or window must be for the https URL, since the earlier schemes are rejected.
+        #if WTF_PLATFORM_MAC
+        let windowConfiguration = try await manager.nextRequestedWindow {
+            context.performAction(for: manager.defaultTab)
+        }
+
+        #expect(windowConfiguration.tabURLs == [URL(string: "https://example.com/")!])
+        #else
+        let tabConfiguration = try await manager.nextRequestedTab {
+            context.performAction(for: manager.defaultTab)
+        }
+
+        #expect(tabConfiguration.url == URL(string: "https://example.com/"))
+        #endif
+    }
+
+    @Test
     func emptyAction() async throws {
         let manifest: [String: Any] = [
             "manifest_version": 3,

@@ -1359,36 +1359,6 @@ EOF
 EOF
     }
 
-    if ($signature->extendedAttributes->{"URL"} && !$interface->extendedAttributes->{"UseCPPAPI"}) {
-        $hasExceptions = 1;
-
-        # FIXME: rdar://problem/58428135 Consider allowing local file access if the extension claimed it in
-        # its manifest and the user opted in explicity in some way.
-
-        push(@$contents, <<EOF);
-
-    if (${variable}.isFileURL) [[unlikely]] {
-        *exception = toJSError(context, "${call}"_s, "${variableLabel}"_s, "it cannot be a local file URL"_s);
-        return ${result};
-    }
-EOF
-    }
- 
-    if ($signature->extendedAttributes->{"URL"} && $interface->extendedAttributes->{"UseCPPAPI"}){
-        $hasExceptions = 1;
-
-        # FIXME: rdar://problem/58428135 Consider allowing local file access if the extension claimed it in
-        # its manifest and the user opted in explicity in some way.
-
-        push(@$contents, <<EOF);
-
-    if (${variable}.protocolIsFile()) [[unlikely]] {
-        *exception = toJSError(context, "${call}"_s, "${variableLabel}"_s, "it cannot be a local file URL"_s);
-        return ${result};
-    }
-EOF
-    }
-
     if ($signature->type->name eq "function" && !$signature->extendedAttributes->{"CallbackHandler"} && !$signature->extendedAttributes->{"Optional"}) {
         $hasExceptions = 1;
 

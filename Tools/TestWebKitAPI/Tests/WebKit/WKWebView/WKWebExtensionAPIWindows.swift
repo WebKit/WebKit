@@ -549,6 +549,70 @@ struct WKWebExtensionAPIWindowsTests {
     }
 
     @Test
+    func createWithJavaScriptURLIsRejected() async throws {
+        let backgroundScript = """
+            await browser.test.assertRejects(browser.windows.create({ url: 'javascript:void(0)' }), /it cannot be a JavaScript URL/i)
+            await browser.test.assertRejects(browser.windows.create({ url: ['http://example.com/', 'javascript:void(0)'] }), /it cannot be a JavaScript URL/i)
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+
+        try await manager.run()
+
+        #expect(manager.windows.count == 1)
+    }
+
+    @Test
+    func createWithFileURLIsRejected() async throws {
+        let backgroundScript = """
+            await browser.test.assertRejects(browser.windows.create({ url: 'file:///tmp/test.html' }), /it cannot be a local file URL/i)
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+
+        try await manager.run()
+
+        #expect(manager.windows.count == 1)
+    }
+
+    @Test
+    func createWithDataURL() async throws {
+        let backgroundScript = """
+            await browser.windows.create({ url: 'data:text/html,Hello' })
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+
+        try await manager.run()
+
+        #expect(manager.windows.count == 2)
+    }
+
+    @Test
+    func createWithFileURLWhenFileAccessIsAllowed() async throws {
+        let backgroundScript = """
+            await browser.windows.create({ url: 'file:///tmp/test.html' })
+
+            browser.test.notifyPass()
+            """
+
+        let manager = try loadWebExtension(manifest: windowsManifest, resources: ["background.js": backgroundScript])
+        let context = try #require(manager.context)
+
+        context._hasAccessToFileURLs = true
+
+        try await manager.run()
+
+        #expect(manager.windows.count == 2)
+    }
+
+    @Test
     func createWithRelativeURL() async throws {
         let backgroundScript = """
             const windowOptions = {
