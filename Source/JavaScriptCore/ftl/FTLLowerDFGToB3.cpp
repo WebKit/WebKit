@@ -22462,7 +22462,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue shift = m_out.constInt32(logElementSize(type));
         LValue basePointer = m_out.add(caged(Gigacage::Primitive, baseVector, base), m_out.shl(offsetPtr, shift));
         LValue sourcePointer = caged(Gigacage::Primitive, sourceVector, source);
-        vmCall(Void, operationTypedArraySet, basePointer, sourcePointer, m_out.shl(sourceLength, shift));
+        m_out.memoryMove(basePointer, sourcePointer, m_out.shl(sourceLength, shift), &m_heaps.TypedArrayProperties, &m_heaps.TypedArrayProperties);
         ensureStillAliveHere(base);
         ensureStillAliveHere(source);
     }

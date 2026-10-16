@@ -348,6 +348,8 @@ public:
     void decorateFenceRead(const AbstractHeap*, Value*);
     void decorateFenceWrite(const AbstractHeap*, Value*);
     void decorateFencedAccess(const AbstractHeap*, Value*);
+    void decorateBulkMemoryRead(const AbstractHeap*, Value*);
+    void decorateBulkMemoryWrite(const AbstractHeap*, Value*);
     void decorateWasmStructGet(const AbstractHeap*, Value*);
     void decorateWasmStructSet(const AbstractHeap*, Value*);
     void decorateWasmStructNew(const AbstractHeap*, Value*);
@@ -383,6 +385,8 @@ private:
     Vector<HeapForValue> m_heapForFenceRead;
     Vector<HeapForValue> m_heapForFenceWrite;
     Vector<HeapForValue> m_heapForFencedAccess;
+    Vector<HeapForValue> m_heapForBulkMemoryRead;
+    Vector<HeapForValue> m_heapForBulkMemoryWrite;
     Vector<HeapForValue> m_heapForWasmStructGet;
     Vector<HeapForValue> m_heapForWasmStructSet;
     Vector<HeapForValue> m_heapForWasmStructNew;

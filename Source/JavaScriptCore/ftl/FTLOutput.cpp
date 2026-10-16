@@ -30,6 +30,7 @@
 
 #include "B3AtomicValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3BulkMemoryValue.h"
 #include "B3Const32Value.h"
 #include "B3FenceValue.h"
 #include "B3MathExtras.h"
@@ -474,6 +475,13 @@ FenceValue* Output::fence(const AbstractHeap* read, const AbstractHeap* write)
     m_heaps->decorateFenceRead(read, result);
     m_heaps->decorateFenceWrite(write, result);
     return result;
+}
+
+void Output::memoryMove(LValue destination, LValue source, LValue byteCount, const AbstractHeap* read, const AbstractHeap* write)
+{
+    BulkMemoryValue* result = m_block->appendNew<BulkMemoryValue>(m_proc, MemoryMove, origin(), destination, source, byteCount);
+    m_heaps->decorateBulkMemoryRead(read, result);
+    m_heaps->decorateBulkMemoryWrite(write, result);
 }
 
 LValue Output::store32As8(LValue value, TypedPointer pointer)

@@ -217,6 +217,7 @@ public:
     LValue load(TypedPointer, LType);
     LValue store(LValue, TypedPointer);
     B3::FenceValue* fence(const AbstractHeap* read, const AbstractHeap* write);
+    void memoryMove(LValue destination, LValue source, LValue byteCount, const AbstractHeap* read, const AbstractHeap* write);
 
     LValue load8SignExt32(TypedPointer);
     LValue load8ZeroExt32(TypedPointer);

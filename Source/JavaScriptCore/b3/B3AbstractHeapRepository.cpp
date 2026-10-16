@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3BulkMemoryValue.h"
 #include "B3CCallValue.h"
 #include "B3FenceValue.h"
 #include "B3MemoryValue.h"
@@ -171,6 +172,16 @@ void AbstractHeapRepository::decorateFencedAccess(const AbstractHeap* heap, Valu
     m_heapForFencedAccess.append(HeapForValue(heap, value));
 }
 
+void AbstractHeapRepository::decorateBulkMemoryRead(const AbstractHeap* heap, Value* value)
+{
+    m_heapForBulkMemoryRead.append(HeapForValue(heap, value));
+}
+
+void AbstractHeapRepository::decorateBulkMemoryWrite(const AbstractHeap* heap, Value* value)
+{
+    m_heapForBulkMemoryWrite.append(HeapForValue(heap, value));
+}
+
 void AbstractHeapRepository::decorateWasmStructGet(const AbstractHeap* heap, Value* value)
 {
     m_heapForWasmStructGet.append(HeapForValue(heap, value));
@@ -243,6 +254,10 @@ void AbstractHeapRepository::computeRangesAndDecorateInstructions()
         entry.value->as<FenceValue>()->write = rangeFor(entry.heap);
     for (HeapForValue entry : m_heapForFencedAccess)
         entry.value->as<MemoryValue>()->setFenceRange(rangeFor(entry.heap));
+    for (HeapForValue entry : m_heapForBulkMemoryRead)
+        entry.value->as<BulkMemoryValue>()->setReadRange(rangeFor(entry.heap));
+    for (HeapForValue entry : m_heapForBulkMemoryWrite)
+        entry.value->as<BulkMemoryValue>()->setWriteRange(rangeFor(entry.heap));
     for (HeapForValue entry : m_heapForWasmStructGet) {
         auto* wasmStructGet = entry.value->as<WasmStructGetValue>();
         wasmStructGet->setRange(rangeFor(entry.heap));
