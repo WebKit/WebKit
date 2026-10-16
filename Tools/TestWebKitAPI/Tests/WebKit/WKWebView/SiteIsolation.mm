@@ -19292,6 +19292,42 @@ TEST(SiteIsolation, DrawPagesToPDFIncludesCrossSiteFrameOnEveryPageItSpans)
     EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(500, 100), white));
 }
 
+TEST(SiteIsolation, DrawPagesToPDFDoesNotCarryTransformIntoNextPage)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0;print-color-adjust:exact'>"
+            "<iframe style='display:block;border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe>"
+            "<div style='break-before:page;width:10px;height:10px;transform:translateX(1px)'></div>"
+            "<div style='position:relative;width:200px;height:200px;background:rgb(0, 128, 0)'></div>"
+            "</body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[mainFrame _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:[mainFrame _handle] pageCount:2];
+    ASSERT_NOT_NULL(data.get());
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 2);
+
+    constexpr std::array<uint8_t, 3> green { 0, 128, 0 };
+    EXPECT_TRUE(pdfPageHasColorAtPoint(data.get(), 2, CGPointMake(100, 100), green));
+}
+
 #endif // HAVE(PDFKIT)
 
 TEST(SiteIsolation, MultiProcessBFCacheIframeRendersAfterBackNavigation)
