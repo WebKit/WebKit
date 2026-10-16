@@ -5240,6 +5240,9 @@ webkit.org/b/325941 webrtc/video-update-often.html [ Pass Crash Timeout ]
 webkit.org/b/327264 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/two-phase/preview-finished-before-swap.tentative.https.html [ Failure Pass ]
 webkit.org/b/327264 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/two-phase/preview-navigation-query.tentative.https.html [ Failure Pass ]
 
+# Spatial video support is not currently implemented
+media/modern-media-controls/spatial-video-support [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

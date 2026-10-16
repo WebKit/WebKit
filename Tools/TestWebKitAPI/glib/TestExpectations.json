@@ -249,7 +249,7 @@
                 "expected": {"all": {"slow": true}}
             },
             "WebKit.EventModifiers": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/323622"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323622"}}
             },
             "WebKit.SpacebarScrolling": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/323624"}}
