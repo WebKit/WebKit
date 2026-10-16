@@ -140,12 +140,14 @@ void SMILTimeContainer::begin()
     // In this case pass on 'seekToTime=true' to updateAnimations().
     m_beginTime = m_resumeTime = now - m_presetStartTime;
     updateAnimations(SMILTime(m_presetStartTime), m_presetStartTime ? true : false);
-    m_presetStartTime = 0_s;
 
     if (m_pauseTime) {
         m_pauseTime = now;
+        m_accumulatedActiveTime = m_presetStartTime;
         m_timer.stop();
     }
+
+    m_presetStartTime = 0_s;
 }
 
 void SMILTimeContainer::pause()

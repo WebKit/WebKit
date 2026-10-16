@@ -168,6 +168,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/onbegin.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/onend.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/onrepeat.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/pause-and-seek-before-begin.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/pruning-first-interval.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/remove-animation-element-while-animation-is-running.html
