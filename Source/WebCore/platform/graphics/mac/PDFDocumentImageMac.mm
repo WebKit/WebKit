@@ -32,12 +32,9 @@
 #import "SharedBuffer.h"
 #import <Quartz/Quartz.h>
 #import <objc/objc-class.h>
+#import <pal/cocoa/PDFKitSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, PDFKit)
-SOFT_LINK_CLASS(PDFKit, PDFDocument)
 
 extern "C" {
 bool CGContextGetAllowsFontSmoothing(CGContextRef context);
@@ -48,7 +45,7 @@ namespace WebCore {
 
 void PDFDocumentImage::createPDFDocument()
 {
-    m_document = adoptNS([allocPDFDocumentInstance() initWithData:protect(data())->makeContiguous()->createNSData().get()]);
+    m_document = adoptNS([PAL::allocPDFDocumentInstance() initWithData:protect(data())->makeContiguous()->createNSData().get()]);
 }
 
 void PDFDocumentImage::computeBoundsForCurrentPage()

@@ -72,6 +72,7 @@
 #import <wtf/FixedVector.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -371,7 +372,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
         unsigned numLabels = [labels count];
         unsigned i;
         for (i = 0; i < numLabels; i++) {
-            String label = [labels objectAtIndex:i];
+            String label = dynamic_objc_cast<NSString>([labels objectAtIndex:i]);
 
             bool startsWithWordCharacter = false;
             bool endsWithWordCharacter = false;

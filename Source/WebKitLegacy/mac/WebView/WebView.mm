@@ -1614,7 +1614,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
     page->setCanStartMedia([self window]);
-    _private->page->settings().setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+    protect(_private->page->settings())->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
 
 #if PLATFORM(IOS_FAMILY)
     // Preserve the behavior we had before <rdar://problem/7580867>
@@ -1741,8 +1741,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     auto extensions = adoptNS([[NSMutableSet alloc] init]);
     NSArray *MIMETypes = [self _supportedMIMETypes];
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
-    NSString *MIMEType;
-    while ((MIMEType = [enumerator nextObject]) != nil) {
+    RetainPtr<NSString> MIMEType;
+    while ((MIMEType = [enumerator nextObject])) {
         NSArray *extensionsForType = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:MIMEType];
         if (extensionsForType) {
             [extensions addObjectsFromArray:extensionsForType];
@@ -2302,7 +2302,8 @@ static NSMutableSet *knownPluginMIMETypes()
     WebCore::LocalDOMWindow::dispatchAllPendingUnloadEvents();
 
     // This will close the WebViews in a random order. Change this if close order is important.
-    for (WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL WebView *webView in [(__bridge NSSet *)allWebViewsSet().get() allObjects])
         [webView close];
 }
 
@@ -2789,8 +2790,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     auto menu = adoptNS([[NSMenu alloc] init]);
-    for (unsigned i = 0; i < count; i++)
-        [menu addItem:[menuItems.get() objectAtIndex:i]];
+    for (unsigned i = 0; i < count; i++) {
+        if (RetainPtr item = dynamic_objc_cast<NSMenuItem>([menuItems.get() objectAtIndex:i]))
+            [menu addItem:item];
+    }
 
     return menu.autorelease();
 }
@@ -3500,7 +3503,7 @@ IGNORE_WARNINGS_END
     [pasteboard _web_writeImage:(NSImage *)(domElement ? nil : [element objectForKey:WebElementImageKey])
                         element:domElement
                             URL:linkURL ? linkURL : (NSURL *)[element objectForKey:WebElementImageURLKey]
-                          title:[element objectForKey:WebElementImageAltStringKey]
+                          title:dynamic_objc_cast<NSString>([element objectForKey:WebElementImageAltStringKey])
                         archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
                           types:types
                          source:nil];
@@ -3508,7 +3511,7 @@ IGNORE_WARNINGS_END
 
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    [pasteboard _web_writeURL:[element objectForKey:WebElementLinkURLKey]
+    [pasteboard _web_writeURL:dynamic_objc_cast<NSURL>([element objectForKey:WebElementLinkURLKey])
                      andTitle:[element objectForKey:WebElementLinkLabelKey]
                         types:types];
 }
@@ -4331,7 +4334,7 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
         _private->page->focusController().setActive([[self window] isKeyWindow]);
 #else
-        _private->page->focusController().setActive([[self window] _hasKeyAppearance]);
+        protect(_private->page->focusController())->setActive([[self window] _hasKeyAppearance]);
 #endif
 }
 
@@ -4919,7 +4922,7 @@ IGNORE_WARNINGS_END
 - (void)_setFontFallbackPrefersPictographs:(BOOL)flag
 {
     if (_private->page)
-        _private->page->settings().setFontFallbackPrefersPictographs(flag);
+        protect(_private->page->settings())->setFontFallbackPrefersPictographs(flag);
 }
 
 #if HAVE(TOUCH_BAR)
@@ -5279,7 +5282,7 @@ IGNORE_WARNINGS_END
 {
     NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
-    id key;
+    RetainPtr<id> key;
     auto array = adoptNS([[NSMutableArray alloc] init]);
 
     while ((key = [enumerator nextObject])) {
@@ -5294,17 +5297,17 @@ IGNORE_WARNINGS_END
 {
     auto viewTypes = adoptNS([[WebFrameView _viewTypesAllowImageTypeOmission:YES] copy]);
     NSEnumerator *enumerator = [viewTypes keyEnumerator];
-    id key;
+    RetainPtr<id> key;
     while ((key = [enumerator nextObject])) {
         if ([viewTypes objectForKey:key] == [WebHTMLView class])
-            [WebView _unregisterViewClassAndRepresentationClassForMIMEType:key];
+            [WebView _unregisterViewClassAndRepresentationClassForMIMEType:checked_objc_cast<NSString>(key)];
     }
 
     int i, count = [MIMETypes count];
     for (i = 0; i < count; i++) {
         [WebView registerViewClass:[WebHTMLView class]
                 representationClass:[WebHTMLRepresentation class]
-                forMIMEType:[MIMETypes objectAtIndex:i]];
+                forMIMEType:checked_objc_cast<NSString>([MIMETypes objectAtIndex:i])];
     }
 }
 
@@ -5406,9 +5409,9 @@ static bool needsWebViewInitThreadWorkaround()
     WebView *result = nil;
 
     @try {
-        NSString *frameName;
-        NSString *groupName;
-        WebPreferences *preferences;
+        RetainPtr<NSString> frameName;
+        RetainPtr<NSString> groupName;
+        RetainPtr<WebPreferences> preferences;
         BOOL useBackForwardList = NO;
         BOOL allowsUndo = YES;
 
@@ -5447,9 +5450,9 @@ static bool needsWebViewInitThreadWorkaround()
         if (![preferences isKindOfClass:[WebPreferences class]])
             preferences = nil;
 
-        LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
+        LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName.get(), groupName.get(), (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];
-        downcast<BackForwardList>([result page]->backForward().client()).setEnabled(useBackForwardList);
+        protect(downcast<BackForwardList>([result page]->backForward().client()))->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -5984,7 +5987,7 @@ static bool needsWebViewInitThreadWorkaround()
 {
     if (!_private->page)
         return;
-    downcast<BackForwardList>(_private->page->backForward().client()).setEnabled(flag);
+    protect(downcast<BackForwardList>(_private->page->backForward().client()))->setEnabled(flag);
 }
 
 - (BOOL)goBack
@@ -5995,7 +5998,7 @@ static bool needsWebViewInitThreadWorkaround()
 #if PLATFORM(IOS_FAMILY)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
-    return _private->page->backForward().goBack();
+    return protect(_private->page->backForward())->goBack();
 #if PLATFORM(IOS_FAMILY)
     WebThreadRun(^{
         _private->page->backForward().goBack();
@@ -6013,7 +6016,7 @@ static bool needsWebViewInitThreadWorkaround()
 #if PLATFORM(IOS_FAMILY)
     if (WebThreadIsCurrent() || !WebThreadIsEnabled())
 #endif
-    return _private->page->backForward().goForward();
+    return protect(_private->page->backForward())->goForward();
 #if PLATFORM(IOS_FAMILY)
     WebThreadRun(^{
         _private->page->backForward().goForward();
@@ -6702,7 +6705,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
     WebCoreThreadViolationCheckRoundThree();
 
-    NSURL *url;
+    RetainPtr<NSURL> url;
     if ([URLString hasPrefix:@"/"])
         url = [NSURL fileURLWithPath:URLString isDirectory:NO];
     else
@@ -6713,7 +6716,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
 - (NSString *)mainFrameURL
 {
-    WebDataSource *ds;
+    RetainPtr<WebDataSource> ds;
     ds = [[self mainFrame] provisionalDataSource];
     if (!ds)
         ds = [[self mainFrame] _dataSource];
@@ -7112,7 +7115,7 @@ static WebFrameView *containingFrameView(NSView *view)
 #endif
         return NO;
 
-    return _private->page->backForward().canGoBackOrForward(-1);
+    return protect(_private->page->backForward())->canGoBackOrForward(-1);
 }
 
 - (BOOL)canGoForward
@@ -7125,7 +7128,7 @@ static WebFrameView *containingFrameView(NSView *view)
 #endif
         return NO;
 
-    return !!_private->page->backForward().canGoBackOrForward(1);
+    return !!protect(_private->page->backForward())->canGoBackOrForward(1);
 }
 
 - (IBAction)goBack:(id)sender
@@ -7646,7 +7649,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
         if ([view conformsToProtocol:@protocol(WebMultipleTextMatches)]) {
             RetainPtr<NSView<WebMultipleTextMatches>> documentView = (NSView <WebMultipleTextMatches> *)view;
             NSRect documentViewVisibleRect = [documentView.get() visibleRect];
-            for (NSValue *rect in [documentView.get() rectsForTextMatches]) {
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL NSValue *rect in [documentView.get() rectsForTextMatches]) {
                 NSRect r = [rect rectValue];
                 // Clip rect to document view's visible rect so rect is confined to subframe
                 r = NSIntersectionRect(r, documentViewVisibleRect);
@@ -7773,7 +7777,8 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 - (void)addVisitedLinks:(NSArray *)visitedLinks
 {
     WebVisitedLinkStore& visitedLinkStore = _private->group->visitedLinkStore();
-    for (NSString *urlString in visitedLinks)
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *urlString in visitedLinks)
         visitedLinkStore.addVisitedLink(urlString);
 }
 
@@ -8698,7 +8703,7 @@ FORWARD(toggleUnderline)
     ASSERT([element isKindOfClass:[NSDictionary class]]);
 
     WebDataSource *dataSource = [(WebFrame *)[element objectForKey:WebElementFrameKey] dataSource];
-    auto request = adoptNS([[dataSource request] copy]);
+    RetainPtr request = checked_objc_cast<NSURLRequest>(adoptNS([[dataSource request] copy]));
     ASSERT(request);
 
     [self _openNewWindowWithRequest:request.get()];
@@ -8718,7 +8723,7 @@ FORWARD(toggleUnderline)
 
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
     [pasteboard declareTypes:@[WebCore::legacyStringPasteboardTypeSingleton()] owner:nil];
-    auto s = adoptNS([selectedString mutableCopy]);
+    RetainPtr s = checked_objc_cast<NSMutableString>(adoptNS([selectedString mutableCopy]));
     const unichar nonBreakingSpaceCharacter = 0xA0;
     NSString *nonBreakingSpaceString = [NSString stringWithCharacters:&nonBreakingSpaceCharacter length:1];
     [s replaceOccurrencesOfString:nonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
@@ -9298,14 +9303,16 @@ FORWARD(toggleUnderline)
 - (void)_dismissTextTouchBarPopoverItemWithIdentifier:(NSString *)identifier
 {
     NSTouchBarItem *foundItem = nil;
-    for (NSTouchBarItem *item in self.textTouchBar.items) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSTouchBarItem *item in self.textTouchBar.items) {
         if ([item.identifier isEqualToString:identifier]) {
             foundItem = item;
             break;
         }
 
         if ([item.identifier isEqualToString:NSTouchBarItemIdentifierTextFormat]) {
-            for (NSTouchBarItem *childItem in [protect(checked_objc_cast<NSGroupTouchBarItem>(item)) groupTouchBar].items) {
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL NSTouchBarItem *childItem in [protect(checked_objc_cast<NSGroupTouchBarItem>(item)) groupTouchBar].items) {
                 if ([childItem.identifier isEqualToString:identifier]) {
                     foundItem = childItem;
                     break;

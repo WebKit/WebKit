@@ -785,7 +785,8 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 
         NSArray *URLs = panel.URLs;
         NSMutableArray *filenames = [NSMutableArray arrayWithCapacity:URLs.count];
-        for (NSURL *URL in URLs)
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSURL *URL in URLs)
             [filenames addObject:URL.path];
 
         [resultListener chooseFilenames:filenames];
@@ -807,7 +808,8 @@ void WebInspectorFrontendClient::sendMessageToBackend(const String& message)
 {
     auto menuItems = adoptNS([[NSMutableArray alloc] init]);
 
-    for (NSMenuItem *item in defaultMenuItems) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSMenuItem *item in defaultMenuItems) {
         switch (item.tag) {
         case WebMenuItemTagOpenLinkInNewWindow:
         case WebMenuItemTagOpenImageInNewWindow:

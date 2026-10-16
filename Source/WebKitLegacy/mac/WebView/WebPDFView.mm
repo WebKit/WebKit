@@ -72,7 +72,10 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemFree.h>
 #import <wtf/URL.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
+
+#import <pal/cocoa/PDFKitSoftLink.h>
 
 extern "C" {
     bool CGContextGetAllowsFontSmoothing(CGContextRef context);
@@ -139,8 +142,8 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     int count = [aPages count];
     int i;
     for (i = 0; i < count; ++i) {
-        NSRect aBounds = [selectionA boundsForPage:[aPages objectAtIndex:i]];
-        NSRect bBounds = [selectionB boundsForPage:[bPages objectAtIndex:i]];
+        NSRect aBounds = [selectionA boundsForPage:checked_objc_cast<PDFPage>([aPages objectAtIndex:i])];
+        NSRect bBounds = [selectionB boundsForPage:checked_objc_cast<PDFPage>([bPages objectAtIndex:i])];
         if (!NSEqualRects(aBounds, bBounds)) {
             return NO;
         }
@@ -280,7 +283,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     if (!newFirstResponder)
         return NO;
 
-    if (![window makeFirstResponder:newFirstResponder.get()])
+    if (![window makeFirstResponder:checked_objc_cast<NSResponder>(newFirstResponder)])
         return NO;
 
     [[protect(dataSource) webFrame] _clearSelectionInOtherFrames];
@@ -678,12 +681,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:[matches count]];
     NSSet *visiblePages = [self _visiblePDFPages];
     NSEnumerator *matchEnumerator = [matches objectEnumerator];
-    PDFSelection *match;
-    
-    while ((match = [matchEnumerator nextObject]) != nil) {
+    RetainPtr<PDFSelection> match;
+
+    while ((match = [matchEnumerator nextObject])) {
         NSEnumerator *pages = [[match pages] objectEnumerator];
-        PDFPage *page;
-        while ((page = [pages nextObject]) != nil) {
+        RetainPtr<PDFPage> page;
+        while ((page = [pages nextObject])) {
             
             // Skip pages that aren't visible (needed for non-continuous modes, see 5362989)
             if (![visiblePages containsObject:page])
@@ -719,7 +722,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [pdfSubview selectAll:nil];
     NSAttributedString *result = [[pdfSubview currentSelection] attributedString];
     if (savedSelection) {
-        [pdfSubview setCurrentSelection:savedSelection.get()];
+        [pdfSubview setCurrentSelection:checked_objc_cast<PDFSelection>(savedSelection)];
     } else {
         // FIXME: behavior of setCurrentSelection:nil is not documented - check 4182934 for progress
         // Otherwise, we could collapse this code with the case above.
@@ -852,8 +855,8 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     NSRect result = NSZeroRect;
     PDFSelection *selection = [pdfSubview currentSelection];
     NSEnumerator *pages = [[selection pages] objectEnumerator];
-    PDFPage *page;
-    while ((page = [pages nextObject]) != nil) {
+    RetainPtr<PDFPage> page;
+    while ((page = [pages nextObject])) {
         NSRect selectionOnPageInPDFViewCoordinates = [pdfSubview convertRect:[selection boundsForPage:page] fromPage:page];
         if (NSIsEmptyRect(result))
             result = selectionOnPageInPDFViewCoordinates;
@@ -996,7 +999,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     // Call to the frame loader because this is where our security checks are made.
     RefPtr frame = core([protect(dataSource) webFrame]);
     Ref document = *frame->document();
-    WebCore::FrameLoadRequest frameLoadRequest { document.copyRef(), document->securityOrigin(), { URL }, { }, WebCore::InitiatedByMainFrame::Unknown };
+    WebCore::FrameLoadRequest frameLoadRequest { document.copyRef(), protect(document->securityOrigin()), { URL }, { }, WebCore::InitiatedByMainFrame::Unknown };
     frameLoadRequest.setReferrerPolicy(WebCore::ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTF::move(frameLoadRequest), event.get(), nullptr);
 }
@@ -1027,24 +1030,12 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 + (Class)_PDFViewClass
 {
-    static Class PDFViewClass = nil;
-    if (PDFViewClass == nil) {
-        PDFViewClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFView"];
-        if (!PDFViewClass)
-            LOG_ERROR("Couldn't find PDFView class in PDFKit.framework");
-    }
-    return PDFViewClass;
+    return PAL::getPDFViewClassSingleton();
 }
 
 + (Class)_PDFSelectionClass
 {
-    static Class PDFSelectionClass = nil;
-    if (PDFSelectionClass == nil) {
-        PDFSelectionClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFSelection"];
-        if (!PDFSelectionClass)
-            LOG_ERROR("Couldn't find PDFSelectionClass class in PDFKit.framework");
-    }
-    return PDFSelectionClass;
+    return PAL::getPDFSelectionClassSingleton();
 }
 
 - (void)_applyPDFDefaults
@@ -1160,8 +1151,8 @@ IGNORE_WARNINGS_END
                               nil]);
     
     RetainPtr e = [[[protect(PDFSubview) menuForEvent:theEvent] itemArray] objectEnumerator];
-    NSMenuItem *item;
-    while ((item = [e nextObject]) != nil) {
+    RetainPtr<NSMenuItem> item;
+    while ((item = [e nextObject])) {
         
         NSString *actionString = NSStringFromSelector([item action]);
         
@@ -1240,15 +1231,15 @@ IGNORE_WARNINGS_END
             [selectionForInitialSearch extendSelectionAtStart:-initialSelectionLength];
         }
     }
-    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch.get() withOptions:options];
+    PDFSelection *foundSelection = [document findString:string fromSelection:checked_objc_cast<PDFSelection>(selectionForInitialSearch) withOptions:options];
 
     // If we first searched in the selection, and we found the selection, search again from just past the selection
     if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))
         foundSelection = [document findString:string fromSelection:initialSelection withOptions:options];
 
     if (!foundSelection && wrapFlag) {
-        RetainPtr emptySelection = adoptNS([[[[self class] _PDFViewClass] alloc] initWithDocument:document.get()]);
-        foundSelection = [document findString:string fromSelection:emptySelection.get() withOptions:options];
+        RetainPtr emptySelection = adoptNS([[[[self class] _PDFSelectionClass] alloc] initWithDocument:document.get()]);
+        foundSelection = [document findString:string fromSelection:checked_objc_cast<PDFSelection>(emptySelection) withOptions:options];
     }
     
     return foundSelection;

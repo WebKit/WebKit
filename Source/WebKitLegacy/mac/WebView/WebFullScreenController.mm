@@ -58,9 +58,10 @@ static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 {
     ASSERT(element);
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
-        WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
+        // FIXME: Remove suppression once rdar://189998444 is fixed.
+        SUPPRESS_MEMORY_UNSAFE_CAST WebCore::FloatQuad contentsBox = static_cast<WebCore::FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
         contentsBox = protect(element->renderer())->localToContainerQuad(contentsBox, nullptr);
-        return element->renderer()->view().frameView().contentsToScreen(contentsBox.enclosingBoundingBox());
+        return protect(element->renderer()->view().frameView())->contentsToScreen(contentsBox.enclosingBoundingBox());
     }
     return element->screenRect();
 }
@@ -259,7 +260,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 {
     CGSWindowID windowNumber = (CGSWindowID)window.windowNumber;
-    CGSRegionObj shape;
+    // This is an out-parameter which is explicitly released below.
+    SUPPRESS_UNRETAINED_LOCAL CGSRegionObj shape;
     CGRect cgClipRect = NSRectToCGRect(clipRect);
     CGSNewRegionWithRect(&cgClipRect, &shape);
     CGSSetWindowClipShape(CGSMainConnectionID(), windowNumber, shape);

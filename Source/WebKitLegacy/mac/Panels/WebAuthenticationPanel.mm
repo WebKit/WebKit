@@ -121,7 +121,7 @@
 
     NSURLProtectionSpace *space = [chall protectionSpace];
 
-    NSString *host;
+    RetainPtr<NSString> host;
     if (![space port])
         host = [[space host] _webkit_decodeHostName];
     else
@@ -130,7 +130,7 @@
     NSString *realm = [space realm];
     if (!realm)
         realm = @"";
-    NSString *message;
+    RetainPtr<NSString> message;
 
     // Consider the realm name to be "simple" if it does not contain any whitespace or newline characters.
     // If the realm name is determined to be complex, we will use a slightly different sheet layout, designed
@@ -141,28 +141,28 @@
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
-                [space proxyType], host];
+                [space proxyType], host.get()];
         } else {
             if (realmNameIsSimple) {
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to area “%@” on %@.",
-                                                               "prompt string in authentication panel"), realm, host];
+                                                               "prompt string in authentication panel"), realm, host.get()];
             } else {
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("To view this page, you must log in to this area on %@:",
-                                                               "prompt string in authentication panel"), host];
+                                                               "prompt string in authentication panel"), host.get()];
             }
         }
     } else {
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for the %@ proxy server %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
                                                            "prompt string in authentication panel"),
-                [space proxyType], host];
+                [space proxyType], host.get()];
         } else {
             if (realmNameIsSimple) {
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for area “%@” on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
-                                                               "prompt string in authentication panel"), realm, host];
+                                                               "prompt string in authentication panel"), realm, host.get()];
             } else {
                 message = [NSString stringWithFormat:UI_STRING_INTERNAL("The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.",
-                                                               "prompt string in authentication panel"), host];
+                                                               "prompt string in authentication panel"), host.get()];
             }
         }
     }

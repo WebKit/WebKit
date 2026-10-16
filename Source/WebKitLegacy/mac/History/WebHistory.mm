@@ -37,6 +37,7 @@
 #import <numeric>
 #import <pal/spi/cocoa/NSCalendarDateSPI.h>
 #import <ranges>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WebCoreThreadMessage.h>
@@ -284,7 +285,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     NSString *URLString = [url _web_originalDataAsString];
     if (!URLString)
         URLString = @"";
-    auto entry = retainPtr([_entriesByURL objectForKey:URLString]);
+    RetainPtr entry = checked_objc_cast<WebHistoryItem>([_entriesByURL objectForKey:URLString]);
 
     if (entry) {
         LOG(History, "Updating global history entry %@", entry.get());
@@ -359,7 +360,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     // Next, we rebuild the history, restore the states, and notify the clients.
     _entriesByURL = entriesByURL;
     for (size_t dayIndex = 0; dayIndex < entryArrays.size(); ++dayIndex) {
-        for (WebHistoryItem *entry in (entryArrays[dayIndex]).get())
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL WebHistoryItem *entry in (entryArrays[dayIndex]).get())
             [self addItemToDateCaches:entry];
     }
     [webHistory _sendNotification:WebHistoryItemsAddedNotification entries:allEntries];
@@ -388,7 +390,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         return NO;
 
     for (NSUInteger index = 0; index < count; ++index)
-        [self removeItem:[entries objectAtIndex:index]];
+        [self removeItem:checked_objc_cast<WebHistoryItem>([entries objectAtIndex:index])];
     
     return YES;
 }
@@ -568,7 +570,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     BOOL itemLimitPassed = NO;
     ASSERT(*numberOfItemsLoaded == 0);
 
-    for (NSDictionary *itemAsDictionary in array) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSDictionary *itemAsDictionary in array) {
         @autoreleasepool {
             auto item = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary]);
 
@@ -644,7 +647,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)addVisitedLinksToVisitedLinkStore:(WebVisitedLinkStore&)visitedLinkStore
 {
-    for (NSString *urlString in _entriesByURL.get())
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSString *urlString in _entriesByURL.get())
         visitedLinkStore.addVisitedLink(urlString);
 }
 
@@ -883,6 +887,6 @@ void WebHistoryWriter::writeHistoryItems(BinaryPropertyListObjectStream& stream)
         RetainPtr<NSArray> entries = m_entriesByDate->get(m_dateKeys[dateIndex]);
         NSUInteger entryCount = [entries count];
         for (NSUInteger entryIndex = 0; entryIndex < entryCount; ++entryIndex)
-            writeHistoryItem(stream, [entries objectAtIndex:entryIndex]);
+            writeHistoryItem(stream, checked_objc_cast<WebHistoryItem>([entries objectAtIndex:entryIndex]));
     }
 }

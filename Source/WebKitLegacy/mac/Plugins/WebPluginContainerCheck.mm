@@ -123,7 +123,7 @@
     RetainPtr controller = _controller;
     WebView *webView = [controller webView];
 
-    WebFrame *targetFrame;
+    RetainPtr<WebFrame> targetFrame;
     if ([target length] > 0) {
         targetFrame = [[controller webFrame] findFrameNamed:target];
     } else {
@@ -135,7 +135,7 @@
     _listener = adoptNS([[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueWithPolicy:)]);
     RetainPtr listener = _listener;
 
-    if (targetFrame == nil) {
+    if (!targetFrame) {
         // would open new window
         [[webView _policyDelegateForwarder] webView:webView
                      decidePolicyForNewWindowAction:action

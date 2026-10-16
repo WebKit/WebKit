@@ -95,7 +95,8 @@
 
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
-        WebCore::GraphicsContextCG context([[NSGraphicsContext currentContext] CGContext]);
+        RetainPtr cgContext = [[NSGraphicsContext currentContext] CGContext];
+        WebCore::GraphicsContextCG context(cgContext);
         if (CheckedPtr controller = [protect(_webNodeHighlight) inspectorController].get())
             controller->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];

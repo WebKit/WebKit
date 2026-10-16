@@ -441,7 +441,8 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     std::optional<WebCore::DetectedItem> detectedItem;
 
     if ([[webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
-        DOMRange *customDataDetectorsRange;
+        // This is an out-parameter which is set to an autoreleased object.
+        SUPPRESS_UNRETAINED_LOCAL DOMRange *customDataDetectorsRange;
         RetainPtr actionContext = [(id)[webView UIDelegate] _webView:webView
             actionContextForHitTestResult:adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]).get()
             range:&customDataDetectorsRange];

@@ -42,6 +42,7 @@
 #import "WebViewPrivate.h"
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebUIKitSupport.h"
@@ -219,8 +220,8 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 - (void)close
 {
     NSEnumerator *pluginEnumerator = [[self plugins] objectEnumerator];
-    WebBasePluginPackage *plugin;
-    while ((plugin = [pluginEnumerator nextObject]) != nil)
+    RetainPtr<WebBasePluginPackage> plugin;
+    while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject])))
         [self _removePlugin:plugin];
     plugins = nil;
 }
@@ -252,8 +253,8 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
         // Find plug-ins to remove from database (i.e., plug-ins that no longer exist on disk)
         NSMutableSet *pluginsToRemove = [NSMutableSet set];
         NSEnumerator *pluginEnumerator = [pluginMap objectEnumerator];
-        WebBasePluginPackage *plugin;
-        while ((plugin = [pluginEnumerator nextObject]) != nil) {
+        RetainPtr<WebBasePluginPackage> plugin;
+        while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject]))) {
             // Any plug-ins that were removed from disk since the last refresh should be removed from
             // the database.
             if (![newPlugins containsObject:plugin])
@@ -273,18 +274,18 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 
         // Remove plugins from database
         pluginEnumerator = [pluginsToRemove objectEnumerator];
-        while ((plugin = [pluginEnumerator nextObject]) != nil)
+        while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject])))
             [self _removePlugin:plugin];
 
         // Add new plugins to database
         pluginEnumerator = [newPlugins objectEnumerator];
-        while ((plugin = [pluginEnumerator nextObject]) != nil)
+        while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject])))
             [self _addPlugin:plugin];
 
         // Build a list of MIME types.
         auto MIMETypes = adoptNS([[NSMutableSet alloc] init]);
         pluginEnumerator = [pluginMap objectEnumerator];
-        while ((plugin = [pluginEnumerator nextObject])) {
+        while ((plugin = checked_objc_cast<WebBasePluginPackage>([pluginEnumerator nextObject]))) {
             const auto& pluginInfo = [plugin pluginInfo];
             for (size_t i = 0; i < pluginInfo.mimes.size(); ++i)
                 [MIMETypes addObject:pluginInfo.mimes[i].type.createNSString().get()];
@@ -292,8 +293,8 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 
         // Register plug-in views and representations.
         NSEnumerator *MIMEEnumerator = [MIMETypes objectEnumerator];
-        NSString *MIMEType;
-        while ((MIMEType = [MIMEEnumerator nextObject]) != nil) {
+        RetainPtr<NSString> MIMEType;
+        while ((MIMEType = checked_objc_cast<NSString>([MIMEEnumerator nextObject]))) {
             [protect(registeredMIMETypes) addObject:MIMEType];
 
             if ([WebView canShowMIMETypeAsHTML:MIMEType]) {
@@ -341,7 +342,8 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 
     NSView <WebDocumentView> *documentView = [[webFrame frameView] documentView]; 
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        for (NSView *subview in [documentView subviews]) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSView *subview in [documentView subviews]) {
             if ([WebPluginController isPlugInView:subview])
                 [instanceViews removeObject:subview];
         }
@@ -350,10 +352,10 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
 
 - (void)destroyAllPluginInstanceViews
 {
-    NSView *view;
+    RetainPtr<NSView> view;
     RetainPtr pli = [protect(pluginInstanceViews) allObjects];
     NSEnumerator *enumerator = [pli objectEnumerator];
-    while ((view = [enumerator nextObject]) != nil) {
+    while ((view = checked_objc_cast<NSView>([enumerator nextObject]))) {
         if ([WebPluginController isPlugInView:view]) {
             ASSERT([[view superview] isKindOfClass:[WebHTMLView class]]);
             ASSERT([[view superview] respondsToSelector:@selector(_destroyAllWebPlugins)]);
@@ -439,12 +441,12 @@ static RetainPtr<NSArray>& LEGACY_NODELETE additionalWebPlugInPaths()
     NSEnumerator *directoryEnumerator = [[self _plugInPaths] objectEnumerator];
     auto uniqueFilenames = adoptNS([[NSMutableSet alloc] init]);
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *pluginDirectory;
-    while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
+    RetainPtr<NSString> pluginDirectory;
+    while ((pluginDirectory = checked_objc_cast<NSString>([directoryEnumerator nextObject]))) {
         // Get contents of each plug-in directory
         NSEnumerator *filenameEnumerator = [[fileManager contentsOfDirectoryAtPath:pluginDirectory error:NULL] objectEnumerator];
-        NSString *filename;
-        while ((filename = [filenameEnumerator nextObject]) != nil) {
+        RetainPtr<NSString> filename;
+        while ((filename = checked_objc_cast<NSString>([filenameEnumerator nextObject]))) {
             // Unique plug-ins by filename
             if ([uniqueFilenames containsObject:filename])
                 continue;

@@ -196,13 +196,13 @@
 #if PLATFORM(MAC)
     auto panel = adoptNS([[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText]);
     [panel showWindow:nil];
-    NSString *result;
+    RetainPtr<NSString> result;
     if ([NSApp runModalForWindow:[panel window]])
         result = [panel text];
     else
         result = nil;
     [[panel window] close];
-    return result;
+    return result.autorelease();
 #else
     return nil;
 #endif

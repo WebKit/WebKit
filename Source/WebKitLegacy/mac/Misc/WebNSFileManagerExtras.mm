@@ -67,7 +67,7 @@ static BOOL fileExists(NSString *path)
     if (fileExists(path.get())) {
         // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
         NSString *extensions = nil;
-        NSString *pathWithoutExtensions;
+        RetainPtr<NSString> pathWithoutExtensions;
         NSString *lastPathComponent = [path.get() lastPathComponent];
         NSRange periodRange = [lastPathComponent rangeOfString:@"."];
         
@@ -80,7 +80,7 @@ static BOOL fileExists(NSString *path)
         }
 
         for (unsigned i = 1; ; i++) {
-            NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
+            NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions.get(), i];
             path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
             if (!fileExists(path.get()))
                 break;

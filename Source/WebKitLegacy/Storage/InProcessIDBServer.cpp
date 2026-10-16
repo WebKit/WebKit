@@ -59,10 +59,10 @@ Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, con
 InProcessIDBServer::~InProcessIDBServer()
 {
     BinarySemaphore semaphore;
-    dispatchTask([this, &semaphore] {
-        assertIsCurrent(m_queue.get());
-        m_server = nullptr;
-        m_connectionToClient = nullptr;
+    dispatchTask([queue = m_queue, server = WTF::move(m_server), connectionToClient = WTF::move(m_connectionToClient), &semaphore] mutable {
+        assertIsCurrent(queue.get());
+        server = nullptr;
+        connectionToClient = nullptr;
         semaphore.signal();
     });
     semaphore.wait();

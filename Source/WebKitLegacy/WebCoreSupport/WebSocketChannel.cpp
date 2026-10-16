@@ -266,10 +266,14 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     if (!m_document)
         return;
     if (LegacyWebSocketInspectorInstrumentation::hasFrontends()) [[unlikely]] {
-        auto cookieRequestHeaderFieldValue = [document = m_document] (const URL& url) -> String {
-            if (!document || !document->page())
+        auto cookieRequestHeaderFieldValue = [weakDocument = m_document](const URL& url) -> String {
+            RefPtr document = weakDocument;
+            if (!document)
                 return { };
-            return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
+            RefPtr page = document->page();
+            if (!page)
+                return { };
+            return protect(page->cookieJar())->cookieRequestHeaderFieldValue(*document, url);
         };
         auto request = m_handshake->clientHandshakeRequest(WTF::move(cookieRequestHeaderFieldValue));
         RefPtr document = m_document;
@@ -459,8 +463,11 @@ bool WebSocketChannel::processBuffer()
             String serverSetCookie = m_handshake->serverSetCookie();
             if (!serverSetCookie.isEmpty()) {
                 RefPtr document = m_document;
-                if (document && document->page() && document->page()->cookieJar().cookiesEnabled(*document))
-                    document->page()->cookieJar().setCookies(*document, m_handshake->httpURLForAuthenticationAndCookies(), serverSetCookie);
+                if (RefPtr page = document ? document->page() : nullptr) {
+                    Ref cookieJar = page->cookieJar();
+                    if (cookieJar->cookiesEnabled(*document))
+                        cookieJar->setCookies(*document, m_handshake->httpURLForAuthenticationAndCookies(), serverSetCookie);
+                }
             }
             LOG(Network, "WebSocketChannel %p Connected", this);
             skipBuffer(headerLength);

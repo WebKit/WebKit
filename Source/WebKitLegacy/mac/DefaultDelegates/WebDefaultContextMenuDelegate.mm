@@ -52,6 +52,7 @@
 #import <WebKitLegacy/DOMPrivate.h>
 #import <pal/system/mac/DefaultSearchProvider.h>
 #import <wtf/Assertions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 
@@ -122,8 +123,8 @@
             [menuItems addObject:[NSMenuItem separatorItem]];
             
             NSEnumerator *e = [defaultItems objectEnumerator];
-            NSMenuItem *item;
-            while ((item = [e nextObject]) != nil) {
+            RetainPtr<NSMenuItem> item;
+            while ((item = checked_objc_cast<NSMenuItem>([e nextObject]))) {
                 [menuItems addObject:item];
             }
         }

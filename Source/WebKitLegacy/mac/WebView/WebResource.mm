@@ -47,6 +47,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 
 static NSString * const WebResourceDataKey =              @"WebResourceData";
@@ -296,7 +297,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     }
 
-    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(copyData ? adoptNS([data copy]).get() : data), URL, MIMEType, textEncodingName, frameName, response);
+    auto coreResource = WebCore::ArchiveResource::create(WebCore::SharedBuffer::create(copyData ? checked_objc_cast<NSData>(adoptNS([data copy]).get()) : data), URL, MIMEType, textEncodingName, frameName, response);
     if (!coreResource) {
         [self release];
         return nil;

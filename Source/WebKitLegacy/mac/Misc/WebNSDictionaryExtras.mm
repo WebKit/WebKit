@@ -32,39 +32,37 @@
 
 @implementation NSDictionary (WebNSDictionaryExtras)
 
--(NSNumber *)_webkit_numberForKey:(id)key
+- (NSNumber *)_webkit_numberForKey:(id)key
 {
     id object = [self objectForKey:key];
     return [object isKindOfClass:[NSNumber class]] ? object : nil;
 }
 
--(NSString *)_webkit_stringForKey:(id)key
+- (NSString *)_webkit_stringForKey:(id)key
 {
     id object = [self objectForKey:key];
     return [object isKindOfClass:[NSString class]] ? object : nil;
 }
 
--(NSArray *)_webkit_arrayForKey:(id)key
+- (NSArray *)_webkit_arrayForKey:(id)key
 {
     id object = [self objectForKey:key];
     return [object isKindOfClass:[NSArray class]] ? object : nil;
 }
 
--(id)_webkit_objectForMIMEType:(NSString *)MIMEType
+- (id)_webkit_objectForMIMEType:(NSString *)MIMEType
 {
-    id result;
+    RetainPtr<id> result;
     NSRange slashRange;
-    
+
     result = [self objectForKey:MIMEType];
-    if (result) {
-        return result;
-    }
-    
+    if (result)
+        return result.autorelease();
+
     slashRange = [MIMEType rangeOfString:@"/"];
-    if (slashRange.location == NSNotFound) {
+    if (slashRange.location == NSNotFound)
         return nil;
-    }
-    
+
     return [self objectForKey:[MIMEType substringToIndex:slashRange.location + 1]];
 }
 

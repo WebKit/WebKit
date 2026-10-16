@@ -734,7 +734,7 @@ void WebChromeClient::requestPointerLock(CompletionHandler<void(WebCore::Pointer
 
     CGDisplayHideCursor(CGMainDisplayID());
     CGAssociateMouseAndMouseCursorPosition(false);
-    [webView page]->pointerLockController().didAcquirePointerLock();
+    protect([webView page]->pointerLockController())->didAcquirePointerLock();
     
     completionHandler(WebCore::PointerLockRequestResult::Success);
 #else
@@ -749,7 +749,7 @@ void WebChromeClient::requestPointerUnlock(CompletionHandler<void(bool)>&& compl
     CGAssociateMouseAndMouseCursorPosition(true);
     CGDisplayShowCursor(CGMainDisplayID());
     if ([webView page]) {
-        [webView page]->pointerLockController().didLosePointerLock();
+        protect([webView page]->pointerLockController())->didLosePointerLock();
         completionHandler(true);
         return;
     }

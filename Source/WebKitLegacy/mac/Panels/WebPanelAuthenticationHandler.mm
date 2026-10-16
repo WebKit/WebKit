@@ -35,6 +35,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
@@ -64,7 +65,7 @@ static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWin
 
 -(void)enqueueChallenge:(NSURLAuthenticationChallenge *)challenge forWindow:(id)window
 {
-    RetainPtr<NSMutableArray> queue = [windowToChallengeQueue objectForKey:window];
+    RetainPtr queue = checked_objc_cast<NSMutableArray>([windowToChallengeQueue objectForKey:window]);
     if (!queue) {
         queue = adoptNS([[NSMutableArray alloc] init]);
         [windowToChallengeQueue setObject:queue forKey:window];
@@ -74,11 +75,11 @@ static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWin
 
 -(void)tryNextChallengeForWindow:(id)window
 {
-    RetainPtr<NSMutableArray> queue = [windowToChallengeQueue objectForKey:window];
+    RetainPtr queue = checked_objc_cast<NSMutableArray>([windowToChallengeQueue objectForKey:window]);
     if (!queue)
         return;
 
-    RetainPtr<NSURLAuthenticationChallenge> challenge = [queue objectAtIndex:0];
+    RetainPtr challenge = checked_objc_cast<NSURLAuthenticationChallenge>([queue objectAtIndex:0]);
     [queue removeObjectAtIndex:0];
     if (![queue count])
         [windowToChallengeQueue removeObjectForKey:window];
@@ -90,7 +91,7 @@ static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWin
         return;
     }
 
-    [self startAuthentication:challenge window:(window == WebModalDialogPretendWindow ? nil : window)];
+    [self startAuthentication:challenge window:(window == WebModalDialogPretendWindow ? nil : checked_objc_cast<NSWindow>(window))];
 }
 
 
@@ -120,7 +121,7 @@ static NSString * const WebModalDialogPretendWindow = @"WebModalDialogPretendWin
     if (window == WebModalDialogPretendWindow)
         [panel runAsModalDialogWithChallenge:challenge];
     else
-        [panel runAsSheetOnWindow:window withChallenge:challenge];
+        [panel runAsSheetOnWindow:w withChallenge:challenge];
 }
 
 -(void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge

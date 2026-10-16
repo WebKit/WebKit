@@ -71,7 +71,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebKitErrors.mm
     mac/Misc/WebKitLogging.m
     mac/Misc/WebKitStatistics.m
-    mac/Misc/WebNSDictionaryExtras.m
+    mac/Misc/WebNSDictionaryExtras.mm
     mac/Misc/WebNSURLRequestExtras.m
 
     mac/WebView/WebFeature.mm
@@ -111,7 +111,7 @@ list(APPEND WebKitLegacy_SOURCES
 
 if (WEBKIT_SDK_IS_MACOS)
 list(APPEND WebKitLegacy_SOURCES
-    mac/History/WebURLsWithTitles.m
+    mac/History/WebURLsWithTitles.mm
 
     mac/Misc/WebNSControlExtras.m
     mac/Misc/WebNSEventExtras.m

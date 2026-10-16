@@ -45,7 +45,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
         return currentFont;
     currentNSFont.get() = font;
     WebCore::FontCascade newFont(WebCore::FontPlatformData((__bridge CTFontRef)font, [font pointSize]));
-    currentFont.get() = newFont;
+    protect(currentFont.get()).get() = newFont;
     return currentFont;
 }
 

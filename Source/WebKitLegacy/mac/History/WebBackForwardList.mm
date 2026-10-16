@@ -277,9 +277,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 -(NSString *)description
 {
-    NSMutableString *result;
-    
-    result = [NSMutableString stringWithCapacity:512];
+    RetainPtr result = [NSMutableString stringWithCapacity:512];
     
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
@@ -295,7 +293,7 @@ static bool bumperCarBackForwardHackNeeded()
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[protect(kit(const_cast<WebCore::HistoryItem*>(entries[i].ptr()))) description]];
+        [result appendString:[protect(kit(entries[i].ptr())) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };
@@ -306,7 +304,7 @@ static bool bumperCarBackForwardHackNeeded()
 
     [result appendString:@"\n--------------------------------------------\n"];    
 
-    return result;
+    return result.autorelease();
 }
 
 - (void)setPageCacheSize:(NSUInteger)size

@@ -42,6 +42,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+#import <pal/cocoa/PDFKitSoftLink.h>
+
 @implementation WebPDFRepresentation
 
 + (NSArray *)supportedMIMETypes
@@ -51,14 +53,7 @@
 
 + (Class)PDFDocumentClass
 {
-    static Class PDFDocumentClass = nil;
-    if (PDFDocumentClass == nil) {
-        PDFDocumentClass = [[WebPDFView PDFKitBundle] classNamed:@"PDFDocument"];
-        if (PDFDocumentClass == nil) {
-            LOG_ERROR("Couldn't find PDFDocument class in PDFKit.framework");
-        }
-    }
-    return PDFDocumentClass;
+    return PAL::getPDFDocumentClassSingleton();
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
@@ -78,10 +73,10 @@
     RetainPtr frame = [dataSource webFrame];
     RetainPtr frameView = [frame frameView];
     RetainPtr view = checked_objc_cast<WebPDFView>([frameView documentView]);
-    auto document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]]);
-    [view setPDFDocument:document.get()];
+    RetainPtr document = adoptNS([[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]]);
+    [view setPDFDocument:checked_objc_cast<PDFDocument>(document)];
 
-    if (!pdfDocumentContainsPrintScript(document.get()))
+    if (!pdfDocumentContainsPrintScript(checked_objc_cast<PDFDocument>(document)))
         return;
 
     CallUIDelegate([frame webView], @selector(webView:printFrameView:), frameView);

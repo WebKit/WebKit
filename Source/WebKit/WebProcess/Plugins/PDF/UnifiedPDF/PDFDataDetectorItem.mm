@@ -34,8 +34,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/cf/TypeCastsCF.h>
 
-#include "PDFKitSoftLink.h"
 #include <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#include <pal/cocoa/PDFKitSoftLink.h>
 #include <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebKit {
@@ -48,7 +48,7 @@ static bool hasActionsForResult(DDScannerResult *dataDetectorResult)
 
 static bool resultIsPastDate(DDScannerResult *dataDetectorResult, PDFPage *pdfPage)
 {
-    RetainPtr referenceDate = [retainPtr([[pdfPage document] documentAttributes]) objectForKey:get_PDFKit_PDFDocumentCreationDateAttributeSingleton()];
+    RetainPtr referenceDate = [retainPtr([[pdfPage document] documentAttributes]) objectForKey:PAL::get_PDFKit_PDFDocumentCreationDateAttributeSingleton()];
     RetainPtr referenceTimeZone = adoptCF(CFTimeZoneCopyDefault());
     return PAL::softLink_DataDetectorsCore_DDResultIsPastDate(RetainPtr { [dataDetectorResult coreResult] }.get(), (CFDateRef)referenceDate.get(), (CFTimeZoneRef)referenceTimeZone.get());
 }

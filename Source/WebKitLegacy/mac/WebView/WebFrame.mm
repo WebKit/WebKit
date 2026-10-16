@@ -869,7 +869,7 @@ static NSURL *createUniqueWebDataURL();
     if (!paragraphStart)
         return std::nullopt;
 
-    auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
+    auto scopeEnd = makeBoundaryPointAfterNodeContents(protect(paragraphStart->container->treeScope().rootNode()));
     return WebCore::resolveCharacterRange({ WTF::move(*paragraphStart), WTF::move(scopeEnd) }, range);
 }
 
@@ -915,7 +915,7 @@ static NSURL *createUniqueWebDataURL();
 
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     Vector<RefPtr<WebCore::Node>> nodesVector;
-    DOMNode *node;
+    RetainPtr<DOMNode> node;
     while ((node = [nodeEnum nextObject]))
         nodesVector.append(core(node));
 
@@ -991,7 +991,7 @@ static NSURL *createUniqueWebDataURL();
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     WebCore::PlatformMouseEvent event(WebCore::IntPoint(windowLoc), WebCore::IntPoint(WebCore::globalPoint(windowLoc, [protect(view->platformWidget()) window])),
         WebCore::MouseButton::Left, WebCore::PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven);
-    _private->coreFrame->eventHandler().dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
+    protect(_private->coreFrame->eventHandler())->dragSourceEndedAt(event, coreDragOperationMask(dragOperationMask));
 }
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
@@ -2338,7 +2338,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!coreFrame)
         return nil;
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    return adoptNS([[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(WebCore::IntPoint(point), hitType)]).autorelease();
+    return adoptNS([[WebElementDictionary alloc] initWithHitTestResult:protect(coreFrame->eventHandler())->hitTestResultAtPoint(WebCore::IntPoint(point), hitType)]).autorelease();
 }
 
 - (NSURL *)_unreachableURL
@@ -2459,7 +2459,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    auto coreFrame = _private->coreFrame;
+    RefPtr coreFrame = _private->coreFrame.get();
     if (!coreFrame)
         return;
 
@@ -2473,7 +2473,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
         resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
-    coreFrame->loader().load(WebCore::FrameLoadRequest(*coreFrame, WTF::move(resourceRequest)));
+    protect(coreFrame->loader())->load(WebCore::FrameLoadRequest(*coreFrame, WTF::move(resourceRequest)));
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -2514,7 +2514,8 @@ static NSURL *createUniqueWebDataURL()
     WebCore::ResourceResponse response(responseURL.get(), MIMEType, [data length], encodingName);
     WebCore::SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], WTF::move(response), WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
 
-    _private->coreFrame->loader().load(WebCore::FrameLoadRequest(*_private->coreFrame, WTF::move(request), WTF::move(substituteData)));
+    RefPtr coreFrame = _private->coreFrame.get();
+    protect(coreFrame->loader())->load(WebCore::FrameLoadRequest(*coreFrame, WTF::move(request), WTF::move(substituteData)));
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
@@ -2549,24 +2550,24 @@ static NSURL *createUniqueWebDataURL()
 - (void)loadArchive:(WebArchive *)archive
 {
     if (RefPtr coreArchive = [archive _coreLegacyWebArchive])
-        _private->coreFrame->loader().loadArchive(*coreArchive);
+        protect(_private->coreFrame->loader())->loadArchive(*coreArchive);
 }
 
 - (void)stopLoading
 {
     if (!_private->coreFrame)
         return;
-    _private->coreFrame->loader().stopForUserCancel();
+    protect(_private->coreFrame->loader())->stopForUserCancel();
 }
 
 - (void)reload
 {
-    _private->coreFrame->loader().reload({ });
+    protect(_private->coreFrame->loader())->reload({ });
 }
 
 - (void)reloadFromOrigin
 {
-    _private->coreFrame->loader().reload(WebCore::ReloadOption::FromOrigin);
+    protect(_private->coreFrame->loader())->reload(WebCore::ReloadOption::FromOrigin);
 }
 
 - (WebFrame *)findFrameNamed:(NSString *)name

@@ -35,7 +35,7 @@
 #import <wtf/Borrow.h>
 #import <wtf/text/TextStream.h>
 
-#import "PDFKitSoftLink.h"
+#import <pal/cocoa/PDFKitSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;

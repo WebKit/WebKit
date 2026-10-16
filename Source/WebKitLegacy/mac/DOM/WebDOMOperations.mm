@@ -96,7 +96,7 @@
 {
     WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
     RetainPtr webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(protect(*core(self)), WTF::move(options), [webArchiveSubframeFilter](WebCore::LocalFrame& subframe) -> bool {
-        return webArchiveSubframeFilter(kit(&subframe));
+        return webArchiveSubframeFilter(protect(kit(&subframe)));
     })]);
 
     return webArchive.autorelease();

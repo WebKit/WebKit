@@ -103,7 +103,7 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/text/TextStream.h>
 
-#import "PDFKitSoftLink.h"
+#import <pal/cocoa/PDFKitSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -245,7 +245,7 @@ void PDFPluginBase::destroy()
 
 void PDFPluginBase::createPDFDocument()
 {
-    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:RetainPtr { originalData() }.get()]);
+    m_pdfDocument = adoptNS([PAL::allocPDFDocumentInstance() initWithData:RetainPtr { originalData() }.get()]);
 }
 
 bool PDFPluginBase::isFullFramePlugin() const

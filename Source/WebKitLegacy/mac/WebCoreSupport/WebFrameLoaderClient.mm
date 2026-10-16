@@ -495,7 +495,7 @@ void WebFrameLoaderClient::willCacheResponse(WebCore::DocumentLoader* loader, We
 #endif
     if (implementations->willCacheResponseFunc) {
         if (id resource = [webView.get() _objectForIdentifier:identifier])
-            return completionHandler(protect(CallResourceLoadDelegate(implementations->willCacheResponseFunc, webView.get(), @selector(webView:resource:willCacheResponse:fromDataSource:), resource, response, protect(dataSource(loader)))));
+            return completionHandler(dynamic_objc_cast<NSCachedURLResponse>(protect(CallResourceLoadDelegate(implementations->willCacheResponseFunc, webView.get(), @selector(webView:resource:willCacheResponse:fromDataSource:), resource, response, protect(dataSource(loader))))));
     }
 
     completionHandler(response);
@@ -1535,7 +1535,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const WebCore::NavigationAc
 
     if (auto mouseEventData = action.mouseEventData()) {
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
+        RetainPtr element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:protect(core(m_webFrame.get())->eventHandler())->hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType)]);
         [result setObject:element.get() forKey:WebActionElementKey];
 
         auto button = std::to_underlying(mouseEventData->isTrusted ? mouseEventData->button : MouseButton::None);
@@ -1751,7 +1751,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
             pluginURL.get(), WebPlugInBaseURLKey, // pluginURL might be nil, so add it last
             nil]);
 
-        RetainPtr view = CallUIDelegate(webView.get(), selector, arguments.get());
+        RetainPtr view = dynamic_objc_cast<NSView>(CallUIDelegate(webView.get(), selector, arguments.get()));
 
         if (view)
             return adoptRef(*new PluginWidget(view.get()));
@@ -1759,7 +1759,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
 #endif
 
     RetainPtr<NSString> MIMEType;
-    WebBasePluginPackage *pluginPackage;
+    RetainPtr<WebBasePluginPackage> pluginPackage;
     if (mimeType.isEmpty())
         pluginPackage = nil;
     else {
@@ -1973,7 +1973,7 @@ RefPtr<WebCore::LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLo
 #if ENABLE(CONTENT_FILTERING)
 void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler&& unblockHandler)
 {
-    core(m_webFrame.get())->loader().policyChecker().setContentFilterUnblockHandler(WTF::move(unblockHandler));
+    protect(core(m_webFrame.get())->loader().policyChecker())->setContentFilterUnblockHandler(WTF::move(unblockHandler));
 }
 #endif
 

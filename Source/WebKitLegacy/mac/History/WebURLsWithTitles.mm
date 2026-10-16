@@ -30,8 +30,9 @@
 
 #import "WebURLsWithTitles.h"
 
-#import <WebKitLegacy/WebNSURLExtras.h>
 #import <WebKitLegacy/WebKitNSStringExtras.h>
+#import <WebKitLegacy/WebNSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation WebURLsWithTitles
 
@@ -40,70 +41,62 @@
     // Make a canned array so we don't construct it on the fly over and over.
     static NSArray *cannedArray = nil;
 
-    if (cannedArray == nil) {
+    if (cannedArray == nil)
         cannedArray = [@[WebURLsWithTitlesPboardType] retain];
-    }
 
     return cannedArray;
 }
 
-+(void)writeURLs:(NSArray *)URLs andTitles:(NSArray *)titles toPasteboard:(NSPasteboard *)pasteboard
++ (void)writeURLs:(NSArray *)URLs andTitles:(NSArray *)titles toPasteboard:(NSPasteboard *)pasteboard
 {
-    NSMutableArray *URLStrings;
-    NSMutableArray *titlesOrEmptyStrings;
+    RetainPtr<NSMutableArray> urlStrings;
+    RetainPtr<NSMutableArray> titlesOrEmptyStrings;
     NSUInteger index, count;
 
     count = [URLs count];
-    if (count == 0) {
+    if (!count)
         return;
-    }
 
-    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil) {
+    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil)
         return;
-    }
 
-    if (count != [titles count]) {
+    if (count != [titles count])
         titles = nil;
-    }
 
-    URLStrings = [NSMutableArray arrayWithCapacity:count];
+    urlStrings = [NSMutableArray arrayWithCapacity:count];
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLStrings addObject:[[URLs objectAtIndex:index] _web_originalDataAsString]];
+        [urlStrings addObject:[[URLs objectAtIndex:index] _web_originalDataAsString]];
         [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
     }
 
-    [pasteboard setPropertyList:@[URLStrings, titlesOrEmptyStrings]
-                        forType:WebURLsWithTitlesPboardType];
+    [pasteboard setPropertyList:@[urlStrings.get(), titlesOrEmptyStrings.get()] forType:WebURLsWithTitlesPboardType];
 }
 
-+(NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard
++ (NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard
 {
-    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil) {
+    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil)
         return nil;
-    }
 
     return [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:1];
 }
 
-+(NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard
++ (NSArray *)URLsFromPasteboard:(NSPasteboard *)pasteboard
 {
-    NSArray *URLStrings;
-    NSMutableArray *URLs;
+    RetainPtr<NSArray> urlStrings;
+    RetainPtr<NSMutableArray> URLs;
     unsigned index, count;
-    
-    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil) {
+
+    if ([pasteboard availableTypeFromArray:[self arrayWithIFURLsWithTitlesPboardType]] == nil)
         return nil;
-    }
 
-    URLStrings = [[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:0];
-    count = [URLStrings count];
+    urlStrings = dynamic_objc_cast<NSArray>([[pasteboard propertyListForType:WebURLsWithTitlesPboardType] objectAtIndex:0]);
+    count = [urlStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
-    for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _web_URLWithDataAsString:[URLStrings objectAtIndex:index]]];
-    }
+    for (index = 0; index < count; ++index)
+        [URLs addObject:[NSURL _web_URLWithDataAsString:dynamic_objc_cast<NSString>([urlStrings objectAtIndex:index])]];
 
-    return URLs;
+    return URLs.autorelease();
 }
 
 @end

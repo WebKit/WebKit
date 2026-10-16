@@ -35,6 +35,7 @@
 #import "WebView.h"
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/SimpleRange.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSWindow (WebNSWindowDetails)
 - (void)_setForceActiveControls:(BOOL)flag;
@@ -191,7 +192,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!completions || ![completions count]) {
             NSBeep();
         } else if ([completions count] == 1) {
-            [self _insertMatch:[completions objectAtIndex:0]];
+            [self _insertMatch:checked_objc_cast<NSString>([completions objectAtIndex:0])];
         } else {
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [frame _stringForRange:selection.get()];
@@ -294,7 +295,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     int selectedRow = [protect(_tableView) selectedRow];
     ASSERT(selectedRow >= 0);
     ASSERT(selectedRow < (int)[_completions count]);
-    [self _insertMatch:[protect(_completions) objectAtIndex:selectedRow]];
+    [self _insertMatch:checked_objc_cast<NSString>([protect(_completions) objectAtIndex:selectedRow])];
 }
 
 - (void)tableAction:(id)sender

@@ -150,7 +150,7 @@ public:
 {
     // Create fake identifier
     static int instanceCount = 1;
-    NSString *fakeIdentifier;
+    RetainPtr<NSString> fakeIdentifier;
 
     // At least ensure that identifier hasn't been already used.
     fakeIdentifier = [NSString stringWithFormat:@"WebPreferences%d", instanceCount++];
@@ -420,7 +420,8 @@ public:
         return nil;
 
     RetainPtr array = (NSArray *)value;
-    for (id object in array.get()) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL id object in array.get()) {
         if (![object isKindOfClass:[NSString class]])
             return nil;
     }
@@ -725,7 +726,7 @@ public:
 
 - (void)setUserStyleSheetLocation:(NSURL *)URL
 {
-    NSString *locationString;
+    RetainPtr<NSString> locationString;
 
     if ([URL isFileURL]) {
         locationString = [[URL path] _web_stringByAbbreviatingWithTildeInPath];

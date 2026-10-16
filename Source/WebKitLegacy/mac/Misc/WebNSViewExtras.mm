@@ -78,7 +78,9 @@
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
 - (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration xHysteresis:(float)xHysteresis yHysteresis:(float)yHysteresis
 {
-    NSEvent *nextEvent, *firstEvent, *mouseUp;
+    RetainPtr<NSEvent> nextEvent;
+    RetainPtr<NSEvent> firstEvent;
+    RetainPtr<NSEvent> mouseUp;
     RetainPtr<NSEvent> dragEvent;
     BOOL dragIt;
 

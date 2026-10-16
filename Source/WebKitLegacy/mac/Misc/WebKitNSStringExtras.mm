@@ -130,7 +130,7 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
     // This works around Radar bug 2774250.
 
     NSString *resolvedHomeDirectory = [homeDirectory stringByResolvingSymlinksInPath];
-    NSString *path;
+    RetainPtr<NSString> path;
 
     if ([self hasPrefix:resolvedHomeDirectory]) {
         NSString *relativePath = [self substringFromIndex:[resolvedHomeDirectory length]];

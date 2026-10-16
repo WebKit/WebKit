@@ -43,6 +43,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
@@ -127,11 +128,11 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
         return NO;
 
     NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
-    NSDictionary *MIMEDictionary;
-    NSString *MIME;
+    RetainPtr<NSDictionary> MIMEDictionary;
+    RetainPtr<NSString> MIME;
 
-    while ((MIME = [keyEnumerator nextObject]) != nil) {
-        MIMEDictionary = [MIMETypes objectForKey:MIME];
+    while ((MIME = checked_objc_cast<NSString>([keyEnumerator nextObject]))) {
+        MIMEDictionary = dynamic_objc_cast<NSDictionary>([MIMETypes objectForKey:MIME]);
         
         // FIXME: Consider storing disabled MIME types.
         NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
@@ -141,16 +142,18 @@ static constexpr auto QuickTimeCocoaPluginIdentifier = "com.apple.quicktime.webp
         WebCore::MimeClassInfo mimeClassInfo;
         
         NSArray *extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
-        for (NSString *extension in extensions) {
+        // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+        for (SUPPRESS_UNRETAINED_LOCAL NSString *extension in extensions) {
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
             // extension string into components.
-            for (NSString *component in [extension componentsSeparatedByString:@","])
+            // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+            for (SUPPRESS_UNRETAINED_LOCAL NSString *component in [extension componentsSeparatedByString:@","])
                 mimeClassInfo.extensions.append(component);
         }
 
         mimeClassInfo.type = AtomString { String(MIME).convertToASCIILowercase() };
-        mimeClassInfo.desc = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
+        mimeClassInfo.desc = dynamic_objc_cast<NSString>([MIMEDictionary objectForKey:WebPluginTypeDescriptionKey]);
 
         pluginInfo.mimes.append(mimeClassInfo);
     }
@@ -380,9 +383,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     NSMutableArray *lowercaseStrings = [NSMutableArray arrayWithCapacity:[self count]];
     NSEnumerator *strings = [self objectEnumerator];
-    NSString *string;
+    RetainPtr<id> string;
 
-    while ((string = [strings nextObject]) != nil) {
+    while ((string = [strings nextObject])) {
         if ([string isKindOfClass:[NSString class]])
             [lowercaseStrings addObject:[string lowercaseString]];
     }

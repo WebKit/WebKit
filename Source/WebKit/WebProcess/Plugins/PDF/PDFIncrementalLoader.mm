@@ -46,7 +46,7 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>
 
-#import "PDFKitSoftLink.h"
+#import <pal/cocoa/PDFKitSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -799,7 +799,7 @@ void PDFIncrementalLoader::threadEntry(Ref<PDFIncrementalLoader>&& loader)
 
     RetainPtr dataProvider = adoptCF(CGDataProviderCreateMultiRangeDirectAccess(this, kCGDataProviderIndeterminateSize, &dataProviderCallbacks));
     CGDataProviderSetProperty(dataProvider.get(), kCGDataProviderHasHighLatency, kCFBooleanTrue);
-    m_backgroundThreadDocument = adoptNS([allocPDFDocumentInstance() initWithProvider:dataProvider.get()]);
+    m_backgroundThreadDocument = adoptNS([PAL::allocPDFDocumentInstance() initWithProvider:dataProvider.get()]);
 
     // [PDFDocument initWithProvider:] will return nil in cases where the PDF is non-linearized.
     // In those cases we'll just keep buffering the entire PDF on the main thread.

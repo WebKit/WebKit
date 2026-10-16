@@ -283,7 +283,8 @@ enum {
 
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType allowingPlugins:(BOOL)allowPlugins
 {
-    Class viewClass;
+    // Out-parameter; classes are never deallocated.
+    SUPPRESS_UNRETAINED_LOCAL Class viewClass;
     return [WebView _viewClass:&viewClass andRepresentationClass:nil forMIMEType:MIMEType allowingPlugins:allowPlugins] ? viewClass : nil;
 }
 

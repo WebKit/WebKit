@@ -100,7 +100,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
 
-#import "PDFKitSoftLink.h"
+#import <pal/cocoa/PDFKitSoftLink.h>
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
@@ -511,7 +511,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
 bool PDFPlugin::pdfKitLayerControllerIsAvailable()
 {
-    return getPDFLayerControllerClassSingleton();
+    return PAL::getPDFLayerControllerClassSingleton();
 }
 
 Ref<PDFPlugin> PDFPlugin::create(HTMLPlugInElement& pluginElement)
@@ -524,7 +524,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this shouldFlip:NO]))
-    , m_pdfLayerController(adoptNS([allocPDFLayerControllerInstance() init]))
+    , m_pdfLayerController(adoptNS([PAL::allocPDFLayerControllerInstance() init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 {
     Ref document = element.document();
@@ -558,8 +558,8 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
         [m_pdfLayerController setDeviceColorSpace:screenColorSpace(protect(frame->coreLocalFrame())->view()).platformColorSpace()];
     
-    if ([getPDFLayerControllerClassSingleton() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
-        [getPDFLayerControllerClassSingleton() setUseIOSurfaceForTiles:false];
+    if ([PAL::getPDFLayerControllerClassSingleton() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
+        [PAL::getPDFLayerControllerClassSingleton() setUseIOSurfaceForTiles:false];
 }
 
 PDFPlugin::~PDFPlugin() = default;
@@ -1332,7 +1332,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchFor
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:initialSelection withOptions:options];
 
     if (!foundSelection && wrapSearch) {
-        auto emptySelection = adoptNS([allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
+        RetainPtr emptySelection = adoptNS([PAL::allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:emptySelection.get() withOptions:options];
     }
 

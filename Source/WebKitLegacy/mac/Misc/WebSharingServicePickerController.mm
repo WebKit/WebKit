@@ -39,6 +39,7 @@
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/NodeDocument.h>
 #import <WebCore/Page.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 static NSString * const serviceControlsPasteboardName = @"WebKitServiceControlsPasteboard";
 
@@ -160,7 +161,8 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
         
     NSMutableArray *services = [NSMutableArray arrayWithCapacity:proposedServices.count];
     
-    for (NSSharingService *service in proposedServices) {
+    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
+    for (SUPPRESS_UNRETAINED_LOCAL NSSharingService *service in proposedServices) {
         if (service.type != NSSharingServiceTypeEditor)
             [services addObject:service];
     }
@@ -212,15 +214,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             }
 
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                [self didShareImageData:receivedData confirmDataIsValidTIFFData:YES];
+                [self didShareImageData:checked_objc_cast<NSData>(receivedData) confirmDataIsValidTIFFData:YES];
             }];
 
         }];
 ALLOW_DEPRECATED_DECLARATIONS_END
-    }
-    else if ([item isKindOfClass:[NSAttributedString class]]) {
+    } else if (RetainPtr attributedString = dynamic_objc_cast<NSAttributedString>(item)) {
         if (RefPtr frame = _pickerClient->pageForSharingServicePicker(*self)->focusController().focusedOrMainFrame())
-            protect(frame->editor())->replaceSelectionWithAttributedString(item);
+            protect(frame->editor())->replaceSelectionWithAttributedString(attributedString);
     } else
         LOG_ERROR("sharingService:didShareItems: - Unknown item type returned\n");
 }

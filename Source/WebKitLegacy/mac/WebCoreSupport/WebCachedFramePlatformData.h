@@ -35,12 +35,15 @@
 class WebCachedFramePlatformData : public WebCore::CachedFramePlatformData {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebCachedFramePlatformData);
 public:
-    WebCachedFramePlatformData(id webDocumentView) : m_webDocumentView(webDocumentView) { }
-    
+    WebCachedFramePlatformData(NSView<WebDocumentView> *webDocumentView)
+        : m_webDocumentView(webDocumentView)
+    {
+    }
+
     virtual void clear() { wtfObjCMsgSend<void>(m_webDocumentView.get(), @selector(closeIfNotCurrentView)); }
 
-    id webDocumentView() { return m_webDocumentView.get(); }
+    NSView<WebDocumentView> *webDocumentView() { return m_webDocumentView.get(); }
 private:
-    const RetainPtr<id> m_webDocumentView;
+    const RetainPtr<NSView<WebDocumentView>> m_webDocumentView;
 };
 
