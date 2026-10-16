@@ -97,6 +97,13 @@ void WebPreferences::forceSiteIsolationAlwaysOnForTesting()
     WebKit::forceSiteIsolationAlwaysOnForTesting = true;
 }
 
+bool WebPreferences::shouldUseUIProcessForBackForwardItemLoading() const
+{
+    // Site Isolation spreads a page's frames across Web processes, so no single Web process can
+    // coordinate a back/forward traversal by itself; the UI process must always drive it.
+    return useUIProcessForBackForwardItemLoading() || siteIsolationEnabled();
+}
+
 const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 {
     static auto experimentalFeatures = NeverDestroyed([]() {

@@ -1,0 +1,4 @@
+
+PASS iframe navigation times are persistent after the iframe is removed. Part 1.
+PASS iframe navigation times are persistent after the iframe is removed Part 2.
+

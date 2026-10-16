@@ -425,7 +425,7 @@ Ref<FrameState> ProvisionalPageProxy::copyFrameStateForBackForwardNavigation(API
 {
     Ref frameItem = navigation.targetFrameItem() ? *navigation.targetFrameItem() : item.mainFrameItem();
     if (RefPtr page = m_page.get()) {
-        if (protect(page->preferences())->useUIProcessForBackForwardItemLoading())
+        if (protect(page->preferences())->shouldUseUIProcessForBackForwardItemLoading())
             return frameItem->copyFrameState();
     }
     return frameItem->copyFrameStateWithChildren();
