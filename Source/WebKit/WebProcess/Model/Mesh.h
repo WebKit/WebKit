@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/NodeIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -98,7 +99,9 @@ public:
     virtual RefPtr<WebCore::NativeImage> getCurrentFrameAsNativeImage(uint32_t) { return nullptr; }
     virtual void updateRenderBuffers(WebModel::ResizeMeshDescriptor&&) { }
     virtual void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback) { callback({ }); }
-    virtual std::pair<simd_float4, simd_float4> getCenterAndExtents() const { return std::make_pair(simd_make_float4(0.f), simd_make_float4(0.f)); }
+    virtual void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&& descriptors) { update(WTF::move(descriptors)); }
+    virtual std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const { return std::nullopt; }
+    virtual void removeModel(WebCore::NodeIdentifier) { }
 #endif
 
 protected:
