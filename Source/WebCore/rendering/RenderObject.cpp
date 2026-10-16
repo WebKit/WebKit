@@ -1524,8 +1524,8 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     } else if (auto* renderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(*this)) {
         ASSERT(!renderSVGModelObject->isInFlowPositioned());
         stream << " " << renderSVGModelObject->frameRectEquivalent();
-    } else if (auto* renderInline = dynamicDowncast<RenderInline>(*this); renderInline && isInFlowPositioned()) {
-        FloatSize inlineOffset = renderInline->offsetForInFlowPosition();
+    } else if (isInlineBox() && isInFlowPositioned()) {
+        FloatSize inlineOffset = downcast<RenderBoxModelObject>(*this).offsetForInFlowPosition();
         stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
     }
 

@@ -820,8 +820,8 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::o
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
         return updateLineBreakBoxDimensions(*renderLineBreak);
 
-    if (auto* inlineBox = dynamicDowncast<RenderInline>(renderer))
-        return updateInlineBoxDimensions(*inlineBox, availableWidth, intrinsicWidthMode);
+    if (renderer.isInlineBox())
+        return updateInlineBoxDimensions(downcast<RenderBoxModelObject>(renderer), availableWidth, intrinsicWidthMode);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const

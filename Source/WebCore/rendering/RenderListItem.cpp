@@ -408,7 +408,7 @@ void RenderListItem::updateMarkerContent()
         return;
     }
 
-    CheckedPtr marker = dynamicDowncast<RenderInline>(m_marker.get());
+    CheckedPtr marker = m_marker;
     // css-lists-3 §3.3: with a non-normal `content` the marker's contents are the author's, not ours to fill in.
     if (!marker || marker->style().content().isData())
         return;
@@ -713,14 +713,15 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
                 fallbackParent = &blockContainer;
                 break;
             }
-            if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(child)) {
-                if (isEmptyInline(*inlineBox)) {
+            if (child.isInlineBox()) {
+                CheckedRef inlineBox = downcast<RenderBoxModelObject>(child);
+                if (isEmptyInline(inlineBox.get())) {
                     fallbackParent = &blockContainer;
                     break;
                 }
                 // An inside marker takes a line ahead of the block, so only an outside marker follows the content in.
                 if (is<RenderListOutsideMarker>(marker)) {
-                    if (CheckedPtr leadingBlock = dynamicDowncast<RenderBlock>(firstContentfulChild(*inlineBox))) {
+                    if (CheckedPtr leadingBlock = dynamicDowncast<RenderBlock>(firstContentfulChild(inlineBox.get()))) {
                         if (auto firstFormattedLineRoot = firstFormattedLineRootIn(*leadingBlock))
                             return { firstFormattedLineRoot, { } };
                         break;

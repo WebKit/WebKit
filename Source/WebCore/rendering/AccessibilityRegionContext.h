@@ -34,7 +34,6 @@ namespace WebCore {
 
 class RenderBox;
 class RenderBoxModelObject;
-class RenderInline;
 class RenderLineBreak;
 class RenderText;
 class RenderView;
@@ -52,8 +51,7 @@ public:
     // This group of methods takes paint-time geometry and uses it directly.
     void takeBounds(const RenderBox&, LayoutPoint /* paintOffset */);
     void takeBounds(const RenderBox&, FloatRect /* paintRect */);
-    void takeBounds(const RenderInline*, LayoutRect&&);
-    void takeBounds(const RenderInline&, LayoutRect&& /* paintRect */);
+    void takeBoundsForInlineBox(const RenderBoxModelObject&, LayoutRect&& /* paintRect */);
     void takeBounds(const RenderText&, FloatRect /* paintRect */, size_t /* lineIndex */);
     void takeBounds(const RenderView&, LayoutPoint&& /* paintOffset */);
     void takeBounds(const RenderLineBreak*, const LayoutPoint& /* paintOffset */);

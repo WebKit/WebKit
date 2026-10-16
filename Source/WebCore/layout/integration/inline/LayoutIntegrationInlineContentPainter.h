@@ -35,7 +35,7 @@ namespace WebCore {
 class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
-class RenderInline;
+class RenderBoxModelObject;
 
 struct PaintInfo;
 
@@ -69,7 +69,7 @@ private:
     const RenderBoxModelObject* m_inlineBoxWithLayer { nullptr };
     const InlineContent& m_inlineContent;
     const RenderBlockFlow& m_root;
-    SingleThreadWeakListHashSet<RenderInline> m_outlineObjects;
+    SingleThreadWeakListHashSet<RenderBoxModelObject> m_outlineObjects;
 };
 
 class LayerPaintScope {

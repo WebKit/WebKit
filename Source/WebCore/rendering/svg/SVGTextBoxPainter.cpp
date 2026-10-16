@@ -236,8 +236,8 @@ void SVGTextBoxPainter::paint()
 
     // Finally, paint the outline if any.
     if (renderer().style().hasOutline()) {
-        if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(parentRenderer))
-            OutlinePainter { m_paintInfo }.paintOutline(*renderInline, m_paintOffset);
+        if (parentRenderer.isInlineBox())
+            OutlinePainter { m_paintInfo }.paintOutline(parentRenderer, m_paintOffset);
     }
 
     ASSERT(!m_legacyPaintingResource);

@@ -113,7 +113,7 @@ CheckedRef<RenderElement> RenderTreeBuilder::Ruby::findOrCreateParentForStyleBas
     auto rubyBase = createAnonymousRendererForRuby(beforeChildAncestor, Style::DisplayType::RubyBase);
     rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
-    m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTF::move(rubyBase), beforeChild);
+    m_builder.inlineBuilder().attach(downcast<RenderBoxModelObject>(parent), WTF::move(rubyBase), beforeChild);
     beforeChild = nullptr;
     return *newParent;
 }

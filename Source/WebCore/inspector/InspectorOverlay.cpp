@@ -166,7 +166,7 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
         renderer->absoluteQuads(highlight.quads);
         for (auto& quad : highlight.quads)
             contentsQuadToCoordinateSystem(mainView, *containingView, quad, coordinateSystem);
-    } else if (isAnyOf<RenderBox, RenderInline>(*renderer)) {
+    } else if (is<RenderBox>(*renderer) || renderer->isInlineBox()) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
         LayoutRect borderBox;
@@ -184,17 +184,17 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
             marginBox = LayoutRect(borderBox.x() - margins.left(), borderBox.y() - margins.top(),
                 borderBox.width() + margins.left() + margins.right(), borderBox.height() + margins.top() + margins.bottom());
         } else {
-            auto& renderInline = downcast<RenderInline>(*renderer);
+            auto& inlineBox = downcast<RenderBoxModelObject>(*renderer);
 
-            // RenderInline's bounding box includes padding and borders, excludes margins.
-            borderBox = renderInline.borderBoxRectInContainer();
-            paddingBox = LayoutRect(borderBox.x() + renderInline.borderLeft(), borderBox.y() + renderInline.borderTop(),
-                borderBox.width() - renderInline.borderLeft() - renderInline.borderRight(), borderBox.height() - renderInline.borderTop() - renderInline.borderBottom());
-            contentBox = LayoutRect(paddingBox.x() + renderInline.paddingLeft(), paddingBox.y() + renderInline.paddingTop(),
-                paddingBox.width() - renderInline.paddingLeft() - renderInline.paddingRight(), paddingBox.height() - renderInline.paddingTop() - renderInline.paddingBottom());
+            // An inline box's bounding box includes padding and borders, excludes margins.
+            borderBox = inlineBox.borderBoxRectInContainer();
+            paddingBox = LayoutRect(borderBox.x() + inlineBox.borderLeft(), borderBox.y() + inlineBox.borderTop(),
+                borderBox.width() - inlineBox.borderLeft() - inlineBox.borderRight(), borderBox.height() - inlineBox.borderTop() - inlineBox.borderBottom());
+            contentBox = LayoutRect(paddingBox.x() + inlineBox.paddingLeft(), paddingBox.y() + inlineBox.paddingTop(),
+                paddingBox.width() - inlineBox.paddingLeft() - inlineBox.paddingRight(), paddingBox.height() - inlineBox.paddingTop() - inlineBox.paddingBottom());
             // Ignore marginTop and marginBottom for inlines.
-            marginBox = LayoutRect(borderBox.x() - renderInline.marginLeft(), borderBox.y(),
-                borderBox.width() + renderInline.horizontalMarginExtent(), borderBox.height());
+            marginBox = LayoutRect(borderBox.x() - inlineBox.marginLeft(), borderBox.y(),
+                borderBox.width() + inlineBox.horizontalMarginExtent(), borderBox.height());
         }
 
         // FIXME: Remove suppression once rdar://189998444 is fixed.

@@ -68,7 +68,7 @@ private:
     void repositionGenericCue();
 
     RenderBlockFlow* backdropBox() const;
-    RenderInline* cueBox() const;
+    RenderBoxModelObject* cueBox() const;
     static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBox&);
 
     WeakPtr<VTTCue, WeakPtrImplWithEventTargetData> m_cue;

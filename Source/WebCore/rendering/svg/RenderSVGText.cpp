@@ -465,7 +465,7 @@ bool RenderSVGText::layoutInlineChildrenWithoutLineLayout()
     CheckedPtr cache = protect(document())->existingAXObjectCache();
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
-        ASSERT((isAnyOf<RenderInline, RenderText>(renderer)));
+        ASSERT(renderer.isInlineBox() || is<RenderText>(renderer));
         renderer.clearNeedsLayout();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (cache)

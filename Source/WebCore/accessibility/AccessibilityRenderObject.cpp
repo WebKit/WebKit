@@ -722,7 +722,7 @@ static Path computePathForRenderBox(const RenderBox& renderBox)
     auto borderShape = BorderShape::shapeForBorderRect(renderBox.usedStyle(), renderBox.borderBoxRect());
     auto path = borderShape.pathForOuterShape(protect(renderBox.document())->deviceScaleFactor());
     // borderBoxRect() is in local coordinates. Offset it to absolute document coordinates
-    // to match the coordinate system used by SVG, RenderText, and RenderInline paths.
+    // to match the coordinate system used by SVG, RenderText, and inline box paths.
     auto absoluteOrigin = flooredLayoutPoint(renderBox.localToAbsolute(FloatPoint(), MapCoordinatesMode::UseTransforms));
     path.transform(AffineTransform().translate(absoluteOrigin.x(), absoluteOrigin.y()));
     return path;
@@ -746,19 +746,19 @@ static bool rectsSpanMultipleLines(const Vector<LayoutRect>& rects, bool isHoriz
     return false;
 }
 
-static Path computePathForMultiLineRenderInline(const RenderInline& renderInline)
+static Path computePathForMultiLineInlineBox(const RenderBoxModelObject& inlineBox)
 {
     Vector<LayoutRect> rects;
-    renderInline.boundingRects(rects, flooredLayoutPoint(renderInline.localToAbsolute()));
+    inlineBox.boundingRects(rects, flooredLayoutPoint(inlineBox.localToAbsolute()));
     // Single-line inlines don't need a path -- the bounding rect is sufficient.
     if (rects.size() < 2)
         return { };
 
-    CheckedRef style = renderInline.style();
+    CheckedRef style = inlineBox.style();
     if (!rectsSpanMultipleLines(rects, style->writingMode().isHorizontal()))
         return { };
 
-    float deviceScaleFactor = protect(renderInline.document())->deviceScaleFactor();
+    float deviceScaleFactor = protect(inlineBox.document())->deviceScaleFactor();
     Vector<FloatRect> pixelSnappedRects;
     for (auto rect : rects)
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
@@ -859,8 +859,10 @@ Path AccessibilityRenderObject::elementPath() const
             return computePathForRenderBox(*renderBox);
     }
 
-    if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*m_renderer))
-        return computePathForMultiLineRenderInline(*renderInline);
+    if (m_renderer->isInlineBox()) {
+        CheckedRef inlineBox = downcast<RenderBoxModelObject>(*m_renderer);
+        return computePathForMultiLineInlineBox(inlineBox.get());
+    }
 
     return { };
 }

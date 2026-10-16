@@ -214,7 +214,7 @@ static RenderPtr<RenderText> createMarkerTextRenderer(Document& document, const 
     return WebCore::createRenderer<RenderText>(RenderObject::Type::Text, document, emptyString());
 }
 
-static CheckedRef<RenderBlock> parentForInlineMarker(RenderListItem& listItemRenderer, const RenderInline& marker)
+static CheckedRef<RenderBlock> parentForInlineMarker(RenderListItem& listItemRenderer, const RenderBoxModelObject& marker)
 {
     if (CheckedPtr firstChild = dynamicDowncast<RenderBlock>(firstNonMarkerChild(listItemRenderer)); firstChild && !firstChild->isAnonymous())
         return listItemRenderer;

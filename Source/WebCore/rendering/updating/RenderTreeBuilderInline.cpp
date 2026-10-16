@@ -46,8 +46,9 @@ RenderTreeBuilder::Inline::Inline(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::Inline::attach(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::Inline::attach(RenderBoxModelObject& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
+    ASSERT(parent.isInlineBox());
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* fragmentedFlow = parent.enclosingFragmentedFlow())
         beforeChildOrPlaceholder = m_builder.multiColumnBuilder().resolveMovedChild(*fragmentedFlow, beforeChild);

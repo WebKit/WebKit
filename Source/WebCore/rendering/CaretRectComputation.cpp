@@ -324,7 +324,7 @@ static LayoutRect computeCaretRectForBlock(const RenderBlock& renderer, const In
     return computeCaretRectForEmptyElement(renderer, renderer.logicalWidth(), renderer.textIndentOffset(), caretRectMode);
 }
 
-static LayoutRect computeCaretRectForInline(const RenderInline& renderer)
+static LayoutRect computeCaretRectForInline(const RenderBoxModelObject& renderer)
 {
     if (renderer.firstChild()) {
         // This condition is possible if the RenderInline is at an editing boundary,
@@ -360,8 +360,8 @@ LayoutRect computeLocalCaretRect(const RenderObject& renderer, const InlineBoxAn
     if (auto* box = dynamicDowncast<RenderBox>(renderer))
         return computeCaretRectForBox(*box, boxAndOffset, caretRectMode);
 
-    if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
-        return computeCaretRectForInline(*renderInline);
+    if (renderer.isInlineBox())
+        return computeCaretRectForInline(downcast<RenderBoxModelObject>(renderer));
 
     return { };
 }

@@ -35,7 +35,7 @@ class RenderTreeBuilder::Inline {
 public:
     Inline(RenderTreeBuilder&);
 
-    void attach(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void attach(RenderBoxModelObject& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
 private:
 

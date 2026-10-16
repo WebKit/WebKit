@@ -49,7 +49,7 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
         if (!renderer->isInFlow())
             return false;
 
-        auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderInline, RenderListOutsideMarker>(renderer);
+        auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderListOutsideMarker>(renderer) || renderer->isInlineBox();
         if (isFullySupportedInFlowRenderer)
             continue;
 

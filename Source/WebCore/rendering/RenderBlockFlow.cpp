@@ -274,9 +274,8 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
     auto parentBlock = [&]() -> CheckedPtr<RenderBlockFlow> {
         if (auto* blockFlowParent = dynamicDowncast<RenderBlockFlow>(parent()))
             return blockFlowParent;
-        if (auto* inlineBoxParent = dynamicDowncast<RenderInline>(parent())) {
-            return dynamicDowncast<RenderBlockFlow>(inlineBoxParent->containingBlock());
-        }
+        if (parent() && parent()->isInlineBox())
+            return dynamicDowncast<RenderBlockFlow>(parent()->containingBlock());
         // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add
         // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
         // See <rdar://problem/8049753>, where float property is applied on a text node in a SVG.
@@ -887,7 +886,7 @@ static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContai
         return false;
     for (CheckedPtr<const RenderObject> renderer = blockWithClampedLine.get(); renderer && renderer != &lineClampContainer; renderer = renderer->parent()) {
         CheckedPtr parent = renderer->parent();
-        if (is<RenderInline>(*parent))
+        if (parent->isInlineBox())
             continue;
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*parent); blockFlow && blockFlow->childrenInline()) {
             if (!blockFlow->inlineLayout() || !blockFlow->inlineLayout()->contentFitsWithinMaximumLines())
@@ -1166,7 +1165,7 @@ void RenderBlockFlow::simplifiedNormalFlowLayout()
         CheckedPtr renderer = walker.current();
         if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer); box && box->needsLayout() && !box->isOutOfFlowPositioned())
             box->layout();
-        else if (isAnyOf<RenderText, RenderInline, RenderLineBreak>(renderer))
+        else if (isAnyOf<RenderText, RenderLineBreak>(renderer) || renderer->isInlineBox())
             renderer->clearNeedsLayout();
     }
 
@@ -4434,7 +4433,7 @@ RenderBlockFlow::InlineContentStatus RenderBlockFlow::markInlineContentDirtyForL
         if (renderer.needsLayout())
             contentNeedsNormalChildLayoutOnly = contentNeedsNormalChildLayoutOnly.value_or(true) && renderer.needsNormalChildOrSimplifiedLayoutOnly();
 
-        if (isAnyOf<RenderLineBreak, RenderInline, RenderText>(renderer))
+        if (isAnyOf<RenderLineBreak, RenderText>(renderer) || renderer.isInlineBox())
             renderer.clearNeedsLayout();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -5028,7 +5027,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin, Render
     }
 }
 
-static inline std::optional<std::pair<const RenderText&, const RenderText&>> trailingRubyBaseAndAdjacentTextContent(const RenderInline& rubyBase, const RenderBlockFlow& blockContainer)
+static inline std::optional<std::pair<const RenderText&, const RenderText&>> trailingRubyBaseAndAdjacentTextContent(const RenderBoxModelObject& rubyBase, const RenderBlockFlow& blockContainer)
 {
     // This functions returns adjacent _content_ renderers by skipping non-inline content (floats, out-of-flow content) inline boxes and related annotation boxes.
     // e.g. <ruby>
@@ -5078,7 +5077,7 @@ static inline std::optional<std::pair<const RenderText&, const RenderText&>> tra
     return { std::pair<const RenderText&, const RenderText&> { downcast<RenderText>(*lastChild), downcast<RenderText>(*firstSibling) } };
 }
 
-static inline bool hasTrailingSoftWrapOpportunity(const RenderInline& rubyBase, const RenderBlockFlow& blockContainer)
+static inline bool hasTrailingSoftWrapOpportunity(const RenderBoxModelObject& rubyBase, const RenderBlockFlow& blockContainer)
 {
     if (rubyBase.parent()->style().textWrapMode() == TextWrapMode::NoWrap)
         return false;
@@ -5280,10 +5279,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
             }
             auto& childStyle = downcast<RenderElement>(*child).style();
             // Case (1) and (2). Inline replaced and inline flow elements.
-            if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*child)) {
+            if (child->isInlineBox()) {
+                CheckedRef inlineBox = downcast<RenderBoxModelObject>(*child);
                 // Add in padding/border/margin from the appropriate side of
                 // the element.
-                float bpm = getBorderPaddingMargin(*renderInline, childIterator.isEndOfInline());
+                float bpm = getBorderPaddingMargin(inlineBox.get(), childIterator.isEndOfInline());
                 childMin += bpm;
                 childMax += bpm;
 
@@ -5296,7 +5296,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
                 if (childStyle.display() == Style::DisplayType::RubyBase && childIterator.isEndOfInline()) {
                     if (!rubyBaseContentStack.isEmpty()) {
                         auto rubyBaseStart = rubyBaseContentStack.last();
-                        auto baseHasBreakingPositionAfter = hasTrailingSoftWrapOpportunity(*renderInline, *this);
+                        auto baseHasBreakingPositionAfter = hasTrailingSoftWrapOpportunity(inlineBox.get(), *this);
                         rubyBaseContentStack.last() = RubyBaseContent { inlineMin - rubyBaseStart.minimumWidth, inlineMax - rubyBaseStart.maximumWidth, baseHasBreakingPositionAfter };
                         if (baseHasBreakingPositionAfter) {
                             // Let's mark based end as a breaking opportunity. Note that annotation may chage the final value of minLogicalWidth.

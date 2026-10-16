@@ -2099,12 +2099,12 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     Color surface;
     for (CheckedPtr renderer = firstRenderer; renderer && !surface.isOpaque(); renderer = renderer->parent()) {
         auto background = protect(renderer->style())->visitedDependentUsedBackgroundColorApplyingColorFilter();
-        if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(renderer.get())) {
+        if (renderer->isInlineBox()) {
             if (!background.isVisible())
                 continue;
             if (!caretPainter || !caretRectInPainterSpace)
                 continue;
-            if (!inlineBackgroundCoversCaret(*inlineBox, *caretPainter, *caretRectInPainterSpace))
+            if (!inlineBackgroundCoversCaret(downcast<RenderBoxModelObject>(*renderer), *caretPainter, *caretRectInPainterSpace))
                 continue;
         }
         surface = blendSourceOver(background, surface);

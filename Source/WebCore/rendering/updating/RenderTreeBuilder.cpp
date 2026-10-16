@@ -421,8 +421,8 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (auto* inlineParent = dynamicDowncast<RenderInline>(parent)) {
-        inlineBuilder().attach(*inlineParent, WTF::move(child), beforeChild);
+    if (parent.isInlineBox()) {
+        inlineBuilder().attach(downcast<RenderBoxModelObject>(parent), WTF::move(child), beforeChild);
         return;
     }
 
@@ -722,7 +722,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, S
     if (is<RenderBlock>(parent))
         noLongerAffectsParent = (!wasFloating && isFloating) || (!wasOutOfFlowPositioned && isOutOfFlowPositioned);
 
-    if (isAnyOf<RenderBlockFlow, RenderInline>(parent)) {
+    if (is<RenderBlockFlow>(parent) || parent.isInlineBox()) {
         startsAffectingParent = (wasFloating || wasOutOfFlowPositioned) && !isFloating && !isOutOfFlowPositioned;
         ASSERT(!startsAffectingParent || !noLongerAffectsParent);
     }
