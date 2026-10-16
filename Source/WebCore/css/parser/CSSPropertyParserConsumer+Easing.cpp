@@ -145,9 +145,17 @@ static std::optional<CSS::LinearEasingParameters::Stop> consumeUnresolvedLinearE
     // <linear-easing-function-stop> = <number> && <percentage>{0,2}
 
     auto output = MetaConsumer<CSS::Number<>>::consume(args, state);
-    if (!output)
-        return { };
-    auto input = consumeUnresolvedLinearEasingFunctionStopLength(args, state);
+    std::optional<CSS::LinearEasingParameters::Stop::Length> input;
+    if (output)
+        input = consumeUnresolvedLinearEasingFunctionStopLength(args, state);
+    else {
+        input = consumeUnresolvedLinearEasingFunctionStopLength(args, state);
+        if (!input)
+            return { };
+        output = MetaConsumer<CSS::Number<>>::consume(args, state);
+        if (!output)
+            return { };
+    }
 
     return CSS::LinearEasingParameters::Stop {
         .output = WTF::move(*output),
