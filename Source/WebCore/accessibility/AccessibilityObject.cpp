@@ -3328,6 +3328,9 @@ AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value
 
 String AccessibilityObject::computedRoleString() const
 {
+    // We only finalize some roles, like a list without markers, after adding children, so add them now.
+    const_cast<AccessibilityObject*>(this)->updateChildrenIfNecessary();
+
     // FIXME: Need a few special cases that aren't in the RoleMap: option, etc. http://webkit.org/b/128296
     auto role = this->role();
 
