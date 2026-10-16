@@ -40,6 +40,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // A scene that never activates would otherwise leave the presentation completion pending forever.
 static constexpr Seconds sceneActivationTimeout = 10_s;
