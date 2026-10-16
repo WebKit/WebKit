@@ -7000,6 +7000,17 @@ WantsBalancedSetDefersLoadingBehavior:
   status: embedder
   defaultValue: false
 
+WasmCustomPageSizesEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Custom Page Sizes"
+  humanReadableDescription: "Allow the custom-page-sizes proposal for WebAssembly."
+  jscOptionName: useWasmCustomPageSizes
+  sharedPreferenceForWebProcess: true
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: false
+
 WasmJSStringBuiltinsEnabled:
   type: bool
   status: stable
