@@ -91,6 +91,12 @@ SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
     return { SerializedNode::ProcessingInstruction { { data() }, m_target } };
 }
 
+static void detachStyleSheetFromOwnerNode(RefPtr<StyleSheet>& sheet)
+{
+    if (RefPtr oldSheet = std::exchange(sheet, nullptr))
+        oldSheet->clearOwnerNode();
+}
+
 void ProcessingInstruction::checkStyleSheet()
 {
     Ref document = this->document();
@@ -129,6 +135,7 @@ void ProcessingInstruction::checkStyleSheet()
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
                 URL finalURL({ }, m_localHref);
+                detachStyleSheetFromOwnerNode(m_sheet);
                 m_sheet = XSLStyleSheet::createEmbedded(*this, finalURL);
                 m_loading = false;
                 document->scheduleToApplyXSLTransforms();
@@ -219,6 +226,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     cssSheet->setTitle(m_title);
     cssSheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, document->cssParserContext()));
 
+    detachStyleSheetFromOwnerNode(m_sheet);
     m_sheet = WTF::move(cssSheet);
 
     // We don't need the cross-origin security check here because we are
@@ -231,6 +239,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
 {
     ASSERT(m_isXSL);
+    detachStyleSheetFromOwnerNode(m_sheet);
     m_sheet = XSLStyleSheet::create(*this, href, baseURL);
     Ref protectedDocument { document() };
     parseStyleSheet(sheet);

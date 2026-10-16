@@ -1,0 +1,3 @@
+Mutating an xml-stylesheet processing instruction's data re-runs ProcessingInstruction::checkStyleSheet(), which replaces m_sheet without calling clearOwnerNode() on the previous sheet. The orphaned CSSStyleSheet keeps a counted CheckedPtr to the PI, so deleting the PI scribbles and leaks it, and the next style update crashes in ~CSSStyleSheet.
+
+PASS - did not crash

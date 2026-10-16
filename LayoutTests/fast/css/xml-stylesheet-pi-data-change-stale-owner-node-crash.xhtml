@@ -1,0 +1,62 @@
+<?xml-stylesheet href="resources/small.css" type="text/css"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/gc.js"></script>
+</head>
+<body>
+<p>Mutating an xml-stylesheet processing instruction's data re-runs ProcessingInstruction::checkStyleSheet(), which replaces m_sheet without calling clearOwnerNode() on the previous sheet. The orphaned CSSStyleSheet keeps a counted CheckedPtr to the PI, so deleting the PI scribbles and leaks it, and the next style update crashes in ~CSSStyleSheet.</p>
+<div id="result">FAIL - test did not run to completion</div>
+<script type="text/javascript">
+<![CDATA[
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = function() {
+    var result = document.getElementById("result");
+
+    // The prolog PI is the document's first child. Reach it without going through
+    // document.styleSheets, so no JS wrapper is created for the first sheet: such a
+    // wrapper would add the PI as a GC opaque root and keep it alive past step 4.
+    var pi = document.firstChild;
+
+    // 1. Flush style so the first sheet is retained by Style::Scope.
+    document.documentElement.offsetHeight;
+    var firstSheet = pi.sheet;
+
+    // 2. CharacterData::setData() re-runs checkStyleSheet(), which re-requests the same
+    //    URL. It is already in the memory cache, and a CachedCSSStyleSheet is not a
+    //    RawResource, so CachedResource::addClient() does not defer: didAddClient() calls
+    //    setCSSStyleSheet() synchronously and m_sheet is replaced. Without the fix the
+    //    first sheet is now orphaned, still holding a counted CheckedPtr to the PI.
+    pi.data = pi.data + " ";
+    var secondSheet = pi.sheet;
+    var sheetWasReplacedSynchronously = firstSheet !== secondSheet;
+    firstSheet = secondSheet = null;
+
+    // 3. removingSteps() clears the owner node of whatever m_sheet currently holds.
+    pi.remove();
+    pi = null;
+
+    // 4. Collecting the PI's wrapper drops the last ref to the PI. If a stale sheet still
+    //    counts it, WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR zeroes and leaks the node.
+    gc();
+    gc();
+
+    // 5. Flushing the pending update releases the previous sheet list. ~CSSStyleSheet
+    //    destroys its CheckedPtr<Node>, reads a zero count out of the scribbled PI and
+    //    calls crashDueToCheckedPtrToDeadObject().
+    document.documentElement.offsetHeight;
+
+    result.textContent = sheetWasReplacedSynchronously
+        ? "PASS - did not crash"
+        : "FAIL - the sheet was not replaced synchronously, so the test exercised nothing";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+]]>
+</script>
+</body>
+</html>
