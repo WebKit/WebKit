@@ -2988,6 +2988,42 @@ public:
             return false;
         };
 
+        auto tryExtractOptionalCRThenLF = [&] -> bool {
+            // Detect patterns: \r?\n
+            // These patterns match LF (\n) and CRLF (\r\n)
+
+            auto& alternatives = m_pattern.m_body->m_alternatives;
+            if (alternatives.size() != 1)
+                return false;
+
+            auto* alternative = alternatives[0].get();
+            if (alternative->m_terms.size() != 2)
+                return false;
+
+            auto& term0 = alternative->m_terms[0];
+            if (term0.type != PatternTerm::Type::PatternCharacter)
+                return false;
+            if (term0.patternCharacter != '\r')
+                return false;
+            if (term0.quantityType != QuantifierType::Greedy)
+                return false;
+            if (term0.quantityMinCount || term0.quantityMaxCount != 1)
+                return false;
+
+            auto& term1 = alternative->m_terms[1];
+            if (term1.type != PatternTerm::Type::PatternCharacter)
+                return false;
+            if (term1.patternCharacter != '\n')
+                return false;
+            if (term1.quantityType != QuantifierType::FixedCount)
+                return false;
+            if (term1.quantityMinCount != 1 || term1.quantityMaxCount != 1)
+                return false;
+
+            m_pattern.m_specificPattern = SpecificPattern::OptionalCRThenLF;
+            return true;
+        };
+
         if (tryExtractAtom())
             return;
 
@@ -2998,6 +3034,9 @@ public:
             return;
 
         if (tryExtractNewlines())
+            return;
+
+        if (tryExtractOptionalCRThenLF())
             return;
     }
 

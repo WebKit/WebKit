@@ -925,8 +925,9 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
         return result;
     }
 
-    // Fast path for newline splitting pattern: \r\n?|\n
-    if (regexp->specificPattern() == Yarr::SpecificPattern::Newlines) {
+    // Fast path for newline splitting patterns: \r\n?|\n and \r?\n
+    auto specificPattern = regexp->specificPattern();
+    if (specificPattern == Yarr::SpecificPattern::Newlines || (specificPattern == Yarr::SpecificPattern::OptionalCRThenLF && !cacheable)) {
         JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);
         if (!result) [[unlikely]] {
             throwOutOfMemoryError(globalObject, scope);
@@ -936,9 +937,9 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
         unsigned resultLength = 0;
         MatchResult lastMatchResult = MatchResult::failed();
 
-        auto processSplit = [&](auto span) {
+        auto processSplit = [&](auto span, auto findSeparator) {
             while (position < inputSize && resultLength < limit) {
-                auto newlinePos = WTF::findNextNewline(span, position);
+                auto newlinePos = findSeparator(span, position);
                 if (newlinePos.position == WTF::notFound)
                     break;
 
@@ -956,10 +957,27 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
             return ContinueSplit;
         };
 
-        if (input->is8Bit())
-            processSplit(input->span8());
-        else
-            processSplit(input->span16());
+        auto split = [&](auto findSeparator) {
+            if (input->is8Bit())
+                processSplit(input->span8(), findSeparator);
+            else
+                processSplit(input->span16(), findSeparator);
+        };
+
+        if (specificPattern == Yarr::SpecificPattern::Newlines) {
+            split([](auto span, size_t position) {
+                return WTF::findNextNewline(span, position);
+            });
+        } else {
+            split([](auto span, size_t position) -> WTF::NewlinePosition {
+                size_t lineFeed = WTF::find(span, Latin1Character { '\n' }, position);
+                if (lineFeed == WTF::notFound)
+                    return { };
+                if (lineFeed > position && span[lineFeed - 1] == '\r')
+                    return { lineFeed - 1, 2 };
+                return { lineFeed, 1 };
+            });
+        }
         RETURN_IF_EXCEPTION(scope, { });
 
         if (lastMatchResult)

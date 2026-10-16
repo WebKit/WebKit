@@ -1237,6 +1237,7 @@ static ALWAYS_INLINE JSString* tryTrimSpaces(VM& vm, JSGlobalObject* globalObjec
     case Yarr::SpecificPattern::LeadingSpacesStar:
     case Yarr::SpecificPattern::Atom:
     case Yarr::SpecificPattern::Newlines:
+    case Yarr::SpecificPattern::OptionalCRThenLF:
     case Yarr::SpecificPattern::None:
         break;
     }
