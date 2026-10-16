@@ -17209,12 +17209,29 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinti
 }
 
 #if PLATFORM(COCOA)
+bool WebPageProxy::shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame)
+{
+    Ref preferences = this->preferences();
+    if (!preferences->remoteSnapshottingEnabled() || !preferences->useGPUProcessForDOMRenderingEnabled() || !preferences->siteIsolationEnabled())
+        return false;
+
+    if (!rootFrame)
+        return false;
+
+    Ref rootProcess = rootFrame->process();
+    for (RefPtr frame = rootFrame->traverseNext(rootFrame); frame; frame = frame->traverseNext(rootFrame)) {
+        if (&frame->process() != rootProcess.ptr())
+            return true;
+    }
+
+    return false;
+}
+
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawRectToImage(WebFrameProxy& frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& callback)
 {
     auto frameID = frame.frameID();
 
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    if (!shouldUseRemoteSnapshotting(&frame)) {
         if (m_isPerformingDOMPrintOperation)
             return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImageDuringDOMPrintOperation(frameID, printInfo, rect, imageSize), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawRectToImage(frameID, printInfo, rect, imageSize), WTF::move(callback));
@@ -17234,8 +17251,7 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
 {
     auto frameID = frame.frameID();
 
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    if (!shouldUseRemoteSnapshotting(&frame)) {
         if (m_isPerformingDOMPrintOperation)
             return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation(frameID, printInfo, first, count), toAPIDataSharedBufferCallback(WTF::move(callback)), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDF(frameID, printInfo, first, count),  toAPIDataSharedBufferCallback(WTF::move(callback)));
@@ -17275,8 +17291,7 @@ void WebPageProxy::drawToPDF(const std::optional<FloatRect>& rect, bool allowTra
         callback({ });
         return;
     }
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    if (!shouldUseRemoteSnapshotting(protect(m_mainFrame).get())) {
         sendWithAsyncReply(Messages::WebPage::DrawToPDF(rect, allowTransparentBackground), WTF::move(callback));
         return;
     }
@@ -17800,8 +17815,7 @@ void WebPageProxy::takeSnapshotLegacy(const IntRect& rect, const IntSize& bitmap
 #if PLATFORM(COCOA)
 void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, CompletionHandler<void(CGImageRef)>&& callback)
 {
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    if (!shouldUseRemoteSnapshotting(protect(m_mainFrame).get())) {
         sendWithAsyncReply(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options), [callback = WTF::move(callback)] (std::optional<ImageBufferBackendHandle>&& imageHandle, Headroom headroom) mutable {
             if (!imageHandle) {
                 callback(nullptr);

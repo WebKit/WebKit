@@ -3287,6 +3287,7 @@ private:
     void generatePageLoadTimingSoon();
 #if PLATFORM(COCOA)
     void didGeneratePageLoadTiming(const WebPageLoadTiming&);
+    bool shouldUseRemoteSnapshotting(const WebFrameProxy* rootFrame);
 #else
     void didGeneratePageLoadTiming(const WebPageLoadTiming&) { }
 #endif

@@ -1052,8 +1052,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToPDFiOS(FrameIde
         return std::nullopt;
     }
 
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!shouldUseRemoteSnapshotting(frame.get())) {
         Ref drawing = PendingSnapshotDrawing::create();
         auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), drawing->completionHandler(WTF::move(completionHandler)));
         if (replyID)
@@ -1078,8 +1078,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawToImage(FrameIden
         return std::nullopt;
     }
 
-    Ref preferences = this->preferences();
-    if (!(preferences->remoteSnapshottingEnabled() && preferences->useGPUProcessForDOMRenderingEnabled())) {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!shouldUseRemoteSnapshotting(frame.get())) {
         Ref drawing = PendingSnapshotDrawing::create();
         auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawToImage(frameID, printInfo), drawing->completionHandler(WTF::move(completionHandler)));
         if (replyID)

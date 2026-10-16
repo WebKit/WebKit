@@ -19012,6 +19012,36 @@ TEST(SiteIsolation, DrawPagesToPDFSynchronouslyIncludesCrossSiteFrames)
     EXPECT_TRUE([text containsString:@"Nested"]);
 }
 
+TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://a.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_EQ([mainFrame _processIdentifier], [subframe _processIdentifier]);
+
+    __block bool done = false;
+    [webView createPDFWithConfiguration:nil completionHandler:^(NSData *data, NSError *error) {
+        EXPECT_NULL(error);
+        RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data]);
+        EXPECT_EQ([document pageCount], 1);
+        RetainPtr text = [[document pageAtIndex:0] text];
+        EXPECT_TRUE([text containsString:@"Mainframe"]);
+        EXPECT_TRUE([text containsString:@"Subframe"]);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 // Whether the pixel at a point, measured from the top left of a page, is close to an sRGB color. Unlike
 // TestPDFPage's colorAtPoint:, this can tell apart colors at different heights.
 static bool pdfPageHasColorAtPoint(NSData *data, size_t pageNumber, CGPoint point, std::array<uint8_t, 3> color)
