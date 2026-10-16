@@ -94,12 +94,12 @@ static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
     return 0;
 }
 
-RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+RefPtr<Cache> Cache::open(const String& cachePath, OptionSet<CacheOption> options, PAL::SessionID sessionID)
 {
     if (!FileSystem::makeAllDirectories(cachePath))
         return nullptr;
 
-    auto cacheModel = networkProcess.cacheModel();
+    auto cacheModel = NetworkProcess::singleton().cacheModel();
     auto capacity = computeCapacity(cacheModel, cachePath);
 
     // Cache a small number of recently used memory mapped main resource blobs to speed up hot loads of
@@ -113,7 +113,7 @@ RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePat
     if (!storage)
         return nullptr;
 
-    return adoptRef(*new Cache(networkProcess, cachePath, storage.releaseNonNull(), options, sessionID));
+    return adoptRef(*new Cache(cachePath, storage.releaseNonNull(), options, sessionID));
 }
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -123,9 +123,13 @@ static void dumpFileChanged(Cache* cache)
 }
 #endif
 
-Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
+NetworkProcess& Cache::networkProcess()
+{
+    return NetworkProcess::singleton();
+}
+
+Cache::Cache(const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
     : m_storage(WTF::move(storage))
-    , m_networkProcess(networkProcess)
     , m_sessionID(sessionID)
     , m_storageDirectory(storageDirectory)
 {
@@ -171,7 +175,7 @@ size_t Cache::capacity() const
 
 void Cache::updateCapacity()
 {
-    auto newCapacity = computeCapacity(m_networkProcess->cacheModel(), m_storage->basePathIsolatedCopy());
+    auto newCapacity = computeCapacity(NetworkProcess::singleton().cacheModel(), m_storage->basePathIsolatedCopy());
     m_storage->setCapacity(newCapacity);
 }
 
@@ -253,14 +257,14 @@ static UseDecision responseNeedsRevalidation(NetworkSession& networkSession, con
     return responseNeedsRevalidation(networkSession, response, timestamp, requestDirectives);
 }
 
-static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionID sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
+static UseDecision makeUseDecision(PAL::SessionID sessionID, const Entry& entry, const WebCore::ResourceRequest& request)
 {
     // The request is conditional so we force revalidation from the network. We merely check the disk cache
     // so we can update the cache entry.
     if (request.isConditional() && !entry.redirectRequest())
         return UseDecision::Validate;
 
-    if (!verifyVaryingRequestHeaders(protect(networkProcess.storageSession(sessionID)), entry.varyingRequestHeaders(), request))
+    if (!verifyVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(sessionID)), entry.varyingRequestHeaders(), request))
         return UseDecision::NoDueToVaryingHeaderMismatch;
 
     // We never revalidate in the case of a history navigation.
@@ -272,7 +276,7 @@ static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionI
     if (request.url().hasFragmentIdentifier() && entry.redirectRequest())
         return UseDecision::NoDueToRequestContainingFragments;
 
-    auto decision = responseNeedsRevalidation(*protect(networkProcess.networkSession(sessionID)), entry.response(), request, entry.timeStamp());
+    auto decision = responseNeedsRevalidation(*protect(NetworkProcess::singleton().networkSession(sessionID)), entry.response(), request, entry.timeStamp());
     if (decision != UseDecision::Validate)
         return decision;
 
@@ -455,8 +459,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 
     info.speculativeLoadDecision = SpeculativeLoadDecision::NoDueToCannotUse;
     if (canUseSpeculativeRevalidation && speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
-        speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
-            if (entry && verifyVaryingRequestHeaders(protect(networkProcess->storageSession(sessionID)), entry->varyingRequestHeaders(), request)) {
+        speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
+            if (entry && verifyVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(sessionID)), entry->varyingRequestHeaders(), request)) {
                 info.speculativeLoadDecision = SpeculativeLoadDecision::Yes;
                 completeRetrieve(WTF::move(completionHandler), WTF::move(entry), info);
             } else {
@@ -467,7 +471,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
         return;
     }
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTF::move(completionHandler), info = crossThreadCopy(WTF::move(info)), storageKey, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (record.isNull()) {
@@ -487,7 +491,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
             return false;
         }
 
-        auto useDecision = entry ? makeUseDecision(networkProcess, sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
+        auto useDecision = entry ? makeUseDecision(sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
         info.useDecision = useDecision;
 
         switch (useDecision) {
@@ -541,14 +545,14 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
-    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
     auto cachedRedirectRequest = redirectRequest;
     cachedRedirectRequest.clearHTTPAuthorization();
-    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
@@ -841,7 +845,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
     response.setIPAddressSpace(validatingResponse.ipAddressSpace());
 
-    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), originalRequest, response));
+    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), collectVaryingRequestHeaders(protect(NetworkProcess::singleton().storageSession(m_sessionID)), originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();
     bool storeBlobInMemoryCache = originalRequest.isTopSite();
 

@@ -107,11 +107,6 @@ WebSWServerConnection::~WebSWServerConnection()
         completionHandler(false);
 }
 
-NetworkProcess* WebSWServerConnection::networkProcess()
-{
-    return m_networkConnectionToWebProcess ? &NetworkProcess::singleton() : nullptr;
-}
-
 std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPreferencesForWebProcess() const
 {
     return m_networkConnectionToWebProcess ? m_networkConnectionToWebProcess->sharedPreferencesForWebProcess() : std::nullopt;
@@ -416,10 +411,9 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
         // PostMessageToServiceWorker follows a different flow than normal MessagePort post message.
         // We pre-record the destination so impending message checks pass.
-        RefPtr networkProcess = protectedThis->networkProcess();
-        if (!networkProcess)
+        if (!protectedThis->m_networkConnectionToWebProcess)
             return;
-        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        CheckedRef registry = NetworkProcess::singleton().messagePortChannelRegistry();
         for (auto& transferredPort : borrow(message.transferredPorts))
             registry->recordPendingTransferDestination(transferredPort.first, contextConnection->webProcessIdentifier());
 
@@ -507,10 +501,9 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     server->postMessageToServiceWorkerClient(destinationContextIdentifier, message, sourceIdentifier, sourceOrigin, [protectedThis = Ref { *this }, &blobURLsInFlight] (auto destinationContextIdentifier, auto& message, auto sourceServiceWorkerData, auto& sourceOrigin) {
         // PostMessageToServiceWorkerClient follows a different flow than normal MessagePort post message.
         // We pre-record the destination so impending message checks pass.
-        RefPtr networkProcess = protectedThis->networkProcess();
-        if (!networkProcess)
+        if (!protectedThis->m_networkConnectionToWebProcess)
             return;
-        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        CheckedRef registry = NetworkProcess::singleton().messagePortChannelRegistry();
         for (auto& transferredPort : borrow(message.transferredPorts))
             registry->recordPendingTransferDestination(transferredPort.first, destinationContextIdentifier.processIdentifier());
         if (!blobURLsInFlight) {
@@ -592,8 +585,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
 
     if (isNewOrigin) {
         server->forEachContextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin }, [&](auto& contextConnection) {
-            RefPtr networkProcess = this->networkProcess();
-            protect(networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), downcast<WebSWServerToContextConnection>(contextConnection).webProcessIdentifier() }, 0);
+            protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), downcast<WebSWServerToContextConnection>(contextConnection).webProcessIdentifier() }, 0);
         });
     }
 }
@@ -626,8 +618,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
         if (!hasMatchingClient(potentiallyRemovedDomain)) {
             server->forEachContextConnectionForRegistrableDomain(potentiallyRemovedDomain, [&](auto& contextConnection) {
                 auto& connection = downcast<WebSWServerToContextConnection>(contextConnection);
-                RefPtr networkProcess = downcast<WebSWServerToContextConnection>(contextConnection).networkProcess();
-                protect(networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
+                protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
             });
         }
     }
@@ -816,8 +807,7 @@ void WebSWServerConnection::contextConnectionCreated(SWServerToContextConnection
     connection.setThrottleState(computeThrottleState(connection.registrableDomain()));
 
     if (hasMatchingClient(connection.registrableDomain())) {
-        RefPtr networkProcess = this->networkProcess();
-        protect(networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
+        protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::NetworkProcessProxy::RegisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
     }
 }
 
@@ -847,8 +837,9 @@ PAL::SessionID WebSWServerConnection::sessionID() const
 
 NetworkSession* WebSWServerConnection::session()
 {
-    RefPtr networkProcess = this->networkProcess();
-    return networkProcess ? networkProcess->networkSession(sessionID()) : nullptr;
+    if (!m_networkConnectionToWebProcess)
+        return nullptr;
+    return NetworkProcess::singleton().networkSession(sessionID());
 }
 
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
@@ -872,12 +863,11 @@ void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWor
 
 void WebSWServerConnection::fetchTaskReceivedMainResourceResponse(std::optional<ServiceWorkerIdentifier> serviceWorkerIdentifier, const ResourceResponse& response, FrameIdentifier frameID)
 {
-    RefPtr networkProcess = this->networkProcess();
-    if (!networkProcess)
+    if (!m_networkConnectionToWebProcess)
         return;
 
     auto sendCertificateInfo = [&](const CertificateInfo& certificateInfo) {
-        protect(networkProcess->parentProcessConnection())->send(Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo(response.url().hostAndPort(), certificateInfo), frameID);
+        protect(NetworkProcess::singleton().parentProcessConnection())->send(Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo(response.url().hostAndPort(), certificateInfo), frameID);
     };
 
     if (serviceWorkerIdentifier) {

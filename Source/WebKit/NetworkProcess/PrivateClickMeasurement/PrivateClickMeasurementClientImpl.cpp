@@ -34,21 +34,20 @@ namespace WebKit::PCM {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ClientImpl);
 
-ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
-    : m_networkSession(session)
-    , m_networkProcess(networkProcess) { }
+ClientImpl::ClientImpl(NetworkSession& session)
+    : m_networkSession(session) { }
 
 void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
 {
     if (!featureEnabled())
         return;
 
-    m_networkProcess->broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, message);
+    NetworkProcess::singleton().broadcastConsoleMessage(m_networkSession->sessionID(), MessageSource::PrivateClickMeasurement, messageLevel, message);
 }
 
 bool ClientImpl::featureEnabled() const
 {
-    return m_networkSession && m_networkProcess->privateClickMeasurementEnabled();
+    return m_networkSession && NetworkProcess::singleton().privateClickMeasurementEnabled();
 }
 
 bool ClientImpl::debugModeEnabled() const

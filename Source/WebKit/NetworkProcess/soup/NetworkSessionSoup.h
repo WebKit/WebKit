@@ -48,11 +48,11 @@ class NetworkSessionSoup final : public NetworkSession {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSessionSoup);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkSessionSoup);
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
+    static std::unique_ptr<NetworkSession> create(const NetworkSessionCreationParameters& parameters)
     {
-        return makeUnique<NetworkSessionSoup>(networkProcess, parameters);
+        return makeUnique<NetworkSessionSoup>(parameters);
     }
-    NetworkSessionSoup(NetworkProcess&, const NetworkSessionCreationParameters&);
+    explicit NetworkSessionSoup(const NetworkSessionCreationParameters&);
     ~NetworkSessionSoup();
 
     WebCore::SoupNetworkSession& soupNetworkSession() const { return *m_networkSession; }
