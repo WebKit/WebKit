@@ -101,8 +101,6 @@ endif ()
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesCocoa.txt"
-
-    "Platform/SourcesCocoa.txt"
 )
 # FIXME: Test building on iOS and then enable on iOS.
 if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
@@ -110,6 +108,12 @@ if (NOT WEBKIT_SDK_IS_IOS_FAMILY)
         "SourcesCMakeCocoa.txt"
     )
 endif ()
+
+# See WebKit_USE_PLATFORM_SUBTARGET in CMakeLists.txt.
+list(APPEND WebKitPlatform_UNIFIED_SOURCE_LIST_FILES
+    "Platform/SourcesCMakeCocoa.txt"
+    "Platform/SourcesCocoa.txt"
+)
 
 list(APPEND WebKit_SOURCES
     GPUProcess/media/RemoteAudioDestinationManager.cpp
@@ -430,12 +434,6 @@ list(APPEND WebCore_SERIALIZATION_IN_FILES
 )
 
 
-file(GLOB _webkit_additional_cocoa_sources RELATIVE "${WEBKIT_DIR}"
-    "${WEBKIT_DIR}/Shared/Cocoa/CoreIPC*.mm"
-    "${WEBKIT_DIR}/Shared/cf/CoreIPC*.mm"
-)
-list(APPEND WebKit_SOURCES ${_webkit_additional_cocoa_sources})
-unset(_webkit_additional_cocoa_sources)
 list(APPEND WebKit_SOURCES
     NetworkProcess/cocoa/DeviceManagementSoftLink.mm
     NetworkProcess/cocoa/NetworkSoftLink.mm
@@ -446,15 +444,10 @@ list(APPEND WebKit_SOURCES
     Shared/AdditionalFonts.mm
 
     Shared/Cocoa/AnnotatedMachSendRight.mm
-    Shared/Cocoa/ArgumentCodersCocoa.mm
     Shared/Cocoa/BackgroundFetchStateCocoa.mm
-    Shared/Cocoa/CoreTextHelpers.mm
-    Shared/Cocoa/DataDetectionResult.mm
     Shared/Cocoa/LaunchLogHook.mm
-    Shared/Cocoa/WKKeyedCoder.mm
     Shared/Cocoa/WKProcessExtension.mm
     Shared/Cocoa/WebKit2InitializeCocoa.mm
-    Shared/Cocoa/WebPushMessageCocoa.mm
 
     UIProcess/EndowmentStateTracker.mm
 
@@ -727,10 +720,6 @@ target_link_options(WebKit PRIVATE
     "LINKER:-unexported_symbol,_$s*3Cxx*"
 )
 
-# FIXME: Hide WebKit's Objective-C++ symbols too, as Xcode does. TestIPC needs
-# to be refactored to import WebKit's IPC serialization code.
-target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fvisibility=default>")
-
 # Like Xcode, which dead-strips WebKit in every configuration. The precompiled headers' objects
 # otherwise keep references to inline functions that call hidden WebCore and WTF symbols.
 target_link_options(WebKit PRIVATE "$<$<CONFIG:Debug>:LINKER:-dead_strip>")
@@ -753,6 +742,8 @@ set(WebKit_GENERATED_SERIALIZERS_SUFFIX mm)
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedWebKitSecureCoding.h
+)
+list(APPEND WebKitPlatform_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedWebKitSecureCoding.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
 )
 

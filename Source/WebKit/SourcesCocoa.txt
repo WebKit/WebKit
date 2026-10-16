@@ -242,7 +242,6 @@ Shared/mac/SecItemRequestData.cpp
 Shared/mac/WebEventFactory.mm @nonARC
 Shared/mac/WebGestureEvent.cpp
 Shared/mac/WebMemorySampler.mac.mm @nonARC
-Shared/mac/CoreIPCDDSecureActionContext.mm
 
 Shared/RemoteLayerTree/DynamicContentScalingBifurcatedImageBuffer.mm @nonARC
 Shared/RemoteLayerTree/DynamicContentScalingImageBufferBackend.mm @nonARC

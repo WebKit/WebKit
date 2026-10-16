@@ -3441,6 +3441,7 @@ if (APPLE)
         "LINKER:-allowable_client,WebKitTestRunnerInjectedBundle"
         "LINKER:-allowable_client,DumpRenderTree"
         "LINKER:-allowable_client,InjectedBundleTestWebKitAPI"
+        "LINKER:-allowable_client,TestIPC"
         "LINKER:-allowable_client,TestWebCore"
         "LINKER:-allowable_client,TestWebKitAPI"
         "LINKER:-allowable_client,TestWebKitAPIPlugIn"

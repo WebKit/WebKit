@@ -1,5 +1,13 @@
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
+# Build the IPC and platform layer as a subtarget. TestIPC links against it
+# directly instead of WebKit, which enables WebKit to keep c++ implementation
+# details out of the exported symbol table. In Xcode, this is built as
+# `libWebKitPlatform.a`.
+if (APPLE)
+    set(WebKit_USE_PLATFORM_SUBTARGET ON)
+endif ()
+
 set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${PAL_FRAMEWORK_HEADERS_DIR}"
@@ -137,9 +145,19 @@ set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "Sources.txt"
-
-    "Platform/Sources.txt"
 )
+
+if (WebKit_USE_PLATFORM_SUBTARGET)
+    set(WebKitPlatform_DERIVED_SOURCES_DIR ${WebKit_DERIVED_SOURCES_DIR})
+    set(WebKitPlatform_UNIFIED_SOURCE_BUNDLE_PREFIX Platform)
+    list(APPEND WebKitPlatform_UNIFIED_SOURCE_LIST_FILES
+        "Platform/Sources.txt"
+    )
+else ()
+    list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
+        "Platform/Sources.txt"
+    )
+endif ()
 
 set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIAction
@@ -1210,9 +1228,13 @@ list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersUIProcess.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializersCommon.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
-    ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     ${WebKit_DERIVED_SOURCES_DIR}/JSWebExtensionAPIUnified.cpp
 )
+if (WebKit_USE_PLATFORM_SUBTARGET)
+    list(APPEND WebKitPlatform_SOURCES ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX})
+else ()
+    list(APPEND WebKit_DERIVED_SOURCES ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX})
+endif ()
 
 set(_serializers_stage_dir ${WebKit_DERIVED_SOURCES_DIR}/.serializers-stage)
 set(_serializers_outputs
@@ -1509,6 +1531,9 @@ WEBKIT_COMPUTE_SOURCES(WebKit)
 if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)
     list(REMOVE_ITEM WebKit_SOURCES ${WebKit_SWIFT_INTEROP_SOURCES})
 endif ()
+if (WebKit_USE_PLATFORM_SUBTARGET)
+    WEBKIT_COMPUTE_SOURCES(WebKitPlatform)
+endif ()
 
 WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX(WebKit WebKitUIProcess
     PREFIX WebKitUIProcessPrefix.h
@@ -1566,6 +1591,20 @@ if (WebKit_ARC_SOURCES)
     target_compile_options(WebKitARC PRIVATE -fobjc-arc)
     WEBKIT_ADD_PREFIX_HEADER(WebKitARC WebKitPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES OBJCXX)
     target_sources(WebKit PRIVATE $<TARGET_OBJECTS:WebKitARC>)
+endif ()
+
+if (WebKit_USE_PLATFORM_SUBTARGET)
+    WEBKIT_DEFINE_SUBTARGET(WebKitPlatform WebKit ${WebKitPlatform_SOURCES})
+    # PREFIX_NO_CODEGEN needed for TestIPC: it does not link against full
+    # WebKit, so it doesn't get the PCH object.
+    WEBKIT_ADD_PREFIX_HEADER(WebKitPlatform WebKitPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX OBJCXX)
+    target_sources(WebKit PRIVATE $<TARGET_OBJECTS:WebKitPlatform>)
+    if (WebKitPlatform_ARC_SOURCES)
+        WEBKIT_DEFINE_SUBTARGET(WebKitPlatformARC WebKit ${WebKitPlatform_ARC_SOURCES})
+        target_compile_options(WebKitPlatformARC PRIVATE -fobjc-arc)
+        WEBKIT_ADD_PREFIX_HEADER(WebKitPlatformARC WebKitPrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES OBJCXX)
+        target_sources(WebKit PRIVATE $<TARGET_OBJECTS:WebKitPlatformARC>)
+    endif ()
 endif ()
 
 if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_IOS_FAMILY)

@@ -659,11 +659,19 @@ if (ENABLE_WEBKIT)
             WebKit::gtest
         )
 
-        set(TestIPC_FRAMEWORKS
-            WebKit
-        )
+        if (APPLE)
+            list(APPEND TestIPC_SOURCES
+                ${WEBKIT_DIR}/Shared/WebFoundTextRange.cpp
 
-        if (NOT APPLE)
+                $<TARGET_OBJECTS:WebKitPlatform>
+                $<TARGET_OBJECTS:WebKitPlatformARC>
+            )
+
+            list(APPEND TestIPC_LIBRARIES
+                WebKit::JavaScriptCore
+                WebKit::WebCore
+            )
+        else ()
             # TestIPC compiles the IPC implementation directly rather than linking WebKit.
             list(APPEND TestIPC_SOURCES
                 generic/main.cpp
@@ -726,6 +734,9 @@ if (ENABLE_WEBKIT)
                 ${GLIB_LIBRARIES}
             )
 
+            set(TestIPC_FRAMEWORKS
+                WebKit
+            )
         endif ()
 
         WEBKIT_EXECUTABLE_DECLARE(TestIPC)

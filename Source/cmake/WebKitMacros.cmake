@@ -107,6 +107,8 @@ endmacro()
 
 macro(WEBKIT_COMPUTE_SOURCES _framework)
     set(_derivedSourcesPath ${${_framework}_DERIVED_SOURCES_DIR})
+    # This is a macro, so don't pick up the list files of an earlier call.
+    unset(_sourceListFileTruePaths)
 
     foreach (_sourcesListFile IN LISTS ${_framework}_UNIFIED_SOURCE_LIST_FILES)
       if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_sourcesListFile}")
@@ -141,6 +143,10 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
 
     set(gusb_args --derived-sources-path ${_derivedSourcesPath} --source-tree-path ${CMAKE_CURRENT_SOURCE_DIR})
     list(APPEND gusb_args --ignore-header-groups)
+    # Distinguishes the bundles of targets that share a derived sources directory.
+    if (DEFINED ${_framework}_UNIFIED_SOURCE_BUNDLE_PREFIX)
+        list(APPEND gusb_args --bundle-filename-prefix ${${_framework}_UNIFIED_SOURCE_BUNDLE_PREFIX})
+    endif ()
     # Windows needs a larger bundle size because that helps keep WebCore.lib's size below the 4GB maximum in debug builds.
     if (MSVC AND ${_framework} STREQUAL "WebCore" AND ${_framework}_LIBRARY_TYPE STREQUAL "STATIC")
         list(APPEND gusb_args --max-bundle-size 16)
