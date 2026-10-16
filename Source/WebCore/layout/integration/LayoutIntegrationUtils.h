@@ -64,8 +64,9 @@ public:
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
     NODELETE static const Style::ComputedStyle& firstNonAnonymousAncestorStyle(const Box&);
 
+    // What of RenderBlockFlow::MarginInfo crosses into the inline content; the rest stays with the block container (MarginInfo(const RenderBlockFlow&)).
     NODELETE static BlockLayoutState::MarginState toMarginState(const RenderBlockFlow::MarginInfo&);
-    static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);
+    static void updateMarginInfo(RenderBlockFlow::MarginInfo&, const BlockLayoutState::MarginState&);
     NODELETE static std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode);
 
 private:
