@@ -55,6 +55,8 @@ public:
     Ref<BitmapTexture> createTextureForImage(EGLImage, const IntSize&, OptionSet<BitmapTexture::Flags>);
 #endif
 
+    void releaseAllTextures();
+
 #if USE(GRAPHICS_LAYER_WC)
     void releaseUnusedTexturesNow() { releaseUnusedTexturesTimerFired(); }
 #endif
