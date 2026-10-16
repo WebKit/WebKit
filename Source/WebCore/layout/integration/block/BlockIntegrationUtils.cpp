@@ -36,6 +36,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderHTMLCanvas.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
 
@@ -98,6 +99,13 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::inlineContentIntrinsicI
     return { minimum, maximum };
 }
 
+// A canvas lays out its drawable content in an anonymous block (RenderHTMLCanvas::layout), whose containing block is the canvas's.
+static RenderBlock* drawableContentBlock(RenderBox& box)
+{
+    CheckedPtr canvas = dynamicDowncast<RenderHTMLCanvas>(box);
+    return canvas ? canvas->innerRenderer() : nullptr;
+}
+
 BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
 {
     // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
@@ -118,6 +126,9 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
     box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
     if (Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
         box->setOverridingContainingBlockContentLogicalHeight(constraints.containingBlockBlockSize);
+    CheckedPtr drawableContent = drawableContentBlock(box);
+    if (drawableContent)
+        drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
     {
         // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
         CheckedRef layoutContext = box->view().frameView().layoutContext();
@@ -125,6 +136,8 @@ BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegration
         box->layoutIfNeeded();
     }
     box->clearOverridingContainingBlockContentSize();
+    if (drawableContent)
+        drawableContent->clearOverridingContainingBlockContentSize();
     if (constraints.borderBoxInlineSize)
         box->clearOverridingBorderBoxLogicalWidth();
 
@@ -142,6 +155,19 @@ bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, La
         return true;
     CheckedPtr block = dynamicDowncast<RenderBlock>(box);
     return block && block->hasBorderOrPaddingLogicalWidthChanged();
+}
+
+void BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(const RenderBlockFlow& blockContainer)
+{
+    // Only the dirty bits of this block container and of the boxes laid out through the render tree inside it are written. RenderBlockFlow::layoutBlock
+    // lays out its content right after; the block container is marked too, so that its inline content, which lays out those boxes, is not kept
+    // as it is (layoutInlineContent).
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBlockContainer = const_cast<RenderBlockFlow&>(blockContainer);
+    auto* descendants = mutableBlockContainer->percentHeightDescendants();
+    if (!descendants || descendants->isEmptyIgnoringNullReferences())
+        return;
+    mutableBlockContainer->dirtyForLayoutFromPercentageHeightDescendants();
+    mutableBlockContainer->setChildNeedsLayout(MarkingBehavior::OnlyThis);
 }
 
 bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
@@ -193,6 +219,8 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         if (Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
             box->setOverridingContainingBlockContentLogicalHeight(contentBoxBlockSize);
         atomicInlineLevelBoxes.append(*box);
+        if (CheckedPtr drawableContent = drawableContentBlock(*box))
+            drawableContent->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
         descendant = descendant->nextInPreOrderAfterChildren(&inlineContentRoot);
     }
     {
@@ -202,8 +230,11 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         // Without block-in-inline no margins cross into the inline content, so the margin state of the block layout state stays empty.
         paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, invalidateChildren ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No).repaintRect);
     }
-    for (auto& box : atomicInlineLevelBoxes)
+    for (auto& box : atomicInlineLevelBoxes) {
         box->clearOverridingContainingBlockContentSize();
+        if (CheckedPtr drawableContent = drawableContentBlock(box))
+            drawableContent->clearOverridingContainingBlockContentSize();
+    }
     return inlineContentLayoutResult(lineLayout.get());
 }
 
