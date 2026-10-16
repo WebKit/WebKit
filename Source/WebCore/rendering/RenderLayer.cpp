@@ -1536,6 +1536,18 @@ std::optional<LayoutRect> RenderLayer::cachedClippedOverflowRect() const
     return m_repaintRects.clippedOverflowRect;
 }
 
+bool RenderLayer::scheduledFullRepaintCoversContentPaintedBy(const RenderLayer& paintingLayer) const
+{
+    // Only NeedsFullRepaint is repainted in full after layout, and only within this layer's visual overflow.
+    if (!isSelfPaintingLayer() || m_repaintStatus != RepaintStatus::NeedsFullRepaint)
+        return false;
+    if (&paintingLayer == this)
+        return true;
+    auto paintingLayerRect = paintingLayer.cachedClippedOverflowRect();
+    auto layerRect = cachedClippedOverflowRect();
+    return paintingLayerRect && layerRect && paintingLayer.repaintContainer() == repaintContainer() && layerRect->contains(*paintingLayerRect);
+}
+
 void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer)
 {
     ASSERT(!m_visibleContentStatusDirty);
@@ -2558,13 +2570,15 @@ RenderLayer::EnclosingCompositingLayerStatus RenderLayer::enclosingCompositingLa
         return layer.isSelfPaintingLayer() && !layer.renderer().hasPotentiallyScrollableOverflow() && !is<RenderView>(layer.renderer());
     };
 
-    auto fullRepaintAlreadyScheduled = isEligibleForFullRepaintCheck(*this) && needsFullRepaint();
+    auto fullRepaintAlreadyScheduled = isEligibleForFullRepaintCheck(*this) && scheduledFullRepaintCoversContentPaintedBy(*this);
     RenderLayer* repaintTarget = nullptr;
     if (includeSelf == IncludeSelf && (repaintTarget = repaintTargetForLayer(*this)))
         return { fullRepaintAlreadyScheduled, repaintTarget };
 
-    for (const RenderLayer* curr = paintOrderParent(); curr; curr = curr->paintOrderParent()) {
-        fullRepaintAlreadyScheduled = fullRepaintAlreadyScheduled || (isEligibleForFullRepaintCheck(*curr) && curr->needsFullRepaint());
+    for (const RenderLayer* curr = paintOrderParent(), *paintingLayer = isSelfPaintingLayer() ? this : nullptr; curr; curr = curr->paintOrderParent()) {
+        if (!paintingLayer && curr->isSelfPaintingLayer())
+            paintingLayer = curr;
+        fullRepaintAlreadyScheduled = fullRepaintAlreadyScheduled || (paintingLayer && isEligibleForFullRepaintCheck(*curr) && curr->scheduledFullRepaintCoversContentPaintedBy(*paintingLayer));
         if ((repaintTarget = repaintTargetForLayer(*curr)))
             return { fullRepaintAlreadyScheduled, repaintTarget };
     }
