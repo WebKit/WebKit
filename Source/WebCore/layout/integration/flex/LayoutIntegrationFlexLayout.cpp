@@ -255,6 +255,82 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), integrationUtils, constraints, *m_flexLayoutState).layout(flexLayoutItems);
 }
 
+std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() const
+{
+    auto scrollbarWidth = flexBox().scrollbarLogicalWidth();
+
+    if (flexBox().shouldApplySizeOrInlineSizeContainment()) {
+        if (auto width = flexBox().explicitIntrinsicInnerLogicalWidth())
+            return { width.value() + scrollbarWidth, width.value() + scrollbarWidth };
+        return { scrollbarWidth, scrollbarWidth };
+    }
+
+    // FIXME: We're ignoring flex-basis here and we shouldn't. We can't start
+    // honoring it though until the flex shorthand stops setting it to 0. See
+    // https://bugs.webkit.org/show_bug.cgi?id=116117 and
+    // https://crbug.com/240765.
+    auto [legendMinWidth, legendMaxWidth] = flexBox().computeIntrinsicLogicalWidthsForFieldsetLegend();
+
+    auto minLogicalWidth = LayoutUnit { };
+    auto maxLogicalWidth = LayoutUnit { };
+
+    size_t numItemsWithNormalLayout = 0;
+    for (CheckedPtr flexItem = flexBox().firstChildBox(); flexItem; flexItem = flexItem->nextSiblingBox()) {
+        if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
+            continue;
+        ++numItemsWithNormalLayout;
+
+        // Pre-layout orthogonal children in order to get a valid value for the preferred width.
+        if (flexBox().writingMode().isOrthogonal(flexItem->writingMode()))
+            flexItem->layoutIfNeeded();
+
+        LayoutUnit margin = flexBox().marginIntrinsicLogicalWidthForChild(*flexItem);
+
+        auto [minContentInParentInlineAxis, maxContentInParentInlineAxis] = [&] -> std::pair<LayoutUnit, LayoutUnit> {
+            if (flexBox().writingMode().isOrthogonal(flexItem->writingMode())) {
+                auto intrinsicBlockSize = flexItem->computeIntrinsicLogicalHeight();
+                return { intrinsicBlockSize, intrinsicBlockSize };
+            }
+            return flexBox().computeChildIntrinsicLogicalWidths(*flexItem);
+        }();
+
+        minContentInParentInlineAxis += margin;
+        maxContentInParentInlineAxis += margin;
+
+        if (!FlexFormattingUtils::isColumnFlow(flexBox())) {
+            maxLogicalWidth += maxContentInParentInlineAxis;
+            if (FlexFormattingUtils::isMultiline(flexBox())) {
+                // For multiline, the min preferred width is if you put a break between
+                // each item.
+                minLogicalWidth = std::max(minLogicalWidth, minContentInParentInlineAxis);
+            } else
+                minLogicalWidth += minContentInParentInlineAxis;
+        } else {
+            minLogicalWidth = std::max(minContentInParentInlineAxis, minLogicalWidth);
+            maxLogicalWidth = std::max(maxContentInParentInlineAxis, maxLogicalWidth);
+        }
+    }
+
+    if (!FlexFormattingUtils::isColumnFlow(flexBox()) && numItemsWithNormalLayout > 1) {
+        LayoutUnit inlineGapSize = (numItemsWithNormalLayout - 1) * FlexFormattingUtils::computeGap(flexBox(), FlexFormattingUtils::GapType::BetweenItems);
+        maxLogicalWidth += inlineGapSize;
+        if (!FlexFormattingUtils::isMultiline(flexBox()))
+            minLogicalWidth += inlineGapSize;
+    }
+
+    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+
+    // Due to negative margins, it is possible that we calculated a negative
+    // intrinsic width. Make sure that we never return a negative width.
+    minLogicalWidth = std::max(0_lu, minLogicalWidth);
+    maxLogicalWidth = std::max(0_lu, maxLogicalWidth);
+
+    minLogicalWidth = std::max(minLogicalWidth, legendMinWidth);
+    maxLogicalWidth = std::max(maxLogicalWidth, legendMaxWidth);
+
+    return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
+}
+
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
 {
     if ((flexBox().isWritingModeRoot() && !flexBox().isFlexItem()) || !m_flexLayoutResult || !m_flexLayoutResult->numberOfFlexItemsOnFirstLine || flexBox().shouldApplyLayoutContainment())
