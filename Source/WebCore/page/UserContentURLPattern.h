@@ -76,7 +76,7 @@ public:
 
     WEBCORE_EXPORT bool matchesScheme(const URL&) const;
     bool matchesHost(const URL& url) const { return matchesHost(url.host().toStringWithoutCopying()); }
-    bool matchesPath(const URL& url) const { return matchesPath(url.path().toStringWithoutCopying()); }
+    WEBCORE_EXPORT bool matchesPath(const URL&) const;
 
     WEBCORE_EXPORT bool matchesScheme(const UserContentURLPattern&) const;
     bool matchesHost(const UserContentURLPattern& other) const { return matchesHost(other.host()); }
