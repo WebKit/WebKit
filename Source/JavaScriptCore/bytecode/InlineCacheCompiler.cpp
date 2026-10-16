@@ -3655,7 +3655,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         // exactly when this would make calls.
         bool allocating = accessCase.newStructure()->outOfLineCapacity() != accessCase.structure()->outOfLineCapacity();
         bool reallocating = allocating && accessCase.structure()->outOfLineCapacity();
-        bool allocatingInline = allocating && !accessCase.structure()->couldHaveIndexingHeader();
+        bool allocatingInline = allocating && accessCase.structure()->canAllocatePropertyStorageInJIT();
 
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
 
@@ -3677,10 +3677,25 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             size_t newSize = accessCase.newStructure()->outOfLineCapacity() * sizeof(JSValue);
 
             if (allocatingInline) {
-                Allocator allocator = vm.auxiliarySpace().allocatorForNonInline(newSize, AllocatorForMode::AllocatorIfExists);
+                if (hasIndexedProperties(accessCase.structure()->indexingType())) {
+                    jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR2);
+                    jit.load32(CCallHelpers::Address(scratchGPR2, Butterfly::offsetOfVectorLength()), scratchGPR2);
+                    jit.lshift64(CCallHelpers::TrustedImm32(3), scratchGPR2);
+                    jit.add64(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR2);
+                    jit.emitAllocateVariableSized(scratchGPR, vm.auxiliarySpace(), scratchGPR2, scratchGPR2, scratchGPR3, slowPath);
+                    jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);
 
-                jit.emitAllocate(scratchGPR, JITAllocator::constant(allocator), scratchGPR2, scratchGPR3, slowPath);
-                jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);
+                    jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR3);
+                    jit.load32(CCallHelpers::Address(scratchGPR3, Butterfly::offsetOfVectorLength()), scratchGPR2);
+                    auto loop = jit.label();
+                    jit.transfer64(CCallHelpers::BaseIndex(scratchGPR3, scratchGPR2, CCallHelpers::TimesEight, -static_cast<ptrdiff_t>(sizeof(IndexingHeader))), CCallHelpers::BaseIndex(scratchGPR, scratchGPR2, CCallHelpers::TimesEight, -static_cast<ptrdiff_t>(sizeof(IndexingHeader))));
+                    jit.branchSub32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(1), scratchGPR2).linkTo(loop, &jit);
+                } else {
+                    Allocator allocator = vm.auxiliarySpace().allocatorForNonInline(newSize, AllocatorForMode::AllocatorIfExists);
+
+                    jit.emitAllocate(scratchGPR, JITAllocator::constant(allocator), scratchGPR2, scratchGPR3, slowPath);
+                    jit.addPtr(CCallHelpers::TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR);
+                }
 
                 size_t oldSize = accessCase.structure()->outOfLineCapacity() * sizeof(JSValue);
                 ASSERT(newSize > oldSize);
@@ -3708,8 +3723,7 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                     }
                 }
 
-                for (size_t offset = oldSize; offset < newSize; offset += sizeof(void*))
-                    jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(scratchGPR, -static_cast<ptrdiff_t>(offset + sizeof(JSValue) + sizeof(void*))));
+                jit.emitFillStorageWithJSEmpty(scratchGPR, -static_cast<ptrdiff_t>(newSize + sizeof(IndexingHeader)), (newSize - oldSize) / sizeof(JSValue), scratchGPR2);
             } else {
                 // Handle the case where we are allocating out-of-line using an operation.
                 RegisterSet extraRegistersToPreserve;
@@ -3772,8 +3786,6 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         }
 
         if (allocatingInline) {
-            // If we were to have any indexed properties, then we would need to update the indexing mask on the base object.
-            RELEASE_ASSERT(!accessCase.newStructure()->couldHaveIndexingHeader());
             // We set the new butterfly and the structure last. Doing it this way ensures that
             // whatever we had done up to this point is forgotten if we choose to branch to slow
             // path.

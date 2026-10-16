@@ -1347,6 +1347,7 @@ public:
 
     void compileSameValue(Node*);
     
+    void compileAllocatePropertyStorageWithIndexingHeader(Node*);
     void compileAllocatePropertyStorage(Node*);
     void compileReallocatePropertyStorage(Node*);
     void compileNukeStructureAndSetButterfly(Node*);

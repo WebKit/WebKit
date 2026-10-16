@@ -10711,11 +10711,57 @@ void SpeculativeJIT::compileCheckStructure(Node* node)
     }
 }
 
+void SpeculativeJIT::compileAllocatePropertyStorageWithIndexingHeader(Node* node)
+{
+    size_t oldSize = node->transition()->previous->outOfLineCapacity() * sizeof(JSValue);
+    size_t newSize = node->transition()->next->outOfLineCapacity() * sizeof(JSValue);
+
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratchGPR1 = scratch1.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+
+    loadPtr(Address(baseGPR, JSObject::butterflyOffset()), scratchGPR1);
+    load32(Address(scratchGPR1, Butterfly::offsetOfVectorLength()), scratchGPR1);
+    lshift64(TrustedImm32(3), scratchGPR1);
+    add64(TrustedImm32(newSize + sizeof(IndexingHeader)), scratchGPR1);
+
+    JumpList slowPath;
+    emitAllocateVariableSized(resultGPR, vm().auxiliarySpace(), scratchGPR1, scratchGPR1, scratchGPR2, slowPath, SlowAllocationResult::UndefinedBehavior);
+    addPtr(TrustedImm32(newSize + sizeof(IndexingHeader)), resultGPR);
+
+    emitFillStorageWithJSEmpty(resultGPR, -static_cast<ptrdiff_t>(newSize + sizeof(IndexingHeader)), (newSize - oldSize) / sizeof(JSValue), scratchGPR1);
+
+    loadPtr(Address(baseGPR, JSObject::butterflyOffset()), scratchGPR1);
+    for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(oldSize); offset += sizeof(void*))
+        transferPtr(Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))), Address(resultGPR, -(offset + sizeof(JSValue) + sizeof(void*))));
+
+    load32(Address(scratchGPR1, Butterfly::offsetOfVectorLength()), scratchGPR2);
+    Label loop = label();
+    transfer64(BaseIndex(scratchGPR1, scratchGPR2, TimesEight, -static_cast<ptrdiff_t>(sizeof(IndexingHeader))), BaseIndex(resultGPR, scratchGPR2, TimesEight, -static_cast<ptrdiff_t>(sizeof(IndexingHeader))));
+    branchSub32(PositiveOrZero, TrustedImm32(1), scratchGPR2).linkTo(loop, this);
+
+    addSlowPathGenerator(
+        slowPathCall(slowPath, this, operationAllocateComplexPropertyStorage, resultGPR, TrustedImmPtr(&vm()), baseGPR, newSize / sizeof(JSValue)));
+
+    storageResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
     ASSERT(!node->transition()->previous->outOfLineCapacity());
     ASSERT(initialOutOfLineCapacity == node->transition()->next->outOfLineCapacity());
     
+    if (node->transition()->previous->couldHaveIndexingHeader() && node->transition()->previous->canAllocatePropertyStorageInJIT()) {
+        compileAllocatePropertyStorageWithIndexingHeader(node);
+        return;
+    }
+
     size_t size = initialOutOfLineCapacity * sizeof(JSValue);
 
     Allocator allocator = vm().auxiliarySpace().allocatorFor(size, AllocatorForMode::AllocatorIfExists);
@@ -10761,6 +10807,11 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->transition()->next->outOfLineCapacity() * sizeof(JSValue));
     
+    if (node->transition()->previous->couldHaveIndexingHeader() && node->transition()->previous->canAllocatePropertyStorageInJIT()) {
+        compileAllocatePropertyStorageWithIndexingHeader(node);
+        return;
+    }
+
     Allocator allocator = vm().auxiliarySpace().allocatorFor(newSize, AllocatorForMode::AllocatorIfExists);
 
     if (!allocator || node->transition()->previous->couldHaveIndexingHeader()) {
