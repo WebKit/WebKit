@@ -217,6 +217,7 @@ inline bool isSpecialNode(const HTMLStackItem& item)
     case HTML::plaintext:
     case HTML::pre:
     case HTML::script:
+    case HTML::search:
     case HTML::section:
     case HTML::select:
     case HTML::style:
