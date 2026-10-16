@@ -999,6 +999,7 @@ void run(const TestConfig* config)
 
     RUN(testBasicSelect());
     RUN(testSelectTest());
+    RUN(testSelectTestHighBits());
     RUN(testSelectCompareDouble());
     RUN_BINARY(testSelectCompareFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testSelectCompareFloatToDouble, floatingPointOperands<float>(), floatingPointOperands<float>());

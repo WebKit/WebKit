@@ -1723,7 +1723,7 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp, Tmp, Tmp
     x86_64: ResCond, Tmp, Imm, Tmp, Tmp
 
-64: MoveConditionallyTest64 U:G:32, U:G:32, U:G:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+64: MoveConditionallyTest64 U:G:32, U:G:64, U:G:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
     x86_64: ResCond, Tmp, Imm, Tmp, Tmp, Tmp
     arm64: ResCond, Tmp, Tmp, Tmp, ZeroReg, Tmp

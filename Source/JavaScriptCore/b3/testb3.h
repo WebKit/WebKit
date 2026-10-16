@@ -609,6 +609,7 @@ void testBitAndZeroShiftRightArgImmMask32();
 void testBitAndZeroShiftRightArgImmMask64();
 void testBasicSelect();
 void testSelectTest();
+void testSelectTestHighBits();
 void testAddWithLeftShift32();
 void testAddWithRightShift32();
 void testAddWithUnsignedRightShift32();
