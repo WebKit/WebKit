@@ -95,6 +95,7 @@ using namespace WebCore;
 -(void)disconnect;
 -(void)addNotificationObservers;
 -(void)removeNotificationObservers;
+-(void)performOnMainRunLoop:(Function<void(AVVideoCaptureSource&)>&&)function;
 -(void)captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
 -(void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error;
@@ -1575,12 +1576,14 @@ void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 
 void AVVideoCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)
 {
+    assertIsCurrent(RunLoop::mainSingleton());
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, [notification userInfo][AVCaptureSessionInterruptionReasonKey]);
     m_interrupted = true;
 }
 
 void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotification>)
 {
+    assertIsCurrent(RunLoop::mainSingleton());
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_interrupted = false;
 }
@@ -1588,6 +1591,7 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 
 void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notification)
 {
+    assertIsCurrent(RunLoop::mainSingleton());
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (this->device() == [notification object])
         captureFailed();
@@ -1637,6 +1641,15 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)performOnMainRunLoop:(Function<void(AVVideoCaptureSource&)>&&)function
+{
+    ensureOnMainRunLoop([strongSelf = RetainPtr { self }, function = WTF::move(function)] {
+        if (RefPtr source = strongSelf->m_captureSource.get())
+            function(*source);
+    });
+}
+
+// Frame callbacks stay on the capture queue for performance. Photo results are guarded by m_photoLock.
 - (void)captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
     if (RefPtr source = m_captureSource.get())
@@ -1645,7 +1658,7 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 
 - (void)captureOutput:(AVCapturePhotoOutput *)captureOutput didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error
 {
-    if (RefPtr source = m_captureSource.get())
+    if (RefPtr source = m_captureSource)
         source->captureOutputDidFinishProcessingPhoto(captureOutput, photo, error);
 }
 
@@ -1655,8 +1668,9 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     UNUSED_PARAM(coordinator);
     UNUSED_PARAM(captureReadiness);
 
-    if (RefPtr source = m_captureSource.get())
-        source->captureReadinessDidChange();
+    [self performOnMainRunLoop:[](auto& source) {
+        source.captureReadinessDidChange();
+    }];
 }
 #endif
 
@@ -1665,56 +1679,58 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     UNUSED_PARAM(object);
     UNUSED_PARAM(context);
 
-    RefPtr source = m_captureSource.get();
-    if (!source)
-        return;
-
-    id newValue = [change valueForKey:NSKeyValueChangeNewKey];
+    RetainPtr newValue = [change valueForKey:NSKeyValueChangeNewKey];
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
 
+    [self performOnMainRunLoop:[keyPath = RetainPtr { keyPath }, newValue = WTF::move(newValue), willChange](auto& source) {
 #if !RELEASE_LOG_DISABLED
-    if (RefPtr logger = source->loggerPtr()) {
-        auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource"_s, "observeValueForKeyPath"_s, source->logIdentifier());
-        RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-        logger->logAlways(source->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString UTF8String]);
-    }
+        if (RefPtr logger = source.loggerPtr()) {
+            auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource"_s, "observeValueForKeyPath"_s, source.logIdentifier());
+            RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue.get()]);
+            logger->logAlways(source.logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "' to ", [valueString UTF8String]);
+        }
 #endif
 
-    if (willChange)
-        return;
+        if (willChange)
+            return;
 
-    if ([keyPath isEqualToString:@"running"])
-        source->captureSessionIsRunningDidChange([newValue boolValue]);
-    if ([keyPath isEqualToString:@"suspended"])
-        source->captureDeviceSuspendedDidChange();
-    if ([keyPath isEqualToString:@"portraitEffectActive"])
-        source->configurationChanged();
+        if ([keyPath isEqualToString:@"running"])
+            source.captureSessionIsRunningDidChange([newValue boolValue]);
+        if ([keyPath isEqualToString:@"suspended"])
+            source.captureDeviceSuspendedDidChange();
+        if ([keyPath isEqualToString:@"portraitEffectActive"])
+            source.configurationChanged();
+    }];
 }
 
 - (void)deviceConnectedDidChange:(NSNotification*)notification
 {
-    if (RefPtr source = m_captureSource.get())
-        source->deviceDisconnected(notification);
+    [self performOnMainRunLoop:[notification = RetainPtr { notification }](auto& source) mutable {
+        source.deviceDisconnected(WTF::move(notification));
+    }];
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (void)sessionRuntimeError:(NSNotification*)notification
 {
     NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
-    if (RefPtr source = m_captureSource.get())
-        source->captureSessionRuntimeError(error);
+    [self performOnMainRunLoop:[error = RetainPtr { error }](auto& source) mutable {
+        source.captureSessionRuntimeError(WTF::move(error));
+    }];
 }
 
 - (void)beginSessionInterrupted:(NSNotification*)notification
 {
-    if (RefPtr source = m_captureSource.get())
-        source->captureSessionBeginInterruption(notification);
+    [self performOnMainRunLoop:[notification = RetainPtr { notification }](auto& source) mutable {
+        source.captureSessionBeginInterruption(WTF::move(notification));
+    }];
 }
 
 - (void)endSessionInterrupted:(NSNotification*)notification
 {
-    if (RefPtr source = m_captureSource.get())
-        source->captureSessionEndInterruption(notification);
+    [self performOnMainRunLoop:[notification = RetainPtr { notification }](auto& source) mutable {
+        source.captureSessionEndInterruption(WTF::move(notification));
+    }];
 }
 #endif
 
