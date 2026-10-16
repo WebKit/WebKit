@@ -252,7 +252,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     Reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCore::ReloadOption> reloadOptions, WebKit::SandboxExtensionHandle sandboxExtensionHandle)
     StopLoading()
-    StopLoadingDueToProcessSwap()
+    StopLoadingDueToProcessSwap(WebCore::NavigationIdentifier navigationID)
     KeepBlobURLAliveForNewWindowNavigation(URL blobURL, std::optional<WebCore::SecurityOriginData> topOrigin) AllowedWhenWaitingForSyncReply
     ReleaseKeptBlobURLForNewWindowNavigation()
 

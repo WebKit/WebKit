@@ -211,6 +211,7 @@ public:
     void continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed, ResourceLoadInfo&&, ResponseCompletionHandler&&);
     void continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry>);
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    void failWhileHandlingResponse(const WebCore::ResourceError&);
     void setIsFromPrevalentDomainIfNeeded(WebCore::ResourceResponse&) const;
 
     bool LEGACY_NODELETE isAppInitiated();

@@ -1812,6 +1812,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::LastNavigationWasAppInitiated': ['"AppPrivacyReport.h"'],
         'WebKit::LayerHostingContextID': ['"LayerHostingContext.h"'],
         'WebKit::MessageBatchIdentifier': ['"NetworkConnectionToWebProcess.h"'],
+        'WebKit::NavigationResponseWithoutProcessSwap': ['"NavigationResponseProcessSwap.h"'],
         'WebKit::NetworkActivityTracker::CompletionCode': ['"NetworkActivityTracker.h"'],
         'WebKit::PageGroupIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::PDFAccessibilityDisplayModeState': ['"PDFAccessibilityDisplayModeState.h"'],

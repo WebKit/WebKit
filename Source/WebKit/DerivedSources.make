@@ -820,6 +820,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ModelProcessConnectionParameters.serialization.in \
 	Shared/MonotonicObjectIdentifier.serialization.in \
 	Shared/NavigationActionData.serialization.in \
+	Shared/NavigationResponseProcessSwap.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
 	Shared/NodeHitTestResult.serialization.in \
 	Shared/PDFAccessibilityDisplayModeState.serialization.in \

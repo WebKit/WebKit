@@ -2872,8 +2872,13 @@ void WebPage::stopLoadingInRootFrames(AbortOngoingNavigation abortOngoingNavigat
         localMainFrame->loader().completePageTransitionIfNeeded();
 }
 
-void WebPage::stopLoadingDueToProcessSwap()
+void WebPage::stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier navigationID)
 {
+    RefPtr localMainFrame = m_page->localMainFrame();
+    RefPtr documentLoader = localMainFrame ? localMainFrame->loader().provisionalDocumentLoader() : nullptr;
+    if (!documentLoader || documentLoader->navigationID() != navigationID)
+        return;
+
     SetForScope isStoppingLoadingDueToProcessSwap(m_isStoppingLoadingDueToProcessSwap, true);
     stopLoadingInRootFrames(AbortOngoingNavigation::No);
 }

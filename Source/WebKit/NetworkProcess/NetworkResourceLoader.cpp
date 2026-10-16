@@ -32,6 +32,7 @@
 #include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
+#include "NavigationResponseProcessSwap.h"
 #include "NetworkCache.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -1546,6 +1547,27 @@ void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessChe
     });
 }
 
+void NetworkResourceLoader::failWhileHandlingResponse(const ResourceError& error)
+{
+    // Empty the queues before failing so that the failure is not itself deferred, and answer the response handlers
+    // only once the load is torn down so that a reentrant network callback cannot fail the load a second time.
+    auto responseCompletionHandlers = std::exchange(m_responseCompletionHandlers, { });
+#if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
+    m_isProcessingResponse = false;
+    cancelDeferredMessages();
+#endif
+
+    if (RefPtr task = WTF::move(m_serviceWorkerFetchTask))
+        task->cancelFromClient();
+    if (RefPtr networkLoad = m_networkLoad)
+        networkLoad->cancel();
+
+    didFailLoading(error);
+
+    while (!responseCompletionHandlers.isEmpty())
+        responseCompletionHandlers.takeFirst()(PolicyAction::Ignore);
+}
+
 void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)
 {
     if (m_serviceWorkerTimingInfo)
@@ -1587,30 +1609,37 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
     auto responseMetrics = computeResponseMetrics(response);
     if (CheckedPtr session = connection->networkSession())
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
-    Site responseSite { response.url() };
 
-    auto swapResultHandler = [existingNetworkResourceLoadIdentifierToResume, weakSession = WeakPtr { connection->networkSession() }, shouldConsiderProcessSwapForEnhancedSecurity, connection = WTF::Ref { connection }, response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics](std::optional<WebCore::ProcessIdentifier> destinationWebProcess) {
+    auto swapResultHandler = [existingNetworkResourceLoadIdentifierToResume, weakSession = WeakPtr { connection->networkSession() }, connection = protect(connection), response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics](NavigationResponseProcessSwapResult&& result) {
         CheckedPtr session = weakSession;
         if (!session)
             return;
-        if (destinationWebProcess) {
+        if (auto* destinationWebProcess = std::get_if<WebCore::ProcessIdentifier>(&result)) {
             // The UIProcess chose the destination WebContent process for this parked loader. Bind the
             // loader to it so only that process can claim it via ScheduleResourceLoad, and resolve any
             // claims that arrived before the destination was known.
             session->setParkedLoaderDestinationAndResolvePendingClaims(existingNetworkResourceLoadIdentifierToResume, *destinationWebProcess);
             return;
         }
-        // No process swap happened. For Enhanced Security this means the swap was declined, so resume the
-        // load in the original process. This is a trusted, in-NetworkProcess return-to-sender: the loader
+        // The load continues in the original process or not at all. This is a trusted, in-NetworkProcess return-to-sender: the loader
         // goes back to the connection that parked it, so no ownership check is needed (and none is possible,
         // since the declined loader never had a destination recorded).
-        if (RefPtr loader = shouldConsiderProcessSwapForEnhancedSecurity ? session->takeParkedLoaderForOriginalProcess(existingNetworkResourceLoadIdentifierToResume) : nullptr) {
-            auto loaderCoreIdentifier = loader->coreIdentifier();
-            loader->send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics }, loaderCoreIdentifier);
-            connection->adoptNetworkResourceLoader(loaderCoreIdentifier, loader.releaseNonNull());
+        RefPtr loader = session->takeParkedLoaderForOriginalProcess(existingNetworkResourceLoadIdentifierToResume);
+        if (!loader)
+            return;
+        // The original process may have exited while the load was parked.
+        if (!connection->connection().isValid()) {
+            loader->abort();
             return;
         }
-        session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
+        auto loaderCoreIdentifier = loader->coreIdentifier();
+        if (std::get<NavigationResponseWithoutProcessSwap>(result) == NavigationResponseWithoutProcessSwap::CancelLoad) {
+            connection->adoptNetworkResourceLoader(loaderCoreIdentifier, *loader);
+            loader->failWhileHandlingResponse(cancelledError(loader->parameters().request));
+            return;
+        }
+        loader->send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, responseMetrics }, loaderCoreIdentifier);
+        connection->adoptNetworkResourceLoader(loaderCoreIdentifier, loader.releaseNonNull());
     };
 
     auto reason = shouldConsiderProcessSwapForEnhancedSecurity ? NavigationResponseProcessSwapReason::EnhancedSecurity : NavigationResponseProcessSwapReason::COOP;
@@ -1618,7 +1647,7 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
     // Propagating the original start time to a destination that fails the TAO check would leak cross-origin redirect timing.
     // https://fetch.spec.whatwg.org/#navigation-tao-check
     auto originalNavigationStartTime = (m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed()) ? m_parameters.originalNavigationStartTime : MonotonicTime { };
-    protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, responseSite, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
+    protect(connection->networkProcess().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, Site { response.url() }, connection->webProcessIdentifier(), existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
 }
 
 void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer)
@@ -2251,22 +2280,7 @@ void NetworkResourceLoader::cancelDeferredMessages()
 void NetworkResourceLoader::failDueToExcessiveDeferredMessages()
 {
     LOADER_RELEASE_LOG_ERROR("failDueToExcessiveDeferredMessages: Cancelling load, too much deferred while waiting for ContinueDidReceiveResponse (deferredMessageCount=%zu, deferredMessagesSize=%zu)", m_deferredMessages.size(), m_deferredMessagesSize);
-
-    Ref protectedThis { *this };
-
-    // Empty both queues before failing so that the failure is not itself deferred, and answer the response handler
-    // only once the load is torn down so that a reentrant network callback cannot fail the load a second time.
-    auto responseCompletionHandlers = std::exchange(m_responseCompletionHandlers, { });
-    m_isProcessingResponse = false;
-    cancelDeferredMessages();
-
-    if (RefPtr networkLoad = m_networkLoad)
-        networkLoad->cancel();
-
-    didFailLoading(ResourceError { errorDomainWebKitInternal, 0, m_parameters.request.url(), "Too much data buffered while waiting for the previous multipart part to be handled"_s, ResourceError::Type::General });
-
-    while (!responseCompletionHandlers.isEmpty())
-        responseCompletionHandlers.takeFirst()(PolicyAction::Ignore);
+    failWhileHandlingResponse(ResourceError { errorDomainWebKitInternal, 0, m_parameters.request.url(), "Too much data buffered while waiting for the previous multipart part to be handled"_s, ResourceError::Type::General });
 }
 
 #endif // HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)

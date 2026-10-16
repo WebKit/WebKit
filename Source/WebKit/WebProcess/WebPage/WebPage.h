@@ -1014,7 +1014,7 @@ public:
     WebCore::Color underlayColor() const { return m_underlayColor; }
 
     void stopLoading();
-    void stopLoadingDueToProcessSwap();
+    void stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier);
     void releaseKeptBlobURLForNewWindowNavigation();
     bool LEGACY_NODELETE defersLoading() const;
 

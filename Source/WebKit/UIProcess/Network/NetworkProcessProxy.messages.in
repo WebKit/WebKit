@@ -80,7 +80,7 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
     RequestLocalNetworkAccessPermission(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace) -> (enum:uint8_t WebCore::PermissionState state)
     QueryLocalNetworkAccessPermission(PAL::SessionID sessionID, std::optional<WebKit::WebPageProxyIdentifier> pageID, struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace) -> (enum:uint8_t std::optional<WebCore::PermissionState> state)
 
-    ConsiderProcessSwapForNavigationResponse(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, enum:uint8_t WebCore::NavigationResponseProcessSwapReason reason, WebCore::Site responseSite, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime) -> (std::optional<WebCore::ProcessIdentifier> destinationWebProcess)
+    ConsiderProcessSwapForNavigationResponse(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::NavigationIdentifier navigationID, enum:uint8_t WebCore::BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, enum:uint8_t WebCore::NavigationResponseProcessSwapReason reason, WebCore::Site responseSite, WebCore::ProcessIdentifier loadingWebProcess, WebKit::NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime) -> (Variant<WebKit::NavigationResponseWithoutProcessSwap, WebCore::ProcessIdentifier> result)
 
 #if USE(SOUP)
     DidExceedMemoryLimit()
