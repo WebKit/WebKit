@@ -260,6 +260,12 @@ class GlobalVariablesTest(unittest.TestCase):
         assertNoCheck(os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi', 'cocoa', 'PassKitSPI.h'),
                       "build/include")
 
+        # Test if the exception for the include order of libpas is in place.
+        libpas_source = os.path.join('Source', 'bmalloc', 'libpas', 'src', 'libpas', 'bmalloc_heap.c')
+        assertNoCheck(libpas_source, "build/include_order")
+        assertCheck(libpas_source, "whitespace/parens")
+        assertCheck(os.path.join('Source', 'bmalloc', 'bmalloc', 'SystemHeap.cpp'), "build/include_order")
+
         # Test if the exception for pal/spi is in place.
         assertNoCheck(os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi'),
                       "readability/naming/underscores")

@@ -405,8 +405,11 @@ _PATH_RULES_SPECIFIER = [
       # as an separate codebase, with a few different style rules.
       # It also does not have access to any of WTF's safe-cpp wrappers,
       # e.g. memsetSpan.
+      # Its sources include pas_config.h first instead of config.h, and their
+      # own header after the #if LIBPAS_ENABLED that follows it.
       os.path.join('Source', 'bmalloc', 'libpas', 'src')],
-     ["-readability/naming/underscores",
+     ["-build/include_order",
+      "-readability/naming/underscores",
       "-readability/parameter_name",
       "-whitespace/declaration",
       "-whitespace/indent",
