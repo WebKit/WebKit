@@ -2164,6 +2164,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MediaPromiseTypes.h
     platform/MediaSample.h
     platform/MediaSamplesBlock.h
+    platform/MediaSamplesDecoder.h
     platform/MediaSelectionOption.h
     platform/MediaSessionGroupIdentifier.h
     platform/MediaSessionIdentifier.h
