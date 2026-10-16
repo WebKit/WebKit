@@ -429,6 +429,12 @@ private:
     ColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
 
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    void setDynamicRangeLimit(PlatformDynamicRangeLimit) final;
+    std::optional<double> getEffectiveDynamicRangeLimitValue() const final;
+    ImagePaintingOptions paintingOptionsForDisplay() const final;
+#endif
+
     void realizeSavesLoop();
     void setStrokeColorImpl(Color&& color, String&& unparsedColor = { });
     void setFillColorImpl(Color&& color, String&& unparsedColor = { });
@@ -521,6 +527,9 @@ private:
     CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
     mutable bool m_hasCreatedImageBuffer { false };
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    PlatformDynamicRangeLimit m_dynamicRangeLimit { PlatformDynamicRangeLimit::initialValue() };
+#endif
 };
 
 } // namespace WebCore

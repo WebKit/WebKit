@@ -59,6 +59,7 @@
 #include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
+#include "Document.h"
 #include "FloatQuad.h"
 #include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
@@ -75,10 +76,13 @@
 #include "InspectorInstrumentation.h"
 #include "NativeImage.h"
 #include "OffscreenCanvas.h"
+#include "Page.h"
 #include "PaintRenderingContext2D.h"
 #include "Path2D.h"
 #include "PixelBufferConversion.h"
 #include "PixelFormat.h"
+#include "PlatformDynamicRangeLimit.h"
+#include "PlatformScreen.h"
 #include "PlatformVideoColorSpace.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -3423,6 +3427,53 @@ bool CanvasRenderingContext2DBase::willReadFrequently() const
 {
     return m_settings.willReadFrequently;
 }
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+
+void CanvasRenderingContext2DBase::setDynamicRangeLimit(PlatformDynamicRangeLimit dynamicRangeLimit)
+{
+    m_dynamicRangeLimit = dynamicRangeLimit;
+}
+
+namespace {
+struct DisplayEDRState {
+    float headroom { 1.f };
+    bool suppressEDR { false };
+};
+}
+
+static DisplayEDRState displayEDRState(const CanvasBase& canvas)
+{
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    RefPtr document = dynamicDowncast<Document>(canvas.scriptExecutionContext());
+    if (RefPtr page = document ? document->page() : nullptr)
+        return { currentEDRHeadroomForDisplay(page->displayID()), suppressEDRForDisplay(page->displayID()) };
+#else
+    UNUSED_PARAM(canvas);
+#endif
+    return { };
+}
+
+std::optional<double> CanvasRenderingContext2DBase::getEffectiveDynamicRangeLimitValue() const
+{
+    return effectiveDynamicRangeLimit(m_dynamicRangeLimit, displayEDRState(protect(canvasBase())).suppressEDR).value();
+}
+
+ImagePaintingOptions CanvasRenderingContext2DBase::paintingOptionsForDisplay() const
+{
+    if (!isHDR() || m_dynamicRangeLimit == PlatformDynamicRangeLimit::noLimit())
+        return { };
+
+    auto display = displayEDRState(protect(canvasBase()));
+
+    return {
+        Headroom(headroomForDynamicRangeLimit(m_dynamicRangeLimit, display.headroom, display.suppressEDR)),
+        m_dynamicRangeLimit,
+        DrawsHDRContent::Yes
+    };
+}
+
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 
 std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesting() const
 {
