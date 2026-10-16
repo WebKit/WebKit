@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -59,7 +60,7 @@ struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
 template<typename ExpectedType, typename ArgType>
 inline bool is(const ArgType& source)
 {
-    static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
+    static_assert(std::derived_from<ExpectedType, ArgType>, "Unnecessary type check");
     return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(source);
 }
 
@@ -89,8 +90,8 @@ using match_constness_t =
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<match_constness_t<Source, Target>&>(source);
 }
@@ -98,8 +99,8 @@ inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source LIFET
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<match_constness_t<Source, Target>*>(source);
 }
@@ -107,8 +108,8 @@ inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source LIFET
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>& downcast(Source& source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     RELEASE_ASSERT_WITH_UNQUALIFIED_FUNCTION_NAME(is<Target>(source));
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<match_constness_t<Source, Target>&>(source);
 }
@@ -116,8 +117,8 @@ inline match_constness_t<Source, Target>& downcast(Source& source LIFETIME_BOUND
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>* downcast(Source* source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     RELEASE_ASSERT_WITH_UNQUALIFIED_FUNCTION_NAME(!source || is<Target>(*source));
     SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<match_constness_t<Source, Target>*>(source);
 }
@@ -125,16 +126,16 @@ inline match_constness_t<Source, Target>* downcast(Source* source LIFETIME_BOUND
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>* dynamicDowncast(Source& source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     SUPPRESS_MEMORY_UNSAFE_CAST return is<Target>(source) ? &static_cast<match_constness_t<Source, Target>&>(source) : nullptr;
 }
 
 template<typename Target, typename Source>
 inline match_constness_t<Source, Target>* dynamicDowncast(Source* source LIFETIME_BOUND)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    static_assert(!std::same_as<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::derived_from<Target, Source>, "Should be a downcast");
     SUPPRESS_MEMORY_UNSAFE_CAST return is<Target>(source) ? static_cast<match_constness_t<Source, Target>*>(source) : nullptr;
 }
 
