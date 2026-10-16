@@ -63,7 +63,7 @@ struct InlineLayoutResult {
 class InlineFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, const BlockLayoutState& parentBlockLayoutState, PlacedFloats&);
 
     // Nullptr signals that there was no actual inline content to lay out and no lines were generated.
     std::unique_ptr<InlineLayoutResult> layout(const ConstraintsForInlineContent&, InlineDamage* = nullptr);
