@@ -57,6 +57,8 @@ class SpatialVideoSupport extends MediaControllerSupport
         if (!host || !host.spatialVideoRenderingEnabled)
             return;
         super.enable();
+        if (this._active === false)
+            this._maybeEnable();
     }
 
     handleEvent()
