@@ -80,15 +80,6 @@ CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElement
 
 CustomElementConstructionData::~CustomElementConstructionData() = default;
 
-namespace {
-
-inline bool LEGACY_NODELETE isASCIIWhitespaceOrReplacementCharacter(char16_t character)
-{
-    return isASCIIWhitespace(character) || character == replacementCharacter;
-}
-
-}
-
 static inline TextPosition LEGACY_NODELETE uninitializedPositionValue1()
 {
     return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber());
@@ -2540,6 +2531,8 @@ void HTMLTreeBuilder::processComment(AtomHTMLToken&& token)
 void HTMLTreeBuilder::processCharacter(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Type::Character);
+    if (token.isReplacedNullCharacter())
+        return;
     ExternalCharacterTokenBuffer buffer(token);
     processCharacterBuffer(buffer);
 }
@@ -2823,7 +2816,7 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 #else
     m_tree.insertTextNode(characters);
 #endif
-    if (m_framesetOk && !characters.containsOnly<isASCIIWhitespaceOrReplacementCharacter>())
+    if (m_framesetOk && !characters.containsOnly<isASCIIWhitespace>())
         m_framesetOk = false;
 }
 
@@ -3229,7 +3222,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
     case HTMLToken::Type::Character: {
         String characters = token.characters();
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && !characters.containsOnly<isASCIIWhitespaceOrReplacementCharacter>())
+        if (m_framesetOk && !token.isReplacedNullCharacter() && !characters.containsOnly<isASCIIWhitespace>())
             m_framesetOk = false;
         break;
     }

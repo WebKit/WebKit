@@ -22,6 +22,11 @@ PASS <svg>\x00a<frameset>
 PASS <svg>\x00</svg><frameset>
 PASS <svg>\x00 </svg><frameset>
 PASS <svg>\x00a</svg><frameset>
+PASS <svg><![CDATA[\x00]]></svg><frameset>: U+0000 NULL in a CDATA section in foreign content does not set frameset-ok to "not ok"
+PASS <svg><foreignObject><![CDATA[\x00]]></foreignObject></svg><frameset>: U+0000 NULL in a CDATA section at an HTML integration point does not set frameset-ok to "not ok"
+PASS <svg>\x00&#xFFFD;</svg><frameset>: U+FFFD after U+0000 NULL in foreign content sets frameset-ok to "not ok"
+PASS <!DOCTYPE html><body>a<\x00b: U+0000 NULL after a less-than sign is ignored in body
+PASS <svg><foreignObject><![CDATA[a\x00b]]>: U+0000 NULL in a CDATA section at an HTML integration point is ignored
 PASS <svg><path></path></svg><frameset>
 PASS <svg><p><frameset>
 PASS <!DOCTYPE html><pre>\r\n\r\nA</pre>

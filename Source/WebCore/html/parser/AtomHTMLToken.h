@@ -73,6 +73,7 @@ public:
 
     std::span<const char16_t> characters() const;
     bool charactersIsAll8BitData() const;
+    bool isReplacedNullCharacter() const;
 
     // Comment
 
@@ -97,6 +98,7 @@ private:
     Type m_type;
     TagName m_tagName; // StartTag, EndTag.
     bool m_externalCharactersIsAll8BitData; // Character
+    bool m_isReplacedNullCharacter { false }; // Character
     bool m_selfClosing { false }; // StartTag, EndTag.
     bool m_hasDuplicateAttribute { false };
 };
@@ -169,6 +171,12 @@ inline bool AtomHTMLToken::charactersIsAll8BitData() const
 {
     ASSERT(m_type == Type::Character);
     return m_externalCharactersIsAll8BitData;
+}
+
+inline bool AtomHTMLToken::isReplacedNullCharacter() const
+{
+    ASSERT(m_type == Type::Character);
+    return m_isReplacedNullCharacter;
 }
 
 inline const String& AtomHTMLToken::comment() const
@@ -279,6 +287,7 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
     case Type::Character:
         m_externalCharacters = token.characters().span();
         m_externalCharactersIsAll8BitData = token.charactersIsAll8BitData();
+        m_isReplacedNullCharacter = token.isReplacedNullCharacter();
         return;
     }
     ASSERT_NOT_REACHED();

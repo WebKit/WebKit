@@ -154,6 +154,21 @@ inline bool HTMLTokenizer::emitEndOfFile(SegmentedString& source)
     return true;
 }
 
+static bool isReplacedNullCharacter(const SegmentedString& source, char16_t character)
+{
+    return character == replacementCharacter && !source.currentCharacter();
+}
+
+inline bool HTMLTokenizer::emitReplacedNullCharacter(SegmentedString& source, State state)
+{
+    m_state = state;
+    if (haveBufferedCharacterToken())
+        return true;
+    m_token.makeReplacedNullCharacter();
+    source.advancePastNonNewline();
+    return true;
+}
+
 inline void HTMLTokenizer::saveEndTagNameIfNeeded()
 {
     ASSERT(m_token.type() != HTMLToken::Type::Uninitialized);
@@ -251,6 +266,8 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         if (character == kEndOfFileMarker)
             return emitEndOfFile(source);
+        if (isReplacedNullCharacter(source, character)) [[unlikely]]
+            return emitReplacedNullCharacter(source, DataState);
         bufferCharacter(character);
         // Optimization: scan ahead for a run of plain-text characters in the
         // current 8-bit substring and buffer them all at once, avoiding the
@@ -1443,6 +1460,8 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(CDATASectionRightSquareBracketState);
         if (character == kEndOfFileMarker)
             RECONSUME_IN(DataState);
+        if (isReplacedNullCharacter(source, character)) [[unlikely]]
+            return emitReplacedNullCharacter(source, CDATASectionState);
         bufferCharacter(character);
         ADVANCE_TO(CDATASectionState);
     END_STATE()

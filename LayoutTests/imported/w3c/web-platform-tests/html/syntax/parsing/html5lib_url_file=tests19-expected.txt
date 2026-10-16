@@ -48,10 +48,10 @@ PASS <html><frameset></frameset></html><!doctype html>
 PASS <!doctype html><body><frameset>
 PASS <!doctype html><p><frameset><frame>
 PASS <!doctype html><p>a<frameset>
-FAIL <!doctype html>�<frameset><frame>: U+FFFD character sets frameset-ok to "not ok" assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     \"\ufffd\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <frameset>\n|     <frame>"
-FAIL <!doctype html>&#xFFFD;<frameset><frame>: U+FFFD from a character reference sets frameset-ok to "not ok" assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     \"\ufffd\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <frameset>\n|     <frame>"
-FAIL <!doctype html>&#0;<frameset><frame>: Null character reference becomes U+FFFD and sets frameset-ok to "not ok" assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     \"\ufffd\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <frameset>\n|     <frame>"
-FAIL <!doctype html><svg>&#xFFFD;</svg><frameset><frame>: U+FFFD in foreign content sets frameset-ok to "not ok" assert_equals: expected "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <body>\n|     <svg svg>\n|       \"\ufffd\"" but got "#document\n| <!DOCTYPE html>\n| <html>\n|   <head>\n|   <frameset>\n|     <frame>"
+PASS <!doctype html>�<frameset><frame>: U+FFFD character sets frameset-ok to "not ok"
+PASS <!doctype html>&#xFFFD;<frameset><frame>: U+FFFD from a character reference sets frameset-ok to "not ok"
+PASS <!doctype html>&#0;<frameset><frame>: Null character reference becomes U+FFFD and sets frameset-ok to "not ok"
+PASS <!doctype html><svg>&#xFFFD;</svg><frameset><frame>: U+FFFD in foreign content sets frameset-ok to "not ok"
 PASS <!doctype html><p> <frameset><frame>
 PASS <!doctype html><pre><frameset>
 PASS <!doctype html><listing><frameset>
@@ -108,89 +108,4 @@ PASS <!doctype html><figcaption><article></figcaption>a
 PASS <!doctype html><summary><article></summary>a
 PASS <!doctype html><p><a><plaintext>b
 PASS <!DOCTYPE html><div>a<a></div>b<p>c</p>d
-<!doctype html>�<frameset><frame>: U+FFFD character sets frameset-ok to "not ok"
-
-Input
-
-<!doctype html>�<frameset><frame>
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "�"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
-<!doctype html>&#xFFFD;<frameset><frame>: U+FFFD from a character reference sets frameset-ok to "not ok"
-
-Input
-
-<!doctype html>&#xFFFD;<frameset><frame>
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "�"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
-<!doctype html>&#0;<frameset><frame>: Null character reference becomes U+FFFD and sets frameset-ok to "not ok"
-
-Input
-
-<!doctype html>&#0;<frameset><frame>
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     "�"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
-<!doctype html><svg>&#xFFFD;</svg><frameset><frame>: U+FFFD in foreign content sets frameset-ok to "not ok"
-
-Input
-
-<!doctype html><svg>&#xFFFD;</svg><frameset><frame>
-Expected
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       "�"
-Actual
-
-#document
-| <!DOCTYPE html>
-| <html>
-|   <head>
-|   <frameset>
-|     <frame>
 

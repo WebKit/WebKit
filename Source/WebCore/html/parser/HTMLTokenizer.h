@@ -163,6 +163,7 @@ private:
     bool emitAndResumeInDataState(SegmentedString&);
     bool emitAndReconsumeInDataState();
     bool emitEndOfFile(SegmentedString&);
+    bool emitReplacedNullCharacter(SegmentedString&, State);
 
     // Return true if we wil emit a character token before dealing with the buffered end tag.
     void flushBufferedEndTag();

@@ -28,6 +28,7 @@
 
 #include "Attribute.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -120,11 +121,14 @@ public:
 
     const DataVector& characters() const LIFETIME_BOUND;
     bool charactersIsAll8BitData() const;
+    bool isReplacedNullCharacter() const;
 
     void appendToCharacter(Latin1Character);
     void appendToCharacter(char16_t);
     void appendToCharacter(const Vector<Latin1Character, 32>&);
     template<typename CharacterType> void appendToCharacter(std::span<const CharacterType>);
+
+    void makeReplacedNullCharacter();
 
     // Comment.
 
@@ -142,6 +146,9 @@ private:
     DataVector m_data;
     char16_t m_data8BitCheck { 0 };
     Type m_type { Type::Uninitialized };
+
+    // For Character
+    bool m_isReplacedNullCharacter { false };
 
     // For StartTag and EndTag
     bool m_selfClosing;
@@ -163,6 +170,7 @@ inline void HTMLToken::clear()
     else
         m_data.shrink(0);
     m_data8BitCheck = 0;
+    m_isReplacedNullCharacter = false;
 }
 
 inline HTMLToken::Type HTMLToken::type() const
@@ -365,6 +373,12 @@ inline bool HTMLToken::charactersIsAll8BitData() const
     return m_data8BitCheck <= 0xFF;
 }
 
+inline bool HTMLToken::isReplacedNullCharacter() const
+{
+    ASSERT(m_type == Type::Character);
+    return m_isReplacedNullCharacter;
+}
+
 inline void HTMLToken::appendToCharacter(Latin1Character character)
 {
     ASSERT(m_type == Type::Uninitialized || m_type == Type::Character);
@@ -398,6 +412,13 @@ inline void HTMLToken::appendToCharacter(std::span<const CharacterType> characte
         for (auto character : characters)
             m_data8BitCheck |= character;
     }
+}
+
+inline void HTMLToken::makeReplacedNullCharacter()
+{
+    ASSERT(m_type == Type::Uninitialized);
+    appendToCharacter(replacementCharacter);
+    m_isReplacedNullCharacter = true;
 }
 
 inline const HTMLToken::DataVector& HTMLToken::comment() const
