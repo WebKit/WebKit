@@ -74,6 +74,14 @@ ProcessingInstruction::~ProcessingInstruction()
         protect(document().styleScope())->removeStyleSheetCandidateNode(*this);
 }
 
+void ProcessingInstruction::setSheet(RefPtr<StyleSheet>&& sheet)
+{
+    ASSERT(!sheet || sheet->ownerNode() == this);
+    RefPtr oldSheet = std::exchange(m_sheet, WTF::move(sheet));
+    if (oldSheet && oldSheet != m_sheet)
+        oldSheet->clearOwnerNode();
+}
+
 String ProcessingInstruction::nodeName() const
 {
     return m_target;
@@ -129,7 +137,7 @@ void ProcessingInstruction::checkStyleSheet()
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
                 URL finalURL({ }, m_localHref);
-                m_sheet = XSLStyleSheet::createEmbedded(*this, finalURL);
+                setSheet(XSLStyleSheet::createEmbedded(*this, finalURL));
                 m_loading = false;
                 document->scheduleToApplyXSLTransforms();
             }
@@ -219,7 +227,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     cssSheet->setTitle(m_title);
     cssSheet->setMediaQueries(MQ::MediaQueryParser::parse(m_media, document->cssParserContext()));
 
-    m_sheet = WTF::move(cssSheet);
+    setSheet(WTF::move(cssSheet));
 
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
@@ -231,7 +239,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
 void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
 {
     ASSERT(m_isXSL);
-    m_sheet = XSLStyleSheet::create(*this, href, baseURL);
+    setSheet(XSLStyleSheet::create(*this, href, baseURL));
     Ref protectedDocument { document() };
     parseStyleSheet(sheet);
 }
@@ -291,10 +299,7 @@ void ProcessingInstruction::removingSteps(RemovalType removalType, ContainerNode
     CheckedRef styleScope = document().styleScope();
     styleScope->removeStyleSheetCandidateNode(*this);
 
-    if (RefPtr sheet = std::exchange(m_sheet, nullptr)) {
-        ASSERT(sheet->ownerNode() == this);
-        sheet->clearOwnerNode();
-    }
+    setSheet(nullptr);
 
     if (m_loading) {
         m_loading = false;

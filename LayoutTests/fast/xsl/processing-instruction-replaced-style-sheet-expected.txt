@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+Tests that a processing instruction clears the owner node of a style sheet it replaces. The test passes if it does not crash.
+
+PASS: did not crash
