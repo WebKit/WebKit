@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.getResourceTree.URLFragment");
+
+    suite.addTestCase({
+        name: "Page.getResourceTree.URLFragment",
+        description: "Should include the fragment a resource was requested with.",
+        async test() {
+            let resource = WI.networkManager.resourcesForURL("http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg?get-resource-tree-url-fragment#green-icon").firstValue;
+            InspectorTest.expectThat(resource, "Should find the image by its URL with the fragment.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree includes the fragment a resource was requested with.</p>
+<img src="../../svg/resources/rgb-icons-3.svg?get-resource-tree-url-fragment#green-icon">
+</body>
+</html>
