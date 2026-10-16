@@ -29,9 +29,8 @@
 
 #include "GPUTexture.h"
 #include "GPUTextureViewDescriptor.h"
-#include "WebGPUXREye.h"
-#include "WebGPUXRSubImage.h"
 #include "XRSubImage.h"
+#include <WebCore/WebGPUCppAPI.h>
 
 #include <wtf/TZoneMalloc.h>
 
@@ -46,7 +45,7 @@ class IntRect;
 class XRGPUSubImage : public XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(XRGPUSubImage);
 public:
-    static Ref<XRGPUSubImage> create(Ref<WebGPU::XRSubImage>&& backing, WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
+    static Ref<XRGPUSubImage> create(Ref<::WebGPU::XRSubImage>&& backing, ::WebGPU::XREye eye, std::array<uint16_t, 2>&& physicalSize, WebCore::IntRect&& viewport, GPUDevice& device)
     {
         return adoptRef(*new XRGPUSubImage(WTF::move(backing), eye, WTF::move(physicalSize), WTF::move(viewport), device));
     }
@@ -58,11 +57,11 @@ public:
 
     const GPUTextureViewDescriptor& getViewDescriptor() const;
 private:
-    XRGPUSubImage(Ref<WebGPU::XRSubImage>&&, WebGPU::XREye, std::array<uint16_t, 2>&&, WebCore::IntRect&&, GPUDevice&);
+    XRGPUSubImage(Ref<::WebGPU::XRSubImage>&&, ::WebGPU::XREye, std::array<uint16_t, 2>&&, WebCore::IntRect&&, GPUDevice&);
 
     bool isXRGPUSubImage() const final { return true; }
 
-    const Ref<WebGPU::XRSubImage> m_backing;
+    const Ref<::WebGPU::XRSubImage> m_backing;
     const Ref<GPUDevice> m_device;
     const GPUTextureViewDescriptor m_descriptor;
     const Ref<WebXRViewport> m_viewport;

@@ -30,12 +30,12 @@ namespace WebCore {
 
 const String& GPUCompilationMessage::message() const
 {
-    return m_backing->message();
+    return m_backing.message;
 }
 
 GPUCompilationMessageType GPUCompilationMessage::type() const
 {
-    switch (m_backing->type()) {
+    switch (m_backing.type) {
     case WebGPU::CompilationMessageType::Error:
         return GPUCompilationMessageType::Error;
     case WebGPU::CompilationMessageType::Warning:
@@ -48,22 +48,22 @@ GPUCompilationMessageType GPUCompilationMessage::type() const
 
 uint64_t GPUCompilationMessage::lineNum() const
 {
-    return m_backing->lineNum();
+    return m_backing.lineNum;
 }
 
 uint64_t GPUCompilationMessage::linePos() const
 {
-    return m_backing->linePos();
+    return m_backing.linePos;
 }
 
 uint64_t GPUCompilationMessage::offset() const
 {
-    return m_backing->offset();
+    return m_backing.offset;
 }
 
 uint64_t GPUCompilationMessage::length() const
 {
-    return m_backing->length();
+    return m_backing.length;
 }
 
 }

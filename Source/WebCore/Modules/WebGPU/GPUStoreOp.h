@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUStoreOp.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUStoreOp : uint8_t {
     Discard,
 };
 
-inline WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)
+inline ::WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)
 {
     switch (storeOp) {
     case GPUStoreOp::Store:
-        return WebGPU::StoreOp::Store;
+        return ::WebGPU::StoreOp::Store;
     case GPUStoreOp::Discard:
-        return WebGPU::StoreOp::Discard;
+        return ::WebGPU::StoreOp::Discard;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

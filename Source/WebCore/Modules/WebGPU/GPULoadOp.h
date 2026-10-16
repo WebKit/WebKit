@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPULoadOp.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPULoadOp : uint8_t {
     Clear,
 };
 
-inline WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)
+inline ::WebGPU::LoadOp convertToBacking(GPULoadOp loadOp)
 {
     switch (loadOp) {
     case GPULoadOp::Load:
-        return WebGPU::LoadOp::Load;
+        return ::WebGPU::LoadOp::Load;
     case GPULoadOp::Clear:
-        return WebGPU::LoadOp::Clear;
+        return ::WebGPU::LoadOp::Clear;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -31,7 +31,7 @@
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BindGroupEntry {
-    WebCore::WebGPU::Index32 binding
+    uint32_t binding
     WebKit::WebGPU::BufferBinding bufferBinding
     WebKit::WebGPUIdentifier identifier
     WebKit::WebGPU::BindingResourceType type

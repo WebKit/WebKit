@@ -24,9 +24,8 @@ endif ()
 
 add_subdirectory(JavaScriptCore)
 
-if (ENABLE_WEBGPU)
-    add_subdirectory(WebGPU)
-endif ()
+# Every port installs the WebGPU C++ API header, which WebCore uses even when WebGPU is disabled.
+add_subdirectory(WebGPU)
 
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)

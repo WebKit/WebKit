@@ -31,28 +31,28 @@
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 #include "GPUTextureViewDimension.h"
-#include "WebGPUTextureViewDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-inline std::optional<WebGPU::ComponentSwizzle> convertSwizzleComponentToBacking(char16_t component)
+inline std::optional<::WebGPU::ComponentSwizzle> convertSwizzleComponentToBacking(char16_t component)
 {
     switch (component) {
     case 'r':
-        return WebGPU::ComponentSwizzle::R;
+        return ::WebGPU::ComponentSwizzle::R;
     case 'g':
-        return WebGPU::ComponentSwizzle::G;
+        return ::WebGPU::ComponentSwizzle::G;
     case 'b':
-        return WebGPU::ComponentSwizzle::B;
+        return ::WebGPU::ComponentSwizzle::B;
     case 'a':
-        return WebGPU::ComponentSwizzle::A;
+        return ::WebGPU::ComponentSwizzle::A;
     case '0':
-        return WebGPU::ComponentSwizzle::Zero;
+        return ::WebGPU::ComponentSwizzle::Zero;
     case '1':
-        return WebGPU::ComponentSwizzle::One;
+        return ::WebGPU::ComponentSwizzle::One;
     default:
         return std::nullopt;
     }
@@ -60,7 +60,7 @@ inline std::optional<WebGPU::ComponentSwizzle> convertSwizzleComponentToBacking(
 
 struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
     // Returns std::nullopt if swizzle is not four characters, each of which is one of "rgba01".
-    std::optional<WebGPU::TextureViewDescriptor> convertToBacking() const
+    std::optional<::WebGPU::TextureViewDescriptor> convertToBacking() const
     {
         if (swizzle.length() != 4)
             return std::nullopt;
@@ -72,18 +72,18 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
         if (!r || !g || !b || !a)
             return std::nullopt;
 
-        return { {
-            { label },
-            format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
-            dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
-            convertTextureUsageFlagsToBacking(usage),
-            WebCore::convertToBacking(aspect),
-            baseMipLevel,
-            mipLevelCount,
-            baseArrayLayer,
-            arrayLayerCount,
-            { *r, *g, *b, *a },
-        } };
+        return ::WebGPU::TextureViewDescriptor {
+            .label = label,
+            .format = format ? std::optional { WebCore::convertToBacking(*format) } : std::nullopt,
+            .dimension = dimension ? std::optional { WebCore::convertToBacking(*dimension) } : std::nullopt,
+            .baseMipLevel = baseMipLevel,
+            .mipLevelCount = mipLevelCount,
+            .baseArrayLayer = baseArrayLayer,
+            .arrayLayerCount = arrayLayerCount,
+            .aspect = WebCore::convertToBacking(aspect),
+            .usage = convertTextureUsageFlagsToBacking(usage),
+            .swizzle = { *r, *g, *b, *a },
+        };
     }
 
     Ref<JSON::Object> toJSON() const;

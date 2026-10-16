@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
     std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
-    WebCore::WebGPU::PredefinedColorSpace colorSpace { WebCore::WebGPU::PredefinedColorSpace::SRGB };
+    WebCore::PredefinedColorSpace colorSpace { WebCore::PredefinedColorSpace::SRGB };
     WebCore::IntSize visibleSize;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::optional<WebKit::SharedVideoFrame> sharedFrame;

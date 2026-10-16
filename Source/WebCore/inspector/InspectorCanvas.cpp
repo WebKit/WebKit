@@ -42,6 +42,7 @@
 #include "FloatPoint.h"
 #include "GPUCanvasContext.h"
 #include "GPUDevice.h"
+#include "GPUSupportedFeatures.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -702,7 +703,7 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                 .release();
 
             auto features = JSON::ArrayOf<String>::create();
-            for (const String& feature : device->backing().features().features())
+            for (const String& feature : device->features()->backing().features())
                 features->addItem(feature);
             result->setFeatures(WTF::move(features));
 

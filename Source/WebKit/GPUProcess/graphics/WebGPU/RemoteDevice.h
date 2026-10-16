@@ -32,10 +32,15 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
+#include "WebGPUBufferDescriptor.h"
+#include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
+#include "WebGPUQuerySetDescriptor.h"
+#include "WebGPUSamplerDescriptor.h"
 #include <WebCore/MediaPlayerIdentifier.h>
-#include <WebCore/WebGPUErrorFilter.h>
+#include <WebCore/WebGPUCppAPI.h>
+#include <WebCore/WebGPUDevice.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -48,11 +53,6 @@
 #endif
 
 typedef struct __CVBuffer* CVPixelBufferRef;
-
-namespace WebCore::WebGPU {
-class Device;
-enum class DeviceLostReason : uint8_t;
-}
 
 namespace IPC {
 class Connection;
@@ -74,16 +74,12 @@ struct SharedVideoFrame;
 namespace WebGPU {
 struct BindGroupDescriptor;
 struct BindGroupLayoutDescriptor;
-struct BufferDescriptor;
-struct CommandEncoderDescriptor;
 struct ComputePipelineDescriptor;
 struct ExternalTextureDescriptor;
 class ObjectHeap;
 struct PipelineLayoutDescriptor;
-struct QuerySetDescriptor;
 struct RenderBundleEncoderDescriptor;
 struct RenderPipelineDescriptor;
-struct SamplerDescriptor;
 struct ShaderModuleDescriptor;
 struct TextureDescriptor;
 }
@@ -91,7 +87,7 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteDevice);
 public:
-    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
         return adoptRef(*new RemoteDevice(gpuConnectionToWebProcess, gpu, device, objectHeap, WTF::move(streamConnection), identifier, queueIdentifier));
     }
@@ -107,14 +103,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(GPUConnectionToWebProcess&, RemoteGPU&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
     RemoteDevice& operator=(const RemoteDevice&) = delete;
     RemoteDevice& operator=(RemoteDevice&&) = delete;
 
-    WebCore::WebGPU::Device& backing() { return m_backing; }
+    ::WebGPU::Device& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -147,17 +143,17 @@ private:
 
     void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUIdentifier);
 
-    void pushErrorScope(WebCore::WebGPU::ErrorFilter);
+    void pushErrorScope(::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
     void resolveUncapturedErrorEvent(CompletionHandler<void(bool, std::optional<WebGPU::Error>&&)>&&);
-    void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&);
+    void resolveDeviceLostPromise(CompletionHandler<void(::WebGPU::DeviceLostReason)>&&);
 
     void setLabel(String&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
     void pauseAllErrorReporting(bool pauseErrorReporting);
 
-    const Ref<WebCore::WebGPU::Device> m_backing;
+    const Ref<::WebGPU::Device> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

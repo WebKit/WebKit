@@ -163,7 +163,7 @@ header: <WebKit/ModelTypes.h>
 header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::VertexAttributeFormat {
     WebModel::VertexSemantic semantic;
-    WebCore::WebGPU::VertexFormat format;
+    ::WebGPU::VertexFormat format;
     long layoutIndex;
     long offset;
 };
@@ -200,11 +200,11 @@ header: <WebKit/ModelTypes.h>
     [Validator='*width > 0 && *width <= WKBridgeMaximumTextureDimension'] long width;
     [Validator='*height > 0 && *height <= WKBridgeMaximumTextureDimension'] long height;
     long depth;
-    WebCore::WebGPU::TextureViewDimension textureType;
-    WebCore::WebGPU::TextureFormat pixelFormat;
+    ::WebGPU::TextureViewDimension textureType;
+    ::WebGPU::TextureFormat pixelFormat;
     long mipmapLevelCount;
     long arrayLength;
-    WebCore::WebGPU::TextureUsageFlags textureUsage;
+    OptionSet<::WebGPU::TextureUsage> textureUsage;
     WebModel::ImageAssetSwizzle swizzle;
 };
 
@@ -212,7 +212,7 @@ header: <WebKit/ModelTypes.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebModel::MeshPart {
     uint32_t indexOffset;
     uint32_t indexCount;
-    WebCore::WebGPU::PrimitiveTopology topology;
+    ::WebGPU::PrimitiveTopology topology;
     uint32_t materialIndex;
     WebModel::Float3 boundsMin;
     WebModel::Float3 boundsMax;

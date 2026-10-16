@@ -49,10 +49,16 @@ RemotePipelineLayoutProxy::~RemotePipelineLayoutProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemotePipelineLayoutProxy::setLabelInternal(const String& label)
+void RemotePipelineLayoutProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemotePipelineLayout::SetLabel(label));
+    auto sendResult = send(Messages::RemotePipelineLayout::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemotePipelineLayoutProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

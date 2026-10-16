@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUQueryType.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUQueryType : uint8_t {
     Timestamp,
 };
 
-inline WebGPU::QueryType convertToBacking(GPUQueryType queryType)
+inline ::WebGPU::QueryType convertToBacking(GPUQueryType queryType)
 {
     switch (queryType) {
     case GPUQueryType::Occlusion:
-        return WebGPU::QueryType::Occlusion;
+        return ::WebGPU::QueryType::Occlusion;
     case GPUQueryType::Timestamp:
-        return WebGPU::QueryType::Timestamp;
+        return ::WebGPU::QueryType::Timestamp;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

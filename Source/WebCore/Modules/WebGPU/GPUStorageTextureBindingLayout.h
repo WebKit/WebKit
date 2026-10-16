@@ -28,13 +28,13 @@
 #include "GPUStorageTextureAccess.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureViewDimension.h"
-#include "WebGPUStorageTextureBindingLayout.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUStorageTextureBindingLayout {
-    WebGPU::StorageTextureBindingLayout convertToBacking() const
+    ::WebGPU::StorageTextureBindingLayout convertToBacking() const
     {
         return {
             WebCore::convertToBacking(access),

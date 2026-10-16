@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class PresentationContext;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -55,7 +52,7 @@ struct CanvasConfiguration;
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemotePresentationContext);
 public:
-    static Ref<RemotePresentationContext> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, WebCore::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemotePresentationContext> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteGPU& gpu, ::WebGPU::PresentationContext& presentationContext, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemotePresentationContext(gpuConnectionToWebProcess, gpu, presentationContext, objectHeap, WTF::move(streamConnection), identifier));
     }
@@ -69,14 +66,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemotePresentationContext(GPUConnectionToWebProcess&, RemoteGPU&, WebCore::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemotePresentationContext(GPUConnectionToWebProcess&, RemoteGPU&, ::WebGPU::PresentationContext&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemotePresentationContext(const RemotePresentationContext&) = delete;
     RemotePresentationContext(RemotePresentationContext&&) = delete;
     RemotePresentationContext& operator=(const RemotePresentationContext&) = delete;
     RemotePresentationContext& operator=(RemotePresentationContext&&) = delete;
 
-    WebCore::WebGPU::PresentationContext& backing() { return m_backing; }
+    ::WebGPU::PresentationContext& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -86,7 +83,7 @@ private:
 
     void getCurrentTexture(WebGPUIdentifier, uint32_t frameIndex);
 
-    const Ref<WebCore::WebGPU::PresentationContext> m_backing;
+    const Ref<::WebGPU::PresentationContext> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

@@ -49,10 +49,16 @@ RemoteBindGroupLayoutProxy::~RemoteBindGroupLayoutProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteBindGroupLayoutProxy::setLabelInternal(const String& label)
+void RemoteBindGroupLayoutProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteBindGroupLayout::SetLabel(label));
+    auto sendResult = send(Messages::RemoteBindGroupLayout::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteBindGroupLayoutProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

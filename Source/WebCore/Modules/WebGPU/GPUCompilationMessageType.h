@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUCompilationMessageType.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUCompilationMessageType : uint8_t {
     Info,
 };
 
-inline WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)
+inline ::WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)
 {
     switch (compilationMessageType) {
     case GPUCompilationMessageType::Error:
-        return WebGPU::CompilationMessageType::Error;
+        return ::WebGPU::CompilationMessageType::Error;
     case GPUCompilationMessageType::Warning:
-        return WebGPU::CompilationMessageType::Warning;
+        return ::WebGPU::CompilationMessageType::Warning;
     case GPUCompilationMessageType::Info:
-        return WebGPU::CompilationMessageType::Info;
+        return ::WebGPU::CompilationMessageType::Info;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

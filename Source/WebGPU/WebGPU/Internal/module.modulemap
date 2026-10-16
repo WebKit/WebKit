@@ -172,6 +172,11 @@ module WebGPU_Internal [system] {
         export *
     }
 
+    explicit module WebGPUCppBridge {
+        header "../WebGPUCppBridge.h"
+        export *
+    }
+
     explicit module WebGPUCppConversions {
         header "../WebGPUCppConversions.h"
         export *

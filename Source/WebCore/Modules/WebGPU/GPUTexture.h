@@ -29,8 +29,8 @@
 #include "GPUTextureAspect.h"
 #include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
-#include "WebGPUTexture.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <atomic>
 #include <optional>
 #include <wtf/Ref.h>
@@ -50,7 +50,7 @@ template<typename> class ExceptionOr;
 
 class GPUTexture : public RefCountedAndCanMakeWeakPtr<GPUTexture> {
 public:
-    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking = false)
+    static Ref<GPUTexture> create(Ref<::WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking = false)
     {
         return adoptRef(*new GPUTexture(WTF::move(backing), descriptor, device, isCanvasBacking));
     }
@@ -63,8 +63,8 @@ public:
     void destroy();
     bool isDestroyed() const { return m_isDestroyed; }
 
-    WebGPU::Texture& backing() { return m_backing; }
-    const WebGPU::Texture& backing() const { return m_backing; }
+    ::WebGPU::Texture& backing() { return m_backing; }
+    const ::WebGPU::Texture& backing() const { return m_backing; }
     GPUTextureFormat format() const { return m_format; }
     bool isCanvasBacking() const { return m_isCanvasBacking; }
 
@@ -95,14 +95,15 @@ public:
     bool hasActiveInspectorCanvasCallTracer() const;
 
 private:
-    GPUTexture(Ref<WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&, bool isCanvasBacking);
+    GPUTexture(Ref<::WebGPU::Texture>&&, const GPUTextureDescriptor&, GPUDevice&, bool isCanvasBacking);
 
     GPUTexture(const GPUTexture&) = delete;
     GPUTexture(GPUTexture&&) = delete;
     GPUTexture& operator=(const GPUTexture&) = delete;
     GPUTexture& operator=(GPUTexture&&) = delete;
 
-    const Ref<WebGPU::Texture> m_backing;
+    const Ref<::WebGPU::Texture> m_backing;
+    String m_label;
     const GPUTextureFormat m_format;
     const GPUIntegerCoordinateOut m_width;
     const GPUIntegerCoordinateOut m_height;

@@ -31,7 +31,7 @@
 #include "GPUSampler.h"
 #include "GPUTexture.h"
 #include "GPUTextureView.h"
-#include "WebGPUBindGroupEntry.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <utility>
 
 namespace WebCore {
@@ -45,19 +45,19 @@ using GPUBindingResource = Variant<
     Ref<GPUExternalTexture>
 >;
 
-inline WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
+inline ::WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
 {
     return WTF::switchOn(bindingResource,
-        [](const Ref<GPUSampler>& sampler) -> WebGPU::BindingResource {
+        [](const Ref<GPUSampler>& sampler) -> ::WebGPU::BindingResource {
             return sampler->backing();
         },
-        [](const Ref<GPUTexture>& texture) -> WebGPU::BindingResource {
+        [](const Ref<GPUTexture>& texture) -> ::WebGPU::BindingResource {
             return texture->backing();
         },
-        [](const Ref<GPUTextureView>& textureView) -> WebGPU::BindingResource {
+        [](const Ref<GPUTextureView>& textureView) -> ::WebGPU::BindingResource {
             return textureView->backing();
         },
-        [](const Ref<GPUBuffer>& buffer) -> WebGPU::BindingResource {
+        [](const Ref<GPUBuffer>& buffer) -> ::WebGPU::BindingResource {
             GPUBufferBinding bufferBinding {
                 .buffer = buffer,
                 .offset = 0,
@@ -65,17 +65,17 @@ inline WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindin
             };
             return bufferBinding.convertToBacking();
         },
-        [](const GPUBufferBinding& bufferBinding) -> WebGPU::BindingResource {
+        [](const GPUBufferBinding& bufferBinding) -> ::WebGPU::BindingResource {
             return bufferBinding.convertToBacking();
         },
-        [](const Ref<GPUExternalTexture>& externalTexture) -> WebGPU::BindingResource {
+        [](const Ref<GPUExternalTexture>& externalTexture) -> ::WebGPU::BindingResource {
             return externalTexture->backing();
         }
     );
 }
 
 struct GPUBindGroupEntry {
-    WebGPU::BindGroupEntry convertToBacking() const
+    ::WebGPU::BindGroupEntry convertToBacking() const
     {
         return {
             binding,

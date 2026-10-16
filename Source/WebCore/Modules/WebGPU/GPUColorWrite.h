@@ -28,7 +28,7 @@
 #include "GPUBlendFactor.h"
 #include "GPUBlendOperation.h"
 #include "GPUIntegralTypes.h"
-#include "WebGPUColorWrite.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
@@ -49,14 +49,14 @@ static constexpr bool compare(auto a, auto b)
     return static_cast<unsigned>(a) == static_cast<unsigned>(b);
 }
 
-inline WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
+inline uint32_t convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
 {
-    static_assert(compare(GPUColorWrite::RED, WebGPU::ColorWrite::Red), "ColorWriteFlags enum values differ");
-    static_assert(compare(GPUColorWrite::GREEN, WebGPU::ColorWrite::Green), "ColorWriteFlags enum values differ");
-    static_assert(compare(GPUColorWrite::BLUE, WebGPU::ColorWrite::Blue), "ColorWriteFlags enum values differ");
-    static_assert(compare(GPUColorWrite::ALPHA, WebGPU::ColorWrite::Alpha), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::RED, ::WebGPU::ColorWrite::Red), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::GREEN, ::WebGPU::ColorWrite::Green), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::BLUE, ::WebGPU::ColorWrite::Blue), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::ALPHA, ::WebGPU::ColorWrite::Alpha), "ColorWriteFlags enum values differ");
 
-    return static_cast<WebGPU::ColorWriteFlags>(colorWriteFlags);
+    return static_cast<uint32_t>(colorWriteFlags);
 }
 
 }

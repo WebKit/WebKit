@@ -45,14 +45,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteBuffer);
 
-RemoteBuffer::RemoteBuffer(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, bool mappedAtCreation, WebGPUIdentifier identifier)
+RemoteBuffer::RemoteBuffer(::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, bool mappedAtCreation, WebGPUIdentifier identifier)
     : m_backing(buffer)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
     , m_gpu(gpu)
     , m_identifier(identifier)
     , m_isMapped(mappedAtCreation)
-    , m_mapModeFlags(mappedAtCreation ? WebCore::WebGPU::MapModeFlags(WebCore::WebGPU::MapMode::Write) : WebCore::WebGPU::MapModeFlags())
+    , m_mapModeFlags(mappedAtCreation ? OptionSet<::WebGPU::MapMode>(::WebGPU::MapMode::Write) : OptionSet<::WebGPU::MapMode>())
 {
     protect(m_streamConnection)->startReceivingMessages(*this, Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -64,7 +64,7 @@ void RemoteBuffer::stopListeningForIPC()
     protect(m_streamConnection)->stopReceivingMessages(Messages::RemoteBuffer::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(bool)>&& callback)
+void RemoteBuffer::mapAsync(OptionSet<::WebGPU::MapMode> mapModeFlags, uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(bool)>&& callback)
 {
     if (m_pendingMap) {
         callback(false);
@@ -89,7 +89,7 @@ void RemoteBuffer::mapAsync(WebCore::WebGPU::MapModeFlags mapModeFlags, WebCore:
     });
 }
 
-void RemoteBuffer::getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
+void RemoteBuffer::getMappedRange(uint64_t offset, std::optional<uint64_t> size, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&& callback)
 {
     MESSAGE_CHECK_COMPLETION(m_isMapped, callback(std::nullopt));
     protect(m_backing)->getMappedRange(offset, size, [protectedThis = protect(*this), &callback] (auto mappedRange) {
@@ -109,7 +109,7 @@ void RemoteBuffer::unmap()
 
 void RemoteBuffer::copyWithCopy(Vector<uint8_t>&& data, uint64_t offset)
 {
-    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(::WebGPU::MapMode::Write))
         return;
 
     auto buffer = protect(m_backing)->getBufferContents();
@@ -126,7 +126,7 @@ void RemoteBuffer::copyWithCopy(Vector<uint8_t>&& data, uint64_t offset)
 
 void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle, uint64_t offset, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write)) {
+    if (m_pendingMap || !m_isMapped || !m_mapModeFlags.contains(::WebGPU::MapMode::Write)) {
         completionHandler(false);
         return;
     }

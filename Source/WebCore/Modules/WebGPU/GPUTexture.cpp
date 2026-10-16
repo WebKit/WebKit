@@ -31,7 +31,7 @@
 #include "GPUTextureDescriptor.h"
 #include "GPUTextureView.h"
 #include "GPUTextureViewDescriptor.h"
-#include "WebGPUTextureViewDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <bit>
 #include <wtf/CheckedArithmetic.h>
 
@@ -60,6 +60,7 @@ static uint32_t getDimension(auto& extent3D)
 
 GPUTexture::GPUTexture(Ref<WebGPU::Texture>&& backing, const GPUTextureDescriptor& descriptor, GPUDevice& device, bool isCanvasBacking)
     : m_backing(WTF::move(backing))
+    , m_label(descriptor.label)
     , m_format(descriptor.format)
     , m_width(getDimension<0>(descriptor.size))
     , m_height(getDimension<1>(descriptor.size))
@@ -90,11 +91,12 @@ GPUDevice* GPUTexture::device() const
 
 String GPUTexture::label() const
 {
-    return m_backing->label();
+    return m_label;
 }
 
 void GPUTexture::setLabel(String&& label)
 {
+    m_label = label;
     m_backing->setLabel(WTF::move(label));
 }
 
@@ -118,7 +120,7 @@ ExceptionOr<Ref<GPUTextureView>> GPUTexture::createView(const std::optional<GPUT
     RefPtr view = m_backing->createView(backingDescriptor);
     if (!view)
         return Exception { ExceptionCode::InvalidStateError, "GPUTexture.createView: Unable to create view."_s };
-    return GPUTextureView::create(view.releaseNonNull(), *this);
+    return GPUTextureView::create(view.releaseNonNull(), WTF::move(backingDescriptor->label), *this);
 }
 
 void GPUTexture::destroy()

@@ -57,7 +57,8 @@ public:
     void LEGACY_NODELETE setLabel(String&&) final;
 
     bool LEGACY_NODELETE isValid() const final;
-    void LEGACY_NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples);
+    void LEGACY_NODELETE startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples) final;
+    void endFrame() final { }
 
     id<MTLTexture> LEGACY_NODELETE colorTexture() const;
     id<MTLTexture> LEGACY_NODELETE depthTexture() const;

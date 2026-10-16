@@ -34,22 +34,20 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::DeviceDescriptor& deviceDescriptor)
+std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::DeviceDescriptor& deviceDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(deviceDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    return { { WTF::move(*base), deviceDescriptor.requiredFeatures, deviceDescriptor.requiredLimits } };
+    std::optional<SupportedLimits> requiredLimits;
+    if (deviceDescriptor.requiredLimits)
+        requiredLimits = WebGPU::convertToBacking(*deviceDescriptor.requiredLimits);
+    return { { { deviceDescriptor.label }, Vector<::WebGPU::FeatureName> { deviceDescriptor.requiredFeatures }, WTF::move(requiredLimits) } };
 }
 
-std::optional<WebCore::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
+std::optional<::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
 {
-    auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(deviceDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    return { { WTF::move(*base), deviceDescriptor.requiredFeatures, deviceDescriptor.requiredLimits } };
+    std::optional<::WebGPU::Limits> requiredLimits;
+    if (deviceDescriptor.requiredLimits)
+        requiredLimits = WebGPU::convertFromBacking(*deviceDescriptor.requiredLimits);
+    return { { deviceDescriptor.label, deviceDescriptor.requiredFeatures.span(), WTF::move(requiredLimits) } };
 }
 
 } // namespace WebKit

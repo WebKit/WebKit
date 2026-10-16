@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBlendComponent.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BlendComponent> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BlendComponent& blendComponent)
+std::optional<BlendComponent> ConvertToBackingContext::convertToBacking(const ::WebGPU::BlendComponent& blendComponent)
 {
     return { { blendComponent.operation, blendComponent.srcFactor, blendComponent.dstFactor } };
 }
 
-std::optional<WebCore::WebGPU::BlendComponent> ConvertFromBackingContext::convertFromBacking(const BlendComponent& blendComponent)
+std::optional<::WebGPU::BlendComponent> ConvertFromBackingContext::convertFromBacking(const BlendComponent& blendComponent)
 {
     return { { blendComponent.operation, blendComponent.srcFactor, blendComponent.dstFactor } };
 }

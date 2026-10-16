@@ -28,7 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Ref.h>
 
@@ -36,8 +36,8 @@ namespace WebKit::WebGPU {
 
 struct BufferBinding {
     WebGPUIdentifier buffer;
-    WebCore::WebGPU::Size64 offset { 0 };
-    std::optional<WebCore::WebGPU::Size64> size { std::nullopt };
+    uint64_t offset { 0 };
+    std::optional<uint64_t> size { std::nullopt };
 };
 
 } // namespace WebKit::WebGPU

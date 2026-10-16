@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUStencilOperation.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -41,25 +41,25 @@ enum class GPUStencilOperation : uint8_t {
     DecrementWrap,
 };
 
-inline WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)
+inline ::WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)
 {
     switch (stencilOperation) {
     case GPUStencilOperation::Keep:
-        return WebGPU::StencilOperation::Keep;
+        return ::WebGPU::StencilOperation::Keep;
     case GPUStencilOperation::Zero:
-        return WebGPU::StencilOperation::Zero;
+        return ::WebGPU::StencilOperation::Zero;
     case GPUStencilOperation::Replace:
-        return WebGPU::StencilOperation::Replace;
+        return ::WebGPU::StencilOperation::Replace;
     case GPUStencilOperation::Invert:
-        return WebGPU::StencilOperation::Invert;
+        return ::WebGPU::StencilOperation::Invert;
     case GPUStencilOperation::IncrementClamp:
-        return WebGPU::StencilOperation::IncrementClamp;
+        return ::WebGPU::StencilOperation::IncrementClamp;
     case GPUStencilOperation::DecrementClamp:
-        return WebGPU::StencilOperation::DecrementClamp;
+        return ::WebGPU::StencilOperation::DecrementClamp;
     case GPUStencilOperation::IncrementWrap:
-        return WebGPU::StencilOperation::IncrementWrap;
+        return ::WebGPU::StencilOperation::IncrementWrap;
     case GPUStencilOperation::DecrementWrap:
-        return WebGPU::StencilOperation::DecrementWrap;
+        return ::WebGPU::StencilOperation::DecrementWrap;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

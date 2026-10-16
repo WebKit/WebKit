@@ -574,4 +574,23 @@ inline T* releaseToAPI(RefPtr<T>&& pointer)
     return nullptr;
 }
 
+// For the WebGPU::X objects that a WebGPU::Metal object creates, which are WebGPU::Metal::X objects.
+template <typename T, typename U>
+inline T* releaseToAPIAs(RefPtr<U>&& pointer)
+{
+    if constexpr (std::is_same_v<T, U>)
+        return pointer.leakRef();
+    else
+        return downcast<T>(pointer.leakRef());
+}
+
+template <typename T, typename U>
+inline T* releaseToAPIAs(Ref<U>&& pointer)
+{
+    if constexpr (std::is_same_v<T, U>)
+        return &pointer.leakRef();
+    else
+        return &downcast<T>(pointer.leakRef());
+}
+
 } // namespace WebGPU::Metal

@@ -38,7 +38,7 @@
 namespace WebCore {
 
 struct GPURenderPipelineDescriptor : public GPUPipelineDescriptorBase {
-    WebGPU::RenderPipelineDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
+    WebGPURenderPipelineDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             {

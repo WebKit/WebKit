@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class Sampler;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -52,7 +49,7 @@ class ObjectHeap;
 class RemoteSampler final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSampler);
 public:
-    static Ref<RemoteSampler> create(WebCore::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteSampler> create(::WebGPU::Sampler& sampler, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteSampler(sampler, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,21 +63,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteSampler(WebCore::WebGPU::Sampler&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteSampler(::WebGPU::Sampler&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteSampler(const RemoteSampler&) = delete;
     RemoteSampler(RemoteSampler&&) = delete;
     RemoteSampler& operator=(const RemoteSampler&) = delete;
     RemoteSampler& operator=(RemoteSampler&&) = delete;
 
-    WebCore::WebGPU::Sampler& backing() { return m_backing; }
+    ::WebGPU::Sampler& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::Sampler> m_backing;
+    const Ref<::WebGPU::Sampler> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;

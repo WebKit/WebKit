@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUPrimitiveState.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PrimitiveState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PrimitiveState& primitiveState)
+std::optional<PrimitiveState> ConvertToBackingContext::convertToBacking(const ::WebGPU::PrimitiveState& primitiveState)
 {
     return { { primitiveState.topology, primitiveState.stripIndexFormat, primitiveState.frontFace, primitiveState.cullMode, primitiveState.unclippedDepth } };
 }
 
-std::optional<WebCore::WebGPU::PrimitiveState> ConvertFromBackingContext::convertFromBacking(const PrimitiveState& primitiveState)
+std::optional<::WebGPU::PrimitiveState> ConvertFromBackingContext::convertFromBacking(const PrimitiveState& primitiveState)
 {
     return { { primitiveState.topology, primitiveState.stripIndexFormat, primitiveState.frontFace, primitiveState.cullMode, primitiveState.unclippedDepth } };
 }

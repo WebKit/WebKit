@@ -30,7 +30,7 @@ namespace WebCore {
 
 Vector<Ref<GPUCompilationMessage>> GPUCompilationInfo::messages() const
 {
-    return m_backing->messages().map([](const auto& message) {
+    return m_backing.messages.map([](const auto& message) {
         return GPUCompilationMessage::create(message);
     });
 }

@@ -39,8 +39,9 @@ GPUBuffer::~GPUBuffer()
         device->willDestroyBuffer(*this);
 }
 
-GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
+GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, String&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
+    , m_label(WTF::move(label))
     , m_bufferSize(bufferSize)
     , m_usage(usage)
     , m_mapState(mappedAtCreation ? GPUBufferMapState::Mapped : GPUBufferMapState::Unmapped)
@@ -64,11 +65,12 @@ GPUDevice* GPUBuffer::device() const
 
 String GPUBuffer::label() const
 {
-    return m_backing->label();
+    return m_label;
 }
 
 void GPUBuffer::setLabel(String&& label)
 {
+    m_label = label;
     m_backing->setLabel(WTF::move(label));
 }
 

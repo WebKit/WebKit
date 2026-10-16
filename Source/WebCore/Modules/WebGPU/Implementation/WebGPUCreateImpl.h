@@ -33,15 +33,13 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
 class ProcessIdentity;
-}
 
-namespace WebCore::WebGPU {
+// Runs a work item on the thread that the WebGPU objects call back on.
+using WebGPUScheduleWorkFunction = Function<void(Function<void()>&&)>;
+WEBCORE_EXPORT RefPtr<WebGPUIntegration> createWebGPUIntegration(WebGPUScheduleWorkFunction&&, const ProcessIdentity*);
 
-using WorkItem = Function<void()>;
-using ScheduleWorkFunction = Function<void(WorkItem&&)>;
-WEBCORE_EXPORT RefPtr<GPU> create(ScheduleWorkFunction&&, const WebCore::ProcessIdentity*);
-
-} // namespace WebCore::WebGPU
+} // namespace WebCore
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

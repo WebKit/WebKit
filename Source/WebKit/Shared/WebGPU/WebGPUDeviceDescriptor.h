@@ -28,7 +28,8 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
-#include <WebCore/WebGPUFeatureName.h>
+#include "WebGPUSupportedLimits.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <optional>
 #include <wtf/HashMap.h>
@@ -38,8 +39,8 @@
 namespace WebKit::WebGPU {
 
 struct DeviceDescriptor : public ObjectDescriptorBase {
-    Vector<WebCore::WebGPU::FeatureName> requiredFeatures;
-    Vector<KeyValuePair<String, uint64_t>> requiredLimits;
+    Vector<::WebGPU::FeatureName> requiredFeatures;
+    std::optional<SupportedLimits> requiredLimits;
 };
 
 } // namespace WebKit::WebGPU

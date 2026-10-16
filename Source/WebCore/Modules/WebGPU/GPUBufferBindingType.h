@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUBufferBindingType.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -36,15 +36,15 @@ enum class GPUBufferBindingType : uint8_t {
     ReadOnlyStorage,
 };
 
-inline WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)
+inline ::WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)
 {
     switch (bufferBindingType) {
     case GPUBufferBindingType::Uniform:
-        return WebGPU::BufferBindingType::Uniform;
+        return ::WebGPU::BufferBindingType::Uniform;
     case GPUBufferBindingType::Storage:
-        return WebGPU::BufferBindingType::Storage;
+        return ::WebGPU::BufferBindingType::Storage;
     case GPUBufferBindingType::ReadOnlyStorage:
-        return WebGPU::BufferBindingType::ReadOnlyStorage;
+        return ::WebGPU::BufferBindingType::ReadOnlyStorage;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -31,25 +31,27 @@
 #include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
-#include "WebGPUTextureDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::TextureDescriptor convertToBacking() const
+    // The descriptor borrows the view formats from viewFormatsStorage.
+    ::WebGPU::TextureDescriptor convertToBacking(Vector<::WebGPU::TextureFormat>& viewFormatsStorage) const
     {
+        viewFormatsStorage = viewFormats.map([](auto viewFormat) {
+            return WebCore::convertToBacking(viewFormat);
+        });
         return {
-            { label },
-            WebCore::convertToBacking(size),
-            mipLevelCount,
-            sampleCount,
-            WebCore::convertToBacking(dimension),
-            WebCore::convertToBacking(format),
-            convertTextureUsageFlagsToBacking(usage),
-            viewFormats.map([](auto viewFormat) {
-                return WebCore::convertToBacking(viewFormat);
-            }),
+            .label = label,
+            .usage = convertTextureUsageFlagsToBacking(usage),
+            .dimension = WebCore::convertToBacking(dimension),
+            .size = WebCore::convertToBacking(size),
+            .format = WebCore::convertToBacking(format),
+            .mipLevelCount = mipLevelCount,
+            .sampleCount = sampleCount,
+            .viewFormats = viewFormatsStorage.span(),
         };
     }
 

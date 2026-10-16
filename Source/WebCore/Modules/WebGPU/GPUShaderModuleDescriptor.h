@@ -35,14 +35,14 @@
 namespace WebCore {
 
 struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
+    WebGPUShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },
             code,
             // FIXME: Handle the sourceMap.
             hints.map([&autoLayout](auto& hint) {
-                return KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
+                return KeyValuePair<String, WebGPUShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
             }),
         };
     }

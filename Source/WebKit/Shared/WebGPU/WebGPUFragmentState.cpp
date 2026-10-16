@@ -35,15 +35,15 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::FragmentState& fragmentState)
+std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const ::WebGPU::FragmentState& fragmentState)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ProgrammableStage&>(fragmentState));
+    auto base = convertToBacking(fragmentState.stage);
     if (!base)
         return std::nullopt;
 
     Vector<std::optional<ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
-    for (const auto& target : borrow(fragmentState.targets)) {
+    for (const auto& target : fragmentState.targets) {
         if (target) {
             auto convertedTarget = convertToBacking(*target);
             if (!convertedTarget)
@@ -56,25 +56,24 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const Web
     return { { WTF::move(*base), WTF::move(targets) } };
 }
 
-std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState)
+std::optional<::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState, RenderPipelineDescriptorStorage& storage)
 {
-    auto base = convertFromBacking(static_cast<const ProgrammableStage&>(fragmentState));
-    if (!base)
+    auto stage = convertFromBacking(static_cast<const ProgrammableStage&>(fragmentState), storage.fragmentConstants);
+    if (!stage)
         return std::nullopt;
 
-    Vector<std::optional<WebCore::WebGPU::ColorTargetState>> targets;
-    targets.reserveInitialCapacity(fragmentState.targets.size());
+    storage.fragmentTargets.reserveInitialCapacity(fragmentState.targets.size());
     for (const auto& backingTarget : borrow(fragmentState.targets)) {
         if (backingTarget) {
             auto target = convertFromBacking(*backingTarget);
             if (!target)
                 return std::nullopt;
-            targets.append(WTF::move(*target));
+            storage.fragmentTargets.append(WTF::move(*target));
         } else
-            targets.append(std::nullopt);
+            storage.fragmentTargets.append(std::nullopt);
     }
 
-    return { { WTF::move(*base), WTF::move(targets) } };
+    return { { WTF::move(*stage), storage.fragmentTargets.span() } };
 }
 
 } // namespace WebKit

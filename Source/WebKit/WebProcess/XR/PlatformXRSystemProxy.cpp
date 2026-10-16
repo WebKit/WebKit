@@ -80,8 +80,8 @@ void PlatformXRSystemProxy::requestPermissionOnSessionFeatures(const WebCore::Se
 
 void PlatformXRSystemProxy::initializeTrackingAndRendering(std::optional<WebCore::XRCanvasConfiguration>&& optionalInit)
 {
-    std::optional<WebCore::WebGPU::TextureFormat> colorFormat;
-    std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat;
+    std::optional<::WebGPU::TextureFormat> colorFormat;
+    std::optional<::WebGPU::TextureFormat> depthStencilFormat;
     if (optionalInit) {
         colorFormat = optionalInit->colorFormat;
         depthStencilFormat = optionalInit->depthStencilFormat;

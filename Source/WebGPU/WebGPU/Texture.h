@@ -69,8 +69,9 @@ public:
     ~Texture();
 
     // std::nullopt is a descriptor with all members at their defaults.
-    Ref<TextureView> createView(const std::optional<WebGPU::TextureViewDescriptor>&);
-    void destroy();
+    RefPtr<WebGPU::TextureView> createView(const std::optional<WebGPU::TextureViewDescriptor>&) final;
+    void destroy() final;
+    void undestroy() final;
     void setLabel(String&&) final;
 
     bool LEGACY_NODELETE isValid() const final;

@@ -31,24 +31,18 @@
 #include "RemoteGPUProxy.h"
 #include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUXREye.h>
-#include <WebCore/WebGPUXRView.h>
+#include <WebCore/WebGPUCppAPI.h>
+#include <WebCore/WebGPUDevice.h>
 
 namespace WebCore {
 class WebXRFrame;
-}
-
-namespace WebCore::WebGPU {
-class Device;
-class XRProjectionLayer;
-class XRView;
 }
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteXRViewProxy final : public WebCore::WebGPU::XRView {
+class RemoteXRViewProxy final : public ::WebGPU::XRView {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRViewProxy);
 public:
     static Ref<RemoteXRViewProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -61,6 +55,9 @@ public:
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() const { return m_parent->root(); }
 
+    void setLabel(String&&) final { }
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -70,8 +67,6 @@ private:
     RemoteXRViewProxy(RemoteXRViewProxy&&) = delete;
     RemoteXRViewProxy& operator=(const RemoteXRViewProxy&) = delete;
     RemoteXRViewProxy& operator=(RemoteXRViewProxy&&) = delete;
-
-    bool isRemoteXRViewProxy() const final { return true; }
 
     WebGPUIdentifier backing() const { return m_backing; }
 
@@ -94,7 +89,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRViewProxy)
-    static bool isType(const WebCore::WebGPU::XRView& view) { return view.isRemoteXRViewProxy(); }
+    // In the Web Process, every WebGPU::XRView is a RemoteXRViewProxy.
+    static bool isType(const ::WebGPU::XRView&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

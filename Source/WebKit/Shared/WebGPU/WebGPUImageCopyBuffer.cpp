@@ -30,30 +30,29 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBuffer.h>
-#include <WebCore/WebGPUImageCopyBuffer.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyBuffer& imageCopyBuffer)
+std::optional<ImageCopyBuffer> ConvertToBackingContext::convertToBacking(const ::WebGPU::TexelCopyBufferInfo& imageCopyBuffer)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ImageDataLayout&>(imageCopyBuffer));
+    auto base = convertToBacking(imageCopyBuffer.layout);
     auto buffer = convertToBacking(protect(imageCopyBuffer.buffer).get());
 
     return { { WTF::move(*base), buffer } };
 }
 
-std::optional<WebCore::WebGPU::ImageCopyBuffer> ConvertFromBackingContext::convertFromBacking(const ImageCopyBuffer& imageCopyBuffer)
+std::optional<::WebGPU::TexelCopyBufferInfo> ConvertFromBackingContext::convertFromBacking(const ImageCopyBuffer& imageCopyBuffer)
 {
     auto base = convertFromBacking(static_cast<const ImageDataLayout&>(imageCopyBuffer));
     if (!base)
         return std::nullopt;
 
-    WeakPtr buffer = convertBufferFromBacking(imageCopyBuffer.buffer);
+    RefPtr buffer = convertBufferFromBacking(imageCopyBuffer.buffer);
     if (!buffer)
         return std::nullopt;
 
-    return { { WTF::move(*base), *buffer } };
+    return { { WTF::move(*base), buffer.releaseNonNull() } };
 }
 
 } // namespace WebKit

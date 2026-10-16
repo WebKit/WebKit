@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebCore {
 
 struct XRCanvasConfiguration {
-    std::optional<WebGPU::TextureFormat> colorFormat;
-    std::optional<WebGPU::TextureFormat> depthStencilFormat;
+    std::optional<::WebGPU::TextureFormat> colorFormat;
+    std::optional<::WebGPU::TextureFormat> depthStencilFormat;
 };
 
 } // namespace WebCore

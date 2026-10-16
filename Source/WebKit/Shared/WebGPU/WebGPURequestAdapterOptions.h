@@ -27,13 +27,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/WebGPUPowerPreference.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct RequestAdapterOptions {
-    std::optional<WebCore::WebGPU::PowerPreference> powerPreference;
+    std::optional<::WebGPU::PowerPreference> powerPreference;
     bool forceFallbackAdapter { false };
     bool xrCompatible { false };
 };

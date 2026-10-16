@@ -62,33 +62,9 @@
 #include <WebCore/WebGPU.h>
 #endif
 
-#include <WebCore/WebGPUAdapter.h>
-#include <WebCore/WebGPUBindGroup.h>
-#include <WebCore/WebGPUBindGroupLayout.h>
-#include <WebCore/WebGPUBuffer.h>
-#include <WebCore/WebGPUCommandBuffer.h>
-#include <WebCore/WebGPUCommandEncoder.h>
 #include <WebCore/WebGPUCompositorIntegration.h>
-#include <WebCore/WebGPUComputePassEncoder.h>
-#include <WebCore/WebGPUComputePipeline.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <WebCore/WebGPUDevice.h>
-#include <WebCore/WebGPUExternalTexture.h>
-#include <WebCore/WebGPUPipelineLayout.h>
-#include <WebCore/WebGPUPresentationContext.h>
-#include <WebCore/WebGPUQuerySet.h>
-#include <WebCore/WebGPUQueue.h>
-#include <WebCore/WebGPURenderBundle.h>
-#include <WebCore/WebGPURenderBundleEncoder.h>
-#include <WebCore/WebGPURenderPassEncoder.h>
-#include <WebCore/WebGPURenderPipeline.h>
-#include <WebCore/WebGPUSampler.h>
-#include <WebCore/WebGPUShaderModule.h>
-#include <WebCore/WebGPUTexture.h>
-#include <WebCore/WebGPUTextureView.h>
-#include <WebCore/WebGPUXRBinding.h>
-#include <WebCore/WebGPUXRProjectionLayer.h>
-#include <WebCore/WebGPUXRSubImage.h>
-#include <WebCore/WebGPUXRView.h>
 
 namespace WebKit::WebGPU {
 
@@ -274,7 +250,7 @@ void ObjectHeap::clear()
     m_objects.clear();
 }
 
-WeakPtr<WebCore::WebGPU::Adapter> ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Adapter> ObjectHeap::convertAdapterFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>>(iterator->value))
@@ -282,7 +258,7 @@ WeakPtr<WebCore::WebGPU::Adapter> ObjectHeap::convertAdapterFromBacking(WebGPUId
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteAdapter>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::BindGroup> ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::BindGroup> ObjectHeap::convertBindGroupFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>>(iterator->value))
@@ -290,7 +266,7 @@ WeakPtr<WebCore::WebGPU::BindGroup> ObjectHeap::convertBindGroupFromBacking(WebG
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroup>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::BindGroupLayout> ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::BindGroupLayout> ObjectHeap::convertBindGroupLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>>(iterator->value))
@@ -298,7 +274,7 @@ WeakPtr<WebCore::WebGPU::BindGroupLayout> ObjectHeap::convertBindGroupLayoutFrom
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBindGroupLayout>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::Buffer> ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Buffer> ObjectHeap::convertBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>>(iterator->value))
@@ -306,7 +282,7 @@ WeakPtr<WebCore::WebGPU::Buffer> ObjectHeap::convertBufferFromBacking(WebGPUIden
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteBuffer>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::CommandBuffer> ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::CommandBuffer> ObjectHeap::convertCommandBufferFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>>(iterator->value))
@@ -314,7 +290,7 @@ WeakPtr<WebCore::WebGPU::CommandBuffer> ObjectHeap::convertCommandBufferFromBack
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandBuffer>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::CommandEncoder> ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::CommandEncoder> ObjectHeap::convertCommandEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value))
@@ -322,7 +298,7 @@ WeakPtr<WebCore::WebGPU::CommandEncoder> ObjectHeap::convertCommandEncoderFromBa
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::CompositorIntegration> ObjectHeap::convertCompositorIntegrationFromBacking(WebGPUIdentifier identifier)
+WeakPtr<WebCore::WebGPUCompositorIntegration> ObjectHeap::convertCompositorIntegrationFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>>(iterator->value))
@@ -330,7 +306,7 @@ WeakPtr<WebCore::WebGPU::CompositorIntegration> ObjectHeap::convertCompositorInt
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::ComputePassEncoder> ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::ComputePassEncoder> ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>>(iterator->value))
@@ -338,7 +314,7 @@ WeakPtr<WebCore::WebGPU::ComputePassEncoder> ObjectHeap::convertComputePassEncod
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePassEncoder>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::ComputePipeline> ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::ComputePipeline> ObjectHeap::convertComputePipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>>(iterator->value))
@@ -346,7 +322,7 @@ WeakPtr<WebCore::WebGPU::ComputePipeline> ObjectHeap::convertComputePipelineFrom
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteComputePipeline>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::Device> ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Device> ObjectHeap::convertDeviceFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>>(iterator->value))
@@ -354,7 +330,7 @@ WeakPtr<WebCore::WebGPU::Device> ObjectHeap::convertDeviceFromBacking(WebGPUIden
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>>(iterator->value)->backing();
 }
 
-ThreadSafeWeakPtr<WebCore::WebGPU::ExternalTexture> ObjectHeap::convertExternalTextureFromBacking(WebGPUIdentifier identifier)
+ThreadSafeWeakPtr<::WebGPU::ExternalTexture> ObjectHeap::convertExternalTextureFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>>(iterator->value))
@@ -362,7 +338,7 @@ ThreadSafeWeakPtr<WebCore::WebGPU::ExternalTexture> ObjectHeap::convertExternalT
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::PipelineLayout> ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::PipelineLayout> ObjectHeap::convertPipelineLayoutFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>>(iterator->value))
@@ -370,7 +346,7 @@ WeakPtr<WebCore::WebGPU::PipelineLayout> ObjectHeap::convertPipelineLayoutFromBa
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::PresentationContext> ObjectHeap::convertPresentationContextFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::PresentationContext> ObjectHeap::convertPresentationContextFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemotePresentationContext>>(iterator->value))
@@ -378,7 +354,7 @@ WeakPtr<WebCore::WebGPU::PresentationContext> ObjectHeap::convertPresentationCon
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemotePresentationContext>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::QuerySet> ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::QuerySet> ObjectHeap::convertQuerySetFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>>(iterator->value))
@@ -386,7 +362,7 @@ WeakPtr<WebCore::WebGPU::QuerySet> ObjectHeap::convertQuerySetFromBacking(WebGPU
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::Queue> ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Queue> ObjectHeap::convertQueueFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>>(iterator->value))
@@ -394,7 +370,7 @@ WeakPtr<WebCore::WebGPU::Queue> ObjectHeap::convertQueueFromBacking(WebGPUIdenti
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::RenderBundleEncoder> ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::RenderBundleEncoder> ObjectHeap::convertRenderBundleEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>>(iterator->value))
@@ -402,7 +378,7 @@ WeakPtr<WebCore::WebGPU::RenderBundleEncoder> ObjectHeap::convertRenderBundleEnc
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::RenderBundle> ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::RenderBundle> ObjectHeap::convertRenderBundleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>>(iterator->value))
@@ -410,7 +386,7 @@ WeakPtr<WebCore::WebGPU::RenderBundle> ObjectHeap::convertRenderBundleFromBackin
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundle>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::RenderPassEncoder> ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::RenderPassEncoder> ObjectHeap::convertRenderPassEncoderFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>>(iterator->value))
@@ -418,7 +394,7 @@ WeakPtr<WebCore::WebGPU::RenderPassEncoder> ObjectHeap::convertRenderPassEncoder
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPassEncoder>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::RenderPipeline> ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::RenderPipeline> ObjectHeap::convertRenderPipelineFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>>(iterator->value))
@@ -426,7 +402,7 @@ WeakPtr<WebCore::WebGPU::RenderPipeline> ObjectHeap::convertRenderPipelineFromBa
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::Sampler> ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Sampler> ObjectHeap::convertSamplerFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>>(iterator->value))
@@ -434,7 +410,7 @@ WeakPtr<WebCore::WebGPU::Sampler> ObjectHeap::convertSamplerFromBacking(WebGPUId
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::ShaderModule> ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::ShaderModule> ObjectHeap::convertShaderModuleFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value))
@@ -442,7 +418,7 @@ WeakPtr<WebCore::WebGPU::ShaderModule> ObjectHeap::convertShaderModuleFromBackin
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::Texture> ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::Texture> ObjectHeap::convertTextureFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>>(iterator->value))
@@ -450,7 +426,7 @@ WeakPtr<WebCore::WebGPU::Texture> ObjectHeap::convertTextureFromBacking(WebGPUId
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::TextureView> ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::TextureView> ObjectHeap::convertTextureViewFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value))
@@ -458,7 +434,7 @@ WeakPtr<WebCore::WebGPU::TextureView> ObjectHeap::convertTextureViewFromBacking(
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::XRBinding> ObjectHeap::convertXRBindingFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::XRBinding> ObjectHeap::convertXRBindingFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>>(iterator->value))
@@ -466,7 +442,7 @@ WeakPtr<WebCore::WebGPU::XRBinding> ObjectHeap::convertXRBindingFromBacking(WebG
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRBinding>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::XRSubImage> ObjectHeap::convertXRSubImageFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::XRSubImage> ObjectHeap::convertXRSubImageFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>>(iterator->value))
@@ -474,7 +450,7 @@ WeakPtr<WebCore::WebGPU::XRSubImage> ObjectHeap::convertXRSubImageFromBacking(We
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRSubImage>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::XRProjectionLayer> ObjectHeap::convertXRProjectionLayerFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::XRProjectionLayer> ObjectHeap::convertXRProjectionLayerFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>>(iterator->value))
@@ -482,7 +458,7 @@ WeakPtr<WebCore::WebGPU::XRProjectionLayer> ObjectHeap::convertXRProjectionLayer
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRProjectionLayer>>(iterator->value)->backing();
 }
 
-WeakPtr<WebCore::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUIdentifier identifier)
+RefPtr<::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUIdentifier identifier)
 {
     auto iterator = m_objects.find(identifier);
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value))
@@ -490,7 +466,7 @@ WeakPtr<WebCore::WebGPU::XRView> ObjectHeap::createXRViewFromBacking(WebGPUIdent
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>>(iterator->value)->backing();
 }
 
-ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPU::GPU& gpu, WebGPUIdentifier identifier) const
+ObjectHeap::ExistsAndValid ObjectHeap::objectExistsAndValid(const WebCore::WebGPUIntegration& gpu, WebGPUIdentifier identifier) const
 {
     ExistsAndValid result;
 #if HAVE(WEBGPU_IMPLEMENTATION)

@@ -269,7 +269,7 @@ static void uncacheSamplerState(const Sampler::UniqueSamplerIdentifier& samplerI
         samplerStates.remove(it);
 }
 
-Ref<Sampler> Device::createSampler(const WebGPU::SamplerDescriptor& descriptor)
+RefPtr<WebGPU::Sampler> Device::createSampler(const WebGPU::SamplerDescriptor& descriptor)
 {
     if (!isValid())
         return Sampler::createInvalid(*this);

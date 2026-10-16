@@ -1729,54 +1729,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
         'WebCore::VideoPresetData': ['<WebCore/VideoPreset.h>'],
         'WebCore::JSHandleIdentifier': ['<WebCore/WebKitJSHandle.h>'],
-        'WebCore::WebGPU::AddressMode': ['<WebCore/WebGPUAddressMode.h>'],
-        'WebCore::WebGPU::BlendFactor': ['<WebCore/WebGPUBlendFactor.h>'],
-        'WebCore::WebGPU::BlendOperation': ['<WebCore/WebGPUBlendOperation.h>'],
-        'WebCore::WebGPU::BufferBindingType': ['<WebCore/WebGPUBufferBindingType.h>'],
-        'WebCore::WebGPU::BufferDynamicOffset': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::BufferUsageFlags': ['<WebCore/WebGPUBufferUsage.h>'],
-        'WebCore::WebGPU::CanvasAlphaMode': ['<WebCore/WebGPUCanvasAlphaMode.h>'],
-        'WebCore::WebGPU::CanvasToneMappingMode': ['<WebCore/WebGPUCanvasToneMappingMode.h>'],
-        'WebCore::WebGPU::ColorWriteFlags': ['<WebCore/WebGPUColorWrite.h>'],
-        'WebCore::WebGPU::CompareFunction': ['<WebCore/WebGPUCompareFunction.h>'],
-        'WebCore::WebGPU::CompilationMessageType': ['<WebCore/WebGPUCompilationMessageType.h>'],
-        'WebCore::WebGPU::CullMode': ['<WebCore/WebGPUCullMode.h>'],
-        'WebCore::WebGPU::DepthBias': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::DeviceLostReason': ['<WebCore/WebGPUDeviceLostReason.h>'],
-        'WebCore::WebGPU::ErrorFilter': ['<WebCore/WebGPUErrorFilter.h>'],
-        'WebCore::WebGPU::FeatureName': ['<WebCore/WebGPUFeatureName.h>'],
-        'WebCore::WebGPU::FilterMode': ['<WebCore/WebGPUFilterMode.h>'],
-        'WebCore::WebGPU::FlagsConstant': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::FrontFace': ['<WebCore/WebGPUFrontFace.h>'],
-        'WebCore::WebGPU::Index32': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::IndexFormat': ['<WebCore/WebGPUIndexFormat.h>'],
-        'WebCore::WebGPU::IntegerCoordinate': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::LoadOp': ['<WebCore/WebGPULoadOp.h>'],
-        'WebCore::WebGPU::MapModeFlags': ['<WebCore/WebGPUMapMode.h>'],
-        'WebCore::WebGPU::PipelineStatisticName': ['<WebCore/WebGPUPipelineStatisticName.h>'],
-        'WebCore::WebGPU::PowerPreference': ['<WebCore/WebGPUPowerPreference.h>'],
-        'WebCore::WebGPU::PredefinedColorSpace': ['<WebCore/WebGPUPredefinedColorSpace.h>'],
-        'WebCore::WebGPU::PrimitiveTopology': ['<WebCore/WebGPUPrimitiveTopology.h>'],
-        'WebCore::WebGPU::QueryType': ['<WebCore/WebGPUQueryType.h>'],
-        'WebCore::WebGPU::SampleMask': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::SamplerBindingType': ['<WebCore/WebGPUSamplerBindingType.h>'],
-        'WebCore::WebGPU::ShaderStageFlags': ['<WebCore/WebGPUShaderStage.h>'],
-        'WebCore::WebGPU::SignedOffset32': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::Size32': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::Size64': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::StencilOperation': ['<WebCore/WebGPUStencilOperation.h>'],
-        'WebCore::WebGPU::StencilValue': ['<WebCore/WebGPUIntegralTypes.h>'],
-        'WebCore::WebGPU::StorageTextureAccess': ['<WebCore/WebGPUStorageTextureAccess.h>'],
-        'WebCore::WebGPU::StoreOp': ['<WebCore/WebGPUStoreOp.h>'],
-        'WebCore::WebGPU::TextureAspect': ['<WebCore/WebGPUTextureAspect.h>'],
-        'WebCore::WebGPU::TextureDimension': ['<WebCore/WebGPUTextureDimension.h>'],
-        'WebCore::WebGPU::TextureFormat': ['<WebCore/WebGPUTextureFormat.h>'],
-        'WebCore::WebGPU::TextureSampleType': ['<WebCore/WebGPUTextureSampleType.h>'],
-        'WebCore::WebGPU::TextureUsageFlags': ['<WebCore/WebGPUTextureUsage.h>'],
-        'WebCore::WebGPU::TextureViewDimension': ['<WebCore/WebGPUTextureViewDimension.h>'],
-        'WebCore::WebGPU::VertexFormat': ['<WebCore/WebGPUVertexFormat.h>'],
-        'WebCore::WebGPU::VertexStepMode': ['<WebCore/WebGPUVertexStepMode.h>'],
-        'WebCore::WebGPU::XREye': ['<WebCore/WebGPUXREye.h>'],
         'WebCore::WebLockIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::WheelEventProcessingSteps': ['<WebCore/ScrollingCoordinatorTypes.h>'],
         'WebCore::WheelEventTestMonitorDeferReason': ['<WebCore/WheelEventTestMonitor.h>'],
@@ -1948,6 +1900,11 @@ def headers_for_type(type, for_implementation_file=False):
             type = type[6:]
         if type in special_cases:
             headers += special_cases[type]
+            continue
+
+        # The C++ API of WebGPU, which cannot be forward declared piecemeal.
+        if type.startswith('::WebGPU::'):
+            headers.append('<WebCore/WebGPUCppAPI.h>')
             continue
 
         if not for_implementation_file and type not in types_that_cannot_be_forward_declared():

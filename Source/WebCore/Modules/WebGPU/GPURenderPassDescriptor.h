@@ -30,7 +30,7 @@
 #include "GPURenderPassColorAttachment.h"
 #include "GPURenderPassDepthStencilAttachment.h"
 #include "GPURenderPassTimestampWrites.h"
-#include "WebGPURenderPassDescriptor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -38,17 +38,19 @@
 namespace WebCore {
 
 struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
-    WebGPU::RenderPassDescriptor convertToBacking() const
+    // The descriptor borrows the color attachments from colorAttachmentsStorage.
+    ::WebGPU::RenderPassDescriptor convertToBacking(Vector<std::optional<::WebGPU::RenderPassColorAttachment>>& colorAttachmentsStorage) const
     {
+        colorAttachmentsStorage = colorAttachments.map([](auto& colorAttachment) -> std::optional<::WebGPU::RenderPassColorAttachment> {
+            return colorAttachment ? std::optional { colorAttachment->convertToBacking() } : std::nullopt;
+        });
         return {
-            { label },
-            colorAttachments.map([](auto& colorAttachment) -> std::optional<WebGPU::RenderPassColorAttachment> {
-                return colorAttachment ? std::optional { colorAttachment->convertToBacking() } : std::nullopt;
-            }),
-            depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
-            occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
-            timestampWrites ? std::optional { timestampWrites->convertToBacking() } : std::nullopt,
-            maxDrawCount,
+            .label = label,
+            .colorAttachments = colorAttachmentsStorage.span(),
+            .depthStencilAttachment = depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
+            .occlusionQuerySet = occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
+            .timestampWrites = timestampWrites ? std::optional { timestampWrites->convertToBacking() } : std::nullopt,
+            .maxDrawCount = maxDrawCount,
         };
     }
 

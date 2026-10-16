@@ -34,12 +34,12 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<ObjectDescriptorBase> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ObjectDescriptorBase& objectDescriptorBase)
+std::optional<ObjectDescriptorBase> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUObjectDescriptorBase& objectDescriptorBase)
 {
     return { { objectDescriptorBase.label } };
 }
 
-std::optional<WebCore::WebGPU::ObjectDescriptorBase> ConvertFromBackingContext::convertFromBacking(const ObjectDescriptorBase& objectDescriptorBase)
+std::optional<WebCore::WebGPUObjectDescriptorBase> ConvertFromBackingContext::convertFromBacking(const ObjectDescriptorBase& objectDescriptorBase)
 {
     return { { objectDescriptorBase.label } };
 }

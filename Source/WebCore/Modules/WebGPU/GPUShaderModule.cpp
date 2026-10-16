@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-GPUShaderModule::GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, WebGPU::ShaderModuleDescriptor&& descriptor, GPUDevice& device)
+GPUShaderModule::GPUShaderModule(Ref<WebGPU::ShaderModule>&& backing, WebGPUShaderModuleDescriptor&& descriptor, GPUDevice& device)
     : m_backing(WTF::move(backing))
     , m_descriptor(WTF::move(descriptor))
     , m_device(device)
@@ -53,7 +53,7 @@ GPUDevice* GPUShaderModule::device() const
 
 String GPUShaderModule::label() const
 {
-    return m_backing->label();
+    return m_descriptor.label;
 }
 
 void GPUShaderModule::setLabel(String&& label)
@@ -64,7 +64,7 @@ void GPUShaderModule::setLabel(String&& label)
 
 void GPUShaderModule::getCompilationInfo(CompilationInfoPromise&& promise)
 {
-    m_backing->compilationInfo([promise = WTF::move(promise)](Ref<WebGPU::CompilationInfo>&& compilationInfo) mutable {
+    m_backing->compilationInfo([promise = WTF::move(promise)](WebGPU::CompilationInfo&& compilationInfo) mutable {
         promise.resolve(GPUCompilationInfo::create(WTF::move(compilationInfo)));
     });
 }

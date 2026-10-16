@@ -26,13 +26,13 @@
 #pragma once
 
 #include "GPUSamplerBindingType.h"
-#include "WebGPUSamplerBindingLayout.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUSamplerBindingLayout {
-    WebGPU::SamplerBindingLayout convertToBacking() const
+    ::WebGPU::SamplerBindingLayout convertToBacking() const
     {
         return {
             WebCore::convertToBacking(type),

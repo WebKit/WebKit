@@ -29,7 +29,7 @@
 
 #include "WebGPUBufferBinding.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <optional>
 
@@ -44,7 +44,7 @@ enum class BindingResourceType : uint8_t {
 };
 
 struct BindGroupEntry {
-    WebCore::WebGPU::Index32 binding { 0 };
+    uint32_t binding { 0 };
     BufferBinding bufferBinding;
     WebGPUIdentifier identifier;
     BindingResourceType type { BindingResourceType::Sampler };

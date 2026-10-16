@@ -30,30 +30,22 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUComputePassDescriptor.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePassDescriptor& computePassDescriptor)
+std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::ComputePassDescriptor& computePassDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(computePassDescriptor));
-    if (!base)
-        return std::nullopt;
-
     auto timestampWrites = computePassDescriptor.timestampWrites ? convertToBacking(*computePassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTF::move(*base), timestampWrites } };
+    return { { { computePassDescriptor.label }, timestampWrites } };
 }
 
-std::optional<WebCore::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
+std::optional<::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
 {
-    auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(computePassDescriptor));
-    if (!base)
-        return std::nullopt;
-
     auto timestampWrites = computePassDescriptor.timestampWrites ? convertFromBacking(*computePassDescriptor.timestampWrites) : std::nullopt;
 
-    return { { WTF::move(*base), timestampWrites } };
+    return ::WebGPU::ComputePassDescriptor { .label = computePassDescriptor.label, .timestampWrites = WTF::move(timestampWrites) };
 }
 
 } // namespace WebKit

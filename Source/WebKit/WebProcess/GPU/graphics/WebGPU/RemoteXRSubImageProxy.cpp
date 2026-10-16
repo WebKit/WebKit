@@ -33,7 +33,7 @@
 #include "RemoteXRSubImageMessages.h"
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
@@ -52,7 +52,7 @@ RemoteXRSubImageProxy::~RemoteXRSubImageProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
+RefPtr<::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
 {
     if (m_currentTexture)
         return m_currentTexture;
@@ -66,7 +66,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
     return m_currentTexture;
 }
 
-RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
+RefPtr<::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
 {
     if (m_currentDepthTexture)
         return m_currentDepthTexture;
@@ -80,11 +80,11 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
     return m_currentDepthTexture;
 }
 
-RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::motionVectorTexture()
+bool RemoteXRSubImageProxy::isValid() const
 {
-    return nullptr;
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
-
 
 } // namespace WebKit::WebGPU
 

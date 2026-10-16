@@ -27,13 +27,13 @@
 
 #include "GPUBlendFactor.h"
 #include "GPUBlendOperation.h"
-#include "WebGPUBlendComponent.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUBlendComponent {
-    WebGPU::BlendComponent convertToBacking() const
+    ::WebGPU::BlendComponent convertToBacking() const
     {
         return {
             WebCore::convertToBacking(operation),

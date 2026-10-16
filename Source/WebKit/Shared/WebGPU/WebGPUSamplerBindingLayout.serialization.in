@@ -22,6 +22,6 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SamplerBindingLayout {
-    WebCore::WebGPU::SamplerBindingType type;
+    ::WebGPU::SamplerBindingType type;
 };
 #endif

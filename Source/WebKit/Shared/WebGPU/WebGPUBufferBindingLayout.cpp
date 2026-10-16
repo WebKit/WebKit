@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBufferBindingLayout.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BufferBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BufferBindingLayout& bufferBindingLayout)
+std::optional<BufferBindingLayout> ConvertToBackingContext::convertToBacking(const ::WebGPU::BufferBindingLayout& bufferBindingLayout)
 {
     return { { bufferBindingLayout.type, bufferBindingLayout.hasDynamicOffset, bufferBindingLayout.minBindingSize } };
 }
 
-std::optional<WebCore::WebGPU::BufferBindingLayout> ConvertFromBackingContext::convertFromBacking(const BufferBindingLayout& bufferBindingLayout)
+std::optional<::WebGPU::BufferBindingLayout> ConvertFromBackingContext::convertFromBacking(const BufferBindingLayout& bufferBindingLayout)
 {
     return { { bufferBindingLayout.type, bufferBindingLayout.hasDynamicOffset, bufferBindingLayout.minBindingSize } };
 }

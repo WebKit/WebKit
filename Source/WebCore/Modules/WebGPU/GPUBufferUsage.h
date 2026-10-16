@@ -26,7 +26,7 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
-#include "WebGPUBufferUsage.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
@@ -48,34 +48,30 @@ public:
     static constexpr GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
 
-static constexpr bool compare(unsigned a, WebCore::WebGPU::BufferUsage b)
+static constexpr bool compare(unsigned a, ::WebGPU::BufferUsage b)
 {
     return a == static_cast<unsigned>(b);
 }
 
-inline WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
+inline OptionSet<::WebGPU::BufferUsage> convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
 {
-    static_assert(compare(GPUBufferUsage::MAP_READ, WebGPU::BufferUsage::MapRead), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::MAP_WRITE,  WebGPU::BufferUsage::MapWrite), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::COPY_SRC,  WebGPU::BufferUsage::CopySource), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::COPY_DST,  WebGPU::BufferUsage::CopyDestination), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::INDEX, WebGPU::BufferUsage::Index), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::VERTEX, WebGPU::BufferUsage::Vertex), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::UNIFORM, WebGPU::BufferUsage::Uniform), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::STORAGE, WebGPU::BufferUsage::Storage), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::INDIRECT, WebGPU::BufferUsage::Indirect), "GPUBufferUsageFlags does not match BufferUsageFlags");
-    static_assert(compare(GPUBufferUsage::QUERY_RESOLVE, WebGPU::BufferUsage::QueryResolve), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::MAP_READ, ::WebGPU::BufferUsage::MapRead), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::MAP_WRITE,  ::WebGPU::BufferUsage::MapWrite), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::COPY_SRC,  ::WebGPU::BufferUsage::CopySource), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::COPY_DST,  ::WebGPU::BufferUsage::CopyDestination), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::INDEX, ::WebGPU::BufferUsage::Index), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::VERTEX, ::WebGPU::BufferUsage::Vertex), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::UNIFORM, ::WebGPU::BufferUsage::Uniform), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::STORAGE, ::WebGPU::BufferUsage::Storage), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::INDIRECT, ::WebGPU::BufferUsage::Indirect), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::QUERY_RESOLVE, ::WebGPU::BufferUsage::QueryResolve), "GPUBufferUsageFlags does not match BufferUsageFlags");
 
     constexpr GPUBufferUsageFlags allKnownUsages = GPUBufferUsage::MAP_READ | GPUBufferUsage::MAP_WRITE | GPUBufferUsage::COPY_SRC | GPUBufferUsage::COPY_DST | GPUBufferUsage::INDEX | GPUBufferUsage::VERTEX | GPUBufferUsage::UNIFORM | GPUBufferUsage::STORAGE | GPUBufferUsage::INDIRECT | GPUBufferUsage::QUERY_RESOLVE;
 
-    // The flags are 1:1 (see the static_asserts above), but GPUBufferUsageFlags is 32 bits wide and
-    // BufferUsageFlags is only 16, so a plain cast would drop the high half. Mask first and record
-    // that a bit was lost, rather than truncating it away and creating the buffer as if the caller
-    // had only asked for the bits we recognize.
-    unsigned result = bufferUsageFlags & allKnownUsages;
+    auto result = OptionSet<::WebGPU::BufferUsage>::fromRaw(static_cast<uint16_t>(bufferUsageFlags & allKnownUsages));
     if (bufferUsageFlags & ~allKnownUsages)
-        result |= static_cast<unsigned>(WebGPU::BufferUsage::Invalid);
-    return static_cast<WebGPU::BufferUsageFlags>(result);
+        result.add(::WebGPU::BufferUsage::Invalid);
+    return result;
 }
 
 }

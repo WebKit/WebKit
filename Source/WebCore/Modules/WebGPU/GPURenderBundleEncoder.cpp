@@ -36,8 +36,9 @@
 
 namespace WebCore {
 
-GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, GPUDevice& device)
+GPURenderBundleEncoder::GPURenderBundleEncoder(Ref<WebGPU::RenderBundleEncoder>&& backing, String&& label, GPUDevice& device)
     : m_backing(WTF::move(backing))
+    , m_label(WTF::move(label))
     , m_device(device)
 {
 }
@@ -55,11 +56,12 @@ GPUDevice* GPURenderBundleEncoder::device() const
 
 String GPURenderBundleEncoder::label() const
 {
-    return m_backing->label();
+    return m_label;
 }
 
 void GPURenderBundleEncoder::setLabel(String&& label)
 {
+    m_label = label;
     m_backing->setLabel(WTF::move(label));
 }
 
@@ -69,12 +71,12 @@ void GPURenderBundleEncoder::setPipeline(const GPURenderPipeline& renderPipeline
     m_backing->setPipeline(protect(renderPipeline.backing()));
 }
 
-void GPURenderBundleEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderBundleEncoder::setIndexBuffer(GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
 {
     m_backing->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderBundleEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderBundleEncoder::setVertexBuffer(GPUIndex32 slot, GPUBuffer* buffer, GPUSize64 offset, std::optional<GPUSize64> size)
 {
     m_backing->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
 }
@@ -99,14 +101,14 @@ void GPURenderBundleEncoder::drawIndexed(GPUSize32 indexCount,
     m_backing->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
-void GPURenderBundleEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
+void GPURenderBundleEncoder::drawIndirect(GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
     if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
         return;
     m_backing->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPURenderBundleEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
+void GPURenderBundleEncoder::drawIndexedIndirect(GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
     if (RefPtr pipeline = m_currentPipeline; pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
         return;
@@ -116,7 +118,7 @@ void GPURenderBundleEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer
 void GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTF::move(dynamicOffsets));
+    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
 ExceptionOr<void> GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -128,7 +130,7 @@ ExceptionOr<void> GPURenderBundleEncoder::setBindGroup(GPUIndex32 index, const G
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    m_backing->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 
@@ -156,11 +158,12 @@ static WebGPU::RenderBundleDescriptor LEGACY_NODELETE convertToBacking(const std
 
 ExceptionOr<Ref<GPURenderBundle>> GPURenderBundleEncoder::finish(const std::optional<GPURenderBundleDescriptor>& renderBundleDescriptor)
 {
-    RefPtr bundle = m_backing->finish(convertToBacking(renderBundleDescriptor));
+    auto backingDescriptor = convertToBacking(renderBundleDescriptor);
+    RefPtr bundle = m_backing->finish(backingDescriptor);
     m_currentPipeline = nullptr;
     if (!bundle)
         return Exception { ExceptionCode::InvalidStateError, "GPURenderBundleEncoder.finish: Unable to finish."_s };
-    return GPURenderBundle::create(bundle.releaseNonNull(), *this);
+    return GPURenderBundle::create(bundle.releaseNonNull(), WTF::move(backingDescriptor.label), *this);
 }
 
 }

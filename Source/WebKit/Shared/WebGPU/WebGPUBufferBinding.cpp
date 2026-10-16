@@ -30,21 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUBuffer.h>
-#include <WebCore/WebGPUBufferBinding.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BufferBinding& bufferBinding)
+std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const ::WebGPU::BufferBinding& bufferBinding)
 {
     auto buffer = convertToBacking(protect(bufferBinding.buffer).get());
 
     return { { buffer, bufferBinding.offset, bufferBinding.size } };
 }
 
-std::optional<WebCore::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
+std::optional<::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
 {
-    WeakPtr buffer = convertBufferFromBacking(bufferBinding.buffer);
+    RefPtr buffer = convertBufferFromBacking(bufferBinding.buffer);
     if (!buffer)
         return std::nullopt;
 

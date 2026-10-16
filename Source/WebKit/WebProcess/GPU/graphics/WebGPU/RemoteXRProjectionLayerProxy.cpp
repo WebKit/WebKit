@@ -33,7 +33,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PlatformXR.h>
-#include <WebCore/WebGPUTextureFormat.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/MachSendRight.h>
 
 namespace WebKit::WebGPU {
@@ -54,9 +54,15 @@ RemoteXRProjectionLayerProxy::~RemoteXRProjectionLayerProxy()
 }
 
 #if PLATFORM(COCOA)
-void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, PlatformXR::RateMapDescription&& rateMapDescription)
+void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&& colorBuffer, MachSendRight&& depthBuffer, MachSendRight&& completionSyncEvent, size_t reusableTextureIndex, unsigned screenWidth, unsigned screenHeight, Vector<float>&& horizontalSamplesLeft, Vector<float>&& horizontalSamplesRight, Vector<float>&& verticalSamples)
 {
 #if PLATFORM(VISION)
+    PlatformXR::RateMapDescription rateMapDescription {
+        .screenSize = { static_cast<int>(screenWidth), static_cast<int>(screenHeight) },
+        .horizontalSamplesLeft = WTF::move(horizontalSamplesLeft),
+        .horizontalSamplesRight = WTF::move(horizontalSamplesRight),
+        .verticalSamples = WTF::move(verticalSamples),
+    };
     auto sendResult = send(Messages::RemoteXRProjectionLayer::StartFrame(frameIndex, WTF::move(colorBuffer), WTF::move(depthBuffer), WTF::move(completionSyncEvent), reusableTextureIndex, WTF::move(rateMapDescription)));
     UNUSED_VARIABLE(sendResult);
 #else
@@ -65,59 +71,25 @@ void RemoteXRProjectionLayerProxy::startFrame(size_t frameIndex, MachSendRight&&
     UNUSED_VARIABLE(depthBuffer);
     UNUSED_VARIABLE(completionSyncEvent);
     UNUSED_VARIABLE(reusableTextureIndex);
-    UNUSED_VARIABLE(rateMapDescription);
+    UNUSED_VARIABLE(screenWidth);
+    UNUSED_VARIABLE(screenHeight);
+    UNUSED_VARIABLE(horizontalSamplesLeft);
+    UNUSED_VARIABLE(horizontalSamplesRight);
+    UNUSED_VARIABLE(verticalSamples);
 #endif
 }
 #endif
 
-#if PLATFORM(COCOA)
 void RemoteXRProjectionLayerProxy::endFrame()
-#else
-void RemoteXRProjectionLayerProxy::endFrame(PlatformXR::DeviceLayer&)
-#endif
 {
     auto sendResult = send(Messages::RemoteXRProjectionLayer::EndFrame());
     UNUSED_VARIABLE(sendResult);
 }
 
-uint32_t RemoteXRProjectionLayerProxy::colorTextureWidth() const
+bool RemoteXRProjectionLayerProxy::isValid() const
 {
-    return 0;
-}
-
-uint32_t RemoteXRProjectionLayerProxy::colorTextureHeight() const
-{
-    return 0;
-}
-
-uint32_t RemoteXRProjectionLayerProxy::colorTextureArrayLength() const
-{
-    return 0;
-}
-
-bool RemoteXRProjectionLayerProxy::ignoreDepthValues() const
-{
-    return false;
-}
-
-std::optional<float> RemoteXRProjectionLayerProxy::fixedFoveation() const
-{
-    return 1.f;
-}
-
-void RemoteXRProjectionLayerProxy::setFixedFoveation(std::optional<float>)
-{
-    return;
-}
-
-WebCore::WebXRRigidTransform* RemoteXRProjectionLayerProxy::deltaPose() const
-{
-    return nullptr;
-}
-
-void RemoteXRProjectionLayerProxy::setDeltaPose(WebCore::WebXRRigidTransform*)
-{
-    return;
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

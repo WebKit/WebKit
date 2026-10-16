@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::VertexAttribute {
-    WebCore::WebGPU::VertexFormat format
-    WebCore::WebGPU::Size64 offset
-    WebCore::WebGPU::Index32 shaderLocation
+    ::WebGPU::VertexFormat format
+    uint64_t offset
+    uint32_t shaderLocation
 }
 #endif

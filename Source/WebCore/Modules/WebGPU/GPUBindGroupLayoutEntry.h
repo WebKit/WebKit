@@ -32,14 +32,14 @@
 #include "GPUShaderStage.h"
 #include "GPUStorageTextureBindingLayout.h"
 #include "GPUTextureBindingLayout.h"
-#include "WebGPUBindGroupLayoutEntry.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUBindGroupLayoutEntry {
-    WebGPU::BindGroupLayoutEntry convertToBacking() const
+    ::WebGPU::BindGroupLayoutEntry convertToBacking() const
     {
         return {
             binding,

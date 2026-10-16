@@ -34,16 +34,16 @@
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyTextureTagged& imageCopyTextureTagged)
+std::optional<ImageCopyTextureTagged> ConvertToBackingContext::convertToBacking(const WebCore::WebGPUImageCopyTextureTagged& imageCopyTextureTagged)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ImageCopyTexture&>(imageCopyTextureTagged));
+    auto base = convertToBacking(static_cast<const ::WebGPU::TexelCopyTextureInfo&>(imageCopyTextureTagged));
     if (!base)
         return std::nullopt;
 
     return { { WTF::move(*base), imageCopyTextureTagged.colorSpace, imageCopyTextureTagged.premultipliedAlpha } };
 }
 
-std::optional<WebCore::WebGPU::ImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
+std::optional<WebCore::WebGPUImageCopyTextureTagged> ConvertFromBackingContext::convertFromBacking(const ImageCopyTextureTagged& imageCopyTextureTagged)
 {
     auto base = convertFromBacking(static_cast<const ImageCopyTexture&>(imageCopyTextureTagged));
     if (!base)

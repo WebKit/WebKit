@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUVertexStepMode.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUVertexStepMode : uint8_t {
     Instance,
 };
 
-inline WebGPU::VertexStepMode convertToBacking(GPUVertexStepMode vertexStepMode)
+inline ::WebGPU::VertexStepMode convertToBacking(GPUVertexStepMode vertexStepMode)
 {
     switch (vertexStepMode) {
     case GPUVertexStepMode::Vertex:
-        return WebGPU::VertexStepMode::Vertex;
+        return ::WebGPU::VertexStepMode::Vertex;
     case GPUVertexStepMode::Instance:
-        return WebGPU::VertexStepMode::Instance;
+        return ::WebGPU::VertexStepMode::Instance;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

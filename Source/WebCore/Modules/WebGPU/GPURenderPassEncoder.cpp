@@ -49,7 +49,7 @@ static RefPtr<WebGPU::RenderPipeline> applyInspectorPipelineHighlight(WebGPU::Re
         return nullptr;
 
     encoder.setPipeline(*highlightedPipeline);
-    encoder.setBlendConstant(WebGPU::Color { WebGPU::ColorDict { 111.0 / 255.0, 168.0 / 255.0, 220.0 / 255.0, 2.0 / 3.0 } });
+    encoder.setBlendConstant(WebGPU::Color { 111.0 / 255.0, 168.0 / 255.0, 220.0 / 255.0, 2.0 / 3.0 });
     return highlightedPipeline;
 }
 
@@ -59,8 +59,9 @@ static void restorePipelineAfterInspectorHighlight(WebGPU::RenderPassEncoder& en
     encoder.setBlendConstant(convertToBacking(blendConstant));
 }
 
-GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder, uint8_t canvasColorAttachmentMask)
     : m_backing(WTF::move(backing))
+    , m_label(WTF::move(label))
     , m_device(commandEncoder.device())
     , m_canvasColorAttachmentMask(canvasColorAttachmentMask)
 {
@@ -79,11 +80,12 @@ GPUDevice* GPURenderPassEncoder::device() const
 
 String GPURenderPassEncoder::label() const
 {
-    return m_overrideLabel ? *m_overrideLabel : m_backing->label();
+    return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
 void GPURenderPassEncoder::setLabel(String&& label)
 {
+    m_label = label;
     protect(backing())->setLabel(WTF::move(label));
 }
 
@@ -93,12 +95,12 @@ void GPURenderPassEncoder::setPipeline(const GPURenderPipeline& renderPipeline)
     protect(backing())->setPipeline(protect(renderPipeline.backing()));
 }
 
-void GPURenderPassEncoder::setIndexBuffer(const GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setIndexBuffer(GPUBuffer& buffer, GPUIndexFormat indexFormat, GPUSize64 offset, std::optional<GPUSize64> size)
 {
     protect(backing())->setIndexBuffer(buffer.backing(), convertToBacking(indexFormat), offset, size);
 }
 
-void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, const GPUBuffer* buffer, GPUSize64 offset, std::optional<GPUSize64> size)
+void GPURenderPassEncoder::setVertexBuffer(GPUIndex32 slot, GPUBuffer* buffer, GPUSize64 offset, std::optional<GPUSize64> size)
 {
     protect(backing())->setVertexBuffer(slot, buffer ? &buffer->backing() : nullptr, offset, size);
 }
@@ -141,7 +143,7 @@ void GPURenderPassEncoder::drawIndexed(GPUSize32 indexCount, GPUSize32 instanceC
     protectedBacking->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
-void GPURenderPassEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
+void GPURenderPassEncoder::drawIndirect(GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
     RefPtr pipeline = m_currentPipeline;
     if (pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
@@ -158,7 +160,7 @@ void GPURenderPassEncoder::drawIndirect(const GPUBuffer& indirectBuffer, GPUSize
     protectedBacking->drawIndirect(indirectBuffer.backing(), indirectOffset);
 }
 
-void GPURenderPassEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
+void GPURenderPassEncoder::drawIndexedIndirect(GPUBuffer& indirectBuffer, GPUSize64 indirectOffset)
 {
     RefPtr pipeline = m_currentPipeline;
     if (pipeline && InspectorInstrumentation::isWebGPURenderPipelineDisabled(*pipeline)) [[unlikely]]
@@ -178,7 +180,7 @@ void GPURenderPassEncoder::drawIndexedIndirect(const GPUBuffer& indirectBuffer, 
 void GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTF::move(dynamicOffsets));
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
 ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -190,7 +192,7 @@ ExceptionOr<void> GPURenderPassEncoder::setBindGroup(GPUIndex32 index, const GPU
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 
@@ -248,7 +250,7 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
     auto result = WTF::map(bundles, [](auto& bundle) -> Ref<WebGPU::RenderBundle> {
         return bundle->backing();
     });
-    protect(backing())->executeBundles(WTF::move(result));
+    protect(backing())->executeBundles(result.span());
     m_currentPipeline = nullptr;
 }
 
@@ -258,7 +260,7 @@ void GPURenderPassEncoder::end()
     m_currentPipeline = nullptr;
     if (RefPtr device = m_device) {
         m_overrideLabel = label();
-        m_backing = device->backing().invalidRenderPassEncoder();
+        m_backing = device->invalidRenderPassEncoder();
     }
 }
 

@@ -31,24 +31,18 @@
 #include "RemoteGPUProxy.h"
 #include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUXRBinding.h>
-#include <WebCore/WebGPUXREye.h>
+#include <WebCore/WebGPUCppAPI.h>
+#include <WebCore/WebGPUDevice.h>
 
 namespace WebCore {
 class WebXRFrame;
-}
-
-namespace WebCore::WebGPU {
-class Device;
-class XRProjectionLayer;
-class XRView;
 }
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteXRBindingProxy final : public WebCore::WebGPU::XRBinding {
+class RemoteXRBindingProxy final : public ::WebGPU::XRBinding {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRBindingProxy);
 public:
     static Ref<RemoteXRBindingProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -61,6 +55,11 @@ public:
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    RefPtr<::WebGPU::XRProjectionLayer> createProjectionLayer(const ::WebGPU::XRProjectionLayerDescriptor&) final;
+    RefPtr<::WebGPU::XRSubImage> getViewSubImage(::WebGPU::XRProjectionLayer&) final;
+    void setLabel(String&&) final { }
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -71,14 +70,7 @@ private:
     RemoteXRBindingProxy& operator=(const RemoteXRBindingProxy&) = delete;
     RemoteXRBindingProxy& operator=(RemoteXRBindingProxy&&) = delete;
 
-    bool isRemoteXRBindingProxy() const final { return true; }
-
     WebGPUIdentifier backing() const { return m_backing; }
-
-    RefPtr<WebCore::WebGPU::XRProjectionLayer> createProjectionLayer(const WebCore::WebGPU::XRProjectionLayerInit&) final;
-    RefPtr<WebCore::WebGPU::XRSubImage> getSubImage(WebCore::WebGPU::XRProjectionLayer&, WebCore::WebXRFrame&, std::optional<WebCore::WebGPU::XREye>/* = "none"*/) final;
-    RefPtr<WebCore::WebGPU::XRSubImage> getViewSubImage(WebCore::WebGPU::XRProjectionLayer&) final;
-    WebCore::WebGPU::TextureFormat getPreferredColorFormat() final;
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -99,7 +91,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRBindingProxy)
-    static bool isType(const WebCore::WebGPU::XRBinding& binding) { return binding.isRemoteXRBindingProxy(); }
+    // In the Web Process, every WebGPU::XRBinding is a RemoteXRBindingProxy.
+    static bool isType(const ::WebGPU::XRBinding&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPURequestAdapterOptions.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RequestAdapterOptions& requestAdapterOptions)
+std::optional<RequestAdapterOptions> ConvertToBackingContext::convertToBacking(const ::WebGPU::RequestAdapterOptions& requestAdapterOptions)
 {
     return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter, requestAdapterOptions.xrCompatible } };
 }
 
-std::optional<WebCore::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
+std::optional<::WebGPU::RequestAdapterOptions> ConvertFromBackingContext::convertFromBacking(const RequestAdapterOptions& requestAdapterOptions)
 {
     return { { requestAdapterOptions.powerPreference, requestAdapterOptions.forceFallbackAdapter, requestAdapterOptions.xrCompatible } };
 }

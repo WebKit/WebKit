@@ -29,18 +29,14 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUBindGroup.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace WebCore::WebGPU {
-class ExternalTexture;
-}
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteBindGroupProxy final : public WebCore::WebGPU::BindGroup {
+class RemoteBindGroupProxy final : public ::WebGPU::BindGroup {
     WTF_MAKE_TZONE_ALLOCATED(RemoteBindGroupProxy);
 public:
     static Ref<RemoteBindGroupProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -53,6 +49,10 @@ public:
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    bool updateExternalTextures(::WebGPU::ExternalTexture&) final;
+    void setLabel(String&&) final;
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -62,8 +62,6 @@ private:
     RemoteBindGroupProxy(RemoteBindGroupProxy&&) = delete;
     RemoteBindGroupProxy& operator=(const RemoteBindGroupProxy&) = delete;
     RemoteBindGroupProxy& operator=(RemoteBindGroupProxy&&) = delete;
-
-    bool isRemoteBindGroupProxy() const final { return true; }
 
     WebGPUIdentifier backing() const { return m_backing; }
     
@@ -78,9 +76,6 @@ private:
         return protect(root().streamClientConnection())->sendSync(std::forward<T>(message), backing());
     }
 
-    void setLabelInternal(const String&) final;
-    bool updateExternalTextures(WebCore::WebGPU::ExternalTexture&) final;
-
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteDeviceProxy> m_parent;
@@ -89,7 +84,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteBindGroupProxy)
-    static bool isType(const WebCore::WebGPU::BindGroup& group) { return group.isRemoteBindGroupProxy(); }
+    // In the Web Process, every WebGPU::BindGroup is a RemoteBindGroupProxy.
+    static bool isType(const ::WebGPU::BindGroup&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

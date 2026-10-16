@@ -25,9 +25,9 @@
 
 #pragma once
 
+#import "WebGPUCppBridge.h"
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUCpp.h>
-#import <WebGPU/WebGPUCppBridge.h>
 #import <WebGPU/WebGPUExt.h>
 #import <optional>
 #import <type_traits>
@@ -2007,6 +2007,41 @@ inline std::optional<WebGPU::TextureDescriptor> fromAPI(const WGPUTextureDescrip
     };
 }
 
+// WGPUComponentSwizzle_Undefined selects the component of the channel itself.
+inline std::optional<WebGPU::ComponentSwizzle> fromAPI(WGPUComponentSwizzle component, WebGPU::ComponentSwizzle channel)
+{
+    switch (component) {
+    case WGPUComponentSwizzle_Undefined:
+        return channel;
+    case WGPUComponentSwizzle_Zero:
+        return WebGPU::ComponentSwizzle::Zero;
+    case WGPUComponentSwizzle_One:
+        return WebGPU::ComponentSwizzle::One;
+    case WGPUComponentSwizzle_R:
+        return WebGPU::ComponentSwizzle::R;
+    case WGPUComponentSwizzle_G:
+        return WebGPU::ComponentSwizzle::G;
+    case WGPUComponentSwizzle_B:
+        return WebGPU::ComponentSwizzle::B;
+    case WGPUComponentSwizzle_A:
+        return WebGPU::ComponentSwizzle::A;
+    case WGPUComponentSwizzle_Force32:
+        break;
+    }
+    return std::nullopt;
+}
+
+inline std::optional<WebGPU::TextureComponentSwizzle> fromAPI(const WGPUTextureComponentSwizzle& swizzle)
+{
+    auto r = fromAPI(swizzle.r, WebGPU::ComponentSwizzle::R);
+    auto g = fromAPI(swizzle.g, WebGPU::ComponentSwizzle::G);
+    auto b = fromAPI(swizzle.b, WebGPU::ComponentSwizzle::B);
+    auto a = fromAPI(swizzle.a, WebGPU::ComponentSwizzle::A);
+    if (!r || !g || !b || !a)
+        return std::nullopt;
+    return WebGPU::TextureComponentSwizzle { *r, *g, *b, *a };
+}
+
 inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureViewDescriptor& descriptor)
 {
     // WGPUTextureFormat_Undefined, WGPUTextureViewDimension_Undefined, WGPU_MIP_LEVEL_COUNT_UNDEFINED
@@ -2027,7 +2062,8 @@ inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureVie
 
     auto aspect = fromAPI(descriptor.aspect);
     auto usage = textureUsageFromAPI(descriptor.usage);
-    if (!aspect || !usage)
+    auto swizzle = fromAPI(descriptor.swizzle);
+    if (!aspect || !usage || !swizzle)
         return std::nullopt;
 
     return WebGPU::TextureViewDescriptor {
@@ -2040,6 +2076,7 @@ inline std::optional<WebGPU::TextureViewDescriptor> fromAPI(const WGPUTextureVie
         .arrayLayerCount = descriptor.arrayLayerCount == WGPU_ARRAY_LAYER_COUNT_UNDEFINED ? std::nullopt : std::optional<uint32_t> { descriptor.arrayLayerCount },
         .aspect = *aspect,
         .usage = *usage,
+        .swizzle = *swizzle,
     };
 }
 
@@ -2240,6 +2277,7 @@ inline std::optional<WebGPU::ShaderModuleDescriptor> fromAPI(const WGPUShaderMod
     };
 }
 
+// The C API line positions stay zero-based, as they were.
 inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compilationInfo)
 {
     return compilationInfo.messages.map([](auto& message) {
@@ -2247,10 +2285,10 @@ inline Vector<WGPUCompilationMessage> toAPI(const WebGPU::CompilationInfo& compi
             .message = message.message,
             .type = toAPI(message.type),
             .lineNum = message.lineNum,
-            .linePos = message.linePos,
+            .linePos = message.linePos - 1,
             .offset = message.offset,
             .length = message.length,
-            .utf16LinePos = message.linePos,
+            .utf16LinePos = message.linePos - 1,
             .utf16Offset = message.offset,
             .utf16Length = message.length,
         };

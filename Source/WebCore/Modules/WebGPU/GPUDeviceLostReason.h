@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUDeviceLostReason.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUDeviceLostReason : uint8_t {
     Destroyed,
 };
 
-inline WebGPU::DeviceLostReason convertToBacking(GPUDeviceLostReason deviceLostReason)
+inline ::WebGPU::DeviceLostReason convertToBacking(GPUDeviceLostReason deviceLostReason)
 {
     switch (deviceLostReason) {
     case GPUDeviceLostReason::Unknown:
-        return WebGPU::DeviceLostReason::Unknown;
+        return ::WebGPU::DeviceLostReason::Unknown;
     case GPUDeviceLostReason::Destroyed:
-        return WebGPU::DeviceLostReason::Destroyed;
+        return ::WebGPU::DeviceLostReason::Destroyed;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

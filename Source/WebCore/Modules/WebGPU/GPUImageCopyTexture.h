@@ -29,7 +29,7 @@
 #include "GPUOrigin3DDict.h"
 #include "GPUTexture.h"
 #include "GPUTextureAspect.h"
-#include "WebGPUImageCopyTexture.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -37,13 +37,13 @@
 namespace WebCore {
 
 struct GPUImageCopyTexture {
-    WebGPU::ImageCopyTexture convertToBacking() const
+    ::WebGPU::TexelCopyTextureInfo convertToBacking() const
     {
         return {
-            texture->backing(),
-            mipLevel,
-            origin ? std::optional { WebCore::convertToBacking(*origin) } : std::nullopt,
-            WebCore::convertToBacking(aspect),
+            .texture = texture->backing(),
+            .mipLevel = mipLevel,
+            .origin = origin ? WebCore::convertToBacking(*origin) : ::WebGPU::Origin3D { },
+            .aspect = WebCore::convertToBacking(aspect),
         };
     }
 

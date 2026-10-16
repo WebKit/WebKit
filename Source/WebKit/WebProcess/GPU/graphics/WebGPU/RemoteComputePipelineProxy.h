@@ -29,7 +29,7 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUComputePipeline.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -38,7 +38,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 class RemoteBindGroupLayoutProxy;
 
-class RemoteComputePipelineProxy final : public WebCore::WebGPU::ComputePipeline {
+class RemoteComputePipelineProxy final : public ::WebGPU::ComputePipeline {
     WTF_MAKE_TZONE_ALLOCATED(RemoteComputePipelineProxy);
 public:
     static Ref<RemoteComputePipelineProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -51,6 +51,10 @@ public:
     RemoteDeviceProxy& parent() const { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    Ref<::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;
+    void setLabel(String&&) final;
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -61,8 +65,6 @@ private:
     RemoteComputePipelineProxy& operator=(const RemoteComputePipelineProxy&) = delete;
     RemoteComputePipelineProxy& operator=(RemoteComputePipelineProxy&&) = delete;
 
-    bool isRemoteComputePipelineProxy() const final { return true; }
-
     WebGPUIdentifier backing() const { return m_backing; }
     
     template<typename T>
@@ -70,10 +72,6 @@ private:
     {
         return protect(root().streamClientConnection())->send(std::forward<T>(message), backing());
     }
-
-    Ref<WebCore::WebGPU::BindGroupLayout> getBindGroupLayout(uint32_t index) final;
-
-    void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     const Ref<ConvertToBackingContext> m_convertToBackingContext;
@@ -83,7 +81,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteComputePipelineProxy)
-    static bool isType(const WebCore::WebGPU::ComputePipeline& pipeline) { return pipeline.isRemoteComputePipelineProxy(); }
+    // In the Web Process, every WebGPU::ComputePipeline is a RemoteComputePipelineProxy.
+    static bool isType(const ::WebGPU::ComputePipeline&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

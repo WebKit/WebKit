@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "WebGPURenderPipeline.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
@@ -86,7 +86,7 @@ private:
     void invalidateRenderPipelinesForHighlighting();
     void prepareRenderPipelinesForHighlighting(CompletionHandler<void()>&&);
     void requestRenderPipelineForHighlighting(unsigned canvasColorAttachmentMask, CompletionHandler<void()>&&);
-    RefPtr<WebGPU::RenderPipeline> renderPipelineForHighlighting(unsigned canvasColorAttachmentMask);
+    RefPtr<::WebGPU::RenderPipeline> renderPipelineForHighlighting(unsigned canvasColorAttachmentMask);
 
     String m_identifier;
     WeakRef<InspectorCanvas> m_canvas;
@@ -99,7 +99,7 @@ private:
     > m_program;
 
     HashSet<unsigned> m_canvasColorAttachmentMasks;
-    HashMap<unsigned, Ref<WebGPU::RenderPipeline>> m_renderPipelinesForHighlighting;
+    HashMap<unsigned, Ref<::WebGPU::RenderPipeline>> m_renderPipelinesForHighlighting;
     HashMap<unsigned, uint64_t> m_renderPipelineHighlightRequestGenerations;
     uint64_t m_renderPipelineHighlightGeneration { 0 };
 

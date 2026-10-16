@@ -36,8 +36,9 @@
 
 namespace WebCore {
 
-GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, GPUCommandEncoder& commandEncoder)
+GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, String&& label, GPUCommandEncoder& commandEncoder)
     : m_backing(WTF::move(backing))
+    , m_label(WTF::move(label))
     , m_device(commandEncoder.device())
 {
 }
@@ -55,11 +56,12 @@ GPUDevice* GPUComputePassEncoder::device() const
 
 String GPUComputePassEncoder::label() const
 {
-    return m_overrideLabel ? *m_overrideLabel : m_backing->label();
+    return m_overrideLabel ? *m_overrideLabel : m_label;
 }
 
 void GPUComputePassEncoder::setLabel(String&& label)
 {
+    m_label = label;
     protect(backing())->setLabel(WTF::move(label));
 }
 
@@ -83,14 +85,14 @@ void GPUComputePassEncoder::end()
     protect(backing())->end();
     if (RefPtr device = m_device) {
         m_overrideLabel = label();
-        m_backing = device->backing().invalidComputePassEncoder();
+        m_backing = device->invalidComputePassEncoder();
     }
 }
 
 void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
     std::optional<Vector<GPUBufferDynamicOffset>>&& dynamicOffsets)
 {
-    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, WTF::move(dynamicOffsets));
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsets ? std::optional { dynamicOffsets->span() } : std::nullopt);
 }
 
 ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup* bindGroup,
@@ -102,7 +104,7 @@ ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GP
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, dynamicOffsetsData.typedSpan(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    protect(backing())->setBindGroup(index, bindGroup ? &bindGroup->backing() : nullptr, std::optional { dynamicOffsetsData.typedSpan().subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength) });
     return { };
 }
 

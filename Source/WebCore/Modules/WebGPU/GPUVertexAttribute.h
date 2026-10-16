@@ -27,13 +27,13 @@
 
 #include "GPUIntegralTypes.h"
 #include "GPUVertexFormat.h"
-#include "WebGPUVertexAttribute.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUVertexAttribute {
-    WebGPU::VertexAttribute convertToBacking() const
+    ::WebGPU::VertexAttribute convertToBacking() const
     {
         return {
             WebCore::convertToBacking(format),

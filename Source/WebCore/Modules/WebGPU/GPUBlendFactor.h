@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUBlendFactor.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -46,35 +46,35 @@ enum class GPUBlendFactor : uint8_t {
     OneMinusConstant,
 };
 
-inline WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
+inline ::WebGPU::BlendFactor convertToBacking(GPUBlendFactor blendFactor)
 {
     switch (blendFactor) {
     case GPUBlendFactor::Zero:
-        return WebGPU::BlendFactor::Zero;
+        return ::WebGPU::BlendFactor::Zero;
     case GPUBlendFactor::One:
-        return WebGPU::BlendFactor::One;
+        return ::WebGPU::BlendFactor::One;
     case GPUBlendFactor::Src:
-        return WebGPU::BlendFactor::Src;
+        return ::WebGPU::BlendFactor::Src;
     case GPUBlendFactor::OneMinusSrc:
-        return WebGPU::BlendFactor::OneMinusSrc;
+        return ::WebGPU::BlendFactor::OneMinusSrc;
     case GPUBlendFactor::SrcAlpha:
-        return WebGPU::BlendFactor::SrcAlpha;
+        return ::WebGPU::BlendFactor::SrcAlpha;
     case GPUBlendFactor::OneMinusSrcAlpha:
-        return WebGPU::BlendFactor::OneMinusSrcAlpha;
+        return ::WebGPU::BlendFactor::OneMinusSrcAlpha;
     case GPUBlendFactor::Dst:
-        return WebGPU::BlendFactor::Dst;
+        return ::WebGPU::BlendFactor::Dst;
     case GPUBlendFactor::OneMinusDst:
-        return WebGPU::BlendFactor::OneMinusDst;
+        return ::WebGPU::BlendFactor::OneMinusDst;
     case GPUBlendFactor::DstAlpha:
-        return WebGPU::BlendFactor::DstAlpha;
+        return ::WebGPU::BlendFactor::DstAlpha;
     case GPUBlendFactor::OneMinusDstAlpha:
-        return WebGPU::BlendFactor::OneMinusDstAlpha;
+        return ::WebGPU::BlendFactor::OneMinusDstAlpha;
     case GPUBlendFactor::SrcAlphaSaturated:
-        return WebGPU::BlendFactor::SrcAlphaSaturated;
+        return ::WebGPU::BlendFactor::SrcAlphaSaturated;
     case GPUBlendFactor::Constant:
-        return WebGPU::BlendFactor::Constant;
+        return ::WebGPU::BlendFactor::Constant;
     case GPUBlendFactor::OneMinusConstant:
-        return WebGPU::BlendFactor::OneMinusConstant;
+        return ::WebGPU::BlendFactor::OneMinusConstant;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

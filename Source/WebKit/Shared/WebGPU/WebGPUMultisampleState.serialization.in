@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::MultisampleState {
-    WebCore::WebGPU::Size32 count;
-    WebCore::WebGPU::SampleMask mask;
+    uint32_t count;
+    uint32_t mask;
     bool alphaToCoverageEnabled;
 };
 #endif

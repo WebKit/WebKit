@@ -27,13 +27,13 @@
 
 #include "GPUBufferBindingType.h"
 #include "GPUIntegralTypes.h"
-#include "WebGPUBufferBindingLayout.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUBufferBindingLayout {
-    WebGPU::BufferBindingLayout convertToBacking() const
+    ::WebGPU::BufferBindingLayout convertToBacking() const
     {
         return {
             WebCore::convertToBacking(type),

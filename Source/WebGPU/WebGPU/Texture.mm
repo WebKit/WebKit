@@ -2935,7 +2935,7 @@ static MTLStorageMode LEGACY_NODELETE storageMode(bool deviceHasUnifiedMemory, b
 #endif
 }
 
-Ref<Texture> Device::createTexture(const WebGPU::TextureDescriptor& descriptor)
+RefPtr<WebGPU::Texture> Device::createTexture(const WebGPU::TextureDescriptor& descriptor)
 {
     if (!isValid())
         return Texture::createInvalid(*this);
@@ -3307,12 +3307,18 @@ static MTLPixelFormat LEGACY_NODELETE resolvedPixelFormat(MTLPixelFormat viewPix
     }
 }
 
-Ref<TextureView> Texture::createView(const std::optional<WebGPU::TextureViewDescriptor>& optionalDescriptor)
+RefPtr<WebGPU::TextureView> Texture::createView(const std::optional<WebGPU::TextureViewDescriptor>& optionalDescriptor)
 {
     auto device = m_device;
 
     if (m_destroyed)
         return TextureView::createInvalid(*this, device.get());
+
+    // The texture-component-swizzle feature is not supported, so it can never be enabled.
+    if (optionalDescriptor && optionalDescriptor->swizzle != WebGPU::TextureComponentSwizzle { }) {
+        device->generateAValidationError("GPUTexture.createView: swizzle is not \"rgba\" and the texture-component-swizzle feature is not enabled"_s);
+        return TextureView::createInvalid(*this, device.get());
+    }
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
@@ -3673,6 +3679,11 @@ ASCIILiteral Texture::formatToString(WGPUTextureFormat format)
     case WGPUTextureFormat_Force32:
         return "invalid format"_s;
     }
+}
+
+void Texture::undestroy()
+{
+    recreateIfNeeded();
 }
 
 void Texture::destroy()
@@ -4277,29 +4288,9 @@ void wgpuTextureRelease(WGPUTexture texture)
     WebGPU::Metal::fromAPI(texture).deref();
 }
 
-static bool isIdentitySwizzle(const WGPUTextureComponentSwizzle& swizzle)
-{
-    // WGPUComponentSwizzle_Undefined selects the channel's own component, so a zero-initialized swizzle is the identity.
-    auto isIdentity = [](WGPUComponentSwizzle component, WGPUComponentSwizzle channel) {
-        return component == WGPUComponentSwizzle_Undefined || component == channel;
-    };
-    return isIdentity(swizzle.r, WGPUComponentSwizzle_R)
-        && isIdentity(swizzle.g, WGPUComponentSwizzle_G)
-        && isIdentity(swizzle.b, WGPUComponentSwizzle_B)
-        && isIdentity(swizzle.a, WGPUComponentSwizzle_A);
-}
-
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
     Ref protectedTexture = WebGPU::Metal::fromAPI(texture);
-    // The C++ descriptor has no swizzle, and the texture-component-swizzle feature is not supported,
-    // so it can never be enabled. A destroyed texture's createView generates no error.
-    if (descriptor && !isIdentitySwizzle(descriptor->swizzle)) {
-        Ref device = protectedTexture->device();
-        if (!protectedTexture->isDestroyed())
-            device->generateAValidationError("GPUTexture.createView: swizzle is not \"rgba\" and the texture-component-swizzle feature is not enabled"_s);
-        return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
-    }
     // A null descriptor is a descriptor with all members at their defaults.
     std::optional<WebGPU::TextureViewDescriptor> apiDescriptor;
     if (descriptor) {
@@ -4310,7 +4301,9 @@ WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureView
             return WebGPU::Metal::releaseToAPI(WebGPU::Metal::TextureView::createInvalid(protectedTexture, device));
         }
     }
-    return WebGPU::Metal::releaseToAPI(protectedTexture->createView(apiDescriptor));
+    // Every WebGPU::TextureView that a WebGPU::Metal::Texture creates is a WebGPU::Metal::TextureView.
+    Ref view = downcast<WebGPU::Metal::TextureView>(*protectedTexture->createView(apiDescriptor));
+    return WebGPU::Metal::releaseToAPI(WTF::move(view));
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
@@ -4320,7 +4313,7 @@ void wgpuTextureDestroy(WGPUTexture texture)
 
 void wgpuTextureUndestroy(WGPUTexture texture)
 {
-    protect(WebGPU::Metal::fromAPI(texture))->recreateIfNeeded();
+    protect(WebGPU::Metal::fromAPI(texture))->undestroy();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)

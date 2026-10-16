@@ -27,21 +27,21 @@
 
 #include "GPUBuffer.h"
 #include "GPUImageDataLayout.h"
-#include "WebGPUImageCopyBuffer.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
 struct GPUImageCopyBuffer : public GPUImageDataLayout {
-    WebGPU::ImageCopyBuffer convertToBacking() const
+    ::WebGPU::TexelCopyBufferInfo convertToBacking() const
     {
         return {
-            {
-                offset,
-                bytesPerRow,
-                rowsPerImage,
+            .layout = {
+                .offset = offset,
+                .bytesPerRow = bytesPerRow,
+                .rowsPerImage = rowsPerImage,
             },
-            buffer->backing()
+            .buffer = buffer->backing(),
         };
     }
 

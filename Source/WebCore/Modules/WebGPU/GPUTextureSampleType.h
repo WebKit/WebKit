@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUTextureSampleType.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -38,19 +38,19 @@ enum class GPUTextureSampleType : uint8_t {
     Uint,
 };
 
-inline WebGPU::TextureSampleType convertToBacking(GPUTextureSampleType textureSampleType)
+inline ::WebGPU::TextureSampleType convertToBacking(GPUTextureSampleType textureSampleType)
 {
     switch (textureSampleType) {
     case GPUTextureSampleType::Float:
-        return WebGPU::TextureSampleType::Float;
+        return ::WebGPU::TextureSampleType::Float;
     case GPUTextureSampleType::UnfilterableFloat:
-        return WebGPU::TextureSampleType::UnfilterableFloat;
+        return ::WebGPU::TextureSampleType::UnfilterableFloat;
     case GPUTextureSampleType::Depth:
-        return WebGPU::TextureSampleType::Depth;
+        return ::WebGPU::TextureSampleType::Depth;
     case GPUTextureSampleType::Sint:
-        return WebGPU::TextureSampleType::Sint;
+        return ::WebGPU::TextureSampleType::Sint;
     case GPUTextureSampleType::Uint:
-        return WebGPU::TextureSampleType::Uint;
+        return ::WebGPU::TextureSampleType::Uint;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

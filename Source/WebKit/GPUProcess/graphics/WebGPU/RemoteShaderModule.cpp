@@ -31,16 +31,14 @@
 #include "RemoteShaderModuleMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <WebCore/WebGPUCompilationInfo.h>
-#include <WebCore/WebGPUCompilationMessage.h>
-#include <WebCore/WebGPUShaderModule.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteShaderModule);
 
-RemoteShaderModule::RemoteShaderModule(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+RemoteShaderModule::RemoteShaderModule(::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     : m_backing(shaderModule)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTF::move(streamConnection))
@@ -64,18 +62,8 @@ void RemoteShaderModule::stopListeningForIPC()
 
 void RemoteShaderModule::compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
 {
-    protect(m_backing)->compilationInfo([callback = WTF::move(callback)] (Ref<WebCore::WebGPU::CompilationInfo>&& compilationMessage) mutable {
-        auto convertedMessages = compilationMessage->messages().map([] (const Ref<WebCore::WebGPU::CompilationMessage>& message) {
-            return WebGPU::CompilationMessage {
-                message->message(),
-                message->type(),
-                message->lineNum(),
-                message->linePos(),
-                message->offset(),
-                message->length(),
-            };
-        });
-        callback(WTF::move(convertedMessages));
+    protect(m_backing)->compilationInfo([callback = WTF::move(callback)](::WebGPU::CompilationInfo&& compilationInfo) mutable {
+        callback(WTF::move(compilationInfo.messages));
     });
 }
 

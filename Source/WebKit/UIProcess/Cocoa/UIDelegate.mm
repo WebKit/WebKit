@@ -2256,28 +2256,28 @@ void UIDelegate::UIClient::supportedXRSessionFeatures(PlatformXR::Device::Featur
 }
 
 #if PLATFORM(IOS_FAMILY)
-static MTLPixelFormat toMetalFormat(WebCore::WebGPU::TextureFormat format)
+static MTLPixelFormat toMetalFormat(::WebGPU::TextureFormat format)
 {
     using namespace WebCore;
     switch (format) {
-    case WebCore::WebGPU::TextureFormat::Bgra8unorm:
+    case ::WebGPU::TextureFormat::Bgra8unorm:
         return MTLPixelFormatBGRA8Unorm_sRGB;
-    case WebCore::WebGPU::TextureFormat::Rgba8unorm:
+    case ::WebGPU::TextureFormat::Rgba8unorm:
         return MTLPixelFormatRGBA8Unorm_sRGB;
-    case WebCore::WebGPU::TextureFormat::Rgba16float:
+    case ::WebGPU::TextureFormat::Rgba16float:
         return MTLPixelFormatRGBA16Float;
-    case WebCore::WebGPU::TextureFormat::Depth32float:
-    case WebCore::WebGPU::TextureFormat::Depth24plus:
+    case ::WebGPU::TextureFormat::Depth32float:
+    case ::WebGPU::TextureFormat::Depth24plus:
         return MTLPixelFormatDepth32Float;
-    case WebCore::WebGPU::TextureFormat::Depth32floatStencil8:
-    case WebCore::WebGPU::TextureFormat::Depth24plusStencil8:
+    case ::WebGPU::TextureFormat::Depth32floatStencil8:
+    case ::WebGPU::TextureFormat::Depth24plusStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
     default:
         return MTLPixelFormatInvalid;
     }
 }
 
-static MTLPixelFormat toMetalFormat(std::optional<WebCore::WebGPU::TextureFormat> optionalFormat)
+static MTLPixelFormat toMetalFormat(std::optional<::WebGPU::TextureFormat> optionalFormat)
 {
     return optionalFormat ? toMetalFormat(*optionalFormat) : MTLPixelFormatInvalid;
 }

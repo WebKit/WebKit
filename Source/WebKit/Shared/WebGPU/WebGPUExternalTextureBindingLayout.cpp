@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUExternalTextureBindingLayout.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ExternalTextureBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ExternalTextureBindingLayout& externalTextureBindingLayout)
+std::optional<ExternalTextureBindingLayout> ConvertToBackingContext::convertToBacking(const ::WebGPU::ExternalTextureBindingLayout& externalTextureBindingLayout)
 {
     return { ExternalTextureBindingLayout { } };
 }
 
-std::optional<WebCore::WebGPU::ExternalTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const ExternalTextureBindingLayout& externalTextureBindingLayout)
+std::optional<::WebGPU::ExternalTextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const ExternalTextureBindingLayout& externalTextureBindingLayout)
 {
-    return { WebCore::WebGPU::ExternalTextureBindingLayout { } };
+    return { ::WebGPU::ExternalTextureBindingLayout { } };
 }
 
 } // namespace WebKit

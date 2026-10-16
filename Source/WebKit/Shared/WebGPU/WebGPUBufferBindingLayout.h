@@ -27,16 +27,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include <WebCore/WebGPUBufferBindingType.h>
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct BufferBindingLayout {
-    WebCore::WebGPU::BufferBindingType type { WebCore::WebGPU::BufferBindingType::Uniform };
+    ::WebGPU::BufferBindingType type { ::WebGPU::BufferBindingType::Uniform };
     bool hasDynamicOffset { false };
-    WebCore::WebGPU::Size64 minBindingSize { 0 };
+    uint64_t minBindingSize { 0 };
 };
 
 } // namespace WebKit::WebGPU

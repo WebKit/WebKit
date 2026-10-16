@@ -22,8 +22,8 @@
 
 #if ENABLE(GPU_PROCESS)
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::StencilFaceState {
-    WebCore::WebGPU::CompareFunction compare
-    WebCore::WebGPU::StencilOperation failOp
-    WebCore::WebGPU::StencilOperation depthFailOp
-    WebCore::WebGPU::StencilOperation passOp
+    ::WebGPU::CompareFunction compare
+    ::WebGPU::StencilOperation failOp
+    ::WebGPU::StencilOperation depthFailOp
+    ::WebGPU::StencilOperation passOp
 }

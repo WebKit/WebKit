@@ -193,7 +193,7 @@ static std::optional<BindGroupLayout::Entry::BindingLayout> bindingLayout(const 
     };
 }
 
-Ref<BindGroupLayout> Device::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor)
+RefPtr<WebGPU::BindGroupLayout> Device::createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor& descriptor)
 {
     if (!isValid())
         return BindGroupLayout::createInvalid(*this);

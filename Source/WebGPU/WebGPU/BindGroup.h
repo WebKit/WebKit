@@ -100,7 +100,7 @@ public:
     const BufferAndType* LEGACY_NODELETE dynamicBuffer(uint32_t) const;
     uint32_t LEGACY_NODELETE dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
     bool rebindSamplersIfNeeded() const;
-    bool updateExternalTextures(ExternalTexture&);
+    bool updateExternalTextures(WebGPU::ExternalTexture&) final;
     void releaseDestroyedResources();
     bool makeSubmitInvalid(ShaderStage, const BindGroupLayout*) const;
     const SamplersContainer& samplers() const LIFETIME_BOUND { return m_samplers; }

@@ -29,14 +29,12 @@
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
-#include <WebCore/WebGPUXRSubImage.h>
+#include <WebCore/WebGPUCppAPI.h>
+#include <WebCore/WebGPUDevice.h>
 
 namespace WebCore {
 class ImageBuffer;
 class NativeImage;
-namespace WebGPU {
-class Device;
-}
 }
 
 namespace WebKit::WebGPU {
@@ -44,7 +42,7 @@ namespace WebKit::WebGPU {
 class ConvertToBackingContext;
 class RemoteTextureProxy;
 
-class RemoteXRSubImageProxy final : public WebCore::WebGPU::XRSubImage {
+class RemoteXRSubImageProxy final : public ::WebGPU::XRSubImage {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImageProxy);
 public:
     static Ref<RemoteXRSubImageProxy> create(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -57,6 +55,11 @@ public:
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent; }
 
+    RefPtr<::WebGPU::Texture> colorTexture() final;
+    RefPtr<::WebGPU::Texture> depthStencilTexture() final;
+    void setLabel(String&&) final { }
+    bool isValid() const final;
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -67,12 +70,7 @@ private:
     RemoteXRSubImageProxy& operator=(const RemoteXRSubImageProxy&) = delete;
     RemoteXRSubImageProxy& operator=(RemoteXRSubImageProxy&&) = delete;
 
-    bool isRemoteXRSubImageProxy() const final { return true; }
-
     WebGPUIdentifier backing() const { return m_backing; }
-    RefPtr<WebCore::WebGPU::Texture> colorTexture() final;
-    RefPtr<WebCore::WebGPU::Texture> depthStencilTexture() final;
-    RefPtr<WebCore::WebGPU::Texture> motionVectorTexture() final;
 
     template<typename T>
     [[nodiscard]] IPC::Error send(T&& message)
@@ -96,7 +94,8 @@ private:
 } // namespace WebKit::WebGPU
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRSubImageProxy)
-    static bool isType(const WebCore::WebGPU::XRSubImage& image) { return image.isRemoteXRSubImageProxy(); }
+    // In the Web Process, every WebGPU::XRSubImage is a RemoteXRSubImageProxy.
+    static bool isType(const ::WebGPU::XRSubImage&) { return true; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

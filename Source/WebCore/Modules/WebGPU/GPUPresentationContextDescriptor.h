@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct GPUPresentationContextDescriptor {
-    WebGPU::PresentationContextDescriptor convertToBacking() const
+    WebGPUPresentationContextDescriptor convertToBacking() const
     {
         return {
             layout->backing(),

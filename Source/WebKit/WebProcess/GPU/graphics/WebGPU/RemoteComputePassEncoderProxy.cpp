@@ -49,7 +49,7 @@ RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setPipeline(const WebCore::WebGPU::ComputePipeline& computePipeline)
+void RemoteComputePassEncoderProxy::setPipeline(const ::WebGPU::ComputePipeline& computePipeline)
 {
     auto convertedComputePipeline = m_convertToBackingContext->convertToBacking(computePipeline);
 
@@ -57,13 +57,13 @@ void RemoteComputePassEncoderProxy::setPipeline(const WebCore::WebGPU::ComputePi
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
+void RemoteComputePassEncoderProxy::dispatch(uint32_t workgroupCountX, uint32_t workgroupCountY, uint32_t workgroupCountZ)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::Dispatch(workgroupCountX, workgroupCountY, workgroupCountZ));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::dispatchIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
+void RemoteComputePassEncoderProxy::dispatchIndirect(const ::WebGPU::Buffer& indirectBuffer, uint64_t indirectOffset)
 {
     auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
 
@@ -77,27 +77,13 @@ void RemoteComputePassEncoderProxy::end()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, const WebCore::WebGPU::BindGroup* bindGroup,
-    std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& offsets)
+void RemoteComputePassEncoderProxy::setBindGroup(uint32_t index, const ::WebGPU::BindGroup* bindGroup, std::optional<std::span<const uint32_t>> dynamicOffsets)
 {
     std::optional<WebGPUIdentifier> convertedBindGroup;
     if (bindGroup)
         convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
 
-    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, WTF::move(offsets)));
-    UNUSED_VARIABLE(sendResult);
-}
-
-void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, const WebCore::WebGPU::BindGroup* bindGroup,
-    std::span<const uint32_t> dynamicOffsetsArrayBuffer,
-    WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
-    WebCore::WebGPU::Size32 dynamicOffsetsDataLength)
-{
-    std::optional<WebGPUIdentifier> convertedBindGroup;
-    if (bindGroup)
-        convertedBindGroup = m_convertToBackingContext->convertToBacking(*bindGroup);
-
-    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength))));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, dynamicOffsets ? std::optional { Vector<uint32_t>(*dynamicOffsets) } : std::nullopt));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -119,10 +105,16 @@ void RemoteComputePassEncoderProxy::insertDebugMarker(String&& markerLabel)
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setLabelInternal(const String& label)
+void RemoteComputePassEncoderProxy::setLabel(String&& label)
 {
-    auto sendResult = send(Messages::RemoteComputePassEncoder::SetLabel(label));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::SetLabel(WTF::move(label)));
     UNUSED_VARIABLE(sendResult);
+}
+
+bool RemoteComputePassEncoderProxy::isValid() const
+{
+    // The Web Process cannot know. RemoteGPU::isValid() answers it for tests.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit::WebGPU

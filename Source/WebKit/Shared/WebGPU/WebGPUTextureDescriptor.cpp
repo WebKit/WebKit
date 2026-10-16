@@ -30,34 +30,28 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <WebCore/WebGPUTextureDescriptor.h>
+#include <WebCore/WebGPUCppAPI.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::TextureDescriptor& textureDescriptor)
+std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const ::WebGPU::TextureDescriptor& textureDescriptor)
 {
-    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(textureDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    auto size = convertToBacking(textureDescriptor.size);
-    if (!size)
-        return std::nullopt;
-
-    return { { WTF::move(*base), WTF::move(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
+    return { { { textureDescriptor.label }, textureDescriptor.size, textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, Vector(textureDescriptor.viewFormats) } };
 }
 
-std::optional<WebCore::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)
+// The descriptor borrows the view formats from textureDescriptor.
+std::optional<::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)
 {
-    auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(textureDescriptor));
-    if (!base)
-        return std::nullopt;
-
-    auto size = convertFromBacking(textureDescriptor.size);
-    if (!size)
-        return std::nullopt;
-
-    return { { WTF::move(*base), WTF::move(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
+    return ::WebGPU::TextureDescriptor {
+        .label = textureDescriptor.label,
+        .usage = textureDescriptor.usage,
+        .dimension = textureDescriptor.dimension,
+        .size = textureDescriptor.size,
+        .format = textureDescriptor.format,
+        .mipLevelCount = textureDescriptor.mipLevelCount,
+        .sampleCount = textureDescriptor.sampleCount,
+        .viewFormats = textureDescriptor.viewFormats.span(),
+    };
 }
 
 } // namespace WebKit

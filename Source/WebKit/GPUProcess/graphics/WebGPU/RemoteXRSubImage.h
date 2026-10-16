@@ -32,7 +32,7 @@
 #include "WebGPUIdentifier.h"
 #include <WebCore/AlphaPremultiplication.h>
 #include <WebCore/RenderingResourceIdentifier.h>
-#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -45,10 +45,6 @@
 namespace WebCore {
 class ColorSpace;
 class ImageBuffer;
-}
-
-namespace WebCore::WebGPU {
-class XRSubImage;
 }
 
 namespace IPC {
@@ -68,7 +64,7 @@ class ObjectHeap;
 class RemoteXRSubImage final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteXRSubImage);
 public:
-    static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteXRSubImage> create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, ::WebGPU::XRSubImage& xrSubImage, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteXRSubImage(gpuConnectionToWebProcess, xrSubImage, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -81,21 +77,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteXRSubImage(GPUConnectionToWebProcess&, WebCore::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteXRSubImage(GPUConnectionToWebProcess&, ::WebGPU::XRSubImage&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteXRSubImage(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage(RemoteXRSubImage&&) = delete;
     RemoteXRSubImage& operator=(const RemoteXRSubImage&) = delete;
     RemoteXRSubImage& operator=(RemoteXRSubImage&&) = delete;
 
-    WebCore::WebGPU::XRSubImage& backing() { return m_backing; }
+    ::WebGPU::XRSubImage& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
     void destruct();
     void getColorTexture(WebGPUIdentifier);
     void getDepthTexture(WebGPUIdentifier);
 
-    const Ref<WebCore::WebGPU::XRSubImage> m_backing;
+    const Ref<::WebGPU::XRSubImage> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

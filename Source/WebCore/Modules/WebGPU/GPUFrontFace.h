@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUFrontFace.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <cstdint>
 
 namespace WebCore {
@@ -35,13 +35,13 @@ enum class GPUFrontFace : uint8_t {
     Cw,
 };
 
-inline WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)
+inline ::WebGPU::FrontFace convertToBacking(GPUFrontFace frontFace)
 {
     switch (frontFace) {
     case GPUFrontFace::Ccw:
-        return WebGPU::FrontFace::CCW;
+        return ::WebGPU::FrontFace::CCW;
     case GPUFrontFace::Cw:
-        return WebGPU::FrontFace::CW;
+        return ::WebGPU::FrontFace::CW;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

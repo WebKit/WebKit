@@ -1512,7 +1512,7 @@ static NSString* errorValidatingVertexStageIn(const ShaderModule::VertexStageIn*
     return nil;
 }
 
-Ref<RenderPipeline> Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor)
+RefPtr<WebGPU::RenderPipeline> Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descriptor)
 {
     std::optional<std::pair<Ref<RenderPipeline>, NSString*>> result;
     createRenderPipeline(descriptor, false, nullptr, LibraryCompilation::Synchronous, [&](std::pair<Ref<RenderPipeline>, NSString*>&& pipelineAndError) {
@@ -1647,6 +1647,8 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
             mtlColorAttachment.pixelFormat = Texture::pixelFormat(targetFormat);
 
             hasAtLeastOneColorTarget = true;
+            if (targetDescriptor.writeMask.contains(WebGPU::ColorWrite::Invalid))
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s));
             if (fragmentFunctionReturnType == MTLDataTypeNone && !targetDescriptor.writeMask.isEmpty())
                 return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s));
             mtlColorAttachment.writeMask = colorWriteMask(toAPI(targetDescriptor.writeMask));
@@ -1886,13 +1888,13 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
     });
 }
 
-static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyncRenderPipelineCompletion(Device& device, CompletionHandler<void(std::expected<Ref<RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
+static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyncRenderPipelineCompletion(Device& device, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     return [protectedDevice = protect(device), callback = WTF::move(callback)](std::pair<Ref<RenderPipeline>, NSString*>&& pipelineAndError) mutable {
         auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = String { pipelineAndError.second }]() mutable {
             // A lost device makes invalid objects without errors.
             if (protectedDevice->isDestroyed() || pipeline->isValid())
-                return callback(WTF::move(pipeline));
+                return callback(Ref<WebGPU::RenderPipeline> { WTF::move(pipeline) });
             callback(makeUnexpected(WebGPU::PipelineError { .reason = WebGPU::PipelineErrorReason::Validation, .message = WTF::move(message) }));
         };
 
@@ -1905,15 +1907,15 @@ static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyn
     };
 }
 
-void Device::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
+void Device::createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     createRenderPipeline(descriptor, true, nullptr, asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
 }
 
-void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, const RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
+void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WebGPU::RenderPipelineDescriptor& descriptor, const WebGPU::RenderPipeline& pipelineToReplace, CompletionHandler<void(std::expected<Ref<WebGPU::RenderPipeline>, WebGPU::PipelineError>&&)>&& callback)
 {
     bool wasErrorReportingPaused = pauseErrorReporting(true);
-    createRenderPipeline(descriptor, true, &pipelineToReplace, asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
+    createRenderPipeline(descriptor, true, &downcast<RenderPipeline>(pipelineToReplace), asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
     pauseErrorReporting(wasErrorReportingPaused);
 }
 
@@ -1958,7 +1960,7 @@ RenderPipeline::RenderPipeline(Device& device)
 
 RenderPipeline::~RenderPipeline() = default;
 
-Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+Ref<WebGPU::BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     auto pipelineLayout = m_pipelineLayout;
     auto device = m_device;
@@ -2161,7 +2163,9 @@ void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return WebGPU::Metal::releaseToAPI(protect(WebGPU::Metal::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex));
+    // Every WebGPU::BindGroupLayout that a WebGPU::Metal::RenderPipeline returns is a WebGPU::Metal::BindGroupLayout.
+    Ref bindGroupLayout = downcast<WebGPU::Metal::BindGroupLayout>(protect(WebGPU::Metal::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex).get());
+    return WebGPU::Metal::releaseToAPI(WTF::move(bindGroupLayout));
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, WGPUStringView label)

@@ -30,14 +30,11 @@
 #include "RemoteGPU.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPUCppAPI.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebCore::WebGPU {
-class CommandBuffer;
-}
 
 namespace IPC {
 class StreamServerConnection;
@@ -52,7 +49,7 @@ class ObjectHeap;
 class RemoteCommandBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteCommandBuffer);
 public:
-    static Ref<RemoteCommandBuffer> create(WebCore::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandBuffer> create(::WebGPU::CommandBuffer& commandBuffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, RemoteGPU& gpu, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteCommandBuffer(commandBuffer, objectHeap, WTF::move(streamConnection), gpu, identifier));
     }
@@ -66,21 +63,21 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandBuffer(WebCore::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
+    RemoteCommandBuffer(::WebGPU::CommandBuffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, RemoteGPU&, WebGPUIdentifier);
 
     RemoteCommandBuffer(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer(RemoteCommandBuffer&&) = delete;
     RemoteCommandBuffer& operator=(const RemoteCommandBuffer&) = delete;
     RemoteCommandBuffer& operator=(RemoteCommandBuffer&&) = delete;
 
-    WebCore::WebGPU::CommandBuffer& backing() { return m_backing; }
+    ::WebGPU::CommandBuffer& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setLabel(String&&);
     void destruct();
 
-    const Ref<WebCore::WebGPU::CommandBuffer> m_backing;
+    const Ref<::WebGPU::CommandBuffer> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
