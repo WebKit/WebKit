@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "GPRInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
@@ -60,6 +61,14 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSetBuilder, Offse
     });
 
     ASSERT(static_cast<size_t>(offset - startOffset) == sizeOfAreaInBytes);
+}
+
+RegisterAtOffsetList::RegisterAtOffsetList(std::initializer_list<RegisterAtOffset> registers, size_t sizeOfAreaInBytes)
+    : m_registers(registers)
+    , m_sizeOfAreaInBytes(sizeOfAreaInBytes)
+{
+    for (size_t i = 1; i < m_registers.size(); ++i)
+        ASSERT(m_registers[i - 1].reg() < m_registers[i].reg());
 }
 
 void RegisterAtOffsetList::dump(PrintStream& out) const
@@ -115,7 +124,22 @@ const RegisterAtOffsetList& RegisterAtOffsetList::ipintCalleeSaveRegisters()
     static std::once_flag onceKey;
     static LazyNeverDestroyed<RegisterAtOffsetList> result;
     std::call_once(onceKey, [] {
-        result.construct(RegisterSet::ipintCalleeSaveRegisters());
+        // PC -8, MC -16, size -24. find() needs register-index order, so x86 lists the size last.
+#if CPU(X86_64)
+        result.construct(std::initializer_list<RegisterAtOffset> {
+            RegisterAtOffset(GPRInfo::wasmIPIntMCRegister, -16, Width64),
+            RegisterAtOffset(GPRInfo::wasmIPIntPCRegister, -8, Width64),
+            RegisterAtOffset(GPRInfo::wasmBoundsCheckingSizeRegister, -24, Width64),
+        }, 24);
+#elif CPU(ARM64) || CPU(RISCV64)
+        result.construct(std::initializer_list<RegisterAtOffset> {
+            RegisterAtOffset(GPRInfo::wasmBoundsCheckingSizeRegister, -24, Width64),
+            RegisterAtOffset(GPRInfo::wasmIPIntMCRegister, -16, Width64),
+            RegisterAtOffset(GPRInfo::wasmIPIntPCRegister, -8, Width64),
+        }, 24);
+#else
+#error Unsupported architecture.
+#endif
     });
     return result.get();
 }

@@ -23,28 +23,30 @@
 
 # Callee save
 
+# -3 * SlotSize, matching RegisterAtOffsetList::ipintCalleeSaveRegisters(). MC stays at -16 and PC at -8.
+const IPIntBoundsCheckingSizeSpill = -3 * SlotSize
+
 macro saveIPIntRegisters()
-    # NOTE: We intentionally don't restore pinned wasm registers here. These are saved
-    # and restored when entering Wasm by the JSToWasm wrapper and changes to them are meant
-    # to be observable within the same Wasm module.
+    # memoryBase and wasmInstance stay live. boundsCheckingSize is callee-saved.
     subp IPIntCalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq MC, PC, -2 * SlotSize[cfr]
+        storep boundsCheckingSize, IPIntBoundsCheckingSizeSpill[cfr]
     elsif X86_64 or RISCV64
         storep PC, -1 * SlotSize[cfr]
         storep MC, -2 * SlotSize[cfr]
+        storep boundsCheckingSize, IPIntBoundsCheckingSizeSpill[cfr]
     end
 end
 
 macro restoreIPIntRegisters()
-    # NOTE: We intentionally don't restore pinned wasm registers here. These are saved
-    # and restored when entering Wasm by the JSToWasm wrapper and changes to them are meant
-    # to be observable within the same Wasm module.
     if ARM64 or ARM64E
         loadpairq -2 * SlotSize[cfr], MC, PC
+        loadp IPIntBoundsCheckingSizeSpill[cfr], boundsCheckingSize
     elsif X86_64 or RISCV64
         loadp -1 * SlotSize[cfr], PC
         loadp -2 * SlotSize[cfr], MC
+        loadp IPIntBoundsCheckingSizeSpill[cfr], boundsCheckingSize
     end
     addp IPIntCalleeSaveSpaceStackAligned, sp
 end
@@ -12445,14 +12447,22 @@ end
 if ARM64E
     addp CallerFrameAndPCSize, cfr, ws2
 end
+if X86_64
+    # targetInstance is sc3, which is boundsCheckingSize.
+    loadp IPIntBoundsCheckingSizeSpill[cfr], sc2
+else
+    loadp IPIntBoundsCheckingSizeSpill[cfr], boundsCheckingSize
+end
     # saved cfr
     move sc1, cfr
 
     # swap instances
     move targetInstance, wasmInstance
+if X86_64
+    move sc2, boundsCheckingSize
+end
 
-    # set up memory
-    ipintReloadMemory(ws1)
+    ipintReloadMemoryBase(ws1)
 
     addp CallerFrameAndPCSize, sp
 
@@ -12764,7 +12774,7 @@ end
 global _wasm_restore_frame_return
 _wasm_restore_frame_return:
     loadp CodeBlock[cfr], wasmInstance
-    ipintReloadMemory(ws0)
+    ipintReloadMemoryBase(ws0)
 
 if ARM64E
     loadp ReturnPC[cfr], lr

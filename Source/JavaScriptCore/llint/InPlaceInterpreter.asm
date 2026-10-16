@@ -417,6 +417,11 @@ macro ipintReloadMemory(scratch)
     cagedPrimitiveMayBeNull(memoryBase, scratch)
 end
 
+macro ipintReloadMemoryBase(scratch)
+    loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+    cagedPrimitiveMayBeNull(memoryBase, scratch)
+end
+
 # Call site tracking
 
 macro saveCallSiteIndex()

@@ -227,9 +227,8 @@ static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGener
 // Emits a RestoreInstanceCallee frame to restore our instance when returning from a
 // cross instance tail call chain. This is done lazily for performance of intra-module
 // tail call chains.
-// Note: since we know we're making a cross instance call it's likely valid to use
-// GPRInfo::wasmBaseMemoryPointer and GPRInfo::wasmBoundsCheckingSizeRegister as
-// two of the scratches. They'll be filled later anyway.
+// wasmBaseMemoryPointer is reloaded for the callee. wasmBoundsCheckingSizeRegister is
+// callee-saved, so a scratch use has to be restored before the callee is entered.
 //
 // FIXME: In OMG and BBQ, emit restore frame creation on an out-of-line slow path
 // so the common case (same instance || restore frame exists) doesn't have to jump over
