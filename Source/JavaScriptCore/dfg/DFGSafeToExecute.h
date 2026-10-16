@@ -459,8 +459,10 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetTypedArrayByteOffsetAsInt52:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
 
-    case TypedArraySet:
-        return !(state.forNode(node->child1()).m_type & ~speculationFromTypedArrayType(node->typedArrayType()));
+    case TypedArraySet: {
+        SpeculatedType expected = speculationFromTypedArrayType(node->typedArrayType());
+        return !(state.forNode(node->child1()).m_type & ~expected) && !(state.forNode(node->child2()).m_type & ~expected);
+    }
 
     case PutByValDirect:
     case PutByVal:

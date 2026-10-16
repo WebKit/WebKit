@@ -3165,6 +3165,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* source = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             Node* offset = argumentCountIncludingThis > 2 ? get(virtualRegisterForArgumentIncludingThis(2, registerOffset)) : jsConstant(jsNumber(0));
             addToGraph(CheckArray, OpInfo(mode.asWord()), base);
+            addToGraph(CheckArray, OpInfo(mode.asWord()), source);
             addToGraph(TypedArraySet, OpInfo(mode.typedArrayType()), base, source, offset);
             setResult(addToGraph(JSConstant, OpInfo(m_constantUndefined)));
             return CallOptimizationResult::Inlined;

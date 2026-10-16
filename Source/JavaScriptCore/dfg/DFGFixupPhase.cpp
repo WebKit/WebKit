@@ -3745,7 +3745,7 @@ private:
 
         case TypedArraySet: {
             fixEdge<KnownCellUse>(node->child1());
-            fixEdge<CellUse>(node->child2());
+            fixEdge<KnownCellUse>(node->child2());
             fixEdge<Int32Use>(node->child3());
             break;
         }

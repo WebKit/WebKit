@@ -22447,7 +22447,6 @@ IGNORE_CLANG_WARNINGS_END
         LValue offset = lowInt32(m_node->child3());
 
         TypedArrayType type = m_node->typedArrayType();
-        FTL_TYPE_CHECK(jsValueValue(source), m_node->child2(), speculationFromTypedArrayType(type), isNotType(source, typeForTypedArrayType(type)));
 
         LValue baseLength = typedArrayLength(base, false, type, m_node->child1());
         LValue sourceLength = typedArrayLength(source, false, type, m_node->child2());

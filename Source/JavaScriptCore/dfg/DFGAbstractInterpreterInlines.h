@@ -5910,12 +5910,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case DataViewSet: {
-        break;
-    }
-
+    case DataViewSet:
     case TypedArraySet: {
-        filter(node->child2(), speculationFromTypedArrayType(node->typedArrayType()));
         break;
     }
 

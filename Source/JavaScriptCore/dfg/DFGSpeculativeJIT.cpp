@@ -8325,7 +8325,6 @@ void SpeculativeJIT::compileTypedArraySet(Node* node)
     GPRReg sizeGPR = size.gpr();
 
     TypedArrayType type = node->typedArrayType();
-    speculateCellType(node->child2(), sourceGPR, speculationFromTypedArrayType(type), typeForTypedArrayType(type));
 
     if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(node->child1())))
         speculationCheck(UnexpectedResizableArrayBufferView, JSValueSource(baseGPR), node->child1(), branchTest8(NonZero, Address(baseGPR, JSArrayBufferView::offsetOfMode()), TrustedImm32(isResizableOrGrowableSharedMode)));
