@@ -38,6 +38,7 @@ Access-Control-Request-Headers
 Access-Control-Request-Method
 Age
 Authorization
+Available-Dictionary
 Cache-Control
 Clear-Site-Data
 Connection
@@ -58,6 +59,7 @@ Cross-Origin-Opener-Policy
 Cross-Origin-Opener-Policy-Report-Only
 Cross-Origin-Resource-Policy
 Date
+Dictionary-ID
 DNT
 Default-Style
 Document-Isolation-Policy

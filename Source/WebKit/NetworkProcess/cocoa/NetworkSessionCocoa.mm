@@ -502,6 +502,19 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     }
 }
 
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task _needsCompressionDictionaryWithSHA256:(NSData *)sha256 completionHandler:(void (^)(NSData *dictionaryData))completionHandler
+{
+    RefPtr networkDataTask = [self existingTask:task];
+    if (!networkDataTask) {
+        completionHandler(nil);
+        return;
+    }
+
+    networkDataTask->needsCompressionDictionary(span(sha256), [completionHandler = makeBlockPtr(completionHandler)](RefPtr<WebCore::SharedBuffer>&& buffer) {
+        completionHandler(buffer ? buffer->createNSData().get() : nil);
+    });
+}
+
 static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, SessionWrapper& sessionWrapper, NSURLAuthenticationChallenge *challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential)>&& completionHandler)
 {
     session.continueDidReceiveChallenge(sessionWrapper, challenge, negotiatedLegacyTLS, taskIdentifier, networkDataTask, [completionHandler = WTF::move(completionHandler), secTrust = retainPtr(challenge.protectionSpace.serverTrust)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {

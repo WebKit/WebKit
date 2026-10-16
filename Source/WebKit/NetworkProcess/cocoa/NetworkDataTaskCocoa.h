@@ -96,6 +96,9 @@ public:
 
     void checkTAO(const WebCore::ResourceResponse&);
 
+    static bool hasCompressionDictionarySupport();
+    void needsCompressionDictionary(std::span<const uint8_t> sha256, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
@@ -103,6 +106,9 @@ private:
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
     void updateFirstPartyInfoForSession(const URL&);
+
+    void updateCompressionDictionaryForRedirect(WebCore::ResourceRequest&);
+    void failForUnavailableCompressionDictionary();
 
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
@@ -123,6 +129,7 @@ private:
     bool m_navigationLosesFrameSpecificStorageAccess { false };
     const RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
     uint64_t m_requiredCookiesVersion { 0 };
+    std::optional<CompressionDictionaryParameters> m_compressionDictionary;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
