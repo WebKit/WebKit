@@ -2885,7 +2885,7 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
             return true;
     }
 
-    if (isGridItem() && gridAreaContentLogicalHeight())
+    if (isGridItem() && overridingContainingBlockContentLogicalHeight())
         return true;
 
     if (isFlexItem()) {
