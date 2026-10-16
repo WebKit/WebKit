@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 512 draws, one per 8x8 tile of a 256x128 framebuffer. Each draw first overwrites the same
+// 72-byte vertex buffer with its quad, so every draw reads data that the next upload replaces.
+const width = 256;
+const height = 128;
+const tileSize = 8;
+const tilesPerRow = width / tileSize;
+const drawCount = tilesPerRow * (height / tileSize);
+const vertexSize = 12; // vec2 position as floats, then RGBA as normalized bytes.
+const quadSize = 6 * vertexSize;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main() {
+    vColor = aColor;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+const quads = new ArrayBuffer(drawCount * quadSize);
+const quadPositions = new Float32Array(quads);
+const quadBytes = new Uint8Array(quads);
+const quadViews = [];
+const color = [0, 0, 0, 0];
+
+WebGLBench.run({
+    description: "Measures 512 pairs of bufferSubData of one 72-byte quad and a drawArrays of it, always into the same buffer, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor"]);
+        const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+        for (let i = 0; i < drawCount; ++i) {
+            const tileX = i % tilesPerRow;
+            const tileY = Math.floor(i / tilesPerRow);
+            corners.forEach(([x, y], vertex) => {
+                const offset = (i * quadSize + vertex * vertexSize) / 4;
+                quadPositions[offset] = (tileX + x) * tileSize / (width / 2) - 1;
+                quadPositions[offset + 1] = (tileY + y) * tileSize / (height / 2) - 1;
+            });
+            quadViews.push(new Uint8Array(quads, i * quadSize, quadSize));
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, quadSize, gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, vertexSize, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, vertexSize, 8);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < drawCount; ++i) {
+            WebGLBench.colorInto(n, i, color);
+            for (let vertex = 0; vertex < 6; ++vertex)
+                quadBytes.set(color, i * quadSize + vertex * vertexSize + 8);
+        }
+        for (let i = 0; i < drawCount; ++i) {
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0, quadViews[i]);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, width - tileSize / 2, height - tileSize / 2, WebGLBench.color(n, drawCount - 1), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => {
+            WebGLBench.colorInto(n, Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize), out);
+        });
+    }
+});
+
+</script>
+</body>
+</html>

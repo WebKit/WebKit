@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/draw-call-benchmark.js"></script>
+<script>
+WebGLBench.repeatCount = 2;
+
+// 1024 draws, one per 8x8 tile of a 256x256 framebuffer cleared to the color of the iteration.
+// Blending is disabled for every other draw. The draws in between enable it and cycle through
+// three blend functions, so each draw needs a different pipeline than the one before.
+const size = DrawCallBench.size;
+const tileSize = DrawCallBench.tileSize;
+const drawCount = DrawCallBench.tileCount;
+
+// The source color is the tile color plus a uniform color, both below 64 per channel, with the
+// alpha of the tile, from 64 to 191. The clear color is below 128 per channel and opaque, so
+// additive blending does not saturate the color channels.
+const fragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vec4(vColor.rgb + uColor.rgb, vColor.a);
+}`;
+
+// The blending of draw i: null for disabled, or the blend function and the result of it for
+// source s and destination d, as normalized colors.
+const blendModes = [
+    null,
+    { factors: ["ONE", "ONE"], blend: (s, d, sa, da) => Math.min(1, s + d) },
+    null,
+    { factors: ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA"], blend: (s, d, sa, da) => s * sa + d * (1 - sa) },
+    null,
+    { factors: ["DST_COLOR", "ZERO"], blend: (s, d, sa, da) => s * d },
+];
+
+let target;
+let colorLocation;
+const iterationColor = [0, 0, 0, 0];
+const clearColor = [0, 0, 0, 0];
+const source = [0, 0, 0, 0];
+
+function expectedTileInto(n, i, out)
+{
+    DrawCallBench.iterationColorInto(n, drawCount, iterationColor, 6);
+    DrawCallBench.iterationColorInto(n, drawCount + 1, clearColor);
+    DrawCallBench.tileColorInto(i, source, 6);
+    for (let c = 0; c < 3; ++c)
+        source[c] += iterationColor[c];
+    const mode = blendModes[i % blendModes.length];
+    if (!mode) {
+        for (let c = 0; c < 4; ++c)
+            out[c] = source[c];
+        return out;
+    }
+    const sa = source[3] / 255;
+    for (let c = 0; c < 4; ++c)
+        out[c] = Math.round(mode.blend(source[c] / 255, clearColor[c] / 255, sa, 1) * 255);
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 1024 drawArrays calls of 2 triangles each, disabling blending before every other draw and enabling it with one of 3 blend functions before the others, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, DrawCallBench.vertexShader, fragmentShader, ["aPosition", "aColor"]);
+        colorLocation = gl.getUniformLocation(program, "uColor");
+        DrawCallBench.bindTileVertices(gl, DrawCallBench.createTileVertices(DrawCallBench.allTiles(), DrawCallBench.quadCorners, 6));
+        blendModes.forEach(mode => {
+            if (mode)
+                mode.glFactors = mode.factors.map(factor => gl[factor]);
+        });
+    },
+    iteration(gl, n) {
+        DrawCallBench.iterationColorInto(n, drawCount + 1, clearColor);
+        gl.disable(gl.BLEND);
+        gl.clearColor(clearColor[0] / 255, clearColor[1] / 255, clearColor[2] / 255, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        DrawCallBench.iterationColorInto(n, drawCount, iterationColor, 6);
+        gl.uniform4f(colorLocation, iterationColor[0] / 255, iterationColor[1] / 255, iterationColor[2] / 255, 1);
+        for (let i = 0; i < drawCount; ++i) {
+            const mode = blendModes[i % blendModes.length];
+            if (mode) {
+                gl.enable(gl.BLEND);
+                gl.blendFunc(mode.glFactors[0], mode.glFactors[1]);
+            } else
+                gl.disable(gl.BLEND);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, size - tileSize / 2, size - tileSize / 2, expectedTileInto(n, drawCount - 1, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => expectedTileInto(n, DrawCallBench.tileAt(x, y), out));
+    }
+});
+
+</script>
+</body>
+</html>

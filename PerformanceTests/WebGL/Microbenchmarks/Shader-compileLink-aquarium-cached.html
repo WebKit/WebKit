@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/aquarium-shaders.js"></script>
+<script>
+
+// Like Shader-compileLink-aquarium.html, but the sources are the same in every run, so shader and
+// pipeline caches can be hit. Each run compiles, links and draws once with the 11 programs of the
+// WebGL Aquarium. The aquarium's shaders get a branch, taken when uBenchOutput is set, that draws
+// a fullscreen quad in the color of uBenchColor, which is unique to the run and the program.
+const tileSize = 16;
+const tilesPerRow = 4;
+const size = tileSize * tilesPerRow;
+const programCount = aquariumPrograms.length;
+
+let target;
+const vertexShaders = [];
+const fragmentShaders = [];
+
+function seedColor(n, program)
+{
+    return [n & 0xff, (n >> 8) & 0xff, program * 16, 255];
+}
+
+function insertBeforeEndOfMain(source, code)
+{
+    const end = source.lastIndexOf("}");
+    return source.substring(0, end) + code + source.substring(end);
+}
+
+function vertexShaderFor(program)
+{
+    return "attribute vec2 benchPosition;\nuniform mediump float uBenchOutput;\nuniform float uBenchDepth;\n"
+        + insertBeforeEndOfMain(aquariumShaders[aquariumPrograms[program][0]], `
+  if (uBenchOutput > 0.5)
+    gl_Position = vec4(benchPosition, uBenchDepth, 1.0);
+`);
+}
+
+function fragmentShaderFor(program)
+{
+    const [, fragmentShaderId, fog] = aquariumPrograms[program];
+    return "uniform mediump float uBenchOutput;\nuniform mediump vec4 uBenchColor;\n"
+        + insertBeforeEndOfMain(aquariumFragmentShader(fragmentShaderId, fog), `
+  if (uBenchOutput > 0.5)
+    gl_FragColor = uBenchColor / 255.0;
+`);
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const program = Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize);
+    const color = program < programCount ? seedColor(n, program) : [0, 0, 0, 0];
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures compiling, linking and drawing once with each of the 11 GLSL ES 1.00 programs of the WebGL Aquarium, with the same sources in every run, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        WebGLBench.bindFullscreenQuad(gl);
+        for (let i = 0; i < programCount; ++i) {
+            vertexShaders.push(vertexShaderFor(i));
+            fragmentShaders.push(fragmentShaderFor(i));
+        }
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < programCount; ++i) {
+            const program = WebGLBench.createProgram(gl, vertexShaders[i], fragmentShaders[i], ["benchPosition"]);
+            // Cube map and 2D samplers must not share a texture unit.
+            const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+            for (let u = 0; u < uniformCount; ++u) {
+                const info = gl.getActiveUniform(program, u);
+                if (info.type == gl.SAMPLER_CUBE)
+                    gl.uniform1i(gl.getUniformLocation(program, info.name), 1);
+            }
+            const color = seedColor(n, i);
+            gl.uniform1f(gl.getUniformLocation(program, "uBenchOutput"), 1);
+            gl.uniform1f(gl.getUniformLocation(program, "uBenchDepth"), (n % 1000) / 2000);
+            gl.uniform4f(gl.getUniformLocation(program, "uBenchColor"), color[0], color[1], color[2], color[3]);
+            gl.viewport((i % tilesPerRow) * tileSize, Math.floor(i / tilesPerRow) * tileSize, tileSize, tileSize);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.deleteProgram(program);
+        }
+    },
+    probe(gl, n) {
+        const program = programCount - 1;
+        const x = (program % tilesPerRow) * tileSize + tileSize / 2;
+        const y = Math.floor(program / tilesPerRow) * tileSize + tileSize / 2;
+        WebGLBench.probe(gl, target, x, y, seedColor(n, program), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Program tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

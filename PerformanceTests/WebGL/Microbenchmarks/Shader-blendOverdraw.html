@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const layerCount = 8;
+const batchCount = 4;
+const drawCount = layerCount * batchCount;
+
+// The color varies along x and the alpha along y, between two values per layer.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform vec4 uColor0;
+uniform vec4 uColor1;
+void main() {
+    vec2 p = vPixel * (1.0 / ${size}.0);
+    gl_FragColor = vec4(mix(uColor0.rgb, uColor1.rgb, p.x), mix(uColor0.a, uColor1.a, p.y));
+}`;
+
+let color0Location;
+let color1Location;
+
+// The colors of layer i of iteration n: [r0, g0, b0, a0, r1, g1, b1, a1], with alpha in [0.2, 0.8].
+function layerColors(n, i)
+{
+    const f = Math.fround;
+    const colors = [];
+    for (let c = 0; c < 8; ++c) {
+        const value = FullscreenShaderBenchmark.random(n, i * 8 + c);
+        colors.push(f(c % 4 == 3 ? 0.2 + 0.6 * value : value));
+    }
+    return colors;
+}
+
+const layers = [];
+let layersIteration = -1;
+
+function layersFor(n)
+{
+    if (layersIteration != n) {
+        for (let i = 0; i < drawCount; ++i)
+            layers[i] = layerColors(n, i);
+        layersIteration = n;
+    }
+    return layers;
+}
+
+function clearColorFor(n)
+{
+    return WebGLBench.color(n, 1000);
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + batchCount + " batches of " + layerCount + " fullscreen draws into a 2048x2048 framebuffer with SRC_ALPHA, ONE_MINUS_SRC_ALPHA blending of a fragment shader that writes a gradient, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    // The test sets its own blending.
+    allowHiddenSurfaceRemoval: true,
+    tolerance: 2,
+    setup(gl, program) {
+        color0Location = gl.getUniformLocation(program, "uColor0");
+        color1Location = gl.getUniformLocation(program, "uColor1");
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    },
+    clearColor: clearColorFor,
+    update(gl, n) {
+        layersFor(n);
+    },
+    draw(gl, n, i) {
+        const colors = layers[i];
+        gl.uniform4f(color0Location, colors[0], colors[1], colors[2], colors[3]);
+        gl.uniform4f(color1Location, colors[4], colors[5], colors[6], colors[7]);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    },
+    // Blends each layer and rounds the result to 8 bits, as the framebuffer stores it.
+    expectedPixel(n, x, y, out) {
+        const f = Math.fround;
+        const layers = layersFor(n);
+        const px = f(f(x + 0.5) / size);
+        const py = f(f(y + 0.5) / size);
+        const destination = clearColorFor(n);
+        const source = [0, 0, 0, 0];
+        for (let i = 0; i < drawCount; ++i) {
+            const colors = layers[i];
+            for (let c = 0; c < 3; ++c)
+                source[c] = colors[c] * (1 - px) + colors[c + 4] * px;
+            source[3] = colors[3] * (1 - py) + colors[7] * py;
+            const alpha = source[3];
+            for (let c = 0; c < 4; ++c) {
+                const value = source[c] * alpha + destination[c] / 255 * (1 - alpha);
+                destination[c] = Math.round(Math.min(Math.max(value, 0), 1) * 255);
+            }
+        }
+        for (let c = 0; c < 4; ++c)
+            out[c] = destination[c];
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

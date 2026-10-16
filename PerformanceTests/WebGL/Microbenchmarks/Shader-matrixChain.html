@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const rotationCount = 8;
+const repeatCount = 4;
+const drawCount = 2;
+
+// Rotations keep every product bounded. The per-pixel rotation uses the rational
+// parametrization c = (1 - t^2) / (1 + t^2), s = 2t / (1 + t^2), which avoids sin and cos.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform mat4 uRotations[${rotationCount}];
+void main() {
+    vec2 t = (vPixel - vec2(${size / 2}.0)) * (1.0 / ${size / 2}.0);
+    vec2 d = vec2(1.0) / (vec2(1.0) + t * t);
+    vec2 c = (vec2(1.0) - t * t) * d;
+    vec2 s = 2.0 * t * d;
+    mat4 m = mat4(c.x, s.x, 0.0, 0.0, -s.x, c.x, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+        * mat4(1.0, 0.0, 0.0, 0.0, 0.0, c.y, s.y, 0.0, 0.0, -s.y, c.y, 0.0, 0.0, 0.0, 0.0, 1.0);
+    for (int r = 0; r < ${repeatCount}; r++) {
+        for (int j = 0; j < ${rotationCount}; j++)
+            m = m * uRotations[j];
+    }
+    vec4 v = m * vec4(0.6, 0.0, 0.8, 1.0);
+    gl_FragColor = vec4(v.xyz * 0.5 + vec3(0.5), v.w);
+}`;
+
+let rotationsLocation;
+const rotations = new Float32Array(rotationCount * 16);
+let rotationsIteration = -1;
+
+// Column-major 4x4 matrices, as in GLSL.
+function multiply(a, b)
+{
+    const result = new Array(16);
+    for (let column = 0; column < 4; ++column) {
+        for (let row = 0; row < 4; ++row) {
+            let sum = 0;
+            for (let k = 0; k < 4; ++k)
+                sum += a[k * 4 + row] * b[column * 4 + k];
+            result[column * 4 + row] = sum;
+        }
+    }
+    return result;
+}
+
+function rotationsFor(n)
+{
+    if (rotationsIteration == n)
+        return rotations;
+    const random = i => FullscreenShaderBenchmark.random(n, i);
+    for (let j = 0; j < rotationCount; ++j) {
+        let x = random(j * 4) - 0.5;
+        let y = random(j * 4 + 1) - 0.5;
+        let z = random(j * 4 + 2) - 0.5;
+        const length = Math.hypot(x, y, z) || 1;
+        x /= length;
+        y /= length;
+        z /= length;
+        const angle = random(j * 4 + 3) * 2 * Math.PI;
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+        const t = 1 - c;
+        rotations.set([
+            t * x * x + c, t * x * y + s * z, t * x * z - s * y, 0,
+            t * x * y - s * z, t * y * y + c, t * y * z + s * x, 0,
+            t * x * z + s * y, t * y * z - s * x, t * z * z + c, 0,
+            0, 0, 0, 1,
+        ], j * 16);
+    }
+    rotationsIteration = n;
+    return rotations;
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that multiplies " + (rotationCount * repeatCount) + " mat4 rotation matrices from a uniform array, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 2,
+    setup(gl, program) {
+        rotationsLocation = gl.getUniformLocation(program, "uRotations");
+    },
+    update(gl, n) {
+        gl.uniformMatrix4fv(rotationsLocation, false, rotationsFor(n));
+    },
+    expectedPixel(n, x, y, out) {
+        const f = Math.fround;
+        const rotations = rotationsFor(n);
+        const t = [f(f(f(x + 0.5) - size / 2) / (size / 2)), f(f(f(y + 0.5) - size / 2) / (size / 2))];
+        const c = t.map(value => (1 - value * value) / (1 + value * value));
+        const s = t.map(value => 2 * value / (1 + value * value));
+        let m = multiply([c[0], s[0], 0, 0, -s[0], c[0], 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, c[1], s[1], 0, 0, -s[1], c[1], 0, 0, 0, 0, 1]);
+        for (let r = 0; r < repeatCount; ++r) {
+            for (let j = 0; j < rotationCount; ++j)
+                m = multiply(m, rotations.subarray(j * 16, j * 16 + 16));
+        }
+        const vector = [0.6, 0, 0.8, 1];
+        for (let row = 0; row < 4; ++row) {
+            let value = 0;
+            for (let k = 0; k < 4; ++k)
+                value += m[k * 4 + row] * vector[k];
+            if (row < 3)
+                value = value * 0.5 + 0.5;
+            out[row] = Math.round(Math.min(Math.max(value, 0), 1) * 255);
+        }
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

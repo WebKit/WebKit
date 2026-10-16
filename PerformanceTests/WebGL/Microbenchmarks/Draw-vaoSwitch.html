@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/draw-call-benchmark.js"></script>
+<script>
+WebGLBench.repeatCount = 2;
+
+// 1024 draws, one per 8x8 tile of a 256x256 framebuffer, cycling through 8 vertex array objects
+// with a bindVertexArrayOES before each draw. Each VAO has its own vertex buffer with the quads of
+// every 8th tile.
+const size = DrawCallBench.size;
+const tileSize = DrawCallBench.tileSize;
+const drawCount = DrawCallBench.tileCount;
+const vaoCount = 8;
+
+let target;
+let colorLocation;
+let extension;
+const vaos = [];
+const iterationColor = [0, 0, 0, 0];
+const tileColor = [0, 0, 0, 0];
+
+function expectedTileInto(n, i, out)
+{
+    DrawCallBench.iterationColorInto(n, drawCount, iterationColor);
+    DrawCallBench.tileColorInto(i, tileColor);
+    for (let c = 0; c < 3; ++c)
+        out[c] = tileColor[c] + iterationColor[c];
+    out[3] = 255;
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 1024 drawArrays calls of 2 triangles each, cycling through 8 vertex array objects with bindVertexArrayOES before each draw, followed by a 1x1 readPixels.",
+    setup(gl) {
+        extension = gl.getExtension("OES_vertex_array_object");
+        if (!extension)
+            throw new Error("OES_vertex_array_object is not supported");
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, DrawCallBench.vertexShader, DrawCallBench.fragmentShader, ["aPosition", "aColor"]);
+        colorLocation = gl.getUniformLocation(program, "uColor");
+        for (let v = 0; v < vaoCount; ++v) {
+            const vao = extension.createVertexArrayOES();
+            extension.bindVertexArrayOES(vao);
+            const tiles = DrawCallBench.allTiles().filter(i => i % vaoCount == v);
+            DrawCallBench.bindTileVertices(gl, DrawCallBench.createTileVertices(tiles, DrawCallBench.quadCorners));
+            vaos.push(vao);
+        }
+    },
+    iteration(gl, n) {
+        DrawCallBench.iterationColorInto(n, drawCount, iterationColor);
+        gl.uniform4f(colorLocation, iterationColor[0] / 255, iterationColor[1] / 255, iterationColor[2] / 255, 1);
+        for (let i = 0; i < drawCount; ++i) {
+            extension.bindVertexArrayOES(vaos[i % vaoCount]);
+            gl.drawArrays(gl.TRIANGLES, Math.floor(i / vaoCount) * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, size - tileSize / 2, size - tileSize / 2, expectedTileInto(n, drawCount - 1, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => expectedTileInto(n, DrawCallBench.tileAt(x, y), out));
+    }
+});
+
+</script>
+</body>
+</html>

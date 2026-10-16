@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+const size = 64;
+let target;
+
+WebGLBench.run({
+    description: "Measures a clear of a 64x64 framebuffer followed by a 1x1 readPixels. This is the round trip that every WebGL benchmark here pays once per run.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+    },
+    iteration(gl, n) {
+        const color = WebGLBench.color(n, 0);
+        gl.clearColor(color[0] / 255, color[1] / 255, color[2] / 255, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    },
+    probe(gl, n) {
+        WebGLBench.probe(gl, target, size - 1, size - 1, WebGLBench.color(n, 0));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTargetColor(gl, target, "Clear", WebGLBench.color(n, 0));
+    }
+});
+
+</script>
+</body>
+</html>

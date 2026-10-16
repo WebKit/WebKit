@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+// A 1024x1024 target, so that there is one grid vertex per 2x2 pixels and the vertex shader,
+// not the fill, dominates.
+const size = 1024;
+const gridSize = 512;
+const drawCount = 8;
+
+// The grid is flat; the noise goes to the color. Vertex (i, j) is at the center of pixel
+// (2i, 2j), where the interpolated color is the vertex color.
+//
+// The lattice hash is the permutation polynomial (34x + 1)x mod 289 on integers below 2^24, which
+// are exact in single precision. imod() corrects the quotient, which a division that is not
+// correctly rounded can get off by one. Value noise is continuous, so the floor() of a
+// coordinate that lands on a lattice line does not matter.
+const vertexShader = `
+attribute vec2 aGrid;
+uniform vec2 uSeed;
+varying highp vec4 vColor;
+float imod(float a, float m) {
+    float r = a - m * floor(a / m);
+    if (r < 0.0)
+        r += m;
+    if (r >= m)
+        r -= m;
+    return r;
+}
+float permute(float x) {
+    return imod((x * 34.0 + 1.0) * x, 289.0);
+}
+float lattice(vec2 i) {
+    return permute(imod(permute(imod(i.x, 289.0)) + i.y, 289.0)) * (1.0 / 288.0);
+}
+float valueNoise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = p - i;
+    vec2 w = f * f * (vec2(3.0) - 2.0 * f);
+    float a = lattice(i);
+    float b = lattice(i + vec2(1.0, 0.0));
+    float c = lattice(i + vec2(0.0, 1.0));
+    float d = lattice(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, w.x), mix(c, d, w.x), w.y);
+}
+void main() {
+    vec2 p = (aGrid + uSeed) * (1.0 / 16.0);
+    float sum = 0.0;
+    float amplitude = 0.5;
+    for (int octave = 0; octave < 4; octave++) {
+        sum += amplitude * valueNoise(p);
+        p = p * 2.0;
+        amplitude = amplitude * 0.5;
+    }
+    float v = sum * (1.0 / 0.9375);
+    vColor = vec4(v, v * v, 1.0 - v, 1.0);
+    gl_Position = vec4((aGrid * 4.0 + vec2(1.0)) * (1.0 / ${size}.0) - vec2(1.0), 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying highp vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let seedLocation;
+let vertexCount;
+
+function seedFor(n)
+{
+    return [(n * 37) % 256, (n * 61) % 256];
+}
+
+function imod(a, m)
+{
+    return a - m * Math.floor(a / m);
+}
+
+function permute(x)
+{
+    return imod((x * 34 + 1) * x, 289);
+}
+
+function lattice(ix, iy)
+{
+    return permute(imod(permute(imod(ix, 289)) + iy, 289)) / 288;
+}
+
+function valueNoise(px, py)
+{
+    const ix = Math.floor(px);
+    const iy = Math.floor(py);
+    const fx = px - ix;
+    const fy = py - iy;
+    const wx = fx * fx * (3 - 2 * fx);
+    const wy = fy * fy * (3 - 2 * fy);
+    const a = lattice(ix, iy);
+    const b = lattice(ix + 1, iy);
+    const c = lattice(ix, iy + 1);
+    const d = lattice(ix + 1, iy + 1);
+    const top = a * (1 - wx) + b * wx;
+    const bottom = c * (1 - wx) + d * wx;
+    return top * (1 - wy) + bottom * wy;
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " draws into a 1024x1024 framebuffer of a 512x512-vertex grid as triangle strips, with a vertex shader that computes 4 octaves of value noise, followed by a 1x1 readPixels.",
+    size,
+    vertexShader,
+    fragmentShader,
+    attributes: ["aGrid"],
+    drawCount,
+    // Every draw runs the vertex shader, which is what this test measures, even if the GPU skips
+    // the fragments of covered draws.
+    allowHiddenSurfaceRemoval: true,
+    tolerance: 2,
+    bindGeometry(gl) {
+        // One strip per row of quads, joined by degenerate triangles.
+        const vertices = [];
+        for (let j = 0; j < gridSize - 1; ++j) {
+            if (j)
+                vertices.push(gridSize - 1, j, 0, j);
+            for (let i = 0; i < gridSize; ++i)
+                vertices.push(i, j, i, j + 1);
+        }
+        vertexCount = vertices.length / 2;
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    },
+    setup(gl, program) {
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+    },
+    update(gl, n) {
+        const seed = seedFor(n);
+        gl.uniform2f(seedLocation, seed[0], seed[1]);
+    },
+    draw(gl, n, i) {
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertexCount);
+    },
+    // Only the pixels at interior grid vertices are checked.
+    expectedPixel(n, x, y, out) {
+        if (x % 2 || y % 2)
+            return null;
+        const i = x / 2;
+        const j = y / 2;
+        if (i < 1 || j < 1 || i > gridSize - 2 || j > gridSize - 2)
+            return null;
+        const seed = seedFor(n);
+        let px = (i + seed[0]) / 16;
+        let py = (j + seed[1]) / 16;
+        let sum = 0;
+        let amplitude = 0.5;
+        for (let octave = 0; octave < 4; ++octave) {
+            sum += amplitude * valueNoise(px, py);
+            px *= 2;
+            py *= 2;
+            amplitude *= 0.5;
+        }
+        const v = sum / 0.9375;
+        const color = [v, v * v, 1 - v, 1];
+        for (let c = 0; c < 4; ++c)
+            out[c] = Math.round(Math.min(Math.max(color[c], 0), 1) * 255);
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

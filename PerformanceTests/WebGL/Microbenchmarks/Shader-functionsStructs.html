@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const loopCount = 16;
+const drawCount = 2;
+
+// A call tree four levels deep, with structs passed by value, returned, nested, and passed as inout.
+// Each step is a contraction, so rounding differences do not grow.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform vec4 uBias;
+struct Sample {
+    vec4 color;
+    float weight;
+};
+struct State {
+    Sample a;
+    Sample b;
+    float k;
+};
+vec4 leaf(vec4 x, float t) {
+    return x * t + uBias * t;
+}
+vec4 blend(vec4 x, float t) {
+    return leaf(x, t) * 0.5 + leaf(x.yzwx, 1.0 - t) * 0.5;
+}
+void accumulate(inout Sample s, vec4 v, float k) {
+    s.color = s.color * k + v * (1.0 - k);
+    s.weight = s.weight * k + (1.0 - k);
+}
+void step(inout State s, float t) {
+    accumulate(s.a, blend(s.b.color, t), s.k);
+    accumulate(s.b, blend(s.a.color, 1.0 - t), s.k);
+}
+State advance(State s, float t) {
+    step(s, t);
+    step(s, t * 0.5 + 0.25);
+    return s;
+}
+Sample combine(Sample x, Sample y) {
+    return Sample((x.color * x.weight + y.color * y.weight) / (x.weight + y.weight), 0.5 * (x.weight + y.weight));
+}
+void main() {
+    vec2 p = vPixel * (1.0 / ${size}.0);
+    State s = State(Sample(vec4(p, 1.0 - p.x, 0.5), 1.0), Sample(vec4(1.0 - p.y, p.x * p.y, 0.25, 0.75), 1.0), 0.25 + 0.5 * p.y);
+    for (int i = 0; i < ${loopCount}; i++)
+        s = advance(s, p.x * 0.5 + float(i) * (1.0 / ${loopCount * 2}.0));
+    Sample result = combine(s.a, s.b);
+    gl_FragColor = vec4(result.color.xyz, result.weight);
+}`;
+
+let biasLocation;
+
+function biasFor(n)
+{
+    const f = Math.fround;
+    return [0, 1, 2, 3].map(c => f(0.5 * FullscreenShaderBenchmark.random(n, c)));
+}
+
+// A JS mirror of the shader.
+function leaf(x, t, bias)
+{
+    return x.map((value, c) => value * t + bias[c] * t);
+}
+
+function blend(x, t, bias)
+{
+    const a = leaf(x, t, bias);
+    const b = leaf([x[1], x[2], x[3], x[0]], 1 - t, bias);
+    return a.map((value, c) => value * 0.5 + b[c] * 0.5);
+}
+
+function accumulate(sample, v, k)
+{
+    sample.color = sample.color.map((value, c) => value * k + v[c] * (1 - k));
+    sample.weight = sample.weight * k + (1 - k);
+}
+
+function step(state, t, bias)
+{
+    accumulate(state.a, blend(state.b.color, t, bias), state.k);
+    accumulate(state.b, blend(state.a.color, 1 - t, bias), state.k);
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that runs a " + loopCount + "-iteration loop over a four-level call tree with nested structs and inout parameters, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 2,
+    setup(gl, program) {
+        biasLocation = gl.getUniformLocation(program, "uBias");
+    },
+    update(gl, n) {
+        const bias = biasFor(n);
+        gl.uniform4f(biasLocation, bias[0], bias[1], bias[2], bias[3]);
+    },
+    expectedPixel(n, x, y, out) {
+        const f = Math.fround;
+        const bias = biasFor(n);
+        const px = f(f(x + 0.5) / size);
+        const py = f(f(y + 0.5) / size);
+        const state = {
+            a: { color: [px, py, 1 - px, 0.5], weight: 1 },
+            b: { color: [1 - py, px * py, 0.25, 0.75], weight: 1 },
+            k: 0.25 + 0.5 * py,
+        };
+        for (let i = 0; i < loopCount; ++i) {
+            const t = px * 0.5 + i / (loopCount * 2);
+            step(state, t, bias);
+            step(state, t * 0.5 + 0.25, bias);
+        }
+        const weight = state.a.weight + state.b.weight;
+        const color = state.a.color.map((value, c) => (value * state.a.weight + state.b.color[c] * state.b.weight) / weight);
+        color[3] = 0.5 * weight;
+        for (let c = 0; c < 4; ++c)
+            out[c] = Math.round(Math.min(Math.max(color[c], 0), 1) * 255);
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 8;
+
+const size = 1024;
+const clearCount = 50;
+let target;
+
+WebGLBench.run({
+    description: "Measures 50 clears of a 1024x1024 framebuffer to different colors, followed by a 1x1 readPixels. An implementation may merge clears that are overwritten.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+    },
+    iteration(gl, n) {
+        const color = [0, 0, 0, 0];
+        for (let i = 0; i < clearCount; ++i) {
+            WebGLBench.colorInto(n, i, color);
+            gl.clearColor(color[0] / 255, color[1] / 255, color[2] / 255, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        WebGLBench.probe(gl, target, x, y, WebGLBench.color(n, clearCount - 1));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTargetColor(gl, target, "Last clear", WebGLBench.color(n, clearCount - 1));
+    }
+});
+
+</script>
+</body>
+</html>

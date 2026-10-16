@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/aquarium-shaders.js"></script>
+<script>
+
+// Like Shader-compileLink-aquarium.html, with sources unique to each run, but without drawing: each
+// run compiles and links the 11 programs of the WebGL Aquarium and queries LINK_STATUS. This
+// separates GLSL translation and linking from the pipeline creation of the first draw. The probe
+// draws with a trivial program in a color unique to the run, so each run still ends with a GPU sync
+// and a check.
+const size = 16;
+const programCount = aquariumPrograms.length;
+
+const probeVertexShader = `
+attribute vec2 aPosition;
+void main() {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const probeFragmentShader = `
+precision highp float;
+uniform vec4 uColor;
+void main() {
+    gl_FragColor = uColor;
+}`;
+
+let target;
+let probeProgram;
+let probeColorLocation;
+
+function insertBeforeEndOfMain(source, code)
+{
+    const end = source.lastIndexOf("}");
+    return source.substring(0, end) + code + source.substring(end);
+}
+
+// The run's constants are baked into both shaders, so no shader cache can be hit.
+function vertexShaderFor(n, program)
+{
+    const depth = (n % 1000) / 2000;
+    return "attribute vec2 benchPosition;\nuniform mediump float uBenchOutput;\n"
+        + insertBeforeEndOfMain(aquariumShaders[aquariumPrograms[program][0]], `
+  if (uBenchOutput > 0.5)
+    gl_Position = vec4(benchPosition, ${depth.toFixed(4)}, 1.0);
+`);
+}
+
+function fragmentShaderFor(n, program)
+{
+    const color = [n & 0xff, (n >> 8) & 0xff, program * 16, 255].map(value => value.toFixed(1)).join(", ");
+    const [, fragmentShaderId, fog] = aquariumPrograms[program];
+    return "uniform mediump float uBenchOutput;\n"
+        + insertBeforeEndOfMain(aquariumFragmentShader(fragmentShaderId, fog), `
+  if (uBenchOutput > 0.5)
+    gl_FragColor = vec4(${color}) / 255.0;
+`);
+}
+
+function compileShader(gl, type, source)
+{
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    return shader;
+}
+
+// Compiles and links without making the program current, then waits for LINK_STATUS.
+function compileAndLink(gl, vertexSource, fragmentSource)
+{
+    const program = gl.createProgram();
+    const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
+    const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.bindAttribLocation(program, 0, "benchPosition");
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS) && !gl.isContextLost())
+        throw new Error("Program link failed: " + gl.getProgramInfoLog(program) + gl.getShaderInfoLog(vertexShader) + gl.getShaderInfoLog(fragmentShader));
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+    gl.deleteProgram(program);
+}
+
+WebGLBench.run({
+    description: "Measures compiling and linking each of the 11 GLSL ES 1.00 programs of the WebGL Aquarium and querying LINK_STATUS, with sources unique to each run and page load and no draw, followed by a draw with a trivial program and a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        probeProgram = WebGLBench.createProgram(gl, probeVertexShader, probeFragmentShader, ["aPosition"]);
+        probeColorLocation = gl.getUniformLocation(probeProgram, "uColor");
+        WebGLBench.bindFullscreenQuad(gl);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < programCount; ++i)
+            compileAndLink(gl, WebGLBench.uniqueToPageLoad(vertexShaderFor(n, i), false), WebGLBench.uniqueToPageLoad(fragmentShaderFor(n, i), true));
+    },
+    probe(gl, n) {
+        const color = WebGLBench.color(n, 0);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+        gl.useProgram(probeProgram);
+        gl.uniform4f(probeColorLocation, color[0] / 255, color[1] / 255, color[2] / 255, 1);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        WebGLBench.probe(gl, target, size / 2, size / 2, color, 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTargetColor(gl, target, "Probe draw", WebGLBench.color(n, 0));
+    }
+});
+
+</script>
+</body>
+</html>

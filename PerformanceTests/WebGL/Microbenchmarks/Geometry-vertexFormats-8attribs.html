@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 2;
+
+// 4 draws of a mesh of 65k triangles, 2 per cell of 2x1 pixels, each into one 256x256 quadrant of
+// a 512x512 framebuffer. The vertices have 8 attributes in 4 buffers, in formats that WebGPU lacks
+// or with offsets and strides that it does not allow, so ANGLE has to convert them:
+//
+//   buffer 0, stride 12: aPosition FLOAT x2 at 0, aFloat FLOAT x1 at 8
+//   buffer 1, stride 3: aRgb normalized UNSIGNED_BYTE x3 at 0
+//   buffer 2, stride 10: aRgba normalized UNSIGNED_BYTE x4 at 1, aBytes BYTE x3 at 5,
+//       aBytes2 UNSIGNED_BYTE x2 at 8
+//   buffer 3, stride 10: aShorts SHORT x3 at 2, aUShort normalized UNSIGNED_SHORT x1 at 8
+//
+// All vertices of a triangle have the same attribute values. The vertex shader adds them up into
+// the color, so each attribute changes the result. Each term is below 35 and the seed of the draw
+// below 16, so the sum does not saturate.
+const width = 512;
+const height = 512;
+const meshSize = 256;
+const columns = meshSize / 2;
+const triangleCount = columns * meshSize * 2;
+const vertexCount = triangleCount * 3;
+const drawCount = 4;
+
+const attributeNames = ["aPosition", "aFloat", "aRgb", "aRgba", "aBytes", "aBytes2", "aShorts", "aUShort"];
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute float aFloat;
+attribute vec3 aRgb;
+attribute vec4 aRgba;
+attribute vec3 aBytes;
+attribute vec2 aBytes2;
+attribute vec3 aShorts;
+attribute float aUShort;
+uniform vec2 uOffset;
+uniform vec4 uSeed;
+varying vec4 vColor;
+void main() {
+    vec4 normalized = vec4(aRgb, 0.0) + aRgba + vec4(aFloat, aUShort, 0.0, 0.0);
+    vec4 integers = vec4(aBytes + vec3(17.0), 0.0) + vec4((aShorts + vec3(1700.0)) / 100.0, 0.0) + vec4(aBytes2, 0.0, 0.0) + uSeed;
+    vColor = normalized + integers / 255.0;
+    gl_Position = vec4((aPosition + uOffset) / vec2(${width / 2}.0, ${height / 2}.0) - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+varying vec4 vColor;
+void main() {
+    gl_FragColor = vColor;
+}`;
+
+let target;
+let offsetLocation;
+let seedLocation;
+const triangleColors = new Uint8Array(triangleCount * 4);
+const seed = [0, 0, 0, 0];
+
+function seedInto(n, draw, out)
+{
+    const value = WebGLBench.hash(n * drawCount + draw);
+    for (let c = 0; c < 4; ++c)
+        out[c] = (value >>> (c * 8)) & 15;
+    return out;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    seedInto(n, (x >= meshSize ? 1 : 0) + (y >= meshSize ? 2 : 0), seed);
+    const meshX = x % meshSize;
+    const meshY = y % meshSize;
+    const offset = ((meshY * columns + (meshX >> 1)) * 2 + (meshX & 1)) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = triangleColors[offset + c] + seed[c];
+    return out;
+}
+
+function createBuffer(gl, data)
+{
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    return buffer;
+}
+
+WebGLBench.run({
+    description: "Measures 4 drawArrays calls of 65k triangles each with 8 vertex attributes in FLOAT, normalized UNSIGNED_BYTE x3 and x4, BYTE, UNSIGNED_BYTE, SHORT and normalized UNSIGNED_SHORT formats at unaligned offsets and strides, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, attributeNames);
+        offsetLocation = gl.getUniformLocation(program, "uOffset");
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+
+        const buffer0 = new Float32Array(vertexCount * 3);
+        const buffer1 = new Uint8Array(vertexCount * 3);
+        const buffer2 = new ArrayBuffer(vertexCount * 10);
+        const buffer2Bytes = new Uint8Array(buffer2);
+        const buffer2SignedBytes = new Int8Array(buffer2);
+        const buffer3 = new ArrayBuffer(vertexCount * 10);
+        const buffer3Shorts = new Int16Array(buffer3);
+        const buffer3UShorts = new Uint16Array(buffer3);
+
+        // The first triangle of a cell is above its diagonal and the second below it.
+        const triangles = [[[0, 0], [2, 1], [0, 1]], [[0, 0], [2, 0], [2, 1]]];
+        const values = new Array(17);
+        for (let t = 0; t < triangleCount; ++t) {
+            for (let k = 0; k < values.length; ++k)
+                values[k] = WebGLBench.hash(t * values.length + k) % 35;
+            const [float, ushort, r, g, b, rgbaR, rgbaG, rgbaB, rgbaA, byteX, byteY, byteZ, byte2X, byte2Y, shortX, shortY, shortZ] = values;
+            triangleColors[t * 4] = r + rgbaR + float + byteX + shortX + byte2X;
+            triangleColors[t * 4 + 1] = g + rgbaG + ushort + byteY + shortY + byte2Y;
+            triangleColors[t * 4 + 2] = b + rgbaB + byteZ + shortZ;
+            triangleColors[t * 4 + 3] = rgbaA;
+
+            const cell = t >> 1;
+            const cellX = (cell % columns) * 2;
+            const cellY = Math.floor(cell / columns);
+            triangles[t & 1].forEach(([x, y], vertex) => {
+                const v = t * 3 + vertex;
+                buffer0.set([cellX + x, cellY + y, float / 255], v * 3);
+                buffer1.set([r, g, b], v * 3);
+                buffer2Bytes.set([rgbaR, rgbaG, rgbaB, rgbaA], v * 10 + 1);
+                buffer2SignedBytes.set([byteX - 17, byteY - 17, byteZ - 17], v * 10 + 5);
+                buffer2Bytes.set([byte2X, byte2Y], v * 10 + 8);
+                buffer3Shorts.set([shortX * 100 - 1700, shortY * 100 - 1700, shortZ * 100 - 1700], v * 5 + 1);
+                buffer3UShorts[v * 5 + 4] = ushort * 257;
+            });
+        }
+
+        for (let i = 0; i < attributeNames.length; ++i)
+            gl.enableVertexAttribArray(i);
+        createBuffer(gl, buffer0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 12, 0);
+        gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 12, 8);
+        createBuffer(gl, buffer1);
+        gl.vertexAttribPointer(2, 3, gl.UNSIGNED_BYTE, true, 3, 0);
+        createBuffer(gl, buffer2);
+        gl.vertexAttribPointer(3, 4, gl.UNSIGNED_BYTE, true, 10, 1);
+        gl.vertexAttribPointer(4, 3, gl.BYTE, false, 10, 5);
+        gl.vertexAttribPointer(5, 2, gl.UNSIGNED_BYTE, false, 10, 8);
+        createBuffer(gl, buffer3);
+        gl.vertexAttribPointer(6, 3, gl.SHORT, false, 10, 2);
+        gl.vertexAttribPointer(7, 1, gl.UNSIGNED_SHORT, true, 10, 8);
+    },
+    iteration(gl, n) {
+        for (let draw = 0; draw < drawCount; ++draw) {
+            seedInto(n, draw, seed);
+            gl.uniform2f(offsetLocation, (draw & 1) * meshSize, (draw >> 1) * meshSize);
+            gl.uniform4f(seedLocation, seed[0], seed[1], seed[2], seed[3]);
+            gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % width;
+        const y = WebGLBench.hash(n + 1) % height;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Triangles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

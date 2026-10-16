@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// 8 pairs of a draw of a gradient into a 1024x1024 framebuffer and a readPixels of the 333x211
+// rectangle at (17, 9), each into its own array. The odd offset and size make the readback
+// repack rows: the rectangle's rows are 1332 bytes and start 68 bytes into the framebuffer's rows.
+// Each draw changes the blue channel, so each readPixels has to wait for the draw before it.
+const size = 1024;
+const readX = 17;
+const readY = 9;
+const readWidth = 333;
+const readHeight = 211;
+const readCount = 8;
+
+const vertexShader = `
+attribute vec2 aPosition;
+varying vec2 vPixel;
+void main() {
+    vPixel = (aPosition * 0.5 + 0.5) * ${size}.0;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform float uSeed;
+varying vec2 vPixel;
+void main() {
+    vec2 p = floor(vPixel);
+    gl_FragColor = vec4(mod(p.x, 256.0), mod(p.y, 256.0), uSeed, 255.0) / 255.0;
+}`;
+
+let target;
+let seedLocation;
+const readbacks = [];
+
+function seed(n, read)
+{
+    return (n * readCount + read) & 0xff;
+}
+
+// The expected pixel (x, y) of the rectangle.
+function expectedPixel(n, read, x, y, out)
+{
+    out[0] = (readX + x) & 0xff;
+    out[1] = (readY + y) & 0xff;
+    out[2] = seed(n, read);
+    out[3] = 255;
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 8 pairs of a draw into a 1024x1024 framebuffer and a readPixels of the 333x211 rectangle at (17, 9).",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition"]);
+        seedLocation = gl.getUniformLocation(program, "uSeed");
+        WebGLBench.bindFullscreenQuad(gl);
+        for (let i = 0; i < readCount; ++i)
+            readbacks.push(new Uint8Array(readWidth * readHeight * 4));
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < readCount; ++i) {
+            gl.uniform1f(seedLocation, seed(n, i));
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.readPixels(readX, readY, readWidth, readHeight, gl.RGBA, gl.UNSIGNED_BYTE, readbacks[i]);
+        }
+    },
+    probe(gl, n) {
+        // Checks the corners of the last readback and one pixel of each readback.
+        const expected = [0, 0, 0, 0];
+        const last = readCount - 1;
+        for (const [x, y] of [[0, 0], [readWidth - 1, 0], [0, readHeight - 1], [readWidth - 1, readHeight - 1]])
+            WebGLBench.verifyPixels("Readback " + last + " pixel (" + x + ", " + y + ")", readbacks[last].subarray((y * readWidth + x) * 4), expectedPixel(n, last, x, y, expected), 1, 0);
+        for (let i = 0; i < readCount; ++i) {
+            const x = WebGLBench.hash(n * readCount + i) % readWidth;
+            const y = WebGLBench.hash(n * readCount + i + 1) % readHeight;
+            WebGLBench.verifyPixels("Readback " + i + " pixel (" + x + ", " + y + ")", readbacks[i].subarray((y * readWidth + x) * 4), expectedPixel(n, i, x, y, expected), 1, 0);
+        }
+    },
+    verify(gl, n) {
+        const expected = new Uint8Array(readWidth * readHeight * 4);
+        const pixel = [0, 0, 0, 0];
+        for (let i = 0; i < readCount; ++i) {
+            for (let y = 0; y < readHeight; ++y) {
+                for (let x = 0; x < readWidth; ++x)
+                    expected.set(expectedPixel(n, i, x, y, pixel), (y * readWidth + x) * 4);
+            }
+            WebGLBench.verifyPixels("Readback " + i, readbacks[i], expected, readWidth, 0);
+        }
+    }
+});
+
+</script>
+</body>
+</html>

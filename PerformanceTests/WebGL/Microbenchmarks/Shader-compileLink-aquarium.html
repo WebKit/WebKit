@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/aquarium-shaders.js"></script>
+<script>
+
+// Each run compiles, links and draws once with the 11 programs of the WebGL Aquarium. The
+// aquarium's shaders get a branch, taken when uBenchOutput is set, that draws a fullscreen quad
+// in a color unique to the run and the program. The branch keeps the aquarium's code alive, and
+// the run's constants and WebGLBench.uniqueToPageLoad() change the generated code, so no shader or
+// pipeline cache, not even one on disk from an earlier page load, can be hit.
+const tileSize = 16;
+const tilesPerRow = 4;
+const size = tileSize * tilesPerRow;
+const programCount = aquariumPrograms.length;
+
+let target;
+
+function seedColor(n, program)
+{
+    return [n & 0xff, (n >> 8) & 0xff, program * 16, 255];
+}
+
+function insertBeforeEndOfMain(source, code)
+{
+    const end = source.lastIndexOf("}");
+    return source.substring(0, end) + code + source.substring(end);
+}
+
+function vertexShaderFor(n, program)
+{
+    const depth = (n % 1000) / 2000;
+    return "attribute vec2 benchPosition;\nuniform mediump float uBenchOutput;\n"
+        + insertBeforeEndOfMain(aquariumShaders[aquariumPrograms[program][0]], `
+  if (uBenchOutput > 0.5)
+    gl_Position = vec4(benchPosition, ${depth.toFixed(4)}, 1.0);
+`);
+}
+
+function fragmentShaderFor(n, program)
+{
+    const color = seedColor(n, program).map(value => value.toFixed(1)).join(", ");
+    const [, fragmentShaderId, fog] = aquariumPrograms[program];
+    return "uniform mediump float uBenchOutput;\n"
+        + insertBeforeEndOfMain(aquariumFragmentShader(fragmentShaderId, fog), `
+  if (uBenchOutput > 0.5)
+    gl_FragColor = vec4(${color}) / 255.0;
+`);
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const program = Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize);
+    const color = program < programCount ? seedColor(n, program) : [0, 0, 0, 0];
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures compiling, linking and drawing once with each of the 11 GLSL ES 1.00 programs of the WebGL Aquarium, with sources unique to each run and page load, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        WebGLBench.bindFullscreenQuad(gl);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < programCount; ++i) {
+            const vertexSource = WebGLBench.uniqueToPageLoad(vertexShaderFor(n, i), false);
+            const fragmentSource = WebGLBench.uniqueToPageLoad(fragmentShaderFor(n, i), true);
+            const program = WebGLBench.createProgram(gl, vertexSource, fragmentSource, ["benchPosition"]);
+            // Cube map and 2D samplers must not share a texture unit.
+            const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+            for (let u = 0; u < uniformCount; ++u) {
+                const info = gl.getActiveUniform(program, u);
+                if (info.type == gl.SAMPLER_CUBE)
+                    gl.uniform1i(gl.getUniformLocation(program, info.name), 1);
+            }
+            gl.uniform1f(gl.getUniformLocation(program, "uBenchOutput"), 1);
+            gl.viewport((i % tilesPerRow) * tileSize, Math.floor(i / tilesPerRow) * tileSize, tileSize, tileSize);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.deleteProgram(program);
+        }
+    },
+    probe(gl, n) {
+        const program = programCount - 1;
+        const x = (program % tilesPerRow) * tileSize + tileSize / 2;
+        const y = Math.floor(program / tilesPerRow) * tileSize + tileSize / 2;
+        WebGLBench.probe(gl, target, x, y, seedColor(n, program), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Program tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

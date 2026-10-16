@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// texSubImage2D of 512x512 RGBA8 data into each of the 6 faces of a cube map, then 6 draws, one
+// per face, into the 512x512 tiles of a 1536x1024 framebuffer. Each draw samples its face with
+// NEAREST filtering along the direction that hits the center of texel (x, y) at pixel (x, y) of
+// the tile, so the tile is a 1:1 copy of the face.
+const faceSize = 512;
+const tilesPerRow = 3;
+const width = faceSize * tilesPerRow;
+const height = faceSize * 2;
+const faceCount = 6;
+const patternCount = faceCount + 1;
+
+// For each face, in the order of TEXTURE_CUBE_MAP_POSITIVE_X + i, the direction to the center of
+// the face (the major axis) and the directions in which the s and t texture coordinates grow, as
+// in table 3.21 of the OpenGL ES 2.0 specification.
+const faceAxes = [
+    { major: [1, 0, 0], s: [0, 0, -1], t: [0, -1, 0] },
+    { major: [-1, 0, 0], s: [0, 0, 1], t: [0, -1, 0] },
+    { major: [0, 1, 0], s: [1, 0, 0], t: [0, 0, 1] },
+    { major: [0, -1, 0], s: [1, 0, 0], t: [0, 0, -1] },
+    { major: [0, 0, 1], s: [1, 0, 0], t: [0, -1, 0] },
+    { major: [0, 0, -1], s: [-1, 0, 0], t: [0, -1, 0] },
+];
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec2 aFaceCoord;
+varying vec2 vFaceCoord;
+void main() {
+    vFaceCoord = aFaceCoord;
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform samplerCube uTexture;
+uniform vec3 uMajor;
+uniform vec3 uS;
+uniform vec3 uT;
+varying vec2 vFaceCoord;
+void main() {
+    gl_FragColor = textureCube(uTexture, uMajor + vFaceCoord.x * uS + vFaceCoord.y * uT);
+}`;
+
+let target;
+let majorLocation;
+let sLocation;
+let tLocation;
+const patterns = [];
+
+function patternFor(n, face)
+{
+    return patterns[(n + face) % patternCount];
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const pattern = patternFor(n, Math.floor(y / faceSize) * tilesPerRow + Math.floor(x / faceSize));
+    const offset = ((y % faceSize) * faceSize + x % faceSize) * 4;
+    for (let c = 0; c < 4; ++c)
+        out[c] = pattern[offset + c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures texSubImage2D of 512x512 RGBA8 data into the 6 faces of a cube map and 6 draws sampling all of each face, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, width, height);
+        for (let i = 0; i < patternCount; ++i)
+            patterns.push(WebGLBench.createPattern(faceSize * faceSize * 4, i));
+
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        for (let face = 0; face < faceCount; ++face)
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, gl.RGBA, faceSize, faceSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+        const program = WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aFaceCoord"]);
+        majorLocation = gl.getUniformLocation(program, "uMajor");
+        sLocation = gl.getUniformLocation(program, "uS");
+        tLocation = gl.getUniformLocation(program, "uT");
+
+        // The face coordinates go from -1 to 1 across the tile, so at the center of pixel (x, y)
+        // of the tile they are 2 * (x + 0.5) / faceSize - 1, the center of texel (x, y).
+        const corners = [[0, 0], [1, 0], [0, 1], [0, 1], [1, 0], [1, 1]];
+        const vertices = new Float32Array(faceCount * 6 * 4);
+        for (let face = 0; face < faceCount; ++face) {
+            const tileX = face % tilesPerRow;
+            const tileY = Math.floor(face / tilesPerRow);
+            corners.forEach(([x, y], vertex) => {
+                const offset = (face * 6 + vertex) * 4;
+                vertices[offset] = (tileX + x) * faceSize / (width / 2) - 1;
+                vertices[offset + 1] = (tileY + y) * faceSize / (height / 2) - 1;
+                vertices[offset + 2] = x * 2 - 1;
+                vertices[offset + 3] = y * 2 - 1;
+            });
+        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 16, 0);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 16, 8);
+    },
+    iteration(gl, n) {
+        for (let face = 0; face < faceCount; ++face)
+            gl.texSubImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, 0, 0, faceSize, faceSize, gl.RGBA, gl.UNSIGNED_BYTE, patternFor(n, face));
+        for (let face = 0; face < faceCount; ++face) {
+            gl.uniform3fv(majorLocation, faceAxes[face].major);
+            gl.uniform3fv(sLocation, faceAxes[face].s);
+            gl.uniform3fv(tLocation, faceAxes[face].t);
+            gl.drawArrays(gl.TRIANGLES, face * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % width;
+        const y = WebGLBench.hash(n + 1) % height;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]));
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Faces", 0, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

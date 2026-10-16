@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+
+// Each run compiles, links and draws once with 50 small programs, each into its own 8x8 tile of a
+// 64x64 framebuffer. The tile position is baked into the vertex shader and the color, which
+// encodes the run and the program, into both shaders, so every source is unique and no shader or
+// pipeline cache can be hit.
+const tileSize = 8;
+const tilesPerRow = 8;
+const size = tileSize * tilesPerRow;
+const programCount = 50;
+
+let target;
+
+function seedColor(n, program)
+{
+    return [n & 0xff, (n >> 8) & 0xff, program * 5, 255];
+}
+
+function vertexShaderFor(n, program)
+{
+    const scale = tileSize / size;
+    const x = ((program % tilesPerRow) * tileSize + tileSize / 2) / (size / 2) - 1;
+    const y = (Math.floor(program / tilesPerRow) * tileSize + tileSize / 2) / (size / 2) - 1;
+    const depth = (n % 1000) / 2000;
+    const color = seedColor(n, program);
+    return `
+attribute vec2 aPosition;
+varying vec4 vColor;
+const vec2 kOffset = vec2(${x.toFixed(6)}, ${y.toFixed(6)});
+const float kScale = ${scale.toFixed(6)};
+const float kGreen = ${color[1].toFixed(1)};
+void main() {
+    vColor = vec4(0.0, kGreen, 0.0, 255.0) / 255.0;
+    gl_Position = vec4(aPosition * kScale + kOffset, ${depth.toFixed(4)}, 1.0);
+}`;
+}
+
+function fragmentShaderFor(n, program)
+{
+    const color = seedColor(n, program);
+    return `
+precision highp float;
+varying vec4 vColor;
+const float kSeed = ${n.toFixed(1)};
+const float kBlue = ${color[2].toFixed(1)};
+void main() {
+    gl_FragColor = vec4(mod(kSeed, 256.0) / 255.0, vColor.y, kBlue / 255.0, vColor.w);
+}`;
+}
+
+function expectedPixel(n, x, y, out)
+{
+    const program = Math.floor(y / tileSize) * tilesPerRow + Math.floor(x / tileSize);
+    const color = program < programCount ? seedColor(n, program) : [0, 0, 0, 0];
+    for (let c = 0; c < 4; ++c)
+        out[c] = color[c];
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures compiling, linking and drawing once with each of 50 small GLSL ES 1.00 programs, with sources unique to each run, program and page load, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        WebGLBench.bindFullscreenQuad(gl);
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < programCount; ++i) {
+            const program = WebGLBench.createProgram(gl, WebGLBench.uniqueToPageLoad(vertexShaderFor(n, i), false), WebGLBench.uniqueToPageLoad(fragmentShaderFor(n, i), true), ["aPosition"]);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.deleteProgram(program);
+        }
+    },
+    probe(gl, n) {
+        const program = programCount - 1;
+        const x = (program % tilesPerRow) * tileSize + tileSize / 2;
+        const y = Math.floor(program / tilesPerRow) * tileSize + tileSize / 2;
+        WebGLBench.probe(gl, target, x, y, seedColor(n, program), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Program tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

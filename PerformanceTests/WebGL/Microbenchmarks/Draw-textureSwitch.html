@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/draw-call-benchmark.js"></script>
+<script>
+WebGLBench.repeatCount = 3;
+
+// 1024 draws, one per 8x8 tile of a 256x256 framebuffer, cycling through 8 textures of 4x4 pixels
+// with a bindTexture before each draw. Each iteration first uploads new contents into the 8
+// textures. A tile is its fixed color plus its texture at 2x2 pixels per texel.
+const size = DrawCallBench.size;
+const tileSize = DrawCallBench.tileSize;
+const drawCount = DrawCallBench.tileCount;
+const textureCount = 8;
+const textureSize = 4;
+
+const vertexShader = `
+attribute vec2 aPosition;
+attribute vec4 aColor;
+attribute vec2 aTexCoord;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+void main() {
+    vColor = aColor;
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(aPosition / ${size / 2}.0 - 1.0, 0.0, 1.0);
+}`;
+
+const fragmentShader = `
+precision highp float;
+uniform sampler2D uTexture;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+void main() {
+    gl_FragColor = vec4(vColor.rgb + texture2D(uTexture, vTexCoord).rgb, 1.0);
+}`;
+
+let target;
+const textures = [];
+const contents = [];
+const tileColor = [0, 0, 0, 0];
+
+// The contents of texture t in iteration n, with channels below 128 so that the sum with the tile
+// color does not saturate.
+function textureContentsInto(n, t, out)
+{
+    const pattern = WebGLBench.createPattern(out.length, n * textureCount + t);
+    for (let i = 0; i < out.length; ++i)
+        out[i] = pattern[i] & 0x7f;
+    return out;
+}
+
+// The texture contents of the iteration that expectedPixel() last computed.
+let expectedIteration = -1;
+const expectedContents = [];
+
+function expectedPixel(n, x, y, out)
+{
+    if (expectedIteration != n) {
+        for (let t = 0; t < textureCount; ++t)
+            expectedContents[t] = textureContentsInto(n, t, new Uint8Array(textureSize * textureSize * 4));
+        expectedIteration = n;
+    }
+    const i = DrawCallBench.tileAt(x, y);
+    const texels = expectedContents[i % textureCount];
+    const offset = ((y % tileSize >> 1) * textureSize + (x % tileSize >> 1)) * 4;
+    DrawCallBench.tileColorInto(i, tileColor);
+    for (let c = 0; c < 3; ++c)
+        out[c] = tileColor[c] + texels[offset + c];
+    out[3] = 255;
+    return out;
+}
+
+WebGLBench.run({
+    description: "Measures 8 texSubImage2D calls of 4x4 pixels and 1024 drawArrays calls of 2 triangles each, cycling through the 8 textures with bindTexture before each draw, followed by a 1x1 readPixels.",
+    setup(gl) {
+        target = WebGLBench.createRenderTarget(gl, size, size);
+        WebGLBench.createProgram(gl, vertexShader, fragmentShader, ["aPosition", "aColor", "aTexCoord"]);
+        DrawCallBench.bindTileVertices(gl, DrawCallBench.createTileVertices(DrawCallBench.allTiles(), DrawCallBench.quadCorners), true);
+        for (let t = 0; t < textureCount; ++t) {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            textures.push(texture);
+            contents.push(new Uint8Array(textureSize * textureSize * 4));
+        }
+    },
+    iteration(gl, n) {
+        for (let t = 0; t < textureCount; ++t) {
+            gl.bindTexture(gl.TEXTURE_2D, textures[t]);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, textureSize, textureSize, gl.RGBA, gl.UNSIGNED_BYTE, textureContentsInto(n, t, contents[t]));
+        }
+        for (let i = 0; i < drawCount; ++i) {
+            gl.bindTexture(gl.TEXTURE_2D, textures[i % textureCount]);
+            gl.drawArrays(gl.TRIANGLES, i * 6, 6);
+        }
+    },
+    probe(gl, n) {
+        const x = size - tileSize + WebGLBench.hash(n) % tileSize;
+        const y = size - tileSize + WebGLBench.hash(n + 1) % tileSize;
+        WebGLBench.probe(gl, target, x, y, expectedPixel(n, x, y, [0, 0, 0, 0]), 1);
+    },
+    verify(gl, n) {
+        WebGLBench.verifyTarget(gl, target, "Tiles", 1, (x, y, out) => expectedPixel(n, x, y, out));
+    }
+});
+
+</script>
+</body>
+</html>

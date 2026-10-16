@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script src="../resources/fullscreen-shader-benchmark.js"></script>
+<script>
+
+const size = 2048;
+const textureSize = 256;
+const fetchCount = 8;
+const drawCount = 4;
+
+// The red and green bytes of each texel are the coordinates of the next texel to fetch.
+const fragmentShader = `
+precision highp float;
+varying highp vec2 vPixel;
+uniform sampler2D uPermutation;
+uniform vec2 uStart;
+void main() {
+    vec2 texel = mod(floor(vPixel) + uStart, ${textureSize}.0);
+    vec4 value = texture2D(uPermutation, (texel + vec2(0.5)) * (1.0 / ${textureSize}.0));
+    for (int i = 1; i < ${fetchCount}; i++)
+        value = texture2D(uPermutation, (value.xy * 255.0 + vec2(0.5)) * (1.0 / ${textureSize}.0));
+    gl_FragColor = value;
+}`;
+
+let startLocation;
+let data;
+
+function startFor(n)
+{
+    return [WebGLBench.hash(n * 2 + 1000) & 255, WebGLBench.hash(n * 2 + 1001) & 255];
+}
+
+FullscreenShaderBenchmark.run({
+    description: "Measures " + drawCount + " fullscreen draws into a 2048x2048 framebuffer of a fragment shader that makes a chain of " + fetchCount + " dependent NEAREST fetches from a 256x256 RGBA8 permutation texture, followed by a 1x1 readPixels.",
+    size,
+    fragmentShader,
+    drawCount,
+    tolerance: 0,
+    setup(gl, program) {
+        startLocation = gl.getUniformLocation(program, "uStart");
+        gl.uniform1i(gl.getUniformLocation(program, "uPermutation"), 0);
+        // A random permutation of the texels, plus random blue and alpha bytes.
+        const texelCount = textureSize * textureSize;
+        const permutation = new Uint32Array(texelCount);
+        for (let i = 0; i < texelCount; ++i)
+            permutation[i] = i;
+        for (let i = texelCount - 1; i > 0; --i) {
+            const j = WebGLBench.hash(i) % (i + 1);
+            const swap = permutation[i];
+            permutation[i] = permutation[j];
+            permutation[j] = swap;
+        }
+        const extra = WebGLBench.createPattern(texelCount * 2, 5);
+        data = new Uint8Array(texelCount * 4);
+        for (let i = 0; i < texelCount; ++i) {
+            data[i * 4] = permutation[i] % textureSize;
+            data[i * 4 + 1] = Math.floor(permutation[i] / textureSize);
+            data[i * 4 + 2] = extra[i * 2];
+            data[i * 4 + 3] = extra[i * 2 + 1];
+        }
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    },
+    update(gl, n) {
+        const start = startFor(n);
+        gl.uniform2f(startLocation, start[0], start[1]);
+    },
+    expectedPixel(n, x, y, out) {
+        const start = startFor(n);
+        let offset = ((((y + start[1]) & 255) * textureSize) + ((x + start[0]) & 255)) * 4;
+        for (let i = 1; i < fetchCount; ++i)
+            offset = (data[offset + 1] * textureSize + data[offset]) * 4;
+        for (let c = 0; c < 4; ++c)
+            out[c] = data[offset + c];
+        return out;
+    }
+});
+
+</script>
+</body>
+</html>

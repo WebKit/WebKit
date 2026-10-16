@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script src="../resources/webgl-bench.js"></script>
+<script>
+WebGLBench.repeatCount = 3;
+
+// copyTexImage2D in the only shape that ANGLE's WebGPU backend implements: the read
+// framebuffer has a texture attachment, and the destination is another texture. Each copy
+// redefines the destination texture, which stays attached to its own framebuffer for the checks.
+const size = 1024;
+const copyCount = 8;
+const sourceCount = 3;
+const sources = [];
+const destinations = [];
+const patterns = [];
+
+function sourceFor(n, copy)
+{
+    return (n + copy) % sourceCount;
+}
+
+WebGLBench.run({
+    description: "Measures 8 copyTexImage2D calls that redefine 1024x1024 RGBA8 textures with copies of 1024x1024 RGBA8 framebuffer textures, followed by a 1x1 readPixels.",
+    setup(gl) {
+        for (let i = 0; i < sourceCount; ++i) {
+            patterns.push(WebGLBench.createPattern(size * size * 4, i));
+            const source = WebGLBench.createRenderTarget(gl, size, size);
+            gl.bindTexture(gl.TEXTURE_2D, source.texture);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, size, size, gl.RGBA, gl.UNSIGNED_BYTE, patterns[i]);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            sources.push(source);
+        }
+        for (let i = 0; i < copyCount; ++i)
+            destinations.push(WebGLBench.createRenderTarget(gl, size, size));
+    },
+    iteration(gl, n) {
+        for (let i = 0; i < copyCount; ++i) {
+            gl.bindFramebuffer(gl.FRAMEBUFFER, sources[sourceFor(n, i)].framebuffer);
+            gl.bindTexture(gl.TEXTURE_2D, destinations[i].texture);
+            gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, size, size, 0);
+        }
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    },
+    probe(gl, n) {
+        const x = WebGLBench.hash(n) % size;
+        const y = WebGLBench.hash(n + 1) % size;
+        const offset = (y * size + x) * 4;
+        WebGLBench.probe(gl, destinations[copyCount - 1], x, y, patterns[sourceFor(n, copyCount - 1)].subarray(offset, offset + 4));
+    },
+    verify(gl, n) {
+        for (let i = 0; i < copyCount; ++i) {
+            const pixels = WebGLBench.readPixels(gl, destinations[i], 0, 0, size, size);
+            WebGLBench.verifyPixels("Destination " + i, pixels, patterns[sourceFor(n, i)], size, 0);
+        }
+    }
+});
+
+</script>
+</body>
+</html>
