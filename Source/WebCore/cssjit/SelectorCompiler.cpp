@@ -4648,6 +4648,12 @@ void SelectorCodeGenerator::generateNthFilterTest(Assembler::JumpList& failureCa
     if (!a)
         failureCases.append(m_assembler.branch32(Assembler::NotEqual, Assembler::TrustedImm32(b), counter));
     else if (a > 0) {
+        // Normalize a negative b to [0, a) so counter - b cannot overflow.
+        if (b < 0) {
+            b %= a;
+            if (b)
+                b += a;
+        }
         if (a == 2 && b == 1) {
             // This is the common case 2n+1 (or "odd"), we can test for odd values without doing the arithmetic.
             failureCases.append(m_assembler.branchTest32(Assembler::Zero, counter, Assembler::TrustedImm32(1)));
