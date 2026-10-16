@@ -743,6 +743,15 @@ void WebPage::performAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier f
     completionHandler(convertSearchResultsToRemoteTokens(WTF::move(searchResults)));
 }
 
+void WebPage::postAccessibilitySelectedTextChangeFromRemoteFrame(const WebCore::AXRemoteFrameSelectedTextChange& change)
+{
+    RefPtr coreFrame = m_mainFrame->coreLocalFrame();
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    // This is null if accessibility isn't enabled, in which case no assistive technology is listening.
+    if (CheckedPtr cache = document ? document->axObjectCache() : nullptr)
+        cache->postSelectedTextChangeFromRemoteFrame(change);
+}
+
 void WebPage::continueAccessibilitySearchInParentFrame(WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC criteria, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&& completionHandler)
 {
     // Get the main frame's document and AXObjectCache for this (parent) process.

@@ -297,6 +297,7 @@ enum class AttachmentAssociatedElementType : uint8_t;
 #endif
 
 struct AXDebugInfo;
+struct AXRemoteFrameSelectedTextChange;
 struct AccessibilityRemoteToken;
 struct AccessibilitySearchCriteriaIPC;
 struct AgentClusterAssignment;
@@ -3296,6 +3297,7 @@ private:
 #if PLATFORM(MAC)
     void performAccessibilitySearchInRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
     void continueAccessibilitySearchFromChildFrame(IPC::Connection&, WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
+    void relayAccessibilitySelectedTextChangeToMainFrame(IPC::Connection&, WebCore::FrameIdentifier, WebCore::AXRemoteFrameSelectedTextChange&&);
 #endif
     void updateSandboxFlags(IPC::Connection&, WebCore::FrameIdentifier, WebCore::SandboxFlags);
     void updateReferrerPolicy(IPC::Connection&, WebCore::FrameIdentifier, WebCore::ReferrerPolicy);

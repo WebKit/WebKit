@@ -589,6 +589,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if PLATFORM(MAC)
     PerformAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier frameID, struct WebCore::AccessibilitySearchCriteriaIPC criteria) -> (Vector<WebCore::AccessibilityRemoteToken> results)
     ContinueAccessibilitySearchInParentFrame(WebCore::FrameIdentifier childFrameID, struct WebCore::AccessibilitySearchCriteriaIPC criteria) -> (Vector<WebCore::AccessibilityRemoteToken> results)
+    PostAccessibilitySelectedTextChangeFromRemoteFrame(struct WebCore::AXRemoteFrameSelectedTextChange change)
 #endif
 
 #if PLATFORM(MAC)

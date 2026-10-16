@@ -654,6 +654,7 @@ private:
     void handleAXRemoveNotificationListener();
     bool observeAXApplicationForElement(CFTypeRef);
     bool observeAXApplication(CFTypeRef);
+    WKRetainPtr<WKTypeRef> axValueToWK(CFTypeRef value, CFTypeRef textElement);
 #endif
 
     // WKContextClient

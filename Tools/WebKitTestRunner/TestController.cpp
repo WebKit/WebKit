@@ -6454,6 +6454,60 @@ void TestController::handleAXRemoveNotificationListener()
     m_axObservers.clear();
 }
 
+// Converts a notification's userInfo for the injected bundle. Elements become tokens, and text marker
+// ranges become the text they span, resolved on |textElement| the way a client would.
+WKRetainPtr<WKTypeRef> TestController::axValueToWK(CFTypeRef value, CFTypeRef textElement)
+{
+    auto typeID = CFGetTypeID(value);
+    if (typeID == CFStringGetTypeID())
+        return toWK(String(static_cast<CFStringRef>(value)));
+    if (typeID == CFBooleanGetTypeID())
+        return adoptWK(WKBooleanCreate(CFBooleanGetValue(static_cast<CFBooleanRef>(value))));
+    if (typeID == CFNumberGetTypeID()) {
+        double number = 0;
+        CFNumberGetValue(static_cast<CFNumberRef>(value), kCFNumberDoubleType, &number);
+        return adoptWK(WKDoubleCreate(number));
+    }
+    if (typeID == AXUIElementGetTypeID()) {
+        WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+        setValue(dictionary, "AXUIElementToken", storeAXElement(value));
+        return dictionary;
+    }
+    if (typeID == AXTextMarkerRangeGetTypeID()) {
+        WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+        CFTypeRef string = nullptr;
+        AXUIElementCopyParameterizedAttributeValue(static_cast<AXUIElementRef>(textElement), CFSTR("AXStringForTextMarkerRange"), value, &string);
+        RetainPtr adoptedString = adoptCF(string);
+        setValue(dictionary, "AXTextMarkerRangeString", string && CFGetTypeID(string) == CFStringGetTypeID() ? String(static_cast<CFStringRef>(string)) : String());
+        return dictionary;
+    }
+    if (typeID == CFArrayGetTypeID()) {
+        WKRetainPtr array = adoptWK(WKMutableArrayCreate());
+        auto cfArray = static_cast<CFArrayRef>(value);
+        for (CFIndex i = 0; i < CFArrayGetCount(cfArray); ++i) {
+            if (auto item = axValueToWK(CFArrayGetValueAtIndex(cfArray, i), textElement))
+                WKArrayAppendItem(array.get(), item.get());
+        }
+        return array;
+    }
+    if (typeID == CFDictionaryGetTypeID()) {
+        WKRetainPtr dictionary = adoptWK(WKMutableDictionaryCreate());
+        auto cfDictionary = static_cast<CFDictionaryRef>(value);
+        auto count = CFDictionaryGetCount(cfDictionary);
+        Vector<const void*> keys(count);
+        Vector<const void*> values(count);
+        CFDictionaryGetKeysAndValues(cfDictionary, keys.mutableSpan().data(), values.mutableSpan().data());
+        for (CFIndex i = 0; i < count; ++i) {
+            if (CFGetTypeID(keys[i]) != CFStringGetTypeID())
+                continue;
+            if (auto item = axValueToWK(values[i], textElement))
+                WKDictionarySetItem(dictionary.get(), toWK(String(static_cast<CFStringRef>(keys[i]))).get(), item.get());
+        }
+        return dictionary;
+    }
+    return nullptr;
+}
+
 void TestController::axNotificationReceived(CFTypeRef element, CFStringRef notification, CFDictionaryRef userInfo, pid_t observedPid)
 {
     if (!m_isListeningForAXNotifications)
@@ -6470,6 +6524,15 @@ void TestController::axNotificationReceived(CFTypeRef element, CFStringRef notif
     WKRetainPtr body = adoptWK(WKMutableDictionaryCreate());
     setValue(body, "elementToken", storeAXElement(element));
     setValue(body, "notificationName", String(notification));
+    if (userInfo) {
+        // Like VoiceOver, resolve text markers on the AXTextChangeElement when there is one. Markers relayed from a
+        // cross-site frame's process only resolve there, not on the main frame's web area the notification is posted on.
+        CFTypeRef textElement = CFDictionaryGetValue(userInfo, CFSTR("AXTextChangeElement"));
+        if (!textElement || CFGetTypeID(textElement) != AXUIElementGetTypeID())
+            textElement = element;
+        if (auto value = axValueToWK(userInfo, textElement))
+            setValue(body, "userInfo", value);
+    }
     WKPagePostMessageToInjectedBundle(m_mainWebView->page(), toWK("AXClientNotification").get(), body.get());
 }
 

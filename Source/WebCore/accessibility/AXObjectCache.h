@@ -384,6 +384,11 @@ public:
     void onSelectedOptionChanged(Element&);
     void onSelectedOptionChanged(HTMLSelectElement&, int optionIndex);
     void onSelectedTextChanged(const VisiblePositionRange&, AccessibilityObject* = nullptr);
+#if PLATFORM(MAC)
+    // Posts AXSelectedTextChanged on this cache's root web area for a selection change in a cross-site frame, relayed
+    // from that frame's process. VoiceOver only handles the notification on the top-level web area.
+    WEBCORE_EXPORT void postSelectedTextChangeFromRemoteFrame(const AXRemoteFrameSelectedTextChange&);
+#endif
     void onSlottedContentChange(const HTMLSlotElement&);
     void onStyleChange(Element&, OptionSet<Style::Change>, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle);
     void onStyleChange(RenderText&, Style::Difference, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle& newStyle);

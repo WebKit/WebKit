@@ -2054,6 +2054,12 @@ void WebChromeClient::continueAccessibilitySearchFromChildFrame(FrameIdentifier 
     else
         callback({ });
 }
+
+void WebChromeClient::relayAccessibilitySelectedTextChangeToMainFrame(FrameIdentifier frameID, AXRemoteFrameSelectedTextChange&& change)
+{
+    if (RefPtr page = m_page)
+        page->send(Messages::WebPageProxy::RelayAccessibilitySelectedTextChangeToMainFrame(frameID, WTF::move(change)));
+}
 #endif
 
 void WebChromeClient::isPlayingMediaDidChange(MediaProducerMediaStateFlags state)
