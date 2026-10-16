@@ -3512,7 +3512,7 @@ IGNORE_WARNINGS_END
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     [pasteboard _web_writeURL:dynamic_objc_cast<NSURL>([element objectForKey:WebElementLinkURLKey])
-                     andTitle:[element objectForKey:WebElementLinkLabelKey]
+                     andTitle:dynamic_objc_cast<NSString>([element objectForKey:WebElementLinkLabelKey])
                         types:types];
 }
 
