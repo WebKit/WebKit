@@ -458,7 +458,7 @@ static bool executeIndent(LocalFrame& frame, Event*, EditorCommandSource, const 
 
 static bool executeInsertBacktab(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
-    return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event, TextEventInputBackTab);
+    return protect(targetFrame(frame, event)->eventHandler())->handleTextInputEvent("\t"_s, event, TextEventInputBackTab);
 }
 
 static bool executeInsertHorizontalRule(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
@@ -487,7 +487,7 @@ static bool executeInsertLineBreak(LocalFrame& frame, Event* event, EditorComman
 {
     switch (source) {
     case EditorCommandSource::MenuOrKeyBinding:
-        return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\n"_s, event, TextEventInputLineBreak);
+        return protect(targetFrame(frame, event)->eventHandler())->handleTextInputEvent("\n"_s, event, TextEventInputLineBreak);
     case EditorCommandSource::DOM:
     case EditorCommandSource::DOMWithUserInterface:
         // Doesn't scroll to make the selection visible, or modify the kill ring.
@@ -527,7 +527,7 @@ static bool executeInsertParagraph(LocalFrame& frame, Event*, EditorCommandSourc
 
 static bool executeInsertTab(LocalFrame& frame, Event* event, EditorCommandSource, const String&)
 {
-    return targetFrame(frame, event)->eventHandler().handleTextInputEvent("\t"_s, event);
+    return protect(targetFrame(frame, event)->eventHandler())->handleTextInputEvent("\t"_s, event);
 }
 
 static bool executeInsertText(LocalFrame& frame, Event* event, EditorCommandSource, const String& value)

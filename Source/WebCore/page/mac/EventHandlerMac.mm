@@ -497,7 +497,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         RefPtr frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
-        auto [result, _] = frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        auto [result, _] = protect(frameView->frame().eventHandler())->handleWheelEvent(wheelEvent, processingSteps);
         return result.wasHandled();
     }
 
@@ -863,7 +863,7 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::determineWheelEventTarget() - event " << wheelEvent << " found scrollableArea " << ValueOrNull(scrollableArea.get()) << ", latching state is " << page->scrollLatchingController());
 
     if (scrollableArea && page->isMonitoringWheelEvents())
-        scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
+        protect(scrollableArea)->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
 
     if (wheelEvent.shouldResetLatching() || wheelEvent.isNonGestureEvent())
         return;

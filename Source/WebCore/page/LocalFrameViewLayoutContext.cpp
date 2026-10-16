@@ -178,7 +178,7 @@ void LocalFrameViewLayoutContext::layout(bool canDeferUpdateLayerPositions)
         return;
 
     Style::DocumentScope::LayoutDependencyUpdateContext layoutDependencyUpdateContext;
-    while (document() && document()->styleScope().invalidateForLayoutDependencies(layoutDependencyUpdateContext)) {
+    while (document() && protect(document()->styleScope())->invalidateForLayoutDependencies(layoutDependencyUpdateContext)) {
         protect(document())->updateStyleIfNeeded();
 
         if (!needsLayout())
@@ -200,7 +200,7 @@ void LocalFrameViewLayoutContext::interleavedLayout()
     performLayout(false);
 
     Style::DocumentScope::LayoutDependencyUpdateContext layoutDependencyUpdateContext;
-    document()->styleScope().invalidateForLayoutDependencies(layoutDependencyUpdateContext);
+    protect(document()->styleScope())->invalidateForLayoutDependencies(layoutDependencyUpdateContext);
 }
 
 void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPositions)
@@ -267,12 +267,12 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         TraceScope tracingScope(RenderTreeLayoutStart, RenderTreeLayoutEnd);
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
-        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+        SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(protect(subtreeLayoutRoot()));
+        RenderView::RepaintRegionAccumulator repaintRegionAccumulator(protect(renderView()));
 #ifndef NDEBUG
         RenderTreeNeedsLayoutChecker checker(*renderView());
 #endif
-        layoutRoot->layout();
+        protect(layoutRoot)->layout();
         {
             CheckedPtr renderView = this->renderView();
             auto state = renderView ? renderView->textAutosizingState() : RenderView::TextAutosizingState::Normal;
@@ -297,7 +297,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
                 break;
             }
         }
-        layoutRoot->absoluteQuads(layoutAreas);
+        protect(layoutRoot)->absoluteQuads(layoutAreas);
 
         clearSubtreeLayoutRoot();
         ASSERT(m_percentHeightIgnoreList.isEmptyIgnoringNullReferences());
@@ -331,7 +331,7 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         protect(view())->didLayout(layoutRoot, canDeferUpdateLayerPositions);
         runOrScheduleAsynchronousTasks(canDeferUpdateLayerPositions);
     }
-    InspectorInstrumentation::didLayout(frame, *layoutRoot, layoutAreas);
+    InspectorInstrumentation::didLayout(frame, *protect(layoutRoot), layoutAreas);
     DebugPageOverlays::didLayout(frame);
 }
 

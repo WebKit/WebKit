@@ -342,7 +342,7 @@ std::optional<CSSToLengthConversionData> SVGLengthContext::cssConversionData() c
         *currentStyle,
         rootStyle,
         parentStyle,
-        element->document().renderView(),
+        protect(element->document().renderView()),
         element.get(),
     };
 }

@@ -328,10 +328,11 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
 #endif
 
 #if HAVE(COREVIDEO_METAL_SUPPORT)
-    CVMetalTextureCacheRef coreVideoTextureCache;
+    // This is an out-parameter which is immediately adopted below.
+    SUPPRESS_UNRETAINED_LOCAL CVMetalTextureCacheRef coreVideoTextureCache;
     CVReturn result = CVMetalTextureCacheCreate(nullptr, nullptr, device, nullptr, &coreVideoTextureCache);
     ASSERT_UNUSED(result, result == kCVReturnSuccess);
-    m_coreVideoTextureCache = coreVideoTextureCache;
+    m_coreVideoTextureCache = adoptCF(coreVideoTextureCache);
 #endif
     GPUFrameCapture::registerForFrameCapture(m_device);
 

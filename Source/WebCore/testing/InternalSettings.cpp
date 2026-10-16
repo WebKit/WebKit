@@ -584,7 +584,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& 
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->settings().setAllowedMediaContainerTypes(types);
+    protect(m_page->settings())->setAllowedMediaContainerTypes(types);
     return { };
 }
 
@@ -592,7 +592,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& type
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->settings().setAllowedMediaCodecTypes(types);
+    protect(m_page->settings())->setAllowedMediaCodecTypes(types);
     return { };
 }
 
@@ -600,7 +600,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& t
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->settings().setAllowedMediaVideoCodecIDs(types);
+    protect(m_page->settings())->setAllowedMediaVideoCodecIDs(types);
     return { };
 }
 
@@ -608,7 +608,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& t
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->settings().setAllowedMediaAudioCodecIDs(types);
+    protect(m_page->settings())->setAllowedMediaAudioCodecIDs(types);
     return { };
 }
 
@@ -616,7 +616,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(const Stri
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->settings().setAllowedMediaCaptionFormatTypes(types);
+    protect(m_page->settings())->setAllowedMediaCaptionFormatTypes(types);
     return { };
 }
 

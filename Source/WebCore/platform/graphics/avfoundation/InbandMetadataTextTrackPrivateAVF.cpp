@@ -86,7 +86,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
             for (auto& partialCue : m_incompleteCues) {
                 INFO_LOG(LOGIDENTIFIER, "updating cue: start = ", partialCue.startTime, ", end = ", time);
                 notifyMainThreadClient([&](auto& client) {
-                    downcast<InbandTextTrackPrivateClient>(client).updateDataCue(partialCue.startTime, time, *partialCue.cueData);
+                    downcast<InbandTextTrackPrivateClient>(client).updateDataCue(partialCue.startTime, time, *protect(partialCue.cueData));
                 });
             }
         }

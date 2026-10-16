@@ -894,7 +894,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Ins
             m_documentsWithForcedPseudoStates.clear();
     }
 
-    element->document().styleScope().didChangeStyleSheetEnvironment();
+    protect(element->document().styleScope())->didChangeStyleSheetEnvironment();
 
     return { };
 }

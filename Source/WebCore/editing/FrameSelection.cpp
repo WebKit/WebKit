@@ -2642,7 +2642,7 @@ void FrameSelection::setFocusedElementIfNeeded(OptionSet<SetSelectionOption> opt
                 FocusOptions focusOptions;
                 if (options & SetSelectionOption::ForBindings)
                     focusOptions.trigger = FocusTrigger::Bindings;
-                document->page()->focusController().setFocusedElement(target.get(), protect(document->frame()), focusOptions);
+                protect(document->page()->focusController())->setFocusedElement(target.get(), protect(document->frame()), focusOptions);
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -2651,7 +2651,7 @@ void FrameSelection::setFocusedElementIfNeeded(OptionSet<SetSelectionOption> opt
     }
 
     if (caretBrowsing)
-        document->page()->focusController().setFocusedElement(nullptr, protect(document->frame()));
+        protect(document->page()->focusController())->setFocusedElement(nullptr, protect(document->frame()));
 }
 
 void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset) const

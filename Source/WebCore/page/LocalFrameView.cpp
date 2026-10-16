@@ -557,7 +557,7 @@ void LocalFrameView::didRestoreFromBackForwardCache()
 void LocalFrameView::willDestroyRenderTree()
 {
     detachCustomScrollbars();
-    layoutContext().clearSubtreeLayoutRoot();
+    protect(layoutContext())->clearSubtreeLayoutRoot();
 }
 
 void LocalFrameView::didDestroyRenderTree()
@@ -2571,7 +2571,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
             if (!elementRenderer)
                 return std::nullopt;
 
-            auto backdropRenderer = elementRenderer->pseudoElementRenderer(PseudoElementType::Backdrop);
+            CheckedPtr backdropRenderer = elementRenderer->pseudoElementRenderer(PseudoElementType::Backdrop);
             if (!backdropRenderer)
                 return std::nullopt;
 
@@ -5382,7 +5382,7 @@ void LocalFrameView::setPagination(const Pagination& pagination)
 
     m_pagination = pagination;
 
-    m_frame->document()->styleScope().didChangeStyleSheetEnvironment();
+    protect(m_frame->document()->styleScope())->didChangeStyleSheetEnvironment();
 }
 
 IntRect LocalFrameView::windowClipRect() const

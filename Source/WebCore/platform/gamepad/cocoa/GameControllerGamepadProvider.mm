@@ -306,7 +306,7 @@ void GameControllerGamepadProvider::playEffect(unsigned gamepadIndex, const Stri
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler(false);
-    auto gamepad = m_gamepadVector[gamepadIndex];
+    CheckedPtr gamepad = m_gamepadVector[gamepadIndex];
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler(false);
 
@@ -317,7 +317,7 @@ void GameControllerGamepadProvider::stopEffects(unsigned gamepadIndex, const Str
 {
     if (gamepadIndex >= m_gamepadVector.size())
         return completionHandler();
-    auto gamepad = m_gamepadVector[gamepadIndex];
+    CheckedPtr gamepad = m_gamepadVector[gamepadIndex];
     if (!gamepad || gamepad->id() != gamepadID)
         return completionHandler();
 

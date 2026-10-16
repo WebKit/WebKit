@@ -83,8 +83,8 @@ public:
     // Controlling the animation.
     void startAnimation(SVGAttributeAnimator& animator) override
     {
-        if (m_animVal)
-            *m_animVal = m_baseVal;
+        if (RefPtr animVal = m_animVal)
+            *animVal = m_baseVal;
         else
             ensureAnimVal();
         Base::startAnimation(animator);
@@ -95,8 +95,8 @@ public:
         Base::stopAnimation(animator);
         if (!this->isAnimating())
             detachAnimVal();
-        else if (m_animVal)
-            *m_animVal = m_baseVal;
+        else if (RefPtr animVal = m_animVal)
+            *animVal = m_baseVal;
     }
 
     // Controlling the instance animation.
@@ -142,8 +142,8 @@ protected:
     // Called when m_baseVal changes or an item in m_baseVal changes.
     void commitPropertyChange(SVGProperty* property) override
     {
-        if (m_animVal)
-            *m_animVal = m_baseVal;
+        if (RefPtr animVal = m_animVal)
+            *animVal = m_baseVal;
         Base::commitPropertyChange(property);
     }
 

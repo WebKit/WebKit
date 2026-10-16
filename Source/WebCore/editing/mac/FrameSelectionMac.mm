@@ -73,7 +73,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
     IntRect selectionRect = absoluteCaretBounds();
     IntRect viewRect = snappedIntRect(renderView->viewRect());
 
-    auto remoteFrameOffset = frameView->frame().loader().client().accessibilityRemoteFrameOffset();
+    auto remoteFrameOffset = protect(frameView->frame().loader().client())->accessibilityRemoteFrameOffset();
     selectionRect.moveBy({ remoteFrameOffset });
     viewRect.moveBy({ remoteFrameOffset });
 

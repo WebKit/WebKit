@@ -422,7 +422,7 @@ void PlaybackSessionModelMediaElement::enterInWindowFullscreen()
     if (!element)
         return;
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, protect(element->document()).ptr() };
 
     if (element->fullscreenMode() != MediaPlayerEnums::VideoFullscreenModeInWindow)
         element->setPresentationModeIgnoringPermissionsPolicy(HTMLVideoElement::VideoPresentationMode::InWindow);
@@ -437,7 +437,7 @@ void PlaybackSessionModelMediaElement::exitInWindowFullscreen()
     if (!element)
         return;
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, protect(element->document()).ptr() };
 
     if (element->fullscreenMode() == MediaPlayerEnums::VideoFullscreenModeInWindow)
         element->setPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
@@ -451,7 +451,7 @@ void PlaybackSessionModelMediaElement::enterFullscreen()
     if (!element)
         return;
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, protect(element->document()).ptr() };
     element->enterFullscreenIgnoringPermissionsPolicy();
 }
 
@@ -472,7 +472,7 @@ void PlaybackSessionModelMediaElement::exitFullscreen()
     if (!element)
         return;
 
-    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, &element->document() };
+    UserGestureIndicator indicator { IsProcessingUserGesture::Yes, protect(element->document()).ptr() };
     element->webkitExitFullscreen();
 }
 

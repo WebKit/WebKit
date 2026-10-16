@@ -288,7 +288,7 @@ void SVGFontFaceElement::rebuildFontFace()
         }
     }
 
-    document().styleScope().didChangeStyleSheetEnvironment();
+    protect(document().styleScope())->didChangeStyleSheetEnvironment();
 }
 
 Node::NeedsPostConnectionSteps SVGFontFaceElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

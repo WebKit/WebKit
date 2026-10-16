@@ -1,4 +1,3 @@
-[ macOS ] InternalSettingsGenerated.cpp
 StyleChangedAnimatablePropertiesGenerated.cpp
 [ macOS ] animation/KeyframeEffect.cpp
 [ macOS ] animation/KeyframeEffectStack.cpp
@@ -44,26 +43,6 @@ dom/Element.cpp
 dom/ShadowRoot.cpp
 [ macOS ] dom/StyledElement.cpp
 [ macOS ] dom/ViewTransition.cpp
-[ macOS ] editing/Editor.cpp
-[ macOS ] editing/mac/FrameSelectionMac.mm
-[ macOS ] fileapi/Blob.cpp
-[ macOS ] history/CachedFrame.cpp
-[ macOS ] platform/audio/MediaSessionManagerInterface.cpp
-[ macOS ] platform/audio/PlatformMediaSessionManager.cpp
-[ macOS ] platform/audio/cocoa/MediaSessionManagerCocoa.mm
-[ macOS ] platform/audio/mac/AudioHardwareListenerMac.cpp
-[ macOS ] platform/cocoa/PlaybackSessionModelMediaElement.mm
-[ macOS ] platform/cocoa/VideoPresentationModelVideoElement.mm
-[ macOS ] platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
-[ macOS ] platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
-[ macOS ] platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
-[ macOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
-[ macOS ] platform/graphics/cocoa/WebCoreDecompressionSession.mm
-[ macOS ] platform/mediastream/AudioTrackPrivateMediaStream.cpp
-[ macOS ] platform/mediastream/cocoa/CoreAudioCaptureUnit.cpp
-[ macOS ] platform/mediastream/cocoa/ScreenCaptureKitSharingSessionManager.mm
-[ macOS ] platform/mock/MockRealtimeMediaSourceCenter.cpp
-[ macOS ] platform/network/cocoa/WebCoreNSURLSession.mm
 rendering/BackgroundPainter.cpp
 [ iOS ] rendering/BorderPainter.cpp
 rendering/HitTestResult.cpp
@@ -139,7 +118,3 @@ style/values/transforms/StyleTransformList.cpp
 style/values/transforms/StyleTranslate.h
 [ macOS ] style/values/ui/StyleCursor.cpp
 style/values/will-change/StyleWillChange.h
-[ macOS ] svg/graphics/SVGImage.cpp
-[ macOS ] svg/properties/SVGAnimatedPropertyList.h
-[ macOS ] testing/InternalSettings.cpp
-[ macOS ] testing/Internals.cpp

@@ -436,8 +436,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 
     sampleBufferDisplayLayer->initialize(hideRootLayer(), size, m_shouldMaintainAspectRatio, [weakThis = WeakPtr { *this }, weakLayer = ThreadSafeWeakPtr { *m_sampleBufferDisplayLayer }, size](auto didSucceed) {
         auto layer = weakLayer.get();
-        if (weakThis && layer && layer.get() == weakThis->m_sampleBufferDisplayLayer.get())
-            weakThis->layersAreInitialized(size, didSucceed);
+        RefPtr protectedThis = weakThis;
+        if (protectedThis && layer && layer.get() == protectedThis->m_sampleBufferDisplayLayer.get())
+            protectedThis->layersAreInitialized(size, didSucceed);
     });
 }
 
@@ -999,7 +1000,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
             if (m_sampleBufferDisplayLayer && source->isCaptureSource())
                 protect(m_sampleBufferDisplayLayer)->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
             source->addVideoFrameObserver(*this);
-            ALWAYS_LOG(LOGIDENTIFIER, "observing video source ", m_activeVideoTrack->streamTrack().logIdentifier());
+            ALWAYS_LOG(LOGIDENTIFIER, "observing video source ", protect(m_activeVideoTrack->streamTrack())->logIdentifier());
         }
     } else
         m_isActiveVideoTrackEnabled = m_activeVideoTrack ? m_activeVideoTrack->streamTrack().enabled() : true;
@@ -1096,7 +1097,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
         return;
 
     if (m_nativeImageCreator) {
-        m_imagePainter.cgImage = m_nativeImageCreator(*m_imagePainter.videoFrame);
+        m_imagePainter.cgImage = m_nativeImageCreator(*protect(m_imagePainter.videoFrame));
         return;
     }
 

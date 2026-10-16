@@ -1180,7 +1180,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy, CompletionH
     switch (policy) {
     case PolicyAction::Use: {
         if (!protect(frameLoader()->client())->canShowMIMEType(m_response.mimeType()) || disallowWebArchive() || disallowDataRequest()) {
-            frameLoader()->policyChecker().cannotShowMIMEType(m_response);
+            protect(frameLoader()->policyChecker())->cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();
             return;
@@ -2437,7 +2437,7 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
 {
     if (m_waitingForContentPolicy || m_waitingForNavigationPolicy) {
         RELEASE_ASSERT(frameLoader());
-        frameLoader()->policyChecker().stopCheck();
+        protect(frameLoader()->policyChecker())->stopCheck();
         m_waitingForContentPolicy = false;
         m_waitingForNavigationPolicy = false;
     }
@@ -2750,7 +2750,7 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
         unblockHandler.wrapWithDecisionHandler([scriptController = WeakPtr { frame()->script() }, script = WTF::move(unblockRequestDeniedScript).isolatedCopy()](bool unblocked) {
             if (!unblocked && scriptController) {
                 // FIXME: This probably needs to figure out if the origin is considered tainted.
-                scriptController->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted);
+                protect(scriptController)->executeScriptIgnoringException(script, JSC::SourceTaintedOrigin::Untainted);
             }
         });
     }

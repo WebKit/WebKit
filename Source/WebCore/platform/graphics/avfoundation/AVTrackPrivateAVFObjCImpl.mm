@@ -114,10 +114,10 @@ void AVTrackPrivateAVFObjCImpl::initializationCompleted()
 {
     assertIsMainThread();
 
-    if (m_audioTrackConfigurationObserver)
-        (*m_audioTrackConfigurationObserver)();
-    if (m_videoTrackConfigurationObserver)
-        (*m_videoTrackConfigurationObserver)();
+    if (RefPtr observer = m_audioTrackConfigurationObserver)
+        (*observer)();
+    if (RefPtr observer = m_videoTrackConfigurationObserver)
+        (*observer)();
 }
 
 bool AVTrackPrivateAVFObjCImpl::enabled() const

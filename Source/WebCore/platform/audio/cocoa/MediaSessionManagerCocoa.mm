@@ -328,8 +328,8 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSessionInterf
     PlatformMediaSessionManager::sessionWillEndPlayback(session, delayCallingUpdateNowPlaying);
 
     enqueueTaskOnMainThread([weakSession = WeakPtr { session }] {
-        if (weakSession)
-            weakSession->updateMediaUsageIfChanged();
+        if (RefPtr session = weakSession)
+            session->updateMediaUsageIfChanged();
     });
 
     if (delayCallingUpdateNowPlaying == DelayCallingUpdateNowPlaying::No)

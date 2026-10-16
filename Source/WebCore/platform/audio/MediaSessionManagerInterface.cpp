@@ -90,7 +90,7 @@ WeakPtr<PlatformMediaSessionInterface> MediaSessionManagerInterface::firstSessio
 
 void MediaSessionManagerInterface::forEachMatchingSession(NOESCAPE const Function<bool(const PlatformMediaSessionInterface&)>& predicate, NOESCAPE const Function<void(PlatformMediaSessionInterface&)>& callback)
 {
-    for (auto& session : sessionsMatching(predicate)) {
+    for (RefPtr session : sessionsMatching(predicate)) {
         ASSERT(session);
         if (session)
             callback(*session);
@@ -103,7 +103,7 @@ void MediaSessionManagerInterface::forEachSessionInGroup(std::optional<MediaSess
         return;
 
     forEachMatchingSession([mediaSessionGroupIdentifier = *mediaSessionGroupIdentifier](auto& session) {
-        return session.client().mediaSessionGroupIdentifier() == mediaSessionGroupIdentifier;
+        return protect(session.client())->mediaSessionGroupIdentifier() == mediaSessionGroupIdentifier;
     }, [&callback](auto& session) {
         callback(session);
     });
@@ -367,7 +367,7 @@ void MediaSessionManagerInterface::processWillSuspend()
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     forEachSession([&] (auto& session) {
-        session.client().processIsSuspendedChanged();
+        protect(session.client())->processIsSuspendedChanged();
     });
 #endif
 
@@ -388,7 +388,7 @@ void MediaSessionManagerInterface::processDidResume()
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     forEachSession([&] (auto& session) {
-        session.client().processIsSuspendedChanged();
+        protect(session.client())->processIsSuspendedChanged();
     });
 #endif
 

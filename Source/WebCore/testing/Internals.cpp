@@ -525,7 +525,7 @@ private:
 };
 
 InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, LocalFrame& mainFrame, RefPtr<LocalDOMWindow>&& frontendWindow)
-    : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), makeUnique<InspectorFrontendClientLocal::Settings>(), InspectorFrontendClientLocal::DispatchBackendTarget::MainFrame)
+    : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), protect(frontendWindow->document()->page()), makeUnique<InspectorFrontendClientLocal::Settings>(), InspectorFrontendClientLocal::DispatchBackendTarget::MainFrame)
     , m_frontendWindow(frontendWindow.copyRef())
     , m_mainFrameInspectorController(mainFrame.inspectorController())
 {
@@ -968,7 +968,7 @@ static String styleValidityToToString(Style::Validity validity)
 
 String Internals::styleChangeType(Node& node)
 {
-    node.document().styleScope().flushPendingUpdate();
+    protect(node.document().styleScope())->flushPendingUpdate();
 
     return styleValidityToToString(node.styleValidity());
 }
@@ -2270,7 +2270,7 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
         return Exception { ExceptionCode::InvalidAccessError };
 
     InspectorOverlay::Highlight highlight;
-    document->page()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
+    protect(document->page()->inspectorController())->getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
     return DOMRectList::create(highlight.quads);
 }
 
@@ -2280,7 +2280,7 @@ ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
     if (!document || !document->page())
         return Exception { ExceptionCode::InvalidAccessError };
 
-    return document->page()->inspectorController().paintRectCount();
+    return protect(document->page()->inspectorController())->paintRectCount();
 }
 
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
@@ -4949,7 +4949,7 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
         return Exception { ExceptionCode::InvalidAccessError };
 
 #if !PLATFORM(IOS_FAMILY)
-    Cursor cursor = document->frame()->eventHandler().currentMouseCursor();
+    Cursor cursor = protect(document->frame()->eventHandler())->currentMouseCursor();
 
     StringBuilder result;
     result.append("type="_s, cursorTypeToString(cursor.type()), " hotSpot="_s, cursor.hotSpot().x(), ',', cursor.hotSpot().y());
@@ -6824,13 +6824,13 @@ bool Internals::isProcessingUserGesture()
 
 void Internals::withUserGesture(Ref<VoidCallback>&& callback)
 {
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, contextDocument());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(contextDocument()));
     callback->invoke();
 }
 
 void Internals::withoutUserGesture(Ref<VoidCallback>&& callback)
 {
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::No, contextDocument());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::No, protect(contextDocument()));
     callback->invoke();
 }
 
@@ -8764,7 +8764,7 @@ void Internals::acceptTypedArrays(Int32Array&)
 
 Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const String& selector)
 {
-    auto selectorList = CSSSelectorParser::parseSelectorList(selector, CSSParserContext(*contextDocument()));
+    auto selectorList = CSSSelectorParser::parseSelectorList(selector, CSSParserContext(*protect(contextDocument())));
     if (!selectorList)
         return { };
 

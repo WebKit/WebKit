@@ -49,7 +49,7 @@ void MockGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client)
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
     WeakHashSet<PlatformGamepad> invisibleGamepads;
-    for (auto& gamepad : m_connectedGamepadVector) {
+    for (CheckedPtr gamepad : m_connectedGamepadVector) {
         if (gamepad)
             invisibleGamepads.add(*gamepad);
     }

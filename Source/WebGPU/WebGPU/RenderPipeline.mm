@@ -1808,7 +1808,7 @@ void Device::createRenderPipeline(const WebGPU::RenderPipelineDescriptor& descri
         return callback(returnInvalidRenderPipeline(*this, isAsync, @"too many render pipelines"));
     }
 
-    Ref<PipelineLayout> finalPipelineLayout = pipelineLayout ? Ref { const_cast<PipelineLayout&>(*pipelineLayout) } : generatePipelineLayout(bindGroupEntries);
+    Ref<PipelineLayout> finalPipelineLayout = pipelineLayout ? Ref { *pipelineLayout } : generatePipelineLayout(bindGroupEntries);
     if (!pipelineLayout && !finalPipelineLayout->isValid())
         return callback(returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_s));
 

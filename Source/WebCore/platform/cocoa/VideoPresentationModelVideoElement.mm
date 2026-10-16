@@ -295,7 +295,7 @@ void VideoPresentationModelVideoElement::requestFullscreenMode(HTMLMediaElementE
         return;
 
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &videoElement->document());
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(videoElement->document()).ptr());
 
     videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
 
@@ -367,7 +367,7 @@ void VideoPresentationModelVideoElement::fullscreenModeChanged(HTMLMediaElementE
     ASSERT_UNUSED(shouldNotifyMediaElement, shouldNotifyMediaElement == ShouldNotifyMediaElement::Yes);
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoFullscreenMode);
     if (RefPtr videoElement = m_videoElement) {
-        UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, &videoElement->document());
+        UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(videoElement->document()).ptr());
         videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(videoFullscreenMode));
     }
 }

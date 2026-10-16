@@ -737,7 +737,7 @@ static std::optional<TargetedElementInfo> targetedElementInfo(Element& element, 
 
         offsetEdges = computeOffsetEdges(renderer->style());
         positionType = renderer->style().position();
-        boundsInClientCoordinates = computeClientRect(*renderer);
+        boundsInClientCoordinates = computeClientRect(*protect(renderer));
     }
 
     bool isInVisibilityAdjustmentSubtree = [&] {

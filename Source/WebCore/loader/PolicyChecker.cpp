@@ -362,7 +362,7 @@ std::optional<HitTestResult> PolicyChecker::hitTestResult(const NavigationAction
     if (!mouseEventData)
         return std::nullopt;
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    return m_frame->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
+    return protect(m_frame->eventHandler())->hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
 }
 
 void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<const FormSubmission>&& formSubmission, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)

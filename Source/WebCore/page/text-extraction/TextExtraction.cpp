@@ -3171,18 +3171,19 @@ static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifi
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(WTF::move(identifier)));
 
-    WeakPtr scroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
-    if (!scroller)
+    WeakPtr weakScroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
+    if (!weakScroller)
         return completion(false, "No scrollable area found"_s);
 
     String fallbackDescription;
-    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(protect(frame), identifierProvided, protect(scroller), stringsToValidate)) {
+    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(protect(frame), identifierProvided, protect(weakScroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
-        scroller = WTF::move(fallbackResult->second.scrollableArea);
+        weakScroller = WTF::move(fallbackResult->second.scrollableArea);
     }
 
     addBoxShadowIfNeeded(*foundNode, "#34c759"_s);
+    CheckedPtr scroller = weakScroller;
     scroller->scrollToOffsetWithoutAnimation(FloatPoint { scroller->scrollOffset() } + scrollDelta);
 
     String summary;
@@ -3199,19 +3200,20 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
     if (!foundNode)
         return completion(false, invalidNodeIdentifierDescription(WTF::move(identifier)));
 
-    WeakPtr scroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
-    if (!scroller)
+    WeakPtr weakScroller = CheckedRef { frame.eventHandler() }->enclosingScrollableArea(foundNode.get());
+    if (!weakScroller)
         return completion(false, "No scrollable area found"_s);
 
     String fallbackDescription;
-    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(frame, identifierProvided, protect(scroller), stringsToValidate)) {
+    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(frame, identifierProvided, protect(weakScroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
-        scroller = WTF::move(fallbackResult->second.scrollableArea);
+        weakScroller = WTF::move(fallbackResult->second.scrollableArea);
     }
 
     addBoxShadowIfNeeded(*foundNode, "#34c759"_s);
 
+    CheckedPtr scroller = weakScroller;
     auto currentOffset = scroller->scrollOffset();
     auto maxOffset = scroller->maximumScrollOffset();
 

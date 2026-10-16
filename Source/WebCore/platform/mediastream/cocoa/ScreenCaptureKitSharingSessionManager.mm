@@ -249,7 +249,7 @@ void ScreenCaptureKitSharingSessionManager::contentSharingPickerUpdatedFilterFor
         return;
     }
 
-    auto activeSource = m_activeSources[index];
+    RefPtr activeSource = m_activeSources[index];
     if (!activeSource->observer()) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::contentFilterWasUpdated - null session observer!");
         m_activeSources.removeAt(index);

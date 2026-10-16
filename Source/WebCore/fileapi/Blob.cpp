@@ -259,7 +259,7 @@ Ref<Blob> Blob::slice(long long start, long long end, const String& contentType)
             sliceMemoryCost = positiveEnd - positiveStart;
         ASSERT(sliceMemoryCost <= totalMemoryCost);
     }
-    auto blob = adoptRef(*new Blob(scriptExecutionContext(), m_internalURL, start, end, sliceMemoryCost, contentType));
+    Ref blob = adoptRef(*new Blob(protect(scriptExecutionContext()), m_internalURL, start, end, sliceMemoryCost, contentType));
     blob->suspendIfNeeded();
     return blob;
 }

@@ -126,14 +126,13 @@ static PixelRange LEGACY_NODELETE pixelRangeFromPixelFormat(OSType pixelFormat)
 
 static TransferFunctionCV transferFunctionFromString(RetainPtr<CFStringRef> string)
 {
-    CFStringRef cfString = string.get();
-    if (!string || CFEqual(cfString, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
+    if (!string || CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
         return TransferFunctionCV::kITU_R_709_2;
-    if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
         return TransferFunctionCV::kITU_R_601_4;
-    if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_SMPTE_240M_1995))
         return TransferFunctionCV::kSMPTE_240M_1995;
-    if (CFEqual(cfString, kCVImageBufferYCbCrMatrix_ITU_R_2020))
+    if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_2020))
         return TransferFunctionCV::kITU_R_2020;
 
     ASSERT_NOT_REACHED("Unexpected transfer function format");

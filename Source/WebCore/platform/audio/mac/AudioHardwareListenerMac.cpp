@@ -122,8 +122,8 @@ AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)
 
     WeakPtr weakThis { *this };
     m_block = Block_copy(^(UInt32 count, const AudioObjectPropertyAddress properties[]) {
-        if (weakThis)
-            weakThis->propertyChanged(unsafeMakeSpan(properties, count));
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->propertyChanged(unsafeMakeSpan(properties, count));
     });
 
     AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject, &processIsRunningPropertyDescriptor(), mainDispatchQueueSingleton(), m_block);

@@ -462,7 +462,7 @@ void MockRealtimeMediaSourceCenter::triggerMockCaptureConfigurationChange(bool f
         }
     }
     if (forDisplay) {
-        if (auto capturer = MockRealtimeDisplaySourceFactory::singleton().latestCapturer())
+        if (RefPtr capturer = MockRealtimeDisplaySourceFactory::singleton().latestCapturer())
             capturer->triggerMockCaptureConfigurationChange();
     }
 #elif USE(GSTREAMER)

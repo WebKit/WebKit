@@ -93,7 +93,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
     m_activeDataDetectorHighlight = nullptr;
     m_dataDetectorContainersAndHighlights = WTF::map(dataDetectorResultElements, [&](auto& element) {
-        CGRect elementBounds = element->renderer()->absoluteBoundingBoxRect();
+        CGRect elementBounds = protect(element->renderer())->absoluteBoundingBoxRect();
         elementBounds.origin = mainFrameView->windowToContents(frameView->contentsToWindow(roundedIntPoint(elementBounds.origin)));
 
         // FIXME: We should teach DataDetectorHighlight to render quads instead of always falling back to axis-aligned bounding rects.

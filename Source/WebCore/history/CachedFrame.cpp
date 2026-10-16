@@ -89,7 +89,7 @@ CachedFrameBase::~CachedFrameBase()
 void CachedFrameBase::pruneDetachedChildFrames()
 {
     m_childFrames.removeAllMatching([] (auto& childFrame) {
-        if (childFrame->view()->frame().page())
+        if (protect(childFrame->view())->frame().page())
             return false;
         childFrame->destroy();
         return true;

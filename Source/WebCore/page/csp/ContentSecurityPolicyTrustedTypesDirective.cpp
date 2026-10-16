@@ -89,6 +89,8 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
     if (value.isEmpty())
         return;
 
+    CheckedRef contentSecurityPolicy = directiveList().policy();
+
     readCharactersForParsing(value, [&](auto buffer) {
         if (isTrustedTypesNone(buffer))
             return;
@@ -112,7 +114,7 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
             }
 
             if (equalIgnoringASCIICase(policy, "'none'"_s)) {
-                directiveList().policy().reportInvalidTrustedTypesNoneKeyword();
+                contentSecurityPolicy->reportInvalidTrustedTypesNoneKeyword();
                 continue;
             }
 
@@ -124,7 +126,7 @@ void ContentSecurityPolicyTrustedTypesDirective::parse(const String& value)
             if (!policy.isEmpty() && policy.containsOnly<isPolicyNameCharacter<char16_t>>())
                 m_list.add(policy.toString());
             else {
-                directiveList().policy().reportInvalidTrustedTypesPolicy(policy.toString());
+                contentSecurityPolicy->reportInvalidTrustedTypesPolicy(policy.toString());
                 return;
             }
 

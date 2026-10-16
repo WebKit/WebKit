@@ -55,12 +55,13 @@ InternalSettingsGenerated::~InternalSettingsGenerated()
 
 void InternalSettingsGenerated::resetToConsistentState()
 {
+    Ref settings = m_page->settings();
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>
 <%- if @setting.condition -%>
 #if <%= @setting.condition %>
 <%- end -%>
-    m_page->settings().<%= @setting.setterFunctionName %>(m_<%= @setting.name %>);
+    settings-><%= @setting.setterFunctionName %>(m_<%= @setting.name %>);
 <%- if @setting.condition -%>
 #endif
 <%- end -%>
@@ -74,12 +75,12 @@ void InternalSettingsGenerated::<%= @setting.setterFunctionName %>(<%= @setting.
 {
 <%- if @setting.condition -%>
 #if <%= @setting.condition %>
-    m_page->settings().<%= @setting.setterFunctionName %>(<%= @setting.name %>);
+    protect(m_page->settings())-><%= @setting.setterFunctionName %>(<%= @setting.name %>);
 #else
     UNUSED_PARAM(<%= @setting.name %>);
 #endif
 <%- else -%>
-    m_page->settings().<%= @setting.setterFunctionName %>(<%= @setting.name %>);
+    protect(m_page->settings())-><%= @setting.setterFunctionName %>(<%= @setting.name %>);
 <%- end -%>
 }
 

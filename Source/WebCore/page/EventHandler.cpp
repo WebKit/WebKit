@@ -3512,7 +3512,7 @@ bool EventHandler::fetchLatchedWheelEventTarget(const PlatformWheelEvent& wheelE
         return false;
 
     if (scrollableArea && page->isMonitoringWheelEvents())
-        scrollableArea->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
+        protect(scrollableArea)->scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     return true;
 #else
     UNUSED_PARAM(wheelEvent);
@@ -3703,7 +3703,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
 #if PLATFORM(COCOA) || PLATFORM(WIN)
     std::unique_ptr<WheelEventTestMonitorCompletionDeferrer> deferrer;
     if (scrollableArea)
-        deferrer = makeUnique<WheelEventTestMonitorCompletionDeferrer>(monitor.get(), scrollableArea->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread);
+        deferrer = makeUnique<WheelEventTestMonitorCompletionDeferrer>(monitor.get(), protect(scrollableArea)->scrollingNodeIDForTesting(), WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread);
 #endif
 
     if (element) {
@@ -3952,7 +3952,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
 
         if (platformEvent) {
             auto copiedEvent = platformEvent->copyWithDeltaAndVelocity(filteredPlatformDelta, filteredVelocity);
-            if (handleWheelEventInScrollableArea(copiedEvent, *latchedScroller, eventHandling))
+            if (handleWheelEventInScrollableArea(copiedEvent, *protect(latchedScroller), eventHandling))
                 wheelEvent.setDefaultHandled();
             return;
         }

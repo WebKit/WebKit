@@ -888,7 +888,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         _resumeSessionID++;
         Ref loader = [strongSession loader];
         if (auto resource = loader->requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching)) {
-            resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(protectedSelf.get(), *_targetDispatcher)));
+            resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(protectedSelf.get(), *protect(_targetDispatcher))));
             if (self->_state != NSURLSessionTaskStateRunning) {
                 resource->shutdown();
                 return;

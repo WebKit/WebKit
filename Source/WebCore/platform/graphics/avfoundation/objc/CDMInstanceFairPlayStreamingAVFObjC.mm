@@ -581,7 +581,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExterna
 {
     for (auto& sessionInterface : m_sessions) {
         if (sessionInterface)
-            sessionInterface->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+            protect(sessionInterface)->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
     }
 }
 
@@ -627,7 +627,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
         if (!sessionInterface)
             continue;
 
-        auto sessionKeys = sessionInterface->keyIDs();
+        auto sessionKeys = protect(sessionInterface)->keyIDs();
         if (std::ranges::any_of(sessionKeys, [&](auto& sessionKey) {
             return keyIDs.containsIf([&](auto& keyID) {
                 return keyID.get() == sessionKey.get();
@@ -641,7 +641,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForKey(AVContentKey *key) const
 {
     auto index = m_sessions.findIf([&] (auto session) {
-        return session && session->hasKey(key);
+        return session && protect(session)->hasKey(key);
     });
 
     if (index != notFound)
@@ -653,7 +653,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForRequest(AVContentKeyRequest *request) const
 {
     auto index = m_sessions.findIf([&] (auto session) {
-        return session && session->hasRequest(request);
+        return session && protect(session)->hasRequest(request);
     });
 
     if (index != notFound)
@@ -694,7 +694,7 @@ static bool LEGACY_NODELETE isPotentiallyUsableKeyStatus(CDMInstanceSession::Key
 bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const CDMKeyIDs& keys) const
 {
     for (auto& sessionInterface : m_sessions) {
-        if (sessionInterface && sessionInterface->isAnyKeyUsable(keys))
+        if (sessionInterface && protect(sessionInterface)->isAnyKeyUsable(keys))
             return true;
     }
     return false;

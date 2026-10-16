@@ -693,7 +693,7 @@ Inspector::CommandResult<void> FrameCSSAgent::forcePseudoState(Inspector::Protoc
             m_documentsWithForcedPseudoStates.clear();
     }
 
-    element->document().styleScope().didChangeStyleSheetEnvironment();
+    protect(element->document().styleScope())->didChangeStyleSheetEnvironment();
 
     return { };
 }

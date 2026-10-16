@@ -30,6 +30,7 @@
 
 #import "NSMenuSPI.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSMenu (WebPrivate)
 - (id)_menuImpl;
@@ -55,11 +56,11 @@ void popUpMenu(NSMenu *menu, NSPoint location, float width, NSView *view, int se
     if (menu.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft)
         labelOffset = NSMakeSize(24, 1);
 
-    auto options = adoptNS([@{
+    RetainPtr options = checked_objc_cast<NSMutableDictionary>(adoptNS([@{
         NSPopUpMenuPopupButtonBounds : [NSValue valueWithRect:adjustedPopupBounds],
         NSPopUpMenuPopupButtonLabelOffset : [NSValue valueWithSize:labelOffset],
         NSPopUpMenuPopupButtonSize : @(controlSize)
-    } mutableCopy]);
+    } mutableCopy]));
 
     if (usesCustomAppearance)
         [options setObject:@"" forKey:NSPopUpMenuPopupButtonWidget];
