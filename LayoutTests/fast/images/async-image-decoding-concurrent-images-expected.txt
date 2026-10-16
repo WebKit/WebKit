@@ -1,0 +1,10 @@
+Many independent animated images must finish asynchronous decoding without exhausting decoding workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS completedImages is 600
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
