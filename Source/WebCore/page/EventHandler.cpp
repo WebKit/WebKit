@@ -1992,7 +1992,9 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(frame->document()).get(), userGestureTypeForPlatformEvent(platformMouseEvent), UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken());
+    // Activation is notified below once we know the event isn't passed to a subframe. Otherwise, same-origin
+    // descendants of this frame would be activated even when the user clicked in a cross-origin subframe.
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, protect(frame->document()).get(), userGestureTypeForPlatformEvent(platformMouseEvent), UserGestureIndicator::ProcessInteractionStyle::Immediate, platformMouseEvent.authorizationToken(), ActivationNotification::Deferred);
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
     frame->loader().resetMultipleFormSubmissionProtection();
@@ -2076,6 +2078,9 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
             }
         }
     }
+
+    if (RefPtr document = frame->document())
+        gestureIndicator.notifyActivation(*document);
 
 #if ENABLE(PAN_SCROLLING)
     // We store whether pan scrolling is in progress before calling stopAutoscrollTimer()

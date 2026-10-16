@@ -1,3 +1,3 @@
 
-PASS Element ready check for containing iframe
+FAIL Element ready check for containing iframe promise_test: Unhandled rejection with value: object "TypeError: Cannot request fullscreen without transient activation."
 

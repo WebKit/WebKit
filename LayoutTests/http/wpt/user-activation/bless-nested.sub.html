@@ -138,9 +138,6 @@
         [["sameOrigin", "crossOriginA"], 1, "blessing a same-origin iframe does not activate its cross-origin child"],
         [["crossOriginA", "crossOriginB"], 1, "blessing a cross-origin iframe does not activate its cross-origin child"],
         [["sameOrigin", "crossOriginA", "sameOrigin"], 3, "bless in a same-origin iframe nested behind a cross-origin iframe"],
-        // Currently FAILs: WebKit over-activates the nested same-origin frame when the cross-origin
-        // frame is clicked (webkit.org/b/318749). The expectation is spec-correct; the committed
-        // baseline captures the failure until that bug is fixed.
         [["sameOrigin", "crossOriginA", "sameOrigin"], 2, "blessing a cross-origin iframe does not activate the same-origin iframe nested below it"],
         [["sameOrigin", "crossOriginA", "sameOrigin"], 1, "blessing the outer iframe activates a same-origin descendant through a cross-origin frame, but not the cross-origin frame itself"],
         [["crossOriginA", "crossOriginB", "crossOriginC"], 3, "bless three distinct cross-origins deep"],

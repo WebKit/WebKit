@@ -54,6 +54,7 @@ enum class CanRequestDOMPaste : bool { No, Yes };
 enum class UserGestureType : uint8_t { EscapeKey, ActivationTriggering, Other };
 enum class ProcessInteractionStyle { Immediate, Delayed, Never };
 enum class GestureScope : bool { All, MediaOnly };
+enum class ActivationNotification : bool { Immediate, Deferred };
 enum class RemoveTransientActivation : bool;
 
 struct UserGestureTokenData {
@@ -165,13 +166,17 @@ public:
     WEBCORE_EXPORT explicit UserGestureIndicator(const UserGestureTokenData&, Document*);
     WEBCORE_EXPORT explicit UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document* = nullptr, UserGestureType = UserGestureType::ActivationTriggering, ProcessInteractionStyle = ProcessInteractionStyle::Immediate, std::optional<WTF::UUID> authorizationToken = std::nullopt, CanRequestDOMPaste = CanRequestDOMPaste::Yes, MonotonicTime startTime = MonotonicTime::now(), DOMPasteAccessPolicy = DOMPasteAccessPolicy::NotRequestedYet, GestureScope = GestureScope::All);
     UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document*, UserGestureType, ProcessInteractionStyle, RemoveTransientActivation);
+    // With ActivationNotification::Deferred, the caller must call notifyActivation() once it knows the document in which the activation triggering event fires.
+    UserGestureIndicator(IsProcessingUserGesture, Document*, UserGestureType, ProcessInteractionStyle, std::optional<WTF::UUID> authorizationToken, ActivationNotification);
     WEBCORE_EXPORT explicit UserGestureIndicator(RefPtr<UserGestureToken>, UserGestureToken::GestureScope = UserGestureToken::GestureScope::All, UserGestureToken::ShouldPropagateToMicroTask = UserGestureToken::ShouldPropagateToMicroTask::No);
     WEBCORE_EXPORT ~UserGestureIndicator();
 
     WEBCORE_EXPORT std::optional<WTF::UUID> authorizationToken() const;
 
+    void notifyActivation(Document&);
+
 private:
-    UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document*, UserGestureType, ProcessInteractionStyle, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime startTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation);
+    UserGestureIndicator(std::optional<IsProcessingUserGesture>, Document*, UserGestureType, ProcessInteractionStyle, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste, MonotonicTime startTime, DOMPasteAccessPolicy, GestureScope, RemoveTransientActivation, ActivationNotification = ActivationNotification::Immediate);
 
     RefPtr<UserGestureToken> m_previousToken;
 };

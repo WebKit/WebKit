@@ -203,7 +203,12 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
 {
 }
 
-UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture> isProcessingUserGesture, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste canRequestDOMPaste, MonotonicTime startTime, DOMPasteAccessPolicy domPasteAccessPolicy, GestureScope gestureScope, RemoveTransientActivation removeTransientActivation)
+UserGestureIndicator::UserGestureIndicator(IsProcessingUserGesture isProcessingUserGesture, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<WTF::UUID> authorizationToken, ActivationNotification activationNotification)
+    : UserGestureIndicator(isProcessingUserGesture, document, gestureType, processInteractionStyle, authorizationToken, CanRequestDOMPaste::Yes, MonotonicTime::now(), DOMPasteAccessPolicy::NotRequestedYet, GestureScope::All, RemoveTransientActivation::No, activationNotification)
+{
+}
+
+UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture> isProcessingUserGesture, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<WTF::UUID> authorizationToken, CanRequestDOMPaste canRequestDOMPaste, MonotonicTime startTime, DOMPasteAccessPolicy domPasteAccessPolicy, GestureScope gestureScope, RemoveTransientActivation removeTransientActivation, ActivationNotification activationNotification)
 {
     ASSERT(isMainThread());
 
@@ -240,15 +245,24 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
                 frame->loader().client().didHandleFirstUserGesture(currentToken(vm)->startTime());
         }
 
-        // https://html.spec.whatwg.org/multipage/interaction.html#user-activation-processing-model
-        // When a user interaction causes firing of an activation triggering input event in a Document...
-        // NOTE: Only activate the relevent DOMWindow when the gestureType is an ActivationTriggering one
-        RefPtr window = document->window();
-        if (window && gestureType == UserGestureType::ActivationTriggering) {
-            if (RefPtr token = currentToken(vm))
-                window->notifyActivated(*token);
-        }
+        if (activationNotification == ActivationNotification::Immediate)
+            notifyActivation(*document);
     }
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#user-activation-processing-model
+// When a user interaction causes firing of an activation triggering input event in a Document...
+void UserGestureIndicator::notifyActivation(Document& document)
+{
+    ASSERT(isMainThread());
+
+    // NOTE: Only activate the relevent DOMWindow when the gestureType is an ActivationTriggering one
+    RefPtr token = currentToken(commonVM());
+    if (!token || !token->processingUserGesture() || token->gestureType() != UserGestureType::ActivationTriggering)
+        return;
+
+    if (RefPtr window = document.window())
+        window->notifyActivated(*token);
 }
 
 UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token, UserGestureToken::GestureScope scope, UserGestureToken::ShouldPropagateToMicroTask shouldPropagateToMicroTask)
