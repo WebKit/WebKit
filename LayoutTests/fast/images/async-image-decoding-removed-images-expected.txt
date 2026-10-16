@@ -1,0 +1,10 @@
+Repeatedly removing small batches during animation decoding must not accumulate waiting workers and stall later images.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS completedBatches is 160
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
