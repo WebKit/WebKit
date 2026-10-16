@@ -30,6 +30,7 @@
 #include "BlockFormattingUtils.h"
 #include "InlineFormattingConstraints.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutIntegrationBlockCoverage.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LocalFrameViewInlines.h"
 #include "RenderBlockFlow.h"
@@ -145,6 +146,14 @@ bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, La
         return true;
     CheckedPtr block = dynamicDowncast<RenderBlock>(box);
     return block && block->hasBorderOrPaddingLogicalWidthChanged();
+}
+
+bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
+{
+    // FIXME: A block formatting context root whose content the block formatting context cannot lay out yet runs render tree block layout
+    // (RenderBlockFlow::layoutBlock). It goes back to the block formatting context as coverage grows.
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+    return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
 BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, const Layout::BlockLayoutState& blockLayoutState)
