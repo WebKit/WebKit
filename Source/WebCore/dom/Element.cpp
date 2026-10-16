@@ -3242,6 +3242,9 @@ Node::NeedsPostConnectionSteps Element::insertionSteps(InsertionType insertionTy
             for (auto& attribute : attributes())
                 document->attributeAddedToElement(attribute.name());
         }
+
+        if (!isHTMLElement() && localName() == baseTag->localName()) [[unlikely]]
+            protect(document())->incrementConnectedNonHTMLBaseElementCount();
     }
 
     if (parentNode() == &parentOfInsertedTree) {
@@ -3329,6 +3332,9 @@ void Element::removingSteps(RemovalType removalType, ContainerNode& oldParentOfR
         }
 
         oldDocument->elementDisconnectedFromDocument(*this);
+
+        if (!isHTMLElement() && localName() == baseTag->localName()) [[unlikely]]
+            oldDocument->decrementConnectedNonHTMLBaseElementCount();
 
         setSavedLayerScrollPosition({ });
 

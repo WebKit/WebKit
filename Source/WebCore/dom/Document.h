@@ -931,6 +931,13 @@ public:
     const AtomString& baseTarget() const LIFETIME_BOUND { return m_baseTarget; }
     HTMLBaseElement* LEGACY_NODELETE firstBaseElement() const;
     void processBaseElement();
+    bool hasConnectedNonHTMLBaseElements() const { return m_connectedNonHTMLBaseElementCount; }
+    void incrementConnectedNonHTMLBaseElementCount() { ++m_connectedNonHTMLBaseElementCount; }
+    void decrementConnectedNonHTMLBaseElementCount()
+    {
+        ASSERT(m_connectedNonHTMLBaseElementCount);
+        --m_connectedNonHTMLBaseElementCount;
+    }
 
     // https://wicg.github.io/nav-speculation/speculation-rules.html#consider-speculation
     void considerSpeculationRules();
@@ -2408,6 +2415,7 @@ private:
     AtomString m_baseTarget;
 
     WeakPtr<HTMLBaseElement, WeakPtrImplWithEventTargetData> m_firstBaseElement;
+    unsigned m_connectedNonHTMLBaseElementCount { 0 };
 
     // MIME type of the document in case it was cloned or created by XHR.
     String m_overriddenMIMEType;
