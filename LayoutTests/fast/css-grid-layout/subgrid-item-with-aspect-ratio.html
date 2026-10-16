@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 100px;
+    justify-content: start;
+}
+
+.subgrid {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+}
+
+.stretched {
+    aspect-ratio: 1 / 1;
+    align-self: stretch;
+}
+
+.percentage {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+}
+
+.two-columns {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto;
+}
+
+.row-sizer {
+    grid-column: 2;
+    width: 10px;
+    height: 100px;
+}
+</style>
+</head>
+<body onload="checkLayout('.grid')">
+
+<p>Items of a subgrid whose inline size follows their block size through an aspect ratio size the outer grid's columns like direct children do, including when the row size is only known once the rows are sized.</p>
+
+<div class="grid">
+    <div class="subgrid" data-expected-width="100" data-expected-height="100">
+        <div class="stretched" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="subgrid" data-expected-width="100" data-expected-height="100">
+        <div class="percentage" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div class="grid two-columns">
+    <div class="subgrid" data-expected-width="100" data-expected-height="100">
+        <div class="stretched" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+    <div class="row-sizer"></div>
+</div>
+
+</body>
+</html>
