@@ -76,6 +76,19 @@ else ()
     set(_WKC_WEB_INSPECTOR_DEFINE 0)
 endif ()
 
+# WebGL requires a modern GraphicsContextGL platform backend. The 4.3 WKC
+# GraphicsContext3D implementation targets removed APIs and is not a valid
+# replacement. Keep WebGL disabled until the current WKC backend exists.
+option(WKC_ENABLE_WEBGL "Enable WebGL (requires Source/WebCore/platform/graphics/WKC/GraphicsContextGLWKC.cpp)" OFF)
+if (WKC_ENABLE_WEBGL)
+    if (NOT EXISTS "${WEBCORE_DIR}/platform/graphics/WKC/GraphicsContextGLWKC.cpp")
+        message(FATAL_ERROR "WKC_ENABLE_WEBGL=ON, but the modern WKC GraphicsContextGLWKC.cpp backend is missing. Port a backend for current WebKit before enabling WebGL.")
+    endif ()
+    set(_WKC_WEBGL_DEFINE 1)
+else ()
+    set(_WKC_WEBGL_DEFINE 0)
+endif ()
+
 # Enable Web Notifications only in the full WebCore profile by default.
 # WebCore owns the JavaScript API; WKC forwards permission and display operations
 # to the embedder so the Wii U application can supply UI and delivery. This does
@@ -161,7 +174,7 @@ include_directories(
     ${WEBCORE_DIR}/svg
     ${WTF_DIR}
     ${WTF_DIR}/wtf
-    ${WTF_DIR}/wtf/WKC
+    ${WTF_DIR}/wtf/wiiu
     ${WTF_DIR}/wtf/text
     ${BMALLOC_DIR}
     /tmp/icu-headers
@@ -189,7 +202,7 @@ add_definitions(
     -DUSE_SYSTEM_MALLOC=1
     -DUSE_PTHREADS=1
     -DENABLE_JAVASCRIPT_DEBUGGER=${_WKC_WEB_INSPECTOR_DEFINE}
-    -DENABLE_WEBGL=1
+    -DENABLE_WEBGL=${_WKC_WEBGL_DEFINE}
     -DENABLE_WEB_AUDIO=${_WKC_WEB_AUDIO_DEFINE}
     -DENABLE_MEDIA_STREAM=1
     -DENABLE_GAMEPAD=${_WKC_GAMEPAD_DEFINE}
@@ -228,10 +241,6 @@ add_compile_options(
     # the whole library is built with one toolchain, so there is no cross-GCC ABI
     # mixing -- and it is the conventional flag to silence on PPC/ARM targets.
     -Wno-psabi
-)
-
-file(GLOB_RECURSE WTF_WKC_SOURCES
-    ${WTF_DIR}/wtf/WKC/*.cpp
 )
 
 # ---------------------------------------------------------------------------
@@ -416,6 +425,11 @@ endif ()
 list(LENGTH JSC_CORE_SOURCES JSC_CORE_COUNT)
 message(STATUS "JSC core: ${JSC_CORE_COUNT} source files selected (CLoop, no JIT)")
 
+# Select the current WKC adapters explicitly. Do not recursively import the
+# legacy WebKit_WiiU4.3 html/shadow/WKC, loader/archive/mhtml/WKC or page/WKC
+# directories: they implement older class interfaces and in some cases duplicate
+# definitions now owned by modern WebCore. See PORTING_STATUS.md before porting
+# any of those files into this build.
 file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/WKC/*.cpp
     ${WEBCORE_DIR}/platform/network/curl/*.cpp
@@ -588,7 +602,6 @@ file(GLOB WEBCORE_BUILTINS_SOURCES
 )
 
 add_library(WebKitWKC STATIC
-    ${WTF_WKC_SOURCES}
     ${WTF_CORE_SOURCES}
     ${JSC_CORE_SOURCES}
     ${WEBCORE_PLATFORM_SOURCES}
