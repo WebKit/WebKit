@@ -54,7 +54,10 @@ public:
         ASSERT(!*this);
     }
 
-    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64);
+    MemoryInformation(PageCount initial, PageCount maximum, bool isShared, bool isImport, bool isMemory64, uint8_t log2PageSize);
+
+    static constexpr uint8_t defaultLog2PageSize = 16;
+    static_assert(1ull << defaultLog2PageSize == PageCount::pageSize);
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
@@ -62,6 +65,7 @@ public:
     bool isImport() const { return m_isImport; }
     AddressType addressType() const { return m_addressType; }
     bool isMemory64() const { return m_addressType.is64Bit(); }
+    uint8_t log2PageSize() const { return m_log2PageSize; }
     bool doesAccessOverflow(uint64_t offset, uint64_t size) const;
 
     explicit operator bool() const { return !!m_initial; }
@@ -72,6 +76,7 @@ private:
     bool m_isShared { false };
     bool m_isImport { false };
     AddressType m_addressType;
+    uint8_t m_log2PageSize { defaultLog2PageSize };
 };
 
 } } // namespace JSC::Wasm

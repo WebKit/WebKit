@@ -422,7 +422,7 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     ASSERT(initialPageCount);
     ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
-    m_info->memories.append(MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64));
+    m_info->memories.append(MemoryInformation(initialPageCount, maximumPageCount, isShared, isImport, isMemory64, MemoryInformation::defaultLog2PageSize));
 
     return { };
 }
