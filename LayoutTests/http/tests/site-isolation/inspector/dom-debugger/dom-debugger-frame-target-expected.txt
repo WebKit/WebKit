@@ -1,4 +1,4 @@
-Test that cross-origin frame targets expose the DOMDebugger domain for event and URL breakpoints, but not DOM breakpoints.
+Test that cross-origin frame targets expose the DOMDebugger domain for event, URL and DOM breakpoints.
 
 
 
@@ -12,9 +12,18 @@ PASS: Frame target should support DOMDebugger.setEventBreakpoint.
 PASS: Frame target should support DOMDebugger.removeEventBreakpoint.
 PASS: Frame target should support DOMDebugger.setURLBreakpoint.
 PASS: Frame target should support DOMDebugger.removeURLBreakpoint.
-PASS: Frame target should not support DOMDebugger.setDOMBreakpoint.
-PASS: Frame target should not support DOMDebugger.removeDOMBreakpoint.
+PASS: Frame target should support DOMDebugger.setDOMBreakpoint.
+PASS: Frame target should support DOMDebugger.removeDOMBreakpoint.
 PASS: Page target should still support DOMDebugger.setDOMBreakpoint.
+
+-- Running test case: SiteIsolation.DOMDebugger.FrameTarget.DOMBreakpointState
+PASS: Body node should belong to the frame target.
+PASS: Should produce an exception.
+Error: Breakpoint for given node and given type already exists
+PASS: Should produce an exception.
+Error: Breakpoint for given node and given type missing
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
 
 -- Running test case: SiteIsolation.DOMDebugger.FrameTarget.EventBreakpointState
 PASS: Should produce an exception.

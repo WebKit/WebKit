@@ -1,0 +1,28 @@
+Test that DOM breakpoints on nodes in a cross-origin iframe lose their nodes when the iframe's document goes away.
+
+
+
+== Running test suite: SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation.Setup
+PASS: Should find the cross-origin frame target.
+PASS: Frame document should be spliced under the iframe element.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation.FrameReloaded
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Breakpoint should be listed.
+Reloading the cross-origin iframe...
+PASS: Breakpoint should have no node.
+PASS: Breakpoint should not be listed.
+PASS: Should not pause in the reloaded document.
+-- Running test teardown.
+
+-- Running test case: SiteIsolation.DOMDebugger.DOMBreakpoint.FrameNavigation.FrameTargetRemoved
+Adding "attribute-modified" DOM Breakpoint on #attribute-target...
+PASS: Breakpoint should be listed.
+Navigating the iframe to the main frame's site...
+PASS: Breakpoint should have no node.
+PASS: Breakpoint should not be listed.
+PASS: Should not pause in the new document.
+-- Running test teardown.
+

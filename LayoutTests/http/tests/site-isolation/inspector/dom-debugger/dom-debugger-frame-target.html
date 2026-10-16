@@ -18,17 +18,41 @@ function test() {
 
     suite.addTestCase({
         name: "SiteIsolation.DOMDebugger.FrameTarget.DomainAvailability",
-        description: "Frame targets should expose event and URL breakpoint commands, but not DOM breakpoint commands.",
+        description: "Frame targets should expose event, URL and DOM breakpoint commands.",
         async test() {
             InspectorTest.expectThat(crossOriginTarget.hasDomain("DOMDebugger"), "Frame target should have the DOMDebugger domain.");
 
-            for (let command of ["setEventBreakpoint", "removeEventBreakpoint", "setURLBreakpoint", "removeURLBreakpoint"])
+            for (let command of ["setEventBreakpoint", "removeEventBreakpoint", "setURLBreakpoint", "removeURLBreakpoint", "setDOMBreakpoint", "removeDOMBreakpoint"])
                 InspectorTest.expectThat(crossOriginTarget.hasCommand(`DOMDebugger.${command}`), `Frame target should support DOMDebugger.${command}.`);
 
-            for (let command of ["setDOMBreakpoint", "removeDOMBreakpoint"])
-                InspectorTest.expectFalse(crossOriginTarget.hasCommand(`DOMDebugger.${command}`), `Frame target should not support DOMDebugger.${command}.`);
-
             InspectorTest.expectThat(WI.mainTarget.hasCommand("DOMDebugger.setDOMBreakpoint"), "Page target should still support DOMDebugger.setDOMBreakpoint.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOMDebugger.FrameTarget.DOMBreakpointState",
+        description: "DOM breakpoints sent to a frame target should be stored by an agent in the frame's process, keyed by that frame's node ids.",
+        async test() {
+            let {result} = await crossOriginTarget.RuntimeAgent.evaluate.invoke({expression: "document.body", objectGroup: "test"});
+            let remoteObject = WI.RemoteObject.fromPayload(result, crossOriginTarget);
+            let node = WI.domManager.nodeForId(await new Promise((resolve) => remoteObject.pushNodeToFrontend(resolve)));
+            InspectorTest.expectThat(node?.owningTarget === crossOriginTarget, "Body node should belong to the frame target.");
+
+            let breakpoint = {nodeId: node.backendNodeId, type: WI.DOMBreakpoint.Type.SubtreeModified};
+
+            await crossOriginTarget.DOMDebuggerAgent.setDOMBreakpoint.invoke(breakpoint);
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMDebuggerAgent.setDOMBreakpoint.invoke(breakpoint);
+            });
+
+            await crossOriginTarget.DOMDebuggerAgent.removeDOMBreakpoint.invoke(breakpoint);
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMDebuggerAgent.removeDOMBreakpoint.invoke(breakpoint);
+            });
+
+            await InspectorTest.expectException(async () => {
+                await crossOriginTarget.DOMDebuggerAgent.setDOMBreakpoint.invoke({nodeId: 999999, type: WI.DOMBreakpoint.Type.SubtreeModified});
+            });
         }
     });
 
@@ -73,6 +97,6 @@ function test() {
 </script>
 
 <body onload="runTest()">
-<p>Test that cross-origin frame targets expose the DOMDebugger domain for event and URL breakpoints, but not DOM breakpoints.</p>
+<p>Test that cross-origin frame targets expose the DOMDebugger domain for event, URL and DOM breakpoints.</p>
 <iframe src="http://localhost:8000/site-isolation/inspector/dom-debugger/resources/dom-debugger-frame.html"></iframe>
 </body>

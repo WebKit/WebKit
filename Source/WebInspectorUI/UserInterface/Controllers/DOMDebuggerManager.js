@@ -70,6 +70,9 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.FrameDocumentAvailable, this._handleFrameDocumentAvailable, this);
+
         let loadBreakpoints = (constructor, objectStore, callback) => {
             WI.Target.registerInitializationPromise((async () => {
                 let serializedBreakpoints = await objectStore.getAll();
@@ -228,14 +231,16 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         console.assert(!breakpoint.special, breakpoint);
 
+        if (breakpoint.domNode && !this.supportsDOMBreakpointsForNode(breakpoint.domNode))
+            return;
+
         this._domBreakpointURLMap.add(breakpoint.url, breakpoint);
 
         if (breakpoint.domNode) {
             this._resolveDOMBreakpoint(breakpoint, breakpoint.domNode);
 
             if (!breakpoint.disabled) {
-                // We should get the target associated with the nodeIdentifier of this breakpoint.
-                let target = WI.assumingMainTarget();
+                let target = this.#targetForDOMBreakpoint(breakpoint);
                 if (target)
                     this._setDOMBreakpoint(breakpoint, target);
             }
@@ -246,7 +251,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         } else
             this._speculativelyResolveDOMBreakpoint(breakpoint);
 
-        if (!this._restoringBreakpoints)
+        if (this.#shouldSaveDOMBreakpoint(breakpoint))
             WI.objectStores.domBreakpoints.putObject(breakpoint);
     }
 
@@ -285,6 +290,43 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     removeDOMBreakpointsForNode(node)
     {
         this.domBreakpointsForNode(node).forEach(this.removeDOMBreakpoint, this);
+    }
+
+    supportsDOMBreakpointsForNode(node)
+    {
+        console.assert(node instanceof WI.DOMNode, node);
+
+        let target = node.owningTarget;
+        if (!target)
+            return true;
+
+        // COMPATIBILITY (macOS 27.0, iOS 27.0): DOMDebugger.setDOMBreakpoint was not supported on frame targets.
+        if (!target.hasCommand("DOMDebugger.setDOMBreakpoint"))
+            return false;
+
+        // Matches FrameDOMDebuggerAgent::setDOMBreakpoint, which only accepts nodes of its frame's own document.
+        let frameDocument = WI.domManager.frameTargetDocumentForTarget(target);
+        for (let ancestor = node; ancestor; ancestor = ancestor.parentNode) {
+            if (ancestor === frameDocument)
+                return true;
+            if (ancestor.nodeType() === Node.DOCUMENT_NODE || ancestor.parentNode?.templateContent() === ancestor)
+                return false;
+        }
+        return false;
+    }
+
+    domBreakpointForPauseData(pauseData, target)
+    {
+        let breakpointForNode = (node) => node ? this.domBreakpointsForNode(node).find((breakpoint) => breakpoint.type === pauseData.type) : null;
+
+        // A frame target's agent sends node ids of that target. Under Site Isolation the page target's
+        // agent also pauses in frame targets, with node ids of the page target.
+        if (target instanceof WI.FrameTarget) {
+            let breakpoint = breakpointForNode(WI.domManager.nodeForIdInFrameTarget(pauseData.nodeId, target));
+            if (breakpoint)
+                return breakpoint;
+        }
+        return breakpointForNode(WI.domManager.nodeForId(pauseData.nodeId)) || null;
     }
 
     listenerBreakpointsForEventName(eventName)
@@ -517,6 +559,29 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             this._detachDOMBreakpointsForFrame(childFrame);
     }
 
+    _detachDOMBreakpointsForFrameTarget(target, {destroyedNodesOnly} = {})
+    {
+        let breakpoints = Array.from(this._domBreakpointURLMap.values()).filter((breakpoint) => {
+            let domNode = breakpoint.domNode;
+            return domNode?.owningTarget === target && (!destroyedNodesOnly || domNode.destroyed);
+        });
+        if (!breakpoints.length)
+            return;
+
+        // A frame node's `frame` comes from the page tree, which it may no longer be attached to, so check every frame.
+        for (let [frame, domBreakpointNodeIdentifierMap] of this._domBreakpointFrameIdentifierMap) {
+            for (let breakpoint of breakpoints)
+                domBreakpointNodeIdentifierMap.delete(breakpoint.domNode, breakpoint);
+            if (!domBreakpointNodeIdentifierMap.size)
+                this._domBreakpointFrameIdentifierMap.delete(frame);
+        }
+
+        this._clearingDOMBreakpointsForRemovedDOMNode = true;
+        for (let breakpoint of breakpoints)
+            breakpoint.domNode = null;
+        this._clearingDOMBreakpointsForRemovedDOMNode = false;
+    }
+
     _speculativelyResolveDOMBreakpointsForURL(url)
     {
         let domBreakpoints = this._domBreakpointURLMap.get(url);
@@ -578,7 +643,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             WI.debuggerManager.breakpointsEnabled = true;
 
         target.DOMDebuggerAgent.setDOMBreakpoint.invoke({
-            nodeId: breakpoint.domNode.id,
+            nodeId: breakpoint.domNode.backendNodeId,
             type: breakpoint.type,
             options: breakpoint.optionsToProtocol(),
         });
@@ -589,7 +654,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         console.assert(breakpoint.domNode instanceof WI.DOMNode, breakpoint);
         console.assert(target.hasCommand("DOMDebugger.removeDOMBreakpoint"), "Target does not support DOM breakpoints", target);
 
-        target.DOMDebuggerAgent.removeDOMBreakpoint(breakpoint.domNode.id, breakpoint.type);
+        target.DOMDebuggerAgent.removeDOMBreakpoint(breakpoint.domNode.backendNodeId, breakpoint.type);
     }
 
     _commandArgumentsForEventBreakpoint(breakpoint)
@@ -702,14 +767,13 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         let breakpoint = event.target;
 
-        if (!this._restoringBreakpoints)
+        if (this.#shouldSaveDOMBreakpoint(breakpoint))
             WI.objectStores.domBreakpoints.putObject(breakpoint);
 
         if (!breakpoint.domNode)
             return;
 
-        // We should get the target associated with the nodeIdentifier of this breakpoint.
-        let target = WI.assumingMainTarget();
+        let target = this.#targetForDOMBreakpoint(breakpoint);
         if (target) {
             if (breakpoint.disabled)
                 this._removeDOMBreakpoint(breakpoint, target);
@@ -722,7 +786,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         let breakpoint = event.target;
 
-        if (!this._restoringBreakpoints)
+        if (this.#shouldSaveDOMBreakpoint(breakpoint))
             WI.objectStores.domBreakpoints.putObject(breakpoint);
 
         if (!breakpoint.domNode)
@@ -732,8 +796,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         this._restoringBreakpoints = true;
-        // We should get the target associated with the nodeIdentifier of this breakpoint.
-        let target = WI.assumingMainTarget();
+        let target = this.#targetForDOMBreakpoint(breakpoint);
         if (target) {
             // Clear the old breakpoint from the backend before setting the new one.
             this._removeDOMBreakpoint(breakpoint, target);
@@ -765,8 +828,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         if (!breakpoint.disabled) {
-            // We should get the target associated with the nodeIdentifier of this breakpoint.
-            let target = WI.assumingMainTarget();
+            let target = this.#targetForDOMBreakpoint(breakpoint);
             if (target)
                 this._removeDOMBreakpoint(breakpoint, target);
         }
@@ -782,8 +844,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         if (!breakpoint.disabled) {
-            // We should get the target associated with the nodeIdentifier of this breakpoint.
-            let target = WI.assumingMainTarget();
+            let target = this.#targetForDOMBreakpoint(breakpoint);
             if (target)
                 this._setDOMBreakpoint(breakpoint, target);
         }
@@ -895,6 +956,20 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         this._detachDOMBreakpointsForFrame(frame);
     }
 
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+        if (target instanceof WI.FrameTarget)
+            this._detachDOMBreakpointsForFrameTarget(target);
+    }
+
+    _handleFrameDocumentAvailable(event)
+    {
+        // The frame target has a new document, and its agent dropped the breakpoints of the old one.
+        let {target} = event.data;
+        this._detachDOMBreakpointsForFrameTarget(target, {destroyedNodesOnly: true});
+    }
+
     _mainFrameDidChange(event)
     {
         // The main frame can be transiently null (e.g. while frame events from multiple
@@ -993,6 +1068,24 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             if (target.hasDomain("DOMDebugger"))
                 yield target;
         }
+    }
+
+    #shouldSaveDOMBreakpoint(breakpoint)
+    {
+        // FIXME: <https://webkit.org/b/328681> Save breakpoints on frame target nodes once they can be restored.
+        // Until then a saved one is never shown again, and its path can resolve to an unrelated node of the page.
+        return !this._restoringBreakpoints && !breakpoint.domNode?.owningTarget;
+    }
+
+    #targetForDOMBreakpoint(breakpoint)
+    {
+        // A frame target's node ids mean nothing to the page target, so never fall back to it.
+        let target = breakpoint.domNode.owningTarget;
+        if (!target)
+            return WI.assumingMainTarget();
+        if (breakpoint.domNode.destroyed || !target.hasCommand("DOMDebugger.setDOMBreakpoint"))
+            return null;
+        return target;
     }
 };
 
