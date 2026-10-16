@@ -45,6 +45,7 @@
 #import "InstanceMethodSwizzler.h"
 #import "TestInputDelegate.h"
 #import "TestURLSchemeHandler.h"
+#import "WKPrinting.h"
 #import "WKWebViewFindStringFindDelegate.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/IntRect.h>
@@ -19186,6 +19187,41 @@ TEST(SiteIsolation, DrawToPDFIncludesSameSiteFrames)
         done = true;
     }];
     Util::run(&done);
+}
+
+TEST(SiteIsolation, DrawPagesToPDFSynchronouslyDuringDOMPrintIncludesCrossSiteFrames)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin:0'>Mainframe<br><iframe style='border:0;width:400px;height:200px' src='https://b.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin:0'>Subframe</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration.get(), @"RemoteSnapshottingEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr uiDelegate = adoptNS([DeferredPrintUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    RetainPtr<_WKFrameHandle> frame = [uiDelegate waitForPrintFrame];
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:frame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    [uiDelegate finishPrinting];
+    ASSERT_NOT_NULL(data.get());
+
+    RetainPtr document = adoptNS([[TestPDFDocument alloc] initFromData:data.get()]);
+    EXPECT_EQ([document pageCount], 1);
+    RetainPtr text = [[document pageAtIndex:0] text];
+    EXPECT_TRUE([text containsString:@"Mainframe"]);
+    EXPECT_TRUE([text containsString:@"Subframe"]);
 }
 
 // Whether the pixel at a point, measured from the top left of a page, is close to an sRGB color. Unlike

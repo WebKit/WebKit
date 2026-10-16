@@ -17295,9 +17295,18 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     auto frameID = frame.frameID();
 
     if (!shouldUseRemoteSnapshotting(&frame)) {
-        if (m_isPerformingDOMPrintOperation)
-            return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation(frameID, printInfo, first, count), toAPIDataSharedBufferCallback(WTF::move(callback)), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-        return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDF(frameID, printInfo, first, count),  toAPIDataSharedBufferCallback(WTF::move(callback)));
+        Ref drawing = PendingSnapshotDrawing::create();
+        auto drawingCallback = drawing->completionHandler(toAPIDataSharedBufferCallback(WTF::move(callback)));
+        if (m_isPerformingDOMPrintOperation) {
+            auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation(frameID, printInfo, first, count), WTF::move(drawingCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+            if (replyID)
+                drawing->setReply<Messages::WebPage::DrawPagesToPDFDuringDOMPrintOperation>(processContainingFrame(frameID), *replyID);
+            return replyID;
+        }
+        auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesToPDF(frameID, printInfo, first, count), WTF::move(drawingCallback));
+        if (replyID)
+            drawing->setReply<Messages::WebPage::DrawPagesToPDF>(processContainingFrame(frameID), *replyID);
+        return replyID;
     }
 
     auto snapshotIdentifier = generateRemoteSnapshotIdentifier();
@@ -17306,9 +17315,11 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
     auto sinkReplyID = gpuProcess->sinkCompletedSnapshotToPDF(snapshotIdentifier, frameID, drawing->completionHandler(toAPIDataSharedBufferCallback(WTF::move(callback))));
     auto snapshotCallback = gpuProcess->releaseSnapshotIfRootFails(snapshotIdentifier);
 
+    std::optional<IPC::Connection::AsyncReplyID> replyID;
     if (m_isPerformingDOMPrintOperation)
-        return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
-    auto replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback));
+        replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshotDuringDOMPrintOperation(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+    else
+        replyID = sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPrintingPagesToSnapshot(snapshotIdentifier, frameID, printInfo, first, count), WTF::move(snapshotCallback));
     if (replyID)
         drawing->setReply<Messages::GPUProcess::SinkCompletedSnapshotToPDF>(gpuProcess.get(), sinkReplyID, *replyID);
     return replyID;

@@ -31,10 +31,13 @@
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/Utilities.h"
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/_WKFrameHandle.h>
+#import <WebKit/_WKFrameTreeNode.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -78,6 +81,32 @@ typedef void (^CallCompletionBlock)();
 
 @end
 
+@implementation DeferredPrintUIDelegate {
+    RetainPtr<_WKFrameHandle> _frame;
+    BlockPtr<void()> _completionHandler;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    _frame = frame;
+    _completionHandler = makeBlockPtr(completionHandler);
+}
+
+- (_WKFrameHandle *)waitForPrintFrame
+{
+    while (!_frame)
+        TestWebKitAPI::Util::spinRunLoop();
+    return _frame.get();
+}
+
+- (void)finishPrinting
+{
+    std::exchange(_completionHandler, nullptr)();
+    _frame = nil;
+}
+
+@end
+
 TEST(Printing, PrintWithDelayedCompletion)
 {
     RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
@@ -91,6 +120,45 @@ TEST(Printing, PrintWithDelayedCompletion)
 
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     [delegate waitForPagination];
+}
+
+TEST(Printing, DrawPagesToPDFSynchronously)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<body>Hello</body>"];
+
+    RetainPtr<_WKFrameHandle> mainFrame = [webView mainFrame].info._handle;
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:mainFrame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    TestWebKitAPI::Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:mainFrame.get() pageCount:1];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_TRUE([data length]);
+}
+
+TEST(Printing, DrawPagesToPDFSynchronouslyDuringDOMPrint)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr delegate = adoptNS([DeferredPrintUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello</body>"];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    RetainPtr<_WKFrameHandle> frame = [delegate waitForPrintFrame];
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:frame.get() completionHandler:^{
+        computedPages = true;
+    }];
+    TestWebKitAPI::Util::run(&computedPages);
+
+    RetainPtr data = [webView _drawPagesToPDFSynchronouslyForTesting:frame.get() pageCount:1];
+    [delegate finishPrinting];
+    ASSERT_NOT_NULL(data.get());
+    EXPECT_TRUE([data length]);
 }
 
 #if PLATFORM(MAC)

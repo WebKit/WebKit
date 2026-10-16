@@ -535,8 +535,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if PLATFORM(COCOA)
     DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) ReplyCanDispatchOutOfOrder
     DrawRectToImageDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (std::optional<WebCore::ShareableBitmapHandle> image) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
-    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data)
-    DrawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) ReplyCanDispatchOutOfOrder
+    DrawPagesToPDFDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count) -> (RefPtr<WebCore::SharedBuffer> data) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC ReplyCanDispatchOutOfOrder
 
     DrawPrintingRectToSnapshot(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (bool success) ReplyCanDispatchOutOfOrder
     DrawPrintingRectToSnapshotDuringDOMPrintOperation(WebKit::RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize) -> (bool success) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC

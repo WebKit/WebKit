@@ -29,6 +29,12 @@
 
 @class NSURLRequest;
 @class WKWebView;
+@class _WKFrameHandle;
+
+@interface DeferredPrintUIDelegate : NSObject <WKUIDelegatePrivate>
+- (_WKFrameHandle *)waitForPrintFrame;
+- (void)finishPrinting;
+@end
 
 @interface TestPDFPrintDelegate : NSObject <WKUIDelegatePrivate>
 - (void)waitForPrintFrameCall;
