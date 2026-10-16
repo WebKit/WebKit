@@ -30,6 +30,7 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "GPRInfo.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace B3 { namespace Air {
@@ -64,6 +65,11 @@ void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
     usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
     auto calleSavesToSave = usedCalleeSaves;
+    // A pinned register is not mutable, so the incoming value would otherwise be dropped.
+    if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg) {
+        if (code.isPinned(Reg(GPRInfo::wasmBoundsCheckingSizeRegister)))
+            calleSavesToSave.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+    }
 
     if (!calleSavesToSave.numberOfSetRegisters())
         return;
