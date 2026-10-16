@@ -7,7 +7,7 @@
 <!-- Author : Ola Andersson,  22-Sep-2003                                 -->
 <!--======================================================================--><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
 
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
+<svg onload="document.documentElement.pauseAnimations(); document.documentElement.setCurrentTime(0);" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="tiny" id="svg-root" width="100%" height="100%" viewBox="0 0 480 360">
 
     <SVGTestCase xmlns:testcase="http://www.w3.org/2000/02/svg/testsuite/description/" xmlns="http://www.w3.org/2000/02/svg/testsuite/description/" reviewed="yes" reviewer="VH" owner="OA" desc="Tests various types of animations on referenced elements " status="accepted" version="$Revision: 1.6 $" testname="$RCSfile: animate-elem-30-t.svg,v $">
 <OperatorScript>
