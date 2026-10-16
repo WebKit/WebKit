@@ -337,10 +337,13 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     // autofill when there is no actual change (see https://bugs.webkit.org/show_bug.cgi?id=35256 and <rdar://7467917>).
     // The selectOption function does not behave this way, possibly because other callers need a change event even
     // in cases where the selected option is not change.
-    if (optionIndex == selectedIndex())
+    if (optionIndex == selectedIndex()) {
+        if (RefPtr option = selectedOption())
+            option->setDirty(true);
         return;
+    }
 
-    OptionSet flags = { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::UserDriven };
+    OptionSet flags = { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::UserDriven, SelectOptionFlag::MakeOptionDirty };
     if (fireOnChangeNow)
         flags.add(SelectOptionFlag::DispatchChangeEvent);
     selectOption(optionIndex, flags);
@@ -359,10 +362,6 @@ void HTMLSelectElement::pickOrToggleOption(HTMLOptionElement& option)
     // That script may also have taken the renderer away, which updateListBoxSelection() needs.
     if (!renderer() && !isSingleSelectDropdownBox())
         return;
-
-    // FIXME: Native appearance should set the dirtiness too, but none of its user interaction does yet.
-    if (optionsAreRenderedWithBaseAppearance())
-        option.setDirty(true);
 
     // Toggling rather than picking is not yet in the specification.
     optionSelectedByUser(option.index(), true, m_multiple);
@@ -810,7 +809,7 @@ void HTMLSelectElement::setValue(const String& value)
     for (auto& item : listItems()) {
         if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get())) {
             if (option->value() == value) {
-                setSelectedIndex(optionIndex);
+                selectOption(optionIndex, { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::MakeOptionDirty });
                 return;
             }
             ++optionIndex;
@@ -1429,9 +1428,10 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
         if (!element || element->isDisabledFormControl())
             continue;
 
-        if (i >= start && i <= end)
+        if (i >= start && i <= end) {
             element->setSelectedState(m_activeSelectionState);
-        else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size())
+            element->setDirty(true);
+        } else if (deselectOtherOptions || i >= m_cachedStateForActiveSelection.size())
             element->setSelectedState(false);
         else
             element->setSelectedState(m_cachedStateForActiveSelection[i]);
@@ -1695,6 +1695,11 @@ void HTMLSelectElement::setSelectedIndex(int index)
     selectOption(index, SelectOptionFlag::DeselectOtherOptions);
 }
 
+void HTMLSelectElement::setSelectedIndexForBindings(int index)
+{
+    selectOption(index, { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::MakeOptionDirty });
+}
+
 void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement& option, bool optionIsSelected)
 {
     ASSERT(option.ownerSelectElement() == this);
@@ -1738,6 +1743,8 @@ void HTMLSelectElement::selectOption(int optionIndex, OptionSet<SelectOptionFlag
         if (m_activeSelectionEndIndex < 0 || shouldDeselect)
             setActiveSelectionEndIndex(listIndex);
         option->setSelectedState(true);
+        if (flags.contains(SelectOptionFlag::MakeOptionDirty))
+            option->setDirty(true);
         selectedOption = option;
     }
 
@@ -2066,7 +2073,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             return;
 
         if (static_cast<size_t>(listIndex) < listItems.size())
-            selectOption(listToOptionIndex(listIndex), { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::DispatchChangeEvent, SelectOptionFlag::UserDriven });
+            selectOption(listToOptionIndex(listIndex), { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::DispatchChangeEvent, SelectOptionFlag::UserDriven, SelectOptionFlag::MakeOptionDirty });
 
         keyboardEvent->setDefaultHandled();
         return;
@@ -2517,7 +2524,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent& event)
     int index = typeAheadMatchIndex(event);
     if (index < 0)
         return;
-    selectOption(listToOptionIndex(index), { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::DispatchChangeEvent, SelectOptionFlag::UserDriven });
+    selectOption(listToOptionIndex(index), { SelectOptionFlag::DeselectOtherOptions, SelectOptionFlag::DispatchChangeEvent, SelectOptionFlag::UserDriven, SelectOptionFlag::MakeOptionDirty });
     if (!isSingleSelectDropdownBox())
         listBoxOnChange();
 }

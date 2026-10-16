@@ -43,7 +43,7 @@
     [CEReactions=Needed] setter undefined (unsigned long index, HTMLOptionElement? option);
 
     [SameObject] readonly attribute HTMLCollection selectedOptions;
-    [CEReactions=Needed] attribute long selectedIndex;
+    [CEReactions=Needed, ImplementedAs=selectedIndexForBindings] attribute long selectedIndex;
     [CEReactions=Needed] attribute DOMString value;
 
     readonly attribute boolean willValidate;

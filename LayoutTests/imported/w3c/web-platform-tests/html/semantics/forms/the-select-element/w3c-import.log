@@ -84,10 +84,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions-nesting.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-setter-dirtiness.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-tab-navigation.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-toggle-multiple-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-toggle-multiple-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-toggle-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-user-selection-dirtiness.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-validity.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-value-option.tentative.html

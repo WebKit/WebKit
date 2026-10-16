@@ -1,0 +1,7 @@
+
+
+PASS Clicking an option in a list box sets its dirtiness
+PASS Clicking the selected option in a list box sets its dirtiness
+PASS Clicking an option in a select with multiple sets its dirtiness
+PASS Typing to select an option in a dropdown box sets its dirtiness
+

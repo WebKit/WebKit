@@ -75,6 +75,8 @@ public:
     WEBCORE_EXPORT int selectedIndex() const;
     HTMLOptionElement* selectedOption();
     WEBCORE_EXPORT void setSelectedIndex(int);
+    int selectedIndexForBindings() const { return selectedIndex(); }
+    void setSelectedIndexForBindings(int);
 
     WEBCORE_EXPORT void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
     void pickOrToggleOption(HTMLOptionElement&);
@@ -300,6 +302,7 @@ private:
         DispatchChangeEvent = 1 << 1,
         UserDriven = 1 << 2,
         SkipSelectedContentUpdate = 1 << 3,
+        MakeOptionDirty = 1 << 4,
     };
     void selectOption(int optionIndex, OptionSet<SelectOptionFlag> = { });
     void deselectItemsWithoutValidation(HTMLElement* elementToExclude = nullptr);

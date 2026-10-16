@@ -56,7 +56,7 @@ int HTMLOptionsCollection::selectedIndex() const
 
 void HTMLOptionsCollection::setSelectedIndex(int index)
 {
-    protect(selectElement())->setSelectedIndex(index);
+    protect(selectElement())->setSelectedIndexForBindings(index);
 }
 
 unsigned HTMLOptionsCollection::length() const
