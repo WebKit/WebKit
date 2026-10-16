@@ -402,8 +402,8 @@ bool OutlinePainter::collectFocusRingRectsForListBox(const RenderListBox& render
 
     // No selected items, find the first non-disabled item.
     int indexOfFirstEnabledOption = 0;
-    for (auto& item : selectElement->listItems()) {
-        if (is<HTMLOptionElement>(item.get()) && !item->isDisabledFormControl()) {
+    for (RefPtr item : selectElement->listItems()) {
+        if (is<HTMLOptionElement>(item) && !item->isDisabledFormControl()) {
             selectElement->setActiveSelectionEndIndex(indexOfFirstEnabledOption);
             rects.append(renderer.itemBoundingBoxRect(additionalOffset, indexOfFirstEnabledOption));
             return true;

@@ -67,7 +67,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderListOutsideMarker);
 
 RenderListOutsideMarker::RenderListOutsideMarker(RenderListItem& listItem, Style::ComputedStyle&& style)
-    : RenderBox(Type::ListOutsideMarker, listItem.document(), WTF::move(style))
+    : RenderBox(Type::ListOutsideMarker, protect(listItem.document()), WTF::move(style))
     , m_listItem(listItem)
 {
     setInline(true);

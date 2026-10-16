@@ -90,7 +90,7 @@ ScrollbarUpdateScope::~ScrollbarUpdateScope()
 
     m_renderLayerScrollableArea->resnapAfterLayout();
 
-    InspectorInstrumentation::didAddOrRemoveScrollbars(m_renderLayerScrollableArea->m_layer.renderer());
+    InspectorInstrumentation::didAddOrRemoveScrollbars(protect(m_renderLayerScrollableArea->m_layer.renderer()));
 }
 
 } // namespace WebCore

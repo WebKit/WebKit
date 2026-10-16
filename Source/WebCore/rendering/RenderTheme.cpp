@@ -312,7 +312,7 @@ void RenderTheme::adjustStyle(Style::ComputedStyle& style, const Style::Computed
         style.setUsedAppearance(appearance);
     }
 
-    if (appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style, element->document().settings())) {
+    if (appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style, protect(element->document().settings()))) {
         appearance = StyleAppearance::TextField;
         style.setUsedAppearance(appearance);
     }

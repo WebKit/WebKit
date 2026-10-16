@@ -79,7 +79,6 @@ rendering/CounterNode.cpp
 rendering/EllipsisBoxPainter.cpp
 rendering/FixedTableLayout.cpp
 rendering/FloatingObjects.cpp
-[ macOS ] rendering/GridLanesLayout.cpp
 rendering/GridTrackSizingAlgorithm.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
@@ -88,7 +87,6 @@ rendering/LayoutRepainter.cpp
 rendering/LogicalSelectionOffsetCachesInlines.h
 rendering/MarkedText.cpp
 rendering/MarkedText.h
-[ macOS ] rendering/OutlinePainter.cpp
 rendering/PositionedLayoutConstraints.cpp
 rendering/RegionContext.h
 rendering/RenderBlock.cpp
@@ -108,7 +106,6 @@ rendering/RenderFragmentContainerSet.cpp
 rendering/RenderFragmentedFlow.cpp
 rendering/RenderGeometryMap.cpp
 rendering/RenderGrid.cpp
-[ macOS ] rendering/RenderHighlight.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.cpp
 rendering/RenderIterator.h
@@ -123,11 +120,9 @@ rendering/RenderListItem.cpp
 rendering/RenderListOutsideMarker.cpp
 rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
-[ macOS ] rendering/RenderMultiColumnSpannerPlaceholder.cpp
 rendering/RenderObject.cpp
 rendering/RenderReplaced.cpp
 rendering/RenderReplica.cpp
-[ macOS ] rendering/RenderSelection.cpp
 rendering/RenderSelectionGeometry.cpp
 rendering/RenderTable.cpp
 rendering/RenderTableCaption.cpp
@@ -144,7 +139,6 @@ rendering/RenderTextFragment.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
-[ macOS ] rendering/ScrollbarUpdateScope.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextAutoSizing.cpp
 rendering/TextBoxPainter.cpp
@@ -157,10 +151,8 @@ rendering/shapes/ShapeOutsideInfo.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGInline.cpp
 rendering/svg/RenderSVGInlineText.cpp
-[ macOS ] rendering/svg/RenderSVGResourceContainer.cpp
 rendering/svg/RenderSVGText.cpp
 rendering/svg/SVGBoundingBoxComputation.cpp
-[ macOS ] rendering/svg/SVGRenderSupport.cpp
 rendering/svg/SVGRenderingContext.cpp
 rendering/svg/SVGTextBoxPainter.cpp
 rendering/svg/SVGTextLayoutEngine.cpp
@@ -171,7 +163,6 @@ rendering/svg/SVGTextQuery.cpp
 rendering/svg/legacy/LegacyRenderSVGContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGModelObject.cpp
-[ macOS ] rendering/svg/legacy/LegacyRenderSVGResource.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceClipper.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceContainer.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp

@@ -136,7 +136,7 @@ RenderObject::HighlightState RenderHighlight::highlightStateForRenderer(const Re
     CheckedPtr rangeEnd = m_renderRange.end();
     CheckedPtr highlightEnd = rangeEnd ? rendererAfterOffset(*rangeEnd, m_renderRange.endOffset()) : nullptr;
 
-    RenderRangeIterator highlightIterator(m_renderRange.start());
+    RenderRangeIterator highlightIterator(protect(m_renderRange.start()));
     for (CheckedPtr currentRenderer = m_renderRange.start(); currentRenderer && currentRenderer != highlightEnd; currentRenderer = highlightIterator.next()) {
         if (currentRenderer == m_renderRange.start())
             continue;

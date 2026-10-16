@@ -173,7 +173,7 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
         }
     }
 
-    for (auto& cssClient : svgElement->referencingCSSClients()) {
+    for (CheckedPtr cssClient : svgElement->referencingCSSClients()) {
         if (!cssClient)
             continue;
         cssClient->resourceChanged(*svgElement);

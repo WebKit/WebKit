@@ -96,7 +96,7 @@ static inline void notifyResourceChanged(SVGElement& element)
 
     SVGVisitedElementTracking::Scope recursionScope(recursionTracking, element);
 
-    for (auto& cssClient : element.referencingCSSClients()) {
+    for (CheckedPtr cssClient : element.referencingCSSClients()) {
         if (!cssClient)
             continue;
         cssClient->resourceChanged(element);

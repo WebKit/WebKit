@@ -154,7 +154,7 @@ void RenderSelection::repaint() const
     CheckedPtr<RenderObject> end;
     if (CheckedPtr rangeEnd = m_renderRange.end())
         end = rendererAfterOffset(*rangeEnd, m_renderRange.endOffset());
-    RenderRangeIterator highlightIterator(m_renderRange.start());
+    RenderRangeIterator highlightIterator(protect(m_renderRange.start()));
     for (CheckedPtr renderer = highlightIterator.current(); renderer && renderer != end; renderer = highlightIterator.next()) {
         if (!isValidRendererForSelection(*renderer, m_renderRange))
             continue;

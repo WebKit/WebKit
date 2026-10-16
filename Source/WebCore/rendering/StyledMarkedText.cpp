@@ -309,7 +309,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
         return { styledMarkedText };
     }
 
-    auto viewportSize = renderer.view().frameView().size();
+    auto viewportSize = protect(renderer.view().frameView())->size();
 
     auto markedTexts = MarkedText::subdivide(textsToSubdivide, OverlapStrategy::None);
     ASSERT(!markedTexts.isEmpty());

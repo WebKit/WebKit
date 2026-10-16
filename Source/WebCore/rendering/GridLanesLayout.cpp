@@ -87,7 +87,7 @@ GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridI
 
 LayoutUnit GridLanesLayout::calculateGridLanesIntrinsicLogicalWidth(RenderBox& gridItem, Phase layoutPhase)
 {
-    auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { gridItem.layoutContext(), gridItem };
+    auto intrinsicWidthComputationScope = IntrinsicLogicalWidthComputationScope { protect(gridItem.layoutContext()), gridItem };
     switch (layoutPhase) {
     case Phase::MinContent:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, { }, gridItem.borderAndPaddingLogicalWidth());

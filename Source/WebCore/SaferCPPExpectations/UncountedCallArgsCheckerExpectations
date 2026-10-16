@@ -48,7 +48,6 @@ rendering/BackgroundPainter.cpp
 rendering/HitTestResult.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/MarkedText.cpp
-[ macOS ] rendering/OutlinePainter.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
@@ -63,23 +62,17 @@ rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
 rendering/RenderLayerScrollableArea.cpp
-[ macOS ] rendering/RenderListOutsideMarker.cpp
-[ macOS ] rendering/RenderMultiColumnSet.cpp
-[ macOS ] rendering/RenderMultiColumnSpannerPlaceholder.cpp
 rendering/RenderObject.cpp
 rendering/RenderReplica.cpp
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.h
-[ macOS ] rendering/RenderTheme.cpp
 rendering/RenderView.cpp
 rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
-[ macOS ] rendering/StyledMarkedText.cpp
 [ macOS ] rendering/cocoa/RenderThemeCocoa.mm
 rendering/shapes/ShapeOutsideInfo.h
 rendering/style/BorderData.cpp
 rendering/svg/RenderSVGTextPath.cpp
-[ macOS ] rendering/svg/SVGRenderSupport.cpp
 rendering/svg/legacy/LegacyRenderSVGImage.cpp
 rendering/svg/legacy/LegacyRenderSVGResourceFilter.cpp
 rendering/svg/legacy/LegacyRenderSVGRoot.cpp
