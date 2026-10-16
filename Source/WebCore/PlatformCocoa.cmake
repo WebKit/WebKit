@@ -47,6 +47,7 @@ find_library(COCOA_LIBRARY Cocoa)
 find_library(CORESERVICES_LIBRARY CoreServices)
 find_library(DISKARBITRATION_LIBRARY DiskArbitration)
 find_library(OPENGL_LIBRARY OpenGL)
+find_library(PDFKIT_LIBRARY PDFKit)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(LOOKUP_FRAMEWORK Lookup HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(APPSUPPORT_LIBRARY AppSupport HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
@@ -116,6 +117,7 @@ if (WEBKIT_SDK_IS_MACOS)
         ${CORESERVICES_LIBRARY}
         ${DISKARBITRATION_LIBRARY}
         ${OPENGL_LIBRARY}
+        ${PDFKIT_LIBRARY}
         ${QUARTZ_LIBRARY}
         $<$<BOOL:${LOOKUP_FRAMEWORK}>:${LOOKUP_FRAMEWORK}>
     )

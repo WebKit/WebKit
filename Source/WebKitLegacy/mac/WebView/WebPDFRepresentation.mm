@@ -42,8 +42,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-#import <pal/cocoa/PDFKitSoftLink.h>
-
 @implementation WebPDFRepresentation
 
 + (NSArray *)supportedMIMETypes
@@ -53,7 +51,7 @@
 
 + (Class)PDFDocumentClass
 {
-    return PAL::getPDFDocumentClassSingleton();
+    return [PDFDocument class];
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource

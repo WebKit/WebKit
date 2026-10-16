@@ -124,7 +124,6 @@
 		A15E661B2EDA937A007FB56F /* AVSystemRoutingSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = A15E66192EDA937A007FB56F /* AVSystemRoutingSoftLink.mm */; };
 		A15E66242EDA972C007FB56F /* AVSystemRoutingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A15E66182EDA937A007FB56F /* AVSystemRoutingSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */; };
-		B379F70FB4A8F0A13AB521CE /* PDFKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F12BAEBF578EE92615178A62 /* PDFKitSoftLink.mm */; };
 		A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRing.cpp */; };
 		A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A30D41241F0DD12D00B71954 /* KillRingMac.mm */; };
 		A3788E9C1F05B78200679425 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9B1F05B78200679425 /* Sound.cpp */; };
@@ -159,7 +158,6 @@
 		DD20DD2027BC90D60093D175 /* NaturalLanguageSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F47221F5276FC32300B984C7 /* NaturalLanguageSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD2127BC90D60093D175 /* OpenGLSoftLinkCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 31647FAF251759DC0010F8FB /* OpenGLSoftLinkCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD2227BC90D60093D175 /* PassKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		8C7E7F462B8A18FC1B1C4F7E /* PDFKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = B58ADD9F17A158F01E7961AC /* PDFKitSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD2327BC90D60093D175 /* RevealSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4974EA1265EEA2200B49B8C /* RevealSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD2427BC90D60093D175 /* SpeechSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B38EBD25821CB600198E63 /* SpeechSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD2527BC90D60093D175 /* UsageTrackingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 07611DB4243FA5BE00D80704 /* UsageTrackingSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -764,8 +762,6 @@
 		A169B040248EF03900EE8B7B /* PassKitInstallmentsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitInstallmentsSPI.h; sourceTree = "<group>"; };
 		A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PassKitSoftLink.h; sourceTree = "<group>"; };
 		A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PassKitSoftLink.mm; sourceTree = "<group>"; };
-		B58ADD9F17A158F01E7961AC /* PDFKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PDFKitSoftLink.h; sourceTree = "<group>"; };
-		F12BAEBF578EE92615178A62 /* PDFKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitSoftLink.mm; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		A30D411F1F0DD0EA00B71954 /* KillRing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRing.cpp; sourceTree = "<group>"; };
 		A30D41241F0DD12D00B71954 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
@@ -1244,8 +1240,6 @@
 				31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */,
 				A1F63C9D21A4DBF7006FB43B /* PassKitSoftLink.h */,
 				A1F63C9E21A4DBF7006FB43B /* PassKitSoftLink.mm */,
-				B58ADD9F17A158F01E7961AC /* PDFKitSoftLink.h */,
-				F12BAEBF578EE92615178A62 /* PDFKitSoftLink.mm */,
 				D065131529B69F11008C65C4 /* QuartzCoreSoftLink.h */,
 				D065131429B69F11008C65C4 /* QuartzCoreSoftLink.mm */,
 				F4974EA1265EEA2200B49B8C /* RevealSoftLink.h */,
@@ -1655,7 +1649,6 @@
 				DD20DE0227BC90D80093D175 /* PassKitInstallmentsSPI.h in Headers */,
 				DD20DD2227BC90D60093D175 /* PassKitSoftLink.h in Headers */,
 				DD20DE0327BC90D80093D175 /* PassKitSPI.h in Headers */,
-				8C7E7F462B8A18FC1B1C4F7E /* PDFKitSoftLink.h in Headers */,
 				DD20DE3E27BC90D80093D175 /* PIPSPI.h in Headers */,
 				078D1F3D2F74D8D000B6BFA9 /* PlatformECKey.h in Headers */,
 				DD20DE4527BC90D80093D175 /* PopupMenu.h in Headers */,
@@ -1944,7 +1937,6 @@
 				071CFF4F2F0614FB00E07A47 /* pal.swift in Sources */,
 				FE62AC3D2CFE2E0300740A18 /* PALTZoneImpls.cpp in Sources */,
 				A1F63CA021A4DBF7006FB43B /* PassKitSoftLink.mm in Sources */,
-				B379F70FB4A8F0A13AB521CE /* PDFKitSoftLink.mm in Sources */,
 				078D1F422F74FB5D00B6BFA9 /* PlatformECKey.cpp in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
 				D065131629B69F11008C65C4 /* QuartzCoreSoftLink.mm in Sources */,

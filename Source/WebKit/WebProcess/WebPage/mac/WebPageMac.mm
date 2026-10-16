@@ -127,8 +127,6 @@
 #import "MediaPlaybackTargetSerialized.h"
 #endif
 
-#import <pal/cocoa/PDFKitSoftLink.h>
-
 namespace WebKit {
 using namespace WebCore;
 

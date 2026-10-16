@@ -8,6 +8,7 @@ WEBKIT_ADD_PREFIX_HEADER(WebKitLegacy WebKitLegacyPrefix.h PREFIX_LANGUAGES CXX 
 
 find_library(UIKIT_LIBRARY UIKit)
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
+find_library(PDFKIT_LIBRARY PDFKit)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 
@@ -15,7 +16,10 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${UIKIT_LIBRARY})
 endif ()
 if (WEBKIT_SDK_IS_MACOS)
-    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES ${SECURITYINTERFACE_LIBRARY})
+    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+        ${PDFKIT_LIBRARY}
+        ${SECURITYINTERFACE_LIBRARY}
+    )
 endif ()
 
 # FIXME: Unset for production-style CMake builds.

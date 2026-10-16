@@ -156,10 +156,11 @@ WK_LIBSANDBOX_LDFLAGS_iphonesimulator = -W1,-hidden-lsandbox-static;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
-WK_PDFKIT_LDFLAGS_iphonesimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
-WK_PDFKIT_LDFLAGS_xros = $(WK_PDFKIT_LDFLAGS_iphoneos);
-WK_PDFKIT_LDFLAGS_xrsimulator = $(WK_PDFKIT_LDFLAGS_iphoneos);
-WK_PDFKIT_LDFLAGS_maccatalyst = $(WK_PDFKIT_LDFLAGS_iphoneos);
+WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xros = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_xrsimulator = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
 
 WK_PROTOTYPE_TOOLS_LDFLAGS = $(WK_PROTOTYPE_TOOLS_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_PROTOTYPE_TOOLS_LDFLAGS_cocoatouch = -framework PrototypeTools;

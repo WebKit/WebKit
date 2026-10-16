@@ -50,8 +50,6 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/Page.h>
 
-#import <pal/cocoa/PDFKitSoftLink.h>
-
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;

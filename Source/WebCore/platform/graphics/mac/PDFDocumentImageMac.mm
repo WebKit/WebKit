@@ -30,9 +30,8 @@
 
 #import "GraphicsContextStateSaver.h"
 #import "SharedBuffer.h"
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 #import <objc/objc-class.h>
-#import <pal/cocoa/PDFKitSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -45,7 +44,7 @@ namespace WebCore {
 
 void PDFDocumentImage::createPDFDocument()
 {
-    m_document = adoptNS([PAL::allocPDFDocumentInstance() initWithData:protect(data())->makeContiguous()->createNSData().get()]);
+    m_document = adoptNS([[PDFDocument alloc] initWithData:protect(data())->makeContiguous()->createNSData().get()]);
 }
 
 void PDFDocumentImage::computeBoundsForCurrentPage()

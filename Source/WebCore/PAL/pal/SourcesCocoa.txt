@@ -54,7 +54,6 @@ cocoa/MediaToolboxSoftLink.cpp
 cocoa/NaturalLanguageSoftLink.mm @nonARC
 cocoa/OpenGLSoftLinkCocoa.mm @nonARC
 cocoa/PassKitSoftLink.mm @nonARC
-cocoa/PDFKitSoftLink.mm @nonARC
 cocoa/QuartzCoreSoftLink.mm @nonARC
 cocoa/RevealSoftLink.mm @nonARC
 cocoa/ScreenTimeSoftLink.mm @nonARC

@@ -29,13 +29,12 @@
 #if ENABLE(UNIFIED_PDF)
 
 #import "Logging.h"
+#import <PDFKit/PDFKit.h>
 #import <WebCore/AffineTransform.h>
 #import <WebCore/GeometryUtilities.h>
 #import <ranges>
 #import <wtf/Borrow.h>
 #import <wtf/text/TextStream.h>
-
-#import <pal/cocoa/PDFKitSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;

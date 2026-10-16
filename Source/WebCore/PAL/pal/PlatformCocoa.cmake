@@ -33,7 +33,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/MediaToolboxSoftLink.h
     cocoa/NaturalLanguageSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
-    cocoa/PDFKitSoftLink.h
     cocoa/PassKitSoftLink.h
     cocoa/QuartzCoreSoftLink.h
     cocoa/RevealSoftLink.h

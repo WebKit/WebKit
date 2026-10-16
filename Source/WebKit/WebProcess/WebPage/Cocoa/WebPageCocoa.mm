@@ -181,7 +181,7 @@
 #import <WebCore/AcceleratedEffectStackUpdater.h>
 #endif
 
-#if HAVE(PDFKIT)
+#if ENABLE(PDF_PLUGIN)
 #import "PDFKitSPI.h"
 #endif
 
@@ -192,8 +192,6 @@
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
 #import <WebCore/TextEffectController.h>
 #endif
-
-#import <pal/cocoa/PDFKitSoftLink.h>
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
@@ -1619,7 +1617,7 @@ void WebPage::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional
     decodeImageWithSize(buffer->span(), preferredSize, WTF::move(completionHandler));
 }
 
-#if HAVE(PDFKIT)
+#if ENABLE(PDF_PLUGIN)
 
 void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
 {
@@ -1683,7 +1681,7 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
 
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL PDFAnnotation *annotation in [pdfPage annotations]) {
-        if (![[annotation valueForAnnotationKey:PAL::get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:PAL::get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
+        if (![[annotation valueForAnnotationKey:PDFAnnotationKeySubtype] isEqualToString:PDFAnnotationSubtypeLink])
             continue;
 
         RetainPtr<NSURL> url = annotation.URL;
