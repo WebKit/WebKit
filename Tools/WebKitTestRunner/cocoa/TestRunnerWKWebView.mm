@@ -96,6 +96,7 @@ struct CustomMenuActionInfo {
 #if PLATFORM(MAC)
     int _draggingSequenceNumber;
     RetainPtr<WebKitTestRunnerDraggingInfo> _currentDraggingInfo;
+    RetainPtr<NSDraggingSession> _currentDraggingSession;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
@@ -125,7 +126,8 @@ struct CustomMenuActionInfo {
 - (void)_startTestDragWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source
 {
     ++_draggingSequenceNumber;
-    RetainPtr draggingInfo = adoptNS([[WebKitTestRunnerDraggingInfo alloc] initWithImage:image offset:offset pasteboard:pasteboard source:source sequenceNumber:_draggingSequenceNumber]);
+    _currentDraggingSession = adoptNS([[NSDraggingSession alloc] init]);
+    RetainPtr draggingInfo = adoptNS([[WebKitTestRunnerDraggingInfo alloc] initWithImage:image offset:offset pasteboard:pasteboard source:source session:_currentDraggingSession.get() sequenceNumber:_draggingSequenceNumber]);
     _currentDraggingInfo = draggingInfo;
     [self draggingEntered:draggingInfo.get()];
     [self draggingUpdated:draggingInfo.get()];
@@ -181,7 +183,7 @@ IGNORE_WARNINGS_END
     RetainPtr dragImage = dynamic_objc_cast<NSImage>(items.firstObject.imageComponents.firstObject.contents);
     [self _startTestDragWithImage:dragImage.get() offset:NSZeroSize pasteboard:pasteboard.get() source:source];
 
-    return adoptNS([[NSDraggingSession alloc] init]).autorelease();
+    return _currentDraggingSession.get();
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -196,9 +198,19 @@ IGNORE_WARNINGS_END
 - (void)mouseUp:(NSEvent *)event
 {
     if (RetainPtr<WebKitTestRunnerDraggingInfo> draggingInfo = _currentDraggingInfo) {
-        [self prepareForDragOperation:draggingInfo.get()];
-        [self performDragOperation:draggingInfo.get()];
+        // AppKit keeps sending draggingUpdated: while the mouse hovers, so the operation it drops with reflects
+        // the page's asynchronous answer to dragenter and dragover. Ask once more before dropping to match that.
+        NSDragOperation operation = [self draggingUpdated:draggingInfo.get()];
+        if (operation == NSDragOperationNone)
+            [self draggingExited:draggingInfo.get()];
+        else {
+            [self prepareForDragOperation:draggingInfo.get()];
+            if (![self performDragOperation:draggingInfo.get()])
+                operation = NSDragOperationNone;
+        }
         _currentDraggingInfo = nil;
+        if (RetainPtr session = std::exchange(_currentDraggingSession, nil))
+            [static_cast<id<NSDraggingSource>>(self) draggingSession:session.get() endedAtPoint:[self.window convertPointToScreen:[draggingInfo draggingLocation]] operation:operation];
     } else
         [super mouseUp:event];
 }
