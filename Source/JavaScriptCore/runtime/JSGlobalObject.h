@@ -649,6 +649,7 @@ public:
 
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
+    bool m_webAssemblyESMIntegrationEnabled { true };
     bool m_needsSiteSpecificQuirks { false };
     bool m_canDoASCIIUCADUCETLocaleCompare { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
@@ -1202,6 +1203,7 @@ public:
 
     bool evalEnabled() const { return m_evalEnabled; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
+    bool webAssemblyESMIntegrationEnabled() const { return m_webAssemblyESMIntegrationEnabled; }
     TrustedTypesEnforcement trustedTypesEnforcement() const { return m_trustedTypesEnforcement; }
     const String& evalDisabledErrorMessage() const LIFETIME_BOUND { return m_evalDisabledErrorMessage; }
     const String& webAssemblyDisabledErrorMessage() const LIFETIME_BOUND { return m_webAssemblyDisabledErrorMessage; }
@@ -1214,6 +1216,10 @@ public:
     {
         m_webAssemblyEnabled = enabled;
         m_webAssemblyDisabledErrorMessage = errorMessage;
+    }
+    void setWebAssemblyESMIntegrationEnabled(bool enabled)
+    {
+        m_webAssemblyESMIntegrationEnabled = enabled;
     }
     void setTrustedTypesEnforcement(TrustedTypesEnforcement enforcement)
     {

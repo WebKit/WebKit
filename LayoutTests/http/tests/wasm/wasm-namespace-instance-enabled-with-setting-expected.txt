@@ -1,0 +1,10 @@
+WebAssembly.namespaceInstance is exposed when WebAssemblyESMIntegrationEnabled is on.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof WebAssembly.namespaceInstance is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
