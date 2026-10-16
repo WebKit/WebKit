@@ -2143,13 +2143,15 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
             if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
                 networkLoad->clearClient();
-            m_serviceWorkerFetchTask = WTF::move(serviceWorkerFetchTask);
+            if (RefPtr previousTask = std::exchange(m_serviceWorkerFetchTask, WTF::move(serviceWorkerFetchTask)))
+                previousTask->cancelFromClient();
             return completionHandler({ });
         }
         LOADER_RELEASE_LOG("continueWillSendRequest: Navigation is not using service workers");
-        if (m_serviceWorkerFetchTask)
+        if (auto previousTask = std::exchange(m_serviceWorkerFetchTask, { })) {
+            previousTask->cancelFromClient();
             m_shouldRestartLoad = true;
-        m_serviceWorkerFetchTask = nullptr;
+        }
     }
     if (m_serviceWorkerFetchTask) {
         LOADER_RELEASE_LOG("continueWillSendRequest: Continuing fetch task with redirect (fetchIdentifier=%" PRIu64 ")", m_serviceWorkerFetchTask->fetchIdentifier().toUInt64());

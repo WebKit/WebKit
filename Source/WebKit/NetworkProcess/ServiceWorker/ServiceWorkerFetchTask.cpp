@@ -184,6 +184,9 @@ template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& m
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)
 {
     SWFETCH_RELEASE_LOG("start:");
+    if (m_isDone)
+        return;
+
     m_serviceWorkerConnection = serviceWorkerConnection;
     serviceWorkerConnection.registerFetch(*this);
 
@@ -213,6 +216,9 @@ void ServiceWorkerFetchTask::contextClosed()
 
 void ServiceWorkerFetchTask::startFetch()
 {
+    ASSERT(m_loader);
+    ASSERT(!m_isDone);
+
     bool shouldStart = !m_shouldRaceNetworkAndFetchHandler || !m_isLoadingFromPreloader;
     SWFETCH_RELEASE_LOG("startFetch, shouldStart=%d", shouldStart);
 
