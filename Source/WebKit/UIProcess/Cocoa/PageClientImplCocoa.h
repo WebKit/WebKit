@@ -89,6 +89,10 @@ public:
     void underPageBackgroundColorDidChange() final;
     void sampledPageTopColorWillChange() final;
     void sampledPageTopColorDidChange() final;
+#if PLATFORM(IOS_FAMILY)
+    void effectivePageAppearanceWillChange() final;
+    void effectivePageAppearanceDidChange() final;
+#endif
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 

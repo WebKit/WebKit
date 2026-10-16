@@ -7818,6 +7818,8 @@
 		9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationProxy.h; sourceTree = "<group>"; };
 		9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationProxy.cpp; sourceTree = "<group>"; };
 		9B7F8A502C785725000057F3 /* WebPageLoadTiming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageLoadTiming.h; sourceTree = "<group>"; };
+		BD53B93220737E549900B817 /* ContentInversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentInversion.h; sourceTree = "<group>"; };
+		1669C1B9C02F0AE6F2B8E521 /* ContentInversion.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContentInversion.serialization.in; sourceTree = "<group>"; };
 		9B9513B72CD99DF700E0B6C4 /* ContentWorldData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentWorldData.h; sourceTree = "<group>"; };
 		9B9513BB2CD99F0A00E0B6C4 /* ContentWorldData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContentWorldData.serialization.in; sourceTree = "<group>"; };
 		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
@@ -10488,6 +10490,8 @@
 				D243D71E2CC1764B006D5E35 /* ColorControlSupportsAlpha.h */,
 				AD00CE0C2E1A000000000005 /* Concurrency+Extras.swift */,
 				CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */,
+				BD53B93220737E549900B817 /* ContentInversion.h */,
+				1669C1B9C02F0AE6F2B8E521 /* ContentInversion.serialization.in */,
 				9B9513B72CD99DF700E0B6C4 /* ContentWorldData.h */,
 				9B9513BB2CD99F0A00E0B6C4 /* ContentWorldData.serialization.in */,
 				5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */,

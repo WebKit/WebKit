@@ -7507,6 +7507,26 @@ void WebPageProxy::accessibilitySettingsDidChange()
     });
 }
 
+ContentInversion WebPageProxy::contentInversion() const
+{
+    return internals().contentInversion;
+}
+
+void WebPageProxy::setContentInversion(ContentInversion contentInversion)
+{
+    if (internals().contentInversion == contentInversion)
+        return;
+
+    internals().contentInversion = contentInversion;
+
+    if (!hasRunningProcess())
+        return;
+
+    forEachWebContentProcess([contentInversion](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SetContentInversion(contentInversion), pageID);
+    });
+}
+
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     // This check is fine as the value is initialized in the web
@@ -8638,6 +8658,11 @@ void WebPageProxy::setDevicePostureType(WebCore::DevicePostureType type)
 
 void WebPageProxy::preferencesDidChange()
 {
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    // AX custom color mode is toggled through a preference.
+    effectivePageAppearanceMightHaveChanged();
+#endif
+
     if (!hasRunningProcess())
         return;
 
@@ -15685,6 +15710,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.isProcessSwap = isProcessSwap;
     parameters.useDarkAppearance = useDarkAppearance();
     parameters.useElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel();
+    parameters.contentInversion = internals().contentInversion;
 #if PLATFORM(MAC)
     parameters.colorSpace = pageClient ? std::optional { pageClient->colorSpace() } : std::nullopt;
     parameters.useFormSemanticContext = useFormSemanticContext();
@@ -17014,6 +17040,48 @@ Color WebPageProxy::pageExtendedBackgroundColor() const
     return internals().pageExtendedBackgroundColor;
 }
 
+WebPageProxy::EffectivePageAppearance WebPageProxy::effectivePageAppearance() const
+{
+    return internals().effectivePageAppearance;
+}
+
+WebPageProxy::EffectivePageAppearance WebPageProxy::computeEffectivePageAppearance() const
+{
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    // AX custom color mode knows when the page is displayed dark, including pages that paint no background color.
+    if (axCustomColorModePageIsDark())
+        return EffectivePageAppearance::Dark;
+#endif
+
+    auto& backgroundColor = internals().pageExtendedBackgroundColor;
+    if (!backgroundColor.isValid() || !backgroundColor.isOpaque())
+        return EffectivePageAppearance::Unknown;
+
+    // Dark when white text would have a higher WCAG 2 contrast ratio against the background than black text
+    // (https://www.w3.org/TR/WCAG20/#contrast-ratiodef). This is the same split CSS contrast-color() currently
+    // makes, used here only to classify the background as light or dark, not to judge text legibility.
+    auto luminance = backgroundColor.luminance();
+    auto contrastWithWhite = (1.0 + 0.05) / (luminance + 0.05);
+    auto contrastWithBlack = (luminance + 0.05) / (0.0 + 0.05);
+    return contrastWithWhite > contrastWithBlack ? EffectivePageAppearance::Dark : EffectivePageAppearance::Light;
+}
+
+void WebPageProxy::effectivePageAppearanceMightHaveChanged()
+{
+    auto newAppearance = computeEffectivePageAppearance();
+    if (internals().effectivePageAppearance == newAppearance)
+        return;
+
+    RefPtr pageClient = this->pageClient();
+    if (pageClient)
+        pageClient->effectivePageAppearanceWillChange();
+
+    internals().effectivePageAppearance = newAppearance;
+
+    if (pageClient)
+        pageClient->effectivePageAppearanceDidChange();
+}
+
 void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& newPageExtendedBackgroundColor)
 {
     if (internals().pageExtendedBackgroundColor == newPageExtendedBackgroundColor)
@@ -17036,6 +17104,8 @@ void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& newPageExte
         if (changesUnderPageBackgroundColor)
             pageClient->underPageBackgroundColorDidChange();
     }
+
+    effectivePageAppearanceMightHaveChanged();
 }
 
 Color WebPageProxy::sampledPageTopColor() const
