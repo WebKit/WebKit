@@ -2996,6 +2996,48 @@ void WebPage::setSelectionRange(std::optional<WebCore::FrameIdentifier> frameID,
     m_initialSelection = range;
 }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT) && ENABLE(TWO_PHASE_CLICKS)
+static RefPtr<WebCore::Node> hitNodeAtPointInRootView(WebCore::LocalFrame& frame, const WebCore::IntPoint& pointInRootView)
+{
+    RefPtr view = frame.view();
+    if (!view)
+        return nullptr;
+
+    static constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    return frame.eventHandler().hitTestResultAtPoint(view->rootViewToContents(pointInRootView), hitType).innerNonSharedNode();
+}
+
+static RefPtr<WebCore::HTMLImageElement> imageThatMayZoomInPlaceAtPointInRootView(WebCore::LocalFrame& frame, const WebCore::IntPoint& pointInRootView)
+{
+    constexpr int minimumImageSize = 200;
+
+    RefPtr image = dynamicDowncast<WebCore::HTMLImageElement>(hitNodeAtPointInRootView(frame, pointInRootView));
+    if (!image)
+        return nullptr;
+
+    for (RefPtr ancestor = image->parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        if (ancestor->isLink())
+            return nullptr;
+    }
+
+    auto bounds = image->boundingBoxInRootViewCoordinates();
+    if (bounds.width() < minimumImageSize || bounds.height() < minimumImageSize)
+        return nullptr;
+
+    return image;
+}
+
+static Vector<String> zoomStateForImage(const WebCore::HTMLImageElement& image)
+{
+    Vector<String> state;
+    for (RefPtr<const WebCore::Element> element = &image; element && state.size() < 6; element = element->parentElementInComposedTree()) {
+        state.append(element->getAttribute(WebCore::HTMLNames::classAttr));
+        state.append(element->getAttribute(WebCore::HTMLNames::styleAttr));
+    }
+    return state;
+}
+#endif
+
 static bool isPointOverLink(WebCore::LocalFrame& frame, const WebCore::IntPoint& pointInRootView)
 {
     RefPtr view = frame.view();
@@ -3297,6 +3339,15 @@ static void dispatchSyntheticMouseMove(LocalFrame& localFrame, const WebCore::Fl
 
 void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frameID, Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId)
 {
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (isHoverActivatedByClick(nodeRespondingToClick, roundedIntPoint(location))) {
+        WEBPAGE_RELEASE_LOG(ViewGestures, "handleSyntheticClick: ignoring a click inside the element whose click was handled as hover");
+        invokePendingSyntheticClickCallback(SyntheticClickResult::Hover);
+        send(Messages::WebPageProxy::DidHandleTapAsHover());
+        return;
+    }
+#endif
+
     Ref respondingDocument = nodeRespondingToClick.document();
     m_hasHandledSyntheticClick = true;
 
@@ -3322,7 +3373,7 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
 
     if (targetNodeWentFromHiddenToVisible) {
         LOG(ContentObservation, "handleSyntheticClick: target node was hidden and now is visible -> hover.");
-        didHandleTapAsHover();
+        didHandleTapAsHover(nodeRespondingToClick);
         return;
     }
 
@@ -3364,7 +3415,7 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
             if (RefPtr localRootFrame = protectedThis->localRootFrame(frameID))
                 dispatchSyntheticMouseMove(*localRootFrame, location, modifiers, pointerId, protectedThis->m_potentialTapInputSource);
             LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
-            protectedThis->didHandleTapAsHover();
+            protectedThis->didHandleTapAsHover(targetNode);
             return;
         }
         LOG(ContentObservation, "handleSyntheticClick: calling completeSyntheticClick -> click.");
@@ -3605,14 +3656,70 @@ void WebPage::cancelPotentialTap()
 #endif
 }
 
-void WebPage::didHandleTapAsHover()
+void WebPage::didHandleTapAsHover(Node& nodeRespondingToClick)
 {
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     m_lastSyntheticMousePressPreventedSelection = false;
+    RefPtr element = dynamicDowncast<Element>(nodeRespondingToClick);
+    if (!element)
+        element = nodeRespondingToClick.parentElement();
+    Ref document = nodeRespondingToClick.document();
+    if (element == document->documentElement() || element == document->bodyOrFrameset())
+        element = nullptr;
+    m_elementHoverActivatedByClick = element.get();
+    std::optional<IntRect> bounds;
+    if (element) {
+        bounds = element->boundingBoxInRootViewCoordinates();
+        WEBPAGE_RELEASE_LOG(ViewGestures, "didHandleTapAsHover: tracking the element whose click was handled as hover");
+    }
+    send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(bounds));
+#else
+    UNUSED_PARAM(nodeRespondingToClick);
 #endif
     invokePendingSyntheticClickCallback(SyntheticClickResult::Hover);
     send(Messages::WebPageProxy::DidHandleTapAsHover());
 }
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+bool WebPage::isHoverActivatedByClick(const Node& hitNode, const IntPoint& locationInRootView) const
+{
+    RefPtr element = m_elementHoverActivatedByClick.get();
+    if (!element || !element->isConnected() || !element->renderer() || &element->document() != &hitNode.document())
+        return false;
+
+    if (element->isShadowIncludingInclusiveAncestorOf(hitNode))
+        return true;
+
+    auto elementBounds = element->boundingBoxInRootViewCoordinates();
+    if (!elementBounds.contains(locationInRootView))
+        return false;
+
+    Vector<Ref<const Element>> elementAncestors;
+    for (RefPtr ancestor = element->parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree())
+        elementAncestors.append(*ancestor);
+
+    RefPtr<const Element> branchRoot;
+    RefPtr<const Element> current = dynamicDowncast<Element>(hitNode);
+    if (!current)
+        current = hitNode.parentElementInComposedTree();
+    for (; current; current = current->parentElementInComposedTree()) {
+        if (elementAncestors.containsIf([&](auto& ancestor) { return ancestor.ptr() == current.get(); }))
+            break;
+        branchRoot = current;
+    }
+    if (!branchRoot)
+        return false;
+
+    auto branchBounds = branchRoot->boundingBoxInRootViewCoordinates();
+    if (branchBounds.isEmpty())
+        return false;
+
+    auto overlap = intersection(branchBounds, elementBounds);
+    uint64_t overlapArea = static_cast<uint64_t>(overlap.width()) * overlap.height();
+    uint64_t branchArea = static_cast<uint64_t>(branchBounds.width()) * branchBounds.height();
+    return overlapArea * 4 >= branchArea * 3;
+}
+#endif
 
 void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID, Node* node, FloatPoint point)
 {
@@ -3712,7 +3819,7 @@ void WebPage::didFinishContentChangeObserving(WebCore::FrameIdentifier frameID, 
         if (RefPtr localRootFrame = protectedThis->localRootFrame(frameID))
             dispatchSyntheticMouseMove(*localRootFrame, location, modifiers, pointerId, inputSource);
 
-        protectedThis->didHandleTapAsHover();
+        protectedThis->didHandleTapAsHover(targetNode);
     });
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = { };
@@ -3754,6 +3861,14 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     SetForScope completeSyntheticClickScope { m_completingSyntheticClick, true };
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (m_elementHoverActivatedByClick) {
+        WEBPAGE_RELEASE_LOG(ViewGestures, "completeSyntheticClick: no longer tracking the element whose click was handled as hover");
+        m_elementHoverActivatedByClick = nullptr;
+        send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(std::nullopt));
+    }
+#endif
+
     // FIXME: Make this function take a root frame's ID instead of taking a frame ID of a non-root frame and replacing it with the root frame.
     auto rootFrameID = frameID;
     if (RefPtr webFrame = WebProcess::singleton().webFrame(frameID)) {
@@ -3779,6 +3894,16 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     // FIXME: Pass caps lock state.
     auto platformModifiers = platform(modifiers);
     auto globalPoint = globalPositionForSyntheticMouseEvent(*localRootFrame, location);
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    RefPtr<HTMLImageElement> imageThatMayZoomInPlace;
+    Vector<String> imageZoomStateBeforeClick;
+    if (m_page->settings().useAppKitGestures()) {
+        imageThatMayZoomInPlace = imageThatMayZoomInPlaceAtPointInRootView(*localRootFrame, roundedAdjustedPoint);
+        if (imageThatMayZoomInPlace)
+            imageZoomStateBeforeClick = zoomStateForImage(*imageThatMayZoomInPlace);
+    }
+#endif
 
     auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, clickCount, platformModifiers, MonotonicTime::now(), WebCore::ForceAtClick, syntheticClickType, m_potentialTapInputSource, pointerId };
 
@@ -3808,6 +3933,22 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
     bool handledRelease = localRootFrame->eventHandler().handleMouseReleaseEvent(releaseEvent).wasHandled();
     if (m_isClosed)
         return;
+
+#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (imageThatMayZoomInPlace && imageThatMayZoomInPlace->isConnected()) {
+        RefPtr hitNode = hitNodeAtPointInRootView(*localRootFrame, roundedAdjustedPoint);
+        bool clickChangedImage = hitNode.get() != imageThatMayZoomInPlace.get() || zoomStateForImage(*imageThatMayZoomInPlace) != imageZoomStateBeforeClick;
+        if (hitNode && clickChangedImage) {
+            m_elementHoverActivatedByClick = imageThatMayZoomInPlace.get();
+            if (isHoverActivatedByClick(*hitNode, roundedAdjustedPoint)) {
+                auto bounds = imageThatMayZoomInPlace->boundingBoxInRootViewCoordinates();
+                WEBPAGE_RELEASE_LOG(ViewGestures, "completeSyntheticClick: tracking an image that stayed under the click location after the click");
+                send(Messages::WebPageProxy::SetHoverActivatedByClickBounds(bounds));
+            } else
+                m_elementHoverActivatedByClick = nullptr;
+        }
+    }
+#endif
 
     RefPtr newFocusedFrame = m_page->focusController().localFocusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;

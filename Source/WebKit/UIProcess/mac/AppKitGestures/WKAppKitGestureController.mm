@@ -280,6 +280,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     // between tracking gestures when an active gesture's tracking conditions change.
     WeakObjCPtr<WKMouseTrackingGestureRecognizer> _activeMouseTrackingGestureRecognizer;
     bool _mouseTrackingHasSentMouseDown;
+    bool _mouseTrackingSendsMouseMoves;
+    bool _mayHaveHoverActivatedByClick;
     WebCore::FloatPoint _mouseTrackingStartLocationInWindow;
     bool _mouseTrackingIsSuppressedForTransformGesture;
     bool _contentDeclinedTransformGesture;
@@ -1006,6 +1008,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
     });
 
+    if (_dragGestureHasSentMouseDown && gesture.state == NSGestureRecognizerStateBegan && !_gestureDraggingSession) {
+        auto dragGestureState = [_dragPressGestureRecognizer state];
+        if (dragGestureState != NSGestureRecognizerStateBegan && dragGestureState != NSGestureRecognizerStateChanged) {
+            WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Clearing stale drag gesture state; no drag session started");
+            _dragGestureHasSentMouseDown = false;
+        }
+    }
+
     if (_dragGestureHasSentMouseDown) {
         WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Exiting early because _dragGestureHasSentMouseDown is true");
         return;
@@ -1048,7 +1058,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             break;
         }
 
-        if (!_mouseTrackingHasSentMouseDown) {
+        if (!_mouseTrackingHasSentMouseDown && !_mouseTrackingSendsMouseMoves) {
             // Either the synthetic single-click path or this mouse-tracking path delivers a mouse
             // down for a given interaction, but never both. An event that stays within the single-click
             // gesture's allowable movement is a click: that gesture stays alive and, when it ends, the
@@ -1068,17 +1078,37 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             if (isResumingAfterTransformGesture)
                 [mouseTrackingGesture beginReportingMovementFromWindowLocation:mouseDownLocation];
 
-            RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
-                location:[self _adjustedMouseDownLocationInWindow:mouseDownLocation]
+            if ([self _isHoverActivatedByClickAtLocation:[webView convertPoint:mouseDownLocation fromView:nil]])
+                _mouseTrackingSendsMouseMoves = true;
+            else {
+                RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
+                    location:[self _adjustedMouseDownLocationInWindow:mouseDownLocation]
+                    modifierFlags:modifierFlags
+                    timestamp:timestamp
+                    windowNumber:windowNumber
+                    context:nil
+                    eventNumber:0
+                    clickCount:1
+                    pressure:1.0];
+                impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
+                _mouseTrackingHasSentMouseDown = true;
+            }
+        }
+
+        if (_mouseTrackingSendsMouseMoves) {
+            NSPoint locationInWindow = [mouseTrackingGesture mouseLocationInWindow];
+            RetainPtr mouseMoved = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
+                location:locationInWindow
                 modifierFlags:modifierFlags
                 timestamp:timestamp
                 windowNumber:windowNumber
                 context:nil
                 eventNumber:0
-                clickCount:1
-                pressure:1.0];
-            impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
-            _mouseTrackingHasSentMouseDown = true;
+                clickCount:0
+                pressure:0.0];
+            mouseMoved = [mouseTrackingGesture eventReportingMovement:mouseMoved atWindowLocation:locationInWindow];
+            impl->mouseMoved(mouseMoved.get(), WebKit::WebEventInputSource::Automation);
+            break;
         }
 
         NSPoint locationInWindow = [mouseTrackingGesture mouseLocationInWindow];
@@ -1103,6 +1133,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             break;
 
         _activeMouseTrackingGestureRecognizer = nil;
+
+        if (std::exchange(_mouseTrackingSendsMouseMoves, false))
+            break;
 
         if ([self _mouseTrackingWillBeHandedOff]) {
             WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Handing off mouse tracking to another gesture");
@@ -1695,11 +1728,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     // The heuristic below approximates DragController::draggableElement() by consulting the same element-type and style signals.
     bool isDraggable = representsDraggableElement(information);
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:radius];
-    bool shouldDrag = requestIsValid && isDraggable;
+    bool shouldDrag = requestIsValid && isDraggable && !information.isHoverActivatedByClick;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
         [webView _protectedPage]->logIdentifier(),
-        "Drag-press shouldBegin → %d (hasInfo=%d link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d radius=%d)",
+        "Drag-press shouldBegin → %d (hasInfo=%d link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d hoverActivatedByClick=%d radius=%d)",
         shouldDrag,
         _positionInformationManager->hasValidCurrentInformation(),
         information.isLink,
@@ -1708,6 +1741,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         information.isDHTMLDraggable,
         information.isColorInput,
         information.prefersDraggingOverTextSelection,
+        information.isHoverActivatedByClick,
         radius
     );
 
@@ -1729,18 +1763,39 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
     bool prefersInteraction = prefersDirectManipulation(information);
-    bool yieldToContent = requestIsValid && prefersInteraction;
+    bool usesHoverActivatedByClickBounds = !requestIsValid && [self _isInsideHoverActivatedByClickBoundsAtLocation:locationInViewCoordinates];
+    bool yieldToContent = (requestIsValid && (prefersInteraction || information.isHoverActivatedByClick)) || usesHoverActivatedByClickBounds;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
         [webView _protectedPage]->logIdentifier(),
-        "Pan shouldBegin → %d (hasInfo=%d valid=%d prefersInteraction=%d)",
+        "Pan shouldBegin → %d (hasInfo=%d valid=%d prefersInteraction=%d hoverActivatedByClick=%d fallback=%d)",
         !yieldToContent,
         _positionInformationManager->hasValidCurrentInformation(),
         requestIsValid,
-        prefersInteraction
+        prefersInteraction,
+        information.isHoverActivatedByClick,
+        usesHoverActivatedByClickBounds
     );
 
     return !yieldToContent;
+}
+
+- (BOOL)_isInsideHoverActivatedByClickBoundsAtLocation:(NSPoint)locationInViewCoordinates
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return NO;
+
+    auto bounds = [webView _protectedPage]->hoverActivatedByClickBounds();
+    return bounds && bounds->contains(WebCore::IntPoint { locationInViewCoordinates });
+}
+
+- (BOOL)_isHoverActivatedByClickAtLocation:(NSPoint)locationInViewCoordinates
+{
+    if (![self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius])
+        return [self _isInsideHoverActivatedByClickBoundsAtLocation:locationInViewCoordinates];
+
+    return _positionInformationManager->currentInformation().isHoverActivatedByClick;
 }
 
 #pragma mark - Drag Handling
@@ -1968,6 +2023,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Synthetic click completed");
+
+    bool hasHoverActivatedByClick = [webView _protectedPage]->hoverActivatedByClickBounds().has_value();
+    if (std::exchange(_mayHaveHoverActivatedByClick, hasHoverActivatedByClick) || hasHoverActivatedByClick)
+        _positionInformationManager->invalidate();
 }
 
 - (void)didHandleClickAsHover
@@ -1977,6 +2036,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "Click was handled as hover");
+
+    _mayHaveHoverActivatedByClick = true;
+    _positionInformationManager->invalidate();
 }
 
 - (void)didNotHandleClickAsClick:(const WebCore::IntPoint&)point
@@ -2390,6 +2452,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _mouseTrackingIsSuppressedForTransformGesture = false;
     _contentDeclinedTransformGesture = false;
     _lastTransformGestureDriveTime = MonotonicTime();
+    _mouseTrackingSendsMouseMoves = false;
+    _mayHaveHoverActivatedByClick = false;
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
     [self resetDOMDoubleClickGestureRecognizer];
