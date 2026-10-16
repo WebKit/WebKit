@@ -27,6 +27,7 @@
 # SUCH DAMAGE.
 
 import json
+import logging
 import os
 import unittest
 
@@ -303,6 +304,48 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitattributes'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.gitignore'))
         self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/.svn'))
+
+    def test_case_mismatch_in_test_path(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/webidl/test.html': MINIMAL_TESTHARNESS,
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        with OutputCapture(level=logging.ERROR) as captured:
+            fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c', 'web-platform-tests/WebIDL'], FAKE_FILES)
+
+        self.assertEqual(captured.root.log.getvalue(), 'web-platform-tests/WebIDL differs only in case from web-platform-tests/webidl in the WPT checkout.\n')
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/webidl/test.html'))
+        import_expectations = json.loads(fs.read_text_file('/mock-checkout/LayoutTests/imported/w3c/resources/import-expectations.json'))
+        self.assertNotIn('web-platform-tests/WebIDL', import_expectations)
+
+    def test_case_mismatch_in_destination_directory(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/webidl/test.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/WebIDL/test.html': 'old',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        with OutputCapture(level=logging.ERROR) as captured:
+            fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c', 'web-platform-tests/webidl'], FAKE_FILES)
+
+        self.assertEqual(captured.root.log.getvalue(), '/mock-checkout/LayoutTests/w3c/web-platform-tests/WebIDL differs only in case from web-platform-tests/webidl in the WPT checkout. Rename it to match before importing.\n')
+        self.assertEqual(fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/WebIDL/test.html'), 'old')
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/webidl/test.html'))
+
+    def test_case_mismatch_in_destination_file(self):
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/t/progress.html': MINIMAL_TESTHARNESS,
+            '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/Progress.html': 'old',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        with OutputCapture(level=logging.ERROR) as captured:
+            fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c', 'web-platform-tests/t'], FAKE_FILES)
+
+        self.assertEqual(captured.root.log.getvalue(), '/mock-checkout/LayoutTests/w3c/web-platform-tests/t/Progress.html differs only in case from web-platform-tests/t/progress.html in the WPT checkout. Rename it to match before importing.\n')
+        self.assertEqual(fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/Progress.html'), 'old')
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/progress.html'))
 
     def test_update_slow_test(self):
         existing_resource_files = {

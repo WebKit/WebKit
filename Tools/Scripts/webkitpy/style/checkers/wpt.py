@@ -82,8 +82,24 @@ def wpt_lint_categories():
     return categories
 
 
+def _resolves_only_ignoring_case(root, path):
+    """Whether path exists only because the file system ignores case."""
+    if not os.path.exists(os.path.join(root, path)):
+        return False
+    directory = root
+    for part in path.split(os.sep):
+        if part not in os.listdir(directory):
+            return True
+        directory = os.path.join(directory, part)
+    return False
+
+
 def run_wpt_lint(wpt_repo_dir, wpt_paths, configuration, increment_error_count):
     """Run the WPT linter and report each error via the style configuration."""
+    # Such as the old path of a file renamed to another case, which the WPT linter would see as a duplicate.
+    wpt_paths = [path for path in wpt_paths if not _resolves_only_ignoring_case(wpt_repo_dir, path)]
+    if not wpt_paths:
+        return
     for error in WPTLinter(wpt_repo_dir).lint(wpt_paths):
         file_path = os.path.join('LayoutTests', *IMPORTED_WPT_DIR.split('/'), error['path'])
         line_number = error['lineno'] if error['lineno'] is not None else '-'

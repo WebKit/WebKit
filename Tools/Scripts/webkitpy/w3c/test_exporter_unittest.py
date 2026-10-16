@@ -771,6 +771,52 @@ class TestExporterTest(testing.PathTestCase):
         log = captured.root.log.getvalue()
         self.assertIn('Failed to push to WPT fork', log)
 
+    def test_export_case_mismatch(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(remote='github.com/web-platform-tests/wpt', labels={
+            'webkit-export': dict(color='00000', description=''),
+        }) as wpt_remote, mocks.local.Git(
+            self.path,
+            remote='https://{}'.format(wpt_remote.remote)
+        ) as git_mock, patch(
+            'webkitpy.common.webkit_finder.WebKitFinder.webkit_base', return_value=self.path,
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA_URL)],
+        ), patch(
+            'webkitpy.w3c.test_exporter.WPTLinter', autospec=True, spec_set=True,
+        ), patch(
+            'webkitpy.w3c.test_exporter.run', wraps=run,
+        ) as run_mock:
+            git_mock.head.message = f'Test\n{self.BUGZILLA_URL}/show_bug.cgi?id=1\n'
+
+            # Like git apply on a case-insensitive file system: the index keeps the case of the patch.
+            def apply(patch=None):
+                git_mock.staged['WebIDL/ecmascript-binding/test.html'] = 'added'
+                return wkmocks.ProcessCompletion(returncode=0)
+            git_mock.apply = apply
+
+            host = TestExporterTest.MyMockHost()
+            host.filesystem.maybe_make_directory(self.path)
+            host.filesystem.write_binary_file(f'{self.path}/resources/testharness.js', '')
+            host.filesystem.write_binary_file(f'{self.path}/wpt', '')
+            host.filesystem.write_binary_file(f'{self.path}/webidl/ecmascript-binding/test.html', '')
+            host.web.responses.append({'status_code': 200, 'body': '{"login": "USER"}'})
+            options = parse_args(['test_exporter.py', '-g', 'HEAD', '-c', '-d', self.path])
+            self.assertEqual(WebPlatformTestExporter(host, options).do_export(), 1)
+            self.assertEqual(wpt_remote.pull_requests, [])
+            self.assertEqual([call for call in run_mock.call_args_list if call.args[0][1] == 'commit'], [])
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                f'Using the WPT repository found at `{self.path}`',
+                'Fetching web-platform-tests repository',
+                'Cleaning web-platform-tests master branch',
+                'Applying patch to web-platform-tests branch wpt-export-for-webkit-1',
+                'LayoutTests/imported/w3c/web-platform-tests/WebIDL differs only in case from webidl in web-platform-tests. Rename it to match before exporting.',
+                "Cannot create web-platform-tests local branch from the patch '/__im_tmp/tmp_0_wpt_export_patch'",
+                'Keeping local branch wpt-export-for-webkit-1'],
+        )
+
     def test_export_open_pr_errors_without_flag(self):
         with OutputCapture(level=logging.INFO) as captured, bmocks.Bugzilla(self.BUGZILLA_URL.split('://')[1], issues=bmocks.ISSUES, environment=wkmocks.Environment(
             BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',

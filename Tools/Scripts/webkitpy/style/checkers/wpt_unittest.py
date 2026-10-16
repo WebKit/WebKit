@@ -102,6 +102,19 @@ class RunWPTLintTest(unittest.TestCase):
         configuration.write_style_error.assert_not_called()
         increment.assert_not_called()
 
+    # Like a case-insensitive file system after css/Test.html was renamed to css/test.html.
+    @patch('os.listdir', side_effect=lambda path: {'/wpt': ['css'], '/wpt/css': ['test.html']}[path])
+    @patch('os.path.exists', side_effect=lambda path: path.lower() == '/wpt/css/test.html')
+    @patch('webkitpy.style.checkers.wpt.WPTLinter')
+    def test_skips_paths_that_only_resolve_ignoring_case(self, MockLinter, _exists, _listdir):
+        MockLinter.return_value.lint.return_value = iter([])
+
+        run_wpt_lint('/wpt', ['css/Test.html'], MagicMock(), MagicMock())
+        MockLinter.assert_not_called()
+
+        run_wpt_lint('/wpt', ['css/Test.html', 'css/test.html', 'css/deleted.html'], MagicMock(), MagicMock())
+        MockLinter.return_value.lint.assert_called_once_with(['css/test.html', 'css/deleted.html'])
+
 
 class NormalizeRuleNameTest(unittest.TestCase):
     def test_spaces_and_hyphens_become_underscores(self):
