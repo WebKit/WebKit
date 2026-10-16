@@ -49,14 +49,22 @@ set(WebKitTestRunner_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitTestRunner/D
 
 # FRAMEWORK_HEADERS_DIR variables include the name of the framework as a child
 # directory, and are suitable for use as include paths.
-set(bmalloc_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/Headers")
+if (PORT STREQUAL "Cocoa")
+    # The Xcode build installs these libraries' headers to usr/local/include, so
+    # do the same for clients like Safari that expect them there.
+    set(bmalloc_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/usr/local/include")
+    set(WTF_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/usr/local/include")
+    set(PAL_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/usr/local/include")
+else ()
+    set(bmalloc_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/Headers")
+    set(WTF_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WTF/Headers")
+    set(PAL_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/PAL/Headers")
+endif ()
 set(bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/PrivateHeaders")
 set(ANGLE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/ANGLE/Headers")
 set(Skia_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/Skia/Headers")
-set(WTF_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WTF/Headers")
 set(JavaScriptCore_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore/Headers")
 set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/JavaScriptCore/PrivateHeaders")
-set(PAL_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/PAL/Headers")
 set(WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebCore/PrivateHeaders")
 set(WebKitLegacy_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitLegacy/Headers")
 set(WebKit_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/Headers")
