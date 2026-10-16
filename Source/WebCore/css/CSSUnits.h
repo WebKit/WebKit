@@ -147,6 +147,7 @@ enum class CSSUnitCategory : uint8_t {
     AbsoluteLength,
     FontRelativeLength,
     ViewportPercentageLength,
+    ContainerPercentageLength,
     Angle,
     Time,
     Frequency,

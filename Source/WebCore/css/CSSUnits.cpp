@@ -83,6 +83,14 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::Lvmax:
     case CSSUnitType::Dvmax:
         return CSSUnitCategory::ViewportPercentageLength;
+    // https://drafts.csswg.org/css-conditional-5/#container-lengths
+    case CSSUnitType::Cqw:
+    case CSSUnitType::Cqh:
+    case CSSUnitType::Cqi:
+    case CSSUnitType::Cqb:
+    case CSSUnitType::Cqmin:
+    case CSSUnitType::Cqmax:
+        return CSSUnitCategory::ContainerPercentageLength;
     // https://drafts.csswg.org/css-values-4/#time
     case CSSUnitType::Ms:
     case CSSUnitType::S:
@@ -105,12 +113,6 @@ CSSUnitCategory unitCategory(CSSUnitType type)
         return CSSUnitCategory::Resolution;
     case CSSUnitType::Fr:
         return CSSUnitCategory::Flex;
-    case CSSUnitType::Cqw:
-    case CSSUnitType::Cqh:
-    case CSSUnitType::Cqi:
-    case CSSUnitType::Cqb:
-    case CSSUnitType::Cqmin:
-    case CSSUnitType::Cqmax:
     case CSSUnitType::Calc:
     case CSSUnitType::CalcPercentageWithAngle:
     case CSSUnitType::CalcPercentageWithLength:
@@ -143,6 +145,7 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
         return CSSUnitType::Fr;
     case CSSUnitCategory::FontRelativeLength:
     case CSSUnitCategory::ViewportPercentageLength:
+    case CSSUnitCategory::ContainerPercentageLength:
     case CSSUnitCategory::Other:
         return CSSUnitType::Unknown;
     }
@@ -162,6 +165,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitCategory category)
     case CSSUnitCategory::Percent: ts << "Percent"_s; break;
     case CSSUnitCategory::AbsoluteLength: ts << "AsboluteLength"_s; break;
     case CSSUnitCategory::ViewportPercentageLength: ts << "ViewportPercentageLength"_s; break;
+    case CSSUnitCategory::ContainerPercentageLength: ts << "ContainerPercentageLength"_s; break;
     case CSSUnitCategory::FontRelativeLength: ts << "FontRelativeLength"_s; break;
     case CSSUnitCategory::Angle: ts << "Angle"_s; break;
     case CSSUnitCategory::Time: ts << "Time"_s; break;

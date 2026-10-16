@@ -45,6 +45,7 @@ std::optional<CSSNumericType> CSSNumericType::create(CSSUnitType unit, int expon
     case CSSUnitCategory::AbsoluteLength:
     case CSSUnitCategory::FontRelativeLength:
     case CSSUnitCategory::ViewportPercentageLength:
+    case CSSUnitCategory::ContainerPercentageLength:
         type.length = exponent;
         return { WTF::move(type) };
     case CSSUnitCategory::Angle:

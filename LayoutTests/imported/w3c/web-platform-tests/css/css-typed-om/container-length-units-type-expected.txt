@@ -1,0 +1,32 @@
+
+PASS CSS.cqw() has length type
+PASS new CSSUnitValue(1, "cqw") has length type
+PASS cqw can be added to px
+PASS cqw cannot be added to a number
+PASS cqw multiplied by cqw has length^2 type
+PASS CSS.cqh() has length type
+PASS new CSSUnitValue(1, "cqh") has length type
+PASS cqh can be added to px
+PASS cqh cannot be added to a number
+PASS cqh multiplied by cqh has length^2 type
+PASS CSS.cqi() has length type
+PASS new CSSUnitValue(1, "cqi") has length type
+PASS cqi can be added to px
+PASS cqi cannot be added to a number
+PASS cqi multiplied by cqi has length^2 type
+PASS CSS.cqb() has length type
+PASS new CSSUnitValue(1, "cqb") has length type
+PASS cqb can be added to px
+PASS cqb cannot be added to a number
+PASS cqb multiplied by cqb has length^2 type
+PASS CSS.cqmin() has length type
+PASS new CSSUnitValue(1, "cqmin") has length type
+PASS cqmin can be added to px
+PASS cqmin cannot be added to a number
+PASS cqmin multiplied by cqmin has length^2 type
+PASS CSS.cqmax() has length type
+PASS new CSSUnitValue(1, "cqmax") has length type
+PASS cqmax can be added to px
+PASS cqmax cannot be added to a number
+PASS cqmax multiplied by cqmax has length^2 type
+
