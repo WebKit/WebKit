@@ -291,7 +291,6 @@ private:
 
     bool LEGACY_NODELETE siteIsolationEnabled() const;
 
-    void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&) final;
     void broadcastFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncSerializationData&&) final;
 
     void didNotifyUserActivation(MonotonicTime, std::optional<WebCore::UserGestureTokenIdentifier> forcedActivationToken) final;

@@ -261,11 +261,6 @@ void WebRemoteFrameClient::setPrinting(bool printing, FloatSize pageSize, FloatS
     WebFrameLoaderClient::setPrinting(printing, pageSize, originalPageSize, maximumShrinkRatio, adjustViewSize);
 }
 
-void WebRemoteFrameClient::broadcastAllFrameTreeSyncDataToOtherProcesses(FrameTreeSyncData& data)
-{
-    WebFrameLoaderClient::broadcastAllFrameTreeSyncDataToOtherProcesses(data);
-}
-
 void WebRemoteFrameClient::broadcastFrameTreeSyncDataToOtherProcesses(FrameTreeSyncSerializationData&& data)
 {
     WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(WTF::move(data));
