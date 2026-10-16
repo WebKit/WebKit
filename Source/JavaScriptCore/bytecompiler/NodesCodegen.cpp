@@ -2473,6 +2473,9 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         ASSERT(!m_base->isResolveNode() || static_cast<ResolveNode*>(m_base)->identifier() != "Reflect"_s);
         generator.emitJumpIfNotFunctionApply(function.get(), realCall.get());
     }
+    auto emitApplyVarargs = [&](RegisterID* callee, RegisterID* thisRegister, RegisterID* arguments) {
+        generator.emitCallVarargsInTailPosition(returnValue.get(), callee, thisRegister, arguments, generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::Yes, true);
+    };
     if (mayBeCall) {
         if (m_args->m_listNode && m_args->m_listNode->m_expr) {
             ArgumentListNode* oldList = m_args->m_listNode;
@@ -2498,7 +2501,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
                     generator.emitLabel(end.get());
                 };
                 generator.emitEnumeration(this, spread->expression(), extractor);
-                generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argumentsRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+                emitApplyVarargs(realFunction.get(), thisRegister.get(), argumentsRegister.get());
             } else if (m_args->m_listNode->m_next) {
                 ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                 ASSERT(!m_args->m_listNode->m_next->m_next);
@@ -2534,7 +2537,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         while ((args = args->m_next))
             generator.emitNode(args->m_expr);
 
-        generator.emitCallVarargsInTailPosition(returnValue.get(), realFunction.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+        emitApplyVarargs(realFunction.get(), thisRegister.get(), argsRegister.get());
     }
     if (emitCallCheck) {
         generator.emitJump(end.get());

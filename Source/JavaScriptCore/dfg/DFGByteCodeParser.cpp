@@ -1850,6 +1850,8 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const JSInstructio
     
     CallVarargsData* data = m_graph.m_callVarargsData.add();
     data->firstVarArgOffset = firstVarArgOffset;
+    if constexpr (CallOp::opcodeID == op_call_varargs || CallOp::opcodeID == op_tail_call_varargs)
+        data->isFunctionApply = bytecode.m_isFunctionApply;
     
     Node* thisChild = get(bytecode.m_thisValue);
     Node* argumentsChild = nullptr;
