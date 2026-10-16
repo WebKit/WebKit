@@ -47,6 +47,7 @@ class TestInput(object):
     needs_servers = attr.ib(default=None)  # type: Optional[bool]
     should_dump_jsconsolelog_in_stderr = attr.ib(default=None)  # type: Optional[bool]
     should_run_pixel_test = attr.ib(default=None)  # type: Optional[bool]
+    expected_results = attr.ib(default=None)  # type: Optional[FrozenSet[int]]
 
     @property
     def test_name(self):
