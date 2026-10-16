@@ -162,7 +162,7 @@
 		BC952F1F11F3C652003398B4 /* JSTestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952F1D11F3C652003398B4 /* JSTestRunner.cpp */; };
 		BCC997A411D3C8F60017BCA2 /* InjectedBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */; };
 		BCC997A511D3C8F60017BCA2 /* InjectedBundlePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */; };
-		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
+		C0CE720B1247C93300BC0EC4 /* TestRunnerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerCocoa.mm */; };
 		D2D99AEE2A9EF3F500000BBF /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AED2A9EF3F500000BBF /* Network.framework */; };
 		D2D99AF72AA21E6800000BBF /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AF62AA21E6800000BBF /* NetworkExtension.framework */; platformFilters = (maccatalyst, macos, ); };
 		D2D99AFC2AA27BA800000BBF /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2D99AED2A9EF3F500000BBF /* Network.framework */; };
@@ -366,7 +366,6 @@
 		2E2A765B2370C8A0008F9FFE /* PlatformViewHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformViewHelpers.h; path = ../TestRunnerShared/cocoa/PlatformViewHelpers.h; sourceTree = "<group>"; };
 		2E2A765C2370C8A0008F9FFE /* PlatformViewHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformViewHelpers.mm; path = ../TestRunnerShared/cocoa/PlatformViewHelpers.mm; sourceTree = "<group>"; };
 		2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityControllerIOS.mm; sourceTree = "<group>"; };
-		2E63ED761891ACE9002A7AFC /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
 		2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTextMarkerIOS.mm; sourceTree = "<group>"; };
 		2E63ED781891ACE9002A7AFC /* AccessibilityUIElementIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityUIElementIOS.mm; sourceTree = "<group>"; };
 		2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxyIOS.mm; sourceTree = "<group>"; };
@@ -433,8 +432,8 @@
 		7CFF9BC72534AF1D0008009F /* TestCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestCommand.cpp; path = ../TestRunnerShared/TestCommand.cpp; sourceTree = "<group>"; };
 		7CFF9BC82534AF1D0008009F /* TestCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestCommand.h; path = ../TestRunnerShared/TestCommand.h; sourceTree = "<group>"; };
 		8034C6611487636400AC32E9 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityControllerMac.mm; sourceTree = "<group>"; };
-		8097338814874A5A008156D9 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = mac/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
-		8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
+		8097338814874A5A008156D9 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = cocoa/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
+		8097338914874A5A008156D9 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = cocoa/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		80A359B02F2945980018924A /* AccessibilityUIElementClientMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElementClientMac.h; sourceTree = "<group>"; };
 		80A359B12F2945A20018924A /* AccessibilityUIElementMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElementMac.h; sourceTree = "<group>"; };
 		841CC00D181185BF0042E9B6 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
@@ -497,7 +496,7 @@
 		BCD7D2F611921278006DB7EE /* TestInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestInvocation.h; sourceTree = "<group>"; };
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
+		C0CE720A1247C93300BC0EC4 /* TestRunnerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerCocoa.mm; path = cocoa/TestRunnerCocoa.mm; sourceTree = "<group>"; };
 		D2D99AED2A9EF3F500000BBF /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/PrivateFrameworks/Network.framework; sourceTree = SDKROOT; };
 		D2D99AF62AA21E6800000BBF /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		DD4671AD2A6B136200E49DBD /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -819,7 +818,6 @@
 			isa = PBXGroup;
 			children = (
 				2E63ED751891ACE9002A7AFC /* AccessibilityControllerIOS.mm */,
-				2E63ED761891ACE9002A7AFC /* AccessibilityNotificationHandler.h */,
 				2E63ED771891ACE9002A7AFC /* AccessibilityTextMarkerIOS.mm */,
 				2E63ED781891ACE9002A7AFC /* AccessibilityUIElementIOS.mm */,
 				2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */,
@@ -918,7 +916,7 @@
 				BC14E4D8120E02D000826C0C /* GCController.h */,
 				BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */,
 				BCC9981611D3F51E0017BCA2 /* TestRunner.h */,
-				C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */,
+				C0CE720A1247C93300BC0EC4 /* TestRunnerCocoa.mm */,
 				5664A49814326384008881BE /* TextInputController.cpp */,
 				5664A49914326384008881BE /* TextInputController.h */,
 			);
@@ -1509,7 +1507,7 @@
 				5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */,
 				0F6E89031D6BC5A2008ED0FA /* JSWrapper.cpp in Sources */,
 				2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */,
-				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
+				C0CE720B1247C93300BC0EC4 /* TestRunnerCocoa.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				93C78823250C6C2E00C0AA24 /* WPTFunctions.cpp in Sources */,
 			);

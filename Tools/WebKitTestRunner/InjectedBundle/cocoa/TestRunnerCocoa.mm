@@ -48,7 +48,7 @@ RefPtr<OpaqueJSString> TestRunner::inspectorTestStubURL()
     auto inspectorBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebInspectorUI"));
     if (!inspectorBundle)
         return nullptr;
-    auto resourceURL = adoptCF(CFBundleCopyResourceURL(inspectorBundle, CFSTR("TestStub"), CFSTR("html"), NULL));
+    RetainPtr resourceURL = adoptCF(CFBundleCopyResourceURL(inspectorBundle, CFSTR("TestStub"), CFSTR("html"), NULL));
     return resourceURL ? adoptRef(JSStringCreateWithCFString(CFURLGetString(resourceURL.get()))) : nullptr;
 #endif
 }
