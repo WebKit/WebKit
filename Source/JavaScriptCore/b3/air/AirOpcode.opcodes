@@ -1550,6 +1550,10 @@ arm64: CompareConditionallyOnFlagsFloat U:F:32, U:F:32, U:G:8, U:G:8 /effects
 arm64: CompareConditionallyOnFlagsDouble U:F:64, U:F:64, U:G:8, U:G:8 /effects
     Tmp, Tmp, Imm, RelCond
 
+# Materializes a condition of the flags set by a preceding CompareOnFlags / ccmp chain (ARM64 cset).
+arm64: SetOnFlags U:G:32, ZD:G:32 /effects
+    RelCond, Tmp
+
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 

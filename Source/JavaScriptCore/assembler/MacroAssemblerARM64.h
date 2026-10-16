@@ -5736,6 +5736,11 @@ public:
         return Jump(makeBranch(cond));
     }
 
+    void setOnFlags(RelationalCondition cond, RegisterID dest)
+    {
+        m_assembler.cset<32>(dest, ARM64Condition(cond));
+    }
+
     void test32(ResultCondition cond, RegisterID src, RegisterID mask, RegisterID dest)
     {
         m_assembler.tst<32>(src, mask);

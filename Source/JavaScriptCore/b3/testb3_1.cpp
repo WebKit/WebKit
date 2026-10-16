@@ -1445,6 +1445,35 @@ void run(const TestConfig* config)
     RUN(testCCmpChainRollback(200, 8, 5, 5, 5, 10)); // i>=len; pre-fix wrongly returns 1
     RUN(testCCmpChainRollback(5, 8, 5, 5, 5, -10)); // c>d, expected 1
 
+    for (B3::Opcode opcode : { Equal, NotEqual }) {
+        RUN(testXorOrCompareChain32(opcode, 1, 1, 2, 2));
+        RUN(testXorOrCompareChain32(opcode, 1, 2, 2, 2));
+        RUN(testXorOrCompareChain32(opcode, 1, 1, 2, 3));
+        RUN(testXorOrCompareChain32(opcode, -1, -1, 0, 0));
+        RUN(testXorOrCompareChain64(opcode, 0x123, 7, 0x123));
+        RUN(testXorOrCompareChain64(opcode, 0x124, 7, 0x124));
+        RUN(testXorOrCompareChain64(opcode, 0x123, 8, 0x123));
+        RUN(testXorOrCompareChain64(opcode, 0x123, 7, 0x223));
+    }
+    RUN(testXorOrCompareChainZExt64(0x123456789abcLL, 0x61));
+    RUN(testXorOrCompareChainZExt64(0x123456789abdLL, 0x61));
+    RUN(testXorOrCompareChainZExt64(0x123456789abcLL, 0x62));
+    RUN(testXorOrCompareChainBitImmediate32(0x0f0f0f0f, 0x30303030));
+    RUN(testXorOrCompareChainBitImmediate32(0x0f0f0f0f, 0x30303031));
+    RUN(testXorOrCompareChainBranch64(1, 1, 0x100000000LL, 0x100000000LL));
+    RUN(testXorOrCompareChainBranch64(1, 1, 0x100000000LL, 0));
+    RUN(testXorOrCompareChainBranch64(0x100000000LL, 0, 2, 2));
+    RUN(testXorOrCompareChainBranchEqualZero32(3, 3, 4, 4));
+    RUN(testXorOrCompareChainBranchEqualZero32(3, 3, 4, 5));
+    RUN(testXorOrCompareChainBranchEqualZero32(3, 4, 4, 4));
+    RUN(testXorOrCompareChainSharedLeaf32(5, 5, 6, 6));
+    RUN(testXorOrCompareChainSharedLeaf32(5, 9, 6, 6));
+    RUN(testXorOrCompareChainSharedLeaf32(5, 5, 6, 7));
+    for (unsigned leafCount = 2; leafCount <= 6; ++leafCount) {
+        for (unsigned mismatchIndex = 0; mismatchIndex <= leafCount; ++mismatchIndex)
+            RUN(testXorOrCompareChainLoads64(leafCount, mismatchIndex));
+    }
+
     RUN_UNARY(testSShrCompare32, int32OperandsMore());
     RUN_UNARY(testSShrCompare64, int64OperandsMore());
 

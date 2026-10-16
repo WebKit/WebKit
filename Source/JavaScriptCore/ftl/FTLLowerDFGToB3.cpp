@@ -22877,12 +22877,18 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue stringsEqual(LValue leftJSString, LValue rightJSString, Edge leftJSStringEdge = Edge(), Edge rightJSStringEdge = Edge())
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-
         String leftConst = leftJSStringEdge ? leftJSStringEdge->tryGetString(m_graph) : String();
         String rightConst = rightJSStringEdge ? rightJSStringEdge->tryGetString(m_graph) : String();
         bool leftAtom = !leftConst.isNull() && leftConst.impl()->isAtom();
         bool rightAtom = !rightConst.isNull() && rightConst.impl()->isAtom();
+
+        auto isShortConstant = [](const String& string) {
+            return !string.isNull() && string.is8Bit() && string.length() <= maxInlineConstantStringCompareLength;
+        };
+        if (isShortConstant(rightConst) && leftConst.isNull())
+            return stringEqualsShortConstant(leftJSString, leftJSStringEdge, rightJSString, rightConst);
+        if (isShortConstant(leftConst) && rightConst.isNull())
+            return stringEqualsShortConstant(rightJSString, rightJSStringEdge, leftJSString, leftConst);
 
         LBasicBlock notTriviallyUnequalCase = m_out.newBlock();
         LBasicBlock notEmptyCase = m_out.newBlock();
@@ -23050,7 +23056,16 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.notEqual(leftRopeCaseLength, rightRopeCaseLength), usually(falseCase), rarely(slowCase));
 
         m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(callStringEqualThunk(leftJSString, rightJSString));
+        m_out.jump(continuation);
 
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(Int32, trueResult, falseResult, slowResult);
+    }
+
+    LValue callStringEqualThunk(LValue leftJSString, LValue rightJSString)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         VM* vmPtr = &vm();
         callPreflight();
         auto global = weakPointer(globalObject);
@@ -23070,11 +23085,127 @@ IGNORE_CLANG_WARNINGS_END
                 jit.nearCallThunk(CodeLocationLabel<JITThunkPtrTag>(vmPtr->getCTIStub(stringEqualThunkGenerator).code()));
             });
         LValue result = operationExceptionCheckAndExtractResultIfNeeded<ExceptionOperationResult<EncodedJSValue>>(thunkCall);
-        ValueFromBlock slowResult = m_out.anchor(unboxBoolean(result));
+        return unboxBoolean(result);
+    }
+
+    static constexpr unsigned maxInlineConstantStringCompareLength = 16;
+
+    // Substring ropes are decoded inline rather than calling out, so that a chain like
+    // `id === "while" || id === "break"` on a sliced identifier stays free of calls.
+    LValue stringEqualsShortConstant(LValue jsString, Edge edge, LValue constantJSString, const String& constant)
+    {
+        ASSERT(constant.is8Bit());
+        unsigned length = constant.length();
+        ASSERT(length <= maxInlineConstantStringCompareLength);
+
+        LBasicBlock nonRopeCase = m_out.newBlock();
+        LBasicBlock nonRopeLengthMatched = m_out.newBlock();
+        LBasicBlock nonRope8BitCase = m_out.newBlock();
+        LBasicBlock ropeCase = m_out.newBlock();
+        LBasicBlock ropeLengthMatched = m_out.newBlock();
+        LBasicBlock substringCase = m_out.newBlock();
+        LBasicBlock substring8BitCase = m_out.newBlock();
+        LBasicBlock compareCase = m_out.newBlock();
+        LBasicBlock falseCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue value = m_out.loadPtr(jsString, m_heaps.JSString_value);
+        if (canBeRope(edge))
+            m_out.branch(m_out.testNonZeroPtr(value, m_out.constIntPtr(JSString::isRopeInPointer)), unsure(ropeCase), unsure(nonRopeCase));
+        else
+            m_out.jump(nonRopeCase);
+
+        LBasicBlock lastNext = m_out.appendTo(nonRopeCase, nonRopeLengthMatched);
+        m_out.branch(m_out.notEqual(m_out.load32(value, m_heaps.StringImpl_length), m_out.constInt32(length)), unsure(falseCase), unsure(nonRopeLengthMatched));
+
+        m_out.appendTo(nonRopeLengthMatched, nonRope8BitCase);
+        m_out.branch(m_out.testIsZero32(m_out.load32(value, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), rarely(slowCase), usually(nonRope8BitCase));
+
+        m_out.appendTo(nonRope8BitCase, ropeCase);
+        ValueFromBlock nonRopeData = m_out.anchor(m_out.loadPtr(value, m_heaps.StringImpl_data));
+        m_out.jump(compareCase);
+
+        m_out.appendTo(ropeCase, ropeLengthMatched);
+        m_out.branch(m_out.notEqual(m_out.load32NonNegative(jsString, m_heaps.JSRopeString_length), m_out.constInt32(length)), unsure(falseCase), unsure(ropeLengthMatched));
+
+        m_out.appendTo(ropeLengthMatched, substringCase);
+        m_out.branch(m_out.testIsZeroPtr(value, m_out.constIntPtr(JSRopeString::isSubstringInPointer)), rarely(slowCase), usually(substringCase));
+
+        m_out.appendTo(substringCase, substring8BitCase);
+        LValue packedLengthAndBaseLower = m_out.load64(jsString, m_heaps.JSRopeString_fiber1);
+        LValue packedBaseUpperAndOffset = m_out.load64(jsString, m_heaps.JSRopeString_fiber2);
+        LValue substringBase = m_out.bitOr(
+            m_out.lShr(packedLengthAndBaseLower, m_out.constInt32(32)),
+            m_out.shl(m_out.bitAnd(packedBaseUpperAndOffset, m_out.constInt64(0xffff)), m_out.constInt32(32)));
+        LValue baseImpl = m_out.loadPtr(substringBase, m_heaps.JSString_value);
+        // The rope's cached is8Bit bit can go stale: atomizing the base may swap in an equal 16-bit StringImpl.
+        m_out.branch(m_out.testIsZero32(m_out.load32(baseImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIs8Bit())), rarely(slowCase), usually(substring8BitCase));
+
+        m_out.appendTo(substring8BitCase, compareCase);
+        LValue substringOffset = m_out.lShr(packedBaseUpperAndOffset, m_out.constInt32(16));
+        ValueFromBlock substringData = m_out.anchor(m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
+        m_out.jump(compareCase);
+
+        m_out.appendTo(compareCase, falseCase);
+        LValue data = m_out.phi(pointerType(), nonRopeData, substringData);
+        LValue result;
+        if (!length)
+            result = m_out.booleanTrue;
+        else {
+            auto characters = constant.span8();
+            auto loadChunk = [&](unsigned offset, unsigned size) -> LValue {
+                TypedPointer pointer(m_heaps.characters8.atAnyIndex(), m_out.add(data, m_out.constIntPtr(offset)));
+                switch (size) {
+                case 1:
+                    return m_out.load8ZeroExt32(pointer);
+                case 2:
+                    return m_out.load16ZeroExt32(pointer);
+                case 4:
+                    return m_out.load32(pointer);
+                case 8:
+                    return m_out.load64(pointer);
+                }
+                RELEASE_ASSERT_NOT_REACHED();
+                return nullptr;
+            };
+            auto expectedChunk = [&](unsigned offset, unsigned size) -> LValue {
+                uint64_t expected = 0;
+                memcpySpan(asMutableByteSpan(expected).first(size), characters.subspan(offset, size));
+                if (size == 8)
+                    return m_out.constInt64(static_cast<int64_t>(expected));
+                return m_out.constInt32(static_cast<int32_t>(expected));
+            };
+
+            static_assert(maxInlineConstantStringCompareLength <= 16);
+            unsigned chunkSize = length >= 8 ? 8 : length >= 4 ? 4 : length >= 2 ? 2 : 1;
+            if (length == chunkSize)
+                result = m_out.equal(loadChunk(0, chunkSize), expectedChunk(0, chunkSize));
+            else {
+                // The tail chunk overlaps the head chunk when the remainder is not a power of two.
+                unsigned tailSize = roundUpToPowerOfTwo(length - chunkSize);
+                unsigned tailOffset = length - tailSize;
+                LValue head = m_out.bitXor(loadChunk(0, chunkSize), expectedChunk(0, chunkSize));
+                LValue tail = m_out.bitXor(loadChunk(tailOffset, tailSize), expectedChunk(tailOffset, tailSize));
+                if (chunkSize == 8 && tailSize < 8)
+                    tail = m_out.zeroExt(tail, Int64);
+                LValue difference = m_out.bitOr(head, tail);
+                result = chunkSize == 8 ? m_out.isZero64(difference) : m_out.isZero32(difference);
+            }
+        }
+        ValueFromBlock compareResult = m_out.anchor(result);
+        m_out.jump(continuation);
+
+        m_out.appendTo(falseCase, slowCase);
+        ValueFromBlock falseResult = m_out.anchor(m_out.booleanFalse);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(callStringEqualThunk(jsString, constantJSString));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        return m_out.phi(Int32, trueResult, falseResult, slowResult);
+        return m_out.phi(Int32, compareResult, falseResult, slowResult);
     }
 
     enum ScratchFPRUsage {

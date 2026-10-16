@@ -1542,6 +1542,14 @@ void testCCmpNegatedOr32(int32_t, int32_t);
 void testCCmpMixedWidth32And64(int32_t, int64_t, int32_t);
 void testCCmpMixedWidth64And32(int64_t, int32_t);
 void testCCmpChainRollback(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
+void testXorOrCompareChain32(B3::Opcode, int32_t, int32_t, int32_t, int32_t);
+void testXorOrCompareChain64(B3::Opcode, int64_t, int64_t, int64_t);
+void testXorOrCompareChainZExt64(int64_t, int32_t);
+void testXorOrCompareChainBitImmediate32(int32_t, int32_t);
+void testXorOrCompareChainBranch64(int64_t, int64_t, int64_t, int64_t);
+void testXorOrCompareChainBranchEqualZero32(int32_t, int32_t, int32_t, int32_t);
+void testXorOrCompareChainSharedLeaf32(int32_t, int32_t, int32_t, int32_t);
+void testXorOrCompareChainLoads64(unsigned, unsigned);
 
 // ARM64 fccmp tests (floating-point conditional compare)
 void testFCCmpAndDouble(double, double, double, double);
