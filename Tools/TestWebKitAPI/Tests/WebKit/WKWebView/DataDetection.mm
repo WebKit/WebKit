@@ -215,6 +215,7 @@ public:
     static constexpr NSPoint nestedFrameContentOrigin { iframeLeft + iframeBorderAndPadding + nestedFrameLeft, iframeTop + iframeBorderAndPadding + nestedFrameTop };
     static constexpr NSRect nestedFrameContentBox { nestedFrameContentOrigin, { 300, 200 } };
     static constexpr NSRect nestedFrameAtOriginBox { { 300, 120 }, { 300, 200 } };
+    static constexpr NSRect iframeNextToTelephoneNumberBox { { 300, 120 }, { 400, 300 } };
 
     void SetUp() override
     {
@@ -244,6 +245,8 @@ public:
                 "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/nested-main-site-at-origin.html"_s), "'></iframe></body>"_s)) },
             { "/main-with-telephone-number-overlapping-nested-main-site-frame"_s, html(makeString("<body style='margin:0'><span id='phone' style='position:absolute; right:702px; top:130px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span>"
                 "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/nested-main-site-at-origin-with-telephone-number-at-left.html"_s), "'></iframe></body>"_s)) },
+            { "/main-with-telephone-number-next-to-iframe"_s, html(makeString("<body style='margin:0'><span id='phone' style='position:absolute; right:706px; top:130px; font:20px Helvetica; white-space:nowrap'>408-996-1010</span>"
+                "<iframe style='position:absolute; left:300px; top:120px; width:400px; height:300px; border:0' src='"_s, GetParam().subframeURL("/text.html"_s), "'></iframe></body>"_s)) },
             { "/main-with-scrollable-iframe"_s, html(mainHTML(iframe(iframeLeft, GetParam().subframeURL("/tall-telephone-number.html"_s)))) },
             { "/nested.html"_s, html(nestedFrameHTML("telephone-number.html"_s)) },
             { "/nested-main-site.html"_s, html(nestedFrameHTML("https://example.com/telephone-number.html"_s)) },
@@ -366,13 +369,20 @@ public:
         });
     }
 
-    bool moveAwayUntilHighlightIsHidden(CGPoint pointInSameFrame, CGRect highlightBoundingRect)
+    bool moveAwayUntilHighlightIsHidden(CGPoint point, CGRect highlightBoundingRect)
     {
-        moveMouse(pointInSameFrame);
+        moveMouse(point);
         return TestWebKitAPI::Util::waitFor([&] {
             [webView waitForNextPresentationUpdate];
             return !hasVisibleHighlightLayer(highlightBoundingRect);
         });
+    }
+
+    bool highlightStaysHidden(CGRect highlightBoundingRect)
+    {
+        TestWebKitAPI::Util::runFor(500_ms);
+        [webView waitForNextPresentationUpdate];
+        return !hasVisibleHighlightLayer(highlightBoundingRect);
     }
 
     bool hoveringShowsHighlight(CGPoint point, CGRect highlightBoundingRect)
@@ -606,6 +616,31 @@ TEST_P(TelephoneNumberInSubframe, HighlightInMainFrameStaysWhileMouseIsOverNeste
     clickButtonAndExpectMenu(pointOverNestedFrame, mainFrameRect);
 }
 
+TEST_P(TelephoneNumberInSubframe, HighlightInMainFrameStaysWhileMouseIsOverCrossSiteFrame)
+{
+    load(@"/main-with-telephone-number-next-to-iframe");
+    CGRect mainFrameRect { telephoneNumberRect(nil, CGPointZero) };
+    selectTelephoneNumber(nil, mainFrameRect);
+
+    auto highlight { dataDetectorHighlightGeometry(mainFrameRect, [webView bounds]) };
+    CGPoint pointOverFrame { std::max<CGFloat>(CGRectGetMinX(iframeNextToTelephoneNumberBox) + 2, CGRectGetMidX(highlight.buttonRect)), std::floor(CGRectGetMidY(highlight.buttonRect)) };
+    ASSERT_TRUE(CGRectContainsPoint(highlight.buttonRect, pointOverFrame) && CGRectContainsPoint(iframeNextToTelephoneNumberBox, pointOverFrame)) << NSStringFromRect(highlight.buttonRect).UTF8String;
+
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), mainFrameRect, highlight.boundingRect, telephoneNumberRectTolerance));
+    ASSERT_TRUE(waitUntilHighlightIsOpaque(highlight.boundingRect));
+    float minimumOpacity { 1 };
+    for (unsigned i = 0; i < 2; ++i) {
+        moveMouse(CGPointMake(pointOverFrame.x, pointOverFrame.y + i));
+        for (unsigned j = 0; j < 3; ++j) {
+            TestWebKitAPI::Util::runFor(30_ms);
+            [webView waitForNextPresentationUpdate];
+            minimumOpacity = std::min(minimumOpacity, highlightOpacity(highlight.boundingRect));
+        }
+    }
+    EXPECT_EQ(minimumOpacity, 1.f);
+    clickButtonAndExpectMenu(pointOverFrame, mainFrameRect);
+}
+
 TEST_P(TelephoneNumberInSubframe, OverlappingHighlightsInNestedFramesDoNotTakeTurns)
 {
     load(@"/main-with-telephone-number-overlapping-nested-main-site-frame");
@@ -699,11 +734,78 @@ TEST_P(TelephoneNumberInSubframe, HighlightGoesAwayWhenMouseMovesIntoAnotherFram
     auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
     ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
 
-    // FIXME: Without the shared process, the second frame is in another process, and nothing tells the first frame's process that the mouse left (https://bugs.webkit.org/show_bug.cgi?id=326785).
-    if (GetParam().isCrossOriginWithSiteIsolation() && !GetParam().sharedProcessEnabled)
-        return;
-
     EXPECT_TRUE(moveAwayUntilHighlightIsHidden(CGPointMake(CGRectGetMidX(secondIframeContentBox), CGRectGetMaxY(secondIframeContentBox) - 20), highlight.boundingRect));
+}
+
+TEST_P(TelephoneNumberInSubframe, HighlightGoesAwayWhenMouseMovesIntoMainFrame)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
+    selectTelephoneNumber(frame.get(), rect);
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
+
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(CGPointMake(50, CGRectGetMidY(rect)), highlight.boundingRect));
+    EXPECT_TRUE(highlightStaysHidden(highlight.boundingRect));
+
+    showHighlightAndMenu(rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(TelephoneNumberInSubframe, HighlightGoesAwayWhenMouseMovesIntoFrameWithoutTelephoneNumber)
+{
+    load(@"/main-with-two-iframes");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
+    selectTelephoneNumber(frame.get(), rect);
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
+
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(pointInSecondFrame(center(rect)), highlight.boundingRect));
+    EXPECT_TRUE(highlightStaysHidden(highlight.boundingRect));
+
+    showHighlightAndMenu(rect, rootVisibleRect(iframeContentBox));
+}
+
+TEST_P(TelephoneNumberInSubframe, HighlightInNestedFrameGoesAwayWhenMouseMovesIntoMainFrame)
+{
+    load(@"/main-with-telephone-number-and-nested-main-site-frame");
+    CGRect mainFrameRect { telephoneNumberRect(nil, CGPointZero) };
+    selectTelephoneNumber(nil, mainFrameRect);
+    RetainPtr frame { nestedFrame() };
+    CGRect rect { telephoneNumberRect(frame.get(), nestedFrameContentOrigin) };
+    selectTelephoneNumber(frame.get(), rect);
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return selectionContainsTelephoneNumber(nil) && selectionContainsTelephoneNumber(frame.get());
+    }));
+
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(nestedFrameContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
+
+    EXPECT_TRUE(moveAwayUntilHighlightIsHidden(CGPointMake(50, CGRectGetMidY(rect)), highlight.boundingRect));
+    EXPECT_TRUE(highlightStaysHidden(highlight.boundingRect));
+
+    showHighlightAndMenu(mainFrameRect, [webView bounds]);
+}
+
+TEST_P(TelephoneNumberInSubframe, HighlightGoesAwayWhenMouseLeavesWebView)
+{
+    load(@"/main");
+    RetainPtr frame { [webView firstChildFrame] };
+    CGRect rect { telephoneNumberRect(frame.get(), iframeContentBox.origin) };
+    selectTelephoneNumber(frame.get(), rect);
+    auto highlight { dataDetectorHighlightGeometry(rect, rootVisibleRect(iframeContentBox)) };
+    ASSERT_TRUE(hoverUntilHighlightIsShown(webView.get(), rect, highlight.boundingRect, telephoneNumberRectTolerance));
+
+    CGPoint pointBelowWebView { CGRectGetMidX(rect), CGRectGetMaxY([webView bounds]) + 10 };
+    RetainPtr exitEvent { [webView _mouseEventWithType:NSEventTypeMouseExited atLocation:[webView convertPoint:pointBelowWebView toView:nil]] };
+    [webView _simulateMouseExit:exitEvent.get()];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        [webView waitForNextPresentationUpdate];
+        return !hasVisibleHighlightLayer(highlight.boundingRect);
+    }));
+    EXPECT_TRUE(highlightStaysHidden(highlight.boundingRect));
 }
 
 TEST_P(TelephoneNumberInSubframe, HighlightGoesAwayWhenSelectionMovesOffTelephoneNumber)
