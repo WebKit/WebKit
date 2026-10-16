@@ -263,6 +263,8 @@ public:
     ARM64Assembler()
         : m_indexOfLastWatchpoint(INT_MIN)
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
+        , m_indexOfLastLabel(INT_MIN)
+        , m_lastInstruction(0)
     {
         m_jumpsToLink.reserveInitialCapacity(64);
     }
@@ -3746,6 +3748,7 @@ public:
         AssemblerLabel result = m_buffer.label();
         if (static_cast<int>(result.offset()) != m_indexOfLastWatchpoint)
             result = label();
+        m_indexOfLastLabel = result.offset();
         m_indexOfLastWatchpoint = result.offset();
         m_indexOfTailOfLastWatchpoint = result.offset() + maxJumpReplacementSize();
         return result;
@@ -3758,7 +3761,22 @@ public:
             nop();
             result = m_buffer.label();
         }
+        m_indexOfLastLabel = result.offset();
         return result;
+    }
+
+    // True if the instruction just emitted wrote rd with bits 63:32 cleared and no label has been
+    // bound since, so every path to the current position executes it. labelIgnoringWatchpoints() is
+    // deliberately not a barrier: it marks positions inside jump-replacement regions, which no
+    // branch may target.
+    bool lastInstructionZeroExtendsRegister(RegisterID rd)
+    {
+        if (isSp(rd) || isZr(rd))
+            return false;
+        size_t codeSize = m_buffer.codeSize();
+        if (codeSize < sizeof(int) || static_cast<int>(codeSize) == m_indexOfLastLabel)
+            return false;
+        return zeroExtendsRegister(m_lastInstruction, rd);
     }
 
     AssemblerLabel align(int alignment)
@@ -4457,6 +4475,58 @@ protected:
         return insn == 0xd503201f;
     }
 
+    // Does this instruction write rd with bits 63:32 cleared? True for every sf=0 data-processing
+    // instruction, every load into a W register, and the 64-bit instructions whose result provably
+    // fits in 32 bits: MOVZ with hw < 2, UBFX of width at most 32 (which includes LSR by 32 or
+    // more), and AND or MOV with a bitmask immediate confined to the low half.
+    static bool zeroExtendsRegister(int instruction, RegisterID rd)
+    {
+        ASSERT(!isSp(rd) && !isZr(rd));
+        unsigned insn = static_cast<unsigned>(instruction);
+        if ((insn & 0x1f) != static_cast<unsigned>(rd))
+            return false;
+        if (!(insn & 0x80000000)) {
+            if ((insn & 0x1f800000) == 0x11000000 // add/subtract immediate
+                || (insn & 0x1f800000) == 0x12000000 // logical immediate
+                || (insn & 0x1f800000) == 0x12800000 // move wide immediate
+                || (insn & 0x1f800000) == 0x13000000 // bitfield
+                || (insn & 0x1f800000) == 0x13800000 // extract
+                || (insn & 0x1f000000) == 0x0a000000 // logical shifted register
+                || (insn & 0x1f000000) == 0x0b000000 // add/subtract shifted or extended register
+                || (insn & 0x1fe0fc00) == 0x1a000000 // add/subtract with carry
+                || (insn & 0x1fe00000) == 0x1a800000 // conditional select
+                || (insn & 0x1f000000) == 0x1b000000 // data-processing 3-source
+                || (insn & 0x7fe00000) == 0x1ac00000 // data-processing 2-source
+                || (insn & 0x7fe00000) == 0x5ac00000) // data-processing 1-source
+                return true;
+        }
+        // Loads into a W register in every addressing mode: LDRB, LDRH and LDR (opc=01), LDRSB and
+        // LDRSH (opc=11). V=0 excludes SIMD loads; size=11 or opc=10 would be an X-register load.
+        unsigned sizeAndOpc = insn & 0xfec00000;
+        if (sizeAndOpc == 0x38400000 || sizeAndOpc == 0x78400000 || sizeAndOpc == 0xb8400000 || sizeAndOpc == 0x38c00000 || sizeAndOpc == 0x78c00000)
+            return true;
+        // MOVZ Xd, #imm16, LSL #0 or LSL #16.
+        if ((insn & 0xffc00000) == 0xd2800000)
+            return true;
+        unsigned immr = (insn >> 16) & 0x3f;
+        unsigned imms = (insn >> 10) & 0x3f;
+        // UBFM Xd, Xn, #immr, #imms with imms >= immr is UBFX of width imms - immr + 1.
+        if ((insn & 0xffc00000) == 0xd3400000)
+            return imms >= immr && imms - immr < 32;
+        // 64-bit AND, ANDS or ORR-from-ZR with a bitmask immediate: N=1 means one 64-bit element of
+        // imms + 1 ones rotated right by immr, so the result is confined to the low half if that is.
+        if ((insn & 0x9fc00000) == 0x92400000 && imms != 63) {
+            unsigned opc = (insn >> 29) & 3;
+            if (opc == 2 || (opc == 1 && ((insn >> 5) & 0x1f) != 31))
+                return false;
+            uint64_t mask = (1ull << (imms + 1)) - 1;
+            if (immr)
+                mask = (mask >> immr) | (mask << (64 - immr));
+            return !(mask >> 32);
+        }
+        return false;
+    }
+
     static bool disassembleCompareAndBranchImmediate(void* address, Datasize& sf, bool& op, int& imm19, RegisterID& rt)
     {
         int insn = *static_cast<int*>(address);
@@ -4513,6 +4583,7 @@ protected:
 
     ALWAYS_INLINE void insn(int instruction)
     {
+        m_lastInstruction = instruction;
         m_buffer.putInt(instruction);
     }
 
@@ -4991,6 +5062,8 @@ protected:
     Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;
     int m_indexOfLastWatchpoint;
     int m_indexOfTailOfLastWatchpoint;
+    int m_indexOfLastLabel;
+    int m_lastInstruction;
     AssemblerBuffer m_buffer;
 
 public:
