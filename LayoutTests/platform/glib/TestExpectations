@@ -3614,9 +3614,7 @@ fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 fast/dom/Window/slow-unload-handler.html [ WontFix ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
-# Missing WebSpeech implementation
-webkit.org/b/136224 fast/speechrecognition [ Skip ]
-http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Skip ]
+# Needs USE(AUDIO_SESSION)
 fast/mediastream/audio-session-stays-active-when-removing-session-during-speech-recognition.html [ Skip ]
 fast/mediastream/audio-session-active-when-capture-starts-and-stops.html [ Skip ]
 fast/mediastream/audio-session-stays-active-during-capture.html [ Skip ]
