@@ -308,7 +308,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
     ASSERT(!needsLayoutRange.isEmpty());
     auto layoutResult = makeUniqueRef<InlineLayoutResult>();
     auto& inlineLayoutState = layoutState();
-    auto& marginState = inlineLayoutState.parentBlockLayoutState().marginState();
+    auto& marginState = inlineLayoutState.marginState();
 
     auto isPartialLayout = InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage);
     ASSERT(isPartialLayout || !previousLine);
