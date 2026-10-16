@@ -1806,7 +1806,7 @@ void RenderBlock::addOutOfFlowBox(RenderBox& outOfFlowBox)
     ASSERT(outOfFlowBox.isOutOfFlowPositioned());
     ASSERT(!isAnonymousBlock());
 
-    outOfFlowBox.clearGridAreaContentSize();
+    outOfFlowBox.clearOverridingContainingBlockContentSize();
 
     if (outOfFlowBox.isRenderFragmentedFlow())
         return;
@@ -3068,7 +3068,7 @@ bool RenderBlock::hasDefiniteLogicalHeightForPercentageResolutionFromStyle() con
             return true;
     }
 
-    if (isGridItem() && gridAreaContentLogicalHeight())
+    if (isGridItem() && overridingContainingBlockContentLogicalHeight())
         return true;
 
     if (isFlexItem()) {

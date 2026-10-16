@@ -56,12 +56,12 @@ static LayoutUnit inlineWidthForGridItemWithGridArea(const LayoutState& layoutSt
     // RenderGrid sets the grid item renderer's grid area content logical width during
     // item placement which is present until we have resolved the actual grid area
     // inline size.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
     renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
 
     auto width = layoutState.logicalWidthWithFormattingContextForBox(box, logicalWidthType);
 
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
     renderer->invalidateContentLogicalWidths(MarkingBehavior::MarkOnlyThis);
 
     return width;
@@ -83,10 +83,10 @@ std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::borderAndPaddingForGridItem(
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
 
     // The inline grid area is indefinite while sizing columns, so the item's cyclic percentage padding resolves against zero.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize.value_or(0_lu));
     auto inlineBorderAndPadding = renderer->borderAndPaddingLogicalWidth();
     auto blockBorderAndPadding = renderer->borderAndPaddingLogicalHeight();
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
 
     return { inlineBorderAndPadding, blockBorderAndPadding };
 }

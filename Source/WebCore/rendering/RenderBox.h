@@ -422,16 +422,18 @@ public:
     void LEGACY_NODELETE clearOverridingBorderBoxLogicalWidth();
     void LEGACY_NODELETE clearOverridingSize();
 
-    // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
-    using GridAreaSize = std::optional<LayoutUnit>;
-    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentWidth(WritingMode) const;
-    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentHeight(WritingMode) const;
-    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentLogicalWidth() const;
-    std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentLogicalHeight() const;
-    void setGridAreaContentLogicalWidth(GridAreaSize);
-    void setGridAreaContentLogicalHeight(GridAreaSize);
-    void LEGACY_NODELETE clearGridAreaContentSize();
-    void LEGACY_NODELETE clearGridAreaContentLogicalHeight();
+    // The content size of the containing block when it is not the content box of containingBlock(): a grid item's containing block is
+    // its grid area, which has no renderer, and the new block formatting context lays out some boxes through the render tree before it
+    // writes their containing block's geometry. A nullopt size is indefinite.
+    using ContainingBlockContentSize = std::optional<LayoutUnit>;
+    std::optional<ContainingBlockContentSize> LEGACY_NODELETE overridingContainingBlockContentWidth(WritingMode) const;
+    std::optional<ContainingBlockContentSize> LEGACY_NODELETE overridingContainingBlockContentHeight(WritingMode) const;
+    std::optional<ContainingBlockContentSize> LEGACY_NODELETE overridingContainingBlockContentLogicalWidth() const;
+    std::optional<ContainingBlockContentSize> LEGACY_NODELETE overridingContainingBlockContentLogicalHeight() const;
+    void setOverridingContainingBlockContentLogicalWidth(ContainingBlockContentSize);
+    void setOverridingContainingBlockContentLogicalHeight(ContainingBlockContentSize);
+    void LEGACY_NODELETE clearOverridingContainingBlockContentSize();
+    void LEGACY_NODELETE clearOverridingContainingBlockContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
