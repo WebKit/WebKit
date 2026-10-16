@@ -890,6 +890,7 @@ static OptionSet<WebCore::DataDetectorType> LEGACY_NODELETE coreDataDetectorType
             .eventListenerCategories = coreEventListenerCategories(configuration.eventListenerCategories),
             .includeAccessibilityAttributes = !!configuration.includeAccessibilityAttributes,
             .includeTextInAutoFilledControls = !!configuration.includeTextInAutoFilledControls,
+            .includeFormControlValues = !!configuration.includeFormControlValues,
             .includeOffscreenPasswordFields = !!configuration.includeOffscreenPasswordFields,
             .includeTagName = !!configuration.includeTagName,
             .includeSameOriginSubframes = !!configuration.includeSameOriginSubframes,

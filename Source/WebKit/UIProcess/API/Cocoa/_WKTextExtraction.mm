@@ -59,6 +59,7 @@
     _includeTextInAutoFilledControls = NO;
     _includeSameOriginSubframes = YES;
     _includeClippedContent = YES;
+    _includeFormControlValues = YES;
     _skipNearlyTransparentContent = YES;
     _targetRect = CGRectNull;
     _maxWordsPerParagraph = NSUIntegerMax;

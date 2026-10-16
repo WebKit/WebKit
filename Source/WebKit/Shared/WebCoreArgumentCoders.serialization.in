@@ -5045,6 +5045,7 @@ header: <WebCore/TextExtractionTypes.h>
     OptionSet<WebCore::TextExtraction::EventListenerCategory> eventListenerCategories;
     bool includeAccessibilityAttributes;
     bool includeTextInAutoFilledControls;
+    bool includeFormControlValues;
     bool includeOffscreenPasswordFields;
     bool includeTagName;
     bool includeSameOriginSubframes;
