@@ -123,7 +123,7 @@ void CSSMatrixComponent::serialize(StringBuilder& builder) const
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
 {
     if (!is2D())
-        return { m_matrix.get() };
+        return { protect(m_matrix)->cloneAsDOMMatrix() };
 
     // Flatten to 2d.
     return { DOMMatrix::create({
