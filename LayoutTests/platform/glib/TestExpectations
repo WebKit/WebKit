@@ -3295,7 +3295,6 @@ webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-w
 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Skip ]
 
 # Crashes on an assertion in SubresourceLoader::didReceiveResponse.
-imported/w3c/web-platform-tests/xhr/send-redirect.htm [ Skip ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
 

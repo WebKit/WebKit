@@ -425,12 +425,7 @@ enum class ShouldStartHTTPRedirection {
 
 static ShouldStartHTTPRedirection shouldStartHTTPRedirection(const WebCore::ResourceResponse& response)
 {
-    auto status = response.httpStatusCode();
-    if (!SOUP_STATUS_IS_REDIRECTION(status))
-        return ShouldStartHTTPRedirection::No;
-
-    // Some 3xx status codes aren't actually redirects.
-    if (status == 300 || status == 304 || status == 305 || status == 306)
+    if (!response.isRedirection())
         return ShouldStartHTTPRedirection::No;
 
     auto location = response.httpHeaderField(HTTPHeaderName::Location);
