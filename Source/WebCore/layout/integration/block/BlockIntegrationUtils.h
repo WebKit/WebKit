@@ -114,6 +114,9 @@ public:
     // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
     // (RenderBlock::recomputeLogicalWidth).
     static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
+    // Like RenderBlockFlow::layoutBlock: the boxes laid out through the render tree that resolve a percentage block size against the block
+    // container are laid out again (RenderBlockFlow::dirtyForLayoutFromPercentageHeightDescendants).
+    static void markPercentageHeightDescendantsForLayout(const RenderBlockFlow&);
     // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
     static bool laysOutThroughRenderTree(const RenderBox&);
 
