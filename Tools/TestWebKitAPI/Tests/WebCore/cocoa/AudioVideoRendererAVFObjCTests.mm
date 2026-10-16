@@ -207,6 +207,33 @@ TEST_F(AudioVideoRendererAVFObjCTest, NoFlushWithDecompressionSessionForProtecte
     EXPECT_EQ(errorCount, 0);
 }
 
+// A decompression session that started before the content became protected stays in use, so
+// restaging the same renderer must not request a flush (webkit.org/b/327136).
+TEST_F(AudioVideoRendererAVFObjCTest, NoFlushOnVisibilityCycleWhenDecompressionSessionPredatesProtectedContent)
+{
+    ASSERT_TRUE(videoTrackId.has_value());
+
+    renderer->setPreferences({ VideoRendererPreference::PrefersDecompressionSession });
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    enqueueVideoSample();
+
+    renderer->setHasProtectedVideoContent(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    renderer->renderingCanBeAcceleratedChanged(false);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+    EXPECT_EQ(errorCount, 0);
+}
+
 // prepareToSeek's fast path is taken when the destination is within 1ms of the synchronizer's
 // current time: the synchronizer isn't moved and no time jumped notification is awaited. These
 // tests use an audio-only renderer because that is the only way to make

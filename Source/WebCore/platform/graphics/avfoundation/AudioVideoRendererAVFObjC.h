@@ -262,6 +262,7 @@ private:
     bool LEGACY_NODELETE canUseDecompressionSession() const;
     bool LEGACY_NODELETE isUsingDecompressionSession() const;
     bool LEGACY_NODELETE willUseDecompressionSessionIfNeeded() const;
+    bool LEGACY_NODELETE isRenderingCompressedVideo(bool hasRenderer) const;
 
     void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
     void flushPendingSizeChanges();
