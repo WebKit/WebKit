@@ -418,6 +418,7 @@ private:
 
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
+    bool m_isDone { false };
     bool m_hasReceivedEarlyHints { false };
     bool m_canUseCompressionDictionary { false };
 

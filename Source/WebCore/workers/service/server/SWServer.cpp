@@ -111,6 +111,12 @@ void SWServer::close()
     }
     for (auto& runningWorker : runningWorkers)
         runningWorker->terminate();
+
+    auto loadingScriptCallbacks = std::exchange(m_loadingScriptCallbacks, { });
+    for (auto& callbacks : loadingScriptCallbacks.values()) {
+        for (auto& callback : callbacks)
+            callback(false);
+    }
 }
 
 RefPtr<SWServerWorker> SWServer::workerByID(ServiceWorkerIdentifier identifier) const
@@ -305,15 +311,24 @@ void SWServer::loadWorkerScripts(const SWServerWorker& worker, CompletionHandler
         return;
     }
 
+    auto result = m_loadingScriptCallbacks.ensure(worker.identifier(), [] {
+        return Vector<CompletionHandler<void(bool)>>();
+    });
+    result.iterator->value.append(WTF::move(callback));
+    if (!result.isNewEntry)
+        return;
+
     store->retrieveWorkerScripts(worker.identifier(), worker.registrationKey(), worker.scriptURL(), worker.importedScriptURLs(),
-        [weakThis = WeakPtr { *this }, workerIdentifier = worker.identifier(), callback = WTF::move(callback)](auto&& result) mutable {
+        [weakThis = WeakPtr { *this }, workerIdentifier = worker.identifier()](auto&& result) mutable {
             RefPtr protectedThis = weakThis;
             if (!protectedThis)
-                return callback(false);
+                return;
 
+            auto callbacks = protectedThis->m_loadingScriptCallbacks.take(workerIdentifier);
             bool success = !!result;
             auto scope = makeScopeExit([&] {
-                callback(success);
+                for (auto& callback : callbacks)
+                    callback(success);
             });
 
             RefPtr worker = protectedThis->workerByID(workerIdentifier);
