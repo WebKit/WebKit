@@ -1358,8 +1358,9 @@ TEST(SiteIsolation, ConcurrentPopupNavigationsToSameSiteShareProcessWhenOneFails
         openedDelegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
             failedPopups++;
         };
-        openedDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
-            finishedPopups++;
+        openedDelegate.get().didFinishNavigation = ^(WKWebView *view, WKNavigation *) {
+            if ([view.URL.host isEqualToString:@"webkit.org"])
+                finishedPopups++;
         };
         RetainPtr opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
         opened.get().navigationDelegate = openedDelegate.get();
