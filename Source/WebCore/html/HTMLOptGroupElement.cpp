@@ -204,7 +204,7 @@ bool HTMLOptGroupElement::isActuallyDisabled() const
 bool HTMLOptGroupElement::isFocusable() const
 {
     RefPtr select = ownerSelectElement();
-    if (select && select->isDropdownBox())
+    if (select && select->isDropdownBox() && !select->usesBaseAppearancePicker())
         return false;
     return HTMLElement::isFocusable();
 }
