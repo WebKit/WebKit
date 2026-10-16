@@ -4094,6 +4094,8 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
             if (&simpleRange.startContainer().treeScope() != &simpleRange.endContainer().treeScope())
                 continue;
             highlightRanges.append(highlightRange.get());
+            // This range's positions are about to be updated, which can change the renderers it highlights.
+            highlight.value->invalidateHighlightRangesForRenderer();
         }
     }
 
@@ -4108,17 +4110,21 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
 
 void Document::updateHighlightPositions()
 {
-    Vector<WeakPtr<HighlightRange>> highlightRanges;
+    Vector<Ref<HighlightRegistry>, 4> highlightRegistries;
     if (m_highlightRegistry)
-        collectHighlightRangesFromRegister(highlightRanges, *m_highlightRegistry.get());
+        highlightRegistries.append(*m_highlightRegistry);
     if (m_fragmentHighlightRegistry)
-        collectHighlightRangesFromRegister(highlightRanges, *m_fragmentHighlightRegistry.get());
+        highlightRegistries.append(*m_fragmentHighlightRegistry);
     if (m_textExtractionHighlightRegistry)
-        collectHighlightRangesFromRegister(highlightRanges, *m_textExtractionHighlightRegistry.get());
+        highlightRegistries.append(*m_textExtractionHighlightRegistry);
 #if ENABLE(APP_HIGHLIGHTS)
     if (m_appHighlightRegistry)
-        collectHighlightRangesFromRegister(highlightRanges, *m_appHighlightRegistry.get());
+        highlightRegistries.append(*m_appHighlightRegistry);
 #endif
+
+    Vector<WeakPtr<HighlightRange>> highlightRanges;
+    for (auto& highlightRegistry : highlightRegistries)
+        collectHighlightRangesFromRegister(highlightRanges, highlightRegistry);
 
     for (auto& weakRangeData : highlightRanges) {
         if (RefPtr highlightRange = weakRangeData.get()) {
@@ -4141,6 +4147,11 @@ void Document::updateHighlightPositions()
 
             Highlight::repaintRange(highlightRange->range());
         }
+    }
+
+    for (auto& highlightRegistry : highlightRegistries) {
+        for (Ref highlight : highlightRegistry->map().values())
+            highlight->updateHighlightRangesForRendererIfNeeded(*this);
     }
 }
 

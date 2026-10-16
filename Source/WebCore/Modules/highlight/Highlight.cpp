@@ -26,13 +26,17 @@
 #include "config.h"
 #include "Highlight.h"
 
+#include "Document.h"
 #include "IDLTypes.h"
 #include "JSDOMSetLike.h"
 #include "JSStaticRange.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
+#include "RenderHighlight.h"
+#include "RenderObjectDocument.h"
 #include "StaticRange.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -74,6 +78,7 @@ void Highlight::initializeSetLike(DOMSetAdapter& set)
 
 bool Highlight::removeFromSetLike(const AbstractRange& range)
 {
+    invalidateHighlightRangesForRenderer();
     return m_highlightRanges.removeFirstMatching([&range](const Ref<HighlightRange>& current) {
         repaintRange(range);
         return &current->range() == &range;
@@ -82,12 +87,14 @@ bool Highlight::removeFromSetLike(const AbstractRange& range)
 
 void Highlight::clearFromSetLike()
 {
+    invalidateHighlightRangesForRenderer();
     for (auto& highlightRange : std::exchange(m_highlightRanges, { }))
         repaintRange(highlightRange->range());
 }
 
 bool Highlight::addToSetLike(AbstractRange& range)
 {
+    invalidateHighlightRangesForRenderer();
     auto index = m_highlightRanges.findIf([&range](const Ref<HighlightRange>& current) {
         return &current->range() == &range;
     });
@@ -112,6 +119,52 @@ void Highlight::setAllRangesNeedPositionUpdate()
 {
     for (auto& highlightRange : m_highlightRanges)
         highlightRange->setNeedsPositionUpdate();
+}
+
+void Highlight::invalidateHighlightRangesForRenderer()
+{
+    m_highlightRangesForRenderer.clear();
+    m_highlightRangesForRendererDocument = nullptr;
+}
+
+void Highlight::updateHighlightRangesForRendererIfNeeded(Document& document)
+{
+    if (m_highlightRangesForRendererDocument == &document
+        && m_highlightRangesForRendererDOMTreeVersion == document.domTreeVersion()
+        && m_highlightRangesForRendererRenderTreeVersion == document.renderTreeVersion())
+        return;
+
+    m_highlightRangesForRenderer.clear();
+    m_highlightRangesForRendererDocument = document;
+    m_highlightRangesForRendererDOMTreeVersion = document.domTreeVersion();
+    m_highlightRangesForRendererRenderTreeVersion = document.renderTreeVersion();
+
+    RenderHighlight renderHighlight;
+    for (auto& highlightRange : m_highlightRanges) {
+        if (!renderHighlight.setRenderRange(highlightRange))
+            continue;
+        if (&renderHighlight.start()->document() != &document)
+            continue;
+        renderHighlight.forEachRendererInRange([&](RenderObject& renderer) {
+            auto& rangesForRenderer = m_highlightRangesForRenderer.ensure(renderer, [] {
+                return Vector<Ref<HighlightRange>> { };
+            }).iterator->value;
+            if (rangesForRenderer.isEmpty() || rangesForRenderer.last().ptr() != highlightRange.ptr())
+                rangesForRenderer.append(highlightRange);
+        });
+    }
+}
+
+const Vector<Ref<HighlightRange>>& Highlight::highlightRangesFor(const RenderObject& renderer)
+{
+    updateHighlightRangesForRendererIfNeeded(protect(renderer.document()));
+
+    auto it = m_highlightRangesForRenderer.find(renderer);
+    if (it == m_highlightRangesForRenderer.end()) {
+        static NeverDestroyed<Vector<Ref<HighlightRange>>> emptyVector;
+        return emptyVector.get();
+    }
+    return it->value;
 }
 
 void Highlight::setPriority(int priority)

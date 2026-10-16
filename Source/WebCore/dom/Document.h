@@ -1360,6 +1360,9 @@ public:
     void incDOMTreeVersion() { m_domTreeVersion = ++s_globalTreeVersion; }
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
+    void incRenderTreeVersion() { ++m_renderTreeVersion; }
+    uint64_t renderTreeVersion() const { return m_renderTreeVersion; }
+
     WEBCORE_EXPORT String originIdentifierForPasteboard() const;
 
     // XPathEvaluator methods
@@ -2424,6 +2427,7 @@ private:
 
     uint64_t m_domTreeVersion;
     static uint64_t s_globalTreeVersion;
+    uint64_t m_renderTreeVersion { 0 };
 
     mutable String m_uniqueIdentifier;
 

@@ -29,10 +29,13 @@
 #include <WebCore/Range.h>
 #include <WebCore/StaticRange.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
 class DOMSetAdapter;
+class Document;
+class RenderObject;
 
 class HighlightRange : public RefCountedAndCanMakeWeakPtr<HighlightRange> {
 public:
@@ -85,10 +88,18 @@ public:
     void setAllRangesNeedPositionUpdate();
     const Vector<Ref<HighlightRange>>& highlightRanges() const LIFETIME_BOUND { return m_highlightRanges; }
 
+    const Vector<Ref<HighlightRange>>& highlightRangesFor(const RenderObject&) LIFETIME_BOUND;
+    void updateHighlightRangesForRendererIfNeeded(Document&);
+    void invalidateHighlightRangesForRenderer();
+
 private:
     explicit Highlight(FixedVector<std::reference_wrapper<AbstractRange>>&&);
 
     Vector<Ref<HighlightRange>> m_highlightRanges;
+    SingleThreadWeakHashMap<RenderObject, Vector<Ref<HighlightRange>>> m_highlightRangesForRenderer;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_highlightRangesForRendererDocument;
+    uint64_t m_highlightRangesForRendererDOMTreeVersion { 0 };
+    uint64_t m_highlightRangesForRendererRenderTreeVersion { 0 };
     Type m_type { Type::Highlight };
     int m_priority { 0 };
 };

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+#target {
+    font: 16px/20px monospace;
+    white-space: pre;
+    width: max-content;
+    color: black;
+}
+#highlighted {
+    background-color: lime;
+}
+</style>
+</head>
+<body>
+<p>PASS if the first two characters of the first "BBBB" are unhighlighted and everything from the third "B" to the end is one solid lime rectangle with no gap in the middle.</p>
+<div id="target">AAAABB<span id="highlighted">BBDDDDCCCC</span></div>
+</body>
+</html>
