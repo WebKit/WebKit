@@ -40,7 +40,6 @@ enum class MemoryRestriction {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
 #include <WebKitAdditions/FastJITPermissionsAdditions.h>
-#include <WebKitAdditions/JSGlobalObjectAdditions.h>
 #pragma clang diagnostic pop
 #endif
 
