@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakHashMap.h>
+
 namespace WebCore {
 
 class RenderBlockFlow;
@@ -33,6 +36,21 @@ class RenderView;
 namespace LayoutIntegration {
 
 bool canUseForBlockLayout(const RenderBlockFlow&);
+// Whether the block formatting context a block formatting context root is in lays out its content, instead of laying it out through the
+// render tree.
+bool canUseForNestedBlockLayout(const RenderBlockFlow&);
+// The walk of every block formatting context a root is nested in walks the content of the root, and asks again whether the root's content can
+// be laid out with it, which walks that content too, so the walks double with each level of nesting. While a scope is alive, the first scope
+// keeps the answers, which hold while the render tree does not change: during one check, or one layout of a root.
+class NestedBlockLayoutCoverageScope {
+    WTF_MAKE_NONCOPYABLE(NestedBlockLayoutCoverageScope);
+public:
+    NestedBlockLayoutCoverageScope();
+    ~NestedBlockLayoutCoverageScope();
+
+private:
+    std::optional<SingleThreadWeakHashMap<const RenderBlockFlow, bool>> m_canUseForNestedBlockLayout;
+};
 // Whether the new block formatting context lays out the root and an out-of-flow box whose containing block is the root or a box inside it.
 bool canUseForBlockLayoutWithOutOfFlowBoxes(const RenderBlockFlow&);
 bool canUseForIntrinsicInlineSizes(const RenderBlockFlow&);

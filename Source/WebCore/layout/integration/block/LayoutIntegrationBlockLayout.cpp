@@ -66,6 +66,7 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
 
 void BlockLayout::layout(RelayoutChildren relayoutChildren)
 {
+    auto nestedBlockLayoutCoverageScope = NestedBlockLayoutCoverageScope { };
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
@@ -79,6 +80,7 @@ void BlockLayout::layout(RelayoutChildren relayoutChildren)
 
 std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const RenderBlockFlow& rootRenderer)
 {
+    auto nestedBlockLayoutCoverageScope = NestedBlockLayoutCoverageScope { };
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
@@ -99,6 +101,7 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
 
 void BlockLayout::layoutOutOfFlowBoxes()
 {
+    auto nestedBlockLayoutCoverageScope = NestedBlockLayoutCoverageScope { };
     auto paintInvalidation = PaintInvalidation { };
     layoutOutOfFlowBoxes(rootRenderer(), paintInvalidation);
 }
