@@ -282,7 +282,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBuffer& other)
     return ArrayBuffer::create(other.span());
 }
 
-Ref<ArrayBuffer> ArrayBuffer::create(std::span<const uint8_t> span)
+Ref<ArrayBuffer> ArrayBuffer::create(NOESCAPE std::span<const uint8_t> span)
 {
     auto buffer = tryCreate(span);
     if (!buffer)

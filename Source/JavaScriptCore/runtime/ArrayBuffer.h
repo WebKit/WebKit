@@ -38,6 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -54,6 +55,10 @@ class Memory;
 }
 
 using ArrayBufferDestructorFunction = RefPtr<SharedTask<void(void*)>>;
+
+// FIXME: rdar://190236443 Swift only generates a Span overload of create(std::span<const uint8_t>)
+// if its return type is spelled without template arguments. Remove this alias once that's fixed.
+using RefArrayBuffer = Ref<ArrayBuffer>;
 
 class SharedArrayBufferContents final : public ThreadSafeRefCounted<SharedArrayBufferContents> {
 public:
@@ -247,9 +252,23 @@ private:
 
 class ArrayBuffer final : public GCIncomingRefCounted<ArrayBuffer> {
 public:
+#if defined(__swift__) && !ENABLE(SWIFT_BASE_CLASS_ANNOTATIONS)
+    // FIXME: rdar://165684636 means we have to define these at this level of the
+    // type hierarchy.
+    void ref() const
+    {
+        GCIncomingRefCounted<ArrayBuffer>::ref();
+    }
+
+    void deref() const
+    {
+        GCIncomingRefCounted<ArrayBuffer>::deref();
+    }
+#endif
+
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(size_t numElements, unsigned elementByteSize);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBuffer&);
-    JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(std::span<const uint8_t> = { });
+    JS_EXPORT_PRIVATE static RefArrayBuffer create(NOESCAPE std::span<const uint8_t> = { });
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> create(ArrayBufferContents&&);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createAdopted(std::span<const uint8_t>);
     JS_EXPORT_PRIVATE static Ref<ArrayBuffer> createFromBytes(std::span<const uint8_t> data, ArrayBufferDestructorFunction&&);
@@ -339,7 +358,7 @@ private:
     static constexpr unsigned s_lockedFlag = INT32_MIN;
     Checked<unsigned> m_pinCount { 0 };
     bool m_isWasmMemory { false };
-};
+} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 void* ArrayBuffer::data() LIFETIME_BOUND
 {
