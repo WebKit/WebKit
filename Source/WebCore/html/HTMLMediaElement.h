@@ -399,7 +399,7 @@ public:
 
     WEBCORE_EXPORT bool canPlay() const override;
 
-    bool shouldForceControlsDisplay() const;
+    WEBCORE_EXPORT bool shouldForceControlsDisplay() const;
 
     ExceptionOr<Ref<TextTrack>> addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language);
     ExceptionOr<void> removeTextTrack(TextTrack&);
