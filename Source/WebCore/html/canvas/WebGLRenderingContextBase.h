@@ -184,6 +184,8 @@ public:
     WebGLCanvas canvas();
 
     int LEGACY_NODELETE drawingBufferWidth() const;
+    // For testing.
+    WEBCORE_EXPORT IntSize defaultFramebufferAllocatedSize() const;
     int LEGACY_NODELETE drawingBufferHeight() const;
 
     PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }

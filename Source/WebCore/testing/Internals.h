@@ -1121,6 +1121,8 @@ public:
     static RequestedGPU LEGACY_NODELETE requestedGPU(WebGLRenderingContextBase&);
     // The largest drawing buffer width and height, including the limits of the compositor buffers.
     static Vector<int> webglMaxDrawingBufferSize(WebGLRenderingContextBase&);
+    // The width and height of the allocated default framebuffer storage, or 0, 0 if it is not allocated.
+    static Vector<int> webglDefaultFramebufferAllocatedSize(WebGLRenderingContextBase&);
 #endif
 
     void setPageVisibility(bool isVisible);

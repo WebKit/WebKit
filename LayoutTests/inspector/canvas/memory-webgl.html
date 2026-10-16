@@ -9,6 +9,8 @@ let texture = null;
 
 function load() {
     context = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
+    // The drawing buffer is allocated when it is first used.
+    context.clear(context.COLOR_BUFFER_BIT);
     runTest();
 }
 

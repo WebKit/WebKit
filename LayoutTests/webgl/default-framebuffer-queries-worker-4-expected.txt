@@ -16,7 +16,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -174,6 +173,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -185,7 +185,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -259,6 +258,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -270,7 +270,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -344,6 +343,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -355,7 +355,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -429,6 +428,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: true
 [Worker] fresh:
@@ -442,7 +442,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -600,6 +599,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -611,7 +611,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -685,6 +684,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -696,7 +696,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -770,6 +769,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -781,7 +781,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -855,6 +854,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
 [Worker] fresh:
@@ -869,7 +869,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1027,6 +1026,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1039,7 +1039,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1113,6 +1112,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1125,7 +1125,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1199,6 +1198,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1211,7 +1211,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1285,6 +1284,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
 [Worker] fresh:
@@ -1299,7 +1299,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1457,6 +1456,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1469,7 +1469,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1543,6 +1542,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1555,7 +1555,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1629,6 +1628,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1641,7 +1641,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1715,6 +1714,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: false
 [Worker] fresh:
@@ -1728,7 +1728,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1850,6 +1849,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1861,7 +1861,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1911,6 +1910,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1922,7 +1922,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -1972,6 +1971,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -1983,7 +1983,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2033,6 +2032,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: false
 [Worker] fresh:
@@ -2046,7 +2046,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2168,6 +2167,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2179,7 +2179,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2229,6 +2228,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2240,7 +2240,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2290,6 +2289,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2301,7 +2301,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2351,6 +2350,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: false
 [Worker] fresh:
@@ -2365,7 +2365,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2487,6 +2486,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2499,7 +2499,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2549,6 +2548,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2561,7 +2561,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2611,6 +2610,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2623,7 +2623,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2673,6 +2672,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: true, premultipliedAlpha: false, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
 [Worker] fresh:
@@ -2687,7 +2687,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2809,6 +2808,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2821,7 +2821,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2871,6 +2870,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2883,7 +2883,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2933,6 +2932,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -2945,7 +2945,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT) is gl.RGBA
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -2995,6 +2994,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: true
 [Worker] fresh:
@@ -3009,7 +3009,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3204,6 +3203,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3215,7 +3215,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3314,6 +3313,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3325,7 +3325,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3424,6 +3423,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3435,7 +3435,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3534,6 +3533,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: true
 [Worker] fresh:
@@ -3548,7 +3548,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3743,6 +3742,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3754,7 +3754,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3853,6 +3852,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3864,7 +3864,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -3963,6 +3962,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -3974,7 +3974,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4073,6 +4072,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: true
 [Worker] fresh:
@@ -4088,7 +4088,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4283,6 +4282,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -4295,7 +4295,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4394,6 +4393,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -4406,7 +4406,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4505,6 +4504,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -4517,7 +4517,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4616,6 +4615,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: true
 [Worker] fresh:
@@ -4631,7 +4631,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4826,6 +4825,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -4838,7 +4838,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -4937,6 +4936,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -4949,7 +4949,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5048,6 +5047,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5060,7 +5060,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5159,6 +5158,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: true, stencil: false
 [Worker] fresh:
@@ -5173,7 +5173,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5332,6 +5331,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5343,7 +5343,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5418,6 +5417,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5429,7 +5429,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5504,6 +5503,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5515,7 +5515,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5590,6 +5589,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: true, stencil: false
 [Worker] fresh:
@@ -5604,7 +5604,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5763,6 +5762,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5774,7 +5774,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5849,6 +5848,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5860,7 +5860,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -5935,6 +5934,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -5946,7 +5946,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6021,6 +6020,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: true, stencil: false
 [Worker] fresh:
@@ -6036,7 +6036,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6195,6 +6194,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6207,7 +6207,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6282,6 +6281,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6294,7 +6294,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6369,6 +6368,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6381,7 +6381,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6456,6 +6455,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: true, stencil: false
 [Worker] fresh:
@@ -6471,7 +6471,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6630,6 +6629,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6642,7 +6642,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6717,6 +6716,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6729,7 +6729,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6804,6 +6803,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -6816,7 +6816,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -6891,6 +6890,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: true
 [Worker] fresh:
@@ -6905,7 +6905,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7063,6 +7062,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7074,7 +7074,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7148,6 +7147,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7159,7 +7159,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7233,6 +7232,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7244,7 +7244,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7318,6 +7317,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: true
 [Worker] fresh:
@@ -7332,7 +7332,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7490,6 +7489,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7501,7 +7501,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7575,6 +7574,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7586,7 +7586,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7660,6 +7659,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7671,7 +7671,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7745,6 +7744,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: true
 [Worker] fresh:
@@ -7760,7 +7760,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -7918,6 +7917,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -7930,7 +7930,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8004,6 +8003,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8016,7 +8016,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8090,6 +8089,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8102,7 +8102,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8176,6 +8175,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: true
 [Worker] fresh:
@@ -8191,7 +8191,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8349,6 +8348,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8361,7 +8361,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8435,6 +8434,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8447,7 +8447,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8521,6 +8520,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8533,7 +8533,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8607,6 +8606,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: false, depth: false, stencil: false
 [Worker] fresh:
@@ -8621,7 +8621,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8743,6 +8742,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8754,7 +8754,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8804,6 +8803,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8815,7 +8815,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8865,6 +8864,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -8876,7 +8876,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -8926,6 +8925,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true, depth: false, stencil: false
 [Worker] fresh:
@@ -8940,7 +8940,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9062,6 +9061,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9073,7 +9073,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9123,6 +9122,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9134,7 +9134,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9184,6 +9183,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9195,7 +9195,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLE_BUFFERS) is 0
 PASS [Worker] gl.getParameter(gl.SAMPLES) is 0
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9245,6 +9244,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: false, depth: false, stencil: false
 [Worker] fresh:
@@ -9260,7 +9260,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9382,6 +9381,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9394,7 +9394,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9444,6 +9443,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9456,7 +9456,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9506,6 +9505,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9518,7 +9518,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9568,6 +9567,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker]
 [Worker] OffscreenCanvas, WebGL 2, alpha: false, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true, depth: false, stencil: false
 [Worker] fresh:
@@ -9583,7 +9583,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9705,6 +9704,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] drawn:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9717,7 +9717,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9767,6 +9766,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] after transferToImageBitmap():
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9779,7 +9779,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9829,6 +9828,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 [Worker] resized:
 PASS [Worker] gl.getParameter(gl.RED_BITS) is 8
 PASS [Worker] gl.getParameter(gl.GREEN_BITS) is 8
@@ -9841,7 +9841,6 @@ PASS [Worker] gl.getParameter(gl.SAMPLES) is > 0
 PASS [Worker] Array.from(gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA8, gl.SAMPLES)).includes(gl.getParameter(gl.SAMPLES)) is true
 PASS [Worker] [gl.RGB, gl.RGBA].includes(gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT)) is true
 PASS [Worker] gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE) is gl.UNSIGNED_BYTE
-PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: DRAW_FRAMEBUFFER
 PASS [Worker] checkFramebufferStatus was FRAMEBUFFER_COMPLETE: READ_FRAMEBUFFER
@@ -9891,6 +9890,7 @@ PASS [Worker] getError was expected value: NO_ERROR : after the queries
 PASS [Worker] gl.isContextLost() is false
 PASS [Worker] contextLostEventCount is 0
 PASS [Worker] collectStateIndependentQueries() is stateIndependentQueries
+PASS [Worker] getError was expected value: NO_ERROR : after evaluating: gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
 PASS successfullyParsed is true
 
 TEST COMPLETE

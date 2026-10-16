@@ -305,7 +305,6 @@ void WebXRWebGLSharedImageSwapchain::endFrame(PlatformXR::DeviceLayer& layerData
     if (!gl)
         return;
 
-    ASSERT(gl->checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     signalEndFrame(*gl, layerData);
 }
 

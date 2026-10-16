@@ -540,11 +540,11 @@ bool WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
         initializeContextState();
         initializeDefaultObjects();
     }
+    // The storage is allocated when the default framebuffer is first used.
     m_defaultFramebuffer->setSize(clampedCanvasSize());
-    bool reshaped = m_defaultFramebuffer->ensureSize();
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
-    return reshaped && !m_context->isContextLost();
+    return !m_context->isContextLost();
 }
 
 void WebGLRenderingContextBase::initializeContextState()
@@ -742,10 +742,13 @@ bool WebGLRenderingContextBase::ensureDefaultFramebufferSize()
 {
     if (isContextLost())
         return false;
+    auto oldAllocatedSize = m_defaultFramebuffer->allocatedSize();
     if (!m_defaultFramebuffer->ensureSize()) {
         forceContextLost();
         return false;
     }
+    if (m_defaultFramebuffer->allocatedSize() != oldAllocatedSize)
+        updateMemoryCost();
     return true;
 }
 
@@ -1018,6 +1021,13 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
     m_compositingResultsNeedUpdating = true;
     willUpdateCanvasContents();
     updateMemoryCost();
+}
+
+IntSize WebGLRenderingContextBase::defaultFramebufferAllocatedSize() const
+{
+    if (isContextLost() || !m_defaultFramebuffer)
+        return { };
+    return m_defaultFramebuffer->allocatedSize();
 }
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
@@ -5993,7 +6003,7 @@ void WebGLRenderingContextBase::updateMemoryCost() const
     newMemoryCost += m_readDisplayBuffer.memoryCost();
     newMemoryCost += m_readDrawingBuffer.memoryCost();
     if (!isContextLost()) {
-        size_t area = m_defaultFramebuffer->size().unclampedArea();
+        size_t area = m_defaultFramebuffer->allocatedSize().unclampedArea();
         size_t bytesPerSample = 4;
         if (m_attributes.depth)
             bytesPerSample += 4;
