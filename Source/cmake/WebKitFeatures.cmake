@@ -501,20 +501,9 @@ macro(WEBKIT_OPTION_END)
         endif ()
     endforeach ()
 
-    # Swift/C++ interop is Clang-only: GCC builds link but crash at runtime (the
-    # Swift-emitted C++ thunks rely on Clang ABI details), so refuse to configure
-    # a Swift feature under a non-Clang compiler.
-    if (NOT COMPILER_IS_CLANG)
-        message(FATAL_ERROR
-            "Swift/C++ interop on the GLib ports requires Clang, but the "
-            "configured C++ compiler is ${CMAKE_CXX_COMPILER_ID}. Re-run "
-            "the configure step with CC=clang CXX=clang++.")
-    endif ()
-
     # Swift/C++ interop is now always required. Fail loudly if the
-    # toolchain is too old. Apple is gated elsewhere; non-Clang is
-    # already rejected above.
-    if (NOT APPLE AND COMPILER_IS_CLANG)
+    # toolchain is too old. Apple is gated elsewhere.
+    if (NOT APPLE)
         _WEBKIT_DETECT_SWIFT_CXX_INTEROP_SUPPORT(_swift_interop_ok)
         if (NOT _swift_interop_ok)
             message(FATAL_ERROR
