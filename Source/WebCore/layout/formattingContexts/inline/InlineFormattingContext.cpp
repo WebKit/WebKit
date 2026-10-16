@@ -300,7 +300,7 @@ static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t line
 static inline void handleAfterSideMargin(BlockLayoutState::MarginState& marginState, InlineDisplay::Content& displayContent)
 {
     if (!InlineDisplayLineBuilder::hasTrailingLineWithBlockContent(displayContent.lines))
-        marginState.canCollapseMarginAfterWithChildren = false;
+        marginState.blockContainerMarginAfterCollapsesWithContent = false;
 }
 
 UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild)

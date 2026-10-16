@@ -665,7 +665,7 @@ std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& margin
         ASSERT(!m_lineDamage);
     }
 
-    marginInfo = Layout::IntegrationUtils::toMarginInfo(inlineFormattingContext.layoutState().marginState());
+    Layout::IntegrationUtils::updateMarginInfo(marginInfo, inlineFormattingContext.layoutState().marginState());
 
     if (!m_inlineContent->hasPaintedInlineLevelBoxes()) {
         // Nothing to repaint. If layout affects painted block level content those issue their own repaints.
