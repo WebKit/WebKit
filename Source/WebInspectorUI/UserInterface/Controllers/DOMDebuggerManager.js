@@ -122,7 +122,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             if (this._allTimeoutsBreakpoint && !this._allTimeoutsBreakpoint.disabled)
                 this._setEventBreakpoint(this._allTimeoutsBreakpoint, target);
 
-            if (this._allRequestsBreakpoint)
+            if (this._allRequestsBreakpoint && !this._allRequestsBreakpoint.disabled)
                 this._setURLBreakpoint(this._allRequestsBreakpoint, target);
 
             for (let breakpoint of this._listenerBreakpoints) {
