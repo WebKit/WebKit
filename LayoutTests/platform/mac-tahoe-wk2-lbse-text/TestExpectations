@@ -87,7 +87,6 @@ svg/outermost-svg-root.html [ Failure ]
 ###############
 
 # 1) Text rendering flakines issue with SVG Fonts (also in legacy engine)
-svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Pass ImageOnlyFailure ]
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Pass ImageOnlyFailure ]
 
 # 2) SVG <image> flakiness
