@@ -494,6 +494,7 @@ UIProcess/Cocoa/WebProcessCacheCocoa.mm @nonARC
 UIProcess/Cocoa/WebProcessPoolCocoa.mm @nonARC @cost:5
 UIProcess/Cocoa/WebProcessProxyCocoa.mm @nonARC
 UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm @nonARC
+UIProcess/Cocoa/WKClickHighlightView.mm @nonARC
 UIProcess/Cocoa/WKColorExtensionView.mm @nonARC
 UIProcess/Cocoa/WKContactPicker.mm @nonARC
 UIProcess/Cocoa/WKEditCommand.mm @nonARC
@@ -626,7 +627,6 @@ UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm @nonARC
 UIProcess/ios/WKStylusDeviceObserver.mm @nonARC
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm @nonARC
 UIProcess/ios/WKSyntheticTapGestureRecognizer.mm @nonARC
-UIProcess/ios/WKTapHighlightView.mm @nonARC
 UIProcess/ios/WKTextInteractionWrapper.mm @nonARC
 UIProcess/ios/WKTouchActionGestureRecognizer.mm @nonARC
 UIProcess/ios/WKTouchEventsGestureRecognizer.mm @nonARC

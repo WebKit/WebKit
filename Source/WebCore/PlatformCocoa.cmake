@@ -1240,6 +1240,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cf/MediaAccessibilitySoftLink.h
 
     platform/cocoa/AppleVisualEffect.h
+    platform/cocoa/CocoaBezierPath.h
     platform/cocoa/CocoaView.h
     platform/cocoa/CocoaWritingToolsTypes.h
     platform/cocoa/CoreLocationGeolocationProvider.h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,19 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#include <wtf/Platform.h>
+#if PLATFORM(COCOA)
 
-#import <UIKit/UIKit.h>
-#import <WebCore/FloatQuad.h>
-#import <WebCore/FloatRoundedRect.h>
-#import <wtf/Vector.h>
+#if PLATFORM(MAC)
 
-@interface WKTapHighlightView : UIView
+OBJC_CLASS NSBezierPath;
+using CocoaBezierPath = NSBezierPath;
 
-- (void)setColor:(UIColor *)color;
-- (void)setMinimumCornerRadius:(float)radius;
-- (void)setCornerRadii:(WebCore::CornerRadii&&)radii;
-- (void)setFrames:(Vector<WebCore::FloatRect>&&)frames;
-- (void)setQuads:(Vector<WebCore::FloatQuad>&&)quads boundaryRect:(const WebCore::FloatRect&)rect;
+#else
 
-@end
+OBJC_CLASS UIBezierPath;
+using CocoaBezierPath = UIBezierPath;
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif
+
+#endif // PLATFORM(COCOA)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,16 +24,65 @@
  */
 
 #import "config.h"
-#import "WKTapHighlightView.h"
+#import "WKClickHighlightView.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(TWO_PHASE_CLICKS)
 
+#import <WebCore/CocoaBezierPath.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
 #import <wtf/RetainPtr.h>
 
-@implementation WKTapHighlightView {
-    RetainPtr<UIColor> _color;
+static void setNeedsDisplay(CocoaView *view)
+{
+#if PLATFORM(IOS_FAMILY)
+    [view setNeedsDisplay];
+#else
+    view.needsDisplay = YES;
+#endif
+}
+
+static void fillBezierPathWithRoundedRectForCornerRadius(CGRect rectBounds, float radius)
+{
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr path = [UIBezierPath bezierPathWithRoundedRect:rectBounds cornerRadius:radius];
+#else
+    WebCore::Path corePath;
+    corePath.addContinuousRoundedRect(rectBounds, radius);
+    RetainPtr path = [NSBezierPath bezierPathWithCGPath:protect(corePath.platformPath())];
+#endif
+    [path fill];
+}
+
+static CGContextRef currentGraphicsContext()
+{
+#if PLATFORM(IOS_FAMILY)
+    return UIGraphicsGetCurrentContext();
+#else
+    return [NSGraphicsContext currentContext].CGContext;
+#endif
+}
+
+static void appendPath(CocoaBezierPath *path, CocoaBezierPath *subpath)
+{
+#if PLATFORM(IOS_FAMILY)
+    [path appendPath:subpath];
+#else
+    [path appendBezierPath:subpath];
+#endif
+}
+
+static void addLineToPoint(CocoaBezierPath *path, const WebCore::FloatPoint& point)
+{
+#if PLATFORM(IOS_FAMILY)
+    [path addLineToPoint:point];
+#else
+    [path lineToPoint:point];
+#endif
+}
+
+@implementation WKClickHighlightView {
+    RetainPtr<WebCore::CocoaColor> _color;
     float _minimumCornerRadius;
     WebCore::CornerRadii _cornerRadii;
     Vector<WebCore::FloatRect> _innerFrames;
@@ -53,7 +102,7 @@
     _innerQuads.clear();
 }
 
-- (void)setColor:(UIColor *)color
+- (void)setColor:(WebCore::CocoaColor *)color
 {
     _color = color;
 }
@@ -93,8 +142,7 @@
     for (auto& frame : _innerFrames)
         frame.moveBy(-viewFrame.location());
 
-    if (self.layer.needsDisplayOnBoundsChange)
-        [self setNeedsDisplay];
+    setNeedsDisplay(self);
 }
 
 - (void)setQuads:(Vector<WebCore::FloatQuad>&&)quads boundaryRect:(const WebCore::FloatRect&)boundaryRect
@@ -131,8 +179,7 @@
     for (auto& quad : _innerQuads)
         quad.move(-viewFrame.x(), -viewFrame.y());
 
-    if (self.layer.needsDisplayOnBoundsChange)
-        [self setNeedsDisplay];
+    setNeedsDisplay(self);
 }
 
 - (void)setFrame:(CGRect)frame
@@ -146,53 +193,69 @@
 {
     if (_innerFrames.isEmpty() && _innerQuads.isEmpty()) {
         [_color set];
-        [[UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:_minimumCornerRadius] fill];
+        fillBezierPathWithRoundedRectForCornerRadius(self.bounds, _minimumCornerRadius);
         return;
     }
 
-    auto path = [UIBezierPath bezierPath];
+    RetainPtr path = [CocoaBezierPath bezierPath];
 
     if (_innerFrames.size()) {
         auto corePath = WebCore::PathUtilities::pathWithShrinkWrappedRects(_innerFrames, _cornerRadii);
-        [path appendPath:[UIBezierPath bezierPathWithCGPath:protect(corePath.platformPath()).get()]];
+        appendPath(path, [CocoaBezierPath bezierPathWithCGPath:protect(corePath.platformPath())]);
     } else {
         for (auto& quad : _innerQuads) {
-            UIBezierPath *subpath = [UIBezierPath bezierPath];
+            RetainPtr subpath = [CocoaBezierPath bezierPath];
             [subpath moveToPoint:quad.p1()];
-            [subpath addLineToPoint:quad.p2()];
-            [subpath addLineToPoint:quad.p3()];
-            [subpath addLineToPoint:quad.p4()];
+            addLineToPoint(subpath, quad.p2());
+            addLineToPoint(subpath, quad.p3());
+            addLineToPoint(subpath, quad.p4());
             [subpath closePath];
-            [path appendPath:subpath];
+            appendPath(path, subpath);
         }
     }
 
-    RetainPtr context = UIGraphicsGetCurrentContext();
-    CGContextSaveGState(context.get());
+    RetainPtr context = currentGraphicsContext();
+    CGContextSaveGState(context);
 
     if (!_innerQuads.isEmpty())
-        CGContextSetLineWidth(context.get(), 4 * _minimumCornerRadius);
+        CGContextSetLineWidth(context, 4 * _minimumCornerRadius);
 
-    CGContextSetLineJoin(context.get(), kCGLineJoinRound);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
 
     auto alpha = CGColorGetAlpha(protect([_color CGColor]));
 
     [[_color colorWithAlphaComponent:1] set];
 
-    CGContextSetAlpha(context.get(), alpha);
-    CGContextBeginTransparencyLayer(context.get(), nil);
-    CGContextAddPath(context.get(), protect(path.CGPath));
-    CGContextDrawPath(context.get(), kCGPathFillStroke);
-    CGContextEndTransparencyLayer(context.get());
+    CGContextSetAlpha(context, alpha);
+    CGContextBeginTransparencyLayer(context, nil);
+    CGContextAddPath(context, protect([path CGPath]));
+    CGContextDrawPath(context, kCGPathFillStroke);
+    CGContextEndTransparencyLayer(context);
 
-    CGContextRestoreGState(context.get());
+    CGContextRestoreGState(context);
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
     return nil;
 }
 
+#else
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    return nil;
+}
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+#endif
+
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif

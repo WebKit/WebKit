@@ -57,6 +57,7 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKActionSheetAssistant.h"
+#import "WKClickHighlightView.h"
 #import "WKContextMenuElementInfoInternal.h"
 #import "WKContextMenuElementInfoPrivate.h"
 #import "WKDatePickerViewController.h"
@@ -79,7 +80,6 @@
 #import "WKScrollView.h"
 #import "WKSelectMenuListViewController.h"
 #import "WKSyntheticFlagsChangedWebEvent.h"
-#import "WKTapHighlightView.h"
 #import "WKTextInputListViewController.h"
 #import "WKTextInteractionWrapper.h"
 #import "WKTextPlaceholder.h"
@@ -2709,7 +2709,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
         return;
 
     if (!_tapHighlightView) {
-        _tapHighlightView = adoptNS([[WKTapHighlightView alloc] initWithFrame:CGRectZero]);
+        _tapHighlightView = adoptNS([[WKClickHighlightView alloc] initWithFrame:CGRectZero]);
         [_tapHighlightView setUserInteractionEnabled:NO];
         [_tapHighlightView setOpaque:NO];
         [_tapHighlightView setMinimumCornerRadius:minimumTapHighlightRadius];

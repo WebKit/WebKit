@@ -1340,6 +1340,7 @@
 		334BF3E82D52D655004AE4EA /* MouseEventTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 334BF3E72D52D63D004AE4EA /* MouseEventTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		33883889308047B7007ECDC2 /* CocoaBezierPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 33883888308047B7007ECDC2 /* CocoaBezierPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33B1AB242BE309F00006EFC7 /* ColorBlending.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1B4A6724A997660033727F /* ColorBlending.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33E5A6AA2C6E023400F2CD04 /* ImmediateActionStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 33E5A6A92C6E023400F2CD04 /* ImmediateActionStage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3470704B5333F4D30F012D5E /* ImageSizingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 257524222FF97A6B8028F838 /* ImageSizingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10975,6 +10976,7 @@
 		33839EFA2C5CB3A600F1E4FA /* InternalObserverTake.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalObserverTake.h; sourceTree = "<group>"; };
 		33839EFB2C5CB3AF00F1E4FA /* InternalObserverDrop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InternalObserverDrop.cpp; sourceTree = "<group>"; };
 		33839EFC2C5CB3B600F1E4FA /* InternalObserverDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalObserverDrop.h; sourceTree = "<group>"; };
+		33883888308047B7007ECDC2 /* CocoaBezierPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaBezierPath.h; sourceTree = "<group>"; };
 		33E5A6A92C6E023400F2CD04 /* ImmediateActionStage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = ImmediateActionStage.h; sourceTree = "<group>"; };
 		357B581C27F7909A00B93E4E /* CSSBorderImageWidthValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageWidthValue.h; sourceTree = "<group>"; };
 		357B581E27F790BD00B93E4E /* CSSBorderImageWidthValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageWidthValue.cpp; sourceTree = "<group>"; };
@@ -35124,6 +35126,7 @@
 			children = (
 				E55450742D11C97500183457 /* AppleVisualEffect.cpp */,
 				E55450522D10D78700183457 /* AppleVisualEffect.h */,
+				33883888308047B7007ECDC2 /* CocoaBezierPath.h */,
 				F402822E2D88C9A700F3680B /* CocoaView.h */,
 				0759DC782DB4490F000E276E /* CocoaWritingToolsTypes.h */,
 				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
@@ -45123,6 +45126,7 @@
 				A3A0ED792BFFD22A003F5C07 /* CloseWatcherManager.h in Headers */,
 				5150B5DD27CDF2E0004FC81E /* CMUtilities.h in Headers */,
 				803798AB2D48AFFC00F5F581 /* CocoaAccessibilityConstants.h in Headers */,
+				33883889308047B7007ECDC2 /* CocoaBezierPath.h in Headers */,
 				F402822F2D88C9A700F3680B /* CocoaView.h in Headers */,
 				0759DC792DB44B4A000E276E /* CocoaWritingToolsTypes.h in Headers */,
 				C0C054CB1118C8E400CE2636 /* CodeGenerator.pm in Headers */,
