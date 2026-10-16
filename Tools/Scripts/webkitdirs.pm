@@ -313,6 +313,7 @@ sub exitStatus($);
 
 sub findMatchingArguments($$);
 sub hasArgument($$);
+sub ninjaExecutable();
 
 sub sdkDirectory($)
 {
@@ -365,7 +366,8 @@ sub setSourceDir($)
 
 sub determineNinjaVersion
 {
-    chomp(my $ninjaVersion = `ninja --version`);
+    my $ninja = ninjaExecutable();
+    chomp(my $ninjaVersion = `"$ninja" --version`);
     return $ninjaVersion;
 }
 
@@ -3152,6 +3154,7 @@ sub generateBuildSystemFromCMakeProject
         } else {
             push @args, "Ninja";
         }
+        push @args, "-DCMAKE_MAKE_PROGRAM=\"" . File::Spec->catfile(sourceDir(), "Source", "cmake", "ninja-wrapper") . "\"" if isAppleCocoaWebKit();
         push @args, "-DUSE_THIN_ARCHIVES=OFF" if isPlayStation();
     } else {
         if (isAnyWindows()) {
