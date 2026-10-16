@@ -73,7 +73,7 @@ public: \
             TZONE_SPEC_NAME_ARG(#_type) \
         }; \
     \
-        if (!s_heapRef || size != sizeof(_type)) { [[unlikely]] \
+        if (!s_heapRef || size != sizeof(_type)) [[unlikely]] { \
             if constexpr (::bmalloc::api::compactAllocationMode<_type>() == CompactAllocationMode::Compact) \
                 return ::bmalloc::api::tzoneAllocateCompactSlow(size, s_heapSpec); \
             return ::bmalloc::api::tzoneAllocate ## _compactMode ## Slow(size, s_heapSpec); \

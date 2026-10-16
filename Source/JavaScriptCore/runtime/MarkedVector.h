@@ -345,7 +345,7 @@ public:
 
     [[nodiscard]] T& at(size_t i) LIFETIME_BOUND
     {
-        if (i >= size()) { [[unlikely]]
+        if (i >= size()) [[unlikely]] {
             OverflowHandler::overflowed();
             if constexpr (!std::is_same_v<OverflowHandler, CrashOnOverflow>) {
                 T* oobStorage = std::bit_cast<T*>(&m_storageForOutOfBoundsAccess);
@@ -357,7 +357,7 @@ public:
     }
     [[nodiscard]] const T& at(size_t i) const LIFETIME_BOUND
     {
-        if (i >= size()) { [[unlikely]]
+        if (i >= size()) [[unlikely]] {
             const_cast<MarkedVector*>(this)->OverflowHandler::overflowed();
             if constexpr (!std::is_same_v<OverflowHandler, CrashOnOverflow>) {
                 T* oobStorage = std::bit_cast<T*>(&m_storageForOutOfBoundsAccess);
