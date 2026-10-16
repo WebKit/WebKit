@@ -128,7 +128,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
     if (RefPtr signal = options.signal) {
         signal->addAlgorithm([weakThis = WeakPtr { *this }, eventType, listener = WeakPtr { listener }, capture = options.capture](JSC::JSValue) {
             if (weakThis && listener)
-                Ref { *weakThis }->removeEventListener(eventType, *listener, { .capture = capture });
+                Ref { *weakThis }->removeEventListener(eventType, *protect(listener), { .capture = capture });
         });
     }
 

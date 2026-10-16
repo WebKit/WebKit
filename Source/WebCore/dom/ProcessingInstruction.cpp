@@ -71,7 +71,7 @@ ProcessingInstruction::~ProcessingInstruction()
         cachedSheet->removeClient(*this);
 
     if (isConnected())
-        document().styleScope().removeStyleSheetCandidateNode(*this);
+        protect(document().styleScope())->removeStyleSheetCandidateNode(*this);
 }
 
 String ProcessingInstruction::nodeName() const
@@ -273,7 +273,7 @@ Node::NeedsPostConnectionSteps ProcessingInstruction::insertionSteps(InsertionTy
     CharacterData::insertionSteps(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return NeedsPostConnectionSteps::No;
-    document().styleScope().addStyleSheetCandidateNode(*this, m_createdByParser);
+    protect(document().styleScope())->addStyleSheetCandidateNode(*this, m_createdByParser);
     return NeedsPostConnectionSteps::Yes;
 }
 

@@ -247,7 +247,7 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValu
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
 {
-    bool changes = ensureMutableInlineStyle()->setProperty(propertyID, value, CSSParserContext(document()), important, didFailParsing);
+    bool changes = ensureMutableInlineStyle()->setProperty(propertyID, value, CSSParserContext(protect(document())), important, didFailParsing);
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -255,7 +255,7 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
 
 bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant important)
 {
-    bool changes = ensureMutableInlineStyle()->setCustomProperty(property.string(), value, CSSParserContext(document()), important);
+    bool changes = ensureMutableInlineStyle()->setCustomProperty(property.string(), value, CSSParserContext(protect(document())), important);
     if (changes)
         inlineStyleChanged();
     return changes;

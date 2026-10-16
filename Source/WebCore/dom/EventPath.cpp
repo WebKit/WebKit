@@ -106,7 +106,7 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
     RefPtr<ShadowRoot> shadowRoot;
     while (node) {
         while (node) {
-            m_path.append(EventContext { contextType, *node, eventTargetRespectingTargetRules(*node), target.get(), closedShadowDepth });
+            m_path.append(EventContext { contextType, *node, protect(eventTargetRespectingTargetRules(*node)), target.get(), closedShadowDepth });
 
             if (RefPtr maybeShadowRoot = dynamicDowncast<ShadowRoot>(*node)) {
                 shadowRoot = WTF::move(maybeShadowRoot);

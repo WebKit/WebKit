@@ -68,13 +68,13 @@ void ScriptExecutionContext::enqueueTaskWhenSettled(Ref<Promise>&& promise, Task
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->eventLoop().queueTask(taskSource, [task = WTF::move(task), result = WTF::move(result)] () mutable {
+        protect(protectedThis->eventLoop())->queueTask(taskSource, [task = WTF::move(task), result = WTF::move(result)] mutable {
             task(WTF::move(result));
         });
     });
-    if (weakRequest) {
-        m_nativePromiseRequests.add(*weakRequest);
-        command->track(*weakRequest);
+    if (RefPtr request = weakRequest) {
+        m_nativePromiseRequests.add(*request);
+        command->track(*request);
     }
 }
 

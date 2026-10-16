@@ -182,7 +182,7 @@ private:
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
-    Node* m_shadowIncludingRoot { nullptr };
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_shadowIncludingRoot;
     const RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;

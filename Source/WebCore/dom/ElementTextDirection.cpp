@@ -204,7 +204,7 @@ static std::optional<TextDirection> computeTextDirectionOfSlotElement(const HTML
     if (!nodes)
         return computeContainedTextAutoDirection(slotElement);
 
-    for (auto& child : *nodes) {
+    for (RefPtr child : *nodes) {
         // Specs: If child is a Text node and its text direction is
         // not null, then return it.
         if (child->isTextNode()) {

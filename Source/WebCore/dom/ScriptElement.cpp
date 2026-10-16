@@ -84,7 +84,7 @@ namespace WebCore {
 static const auto maxUserGesturePropagationTime = 1_s;
 
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
-    : ActiveDOMObject(element.document())
+    : ActiveDOMObject(protect(element.document()))
     , m_element(element)
     , m_parserInserted(parserInserted ? ParserInserted::Yes : ParserInserted::No)
     , m_alreadyStarted(alreadyStarted)
@@ -447,7 +447,7 @@ bool ScriptElement::requestModuleScript(const String& sourceText, const TextPosi
         m_isExternalScript = true;
         AtomString integrity = element->attributeWithoutSynchronization(HTMLNames::integrityAttr);
         if (integrity.isNull())
-            integrity = AtomString { document->globalObject()->importMap().integrityForURL(moduleScriptRootURL) };
+            integrity = AtomString { protect(document->globalObject()->importMap())->integrityForURL(moduleScriptRootURL) };
         Ref script = LoadableModuleScript::create(LoadableModuleScript::IsInline::No, nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 

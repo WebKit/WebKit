@@ -1,7 +1,6 @@
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-[ macOS ] dom/ShadowRoot.h
 layout/formattingContexts/inline/AbstractLineBuilder.h
 layout/formattingContexts/inline/InlineContentBreaker.h
 layout/formattingContexts/inline/InlineFormattingContext.h

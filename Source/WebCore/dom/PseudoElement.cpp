@@ -51,7 +51,7 @@ const QualifiedName& pseudoElementTagName()
 }
 
 PseudoElement::PseudoElement(Element& host, PseudoElementType pseudoElementType)
-    : Element(pseudoElementTagName(), host.document(), { TypeFlag::IsPseudoElementOrSpecialInternalNode })
+    : Element(pseudoElementTagName(), protect(host.document()), { TypeFlag::IsPseudoElementOrSpecialInternalNode })
     , m_hostElement(host)
     , m_pseudoElementType(pseudoElementType)
 {

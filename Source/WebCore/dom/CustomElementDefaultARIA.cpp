@@ -119,7 +119,7 @@ std::optional<Vector<Ref<Element>>> CustomElementDefaultARIA::elementsForAttribu
         if (thisElement.isInTreeScope()) {
             SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
             result = WTF::compactMap(idList, [&](auto& id) {
-                RefPtr elementForId = thisElement.treeScope().getElementById(id);
+                RefPtr elementForId = protect(thisElement.treeScope())->getElementById(id);
                 return elementForId ? elementForId->resolveReferenceTarget() : nullptr;
             });
         }

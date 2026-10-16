@@ -249,7 +249,7 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message, Com
         if (channel.m_isClosed || !channel.scriptExecutionContext())
             return;
 
-        auto* globalObject = channel.scriptExecutionContext()->globalObject();
+        auto* globalObject = protect(channel.scriptExecutionContext())->globalObject();
         if (!globalObject)
             return;
 

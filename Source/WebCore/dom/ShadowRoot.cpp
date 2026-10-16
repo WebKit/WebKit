@@ -62,7 +62,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ShadowRoot);
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t flagsAndModes[3];
     WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
-    void* shadowIncludingRoot;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> shadowIncludingRoot;
     void* styleSheetList;
     void* styleScope;
     void* slotAssignment;

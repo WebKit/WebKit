@@ -13,28 +13,17 @@ StyleBuilderGenerated.cpp
 [ macOS ] css/query/MediaQueryEvaluator.cpp
 [ macOS ] css/typedom/ComputedStylePropertyMapReadOnly.cpp
 [ macOS ] css/typedom/InlineStylePropertyMap.cpp
-[ macOS ] dom/ActiveDOMObject.cpp
 dom/Attr.cpp
-[ macOS ] dom/BroadcastChannel.cpp
 [ macOS ] dom/ComposedTreeIterator.h
 dom/Document.cpp
 dom/Element.cpp
-[ macOS ] dom/ElementTextDirection.cpp
 [ macOS ] dom/EventLoop.cpp
-[ macOS ] dom/EventPath.cpp
-[ macOS ] dom/EventSender.h
-[ macOS ] dom/ExtensionStyleSheets.cpp
 [ macOS ] dom/InlineStyleSheetOwner.cpp
 [ macOS ] dom/MutationObserver.cpp
 dom/PendingScript.cpp
-[ macOS ] dom/ProcessingInstruction.cpp
-[ macOS ] dom/PseudoElement.cpp
 [ macOS ] dom/Range.cpp
 [ macOS ] dom/ScriptElement.cpp
-[ macOS ] dom/ScriptExecutionContextInlines.h
-[ macOS ] dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
-[ macOS ] dom/StyledElement.cpp
 [ macOS ] dom/ViewTransition.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp

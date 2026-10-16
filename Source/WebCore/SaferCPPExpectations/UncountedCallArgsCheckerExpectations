@@ -18,30 +18,16 @@ StyleChangedAnimatablePropertiesGenerated.cpp
 [ macOS ] css/typedom/ComputedStylePropertyMapReadOnly.cpp
 [ macOS ] css/typedom/DeclaredStylePropertyMap.cpp
 [ macOS ] css/typedom/InlineStylePropertyMap.cpp
-[ macOS ] dom/AbortSignal.cpp
-[ macOS ] dom/ActiveDOMObject.cpp
 dom/Attr.cpp
 [ macOS ] dom/BroadcastChannel.cpp
 [ macOS ] dom/ComposedTreeIterator.h
 [ macOS ] dom/ContainerNode.cpp
-[ macOS ] dom/CustomElementDefaultARIA.cpp
 dom/Document.cpp
 dom/Element.cpp
-[ macOS ] dom/ElementTextDirection.cpp
 [ macOS ] dom/EventPath.cpp
-[ macOS ] dom/EventSender.h
-[ macOS ] dom/EventTarget.cpp
-[ macOS ] dom/ExtensionStyleSheets.cpp
 [ macOS ] dom/InlineStyleSheetOwner.cpp
-[ macOS ] dom/MessageEvent.cpp
 [ macOS ] dom/MutationObserver.cpp
-[ macOS ] dom/PseudoElement.cpp
-[ macOS ] dom/ScriptElement.cpp
-[ macOS ] dom/ScriptExecutionContextInlines.h
-[ macOS ] dom/SecurityContext.cpp
-[ macOS ] dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
-[ macOS ] dom/StyledElement.cpp
 [ macOS ] dom/ViewTransition.cpp
 rendering/BackgroundPainter.cpp
 [ iOS ] rendering/BorderPainter.cpp

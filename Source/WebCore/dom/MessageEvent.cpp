@@ -81,7 +81,7 @@ inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, RefPt
 auto MessageEvent::create(JSC::JSGlobalObject& globalObject, Ref<SerializedScriptValue>&& data, RefPtr<SecurityOrigin>&& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<Ref<MessagePort>>&& ports) -> MessageEventWithStrongData
 {
     auto& vm = globalObject.vm();
-    Locker<JSC::JSLock> locker(vm.apiLock());
+    JSC::JSLockHolder locker(vm);
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     bool didFail = false;

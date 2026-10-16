@@ -1,7 +1,6 @@
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-[ macOS ] dom/ShadowRoot.h
 dom/TreeScope.h
 layout/formattingContexts/inline/InlineItemsBuilder.h
 rendering/RenderLayer.h

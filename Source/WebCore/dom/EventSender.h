@@ -133,7 +133,7 @@ template<typename T, typename WeakPtrImpl> void EventSender<T, WeakPtrImpl>::dis
     for (auto& [weakSender, eventType] : m_dispatchingList) {
         if (!weakSender)
             continue;
-        auto sender = std::exchange(weakSender, nullptr);
+        RefPtr sender = std::exchange(weakSender, nullptr);
         if (!page || sender->document().page() == page)
             sender->dispatchPendingEvent(this, eventType);
         else

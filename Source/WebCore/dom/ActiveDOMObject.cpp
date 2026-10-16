@@ -57,17 +57,17 @@ inline ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* context, Checked
 }
 
 ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
-    : ActiveDOMObject(suitableScriptExecutionContext(scriptExecutionContext), CheckedScriptExecutionContext)
+    : ActiveDOMObject(protect(suitableScriptExecutionContext(scriptExecutionContext)), CheckedScriptExecutionContext)
 {
 }
 
 ActiveDOMObject::ActiveDOMObject(Document* document)
-    : ActiveDOMObject(document ? &document->contextDocument() : nullptr, CheckedScriptExecutionContext)
+    : ActiveDOMObject(protect(document ? &document->contextDocument() : nullptr), CheckedScriptExecutionContext)
 {
 }
 
 ActiveDOMObject::ActiveDOMObject(Document& document)
-    : ActiveDOMObject(&document.contextDocument(), CheckedScriptExecutionContext)
+    : ActiveDOMObject(protect(&document.contextDocument()), CheckedScriptExecutionContext)
 {
 }
 
