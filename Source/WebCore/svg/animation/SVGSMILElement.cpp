@@ -363,7 +363,7 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
         auto seconds = parseNumber(secondsString);
         if (!hours || !minutes || *minutes > 59 || !seconds || *seconds >= 60)
             return SMILTime::unresolved();
-        result = *hours * 60 * 60 + *minutes * 60 + *seconds;
+        result = static_cast<double>(*hours) * 60 * 60 + *minutes * 60 + *seconds;
     } else if (doublePointOne == 2 && doublePointTwo == notFound && parse.length() >= 5) {
         // Partial-clock-value: Minutes ":" Seconds ("." Fraction)?
         auto minutes = parseInteger<uint8_t>(parse.left(2));
