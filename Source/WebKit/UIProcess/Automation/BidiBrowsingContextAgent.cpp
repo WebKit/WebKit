@@ -242,8 +242,7 @@ void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsing
             if (RefPtr handleValue = element->getValue("handle"_s))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(handleValue->asString().isNull(), InvalidParameter);
 
-            // FIXME: resolve shared references once the BiDi script module supports node serialization.
-            // Until then, no shared reference can name a known node. <https://webkit.org/b/323423>
+            // FIXME: Resolve the clip element's sharedId with WebAutomationSession::nodeHandleForSharedReference. https://bugs.webkit.org/show_bug.cgi?id=323423
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(NodeNotFound);
         } else if (clipType == "box"_s) {
             for (auto key : { "x"_s, "y"_s, "width"_s, "height"_s }) {

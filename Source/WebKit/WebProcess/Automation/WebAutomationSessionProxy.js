@@ -25,9 +25,52 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, openOrClosedShadowRoot) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
+
+const reflectApply = Reflect.apply;
+const objectDefineProperty = Object.defineProperty;
+const objectHasOwn = Object.hasOwn;
+const arrayIsArray = Array.isArray;
+const MapConstructor = Map;
+const mapPrototypeGet = Map.prototype.get;
+const mapPrototypeHas = Map.prototype.has;
+const mapPrototypeSet = Map.prototype.set;
+const SetConstructor = Set;
+const setPrototypeAdd = Set.prototype.add;
+const PromiseConstructor = Promise;
+const promisePrototypeThen = Promise.prototype.then;
+const BigIntConstructor = BigInt;
+const RegExpConstructor = RegExp;
+const regExpPrototypeExec = RegExp.prototype.exec;
+const DateConstructor = Date;
+const datePrototypeGetTime = Date.prototype.getTime;
+const StringConstructor = String;
+const stringPrototypeStartsWith = String.prototype.startsWith;
+const stringPrototypeIndexOf = String.prototype.indexOf;
+const stringPrototypeSlice = String.prototype.slice;
+const jsonStringify = JSON.stringify;
+
+// https://tc39.es/ecma262/#sec-date-time-string-format
+const dateTimeStringFormat = /^(?!-000000)(?:\d{4}|[+-]\d{6})(?:-\d{2}(?:-\d{2})?)?(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
+
+const bidiProtocolErrorMarker = Symbol("bidiProtocolError");
+
+function bidiProtocolError(name, message)
+{
+    return { name, message, [bidiProtocolErrorMarker]: true };
+}
+
+function invalidBidiArgument(message)
+{
+    return bidiProtocolError("InvalidParameter", message);
+}
+
+function createDataProperty(object, key, value)
+{
+    objectDefineProperty(object, key, { __proto__: null, value, writable: true, enumerable: true, configurable: true });
+}
 
 let AutomationSessionProxy = class AutomationSessionProxy
 {
@@ -47,11 +90,60 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
-    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiScript(expression, awaitPromise, serializationOptions, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
-            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
-            .catch(error => { resultCallback(frameID, callbackID, error); });
+        // https://w3c.github.io/webdriver-bidi/#command-script-evaluate
+        let finish = this._createBidiScriptFinisher(frameID, callbackID, resultCallback, callbackTimeout);
+
+        let result;
+        try {
+            result = evaluate(expression);
+        } catch (error) {
+            this._finishBidiScriptWithException(error, finish);
+            return;
+        }
+
+        this._finishBidiScriptWithResult(result, awaitPromise, serializationOptions, finish);
+    }
+
+    callBidiFunction(functionDeclaration, argumentLocalValues, thisLocalValue, awaitPromise, serializationOptions, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        // https://w3c.github.io/webdriver-bidi/#command-script-callFunction
+        let finish = this._createBidiScriptFinisher(frameID, callbackID, resultCallback, callbackTimeout);
+
+        let argumentValues;
+        let thisValue = null;
+        try {
+            argumentValues = this._deserializeBidiList(argumentLocalValues);
+            if (thisLocalValue !== undefined)
+                thisValue = this._deserializeBidiLocalValue(thisLocalValue);
+        } catch (error) {
+            finish(this._bidiDeserializationError(error));
+            return;
+        }
+
+        let functionValue;
+        try {
+            functionValue = evaluate(this._parenthesizedFunctionDeclaration(functionDeclaration));
+        } catch (error) {
+            this._finishBidiScriptWithException(error, finish);
+            return;
+        }
+
+        if (typeof functionValue !== "function") {
+            finish(invalidBidiArgument("functionDeclaration did not evaluate to a function"));
+            return;
+        }
+
+        let result;
+        try {
+            result = reflectApply(functionValue, thisValue, argumentValues);
+        } catch (error) {
+            this._finishBidiScriptWithException(error, finish);
+            return;
+        }
+
+        this._finishBidiScriptWithResult(result, awaitPromise, serializationOptions, finish);
     }
 
     nodeForIdentifier(identifier)
@@ -127,53 +219,266 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    _executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
+    _createBidiScriptFinisher(frameID, callbackID, resultCallback, callbackTimeout)
     {
-        let timeoutPromise;
+        let finished = false;
         let timeoutIdentifier = 0;
+        let finish = result => {
+            if (finished)
+                return;
+            finished = true;
+            if (timeoutIdentifier)
+                clearTimeout(timeoutIdentifier);
+            resultCallback(frameID, callbackID, result);
+        };
+
         if (callbackTimeout >= 0) {
-            timeoutPromise = new Promise((resolve, reject) => {
-                timeoutIdentifier = setTimeout(() => {
-                    reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
-                }, callbackTimeout);
-            });
+            timeoutIdentifier = setTimeout(() => {
+                finish(bidiProtocolError("JavaScriptTimeout", `script timed out after ${callbackTimeout}ms`));
+            }, callbackTimeout);
         }
 
-        let promise = new Promise((resolve, reject) => {
-            try {
-                // Execute expression using globalThis.eval pattern (like original implementation).
-                let result = globalThis.eval(expression);
+        return finish;
+    }
 
-                if (awaitPromise && result && typeof result.then === "function") {
-                    // Handle promises for awaitPromise: true.
-                    result.then(
-                        value => {
-                            let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
-                            resolve({ success: true, result: serializedValue });
-                        },
-                        error => {
-                            reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
-                        }
-                    );
-                } else {
-                    // Handle synchronous results or non-promises.
-                    let serializedValue = this.serializeBidiRemoteValue(result, maxObjectDepth);
-                    resolve({ success: true, result: serializedValue });
-                }
-            } catch (error) {
-                reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+    _finishBidiScriptWithResult(result, awaitPromise, serializationOptions, finish)
+    {
+        try {
+            if (awaitPromise && result instanceof PromiseConstructor) {
+                reflectApply(promisePrototypeThen, result, [
+                    value => { this._finishBidiScriptWithValue(value, serializationOptions, finish); },
+                    error => { this._finishBidiScriptWithException(error, finish); },
+                ]);
+                return;
             }
-        });
+        } catch (error) {
+            this._finishBidiScriptWithException(error, finish);
+            return;
+        }
 
-        let promises = [promise];
-        if (timeoutPromise)
-            promises.push(timeoutPromise);
-        return Promise.race(promises)
-            .finally(() => {
-                if (timeoutIdentifier) {
-                    clearTimeout(timeoutIdentifier);
-                }
-            });
+        this._finishBidiScriptWithValue(result, serializationOptions, finish);
+    }
+
+    _finishBidiScriptWithValue(value, serializationOptions, finish)
+    {
+        let envelope;
+        try {
+            envelope = jsonStringify({ success: true, result: this.serializeBidiRemoteValue(value, serializationOptions) });
+        } catch (error) {
+            this._finishBidiScriptWithException(error, finish);
+            return;
+        }
+
+        finish(envelope);
+    }
+
+    _finishBidiScriptWithException(error, finish)
+    {
+        let envelope;
+        try {
+            envelope = jsonStringify({ success: false, error: this._bidiExceptionDetails(error) });
+        } catch {
+            finish(bidiProtocolError("InternalError", "Failed to serialize the script exception"));
+            return;
+        }
+
+        finish(envelope);
+    }
+
+    _bidiExceptionDetails(error)
+    {
+        let details = { name: "Error", message: "", stack: undefined };
+        try {
+            if (error !== null && (typeof error === "object" || typeof error === "function")) {
+                let name = error.name;
+                let message = error.message;
+                let stack = error.stack;
+                if (typeof name === "string")
+                    details.name = name;
+                details.message = typeof message === "string" ? message : StringConstructor(error);
+                if (typeof stack === "string")
+                    details.stack = stack;
+            } else
+                details.message = StringConstructor(error);
+        } catch {
+        }
+        return details;
+    }
+
+    _bidiDeserializationError(error)
+    {
+        try {
+            if (error !== null && typeof error === "object" && objectHasOwn(error, bidiProtocolErrorMarker))
+                return error;
+        } catch {
+        }
+        return invalidBidiArgument("LocalValue could not be deserialized");
+    }
+
+    _parenthesizedFunctionDeclaration(functionDeclaration)
+    {
+        // https://w3c.github.io/webdriver-bidi/#evaluate-function-body
+        let prefixLength = 0;
+        while (reflectApply(stringPrototypeStartsWith, functionDeclaration, ["//", prefixLength])) {
+            let lineEnd = reflectApply(stringPrototypeIndexOf, functionDeclaration, ["\n", prefixLength]);
+            if (lineEnd === -1)
+                break;
+            prefixLength = lineEnd + 1;
+        }
+
+        let prefix = reflectApply(stringPrototypeSlice, functionDeclaration, [0, prefixLength]);
+        let body = reflectApply(stringPrototypeSlice, functionDeclaration, [prefixLength]);
+        return prefix + "(" + body + ")";
+    }
+
+    _deserializeBidiLocalValue(localValue)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-local-value
+        if (localValue === null || typeof localValue !== "object" || arrayIsArray(localValue))
+            throw invalidBidiArgument("LocalValue must be an object");
+
+        if (objectHasOwn(localValue, "sharedId") || objectHasOwn(localValue, "handle"))
+            return this._deserializeBidiRemoteReference(localValue);
+
+        let type = objectHasOwn(localValue, "type") ? localValue.type : undefined;
+        let value = objectHasOwn(localValue, "value") ? localValue.value : undefined;
+
+        switch (type) {
+        case "undefined":
+            return undefined;
+        case "null":
+            return null;
+        case "string":
+            if (typeof value === "string")
+                return value;
+            break;
+        case "number":
+            if (typeof value === "number")
+                return value;
+            switch (value) {
+            case "NaN":
+                return NaN;
+            case "-0":
+                return -0;
+            case "Infinity":
+                return Infinity;
+            case "-Infinity":
+                return -Infinity;
+            }
+            break;
+        case "boolean":
+            if (typeof value === "boolean")
+                return value;
+            break;
+        case "bigint":
+            if (typeof value !== "string")
+                break;
+            try {
+                return BigIntConstructor(value);
+            } catch {
+                throw invalidBidiArgument("Invalid bigint LocalValue");
+            }
+        case "date": {
+            if (typeof value !== "string" || reflectApply(regExpPrototypeExec, dateTimeStringFormat, [value]) === null)
+                break;
+            let date = new DateConstructor(value);
+            let time = reflectApply(datePrototypeGetTime, date, []);
+            if (time !== time)
+                break;
+            return date;
+        }
+        case "regexp": {
+            if (value === null || typeof value !== "object" || arrayIsArray(value))
+                break;
+            let pattern = objectHasOwn(value, "pattern") ? value.pattern : undefined;
+            let flags = objectHasOwn(value, "flags") ? value.flags : undefined;
+            if (typeof pattern !== "string" || (flags !== undefined && typeof flags !== "string"))
+                break;
+            try {
+                return new RegExpConstructor(pattern, flags);
+            } catch {
+                throw invalidBidiArgument("Invalid regexp LocalValue");
+            }
+        }
+        case "array":
+            return this._deserializeBidiList(value);
+        case "set": {
+            let items = this._deserializeBidiList(value);
+            let set = new SetConstructor;
+            for (let i = 0; i < items.length; ++i)
+                reflectApply(setPrototypeAdd, set, [items[i]]);
+            return set;
+        }
+        case "object": {
+            let object = {};
+            this._deserializeBidiMapping(value, (key, entryValue) => { createDataProperty(object, key, entryValue); });
+            return object;
+        }
+        case "map": {
+            let map = new MapConstructor;
+            this._deserializeBidiMapping(value, (key, entryValue) => { reflectApply(mapPrototypeSet, map, [key, entryValue]); });
+            return map;
+        }
+        case "channel":
+            if (value === null || typeof value !== "object" || arrayIsArray(value) || !objectHasOwn(value, "channel") || typeof value.channel !== "string")
+                break;
+            // FIXME: Create channels for ChannelValue arguments. https://bugs.webkit.org/show_bug.cgi?id=288057
+            throw bidiProtocolError("NotImplemented", "ChannelValue is not supported");
+        }
+
+        throw invalidBidiArgument(typeof type === "string" ? "Invalid LocalValue of type \"" + type + "\"" : "LocalValue has no valid type");
+    }
+
+    _deserializeBidiRemoteReference(remoteReference)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-remote-reference
+        let hasSharedId = objectHasOwn(remoteReference, "sharedId");
+        if (hasSharedId && typeof remoteReference.sharedId !== "string")
+            throw invalidBidiArgument("sharedId must be a string");
+        if (objectHasOwn(remoteReference, "handle") && typeof remoteReference.handle !== "string")
+            throw invalidBidiArgument("handle must be a string");
+
+        if (hasSharedId)
+            return this._deserializeBidiSharedReference(remoteReference.sharedId);
+
+        // FIXME: Create handles for resultOwnership "root". https://bugs.webkit.org/show_bug.cgi?id=288059
+        throw bidiProtocolError("NotImplemented", "Handle is not supported");
+    }
+
+    _deserializeBidiSharedReference(sharedId)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-shared-reference
+        let node = reflectApply(mapPrototypeGet, this._idToNodeMap, [sharedId]);
+        if (!node || (node !== window.document && node.ownerDocument !== window.document))
+            throw bidiProtocolError("NodeNotFound", "Node was not found");
+        return node;
+    }
+
+    _deserializeBidiList(list)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-value-list
+        if (!arrayIsArray(list))
+            throw invalidBidiArgument("List LocalValue must be an array");
+
+        let values = [];
+        for (let i = 0; i < list.length; ++i)
+            createDataProperty(values, i, this._deserializeBidiLocalValue(list[i]));
+        return values;
+    }
+
+    _deserializeBidiMapping(mapping, addEntry)
+    {
+        // https://w3c.github.io/webdriver-bidi/#deserialize-key-value-list
+        if (!arrayIsArray(mapping))
+            throw invalidBidiArgument("Mapping LocalValue must be an array");
+
+        for (let i = 0; i < mapping.length; ++i) {
+            let entry = mapping[i];
+            if (!arrayIsArray(entry) || entry.length !== 2)
+                throw invalidBidiArgument("Mapping LocalValue entries must have two items");
+            let key = typeof entry[0] === "string" ? entry[0] : this._deserializeBidiLocalValue(entry[0]);
+            addEntry(key, this._deserializeBidiLocalValue(entry[1]));
+        }
     }
 
     _jsonParse(string)
@@ -337,9 +642,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
-    serializeBidiRemoteValue(value, maxObjectDepth = 1, depth = 0, visitedObjects = new Set())
+    serializeBidiRemoteValue(value, serializationOptions, serializationInternalMap = new MapConstructor)
     {
-        // Handle primitives.
+        // https://w3c.github.io/webdriver-bidi/#serialize-as-a-remote-value
         if (value === null) return { type: "null" };
         if (value === undefined) return { type: "undefined" };
         if (typeof value === "boolean") return { type: "boolean", value: value };
@@ -371,22 +676,24 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (value instanceof Promise)
                 return { type: "promise" };
 
+            let knownObject = reflectApply(mapPrototypeHas, serializationInternalMap, [value]);
+
             // Handle collection types with serialization.
+            if (Array.isArray(value))
+                return this._serializeBidiArrayLike("array", value, knownObject, serializationOptions, serializationInternalMap);
             if (value instanceof Map) {
-                let entries = [];
-                for (let [k, v] of value.entries()) {
-                    entries.push({
-                        key: this.serializeBidiRemoteValue(k, maxObjectDepth, depth + 1, visitedObjects),
-                        value: this.serializeBidiRemoteValue(v, maxObjectDepth, depth + 1, visitedObjects)
-                    });
-                }
-                return { type: "map", value: entries };
+                let remoteValue = { type: "map" };
+                this._setInternalIdsIfNeeded(serializationInternalMap, remoteValue, value);
+                if (!knownObject && serializationOptions.maxObjectDepth !== 0)
+                    remoteValue.value = this._serializeBidiMapping(value.entries(), serializationOptions, serializationInternalMap);
+                return remoteValue;
             }
             if (value instanceof Set) {
-                let items = [];
-                for (let v of value.values())
-                    items.push(this.serializeBidiRemoteValue(v, maxObjectDepth, depth + 1, visitedObjects));
-                return { type: "set", value: items };
+                let remoteValue = { type: "set" };
+                this._setInternalIdsIfNeeded(serializationInternalMap, remoteValue, value);
+                if (!knownObject && serializationOptions.maxObjectDepth !== 0)
+                    remoteValue.value = this._serializeBidiList(value.values(), serializationOptions, serializationInternalMap);
+                return remoteValue;
             }
 
             // Handle weak collections and ArrayBuffer types.
@@ -399,40 +706,140 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (ArrayBuffer.isView(value))
                 return { type: "typedarray" };
 
-            // Check for cyclic references.
-            if (visitedObjects.has(value))
-                return { type: "object", value: {} };
+            if (value instanceof NodeList)
+                return this._serializeBidiArrayLike("nodelist", value, knownObject, serializationOptions, serializationInternalMap);
+            if (value instanceof HTMLCollection)
+                return this._serializeBidiArrayLike("htmlcollection", value, knownObject, serializationOptions, serializationInternalMap);
+            if (value instanceof Node)
+                return this._serializeBidiNode(value, knownObject, serializationOptions, serializationInternalMap);
 
-            // Check depth limit.
-            if (depth >= maxObjectDepth)
-                return { type: "object", value: {} };
-
-            visitedObjects.add(value);
-
-            try {
-                if (Array.isArray(value)) {
-                    let serializedArray = [];
-                    for (let i = 0; i < value.length; i++) {
-                        serializedArray[i] = this.serializeBidiRemoteValue(value[i], maxObjectDepth, depth + 1, visitedObjects);
-                    }
-                    return { type: "array", value: serializedArray };
-                } else {
-                    // Deterministic key ordering for plain objects.
-                    let serializedObject = {};
-                    let keys = Object.keys(value).sort();
-                    for (let i = 0; i < keys.length; ++i) {
-                        let key = keys[i];
-                        serializedObject[key] = this.serializeBidiRemoteValue(value[key], maxObjectDepth, depth + 1, visitedObjects);
-                    }
-                    return { type: "object", value: serializedObject };
-                }
-            } finally {
-                visitedObjects.delete(value);
+            let remoteValue = { type: "object" };
+            this._setInternalIdsIfNeeded(serializationInternalMap, remoteValue, value);
+            if (!knownObject && serializationOptions.maxObjectDepth !== 0) {
+                let entries = [];
+                for (let key of Object.keys(value))
+                    entries.push([key, value[key]]);
+                remoteValue.value = this._serializeBidiMapping(entries, serializationOptions, serializationInternalMap);
             }
+            return remoteValue;
         }
 
         // Fallback for unknown types.
         return { type: "undefined" };
+    }
+
+    _setInternalIdsIfNeeded(serializationInternalMap, remoteValue, value)
+    {
+        // https://w3c.github.io/webdriver-bidi/#set-internal-ids-if-needed
+        if (!reflectApply(mapPrototypeHas, serializationInternalMap, [value])) {
+            reflectApply(mapPrototypeSet, serializationInternalMap, [value, remoteValue]);
+            return;
+        }
+
+        let previouslySerializedRemoteValue = reflectApply(mapPrototypeGet, serializationInternalMap, [value]);
+        if (!objectHasOwn(previouslySerializedRemoteValue, "internalId"))
+            previouslySerializedRemoteValue.internalId = createUUID();
+        remoteValue.internalId = previouslySerializedRemoteValue.internalId;
+    }
+
+    _serializeBidiArrayLike(type, value, knownObject, serializationOptions, serializationInternalMap)
+    {
+        // https://w3c.github.io/webdriver-bidi/#serialize-an-array-like
+        let remoteValue = { type };
+        this._setInternalIdsIfNeeded(serializationInternalMap, remoteValue, value);
+        if (!knownObject && serializationOptions.maxObjectDepth !== 0) {
+            let items = [];
+            for (let i = 0; i < value.length; ++i)
+                items.push(value[i]);
+            remoteValue.value = this._serializeBidiList(items, serializationOptions, serializationInternalMap);
+        }
+        return remoteValue;
+    }
+
+    _serializeBidiList(iterable, serializationOptions, serializationInternalMap)
+    {
+        // https://w3c.github.io/webdriver-bidi/#serialize-as-a-list
+        let childSerializationOptions = this._decrementedSerializationOptions(serializationOptions, "maxObjectDepth");
+        let serialized = [];
+        for (let childValue of iterable)
+            serialized.push(this.serializeBidiRemoteValue(childValue, childSerializationOptions, serializationInternalMap));
+        return serialized;
+    }
+
+    _serializeBidiMapping(iterable, serializationOptions, serializationInternalMap)
+    {
+        // https://w3c.github.io/webdriver-bidi/#serialize-as-a-mapping
+        let childSerializationOptions = this._decrementedSerializationOptions(serializationOptions, "maxObjectDepth");
+        let serialized = [];
+        for (let [key, value] of iterable) {
+            let serializedKey = typeof key === "string" ? key : this.serializeBidiRemoteValue(key, childSerializationOptions, serializationInternalMap);
+            let serializedValue = this.serializeBidiRemoteValue(value, childSerializationOptions, serializationInternalMap);
+            serialized.push([serializedKey, serializedValue]);
+        }
+        return serialized;
+    }
+
+    _serializeBidiNode(node, knownObject, serializationOptions, serializationInternalMap)
+    {
+        let remoteValue = { type: "node" };
+
+        // https://w3c.github.io/webdriver-bidi/#get-shared-id-for-a-node
+        let nodeDocument = node.nodeType === Node.DOCUMENT_NODE ? node : node.ownerDocument;
+        if (nodeDocument && nodeDocument.defaultView)
+            remoteValue.sharedId = this._identifierForNode(node);
+
+        this._setInternalIdsIfNeeded(serializationInternalMap, remoteValue, node);
+        if (knownObject)
+            return remoteValue;
+
+        let serialized = { nodeType: node.nodeType };
+        let nodeValue = node.nodeValue;
+        if (nodeValue !== null)
+            serialized.nodeValue = nodeValue;
+        if (node instanceof Element || node instanceof Attr) {
+            serialized.localName = node.localName;
+            serialized.namespaceURI = node.namespaceURI;
+        }
+
+        let childNodes = node.childNodes;
+        serialized.childNodeCount = childNodes.length;
+
+        let isShadowRoot = node instanceof ShadowRoot;
+        let includeShadowTree = serializationOptions.includeShadowTree;
+        let omitChildren = serializationOptions.maxDomDepth === 0
+            || (isShadowRoot && includeShadowTree === "none")
+            || (isShadowRoot && includeShadowTree === "open" && node.mode === "closed");
+        if (!omitChildren) {
+            let childSerializationOptions = this._decrementedSerializationOptions(serializationOptions, "maxDomDepth");
+            let children = [];
+            for (let i = 0; i < childNodes.length; ++i)
+                children.push(this.serializeBidiRemoteValue(childNodes[i], childSerializationOptions, serializationInternalMap));
+            serialized.children = children;
+        }
+
+        if (node instanceof Element) {
+            let attributes = Object.create(null);
+            for (let attribute of node.attributes)
+                attributes[attribute.name] = attribute.value;
+            serialized.attributes = attributes;
+
+            let shadowRoot = openOrClosedShadowRoot(node);
+            serialized.shadowRoot = shadowRoot ? this.serializeBidiRemoteValue(shadowRoot, serializationOptions, serializationInternalMap) : null;
+        }
+
+        if (isShadowRoot)
+            serialized.mode = node.mode;
+
+        remoteValue.value = serialized;
+        return remoteValue;
+    }
+
+    _decrementedSerializationOptions(serializationOptions, depthName)
+    {
+        let childSerializationOptions = { ...serializationOptions };
+        if (childSerializationOptions[depthName] !== null)
+            --childSerializationOptions[depthName];
+        return childSerializationOptions;
     }
 };
 
