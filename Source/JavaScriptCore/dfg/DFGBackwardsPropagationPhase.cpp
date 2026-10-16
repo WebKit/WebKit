@@ -561,6 +561,7 @@ private:
             break;
         }
 
+        case Branch:
         case LogicalNot: {
             // The result is a boolean, so how it is used says nothing about how the operand is
             // observed. The operand is compared against zero, so truncation is observable but -0 is not.
