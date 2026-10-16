@@ -2038,14 +2038,14 @@ static bool inlineBackgroundCoversCaret(const RenderBoxModelObject& inlineBox, c
     auto logicalCaretRect = isHorizontal ? caretRect : caretRect.transposedRect();
     auto caretMiddleAlongBlockAxis = logicalCaretRect.y() + logicalCaretRect.height() / 2;
 
-    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(inlineBox); box; box.traverseInlineBoxLineRightward()) {
-        auto lineRect = LayoutRect { LineSelection::logicalRect(*box->lineBox()) };
+    for (auto& box : InlineIterator::inlineBoxesFor(inlineBox)) {
+        auto lineRect = LayoutRect { LineSelection::logicalRect(box.lineBox()) };
         lineRect.move(logicalOffset);
         if (caretMiddleAlongBlockAxis < lineRect.y())
             break;
         if (caretMiddleAlongBlockAxis >= lineRect.maxY())
             continue;
-        auto boxRect = LayoutRect { box->logicalRectIgnoringInlineDirection() };
+        auto boxRect = LayoutRect { box.logicalRectIgnoringInlineDirection() };
         boxRect.move(logicalOffset);
         if (logicalCaretRect.x() >= boxRect.x() && logicalCaretRect.maxX() <= boxRect.maxX())
             return true;

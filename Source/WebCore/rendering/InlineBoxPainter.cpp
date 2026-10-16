@@ -50,7 +50,7 @@
 namespace WebCore {
 
 InlineBoxPainter::InlineBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
+    : InlineBoxPainter(InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
 {
 }
 
@@ -59,7 +59,7 @@ InlineBoxPainter::InlineBoxPainter(const InlineIterator::InlineBox& inlineBox, P
     , m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
     , m_renderer(m_inlineBox.renderer())
-    , m_isFirstLineBox(m_inlineBox.lineBox()->isFirst())
+    , m_isFirstLineBox(m_inlineBox.lineBox().isFirst())
     , m_isRootInlineBox(m_inlineBox.isRootInlineBox())
     , m_isHorizontal(m_inlineBox.isHorizontal())
 {

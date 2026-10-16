@@ -1085,8 +1085,8 @@ PositionWithAffinity RenderReplaced::positionForPoint(const LayoutPoint& point, 
     auto [top, bottom] = [&]() -> std::pair<float, float> {
         if (auto run = InlineIterator::boxFor(*this)) {
             auto lineBox = run->lineBox();
-            auto lineContentTop = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*lineBox), lineBox->contentLogicalTop()) };
-            return std::make_pair(lineContentTop, LineSelection::logicalBottom(*lineBox));
+            auto lineContentTop = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(lineBox), lineBox.contentLogicalTop()) };
+            return std::make_pair(lineContentTop, LineSelection::logicalBottom(lineBox));
         }
         return std::make_pair(logicalTop(), logicalBottom());
     }();

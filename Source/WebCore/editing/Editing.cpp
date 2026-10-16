@@ -1341,7 +1341,7 @@ static void forEachRenderedBoxBetween(const RenderedPosition& first, const Rende
         return;
     }
 
-    if (first.lineBox().atEnd()) {
+    if (!first.lineBox()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -1425,12 +1425,12 @@ static std::optional<SimpleRange> makeVisuallyContiguousIfNeeded(const SimpleRan
     auto [start, end] = positionsForRange(range);
     auto firstLineDirection = TextDirection::LTR;
     RenderedPosition renderedStart { start };
-    if (renderedStart.isNull() || renderedStart.lineBox().atEnd())
+    if (renderedStart.isNull() || !renderedStart.lineBox())
         return std::nullopt;
 
     auto lastLineDirection = TextDirection::LTR;
     RenderedPosition renderedEnd { end };
-    if (renderedEnd.isNull() || renderedEnd.lineBox().atEnd())
+    if (renderedEnd.isNull() || !renderedEnd.lineBox())
         return std::nullopt;
 
     if (renderedStart.box() == renderedEnd.box())

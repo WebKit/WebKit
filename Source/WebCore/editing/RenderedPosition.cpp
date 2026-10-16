@@ -145,7 +145,7 @@ RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevel
     do {
         auto prev = box->nextLineLeftwardOnLineIgnoringLineBreak();
         if (!prev || prev->bidiLevel() < bidiLevelOfRun)
-            return RenderedPosition(&box->renderer(), box, box->leftmostCaretOffset());
+            return RenderedPosition(protect(box->renderer()).ptr(), box, box->leftmostCaretOffset());
         box = prev;
     } while (box);
 
@@ -162,7 +162,7 @@ RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLeve
     do {
         auto next = box->nextLineRightwardOnLineIgnoringLineBreak();
         if (!next || next->bidiLevel() < bidiLevelOfRun)
-            return RenderedPosition(&box->renderer(), box, box->rightmostCaretOffset());
+            return RenderedPosition(protect(box->renderer()).ptr(), box, box->rightmostCaretOffset());
         box = next;
     } while (box);
 

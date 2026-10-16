@@ -38,41 +38,8 @@
 namespace WebCore {
 namespace InlineIterator {
 
-BoxIterator::BoxIterator(const Box& run)
-    : m_box(run)
-{
-}
-
-bool BoxIterator::operator==(const BoxIterator& other) const
-{
-    if (atEnd() && other.atEnd())
-        return true;
-
-    return m_box.m_inlineContent == other.m_box.m_inlineContent && m_box.m_boxIndex == other.m_box.m_boxIndex;
-}
-
-bool BoxIterator::atEnd() const
-{
-    return m_box.atEnd();
-}
-
-BoxIterator& BoxIterator::traverseLineRightwardOnLine()
-{
-    m_box.traverseNextBoxOnLine();
-    return *this;
-}
-
-BoxIterator& BoxIterator::traverseLineRightwardOnLineSkippingChildren()
-{
-    m_box.traverseNextBoxOnLineSkippingChildren();
-    return *this;
-}
-
-BoxIterator& BoxIterator::traverseLineLeftwardOnLine()
-{
-    m_box.traversePreviousBoxOnLine();
-    return *this;
-}
+static_assert(std::ranges::bidirectional_range<LeafBoxRange> && std::ranges::common_range<LeafBoxRange> && std::ranges::view<LeafBoxRange> && std::ranges::borrowed_range<LeafBoxRange>);
+static_assert(std::ranges::bidirectional_range<BoxRange<BoxIterator>> && std::ranges::common_range<BoxRange<BoxIterator>> && std::ranges::view<BoxRange<BoxIterator>> && std::ranges::borrowed_range<BoxRange<BoxIterator>>);
 
 bool Box::isSVGText() const
 {
@@ -81,46 +48,49 @@ bool Box::isSVGText() const
 
 LeafBoxIterator Box::nextLineRightwardOnLine() const
 {
-    return LeafBoxIterator(*this).traverseLineRightwardOnLine();
+    return std::ranges::next(LeafBoxIterator { *this });
 }
 
 LeafBoxIterator Box::nextLineLeftwardOnLine() const
 {
-    return LeafBoxIterator(*this).traverseLineLeftwardOnLine();
+    return std::ranges::prev(LeafBoxIterator { *this });
 }
 
 LeafBoxIterator Box::nextLineRightwardOnLineIgnoringLineBreak() const
 {
-    return LeafBoxIterator(*this).traverseLineRightwardOnLineIgnoringLineBreak();
+    auto box = LeafBoxIterator { *this };
+    box.traverseLineRightwardOnLineIgnoringLineBreak();
+    return box;
 }
 
 LeafBoxIterator Box::nextLineLeftwardOnLineIgnoringLineBreak() const
 {
-    return LeafBoxIterator(*this).traverseLineLeftwardOnLineIgnoringLineBreak();
+    auto box = LeafBoxIterator { *this };
+    box.traverseLineLeftwardOnLineIgnoringLineBreak();
+    return box;
 }
 
 InlineBoxIterator Box::parentInlineBox() const
 {
     ASSERT(!atEnd());
 
+    if (isRootInlineBox())
+        return { };
+
     auto candidate = *this;
-
-    if (isRootInlineBox()) {
-        candidate.setAtEnd();
-        return { candidate };
-    }
-
     CheckedRef parentLayoutBox = displayBox().layoutBox().parent();
     do {
         candidate.traversePreviousBox();
     } while (!candidate.atEnd() && &candidate.displayBox().layoutBox() != parentLayoutBox.ptr());
 
-    ASSERT(candidate.atEnd() || candidate.displayBox().isInlineBox());
+    if (candidate.atEnd())
+        return { };
 
+    ASSERT(candidate.displayBox().isInlineBox());
     return { candidate };
 }
 
-LineBoxIterator Box::lineBox() const
+LineBox Box::lineBox() const
 {
     return lineBoxFor(*m_inlineContent, lineIndex());
 }
@@ -144,39 +114,6 @@ RenderObject::HighlightState Box::selectionState() const
     return renderer().selectionState();
 }
 
-LeafBoxIterator::LeafBoxIterator(const Box& run)
-    : BoxIterator(run)
-{
-}
-
-LeafBoxIterator& LeafBoxIterator::traverseLineRightwardOnLine()
-{
-    m_box.traverseNextLeafOnLine();
-    return *this;
-}
-
-LeafBoxIterator& LeafBoxIterator::traverseLineLeftwardOnLine()
-{
-    m_box.traversePreviousLeafOnLine();
-    return *this;
-}
-
-LeafBoxIterator& LeafBoxIterator::traverseLineRightwardOnLineIgnoringLineBreak()
-{
-    do {
-        traverseLineRightwardOnLine();
-    } while (!atEnd() && m_box.isLineBreak());
-    return *this;
-}
-
-LeafBoxIterator& LeafBoxIterator::traverseLineLeftwardOnLineIgnoringLineBreak()
-{
-    do {
-        traverseLineLeftwardOnLine();
-    } while (!atEnd() && m_box.isLineBreak());
-    return *this;
-}
-
 LeafBoxIterator boxFor(const RenderLineBreak& renderer)
 {
     if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderer))
@@ -191,9 +128,9 @@ LeafBoxIterator boxFor(const RenderBox& renderer)
     return { };
 }
 
-LeafBoxIterator boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
+Box boxFor(const LayoutIntegration::InlineContent& content, size_t boxIndex)
 {
-    return { Box { content, boxIndex } };
+    return { content, boxIndex };
 }
 
 }

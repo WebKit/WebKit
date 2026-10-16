@@ -652,13 +652,13 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
 {
     auto hitTestInlineBoxes = [&] {
         for (auto boxIterator = InlineIterator::lastBoxFor(*this); boxIterator; --boxIterator) {
-            auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(*boxIterator);
-            if (!textBox)
+            if (!boxIterator->isSVGText())
                 continue;
+            auto textBox = downcast<InlineIterator::SVGTextBox>(*boxIterator);
 
             PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
 
-            auto& renderer = textBox->renderer();
+            auto& renderer = textBox.renderer();
             if (!request.isVisibleForStyle(renderer.usedStyle()) && hitRules.requireVisible)
                 continue;
 
@@ -667,7 +667,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             if (!hitsStroke && !hitsFill)
                 continue;
 
-            auto rect = textBox->calculateBoundariesIncludingSVGTransform();
+            auto rect = textBox.calculateBoundariesIncludingSVGTransform();
             if (!locationInContainer.intersects(rect))
                 continue;
 
@@ -677,7 +677,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             float baseline = renderer.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
 
             AffineTransform fragmentTransform;
-            for (auto& fragment : textBox->textFragments()) {
+            for (auto& fragment : textBox.textFragments()) {
                 FloatQuad fragmentQuad(FloatRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height));
                 fragment.buildFragmentTransform(fragmentTransform);
                 if (!fragmentTransform.isIdentity())
@@ -848,8 +848,8 @@ void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint&
         while (!contextStack.isEmpty() && contextStack.last().renderer() != box->renderer().parent())
             contextStack.removeLast();
 
-        if (auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(*box)) {
-            SVGTextBoxPainter painter(textBox->inlineContent(), textBox->boxIndex(), paintInfo, paintOffset);
+        if (box->isSVGText()) {
+            SVGTextBoxPainter painter(box->inlineContent(), box->boxIndex(), paintInfo, paintOffset);
             painter.paint();
         } else {
             auto* renderer = dynamicDowncast<RenderElement>(box->renderer());

@@ -170,12 +170,12 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
     CheckedRef containingBlock = *renderer.containingBlock();
     auto isFlipped = containingBlock->writingMode().isBlockFlipped();
     Vector<LayoutRect> rects;
-    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(renderer); box; box.traverseInlineBoxLineRightward()) {
+    for (auto& box : InlineIterator::inlineBoxesFor(renderer)) {
         // Start with the inline box's own rect as the base, ensuring the outline
         // covers margins, paddings and borders of nested inline boxes.
-        auto inlineBoxLogicalTop = box->logicalTop();
-        auto inlineBoxLogicalBottom = box->logicalBottom();
-        auto baseRect = FloatRect { box->logicalLeftIgnoringInlineDirection(), inlineBoxLogicalTop, box->logicalWidth(), inlineBoxLogicalBottom - inlineBoxLogicalTop };
+        auto inlineBoxLogicalTop = box.logicalTop();
+        auto inlineBoxLogicalBottom = box.logicalBottom();
+        auto baseRect = FloatRect { box.logicalLeftIgnoringInlineDirection(), inlineBoxLogicalTop, box.logicalWidth(), inlineBoxLogicalBottom - inlineBoxLogicalTop };
 
         if (!isHorizontalWritingMode)
             baseRect = baseRect.transposedRect();
@@ -186,12 +186,12 @@ void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const La
         // Collect a rect for each leaf box inside this inline box fragment,
         // so the outline hugs the actual content shape. Each rect expands
         // beyond the inline box for overflowing content.
-        for (auto leaf = box->firstLeafBox(); leaf && leaf != box->endLeafBox(); ++leaf) {
-            auto logicalTop = std::min(leaf->logicalTop(), inlineBoxLogicalTop);
-            auto logicalBottom = std::max(leaf->logicalBottom(), inlineBoxLogicalBottom);
+        for (auto& leaf : box.leafDescendants()) {
+            auto logicalTop = std::min(leaf.logicalTop(), inlineBoxLogicalTop);
+            auto logicalBottom = std::max(leaf.logicalBottom(), inlineBoxLogicalBottom);
             if (logicalTop == inlineBoxLogicalTop && logicalBottom == inlineBoxLogicalBottom)
                 continue; // Already covered by the base rect.
-            auto enclosingVisualRect = FloatRect { leaf->logicalLeftIgnoringInlineDirection(), logicalTop, leaf->logicalWidth(), logicalBottom - logicalTop };
+            auto enclosingVisualRect = FloatRect { leaf.logicalLeftIgnoringInlineDirection(), logicalTop, leaf.logicalWidth(), logicalBottom - logicalTop };
 
             if (!isHorizontalWritingMode)
                 enclosingVisualRect = enclosingVisualRect.transposedRect();
@@ -480,16 +480,16 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
 
     bool hasBlockContent = false;
 
-    for (auto box = InlineIterator::firstRootInlineBoxFor(renderer); box; box.traverseInlineBoxLineRightward()) {
-        auto lineBox = box->lineBox();
-        if (lineBox->hasBlockContent()) {
+    for (auto& box : InlineIterator::rootInlineBoxesFor(renderer)) {
+        auto lineBox = box.lineBox();
+        if (lineBox.hasBlockContent()) {
             hasBlockContent = true;
             continue;
         }
         // FIXME: This is mixing physical and logical coordinates.
-        auto unflippedVisualRect = box->visualRectIgnoringBlockDirection();
-        auto top = std::max(lineBox->contentLogicalTop(), unflippedVisualRect.y());
-        auto bottom = std::min(lineBox->contentLogicalBottom(), unflippedVisualRect.maxY());
+        auto unflippedVisualRect = box.visualRectIgnoringBlockDirection();
+        auto top = std::max(lineBox.contentLogicalTop(), unflippedVisualRect.y());
+        auto bottom = std::min(lineBox.contentLogicalBottom(), unflippedVisualRect.maxY());
         auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + unflippedVisualRect.x() }
             , additionalOffset.y() + top
             , LayoutUnit { unflippedVisualRect.width() }
@@ -498,8 +498,8 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
     }
 
     if (hasBlockContent) {
-        for (auto line = InlineIterator::firstLineBoxFor(renderer); line; line.traverseNext()) {
-            auto blockLevelBox = line->blockLevelBox();
+        for (auto& line : InlineIterator::lineBoxesFor(renderer)) {
+            auto blockLevelBox = line.blockLevelBox();
             if (!blockLevelBox)
                 continue;
             CheckedRef renderBox = downcast<RenderBox>(blockLevelBox->renderer());

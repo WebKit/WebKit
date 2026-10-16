@@ -32,6 +32,8 @@ namespace WebCore {
 
 namespace InlineIterator {
 
+class TextBoxIterator;
+
 enum class TextRunMode { Painting, Editing };
 
 class TextBox : public Box {
@@ -57,32 +59,21 @@ public:
     TextBoxIterator nextTextBox() const;
 };
 
-class TextBoxIterator : public LeafBoxIterator {
+// Text boxes generated for one RenderText, in display order.
+class TextBoxIterator : public BasicBoxIterator<TextBoxIterator, TextBox, BoxFilter::SameLayoutBox> {
 public:
-    TextBoxIterator() = default;
-    TextBoxIterator(const Box&);
+    using BasicBoxIterator::BasicBoxIterator;
 
-    TextBoxIterator& operator++() { return traverseNextTextBox(); }
-
-    const TextBox& operator*() const LIFETIME_BOUND { return get(); }
-    const TextBox* operator->() const LIFETIME_BOUND { return &get(); }
-
-    // This traverses to the next text box generated for the same RenderText/Layout::InlineTextBox.
-    TextBoxIterator& traverseNextTextBox();
-
-private:
-    BoxIterator& traverseLineRightwardOnLine() = delete;
-    BoxIterator& traverseLineLeftwardOnLine() = delete;
-    BoxIterator& traverseLineRightwardOnLineIgnoringLineBreak() = delete;
-    BoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak() = delete;
-
-    const TextBox& get() const LIFETIME_BOUND { return downcast<TextBox>(m_box); }
+    TextBoxIterator& traverseNextTextBox() { return ++*this; }
 };
 
+using TextBoxRange = BoxRange<TextBoxIterator>;
+
 TextBoxIterator lineLeftmostTextBoxFor(const RenderText&);
-TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
-TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
-BoxRange<TextBoxIterator> textBoxesFor(const RenderText&);
+TextBox textBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
+TextBox textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);
+
+TextBoxRange textBoxesFor(const RenderText&);
 
 inline TextBox::TextBox(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
     : Box(inlineContent, boxIndex)
@@ -142,9 +133,5 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::TextBox)
 static bool isType(const WebCore::InlineIterator::Box& box) { return box.isText(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InlineIterator::TextBoxIterator)
-static bool isType(const WebCore::InlineIterator::BoxIterator& box) { return !box || box->isText(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

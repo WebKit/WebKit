@@ -844,11 +844,9 @@ void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExt
     if (!firstInlineBox)
         return;
 
-    auto lastInlineBox = [&] {
-        auto inlineBox = firstInlineBox;
-        for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
-        return inlineBox;
-    }();
+    auto lastInlineBox = firstInlineBox;
+    while (auto next = std::ranges::next(lastInlineBox))
+        lastInlineBox = next;
     if (firstInlineBox == lastInlineBox)
         return;
 

@@ -772,10 +772,10 @@ void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, con
     if (inlineBox) {
         auto paintOffset = scrolledPaintRect.location() - toLayoutSize(LayoutPoint(inlineBox->visualRectIgnoringBlockDirection().location()));
 
-        for (auto box = inlineBox->firstLeafBox(), end = inlineBox->endLeafBox(); box != end; box.traverseLineRightwardOnLine()) {
-            if (!box->isText())
+        for (auto& box : inlineBox->leafDescendants()) {
+            if (!box.isText())
                 continue;
-            TextBoxPainter { box->inlineContent(), box->displayBox(), box->displayBox().style(), maskInfo, paintOffset }.paint();
+            TextBoxPainter { box.inlineContent(), box.displayBox(), box.displayBox().style(), maskInfo, paintOffset }.paint();
         }
         return;
     }
@@ -1052,22 +1052,22 @@ LayoutUnit RenderBoxModelObject::paddingBoxLogicalWidth() const
     if (!LayoutIntegration::LineLayout::containing(*this))
         return { };
 
-    auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this);
-    if (!inlineBox)
+    auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this);
+    if (!firstInlineBox)
         return { };
+
+    auto lastInlineBox = firstInlineBox;
+    while (auto next = std::ranges::next(lastInlineBox))
+        lastInlineBox = next;
 
     auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
     auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
     if (writingMode().isBidiLTR()) {
-        firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
-        for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
-        ASSERT(inlineBox);
-        lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
+        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
     } else {
-        lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
-        for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
-        ASSERT(inlineBox);
-        firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
+        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRightIgnoringInlineDirection() - borderStart();
+        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
     }
     return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
 }
@@ -1182,8 +1182,8 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
                 // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
                 // any post-layout box adjustments.
                 FloatRect result;
-                for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward())
-                    result.unite(box->visualRectIgnoringBlockDirection());
+                for (auto& box : InlineIterator::inlineBoxesFor(*this))
+                    result.unite(box.visualRectIgnoringBlockDirection());
                 return enclosingIntRect(result);
             }
             return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));

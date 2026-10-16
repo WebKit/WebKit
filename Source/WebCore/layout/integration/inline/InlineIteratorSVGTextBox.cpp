@@ -36,6 +36,8 @@
 namespace WebCore {
 namespace InlineIterator {
 
+static_assert(std::ranges::bidirectional_range<SVGTextBoxRange> && std::ranges::common_range<SVGTextBoxRange> && std::ranges::view<SVGTextBoxRange> && std::ranges::borrowed_range<SVGTextBoxRange>);
+
 SVGTextBox::SVGTextBox(const LayoutIntegration::InlineContent& inlineContent, size_t boxIndex)
     : TextBox(inlineContent, boxIndex)
 {
@@ -103,11 +105,6 @@ const Vector<SVGTextFragment>& SVGTextBox::textFragments() const
     return inlineContent().svgTextFragments(boxIndex());
 }
 
-SVGTextBoxIterator::SVGTextBoxIterator(const Box& box)
-    : TextBoxIterator(box)
-{
-}
-
 SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText& text)
 {
     if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(text)) {
@@ -119,7 +116,7 @@ SVGTextBoxIterator firstSVGTextBoxFor(const RenderSVGInlineText& text)
     return { };
 }
 
-BoxRange<SVGTextBoxIterator> svgTextBoxesFor(const RenderSVGInlineText& text)
+SVGTextBoxRange svgTextBoxesFor(const RenderSVGInlineText& text)
 {
     return { firstSVGTextBoxFor(text) };
 }
@@ -135,8 +132,8 @@ SVGTextBoxIterator svgTextBoxFor(const LayoutIntegration::InlineContent& inlineC
 BoxRange<BoxIterator> boxesFor(const RenderSVGText& svgText)
 {
     if (CheckedPtr lineLayout = svgText.inlineLayout())
-        return { BoxIterator { *lineLayout->firstRootInlineBox() } };
-    return { BoxIterator { } };
+        return { lineLayout->firstRootInlineBox() };
+    return { };
 }
 
 BoxIterator lastBoxFor(const RenderSVGText& svgText)
