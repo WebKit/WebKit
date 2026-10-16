@@ -420,7 +420,10 @@ RenderLayer::~RenderLayer()
         removeReflection();
 
     clearLayerScrollableArea();
-    clearLayerFilters();
+    // Don't use clearLayerFilters() here: removing reference filter clients would take a CheckedPtr
+    // to this layer while it's being deleted. The SVG resources hold this layer weakly, so they drop it on their own.
+    if (RefPtr filters = std::exchange(m_filters, nullptr))
+        filters->detachFromLayer();
     clearLayerClipPath();
 
     // Child layers will be deleted by their corresponding render objects, so
@@ -6608,8 +6611,10 @@ RenderLayerFilters& RenderLayer::ensureLayerFilters()
 
 void RenderLayer::clearLayerFilters()
 {
-    if (RefPtr filters = std::exchange(m_filters, nullptr))
+    if (RefPtr filters = std::exchange(m_filters, nullptr)) {
+        filters->removeReferenceFilterClients();
         filters->detachFromLayer();
+    }
 }
 
 RenderLayerScrollableArea* RenderLayer::ensureLayerScrollableArea()
@@ -6639,13 +6644,6 @@ void RenderLayer::clearLayerScrollableArea()
 
 void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
-    if (renderer().style().filter().hasReferenceFilter())
-        ensureLayerFilters().updateReferenceFilterClients(renderer().style().filter());
-    else if (!shouldPaintWithFilters())
-        clearLayerFilters();
-    else if (m_filters)
-        m_filters->removeReferenceFilterClients();
-
     bool filterValueChanged = oldStyle && oldStyle->filter() != renderer().style().filter();
 
     if (filterValueChanged && requiresFullLayerImageForFilters(oldStyle->filter()) != requiresFullLayerImageForFilters())
@@ -6665,8 +6663,16 @@ void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const St
             return true;
         return false;
     };
+
     if (filterChanged())
         clearLayerFilters();
+
+    if (renderer().style().filter().hasReferenceFilter())
+        ensureLayerFilters().updateReferenceFilterClients(renderer().style().filter());
+    else if (!shouldPaintWithFilters())
+        clearLayerFilters();
+    else if (m_filters)
+        m_filters->removeReferenceFilterClients();
 }
 
 void RenderLayer::updateLayerScrollableArea()
