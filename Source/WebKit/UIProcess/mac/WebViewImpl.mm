@@ -1505,6 +1505,8 @@ NSInteger WebViewImpl::windowNumber()
 
 void WebViewImpl::handleProcessSwapOrExit()
 {
+    m_pendingMouseEvents.clear();
+
     dismissContentRelativeChildWindowsWithAnimation(true);
     m_page->closeSharedPreviewPanelIfNecessary();
 
@@ -1546,6 +1548,7 @@ void WebViewImpl::processDidExit()
 
 void WebViewImpl::pageClosed()
 {
+    m_pendingMouseEvents.clear();
     updateRemoteAccessibilityRegistration(false);
 }
 
@@ -2997,9 +3000,9 @@ void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
         return;
 
     Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), WebEventInputSource::UserDriven);
-    m_page->handleMouseEvent(WTF::move(webEvent));
-
+    m_pendingMouseEvents.append({ WTF::move(webEvent), false });
     m_lastPressureEvent = event;
+    dispatchPendingMouseEvents();
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -6907,23 +6910,46 @@ void WebViewImpl::nativeMouseEventHandler(NSEvent *event, WebEventInputSource in
         return;
     }
 
-    if (RetainPtr context = [m_view.get() inputContext]) {
+    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
+    RetainPtr context = [m_view.get() inputContext];
+    m_pendingMouseEvents.append({ webEvent.copyRef(), context ? std::nullopt : std::optional<bool> { false } });
+
+    if (context) {
         WeakPtr weakThis { *this };
-        RetainPtr<NSEvent> retainedEvent = event;
-        [context handleEvent:event completionHandler:[weakThis, retainedEvent, inputSource, canInitiateDrag] (BOOL handled) {
-            if (!weakThis)
+        [context handleEvent:event completionHandler:[weakThis, webEvent](BOOL handled) {
+            CheckedPtr checkedThis = weakThis;
+            if (!checkedThis)
                 return;
-            if (handled)
-                LOG_WITH_STREAM(TextInput, stream << "Event " << [retainedEvent type] << " was handled by text input context");
-            else {
-                Ref webEvent = NativeWebMouseEvent::create(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view.get(), inputSource, canInitiateDrag);
-                weakThis->m_page->handleMouseEvent(WTF::move(webEvent));
+
+            for (auto& pendingEvent : checkedThis->m_pendingMouseEvents) {
+                if (pendingEvent.event.ptr() == webEvent.ptr()) {
+                    pendingEvent.handledByInputMethod = handled;
+                    checkedThis->dispatchPendingMouseEvents();
+                    return;
+                }
             }
         }];
         return;
     }
-    Ref webEvent = NativeWebMouseEvent::create(event, m_lastPressureEvent.get(), m_view.get().get(), inputSource, canInitiateDrag);
-    m_page->handleMouseEvent(WTF::move(webEvent));
+
+    dispatchPendingMouseEvents();
+}
+
+void WebViewImpl::dispatchPendingMouseEvents()
+{
+    // Input methods can complete mouse events out of order. Only dispatch events
+    // whose predecessors have completed, including events with no input context.
+    WeakPtr weakThis { *this };
+    while (weakThis && !weakThis->m_pendingMouseEvents.isEmpty() && weakThis->m_pendingMouseEvents.first().handledByInputMethod.has_value()) {
+        auto pendingEvent = weakThis->m_pendingMouseEvents.takeFirst();
+        if (*pendingEvent.handledByInputMethod) {
+            LOG_WITH_STREAM(TextInput, stream << "Event " << [pendingEvent.event->nativeEvent() type] << " was handled by text input context");
+            continue;
+        }
+
+        Ref protectedPage = weakThis->m_page;
+        protectedPage->handleMouseEvent(WTF::move(pendingEvent.event));
+    }
 }
 
 void WebViewImpl::nativeMouseEventHandlerInternal(NSEvent *event, WebEventInputSource inputSource, WebCore::PlatformMouseEvent::CanInitiateDrag canInitiateDrag)
