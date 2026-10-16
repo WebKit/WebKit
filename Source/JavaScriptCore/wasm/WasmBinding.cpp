@@ -60,11 +60,12 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm
     jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfTargetInstance(info, importIndex)), GPRInfo::wasmContextInstancePointer, scratch);
 
     // FIXME the following code assumes that all JSWebAssemblyInstance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
-    // Set up the callee's baseMemoryPointer register as well as the memory size registers.
+    // The callee loads the bounds-checking size itself. This stub must not write that register:
+    // signaling callers keep a value in it, and every callee preserves it.
     {
-        // pinned registers always store base and size of memory 0
-        jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, wasmCallingConvention().prologueScratchGPRs[1]);
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0)), GPRInfo::wasmBaseMemoryPointer);
+        GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[1];
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, scratch, scratch);
     }
 
     // Tail call into the callee WebAssembly function.
