@@ -107,10 +107,10 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // A grid item's containing block is its grid area. Keep the grid area's inline size set on the renderer so
     // descendants resolve percentage/calc sizes against it during layout, and resolve the item's own geometry
     // against it below rather than against the grid container's content box.
-    renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
+    renderer->setOverridingContainingBlockContentLogicalWidth(gridAreaInlineSize);
     layoutRendererWithOverridingBorderBoxSize(renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight);
     updateGridItemBoxGeometry(box, gridAreaInlineSize, layoutState);
-    renderer->clearGridAreaContentSize();
+    renderer->clearOverridingContainingBlockContentSize();
 }
 
 static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContainer, auto& placedFloats)
