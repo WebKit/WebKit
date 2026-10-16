@@ -79,6 +79,9 @@ public:
     // Tear down any per-frame paint-rect overlay owned by a local root frame that is going away, so
     // it isn't retained past the frame's lifetime. No-op for clients without per-frame overlays.
     virtual void willDestroyFrameOverlays(FrameIdentifier) { }
+    // Called from ~LocalFrame while the frame's InstrumentingAgents are still alive, so a client can
+    // release state registered on them.
+    virtual void willDestroyFrame(LocalFrame&) { }
 
     virtual void frameDebuggerDidPause(FrameIdentifier) { }
     virtual void frameDebuggerDidContinue(FrameIdentifier) { }

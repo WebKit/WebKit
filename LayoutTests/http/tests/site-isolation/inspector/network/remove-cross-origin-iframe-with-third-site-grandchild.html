@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+// main(A) -> parent(B) -> grandchild(C). The sibling(C) keeps the process of site C alive after the parent is removed.
+function addFrames() {
+    let secondSiteHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let parent = document.createElement("iframe");
+    parent.id = "parent-frame-element";
+    parent.src = `http://${secondSiteHost}:8000/site-isolation/inspector/network/resources/frame-with-third-site-grandchild.html`;
+    document.body.appendChild(parent);
+
+    let sibling = document.createElement("iframe");
+    sibling.src = "https://localhost:8443/site-isolation/inspector/network/resources/third-site-frame.html?sibling";
+    document.body.appendChild(sibling);
+}
+
+function removeParentFrame() {
+    document.getElementById("parent-frame-element").remove();
+}
+
+function test() {
+    const parentPath = "/frame-with-third-site-grandchild.html";
+    const grandchildPath = "/third-site-frame.html?grandchild";
+    const siblingPath = "/third-site-frame.html?sibling";
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.RemoveCrossOriginIFrameWithThirdSiteGrandchild");
+
+    // Not the shared debugger helper, which can hang on frame targets that are in the middle of a swap.
+    async function findFrameTargetForURLContaining(substring) {
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            for (let target of WI.targets) {
+                if (target.type !== WI.TargetType.Frame || target.isProvisional)
+                    continue;
+
+                let response = await Promise.race([
+                    target.RuntimeAgent.evaluate.invoke({expression: "document.location.href", objectGroup: "test", returnByValue: true}).catch(() => null),
+                    new Promise((resolve) => setTimeout(() => resolve(null), 500)),
+                ]);
+                if (response?.result?.value?.includes(substring))
+                    return target;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.RemoveCrossOriginIFrameWithThirdSiteGrandchild.DisableAfterRemoval",
+        description: "The process hosting the grandchild keeps hosting a sibling frame, so it must survive Network.disable and Page.disable after the grandchild's parent is removed by another process.",
+        async test() {
+            InspectorTest.evaluateInPage("addFrames()");
+
+            let parent = null;
+            let grandchild = null;
+            let sibling = null;
+            for (let attempt = 0; attempt < 100; ++attempt) {
+                parent = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(parentPath));
+                grandchild = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(grandchildPath));
+                sibling = WI.networkManager.frames.find((frame) => frame.url && frame.url.endsWith(siblingPath));
+                if (parent && grandchild && sibling)
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!parent, "Parent frame should be in the frame model.");
+            InspectorTest.expectThat(!!grandchild, "Grandchild frame should be in the frame model.");
+            InspectorTest.expectThat(!!sibling, "Sibling frame should be in the frame model.");
+            if (!parent || !grandchild || !sibling)
+                return;
+
+            let siblingTarget = await findFrameTargetForURLContaining(siblingPath);
+            InspectorTest.expectThat(!!siblingTarget, "Sibling frame should have a frame target.");
+            if (!siblingTarget)
+                return;
+
+            let parentId = parent.id;
+            let removedPromise = new Promise((resolve) => {
+                WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasRemoved, function listener(event) {
+                    if (event.data.frame.id === parentId) {
+                        WI.networkManager.removeEventListener(WI.NetworkManager.Event.FrameWasRemoved, listener);
+                        resolve(event.data.frame);
+                    }
+                });
+            });
+            InspectorTest.evaluateInPage("removeParentFrame()");
+            let removedFrame = await Promise.race([
+                removedPromise,
+                new Promise((resolve) => setTimeout(() => resolve(null), 2000)),
+            ]);
+            InspectorTest.expectThat(!!removedFrame, "Removing the iframe should remove the parent frame.");
+
+            InspectorTest.log("Disabling the Network and Page domains...");
+            await WI.backendTarget.NetworkAgent.disable();
+            await WI.backendTarget.PageAgent.disable();
+
+            let response = await siblingTarget.RuntimeAgent.evaluate.invoke({expression: "1 + 1", objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(response.result.value, 2, "The sibling frame's process should still respond.");
+
+            InspectorTest.log("Re-enabling the Network and Page domains...");
+            await WI.backendTarget.NetworkAgent.enable();
+            await WI.backendTarget.PageAgent.enable();
+
+            response = await siblingTarget.RuntimeAgent.evaluate.invoke({expression: "2 + 2", objectGroup: "test", returnByValue: true});
+            InspectorTest.expectEqual(response.result.value, 4, "The sibling frame's process should still respond after re-enabling.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that disabling the Network and Page domains does not crash a process that hosts a frame whose remote parent was removed by another process.</p>
+</body>

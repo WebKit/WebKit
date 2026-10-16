@@ -44,12 +44,14 @@
 #include "FrameInlines.h"
 #include "FrameRuntimeAgent.h"
 #include "FrameWorkerAgent.h"
+#include "InspectorBackendClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorWebAgentBase.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMWindow.h"
 #include "JSExecState.h"
+#include "LocalFrame.h"
 #include "PageInspectorController.h"
 #include "Settings.h"
 #include "WebInjectedScriptHost.h"
@@ -244,6 +246,10 @@ void FrameInspectorController::disconnectFrontend(Inspector::FrontendChannel& fr
 
 void FrameInspectorController::inspectedFrameDestroyed()
 {
+    // Runs even without frontends: the page-level backend can have proxies registered on our InstrumentingAgents.
+    if (auto* client = overlayOwnerBackendClient())
+        client->willDestroyFrame(Ref { m_frame });
+
     if (!m_frontendRouter->hasFrontends())
         return;
 
