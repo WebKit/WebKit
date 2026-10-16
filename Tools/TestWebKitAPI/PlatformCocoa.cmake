@@ -225,6 +225,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/cocoa/ImageRotationSessionVT.cpp
     Tests/WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm
     Tests/WebCore/cocoa/MediaRecorderPrivateWriterTests.cpp
+    Tests/WebCore/cocoa/PaymentSummaryItemsCocoa.mm
     Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm
     Tests/WebCore/cocoa/ResourceMonitor.mm
     Tests/WebCore/cocoa/ScrollbarWidthCrash.mm
