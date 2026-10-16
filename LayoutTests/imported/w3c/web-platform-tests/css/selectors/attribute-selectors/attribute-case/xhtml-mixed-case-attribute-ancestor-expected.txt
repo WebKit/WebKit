@@ -1,0 +1,6 @@
+
+PASS [fooBar] descendant combinator matches mixed-case attribute on HTML element
+PASS [dataItem] child combinator matches mixed-case attribute on HTML element
+PASS [fooBar] matches through an intermediate ancestor
+PASS [foobar] does not match fooBar attribute in XHTML
+
