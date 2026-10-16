@@ -410,6 +410,7 @@ void addMTETests();
 void addMemoryFlavorTests();
 void addMinHeapTests();
 void addPGMTests();
+void addPGMTraceTests();
 void addRaceTests();
 void addRedBlackTreeTests();
 void addReallocFastPathTests();
@@ -911,6 +912,7 @@ int main(int argc, char** argv)
     ADD_SUITE(MemoryFlavor);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);
+    ADD_SUITE(PGMTrace);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
     ADD_SUITE(ReallocFastPath);
