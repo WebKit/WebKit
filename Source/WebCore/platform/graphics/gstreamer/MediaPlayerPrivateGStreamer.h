@@ -456,6 +456,8 @@ protected:
     TrackIDHashMap<RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
 
+    std::optional<bool> m_supportsLifetimeStats;
+
     String errorMessage() const override { return m_errorMessage; }
 
     bool updateVideoSinkStatistics();
@@ -649,7 +651,9 @@ private:
     uint64_t m_networkReadPosition { 0 };
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
-    uint64_t m_totalVideoFrames { 0 };
+    uint64_t m_totalDecodedVideoFrames { 0 };
+    uint64_t m_decodedVideoFrames { 0 };
+    uint64_t m_totalDroppedVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
 
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
