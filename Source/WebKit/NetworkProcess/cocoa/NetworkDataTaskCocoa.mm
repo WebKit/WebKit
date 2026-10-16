@@ -264,8 +264,10 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     auto advancedPrivacyProtections = parameters.advancedPrivacyProtections;
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    if (advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::BaselineProtections) && parameters.isMainFrameNavigation)
+    if (advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::BaselineProtections) && parameters.isMainFrameNavigation) {
         configureForAdvancedPrivacyProtections(m_sessionWrapper->session.get());
+        m_sessionWrapper->isConfiguredForAdvancedPrivacyProtections = true;
+    }
 
     enableAdvancedPrivacyProtections(mutableRequest.get(), advancedPrivacyProtections);
 #endif

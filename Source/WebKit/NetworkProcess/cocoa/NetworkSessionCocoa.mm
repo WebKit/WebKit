@@ -44,6 +44,7 @@
 #import "WKURLSessionTaskDelegate.h"
 #import "WebErrors.h"
 #import "WebPageNetworkParameters.h"
+#import "WebPrivacyHelpers.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/AdvancedPrivacyProtections.h>
@@ -314,6 +315,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error
 {
+#if HAVE(NW_PROXY_CONFIG)
+    // Other sessions lose their wrappers before they become invalid, but a session that a proxy
+    // change replaced keeps its wrapper until it finishes its tasks. The wrapper owns the session
+    // and this delegate, and can let go of both here.
+    if (_sessionWrapper) {
+        RetainPtr protectedSelf = self;
+        RetainPtr protectedSession = session;
+        if (CheckedPtr networkSession = _session)
+            networkSession->replacedSessionDidBecomeInvalid(protectedSession.get());
+        return;
+    }
+#endif
     ASSERT(!_sessionWrapper);
 }
 
@@ -1091,28 +1104,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void SessionWrapper::recreateSessionWithUpdatedProxyConfigurations(NetworkSessionCocoa& networkSession)
-{
-    RELEASE_ASSERT(session);
-    RELEASE_ASSERT(delegate);
-
-    auto withCredentials = delegate->_withCredentials;
-    RetainPtr<NSURLSessionConfiguration> configuration = session.get().configuration;
-
-#if HAVE(NW_PROXY_CONFIG)
-    networkSession.applyProxyConfigurationToSessionConfiguration(configuration.get());
-#endif
-
-    [session invalidateAndCancel];
-    [delegate sessionInvalidated];
-    delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:withCredentials]);
-    session = [NSURLSession sessionWithConfiguration:configuration.get() delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
-
-    dataTaskMap.clear();
-    downloadMap.clear();
-    webSocketDataTaskMap.clear();
-}
-
 SessionWrapper::~SessionWrapper()
 {
     if (session)
@@ -1261,6 +1252,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         configuration.get().TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
 #endif
 
+#if HAVE(NW_PROXY_CONFIG)
+    // Before the sessions exist, so that they get created with the proxies, rather than replaced.
+    if (parameters.proxyConfigData)
+        setProxyConfigData(*parameters.proxyConfigData);
+#endif
+
     initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration.get());
 
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
@@ -1274,11 +1271,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(MANAGED_DOMAINS)
     if (RefPtr resourceLoadStatistics = m_resourceLoadStatistics; resourceLoadStatistics && !parameters.resourceLoadStatisticsParameters.managedDomains.isEmpty())
         resourceLoadStatistics->setManagedDomains(HashSet<WebCore::RegistrableDomain> { parameters.resourceLoadStatisticsParameters.managedDomains }, [] { });
-#endif
-
-#if HAVE(NW_PROXY_CONFIG)
-    if (parameters.proxyConfigData)
-        setProxyConfigData(*parameters.proxyConfigData);
 #endif
 }
 
@@ -1524,6 +1516,14 @@ void NetworkSessionCocoa::invalidateAndCancel()
     invalidateAndCancelSessionSet(m_defaultSessionSet.get());
     for (auto& sessionSet : m_perPageSessionSets.values())
         invalidateAndCancelSessionSet(sessionSet.get());
+
+#if HAVE(NW_PROXY_CONFIG)
+    for (auto& sessionWrapper : m_replacedSessionWrappers) {
+        [sessionWrapper->session invalidateAndCancel];
+        [sessionWrapper->delegate sessionInvalidated];
+    }
+    m_replacedSessionWrappers.clear();
+#endif
 }
 
 HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials()
@@ -1711,29 +1711,40 @@ RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdent
     enableAdvancedPrivacyProtections(ensureMutableRequest().get(), advancedPrivacyProtections);
 
     Ref sessionSet = sessionSetForPage(webPageProxyID);
-    RetainPtr task = [sessionSet->sessionWithCredentialStorage->session webSocketTaskWithRequest:nsRequest.get()];
+    CheckedRef sessionWrapper = sessionSet->sessionWithCredentialStorage;
+    RetainPtr task = [sessionWrapper->session webSocketTaskWithRequest:nsRequest.get()];
     
     // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1.
     // Use NSIntegerMax instead of 2^63 - 1 for 32-bit systems.
     task.get().maximumMessageSize = NSIntegerMax;
 
-    return WebSocketTask::create(channel, webPageProxyID, frameID, pageID, sessionSet, request, clientOrigin, WTF::move(task), storedCredentialsPolicy, isInitiatedByDedicatedWorker);
+    return WebSocketTask::create(channel, webPageProxyID, frameID, pageID, WeakPtr { sessionWrapper.get() }, request, clientOrigin, WTF::move(task), storedCredentialsPolicy, isInitiatedByDedicatedWorker);
 }
 
-void NetworkSessionCocoa::addWebSocketTask(WebPageProxyIdentifier webPageProxyID, WebSocketTask& task)
+void NetworkSessionCocoa::addWebSocketTask(WebSocketTask& task)
 {
-    auto& webSocketDataTaskMap = sessionSetForPage(webPageProxyID).sessionWithCredentialStorage->webSocketDataTaskMap;
+    CheckedPtr sessionWrapper = task.sessionWrapper();
+    RELEASE_ASSERT(sessionWrapper);
+    auto& webSocketDataTaskMap = sessionWrapper->webSocketDataTaskMap;
     auto addResult = webSocketDataTaskMap.add(task.identifier(), &task);
     RELEASE_ASSERT(addResult.isNewEntry);
     RELEASE_LOG(NetworkSession, "NetworkSessionCocoa::addWebSocketTask, web socket count is %u", webSocketDataTaskMap.size());
 }
 
-void NetworkSessionCocoa::removeWebSocketTask(SessionSet& sessionSet, WebSocketTask& task)
+void NetworkSessionCocoa::removeWebSocketTask(WebSocketTask& task)
 {
-    auto& webSocketDataTaskMap = sessionSet.sessionWithCredentialStorage->webSocketDataTaskMap;
-    bool contained = webSocketDataTaskMap.remove(task.identifier());
-    RELEASE_ASSERT(contained);
-    RELEASE_LOG(NetworkSession, "NetworkSessionCocoa::removeWebSocketTask, web socket count is %u", webSocketDataTaskMap.size());
+    // The task's session wrapper, with its map, is gone if its session set went away.
+    if (CheckedPtr sessionWrapper = task.sessionWrapper()) {
+        auto& webSocketDataTaskMap = sessionWrapper->webSocketDataTaskMap;
+        bool contained = webSocketDataTaskMap.remove(task.identifier());
+        RELEASE_ASSERT(contained);
+        RELEASE_LOG(NetworkSession, "NetworkSessionCocoa::removeWebSocketTask, web socket count is %u", webSocketDataTaskMap.size());
+    }
+
+#if HAVE(NW_PROXY_CONFIG)
+    // The wrapper of a session that a proxy change replaced may have been waiting for this task.
+    removeFinishedReplacedSessionWrappers();
+#endif
 }
 
 void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
@@ -1967,55 +1978,48 @@ void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
 #endif
 }
 
-void NetworkSessionCocoa::forEachSessionWrapper(NOESCAPE const Function<void(SessionWrapper&)>& function)
+void NetworkSessionCocoa::forEachSessionWrapper(NOESCAPE const Function<void(UniqueRef<SessionWrapper>&)>& function)
 {
-    auto sessionSetFunction = [&](SessionSet& sessionSet) {
-        function(protect(sessionSet.sessionWithCredentialStorage).get());
-        function(protect(sessionSet.ephemeralStatelessSession).get());
-        if (sessionSet.appBoundSession)
-            function(protect(sessionSet.appBoundSession->sessionWithCredentialStorage));
-
-        for (auto& isolatedSession : sessionSet.isolatedSessions.values()) {
-            if (isolatedSession)
-                function(protect(isolatedSession->sessionWithCredentialStorage));
-        }
-    };
-    
-    sessionSetFunction(m_defaultSessionSet.get());
+    // Pages with the same network parameters share a session set, so collect the sets to visit each once.
+    HashSet<Ref<SessionSet>> sessionSets;
+    sessionSets.add(m_defaultSessionSet);
 
     for (auto& set : m_perPageSessionSets.values())
-        sessionSetFunction(set);
+        sessionSets.add(set);
 
     for (auto& weakSet : m_perParametersSessionSets.values()) {
         if (RefPtr set = weakSet)
-            sessionSetFunction(*set);
+            sessionSets.add(set.releaseNonNull());
+    }
+
+    for (auto& sessionSet : sessionSets) {
+        function(sessionSet->sessionWithCredentialStorage);
+        function(sessionSet->ephemeralStatelessSession);
+        if (sessionSet->appBoundSession)
+            function(sessionSet->appBoundSession->sessionWithCredentialStorage);
+
+        for (auto& isolatedSession : sessionSet->isolatedSessions.values()) {
+            if (isolatedSession)
+                function(isolatedSession->sessionWithCredentialStorage);
+        }
     }
 }
 
 #if HAVE(NW_PROXY_CONFIG)
 void NetworkSessionCocoa::clearProxyConfigData()
 {
-    m_nwProxyConfigs.clear();
-
-    RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
-    forEachSessionWrapper([&contexts](SessionWrapper& sessionWrapper) {
-        if (!sessionWrapper.session)
-            return;
-        [contexts.get() addObject:retainPtr(sessionWrapper.session.get()._networkContext).get()];
-    });
-
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL nw_context_t context in contexts.get())
-        nw_context_clear_proxies(context);
+    setProxyConfigData({ });
 }
 
 void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>& proxyConfigurations)
 {
+    // Replacing the sessions drops all their pooled connections, so only do it when the proxies change.
+    if (proxyConfigurations == m_proxyConfigData)
+        return;
+    m_proxyConfigData = proxyConfigurations;
+
     m_nwProxyConfigs.clear();
 
-    // If any of the proxies pass the `nw_proxy_config_stack_requires_http_protocols` check,
-    // then we cannot set the proxy on the live nw_context_t and instead must destroy and recreate the NSURLSession
-    bool recreateSessions = false;
     for (auto& config : borrow(proxyConfigurations)) {
         uuid_t identifier;
         if (config.second)
@@ -2023,36 +2027,58 @@ void NetworkSessionCocoa::setProxyConfigData(const Vector<std::pair<Vector<uint8
         else
             zeroBytes(identifier);
 
-        RetainPtr nwProxyConfig = adoptNS(nw_proxy_config_create_with_agent_data(borrow(config.first)->span().data(), config.first.size(), identifier));
-
-        if (nw_proxy_config_stack_requires_http_protocols(nwProxyConfig.get()))
-            recreateSessions = true;
-
-        m_nwProxyConfigs.append(WTF::move(nwProxyConfig));
+        m_nwProxyConfigs.append(adoptNS(nw_proxy_config_create_with_agent_data(borrow(config.first)->span().data(), config.first.size(), identifier)));
     }
 
-    if (recreateSessions) {
-        forEachSessionWrapper([this](SessionWrapper& sessionWrapper) {
-            if (sessionWrapper.session)
-                sessionWrapper.recreateSessionWithUpdatedProxyConfigurations(*this);
-        });
-        return;
-    }
+    replaceSessionsWithUpdatedProxyConfigurations();
+}
 
-    RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
-    forEachSessionWrapper([&contexts](SessionWrapper& sessionWrapper) {
-        if (!sessionWrapper.session)
+// A session keeps reusing its pooled connections, which still take the old route, so give each
+// session wrapper a replacement with the new proxies. A replaced wrapper lets its session finish
+// the tasks it already has, and keeps their maps until then, so those loads complete normally.
+void NetworkSessionCocoa::replaceSessionsWithUpdatedProxyConfigurations()
+{
+    forEachSessionWrapper([this](UniqueRef<SessionWrapper>& sessionWrapper) {
+        if (!sessionWrapper->session)
             return;
-        [contexts.get() addObject:retainPtr(sessionWrapper.session.get()._networkContext).get()];
+
+        auto storedCredentialsPolicy = sessionWrapper->delegate->_withCredentials ? WebCore::StoredCredentialsPolicy::Use : WebCore::StoredCredentialsPolicy::DoNotUse;
+        auto replacement = makeUniqueRef<SessionWrapper>();
+        protect(replacement)->initialize(retainPtr(sessionWrapper->session.get().configuration).get(), *this, storedCredentialsPolicy, NavigatingToAppBoundDomain::No);
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        // The tracker lookup callback is on the session's network context, so set it up again.
+        if (sessionWrapper->isConfiguredForAdvancedPrivacyProtections) {
+            configureForAdvancedPrivacyProtections(replacement->session.get());
+            replacement->isConfiguredForAdvancedPrivacyProtections = true;
+        }
+#endif
+
+        auto replacedSessionWrapper = std::exchange(sessionWrapper, WTF::move(replacement));
+        [replacedSessionWrapper->session finishTasksAndInvalidate];
+        m_replacedSessionWrappers.append(WTF::move(replacedSessionWrapper));
     });
+}
 
-    // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
-    for (SUPPRESS_UNRETAINED_LOCAL nw_context_t context in contexts.get()) {
-        nw_context_clear_proxies(context);
+void NetworkSessionCocoa::replacedSessionDidBecomeInvalid(NSURLSession *session)
+{
+    auto index = m_replacedSessionWrappers.findIf([&](auto& sessionWrapper) {
+        return sessionWrapper->session == session;
+    });
+    ASSERT(index != notFound);
+    if (index == notFound)
+        return;
 
-        for (auto& proxyConfig : borrow(m_nwProxyConfigs))
-            nw_context_add_proxy(context, proxyConfig.get());
-    }
+    m_replacedSessionWrappers[index]->session = nullptr;
+    removeFinishedReplacedSessionWrappers();
+}
+
+// A replaced session only becomes invalid once its tasks finish, but a web socket channel can outlive
+// its task, and remove the task from the map later, so the wrapper also waits for that.
+void NetworkSessionCocoa::removeFinishedReplacedSessionWrappers()
+{
+    m_replacedSessionWrappers.removeAllMatching([](auto& sessionWrapper) {
+        return !sessionWrapper->session && sessionWrapper->webSocketDataTaskMap.isEmpty();
+    });
 }
 
 void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *configuration)

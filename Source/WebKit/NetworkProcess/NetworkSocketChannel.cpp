@@ -66,7 +66,7 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     m_socket = session->createWebSocketTask(webPageProxyID, frameID, pageID, *this, request, protocol, clientOrigin, hadMainFrameMainResourcePrivateRelayed, allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy, isInitiatedByDedicatedWorker);
     if (RefPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        session->addWebSocketTask(webPageProxyID, *socket);
+        session->addWebSocketTask(*socket);
 #endif
         socket->resume();
     }
@@ -76,8 +76,8 @@ NetworkSocketChannel::~NetworkSocketChannel()
 {
     if (RefPtr socket = m_socket.get()) {
 #if PLATFORM(COCOA)
-        if (RefPtr sessionSet = m_session ? socket->sessionSet() : nullptr)
-            CheckedRef { *m_session }->removeWebSocketTask(*sessionSet, *socket);
+        if (m_session)
+            CheckedRef { *m_session }->removeWebSocketTask(*socket);
 #endif
         socket->cancel();
     }
