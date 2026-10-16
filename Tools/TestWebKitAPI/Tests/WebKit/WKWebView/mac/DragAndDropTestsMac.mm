@@ -439,6 +439,9 @@ TEST(DragAndDropTests, DraggingAttachmentWhenEditingDelegateReplacesAttachments)
     EXPECT_FALSE(NSIsEmptyRect([simulator delegateDefaultDraggingItemFrame]));
 }
 
+// Every operation that DataTransfer.effectAllowed can allow. This is what a page that sets no effectAllowed gets.
+static constexpr NSDragOperation allDragOperations = NSDragOperationCopy | NSDragOperationLink | NSDragOperationGeneric | NSDragOperationPrivate | NSDragOperationMove | NSDragOperationDelete;
+
 TEST(DragAndDropTests, SourceOperationMaskDefaultsWithinApplication)
 {
     RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
@@ -448,8 +451,40 @@ TEST(DragAndDropTests, SourceOperationMaskDefaultsWithinApplication)
     [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
 
     EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
-    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy);
+    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], allDragOperations);
     EXPECT_EQ([simulator delegateSourceOperationMask], [simulator delegateDefaultSourceOperationMask]);
+}
+
+TEST(DragAndDropTests, SourceOperationMaskFollowsEffectAllowed)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'><div id='draggable' draggable='true' style='width: 300px; height: 100px'>Drag me</div><script>"
+        "draggable.addEventListener('dragstart', event => { event.dataTransfer.effectAllowed = 'copyLink'; event.dataTransfer.setData('application/x-custom', 'test-data'); });"
+        "document.body.addEventListener('dragover', event => event.preventDefault());"
+        "</script></body>"];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
+    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], NSDragOperationCopy | NSDragOperationLink);
+    EXPECT_EQ([simulator delegateSourceOperationMask], [simulator delegateDefaultSourceOperationMask]);
+}
+
+TEST(DragAndDropTests, SourceOperationMaskForLinkDragAlsoAllowsGenericAndCopy)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'><a id='link' href='https://webkit.org/' style='display: block; width: 300px; height: 100px'>Drag me</a><script>"
+        "link.addEventListener('dragstart', event => { event.dataTransfer.effectAllowed = 'link'; });"
+        "document.body.addEventListener('dragover', event => event.preventDefault());"
+        "</script></body>"];
+
+    [simulator runFrom:NSMakePoint(150, 50) to:NSMakePoint(150, 200)];
+
+    // Link, image and selection drags always allow a generic drop and a copy, as they do in WebKitLegacy.
+    EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
+    EXPECT_EQ([simulator delegateDefaultSourceOperationMask], NSDragOperationLink | NSDragOperationGeneric | NSDragOperationCopy);
 }
 
 TEST(DragAndDropTests, SourceOperationMaskOutsideApplicationDefaultsToCopy)
@@ -483,7 +518,7 @@ TEST(DragAndDropTests, SourceOperationMaskDelegateOverride)
 
     EXPECT_TRUE([simulator delegateDidRequestSourceOperationMask]);
     EXPECT_EQ(observedContext, NSDraggingContextWithinApplication);
-    EXPECT_EQ(observedDefault, NSDragOperationGeneric | NSDragOperationMove | NSDragOperationCopy);
+    EXPECT_EQ(observedDefault, allDragOperations);
     EXPECT_EQ([simulator delegateSourceOperationMask], NSDragOperationCopy);
 }
 

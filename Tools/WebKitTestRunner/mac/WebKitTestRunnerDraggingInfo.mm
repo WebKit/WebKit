@@ -35,7 +35,7 @@ using namespace WTR;
 
 @implementation WebKitTestRunnerDraggingInfo
 
-- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source sequenceNumber:(int)sequenceNumber
+- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source session:(NSDraggingSession *)session sequenceNumber:(int)sequenceNumber
 {
     self = [super init];
     if (!self)
@@ -44,6 +44,7 @@ using namespace WTR;
     _draggedImage = image;
     _draggingPasteboard = pasteboard;
     _draggingSource = source;
+    _draggingSession = session;
     _offset = offset;
     _draggingSequenceNumber = sequenceNumber;
 
@@ -62,7 +63,8 @@ using namespace WTR;
 
 - (NSDragOperation)draggingSourceOperationMask 
 {
-    // WKView currently implements neither draggingSourceOperationMaskForLocal: nor draggingSession:sourceOperationMaskForDraggingContext:.
+    if ([_draggingSource respondsToSelector:@selector(draggingSession:sourceOperationMaskForDraggingContext:)])
+        return [_draggingSource draggingSession:_draggingSession.get() sourceOperationMaskForDraggingContext:NSDraggingContextWithinApplication];
     return NSDragOperationAll;
 }
 
