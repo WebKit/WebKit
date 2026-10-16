@@ -226,8 +226,7 @@ static inline void LEGACY_NODELETE updateIFCLineClampAfterLayout(auto& inlineLay
 
 void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block, LayoutPoint blockLineLogicalTopLeft, Layout::InlineLayoutState& inlineLayoutState, Layout::LayoutState& layoutState)
 {
-    auto& parentBlockLayoutState = inlineLayoutState.parentBlockLayoutState();
-    auto& placedFloats = parentBlockLayoutState.placedFloats();
+    auto& placedFloats = inlineLayoutState.placedFloats();
     CheckedRef blockRenderer = downcast<RenderBox>(*block.rendererForIntegration());
     CheckedRef rootBlockContainer = downcast<RenderBlockFlow>(*rootLayoutBox(block).rendererForIntegration());
     auto& renderTreeLayoutState = *rootBlockContainer->view().frameView().layoutContext().layoutState();

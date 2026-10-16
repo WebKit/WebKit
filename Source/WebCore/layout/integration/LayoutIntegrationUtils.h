@@ -36,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+class BoxGeometry;
 class ElementBox;
 class InlineLayoutState;
 class LayoutState;

@@ -95,15 +95,15 @@ static bool LEGACY_NODELETE isEmptyInlineContent(const InlineItemList& inlineIte
     return inlineTextItem && !inlineTextItem->length();
 }
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, BlockLayoutState& parentBlockLayoutState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
     : m_rootBlockContainer(rootBlockContainer)
     , m_globalLayoutState(globalLayoutState)
-    , m_floatingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState.placedFloats())
+    , m_floatingContext(rootBlockContainer, globalLayoutState, placedFloats)
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
     , m_integrationUtils(globalLayoutState)
     , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
-    , m_inlineLayoutState(parentBlockLayoutState)
+    , m_inlineLayoutState(parentBlockLayoutState, placedFloats)
 {
     initializeInlineLayoutState(globalLayoutState);
 }
