@@ -8827,16 +8827,6 @@ bool Document::isContextThread() const
     return isMainThread();
 }
 
-// https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
-static bool isURLPotentiallyTrustworthy(const URL& url)
-{
-    if (url.protocolIsAbout())
-        return url.isAboutBlank() || url.isAboutSrcDoc();
-    if (url.protocolIsData())
-        return true;
-    return SecurityOrigin::create(url)->isPotentiallyTrustworthy();
-}
-
 // https://w3c.github.io/webappsec-secure-contexts/#is-settings-object-contextually-secure step 5.3 and 5.4
 static inline bool isDocumentSecure(const Document& document)
 {

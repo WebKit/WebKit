@@ -109,6 +109,16 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
     return shouldTreatAsPotentiallyTrustworthy(url.protocol(), url.host());
 }
 
+// https://w3c.github.io/webappsec-secure-contexts/#is-url-trustworthy
+bool isURLPotentiallyTrustworthy(const URL& url)
+{
+    if (url.protocolIsAbout())
+        return url.isAboutBlank() || url.isAboutSrcDoc();
+    if (url.protocolIsData())
+        return true;
+    return SecurityOrigin::create(url)->isPotentiallyTrustworthy();
+}
+
 void SecurityOrigin::initializeShared(const URL& url)
 {
     m_isLocal = LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol());

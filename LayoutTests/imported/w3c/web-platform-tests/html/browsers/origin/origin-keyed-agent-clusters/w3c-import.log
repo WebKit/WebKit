@@ -16,6 +16,8 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/about-blank-popup-insecure-opener.tentative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/about-blank-popup.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/about-blank.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/about-blank.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/document-domain.sub.https.html

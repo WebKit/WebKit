@@ -295,6 +295,7 @@
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/ShareData.h>
@@ -6603,6 +6604,18 @@ URL WebPageProxy::topLevelCreationURL(const URL& url, bool isMainFrame) const
     return isMainFrame || !mainFrame ? url : mainFrame->url();
 }
 
+// https://html.spec.whatwg.org/multipage/webappapis.html#secure-context
+// An about:blank document is only as trustworthy as the origin it inherits from its creator, such as a popup's opener.
+bool WebPageProxy::topLevelIsSecureContext(const URL& url, bool isMainFrame) const
+{
+    RefPtr mainFrame = m_mainFrame;
+    if (isMainFrame || !mainFrame)
+        return isURLPotentiallyTrustworthy(url);
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(mainFrame->url()))
+        return mainFrame->securityOrigin()->isPotentiallyTrustworthy();
+    return isURLPotentiallyTrustworthy(mainFrame->url());
+}
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-similar-origin-window-agent
 // Loads whose response decision is skipped, such as through the injected bundle, only record the keying here.
 void WebPageProxy::recordAgentClusterKeying(const API::Navigation& navigation)
@@ -6722,7 +6735,9 @@ void WebPageProxy::receivedNavigationResponsePolicyDecision(WebCore::PolicyActio
     AgentClusterAssignment agentClusterAssignment;
     if (action == PolicyAction::Use) {
         auto& response = navigationResponse->response();
-        auto request = AgentClusterRequest::forNavigationResponse(response, topLevelCreationURL(response.url(), navigationResponse->frame().isMainFrame()), protect(preferences()));
+        bool isMainFrame = navigationResponse->frame().isMainFrame();
+        auto topLevelSecureContext = topLevelIsSecureContext(response.url(), isMainFrame) ? IsSecureContext::Yes : IsSecureContext::No;
+        auto request = AgentClusterRequest::forNavigationResponse(response, topLevelCreationURL(response.url(), isMainFrame), topLevelSecureContext, protect(preferences()));
         agentClusterAssignment = browsingContextGroupForCommittingNavigation(navigation)->assignAgentCluster(request);
         if (navigation)
             navigation->setAgentClusterAssignment(request.origin, agentClusterAssignment);

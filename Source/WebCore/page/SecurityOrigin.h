@@ -234,6 +234,7 @@ private:
 };
 
 WEBCORE_EXPORT bool shouldTreatAsPotentiallyTrustworthy(const URL&);
+WEBCORE_EXPORT bool isURLPotentiallyTrustworthy(const URL&);
 
 // Returns true if the Origin header values serialized from these two origins would be the same.
 bool serializedOriginsMatch(const SecurityOrigin&, const SecurityOrigin&);
