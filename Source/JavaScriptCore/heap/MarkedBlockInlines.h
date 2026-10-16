@@ -305,11 +305,6 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
                 });
         }
 
-        // We only want to discard the newlyAllocated bits if we're creating a FreeList,
-        // otherwise we would lose information on what's currently alive.
-        if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
-            header.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
-
         bool wasUnswept = setBits(true);
         if (isMarking)
             header.m_lock.unlock();
@@ -338,11 +333,6 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         live = header.m_marks;
     else
         live = header.m_newlyAllocated;
-
-    // We only want to discard the newlyAllocated bits if we're creating a FreeList,
-    // otherwise we would lose information on what's currently alive.
-    if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
-        header.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 
     bool wasUnswept = setBits(false);
 
