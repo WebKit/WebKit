@@ -2,6 +2,12 @@ Testing that calling CSS.setStyleText works immediately after CSS.setStyleSheetT
 
 
 == Running test suite: CSS.setStyleTextRace
+-- Running test case: CSS.setStyleSheetText.CachedContents
+PASS: The page should initially use the external stylesheet.
+PASS: The backend should retain the requested stylesheet text.
+PASS: The whole stylesheet edit should change the page's rendered color.
+PASS: The live stylesheet should contain the new declaration.
+
 -- Running test case: CSS.setStyleTextAfterSetStylesheetText
 INFO: Get stylesheet text
 body { color: red; }

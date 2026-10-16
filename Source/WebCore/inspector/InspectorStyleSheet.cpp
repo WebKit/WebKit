@@ -1170,15 +1170,14 @@ String InspectorStyleSheet::finalURL() const
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
     RefPtr pageStyleSheet = m_pageStyleSheet;
-    Ref contents = pageStyleSheet->contents();
     {
         // Have a separate scope for clearRules() (bug 95324).
         CSSStyleSheet::RuleMutationScope mutationScope(pageStyleSheet.get());
-        contents->clearRules();
+        protect(pageStyleSheet->contents())->clearRules();
     }
     {
         CSSStyleSheet::RuleMutationScope mutationScope(pageStyleSheet.get());
-        contents->parseString(text);
+        protect(pageStyleSheet->contents())->parseString(text);
         pageStyleSheet->clearChildRuleCSSOMWrappers();
         fireStyleSheetChanged();
     }

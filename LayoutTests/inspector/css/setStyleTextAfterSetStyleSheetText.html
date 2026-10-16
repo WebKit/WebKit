@@ -8,11 +8,41 @@ function test() {
     let suite = ProtocolTest.createAsyncSuite("CSS.setStyleTextRace");
 
     suite.addTestCase({
+        name: "CSS.setStyleSheetText.CachedContents",
+        description: "Replacing an external stylesheet should change its live rules after cached contents are copied for mutation.",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Page.enable"});
+
+            let {headers} = await InspectorProtocol.awaitCommand({method: "CSS.getAllStyleSheets"});
+
+            let styleSheetId = headers.find((header) => header.sourceURL.endsWith("/resources/external.css"))?.styleSheetId;
+            ProtocolTest.assert(styleSheetId, "The real external stylesheet should be available.");
+
+            let {text: originalText} = await InspectorProtocol.awaitCommand({method: "CSS.getStyleSheetText", params: {styleSheetId}});
+
+            let initialComputed = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "getComputedStyle(document.body).color"}});
+            ProtocolTest.expectEqual(initialComputed.result.value, "rgb(255, 0, 0)", "The page should initially use the external stylesheet.");
+
+            let revisedText = originalText.replace("red", "orange");
+            await InspectorProtocol.awaitCommand({method: "CSS.setStyleSheetText", params: {styleSheetId, text: revisedText}});
+
+            let {text: changedText} = await InspectorProtocol.awaitCommand({method: "CSS.getStyleSheetText", params: {styleSheetId}});
+            ProtocolTest.expectEqual(changedText, revisedText, "The backend should retain the requested stylesheet text.");
+
+            let changedComputed = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "getComputedStyle(document.body).color"}});
+            ProtocolTest.expectEqual(changedComputed.result.value, "rgb(255, 165, 0)", "The whole stylesheet edit should change the page's rendered color.");
+
+            let rule = await InspectorProtocol.awaitCommand({method: "Runtime.evaluate", params: {expression: "document.styleSheets[0].cssRules[0].style.color"}});
+            ProtocolTest.expectEqual(rule.result.value, "orange", "The live stylesheet should contain the new declaration.");
+
+            await InspectorProtocol.awaitCommand({method: "CSS.setStyleSheetText", params: {styleSheetId, text: originalText}});
+        },
+    });
+
+    suite.addTestCase({
         name: "CSS.setStyleTextAfterSetStylesheetText",
         description: "Ensure that editing the style of a CSS rule works after immediately updating the stylesheet text",
         test: async () => {
-            await InspectorProtocol.awaitCommand({ method: "Page.enable" });
-
             let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
             let body = await InspectorProtocol.awaitCommand({
                 method: "DOM.querySelector",
