@@ -49,7 +49,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestDefaultToJSONInheritFinal& wrapped() const
     {
-        return static_cast<TestDefaultToJSONInheritFinal&>(Base::wrapped());
+        // JSTestDefaultToJSONInheritFinal wrappers always wrap TestDefaultToJSONInheritFinal objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestDefaultToJSONInheritFinal&>(Base::wrapped());
     }
 
 protected:

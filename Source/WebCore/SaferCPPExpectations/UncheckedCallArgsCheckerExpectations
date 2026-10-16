@@ -3,9 +3,6 @@ StyleBuilderGenerated.cpp
 [ macOS ] animation/KeyframeEffectStack.cpp
 [ macOS ] animation/StyleOriginatedAnimation.cpp
 [ macOS ] animation/WebAnimation.cpp
-[ macOS ] bindings/js/JSCustomElementInterface.cpp
-[ macOS ] bindings/js/JSDOMGuardedObject.cpp
-[ macOS ] bindings/js/ScriptController.cpp
 [ macOS ] css/CSSStyleProperties.cpp
 [ macOS ] css/FontFace.cpp
 [ macOS ] css/MediaQueryMatcher.cpp

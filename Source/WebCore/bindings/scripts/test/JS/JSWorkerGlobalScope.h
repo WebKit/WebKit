@@ -53,7 +53,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     WorkerGlobalScope& wrapped() const
     {
-        return static_cast<WorkerGlobalScope&>(Base::wrapped());
+        // JSWorkerGlobalScope wrappers always wrap WorkerGlobalScope objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<WorkerGlobalScope&>(Base::wrapped());
     }
 
 public:

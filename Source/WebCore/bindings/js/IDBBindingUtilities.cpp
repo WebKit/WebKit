@@ -145,7 +145,7 @@ JSValue toJS(JSGlobalObject& lexicalGlobalObject, JSGlobalObject& globalObject, 
     }
 
     VM& vm = lexicalGlobalObject.vm();
-    Locker<JSLock> locker(vm.apiLock());
+    JSLockHolder locker(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (key->type()) {

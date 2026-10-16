@@ -50,7 +50,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestEventConstructor& wrapped() const
     {
-        return static_cast<TestEventConstructor&>(Base::wrapped());
+        // JSTestEventConstructor wrappers always wrap TestEventConstructor objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestEventConstructor&>(Base::wrapped());
     }
 
 protected:

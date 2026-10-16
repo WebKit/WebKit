@@ -52,7 +52,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     DOMWindow& wrapped() const
     {
-        return static_cast<DOMWindow&>(Base::wrapped());
+        // JSDOMWindow wrappers always wrap DOMWindow objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<DOMWindow&>(Base::wrapped());
     }
 
 public:

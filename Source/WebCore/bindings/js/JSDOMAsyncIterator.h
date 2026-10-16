@@ -173,7 +173,7 @@ template<typename IteratorValue, typename IteratorTraits>
 inline EnableIfMap<IteratorTraits, JSC::JSValue> convertToJS(JSC::JSGlobalObject& globalObject, JSDOMGlobalObject& domGlobalObject, IteratorValue& value, IteratorTraits, IterationKind kind)
 {
     JSC::VM& vm = globalObject.vm();
-    Locker<JSC::JSLock> locker(vm.apiLock());
+    JSC::JSLockHolder locker(vm);
 
     switch (kind) {
     case IterationKind::Keys:

@@ -49,7 +49,8 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMutationObserver);
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    if (downcast<JSMutationObserver>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+    // This function is called on a GC thread so we cannot ref the object.
+    SUPPRESS_UNCOUNTED_ARG if (downcast<JSMutationObserver>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
         if (reason) [[unlikely]]
             *reason = "Reachable from observed nodes"_s;
         return true;

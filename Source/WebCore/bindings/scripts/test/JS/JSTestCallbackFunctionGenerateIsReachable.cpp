@@ -35,7 +35,7 @@ namespace WebCore {
 using namespace JSC;
 
 JSTestCallbackFunctionGenerateIsReachable::JSTestCallbackFunctionGenerateIsReachable(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionGenerateIsReachable(globalObject->scriptExecutionContext())
+    : TestCallbackFunctionGenerateIsReachable(protect(globalObject->scriptExecutionContext()))
     , m_data(new JSCallbackData(callback, globalObject, globalObject->scriptExecutionContext()))
 {
 }

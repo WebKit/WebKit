@@ -148,7 +148,7 @@ template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> co
 }
 
 JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackInterface(globalObject->scriptExecutionContext())
+    : TestCallbackInterface(protect(globalObject->scriptExecutionContext()))
     , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }

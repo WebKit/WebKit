@@ -3632,7 +3632,8 @@ sub GenerateHeader
         if ($hasParent && !$interface->extendedAttributes->{JSLegacyParent}) {
             push(@headerContent, "    $interfaceName& wrapped() const\n");
             push(@headerContent, "    {\n");
-            push(@headerContent, "        return static_cast<$interfaceName&>(Base::wrapped());\n");
+            push(@headerContent, "        // JS${interfaceName} wrappers always wrap ${interfaceName} objects.\n");
+            push(@headerContent, "        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<$interfaceName&>(Base::wrapped());\n");
             push(@headerContent, "    }\n\n");
         }
     }
@@ -7613,7 +7614,7 @@ sub GenerateCallbackImplementationContent
 
     # Constructor
     push(@$contentRef, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
-    push(@$contentRef, "    : ${name}(globalObject->scriptExecutionContext())\n");
+    push(@$contentRef, "    : ${name}(protect(globalObject->scriptExecutionContext()))\n");
     push(@$contentRef, "    , m_data(new JSCallbackData(callback, globalObject, ${ownerObject}))\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "}\n\n");
@@ -7719,13 +7720,15 @@ sub GenerateCallbackImplementationContent
 
 sub GenerateWriteBarriersForArguments
 {
-    my ($outputArray, $operation, $indent, $isDryRun) = @_;
+    my ($outputArray, $operation, $interface, $indent, $isDryRun) = @_;
 
+    # JSEventTarget's castedThis is a JSEventTargetWrapper.
+    my $owner = $interface->type->name eq "EventTarget" ? "&castedThis->wrapper()" : "castedThis";
     my $argumentIndex = 0;
     my $hasOutput = 0;
     foreach my $argument (@{$operation->arguments}) {
         if ($argument->type->name eq "EventListener") {
-            push(@$outputArray, $indent . "vm.writeBarrier(&static_cast<JSObject&>(*castedThis), argument${argumentIndex}.value());\n") if !$isDryRun;
+            push(@$outputArray, $indent . "vm.writeBarrier(${owner}, argument${argumentIndex}.value());\n") if !$isDryRun;
             $hasOutput = 1;
         }
         $argumentIndex++;
@@ -7751,11 +7754,11 @@ sub GenerateImplementationFunctionCall
     }
 
     my $dryRun = 1;
-    my $hasWriteBarriersForArguments = GenerateWriteBarriersForArguments($outputArray, $operation, $indent, $dryRun);
+    my $hasWriteBarriersForArguments = GenerateWriteBarriersForArguments($outputArray, $operation, $interface, $indent, $dryRun);
     my $returnArgumentName = GetOperationReturnedArgumentName($operation);
     if ($returnArgumentName) {
         push(@$outputArray, $indent . "invokeFunctorPropagatingExceptionIfNecessary(*lexicalGlobalObject, throwScope, [&] { return $functionString; });\n");
-        GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
+        GenerateWriteBarriersForArguments($outputArray, $operation, $interface, $indent);
         push(@$outputArray, $indent . "return JSValue::encode($returnArgumentName.value());\n");
     } else {
         if ($callTracer && $codeGenerator->IsInterfaceType($operation->type)) {
@@ -7769,7 +7772,7 @@ sub GenerateImplementationFunctionCall
         if ($hasWriteBarriersForArguments) {
             push(@$outputArray, $indent . "auto result = JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, $globalObjectReference) . ");\n");
             push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $hasThrowScope;
-            GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
+            GenerateWriteBarriersForArguments($outputArray, $operation, $interface, $indent);
             push(@$outputArray, $indent . "return result;\n");
         } else {
             push(@$outputArray, $indent . "RELEASE_AND_RETURN(throwScope, JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, $globalObjectReference) . "));\n");

@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace JSC;
 
 JSTestCallbackFunctionWithVariadic::JSTestCallbackFunctionWithVariadic(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionWithVariadic(globalObject->scriptExecutionContext())
+    : TestCallbackFunctionWithVariadic(protect(globalObject->scriptExecutionContext()))
     , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }

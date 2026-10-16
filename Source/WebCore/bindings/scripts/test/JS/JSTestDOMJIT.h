@@ -50,7 +50,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestDOMJIT& wrapped() const
     {
-        return static_cast<TestDOMJIT&>(Base::wrapped());
+        // JSTestDOMJIT wrappers always wrap TestDOMJIT objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestDOMJIT&>(Base::wrapped());
     }
 
 protected:

@@ -50,7 +50,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestPromiseRejectionEvent& wrapped() const
     {
-        return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());
+        // JSTestPromiseRejectionEvent wrappers always wrap TestPromiseRejectionEvent objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestPromiseRejectionEvent&>(Base::wrapped());
     }
 
 protected:

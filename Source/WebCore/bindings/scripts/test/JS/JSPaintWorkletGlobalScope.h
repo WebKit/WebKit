@@ -49,7 +49,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     PaintWorkletGlobalScope& wrapped() const
     {
-        return static_cast<PaintWorkletGlobalScope&>(Base::wrapped());
+        // JSPaintWorkletGlobalScope wrappers always wrap PaintWorkletGlobalScope objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<PaintWorkletGlobalScope&>(Base::wrapped());
     }
 
 public:

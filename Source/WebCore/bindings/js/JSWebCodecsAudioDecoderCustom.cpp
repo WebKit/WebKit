@@ -38,8 +38,9 @@ namespace WebCore {
 template <typename Visitor>
 void JSWebCodecsAudioDecoder::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    wrapped().outputCallbackConcurrently().visitJSFunctionInGCThread(visitor);
-    wrapped().errorCallbackConcurrently().visitJSFunctionInGCThread(visitor);
+    // This function may get called on a GC thread so we cannot ref the object.
+    SUPPRESS_UNCOUNTED_ARG wrapped().outputCallbackConcurrently().visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_ARG wrapped().errorCallbackConcurrently().visitJSFunctionInGCThread(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSWebCodecsAudioDecoder);

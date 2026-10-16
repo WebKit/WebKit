@@ -50,7 +50,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestExceptionSubclass& wrapped() const
     {
-        return static_cast<TestExceptionSubclass&>(Base::wrapped());
+        // JSTestExceptionSubclass wrappers always wrap TestExceptionSubclass objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestExceptionSubclass&>(Base::wrapped());
     }
 
 protected:

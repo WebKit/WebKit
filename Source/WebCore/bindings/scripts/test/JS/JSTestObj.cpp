@@ -8628,7 +8628,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_addEventListenerBod
        return encodedJSValue();
     auto result = JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.addEventListener(typeConversionResult.releaseReturnValue(), listenerConversionResult.releaseReturnValue(), useCaptureConversionResult.releaseReturnValue()); }));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    vm.writeBarrier(&static_cast<JSObject&>(*castedThis), argument1.value());
+    vm.writeBarrier(castedThis, argument1.value());
     return result;
 }
 
@@ -8660,7 +8660,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_removeEventListener
        return encodedJSValue();
     auto result = JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.removeEventListener(typeConversionResult.releaseReturnValue(), listenerConversionResult.releaseReturnValue(), useCaptureConversionResult.releaseReturnValue()); }));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    vm.writeBarrier(&static_cast<JSObject&>(*castedThis), argument1.value());
+    vm.writeBarrier(castedThis, argument1.value());
     return result;
 }
 

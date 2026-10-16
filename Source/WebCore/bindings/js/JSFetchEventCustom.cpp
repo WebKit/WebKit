@@ -34,7 +34,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSFetchEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, wrapped().request());
+    // This function may get called on a GC thread so we cannot ref the object.
+    SUPPRESS_UNCOUNTED_ARG addWebCoreOpaqueRoot(visitor, wrapped().request());
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSFetchEvent);

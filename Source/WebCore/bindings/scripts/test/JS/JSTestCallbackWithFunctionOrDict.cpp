@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace JSC;
 
 JSTestCallbackWithFunctionOrDict::JSTestCallbackWithFunctionOrDict(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackWithFunctionOrDict(globalObject->scriptExecutionContext())
+    : TestCallbackWithFunctionOrDict(protect(globalObject->scriptExecutionContext()))
     , m_data(new JSCallbackData(callback, globalObject, this))
 {
 }

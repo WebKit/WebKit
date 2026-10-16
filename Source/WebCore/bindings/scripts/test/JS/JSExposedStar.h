@@ -53,7 +53,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     ExposedStar& wrapped() const
     {
-        return static_cast<ExposedStar&>(Base::wrapped());
+        // JSExposedStar wrappers always wrap ExposedStar objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<ExposedStar&>(Base::wrapped());
     }
 
 protected:

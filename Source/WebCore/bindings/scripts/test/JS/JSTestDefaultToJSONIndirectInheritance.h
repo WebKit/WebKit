@@ -49,7 +49,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestDefaultToJSONIndirectInheritance& wrapped() const
     {
-        return static_cast<TestDefaultToJSONIndirectInheritance&>(Base::wrapped());
+        // JSTestDefaultToJSONIndirectInheritance wrappers always wrap TestDefaultToJSONIndirectInheritance objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestDefaultToJSONIndirectInheritance&>(Base::wrapped());
     }
 
 protected:

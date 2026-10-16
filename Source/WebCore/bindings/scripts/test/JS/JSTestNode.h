@@ -49,7 +49,8 @@ public:
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
     TestNode& wrapped() const
     {
-        return static_cast<TestNode&>(Base::wrapped());
+        // JSTestNode wrappers always wrap TestNode objects.
+        SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<TestNode&>(Base::wrapped());
     }
 
 protected:
