@@ -1,0 +1,7 @@
+Button 1
+Visible line.
+
+Button 3
+
+PASS clamped content remains focusable.
+

@@ -4312,6 +4312,15 @@ imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-05
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-052.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-053.html [ ImageOnlyFailure ]
 
+# Tests that failed on the 2026-10-15 import of css-overflow/line-clamp
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-063.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-text-overflow-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-035.html [ ImageOnlyFailure ]
+[ Debug ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-abspos-025.html [ Crash ]
+[ Release ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-abspos-025.html [ ImageOnlyFailure ]
+[ Debug ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-abspos-026.html [ Crash ]
+[ Release ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-with-abspos-026.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/block-ellipsis-bidi-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-045.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-013.html [ ImageOnlyFailure ]
