@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures the XML external entity deprecation warning is logged only once per page, even when a document declares and references several external entities.");
+
+jsTestIsAsync = true;
+
+var firstEntityText;
+var secondEntityText;
+var thirdEntityText;
+
+function runTest() {
+    var xmlDocument = document.getElementById("xml-iframe").contentDocument;
+
+    firstEntityText = xmlDocument.getElementById("first").textContent.trim();
+    shouldBeEqualToString("firstEntityText", "SUCCESS");
+
+    secondEntityText = xmlDocument.getElementById("second").textContent.trim();
+    shouldBeEqualToString("secondEntityText", "SUCCESS");
+
+    thirdEntityText = xmlDocument.getElementById("third").textContent.trim();
+    shouldBeEqualToString("thirdEntityText", "SUCCESS");
+
+    finishJSTest();
+}
+</script>
+<iframe id="xml-iframe" src="resources/multiple-external-entities.xml" onload="runTest()"></iframe>
+</body>
+</html>

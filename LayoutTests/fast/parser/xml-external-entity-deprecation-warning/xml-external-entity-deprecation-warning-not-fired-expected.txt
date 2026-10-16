@@ -1,0 +1,14 @@
+This test ensures no XML external entity deprecation warning is logged for internal entities, predefined entities, XHTML named entities, or an external DTD subset, which WebKit never fetches.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internalEntityText is "PASS"
+PASS nestedEntityText is "PASS"
+PASS predefinedEntityText is "&<>"
+PASS namedEntityCharCode is 160
+PASS externalSubsetText is "PASS"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
