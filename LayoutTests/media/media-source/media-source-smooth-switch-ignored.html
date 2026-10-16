@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-ignored</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2)');
+        await sourceBufferAppend(1, [[0, 3], [3, 6], [6, 9]]);
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(2, [[0, 3]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+        consoleWrite("<br>The new quality must not have been enqueued since it was fully contained in an already enqueued GOP of the old quality:")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+
+        consoleWrite("<br>A non-overlapping append afterwards should still work:")
+        await sourceBufferAppend(3, [[9, 12]]);
+        await showEnqueuedSamples();
+
+        consoleWrite("<br>Seeking should flush and therefore [0, 3] should use generation 2:");
+        run('video.currentTime = 0.5');
+        await waitFor(video, "seeked", true);
+        await showEnqueuedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

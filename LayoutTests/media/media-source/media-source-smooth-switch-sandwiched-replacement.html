@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-sandwiched-replacement</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2)');
+        await sourceBufferAppend(1, [[0, 3], [3, 6], [6, 9]]);
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(2, [[3, 6]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 7)');
+        consoleWrite("<br>We should have generations 1, 2, 1.")
+        await showEnqueuedSamples();
+
+        consoleWrite("<br>But here is the edge case: turns out we weren't done with the generation 2 GOP! We enter the smooth switch state.")
+        await sourceBufferAppendGopContinuation(2, [6, 8]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 8)');
+        consoleWrite("<br>For now, the generation 2 append hasn't reached the discontinuity boundary, so the browser keeps enqueueing the old quality:");
+        await showEnqueuedSamples();
+
+        consoleWrite("<br>Now the generation 2 GOP will be found to extend beyond the discontinuity boundary, forcing the smooth switch to end with via non-displaying samples.")
+        await sourceBufferAppendGopContinuation(2, [8, 12]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+        consoleWrite("<br>We should have generations 1, 2, 1, 2. The last group needs to repeat samples as non-displaying to re-synchronize the decoder.")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
