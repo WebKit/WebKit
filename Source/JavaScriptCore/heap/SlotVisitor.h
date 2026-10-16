@@ -129,7 +129,7 @@ public:
     bool isMarked(MarkedBlock&, HeapCell*) const final;
     bool isMarked(PreciseAllocation&, HeapCell*) const final;
 
-    void LEGACY_NODELETE didStartMarking(CollectionScope, HeapVersion markingVersion, bool isAnalyzingHeap);
+    void LEGACY_NODELETE didStartMarking(CollectionScope, bool isAnalyzingHeap);
     void LEGACY_NODELETE reset();
     void clearMarkStacks();
 
@@ -165,8 +165,6 @@ public:
     
     void dump(PrintStream&) const final;
 
-    HeapVersion markingVersion() const { return m_markingVersion; }
-
     bool mutatorsAreStopped() const final { return m_mutatorsAreStopped; }
 
     // While set, visits assume the mutators of the heaps being collected are stopped. Change it only between drains.
@@ -192,6 +190,8 @@ private:
     friend class ParallelModeEnabler;
     friend class MarkingConstraintSolver;
     
+    static HeapVersion markingVersionOf(const MarkedBlock&);
+
     void appendJSCellOrAuxiliary(HeapCell*);
 
     JS_EXPORT_PRIVATE void appendSlow(JSCell*, Dependency);
@@ -201,12 +201,12 @@ private:
     template<typename ContainerType>
     void setMarkedAndAppendToMarkStack(ContainerType&, JSCell*, Dependency);
     
-    void appendToMarkStack(JSCell*);
+    void appendToMarkStack(JSC::Heap&, JSCell*);
     
     template<typename ContainerType>
-    void appendToMarkStack(ContainerType&, JSCell*);
+    void appendToMarkStack(JSC::Heap&, ContainerType&, JSCell*);
     
-    void noteLiveAuxiliaryCell(HeapCell*);
+    void noteLiveAuxiliaryCell(JSC::Heap&, HeapCell*);
     
     void visitChildren(const JSCell*);
 
@@ -225,8 +225,6 @@ private:
     IterationStatus forEachMarkStack(NOESCAPE const Func&);
 
     MarkStackArray& LEGACY_NODELETE correspondingGlobalStack(MarkStackArray&);
-
-    HeapVersion m_markingVersion;
 
     // Bytes of m_bytesMarkedHeap's cells this visitor marked and has not yet added to that heap's count. Marking a
     // cell of another heap flushes it, which is rare since a heap's cells mostly reference their own heap's cells.
