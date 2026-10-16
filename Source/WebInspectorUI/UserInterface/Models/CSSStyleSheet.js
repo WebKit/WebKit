@@ -148,7 +148,9 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
         let sourceCode = sourceCodeLocation.sourceCode;
         let lineNumber = this._startLineNumber + sourceCodeLocation.lineNumber;
-        let columnNumber = this._startColumnNumber + sourceCodeLocation.columnNumber;
+        let columnNumber = sourceCodeLocation.columnNumber;
+        if (!sourceCodeLocation.lineNumber)
+            columnNumber += this._startColumnNumber;
         return sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
     }
 
