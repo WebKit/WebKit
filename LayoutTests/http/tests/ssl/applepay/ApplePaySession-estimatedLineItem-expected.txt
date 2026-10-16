@@ -1,0 +1,36 @@
+Test creating an ApplePaySession with an "estimated" line item type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentRequest.features
+
+SETUP: request = validRequest(); request.features = ['invalidFeatureThatsNotLineItemTypeEstimated'];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.features = ['lineItemTypeEstimated'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.total
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'estimated' };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.total = { label: 'label', type: 'estimated' };
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+Testing PaymentRequest.lineItems
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', amount: '10.00', type: 'estimated' }];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', type: 'estimated' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', amount: '', type: 'estimated' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

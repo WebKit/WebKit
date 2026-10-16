@@ -88,12 +88,14 @@ fast/scrolling/unfocusing-page-while-keyboard-scrolling.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
 http/tests/ssl/applepay [ Pass ]
+http/tests/ssl/applepay/ApplePaySession-estimatedLineItem.html [ Skip ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
 http/tests/paymentrequest/ApplePayModifier-disbursementRequest.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-isDelegatedRequest.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-estimatedLineItem.https.html [ Skip ]
 http/tests/paymentrequest [ Pass ]
 http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
