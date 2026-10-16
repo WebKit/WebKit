@@ -72,7 +72,7 @@ Ref<CSSValue> ImageSet::computedStyleValue(const Style::ComputedStyle& style) co
 {
     auto builder = WTF::map<CSSValueListBuilderInlineCapacity>(m_images, [&](auto& image) -> Ref<CSSValue> {
         return CSSImageSetOptionValue::create(
-            image.image->computedStyleValue(style),
+            protect(image.image)->computedStyleValue(style),
             toCSS(image.scaleFactor, style),
             toCSS(image.mimeType, style)
         );

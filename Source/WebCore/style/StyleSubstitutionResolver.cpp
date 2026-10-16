@@ -127,7 +127,7 @@ SubstitutionResolver::SubstitutionResolver(Builder& builder, const CSSRegistered
 RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId)
 {
     if (functionId == CSSValueID::Env)
-        return m_styleBuilder.state().document().styleScope().environmentVariables().valueForName(variableName);
+        return protect(m_styleBuilder.state().document().styleScope())->environmentVariables().valueForName(variableName);
 
     // Every parameter of the function whose arguments are being resolved shadows the calling element's
     // custom property of the same name, resolved or not, so a default can reference an earlier
@@ -277,7 +277,7 @@ bool SubstitutionResolver::substituteNamedValueOrFallback(const std::optional<At
         return false;
 
     if (functionId == CSSValueID::Var && name) {
-        auto* registered = m_styleBuilder.state().registeredProperty(*name);
+        auto* registered = protect(m_styleBuilder.state())->registeredProperty(*name);
         // A custom function's parameters and locals are registered to carry their type, but they are
         // not author registrations, so a fallback for one is not held to its syntax.
         auto* localRegistry = m_styleBuilder.state().localPropertyRegistry();
@@ -548,7 +548,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
 
     // Parameter default values and the body are resolved inside the guard, so a function that reaches
     // itself through either is still cyclic.
-    auto guard = m_styleBuilder.state().guardSubstitutionContext({ SubstitutionContext::Type::Function, scopedFunctionName.name, foundScopeOrdinal });
+    auto guard = protect(m_styleBuilder.state())->guardSubstitutionContext({ SubstitutionContext::Type::Function, scopedFunctionName.name, foundScopeOrdinal });
 
     if (guard.isCyclicContext())
         return false;
@@ -641,7 +641,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     // inherit one. Custom properties are resolved lazily through the calling context's builder instead.
     bodyStyles->inheritIgnoringCustomPropertiesFrom(protect(m_styleBuilder.state().style()));
     Builder bodyBuilder(*bodyStyles, WTF::move(builderContext), bodyMatchResult);
-    bodyBuilder.state().addGuardedFunctionContexts(m_styleBuilder.state());
+    bodyBuilder.state().addGuardedFunctionContexts(protect(m_styleBuilder.state()));
 
     // "Return the value of the result property in body styles."
     auto resolvedResult = bodyBuilder.resolveFunctionResult();
@@ -805,7 +805,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
 
     // Register the substitution dependency on the originating element's scope so attribute changes
     // trigger AttributeChangeInvalidation against the right rule features.
-    m_styleBuilder.state().registerSubstitutionAttribute(attributeName, protect(Scope::forNode(attributeElement)).ptr());
+    protect(m_styleBuilder.state())->registerSubstitutionAttribute(attributeName, protect(Scope::forNode(attributeElement)).ptr());
     // Resolve namespace prefix to URI.
     auto namespaceURI = [&] -> AtomString {
         auto& prefix = parsedName->namespacePrefix;
@@ -815,7 +815,7 @@ bool SubstitutionResolver::substituteAttrFunction(CSSParserTokenRange argumentsR
     }();
 
     // https://drafts.csswg.org/css-values-5/#guarded
-    auto guard = m_styleBuilder.state().guardSubstitutionContext({ SubstitutionContext::Type::Attribute, attributeName });
+    auto guard = protect(m_styleBuilder.state())->guardSubstitutionContext({ SubstitutionContext::Type::Attribute, attributeName });
 
     // Resolve fallback lazily to avoid var() cycle detection side effects during primary resolution.
     auto resolveFallback = [&] -> std::optional<Vector<CSSParserToken>> {
@@ -1050,7 +1050,7 @@ bool SubstitutionResolver::substituteIdentFunction(CSSParserTokenRange range, Ve
         auto integer = CSSPropertyParserHelpers::MetaConsumer<CSS::Integer<>>::consume(argumentRange, parserState);
         if (!integer)
             return false;
-        builder.append(toStyle(*integer, m_styleBuilder.state()).value);
+        builder.append(toStyle(*integer, protect(m_styleBuilder.state())).value);
         if (builder.length() > maxIdentFunctionLength)
             return false;
     }
@@ -1120,7 +1120,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     // This index is counted in its own space, separate from random()'s parse-time
     // cssRandomFunctionCount, which is why the key records which function it came from.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = { m_styleBuilder.state().cssPropertyID(), m_styleBuilder.state().customPropertyName(), CSSCalc::RandomFunction::RandomItem },
+        .property = { m_styleBuilder.state().cssPropertyID(), protect(m_styleBuilder.state())->customPropertyName(), CSSCalc::RandomFunction::RandomItem },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
@@ -1129,7 +1129,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     if (!sharing || !randomKeyRange.atEnd())
         return { };
 
-    return CSSCalc::resolveRandomBaseValue(*sharing, m_styleBuilder.state());
+    return CSSCalc::resolveRandomBaseValue(*sharing, protect(m_styleBuilder.state()));
 }
 
 auto SubstitutionResolver::substituteIfArgumentGrammar(CSSParserTokenRange range, const CSSParserContext& context) -> std::optional<Vector<IfBranch>>

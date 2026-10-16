@@ -150,7 +150,7 @@ auto CSSValueConversion<Cursor>::operator()(BuilderState& state, const CSSValue&
         return CursorImageAndHotSpot { styleImage.releaseNonNull(), WTF::move(hotSpot) };
     });
 
-    return { WTF::move(images), toStyleFromCSSValue<CursorType>(state, list->item(list->size() - 1)) };
+    return { WTF::move(images), toStyleFromCSSValue<CursorType>(state, protect(list->item(list->size() - 1))) };
 }
 
 Ref<CSSValue> CSSValueCreation<CursorImageAndHotSpot>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const CursorImageAndHotSpot& value)

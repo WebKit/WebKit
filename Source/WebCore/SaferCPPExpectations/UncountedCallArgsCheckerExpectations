@@ -51,30 +51,24 @@ rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/AnchorPositionEvaluator.cpp
-[ macOS ] style/ChildChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/RuleSet.cpp
 style/StyleAdjuster.cpp
-[ macOS ] style/StyleBuilder.cpp
 style/StyleDocumentScope.cpp
-[ macOS ] style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidator.cpp
 style/StyleResolver.cpp
 style/StyleScopeRuleSets.cpp
 style/StyleTreeResolver.cpp
-[ macOS ] style/Styleable.cpp
 style/Styleable.h
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/filter-effects/StyleFilterReference.cpp
-[ macOS ] style/values/images/kinds/StyleImageSet.cpp
 [ iOS ] style/values/primitives/StyleLengthResolution.cpp
 style/values/transforms/StyleRotate.h
 style/values/transforms/StyleScale.h
 style/values/transforms/StyleTransformList.cpp
 style/values/transforms/StyleTranslate.h
-[ macOS ] style/values/ui/StyleCursor.cpp
 style/values/will-change/StyleWillChange.h

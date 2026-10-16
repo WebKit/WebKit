@@ -99,7 +99,7 @@ RuleSet* ScopeRuleSets::dynamicViewTransitionsStyle() const
 RuleSet* ScopeRuleSets::userStyle() const
 {
     if (m_usesSharedUserStyle)
-        return m_styleResolver.document().styleScope().resolver().ruleSets().userStyle();
+        return protect(m_styleResolver.document().styleScope())->resolver().ruleSets().userStyle();
     return m_userStyle.get();
 }
 

@@ -104,7 +104,7 @@ Style::ComputedStyle resolveForDocument(const Document& document)
         return fontDescription;
     }();
 
-    auto fontCascade = FontCascade { WTF::move(fontDescription), documentStyle.fontCascade() };
+    auto fontCascade = FontCascade { WTF::move(fontDescription), protect(documentStyle.fontCascade()) };
 
     // We don't just call setFontDescription() because we need to provide the fontSelector to the FontCascade.
     RefPtr fontSelector = document.fontSelector();

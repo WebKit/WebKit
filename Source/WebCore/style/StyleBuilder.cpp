@@ -107,7 +107,7 @@ static bool isInheritedCustomProperty(const CSSRegisteredCustomProperty* registe
 }
 
 Builder::Builder(Style::ComputedStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>* animatedProperties)
-    : m_cascade(matchResult, WTF::move(includedProperties), animatedProperties, positionTryFallbackProperties(context))
+    : m_cascade(matchResult, WTF::move(includedProperties), animatedProperties, protect(positionTryFallbackProperties(context)))
     , m_state(BuilderState::create(style, WTF::move(context)))
 {
 }

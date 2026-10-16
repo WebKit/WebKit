@@ -211,7 +211,7 @@ bool Extractor::updateStyleIfNeededForProperty(Element& element, const std::opti
 
 static inline const Style::ComputedStyle* computeRenderStyleForProperty(Element& element, const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, CSSPropertyID propertyID, std::unique_ptr<Style::ComputedStyle>& ownedStyle)
 {
-    if (Style::Interpolation::isAccelerated(propertyID, element.document().settings())) {
+    if (Style::Interpolation::isAccelerated(propertyID, protect(element.document().settings()))) {
         Styleable styleable(element, pseudoElementIdentifier);
         if (styleable.renderer() && styleable.isRunningAcceleratedAnimationOfProperty(propertyID)) {
             ownedStyle = styleable.renderer()->animatedStyle();
@@ -412,7 +412,7 @@ const Style::ComputedStyle* Extractor::computeStyle(CSSPropertyID propertyID, Up
     if (!element)
         return nullptr;
 
-    if (!isExposed(propertyID, element->document().settings())) {
+    if (!isExposed(propertyID, protect(element->document().settings()))) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
