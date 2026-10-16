@@ -323,7 +323,6 @@ void ImageBuffer::submitDrawingCommands()
 
 void ImageBuffer::prepareForDisplay()
 {
-    flushDrawingContextAsync();
     if (auto* backend = m_backend.get())
         backend->prepareForDisplay();
 }
@@ -468,6 +467,12 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBuffer::layerContentsDisplayDe
     if (auto* backend = m_backend.get())
         return backend->layerContentsDisplayDelegate();
     return nullptr;
+}
+
+void ImageBuffer::releaseLayerContentsDisplayDelegate()
+{
+    if (auto* backend = m_backend.get())
+        backend->releaseLayerContentsDisplayDelegate();
 }
 
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)

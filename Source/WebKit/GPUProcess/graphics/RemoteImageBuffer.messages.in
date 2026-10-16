@@ -41,6 +41,9 @@ messages -> RemoteImageBuffer Stream {
     FlushContextSync() -> () Synchronous
     GetEffectiveRenderingModeForTesting() -> (std::optional<WebCore::RenderingMode> renderingMode) Synchronous
     GetBackendHandle() -> (std::optional<WebKit::ImageBufferBackendHandle> handle) Synchronous NotStreamEncodableReply
+#if PLATFORM(COCOA)
+    PrepareForDisplay(IPC::Semaphore finishedSignal) -> (MachSendRight displayBuffer) Synchronous NotStreamEncodable NotStreamEncodableReply
+#endif
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     DynamicContentScalingDisplayList() -> (std::optional<WebCore::DynamicContentScalingDisplayList> displayList) Synchronous NotStreamEncodableReply

@@ -27,6 +27,7 @@
 
 #include <WebCore/PlaceholderFrameIdentifier.h>
 #include <WebCore/PlatformLayerIdentifier.h>
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -45,6 +46,7 @@ class ImageBuffer;
 enum class ContentsFormat : uint8_t;
 #if USE(CA)
 class PlatformCALayer;
+struct PlatformCALayerDelegatedContents;
 #elif USE(COORDINATED_GRAPHICS)
 class CoordinatedPlatformLayer;
 class CoordinatedPlatformLayerBuffer;
@@ -65,6 +67,7 @@ public:
     // Must not detach the platform layer backing store.
     virtual void display(PlatformCALayer&) = 0;
     virtual GraphicsLayerCompositingCoordinatesOrientation orientation() const;
+    virtual std::optional<PlatformCALayerDelegatedContents> delegatedContents() const;
 #elif USE(COORDINATED_GRAPHICS)
     virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
     virtual void display(CoordinatedPlatformLayer&, std::optional<Damage>&&) = 0;

@@ -148,6 +148,7 @@ public:
 
     bool needsPreparationForDisplay();
     void prepareForDisplay();
+    bool usesContentsAsLayerContents() const;
     void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
     WEBCORE_EXPORT std::optional<double> getContextEffectiveDynamicRangeLimitValue() const;
 
@@ -188,8 +189,6 @@ private:
     bool canStartSelection() const final;
 
     void didUpdateSizeProperties();
-
-    bool usesContentsAsLayerContents() const;
 
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
 

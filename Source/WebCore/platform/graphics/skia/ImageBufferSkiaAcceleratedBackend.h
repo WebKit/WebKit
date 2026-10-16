@@ -70,7 +70,7 @@ private:
     void ensureCanvasRecordingContext();
 
 #if USE(COORDINATED_GRAPHICS)
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
 
     const RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 #endif

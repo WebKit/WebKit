@@ -108,6 +108,7 @@ public:
     virtual bool delegatesDisplay() const { return false; }
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
+    virtual void clearContentsFromLayer() { }
 
     // Returns the drawing buffer and runs the compositing steps of transferToImageBitmap.
     virtual RefPtr<ImageBuffer> transferToImageBuffer();

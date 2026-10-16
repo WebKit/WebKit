@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+<style>
+    canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="canvas" width="20" height="20" content="drawable"></canvas>
+<pre id="layers"></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function nextFrames() {
+        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    }
+
+    const layers = [];
+    function dumpLayers(title) {
+        if (window.internals)
+            layers.push(title + '\n' + internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS));
+    }
+
+    (async () => {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, 20, 20);
+        await nextFrames();
+        dumpLayers('Drawable:');
+
+        canvas.removeAttribute('content');
+        await nextFrames();
+        dumpLayers('Not drawable:');
+
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 20, 20);
+        await nextFrames();
+
+        canvas.setAttribute('content', 'drawable');
+        await nextFrames();
+        dumpLayers('Drawable again:');
+
+        document.getElementById('layers').innerText = layers.join('\n');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    })();
+</script>
+</body>
+</html>

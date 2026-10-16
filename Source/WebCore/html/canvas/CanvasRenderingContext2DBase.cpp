@@ -316,14 +316,12 @@ bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer
     return !m_hasCreatedImageBuffer;
 }
 
-#if USE(SKIA)
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext2DBase::layerContentsDisplayDelegate()
 {
     if (RefPtr buffer = this->buffer())
         return buffer->layerContentsDisplayDelegate();
     return nullptr;
 }
-#endif
 
 bool CanvasRenderingContext2DBase::hasDeferredOperations() const
 {
@@ -346,6 +344,12 @@ void CanvasRenderingContext2DBase::reset()
     // CanvasRenderingContext2D.reset() behaves exactly like width/height self-assignment,
     // `ctx.width = ctx.width`.
     didUpdateCanvasSizeProperties(false);
+}
+
+void CanvasRenderingContext2DBase::clearContentsFromLayer()
+{
+    if (RefPtr buffer = m_buffer)
+        buffer->releaseLayerContentsDisplayDelegate();
 }
 
 void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChanged)
@@ -2709,20 +2713,19 @@ void CanvasRenderingContext2DBase::prepareForDisplay()
 
 bool CanvasRenderingContext2DBase::delegatesDisplay() const
 {
-#if USE(SKIA)
-    return isAccelerated();
-#else
-    return false;
+#if !USE(SKIA)
+    // FIXME: Delegate display of all accelerated 2D canvases.
+    RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase());
+    if (!canvas || !canvas->hasDrawableContent())
+        return false;
 #endif
+    return isAccelerated();
 }
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
-#if USE(SKIA)
-    return isAccelerated();
-#else
-    return false;
-#endif
+    RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase());
+    return canvas && canvas->usesContentsAsLayerContents();
 }
 
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData& existingImageData) const
@@ -3585,12 +3588,10 @@ ImageBuffer* CanvasRenderingContext2DBase::buffer() const
     // Recalculate compositing requirements if acceleration state changed.
     if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
         canvasElement->invalidateStyleAndLayerComposition();
-#if USE(SKIA)
         if (CheckedPtr renderer = canvasElement->renderBox()) {
             if (renderer->hasAcceleratedCompositing() && delegatesDisplay())
                 renderer->contentChanged(ContentChangeType::Canvas);
         }
-#endif
     }
 #endif
     return m_buffer;

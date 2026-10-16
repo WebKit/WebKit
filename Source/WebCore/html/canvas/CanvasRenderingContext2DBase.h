@@ -488,9 +488,8 @@ private:
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
-#if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
-#endif
+    void clearContentsFromLayer() final;
     bool hasDeferredOperations() const final;
     void flushDeferredOperations() final;
 
