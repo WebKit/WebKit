@@ -532,8 +532,8 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
         return nullptr;
 
     if (desiredVisibility == FallbackVisibility::Invisible && font->visibility() == Font::Visibility::Visible)
-        return const_cast<GlyphPage*>(protect(font->invisibleFont())->glyphPage(pageNumber));
-    return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
+        SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<GlyphPage*>(protect(font->invisibleFont())->glyphPage(pageNumber));
+    SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 
 GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeDescription& description, FontSelector* fontSelector, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy)
