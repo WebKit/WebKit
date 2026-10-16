@@ -23,8 +23,10 @@ bool fileExists(const String& path)
 
 bool deleteFile(const String& path)
 {
-    wkcFileUnlinkPeer(path.utf8().data());
-    return true;
+    if (path.isEmpty())
+        return false;
+
+    return wkcFileUnlinkPeer(path.utf8().data());
 }
 
 bool deleteEmptyDirectory(const String& path)
