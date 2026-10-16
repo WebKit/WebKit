@@ -42,14 +42,15 @@ static constexpr double kMinViewportScale = 0.1;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebXRView);
 
-Ref<WebXRView> WebXRView::create(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
+Ref<WebXRView> WebXRView::create(Ref<WebXRFrame>&& frame, XREye eye, Ref<UnderlyingView>&& underlyingView, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
 {
-    return adoptRef(*new WebXRView(WTF::move(frame), eye, WTF::move(transform), WTF::move(projection)));
+    return adoptRef(*new WebXRView(WTF::move(frame), eye, WTF::move(underlyingView), WTF::move(transform), WTF::move(projection)));
 }
 
-WebXRView::WebXRView(Ref<WebXRFrame>&& frame, XREye eye, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
+WebXRView::WebXRView(Ref<WebXRFrame>&& frame, XREye eye, Ref<UnderlyingView>&& underlyingView, Ref<WebXRRigidTransform>&& transform, Ref<Float32Array>&& projection)
     : m_frame(WTF::move(frame))
     , m_eye(eye)
+    , m_underlyingView(WTF::move(underlyingView))
     , m_transform(WTF::move(transform))
     , m_projection(WTF::move(projection))
 {
@@ -69,7 +70,7 @@ void WebXRView::requestViewportScale(std::optional<double> value)
 {
     if (!value || *value <= 0.0)
         return;
-    m_requestedViewportScale = std::clamp(*value, kMinViewportScale, 1.0);
+    m_underlyingView->requestedViewportScale = std::clamp(*value, kMinViewportScale, 1.0);
 }
 
 

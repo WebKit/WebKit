@@ -92,6 +92,7 @@ public:
     void startFrame(PlatformXR::FrameData&) final;
     PlatformXR::DeviceLayer endFrame() final;
     PlatformXR::LayerHandle layerHandle() const final;
+    bool supportsViewportScaling() const final;
 
 private:
     WebXRWebGLLayer(WebXRSession&, WebXRRenderingContext&&, std::unique_ptr<WebXROpaqueFramebuffer>&&, bool antialias, bool ignoreDepthValues, bool isCompositionEnabled);
@@ -111,13 +112,8 @@ private:
     WeakPtr<WebXRSession> m_session;
     WebXRRenderingContext m_context;
 
-    struct ViewportData {
-        Ref<WebXRViewport> viewport;
-        double currentScale { 1.0 };
-    };
-
-    ViewportData m_leftViewportData;
-    ViewportData m_rightViewportData;
+    const Ref<WebXRViewport> m_leftViewport;
+    const Ref<WebXRViewport> m_rightViewport;
     std::unique_ptr<WebXROpaqueFramebuffer> m_framebuffer;
     bool m_antialias { false };
     bool m_ignoreDepthValues { false };

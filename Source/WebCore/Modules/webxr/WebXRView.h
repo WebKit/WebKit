@@ -42,10 +42,22 @@ class WebXRFrame;
 class WebXRRigidTransform;
 class WebXRSession;
 
+// https://immersive-web.github.io/webxr/#xrview-underlying-view
+class UnderlyingView : public RefCounted<UnderlyingView> {
+public:
+    static Ref<UnderlyingView> create() { return adoptRef(*new UnderlyingView); }
+
+    double requestedViewportScale { 1.0 };
+    double currentViewportScale { 1.0 };
+
+private:
+    UnderlyingView() = default;
+};
+
 class WebXRView : public RefCounted<WebXRView> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebXRView, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
+    WEBCORE_EXPORT static Ref<WebXRView> create(Ref<WebXRFrame>&&, XREye, Ref<UnderlyingView>&&, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
     WEBCORE_EXPORT ~WebXRView();
 
     const WebXRFrame& frame() const { return m_frame.get(); }
@@ -56,21 +68,23 @@ public:
     std::optional<double> recommendedViewportScale() const;
     void requestViewportScale(std::optional<double>);
 
-    double requestedViewportScale() const { return m_requestedViewportScale; }
+    double requestedViewportScale() const { return m_underlyingView->requestedViewportScale; }
+    double currentViewportScale() const { return m_underlyingView->currentViewportScale; }
+    void setCurrentViewportScale(double scale) { m_underlyingView->currentViewportScale = scale; }
     bool isViewportModifiable() const { return m_viewportModifiable; }
     void setViewportModifiable(bool modifiable) { m_viewportModifiable = modifiable; }
 
     JSValueInWrappedObject& cachedProjectionMatrix() LIFETIME_BOUND { return m_cachedProjectionMatrix; }
 
 private:
-    WebXRView(Ref<WebXRFrame>&&, XREye, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
+    WebXRView(Ref<WebXRFrame>&&, XREye, Ref<UnderlyingView>&&, Ref<WebXRRigidTransform>&&, Ref<Float32Array>&&);
 
     const Ref<WebXRFrame> m_frame;
     XREye m_eye;
+    const Ref<UnderlyingView> m_underlyingView;
     const Ref<WebXRRigidTransform> m_transform;
     const Ref<Float32Array> m_projection;
     bool m_viewportModifiable { false };
-    double m_requestedViewportScale { 1.0 };
     JSValueInWrappedObject m_cachedProjectionMatrix;
 };
 

@@ -37,6 +37,7 @@
 #include "WebXRInputSourceArray.h"
 #include "WebXRRenderState.h"
 #include "WebXRSessionListener.h"
+#include "WebXRView.h"
 #include "XREnvironmentBlendMode.h"
 #include "XRInteractionMode.h"
 #include "XRReferenceSpaceType.h"
@@ -117,7 +118,10 @@ public:
 
     XRSessionMode mode() const { return m_mode; }
 
-    const Vector<PlatformXR::Device::ViewData>& views() const LIFETIME_BOUND { return m_views; }
+    struct View : PlatformXR::Device::ViewData {
+        Ref<UnderlyingView> underlyingView;
+    };
+    const Vector<View>& views() const LIFETIME_BOUND { return m_views; }
     const PlatformXR::FrameData& frameData() const LIFETIME_BOUND { return m_frameData; }
     const WebXRReferenceSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
@@ -204,7 +208,7 @@ private:
     Vector<Ref<XRFrameRequestCallback>> m_callbacks;
     bool m_isDeviceFrameRequestPending { false };
 
-    Vector<PlatformXR::Device::ViewData> m_views;
+    Vector<View> m_views;
     PlatformXR::FrameData m_frameData;
     std::optional<PlatformXR::RequestData> m_requestData;
     std::optional<InitialRenderingDimensions> m_initialRenderingDimensions;

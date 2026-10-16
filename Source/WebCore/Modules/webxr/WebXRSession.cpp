@@ -76,7 +76,9 @@ WebXRSession::WebXRSession(Document& document, XRSessionMode mode, PlatformXR::D
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_viewerReferenceSpace(WebXRReferenceSpace::create(document, *this, XRReferenceSpaceType::Viewer))
     , m_timeOrigin(MonotonicTime::now())
-    , m_views(device.views(mode))
+    , m_views(device.views(mode).map([](auto& viewData) {
+        return View { viewData, UnderlyingView::create() };
+    }))
 {
     device.setTrackingAndRenderingClient(*this);
     if (!m_requestedFeatures.contains(PlatformXR::SessionFeature::WebGPU))
@@ -373,10 +375,13 @@ IntSize WebXRSession::recommendedWebGLFramebufferResolution() const
 // https://immersive-web.github.io/webxr/#view-viewport-modifiable
 bool WebXRSession::supportsViewportScaling() const
 {
-    RefPtr device { m_device };
-    ASSERT(device);
-    // Only immersive sessions support viewport scaling.
-    return isImmersive(m_mode) && device && device->supportsViewportScaling();
+    if (!m_activeRenderState)
+        return false;
+    if (RefPtr baseLayer = m_activeRenderState->baseLayer())
+        return baseLayer->supportsViewportScaling();
+    return m_activeRenderState->layers().containsIf([](auto& layer) {
+        return layer->supportsViewportScaling();
+    });
 }
 
 bool WebXRSession::isPositionEmulated() const

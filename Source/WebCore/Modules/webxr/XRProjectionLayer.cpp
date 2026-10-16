@@ -106,6 +106,14 @@ Vector<IntRect> XRProjectionLayer::computeViewports()
     return viewports;
 }
 
+void XRProjectionLayer::setViewport(size_t viewIndex, const IntRect& rect)
+{
+    if (m_viewports.isEmpty())
+        m_viewports = computeViewports();
+    ASSERT(viewIndex < m_viewports.size());
+    m_viewports[viewIndex] = rect;
+}
+
 PlatformXR::DeviceLayer XRProjectionLayer::endFrame()
 {
     PlatformXR::DeviceLayer layerData;
