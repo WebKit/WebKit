@@ -383,13 +383,11 @@ void WebChromeClient::takeFocus(FocusDirection direction)
         page->send(Messages::WebPageProxy::TakeFocus(direction));
 }
 
-void WebChromeClient::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions options, BroadcastFocusedElement broadcast)
+void WebChromeClient::focusedElementChanged(Element* element, LocalFrame* frame, FocusOptions, BroadcastFocusedElement)
 {
     RefPtr coreFrame =  element ? element->document().frame() : frame;
     RefPtr webFrame = coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
     RefPtr page = m_page.get();
-    if (page && broadcast == BroadcastFocusedElement::Yes)
-        protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::FocusedElementChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt, options), page->identifier());
 
     RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
     if (!inputElement || !inputElement->isText())

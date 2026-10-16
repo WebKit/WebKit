@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<input type="text" id="outerInput">
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/focus-state-iframe.html" onload="runTest()"></iframe>
+<script>
+description("Tests that clicking a non-focusable area of a cross-origin iframe blurs the focused element in the main frame.");
+jsTestIsAsync = true;
+
+const outerInput = document.getElementById("outerInput");
+const iframe = document.getElementById("frame");
+let outerInputBlurred = false;
+let outerInputFocusedOut = false;
+
+outerInput.addEventListener("blur", () => outerInputBlurred = true);
+outerInput.addEventListener("focusout", () => outerInputFocusedOut = true);
+
+async function runTest()
+{
+    await UIHelper.activateElement(outerInput);
+
+    window.addEventListener("blur", () => {
+        setTimeout(() => {
+            shouldBeTrue("outerInputBlurred");
+            shouldBeTrue("outerInputFocusedOut");
+            shouldBeEqualToString("document.activeElement.tagName", "IFRAME");
+            finishJSTest();
+        }, 0);
+    }, { once: true });
+
+    const iframeRect = iframe.getBoundingClientRect();
+    await UIHelper.activateAt(iframeRect.left + 150, iframeRect.top + 100);
+}
+</script>
+</body>
+</html>

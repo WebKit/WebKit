@@ -528,7 +528,6 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     RefPtr newFrame { dynamicDowncast<LocalFrame>(frame) };
 
     m_focusedFrame = frame;
-    m_focusedFrameBeforeRemoteFocusBroadcast = (is<RemoteFrame>(frame) && !shouldBroadcast) ? oldFrame.get() : nullptr;
 
     // Now that the frame is updated, fire events and update the selection focused states of both frames.
     if (RefPtr oldFrameView = oldFrame ? oldFrame->view() : nullptr) {
@@ -549,16 +548,20 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         protect(newFrame->document())->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
         for (Ref localFrame : inclusiveAncestorFrames<LocalFrame>(*newFrame))
             protect(localFrame->document())->updateServiceWorkerClientData();
-    } else if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
-        RefPtr focusedOrMainFrame = this->focusedOrMainFrame();
-        if (CheckedPtr cache = focusedOrMainFrame ? protect(focusedOrMainFrame->document())->existingAXObjectCache() : nullptr)
-            cache->onRemoteFrameGainedFocus(*remoteFrame);
-    }
+    } else if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame))
+        remoteFrameWillGainFocus(*remoteFrame);
 
     if (shouldBroadcast)
         m_page->chrome().focusedFrameChanged(frame);
 
     m_isChangingFocusedFrame = false;
+}
+
+void FocusController::remoteFrameWillGainFocus(RemoteFrame& remoteFrame)
+{
+    RefPtr localMainFrame = m_page->localMainFrame();
+    if (CheckedPtr cache = localMainFrame ? protect(localMainFrame->document())->existingAXObjectCache() : nullptr)
+        cache->onRemoteFrameGainedFocus(remoteFrame);
 }
 
 LocalFrame* FocusController::focusedOrMainFrame() const
@@ -584,7 +587,7 @@ void FocusController::setFocusedInternal()
     }
 
     if (!focusedFrame())
-        setFocusedFrame(protect(m_page->mainFrame()).ptr());
+        setFocusedFrame(protect(m_page->mainFrame()).ptr(), BroadcastFocusedFrame::No);
 
     RefPtr focusedFrame = localFocusedFrame();
     if (focusedFrame && focusedFrame->view())
@@ -677,6 +680,8 @@ FocusableElementSearchResult FocusController::findFocusableElementDescendingInto
                 // The remote frame has no focusable elements. Focus the frame itself,
                 // matching the behavior of local empty iframes (see findFocusableElementInDocumentOrderStartingWithFrame).
                 if (shouldFocusElement == ShouldFocusElement::Yes) {
+                    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(ownerElement->contentFrame()))
+                        page->focusController().remoteFrameWillGainFocus(*remoteFrame);
                     protect(ownerElement->document())->setFocusedElement(nullptr);
                     page->focusController().setFocusedFrame(protect(ownerElement->contentFrame()));
                 }
@@ -1209,12 +1214,10 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
 
 bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame, const FocusOptions& options, BroadcastFocusedElement broadcast)
 {
-    ASSERT(broadcast == BroadcastFocusedElement::Yes || (!element && is<RemoteFrame>(newFocusedFrame)));
+    ASSERT(broadcast == BroadcastFocusedElement::Yes || !element);
 
     RefPtr newLocalFocusedFrame { dynamicDowncast<LocalFrame>(newFocusedFrame) };
     RefPtr oldFocusedFrame = localFocusedFrame();
-    if (m_focusedFrameBeforeRemoteFocusBroadcast && broadcast == BroadcastFocusedElement::No)
-        oldFocusedFrame = std::exchange(m_focusedFrameBeforeRemoteFocusBroadcast, nullptr).get();
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
     
     RefPtr oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;

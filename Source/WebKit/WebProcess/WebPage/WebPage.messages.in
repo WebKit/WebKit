@@ -898,7 +898,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
     AddResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrameID, WebCore::ResourceTiming resourceTiming)
 
-    ElementWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID, struct WebCore::FocusOptions options)
     FrameWasFocusedInAnotherProcess(std::optional<WebCore::FrameIdentifier> frameID)
 
     RemotePostMessage(WebCore::FrameIdentifier source, WebCore::SecurityOriginData sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message, struct std::optional<WebCore::UserGestureTokenData> userGestureToken)

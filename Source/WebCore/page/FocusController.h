@@ -47,6 +47,7 @@ class IntRect;
 class KeyboardEvent;
 class Node;
 class Page;
+class RemoteFrame;
 class TreeScope;
 
 struct FocusCandidate;
@@ -59,6 +60,7 @@ public:
     explicit FocusController(Page&, OptionSet<ActivityState>);
 
     WEBCORE_EXPORT void setFocusedFrame(Frame*, BroadcastFocusedFrame = BroadcastFocusedFrame::Yes);
+    WEBCORE_EXPORT void remoteFrameWillGainFocus(RemoteFrame&);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
     LocalFrame* localFocusedFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
     WEBCORE_EXPORT LocalFrame* LEGACY_NODELETE focusedOrMainFrame() const;
@@ -136,7 +138,6 @@ private:
 
     WeakRef<Page> m_page;
     WeakPtr<Frame> m_focusedFrame;
-    WeakPtr<LocalFrame> m_focusedFrameBeforeRemoteFocusBroadcast;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;
 
