@@ -241,12 +241,12 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 
 #if ENABLE(REMOTE_INSPECTOR_SERVICE_WORKER_AUTO_INSPECTION)
         ASSERT(RunLoop::isMain());
-        CompletionHandler<void(bool)> handleDebuggableCreated { [serviceWorkerIdentifier](bool shouldWait) {
+        Function<void(bool)> handleDebuggableCreated = [serviceWorkerIdentifier](bool shouldWait) {
             ASSERT(RunLoop::isMain());
             if (!shouldWait)
                 SWContextManager::singleton().stopRunningDebuggerTasksOnServiceWorker(serviceWorkerIdentifier);
             // Otherwise, let the worker remain paused until the auto-launched inspector's frontendInitialized.
-        }, CompletionHandlerCallThread::MainThread };
+        };
         auto createDebuggable = [serviceWorkerIdentifier, scopeURL, inspectable, handleDebuggableCreated = WTF::move(handleDebuggableCreated)]() mutable {
             WebProcess::singleton().sendWithAsyncReply(Messages::WebProcessProxy::CreateServiceWorkerDebuggable(serviceWorkerIdentifier, scopeURL, inspectable), WTF::move(handleDebuggableCreated));
         };
