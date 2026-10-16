@@ -91,6 +91,7 @@ public:
     bool isEmpty() const { return m_samples.isEmpty(); }
     void clear() { m_samples.clear(); }
     SamplesVector takeSamples() { return std::exchange(m_samples, { }); }
+    MediaSamplesBlock isolatedCopy() && { return WTF::move(*this); }
 
     // Indicate that this MediaSampleBlock follows a discontinuity from the previous block.
     std::optional<bool> discontinuity() const { return m_discontinuity; }
