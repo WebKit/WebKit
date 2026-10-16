@@ -55,6 +55,7 @@ messages -> WebInspectorBackend {
 
     SuspendForDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
     ResumeFromDebugger(WebCore::DebuggerPauseSessionIdentifier sessionID)
+    ResumeStoppedFramesForDebugger()
 
     # Fan out the "show paint rects" toggle. Under Site Isolation the Page domain is served by the
     # UIProcess ProxyingPageAgent, so this never reaches the per-process InspectorPageAgent; each

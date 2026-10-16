@@ -146,6 +146,34 @@ void DebuggerSuspensionController::documentDidBecomeCurrent(Document& document)
         holdDocument(document);
 }
 
+void DebuggerSuspensionController::documentWillSuspendScheduledTasks(Document& document, ReasonForSuspension reason)
+{
+    if (!shouldHoldDocuments())
+        return;
+
+    releaseDocument(document);
+
+    // A document leaving for the back/forward cache leaves its frame paused, which would drop the pageshow events of the document restored into it.
+    if (reason != ReasonForSuspension::BackForwardCache)
+        return;
+    if (RefPtr frame = document.frame(); frame && m_pausedFrames.remove(*frame))
+        CheckedRef { frame->script() }->setPaused(false);
+}
+
+void DebuggerSuspensionController::documentDidResumeScheduledTasks(Document& document, ReasonForSuspension reason)
+{
+    // A page restored from the back/forward cache is held once its pageshow events are dispatched, since a held document drops them.
+    if (reason == ReasonForSuspension::BackForwardCache)
+        return;
+    if (shouldHoldDocuments())
+        holdDocument(document);
+}
+
+void DebuggerSuspensionController::pageDidRestoreFromBackForwardCache()
+{
+    updateHeldDocuments();
+}
+
 bool DebuggerSuspensionController::shouldHoldDocuments() const
 {
     return s_isFrameDebuggerPaused || (!m_sessionHolds.isEmpty() && !s_isWaitingForIdleAfterContinue);

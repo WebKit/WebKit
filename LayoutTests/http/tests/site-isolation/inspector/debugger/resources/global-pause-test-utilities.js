@@ -69,6 +69,25 @@ window.GlobalPause = {
         return null;
     },
 
+    // The backend target serves the Target domain, including the pause session commands.
+    pageTarget()
+    {
+        return WI.backendTarget;
+    },
+
+    // Resolves with the next pause session event for which `predicate({state, stoppingTargetIds})` is true.
+    awaitSessionEvent(predicate)
+    {
+        return new Promise((resolve) => {
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.PauseSessionChanged, (event) => {
+                if (!predicate(event.data))
+                    return;
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.PauseSessionChanged, listener);
+                resolve(event.data);
+            });
+        });
+    },
+
     processIdentifier(target)
     {
         return target.identifier.split("-").pop();

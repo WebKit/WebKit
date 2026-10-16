@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function pauseHere()
+{
+    debugger;
+    return "resumed";
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionResumeCommand");
+
+    let mainTarget;
+    let frameATarget;
+
+    function isPaused(target) {
+        return WI.debuggerManager.dataForTarget(target).paused;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionResumeCommand.Setup",
+        description: "Find the frame target of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionResumeCommand.ResumeStoppedFrames",
+        description: "Resuming the session should resume every stopping frame in every process and release the session.",
+        async test() {
+            await GlobalPause.pause(mainTarget);
+            await GlobalPause.pause(frameATarget);
+            InspectorTest.expectTrue(isPaused(mainTarget), "The main frame should be paused.");
+            InspectorTest.expectTrue(isPaused(frameATarget), "Frame A should be paused.");
+
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
+            let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+            await GlobalPause.pageTarget().TargetAgent.resumeDebuggerPauseSession();
+            await closed;
+            await resumed;
+
+            InspectorTest.expectFalse(isPaused(mainTarget), "The main frame should have resumed.");
+            InspectorTest.expectFalse(isPaused(frameATarget), "Frame A should have resumed.");
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval after resuming the session");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionResumeCommand.NoSession",
+        description: "Resuming when no session is open should do nothing.",
+        async test() {
+            await GlobalPause.pageTarget().TargetAgent.resumeDebuggerPauseSession();
+            InspectorTest.expectFalse(WI.debuggerManager.paused, "Nothing should be paused.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that resuming the pause session resumes the frames that are stopped in every process and releases the frames it holds.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

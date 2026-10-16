@@ -1,0 +1,17 @@
+Test that a page that enters the back/forward cache while a pause session holds it is not held after it is restored.
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionBackForwardCache
+-- Running test case: SiteIsolation.Debugger.PauseSessionBackForwardCache.NavigateWhileInterrupted
+PASS: The main frame's interval should be running.
+PASS: The main frame should have navigated to the second page.
+PASS: The main frame should have gone back.
+PASS: The first page should have been restored from the back/forward cache.
+PASS: The restored page's interval should advance.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionBackForwardCache.RestoreWhileInterrupted
+PASS: The main frame should have gone back.
+PASS: The restored page's interval should not advance while the session holds it.
+PASS: The restored page's interval after the session ends should advance.
+PASS: The page restored while the session holds it should have received pageshow.
+

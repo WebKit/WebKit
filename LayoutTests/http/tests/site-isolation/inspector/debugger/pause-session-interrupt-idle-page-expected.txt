@@ -1,0 +1,27 @@
+Test that interrupting an idle page opens a pause session with no stopping frame, which holds the frames in every process until it is resumed.
+
+
+
+== Running test suite: SiteIsolation.Debugger.PauseSessionInterruptIdlePage
+-- Running test case: SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Setup
+PASS: Should find the frame target for frame A.
+PASS: Frame A's interval should be running.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Interrupt
+PASS: The session should have no stopping frame.
+PASS: The main frame's interval should not advance while the page is interrupted.
+PASS: Frame A's interval should not advance while the page is interrupted.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionInterruptIdlePage.StoppingFrameContinues
+PASS: The session should stay open, with no stopping frame.
+PASS: DebuggerManager should still know the session.
+PASS: The main frame's interval should not advance after the stopping frame continued.
+PASS: Frame A's interval should not advance after it continued.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Resume
+PASS: The main frame's interval after resuming should advance.
+PASS: Frame A's interval after resuming should advance.
+
+-- Running test case: SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Disabled
+PASS: The interrupt should fail.
+

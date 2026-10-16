@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+enum class ReasonForSuspension : uint8_t;
+
 class Document;
 class LocalFrame;
 class Page;
@@ -57,6 +59,11 @@ public:
     void removeSessionHold(DebuggerPauseSessionIdentifier);
 
     void documentDidBecomeCurrent(Document&);
+
+    // Another suspension, such as the back/forward cache, replaces the hold: the active DOM objects record one reason, and the cache would resume nothing if ours were recorded.
+    void documentWillSuspendScheduledTasks(Document&, ReasonForSuspension);
+    void documentDidResumeScheduledTasks(Document&, ReasonForSuspension);
+    void pageDidRestoreFromBackForwardCache();
 
 private:
     static void updateHeldDocumentsInAllPages();

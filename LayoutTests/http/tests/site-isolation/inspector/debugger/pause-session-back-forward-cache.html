@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true UsesBackForwardCache=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+window.pageshowEvents = [];
+window.addEventListener("pageshow", (event) => { window.pageshowEvents.push(event.persisted); });
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionBackForwardCache");
+
+    let mainTarget;
+
+    async function waitForLocation(substring) {
+        for (let i = 0; i < 50; ++i) {
+            let href = await Promise.race([GlobalPause.evaluate(mainTarget, "location.href").catch(() => ""), GlobalPause.sleep(500).then(() => "")]);
+            if (href.includes(substring))
+                return true;
+            await GlobalPause.sleep(100);
+        }
+        return false;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionBackForwardCache.NavigateWhileInterrupted",
+        description: "A page that enters the back/forward cache while a session holds it should run again when it is restored.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, "window.mainTicks > 2"), "The main frame's interval should be running.");
+
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pageTarget().TargetAgent.interruptForDebugger();
+            await opened;
+
+            await GlobalPause.evaluate(mainTarget, "location.href = 'resources/next-page.html', 0");
+            let navigated = await waitForLocation("next-page.html");
+
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
+            await GlobalPause.pageTarget().TargetAgent.resumeDebuggerPauseSession();
+            await closed;
+
+            await GlobalPause.evaluate(mainTarget, "history.back(), 0");
+            let back = await waitForLocation("pause-session-back-forward-cache.html");
+
+            // Results can only be logged once the first page is back, because the page that is showing receives the log.
+            InspectorTest.expectThat(navigated, "The main frame should have navigated to the second page.");
+            InspectorTest.expectThat(back, "The main frame should have gone back.");
+
+            InspectorTest.expectThat(await waitForExpressionInTarget(mainTarget, "window.pageshowEvents.includes(true)"), "The first page should have been restored from the back/forward cache.");
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The restored page's interval");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionBackForwardCache.RestoreWhileInterrupted",
+        description: "A page that is restored from the back/forward cache while a session holds the page should be held until the session ends.",
+        async test() {
+            await GlobalPause.evaluate(mainTarget, "location.href = 'resources/next-page.html', 0");
+            let navigated = await waitForLocation("next-page.html");
+            InspectorTest.assert(navigated, "Should have navigated to the second page.");
+
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pageTarget().TargetAgent.interruptForDebugger();
+            await opened;
+
+            await GlobalPause.evaluate(mainTarget, "history.back(), 0");
+            let back = await waitForLocation("pause-session-back-forward-cache.html");
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await GlobalPause.sleep(300);
+            let after = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
+            await GlobalPause.pageTarget().TargetAgent.resumeDebuggerPauseSession();
+            await closed;
+
+            InspectorTest.expectThat(back, "The main frame should have gone back.");
+            InspectorTest.expectEqual(after, before, "The restored page's interval should not advance while the session holds it.");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", after, "The restored page's interval after the session ends");
+            InspectorTest.expectEqual(await GlobalPause.evaluate(mainTarget, "window.pageshowEvents.filter((persisted) => persisted).length"), 2, "The page restored while the session holds it should have received pageshow.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a page that enters the back/forward cache while a pause session holds it is not held after it is restored.</p>
+</body>

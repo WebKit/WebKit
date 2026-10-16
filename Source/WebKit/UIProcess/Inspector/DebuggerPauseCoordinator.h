@@ -30,6 +30,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -57,15 +58,25 @@ public:
     void frameDidChangeProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier newProcessID);
     void frameWillBeDestroyed(WebCore::FrameIdentifier);
     void processDidTerminate(WebProcessProxy&);
+    bool isEnabled() const { return m_isEnabled; }
+    void setEnabled(bool);
+    void interrupt();
     void closeSession();
+    void resumeSession();
 
 private:
     void openSession();
+    void endSession();
+    void notifySessionChanged(bool isPaused);
+    void stoppingFramesDidShrink();
     void suspendPage(WebProcessProxy&, WebCore::PageIdentifier);
     template<typename Predicate> void removeStoppingFramesIf(NOESCAPE const Predicate&);
 
     WeakRef<WebPageProxy> m_page;
     std::optional<WebCore::DebuggerPauseSessionIdentifier> m_sessionID;
+    bool m_isEnabled { true };
+    bool m_isInterrupted { false };
+    bool m_isDestroying { false };
     // A frame can be stopping in two processes at once: its old document has not reported continuing yet when its new document pauses.
     HashSet<std::pair<WebCore::ProcessIdentifier, WebCore::FrameIdentifier>> m_stoppingFrames;
     Vector<std::pair<WeakPtr<WebProcessProxy>, WebCore::PageIdentifier>> m_suspendedPages;
