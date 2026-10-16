@@ -1,0 +1,16 @@
+Test the ApplePayReferenceSession scaffolding: construction and prepare().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof ApplePayReferenceSession is "function"
+PASS new ApplePayReferenceSession() threw TypeError.
+PASS new ApplePayReferenceSession({}) threw TypeError.
+PASS session = new ApplePayReferenceSession(request) did not throw exception.
+
+PASS session.prepare() rejected with NotSupportedError.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
