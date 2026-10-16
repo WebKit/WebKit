@@ -38,7 +38,6 @@ class RenderImage;
 class RenderLayerCompositor;
 class RenderLayoutState;
 class RenderCounter;
-class RenderQuote;
 
 namespace Layout {
 class InitialContainingBlock;

@@ -27,10 +27,12 @@
 
 namespace WebCore {
 
-// Used to represent a text substring of an element, e.g., for text runs that are split because of
-// first letter and that must therefore have different styles (and positions in the render tree).
-// We cache offsets so that text transformations can be applied in such a way that we can recover
-// the original unaltered string from our corresponding DOM node.
+// Used for text that is not the whole text of a DOM text node:
+// - A substring of a text node, e.g., for text runs that are split because of first letter and that must
+//   therefore have different styles (and positions in the render tree). We cache offsets so that text
+//   transformations can be applied in such a way that we can recover the original unaltered string from
+//   our corresponding DOM node.
+// - Text with no DOM node at all, e.g., 'content' strings, quote marks and the value of an input button.
 class RenderTextFragment final : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderTextFragment);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTextFragment);
@@ -56,12 +58,27 @@ public:
 
     const String& altText() const LIFETIME_BOUND { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
-    
+
+    // Which quote mark an open-quote/close-quote shows depends on the quotes before it in document order,
+    // so RenderTreeUpdater::GeneratedContent fills in the content string once the tree is built.
+    std::optional<QuoteType> quoteType() const { return m_quoteType; }
+    void setQuoteType(QuoteType quoteType) { m_quoteType = quoteType; }
+    // ::first-letter replaces the quote's renderer with the text after the letter. That remaining text keeps the whole
+    // quote mark as its content string, which is what tells RenderTreeUpdater::GeneratedContent the mark is unchanged.
+    void setQuoteTypeForRemainingText(QuoteType quoteType, const String& quoteMark)
+    {
+        m_quoteType = quoteType;
+        m_contentString = quoteMark;
+    }
+
 private:
     void setTextInternal(const String&, bool force) override;
     void setTextWithOffset(const String&, unsigned offset) override;
     Node* nodeForHitTest() const override;
     char32_t previousCharacter() const override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void insertedIntoTree() override;
+    void willBeRemovedFromTree() override;
 
     unsigned m_start;
     unsigned m_end;
@@ -69,6 +86,7 @@ private:
     String m_altText;
     String m_contentString;
     SingleThreadWeakPtr<RenderBoxModelObject> m_firstLetter;
+    std::optional<QuoteType> m_quoteType;
 };
 
 } // namespace WebCore

@@ -8,8 +8,8 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerScrollableArea.h
-rendering/RenderQuote.cpp
 rendering/updating/RenderTreeUpdater.h
+rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/PropertyCascade.h
