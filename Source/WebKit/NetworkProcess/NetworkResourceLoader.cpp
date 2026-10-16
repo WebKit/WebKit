@@ -213,6 +213,7 @@ NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(!m_networkLoad);
+    ASSERT(!m_serviceWorkerFetchTask);
     ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply);
     ASSERT(m_fileReferences.isEmpty());
 #if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
@@ -680,6 +681,8 @@ void NetworkResourceLoader::cleanup(LoadResult result)
     ASSERT(RunLoop::isMain());
     LOADER_RELEASE_LOG("cleanup: (result=%u)", static_cast<unsigned>(result));
 
+    m_isDone = true;
+
     NetworkActivityTracker::CompletionCode code { };
     switch (result) {
     case LoadResult::Unknown:
@@ -706,6 +709,9 @@ void NetworkResourceLoader::cleanup(LoadResult result)
     if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
         networkLoad->clearClient();
 
+    if (RefPtr task = std::exchange(m_serviceWorkerFetchTask, { }))
+        task->cancelFromClient();
+
     // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.
     connection->didCleanupResourceLoader(*this);
 }
@@ -714,9 +720,11 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 {
     LOADER_RELEASE_LOG("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, pendingResponseCompletionHandlers=%zu)", downloadID.toUInt64(), !!m_networkLoad, m_responseCompletionHandlers.size());
 
-    RefPtr task = m_serviceWorkerFetchTask;
-    if (task && task->convertToDownload(protect(protect(connectionToWebProcess().networkProcess())->downloadManager()), downloadID, request, response))
-        return;
+    if (RefPtr task = std::exchange(m_serviceWorkerFetchTask, { })) {
+        if (task->convertToDownload(protect(protect(connectionToWebProcess().networkProcess())->downloadManager()), downloadID, request, response))
+            return;
+        task->cancelFromClient();
+    }
 
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
@@ -750,7 +758,7 @@ void NetworkResourceLoader::abort()
         return;
     }
 
-    if (auto task = WTF::move(m_serviceWorkerFetchTask)) {
+    if (RefPtr task = std::exchange(m_serviceWorkerFetchTask, { })) {
         LOADER_RELEASE_LOG("abort: Cancelling pending service worker fetch task (fetchIdentifier=%" PRIu64 ")", task->fetchIdentifier().toUInt64());
         task->cancelFromClient();
     }
@@ -2102,6 +2110,10 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         if (CheckedPtr session = protect(connectionToWebProcess())->networkSession()) {
             if (RefPtr server = session->swServer(); server && !server->isImportCompletedForOrigin(topOrigin)) {
                 server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, newRequest = WTF::move(newRequest), isAllowedToAskUserForCredentials, completionHandler = WTF::move(completionHandler)]() mutable {
+                    if (m_isDone) {
+                        LOADER_RELEASE_LOG("continueWillSendRequest: Load was cleaned up while importing registrations");
+                        return completionHandler({ });
+                    }
                     continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
                 });
                 return;
@@ -2873,6 +2885,11 @@ void NetworkResourceLoader::startWithServiceWorker()
 
         if (request.isNull())
             return;
+
+        if (protectedThis->m_isDone) {
+            LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "startWithServiceWorker: Load was cleaned up while waiting, not starting");
+            return;
+        }
 
         ASSERT(!protectedThis->m_serviceWorkerFetchTask);
         protectedThis->m_serviceWorkerFetchTask = protect(protectedThis->connectionToWebProcess())->createFetchTask(protectedThis, request);

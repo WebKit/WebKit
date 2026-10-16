@@ -382,7 +382,10 @@ void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& fo
 void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetrics)
 {
     ASSERT(!m_timeoutTimer || !m_timeoutTimer->isActive());
-    SWFETCH_RELEASE_LOG("didFinish:");
+    SWFETCH_RELEASE_LOG("didFinish: (m_isDone=%d)", m_isDone);
+
+    if (m_isDone)
+        return;
 
     m_isDone = true;
     if (m_timeoutTimer)
@@ -399,6 +402,9 @@ void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetr
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 {
+    if (m_isDone)
+        return;
+
     m_isDone = true;
     if (m_timeoutTimer && m_timeoutTimer->isActive()) {
         m_timeoutTimer->stop();
@@ -498,6 +504,7 @@ void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
     SWFETCH_RELEASE_LOG("continueFetchTaskWith: (hasServiceWorkerConnection=%d)", !!m_serviceWorkerConnection);
     Ref loader = *m_loader;
     if (!m_serviceWorkerConnection) {
+        m_isDone = true;
         loader->serviceWorkerDidNotHandle(this);
         return;
     }
