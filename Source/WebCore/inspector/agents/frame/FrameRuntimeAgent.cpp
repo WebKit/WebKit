@@ -103,8 +103,7 @@ CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<b
     if (injectedScript.hasNoValue())
         return makeUnexpected(errorString);
 
-    RefPtr frame = m_inspectedFrame.get();
-    RefPtr page = frame ? frame->page() : nullptr;
+    RefPtr page = protect(m_inspectedFrame)->page();
     if (!page)
         return makeUnexpected("Frame or page not available"_s);
 
@@ -120,8 +119,7 @@ void FrameRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::Remot
         return;
     }
 
-    RefPtr frame = m_inspectedFrame.get();
-    RefPtr page = frame ? frame->page() : nullptr;
+    RefPtr page = protect(m_inspectedFrame)->page();
     if (!page) {
         callback->sendFailure("Frame or page not available"_s);
         return;
@@ -134,12 +132,8 @@ void FrameRuntimeAgent::callFunctionOn(const Inspector::Protocol::Runtime::Remot
 InjectedScript FrameRuntimeAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
-        RefPtr frame = m_inspectedFrame.get();
-        if (!frame)
-            return InjectedScript();
-
-        Ref protectedFrame = *frame;
-        CheckedRef script = protectedFrame->script();
+        Ref frame = m_inspectedFrame;
+        CheckedRef script = frame->script();
         auto* globalObject = script->globalObject(mainThreadNormalWorldSingleton());
         if (!globalObject)
             return InjectedScript();
@@ -173,19 +167,15 @@ String FrameRuntimeAgent::frameIdForProtocol() const
 
 void FrameRuntimeAgent::reportExecutionContextCreation()
 {
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
-
-    Ref protectedFrame = *frame;
-    CheckedRef script = protectedFrame->script();
+    Ref frame = m_inspectedFrame;
+    CheckedRef script = frame->script();
 
     if (!script->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return;
 
     // Skip the initial empty document's context. The real context will be reported when the frame navigates
     // to its actual destination URL.
-    if (protectedFrame->loader().stateMachine().isDisplayingInitialEmptyDocument())
+    if (frame->loader().stateMachine().isDisplayingInitialEmptyDocument())
         return;
 
     // Always send the main world first
@@ -197,7 +187,7 @@ void FrameRuntimeAgent::reportExecutionContextCreation()
     notifyContextCreated(&mainGlobalObject, mainThreadNormalWorldSingleton());
 
     // Then iterate isolated worlds
-    Ref windowProxy = protectedFrame->windowProxy();
+    Ref windowProxy = frame->windowProxy();
     for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
         auto* globalObject = jsWindowProxy->window();
         if (globalObject == &mainGlobalObject)
@@ -218,15 +208,11 @@ void FrameRuntimeAgent::notifyContextCreated(JSC::JSGlobalObject* globalObject, 
     if (injectedScript.hasNoValue())
         return;
 
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
-
     auto name = world.name();
     if (name.isEmpty()) {
         if (securityOrigin)
             name = securityOrigin->toRawString();
-        else if (RefPtr document = frame->document())
+        else if (RefPtr document = protect(m_inspectedFrame)->document())
             name = document->url().string();
     }
 
@@ -243,17 +229,14 @@ void FrameRuntimeAgent::notifyContextCreated(JSC::JSGlobalObject* globalObject, 
 
 void FrameRuntimeAgent::didClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
+    Ref frame = m_inspectedFrame;
 
     // Skip the initial empty document's context. The real context will be reported when the frame navigates
     // to its actual destination URL.
     if (frame->loader().stateMachine().isDisplayingInitialEmptyDocument())
         return;
 
-    Ref protectedFrame = *frame;
-    CheckedRef script = protectedFrame->script();
+    CheckedRef script = frame->script();
     auto* globalObject = script->globalObject(world);
     if (!globalObject)
         return;

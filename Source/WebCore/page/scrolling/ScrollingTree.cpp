@@ -551,13 +551,13 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
         auto parentIt = m_nodeMap.find(*parentNodeID);
         ASSERT_WITH_SECURITY_IMPLICATION(parentIt != m_nodeMap.end());
         if (parentIt != m_nodeMap.end()) {
-            RefPtr parent = parentIt->value.get();
+            Ref parent = parentIt->value;
 
             RefPtr oldParent = node->parent();
             if (oldParent)
                 oldParent->removeChild(*node);
 
-            if (oldParent != parent)
+            if (oldParent != parent.ptr())
                 node->setParent(parent.copyRef());
 
             parent->appendChild(*node);

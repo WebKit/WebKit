@@ -220,10 +220,8 @@ std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> Cach
 
 std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatchFrom(const std::optional<SimpleRange>& selectionRange, const String& target, FindOptions options)
 {
-    if (!isTextBufferCacheValid()) {
-        if (!clearTextBufferCache())
-            return std::optional<SimpleRange> { };
-    }
+    if (!isTextBufferCacheValid())
+        clearTextBufferCache();
 
     if (bufferForOptions(options).oversized)
         return makeUnexpected(CacheUnusable::Oversized);
@@ -252,10 +250,9 @@ std::expected<std::optional<SimpleRange>, CachedMatchFinder::CacheUnusable> Cach
 
 std::expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatchFinder::findMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
 {
-    if (!isTextBufferCacheValid()) {
-        if (!clearTextBufferCache())
-            return Vector<SimpleRange> { };
-    } else if (isSearchResultCacheValid(target, options, limit) && m_matchCache)
+    if (!isTextBufferCacheValid())
+        clearTextBufferCache();
+    else if (isSearchResultCacheValid(target, options, limit) && m_matchCache)
         return *m_matchCache;
 
     auto& cached = bufferForOptions(options);
@@ -280,10 +277,9 @@ std::expected<Vector<SimpleRange>, CachedMatchFinder::CacheUnusable> CachedMatch
 
 std::expected<unsigned, CachedMatchFinder::CacheUnusable> CachedMatchFinder::countMatches(const std::optional<SimpleRange>& searchRange, const String& target, FindOptions options, std::optional<unsigned> limit)
 {
-    if (!isTextBufferCacheValid()) {
-        if (!clearTextBufferCache())
-            return 0u;
-    } else if (isSearchResultCacheValid(target, options, limit) && m_countCache)
+    if (!isTextBufferCacheValid())
+        clearTextBufferCache();
+    else if (isSearchResultCacheValid(target, options, limit) && m_countCache)
         return *m_countCache;
 
     auto& cached = bufferForOptions(options);
@@ -370,27 +366,13 @@ unsigned CachedMatchFinder::startingOffsetForSelection(StringView buffer, const 
 
 bool CachedMatchFinder::isTextBufferCacheValid() const
 {
-    RefPtr document = m_document.get();
-    if (!document)
-        return false;
+    Ref document = m_document;
     return document->domTreeVersion() == m_textBufferCacheKeys.domTreeVersion && document->styleRecalcCount() == m_textBufferCacheKeys.styleRecalcCount;
 }
 
-bool CachedMatchFinder::clearTextBufferCache()
+void CachedMatchFinder::clearTextBufferCache()
 {
-    RefPtr document = m_document.get();
-    if (!document) {
-        m_flatTreeBuffer.dirty = true;
-        m_docBuffer.dirty = true;
-        m_searchResultCacheKeys.targetString = std::nullopt;
-        m_searchResultCacheKeys.limit = std::nullopt;
-        m_searchResultCacheKeys.options = std::nullopt;
-        m_matchCache = std::nullopt;
-        m_countCache = std::nullopt;
-        m_matchesMarked = false;
-        return false;
-    }
-
+    Ref document = m_document;
     m_textBufferCacheKeys.domTreeVersion = document->domTreeVersion();
     m_textBufferCacheKeys.styleRecalcCount = document->styleRecalcCount();
     m_searchResultCacheKeys.targetString = std::nullopt;
@@ -401,14 +383,13 @@ bool CachedMatchFinder::clearTextBufferCache()
     m_matchCache = std::nullopt;
     m_countCache = std::nullopt;
     m_matchesMarked = false;
-    return true;
 }
 
 CachedMatchFinder::TextRunCache& CachedMatchFinder::bufferForOptions(FindOptions options)
 {
     auto& cache = options.contains(FindOption::DoNotTraverseFlatTree) ? m_docBuffer : m_flatTreeBuffer;
-    if (RefPtr document = m_document.get(); cache.dirty) {
-        if (auto built = textForScope(*document, options)) {
+    if (cache.dirty) {
+        if (auto built = textForScope(protect(m_document), options)) {
             std::tie(cache.text, cache.runs) = WTF::move(*built);
             cache.oversized = false;
         } else {
@@ -477,9 +458,6 @@ SimpleRange CachedMatchFinder::bufferRangeToSimpleRange(const Vector<TextRun>& r
 
 bool CachedMatchFinder::isSearchResultCacheValid(const String& target, FindOptions options, std::optional<unsigned> limit) const
 {
-    RefPtr document = m_document.get();
-    if (!document)
-        return false;
     if (!isTextBufferCacheValid())
         return false;
     return m_searchResultCacheKeys.targetString

@@ -278,7 +278,7 @@ RefPtr<MediaStreamTrack> MediaStream::internalTakeTrack(const String& trackId)
     if (position == notFound)
         return nullptr;
 
-    RefPtr track = m_tracks[position].get();
+    Ref track = m_tracks[position];
     m_tracks.removeAt(position);
 
     return track;

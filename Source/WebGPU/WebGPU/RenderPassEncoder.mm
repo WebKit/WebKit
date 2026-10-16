@@ -1895,10 +1895,8 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup* group
         }
     }
 
-    for (auto& [samplerPtr, _] : group.samplers()) {
-        if (RefPtr sampler = samplerPtr.get())
-            parentEncoder->addSampler(*sampler);
-    }
+    for (auto& [sampler, _] : group.samplers())
+        parentEncoder->addSampler(sampler);
 
     m_bindGroups.set(groupIndex, group);
 }

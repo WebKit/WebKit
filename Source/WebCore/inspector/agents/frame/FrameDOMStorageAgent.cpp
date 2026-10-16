@@ -184,10 +184,10 @@ RefPtr<StorageArea> FrameDOMStorageAgent::findStorageArea(Inspector::Protocol::E
         return nullptr;
     }
 
-    RefPtr frame = m_inspectedFrame.get();
-    RefPtr page = frame ? frame->page() : nullptr;
-    RefPtr document = frame ? frame->document() : nullptr;
-    if (!frame || !page || !document) {
+    Ref frame = m_inspectedFrame;
+    RefPtr page = frame->page();
+    RefPtr document = frame->document();
+    if (!page || !document) {
         errorString = "Frame or page not available"_s;
         return nullptr;
     }

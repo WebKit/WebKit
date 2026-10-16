@@ -63,10 +63,7 @@ void FrameWorkerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 
 void FrameWorkerAgent::connectToAllWorkerInspectorProxies()
 {
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
-
+    Ref frame = m_inspectedFrame;
     RefPtr page = frame->page();
     if (!page || !page->identifier())
         return;
@@ -78,7 +75,7 @@ void FrameWorkerAgent::connectToAllWorkerInspectorProxies()
             continue;
 
         RefPtr document = dynamicDowncast<Document>(context.get());
-        if (!document || document->frame() != frame.get())
+        if (!document || document->frame() != frame.ptr())
             continue;
 
         connectToWorkerInspectorProxy(proxy);

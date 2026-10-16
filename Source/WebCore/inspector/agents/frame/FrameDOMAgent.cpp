@@ -185,9 +185,7 @@ void FrameDOMAgent::didCreateFrontendAndBackend()
 
     Ref { m_instrumentingAgents.get() }->setPersistentFrameDOMAgent(this);
 
-    RefPtr frame = m_inspectedFrame.get();
-    if (frame)
-        m_document = frame->document();
+    m_document = protect(m_inspectedFrame)->document();
 
     // Force a layout so that we can collect additional information from the layout process, as
     // InspectorDOMAgent does. The flex line-start cache is only populated by layouts that run while a
@@ -896,8 +894,7 @@ void FrameDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 
 void FrameDOMAgent::frameDocumentUpdated(LocalFrame& frame)
 {
-    RefPtr inspectedFrame = m_inspectedFrame.get();
-    if (!inspectedFrame || &frame != inspectedFrame.get())
+    if (&frame != m_inspectedFrame.ptr())
         return;
 
     RefPtr document = frame.document();
@@ -1873,8 +1870,8 @@ bool FrameDOMAgent::ownsElementSelection() const
     // The main frame belongs to the page target.
     // FIXME: A nested local subframe's overlay is not hosted by any compositor, so the page agent
     // keeps it too.
-    RefPtr frame = m_inspectedFrame.get();
-    return m_searchingForNode && frame && frame->isRootFrame() && !frame->isMainFrame();
+    Ref frame = m_inspectedFrame;
+    return m_searchingForNode && frame->isRootFrame() && !frame->isMainFrame();
 }
 
 void FrameDOMAgent::highlightMousedOverNode()

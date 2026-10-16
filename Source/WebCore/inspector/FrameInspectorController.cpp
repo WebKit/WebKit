@@ -180,15 +180,12 @@ void FrameInspectorController::createLazyAgents()
 
     m_didCreateLazyAgents = true;
 
-    RefPtr frame = m_frame.get();
-    if (!frame)
-        return;
-
+    Ref frame = m_frame;
     if (!frame->settings().siteIsolationEnabled())
         return;
 
     // Create debugger before agents that depend on it.
-    lazyInitialize(m_debugger, makeUnique<FrameDebugger>(*frame));
+    lazyInitialize(m_debugger, makeUnique<FrameDebugger>(frame.get()));
 
     if (CheckedPtr scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent())
         scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);

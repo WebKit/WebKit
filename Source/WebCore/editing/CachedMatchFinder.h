@@ -74,7 +74,7 @@ private:
     };
 
     bool isTextBufferCacheValid() const;
-    bool clearTextBufferCache();
+    void clearTextBufferCache();
     TextRunCache& bufferForOptions(FindOptions);
     bool isSearchResultCacheValid(const String&, FindOptions, std::optional<unsigned> limit) const;
     static std::optional<std::pair<String, Vector<TextRun>>> textForScope(ContainerNode&, FindOptions);

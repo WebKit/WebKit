@@ -258,10 +258,7 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     if (!mutedStateChanged && !bufferSizeChanged && !sampleRateChanged && !routingContextUIDChanged)
         return;
 
-    RefPtr protectedProcess = m_webProcess.get();
-    if (!protectedProcess)
-        return;
-
+    Ref protectedProcess = m_webProcess;
     if (!protectedProcess->sharedPreferencesForWebProcessValue().remoteMediaSessionManagerEnabled)
         return;
 

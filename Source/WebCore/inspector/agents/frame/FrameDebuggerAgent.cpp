@@ -73,8 +73,7 @@ CommandResultOf<Ref<Inspector::Protocol::Runtime::RemoteObject>, std::optional<b
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given callFrameId"_s);
 
-    RefPtr frame = m_inspectedFrame.get();
-    RefPtr page = frame ? frame->page() : nullptr;
+    RefPtr page = protect(m_inspectedFrame)->page();
     if (!page)
         return makeUnexpected("Frame or page not available"_s);
 
@@ -101,11 +100,7 @@ String FrameDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& sc
     if (script.url.isEmpty())
         return InspectorDebuggerAgent::sourceMapURLForScript(script);
 
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return InspectorDebuggerAgent::sourceMapURLForScript(script);
-
-    RefPtr resource = ResourceUtilities::cachedResource(frame.get(), URL({ }, script.url));
+    RefPtr resource = ResourceUtilities::cachedResource(protect(m_inspectedFrame).ptr(), URL({ }, script.url));
     if (!resource)
         return InspectorDebuggerAgent::sourceMapURLForScript(script);
 
@@ -132,8 +127,7 @@ void FrameDebuggerAgent::unmuteConsole()
 
 void FrameDebuggerAgent::debuggerWillEvaluate(JSC::Debugger&, JSC::JSGlobalObject* globalObject, const JSC::Breakpoint::Action& action)
 {
-    RefPtr frame = m_inspectedFrame.get();
-    RefPtr page = frame ? frame->page() : nullptr;
+    RefPtr page = protect(m_inspectedFrame)->page();
     if (!page)
         return;
 
@@ -147,23 +141,15 @@ void FrameDebuggerAgent::debuggerDidEvaluate(JSC::Debugger&, JSC::JSGlobalObject
 
 void FrameDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& message)
 {
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
-
-    frame->console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
+    protect(m_inspectedFrame)->console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
 }
 
 InjectedScript FrameDebuggerAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
-        RefPtr frame = m_inspectedFrame.get();
-        if (!frame)
-            return InjectedScript();
-
-        Ref protectedFrame = *frame;
+        Ref frame = m_inspectedFrame;
         Ref world = mainThreadNormalWorldSingleton();
-        CheckedRef script = protectedFrame->script();
+        CheckedRef script = frame->script();
         auto* globalObject = script->globalObject(world);
         if (!globalObject)
             return InjectedScript();
@@ -183,10 +169,7 @@ InjectedScript FrameDebuggerAgent::injectedScriptForEval(Inspector::Protocol::Er
 
 void FrameDebuggerAgent::didClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    RefPtr frame = m_inspectedFrame.get();
-    if (!frame)
-        return;
-
+    Ref frame = m_inspectedFrame;
     if (&world != &mainThreadNormalWorldSingleton()) {
         CheckedRef script = frame->script();
         auto* globalObject = script->globalObject(world);

@@ -104,8 +104,8 @@ double SwipeProgressTracker::totalSwipeDistance() const
     if (m_viewGestureController->hasCustomSwipeViews())
         return m_viewGestureController->customSwipeViewsWidth();
 
-    RefPtr page = m_webPageProxy.get();
-    if (!page || !page->drawingArea())
+    Ref page = m_webPageProxy;
+    if (!page->drawingArea())
         return 0;
 
     return page->drawingArea()->size().width();
@@ -238,10 +238,7 @@ void SwipeProgressTracker::displayLinkFired(WebCore::PlatformDisplayID, WebCore:
 
 void SwipeProgressTracker::startDisplayLinkObserver()
 {
-    RefPtr page = m_webPageProxy.get();
-    if (!page)
-        return;
-
+    Ref page = m_webPageProxy;
     m_displayLinkObserverID = DisplayLinkObserverID::generate();
     auto displayID = page->displayID().value_or(0);
     page->configuration().processPool().displayLinks().startDisplayLink(*this, *m_displayLinkObserverID, displayID, WebCore::FullSpeedFramesPerSecond);

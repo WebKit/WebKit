@@ -199,9 +199,9 @@ void BreakBlockquoteCommand::doApply()
         }
 
         // If the startNode's original parent is now empty, remove it
-        RefPtr originalParent = ancestors.first().get();
+        Ref originalParent = ancestors.first();
         if (!originalParent->hasChildNodes())
-            removeNode(*originalParent);
+            removeNode(originalParent);
     }
     
     // Make sure the cloned block quote renders.

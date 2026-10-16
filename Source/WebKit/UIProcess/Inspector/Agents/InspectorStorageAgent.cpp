@@ -127,25 +127,17 @@ Inspector::Protocol::ErrorStringOr<void> InspectorStorageAgent::disable()
 
 Inspector::Protocol::ErrorStringOr<Ref<API::HTTPCookieStore>> InspectorStorageAgent::cookieStoreForPartition(const RefPtr<JSON::Object>& partition)
 {
-    RefPtr inspectedPage = m_inspectedPage.get();
-    if (!inspectedPage)
-        return makeUnexpected("Inspected page is gone"_s);
-
     if (partition) {
         auto type = partition->getString("type"_s);
         if (type != "context"_s)
             return makeUnexpected("Invalid partition descriptor"_s);
     }
 
-    return Ref { protect(inspectedPage->websiteDataStore())->cookieStore() };
+    return Ref { protect(protect(m_inspectedPage)->websiteDataStore())->cookieStore() };
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> InspectorStorageAgent::makePartitionKey(const RefPtr<JSON::Object>& partition)
 {
-    RefPtr inspectedPage = m_inspectedPage.get();
-    if (!inspectedPage)
-        return makeUnexpected("Inspected page is gone"_s);
-
     if (partition) {
         auto type = partition->getString("type"_s);
         if (type != "context"_s)
@@ -155,7 +147,7 @@ Inspector::Protocol::ErrorStringOr<Ref<PartitionKey>> InspectorStorageAgent::mak
     // All-optional builder: create() returns a Builder, release() yields the Ref.
     auto partitionKey = PartitionKey::create().release();
 
-    URL pageURL { inspectedPage->currentURL() };
+    URL pageURL { protect(m_inspectedPage)->currentURL() };
     if (pageURL.isValid())
         partitionKey->setSourceOrigin(WebCore::SecurityOriginData::fromURL(pageURL).toString());
 
