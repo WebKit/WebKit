@@ -91,7 +91,6 @@ void PlatformWebView::initialize(WKPageConfigurationRef configuration)
         g_assert(WPE_IS_DISPLAY_HEADLESS(display));
         m_view = WKViewCreate(display, configuration);
         auto* wpeView = WKViewGetView(m_view);
-        wpe_view_focus_in(wpeView);
         m_window = wpe_view_get_toplevel(wpeView);
         wpe_toplevel_resize(WPE_TOPLEVEL(m_window), 800, 600);
         return;

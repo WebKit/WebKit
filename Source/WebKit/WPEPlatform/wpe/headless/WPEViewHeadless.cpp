@@ -73,6 +73,7 @@ static void wpeViewHeadlessConstructed(GObject* object)
     g_signal_connect(view, "notify::toplevel", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
         auto* toplevel = wpe_view_get_toplevel(view);
         if (!toplevel) {
+            wpe_view_focus_out(view);
             wpe_view_unmap(view);
             return;
         }
@@ -84,6 +85,7 @@ static void wpeViewHeadlessConstructed(GObject* object)
             wpe_view_resized(view, width, height);
 
         wpe_view_map(view);
+        wpe_view_focus_in(view);
     }), nullptr);
 
     auto* priv = WPE_VIEW_HEADLESS(view)->priv;
