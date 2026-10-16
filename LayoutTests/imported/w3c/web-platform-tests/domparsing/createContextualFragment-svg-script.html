@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>SVG &lt;script&gt; elements created by createContextualFragment() run when inserted into a document</title>
+<link rel="help" href="https://w3c.github.io/DOM-Parsing/#dom-range-createcontextualfragment">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#already-started">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<div id="htmlContext"></div>
+<svg id="svgContext"><g id="svgGroup"></g></svg>
+<script>
+"use strict";
+
+function fragmentFor(contextNode, markup) {
+  const range = document.createRange();
+  range.selectNodeContents(contextNode);
+  return range.createContextualFragment(markup);
+}
+
+test(t => {
+  window.htmlRan = false;
+  t.add_cleanup(() => { delete window.htmlRan; });
+  const fragment = fragmentFor(document.getElementById("htmlContext"),
+      "<script>window.htmlRan = true;<\/script>");
+  assert_false(window.htmlRan, "should not run before insertion");
+  document.getElementById("htmlContext").appendChild(fragment);
+  assert_true(window.htmlRan, "should run after insertion");
+}, "HTML <script> from createContextualFragment() runs when inserted");
+
+test(t => {
+  window.svgInHtmlContextRan = false;
+  t.add_cleanup(() => { delete window.svgInHtmlContextRan; });
+  const fragment = fragmentFor(document.getElementById("htmlContext"),
+      "<svg><script>window.svgInHtmlContextRan = true;<\/script></svg>");
+  assert_equals(fragment.querySelector("script").namespaceURI, "http://www.w3.org/2000/svg");
+  assert_false(window.svgInHtmlContextRan, "should not run before insertion");
+  document.getElementById("htmlContext").appendChild(fragment);
+  assert_true(window.svgInHtmlContextRan, "should run after insertion");
+}, "SVG <script> inside <svg> from createContextualFragment() with an HTML context runs when inserted");
+
+test(t => {
+  window.svgInSvgContextRan = false;
+  t.add_cleanup(() => { delete window.svgInSvgContextRan; });
+  const group = document.getElementById("svgGroup");
+  const fragment = fragmentFor(group,
+      "<script>window.svgInSvgContextRan = true;<\/script>");
+  assert_equals(fragment.firstChild.namespaceURI, "http://www.w3.org/2000/svg");
+  assert_false(window.svgInSvgContextRan, "should not run before insertion");
+  group.appendChild(fragment);
+  assert_true(window.svgInSvgContextRan, "should run after insertion");
+}, "SVG <script> from createContextualFragment() with an SVG context runs when inserted");
+
+test(t => {
+  window.svgClonedRan = false;
+  t.add_cleanup(() => { delete window.svgClonedRan; });
+  const fragment = fragmentFor(document.getElementById("htmlContext"),
+      "<svg><script>window.svgClonedRan = true;<\/script></svg>");
+  const clone = fragment.cloneNode(true);
+  assert_false(window.svgClonedRan, "should not run before insertion");
+  document.getElementById("htmlContext").appendChild(clone);
+  assert_true(window.svgClonedRan, "should run after insertion");
+}, "Clone of an SVG <script> from createContextualFragment() runs when inserted");
+</script>
+</body>
