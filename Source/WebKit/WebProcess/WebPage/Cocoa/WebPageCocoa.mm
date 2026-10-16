@@ -181,7 +181,7 @@
 #import <WebCore/AcceleratedEffectStackUpdater.h>
 #endif
 
-#if ENABLE(PDF_PLUGIN)
+#if HAVE(PDFKIT)
 #import "PDFKitSPI.h"
 #endif
 
@@ -1617,7 +1617,7 @@ void WebPage::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional
     decodeImageWithSize(buffer->span(), preferredSize, WTF::move(completionHandler));
 }
 
-#if ENABLE(PDF_PLUGIN)
+#if HAVE(PDFKIT)
 
 void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
 {
