@@ -3997,9 +3997,124 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GCGLenum target, GCGL
     return texImageSourceHelper(TexImageFunctionID::TexSubImage2D, target, level, 0, 0, format, type, xoffset, yoffset, 0, sentinelEmptyRect(), 1, 0, WTF::move(*source));
 }
 
-ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum, GCGLint, GCGLint, GCGLint, std::optional<CanvasElementImageSource>, std::optional<WebGLCopyElementImageConfig>)
+ExceptionOr<void> WebGLRenderingContextBase::texElementSnapshot2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, const CanvasElementSnapshot& snapshot, std::optional<WebGLCopyElementImageConfig> config)
 {
-    return Exception { ExceptionCode::InvalidStateError };
+    auto snapshotRect = FloatRect { { }, snapshot.size };
+    auto srcRect = snapshotRect;
+
+    if (config) {
+        bool hasSourceMembers[] = { !!config->sx, !!config->sy, !!config->swidth, !!config->sheight };
+        bool hasAnySourceMember = hasSourceMembers[0] || hasSourceMembers[1] || hasSourceMembers[2] || hasSourceMembers[3];
+        bool hasAllSourceMembers = hasSourceMembers[0] && hasSourceMembers[1] && hasSourceMembers[2] && hasSourceMembers[3];
+
+        // Sepcs: If only some of the config members are supplied, generates an INVALID_VALUE error.
+        if (hasAnySourceMember && !hasAllSourceMembers) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "sx, sy, swidth and sheight must be all specified or all omitted"_s);
+            return { };
+        }
+
+        // Specs: If any supplied numeric member of config is negative, generates an INVALID_VALUE error.
+        if (config->sx.value_or(0) < 0 || config->sy.value_or(0) < 0 || config->swidth.value_or(0) < 0 || config->sheight.value_or(0) < 0 || config->width.value_or(0) < 0 || config->height.value_or(0) < 0) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "config members must not be negative"_s);
+            return { };
+        }
+
+        // Sepcs: If config.sx, config.sy, config.swidth, and config.sheight are all supplied, they
+        // define the source rectangle of the element image snapshot to render, in CSS pixels.
+        if (hasAllSourceMembers) {
+            srcRect = {
+                *config->sx,
+                *config->sy,
+                *config->swidth,
+                *config->sheight
+            };
+        }
+    }
+
+    if (!std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height())) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSnapshot2D"_s, "source rectangle is not finite"_s);
+        return { };
+    }
+
+    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
+    if (normalizedSrcRect.isEmpty()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSnapshot2D"_s, "source rectangle is empty"_s);
+        return { };
+    }
+
+    auto dstSize = expandedIntSize(normalizedSrcRect.size());
+
+    if (config) {
+        // Specs: If only one of config.width and config.height is supplied, generates an INVALID_VALUE error.
+        if (!config->width != !config->height) {
+            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "width and height must be both specified or both omitted"_s);
+            return { };
+        }
+
+        if (config->width)
+            dstSize = { *config->width, *config->height };
+    }
+
+    if (dstSize.isEmpty()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "width or height <= 0"_s);
+        return { };
+    }
+
+    auto texture = validateTexImageBinding(TexImageFunctionID::TexSubImage2D, target);
+    if (!texture)
+        return { };
+    if (!validateTexFunc(TexImageFunctionID::TexSubImage2D, SourceElementImage, target, level, 0, dstSize.width(), dstSize.height(), 1, 0, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, xoffset, yoffset, 0))
+        return { };
+
+    // FIXME: Handle drawable element with HDR contents.
+    RefPtr buffer = ImageBuffer::create(dstSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "bad drawable element data"_s);
+        return { };
+    }
+
+    {
+        auto& context = buffer->context();
+        auto scale = dstSize / normalizedSrcRect.size();
+        context.translate(-toFloatSize(normalizedSrcRect.location()) * scale);
+        context.scale(scale);
+        context.drawDisplayList(snapshot.displayList);
+    }
+
+    RefPtr image = buffer->createNativeImageReference();
+    if (!image) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "bad image data"_s);
+        return { };
+    }
+
+    // Sepcs: UNPACK_ pixel store parameters should be ignored by this function.
+    texImageImpl(TexImageFunctionID::TexSubImage2D, target, level, 0, xoffset, yoffset, 0, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, *image, AlphaPremultiplication::Premultiplied, false, false, sentinelEmptyRect(), 1, 0);
+    return { };
+}
+
+ExceptionOr<void> WebGLRenderingContextBase::texElementSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, std::optional<CanvasElementImageSource> source, std::optional<WebGLCopyElementImageConfig> config)
+{
+    if (isContextLost())
+        return { };
+
+    if (!source) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texElementSubImage2D"_s, "source is null"_s);
+        return { };
+    }
+
+    return WTF::switchOn(*source,
+        [&](Ref<Element>& element) -> ExceptionOr<void> {
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
+                if (auto snapshot = canvasElement->canvasDrawableSnapshot(element))
+                    return texElementSnapshot2D(target, level, xoffset, yoffset, *snapshot, config);
+            }
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "texElementSubImage2D"_s, "element is not a direct child of the drawable canvas"_s);
+            return { };
+        },
+        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<void> {
+            return texElementSnapshot2D(target, level, xoffset, yoffset, elementImage->snapshot(), config);
+        }
+    );
 }
 
 bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(ASCIILiteral functionName, ArrayBufferViewFunctionType functionType, GCGLenum type, ArrayBufferView* pixels)
@@ -4155,6 +4270,7 @@ bool WebGLRenderingContextBase::validateTexFuncParameters(TexImageFunctionID fun
     // temporary data based on this combination, so it must be legal.
     if (sourceType == SourceHTMLImageElement
         || sourceType == SourceHTMLCanvasElement
+        || sourceType == SourceElementImage
         || sourceType == SourceImageData
         || sourceType == SourceImageBitmap
 #if ENABLE(VIDEO)

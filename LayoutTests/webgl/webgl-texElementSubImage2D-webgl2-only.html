@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that texElementSubImage2D() is only available on WebGL2.");
+
+const gl1 = document.createElement("canvas").getContext("webgl");
+const gl2 = document.createElement("canvas").getContext("webgl2");
+
+shouldBeNonNull("gl1");
+shouldBeNonNull("gl2");
+
+shouldBeEqualToString("typeof gl1.texElementSubImage2D", "undefined");
+shouldBeFalse("'texElementSubImage2D' in gl1");
+shouldBeFalse("'texElementSubImage2D' in WebGLRenderingContext.prototype");
+
+shouldBeEqualToString("typeof gl2.texElementSubImage2D", "function");
+shouldBeTrue("'texElementSubImage2D' in gl2");
+shouldBeTrue("'texElementSubImage2D' in WebGL2RenderingContext.prototype");
+</script>
+</body>
+</html>

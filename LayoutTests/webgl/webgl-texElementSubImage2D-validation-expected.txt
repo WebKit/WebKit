@@ -1,0 +1,39 @@
+Tests the input validation of WebGL texElementSubImage2D().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS no texture bound generated INVALID_OPERATION
+PASS undefined level generated INVALID_OPERATION
+PASS texImage2D generated NO_ERROR
+PASS valid call generated NO_ERROR
+PASS valid call with empty config generated NO_ERROR
+PASS valid call with full source rect generated NO_ERROR
+PASS valid call with size generated NO_ERROR
+PASS invalid target generated INVALID_ENUM
+PASS negative level generated INVALID_VALUE
+PASS negative xoffset generated INVALID_VALUE
+PASS negative yoffset generated INVALID_VALUE
+PASS region outside texture generated INVALID_VALUE
+PASS only sx generated INVALID_VALUE
+PASS only sy generated INVALID_VALUE
+PASS only swidth generated INVALID_VALUE
+PASS only sheight generated INVALID_VALUE
+PASS three of four source rect members generated INVALID_VALUE
+PASS only width generated INVALID_VALUE
+PASS only height generated INVALID_VALUE
+PASS negative sx generated INVALID_VALUE
+PASS negative sy generated INVALID_VALUE
+PASS negative swidth generated INVALID_VALUE
+PASS negative sheight generated INVALID_VALUE
+PASS negative width generated INVALID_VALUE
+PASS negative height generated INVALID_VALUE
+PASS zero swidth generated INVALID_VALUE
+PASS zero width generated INVALID_VALUE
+PASS zero height generated INVALID_VALUE
+PASS PIXEL_UNPACK_BUFFER bound generated INVALID_OPERATION
+PASS PIXEL_UNPACK_BUFFER unbound generated NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

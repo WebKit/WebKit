@@ -1,0 +1,94 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLInCanvasEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <canvas id="canvas" width="64" height="64" content="drawable">
+        <div id="box" style="width: 20px; height: 20px; background: linear-gradient(rgb(255 0 0), rgb(0 0 255 / 0.5))" drawable></div>
+    </canvas>
+    <script>
+        "use strict";
+        description("Tests that texElementSubImage2D() ignores the UNPACK_* pixel store parameters.");
+        const wtu = WebGLTestUtils;
+        const canvas = document.getElementById("canvas");
+        const box = document.getElementById("box");
+        const size = 20;
+        let gl;
+
+        // Uploads the box to a new texture and returns the texture pixels. The framebuffer
+        // stays bound so that the caller can check the texture contents.
+        function upload() {
+            const texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, box);
+
+            const framebuffer = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+            const pixels = new Uint8Array(size * size * 4);
+            gl.readPixels(0, 0, size, size, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+            return pixels;
+        }
+
+        function setUnpack(flipY, premultiply) {
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, premultiply);
+        }
+
+        function expectSamePixels(name, expected, actual) {
+            if (expected.length === actual.length && expected.every((v, i) => v === actual[i]))
+                testPassed(name + " produced the same pixels as the default state");
+            else
+                testFailed(name + " produced different pixels than the default state");
+        }
+
+        function runTest() {
+            if (window.internals)
+                internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+            gl = wtu.create3DContext(canvas, null, 2);
+
+            setUnpack(false, false);
+            const reference = upload();
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "reference upload");
+
+            // The element's top row is opaque red and its bottom row is half transparent blue.
+            // The first row of the texture is the top of the element, so a flip would be visible.
+            wtu.checkCanvasRect(gl, 0, 0, size, 1, [255, 0, 0, 255], "top row is opaque red", [16, 16, 16, 16]);
+            wtu.checkCanvasRect(gl, 0, size - 1, size, 1, [0, 0, 255, 128], "bottom row is unpremultiplied half transparent blue", [16, 16, 16, 16]);
+
+            setUnpack(true, false);
+            expectSamePixels("UNPACK_FLIP_Y_WEBGL", reference, upload());
+
+            setUnpack(false, true);
+            expectSamePixels("UNPACK_PREMULTIPLY_ALPHA_WEBGL", reference, upload());
+
+            setUnpack(true, true);
+            expectSamePixels("UNPACK_FLIP_Y_WEBGL and UNPACK_PREMULTIPLY_ALPHA_WEBGL", reference, upload());
+
+            setUnpack(false, false);
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);
+            gl.pixelStorei(gl.UNPACK_ROW_LENGTH, 100);
+            gl.pixelStorei(gl.UNPACK_SKIP_PIXELS, 3);
+            gl.pixelStorei(gl.UNPACK_SKIP_ROWS, 3);
+            gl.pixelStorei(gl.UNPACK_IMAGE_HEIGHT, 100);
+            gl.pixelStorei(gl.UNPACK_SKIP_IMAGES, 3);
+            expectSamePixels("UNPACK_ALIGNMENT, UNPACK_ROW_LENGTH, UNPACK_SKIP_* and UNPACK_IMAGE_HEIGHT", reference, upload());
+
+            wtu.glErrorShouldBe(gl, gl.NO_ERROR, "after all uploads");
+            finishTest();
+        }
+
+        // Let the drawable child be painted so that a snapshot exists.
+        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+    </script>
+</body>
+</html>

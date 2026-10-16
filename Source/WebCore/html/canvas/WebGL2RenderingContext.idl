@@ -55,6 +55,8 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
 #endif
 ) TexImageSource;
 
+typedef (Element or CanvasElementImage) CanvasElementImageSource;
+
 [
     ActiveDOMObject,
     Conditional=WEBGL,
@@ -482,6 +484,8 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, TexImageSource source);
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset);
+
+    [EnabledBySetting=HTMLInCanvasEnabled] undefined texElementSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, CanvasElementImageSource source, optional WebGLCopyElementImageConfig options = {});
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, GLintptr offset);
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset, optional GLuint srcLengthOverride = 0);
