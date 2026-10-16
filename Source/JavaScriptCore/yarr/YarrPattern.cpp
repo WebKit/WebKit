@@ -1753,8 +1753,10 @@ public:
         std::unique_ptr<PatternDisjunction> newDisjunction;
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
-            if (filterStartsWithBOL && alternative->m_startsWithBOL && alternative->matchDirection() != Backward)
+            if (filterStartsWithBOL && alternative->m_startsWithBOL) {
+                ASSERT(alternative->matchDirection() == Forward);
                 continue;
+            }
 
             auto copiedTerms = copyTerms(alternative, filterStartsWithBOL);
             if (!copiedTerms)
@@ -1819,7 +1821,7 @@ public:
         if ((term.type != PatternTerm::Type::ParenthesesSubpattern) && (term.type != PatternTerm::Type::ParentheticalAssertion))
             return PatternTerm(term);
         
-        if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL && !term.invert())) {
+        if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL && !term.invert() && term.matchDirection() == Forward)) {
             PatternTerm termCopy = term;
             termCopy.parentheses.disjunction = newDisjunction;
             m_pattern.m_hasCopiedParenSubexpressions = true;
