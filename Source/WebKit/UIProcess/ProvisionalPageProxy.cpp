@@ -264,7 +264,6 @@ void ProvisionalPageProxy::cancel()
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
     FrameInfoData frameInfo {
-        FrameType::Local,
         m_request,
         SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },

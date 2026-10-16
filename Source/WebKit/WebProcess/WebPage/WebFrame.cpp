@@ -305,21 +305,15 @@ FrameInfoData WebFrame::info() const
     RefPtr loadingFrame = m_provisionalFrame ? m_provisionalFrame : coreLocalFrame;
 
     WebFrameMetrics metrics;
-    FrameType frameType = FrameType::Local;
-    if (coreFrame) {
-        if (RefPtr coreView = coreFrame->virtualView()) {
-            IsScrollable isScrollable = hasHorizontalScrollbar() || hasVerticalScrollbar() ? IsScrollable::Yes : IsScrollable::No;
-            IntSize contentSize { coreView->contentsWidth(), coreView->contentsHeight() };
-            auto visibleContentSize = coreView->visibleContentRectIncludingScrollbars().size();
-            auto visibleContentSizeExcludingScrollbars = coreView->visibleContentRect().size();
-            metrics = { isScrollable, contentSize, visibleContentSize, visibleContentSizeExcludingScrollbars };
-        }
-        if (coreFrame->frameType() == WebCore::Frame::FrameType::Remote)
-            frameType = FrameType::Remote;
+    if (RefPtr coreView = coreFrame ? coreFrame->virtualView() : nullptr) {
+        IsScrollable isScrollable = hasHorizontalScrollbar() || hasVerticalScrollbar() ? IsScrollable::Yes : IsScrollable::No;
+        IntSize contentSize { coreView->contentsWidth(), coreView->contentsHeight() };
+        auto visibleContentSize = coreView->visibleContentRectIncludingScrollbars().size();
+        auto visibleContentSizeExcludingScrollbars = coreView->visibleContentRect().size();
+        metrics = { isScrollable, contentSize, visibleContentSize, visibleContentSizeExcludingScrollbars };
     }
 
     return {
-        frameType,
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         coreFrame ? SecurityOriginData::fromFrame(*coreFrame) : SecurityOriginData { },

@@ -34,7 +34,6 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
     constexpr bool errorOccurred { false };
 
     return FrameInfoData {
-        FrameType::Local,
         WTF::move(request),
         WebCore::SecurityOriginData::createOpaque(),
         String { },

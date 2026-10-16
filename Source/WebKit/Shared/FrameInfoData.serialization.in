@@ -22,10 +22,7 @@
 
 headers: "FrameInfoData.h"
 
-enum class WebKit::FrameType : bool
-
 struct WebKit::FrameInfoData {
-    WebKit::FrameType frameType;
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
     String frameName;

@@ -138,7 +138,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         originatingPageID = webPage->webPageProxyIdentifier();
 
     auto originatingFrameInfoData = originator ? FrameInfoData { WTF::move(*originator) } : FrameInfoData {
-        FrameType::Local,
         ResourceRequest { URL { requester.url } },
         requester.securityOrigin->data(),
         { },

@@ -118,7 +118,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (BOOL)_isLocalFrame
 {
-    return _frameInfo->isLocalFrame();
+    return !!_frameInfo->documentID();
 }
 
 - (BOOL)_isFocused
