@@ -210,12 +210,28 @@ void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const Element
 
 Layout::BlockLayoutState::MarginState IntegrationUtils::toMarginState(const RenderBlockFlow::MarginInfo& marginInfo)
 {
-    return { marginInfo.canCollapseWithChildren(), marginInfo.canCollapseMarginBeforeWithChildren(), marginInfo.canCollapseMarginAfterWithChildren(), marginInfo.quirkContainer(), marginInfo.atBeforeSideOfBlock(), marginInfo.atAfterSideOfBlock(), marginInfo.hasMarginBeforeQuirk(), marginInfo.hasMarginAfterQuirk(), marginInfo.determinedMarginBeforeQuirk(), marginInfo.positiveMargin(), marginInfo.negativeMargin(), marginInfo.marginBeforeWithClearance() };
+    auto marginState = BlockLayoutState::MarginState { };
+    marginState.adjoiningMargins = { .positive = marginInfo.positiveMargin(), .negative = marginInfo.negativeMargin() };
+    marginState.marginBeforeIncludedInClearance = marginInfo.marginBeforeWithClearance();
+    marginState.atBlockContainerStart = marginInfo.atBeforeSideOfBlock();
+    marginState.blockContainerMarginBeforeCollapsesWithContent = marginInfo.canCollapseMarginBeforeWithChildren();
+    marginState.blockContainerMarginAfterCollapsesWithContent = marginInfo.canCollapseMarginAfterWithChildren();
+    marginState.marginBeforeIsQuirky = marginInfo.hasMarginBeforeQuirk();
+    marginState.marginAfterIsQuirky = marginInfo.hasMarginAfterQuirk();
+    marginState.marginBeforeQuirkIsDetermined = marginInfo.determinedMarginBeforeQuirk();
+    return marginState;
 }
 
-RenderBlockFlow::MarginInfo IntegrationUtils::toMarginInfo(const Layout::BlockLayoutState::MarginState& marginState)
+void IntegrationUtils::updateMarginInfo(RenderBlockFlow::MarginInfo& marginInfo, const BlockLayoutState::MarginState& marginState)
 {
-    return { marginState.canCollapseWithChildren, marginState.canCollapseMarginBeforeWithChildren, marginState.canCollapseMarginAfterWithChildren, marginState.quirkContainer, marginState.atBeforeSideOfBlock, marginState.atAfterSideOfBlock, marginState.hasMarginBeforeQuirk, marginState.hasMarginAfterQuirk, marginState.determinedMarginBeforeQuirk, marginState.positiveMargin, marginState.negativeMargin, marginState.marginBeforeWithClearance };
+    ASSERT(marginInfo.canCollapseMarginBeforeWithChildren() == marginState.blockContainerMarginBeforeCollapsesWithContent);
+    marginInfo.setMargin(marginState.adjoiningMargins.positive, marginState.adjoiningMargins.negative);
+    marginInfo.setMarginBeforeWithClearance(marginState.marginBeforeIncludedInClearance);
+    marginInfo.setAtBeforeSideOfBlock(marginState.atBlockContainerStart);
+    marginInfo.setCanCollapseMarginAfterWithChildren(marginState.blockContainerMarginAfterCollapsesWithContent);
+    marginInfo.setHasMarginBeforeQuirk(marginState.marginBeforeIsQuirky);
+    marginInfo.setHasMarginAfterQuirk(marginState.marginAfterIsQuirky);
+    marginInfo.setDeterminedMarginBeforeQuirk(marginState.marginBeforeQuirkIsDetermined);
 }
 
 std::pair<LayoutRect, LayoutRect> IntegrationUtils::toMarginAndBorderBoxVisualRect(const BoxGeometry& logicalGeometry, const LayoutSize& containerSize, WritingMode writingMode)
