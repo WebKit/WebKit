@@ -832,6 +832,9 @@ bool HistoryController::currentItemShouldBeReplaced() const
     //  "If the browsing context's session history contains only one Document,
     //   and that was the about:blank Document created when the browsing context
     //   was created, then the navigation must be done with replacement enabled."
+    if (auto* documentLoader = m_frame->loader().documentLoader(); !documentLoader || documentLoader->isInitialAboutBlank() != IsInitialAboutBlank::Yes)
+        return false;
+
     RefPtr currentItem = m_currentItem;
     return currentItem && !m_previousItem && equalIgnoringASCIICase(currentItem->urlString(), aboutBlankURL().string());
 }
