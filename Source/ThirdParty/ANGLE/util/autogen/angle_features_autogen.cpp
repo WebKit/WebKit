@@ -342,6 +342,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::SetZeroLevelBeforeGenerateMipmap, "setZeroLevelBeforeGenerateMipmap"},
     {Feature::ShiftInstancedArrayDataWithOffset, "shiftInstancedArrayDataWithOffset"},
     {Feature::SimulateTileMemoryForTesting, "simulateTileMemoryForTesting"},
+    {Feature::SimulateTileMemoryTransferSrcForTesting, "simulateTileMemoryTransferSrcForTesting"},
     {Feature::SingleThreadedTextureDecompression, "singleThreadedTextureDecompression"},
     {Feature::SkipPipelineCacheSerialization, "skipPipelineCacheSerialization"},
     {Feature::SkipVSConstantRegisterZero, "skipVSConstantRegisterZero"},

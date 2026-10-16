@@ -158,7 +158,7 @@ pub fn run(ir: &mut IR) {
                 OpCode::AccessArrayElement(pointer, index) => {
                     transform_array_element(state, pointer, index, result.unwrap())
                 }
-                _ => vec![],
+                _ => traverser::Transforms::new(),
             }
         },
     );
@@ -418,8 +418,8 @@ fn extract_sampler(
     *next_sampler_index += 1;
 }
 
-fn access_sampler(state: &mut State, result: TypedRegisterId) -> Vec<traverser::Transform> {
-    let mut transforms = vec![];
+fn access_sampler(state: &mut State, result: TypedRegisterId) -> traverser::Transforms {
+    let mut builder = instruction::Builder::<traverser::Transforms>::new();
 
     // If reached a sampler, replace the access chain up to it (if tracked) with one accessing the
     // replacement uniform.
@@ -434,36 +434,19 @@ fn access_sampler(state: &mut State, result: TypedRegisterId) -> Vec<traverser::
         //    indexed1 = AccessArrayElement indexed0 indices[1]
         //    ...
         //    result = AccessArrayElement ...
+        //
+        // If there are no indices, alias the resulting access chain with the uniform.
+        //
+        //    result = Alias sampler
         let mut indexee = *state.extracted_sampler_map.get(&access_chain.path).unwrap();
-        if let Some((&last_index, leading_indices)) = access_chain.indices.split_last() {
-            for &index in leading_indices.iter() {
-                indexee = traverser::add_typed_instruction(
-                    &mut transforms,
-                    instruction::make!(index, state.ir_meta, indexee, index),
-                );
-            }
-            traverser::add_typed_instruction(
-                &mut transforms,
-                instruction::make_with_result_id!(
-                    index,
-                    state.ir_meta,
-                    result,
-                    indexee,
-                    last_index
-                ),
-            );
-        } else {
-            // If there are no indices, alias the resulting access chain with the uniform.
-            //
-            //    result = Alias sampler
-            traverser::add_typed_instruction(
-                &mut transforms,
-                instruction::make_with_result_id!(alias, state.ir_meta, result, indexee),
-            );
+        for &index in access_chain.indices.iter() {
+            indexee = builder.index(state.ir_meta, indexee, index);
         }
-    }
 
-    transforms
+        builder.finish_with_result(state.ir_meta, result, indexee)
+    } else {
+        builder.finish()
+    }
 }
 
 fn transform_struct_field(
@@ -471,7 +454,7 @@ fn transform_struct_field(
     pointer: TypedId,
     field: u32,
     result: TypedRegisterId,
-) -> Vec<traverser::Transform> {
+) -> traverser::Transforms {
     let base_type_id = state.ir_meta.get_pointee_type(pointer.type_id);
     let struct_info = &state.struct_info[base_type_id.id as usize];
 
@@ -480,7 +463,7 @@ fn transform_struct_field(
         || (field as usize) < struct_info.first_sampler_field
         || !struct_info.field_info[field as usize].has_sampler
     {
-        return vec![];
+        return traverser::Transforms::new();
     }
 
     let mut accesses_sampler_only_field = field as usize >= struct_info.first_sampler_only_field;
@@ -521,9 +504,9 @@ fn transform_struct_field(
         replacement
     } else if accesses_sampler_only_field {
         // If the access is to a field that's removed, remove this instruction
-        vec![traverser::Transform::Remove]
+        traverser::Transforms::new_single(traverser::Transform::Remove)
     } else {
-        vec![]
+        traverser::Transforms::new()
     }
 }
 
@@ -532,13 +515,13 @@ fn transform_array_element(
     pointer: TypedId,
     index: TypedId,
     result: TypedRegisterId,
-) -> Vec<traverser::Transform> {
+) -> traverser::Transforms {
     let accesses_sampler_only_field = match pointer.id {
         Id::Variable(variable_id) => {
             let base_type_id = get_variable_base_type(state.ir_meta, variable_id);
             let struct_info = &state.struct_info[base_type_id.id as usize];
             if !struct_info.has_sampler {
-                return vec![];
+                return traverser::Transforms::new();
             }
 
             let decorations = &state.ir_meta.get_variable(variable_id).decorations;
@@ -580,8 +563,8 @@ fn transform_array_element(
         replacement
     } else if accesses_sampler_only_field {
         // If the access is to a field that's removed, remove this instruction
-        vec![traverser::Transform::Remove]
+        traverser::Transforms::new_single(traverser::Transform::Remove)
     } else {
-        vec![]
+        traverser::Transforms::new()
     }
 }

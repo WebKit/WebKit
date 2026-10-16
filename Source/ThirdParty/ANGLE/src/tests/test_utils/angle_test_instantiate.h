@@ -409,7 +409,7 @@ std::vector<ParamsT> CombineWithFuncs(const std::vector<ParamsT> &in,
     std::vector<ParamsT> out;
     for (const ParamsT &paramsIn : in)
     {
-        for (ModifierFunc<ParamsT> modifier : modifiers)
+        for (const ModifierFunc<ParamsT> &modifier : modifiers)
         {
             out.push_back(modifier(paramsIn));
         }

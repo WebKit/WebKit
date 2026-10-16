@@ -1670,6 +1670,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo simulateTileMemoryTransferSrcForTesting = {
+        "simulateTileMemoryTransferSrcForTesting",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsClKhrSubgroups = {
         "supportsClKhrSubgroups",
         FeatureCategory::VulkanFeatures,

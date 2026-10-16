@@ -804,7 +804,7 @@ using TestFormatFunction =
 
 void TestAllCompressedFormats(TestFormatFunction fun, int clientMajorVersion)
 {
-    for (CompressionExtension ext : kCompressionExtensions)
+    for (const CompressionExtension &ext : kCompressionExtensions)
     {
         // ETC2/EAC formats are always supported on OpenGL ES 3.0+ but
         // the extension is only exposed if there is hardware support.

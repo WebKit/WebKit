@@ -135,9 +135,8 @@ angle::Result VertexArrayWgpu::syncState(const gl::Context *context,
 
     gl::AttributesMask syncedAttributes;
 
-    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
+    for (size_t dirtyBit : dirtyBits)
     {
-        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:

@@ -14,6 +14,7 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
+    // Store results in volatile locals so calls to pure hash functions are not optimized out.
 #if !defined(XXH_NO_LONG_LONG)
     // Test 64-bit hash.
     unsigned long long seed64 = 0ull;
@@ -26,9 +27,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     {
         seedSize64 = 0;
     }
-    XXH64_hash_t unusedHash64bit = XXH64(&data[seedSize64], size - seedSize64, seed64);
+    volatile XXH64_hash_t unusedHash64bit = XXH64(&data[seedSize64], size - seedSize64, seed64);
     (void)unusedHash64bit;
-    XXH64_hash_t unusedXXH3Hash =
+    volatile XXH64_hash_t unusedXXH3Hash =
         XXH3_64bits_withSeed(&data[seedSize64], size - seedSize64, seed64);
     (void)unusedXXH3Hash;
 #endif  // !defined(XXH_NO_LONG_LONG)
@@ -44,7 +45,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     {
         seedSize32 = 0;
     }
-    XXH32_hash_t unusedHash32bit = XXH32(&data[seedSize32], size - seedSize32, seed32);
+    volatile XXH32_hash_t unusedHash32bit = XXH32(&data[seedSize32], size - seedSize32, seed32);
     (void)unusedHash32bit;
     return 0;
 }

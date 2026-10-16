@@ -84,7 +84,7 @@ class ScopedDisplayLockAndRefT;
 using ScopedDisplayLockAndRef      = ScopedDisplayLockAndRefT<Display>;
 using ScopedConstDisplayLockAndRef = ScopedDisplayLockAndRefT<const Display>;
 
-using ThreadSet  = angle::HashSet<Thread *>;
+using ThreadSet = angle::HashSet<Thread *>;
 
 // Size of a Vulkan device or driver UUID, matching VK_UUID_SIZE.  Spelled out
 // here because this header must not depend on the Vulkan headers.
@@ -491,10 +491,10 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
     angle::ImageLoadContext getImageLoadContext() const;
 
     const gl::Context *getContext(gl::ContextID contextID) const;
-    const egl::Surface *getSurface(egl::SurfaceID surfaceID) const;
+    ScopedSurfaceRef getSurfaceRef(egl::SurfaceID surfaceID) const;
+    ScopedSurfaceLockAndRef getSurface(egl::SurfaceID surfaceID) const;
     const egl::Image *getImage(egl::ImageID imageID) const;
     gl::Context *getContext(gl::ContextID contextID);
-    egl::Surface *getSurface(egl::SurfaceID surfaceID);
     egl::Image *getImage(egl::ImageID imageID);
 
     const ImageMap &getImagesForCapture() const { return mImageMap; }
@@ -592,9 +592,14 @@ class Display final : public angle::ObserverInterface, public ThreadSafeDisplay
     std::vector<angle::ScratchBuffer> mZeroFilledBuffers;
 
     bool mTerminatedByApi;
+    bool mPendingInternalCleanup;
 
-    // Only this ScopedDisplay class could directly access the lock.
+    void onUnlockMutex();
+
+    // Only these ScopedDisplay classes could directly access the lock.
     friend class ScopedDisplayMutexLock;
+    template <typename DisplayT>
+    friend class ScopedDisplayLockAndRefT;
     mutable angle::SimpleMutex mDisplayMutex;
 };
 
@@ -744,6 +749,16 @@ class [[nodiscard]] ScopedDisplayLockAndRefT final
   public:
     ScopedDisplayLockAndRefT() = default;
     explicit ScopedDisplayLockAndRefT(DisplayT &display) : mLock(display), mDisplay(display) {}
+    ~ScopedDisplayLockAndRefT()
+    {
+        if constexpr (!std::is_const_v<DisplayT>)
+        {
+            if (mDisplay.get() != nullptr)
+            {
+                mDisplay.get()->onUnlockMutex();
+            }
+        }
+    }
 
     ScopedDisplayLockAndRefT(const ScopedDisplayLockAndRefT &)            = delete;
     ScopedDisplayLockAndRefT &operator=(const ScopedDisplayLockAndRefT &) = delete;

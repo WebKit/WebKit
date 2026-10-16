@@ -154,6 +154,7 @@ class RenderPipelineDesc final
     bool setColorAttachmentFormat(size_t colorIndex, WGPUTextureFormat format);
     bool setDepthStencilAttachmentFormat(WGPUTextureFormat format);
     bool setDepthFunc(WGPUCompareFunction compareFunc);
+    bool setDepthWriteEnabled(bool enabled);
     bool setStencilFrontFunc(WGPUCompareFunction compareFunc);
     bool setStencilFrontOps(WGPUStencilOperation failOp,
                             WGPUStencilOperation depthFailOp,

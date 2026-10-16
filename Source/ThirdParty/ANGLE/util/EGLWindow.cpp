@@ -776,7 +776,7 @@ EGLBoolean EGLWindow::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
     std::vector<EGLConfig> allConfigs(numConfigs);
     eglGetConfigs(dpy, allConfigs.data(), static_cast<EGLint>(allConfigs.size()), &numConfigs);
 
-    for (size_t i = 0; i < allConfigs.size(); i++)
+    for (EGLConfig curConfig : allConfigs)
     {
         bool matchFound = true;
         for (const EGLint *curAttrib = attrib_list; curAttrib[0] != EGL_NONE;
@@ -788,7 +788,7 @@ EGLBoolean EGLWindow::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
             }
 
             EGLint actualValue = EGL_DONT_CARE;
-            eglGetConfigAttrib(dpy, allConfigs[i], curAttrib[0], &actualValue);
+            eglGetConfigAttrib(dpy, curConfig, curAttrib[0], &actualValue);
             if ((curAttrib[0] == EGL_SURFACE_TYPE &&
                  (ANGLE_UNSAFE_TODO(curAttrib[1]) & actualValue) !=
                      ANGLE_UNSAFE_TODO(curAttrib[1])) ||
@@ -802,7 +802,7 @@ EGLBoolean EGLWindow::FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, E
 
         if (matchFound)
         {
-            *config = allConfigs[i];
+            *config = curConfig;
             return EGL_TRUE;
         }
     }

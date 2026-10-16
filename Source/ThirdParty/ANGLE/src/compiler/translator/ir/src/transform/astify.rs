@@ -661,7 +661,7 @@ fn declare_temp_variable_if_high_precision_constant(
     state: &mut State,
     id: TypedId,
     other_operands_precision: Precision,
-    transforms: &mut Vec<traverser::Transform>,
+    builder: &mut instruction::Builder<traverser::Transforms>,
 ) -> TypedId {
     if let Id::Constant(constant_id) = id.id
         && instruction::precision::higher_precision(id.precision, other_operands_precision)
@@ -674,11 +674,8 @@ fn declare_temp_variable_if_high_precision_constant(
             Some(constant_id),
             VariableScope::Local,
         );
-        transforms.push(traverser::Transform::DeclareVariable(variable_id));
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(load, state.ir_meta, variable_typed_id),
-        )
+        builder.declare(variable_id);
+        builder.load(state.ir_meta, variable_typed_id)
     } else {
         id
     }
@@ -688,7 +685,7 @@ fn declare_temp_variable_if_high_precision_constant_vec(
     state: &mut State,
     non_constant_precision: Precision,
     params: Vec<TypedId>,
-    transforms: &mut Vec<traverser::Transform>,
+    builder: &mut instruction::Builder<traverser::Transforms>,
 ) -> Vec<TypedId> {
     params
         .iter()
@@ -697,7 +694,7 @@ fn declare_temp_variable_if_high_precision_constant_vec(
                 state,
                 id,
                 non_constant_precision,
-                transforms,
+                builder,
             )
         })
         .collect()
@@ -706,7 +703,7 @@ fn declare_temp_variable_if_high_precision_constant_vec(
 fn declare_temp_variable_for_constant_operands(
     state: &mut State,
     id: RegisterId,
-    transforms: &mut Vec<traverser::Transform>,
+    builder: &mut instruction::Builder<traverser::Transforms>,
 ) {
     // If a constant is used in the instruction whose precision is higher than the other operands,
     // a temporary variable is created to hold its value so that its precision can be retained.
@@ -757,7 +754,7 @@ fn declare_temp_variable_for_constant_operands(
                         state,
                         non_constant_precision,
                         params.clone(),
-                        transforms,
+                        builder,
                     ),
                 ))
             } else {
@@ -771,7 +768,7 @@ fn declare_temp_variable_for_constant_operands(
                         state,
                         non_constant_precision,
                         params.clone(),
-                        transforms,
+                        builder,
                     ),
                 ))
             } else {
@@ -784,7 +781,7 @@ fn declare_temp_variable_for_constant_operands(
                     state,
                     non_constant_precision,
                     params.clone(),
-                    transforms,
+                    builder,
                 )))
             } else {
                 None
@@ -798,7 +795,7 @@ fn declare_temp_variable_for_constant_operands(
                         state,
                         non_constant_precision,
                         params.clone(),
-                        transforms,
+                        builder,
                     ),
                 ))
             } else {
@@ -811,13 +808,13 @@ fn declare_temp_variable_for_constant_operands(
                     state,
                     lhs,
                     non_constant_precision,
-                    transforms,
+                    builder,
                 );
                 let rhs = declare_temp_variable_if_high_precision_constant(
                     state,
                     rhs,
                     non_constant_precision,
-                    transforms,
+                    builder,
                 );
                 Some(OpCode::Binary(binary_op, lhs, rhs))
             } else {
@@ -836,7 +833,7 @@ fn declare_temp_variable_for_constant_operands(
 fn transform_instruction(
     state: &mut State,
     instruction: &BlockInstruction,
-) -> Vec<traverser::Transform> {
+) -> traverser::Transforms {
     // If the instruction is:
     //
     // - a register, and
@@ -868,6 +865,8 @@ fn transform_instruction(
             state.uncached_but_with_side_effect.insert(id);
         }
 
+        let mut builder = instruction::Builder::<traverser::Transforms>::new();
+
         if cache_in_variable_if_necessary {
             let instruction = state.ir_meta.get_instruction(id);
             let id = instruction.result;
@@ -888,43 +887,34 @@ fn transform_instruction(
                 None,
                 VariableScope::Local,
             );
-            let mut transforms = vec![traverser::Transform::DeclareVariable(variable_id)];
+            builder.declare(variable_id);
 
             let new_register_id = state.ir_meta.assign_new_register_to_instruction(id.id);
-            declare_temp_variable_for_constant_operands(state, new_register_id, &mut transforms);
+            declare_temp_variable_for_constant_operands(state, new_register_id, &mut builder);
 
             //     %new_id = ...
-            transforms
-                .push(traverser::Transform::Add(BlockInstruction::new_typed(new_register_id)));
+            //               Store %new_variable %new_id
+            //     %id     = Load %new_variable
+            builder.add_register(new_register_id);
 
             let new_register_id =
                 TypedId::new(Id::new_register(new_register_id), id.type_id, id.precision);
 
-            //               Store %new_variable %new_id
-            traverser::add_void_instruction(
-                &mut transforms,
-                instruction::make!(store, state.ir_meta, variable_typed_id, new_register_id),
-            );
-            //     %id     = Load %new_variable
-            traverser::add_typed_instruction(
-                &mut transforms,
-                instruction::make_with_result_id!(load, state.ir_meta, id, variable_typed_id),
-            );
-
-            transforms
+            builder.store(state.ir_meta, variable_typed_id, new_register_id);
+            let loaded = builder.load(state.ir_meta, variable_typed_id);
+            builder.finish_with_result(state.ir_meta, id, loaded)
         } else {
-            let mut transforms = vec![];
-            declare_temp_variable_for_constant_operands(state, id, &mut transforms);
-            if !transforms.is_empty() {
+            declare_temp_variable_for_constant_operands(state, id, &mut builder);
+            if !builder.is_empty() {
                 // If the instruction is rewritten (i.e. variables are added),
                 // `declare_temp_variable_for_constant_operands` makes it use the same result id
                 // (as `id.id`), so just keep that in the list of instructions.
-                transforms.push(traverser::Transform::Keep);
+                builder.keep();
             }
-            transforms
+            builder.finish()
         }
     } else {
-        vec![]
+        traverser::Transforms::new()
     }
 }
 

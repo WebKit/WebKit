@@ -11,7 +11,10 @@
 #ifndef LIBANGLE_SURFACE_H_
 #define LIBANGLE_SURFACE_H_
 
+#include <array>
+#include <atomic>
 #include <memory>
+#include <utility>
 
 #include <EGL/egl.h>
 
@@ -163,7 +166,11 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     egl::Error unlockSurfaceKHR(const egl::Display *display);
 
     bool isLocked() const;
-    bool isCurrentOnAnyContext() const { return mCurrentRefCount > 0; }
+    bool isCurrentOnAnyContext() const
+    {
+        mMutex.assertLocked();
+        return mCurrentRefCount > 0;
+    }
 
     gl::Texture *getBoundTexture() const { return mTexture; }
 
@@ -190,14 +197,22 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     EGLint getOrientation() const { return mOrientation; }
 
-    bool directComposition() const { return mState.directComposition; }
+    bool directComposition() const
+    {
+        mMutex.assertLocked();
+        return mState.directComposition;
+    }
 
     gl::InitState initState(GLenum binding, const gl::ImageIndex &imageIndex) const override;
     void setInitState(GLenum binding,
                       const gl::ImageIndex &imageIndex,
                       gl::InitState initState) override;
 
-    bool isRobustResourceInitEnabled() const { return mRobustResourceInitialization; }
+    bool isRobustResourceInitEnabled() const
+    {
+        mMutex.assertLocked();
+        return mRobustResourceInitialization;
+    }
 
     const gl::Format &getBindTexImageFormat() const { return mColorFormat; }
 
@@ -230,16 +245,26 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     Error setRenderBuffer(EGLint renderBuffer);
     void setRequestedRenderBuffer(EGLint requestedRenderBuffer);
 
-    bool bufferAgeQueriedSinceLastSwap() const { return mBufferAgeQueriedSinceLastSwap; }
-    void setDamageRegion(const EGLint *rects, EGLint n_rects);
-    bool isDamageRegionSet() const { return mIsDamageRegionSet; }
-
-    void addRef() { mRefCount++; }
-    void release()
+    bool bufferAgeQueriedSinceLastSwap() const
     {
-        ASSERT(mRefCount > 0);
-        mRefCount--;
+        mMutex.assertLocked();
+        return mBufferAgeQueriedSinceLastSwap;
     }
+    void setDamageRegion(const EGLint *rects, EGLint n_rects);
+    bool isDamageRegionSet() const
+    {
+        mMutex.assertLocked();
+        return mIsDamageRegionSet;
+    }
+
+    void addRef() const { mRefCount.fetch_add(1, std::memory_order_relaxed); }
+    void release() const
+    {
+        uint32_t prev = mRefCount.fetch_sub(1, std::memory_order_acq_rel);
+        ASSERT(prev > 0);
+    }
+    Error releaseRef(const Display *display);
+    uint32_t getRefCount() const { return mRefCount.load(std::memory_order_acquire); }
 
   protected:
     Surface(EGLint surfaceType,
@@ -253,12 +278,13 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     // ANGLE-only method, used internally
     friend class gl::Texture;
+    friend class ScopedSurfaceLockAndRef;
     Error releaseTexImageFromTexture(const gl::Context *context);
 
     SurfaceState mState;
     rx::SurfaceImpl *mImplementation;
-    int mRefCount;
-    bool mDestroyed;
+    mutable std::atomic<uint32_t> mRefCount;
+    mutable angle::SimpleMutex mMutex;
 
     EGLint mType;
     EGLenum mBuftype;
@@ -301,20 +327,17 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     gl::Offset mTextureOffset;
 
-    uint32_t mCurrentRefCount;    // The surface is current to a context/client API
-    uint8_t *mLockBufferPtr;      // Memory owned by backend.
+    uint32_t mCurrentRefCount;  // The surface is current to a context/client API
+    uint8_t *mLockBufferPtr;    // Memory owned by backend.
     EGLint mLockBufferPitch;
 
     bool mBufferAgeQueriedSinceLastSwap;
     bool mIsDamageRegionSet;
 
   private:
-    Error getBufferAgeImpl(const gl::Context *context, EGLint *age) const;
-
     Error destroyImpl(const Display *display);
 
     void postSwap(const gl::Context *context, const rx::SurfaceSwapFeedback &feedback);
-    Error releaseRef(const Display *display);
 
     // ObserverInterface implementation.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
@@ -372,13 +395,16 @@ class PixmapSurface final : public Surface
     ~PixmapSurface() override;
 };
 
-class [[nodiscard]] ScopedSurfaceRef
+class [[nodiscard]] ScopedSurfaceRef final
 {
   public:
-    ScopedSurfaceRef(Surface *surface) : mSurface(surface)
+    ScopedSurfaceRef() = default;
+    ScopedSurfaceRef(const Display *display, Surface *surface)
+        : mDisplay(display), mSurface(surface)
     {
         if (mSurface)
         {
+            ASSERT(mDisplay != nullptr);
             mSurface->addRef();
         }
     }
@@ -386,12 +412,111 @@ class [[nodiscard]] ScopedSurfaceRef
     {
         if (mSurface)
         {
-            mSurface->release();
+            ANGLE_SWALLOW_ERR(mSurface->releaseRef(mDisplay));
         }
     }
+    ScopedSurfaceRef(const ScopedSurfaceRef &other)            = delete;
+    ScopedSurfaceRef &operator=(const ScopedSurfaceRef &other) = delete;
+    ScopedSurfaceRef(ScopedSurfaceRef &&other) noexcept
+        : mDisplay(other.mDisplay), mSurface(other.mSurface)
+    {
+        other.mDisplay = nullptr;
+        other.mSurface = nullptr;
+    }
+    ScopedSurfaceRef &operator=(ScopedSurfaceRef &&other) noexcept
+    {
+        std::swap(mDisplay, other.mDisplay);
+        std::swap(mSurface, other.mSurface);
+        return *this;
+    }
+
+    Surface *get() const { return mSurface; }
 
   private:
-    Surface *const mSurface;
+    const Display *mDisplay = nullptr;
+    Surface *mSurface       = nullptr;
+};
+
+class [[nodiscard]] ScopedSurfaceLockAndRef final
+{
+  public:
+    ScopedSurfaceLockAndRef() = default;
+    ScopedSurfaceLockAndRef(const Display *display, Surface *surface)
+        : ScopedSurfaceLockAndRef(ScopedSurfaceRef(display, surface))
+    {}
+    explicit ScopedSurfaceLockAndRef(ScopedSurfaceRef &&surfaceRef)
+        : mSurfaceRef(std::move(surfaceRef))
+    {
+        if (mSurfaceRef.get() != nullptr)
+        {
+            mLock = std::unique_lock<angle::SimpleMutex>(mSurfaceRef.get()->mMutex);
+        }
+    }
+    ScopedSurfaceLockAndRef(const ScopedSurfaceLockAndRef &other)            = delete;
+    ScopedSurfaceLockAndRef &operator=(const ScopedSurfaceLockAndRef &other) = delete;
+    ScopedSurfaceLockAndRef(ScopedSurfaceLockAndRef &&other) noexcept        = default;
+    ScopedSurfaceLockAndRef &operator=(ScopedSurfaceLockAndRef &&other) noexcept
+    {
+        std::swap(mSurfaceRef, other.mSurfaceRef);
+        std::swap(mLock, other.mLock);
+        return *this;
+    }
+
+    Surface *get() const { return mSurfaceRef.get(); }
+
+  private:
+    // Order is important: mLock must be unlocked before mSurfaceRef releases its reference (and
+    // potentially destroys the Surface).
+    ScopedSurfaceRef mSurfaceRef;
+    std::unique_lock<angle::SimpleMutex> mLock;
+};
+
+template <size_t N>
+class [[nodiscard]] ScopedSurfacesLockAndRef final
+{
+  public:
+    ScopedSurfacesLockAndRef() = default;
+    explicit ScopedSurfacesLockAndRef(std::array<ScopedSurfaceRef, N> &&surfaceRefs)
+    {
+        for (size_t i = 0; i < N; ++i)
+        {
+            mSurfaces[i] = surfaceRefs[i].get();
+        }
+
+        // Acquire surface locks in canonical Surface address order to avoid lock-order inversion
+        // when the same surfaces are passed in different orders across entry points.
+        for (size_t i = 1; i < N; ++i)
+        {
+            for (size_t j = i; j > 0 && reinterpret_cast<uintptr_t>(surfaceRefs[j].get()) <
+                                            reinterpret_cast<uintptr_t>(surfaceRefs[j - 1].get());
+                 --j)
+            {
+                std::swap(surfaceRefs[j], surfaceRefs[j - 1]);
+            }
+        }
+
+        size_t lockCount          = 0;
+        const Surface *lastLocked = nullptr;
+        for (size_t i = 0; i < N; ++i)
+        {
+            Surface *surface = surfaceRefs[i].get();
+            if (surface != nullptr && surface != lastLocked)
+            {
+                mLocks[lockCount++] = ScopedSurfaceLockAndRef(std::move(surfaceRefs[i]));
+                lastLocked          = surface;
+            }
+        }
+    }
+    ScopedSurfacesLockAndRef(const ScopedSurfacesLockAndRef &other)                = delete;
+    ScopedSurfacesLockAndRef &operator=(const ScopedSurfacesLockAndRef &other)     = delete;
+    ScopedSurfacesLockAndRef(ScopedSurfacesLockAndRef &&other) noexcept            = default;
+    ScopedSurfacesLockAndRef &operator=(ScopedSurfacesLockAndRef &&other) noexcept = default;
+
+    Surface *get(size_t index) const { return mSurfaces[index]; }
+
+  private:
+    std::array<ScopedSurfaceLockAndRef, N> mLocks;
+    std::array<Surface *, N> mSurfaces = {};
 };
 
 class SurfaceDeleter final
@@ -407,7 +532,29 @@ class SurfaceDeleter final
 
 using SurfacePointer = std::unique_ptr<Surface, SurfaceDeleter>;
 
-using SurfaceMap = priv::ObjectMap<Surface, angle::SimpleMutex>;
+class SurfaceMap final : public priv::ObjectMap<Surface, angle::SimpleMutex>
+{
+  public:
+    Surface *find(SurfaceID handle) const = delete;
+
+    void insert(SurfaceID handle, Surface *surface)
+    {
+        surface->addRef();
+        priv::ObjectMap<Surface, angle::SimpleMutex>::insert(handle, surface);
+    }
+
+    ScopedSurfaceLockAndRef getSurface(const Display *display, SurfaceID handle) const
+    {
+        return ScopedSurfaceLockAndRef(getSurfaceRef(display, handle));
+    }
+
+    ScopedSurfaceRef getSurfaceRef(const Display *display, SurfaceID handle) const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        auto iter = mObjects.find(handle.value);
+        return ScopedSurfaceRef(display, iter != mObjects.end() ? iter->second : nullptr);
+    }
+};
 
 }  // namespace egl
 

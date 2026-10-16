@@ -139,7 +139,15 @@ TEST_P(EGLDisplayTest, InitializeDrawSwapTerminateLoop)
     OSWindow *osWindow = OSWindow::New();
     osWindow->initialize("LockSurfaceTest", kWidth, kHeight);
 
-    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    // Not EGL_DEFAULT_DISPLAY: on Wayland the implementation would connect for itself, and that
+    // connection cannot own the window's wl_surface. anglebug.com/546514492
+    EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                             EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
+                             static_cast<EGLAttrib>(osWindow->getNativeDisplayPlatformType()),
+                             EGL_NONE};
+    EGLDisplay display    = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<void *>(osWindow->getNativeDisplay()), dispattrs);
+    EXPECT_NE(display, EGL_NO_DISPLAY);
 
     for (int i = 0; i < kLoopCount; ++i)
     {

@@ -146,9 +146,9 @@ void PointSpritesBenchmark::initializeBenchmark()
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     std::vector<float> vertexPositions(params.count * 2);
-    for (size_t pointIndex = 0; pointIndex < vertexPositions.size(); ++pointIndex)
+    for (float &vertexPosition : vertexPositions)
     {
-        vertexPositions[pointIndex] = mRNG.randomNegativeOneToOne();
+        vertexPosition = mRNG.randomNegativeOneToOne();
     }
 
     glGenBuffers(1, &mBuffer);

@@ -242,29 +242,26 @@ fn declare_depth_range_struct_type(ir_meta: &mut IRMeta) -> TypeId {
 }
 
 impl DriverUniforms {
-    fn load_field(
+    fn load_field<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
         field_index: u32,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
         // Generate the following:
         //
         //     field  = AccessStructField uniforms index
         //     field' = Load field
-        let field = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(struct_field, ir_meta, self.uniforms_variable_id, field_index),
-        );
-        traverser::add_typed_instruction(transforms, instruction::make!(load, ir_meta, field))
+        let field = builder.struct_field(ir_meta, self.uniforms_variable_id, field_index);
+        builder.load(ir_meta, field)
     }
 
-    pub fn depth_range(
+    pub fn depth_range<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        let field = self.load_field(ir_meta, self.field_index.depth_range.unwrap(), transforms);
+        let field = self.load_field(ir_meta, self.field_index.depth_range.unwrap(), builder);
         // The depth range uniform is a vec2, with `near` in the first and `far` in the second
         // component.  The expected result is a struct of gl_DepthRangeParams type with these fields
         // as well as a `diff` field.
@@ -275,36 +272,18 @@ impl DriverUniforms {
         //    far   = ExtractVectorComponent field 1
         //    diff  = Sub far near
         //    range = ConstructStruct (near far diff)  // gl_DepthRangeParams
-        let near = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(vector_component, ir_meta, field, 0),
-        );
-        let far = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(vector_component, ir_meta, field, 1),
-        );
-        let diff = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(sub, ir_meta, far, near),
-        );
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(
-                construct,
-                ir_meta,
-                self.depth_range_params_type_id,
-                vec![near, far, diff],
-                None
-            ),
-        )
+        let near = builder.vector_component(ir_meta, field, 0);
+        let far = builder.vector_component(ir_meta, field, 1);
+        let diff = builder.sub(ir_meta, far, near);
+        builder.construct(ir_meta, self.depth_range_params_type_id, vec![near, far, diff], None)
     }
 
-    pub fn half_render_area(
+    pub fn half_render_area<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        let field = self.load_field(ir_meta, self.field_index.render_area.unwrap(), transforms);
+        let field = self.load_field(ir_meta, self.field_index.render_area.unwrap(), builder);
         // The render area is packed as two ushort values in one uint.  They are extracted and
         // converted to float, then bundled in a vec2.  The result is multiplied by 0.5, because
         // that's the only use of the render area.
@@ -319,38 +298,20 @@ impl DriverUniforms {
         //    halfArea = VectorTimesScalar area 0.5
         let width_mask = ir_meta.get_constant_uint_typed(0xFFFF, Precision::High);
         let height_shift = ir_meta.get_constant_uint_typed(16, Precision::High);
-        let width = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(bitwise_and, ir_meta, field, width_mask),
-        );
-        let height = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(bit_shift_right, ir_meta, field, height_shift),
-        );
-        let width = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(construct, ir_meta, TYPE_ID_FLOAT, vec![width], None),
-        );
-        let height = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(construct, ir_meta, TYPE_ID_FLOAT, vec![height], None),
-        );
-        let area = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(construct, ir_meta, TYPE_ID_VEC2, vec![width, height], None),
-        );
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(vector_times_scalar, ir_meta, area, TYPED_CONSTANT_ID_FLOAT_HALF),
-        )
+        let width = builder.bitwise_and(ir_meta, field, width_mask);
+        let height = builder.bit_shift_right(ir_meta, field, height_shift);
+        let width = builder.construct(ir_meta, TYPE_ID_FLOAT, vec![width], None);
+        let height = builder.construct(ir_meta, TYPE_ID_FLOAT, vec![height], None);
+        let area = builder.construct(ir_meta, TYPE_ID_VEC2, vec![width, height], None);
+        builder.vector_times_scalar(ir_meta, area, TYPED_CONSTANT_ID_FLOAT_HALF)
     }
 
-    pub fn flip_xy(
+    pub fn flip_xy<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        let field = self.load_field(ir_meta, self.field_index.flip_xy.unwrap(), transforms);
+        let field = self.load_field(ir_meta, self.field_index.flip_xy.unwrap(), builder);
         // The flipXY uniform is packed as four 8-bit snorm values in one uint.  The first two
         // components are used for the fragment shader and the last two for pre-rasterization
         // stages.
@@ -362,48 +323,39 @@ impl DriverUniforms {
         //    flipxy   = ExtractVectorComponentMulti flipxy (0, 1)
         //    // Otherwise:
         //    flipxy   = ExtractVectorComponentMulti flipxy (2, 3)
-        let flipxy = traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(built_in_unary, ir_meta, UnaryOpCode::UnpackSnorm4x8, field),
-        );
+        let flipxy = builder.built_in_unary(ir_meta, UnaryOpCode::UnpackSnorm4x8, field);
         let swizzle =
             if ir_meta.get_shader_type() == ShaderType::Fragment { vec![0, 1] } else { vec![2, 3] };
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(vector_component_multi, ir_meta, flipxy, swizzle),
-        )
+        builder.vector_component_multi(ir_meta, flipxy, swizzle)
     }
 
-    pub fn flip_xy_upside_down(
+    pub fn flip_xy_upside_down<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
         // Same as flipXY, but with Y flipped.
         //
         // Generate the following:
         //
         //    flipxy_upside_down = Mul flipxy vec2(1,-1)
-        let flipxy = self.flip_xy(ir_meta, transforms);
+        let flipxy = self.flip_xy(ir_meta, builder);
         let multiplier = ir_meta.get_constant_composite_typed(
             TYPE_ID_VEC2,
             vec![CONSTANT_ID_FLOAT_ONE, CONSTANT_ID_FLOAT_NEGATIVE_ONE],
             Precision::Low,
         );
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(mul, ir_meta, flipxy, multiplier),
-        )
+        builder.mul(ir_meta, flipxy, multiplier)
     }
 
-    fn misc(
+    fn misc<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
         offset: u32,
         mask: u32,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        let mut field = self.load_field(ir_meta, self.field_index.misc.unwrap(), transforms);
+        let mut field = self.load_field(ir_meta, self.field_index.misc.unwrap(), builder);
         // Helper to extract a uniform out of the `misc` field.
         //
         // Generate the following:
@@ -413,24 +365,18 @@ impl DriverUniforms {
         //    field'' = BitwiseAnd field' mask
         if offset != 0 {
             let offset = ir_meta.get_constant_uint_typed(offset, Precision::Low);
-            field = traverser::add_typed_instruction(
-                transforms,
-                instruction::make!(bit_shift_right, ir_meta, field, offset),
-            );
+            field = builder.bit_shift_right(ir_meta, field, offset);
         }
         let mask = ir_meta.get_constant_uint_typed(mask, Precision::Low);
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(bitwise_and, ir_meta, field, mask),
-        )
+        builder.bitwise_and(ir_meta, field, mask)
     }
 
-    fn misc_bool(
+    fn misc_bool<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
         offset: u32,
         mask: u32,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
         // Get a bit out of the `misc` field.  Similar to the `misc()` helper, but with an added
         // cast to bool.
@@ -438,128 +384,115 @@ impl DriverUniforms {
         // Generate:
         //
         //    field' = ConstructScalarFromScalar field // bool
-        let field = self.misc(ir_meta, offset, mask, transforms);
-        traverser::add_typed_instruction(
-            transforms,
-            instruction::make!(construct, ir_meta, TYPE_ID_BOOL, vec![field], None),
-        )
+        let field = self.misc(ir_meta, offset, mask, builder);
+        builder.construct(ir_meta, TYPE_ID_BOOL, vec![field], None)
     }
 
-    pub fn swap_xy(
+    pub fn swap_xy<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.misc_bool(ir_meta, MISC_SWAP_XY_OFFSET, MISC_SWAP_XY_MASK, transforms)
+        self.misc_bool(ir_meta, MISC_SWAP_XY_OFFSET, MISC_SWAP_XY_MASK, builder)
     }
-    pub fn advanced_blend_equation(
+    pub fn advanced_blend_equation<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
         self.misc_bool(
             ir_meta,
             MISC_ADVANCED_BLEND_EQUATION_OFFSET,
             MISC_ADVANCED_BLEND_EQUATION_MASK,
-            transforms,
+            builder,
         )
     }
-    pub fn sample_count(
+    pub fn sample_count<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.misc(ir_meta, MISC_SAMPLE_COUNT_OFFSET, MISC_SAMPLE_COUNT_MASK, transforms)
+        self.misc(ir_meta, MISC_SAMPLE_COUNT_OFFSET, MISC_SAMPLE_COUNT_MASK, builder)
     }
-    pub fn enabled_clip_planes(
+    pub fn enabled_clip_planes<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.misc(
-            ir_meta,
-            MISC_ENABLED_CLIP_PLANES_OFFSET,
-            MISC_ENABLED_CLIP_PLANES_MASK,
-            transforms,
-        )
+        self.misc(ir_meta, MISC_ENABLED_CLIP_PLANES_OFFSET, MISC_ENABLED_CLIP_PLANES_MASK, builder)
     }
-    pub fn transform_depth(
+    pub fn transform_depth<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.misc_bool(ir_meta, MISC_TRANSFORM_DEPTH_OFFSET, MISC_TRANSFORM_DEPTH_MASK, transforms)
+        self.misc_bool(ir_meta, MISC_TRANSFORM_DEPTH_OFFSET, MISC_TRANSFORM_DEPTH_MASK, builder)
     }
-    pub fn alpha_to_coverage(
+    pub fn alpha_to_coverage<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.misc_bool(
-            ir_meta,
-            MISC_ALPHA_TO_COVERAGE_OFFSET,
-            MISC_ALPHA_TO_COVERAGE_MASK,
-            transforms,
-        )
+        self.misc_bool(ir_meta, MISC_ALPHA_TO_COVERAGE_OFFSET, MISC_ALPHA_TO_COVERAGE_MASK, builder)
     }
-    pub fn layered_framebuffer(
+    pub fn layered_framebuffer<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
         self.misc_bool(
             ir_meta,
             MISC_LAYERED_FRAMEBUFFER_OFFSET,
             MISC_LAYERED_FRAMEBUFFER_MASK,
-            transforms,
+            builder,
         )
     }
 
-    pub fn base_instance(
+    pub fn base_instance<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.base_instance.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.base_instance.unwrap(), builder)
     }
 
-    pub fn acb_buffer_offsets(
+    pub fn acb_buffer_offsets<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.acb_buffer_offsets.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.acb_buffer_offsets.unwrap(), builder)
     }
 
-    pub fn transform_xy(
+    pub fn transform_xy<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.transform_xy.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.transform_xy.unwrap(), builder)
     }
 
-    pub fn xfb_buffer_offsets(
+    pub fn xfb_buffer_offsets<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.xfb_buffer_offsets.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.xfb_buffer_offsets.unwrap(), builder)
     }
 
-    pub fn xfb_vertices_per_instance(
+    pub fn xfb_vertices_per_instance<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.xfb_vertices_per_instance.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.xfb_vertices_per_instance.unwrap(), builder)
     }
 
-    pub fn coverage_mask(
+    pub fn coverage_mask<Container: instruction::InstructionContainer>(
         &self,
         ir_meta: &mut IRMeta,
-        transforms: &mut Vec<traverser::Transform>,
+        builder: &mut instruction::Builder<Container>,
     ) -> TypedId {
-        self.load_field(ir_meta, self.field_index.coverage_mask.unwrap(), transforms)
+        self.load_field(ir_meta, self.field_index.coverage_mask.unwrap(), builder)
     }
 }

@@ -810,12 +810,14 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
         glViewport(0, 0, kRboSize, kRboSize);
         glUseProgram(mProgram[dataType]);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
-        for (unsigned i = 0; i < mTestCases.size(); ++i)
+        for (const TestCase &testCase : mTestCases)
         {
-            if (mTestCases[i].size() == 0)
+            if (testCase.size() == 0)
+            {
                 continue;
-            ASSERT(mTestCases[i].size() == 2);
-            PrepareTestCase(mTestCases[i]);
+            }
+            ASSERT(testCase.size() == 2);
+            PrepareTestCase(testCase);
             EXPECT_GL_NO_ERROR();
             GLint iClearValue[]   = {0, 0, 0, 1};
             GLfloat fClearValue[] = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -837,9 +839,9 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
             EXPECT_GL_NO_ERROR();
 
-            std::shared_ptr<Container> container = mTestCases[i][1].mContainer;
-            size_t offset                        = mTestCases[i][1].mOffset;
-            GLenum glType = GetMappedGLType(mTestCases[i][1].mGLType, dataType);
+            std::shared_ptr<Container> container = testCase[1].mContainer;
+            size_t offset                        = testCase[1].mOffset;
+            GLenum glType                        = GetMappedGLType(testCase[1].mGLType, dataType);
             switch (dataType)
             {
                 case VsInputDataType::FLOAT:

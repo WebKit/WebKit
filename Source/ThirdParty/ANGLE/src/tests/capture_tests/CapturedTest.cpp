@@ -645,6 +645,37 @@ void main()
 
     ASSERT_GL_NO_ERROR();
 
+    // Create a yellow texture and an FBO color texture on GL_TEXTURE2 before capture begins,
+    // leaving yellowTexture bound to GL_TEXTURE2 and fboPreCapture unbound (attached to an FBO).
+    // Updating both via FBO during capture without touching GL_TEXTURE2 causes
+    // ResetReplayContextShared() to clobber GL_TEXTURE2 with fboPreCapture, testing that
+    // ResetReplay() tracks and restores GL_TEXTURE2 and the active texture unit.
+    GLTexture yellowTexture;
+    GLTexture fboPreCapture;
+    const std::vector<GLColor> kYellowData(kSize * kSize, GLColor::yellow);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, yellowTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kYellowData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindTexture(GL_TEXTURE_2D, fboPreCapture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLFramebuffer fboYellow;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboYellow);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, yellowTexture, 0);
+
+    GLFramebuffer fboPre;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboPre);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboPreCapture, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindTexture(GL_TEXTURE_2D, yellowTexture);
+
     // First run the program with red and green active
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, redTexture);
@@ -679,6 +710,12 @@ void main()
     glBindTexture(GL_TEXTURE_2D, greenTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                  kWhiteData.data());
+
+    // Clear pre-capture FBOs to dirty yellowTexture and fboPreCapture without binding GL_TEXTURE2
+    glBindFramebuffer(GL_FRAMEBUFFER, fboYellow);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboPre);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Bind non-default framebuffer during capture restore default to test framebuffer binding
     // tracking in the tracer

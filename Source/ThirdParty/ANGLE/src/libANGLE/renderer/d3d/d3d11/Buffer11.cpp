@@ -799,6 +799,11 @@ angle::Result Buffer11::packPixels(const gl::Context *context,
     ANGLE_TRY(packStorage->packPixels(context, readAttachment, params));
     onStorageUpdate(packStorage);
 
+    // Pixel pack writes new data into this buffer. If the buffer is also bound as a vertex or
+    // index buffer, we must invalidate any cached static translated vertex/index buffers and set
+    // feedback->bufferStateChanged so bound VertexArrays re-sync on the next draw.
+    invalidateStaticData(context, feedback);
+
     return angle::Result::Continue;
 }
 

@@ -7,6 +7,7 @@
 //
 
 #include "common/span.h"
+#include "common/angleutils.h"
 #include "common/unsafe_buffers.h"
 
 #include <gtest/gtest.h>
@@ -271,9 +272,9 @@ TEST(SpanTest, RbeginAndRend)
     constexpr auto sp = ANGLE_UNSAFE_TODO(Span(kSpanData, kSpanDataSize));
 
     size_t currentIndex = 0;
-    for (auto iter = sp.rbegin(); iter != sp.rend(); ++iter)
+    for (unsigned int value : Reversed(sp))
     {
-        ASSERT_EQ(*iter, kSpanDataSize - 1 - currentIndex);
+        ASSERT_EQ(value, kSpanDataSize - 1 - currentIndex);
         ++currentIndex;
     }
 }

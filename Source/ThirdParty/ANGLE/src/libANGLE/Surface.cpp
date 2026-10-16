@@ -70,7 +70,6 @@ Surface::Surface(EGLint surfaceType,
       mState(id, config, attributes),
       mImplementation(nullptr),
       mRefCount(0),
-      mDestroyed(false),
       mType(surfaceType),
       mBuftype(buftype),
       mPostSubBufferRequested(false),
@@ -164,6 +163,7 @@ Surface::Surface(EGLint surfaceType,
 
 Surface::~Surface()
 {
+    ASSERT(mRefCount == 0);
     ASSERT(mCurrentRefCount == 0);
 }
 
@@ -283,6 +283,7 @@ Error Surface::initialize(const Display *display)
 
 Error Surface::makeCurrent(const gl::Context *context)
 {
+    mMutex.assertLocked();
     ANGLE_TRY(mImplementation->makeCurrent(context));
     mCurrentRefCount++;
     addRef();
@@ -291,6 +292,7 @@ Error Surface::makeCurrent(const gl::Context *context)
 
 Error Surface::unMakeCurrent(const gl::Context *context)
 {
+    mMutex.assertLocked();
     ANGLE_TRY(mImplementation->unMakeCurrent(context));
     ASSERT(mCurrentRefCount > 0);
     mCurrentRefCount--;
@@ -300,9 +302,9 @@ Error Surface::unMakeCurrent(const gl::Context *context)
 Error Surface::releaseRef(const Display *display)
 {
     ASSERT(mRefCount > 0);
-    mRefCount--;
-    if (mRefCount == 0 && mDestroyed)
+    if (mRefCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
     {
+        mMutex.assertUnlocked();
         ASSERT(display);
         return destroyImpl(display);
     }
@@ -312,12 +314,8 @@ Error Surface::releaseRef(const Display *display)
 
 Error Surface::onDestroy(const Display *display)
 {
-    mDestroyed = true;
-    if (mRefCount == 0)
-    {
-        return destroyImpl(display);
-    }
-    return NoError();
+    ASSERT(mRefCount == 0);
+    return destroyImpl(display);
 }
 
 void Surface::setLabel(EGLLabelKHR label)
@@ -338,12 +336,14 @@ EGLint Surface::getType() const
 Error Surface::prepareSwap(const gl::Context *context)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::prepareSwap");
+    mMutex.assertLocked();
     return mImplementation->prepareSwap(context);
 }
 
 Error Surface::swap(gl::Context *context)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::swap");
+    mMutex.assertLocked();
     context->onPreSwap();
 
     ANGLE_TRY(updatePropertiesOnSwap(context));
@@ -356,6 +356,7 @@ Error Surface::swap(gl::Context *context)
 Error Surface::swapWithDamage(gl::Context *context, const EGLint *rects, EGLint n_rects)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::swapWithDamage");
+    mMutex.assertLocked();
     context->onPreSwap();
 
     ANGLE_TRY(updatePropertiesOnSwap(context));
@@ -372,6 +373,7 @@ Error Surface::postSubBuffer(const gl::Context *context,
                              EGLint width,
                              EGLint height)
 {
+    mMutex.assertLocked();
     if (width == 0 || height == 0)
     {
         return egl::NoError();
@@ -386,32 +388,38 @@ Error Surface::postSubBuffer(const gl::Context *context,
 
 Error Surface::setPresentationTime(EGLnsecsANDROID time)
 {
+    mMutex.assertLocked();
     return mImplementation->setPresentationTime(time);
 }
 
 Error Surface::querySurfacePointerANGLE(EGLint attribute, void **value)
 {
+    mMutex.assertLocked();
     return mImplementation->querySurfacePointerANGLE(attribute, value);
 }
 
 EGLint Surface::isPostSubBufferSupported() const
 {
+    mMutex.assertLocked();
     return mPostSubBufferRequested && mImplementation->isPostSubBufferSupported();
 }
 
 void Surface::setRequestedSwapInterval(EGLint interval)
 {
+    mMutex.assertLocked();
     mRequestedSwapInterval = interval;
 }
 
 void Surface::setSwapInterval(const Display *display, EGLint interval)
 {
+    mMutex.assertLocked();
     mImplementation->setSwapInterval(display, interval);
     mState.swapInterval = interval;
 }
 
 void Surface::setMipmapLevel(EGLint level)
 {
+    mMutex.assertLocked();
     // Level is set but ignored
     UNIMPLEMENTED();
     mMipmapLevel = level;
@@ -419,6 +427,7 @@ void Surface::setMipmapLevel(EGLint level)
 
 void Surface::setMultisampleResolve(EGLenum resolve)
 {
+    mMutex.assertLocked();
     // Behaviour is set but ignored
     UNIMPLEMENTED();
     mMultisampleResolve = resolve;
@@ -426,23 +435,27 @@ void Surface::setMultisampleResolve(EGLenum resolve)
 
 void Surface::setRequestedSwapBehavior(EGLenum behavior)
 {
+    mMutex.assertLocked();
     mRequestedSwapBehavior = behavior;
 }
 
 void Surface::setSwapBehavior(EGLenum behavior)
 {
+    mMutex.assertLocked();
     mImplementation->setSwapBehavior(behavior);
     mState.swapBehavior = behavior;
 }
 
 void Surface::setFixedWidth(EGLint width)
 {
+    mMutex.assertLocked();
     mFixedWidth = width;
     mImplementation->setFixedWidth(width);
 }
 
 void Surface::setFixedHeight(EGLint height)
 {
+    mMutex.assertLocked();
     mFixedHeight = height;
     mImplementation->setFixedHeight(height);
 }
@@ -454,6 +467,7 @@ const Config *Surface::getConfig() const
 
 EGLint Surface::getPixelAspectRatio() const
 {
+    mMutex.assertLocked();
     return mPixelAspectRatio;
 }
 
@@ -464,31 +478,37 @@ EGLenum Surface::getRenderBuffer() const
 
 EGLenum Surface::getRequestedRenderBuffer() const
 {
+    mMutex.assertLocked();
     return mRequestedRenderBuffer;
 }
 
 EGLenum Surface::getSwapBehavior() const
 {
+    mMutex.assertLocked();
     return mState.swapBehavior;
 }
 
 EGLenum Surface::getRequestedSwapBehavior() const
 {
+    mMutex.assertLocked();
     return mRequestedSwapBehavior;
 }
 
 TextureFormat Surface::getTextureFormat() const
 {
+    mMutex.assertLocked();
     return mTextureFormat;
 }
 
 EGLenum Surface::getTextureTarget() const
 {
+    mMutex.assertLocked();
     return mTextureTarget;
 }
 
 bool Surface::getLargestPbuffer() const
 {
+    mMutex.assertLocked();
     return mLargestPbuffer;
 }
 
@@ -499,41 +519,49 @@ EGLenum Surface::getGLColorspace() const
 
 EGLenum Surface::getVGAlphaFormat() const
 {
+    mMutex.assertLocked();
     return mVGAlphaFormat;
 }
 
 EGLenum Surface::getVGColorspace() const
 {
+    mMutex.assertLocked();
     return mVGColorspace;
 }
 
 bool Surface::getMipmapTexture() const
 {
+    mMutex.assertLocked();
     return mMipmapTexture;
 }
 
 EGLint Surface::getMipmapLevel() const
 {
+    mMutex.assertLocked();
     return mMipmapLevel;
 }
 
 EGLint Surface::getHorizontalResolution() const
 {
+    mMutex.assertLocked();
     return mHorizontalResolution;
 }
 
 EGLint Surface::getVerticalResolution() const
 {
+    mMutex.assertLocked();
     return mVerticalResolution;
 }
 
 EGLenum Surface::getMultisampleResolve() const
 {
+    mMutex.assertLocked();
     return mMultisampleResolve;
 }
 
 EGLint Surface::isFixedSize() const
 {
+    mMutex.assertLocked();
     return mFixedSize;
 }
 
@@ -547,6 +575,7 @@ gl::Extents Surface::getSize() const
 egl::Error Surface::getUserSize(const egl::Display *display, EGLint *width, EGLint *height) const
 {
     ASSERT(width != nullptr || height != nullptr);
+    mMutex.assertLocked();
     if (mFixedSize)
     {
         if (width != nullptr)
@@ -568,10 +597,16 @@ egl::Error Surface::getUserSize(const egl::Display *display, EGLint *width, EGLi
 Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint buffer)
 {
     ASSERT(!mTexture);
+    mMutex.assertLocked();
     ANGLE_TRY(mImplementation->bindTexImage(context, texture, buffer));
     Surface *previousSurface = texture->getBoundSurface();
     if (previousSurface != nullptr)
     {
+        // Do not lock previousSurface->mMutex here. ContextMutex (and this->mMutex) are already
+        // held, so locking previousSurface->mMutex would invert the Surface::mMutex -> ContextMutex
+        // lock order. previousSurface is bound to |texture| on |context| (which holds a reference
+        // to it and is protected by ContextMutex).
+        ASSERT(previousSurface != this);
         ANGLE_TRY(previousSurface->releaseTexImage(context, buffer));
     }
     if (texture->bindTexImageFromSurface(context, this) == angle::Result::Stop)
@@ -587,6 +622,9 @@ Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint b
 Error Surface::releaseTexImage(const gl::Context *context, EGLint buffer)
 {
     ASSERT(context);
+    // Note: mMutex is locked when called from eglReleaseTexImage, but not when called from
+    // Surface::bindTexImage (on previousSurface) or Texture::onDestroy (where ContextMutex is
+    // already held and locking mMutex would cause a lock-order inversion).
 
     ANGLE_TRY(mImplementation->releaseTexImage(context, buffer));
 
@@ -598,11 +636,13 @@ Error Surface::releaseTexImage(const gl::Context *context, EGLint buffer)
 
 Error Surface::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
 {
+    mMutex.assertLocked();
     return mImplementation->getSyncValues(ust, msc, sbc);
 }
 
 Error Surface::getMscRate(EGLint *numerator, EGLint *denominator)
 {
+    mMutex.assertLocked();
     return mImplementation->getMscRate(numerator, denominator);
 }
 
@@ -615,6 +655,9 @@ Error Surface::releaseTexImageFromTexture(const gl::Context *context)
 
 angle::Result Surface::ensureSizeResolved(const gl::Context *context) const
 {
+    // Called from GL entry points on the current context's default framebuffer while ContextMutex
+    // is held; do not require mMutex to avoid Surface::mMutex <-> ContextMutex lock-order
+    // inversion.
     return mImplementation->ensureSizeResolved(context);
 }
 
@@ -667,14 +710,10 @@ GLuint Surface::getId() const
     return mState.id.value;
 }
 
-Error Surface::getBufferAgeImpl(const gl::Context *context, EGLint *age) const
-{
-    return mImplementation->getBufferAge(context, age);
-}
-
 Error Surface::getBufferAge(const gl::Context *context, EGLint *age)
 {
-    Error err = getBufferAgeImpl(context, age);
+    mMutex.assertLocked();
+    Error err = mImplementation->getBufferAge(context, age);
     if (!err.isError())
     {
         mBufferAgeQueriedSinceLastSwap = true;
@@ -718,17 +757,20 @@ void Surface::setInitState(GLenum binding,
 
 void Surface::setTimestampsEnabled(bool enabled)
 {
+    mMutex.assertLocked();
     mImplementation->setTimestampsEnabled(enabled);
     mState.timestampsEnabled = enabled;
 }
 
 bool Surface::isTimestampsEnabled() const
 {
+    mMutex.assertLocked();
     return mState.timestampsEnabled;
 }
 
 Error Surface::setAutoRefreshEnabled(bool enabled)
 {
+    mMutex.assertLocked();
     ANGLE_TRY(mImplementation->setAutoRefreshEnabled(enabled));
     mState.autoRefreshEnabled = enabled;
     return NoError();
@@ -741,6 +783,7 @@ bool Surface::hasProtectedContent() const
 
 const SupportedCompositorTiming &Surface::getSupportedCompositorTimings() const
 {
+    mMutex.assertLocked();
     return mState.supportedCompositorTimings;
 }
 
@@ -748,16 +791,19 @@ Error Surface::getCompositorTiming(EGLint numTimestamps,
                                    const EGLint *names,
                                    EGLnsecsANDROID *values) const
 {
+    mMutex.assertLocked();
     return mImplementation->getCompositorTiming(numTimestamps, names, values);
 }
 
 Error Surface::getNextFrameId(EGLuint64KHR *frameId) const
 {
+    mMutex.assertLocked();
     return mImplementation->getNextFrameId(frameId);
 }
 
 const SupportedTimestamps &Surface::getSupportedTimestamps() const
 {
+    mMutex.assertLocked();
     return mState.supportedTimestamps;
 }
 
@@ -766,6 +812,7 @@ Error Surface::getFrameTimestamps(EGLuint64KHR frameId,
                                   const EGLint *timestamps,
                                   EGLnsecsANDROID *values) const
 {
+    mMutex.assertLocked();
     return mImplementation->getFrameTimestamps(frameId, numTimestamps, timestamps, values);
 }
 
@@ -788,6 +835,7 @@ void Surface::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
 
 Error Surface::setRenderBuffer(EGLint renderBuffer)
 {
+    mMutex.assertLocked();
     ANGLE_TRY(mImplementation->setRenderBuffer(renderBuffer));
     mRenderBuffer = renderBuffer;
     return NoError();
@@ -795,6 +843,7 @@ Error Surface::setRenderBuffer(EGLint renderBuffer)
 
 void Surface::setRequestedRenderBuffer(EGLint requestedRenderBuffer)
 {
+    mMutex.assertLocked();
     mRequestedRenderBuffer = requestedRenderBuffer;
 }
 
@@ -819,21 +868,25 @@ Error Surface::updatePropertiesOnSwap(const gl::Context *context)
 
 bool Surface::isLocked() const
 {
+    mMutex.assertLocked();
     return (mLockBufferPtr != nullptr);
 }
 
 EGLint Surface::getBitmapPitch() const
 {
+    mMutex.assertLocked();
     return mLockBufferPitch;
 }
 
 EGLint Surface::getBitmapOrigin() const
 {
+    mMutex.assertLocked();
     return mImplementation->origin();
 }
 
 EGLint Surface::getRedOffset() const
 {
+    mMutex.assertLocked();
     const gl::InternalFormat &format = *mColorFormat.info;
     if (gl::IsBGRAFormat(format.internalFormat))
     {
@@ -847,6 +900,7 @@ EGLint Surface::getRedOffset() const
 
 EGLint Surface::getGreenOffset() const
 {
+    mMutex.assertLocked();
     const gl::InternalFormat &format = *mColorFormat.info;
     if (gl::IsBGRAFormat(format.internalFormat))
     {
@@ -860,6 +914,7 @@ EGLint Surface::getGreenOffset() const
 
 EGLint Surface::getBlueOffset() const
 {
+    mMutex.assertLocked();
     const gl::InternalFormat &format = *mColorFormat.info;
     if (gl::IsBGRAFormat(format.internalFormat))
     {
@@ -873,6 +928,7 @@ EGLint Surface::getBlueOffset() const
 
 EGLint Surface::getAlphaOffset() const
 {
+    mMutex.assertLocked();
     const gl::InternalFormat &format = *mColorFormat.info;
     if (format.isLUMA())
     {
@@ -884,11 +940,13 @@ EGLint Surface::getAlphaOffset() const
 
 EGLint Surface::getLuminanceOffset() const
 {
+    mMutex.assertLocked();
     return 0;
 }
 
 EGLint Surface::getBitmapPixelSize() const
 {
+    mMutex.assertLocked();
     constexpr EGLint kBitsPerByte    = 8;
     const gl::InternalFormat &format = *mColorFormat.info;
     return (format.pixelBytes * kBitsPerByte);
@@ -896,6 +954,7 @@ EGLint Surface::getBitmapPixelSize() const
 
 EGLAttribKHR Surface::getBitmapPointer() const
 {
+    mMutex.assertLocked();
     return static_cast<EGLAttribKHR>((intptr_t)mLockBufferPtr);
 }
 
@@ -903,11 +962,13 @@ egl::Error Surface::getCompressionRate(const egl::Display *display,
                                        const gl::Context *context,
                                        EGLint *rate)
 {
+    mMutex.assertLocked();
     return mImplementation->getCompressionRate(display, context, rate);
 }
 
 egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeMap &attributes)
 {
+    mMutex.assertLocked();
     EGLint lockBufferUsageHint = attributes.getAsInt(
         EGL_LOCK_USAGE_HINT_KHR, (EGL_READ_SURFACE_BIT_KHR | EGL_WRITE_SURFACE_BIT_KHR));
 
@@ -920,6 +981,7 @@ egl::Error Surface::lockSurfaceKHR(const egl::Display *display, const AttributeM
 
 egl::Error Surface::unlockSurfaceKHR(const egl::Display *display)
 {
+    mMutex.assertLocked();
     mLockBufferPtr   = nullptr;
     mLockBufferPitch = 0;
     return mImplementation->unlockSurface(display, true);
@@ -938,6 +1000,7 @@ WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
 
 void Surface::setDamageRegion(const EGLint *rects, EGLint n_rects)
 {
+    mMutex.assertLocked();
     mIsDamageRegionSet = true;
 }
 

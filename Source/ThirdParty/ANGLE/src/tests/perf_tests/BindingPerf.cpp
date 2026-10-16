@@ -126,9 +126,9 @@ void BindingsBenchmark::initializeBenchmark()
     if (params.allocationStyle == AT_INITIALIZATION)
     {
         glGenBuffers(static_cast<GLsizei>(mBuffers.size()), mBuffers.data());
-        for (size_t bufferIdx = 0; bufferIdx < mBuffers.size(); bufferIdx++)
+        for (GLuint buffer : mBuffers)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, mBuffers[bufferIdx]);
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
         }
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }

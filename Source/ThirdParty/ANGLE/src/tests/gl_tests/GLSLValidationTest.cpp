@@ -3217,6 +3217,35 @@ TEST_P(WebGL2GLSLValidationTest, LargeStructConstructorOnly)
                   "'' : Size of declared private variable exceeds implementation-defined limit");
 }
 
+// Validate that implicitly sized array constructor with excessive size cannot bypass variable
+// size checks.
+TEST_P(WebGL2GLSLValidationTest, ImplicitlySizedArrayConstructorExcessiveSize)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 color;
+uniform int elementIndex;
+struct S { mat4 m[512]; };
+void main() {
+    S a;
+    S b;
+    float x = S[](
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b,
+        a, b, a, b, a, b, a, b, a, b, a, b, a, b, a, b
+    )[elementIndex].m[0][0][0];
+    color = vec4(x);
+})";
+
+    validateError(GL_FRAGMENT_SHADER, kFS,
+                  "'' : Size of declared private variable exceeds implementation-defined limit");
+}
+
 // Validate that too-large structures cannot be used as function return types
 TEST_P(WebGL2GLSLValidationTest, LargeVariableFunctionReturnType)
 {

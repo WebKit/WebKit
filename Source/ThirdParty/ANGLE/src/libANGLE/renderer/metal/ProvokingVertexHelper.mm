@@ -207,8 +207,15 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
     const std::vector<DrawIndexRange> &drawIndexRanges,
     mtl::BufferSlice indexBuffer,
     gl::DrawElementsType indexBufferType,
+    ConversionBufferMtl *conversion,
     mtl::BufferSlice *outNewIndexBuffer)
 {
+    if (conversion && !conversion->dirty)
+    {
+        *outNewIndexBuffer = conversion->buffer;
+        return angle::Result::Continue;
+    }
+
     // Get specialized program
     // Upload index buffer
     // dispatch per-primitive?
@@ -258,7 +265,8 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
         srcOffset <<= indexTypeShift;
 
         uint32_t primitiveCount;
-        angle::CheckedNumeric<size_t> dstOffset = srcOffset;
+        angle::CheckedNumeric<size_t> dstOffset = clippedRange.begin - firstIndex;
+        dstOffset <<= indexTypeShift;
         if (mode == newMode)
         {
             primitiveCount = indexCount / perPrimitiveIndexCount;
@@ -284,7 +292,12 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
 
     ANGLE_CHECK_GL_MATH(context, checkedBufferSize.IsValid());
     mtl::BufferSlice newBuffer;
-    ANGLE_TRY(mIndexBuffers.allocate(context, checkedBufferSize.ValueOrDie(), &newBuffer));
+    mtl::BufferPool &bufferPool = conversion ? conversion->bufferPool : mIndexBuffers;
+    if (conversion)
+    {
+        bufferPool.releaseInFlightBuffers(context);
+    }
+    ANGLE_TRY(bufferPool.allocate(context, checkedBufferSize.ValueOrDie(), &newBuffer));
 
     mtl::ComputeCommandEncoder *encoder =
         context->getComputeCommandEncoderWithoutEndingRenderEncoder();
@@ -306,6 +319,11 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
                           threadsPerThreadgroup);
     }
 
+    if (conversion)
+    {
+        conversion->buffer = newBuffer;
+        conversion->dirty  = false;
+    }
     *outNewIndexBuffer = std::move(newBuffer);
     return angle::Result::Continue;
 }

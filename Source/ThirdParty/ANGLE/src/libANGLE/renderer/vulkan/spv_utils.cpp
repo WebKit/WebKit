@@ -770,10 +770,8 @@ void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
                                   SpvProgramInterfaceInfo *programInterfaceInfo,
                                   ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
-    for (uint32_t blockIndex = 0; blockIndex < blocks.size(); ++blockIndex)
+    for (const gl::InterfaceBlock &block : blocks)
     {
-        const gl::InterfaceBlock &block = blocks[blockIndex];
-
         // TODO: http://anglebug.com/42263134: All blocks should be active
         const gl::ShaderBitSet activeShaders =
             programExecutable.getLinkedShaderStages() & block.activeShaders();
@@ -2401,9 +2399,8 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
 
         // Go over the varyings of this buffer in order.
         const std::vector<XfbVarying> &varyings = mXfbVaryings[bufferIndex];
-        for (size_t varyingIndex = 0; varyingIndex < varyings.size(); ++varyingIndex)
+        for (const XfbVarying &varying : varyings)
         {
-            const XfbVarying &varying                  = varyings[varyingIndex];
             const ShaderInterfaceVariableXfbInfo *info = varying.info;
             ASSERT(info->pod.buffer == bufferIndex);
 
@@ -6099,10 +6096,9 @@ void SpvAssignTransformFeedbackLocations(gl::ShaderType shaderType,
 
     if (isTransformFeedbackStage)
     {
-        for (uint32_t varyingIndex = 0; varyingIndex < tfVaryings.size(); ++varyingIndex)
+        for (const gl::TransformFeedbackVarying &tfVarying : tfVaryings)
         {
-            const gl::TransformFeedbackVarying &tfVarying = tfVaryings[varyingIndex];
-            const std::string &tfVaryingName              = tfVarying.name;
+            const std::string &tfVaryingName = tfVarying.name;
 
             if (tfVaryingName == "gl_Position")
             {

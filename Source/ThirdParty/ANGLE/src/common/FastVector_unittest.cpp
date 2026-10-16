@@ -26,20 +26,20 @@ TEST(FastVector, Constructors)
     // heap-allocated vectors, and ensure they copy correctly.
     static constexpr std::array<size_t, 4> vectorSizes = {5, 3, 16, 32};
 
-    for (size_t i = 0; i < vectorSizes.size(); i++)
+    for (size_t vectorSize : vectorSizes)
     {
-        FastVector<int, 5> count(vectorSizes[i]);
-        EXPECT_EQ(vectorSizes[i], count.size());
+        FastVector<int, 5> count(vectorSize);
+        EXPECT_EQ(vectorSize, count.size());
 
-        FastVector<int, 5> countAndValue(vectorSizes[i], 2);
-        EXPECT_EQ(vectorSizes[i], countAndValue.size());
+        FastVector<int, 5> countAndValue(vectorSize, 2);
+        EXPECT_EQ(vectorSize, countAndValue.size());
         EXPECT_EQ(2, countAndValue[1]);
 
         FastVector<int, 5> copy(countAndValue);
         EXPECT_EQ(copy, countAndValue);
 
         FastVector<int, 5> copyRValue(std::move(count));
-        EXPECT_EQ(vectorSizes[i], copyRValue.size());
+        EXPECT_EQ(vectorSize, copyRValue.size());
 
         FastVector<int, 5> copyIter(countAndValue.begin(), countAndValue.end());
         EXPECT_EQ(copyIter, countAndValue);
@@ -48,10 +48,10 @@ TEST(FastVector, Constructors)
         EXPECT_TRUE(copyIterEmpty.empty());
 
         FastVector<int, 5> assignCopy(copyRValue);
-        EXPECT_EQ(vectorSizes[i], assignCopy.size());
+        EXPECT_EQ(vectorSize, assignCopy.size());
 
         FastVector<int, 5> assignRValue(std::move(assignCopy));
-        EXPECT_EQ(vectorSizes[i], assignRValue.size());
+        EXPECT_EQ(vectorSize, assignRValue.size());
     }
 
     FastVector<int, 5> initializerList{1, 2, 3, 4, 5};
