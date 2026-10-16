@@ -62,6 +62,9 @@ inline std::optional<IPC::ValidationFailure> checkFirstPartyAccessResult(WebProc
 
 inline std::optional<IPC::ValidationFailure> checkFirstPartyAccess(const WebProcessProxy& process, const WebCore::RegistrableDomain& domain)
 {
+    // A web archive's documents have the origin of the archived content, not of the site the process was assigned.
+    if (process.hasCommittedWebArchiveDomain(domain))
+        return std::nullopt;
     return checkFirstPartyAccessResult(process.allowsFirstPartyAccess(domain));
 }
 
