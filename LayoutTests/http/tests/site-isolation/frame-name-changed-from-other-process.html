@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/frame-name-changed-from-other-process-iframe.html"></iframe>
+<script>
+const summary = "Tests that a WebContent process cannot rename a frame it does not host.";
+
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "loaded") {
+        if (!window.IPC) {
+            finish("PASS");
+            return;
+        }
+
+        window.name = "original";
+        frame.contentWindow.postMessage(IPC.frameID[0].toString(), "*");
+        return;
+    }
+
+    if (event.data == "ipc unavailable") {
+        finish("PASS");
+        return;
+    }
+
+    if (event.data != "sent")
+        return;
+
+    if (frames["control"] !== frame.contentWindow)
+        finish("FAIL: the iframe could not rename its own frame.");
+    else if (window.name != "original")
+        finish("FAIL: the name became \"" + window.name + "\", expected \"original\".");
+    else
+        finish("PASS");
+});
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

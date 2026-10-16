@@ -1,0 +1,89 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<iframe id="sibling" src="resources/frame-with-text.html"></iframe>
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/set-frame-printing-from-other-process-iframe.html"></iframe>
+<script>
+const summary = "Tests that a WebContent process cannot put a frame into print mode unless it hosts the frame or its parent.";
+
+let frameID;
+let loaded = 0;
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest() {
+    const sizesAndShrinkRatio = [0, 0, 0, 0, 0].map((value) => ({ type: "float", value }));
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_SetFramePrinting.name, [
+        { type: "FrameID", value: [BigInt(frameID)] },
+        { type: "bool", value: 1 },
+        ...sizesAndShrinkRatio,
+        { type: "bool", value: 0 },
+    ]);
+    frame.contentWindow.postMessage("report", "*");
+}
+
+addEventListener("message", (event) => {
+    if (typeof event.data == "string" && event.data.startsWith("loaded ")) {
+        frameID = event.data.substring(7);
+        if (++loaded == 2)
+            runTest();
+        return;
+    }
+
+    if (event.data == "ipc unavailable") {
+        finish("PASS");
+        return;
+    }
+
+    if (event.data == "print false") {
+        finish("FAIL: the main frame's process could not put the iframe into print mode.");
+        return;
+    }
+
+    if (event.data == "print true") {
+        frame.contentWindow.postMessage([IPC.frameID[0].toString(), sibling.contentWindow.IPC.frameID[0].toString()], "*");
+        return;
+    }
+
+    if (event.data != "sent")
+        return;
+
+    const putIntoPrintMode = [];
+    if (matchMedia("print").matches)
+        putIntoPrintMode.push("the main frame");
+    if (sibling.contentWindow.matchMedia("print").matches)
+        putIntoPrintMode.push("its sibling");
+
+    if (putIntoPrintMode.length)
+        finish("FAIL: the iframe's process put " + putIntoPrintMode.join(" and ") + " into print mode.");
+    else
+        finish("PASS");
+});
+
+onload = () => {
+    if (!window.IPC) {
+        finish("PASS");
+        return;
+    }
+
+    if (++loaded == 2)
+        runTest();
+};
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

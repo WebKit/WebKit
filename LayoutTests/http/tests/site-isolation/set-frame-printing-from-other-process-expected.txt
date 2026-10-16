@@ -1,0 +1,2 @@
+Tests that a WebContent process cannot put a frame into print mode unless it hosts the frame or its parent.
+PASS
