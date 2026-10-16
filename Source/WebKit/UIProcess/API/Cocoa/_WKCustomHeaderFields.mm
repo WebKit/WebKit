@@ -29,6 +29,7 @@
 #import "_WKCustomHeaderFieldsInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @implementation _WKCustomHeaderFields
@@ -52,9 +53,9 @@
 
 - (NSDictionary<NSString *, NSString *> *)fields
 {
-    auto& vector = _fields->fields();
-    NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary dictionaryWithCapacity:vector.size()];
-    for (auto& field : vector)
+    Borrow borrowedVector = _fields->fields();
+    NSMutableDictionary<NSString *, NSString *> *dictionary = [NSMutableDictionary dictionaryWithCapacity:borrowedVector->size()];
+    for (auto& field : borrowedVector)
         [dictionary setObject:field.value().createNSString().get() forKey:field.name().createNSString().get()];
     return dictionary;
 }

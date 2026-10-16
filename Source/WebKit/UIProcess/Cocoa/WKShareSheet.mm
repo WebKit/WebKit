@@ -35,6 +35,7 @@
 #import <WebCore/NSURLUtilities.h>
 #import <WebCore/ShareData.h>
 #import <pal/spi/mac/QuarantineSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
@@ -273,7 +274,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
     auto queue = WorkQueue::create("com.apple.WebKit.WKShareSheet.ShareableFileWriter"_s);
     queue->dispatch([shareDataArray = WTF::move(shareDataArray), fileWriteTasks = WTF::move(fileWriteTasks), temporaryDirectory = retainPtr(temporaryDirectory), usePlaceholderFiles, completionHandler = WTF::move(completionHandler)]() mutable {
         RetainPtr fileURLs = adoptNS([[NSMutableArray alloc] initWithCapacity:fileWriteTasks.size()]);
-        for (auto& fileWriteTask : fileWriteTasks) {
+        for (auto& fileWriteTask : borrow(fileWriteTasks)) {
             RetainPtr fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(fileWriteTask.fileName).createNSString().get() data:fileWriteTask.fileData.get() temporaryDirectory:temporaryDirectory.get()];
             if (!fileURL)
                 continue;

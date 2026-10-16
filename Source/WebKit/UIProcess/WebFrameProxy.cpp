@@ -82,6 +82,7 @@
 #include <WebCore/Site.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <stdio.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -760,7 +761,7 @@ void WebFrameProxy::getFrameTree(CompletionHandler<void(std::optional<FrameTreeN
     public:
         static Ref<FrameInfoCallbackAggregator> create(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&& completionHandler, size_t childCount) { return adoptRef(*new FrameInfoCallbackAggregator(WTF::move(completionHandler), childCount)); }
         void setCurrentFrameData(FrameInfoData&& data) { m_currentFrameData = WTF::move(data); }
-        void addChildFrameData(size_t index, FrameTreeNodeData&& data) { m_childFrameData[index] = WTF::move(data); }
+        void addChildFrameData(size_t index, FrameTreeNodeData&& data) { borrow(m_childFrameData)[index] = WTF::move(data); }
         ~FrameInfoCallbackAggregator()
         {
             // Drop child frames whose process did not reply.
@@ -845,7 +846,7 @@ Vector<Ref<WebFrameProxy>> WebFrameProxy::takeChildFrames()
 
 void WebFrameProxy::adoptChildFrames(Vector<Ref<WebFrameProxy>>&& frames)
 {
-    for (auto& frame : frames) {
+    for (auto& frame : borrow(frames)) {
         frame->m_parentFrame = *this;
         m_childFrames.add(WTF::move(frame));
     }

@@ -36,6 +36,8 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include "WebsiteDataStore.h"
+#include <wtf/Borrow.h>
+#include <wtf/Deque.h>
 
 namespace WebKit {
 
@@ -71,7 +73,7 @@ static Ref<JSON::ArrayOf<PartialCookie>> buildArrayForCookies(const Vector<WebCo
 {
     auto cookies = JSON::ArrayOf<PartialCookie>::create();
 
-    for (const auto& cookie : cookiesList)
+    for (const auto& cookie : borrow(cookiesList))
         cookies->addItem(buildObjectForCookie(cookie));
 
     return cookies;
@@ -158,7 +160,7 @@ void BidiStorageAgent::getCookies(RefPtr<JSON::Object>&& optionalFilter, RefPtr<
         Vector<WebCore::Cookie> matchingCookies;
         matchingCookies.reserveInitialCapacity(cookiesList.size());
 
-        for (const auto& cookie : cookiesList) {
+        for (const auto& cookie : borrow(cookiesList)) {
             if (filter.matches(cookie))
                 matchingCookies.append(cookie);
         }
@@ -208,14 +210,15 @@ void BidiStorageAgent::setCookie(Ref<JSON::Object>&& cookie, RefPtr<JSON::Object
     });
 };
 
-static void deleteCookiesSequentially(RefPtr<API::HTTPCookieStore> store, Vector<WebCore::Cookie> cookies, size_t index, Ref<PartitionKey> partitionKey, Inspector::CommandCallback<Ref<PartitionKey>> callback)
+static void deleteCookiesSequentially(RefPtr<API::HTTPCookieStore> store, Deque<WebCore::Cookie> cookies, Ref<PartitionKey> partitionKey, Inspector::CommandCallback<Ref<PartitionKey>> callback)
 {
-    if (index >= cookies.size()) {
+    if (cookies.isEmpty()) {
         callback({ partitionKey });
         return;
     }
-    store->deleteCookie(cookies[index], [store, cookies = WTF::move(cookies), index, partitionKey = WTF::move(partitionKey), callback = WTF::move(callback)]() mutable {
-        deleteCookiesSequentially(store, WTF::move(cookies), index + 1, partitionKey, WTF::move(callback));
+    WebCore::Cookie cookie = cookies.takeFirst();
+    store->deleteCookie(cookie, [store, cookies = WTF::move(cookies), partitionKey = WTF::move(partitionKey), callback = WTF::move(callback)] mutable {
+        deleteCookiesSequentially(store, WTF::move(cookies), partitionKey, WTF::move(callback));
     });
 }
 
@@ -236,10 +239,9 @@ void BidiStorageAgent::deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefP
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
 
     cookieStore->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(optionalFilter), partitionKey = WTF::move(partitionKey), cookieStore](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
-        Vector<WebCore::Cookie> toDelete;
-        toDelete.reserveInitialCapacity(fetchedCookies.size());
+        Deque<WebCore::Cookie> toDelete;
 
-        for (auto& cookie : fetchedCookies) {
+        for (auto& cookie : borrow(fetchedCookies)) {
             if (filter.matches(cookie))
                 toDelete.append(cookie);
         }
@@ -250,7 +252,7 @@ void BidiStorageAgent::deleteCookies(RefPtr<JSON::Object>&& optionalFilter, RefP
         }
 
         LOG(Automation, "deleteCookies: %zu cookies matched; deleting one-by-one.", toDelete.size());
-        deleteCookiesSequentially(WTF::move(cookieStore), WTF::move(toDelete), 0, partitionKey, WTF::move(callback));
+        deleteCookiesSequentially(WTF::move(cookieStore), WTF::move(toDelete), partitionKey, WTF::move(callback));
     });
 }
 

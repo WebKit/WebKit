@@ -47,6 +47,7 @@
 #import <WebCore/ShareableBitmap.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -243,7 +244,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         }
     }
     
-    for (const auto& layerAndClone : clonesToUpdate)
+    for (const auto& layerAndClone : borrow(clonesToUpdate))
         [layerForID(layerAndClone.layerID) setContents:[layerForID(layerAndClone.cloneLayerID) contents]];
 
     for (auto& destroyedLayer : transaction.destroyedLayers())

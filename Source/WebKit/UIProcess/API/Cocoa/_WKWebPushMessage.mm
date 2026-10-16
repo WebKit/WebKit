@@ -42,7 +42,7 @@
 
 - (NSData *)data
 {
-    if (auto messageData = protect(*_message)->data())
+    if (const auto messageData = protect(*_message)->data())
         return toNSData(*messageData).autorelease();
 
     return nil;

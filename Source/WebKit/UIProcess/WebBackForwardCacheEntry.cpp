@@ -34,6 +34,7 @@
 #include "WebFrameProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -134,7 +135,7 @@ std::pair<Vector<Ref<WebFrameProxy>>, Vector<Ref<WebProcessProxy>>> WebBackForwa
     auto children = std::exchange(m_cachedChildren, { });
     Vector<Ref<WebProcessProxy>> processes;
     HashSet<WebCore::ProcessIdentifier> visited;
-    for (auto& root : children) {
+    for (auto& root : borrow(children)) {
         Ref rootProcess = root->process();
         if (visited.add(rootProcess->coreProcessIdentifier()).isNewEntry)
             processes.append(WTF::move(rootProcess));

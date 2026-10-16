@@ -56,6 +56,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/StdLibExtras.h>
@@ -358,7 +359,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     // The `sendRights` vector must have __block scope to be captured by
     // the commit handler block below without the need to copy it.
     __block Vector<MachSendRight, 16> sendRights;
-    for (auto& transaction : bundle.transactions) {
+    Borrow borrowedTransactions = bundle.transactions;
+    for (auto& transaction : borrowedTransactions) {
         // commitLayerTreeTransaction consumes the incoming buffers, so we need to grab them first.
         CheckedRef removeLayerTreeTransaction = transaction.first;
         for (auto& [layerID, properties] : removeLayerTreeTransaction->changedLayerProperties()) {
@@ -396,12 +398,14 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
         }
     }
 
+    Borrow borrowedCallbackIDs = bundle.pageData.callbackIDs;
+
     if (bundle.mainFrameData) {
         m_activityStateChangeID = bundle.mainFrameData->activityStateChangeID;
 
         // Process any callbacks for unhiding content early, so that we
         // set the root node during the same CA transaction.
-        for (auto& callbackID : bundle.pageData.callbackIDs) {
+        for (auto& callbackID : borrowedCallbackIDs) {
             if (callbackID == m_replyForUnhidingContent) {
                 RELEASE_LOG(RemoteLayerTree, "RemoteLayerTreeDrawingAreaProxy(%" PRIu64 ")::hideContentUntilPendingUpdate completed", identifier().toUInt64());
                 m_replyForUnhidingContent = std::nullopt;
@@ -417,7 +421,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 
     WeakPtr weakThis { *this };
 
-    for (auto& transaction : bundle.transactions) {
+    for (auto& transaction : borrowedTransactions) {
         commitLayerTreeTransaction(connection, CheckedRef { transaction.first }.get(), transaction.second,  transaction.first.remoteContextHostedIdentifier() ? std::nullopt : bundle.mainFrameData, bundle.pageData, bundle.transactionID);
         if (!weakThis)
             return;
@@ -426,7 +430,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
     if (CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy())
         scrollingCoordinatorProxy->establishLayerTreeScrollingRelations(connection);
 
-    for (auto& callbackID : bundle.pageData.callbackIDs) {
+    for (auto& callbackID : borrowedCallbackIDs) {
         removeOutstandingPresentationUpdateCallback(connection, callbackID);
         if (auto callback = connection.takeAsyncReplyHandler(callbackID))
             callback(nullptr, nullptr);

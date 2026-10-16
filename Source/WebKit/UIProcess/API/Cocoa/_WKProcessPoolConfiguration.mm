@@ -29,6 +29,7 @@
 #import "LegacyGlobalSettings.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <objc/runtime.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -405,7 +406,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     const auto& thresholds = _processPoolConfiguration->memoryFootprintNotificationThresholds();
     RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity: thresholds.size()]);
-    for (auto& threshold : thresholds)
+    for (auto& threshold : borrow(thresholds))
         [result addObject:@(threshold)];
     return result.autorelease();
 }

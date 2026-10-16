@@ -32,6 +32,7 @@
 #include "ProcessThrottler.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MathExtras.h>
@@ -222,7 +223,7 @@ void MemoryFootprintMonitor::measurementTimerFired()
     measurementQueueSingleton().dispatch([processesToMeasure = WTF::move(processesToMeasure), weakThis = WeakPtr { *this }]() mutable {
         HashMap<ProcessID, size_t> footprints;
         footprints.reserveInitialCapacity(processesToMeasure.size());
-        for (auto& [pid, taskNamePort] : processesToMeasure) {
+        for (auto& [pid, taskNamePort] : borrow(processesToMeasure)) {
             auto footprint = WTF::memoryFootprint(taskNamePort.sendRight());
             footprints.add(pid, footprint);
         }

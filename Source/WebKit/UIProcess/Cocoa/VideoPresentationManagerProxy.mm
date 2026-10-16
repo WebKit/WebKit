@@ -64,6 +64,7 @@
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MachSendRightAnnotated.h>
 #import <wtf/WeakObjCPtr.h>
@@ -1487,7 +1488,7 @@ void VideoPresentationManagerProxy::textTrackRepresentationSetHidden(IPC::Connec
 void VideoPresentationManagerProxy::callCloseCompletionHandlers()
 {
     auto closeMediaCallbacks = WTF::move(m_closeCompletionHandlers);
-    for (auto& callback : closeMediaCallbacks)
+    for (auto& callback : borrow(closeMediaCallbacks))
         callback();
 }
 

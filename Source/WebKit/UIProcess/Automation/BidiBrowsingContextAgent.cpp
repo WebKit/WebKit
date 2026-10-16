@@ -84,7 +84,7 @@ static std::optional<Ref<Inspector::Protocol::BidiScript::RemoteValue>> extractN
     // Extract the handle from session-node property
     RefPtr<JSON::Value> sessionNodeValue;
     String nodeHandle;
-    for (auto& key : nodeObject->keys()) {
+    for (auto& key : borrow(nodeObject->keys())) {
         if (key.startsWith("session-node-"_s)) {
             if (nodeObject->getValue(key, sessionNodeValue) && sessionNodeValue) {
                 nodeHandle = sessionNodeValue->asString();
@@ -378,7 +378,7 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
 
     auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
     auto newDepth = maxDepth ? std::optional<uint64_t>(*maxDepth - 1) : std::nullopt;
-    for (auto& child : tree.children)
+    for (auto& child : borrow(tree.children))
         childrenInfo->addItem(getNavigableInfo(child, newDepth, IncludeParentID::No));
 
     info->setChildren(WTF::move(childrenInfo));

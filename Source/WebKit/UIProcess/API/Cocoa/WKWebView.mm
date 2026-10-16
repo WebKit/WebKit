@@ -202,6 +202,7 @@
 #import <WebCore/WebViewVisualIdentificationOverlay.h>
 #import <WebCore/WritingMode.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/HashMap.h>
@@ -2763,7 +2764,7 @@ std::optional<WebCore::JSHandleIdentifier> WebKit::jsHandleIdentifierInFrame(con
 
     _page->willBeginWritingToolsSession(webSession, WTF::move(preservedNodeIdentifiers), [completion = makeBlockPtr(completion)](const auto& contextData) {
         auto contexts = [NSMutableArray arrayWithCapacity:contextData.size()];
-        for (auto& context : contextData) {
+        for (auto& context : borrow(contextData)) {
             auto platformContext = WebKit::convertToPlatformContext(context);
             [contexts addObject:platformContext.get()];
         }
@@ -4101,7 +4102,7 @@ struct WKWebViewData {
         encoder << currentWKWebViewDataSerializationVersion;
         encoder << dataTypesToEncode;
 
-        for (auto& dataTypeToEncode : dataTypesToEncode) {
+        for (auto& dataTypeToEncode : borrow(dataTypesToEncode)) {
             switch (dataTypeToEncode) {
             case WebKit::WebViewDataType::SessionStorage:
                 if (!data->sessionStorage) {
@@ -4162,7 +4163,7 @@ struct WKWebViewData {
             completionHandler(nullptr);
     });
 
-    for (auto& encodedDataType : *encodedDataTypes) {
+    for (auto& encodedDataType : borrow(*encodedDataTypes)) {
         switch (encodedDataType) {
         case WebKit::WebViewDataType::SessionStorage: {
             std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>> sessionStorage;
@@ -4506,7 +4507,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 {
     _page->getAllFrameTreesForSiteIsolationTesting([completionHandler = makeBlockPtr(completionHandler), page = protect(*_page)] (Vector<WebKit::FrameTreeNodeData>&& vector) {
         auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
-        for (auto& data : vector)
+        for (auto& data : borrow(vector))
             [set addObject:wrapper(API::FrameTreeNode::create(WTF::move(data), page.get())).get()];
         completionHandler(set.get());
     });
@@ -4715,7 +4716,7 @@ static CGRect webViewRectForMainFrameRect(WebKit::WebPageProxy& page, const std:
         if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
             [delegate _webView:retainedSelf.get() didFindTextManipulationItems:createNSArray(itemReferences, createWKItem).get()];
         else {
-            for (auto& item : itemReferences)
+            for (auto& item : borrow(itemReferences))
                 [delegate _webView:retainedSelf.get() didFindTextManipulationItem:createWKItem(item).get()];
         }
     }, [capturedCompletionBlock = makeBlockPtr(completionHandler)] () {
@@ -5404,7 +5405,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
             return completionHandler(nil, error.get());
         }
 
-        auto metadata = result.value();
+        const Vector metadata = result.value();
         RetainPtr valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:metadata.size()]);
 
         for (const auto& pair : metadata)
@@ -6584,7 +6585,7 @@ static inline OptionSet<WebKit::FindOptions> LEGACY_NODELETE toFindOptions(_WKFi
             }
 
             auto valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:textFieldValues.size()]);
-            for (const auto& pair : textFieldValues)
+            for (const auto& pair : borrow(textFieldValues))
                 [valueMap setObject:pair.second.createNSString().get() forKey:pair.first.createNSString().get()];
 
             auto checker = [&] {

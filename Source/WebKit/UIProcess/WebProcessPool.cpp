@@ -356,7 +356,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             HashSet<WebCore::RegistrableDomain> domainSet;
             for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
                 if (!entry.triggerPages.isEmpty()) {
-                    for (auto&& page : entry.triggerPages)
+                    for (auto&& page : borrow(entry.triggerPages))
                         domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
                     continue;
                 }
@@ -403,7 +403,8 @@ WebProcessPool::~WebProcessPool()
 
     // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
     while (!m_processes.isEmpty()) {
-        auto& process = m_processes.first();
+        // FIXME: `process` gets destroyed manually during the call to `shutDown`, so we can't statically verify lifetime safety here. This needs a new design.
+        SUPPRESS_UNBORROWED_LOCAL auto& process = m_processes.first();
 
         ASSERT(process->isPrewarmed());
         // We need to be the only one holding a reference to the pre-warmed process so that it gets destroyed.
@@ -1697,7 +1698,7 @@ void WebProcessPool::countWebPagesInAllProcessesForTesting(CompletionHandler<voi
     };
 
     Ref aggregator = ResultAggregator::create(WTF::move(completionHandler));
-    for (auto& process : m_processes) {
+    for (auto& process : borrow(m_processes)) {
         process->sendWithAsyncReply(Messages::WebProcess::CountWebPagesForTesting(), [aggregator] (unsigned count) mutable {
             aggregator->addWebPageCount(count);
         });
@@ -1896,7 +1897,7 @@ void WebProcessPool::startMemorySampler(const double interval)
     WebMemorySampler::singleton()->start(interval);
 #endif
     
-    for (auto& process : m_processes) {
+    for (auto& process : borrow(m_processes)) {
         if (!process->canSendMessage())
             continue;
 
@@ -3233,7 +3234,7 @@ void WebProcessPool::initializeAccessibilityIfNecessary()
     if (m_hasReceivedAXRequestInUIProcess)
         return;
 
-    for (auto& process : m_processes) {
+    for (auto& process : borrow(m_processes)) {
         auto handleArray = SandboxExtension::createHandlesForMachLookup({ }, process->auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
         process->send(Messages::WebProcess::InitializeAccessibility(WTF::move(handleArray)), 0);
     }

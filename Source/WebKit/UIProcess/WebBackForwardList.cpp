@@ -62,7 +62,7 @@ static inline void setBackForwardItemIdentifiers(FrameState& frameState, BackFor
 {
     frameState.itemID = itemID;
     frameState.frameItemID = BackForwardFrameItemIdentifier::generate();
-    for (auto& child : frameState.children)
+    for (auto& child : borrow(frameState.children))
         setBackForwardItemIdentifiers(child, itemID);
 }
 
@@ -1173,7 +1173,7 @@ Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::B
 {
     Vector<Ref<WebKit::WebBackForwardListItem>> items;
     items.reserveInitialCapacity(state.items.size());
-    for (auto& itemState : state.items)
+    for (auto& itemState : borrow(state.items))
         items.append(createItemFromState(itemState, pageIdentifier));
     return items;
 }

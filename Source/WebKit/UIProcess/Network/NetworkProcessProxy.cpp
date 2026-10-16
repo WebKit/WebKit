@@ -2187,7 +2187,7 @@ void NetworkProcessProxy::addAllowedFilePaths(WebProcessProxy& webProcessProxy, 
         return HashSet<String> { };
     }).iterator->value;
 
-    for (auto& path : paths)
+    for (auto& path : borrow(paths))
         pathSet.add(path);
 }
 

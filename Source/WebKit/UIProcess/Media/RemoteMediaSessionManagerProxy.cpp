@@ -42,6 +42,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/PlatformMediaSessionInterface.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -161,11 +162,14 @@ void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connect
 
 void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIdentifier processIdentifier)
 {
-    Vector<WebCore::QualifiedMediaSessionIdentifier> staleKeys;
-    for (auto& key : m_sessionProxies.keys()) {
-        if (key.processIdentifier() == processIdentifier)
-            staleKeys.append(key);
-    }
+    const Vector staleKeys = [&] {
+        Vector<WebCore::QualifiedMediaSessionIdentifier> staleKeys;
+        for (auto& key : m_sessionProxies.keys()) {
+            if (key.processIdentifier() == processIdentifier)
+                staleKeys.append(key);
+        }
+        return staleKeys;
+    }();
 
     for (auto& key : staleKeys) {
         if (RefPtr session = m_sessionProxies.get(key))
@@ -192,7 +196,7 @@ void RemoteMediaSessionManagerProxy::setCurrentMediaSession(IPC::Connection& con
 void RemoteMediaSessionManagerProxy::refreshSessionStates(IPC::Connection& connection, const Vector<RemoteMediaSessionState>& sessions)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
-    for (auto& state : sessions) {
+    for (auto& state : borrow(sessions)) {
         if (RefPtr session = m_sessionProxies.get({ state.sessionIdentifier, process->coreProcessIdentifier() }))
             session->updateState(state);
     }

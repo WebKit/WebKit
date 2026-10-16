@@ -35,6 +35,7 @@
 #include "WebProcessPool.h"
 #include <WebCore/MockGamepadProvider.h>
 #include <WebCore/PlatformGamepad.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -111,13 +112,14 @@ void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad, Event
     if (m_gamepads.size() <= gamepad.index())
         m_gamepads.grow(gamepad.index() + 1);
 
-    ASSERT(!m_gamepads[gamepad.index()]);
-    m_gamepads[gamepad.index()] = makeUnique<UIGamepad>(gamepad);
+    Borrow borrowedGamepads = m_gamepads;
+    ASSERT(!borrowedGamepads[gamepad.index()]);
+    borrowedGamepads[gamepad.index()] = makeUnique<UIGamepad>(gamepad);
 
     scheduleGamepadStateSync();
 
     for (Ref pool : m_processPoolsUsingGamepads)
-        pool->gamepadConnected(*m_gamepads[gamepad.index()], eventVisibility);
+        pool->gamepadConnected(*borrowedGamepads[gamepad.index()], eventVisibility);
 }
 
 void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
@@ -137,7 +139,7 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
         return;
     }
 
-    std::unique_ptr<UIGamepad> disconnectedGamepad = WTF::move(m_gamepads[gamepad.index()]);
+    std::unique_ptr<UIGamepad> disconnectedGamepad = WTF::move(borrow(m_gamepads)[gamepad.index()]);
 
     scheduleGamepadStateSync();
 
@@ -155,7 +157,7 @@ void UIGamepadProvider::platformGamepadInputActivity(EventMakesGamepadsVisible e
         if (!m_gamepads[i] || !platformGamepad)
             continue;
 
-        m_gamepads[i]->updateFromPlatformGamepad(*platformGamepad);
+        borrow(m_gamepads)[i]->updateFromPlatformGamepad(*platformGamepad);
     }
 
     if (eventVisibility == EventMakesGamepadsVisible::Yes)

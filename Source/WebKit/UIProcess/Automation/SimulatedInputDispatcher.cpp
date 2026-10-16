@@ -36,6 +36,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
 #include <WebCore/PointerEventTypeNames.h>
+#include <wtf/Borrow.h>
 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 #include <wtf/text/TextBreakIterator.h>
@@ -212,7 +213,7 @@ void SimulatedInputDispatcher::transitionToNextKeyFrame()
         return;
     }
 
-    transitionBetweenKeyFrames(m_keyframes[m_keyframeIndex - 1], m_keyframes[m_keyframeIndex], [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
+    transitionBetweenKeyFrames([this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
         if (error) {
             finishDispatching(error);
             return;
@@ -234,8 +235,10 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
     if (m_inputSourceStateIndex == m_keyframes[m_keyframeIndex].states.size())
         return;
 
-    auto& nextKeyFrame = m_keyframes[m_keyframeIndex];
-    auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
+    // FIXME: These references do not enforce lifetime safety.
+    // We keep them this way for now because the synchronous error case would crash otherwise.
+    SUPPRESS_UNBORROWED_LOCAL auto& nextKeyFrame = m_keyframes[m_keyframeIndex];
+    SUPPRESS_UNBORROWED_LOCAL auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
     Ref inputSource = postStateEntry.first;
 
     transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
@@ -252,16 +255,17 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
     });
 }
 
-void SimulatedInputDispatcher::transitionBetweenKeyFrames(const SimulatedInputKeyFrame& a, const SimulatedInputKeyFrame& b, AutomationCompletionHandler&& completionHandler)
+void SimulatedInputDispatcher::transitionBetweenKeyFrames(AutomationCompletionHandler&& completionHandler)
 {
     m_inputSourceStateIndex = 0;
+    auto maximumDuration = m_keyframes[m_keyframeIndex].maximumDuration();
 
     // The "dispatch tick actions" algorithm (§17.4 Dispatching Actions).
     m_keyFrameTransitionCompletionHandler = WTF::move(completionHandler);
-    m_keyFrameTransitionDurationTimer.startOneShot(b.maximumDuration());
+    m_keyFrameTransitionDurationTimer.startOneShot(maximumDuration);
 
     LOG(Automation, "SimulatedInputDispatcher[%p]: started transition between keyframes: %d --> %d", this, m_keyframeIndex - 1, m_keyframeIndex);
-    LOG(Automation, "SimulatedInputDispatcher[%p]: timer started to ensure minimum duration of %.2f seconds for transition %d --> %d", this, b.maximumDuration().value(), m_keyframeIndex - 1, m_keyframeIndex);
+    LOG(Automation, "SimulatedInputDispatcher[%p]: timer started to ensure minimum duration of %.2f seconds for transition %d --> %d", this, maximumDuration.value(), m_keyframeIndex - 1, m_keyframeIndex);
 
     transitionToNextInputSourceState();
 }

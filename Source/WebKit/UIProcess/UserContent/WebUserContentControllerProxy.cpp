@@ -253,12 +253,15 @@ void WebUserContentControllerProxy::removeAllUserScripts()
 #if ENABLE(WK_WEB_EXTENSIONS)
     ASSERT(removeWebExtensions == RemoveWebExtensions::No);
 
-    Vector<Ref<API::UserScript>> scriptsToRemove;
-    for (RefPtr userScript : m_userScripts->elementsOfType<API::UserScript>()) {
-        if (WebExtensionMatchPattern::isWebExtensionURL(userScript->userScript().url()))
-            continue;
-        scriptsToRemove.append(*userScript);
-    }
+    const Vector scriptsToRemove = [&] {
+        Vector<Ref<API::UserScript>> scriptsToRemove;
+        for (RefPtr userScript : m_userScripts->elementsOfType<API::UserScript>()) {
+            if (WebExtensionMatchPattern::isWebExtensionURL(userScript->userScript().url()))
+                continue;
+            scriptsToRemove.append(*userScript);
+        }
+        return scriptsToRemove;
+    }();
 
     for (auto& userScript : scriptsToRemove)
         removeUserScript(userScript.get());
@@ -330,12 +333,15 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
 #if ENABLE(WK_WEB_EXTENSIONS)
     ASSERT(removeWebExtensions == RemoveWebExtensions::No);
 
-    Vector<Ref<API::UserStyleSheet>> styleSheetsToRemove;
-    for (RefPtr userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>()) {
-        if (WebExtensionMatchPattern::isWebExtensionURL(userStyleSheet->userStyleSheet().url()))
-            continue;
-        styleSheetsToRemove.append(*userStyleSheet);
-    }
+    const Vector styleSheetsToRemove = [&] {
+        Vector<Ref<API::UserStyleSheet>> styleSheetsToRemove;
+        for (RefPtr userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>()) {
+            if (WebExtensionMatchPattern::isWebExtensionURL(userStyleSheet->userStyleSheet().url()))
+                continue;
+            styleSheetsToRemove.append(*userStyleSheet);
+        }
+        return styleSheetsToRemove;
+    }();
 
     for (auto& userStyleSheet : styleSheetsToRemove)
         removeUserStyleSheet(userStyleSheet.get());
@@ -448,14 +454,17 @@ void WebUserContentControllerProxy::removeAllContentRuleLists()
 #if ENABLE(WK_WEB_EXTENSIONS)
     ASSERT(removeWebExtensions == RemoveWebExtensions::No);
 
-    Vector<String> ruleListsToRemove;
-    for (auto& entry : m_contentRuleLists) {
-        const auto& contentRuleListName = entry.key;
-        const auto& extensionBaseURL = std::get<URL>(entry.value);
+    const Vector ruleListsToRemove = [&] {
+        Vector<String> ruleListsToRemove;
+        for (auto& entry : m_contentRuleLists) {
+            const auto& contentRuleListName = entry.key;
+            const auto& extensionBaseURL = std::get<URL>(entry.value);
 
-        if (!WebExtensionMatchPattern::isWebExtensionURL(extensionBaseURL))
-            ruleListsToRemove.append(contentRuleListName);
-    }
+            if (!WebExtensionMatchPattern::isWebExtensionURL(extensionBaseURL))
+                ruleListsToRemove.append(contentRuleListName);
+        }
+        return ruleListsToRemove;
+    }();
 
     for (auto& name : ruleListsToRemove)
         removeContentRuleList(name);

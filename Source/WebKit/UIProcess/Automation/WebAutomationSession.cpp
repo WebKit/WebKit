@@ -522,7 +522,7 @@ void WebAutomationSession::getBrowsingContexts(CommandCallback<Ref<JSON::ArrayOf
 {
     Ref processPool = *m_processPool;
     Vector<Ref<WebPageProxy>> pages;
-    for (Ref process : borrow(processPool->processes()).get()) {
+    for (Ref process : borrow(processPool->processes())) {
         for (Ref page : process->pages()) {
             if (!page->isControlledByAutomation())
                 continue;
@@ -1097,7 +1097,7 @@ void WebAutomationSession::respondToPendingNavigationCallbacksWithSuccess(Vector
 
     // FIXME https://webkit.org/b/323980 Support separate timers, one for each callback
     m_loadTimer.stop();
-    for (auto& callback : callbacks)
+    for (auto& callback : borrow(callbacks))
         callback({ });
 }
 
@@ -1349,7 +1349,7 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
         m_bidiProcessor->browsingContextDomainNotifier().contextCreated(contextHandle, url, originalOpenerHandle, parentContextHandle, WTF::move(children), clientWindow, userContext);
     });
 
-    for (const auto& child : tree.children)
+    for (const auto& child : borrow(tree.children))
         recursivelyEmitContextCreatedEvent(child, contextHandle);
 }
 
@@ -1545,7 +1545,8 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     }
 
     // Per §14.3.10.5 in the W3C spec, if at least one file cannot be accepted, the command should fail.
-    for (const String& filename : m_filesToSelectForFileUpload) {
+    Borrow borrowedFilesToSelect = m_filesToSelectForFileUpload;
+    for (const String& filename : borrowedFilesToSelect) {
         if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes, allowedFileExtensions)) {
             resultListener.cancel();
             m_domainNotifier->fileChooserDismissed(browsingContextHandle, true, { });
@@ -1555,10 +1556,10 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
 
     // Copy the file list we used before calling out to the open panel listener.
     Ref<JSON::ArrayOf<String>> selectedFiles = JSON::ArrayOf<String>::create();
-    for (const String& filename : m_filesToSelectForFileUpload)
+    for (const String& filename : borrowedFilesToSelect)
         selectedFiles->addItem(filename);
 
-    resultListener.chooseFiles(m_filesToSelectForFileUpload);
+    resultListener.chooseFiles(borrowedFilesToSelect);
 
     m_domainNotifier->fileChooserDismissed(browsingContextHandle, false, WTF::move(selectedFiles));
 }
@@ -2012,7 +2013,7 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>> buildArrayFor
 {
     auto cookies = JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>::create();
 
-    for (const auto& cookie : cookiesList)
+    for (const auto& cookie : borrow(cookiesList))
         cookies->addItem(buildObjectForCookie(cookie));
 
     return cookies;
@@ -2802,7 +2803,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
 
     callbackInMap = WTF::move(keyboardEventsFlushedCallback);
 
-    for (auto& action : actionsToPerform)
+    for (auto& action : borrow(actionsToPerform))
         action();
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 }

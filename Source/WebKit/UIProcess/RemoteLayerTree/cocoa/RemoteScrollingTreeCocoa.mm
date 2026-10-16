@@ -55,8 +55,11 @@ bool layerEventRegionContainsPoint(CALayer *layer, CGPoint localPoint)
 
 OptionalEventRegionConstRef eventRegionForPoint(CALayer* rootLayer, FloatPoint& location)
 {
-    Vector<LayerAndPoint, 16> layersAtPoint;
-    collectDescendantLayersAtPoint(layersAtPoint, rootLayer, location, layerEventRegionContainsPoint);
+    const Vector layersAtPoint = [&] {
+        Vector<LayerAndPoint, 16> layersAtPoint;
+        collectDescendantLayersAtPoint(layersAtPoint, rootLayer, location, layerEventRegionContainsPoint);
+        return layersAtPoint;
+    }();
 
     if (layersAtPoint.isEmpty())
         return std::nullopt;

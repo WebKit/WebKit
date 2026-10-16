@@ -31,6 +31,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <iterator>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -279,7 +280,7 @@ void IsolatedSitePersistence::deleteSites(const Vector<WebCore::RegistrableDomai
         return;
     }
 
-    for (auto& domain : domains) {
+    for (auto& domain : borrow(domains)) {
         auto deleteStatement = WebCore::SQLiteStatementAutoResetScope { protect(m_deleteSiteSQLStatement).get() };
         if (!deleteStatement
             || deleteStatement->bindText(1, domain.string()) != SQLITE_OK

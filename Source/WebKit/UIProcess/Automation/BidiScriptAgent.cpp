@@ -616,7 +616,7 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
     else {
         // Enumerate all controlled pages; filtering by context happens during collection.
         RefPtr processPool = session->processPool();
-        for (Ref process : borrow(processPool->processes()).get()) {
+        for (Ref process : borrow(processPool->processes())) {
             for (Ref page : process->pages()) {
                 if (page->isControlledByAutomation())
                     pagesToProcess.append(page);
@@ -725,7 +725,7 @@ void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingCont
     if (!session)
         return;
 
-    for (const auto& [scriptID, scriptInfo] : m_preloadScripts) {
+    for (const auto& [scriptID, scriptInfo] : borrow(m_preloadScripts)) {
         // Check if this script applies to the current browsing context
         bool appliesToContext = WTF::switchOn(scriptInfo.contexts,
             [&] (const AllContextsTag&) {
@@ -854,7 +854,7 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
     if (pagesToProcess.isEmpty()) {
         // Assemble final array with window realms only.
         auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
-        for (auto& realmInfo : accumulated) {
+        for (auto& realmInfo : borrow(accumulated)) {
             if (!realmInfo)
                 continue;
             if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window)
@@ -879,7 +879,7 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
         if (frameTree)
             protectedThis->collectExecutionReadyFrameRealms(*frameTree, candidateRealms, contextHandleFilter, false);
 
-        for (auto& realmInfo : candidateRealms)
+        for (auto& realmInfo : borrow(candidateRealms))
             accumulated.append(WTF::move(realmInfo));
 
         protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
@@ -940,7 +940,7 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
     // only supports main frame contexts. When iframe support is added, this will be used to
     // recursively collect realms from nested browsing contexts (iframes).
     if (recurseSubframes) {
-        for (const auto& child : frameTree.children)
+        for (const auto& child : borrow(frameTree.children))
             collectExecutionReadyFrameRealms(child, realms, contextHandleFilter, true);
     }
 }

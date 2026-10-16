@@ -35,6 +35,7 @@
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
 #include <numbers>
+#include <wtf/Borrow.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -580,10 +581,11 @@ static std::expected<ActionsByTick, String> extractActionSequence(BidiInputState
         if (!sourceActions)
             return makeUnexpected(sourceActions.error());
 
+        Borrow borrowedSourceActions = sourceActions.value();
         for (size_t i = 0; i < sourceActions->size(); ++i) {
             if (actionsByTick.size() <= i)
                 actionsByTick.constructAndAppend();
-            actionsByTick[i].append(WTF::move(sourceActions->at(i)));
+            borrow(actionsByTick)[i].append(WTF::move(borrowedSourceActions->at(i)));
         }
     }
 
@@ -682,10 +684,10 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> translateTicksTo
     };
 
     Vector<SimulatedInputKeyFrame> keyFrames;
-    for (auto& tick : actionsByTick) {
+    for (auto& tick : borrow(actionsByTick)) {
         std::optional<uint64_t> tickDuration;
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
-        for (auto& action : tick) {
+        for (auto& action : borrow(tick)) {
             if (action.sourceType == SourceType::Pointer || action.sourceType == SourceType::Wheel)
                 SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(NotImplemented, "Pointer and wheel input sources are not yet supported."_s);
 // FIXME: Remove the platform-exclusive WEBDRIVER_*_INTERACTIONS guards and input source aliasing. <https://webkit.org/b/327296>
@@ -764,7 +766,7 @@ static Inspector::CommandResult<Vector<SimulatedInputKeyFrame>> keyFramesForUndo
 {
     ActionsByTick ticks;
     ticks.reserveInitialCapacity(undoActions.size());
-    for (auto& action : undoActions) {
+    for (auto& action : borrow(undoActions)) {
         Vector<Action> tick;
         tick.append(WTF::move(action));
         ticks.append(WTF::move(tick));

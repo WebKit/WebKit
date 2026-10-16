@@ -30,6 +30,7 @@
 
 #import "RemoteScrollingTree.h"
 #import <WebCore/ScrollingTreeScrollingNode.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -98,7 +99,8 @@ void RemoteProgressBasedTimelineRegistry::update(const RemoteScrollingTree& scro
             if (matchingTimelines.isEmpty())
                 continue;
             ASSERT(matchingTimelines.size() == 1);
-            auto& existingTimeline = matchingTimelines[0];
+            Borrow borrowedMatchingTimelines = matchingTimelines;
+            auto& existingTimeline = borrowedMatchingTimelines[0];
             existingTimeline->setResolutionData(sourceNode.get(), resolutionData);
             // Move it to the right source.
             processTimelines.ensure(existingTimeline->source(), [] {

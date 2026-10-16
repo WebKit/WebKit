@@ -545,7 +545,7 @@ void WebsiteDataStore::handleResolvedDirectoriesAsynchronously(const WebsiteData
             FileSystem::deleteEmptyDirectory(webSQLDirectory);
         }
 
-        for (auto& directory : directoriesToExclude)
+        for (auto& directory : borrow(directoriesToExclude))
             FileSystem::setExcludedFromBackup(directory, true);
     });
 }
@@ -630,7 +630,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 return;
             }
             ASSERT(RunLoop::isMain());
-            for (auto& entry : websiteData.entries) {
+            for (auto& entry : borrow(websiteData.entries)) {
                 auto displayName = WebsiteDataRecord::displayNameForOrigin(entry.origin);
                 if (!displayName) {
                     if (!allowsWebsiteDataRecordsForAllOrigins && !m_fetchOptions.contains(WebsiteDataFetchOption::IncludeAllOrigins))
@@ -826,8 +826,8 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
         
         Vector<WebsiteDataRecord> matchingDataRecords;
         HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords;
-        for (auto&& dataRecord : existingDataRecords) {
-            for (auto& domain : domains) {
+        for (auto&& dataRecord : borrow(existingDataRecords)) {
+            for (auto& domain : borrow(domains)) {
                 if (dataRecord.matches(domain)) {
                     matchingDataRecords.append(WTF::move(dataRecord));
                     domainsWithMatchingDataRecords.add(domain.isolatedCopy());
@@ -996,19 +996,21 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         completionHandler();
     });
 
+    Borrow borrowedDataRecords = dataRecords;
+
     Vector<WebCore::SecurityOriginData> origins;
-    for (const auto& dataRecord : dataRecords) {
+    for (const auto& dataRecord : borrowedDataRecords) {
         for (auto& origin : dataRecord.origins)
             origins.append(origin);
     }
 
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
         HashSet<WebCore::SecurityOriginData> origins;
-        for (const auto& dataRecord : dataRecords) {
+        for (const auto& dataRecord : borrowedDataRecords) {
             for (const auto& origin : dataRecord.origins)
                 origins.add(crossThreadCopy(origin));
         }
-        
+
 #if ENABLE(VIDEO)
         m_queue->dispatch([origins = WTF::move(origins), mediaCacheDirectory = m_configuration->mediaCacheDirectory().isolatedCopy(), callbackAggregator] {
             WebCore::HTMLMediaElement::clearMediaCacheForOrigins(mediaCacheDirectory, origins);
@@ -1035,7 +1037,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             Vector<String> cookieHostNames;
             Vector<String> HSTSCacheHostNames;
             Vector<WebCore::RegistrableDomain> registrableDomains;
-            for (const auto& dataRecord : dataRecords) {
+            for (const auto& dataRecord : borrowedDataRecords) {
                 for (auto& hostName : dataRecord.cookieHostNames)
                     cookieHostNames.append(hostName);
                 for (auto& hostName : dataRecord.HSTSCacheHostNames)
@@ -1066,7 +1068,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
     if (dataTypes.contains(WebsiteDataType::MediaKeys) && isPersistent()) {
         HashSet<WebCore::SecurityOriginData> origins;
-        for (const auto& dataRecord : dataRecords) {
+        for (const auto& dataRecord : borrowedDataRecords) {
             for (const auto& origin : dataRecord.origins)
                 origins.add(crossThreadCopy(origin));
         }
@@ -1079,7 +1081,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #if ENABLE(SCREEN_TIME)
     if (dataTypes.contains(WebsiteDataType::ScreenTime) && isPersistent()) {
         HashSet<URL> websitesToRemove;
-        for (const auto& dataRecord : dataRecords) {
+        for (const auto& dataRecord : borrowedDataRecords) {
             if (dataRecord.types.contains(WebsiteDataType::ScreenTime)) {
                 for (const auto& origin : dataRecord.origins)
                     websitesToRemove.add(origin.toURL());
@@ -1093,9 +1095,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
     if (dataTypes.contains(WebsiteDataType::IsolatedSiteRecord)) {
         HashSet<WebCore::RegistrableDomain> domainsToRemove;
-        for (auto& origin : origins)
+        for (auto& origin : borrow(origins))
             domainsToRemove.add(WebCore::RegistrableDomain { origin });
-        for (auto& dataRecord : dataRecords) {
+        for (auto& dataRecord : borrowedDataRecords) {
             for (auto& domain : dataRecord.resourceLoadStatisticsRegistrableDomains)
                 domainsToRemove.add(domain);
         }
@@ -1602,7 +1604,7 @@ void WebsiteDataStore::setHighValueFraudTargetDomainsForTesting(Vector<String>&&
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     HashSet<WebCore::RegistrableDomain> registrableDomains;
     registrableDomains.reserveInitialCapacity(domains.size());
-    for (auto& domain : domains)
+    for (auto& domain : borrow(domains))
         registrableDomains.add(WebCore::RegistrableDomain::fromRawString(WTF::move(domain)));
 
     HighValueFraudTargetDomainsController::singleton().setDomainsForTesting(WTF::move(registrableDomains));
@@ -2171,7 +2173,7 @@ void WebsiteDataStore::askPageForLocalNetworkAccess(const LocalNetworkAccessPerm
         return;
 
     RefPtr<WebPageProxy> page;
-    for (auto& waiter : iterator->value.waiters) {
+    for (auto& waiter : borrow(iterator->value.waiters)) {
         page = WebProcessProxy::webPage(waiter.pageID);
         if (page && page->canShowLocalNetworkAccessPrompt(key.first))
             break;
@@ -2200,7 +2202,7 @@ void WebsiteDataStore::finishLocalNetworkAccessPrompt(const LocalNetworkAccessPe
     auto pending = m_pendingLocalNetworkAccessPrompts.take(key);
     if (record == RecordLocalNetworkAccessDecision::Yes)
         m_localNetworkAccessPermissions.set(key, state);
-    for (auto& waiter : pending.waiters)
+    for (auto& waiter : borrow(pending.waiters))
         waiter.handler(state);
 }
 
@@ -2219,11 +2221,14 @@ void WebsiteDataStore::queryLocalNetworkAccessPermission(std::optional<WebPagePr
 
 void WebsiteDataStore::cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
-    Vector<LocalNetworkAccessPermissionKey> keys;
-    for (auto& key : m_pendingLocalNetworkAccessPrompts.keys()) {
-        if (!topOrigin || key.first.topOrigin == *topOrigin)
-            keys.append(key);
-    }
+    const Vector keys = [&] {
+        Vector<LocalNetworkAccessPermissionKey> keys;
+        for (auto& key : m_pendingLocalNetworkAccessPrompts.keys()) {
+            if (!topOrigin || key.first.topOrigin == *topOrigin)
+                keys.append(key);
+        }
+        return keys;
+    }();
     for (auto& key : keys)
         finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordLocalNetworkAccessDecision::No);
 }

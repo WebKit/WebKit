@@ -29,6 +29,7 @@
 #include "WebFoundTextRange.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebKit {
@@ -58,7 +59,7 @@ FindTextMatchCallbackAggregator::~FindTextMatchCallbackAggregator()
     for (RefPtr frame = protectedPage->mainFrame(); frame; frame = frame->traverseNext().frame) {
         const auto frameID = frame->frameID();
         if (auto it = m_frameMatches.find(frameID); it != m_frameMatches.end()) {
-            for (auto& match : it->value) {
+            for (auto& match : borrow(it->value)) {
                 match.order = frameOrder;
                 ranges.append(match);
             }

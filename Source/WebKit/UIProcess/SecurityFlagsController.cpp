@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "ModelProcessProxy.h"
 #include "NetworkProcessProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
@@ -49,7 +50,7 @@ SecurityFlagsController::SecurityFlagsController()
 {
     m_securityFlags.replaceWith(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
 
-    for (auto& name : m_persistentlyDisabledNames) {
+    for (auto& name : borrow(m_persistentlyDisabledNames)) {
         UNUSED_VARIABLE(name);
         RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8());
     }
@@ -60,7 +61,7 @@ SecurityFlags SecurityFlagsController::flagsWithNamesDisabled(const Vector<Strin
     SecurityFlags flags;
     size_t unknownNameCount = 0;
 
-    for (auto& name : names) {
+    for (auto& name : borrow(names)) {
         if (!flags.disableFlagNamed(name))
             ++unknownNameCount;
     }
@@ -70,7 +71,7 @@ SecurityFlags SecurityFlagsController::flagsWithNamesDisabled(const Vector<Strin
         RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", unknownNameCount, names.size());
 
     if (includePersistentNames == IncludePersistentNames::Yes) {
-        for (auto& name : m_persistentlyDisabledNames)
+        for (auto& name : borrow(m_persistentlyDisabledNames))
             flags.disableFlagNamed(name);
     }
 

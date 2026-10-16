@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_ANIMATIONS)
 
 #import "RemoteAnimationUtilities.h"
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -62,7 +63,7 @@ Ref<JSON::Object> RemoteAnimation::toJSONForTesting() const
 
     auto convertKeyframes = [](const Vector<WebCore::AcceleratedEffect::Keyframe>& keyframes) {
         Ref convertedKeyframes = JSON::Array::create();
-        for (auto& keyframe : keyframes) {
+        for (auto& keyframe : borrow(keyframes)) {
             Ref convertedKeyframe = WebKit::toJSONForTesting(keyframe.values(), keyframe.animatedProperties());
             convertedKeyframe->setDouble("offset"_s, keyframe.offset());
             convertedKeyframe->setValue("composite"_s, WebKit::toJSONForTesting(keyframe.compositeOperation()));

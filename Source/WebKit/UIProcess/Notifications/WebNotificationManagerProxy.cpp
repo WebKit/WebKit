@@ -40,6 +40,7 @@
 #include <WebCore/NotificationData.h>
 #include <WebCore/SecurityOriginData.h>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/text/TextStream.h>
@@ -272,7 +273,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         closedNotifications.append(notification.releaseNonNull());
     }
 
-    for (auto& notification : closedNotifications) {
+    for (auto& notification : borrow(closedNotifications)) {
         if (auto connection = notification->sourceConnection()) {
             LOG_WITH_STREAM(Notifications, stream << "Provider did close notification ("_s << notification->coreNotificationID().toString() << ")"_s);
             Vector<WTF::UUID> notificationIDs = { notification->coreNotificationID() };
@@ -293,7 +294,7 @@ static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOrig
 {
     WebsiteDataStore::forEachWebsiteDataStore([&origins](WebsiteDataStore& dataStore) {
         if (dataStore.isPersistent()) {
-            for (auto& origin : origins)
+            for (auto& origin : borrow(origins))
                 protect(dataStore.networkProcess())->removePushSubscriptionsForOrigin(dataStore.sessionID(), origin, [originString = origin.toString()](auto&&) { });
         }
     });

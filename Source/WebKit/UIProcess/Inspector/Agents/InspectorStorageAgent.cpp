@@ -33,6 +33,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Borrow.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -93,7 +94,7 @@ static Ref<Cookie> buildObjectForCookie(const WebCore::Cookie& cookie)
 static Ref<JSON::ArrayOf<Cookie>> buildArrayForCookies(const Vector<WebCore::Cookie>& cookiesList)
 {
     auto cookies = JSON::ArrayOf<Cookie>::create();
-    for (const auto& cookie : cookiesList)
+    for (const auto& cookie : borrow(cookiesList))
         cookies->addItem(buildObjectForCookie(cookie));
     return cookies;
 }
@@ -174,7 +175,7 @@ void InspectorStorageAgent::getCookies(RefPtr<JSON::Object>&& filter, RefPtr<JSO
     store->cookies([callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& cookiesList) mutable {
         Vector<WebCore::Cookie> matchingCookies;
         matchingCookies.reserveInitialCapacity(cookiesList.size());
-        for (const auto& cookie : cookiesList) {
+        for (const auto& cookie : borrow(cookiesList)) {
             if (filter.matches(cookie))
                 matchingCookies.append(cookie);
         }
@@ -247,7 +248,7 @@ static void deleteCookiesSequentially(Ref<API::HTTPCookieStore> store, Vector<We
         return;
     }
     // Copy the target cookie out before the lambda moves `cookies` into its capture (unsequenced-read hazard).
-    auto cookieToDelete = cookies[index];
+    auto cookieToDelete = borrow(cookies)[index];
     store->deleteCookie(cookieToDelete, [store, cookies = WTF::move(cookies), index, partitionKey = WTF::move(partitionKey), callback = WTF::move(callback)]() mutable {
         deleteCookiesSequentially(WTF::move(store), WTF::move(cookies), index + 1, WTF::move(partitionKey), WTF::move(callback));
     });
@@ -277,7 +278,7 @@ void InspectorStorageAgent::deleteCookies(RefPtr<JSON::Object>&& filter, RefPtr<
     store->cookies([store, callback = WTF::move(callback), filter = CookieFilter::fromProtocol(filter), partitionKey = partitionKey.value()](Vector<WebCore::Cookie>&& fetchedCookies) mutable {
         Vector<WebCore::Cookie> toDelete;
         toDelete.reserveInitialCapacity(fetchedCookies.size());
-        for (auto& cookie : fetchedCookies) {
+        for (auto& cookie : borrow(fetchedCookies)) {
             if (filter.matches(cookie))
                 toDelete.append(cookie);
         }

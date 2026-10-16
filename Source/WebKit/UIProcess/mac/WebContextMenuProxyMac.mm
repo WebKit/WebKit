@@ -55,6 +55,7 @@
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
@@ -338,14 +339,17 @@ void WebContextMenuProxyMac::setupServicesMenu()
     appendRemoveBackgroundItemToControlledImageMenuIfNeeded();
 
     // Explicitly add a menu item for each telephone number that is in the selection.
-    Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
+    const Vector telephoneNumberMenuItems = [&] {
+        Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
 
-    for (auto& telephoneNumber : m_context.selectedTelephoneNumbers()) {
-        if (RetainPtr item = menuItemForTelephoneNumber(telephoneNumber)) {
-            [item setIndentationLevel:1];
-            telephoneNumberMenuItems.append(WTF::move(item));
+        for (auto& telephoneNumber : m_context.selectedTelephoneNumbers()) {
+            if (RetainPtr item = menuItemForTelephoneNumber(telephoneNumber)) {
+                [item setIndentationLevel:1];
+                telephoneNumberMenuItems.append(WTF::move(item));
+            }
         }
-    }
+        return telephoneNumberMenuItems;
+    }();
 
     if (!telephoneNumberMenuItems.isEmpty()) {
         if (m_menu)
@@ -820,7 +824,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     std::optional<WebContextMenuItemData> lookUpImageItem;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    for (auto& item : filteredItems) {
+    for (auto& item : borrow(filteredItems)) {
         switch (item.action()) {
         case ContextMenuItemTagLookUpImage: {
             ASSERT(!lookUpImageItem);
@@ -918,9 +922,10 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         completionHandler(menu.get());
     });
 
-    for (size_t i = 0; i < filteredItems.size(); ++i) {
+    Borrow borrowedItems = filteredItems;
+    for (size_t i = 0; i < borrowedItems->size(); ++i) {
         [sparseMenuItems addPointer:nullptr];
-        getContextMenuItem(filteredItems[i], [insertMenuItem, i](NSMenuItem *menuItem) {
+        getContextMenuItem(borrowedItems[i], [insertMenuItem, i](NSMenuItem *menuItem) {
             insertMenuItem(menuItem, i);
         });
     }

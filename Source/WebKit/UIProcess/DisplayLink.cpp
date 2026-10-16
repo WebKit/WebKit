@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include <WebCore/AnimationFrameRate.h>
+#include <wtf/Borrow.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -276,7 +277,7 @@ void DisplayLinkCollection::stopDisplayLink(DisplayLink::Client& client, Display
 
 void DisplayLinkCollection::stopDisplayLinks(DisplayLink::Client& client)
 {
-    for (auto& displayLink : m_displayLinks)
+    for (auto& displayLink : borrow(m_displayLinks))
         displayLink->removeClient(client);
 
     // FIXME: Remove unused display links?

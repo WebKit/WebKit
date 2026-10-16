@@ -322,14 +322,17 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
     }
 
     // Update target list to only include targets belonging to the committed page.
-    Vector<String> targetIDsToRemove;
-    for (auto& [targetID, target] : m_targets) {
-        if (targetID == newPageTargetID)
-            continue;
-        if (shouldManageFrameTargets && targetID == mainFrameTargetID)
-            continue;
-        targetIDsToRemove.append(targetID);
-    }
+    const Vector targetIDsToRemove = [&] {
+        Vector<String> targetIDsToRemove;
+        for (auto& [targetID, target] : m_targets) {
+            if (targetID == newPageTargetID)
+                continue;
+            if (shouldManageFrameTargets && targetID == mainFrameTargetID)
+                continue;
+            targetIDsToRemove.append(targetID);
+        }
+        return targetIDsToRemove;
+    }();
 
     RefPtr oldProcess = WebProcessProxy::processForIdentifier(oldProcessID);
     bool hasFrontends = m_frontendRouter->hasFrontends();

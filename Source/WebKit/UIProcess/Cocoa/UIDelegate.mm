@@ -75,6 +75,7 @@
 #import <WebCore/StorageAccessQuirks.h>
 #import <WebCore/XRGPUProjectionLayerInit.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -531,7 +532,7 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
             if (organizationStorageAccessPromptQuirk) {
                 for (auto& [topFrameDomain, subFrameDomains] : organizationStorageAccessPromptQuirk->quirkDomains) {
                     RetainPtr<NSMutableArray<NSString *>> mutableSubFrameDomains = adoptNS([[NSMutableArray alloc] initWithCapacity:subFrameDomains.size()]);
-                    for (auto& subFrameDomain : subFrameDomains)
+                    for (auto& subFrameDomain : borrow(subFrameDomains))
                         [mutableSubFrameDomains addObject:subFrameDomain.string().createNSString().get()];
                     [quirkDomains setObject:mutableSubFrameDomains.get() forKey:topFrameDomain.string().createNSString().get()];
                 }

@@ -44,6 +44,7 @@
 #include <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 #include <WebCore/ScrollingTreePositionedNode.h>
+#include <wtf/Borrow.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -214,7 +215,7 @@ void RemoteScrollingCoordinatorProxy::adjustMainFrameDelegatedScrollPosition(Scr
         }
     };
 
-    for (auto& request : requestData)
+    for (auto& request : borrow(requestData))
         handleOneRequest(request);
 }
 
@@ -296,7 +297,7 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
     bool mainFrameScrollPositionChanged = false;
     auto rootNodeID = rootScrollingNodeID();
 
-    auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
+    const Vector scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
     for (unsigned i = 0; i < scrollUpdates.size(); ++i) {
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;

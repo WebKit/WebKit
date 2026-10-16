@@ -178,6 +178,7 @@
 #import <ranges>
 #import <sys/stat.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Borrow.h>
 #import <wtf/FileSystem.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
@@ -3510,7 +3511,7 @@ bool WebViewImpl::validateUserInterfaceItem(id<NSValidatedUserInterfaceItem> ite
 
 void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled, int state)
 {
-    ValidationVector items = m_validationMap.take(commandName);
+    const ValidationVector items = m_validationMap.take(commandName);
     for (auto& item : items) {
         RetainPtr protectedMenuItem = menuItem(item.get());
         RetainPtr protectedToolbarItem = toolbarItem(item.get());
@@ -5134,7 +5135,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
             // The delegate's writers own the pasteboard; skip WebKit's own data population.
             page->didStartDrag(frameID);
         } else if (promisedAttachmentInfo) {
-            for (auto& [type, data] : promisedAttachmentInfo.additionalTypesAndData) {
+            for (auto& [type, data] : borrow(promisedAttachmentInfo.additionalTypesAndData)) {
                 RetainPtr nsData = protect(*data)->createNSData();
                 [pasteboard setData:nsData.get() forType:type.createNSString().get()];
             }
@@ -6012,7 +6013,7 @@ void WebViewImpl::interpretKeyEvent(NSEvent *event, void(^completionHandler)(BOO
         bool hasInsertText = false;
         bool hasOnlyInsertText = !commands.isEmpty();
         size_t insertTextLengthFromInputMethod = 0;
-        for (auto& command : commands) {
+        for (auto& command : borrow(commands)) {
             if (command.commandName == "insertText:"_s) {
                 hasInsertText = true;
                 insertTextLengthFromInputMethod += command.text.length();
@@ -6308,7 +6309,7 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
         RetainPtr stagedString = checked_objc_cast<NSMutableAttributedString>(adoptNS([attributedString mutableCopy]));
         if (!stagedString)
             stagedString = adoptNS([[NSMutableAttributedString alloc] init]);
-        for (auto& command : queuedInsertions) {
+        for (auto& command : borrow(queuedInsertions)) {
             NSUInteger location, length;
             if (command.replacementRange.location != notFound) {
                 if (command.replacementRange.location < origin)
@@ -6465,20 +6466,24 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     if (!string.length)
         return { };
 
-    Vector<WebCore::CompositionHighlight> highlights;
-    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        std::optional<WebCore::Color> backgroundHighlightColor;
-        if (RetainPtr backgroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSBackgroundColorAttributeName]))
-            backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor.get());
+    const Vector highlights = [&] {
+        Vector<WebCore::CompositionHighlight> highlights;
+        [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+            std::optional<WebCore::Color> backgroundHighlightColor;
+            if (RetainPtr backgroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSBackgroundColorAttributeName]))
+                backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor.get());
 
-        std::optional<WebCore::Color> foregroundHighlightColor;
-        if (RetainPtr foregroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSForegroundColorAttributeName]))
-            foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor.get());
+            std::optional<WebCore::Color> foregroundHighlightColor;
+            if (RetainPtr foregroundColor = dynamic_objc_cast<WebCore::CocoaColor>(attributes[NSForegroundColorAttributeName]))
+                foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor.get());
 
-        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
-    }];
+            highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
+        }];
 
-    std::ranges::sort(highlights);
+        std::ranges::sort(highlights);
+
+        return highlights;
+    }();
 
     Vector<WebCore::CompositionHighlight> mergedHighlights;
     mergedHighlights.reserveInitialCapacity(highlights.size());
@@ -6502,21 +6507,24 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
     Vector<WebCore::CompositionUnderline> mergedUnderlines;
 
 #if HAVE(INLINE_PREDICTIONS) || HAVE(REDESIGNED_TEXT_CURSOR)
-    Vector<WebCore::CompositionUnderline> underlines;
+    const Vector underlines = [&] {
+        Vector<WebCore::CompositionUnderline> underlines;
+        [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+            RetainPtr style = dynamic_objc_cast<NSNumber>([attributes objectForKey:NSUnderlineStyleAttributeName]);
+            if (!style)
+                return;
 
-    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
-        RetainPtr style = dynamic_objc_cast<NSNumber>([attributes objectForKey:NSUnderlineStyleAttributeName]);
-        if (!style)
-            return;
+            RetainPtr underlineColor = dynamic_objc_cast<NSColor>(attributes[NSUnderlineColorAttributeName]);
+            bool isClear = [underlineColor isEqual:NSColor.clearColor];
 
-        RetainPtr underlineColor = dynamic_objc_cast<NSColor>(attributes[NSUnderlineColorAttributeName]);
-        bool isClear = [underlineColor isEqual:NSColor.clearColor];
+            if (!isClear)
+                underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, style.get().intValue > 1 });
+        }];
 
-        if (!isClear)
-            underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, style.get().intValue > 1 });
-    }];
+        std::ranges::sort(underlines);
 
-    std::ranges::sort(underlines);
+        return underlines;
+    }();
 
     if (!underlines.isEmpty())
         mergedUnderlines.append({ underlines.first().startOffset, underlines.last().endOffset, WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, false });

@@ -44,6 +44,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SharedMemory.h>
 #include <string>
+#include <wtf/Borrow.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileHandle.h>
@@ -353,7 +354,7 @@ static std::expected<MappedData, std::error_code> compiledToFile(WTF::String&& j
             ASSERT(!m_topURLFiltersBytecodeWritten);
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_actionsWritten += actions.size();
-            writeToFile(WebKit::NetworkCache::Data(actions.span()));
+            writeToFile(WebKit::NetworkCache::Data(borrow(actions)->span()));
         }
 
         void writeURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
@@ -361,20 +362,20 @@ static std::expected<MappedData, std::error_code> compiledToFile(WTF::String&& j
             ASSERT(!m_topURLFiltersBytecodeWritten);
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_urlFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
+            writeToFile(WebKit::NetworkCache::Data(borrow(bytecode)->span()));
         }
 
         void writeTopURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
             ASSERT(!m_frameURLFiltersBytecodeWritten);
             m_topURLFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
+            writeToFile(WebKit::NetworkCache::Data(borrow(bytecode)->span()));
         }
 
         void writeFrameURLFiltersBytecode(Vector<DFABytecode>&& bytecode) final
         {
             m_frameURLFiltersBytecodeWritten += bytecode.size();
-            writeToFile(WebKit::NetworkCache::Data(bytecode.span()));
+            writeToFile(WebKit::NetworkCache::Data(borrow(bytecode)->span()));
         }
 
         void finalize() final

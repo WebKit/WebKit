@@ -40,6 +40,7 @@
 #include "WebProtectionSpace.h"
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceResponseBase.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -204,7 +205,7 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
             if (auto handle = SandboxExtension::createHandle(url.fileSystemPath(), SandboxExtension::Type::ReadWrite))
                 placeHolderSandboxExtensionHandle = WTF::move(*handle);
 #endif
-            completionHandler(destination, WTF::move(sandboxExtensionHandle), allowOverwrite, usePlaceholder, url, WTF::move(placeHolderSandboxExtensionHandle), bookmarkData.span(), activityTokenData.span());
+            completionHandler(destination, WTF::move(sandboxExtensionHandle), allowOverwrite, usePlaceholder, url, WTF::move(placeHolderSandboxExtensionHandle), borrow(bookmarkData)->span(), borrow(activityTokenData)->span());
         });
     });
 }

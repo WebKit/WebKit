@@ -36,6 +36,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Borrow.h>
 #include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Function.h>
@@ -333,7 +334,7 @@ Ref<Protocol::Page::FrameResourceTree> ProxyingPageAgent::buildFrameTree(const W
     if (auto it = resourcesByFrame.find(frame.frameID()); it != resourcesByFrame.end()) {
         if (loaderId.isEmpty())
             loaderId = it->value.loaderId;
-        for (auto& resource : it->value.resources)
+        for (auto& resource : borrow(it->value.resources))
             resources->addItem(ResourceUtilities::buildResourceObject(resource));
     }
 
@@ -426,7 +427,7 @@ void ProxyingPageAgent::getResourceTree(Ref<GetResourceTreeCallback>&& callback)
     for (auto& entry : framesByProcess.values()) {
         Ref process = *entry.process;
         process->sendWithAsyncReply(Messages::WebInspectorBackend::GetFrameResourceData { WTF::move(entry.frameIDs) }, [resourcesByFrame, aggregator](Vector<std::pair<FrameIdentifier, FrameResourceData>>&& items) {
-            for (auto& item : items)
+            for (auto& item : borrow(items))
                 resourcesByFrame->set(item.first, WTF::move(item.second));
         }, inspectedPage->webPageIDInProcess(process));
     }
@@ -553,7 +554,7 @@ void ProxyingPageAgent::searchInResource(const Protocol::Network::FrameId& frame
             return;
         }
         auto array = JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>::create();
-        for (auto& match : matches) {
+        for (auto& match : borrow(matches)) {
             array->addItem(Protocol::GenericTypes::SearchMatch::create()
                 .setLineNumber(match.lineNumber)
                 .setLineContent(match.lineContent)
@@ -673,7 +674,7 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
     Ref aggregator = CallbackAggregator::create([callback, resultsByProcess]() mutable {
         auto array = JSON::ArrayOf<Protocol::Page::SearchResult>::create();
         for (auto& [processID, results] : *resultsByProcess) {
-            for (auto& r : results) {
+            for (auto& r : borrow(results)) {
                 // Page.SearchResult.frameId is required, so skip any result lacking a frameID
                 // (WebInspectorBackend always sets it; see SearchResult in InspectorResourceUtilities.h).
                 if (!r.frameID)

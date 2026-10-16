@@ -27,6 +27,7 @@
 #import "_WKLinkIconParametersInternal.h"
 
 #import <WebCore/LinkIcon.h>
+#import <wtf/Borrow.h>
 
 @implementation _WKLinkIconParameters {
     RetainPtr<NSURL> _url;
@@ -60,7 +61,7 @@
     }
 
     _attributes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:linkIcon.attributes.size()]);
-    for (auto& attributePair : linkIcon.attributes)
+    for (auto& attributePair : borrow(linkIcon.attributes))
         _attributes.get()[attributePair.first.createNSString().get()] = attributePair.second.createNSString().get();
 
     return self;

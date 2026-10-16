@@ -39,6 +39,7 @@
 #import <pal/spi/mac/NSColorWellSPI.h>
 #import <pal/spi/mac/NSPopoverColorWellSPI.h>
 #import <pal/spi/mac/NSPopoverSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -243,10 +244,11 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color, const WebCo
     [_popoverWell setSupportsAlpha:supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes];
 
     RetainPtr<NSColorList> suggestedColors;
-    if (suggestions.size()) {
+    Borrow borrowedSuggestions = suggestions;
+    if (borrowedSuggestions->size()) {
         suggestedColors = adoptNS([[NSColorList alloc] init]);
-        for (size_t i = 0; i < std::min(suggestions.size(), clampTo<size_t>(colorPickerMatrixNumColumns)); i++)
-            [suggestedColors insertColor:cocoaColor(suggestions.at(i)).get() key:retainPtr(@(i).stringValue).get() atIndex:i];
+        for (size_t i = 0; i < std::min(borrowedSuggestions->size(), clampTo<size_t>(colorPickerMatrixNumColumns)); i++)
+            [suggestedColors insertColor:cocoaColor(borrowedSuggestions->at(i)).get() key:retainPtr(@(i).stringValue).get() atIndex:i];
     }
 
     [_popoverWell setSuggestedColors:suggestedColors.get()];

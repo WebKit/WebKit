@@ -64,6 +64,7 @@
 #import <objc/runtime.h>
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -229,7 +230,7 @@ static _WKWebAuthenticationTransport LEGACY_NODELETE wkWebAuthenticationTranspor
 
     auto& transports = _panel->transports();
     _transports = adoptNS([[NSMutableSet alloc] initWithCapacity:transports.size()]);
-    for (auto& transport : transports)
+    for (auto& transport : borrow(transports))
         [_transports addObject:adoptNS([[NSNumber alloc] initWithInt:wkWebAuthenticationTransport(transport)]).get()];
     return _transports.get();
 }
@@ -346,7 +347,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         it = responseMap.find(cbor::CBORValue(fido::kEntityIdMapKey));
         if (it != responseMap.end() && it->second.isByteString()) {
             auto& userHandle = it->second.getByteString();
-            [credential setObject:toNSData(userHandle.span()).get() forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
+            [credential setObject:toNSData(borrow(userHandle)->span()).get() forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
         } else
             [credential setObject:[NSNull null] forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
 
@@ -505,7 +506,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     }
     if (!nameSet && displayName)
         updatedUserMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(String(displayName));
-    auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(updatedUserMap)));
+    const auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(updatedUserMap)));
 
     RetainPtr secAttrApplicationTag = toNSData(updatedTag->span());
 
@@ -577,7 +578,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     }
     if (!nameSet && name)
         updatedUserMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(String(name));
-    auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(updatedUserMap)));
+    const auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(updatedUserMap)));
 
     RetainPtr secAttrApplicationTag = toNSData(updatedTag->span());
 
@@ -628,7 +629,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
     }
-    RetainPtr privateKey = toNSData(it->second.getByteString().span());
+    RetainPtr privateKey = toNSData(borrow(it->second.getByteString())->span());
 
     it = credentialMap.find(cbor::CBORValue(WebCore::keyTypeKey));
     if (it == credentialMap.end() || !it->second.isInteger()) {
@@ -656,7 +657,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         createNSErrorFromWKErrorIfNecessary(error, WKErrorMalformedCredential);
         return nullptr;
     }
-    auto keyTag = cbor::CBORWriter::write(cbor::CBORValue(it->second.getMap()));
+    const auto keyTag = cbor::CBORWriter::write(cbor::CBORValue(it->second.getMap()));
 
     RetainPtr options = @{
         // Key type values are string values of numbers, stored as kCFNumberSInt64Type in attributes, but must be passed as string here
@@ -686,7 +687,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
     auto digest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_1);
     digest->addBytes(span(nsPublicKeyData.get()));
-    auto credentialId = digest->computeHash();
+    const Vector credentialId = digest->computeHash();
     RetainPtr nsCredentialId = toNSData(credentialId.span());
 
     BOOL useAlternateKeychainAttribute = WebKit::shouldUseAlternateKeychainAttribute();
@@ -819,8 +820,8 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         return nullptr;
     }
     credentialMap[cbor::CBORValue(WebCore::applicationTagKey)] = cbor::CBORValue(WTF::move(*decodedResponse));
-    auto serializedCredential = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(credentialMap)));
-    return toNSData(serializedCredential.value().span()).autorelease();
+    const auto serializedCredential = cbor::CBORWriter::write(cbor::CBORValue(WTF::move(credentialMap)));
+    return toNSData(serializedCredential->span()).autorelease();
 #else
     return nullptr;
 #endif // ENABLE(WEB_AUTHN)
@@ -1268,7 +1269,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     WebCore::UserVerificationRequirement effectiveUVRequirement = coreOptions.authenticatorSelection ? coreOptions.authenticatorSelection->userVerification : WebCore::UserVerificationRequirement::Preferred;
     if (needsPRF && supportsHmacSecret)
         effectiveUVRequirement = WebCore::UserVerificationRequirement::Required;
-    auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(hash, coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    const Vector encodedVector = fido::encodeMakeCredentialRequestAsCBOR(hash, coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = toNSData(encodedVector);
 #endif
 
@@ -1293,7 +1294,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
         ? WebCore::UserVerificationRequirement::Required
         : coreOptions.userVerification;
 
-    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(hash, coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    const Vector encodedVector = fido::encodeGetAssertionRequestAsCBOR(hash, coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = toNSData(encodedVector);
 #endif
 
@@ -1311,7 +1312,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto coreOptions = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options];
     auto effectiveUV = coreOptions.authenticatorSelection ? coreOptions.authenticatorSelection->userVerification : WebCore::UserVerificationRequirement::Discouraged;
-    auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUV, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    const Vector encodedVector = fido::encodeMakeCredentialRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUV, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = toNSData(encodedVector);
 #endif
 
@@ -1325,7 +1326,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto coreOptions = [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options];
     auto effectiveUV = coreOptions.authenticatorSelection ? coreOptions.authenticatorSelection->userVerification : WebCore::UserVerificationRequirement::Discouraged;
-    auto encodedVector = fido::encodeMakeCredentialRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUV, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, { }, std::nullopt, publicKeyCredentialParameters(credentialParameters));
+    const Vector encodedVector = fido::encodeMakeCredentialRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUV, fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, { }, std::nullopt, publicKeyCredentialParameters(credentialParameters));
     encodedCommand = toNSData(encodedVector);
 #endif
 
@@ -1351,7 +1352,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
         ? WebCore::UserVerificationRequirement::Required
         : coreOptions.userVerification;
 
-    auto encodedVector = fido::encodeGetAssertionRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
+    const Vector encodedVector = fido::encodeGetAssertionRequestAsCBOR(makeVector(clientDataHash), coreOptions, coreUserVerificationAvailability(userVerificationAvailability), effectiveUVRequirement, makeVector<String>(authenticatorSupportedExtensions), std::nullopt);
     encodedCommand = toNSData(encodedVector);
 #endif
 

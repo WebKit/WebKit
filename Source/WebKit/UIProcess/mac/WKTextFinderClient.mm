@@ -38,6 +38,7 @@
 #import <algorithm>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CheckedPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/NakedPtr.h>
@@ -92,7 +93,7 @@ private:
             allMatches.grow(matchCount);
             // FIXME: Clean this up and figure out why we are getting a -1 index
             if (matchIndex >= 0 && static_cast<uint32_t>(matchIndex) < matchCount)
-                allMatches[matchIndex].appendVector(matchRects);
+                borrow(allMatches)[matchIndex].appendVector(matchRects);
         }
 
         [m_textFinderClient didFindStringMatchesWithRects:allMatches didWrapAround:didWrapAround];

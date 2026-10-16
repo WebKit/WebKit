@@ -30,6 +30,7 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 
@@ -72,7 +73,7 @@ void ServiceWorkerNotificationHandler::cancelNotification(WebCore::SecurityOrigi
 
 void ServiceWorkerNotificationHandler::clearNotifications(const Vector<WTF::UUID>& notificationIDs)
 {
-    for (auto& notificationID : notificationIDs) {
+    for (auto& notificationID : borrow(notificationIDs)) {
         if (RefPtr dataStore = dataStoreForNotificationID(notificationID))
             dataStore->clearServiceWorkerNotification(notificationID);
     }

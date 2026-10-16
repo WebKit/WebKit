@@ -31,6 +31,7 @@
 #import "RemoteAnimationUtilities.h"
 #import "RemoteProgressBasedTimeline.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/Borrow.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -150,7 +151,7 @@ void RemoteAnimationStack::initEffectsFromMainThread(PlatformLayer *layer)
 
     if (canonicalFilters) {
         WebCore::PlatformCAFilters::presentationModifiers(computedValues.filter, canonicalFilters, m_filterPresentationModifiers, m_presentationModifierGroup);
-        for (auto& filterPresentationModifier : m_filterPresentationModifiers)
+        for (auto& filterPresentationModifier : borrow(m_filterPresentationModifiers))
             [layer addPresentationModifier:filterPresentationModifier.second.get()];
     }
 
@@ -221,7 +222,7 @@ void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool
 WebCore::AcceleratedEffectValues RemoteAnimationStack::computeValues() const
 {
     auto values = m_baseValues;
-    for (auto& animation : m_animations)
+    for (auto& animation : borrow(m_animations))
         animation->apply(values);
     return values;
 }
@@ -232,7 +233,7 @@ void RemoteAnimationStack::clear(PlatformLayer *layer)
     if (!m_presentationModifierGroup)
         return;
 
-    for (auto& filterPresentationModifier : m_filterPresentationModifiers)
+    for (auto& filterPresentationModifier : borrow(m_filterPresentationModifiers))
         [layer removePresentationModifier:filterPresentationModifier.second.get()];
     if (m_opacityPresentationModifier)
         [layer removePresentationModifier:m_opacityPresentationModifier.get()];
@@ -261,7 +262,7 @@ Ref<JSON::Object> RemoteAnimationStack::toJSONForTesting() const
     Ref convertedAnimations = JSON::Array::create();
     OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties;
 
-    for (auto& animation : m_animations) {
+    for (auto& animation : borrow(m_animations)) {
         animatedProperties.add(animation->animatedProperties());
         convertedAnimations->pushObject(animation->toJSONForTesting());
     }

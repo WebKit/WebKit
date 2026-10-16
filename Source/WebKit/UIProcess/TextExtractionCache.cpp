@@ -27,6 +27,7 @@
 #include "TextExtractionCache.h"
 
 #include <optional>
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
@@ -101,9 +102,10 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
         return { { identifier }, NodeResolution::Unknown };
 
     Vector<String> candidates;
-    auto& newestURL = m_entries[newestIndex].url;
+    Borrow borrowedEntries = m_entries;
+    auto& newestURL = borrowedEntries[newestIndex].url;
     for (size_t targetIndex = newestIndex; targetIndex > sourceEntryIndices.first(); --targetIndex) {
-        auto& target = m_entries[targetIndex];
+        auto& target = borrowedEntries[targetIndex];
         if (target.url != newestURL)
             continue;
 
@@ -112,7 +114,7 @@ auto TextExtractionCache::resolve(const String& identifier) const -> ResolvedNod
             if (sourceIndex >= targetIndex)
                 break;
 
-            auto& source = m_entries[sourceIndex];
+            auto& source = borrowedEntries[sourceIndex];
             auto sourceLineIndex = source.lineIndexForUID.get(identifier);
             auto sourceLineContent = source.lines[sourceLineIndex].cachedRepresentation;
             auto sourceContextBefore = contextWindowBefore(source.lines, sourceLineIndex);

@@ -53,6 +53,7 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
+#import <wtf/Borrow.h>
 #import <wtf/URL.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
@@ -96,7 +97,7 @@ static void addAllowedAttachmentFilePaths(const IPC::Connection& connection, std
     if (!page)
         return;
 
-    for (auto& path : paths)
+    for (auto& path : borrow(paths))
         WebProcessProxy::fromConnection(connection)->addAllowedAttachmentFilePath(path);
 }
 
@@ -112,7 +113,7 @@ std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(We
 {
     grantAccess(process, pasteboardName, PasteboardAccessType::TypesAndData);
     auto pasteboard = PlatformPasteboard(pasteboardName);
-    auto allInfo = pasteboard.allPasteboardItemInfo(pasteboard.changeCount());
+    const auto allInfo = pasteboard.allPasteboardItemInfo(pasteboard.changeCount());
     if (!allInfo) {
         completionHandler();
         return std::nullopt;
@@ -257,8 +258,9 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
 #if PLATFORM(MAC)
         Vector<size_t> indicesToTranscode;
         if (shouldTranscodeHEICImagesForPage(pageID)) {
+            Borrow borrowedPathnames = pathnames;
             for (size_t i = 0; i < pathnames.size(); ++i) {
-                auto mimeType = WebCore::MIMETypeRegistry::mimeTypeForPath(pathnames[i]);
+                auto mimeType = WebCore::MIMETypeRegistry::mimeTypeForPath(borrowedPathnames[i]);
                 if (mimeType == "image/heic"_s || mimeType == "image/heif"_s)
                     indicesToTranscode.append(i);
             }
@@ -278,9 +280,13 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
             return;
         }
 
-        Vector<String> pathsToTranscode;
-        for (auto index : indicesToTranscode)
-            pathsToTranscode.append(pathnames[index]);
+        Vector pathsToTranscode = [&] {
+            Vector<String> pathsToTranscode;
+            Borrow borrowedPathnames = pathnames;
+            for (auto index : indicesToTranscode)
+                pathsToTranscode.append(borrowedPathnames[index]);
+            return pathsToTranscode;
+        }();
 
         auto transcodingMIMEType = "image/jpeg"_s;
         auto transcodingUTI = WebCore::UTIFromMIMEType(transcodingMIMEType);
@@ -295,8 +301,10 @@ void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connecti
                 Vector<String> transcodedFilePaths;
                 for (size_t i = 0; i < indicesToTranscode.size(); ++i) {
                     if (!transcodedPaths[i].isEmpty()) {
-                        pathnames[indicesToTranscode[i]] = transcodedPaths[i];
-                        transcodedFilePaths.append(transcodedPaths[i]);
+                        Borrow borrowedPathnames = pathnames;
+                        Borrow borrowedTranscodedPaths = transcodedPaths;
+                        borrowedPathnames[indicesToTranscode[i]] = borrowedTranscodedPaths[i];
+                        transcodedFilePaths.append(borrowedTranscodedPaths[i]);
                     }
                 }
 
@@ -408,7 +416,7 @@ void WebPasteboardProxy::addPasteboardTypes(IPC::Connection& connection, const S
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), connection, completionHandler(0));
 
-    for (auto& type : pasteboardTypes)
+    for (auto& type : borrow(pasteboardTypes))
         MESSAGE_CHECK_COMPLETION(!type.isEmpty(), connection, completionHandler(0));
 
     auto dataOwner = determineDataOwner(connection, pasteboardName, pageID, PasteboardAccessIntent::Write);
@@ -426,7 +434,7 @@ void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const S
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), connection, completionHandler(0));
 
-    for (auto& type : pasteboardTypes)
+    for (auto& type : borrow(pasteboardTypes))
         MESSAGE_CHECK_COMPLETION(!type.isEmpty(), connection, completionHandler(0));
 
     auto dataOwner = determineDataOwner(connection, pasteboardName, pageID, PasteboardAccessIntent::Write);
@@ -712,7 +720,7 @@ void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection& connection, cons
 #else
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (allInfo) {
-            for (auto& info : *allInfo)
+            for (auto& info : borrow(*allInfo))
                 addAllowedAttachmentFilePaths(connection, pageID, info.pathsForFileUpload);
         }
 #endif

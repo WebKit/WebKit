@@ -27,6 +27,7 @@
 #import "WKFormInfoInternal.h"
 
 #import "WKFrameInfoInternal.h"
+#import <wtf/Borrow.h>
 
 @implementation WKFormInfo
 
@@ -55,9 +56,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (NSDictionary<NSString *, NSString *> *)formValues
 {
     Ref protectedAPIFormInfo = *_formInfo;
-    auto& formValues = protectedAPIFormInfo->formValues();
-    RetainPtr valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:formValues.size()]);
-    for (const auto& pair : formValues)
+    Borrow borrowedFormValues = protectedAPIFormInfo->formValues();
+    RetainPtr valueMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:borrowedFormValues->size()]);
+    for (const auto& pair : borrowedFormValues)
         [valueMap setObject:pair.second.createNSString().get() forKey:pair.first.createNSString().get()];
     return valueMap.autorelease();
 }

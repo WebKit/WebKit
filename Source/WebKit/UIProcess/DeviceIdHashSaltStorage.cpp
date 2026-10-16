@@ -30,6 +30,7 @@
 #include "PersistencyUtils.h"
 
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
@@ -81,7 +82,7 @@ DeviceIdHashSaltStorage::DeviceIdHashSaltStorage(const String& deviceIdHashSaltS
         m_isLoaded = true;
 
         auto pendingCompletionHandlers = WTF::move(m_pendingCompletionHandlers);
-        for (auto& completionHandler : pendingCompletionHandlers)
+        for (auto& completionHandler : borrow(pendingCompletionHandlers))
             completionHandler();
     });
 }
@@ -91,7 +92,7 @@ DeviceIdHashSaltStorage::~DeviceIdHashSaltStorage()
     m_isClosed = true;
 
     auto pendingCompletionHandlers = WTF::move(m_pendingCompletionHandlers);
-    for (auto& completionHandler : pendingCompletionHandlers)
+    for (auto& completionHandler : borrow(pendingCompletionHandlers))
         completionHandler();
 }
 

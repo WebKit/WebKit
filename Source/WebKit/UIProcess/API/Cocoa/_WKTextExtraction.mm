@@ -30,6 +30,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import <WebKit/WKError.h>
+#import <wtf/Borrow.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 
@@ -203,7 +204,7 @@
         return { containers.first() };
 
     std::optional<WebKit::ExtractedNodeInfo> interactiveContainer;
-    for (auto& container : containers) {
+    for (auto& container : borrow(containers)) {
         if (container.interactivity != WebKit::ExtractedNodeInfo::IsInteractive::Yes)
             continue;
 

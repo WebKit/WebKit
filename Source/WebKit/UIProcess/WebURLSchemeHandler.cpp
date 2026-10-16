@@ -61,7 +61,7 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
         return;
 
     auto& tasksByPage = iterator->value;
-    auto taskIdentifiersToStop = WTF::compactMap(tasksByPage, [&](auto& taskIdentifier) -> std::optional<WebCore::ScopedResourceLoaderIdentifier> {
+    const Vector taskIdentifiersToStop = WTF::compactMap(tasksByPage, [&](auto& taskIdentifier) -> std::optional<WebCore::ScopedResourceLoaderIdentifier> {
         if (!process || taskIdentifier.processIdentifier() == process->coreProcessIdentifier())
             return taskIdentifier;
         return std::nullopt;

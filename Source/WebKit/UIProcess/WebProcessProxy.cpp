@@ -115,6 +115,7 @@
 #include <pal/system/Sound.h>
 #include <ranges>
 #include <stdio.h>
+#include <wtf/Borrow.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -589,7 +590,7 @@ WebProcessProxy::~WebProcessProxy()
 #endif
 
     auto isResponsiveCallbacks = WTF::move(m_isResponsiveCallbacks);
-    for (auto& callback : isResponsiveCallbacks)
+    for (auto& callback : borrow(isResponsiveCallbacks))
         callback(false);
 
     while (m_numberOfTimesSuddenTerminationWasDisabled-- > 0)
@@ -1432,7 +1433,7 @@ void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vecto
     if (!dataStore)
         return completionHandler();
     Vector<String> paths;
-    for (auto& urlString : urls) {
+    for (auto& urlString : borrow(urls)) {
         URL url { urlString };
         if (!url.protocolIsFile())
             continue;
@@ -1458,7 +1459,7 @@ void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vecto
 
         // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
         // to have read access to this directory already.
-        for (auto& path : paths) {
+        for (auto& path : borrow(paths)) {
             weakThis->m_localPathsWithAssumedReadAccess.add(path);
             page->addPreviouslyVisitedPath(path);
         }
@@ -1877,15 +1878,18 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // to be deleted before we can finish our work.
     Ref protectedThis { *this };
 
-    auto pages = mainPages();
+    const Vector pages = mainPages();
 
-    Vector<Ref<ProvisionalPageProxy>> provisionalPages;
-    m_provisionalPages.forEach([&] (auto& page) {
-        provisionalPages.append(page);
-    });
+    const Vector provisionalPages = [&] {
+        Vector<Ref<ProvisionalPageProxy>> provisionalPages;
+        m_provisionalPages.forEach([&](auto& page) {
+            provisionalPages.append(page);
+        });
+        return provisionalPages;
+    }();
 
     auto isResponsiveCallbacks = std::exchange(m_isResponsiveCallbacks, { });
-    for (auto& callback : isResponsiveCallbacks)
+    for (auto& callback : borrow(isResponsiveCallbacks))
         callback(false);
 
     if (isStandaloneServiceWorkerProcess())
@@ -1951,7 +1955,7 @@ void WebProcessProxy::didBecomeUnresponsive()
         page->processDidBecomeUnresponsive(*this);
 
     bool isWebProcessResponsive = false;
-    for (auto& callback : isResponsiveCallbacks)
+    for (auto& callback : borrow(isResponsiveCallbacks))
         callback(isWebProcessResponsive);
 
     // If the web process becomes unresponsive and only runs service/shared workers, kill it ourselves since there are no native clients to do it.
@@ -2086,7 +2090,7 @@ void WebProcessProxy::addPreviouslyApprovedFileURLsFromFrameStateTree(const Fram
     URL originalURL { frameState.originalURLString };
     if (originalURL.protocolIsFile())
         addPreviouslyApprovedFileURL(originalURL);
-    for (auto& child : frameState.children)
+    for (auto& child : borrow(frameState.children))
         addPreviouslyApprovedFileURLsFromFrameStateTree(child.get());
 }
 
@@ -3499,7 +3503,7 @@ void WebProcessProxy::getNotifications(const URL& registrationURL, const String&
             }
 
             Vector<NotificationData> filteredNotifications;
-            for (auto& notification : notifications) {
+            for (auto& notification : borrow(notifications)) {
                 if (tag == notification.tag)
                     filteredNotifications.append(notification);
             }
@@ -3606,7 +3610,7 @@ const WeakHashSet<WebProcessProxy>* WebProcessProxy::sharedWorkerClientProcesses
 
 void WebProcessProxy::permissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
 {
-    auto webProcessPools = WebKit::WebProcessPool::allProcessPools();
+    const Vector webProcessPools = WebKit::WebProcessPool::allProcessPools();
 
     for (auto& webProcessPool : webProcessPools) {
         for (Ref webProcessProxy : webProcessPool->processes())

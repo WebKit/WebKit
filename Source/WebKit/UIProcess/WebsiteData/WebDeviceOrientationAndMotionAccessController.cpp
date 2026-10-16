@@ -34,6 +34,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebsiteDataStore.h"
+#include <wtf/Borrow.h>
 
 namespace WebKit {
 
@@ -67,7 +68,7 @@ void WebDeviceOrientationAndMotionAccessController::shouldAllowAccess(WebPagePro
             return;
         protectedThis->m_deviceOrientationPermissionDecisions.set(requestOriginData, granted);
         auto requests = protectedThis->m_pendingRequests.take(requestOriginData);
-        for (auto& completionHandler : requests)
+        for (auto& completionHandler : borrow(requests))
             completionHandler(granted ? DeviceOrientationOrMotionPermissionState::Granted : DeviceOrientationOrMotionPermissionState::Denied);
     });
 }

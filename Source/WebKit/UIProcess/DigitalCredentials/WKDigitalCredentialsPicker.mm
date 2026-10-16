@@ -57,6 +57,7 @@
 #import <WebKit/WKIdentityDocumentPresentmentRawRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRequest.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/JSONValues.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
@@ -140,8 +141,8 @@ static RetainPtr<NSArray<NSData *>> mapIssuerIdentifiersFromX509Identifiers(cons
 
     RetainPtr mappedIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers->size()]);
 
-    for (const auto& identifier : *identifiers) {
-        RetainPtr nsData = toNSData(identifier.data);
+    for (const auto& identifier : borrow(*identifiers)) {
+        RetainPtr nsData = toNSData(borrow(identifier.data)->span());
         [mappedIdentifiers addObject:nsData.get()];
     }
 
@@ -151,13 +152,13 @@ static RetainPtr<NSArray<NSData *>> mapIssuerIdentifiersFromX509Identifiers(cons
 static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *>> mapDocumentRequests(const Vector<WebCore::ISO18013DocumentRequest>& documentRequests)
 {
     RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *>> mappedDocumentRequests = adoptNS([[NSMutableArray alloc] init]);
-    for (auto&& validatedDocumentRequest : documentRequests) {
+    for (auto&& validatedDocumentRequest : borrow(documentRequests)) {
         RetainPtr<NSMutableDictionary<NSString *, NSDictionary<NSString *, WKIdentityDocumentPresentmentMobileDocumentElementInfo *> *>> namespaces = adoptNS([[NSMutableDictionary alloc] init]);
-        for (auto&& namespacePair : validatedDocumentRequest.namespaces) {
+        for (auto&& namespacePair : borrow(validatedDocumentRequest.namespaces)) {
             RetainPtr<NSMutableDictionary<NSString *, WKIdentityDocumentPresentmentMobileDocumentElementInfo *>> namespaceDictionary = adoptNS([[NSMutableDictionary alloc] init]);
 
             auto namespaceIdentifier = namespacePair.first;
-            auto elements = namespacePair.second;
+            const Vector elements = namespacePair.second;
 
             for (auto&& elementPair : elements) {
                 RetainPtr mappedElementIdentifier = elementPair.first.createNSString();
@@ -184,7 +185,7 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDo
 static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *>> mapDocumentRequestSets(const Vector<WebCore::ISO18013DocumentRequestSet>& documentRequestSets)
 {
     RetainPtr<NSMutableArray<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *>> mappedDocumentSets = adoptNS([[NSMutableArray alloc] init]);
-    for (auto&& validatedDocumentSet : documentRequestSets) {
+    for (auto&& validatedDocumentSet : borrow(documentRequestSets)) {
         RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *>> mappedDocumentRequests = mapDocumentRequests(validatedDocumentSet.requests);
         [mappedDocumentSets addObject:mappedDocumentRequests.get()];
     }
@@ -194,7 +195,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndi
 static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *>> mapPresentmentRequests(const Vector<WebCore::ISO18013PresentmentRequest>& presentmentRequests)
 {
     RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *>> mappedPresentmentRequests = adoptNS([[NSMutableArray alloc] init]);
-    for (auto&& validatedPresentmentRequest : presentmentRequests) {
+    for (auto&& validatedPresentmentRequest : borrow(presentmentRequests)) {
         RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *>> mappedDocumentSets = mapDocumentRequestSets(validatedPresentmentRequest.documentRequestSets);
         RetainPtr mappedPresentmentRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentPresentmentRequestInstance() initWithDocumentSets:mappedDocumentSets.get() isMandatory:validatedPresentmentRequest.isMandatory]);
         [mappedPresentmentRequests addObject:mappedPresentmentRequest.get()];
@@ -398,7 +399,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
             [completionHandler = WTF::move(completionHandler)](Vector<WebCore::UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests) {
                 RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentRawRequest *>> rawRequests = adoptNS([[NSMutableArray alloc] init]);
 
-                for (auto &&unvalidatedRequest : unvalidatedRequests) {
+                for (auto &&unvalidatedRequest : borrow(unvalidatedRequests)) {
                     auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
                     if (!mobileDocumentRequest) {
                         auto protocolAndJSON = WebCore::openID4VPRequestJSON(unvalidatedRequest);
@@ -486,7 +487,7 @@ static RetainPtr<WKIdentityDocumentPresentmentOpenID4VPRequest> mapOpenID4VPRequ
 {
     RetainPtr mobileDocumentRequests = adoptNS([[NSMutableArray alloc] init]);
 
-    for (auto&& validatedRequest : requestData.requests) {
+    for (auto&& validatedRequest : borrow(requestData.requests)) {
 
         RetainPtr presentmentRequests = mapPresentmentRequests(validatedRequest.presentmentRequests);
         RetainPtr authenticationCertificates = mapRequestAuthentications(validatedRequest.requestAuthentications);

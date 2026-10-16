@@ -42,6 +42,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ScreenOrientationType.h>
+#include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CoroutineUtilities.h>
 #include <wtf/FileHandle.h>
@@ -129,7 +130,7 @@ void WebFullScreenManagerProxy::didEnterFullScreen(CompletionHandler<void(bool)>
 void WebFullScreenManagerProxy::callCloseCompletionHandlers()
 {
     auto closeMediaCallbacks = WTF::move(m_closeCompletionHandlers);
-    for (auto& callback : closeMediaCallbacks)
+    for (auto& callback : borrow(closeMediaCallbacks))
         callback();
 }
 

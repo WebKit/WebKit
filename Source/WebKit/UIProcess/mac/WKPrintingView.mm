@@ -38,6 +38,7 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LocalDefaultSystemAppearance.h>
 #import <WebCore/ShareableBitmap.h>
+#import <wtf/Borrow.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -332,7 +333,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         if (view->_totalScaleFactorForPrinting <= 0)
             view->_totalScaleFactorForPrinting = 1;
 
-        const WebCore::IntRect& lastPrintingPageRect = view->_printingPageRects[view->_printingPageRects.size() - 1];
+        const WebCore::IntRect lastPrintingPageRect = view->_printingPageRects[view->_printingPageRects.size() - 1];
         NSRect newFrameSize = NSMakeRect(0, 0, 
             ceil(lastPrintingPageRect.maxX() * view->_totalScaleFactorForPrinting), 
             ceil(lastPrintingPageRect.maxY() * view->_totalScaleFactorForPrinting));
@@ -487,7 +488,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
 
     CGAffineTransform transform = CGContextGetCTM(context.get());
 
-    for (const auto& destination : _linkDestinationsPerPage[page]) {
+    for (const auto& destination : borrow(_linkDestinationsPerPage)[page]) {
         CGPoint destinationPoint = CGPointApplyAffineTransform(NSPointToCGPoint([destination point]), transform);
         CGPDFContextAddDestinationAtPoint(context.get(), bridge_cast(linkDestinationName(pdfDocument, destination.get())).get(), destinationPoint);
     }
@@ -592,7 +593,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
-        RetainPtr pdfData = toNSData(_printedPagesData.span());
+        RetainPtr pdfData = toNSData(borrow(_printedPagesData)->span());
         _printedPagesPDFDocument = adoptNS([PAL::allocPDFDocumentInstance() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
@@ -613,7 +614,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
                     continue;
 
                 unsigned destinationPageIndex = [_printedPagesPDFDocument indexForPage:retainPtr(destination.get().page).get()];
-                _linkDestinationsPerPage[destinationPageIndex].append(WTF::move(destination));
+                borrow(_linkDestinationsPerPage)[destinationPageIndex].append(WTF::move(destination));
             }
         }
     }

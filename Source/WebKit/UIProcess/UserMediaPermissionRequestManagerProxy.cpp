@@ -49,6 +49,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UserMediaRequest.h>
 #include <algorithm>
+#include <wtf/Borrow.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/LoggerHelper.h>
@@ -165,7 +166,7 @@ void UserMediaPermissionRequestManagerProxy::invalidatePendingRequests()
     for (auto& request : pendingUserMediaRequests)
         request->invalidate();
 
-    auto pregrantedRequests = WTF::move(m_pregrantedRequests);
+    const Vector pregrantedRequests = WTF::move(m_pregrantedRequests);
     for (auto& request : pregrantedRequests)
         request->invalidate();
 
@@ -488,7 +489,7 @@ static bool isMatchingDeniedRequest(const UserMediaPermissionRequestProxy& reque
 
 bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(const UserMediaPermissionRequestProxy& request, bool needsAudio, bool needsVideo, bool needsScreenCapture)
 {
-    for (const auto& deniedRequest : m_deniedRequests) {
+    for (const auto& deniedRequest : borrow(m_deniedRequests)) {
         if (!isMatchingDeniedRequest(request, deniedRequest))
             continue;
 
@@ -1018,7 +1019,7 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(FrameIden
 
         bool shouldRestrictSpeaker = !protectedThis->wasGrantedAudioAccess(frameID);
         Vector<CaptureDeviceWithCapabilities> filteredDevices;
-        for (auto& deviceWithCapabilities : devicesWithCapabilities) {
+        for (auto& deviceWithCapabilities : borrow(devicesWithCapabilities)) {
             auto& device = deviceWithCapabilities.device;
             if (!device.enabled())
                 continue;
@@ -1205,7 +1206,7 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducerMe
 
 void UserMediaPermissionRequestManagerProxy::viewIsBecomingVisible()
 {
-    auto pregrantedRequests = WTF::move(m_pregrantedRequests);
+    const Vector pregrantedRequests = WTF::move(m_pregrantedRequests);
     for (auto& request : pregrantedRequests)
         grantRequest(request);
 }

@@ -59,6 +59,7 @@
 #import <WebCore/TextExtractionTypes.h>
 #import <WebCore/TextIndicator.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Scope.h>
@@ -89,7 +90,7 @@ static void findFirstConnectedRemapCandidate(WebKit::WebPageProxy& page, const V
 {
     RefPtr<WebKit::WebFrameProxy> frameToQuery;
     Vector<WebCore::NodeIdentifier> nodeIdentifiers;
-    for (auto& candidateIdentifier : candidateIdentifiers) {
+    for (auto& candidateIdentifier : borrow(candidateIdentifiers)) {
         auto candidate = WebKit::parseExtractedNodeInfo(candidateIdentifier);
         if (!candidate)
             continue;
@@ -266,7 +267,7 @@ static String applyReplacementsToDescription(const String& description, const Ve
         return description;
 
     auto result = description;
-    for (auto& string : stringsToValidate) {
+    for (auto& string : borrow(stringsToValidate)) {
         if (auto replaced = WebKit::applyReplacements(string, replacementStrings); replaced != string)
             result = makeStringByReplacingAll(result, string, WTF::move(replaced));
     }
@@ -483,7 +484,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
                 strongSelf->_page->textExtractionCache().add(strongSelf->_page->currentURL(), WTF::move(lineContents));
 
             RetainPtr shortenedURLs = adoptNS([[NSMutableDictionary alloc] initWithCapacity:shortenedURLStrings.size()]);
-            for (auto& string : shortenedURLStrings) {
+            for (auto& string : borrow(shortenedURLStrings)) {
                 if (auto url = urlCache->urlForShortenedString(string); url.isValid()) {
                     if (RetainPtr nsURL = url.createNSURL())
                         [shortenedURLs setObject:nsURL.get() forKey:string.createNSString().get()];
@@ -711,7 +712,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
                 return;
             }
 
-            Ref promise = callbacks[index](text, std::nullopt, std::nullopt);
+            Ref promise = borrow(callbacks)[index](text, std::nullopt, std::nullopt);
             promise->whenSettled(RunLoop::mainSingleton(), [text, protectedThis = Ref { *this }, index](auto&& result) mutable {
                 if (!result)
                     protectedThis->completion(@"");
@@ -1099,7 +1100,7 @@ static OptionSet<WebCore::DataDetectorType> LEGACY_NODELETE coreDataDetectorType
         }
 
         auto description = WTF::move(result.description);
-        auto stringsToValidate = WTF::move(result.stringsToValidate);
+        const Vector stringsToValidate = WTF::move(result.stringsToValidate);
         auto valid = Box<bool>::create(true);
         Ref aggregator = MainRunLoopCallbackAggregator::create([completionHandler = WTF::move(completionHandler), description, valid, staleNodeResolution, weakSelf, stringsToValidate] {
             if (!valid.get()) {

@@ -29,6 +29,7 @@
 #include "APIData.h"
 #include "SessionState.h"
 #include <mutex>
+#include <wtf/Borrow.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocSpan.h>
 #include <wtf/StdLibExtras.h>
@@ -144,7 +145,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<uint8_t>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(value.span(), 1);
+        encodeFixedLengthData(borrow(value)->span(), 1);
 
         return *this;
     }
@@ -152,7 +153,7 @@ public:
     HistoryEntryDataEncoder& operator<<(const Vector<char>& value)
     {
         *this << static_cast<uint64_t>(value.size());
-        encodeFixedLengthData(byteCast<uint8_t>(value.span()), 1);
+        encodeFixedLengthData(byteCast<uint8_t>(borrow(value)->span()), 1);
 
         return *this;
     }
@@ -304,7 +305,7 @@ static void encodeFormData(HistoryEntryDataEncoder& encoder, const HTTPBody& for
     encoder << Vector<uint8_t>();
 
     encoder << static_cast<uint64_t>(formData.elements.size());
-    for (const auto& element : formData.elements)
+    for (const auto& element : borrow(formData.elements))
         encodeFormDataElement(encoder, element);
 
     // Used to be hasGeneratedFiles.
@@ -318,7 +319,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 {
     encoder << static_cast<uint64_t>(frameState.children.size());
 
-    for (auto& childFrameState : frameState.children) {
+    for (auto& childFrameState : borrow(frameState.children)) {
         encoder << childFrameState->originalURLString;
         encoder << childFrameState->urlString;
 
@@ -418,7 +419,7 @@ static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pa
         values.append(keyValuePair.second);
     }
 
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.mutableSpan().data(), values.mutableSpan().data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, borrow(keys)->mutableSpan().data(), borrow(values)->mutableSpan().data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListState& backForwardListState)
@@ -433,7 +434,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
     auto entries = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, backForwardListState.items.size(), &kCFTypeArrayCallBacks));
     size_t totalDataSize = 0;
 
-    for (auto& item : backForwardListState.items) {
+    for (auto& item : borrow(backForwardListState.items)) {
         auto& frameState = item.frameState;
         auto url = frameState->urlString.createCFString();
         auto title = frameState->title.createCFString();

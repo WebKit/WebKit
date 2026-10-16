@@ -317,6 +317,7 @@
 #include <optional>
 #include <ranges>
 #include <stdio.h>
+#include <wtf/Borrow.h>
 #include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedArithmetic.h>
@@ -1143,7 +1144,7 @@ WebPageProxy::~WebPageProxy()
     ASSERT(!m_inspectorDebuggable);
 #endif
 
-    for (auto& callback : m_nextActivityStateChangeCallbacks)
+    for (auto& callback : borrow(m_nextActivityStateChangeCallbacks))
         callback();
 
     if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
@@ -1530,7 +1531,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
 
     finishAttachingToWebProcess(site, reason);
 
-    auto pendingInjectedBundleMessage = WTF::move(m_pendingInjectedBundleMessages);
+    const Vector pendingInjectedBundleMessage = WTF::move(m_pendingInjectedBundleMessages);
     for (auto& message : pendingInjectedBundleMessage)
         send(Messages::WebPage::PostInjectedBundleMessage(message.messageName, UserData(process->transformObjectsToHandles(protect(message.messageBody)).get())));
 }
@@ -1733,7 +1734,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
 #endif
 
 #if PLATFORM(COCOA)
-    auto accessibilityToken = provisionalPage->takeAccessibilityToken();
+    const Vector accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty()) {
         registerWebProcessAccessibilityToken(accessibilityToken.span());
     }
@@ -3068,7 +3069,7 @@ static Vector<RefPtr<WebBackForwardListFrameItem>> matchFromChildItems(WebBackFo
         auto childFrameID = toChildren[i]->frameID();
         RefPtr fromChild = childFrameID ? fromFrame.childItemForFrameID(*childFrameID) : nullptr;
         if (fromChild && pairedFromChildren.add(fromChild->identifier()).isNewEntry)
-            fromChildren[i] = WTF::move(fromChild);
+            borrow(fromChildren)[i] = WTF::move(fromChild);
     }
 
     // Stored frameIDs can disagree across entries, or be entirely unset after
@@ -3079,7 +3080,7 @@ static Vector<RefPtr<WebBackForwardListFrameItem>> matchFromChildItems(WebBackFo
             continue;
         RefPtr fromChild = fromFrame.childItemAtIndex(i);
         if (fromChild && pairedFromChildren.add(fromChild->identifier()).isNewEntry)
-            fromChildren[i] = WTF::move(fromChild);
+            borrow(fromChildren)[i] = WTF::move(fromChild);
     }
     return fromChildren;
 }
@@ -3869,7 +3870,7 @@ void WebPageProxy::dispatchActivityStateChange()
 
     if (changed || activityStateChangeID != ActivityStateChangeAsynchronous || !m_nextActivityStateChangeCallbacks.isEmpty()) {
         auto callbackAggregator = CallbackAggregator::create([callbacks = std::exchange(m_nextActivityStateChangeCallbacks, { })] () mutable {
-            for (auto& callback : callbacks)
+            for (auto& callback : borrow(callbacks))
                 callback();
         });
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
@@ -3935,9 +3936,8 @@ void WebPageProxy::dispatchActivityStateChange()
 #endif
 
 #if PLATFORM(COCOA)
-    for (auto& callback : m_activityStateUpdateCallbacks)
+    for (auto& callback : std::exchange(m_activityStateUpdateCallbacks, { }))
         callback();
-    m_activityStateUpdateCallbacks.clear();
 #endif
 }
 
@@ -4493,7 +4493,7 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
         createSandboxExtensionsForUpload(targetProcess, filenames, freshUploadHandles);
         forwardingData.sandboxExtensionsForUpload = WTF::move(freshUploadHandles);
 #if ENABLE(ATTACHMENT_ELEMENT)
-        for (auto& filename : filenames)
+        for (auto& filename : borrow(filenames))
             targetProcess->addAllowedAttachmentFilePath(filename);
 #endif
     }
@@ -7909,7 +7909,7 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
         void didFindStringMatches(Vector<std::pair<FrameIdentifier, Vector<Vector<IntRect>>>>&& matches, std::optional<FindSelectionInFrame> selectionInFrame)
         {
             uint32_t indexInProcess = 0;
-            for (auto& [frameID, frameMatches] : matches) {
+            for (auto& [frameID, frameMatches] : borrow(matches)) {
                 auto matchCount = frameMatches.size();
                 m_frameMatches.set(frameID, FrameMatches { WTF::move(frameMatches), indexInProcess });
                 indexInProcess += matchCount;
@@ -11807,7 +11807,7 @@ void WebPageProxy::willSubmitForm(IPC::Connection& connection, FrameInfoData&& f
     MESSAGE_CHECK_COMPLETION(process, &sourceFrame->process() == process.ptr(), completionHandler());
     MESSAGE_CHECK_URL_COMPLETION(process, requestURL, completionHandler());
 
-    for (auto& pair : textFieldValues)
+    for (auto& pair : borrow(textFieldValues))
         MESSAGE_CHECK_COMPLETION_BASE(API::Dictionary::MapType::isValidKey(pair.first), connection, completionHandler());
 
     m_formClient->willSubmitForm(*this, *frame, *sourceFrame, WTF::move(frameInfoData), WTF::move(sourceFrameInfoData), WTF::move(textFieldValues), process->transformHandlesToObjects(protect(userData.object()).get()).get(), requestURL, method, WTF::move(completionHandler));
@@ -14320,9 +14320,14 @@ bool WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding(WebProcessProx
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, process = WTF::move(process), fileURLs = crossThreadCopy(WTF::move(fileURLs)), transcodedURLs = crossThreadCopy(WTF::move(transcodedURLs))]() {
             auto sendFilesToWebProcess = [this, protectedThis = Ref { *this }, process, fileURLs, transcodedURLs] {
 #if ENABLE(SANDBOX_EXTENSIONS)
-                Vector<String> sandboxExtensionFiles;
-                for (size_t i = 0, size = fileURLs.size(); i < size; ++i)
-                    sandboxExtensionFiles.append(!transcodedURLs[i].isNull() ? transcodedURLs[i] : fileURLs[i]);
+                const Vector sandboxExtensionFiles = [&] {
+                    Vector<String> sandboxExtensionFiles;
+                    Borrow borrowedTranscodedURLs = transcodedURLs;
+                    Borrow borrowedFileURLs = fileURLs;
+                    for (size_t i = 0, size = borrowedFileURLs->size(); i < size; ++i)
+                        sandboxExtensionFiles.append(!borrowedTranscodedURLs[i].isNull() ? borrowedTranscodedURLs[i] : borrowedFileURLs[i]);
+                    return sandboxExtensionFiles;
+                }();
                 for (auto& file : sandboxExtensionFiles)
                     process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(file));
                 auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, sandboxExtensionFiles);
@@ -14357,11 +14362,14 @@ void WebPageProxy::transcodeChosenFiles(IPC::Connection& connection, Vector<Stri
     WEBPAGEPROXY_RELEASE_LOG(DragAndDrop, "WebPageProxy::transcodeChosenFiles");
     Ref process = WebProcessProxy::fromConnection(connection);
     transcodeImagesInBackgroundQueue(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), [this, protectedThis = Ref { *this }, process = WTF::move(process), completionHandler = WTF::move(completionHandler)](auto&& replacementPaths) mutable {
-        Vector<String> transcodedPaths;
-        for (auto& path : replacementPaths) {
-            if (!path.isNull())
-                transcodedPaths.append(path);
-        }
+        const Vector transcodedPaths = [&] {
+            Vector<String> transcodedPaths;
+            for (auto& path : borrow(replacementPaths)) {
+                if (!path.isNull())
+                    transcodedPaths.append(path);
+            }
+            return transcodedPaths;
+        }();
 
         if (transcodedPaths.isEmpty()) {
             WEBPAGEPROXY_RELEASE_LOG(DragAndDrop, "WebPageProxy::transcodeChosenFiles no file transcoded");
@@ -14407,7 +14415,7 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs, co
             return;
         if (RefPtr process = openPanelResultListener->process()) {
             if (!protectedThis->didChooseFilesForOpenPanelWithImageTranscoding(*process, fileURLs, allowedMIMETypes)) {
-                for (auto& fileURL : fileURLs)
+                for (auto& fileURL : borrow(fileURLs))
                     process->addPreviouslyApprovedFileURL(URL::fileURLWithFileSystemPath(fileURL));
 #if ENABLE(SANDBOX_EXTENSIONS)
                 auto sandboxExtensionHandles = SandboxExtension::createReadOnlyHandlesForFiles("WebPageProxy::didChooseFilesForOpenPanel"_s, fileURLs);
@@ -19027,7 +19035,7 @@ void WebPageProxy::registerAttachmentsFromSerializedData(IPC::Connection& connec
 {
     MESSAGE_CHECK_BASE(protect(preferences())->attachmentElementEnabled(), connection);
 
-    for (auto& serializedData : data) {
+    for (auto& serializedData : borrow(data)) {
         MESSAGE_CHECK_BASE(IdentifierToAttachmentMap::isValidKey(serializedData.identifier), connection);
         auto identifier = WTF::move(serializedData.identifier);
         if (!attachmentForIdentifier(identifier)) {
@@ -19072,10 +19080,11 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
 
     MESSAGE_CHECK_COMPLETION(protect(legacyMainFrameProcess()), protect(preferences())->attachmentElementEnabled(), completionHandler(WTF::move(serializedData)));
 
-    for (const auto& identifier : identifiers)
+    Borrow borrowedIdentifiers = identifiers;
+    for (const auto& identifier : borrowedIdentifiers)
         MESSAGE_CHECK_COMPLETION(m_legacyMainFrameProcess, IdentifierToAttachmentMap::isValidKey(identifier), completionHandler(WTF::move(serializedData)));
 
-    for (const auto& identifier : identifiers) {
+    for (const auto& identifier : borrowedIdentifiers) {
         RefPtr attachment = attachmentForIdentifier(identifier);
         if (!attachment)
             continue;
@@ -19251,7 +19260,7 @@ void WebPageProxy::reportPageLoadResult(const ResourceError& error)
     else if (!error.isNull() || error.errorCode())
         condition = CompletionCondition::Error;
 
-    for (auto& messageItem : messages.get()) {
+    for (auto& messageItem : borrow(messages.get())) {
         if (condition == messageItem.condition && pageLoadTime < messageItem.seconds) {
             logDiagnosticMessage(DiagnosticLoggingKeys::telemetryPageLoadKey(), messageItem.message, ShouldSample::No);
             logDiagnosticMessage(DiagnosticLoggingKeys::telemetryPageLoadKey(), DiagnosticLoggingKeys::occurredKey(), ShouldSample::No);
@@ -19622,9 +19631,9 @@ void WebPageProxy::completeTextManipulation(const Vector<TextManipulationItem>& 
         {
             ASSERT(RunLoop::isMain());
             BitVector resultIndexes;
-            for (auto& failure : m_result.failures)
+            for (auto& failure : borrow(m_result.failures))
                 resultIndexes.set(failure.index);
-            for (auto& index : m_result.succeededIndexes)
+            for (auto& index : borrow(m_result.succeededIndexes))
                 resultIndexes.add(index);
             for (unsigned index = 0; index < m_items.size(); ++index) {
                 if (resultIndexes.get(index))
@@ -19658,7 +19667,7 @@ void WebPageProxy::completeTextManipulation(const Vector<TextManipulationItem>& 
 
     Vector<TextManipulationCallbackAggregator::ItemInfo> itemInfos;
     itemInfos.reserveCapacity(items.size());
-    for (auto& item : items)
+    for (auto& item : borrow(items))
         itemInfos.append({ item.frameID, item.identifier });
     auto callbackAggregator = TextManipulationCallbackAggregator::create(WTF::move(itemInfos), WTF::move(completionHandler));
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
@@ -20864,7 +20873,7 @@ void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::Fra
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        auto messagesToSend = pendingMessagesForTargetFrame->takeMessagesThroughNextPortTransfer();
+        const Vector messagesToSend = pendingMessagesForTargetFrame->takeMessagesThroughNextPortTransfer();
         if (pendingMessagesForTargetFrame->isEmpty())
             protectedThis->m_pendingPostMessages.remove(target);
         for (auto& pendingPostMessage : messagesToSend)

@@ -65,6 +65,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCorePersistentCoders.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
@@ -629,7 +630,7 @@ struct WKWebsiteData {
         encoder << currentWKWebsiteDataSerializationVersion;
         encoder << dataTypesToEncode;
 
-        for (auto& dataTypeToEncode : dataTypesToEncode) {
+        for (auto& dataTypeToEncode : borrow(dataTypesToEncode)) {
             switch (dataTypeToEncode) {
             case WebKit::WebsiteDataType::LocalStorage:
                 if (!data->localStorage) {
@@ -690,7 +691,7 @@ struct WKWebsiteData {
             completionHandler(nullptr);
     });
 
-    for (auto& encodedDataType : *encodedDataTypes) {
+    for (auto& encodedDataType : borrow(*encodedDataTypes)) {
         switch (encodedDataType) {
         case WebKit::WebsiteDataType::LocalStorage: {
             std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>> localStorage;
@@ -1309,7 +1310,7 @@ struct WKWebsiteData {
 
     protect(protect(*_websiteDataStore)->networkProcess())->getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:messages.size()]);
-        for (auto& message : messages)
+        for (auto& message : borrow(messages))
             [result addObject:message.toDictionary().get()];
 
         RELEASE_LOG(Push, "Giving application %zu pending push messages", messages.size());

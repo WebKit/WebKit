@@ -479,7 +479,7 @@ RefPtr<ScrollingTreeNode> RemoteScrollingTreeMac::scrollingNodeForPoint(FloatPoi
     pointInContentsLayer.moveBy(rootContentsLayerPosition);
 
     bool hasAnyNonInteractiveScrollingLayers = false;
-    auto layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, scrolledContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
+    const Vector layersAtPoint = layersAtPointToCheckForScrolling(layerEventRegionContainsPoint, scrollingNodeIDForLayer, scrolledContentsLayer.get(), pointInContentsLayer, hasAnyNonInteractiveScrollingLayers);
 
     LOG_WITH_STREAM(UIHitTesting, stream << "RemoteScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " (converted to layer point " << pointInContentsLayer << ") found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED

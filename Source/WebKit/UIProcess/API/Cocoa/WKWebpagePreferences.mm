@@ -37,6 +37,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/ElementTargetingTypes.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -240,7 +241,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     NSMutableDictionary<NSString *, NSSet<NSString *> *> *dictionary = [NSMutableDictionary dictionary];
     for (const auto& pair : _websitePolicies->activeContentRuleListActionPatterns()) {
         NSMutableSet<NSString *> *set = [NSMutableSet set];
-        for (const auto& pattern : pair.value)
+        for (const auto& pattern : borrow(pair.value))
             [set addObject:pattern.createNSString().get()];
         [dictionary setObject:set forKey:pair.key.createNSString().get()];
     }
@@ -788,7 +789,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:_websitePolicies->visibilityAdjustmentSelectors().size()]);
     for (auto& selectorsForElement : _websitePolicies->visibilityAdjustmentSelectors()) {
         RetainPtr nsSelectorsForElement = adoptNS([[NSMutableArray alloc] initWithCapacity:selectorsForElement.size()]);
-        for (auto& selectors : selectorsForElement) {
+        for (auto& selectors : borrow(selectorsForElement)) {
             RetainPtr nsSelectors = adoptNS([[NSMutableSet alloc] initWithCapacity:selectors.size()]);
             for (auto& selector : selectors)
                 [nsSelectors addObject:selector.createNSString().get()];

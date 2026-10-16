@@ -85,11 +85,14 @@ void WebGeolocationManagerProxy::processPoolDestroyed()
 
 void WebGeolocationManagerProxy::webProcessIsGoingAway(WebProcessProxy& proxy)
 {
-    Vector<WebCore::RegistrableDomain> affectedDomains;
-    for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
-        if (perDomainData->watchers.contains(proxy))
-            affectedDomains.append(registrableDomain);
-    }
+    const Vector affectedDomains = [&] {
+        Vector<WebCore::RegistrableDomain> affectedDomains;
+        for (auto& [registrableDomain, perDomainData] : m_perDomainData) {
+            if (perDomainData->watchers.contains(proxy))
+                affectedDomains.append(registrableDomain);
+        }
+        return affectedDomains;
+    }();
     for (auto& registrableDomain : affectedDomains)
         stopUpdatingWithProxy(proxy, registrableDomain);
 }

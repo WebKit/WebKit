@@ -181,7 +181,7 @@ private:
     SimulatedInputDispatcher(WebPageProxy&, SimulatedInputDispatcher::Client&);
 
     void transitionToNextKeyFrame();
-    void transitionBetweenKeyFrames(const SimulatedInputKeyFrame&, const SimulatedInputKeyFrame&, AutomationCompletionHandler&&);
+    void transitionBetweenKeyFrames(AutomationCompletionHandler&&);
 
     void transitionToNextInputSourceState();
     void transitionInputSourceToState(SimulatedInputSource&, SimulatedInputSourceState& newState, AutomationCompletionHandler&&);

@@ -30,6 +30,7 @@
 #import "UnifiedOriginStorageLevel.h"
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Borrow.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 
@@ -580,7 +581,7 @@ static WebKit::UnifiedOriginStorageLevel LEGACY_NODELETE toUnifiedOriginStorageL
 {
     auto& origins = _configuration->mockPushSubscriptionOriginsForTesting();
     RetainPtr result = adoptNS([[NSMutableArray alloc] initWithCapacity:origins.size()]);
-    for (auto& origin : origins)
+    for (auto& origin : borrow(origins))
         [result addObject:origin.toString().createNSString().get()];
     return result.autorelease();
 }

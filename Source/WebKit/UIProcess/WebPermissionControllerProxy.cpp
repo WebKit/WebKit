@@ -95,31 +95,32 @@ RefPtr<WebPageProxy> WebPermissionControllerProxy::mostReasonableWebPageProxy(co
     ASSERT(source == WebCore::PermissionQuerySource::SharedWorker || source == WebCore::PermissionQuerySource::ServiceWorker);
     
     RefPtr<WebPageProxy> webPageProxy;
-    auto findWebPageProxy = [&topOrigin, &webPageProxy] (auto* processes) {
-        if (!processes)
-            return; 
-
-        for (Ref process : *processes) {
-            for (Ref potentialWebPageProxy : process->pages()) {
-                if (WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { potentialWebPageProxy->currentURL() }) != topOrigin)
-                    continue;
-                // The most reasonable webPageProxy is the newest one (the one with the greatest identifier).
-                if (webPageProxy && webPageProxy->identifier() > potentialWebPageProxy->identifier())
-                    continue;
-                webPageProxy = WTF::move(potentialWebPageProxy);
-            }
+    auto findWebPageProxy = [&topOrigin, &webPageProxy](WebProcessProxy& process) {
+        for (Ref potentialWebPageProxy : process.pages()) {
+            if (WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { potentialWebPageProxy->currentURL() }) != topOrigin)
+                continue;
+            // The most reasonable webPageProxy is the newest one (the one with the greatest identifier).
+            if (webPageProxy && webPageProxy->identifier() > potentialWebPageProxy->identifier())
+                continue;
+            webPageProxy = WTF::move(potentialWebPageProxy);
         }
     };
 
-    Vector<Ref<WebProcessProxy>> currentProcess { m_process.get() };
-    findWebPageProxy(&currentProcess);
+    findWebPageProxy(m_process.get());
+
+    auto findWebPageProxyInProcesses = [&findWebPageProxy](const WeakHashSet<WebProcessProxy>* processes) {
+        if (!processes)
+            return;
+        for (Ref process : *processes)
+            findWebPageProxy(process);
+    };
 
     switch (source) {
     case WebCore::PermissionQuerySource::ServiceWorker:
-        findWebPageProxy(m_process->serviceWorkerClientProcesses());
+        findWebPageProxyInProcesses(m_process->serviceWorkerClientProcesses());
         break;
     case WebCore::PermissionQuerySource::SharedWorker:
-        findWebPageProxy(m_process->sharedWorkerClientProcesses());
+        findWebPageProxyInProcesses(m_process->sharedWorkerClientProcesses());
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

@@ -113,6 +113,7 @@
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -2517,10 +2518,10 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 
             Vector<RefPtr<API::Object>> apiListIdentifiers;
             Vector<RefPtr<API::Object>> apiNotifications;
-            for (const auto& pair : results.results) {
+            for (const auto& pair : borrow(results.results)) {
                 const String& listIdentifier = pair.first;
                 const auto& result = pair.second;
-                for (const String& notification : result.notifications) {
+                for (const String& notification : borrow(result.notifications)) {
                     apiListIdentifiers.append(API::String::create(listIdentifier));
                     apiNotifications.append(API::String::create(notification));
                 }
@@ -2968,7 +2969,7 @@ void WKPageComputePagesForPrinting(WKPageRef pageRef, WKFrameRef frame, WKPrintI
     CRASH_IF_SUSPENDED;
     protect(toImpl(pageRef))->computePagesForPrinting(toImpl(frame)->frameID(), printInfoFromWKPrintInfo(printInfo), [context, callback](const Vector<WebCore::IntRect>& rects, double scaleFactor, const WebCore::FloatBoxExtent& computedPageMargin) {
         auto wkRects = rects.map([](auto& rect) { return toAPI(rect); });
-        callback(wkRects.mutableSpan().data(), wkRects.size(), scaleFactor, nullptr, context);
+        callback(borrow(wkRects)->mutableSpan().data(), wkRects.size(), scaleFactor, nullptr, context);
     });
 }
 

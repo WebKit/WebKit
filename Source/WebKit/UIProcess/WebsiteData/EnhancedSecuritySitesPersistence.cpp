@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SQLiteStatement.h>
+#include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
@@ -202,7 +203,7 @@ void EnhancedSecuritySitesPersistence::deleteSites(const Vector<WebCore::Registr
         return;
     }
 
-    for (auto& site : sites)
+    for (auto& site : borrow(sites))
         deleteSite(site);
 }
 

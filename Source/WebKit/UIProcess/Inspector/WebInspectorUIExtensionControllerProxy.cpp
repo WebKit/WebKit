@@ -51,7 +51,7 @@ WebInspectorUIExtensionControllerProxy::WebInspectorUIExtensionControllerProxy(W
 
 WebInspectorUIExtensionControllerProxy::~WebInspectorUIExtensionControllerProxy()
 {
-    auto callbacks = std::exchange(m_frontendLoadedCallbackQueue, { });
+    const Vector callbacks = std::exchange(m_frontendLoadedCallbackQueue, { });
     for (auto& callback : callbacks)
         callback();
 
@@ -80,7 +80,7 @@ void WebInspectorUIExtensionControllerProxy::inspectorFrontendLoaded()
 
     m_frontendLoaded = true;
 
-    auto callbacks = std::exchange(m_frontendLoadedCallbackQueue, { });
+    const Vector callbacks = std::exchange(m_frontendLoadedCallbackQueue, { });
     for (auto& callback : callbacks)
         callback();
 }

@@ -720,14 +720,17 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
 #if ENABLE(PDF_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
-    auto items = contextMenu.items;
+    const Vector items = [&] {
+        auto items = contextMenu.items;
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
-    if (!canHandleContextMenuTranslation()) {
-        items.removeAllMatching([](auto& item) {
-            return item.action == WebCore::ContextMenuItemTagTranslate;
-        });
-    }
+        if (!canHandleContextMenuTranslation()) {
+            items.removeAllMatching([](auto& item) {
+                return item.action == WebCore::ContextMenuItemTagTranslate;
+            });
+        }
 #endif
+        return items;
+    }();
 
     if (items.isEmpty())
         return completionHandler(std::nullopt);

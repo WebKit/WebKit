@@ -38,6 +38,7 @@
 #include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebPageProxy.h"
+#include <wtf/Borrow.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -204,7 +205,7 @@ IGNORE_GCC_WARNINGS_END
         subscriptionIDs.append(subscriptionID);
     }
 
-    for (const auto& id : subscriptionIDs) {
+    for (const auto& id : borrow(subscriptionIDs)) {
         const auto& subscription = m_eventSubscriptions.get(id);
 
         for (const auto& event : subscription.events) {

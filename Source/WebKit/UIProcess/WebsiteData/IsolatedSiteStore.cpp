@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cmath>
 #include <ranges>
+#include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -342,7 +343,7 @@ void IsolatedSiteStore::evictSitesIfNeeded()
     RELEASE_LOG(Storage, "IsolatedSiteStore::evictSitesIfNeeded evicted %u of %u sites to reach a cap of %u (visit-only %td, gestured %td, credential evidence %td)", evictionCount, m_sites.size(), m_maximumSiteCount, evictedInTier(EvictionTier::VisitOnly), evictedInTier(EvictionTier::Gestured), evictedInTier(EvictionTier::CredentialEvidence));
 #endif
 
-    for (auto& domain : evictedDomains)
+    for (auto& domain : borrow(evictedDomains))
         m_sites.remove(domain);
 
     if (!m_isPersistent)
@@ -435,7 +436,7 @@ void IsolatedSiteStore::removeSites(Vector<WebCore::RegistrableDomain>&& domains
         return completionHandler();
 
     whenLoaded([protectedThis = Ref { *this }, domains = WTF::move(domains), completionHandler = WTF::move(completionHandler)] mutable {
-        for (auto& domain : domains)
+        for (auto& domain : borrow(domains))
             protectedThis->m_sites.remove(domain);
 
         if (!protectedThis->m_isPersistent)

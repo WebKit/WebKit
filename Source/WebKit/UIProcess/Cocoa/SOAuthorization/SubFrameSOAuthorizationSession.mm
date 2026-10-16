@@ -37,6 +37,7 @@
 #import <WebCore/HTTPParsers.h>
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/Borrow.h>
 #import <wtf/RunLoop.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
@@ -144,7 +145,7 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         auto& url = m_requestsToLoad.first().first;
         WTF::switchOn(m_requestsToLoad.first().second, [&](const Vector<uint8_t>& data) {
-            frame->loadData(data, "text/html"_s, "UTF-8"_s, url);
+            frame->loadData(borrow(data), "text/html"_s, "UTF-8"_s, url);
         }, [&](const String& referrer) {
             frame->loadURL(url, referrer);
         });
@@ -161,7 +162,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
         return true;
     case XFrameOptionsDisposition::SameOrigin: {
         auto origin = SecurityOrigin::create(url);
-        for (auto& ancestorOrigin : frameAncestorOrigins) {
+        for (auto& ancestorOrigin : borrow(frameAncestorOrigins)) {
             if (!origin->isSameSchemeHostPort(ancestorOrigin))
                 return true;
         }

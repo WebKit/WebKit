@@ -30,6 +30,7 @@
 #import <WebCore/NotificationDirection.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Borrow.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -172,7 +173,7 @@
 
 - (NSData *)data
 {
-    return toNSData(_coreData.data.span()).autorelease();
+    return toNSData(borrow(_coreData.data)->span()).autorelease();
 }
 
 - (NSString *)origin

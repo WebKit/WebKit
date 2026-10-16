@@ -112,6 +112,7 @@
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Borrow.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cf/VectorCF.h>
@@ -457,10 +458,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
 
     if (files.size() == 1) {
         BOOL isDirectory;
-        if ([[NSFileManager defaultManager] fileExistsAtPath:files[0].createNSString().get() isDirectory:&isDirectory] && !isDirectory) {
+        Borrow borrowedFiles = files;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:borrowedFiles[0].createNSString().get() isDirectory:&isDirectory] && !isDirectory) {
             if (auto handle = createReadOnlySandboxExtensionForProcess(process, "/"_s))
                 fileReadHandle = WTF::move(*handle);
-            else if (auto handle = createReadOnlySandboxExtensionForProcess(process, files[0]))
+            else if (auto handle = createReadOnlySandboxExtensionForProcess(process, borrowedFiles[0]))
                 fileReadHandle = WTF::move(*handle);
             willAcquireUniversalFileReadSandboxExtension(process);
         }
@@ -471,7 +473,7 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
 
 void WebPageProxy::createSandboxExtensionsForUpload(const WebProcessProxy& process, const Vector<String>& files, Vector<SandboxExtension::Handle>& fileUploadHandles)
 {
-    for (auto& file : files) {
+    for (auto& file : borrow(files)) {
         if (![[NSFileManager defaultManager] fileExistsAtPath:file.createNSString().get()])
             continue;
         if (auto handle = createReadOnlySandboxExtensionForProcess(process, file))
@@ -605,7 +607,7 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
         return;
 
     Vector<DictationAlternative> dictationAlternatives;
-    for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
+    for (const auto& alternativeWithRange : borrow(dictationAlternativesWithRange)) {
         if (auto context = pageClient->addDictationAlternatives(alternativeWithRange.alternatives.get()))
             dictationAlternatives.append({ alternativeWithRange.range, *context });
     }
