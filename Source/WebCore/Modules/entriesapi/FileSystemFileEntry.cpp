@@ -50,7 +50,7 @@ FileSystemFileEntry::FileSystemFileEntry(ScriptExecutionContext& context, DOMFil
 
 void FileSystemFileEntry::file(ScriptExecutionContext& context, Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    filesystem().getFile(context, *this, [pendingActivity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](ExceptionOr<Ref<File>>&& result) mutable {
+    protect(filesystem())->getFile(context, *this, [pendingActivity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](ExceptionOr<Ref<File>>&& result) mutable {
         RefPtr document = pendingActivity->object().document();
         if (!document)
             return;
