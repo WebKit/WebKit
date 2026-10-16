@@ -104,7 +104,7 @@ public:
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
 
-    MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
+    // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).
     const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
 
 private:
