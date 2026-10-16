@@ -87,6 +87,16 @@ extension WTF.String {
     }
 }
 
+extension WTF.VectorUInt8 {
+    init(_ bytes: some Sequence<UInt8>) {
+        self.init()
+        reserveCapacity(bytes.underestimatedCount)
+        for byte in bytes {
+            append(consuming: byte)
+        }
+    }
+}
+
 extension CxxRefVector {
     init(array: [Element.Pointee]) {
         var vec = Self()
