@@ -38,6 +38,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CustomStateSet);
 
 bool CustomStateSet::addToSetLike(const AtomString& state)
 {
+    if (m_states.contains(state))
+        return false;
+
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (RefPtr element = m_element.get())
         styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);
@@ -47,6 +50,9 @@ bool CustomStateSet::addToSetLike(const AtomString& state)
 
 bool CustomStateSet::removeFromSetLike(const AtomString& state)
 {
+    if (!m_states.contains(state))
+        return false;
+
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (RefPtr element = m_element.get())
         styleInvalidation.emplace(*element, CSSSelector::PseudoClass::State, Style::PseudoClassChangeInvalidation::AnyValue);

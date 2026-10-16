@@ -1,0 +1,14 @@
+Mutating a CustomStateSet without changing its contents must not invalidate style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addNew > 0 is true
+PASS addExisting is 0
+PASS deleteMissing is 0
+PASS deleteExisting > 0 is true
+PASS clearNonEmpty > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
