@@ -10,9 +10,13 @@ function loadDocumentWithURL(url) {
 }
 
 function loadScriptWithURL(url) {
-    let script = document.createElement("script");
-    script.src = url;
-    document.body.appendChild(script);
+    return new Promise((resolve, reject) => {
+        let script = document.createElement("script");
+        script.src = url;
+        script.addEventListener("load", resolve, {once: true});
+        script.addEventListener("error", reject, {once: true});
+        document.body.appendChild(script);
+    });
 }
 
 function loadStyleSheetWithURL(url) {
@@ -107,6 +111,61 @@ function test()
         mimeType: mimeTypeForExtension.txt,
         synthetic: "text/javascript",
     });
+
+    for (let mimeType of ["text/javascript", "application/javascript", "application/x-javascript", "text/plain"]) {
+        suite.addTestCase({
+            name: `Resource.MIMEType.Script.Repeated.${mimeType}`,
+            description: "Repeated HTTP script loads retain their own response resource.",
+            async test() {
+                let content = "window.mimeScriptLoads = (window.mimeScriptLoads || 0) + 1; function mimeScriptContent() { console.trace(); return window.mimeScriptLoads; }";
+                let url = new URL("resources/echo.py", WI.networkManager.mainFrame.mainResource.url);
+                url.searchParams.set("mimetype", mimeType);
+                url.searchParams.set("content", content);
+                url = url.href;
+                let scripts = [];
+                let resources = [];
+
+                function scriptAdded(event) {
+                    if (event.data.script.url === url)
+                        scripts.push(event.data.script);
+                }
+                function resourceAdded(event) {
+                    if (event.data.resource.url === url)
+                        resources.push(event.data.resource);
+                }
+
+                WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptAdded);
+                WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, resourceAdded);
+                await NetworkAgent.setResourceCachingDisabled(true);
+
+                try {
+                    await Promise.all([
+                        InspectorTest.awaitEvent("RepeatedMIMEScriptsLoaded"),
+                        InspectorTest.evaluateInPage(`window.mimeScriptLoads = 0; loadScriptWithURL(${JSON.stringify(url)}).then(() => loadScriptWithURL(${JSON.stringify(url)})).then(() => TestPage.dispatchEventToFrontend("RepeatedMIMEScriptsLoaded"))`),
+                    ]);
+
+                    InspectorTest.assert(await InspectorTest.evaluateInPage("mimeScriptLoads") === 2, "Both HTTP scripts should execute.");
+                    InspectorTest.assert(scripts.length === 2, "Should parse two real JavaScript scripts.");
+                    InspectorTest.assert(resources.length === 2, "Should load two real JavaScript resources.");
+                    InspectorTest.expectTrue(resources.every((resource) => resource.mimeType === mimeType), "Every response should retain the requested MIME type.");
+                    InspectorTest.expectTrue(scripts.every((script, index) => script.resource === resources[index]), "Each script should use the resource that loaded its source.");
+                    InspectorTest.expectTrue(resources.every((resource, index) => resource.scripts.length === 1 && resource.scripts[0] === scripts[index]), "Each response resource should have exactly its own script.");
+
+                    let [messageAddedEvent] = await Promise.all([
+                        WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                        InspectorTest.evaluateInPage("mimeScriptContent()"),
+                    ]);
+                    let sourceCode = messageAddedEvent.data.message.sourceCodeLocation.sourceCode;
+                    InspectorTest.expectEqual(sourceCode, resources[1], "Console trace should link to the resource for the script currently executing.");
+                    InspectorTest.expectEqual(sourceCode.scripts[0], scripts[1], "The linked resource should use the current script for source annotations and breakpoints.");
+                } finally {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, scriptAdded);
+                    WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, resourceAdded);
+                    await NetworkAgent.setResourceCachingDisabled(false);
+                }
+            },
+        });
+    }
 
     // Style Sheets.
 

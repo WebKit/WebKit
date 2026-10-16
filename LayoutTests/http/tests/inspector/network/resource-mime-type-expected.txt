@@ -14,6 +14,34 @@ PASS: Resource Type should be 'resource-type-script'.
 PASS: Resource mimeType should be 'text/plain'.
 PASS: Resource syntheticMIMEType should be 'text/javascript'.
 
+-- Running test case: Resource.MIMEType.Script.Repeated.text/javascript
+PASS: Every response should retain the requested MIME type.
+PASS: Each script should use the resource that loaded its source.
+PASS: Each response resource should have exactly its own script.
+PASS: Console trace should link to the resource for the script currently executing.
+PASS: The linked resource should use the current script for source annotations and breakpoints.
+
+-- Running test case: Resource.MIMEType.Script.Repeated.application/javascript
+PASS: Every response should retain the requested MIME type.
+PASS: Each script should use the resource that loaded its source.
+PASS: Each response resource should have exactly its own script.
+PASS: Console trace should link to the resource for the script currently executing.
+PASS: The linked resource should use the current script for source annotations and breakpoints.
+
+-- Running test case: Resource.MIMEType.Script.Repeated.application/x-javascript
+PASS: Every response should retain the requested MIME type.
+PASS: Each script should use the resource that loaded its source.
+PASS: Each response resource should have exactly its own script.
+PASS: Console trace should link to the resource for the script currently executing.
+PASS: The linked resource should use the current script for source annotations and breakpoints.
+
+-- Running test case: Resource.MIMEType.Script.Repeated.text/plain
+PASS: Every response should retain the requested MIME type.
+PASS: Each script should use the resource that loaded its source.
+PASS: Each response resource should have exactly its own script.
+PASS: Console trace should link to the resource for the script currently executing.
+PASS: The linked resource should use the current script for source annotations and breakpoints.
+
 -- Running test case: Resource.MIMEType.StyleSheet.css
 PASS: Resource should be created.
 PASS: Resource Type should be 'resource-type-style-sheet'.

@@ -400,7 +400,13 @@ WI.Script = class Script extends WI.SourceCode
         let resourceCollection = this._parentFrame?.resourceCollection || this._target?.resourceCollection;
         if (resourceCollection) {
             let hasMatchingScript = (resource) => resource.scripts.some((script) => script.sourceType === this._sourceType);
-            let isMatchingResource = (resource) => resource.url === this._url && resource.mimeTypeComponents.type === this.syntheticMIMEType;
+            let isMatchingResource = (resource) => {
+                if (resource.url !== this._url)
+                    return false;
+                if (this._sourceType === WI.Script.SourceType.WebAssembly)
+                    return resource.mimeTypeComponents.type === this.syntheticMIMEType;
+                return resource.type === WI.Resource.Type.Script;
+            };
 
             if (this._requestId) {
                 let resource = WI.networkManager.resourceForRequestIdentifier(this._requestId);
