@@ -4830,7 +4830,7 @@ class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.Test
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': 'api_test_results.json'},
                         timeout=20 * 60,
                         )
@@ -7469,7 +7469,7 @@ class TestRunAPITests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7498,7 +7498,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --ios-simulator --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --ios-simulator --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7595,7 +7595,7 @@ Ran 1316 tests of 1318 with 1316 successful
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7638,7 +7638,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7695,7 +7695,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7714,7 +7714,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7744,7 +7744,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7777,7 +7777,7 @@ Expected failures (not blocking):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --exit-after-n-failures 60 --skip-failing-tests 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7825,7 +7825,7 @@ class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} suite.test1 suite.test2 suite.test3 suite.test4 suite.test5 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --skip-failing-tests suite.test1 suite.test2 suite.test3 suite.test4 suite.test5 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7859,7 +7859,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} \'suite.test1(foo:)\' suite.test2 suite.test3 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --skip-failing-tests \'suite.test1(foo:)\' suite.test2 suite.test3 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -7893,7 +7893,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} suite.test-one-failure1 suite.test-one-failure2 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests suite.test-one-failure1 suite.test-one-failure2 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -8284,7 +8284,7 @@ class TestRunAPITestsParallelSafety(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -8309,7 +8309,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --ios-simulator --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --ios-simulator --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -8334,7 +8334,7 @@ All tests successfully passed!
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.TestName 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )
@@ -8366,7 +8366,7 @@ Testing completed, Exit status: 3
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --test-parallel-safety TestWebKitAPI.Test1 --test-parallel-safety TestWebKitAPI.Test2 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --debug --verbose --json-output={self.jsonFileName} --skip-failing-tests --test-parallel-safety TestWebKitAPI.Test1 --test-parallel-safety TestWebKitAPI.Test2 2>&1 | Tools/Scripts/filter-test-logs api'],
                         logfiles={'json': self.jsonFileName},
                         timeout=20 * 60
                         )

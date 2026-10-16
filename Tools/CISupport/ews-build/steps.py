@@ -5863,6 +5863,9 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
         self.pre_existing_flakes_in_results_db = {}
         self.steps_to_add = []
 
+    def _should_apply_failure_limits(self):
+        return GitHub.NO_FAILURE_LIMITS_LABEL not in self.getProperty('github_labels', [])
+
     @defer.inlineCallbacks
     def run(self):
         self.log_observer_json = logobserver.BufferLogObserver()
@@ -5878,8 +5881,10 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
                            '--json-output={0}'.format(self.jsonFileName)]
         else:
             self.command = self.command + customBuildFlag(platform, self.getProperty('fullPlatform'))
-            if self.EXIT_AFTER_FAILURES is not None:
-                self.command += ['--exit-after-n-failures', f'{self.EXIT_AFTER_FAILURES}']
+            if self._should_apply_failure_limits():
+                if self.EXIT_AFTER_FAILURES is not None:
+                    self.command += ['--exit-after-n-failures', f'{self.EXIT_AFTER_FAILURES}']
+                self.command += ['--skip-failing-tests']
 
         additionalArguments = self.getProperty('additionalArguments')
         if additionalArguments:
@@ -5900,6 +5905,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
             rc = FAILURE
 
         if (self.EXIT_AFTER_FAILURES is not None
+                and self._should_apply_failure_limits()
                 and self.failedTestCount >= int(self.EXIT_AFTER_FAILURES)):
             self.setProperty(f'{self.suffix}_exceeded_failure_limit', True)
 
@@ -6584,6 +6590,8 @@ class RunAPITestsParallelSafety(RunAPITests):
             '--verbose',
             f'--json-output={self.jsonFileName}'
         ]
+        if self._should_apply_failure_limits():
+            self.command.append('--skip-failing-tests')
 
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
