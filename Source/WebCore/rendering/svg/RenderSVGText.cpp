@@ -914,35 +914,53 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     Ref textElement = this->textElement();
     SVGLengthContext lengthContext(textElement.ptr());
     auto strokeWidth = lengthContext.valueForLength(style().strokeWidth(), style().usedZoomForLength());
+    if (strokeWidth <= 0)
+        return strokeBoundaries;
 
-    // A non scaling stroke keeps its on-screen width, so it covers fewer user units when scaled up.
-    if (hasNonScalingStroke() && document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto scalingFactor = RenderSVGInlineText::computeScalingFactorForRenderer(*this); scalingFactor > 0) {
-            strokeBoundaries.inflate(strokeWidth * style().usedZoom() * protect(document())->deviceScaleFactor() / scalingFactor);
-            return strokeBoundaries;
-        }
-    }
-
-    strokeBoundaries.inflate(strokeWidth);
+    strokeBoundaries.inflate(strokeInflation(strokeWidth));
     return strokeBoundaries;
 }
 
-bool RenderSVGText::hasNonScalingStroke() const
+float RenderSVGText::strokeInflation(float strokeWidth) const
 {
-    return style().vectorEffect() == VectorEffect::NonScalingStroke;
+    // LBSE tracks non scaling strokes in the subtree, to invalidate cached boxes on ancestor transform
+    // changes, so without the flag the stroke width applies as is. The legacy engine relayouts the text
+    // on those changes and keeps no such flag: it always has to inspect the runs.
+    if (document().settings().layerBasedSVGEngineEnabled() && !mayHaveNonScalingStrokeInSubtree())
+        return strokeWidth;
+
+    // vector-effect is not inherited, so a run may or may not use a non scaling stroke. SVGTextBoxPainter
+    // decides per run, using the style of the run's parent renderer: do the same, and keep the widest inflation.
+    auto zoomAndDeviceScale = style().usedZoom() * protect(document())->deviceScaleFactor();
+    std::optional<float> inflation;
+    for (const RenderObject* descendant = this; descendant; descendant = descendant->nextInPreOrder(this)) {
+        CheckedPtr inlineText = dynamicDowncast<RenderSVGInlineText>(*descendant);
+        if (!inlineText)
+            continue;
+
+        auto runInflation = strokeWidth;
+        if (CheckedPtr runRenderer = inlineText->parent(); runRenderer && runRenderer->style().vectorEffect() == VectorEffect::NonScalingStroke) {
+            if (auto scalingFactor = RenderSVGInlineText::computeScalingFactorForRenderer(*runRenderer); scalingFactor > 0)
+                runInflation = strokeWidth * zoomAndDeviceScale / scalingFactor;
+        }
+
+        inflation = std::max(inflation.value_or(runInflation), runInflation);
+    }
+
+    return inflation.value_or(strokeWidth);
 }
 
 void RenderSVGText::updateFromStyle()
 {
     RenderSVGBlock::updateFromStyle();
 
-    if (hasNonScalingStroke() && document().settings().layerBasedSVGEngineEnabled())
+    if (style().vectorEffect() == VectorEffect::NonScalingStroke && document().settings().layerBasedSVGEngineEnabled())
         setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
 }
 
 void RenderSVGText::invalidateNonScalingStrokeCaches()
 {
-    if (!hasNonScalingStroke() || !m_hasPerformedLayout)
+    if (!mayHaveNonScalingStrokeInSubtree() || !m_hasPerformedLayout)
         return;
 
     invalidateCachedVisualOverflowRect();
