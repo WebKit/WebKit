@@ -317,8 +317,6 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, NOESC
 
     setIsQuickPropertyAccessAllowedForEnumeration(false);
 
-    table->addDeletedOffset(offset);
-
     PropertyOffset newMaxOffset = maxOffset();
 
     func(locker, offset, newMaxOffset);
