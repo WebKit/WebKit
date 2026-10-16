@@ -19,7 +19,6 @@ StyleChangedAnimatablePropertiesGenerated.cpp
 [ macOS ] css/typedom/DeclaredStylePropertyMap.cpp
 [ macOS ] css/typedom/InlineStylePropertyMap.cpp
 dom/Attr.cpp
-[ macOS ] dom/BroadcastChannel.cpp
 [ macOS ] dom/ComposedTreeIterator.h
 [ macOS ] dom/ContainerNode.cpp
 dom/Document.cpp

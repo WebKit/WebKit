@@ -22,7 +22,6 @@ dom/Element.cpp
 [ macOS ] dom/MutationObserver.cpp
 dom/PendingScript.cpp
 [ macOS ] dom/Range.cpp
-[ macOS ] dom/ScriptElement.cpp
 dom/ShadowRoot.cpp
 [ macOS ] dom/ViewTransition.cpp
 layout/floats/FloatingContext.cpp
