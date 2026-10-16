@@ -23,6 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "pas_config.h"
+
+#if LIBPAS_ENABLED
+
 #include "pas_mte.h"
 
 #if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
@@ -42,3 +46,5 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 }
 #endif // PAS_ENABLE_MTE
 #endif // defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
+
+#endif /* LIBPAS_ENABLED */
