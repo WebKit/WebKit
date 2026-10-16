@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AES-KW unwrapKey rejects invalid wrapped key lengths</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+for (const keyLength of [128, 192, 256]) {
+    for (const wrappedKeyLength of [0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 20, 23, 25, 31, 33]) {
+        promise_test(async t => {
+            const unwrappingKey = await crypto.subtle.importKey("raw", new Uint8Array(keyLength / 8), "AES-KW", false, ["unwrapKey"]);
+            await promise_rejects_dom(t, "OperationError", crypto.subtle.unwrapKey("raw", new Uint8Array(wrappedKeyLength), unwrappingKey, "AES-KW", "AES-GCM", true, ["decrypt"]));
+        }, `AES-KW with a ${keyLength}-bit key rejects ${wrappedKeyLength} bytes of wrapped key data with OperationError`);
+    }
+}
+</script>
+</body>
+</html>
