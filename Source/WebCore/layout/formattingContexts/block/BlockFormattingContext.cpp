@@ -135,7 +135,7 @@ void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer
     ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
     // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
     // inline items then.
-    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), blockContainerState.geometry, inlineContentBlockLayoutState);
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), blockContainerState.geometry, blockContainerState.contentBoxBlockSize, inlineContentBlockLayoutState);
     if (!inlineContentLayoutResult.hasLineBoxes)
         return;
     // The first line box separates the block-start margin from what follows (CSS 2.2 §8.3.1).
@@ -274,7 +274,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         // Its content is in a block formatting context of its own, with a block layout state of its own.
         auto blockLayoutState = BlockLayoutState { { } };
         if (box->childrenInline()) {
-            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, blockLayoutState);
+            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, boxState.contentBoxBlockSize, blockLayoutState);
             if (inlineContentLayoutResult.hasLineBoxes)
                 intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
         } else {

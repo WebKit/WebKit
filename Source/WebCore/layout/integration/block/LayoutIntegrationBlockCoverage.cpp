@@ -144,12 +144,50 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
         && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
 }
 
-static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer)
+static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox, const RenderBlockFlow& rootContainer);
+
+static bool isAtomicInlineLevelBox(const RenderObject& renderer)
+{
+    return renderer.isInline() && is<RenderBox>(renderer) && !is<RenderLineBreak>(renderer);
+}
+
+// The inline formatting context lays out an atomic inline-level box through the render tree, with the containing block size the block
+// formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
+static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
+{
+    // FIXME: Replaced elements read the size of their containing block from its renderer (RenderReplaced::computeReplacedLogicalWidth,
+    // RenderSVGRoot::computeReplacedLogicalWidth), past the containing block size the block formatting context gives them.
+    if (box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot())
+        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    // In quirks mode a percentage height inside it looks through it for an ancestor with a height (RenderBox::computePercentageLogicalHeight),
+    // past the containing block size the block formatting context gives it.
+    if (box.document().inQuirksMode())
+        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    // Scrollbars that come or go in a scroll container lay its ancestors out again (RenderObject::markContainingBlocksForLayout).
+    CheckedRef style = box.style();
+    auto isScrollable = [](Overflow overflow) {
+        return overflow == Overflow::Auto || overflow == Overflow::Scroll;
+    };
+    if (box.isWritingModeRoot() || isScrollable(style->overflowX()) || isScrollable(style->overflowY()))
+        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
+    // block formatting context has not committed yet.
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
+        if (!descendant->isOutOfFlowPositioned())
+            continue;
+        CheckedPtr containingBlock = descendant->containingBlock();
+        if (containingBlock != &box && !containingBlock->isDescendantOf(&box) && isLaidOutByBlockFormattingContext(descendant, rootContainer))
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+    }
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
     if (is<RenderLineBreak>(renderer))
         return { };
-    if (is<RenderBox>(renderer))
-        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer))
+        return atomicInlineLevelBoxAvoidanceReason(*box, rootContainer);
     CheckedRef style = renderer.style();
     if (renderer.type() != RenderObject::Type::Inline || style->display() != Style::DisplayType::InlineFlow || style->pseudoElementType() == PseudoElementType::FirstLetter)
         return BlockAvoidanceReason::ContentHasUnsupportedInlineBox;
@@ -192,7 +230,7 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
         // FIXME: A box laid out through the render tree measures its content against its containing block's renderer, which the block
         // formatting context has not committed yet (RenderBox::minContentLogicalWidthContribution reads its block size through an aspect
         // ratio, for instance).
-        if (descendant != &box && isLaidOutThroughRenderTree(*descendant))
+        if (descendant != &box && (isLaidOutThroughRenderTree(*descendant) || isAtomicInlineLevelBox(*descendant)))
             return false;
         if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isInline()) {
             CheckedRef style = blockContainer->style();
@@ -313,7 +351,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         if (auto reason = outOfFlowBoxAvoidanceReason(downcast<RenderBox>(renderer)))
             return reason;
     } else if (renderer.isInline())
-        return inlineContentAvoidanceReason(renderer);
+        return inlineContentAvoidanceReason(renderer, rootContainer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (!blockContainer || blockContainer->type() != RenderObject::Type::BlockFlow)
@@ -404,7 +442,8 @@ static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const Rend
                 return reason;
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
-        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree;
+        // The content of an atomic inline-level box is not part of it either.
+        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree || isAtomicInlineLevelBox(*descendant);
         if (laysOutOutOfFlowBoxes && isOutOfFlowBox && !skipsContent)
             *laysOutOutOfFlowBoxes = true;
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
