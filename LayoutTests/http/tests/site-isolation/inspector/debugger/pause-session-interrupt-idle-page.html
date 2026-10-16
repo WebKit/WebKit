@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionInterruptIdlePage");
+
+    let mainTarget;
+    let frameATarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Setup",
+        description: "Find the frame target of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+            InspectorTest.expectThat(await waitForExpressionInTarget(frameATarget, "window.ticks > 2"), "Frame A's interval should be running.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Interrupt",
+        description: "Interrupting an idle page should hold every frame in every process, although no frame is stopped.",
+        async test() {
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pageTarget().TargetAgent.interruptForDebugger();
+            let data = await opened;
+            InspectorTest.expectEqual(data.stoppingTargetIds.length, 0, "The session should have no stopping frame.");
+
+            await GlobalPause.expectHeld(mainTarget, "window.mainTicks", "The main frame's interval", "while the page is interrupted");
+            await GlobalPause.expectHeld(frameATarget, "window.ticks", "Frame A's interval", "while the page is interrupted");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionInterruptIdlePage.StoppingFrameContinues",
+        description: "A frame that the interrupted session holds can stop when script runs in it. When it continues the session should stay open, with no stopping frame, so every frame stays held until the session is resumed.",
+        async test() {
+            await GlobalPause.pause(frameATarget);
+
+            let outcome = GlobalPause.awaitSessionEvent((data) => data.state === "paused" && !data.stoppingTargetIds.length).then(() => "open");
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed").then(() => "closed");
+            await frameATarget.DebuggerAgent.resume();
+            InspectorTest.expectEqual(await Promise.race([outcome, closed]), "open", "The session should stay open, with no stopping frame.");
+            InspectorTest.expectNotNull(WI.debuggerManager.pauseSession, "DebuggerManager should still know the session.");
+
+            await GlobalPause.expectHeld(mainTarget, "window.mainTicks", "The main frame's interval", "after the stopping frame continued");
+            await GlobalPause.expectHeld(frameATarget, "window.ticks", "Frame A's interval", "after it continued");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Resume",
+        description: "Resuming the session should release every frame.",
+        async test() {
+            let mainBefore = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            let frameABefore = await GlobalPause.evaluate(frameATarget, "window.ticks");
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
+            await GlobalPause.pageTarget().TargetAgent.resumeDebuggerPauseSession();
+            await closed;
+
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", mainBefore, "The main frame's interval after resuming");
+            await GlobalPause.expectRunning(frameATarget, "window.ticks", frameABefore, "Frame A's interval after resuming");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionInterruptIdlePage.Disabled",
+        description: "Interrupting a page that opted out should fail.",
+        async test() {
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(false);
+            let error;
+            try {
+                await GlobalPause.pageTarget().TargetAgent.interruptForDebugger();
+            } catch (e) {
+                error = e;
+            }
+            InspectorTest.expectNotNull(error, "The interrupt should fail.");
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(true);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that interrupting an idle page opens a pause session with no stopping frame, which holds the frames in every process until it is resumed.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>

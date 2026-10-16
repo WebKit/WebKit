@@ -9158,6 +9158,9 @@ WindowEventLoop& Document::windowEventLoop()
 
 void Document::suspendScheduledTasks(ReasonForSuspension reason)
 {
+    if (RefPtr page = this->page())
+        CheckedRef { page->inspectorController().debuggerSuspensionController() }->documentWillSuspendScheduledTasks(*this, reason);
+
     if (m_scheduledTasksAreSuspended) {
         // A page may subsequently suspend DOM objects, say as part of handling a scroll or zoom gesture, after the
         // embedding client requested the page be suspended. We ignore such requests so long as the embedding client
@@ -9209,6 +9212,9 @@ void Document::resumeScheduledTasks(ReasonForSuspension reason)
     resumeScriptedAnimationControllerCallbacks();
 
     m_scheduledTasksAreSuspended = false;
+
+    if (RefPtr page = this->page())
+        CheckedRef { page->inspectorController().debuggerSuspensionController() }->documentDidResumeScheduledTasks(*this, reason);
 }
 
 void Document::suspendScriptedAnimationControllerCallbacks()

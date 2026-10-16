@@ -27,9 +27,11 @@
 #include "DebuggerPauseCoordinator.h"
 
 #include "BrowsingContextGroup.h"
+#include "FrameInspectorTarget.h"
 #include "MessageSenderInlines.h"
 #include "ProvisionalPageProxy.h"
 #include "WebInspectorBackendMessages.h"
+#include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -45,20 +47,26 @@ DebuggerPauseCoordinator::DebuggerPauseCoordinator(WebPageProxy& page)
 
 DebuggerPauseCoordinator::~DebuggerPauseCoordinator()
 {
+    m_isDestroying = true;
     closeSession();
 }
 
 void DebuggerPauseCoordinator::frameDidPause(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
 {
-    m_stoppingFrames.add({ process.coreProcessIdentifier(), frameID });
+    bool isNewStoppingFrame = m_stoppingFrames.add({ process.coreProcessIdentifier(), frameID }).isNewEntry;
+    if (!m_isEnabled)
+        return;
     if (!m_sessionID)
         openSession();
+    else if (isNewStoppingFrame)
+        notifySessionChanged(true);
 }
 
 void DebuggerPauseCoordinator::frameDidContinue(WebProcessProxy& process, WebCore::FrameIdentifier frameID)
 {
-    if (m_stoppingFrames.remove({ process.coreProcessIdentifier(), frameID }) && m_stoppingFrames.isEmpty())
-        closeSession();
+    if (!m_stoppingFrames.remove({ process.coreProcessIdentifier(), frameID }))
+        return;
+    stoppingFramesDidShrink();
 }
 
 // A frame that leaves its process, or is removed, may never report that it continued: the process can lose the
@@ -92,8 +100,28 @@ void DebuggerPauseCoordinator::processDidTerminate(WebProcessProxy& process)
 template<typename Predicate>
 void DebuggerPauseCoordinator::removeStoppingFramesIf(NOESCAPE const Predicate& predicate)
 {
-    if (m_stoppingFrames.removeIf(predicate) && m_stoppingFrames.isEmpty())
+    if (!m_stoppingFrames.removeIf(predicate))
+        return;
+    stoppingFramesDidShrink();
+}
+
+// A session that was interrupted is the user's pause, not a frame's, so it stays open with no stopping frame until it is resumed.
+void DebuggerPauseCoordinator::stoppingFramesDidShrink()
+{
+    if (!m_sessionID)
+        return;
+    if (m_stoppingFrames.isEmpty() && !m_isInterrupted)
         closeSession();
+    else
+        notifySessionChanged(true);
+}
+
+// forEachWebContentProcess() skips the provisional page, which can commit during the session.
+static void forEachProcessOfPage(WebPageProxy& page, NOESCAPE const Function<void(WebProcessProxy&, WebCore::PageIdentifier)>& function)
+{
+    page.forEachWebContentProcess(function);
+    if (RefPtr provisionalPage = page.provisionalPageProxy())
+        function(protect(provisionalPage->process()), provisionalPage->webPageID());
 }
 
 void DebuggerPauseCoordinator::openSession()
@@ -111,6 +139,23 @@ void DebuggerPauseCoordinator::openSession()
         if (RefPtr provisionalPage = page.provisionalPageProxy(); provisionalPage && &provisionalPage->browsingContextGroup() == group.ptr())
             suspendPage(protect(provisionalPage->process()), provisionalPage->webPageID());
     });
+
+    notifySessionChanged(true);
+}
+
+void DebuggerPauseCoordinator::notifySessionChanged(bool isPaused)
+{
+    ASSERT(m_sessionID);
+    if (m_isDestroying)
+        return;
+
+    Vector<String> stoppingTargetIDs;
+    if (isPaused) {
+        for (auto& [processID, frameID] : m_stoppingFrames)
+            stoppingTargetIDs.append(FrameInspectorTarget::toTargetID(frameID, processID));
+        std::ranges::sort(stoppingTargetIDs, WTF::codePointCompareLessThan);
+    }
+    protect(m_page)->inspectorController().debuggerPauseSessionDidChange(*m_sessionID, isPaused, stoppingTargetIDs);
 }
 
 void DebuggerPauseCoordinator::pageWasAdded(WebProcessProxy& process, WebCore::PageIdentifier pageID)
@@ -131,12 +176,64 @@ void DebuggerPauseCoordinator::suspendPage(WebProcessProxy& process, WebCore::Pa
         m_suspendedPages.append({ process, pageID });
 }
 
+// While global pause is off the stopping frames are still tracked, so that turning it on again holds the other frames while one is still stopped.
+void DebuggerPauseCoordinator::setEnabled(bool enabled)
+{
+    if (m_isEnabled == enabled)
+        return;
+    m_isEnabled = enabled;
+    if (!enabled)
+        endSession();
+    else if (!m_stoppingFrames.isEmpty())
+        openSession();
+}
+
+// A session with no stopping frame holds every process of an idle page. A session that is already open is reported again, for a frontend that connected after it opened.
+void DebuggerPauseCoordinator::interrupt()
+{
+    m_isInterrupted = true;
+    if (!m_sessionID)
+        openSession();
+    else
+        notifySessionChanged(true);
+}
+
+// The session closes as the stopping frames report that they continued, so the other frames stay held until the resumed code goes idle, as when a frame is resumed from its own target.
+void DebuggerPauseCoordinator::resumeSession()
+{
+    if (!m_sessionID)
+        return;
+
+    m_isInterrupted = false;
+    if (m_stoppingFrames.isEmpty()) {
+        closeSession();
+        return;
+    }
+
+    HashSet<WebCore::ProcessIdentifier> stoppingProcesses;
+    for (auto& [processID, frameID] : m_stoppingFrames)
+        stoppingProcesses.add(processID);
+
+    forEachProcessOfPage(protect(m_page.get()), [&](WebProcessProxy& process, WebCore::PageIdentifier pageID) {
+        if (stoppingProcesses.contains(process.coreProcessIdentifier()))
+            process.send(Messages::WebInspectorBackend::ResumeStoppedFramesForDebugger(), pageID);
+    });
+}
+
 void DebuggerPauseCoordinator::closeSession()
 {
-    auto sessionID = std::exchange(m_sessionID, std::nullopt);
     m_stoppingFrames.clear();
-    if (!sessionID)
+    endSession();
+}
+
+void DebuggerPauseCoordinator::endSession()
+{
+    m_isInterrupted = false;
+    if (!m_sessionID)
         return;
+
+    notifySessionChanged(false);
+    auto sessionID = std::exchange(m_sessionID, std::nullopt);
 
     for (auto& [weakProcess, pageID] : std::exchange(m_suspendedPages, { })) {
         if (RefPtr process = weakProcess.get())

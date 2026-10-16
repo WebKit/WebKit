@@ -30,6 +30,7 @@
 #include "UIProcess/WebFrameProxy.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
+#include <WebCore/DebuggerPauseSessionIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -55,10 +56,13 @@ class InspectorBrowserAgent;
 class ProvisionalPageProxy;
 struct WebPageAgentContext;
 
-class WebPageInspectorController {
+class WebPageInspectorController : public Inspector::InspectorTargetAgent::DebuggerPauseSessionClient, public CanMakeCheckedPtr<WebPageInspectorController> {
     WTF_MAKE_TZONE_ALLOCATED(WebPageInspectorController);
     WTF_MAKE_NONCOPYABLE(WebPageInspectorController);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPageInspectorController);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     WebPageInspectorController(WebPageProxy&);
     ~WebPageInspectorController();
 
@@ -113,11 +117,19 @@ public:
 
     void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
 
+    void debuggerPauseSessionDidChange(WebCore::DebuggerPauseSessionIdentifier, bool isPaused, const Vector<String>& stoppingTargetIDs);
+
 private:
     void browsingContextGroupPageWasAddedToProcess(WebProcessProxy&, WebCore::PageIdentifier);
 
+    // InspectorTargetAgent::DebuggerPauseSessionClient
+    Inspector::Protocol::ErrorStringOr<void> setGlobalDebuggerPauseEnabled(bool) final;
+    Inspector::Protocol::ErrorStringOr<void> interruptForDebugger() final;
+    Inspector::Protocol::ErrorStringOr<void> resumeDebuggerPauseSession() final;
+
     WebPageAgentContext LEGACY_NODELETE webPageAgentContext();
     void createLazyAgents();
+    DebuggerPauseCoordinator& ensureDebuggerPauseCoordinator();
 
     void addTarget(std::unique_ptr<InspectorTargetProxy>&&);
     void removeTarget(const String& targetId);

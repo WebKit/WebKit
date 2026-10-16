@@ -1,0 +1,92 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true SiteIsolationGlobalDebuggerPauseEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/global-pause-test-utilities.js"></script>
+<script>
+window.mainTicks = 0;
+setInterval(() => { window.mainTicks++; }, 50);
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.PauseSessionOptOut");
+
+    let mainTarget;
+    let frameATarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionOptOut.Setup",
+        description: "Find the frame target of the cross-site iframe.",
+        async test() {
+            mainTarget = InspectorTest.mainFrameTarget;
+            frameATarget = await frameTargetForURLContaining("same-process-frame.html?A");
+            InspectorTest.expectNotNull(frameATarget, "Should find the frame target for frame A.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionOptOut.Disabled",
+        description: "With global pause disabled, pausing a frame should not hold the frames in other processes or open a session.",
+        async test() {
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(false);
+
+            let sessionEvents = 0;
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.PauseSessionChanged, () => { ++sessionEvents; });
+            await GlobalPause.pause(frameATarget);
+
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval while frame A is paused");
+            InspectorTest.expectEqual(sessionEvents, 0, "No session event should be reported.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.PauseSessionChanged, listener);
+
+            await GlobalPause.resumeAll();
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionOptOut.Enabled",
+        description: "With global pause enabled again, pausing a frame should hold the frames in other processes.",
+        async test() {
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(true);
+
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pause(frameATarget);
+            await opened;
+
+            let before = await GlobalPause.expectHeld(mainTarget, "window.mainTicks", "The main frame's interval", "while frame A is paused");
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval after resuming");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.PauseSessionOptOut.ToggledWhileStopped",
+        description: "Turning global pause off while a frame is stopped should release the frames in other processes, and turning it on again should hold them again.",
+        async test() {
+            let opened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pause(frameATarget);
+            await opened;
+
+            let closed = GlobalPause.awaitSessionEvent((data) => data.state === "closed");
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(false);
+            await closed;
+            let before = await GlobalPause.evaluate(mainTarget, "window.mainTicks");
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", before, "The main frame's interval with global pause off");
+
+            let reopened = GlobalPause.awaitSessionEvent((data) => data.state === "paused");
+            await GlobalPause.pageTarget().TargetAgent.setGlobalDebuggerPauseEnabled(true);
+            let session = await reopened;
+            InspectorTest.expectEqual(session.stoppingTargetIds.length, 1, "The session should open again with frame A stopped.");
+            let held = await GlobalPause.expectHeld(mainTarget, "window.mainTicks", "The main frame's interval", "with global pause on again");
+
+            await GlobalPause.resumeAll();
+            await GlobalPause.expectRunning(mainTarget, "window.mainTicks", held, "The main frame's interval after resuming");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that global pause can be turned off for a page, so that frames in other processes keep running while a frame is paused, and turned on again.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/same-process-frame.html?A"></iframe>
+</body>
