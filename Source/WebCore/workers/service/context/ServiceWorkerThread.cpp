@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "ExtendableMessageEvent.h"
 #include "IDBConnectionProxy.h"
+#include "InspectorObjectIdentifier.h"
 #include "InstallEvent.h"
 #include "JSDOMPromise.h"
 #include "LoaderStrategy.h"
@@ -59,7 +60,6 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
@@ -103,7 +103,7 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         contextData.scriptURL,
         URL(), // FIXME: Should pass owner URL.
         emptyString(),
-        makeString("serviceworker:"_s, Inspector::IdentifiersFactory::createIdentifier()),
+        makeString("serviceworker:"_s, generateInspectorObjectIdentifierString()),
         WTF::move(userAgent),
         platformStrategies()->loaderStrategy()->isOnLine(),
         contextData.contentSecurityPolicy,

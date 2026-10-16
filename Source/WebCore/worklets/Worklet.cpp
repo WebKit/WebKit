@@ -29,6 +29,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
+#include "InspectorObjectIdentifier.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptSourceCode.h"
 #include "ScriptWrappableInlines.h"
@@ -37,7 +38,6 @@
 #include "WorkletGlobalScope.h"
 #include "WorkletGlobalScopeProxy.h"
 #include "WorkletPendingTasks.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/Borrow.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -49,7 +49,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Worklet);
 
 Worklet::Worklet(Document& document)
     : ActiveDOMObject(&document)
-    , m_identifier(makeString("worklet:"_s, Inspector::IdentifiersFactory::createIdentifier()))
+    , m_identifier(makeString("worklet:"_s, generateInspectorObjectIdentifierString()))
 {
 }
 

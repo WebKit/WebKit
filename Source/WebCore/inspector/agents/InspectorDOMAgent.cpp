@@ -85,6 +85,7 @@
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
 #include "InspectorNodeFinder.h"
+#include "InspectorObjectIdentifier.h"
 #include "InspectorOverlayConfigParser.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -131,7 +132,6 @@
 #include "WebInjectedScriptManager.h"
 #include "XPathResult.h"
 #include "markup.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
@@ -1236,7 +1236,7 @@ Inspector::Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resu
         finder.performSearch(m_document.get());
     }
 
-    auto searchId = IdentifiersFactory::createIdentifier();
+    auto searchId = generateInspectorObjectIdentifierString();
 
     auto& resultsVector = m_searchResults.add(searchId, Vector<RefPtr<Node>>()).iterator->value;
     for (auto& result : finder.results())

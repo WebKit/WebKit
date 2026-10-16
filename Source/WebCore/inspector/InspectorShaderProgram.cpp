@@ -29,6 +29,7 @@
 #include "GPUComputePipeline.h"
 #include "GPURenderPipeline.h"
 #include "InspectorCanvas.h"
+#include "InspectorObjectIdentifier.h"
 #include "JSExecState.h"
 #include "ScriptExecutionContext.h"
 #include "WebGLProgram.h"
@@ -36,7 +37,6 @@
 #include "WebGLSampler.h"
 #include "WebGLShader.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/CallbackAggregator.h>
@@ -54,7 +54,7 @@ Ref<InspectorShaderProgram> InspectorShaderProgram::create(WebGLProgram& program
 }
 
 InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorCanvas& inspectorCanvas)
-    : m_identifier(makeString("program:"_s, IdentifiersFactory::createIdentifier()))
+    : m_identifier(makeString("program:"_s, generateInspectorObjectIdentifierString()))
     , m_canvas(inspectorCanvas)
     , m_program(program)
 {
@@ -74,7 +74,7 @@ Ref<InspectorShaderProgram> InspectorShaderProgram::create(GPURenderPipeline& pi
 }
 
 InspectorShaderProgram::InspectorShaderProgram(GPUComputePipeline& pipeline, InspectorCanvas& inspectorCanvas)
-    : m_identifier(makeString("pipeline:"_s, IdentifiersFactory::createIdentifier()))
+    : m_identifier(makeString("pipeline:"_s, generateInspectorObjectIdentifierString()))
     , m_canvas(inspectorCanvas)
     , m_program(pipeline)
 {
@@ -82,7 +82,7 @@ InspectorShaderProgram::InspectorShaderProgram(GPUComputePipeline& pipeline, Ins
 }
 
 InspectorShaderProgram::InspectorShaderProgram(GPURenderPipeline& pipeline, InspectorCanvas& inspectorCanvas)
-    : m_identifier(makeString("pipeline:"_s, IdentifiersFactory::createIdentifier()))
+    : m_identifier(makeString("pipeline:"_s, generateInspectorObjectIdentifierString()))
     , m_canvas(inspectorCanvas)
     , m_program(pipeline)
 {

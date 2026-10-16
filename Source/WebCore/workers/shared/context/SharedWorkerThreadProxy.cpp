@@ -36,6 +36,7 @@
 #include "FileSystemStorageConnection.h"
 #include "FrameLoader.h"
 #include "IDBConnectionProxy.h"
+#include "InspectorObjectIdentifier.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
 #include "MessageEvent.h"
@@ -55,7 +56,6 @@
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -73,7 +73,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         workerFetchResult.responseURL,
         document.url(),
         workerOptions.name,
-        makeString("sharedworker:"_s, Inspector::IdentifiersFactory::createIdentifier()),
+        makeString("sharedworker:"_s, generateInspectorObjectIdentifierString()),
         WTF::move(initializationData.userAgent),
         platformStrategies()->loaderStrategy()->isOnLine(),
         workerFetchResult.contentSecurityPolicy,
