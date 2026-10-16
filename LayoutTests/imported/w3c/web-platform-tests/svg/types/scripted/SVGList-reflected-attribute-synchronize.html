@@ -262,6 +262,52 @@ for (const attr of ["transform", "gradientTransform"]) {
     assert_equals(list.getItem(1), held1, "index 1");
   }, "SVGTransformList (" + attr + "): swapping two transform functions keeps both held items");
 
+  // The angle getter returns the angle argument of rotate, skewX and skewY, and
+  // 0 for every other function, so it has to follow each change of function.
+  const FUNCTION_CHANGES = [
+    { from: "rotate(30 5 5)", to: "translate(1,2)",
+      type: SVGTransform.SVG_TRANSFORM_TRANSLATE, angle: 0, component: "e", value: 1 },
+    { from: "translate(1,2)", to: "rotate(45 10 10)",
+      type: SVGTransform.SVG_TRANSFORM_ROTATE, angle: 45, component: "a", value: Math.cos(Math.PI / 4) },
+    { from: "translate(1,2)", to: "skewX(20)",
+      type: SVGTransform.SVG_TRANSFORM_SKEWX, angle: 20, component: "c", value: Math.tan(Math.PI / 9) },
+    { from: "rotate(30)", to: "skewY(20)",
+      type: SVGTransform.SVG_TRANSFORM_SKEWY, angle: 20, component: "b", value: Math.tan(Math.PI / 9) },
+    { from: "rotate(30)", to: "matrix(1 0 0 1 7 8)",
+      type: SVGTransform.SVG_TRANSFORM_MATRIX, angle: 0, component: "e", value: 7 },
+  ];
+  for (const change of FUNCTION_CHANGES) {
+    test(() => {
+      const el = build(change.from);
+      const held = listOf(el).getItem(0);
+      el.setAttribute(attr, change.to);
+      assert_equals(held.type, change.type, "type");
+      assert_equals(held.angle, change.angle, "angle");
+      assert_approx_equals(held.matrix[change.component], change.value, 1e-5,
+                           "matrix." + change.component);
+    }, "SVGTransformList (" + attr + "): " + change.from + " changed to " + change.to + " updates the held item's type, angle and matrix");
+  }
+
+  test(() => {
+    const el = build("translate(1,2)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "scale(3)");
+    held.setTranslate(7, 0);
+    assert_equals(listOf(el).getItem(0).matrix.e, 7,
+                  "the list reports the value written through the held item");
+  }, "SVGTransformList (" + attr + "): the held item is still attached after a changed transform function");
+
+  test(() => {
+    const el = build("translate(1,2)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "scale(3) rotate(45)");
+    assert_equals(listOf(el).numberOfItems, 2, "numberOfItems");
+    assert_equals(held.type, SVGTransform.SVG_TRANSFORM_SCALE, "the held item's type");
+    const appended = listOf(el).getItem(1);
+    assert_equals(appended.type, SVGTransform.SVG_TRANSFORM_ROTATE, "the appended item's type");
+    assert_equals(appended.angle, 45, "the appended item's angle");
+  }, "SVGTransformList (" + attr + "): a grow with a changed transform function updates the held item and sets the appended one");
+
   test(() => {
     const el = build("translate(1,2)");
     const list = listOf(el);
@@ -273,6 +319,41 @@ for (const attr of ["transform", "gradientTransform"]) {
     assert_equals(list.numberOfItems, 0, "numberOfItems");
     assert_equals(held.matrix.e, 1, "the detached item keeps its value");
   }, "SVGTransformList (" + attr + "): an empty list detaches every item");
+
+  // Step 1 reads the whole value before any item is touched: a value that only
+  // turns out unparsable after a valid transform function is an empty list, and
+  // Detach does not change the value of the items it detaches.
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "scale(3) oops(1)");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+    assert_equals(held.type, SVGTransform.SVG_TRANSFORM_TRANSLATE, "the detached item keeps its old type");
+    assert_equals(held.matrix.e, 1, "the detached item keeps its old matrix");
+  }, "SVGTransformList (" + attr + "): an unparsable value after a changed transform function detaches every item, which keeps its old value");
+
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "translate(5,6) oops(1)");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+    assert_equals(held.matrix.e, 1, "the detached item keeps its old matrix");
+  }, "SVGTransformList (" + attr + "): an unparsable value after an unchanged transform function detaches every item, which keeps its old value");
+
+  // A comma is only allowed between two transform functions.
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    el.setAttribute(attr, "scale(3),");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+  }, "SVGTransformList (" + attr + "): a trailing comma makes a shrinking value unparsable");
+
+  test(() => {
+    const el = build("translate(1,2) translate(3,4)");
+    const held = listOf(el).getItem(0);
+    el.setAttribute(attr, "translate(5,6),");
+    assert_equals(listOf(el).numberOfItems, 0, "numberOfItems");
+    assert_equals(held.matrix.e, 1, "the detached item keeps its old matrix");
+  }, "SVGTransformList (" + attr + "): a trailing comma after an unchanged transform function detaches every item, which keeps its old value");
 }
 
 // The DOMString branch, step 5, is deliberately the other way round: the list is
