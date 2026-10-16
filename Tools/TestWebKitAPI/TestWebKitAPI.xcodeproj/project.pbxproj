@@ -894,6 +894,7 @@
 				WebCore/PlatformDynamicRangeLimitTests.cpp,
 				WebCore/PlatformMediaSessionManagerTests.cpp,
 				WebCore/PODIntervalTree.cpp,
+				WebCore/PositionTests.cpp,
 				WebCore/PrivateClickMeasurement.cpp,
 				WebCore/PublicSuffix.cpp,
 				WebCore/PushDatabase.cpp,

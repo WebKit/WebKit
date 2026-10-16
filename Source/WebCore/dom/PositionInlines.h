@@ -61,10 +61,7 @@ inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
     if (auto* characterData = dynamicDowncast<CharacterData>(*anchorNode))
         return offset < characterData->length();
 
-    unsigned currentOffset = 0;
-    for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())
-        currentOffset++;
-    return offset < currentOffset;
+    return offset < anchorNode->countChildNodes();
 }
 
 } // namespace WebCore
