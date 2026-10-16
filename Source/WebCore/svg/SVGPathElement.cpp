@@ -34,6 +34,7 @@
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
+#include "SVGTextPathElement.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePropertiesInlines.h"
@@ -142,7 +143,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         ASSERT(attrName == SVGNames::dAttr);
         InstanceInvalidationGuard guard(*this);
-        invalidateMPathDependencies();
+        invalidatePathDependencies();
 
         if (auto* path = dynamicDowncast<RenderSVGPath>(renderer()))
             path->setNeedsShapeUpdate();
@@ -160,27 +161,29 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGeometryElement::svgAttributeChanged(attrName);
 }
 
-void SVGPathElement::invalidateMPathDependencies()
+void SVGPathElement::invalidatePathDependencies()
 {
-    // <mpath> can only reference <path> but this dependency is not handled in
-    // markForLayoutAndParentResourceInvalidation so we update any mpath dependencies manually.
+    // <mpath> and <textPath> dependencies are not handled in markForLayoutAndParentResourceInvalidation
+    // when this <path> has no renderer, so we update them manually.
     for (auto& element : referencingElements()) {
         if (RefPtr mpathElement = dynamicDowncast<SVGMPathElement>(element.get()))
             mpathElement->targetPathChanged();
+        else if (RefPtr textPathElement = dynamicDowncast<SVGTextPathElement>(element.get()))
+            textPathElement->updateSVGRendererForElementChange();
     }
 }
 
 Node::NeedsPostConnectionSteps SVGPathElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     auto result = SVGGeometryElement::insertionSteps(insertionType, parentOfInsertedTree);
-    invalidateMPathDependencies();
+    invalidatePathDependencies();
     return result;
 }
 
 void SVGPathElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     SVGGeometryElement::removingSteps(removalType, oldParentOfRemovedTree);
-    invalidateMPathDependencies();
+    invalidatePathDependencies();
 }
 
 float SVGPathElement::getTotalLength() const
@@ -300,7 +303,7 @@ void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
 
 void SVGPathElement::pathDidChange()
 {
-    invalidateMPathDependencies();
+    invalidatePathDependencies();
 }
 
 }
