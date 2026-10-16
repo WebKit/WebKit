@@ -104,9 +104,4 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     repaint();
 }
 
-bool RenderInline::requiresLayer() const
-{
-    return RenderBoxModelObject::requiresLayer() || style().willChange().canCreateStackingContext();
-}
-
 } // namespace WebCore

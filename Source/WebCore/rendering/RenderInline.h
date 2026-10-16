@@ -38,7 +38,6 @@ public:
     RenderInline(Type, Element&, Style::ComputedStyle&&);
     RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
-    bool requiresLayer() const override;
 
 private:
     ASCIILiteral renderName() const override;
