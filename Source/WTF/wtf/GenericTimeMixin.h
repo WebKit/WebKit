@@ -109,7 +109,8 @@ public:
         requires (std::is_same_v<TargetTime, DerivedTime>)
     inline DerivedTime approximate() const
     {
-        return *static_cast<const DerivedTime*>(this);
+        // DerivedTime derives from GenericTimeMixin<DerivedTime> (CRTP), so this is always a DerivedTime.
+        SUPPRESS_MEMORY_UNSAFE_CAST return *static_cast<const DerivedTime*>(this);
     }
 
     template<typename TargetTime>

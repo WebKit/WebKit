@@ -43,7 +43,8 @@ public:
     InlineWeakPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     InlineWeakPtr(HashTableEmptyValueType) : m_ptr(nullptr) { }
 
-    ALWAYS_INLINE ~InlineWeakPtr() { weakDerefIfNotNull(m_ptr); }
+    // InlineWeakPtr is itself the weak reference that keeps m_ptr's storage alive.
+    ALWAYS_INLINE ~InlineWeakPtr() { SUPPRESS_UNCOUNTED_ARG SUPPRESS_UNCHECKED_ARG weakDerefIfNotNull(m_ptr); }
 
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return !m_ptr; }
@@ -100,7 +101,8 @@ inline InlineWeakPtr<T>& InlineWeakPtr<T>::operator=(T* optr)
 template<typename T>
 inline InlineWeakPtr<T>& InlineWeakPtr<T>::operator=(std::nullptr_t)
 {
-    weakDerefIfNotNull(std::exchange(m_ptr, nullptr));
+    // InlineWeakPtr is itself the weak reference that keeps m_ptr's storage alive.
+    SUPPRESS_UNCOUNTED_ARG SUPPRESS_UNCHECKED_ARG weakDerefIfNotNull(std::exchange(m_ptr, nullptr));
     return *this;
 }
 

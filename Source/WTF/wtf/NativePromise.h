@@ -663,7 +663,7 @@ public:
         auto producer = adoptRef(new AllPromiseProducer(promises.size()));
         auto promise = producer->promise();
         for (size_t i = 0; i < promises.size(); ++i) {
-            promises[i]->whenSettled([producer, i] (ResultParam result) {
+            protect(promises[i])->whenSettled([producer, i](ResultParam result) {
                 if (result) {
                     if constexpr (std::is_void_v<ResolveValueT>)
                         producer->resolve(i, detail::VoidPlaceholder());
@@ -1337,7 +1337,7 @@ public:
         , m_defaultReject(std::forward<RejectValueT_>(defaulReject))
     {
         if constexpr (PromiseType::IsExclusive)
-            m_promise->setDispatchMode(dispatchMode, creationSite);
+            protect(m_promise)->setDispatchMode(dispatchMode, creationSite);
     }
 
     NativePromiseProducer(NativePromiseProducer&& other) = default;
@@ -1557,7 +1557,8 @@ auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, con
         typename ReturnTypeNoRef::PromiseType::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
         auto promise = proxyPromiseProducer.promise();
         targetQueue.dispatch([producer = WTF::move(proxyPromiseProducer), function = std::forward<Function>(function)] () mutable {
-            static_cast<Ref<typename ReturnTypeNoRef::PromiseType>>(function())->chainTo(WTF::move(producer), { "invokeAsync proxy", 0 });
+            Ref<typename ReturnTypeNoRef::PromiseType> result = function();
+            result->chainTo(WTF::move(producer), { "invokeAsync proxy", 0 });
         });
         return promise;
     } else if constexpr (std::is_void_v<ReturnType>) {

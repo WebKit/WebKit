@@ -113,7 +113,8 @@ private:
 
     void deletePointer()
     {
-        if (T* pointer = m_data.pointer())
+        // This tuple owns the pointer and is deleting it.
+        if (SUPPRESS_UNCHECKED_LOCAL T* pointer = m_data.pointer())
             Deleter()(pointer);
     }
 

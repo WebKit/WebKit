@@ -54,7 +54,8 @@ public:
 
     CompactRefPtrTuple(const CompactRefPtrTuple& other)
     {
-        setPointer(other.pointer());
+        // other.pointer() is kept alive by the reference that other holds.
+        SUPPRESS_UNCOUNTED_ARG setPointer(other.pointer());
         setType(other.type());
     }
 

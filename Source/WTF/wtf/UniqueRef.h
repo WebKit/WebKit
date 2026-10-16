@@ -41,7 +41,8 @@ template<typename T> class UniqueRef;
 template<typename T, class... Args>
 [[nodiscard]] UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
 {
-    return UniqueRef<T>(*new T(std::forward<Args>(args)...));
+    // FIXME: Remove this suppression once rdar://190195858 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG return UniqueRef<T>(*new T(std::forward<Args>(args)...));
 }
 
 template<class T, class... Args>
@@ -56,7 +57,8 @@ template<typename T, class... Args>
 {
     static_assert(std::is_same<typename T::WTFIsFastMallocAllocated, int>::value, "T should use TZoneMalloc (WTF_MAKE_TZONE_ALLOCATED or one of its variants)");
     static_assert(!HasRefPtrMemberFunctions<T>, "T should not be RefCounted");
-    return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
+    // FIXME: Remove this suppression once rdar://190195858 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
 }
 
 template<typename T>

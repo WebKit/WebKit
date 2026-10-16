@@ -204,7 +204,8 @@ public:
     WTF_EXPORT_PRIVATE ContinuousApproximateTime operator-(ContinuousApproximateTime) const;
     WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator-(const TimeWithDynamicClockType&) const;
     
-    friend constexpr auto operator<=>(Seconds, Seconds) = default;
+    // FIXME: Remove this suppression once rdar://190195764 is fixed.
+    SUPPRESS_MEMORY_UNSAFE_CAST friend constexpr auto operator<=>(Seconds, Seconds) = default;
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     

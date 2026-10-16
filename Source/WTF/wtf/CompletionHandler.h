@@ -107,7 +107,8 @@ public:
     {
         assertIsCurrent(m_callThread);
         ASSERT_WITH_MESSAGE(m_function, "Completion handler should not be called more than once");
-        return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
+        // FIXME: Remove this suppression once rdar://190195858 is fixed.
+        SUPPRESS_FORWARD_DECL_ARG return std::exchange(m_function, nullptr)(std::forward<In>(in)...);
     }
 
 private:

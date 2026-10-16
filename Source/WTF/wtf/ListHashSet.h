@@ -814,7 +814,7 @@ inline bool ListHashSet<T, U>::remove(iterator it)
 {
     if (it == end())
         return false;
-    remove(it->get());
+    remove(*it);
     return true;
 }
 

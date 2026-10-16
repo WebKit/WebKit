@@ -162,7 +162,8 @@ public:
     using RefCountedType = T;
 
     void ref() const { header().ref(); }
-    void deref() const { header().deref(object()); }
+    // object() is this object, kept alive by the caller's reference.
+    void deref() const { SUPPRESS_UNCOUNTED_ARG SUPPRESS_UNCHECKED_ARG header().deref(object()); }
     bool hasOneRef() const { return header().hasOneRef(); }
     unsigned refCount() const { return header().refCount(); }
     RefCountDebugger& refCountDebugger() const { return header().refCountDebugger(); }
@@ -180,7 +181,8 @@ public:
             "Polymorphic RefCountedWithInlineWeakPtr<T> requires T to have a virtual destructor");
         auto* storage = new RefCountedStorage<U>;
         ::new (static_cast<void*>(storage->header)) RefCountHeader;
-        auto* result = ::new (static_cast<void*>(storage->object)) U(std::forward<Args>(args)...);
+        // The new object is adopted by the caller.
+        SUPPRESS_UNCOUNTED_LOCAL SUPPRESS_UNCHECKED_LOCAL auto* result = ::new (static_cast<void*>(storage->object)) U(std::forward<Args>(args)...);
         RELEASE_ASSERT(static_cast<T*>(result) == static_cast<void*>(storage->object));
         return result;
     }
@@ -189,7 +191,8 @@ protected:
     RefCountedWithInlineWeakPtr() = default;
 
 private:
-    T* object() const { return const_cast<T*>(static_cast<const T*>(this)); }
+    // T derives from RefCountedWithInlineWeakPtr<T> (CRTP), so this is always a T.
+    T* object() const { SUPPRESS_MEMORY_UNSAFE_CAST return const_cast<T*>(static_cast<const T*>(this)); }
     RefCountHeader& header() const { return refCountHeader(object()); }
 } SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 

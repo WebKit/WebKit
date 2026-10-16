@@ -75,7 +75,8 @@ public:
     
     T* find()
     {
-        T* result = static_cast<T*>(this);
+        // T derives from UnionFind<T> (CRTP), so this is always a T.
+        SUPPRESS_MEMORY_UNSAFE_CAST T* result = static_cast<T*>(this);
         T* next = result->m_parent;
         while (next) {
             result = next;

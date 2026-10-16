@@ -101,8 +101,8 @@ public:
     void operator delete(ButterflyArray* base, std::destroying_delete_t)
     {
         unsigned leadingSize = base->m_leadingSize;
-        std::destroy_at(static_cast<Derived*>(base));
-        fastFree(std::bit_cast<uint8_t*>(static_cast<Derived*>(base)) - memoryOffsetForDerived(leadingSize));
+        std::destroy_at(base->derived());
+        fastFree(std::bit_cast<uint8_t*>(base->derived()) - memoryOffsetForDerived(leadingSize));
     }
 
     ~ButterflyArray()
@@ -116,26 +116,31 @@ public:
 protected:
     LeadingType* leadingData()
     {
-        return std::bit_cast<LeadingType*>(static_cast<Derived*>(this)) - m_leadingSize;
+        return std::bit_cast<LeadingType*>(derived()) - m_leadingSize;
     }
 
     const LeadingType leadingData() const
     {
-        return std::bit_cast<const LeadingType*>(static_cast<const Derived*>(this)) - m_leadingSize;
+        return std::bit_cast<const LeadingType*>(derived()) - m_leadingSize;
     }
 
     TrailingType* trailingData()
     {
-        return std::bit_cast<TrailingType*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfTrailingData());
+        return std::bit_cast<TrailingType*>(std::bit_cast<uint8_t*>(derived()) + offsetOfTrailingData());
     }
 
     const TrailingType* trailingData() const
     {
-        return std::bit_cast<const TrailingType*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfTrailingData());
+        return std::bit_cast<const TrailingType*>(std::bit_cast<const uint8_t*>(derived()) + offsetOfTrailingData());
     }
 
     unsigned m_leadingSize { 0 };
     unsigned m_trailingSize { 0 };
+
+private:
+    // Derived derives from ButterflyArray (CRTP), so this is always a Derived.
+    Derived* derived() { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<Derived*>(this); }
+    const Derived* derived() const { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const Derived*>(this); }
 };
 
 } // namespace WTF

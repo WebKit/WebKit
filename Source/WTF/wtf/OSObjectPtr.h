@@ -119,8 +119,9 @@ public:
     OSObjectPtr(const OSObjectPtr& other)
         : m_ptr(other.m_ptr)
     {
+        // FIXME: Remove this suppression once rdar://190192936 is fixed.
         if (m_ptr)
-            RetainTraits::retain(m_ptr);
+            SUPPRESS_FORWARD_DECL_ARG RetainTraits::retain(m_ptr);
     }
 
     OSObjectPtr(OSObjectPtr&& other)
@@ -132,8 +133,9 @@ public:
     OSObjectPtr(T ptr)
         : m_ptr(WTF::move(ptr))
     {
+        // FIXME: Remove this suppression once rdar://190192936 is fixed.
         if (m_ptr)
-            RetainTraits::retain(m_ptr);
+            SUPPRESS_FORWARD_DECL_ARG RetainTraits::retain(m_ptr);
     }
 
     OSObjectPtr& operator=(const OSObjectPtr& other)

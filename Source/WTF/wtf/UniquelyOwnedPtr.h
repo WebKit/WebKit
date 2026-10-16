@@ -42,7 +42,8 @@ template<typename U, typename... Args>
 UniquelyOwnedPtr<U> makeUniquelyOwned(Args&&... args)
 {
     using T = typename U::RefCountedType;
-    auto* object = RefCountedWithInlineWeakPtr<T>::template create<U>(std::forward<Args>(args)...);
+    // The new object is immediately adopted by the returned UniquelyOwnedPtr.
+    SUPPRESS_UNCOUNTED_LOCAL SUPPRESS_UNCHECKED_LOCAL auto* object = RefCountedWithInlineWeakPtr<T>::template create<U>(std::forward<Args>(args)...);
     return UniquelyOwnedPtr<U>(object);
 }
 

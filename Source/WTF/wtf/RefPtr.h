@@ -95,7 +95,8 @@ public:
     ALWAYS_INLINE constexpr RefPtr(std::nullptr_t) : m_ptr(nullptr) { }
     ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(RefDerefTraits::refIfNotNull(ptr)) { }
     ALWAYS_INLINE RefPtr(T& ptr) : m_ptr(&RefDerefTraits::ref(ptr)) { }
-    ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.m_ptr))) { }
+    // FIXME: Remove this suppression once rdar://190192936 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.m_ptr))) { }
     template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(RefDerefTraits::refIfNotNull(PtrTraits::unwrap(o.get()))) { }
 
     ALWAYS_INLINE RefPtr(RefPtr&& o) noexcept : m_ptr(o.leakRef()) { }
@@ -114,7 +115,8 @@ public:
     bool isHashTableEmptyValue() const { return m_ptr == hashTableEmptyValue(); }
     static T* hashTableEmptyValue() { return nullptr; }
 
-    ALWAYS_INLINE ~RefPtr() { RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
+    // FIXME: Remove this suppression once rdar://190192936 is fixed.
+    ALWAYS_INLINE ~RefPtr() { SUPPRESS_FORWARD_DECL_ARG RefDerefTraits::derefIfNotNull(PtrTraits::exchange(m_ptr, nullptr)); }
 
     T* get() const LIFETIME_BOUND { return PtrTraits::unwrap(m_ptr); }
     T* unsafeGet() const { return PtrTraits::unwrap(m_ptr); } // FIXME: Replace with get() then remove.
@@ -141,7 +143,8 @@ public:
     template<typename X, typename Y, typename Z> void swap(RefPtr<X, Y, Z>&);
 
     RefPtr copyRef() && = delete;
-    [[nodiscard]] RefPtr copyRef() const & { return RefPtr(m_ptr); }
+    // FIXME: Remove this suppression once rdar://190192936 is fixed.
+    [[nodiscard]] RefPtr copyRef() const & { SUPPRESS_FORWARD_DECL_ARG return RefPtr(m_ptr); }
 
 private:
     friend RefPtr adoptRef<T, PtrTraits, RefDerefTraits>(T*);
@@ -210,7 +213,8 @@ inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(T* optr)
 template<typename T, typename U, typename V>
 inline RefPtr<T, U, V>& RefPtr<T, U, V>::operator=(std::nullptr_t)
 {
-    V::derefIfNotNull(U::exchange(m_ptr, nullptr));
+    // FIXME: Remove this suppression once rdar://190192936 is fixed.
+    SUPPRESS_FORWARD_DECL_ARG V::derefIfNotNull(U::exchange(m_ptr, nullptr));
     return *this;
 }
 

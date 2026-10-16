@@ -63,8 +63,9 @@ public:
     T* prev() const { return derivedOrNull(PtrTraits::unwrap(m_prev)); }
     T* next() const { return derivedOrNull(PtrTraits::unwrap(m_next)); }
 
-    T* derived() { return static_cast<T*>(this); }
-    const T* derived() const { return static_cast<const T*>(this); }
+    // T derives from BasicRawSentinelNode (CRTP), so this is always a T.
+    T* derived() { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<T*>(this); }
+    const T* derived() const { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const T*>(this); }
     
     bool isOnList() const
     {
@@ -166,7 +167,7 @@ private:
 
 template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits>::remove()
 {
-    SentinelLinkedList<T, BasicRawSentinelNode>::remove(static_cast<T*>(this));
+    SentinelLinkedList<T, BasicRawSentinelNode>::remove(derived());
 }
 
 template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits>::prepend(BasicRawSentinelNode* node)

@@ -100,7 +100,7 @@ public:
     constexpr Type type() const { return decodeType(m_data); }
     void setType(Type type)
     {
-        m_data = encode(pointer(), type);
+        m_data = (m_data & pointerMask) | encodeType(type);
         ASSERT(this->type() == type);
     }
 

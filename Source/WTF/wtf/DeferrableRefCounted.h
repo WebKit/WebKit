@@ -99,15 +99,17 @@ class DeferrableRefCounted : public DeferrableRefCountedBase {
 public:
     void deref() const
     {
+        // T derives from DeferrableRefCounted<T> (CRTP), so this is always a T.
         if (derefBase())
-            delete static_cast<const T*>(this);
+            SUPPRESS_MEMORY_UNSAFE_CAST delete static_cast<const T*>(this);
     }
 
     bool setIsDeferred(bool value)
     {
         if (!setIsDeferredBase(value))
             return false;
-        delete static_cast<T*>(this);
+        // T derives from DeferrableRefCounted<T> (CRTP), so this is always a T.
+        SUPPRESS_MEMORY_UNSAFE_CAST delete static_cast<T*>(this);
         return true;
     }
 

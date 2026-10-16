@@ -77,7 +77,7 @@ template<typename T> T checked_cf_cast(CFTypeRef object)
 
 // Use bridgeCFCast to convert from id -> CF without ref churn.
 
-inline CFTypeRef bridgeCFCast(id object)
+inline CFTypeRef CLANG_POINTER_CONVERSION bridgeCFCast(id object)
 {
 #ifdef __OBJC__
     return (__bridge CFTypeRef)object;

@@ -167,7 +167,8 @@ CheckedUTF8 checkUTF8(std::span<const char8_t> source)
     return { validSpan, lengthUTF16, validLength == lengthUTF16 };
 }
 
-template<typename CharacterTypeA, typename CharacterTypeB> bool equalInternal(std::span<CharacterTypeA> a, std::span<CharacterTypeB> b)
+template<typename CharacterTypeA, typename CharacterTypeB>
+SUPPRESS_NODELETE bool LEGACY_NODELETE equalInternal(std::span<CharacterTypeA> a, std::span<CharacterTypeB> b)
 {
     size_t offsetA = 0;
     size_t offsetB = 0;

@@ -209,8 +209,9 @@ public:
 
 protected:
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    pointer data() LIFETIME_BOUND { return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
-    const_pointer data() const LIFETIME_BOUND { return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
+    // Derived derives from TrailingArray (CRTP), so this is always a Derived.
+    pointer data() LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
+    const_pointer data() const LIFETIME_BOUND { SUPPRESS_MEMORY_UNSAFE_CAST return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     unsigned m_size { 0 };

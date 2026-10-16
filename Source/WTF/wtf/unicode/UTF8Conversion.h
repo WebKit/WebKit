@@ -53,8 +53,8 @@ WTF_EXPORT_PRIVATE ConversionResult<char8_t> LEGACY_NODELETE convert(std::span<c
 WTF_EXPORT_PRIVATE ConversionResult<char16_t> convertReplacingInvalidSequences(std::span<const char8_t>, std::span<char16_t>);
 WTF_EXPORT_PRIVATE ConversionResult<char8_t> LEGACY_NODELETE convertReplacingInvalidSequences(std::span<const char16_t>, std::span<char8_t>);
 
-WTF_EXPORT_PRIVATE bool equal(std::span<const char16_t>, std::span<const char8_t>);
-WTF_EXPORT_PRIVATE bool equal(std::span<const Latin1Character>, std::span<const char8_t>);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE equal(std::span<const char16_t>, std::span<const char8_t>);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE equal(std::span<const Latin1Character>, std::span<const char8_t>);
 
 // The checkUTF8 function checks the UTF-8 and returns a span of the valid complete
 // UTF-8 sequences at the start of the passed-in characters, along with the UTF-16

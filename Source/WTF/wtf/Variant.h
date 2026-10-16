@@ -448,17 +448,7 @@ namespace mpark {
       using remove_cvref_t =
           typename std::remove_cv<remove_reference_t<T>>::type;
 
-      template <typename T>
-      inline constexpr T &&forward(remove_reference_t<T> &t) noexcept {
-        return static_cast<T &&>(t);
-      }
-
-      template <typename T>
-      inline constexpr T &&forward(remove_reference_t<T> &&t) noexcept {
-        static_assert(!std::is_lvalue_reference<T>::value,
-                      "can not forward an rvalue as an lvalue");
-        return static_cast<T &&>(t);
-      }
+      using std::forward;
 
       template <typename T>
       inline constexpr remove_reference_t<T> &&move(T &&t) noexcept {
@@ -1821,7 +1811,7 @@ IGNORE_GCC_WARNINGS_END
     using overload = typename overload_impl<Arg, Ts...>::type;
 
     template <typename Arg, typename... Ts>
-    using best_match = lib::invoke_result_t<overload<Arg, Ts...>, Arg>;
+    using best_match = std::invoke_result_t<overload<Arg, Ts...>, Arg>;
 
     template <typename T>
     struct is_in_place_index : std::false_type {};

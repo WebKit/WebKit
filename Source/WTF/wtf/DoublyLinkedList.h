@@ -50,22 +50,26 @@ template<typename T> inline DoublyLinkedListNode<T>::DoublyLinkedListNode()
 
 template<typename T> inline void DoublyLinkedListNode<T>::setPrev(T* prev)
 {
-    static_cast<T*>(this)->m_prev = prev;
+    // T derives from DoublyLinkedListNode<T> (CRTP), so this is always a T.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<T*>(this)->m_prev = prev;
 }
 
 template<typename T> inline void DoublyLinkedListNode<T>::setNext(T* next)
 {
-    static_cast<T*>(this)->m_next = next;
+    // T derives from DoublyLinkedListNode<T> (CRTP), so this is always a T.
+    SUPPRESS_MEMORY_UNSAFE_CAST static_cast<T*>(this)->m_next = next;
 }
 
 template<typename T> inline T* DoublyLinkedListNode<T>::prev() const
 {
-    return static_cast<const T*>(this)->m_prev;
+    // T derives from DoublyLinkedListNode<T> (CRTP), so this is always a T.
+    SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const T*>(this)->m_prev;
 }
 
 template<typename T> inline T* DoublyLinkedListNode<T>::next() const
 {
-    return static_cast<const T*>(this)->m_next;
+    // T derives from DoublyLinkedListNode<T> (CRTP), so this is always a T.
+    SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<const T*>(this)->m_next;
 }
 
 template<typename T>

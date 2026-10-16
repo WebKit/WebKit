@@ -151,8 +151,8 @@ static constexpr size_t MB = 1024 * 1024;
 static constexpr size_t GB = 1024 * 1024 * 1024;
 
 // std::min and std::max are not annotated LEGACY_NODELETE, but they run no destructors, so the suppression is safe.
-template<typename T> constexpr const T& LEGACY_NODELETE min(const T& a, const T& b) { SUPPRESS_NODELETE return std::min(a, b); }
-template<typename T> constexpr const T& LEGACY_NODELETE max(const T& a, const T& b) { SUPPRESS_NODELETE return std::max(a, b); }
+template<typename T> SUPPRESS_NODELETE constexpr const T& LEGACY_NODELETE min(const T& a, const T& b) { return std::min(a, b); }
+template<typename T> SUPPRESS_NODELETE constexpr const T& LEGACY_NODELETE max(const T& a, const T& b) { return std::max(a, b); }
 
 inline bool isPointerAligned(void* p)
 {
@@ -873,7 +873,15 @@ template<typename T>
     using NonRefQualifiedType = std::remove_reference_t<T>;
     static_assert(!std::is_const_v<NonRefQualifiedType>, "T is const qualified.");
 
-    return std::move(std::forward<T>(value));
+    return std::move(value);
+}
+
+// Same as std::addressof(), but the static analyzer knows the result points to the argument.
+// FIXME: Use std::addressof() instead once rdar://190195680 is fixed.
+template<typename T>
+ALWAYS_INLINE constexpr T* CLANG_POINTER_CONVERSION addressOfArgument(T& value)
+{
+    return std::addressof(value);
 }
 
 template<typename T, std::size_t N>
@@ -1034,7 +1042,7 @@ T& reinterpretCastSpanStartTo(std::span<U, Extent> span)
 enum class IgnoreTypeChecks : bool { No, Yes };
 
 template<IgnoreTypeChecks ignoreTypeChecks = IgnoreTypeChecks::No, typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
+SUPPRESS_NODELETE bool LEGACY_NODELETE equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(ignoreTypeChecks == IgnoreTypeChecks::Yes || std::has_unique_object_representations_v<T>);
@@ -1047,7 +1055,7 @@ bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-bool spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
+SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
@@ -1058,7 +1066,7 @@ bool spanHasPrefix(std::span<T, TExtent> span, std::span<U, UExtent> prefix)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-bool spanHasSuffix(std::span<T, TExtent> span, std::span<U, UExtent> suffix)
+SUPPRESS_NODELETE bool LEGACY_NODELETE spanHasSuffix(std::span<T, TExtent> span, std::span<U, UExtent> suffix)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
@@ -1069,7 +1077,7 @@ bool spanHasSuffix(std::span<T, TExtent> span, std::span<U, UExtent> suffix)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-std::strong_ordering compareSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
+SUPPRESS_NODELETE std::strong_ordering LEGACY_NODELETE compareSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::has_unique_object_representations_v<T>);
