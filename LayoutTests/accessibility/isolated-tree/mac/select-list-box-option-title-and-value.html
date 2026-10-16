@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="native" size="4">
+    <option id="native-text">Apple</option>
+    <option id="native-label" label="Banana">Yellow fruit</option>
+    <option id="native-element"><span>Cherry</span></option>
+    <option id="native-image"><img alt="Date" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></option>
+</select>
+
+<select id="base" class="base" size="4">
+    <option id="base-text">Apple</option>
+    <option id="base-label" label="Banana">Yellow fruit</option>
+    <option id="base-element"><span>Cherry</span></option>
+    <option id="base-image"><img alt="Date" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></option>
+</select>
+</div>
+
+<script>
+var output = "This test ensures that the options of a base appearance list box expose their text through AXValue without an AXTitle, like those of a native list box.\n\n";
+
+function describe(id) {
+    const option = accessibilityController.accessibleElementById(id);
+    return `${option?.role} | ${option?.title} | ${option?.stringValue} | ${option?.description}`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForElementById("native");
+        await waitForElementById("base");
+        for (const kind of ["text", "label", "element", "image"])
+            output += expect(`describe("base-${kind}")`, `describe("native-${kind}")`);
+        output += expect(`describe("native-image")`, `"AXRole: AXStaticText | AXTitle:  | AXValue: Date | AXDescription: "`);
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

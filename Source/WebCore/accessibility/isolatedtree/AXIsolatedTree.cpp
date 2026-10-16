@@ -455,7 +455,11 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     // to it. It will be removed from m_readerThreadNodeMap when the corresponding DOM element, renderer, or
     // other entity is removed from the page.
     NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper(), nextChangeSequence() };
-    markDirtyAndGetWorkingChanges().appends.append(WTF::move(nodeChange));
+    auto& workingChanges = markDirtyAndGetWorkingChanges();
+    workingChanges.appends.append(WTF::move(nodeChange));
+#if ASSERT_ENABLED
+    workingChanges.unconnectedNodeIDs.append(objectID);
+#endif
 }
 
 void AXIsolatedTree::queueRemovals(Vector<NodeAndParentID>&& subtreeRemovals)
@@ -1763,6 +1767,9 @@ void AXIsolatedTree::PendingChanges::merge(PendingChanges&& source)
     mergeVector(subtreeRemovals, WTF::move(source.subtreeRemovals));
     mergeVector(propertyChanges, WTF::move(source.propertyChanges));
     mergeVector(childrenUpdates, WTF::move(source.childrenUpdates));
+#if ASSERT_ENABLED
+    mergeVector(unconnectedNodeIDs, WTF::move(source.unconnectedNodeIDs));
+#endif
 
     // Set/map union: idempotent for protectedFromDeletionIDs; overwrite-by-key for parentUpdates.
     // As an optimization, when the destination is empty, move-assign instead of element-by-element merge.
@@ -1898,6 +1905,10 @@ void AXIsolatedTree::applyCommittedChanges(PendingChanges&& committedChanges)
     if (hasTreeStructureChange)
         m_cachedUnignoredChildren.clear();
 
+#if ASSERT_ENABLED
+    m_readerThreadUnconnectedNodes.addAll(committedChanges.unconnectedNodeIDs);
+#endif
+
     if (committedChanges.focusedNodeID && *committedChanges.focusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID "_s, m_focusedNodeID ? m_focusedNodeID->loggingString() : ""_str, " pendingFocusedNodeID "_s, *committedChanges.focusedNodeID ? (*committedChanges.focusedNodeID)->loggingString() : ""_str));
         m_focusedNodeID = *committedChanges.focusedNodeID;
@@ -2027,10 +2038,14 @@ void AXIsolatedTree::applyCommittedChanges(PendingChanges&& committedChanges)
             };
             HashSet<AXID> reachableNodes;
             markReachableNodes(root.get(), reachableNodes, markReachableNodes);
-            // FIXME: This can spuriously fire when the tree has unconnected nodes (relation origins /
-            // targets added via addUnconnectedNode), which live in m_readerThreadNodeMap but aren't
-            // reachable from the root. We can't subtract them here because m_unconnectedNodes is only
-            // safe to read on the main thread.
+            // Unconnected nodes, such as relation targets without a renderer, aren't reachable from the root.
+            m_readerThreadUnconnectedNodes.removeIf([&](auto axID) {
+                RefPtr object = objectForID(axID);
+                if (!object)
+                    return true;
+                markReachableNodes(object.get(), reachableNodes, markReachableNodes);
+                return false;
+            });
             ASSERT_WITH_MESSAGE(reachableNodes.size() == m_readerThreadNodeMap.size(), "AX: After applying pending root node, %u reachable nodes but %u are in the node map", reachableNodes.size(), m_readerThreadNodeMap.size());
         }
 #endif // ASSERT_ENABLED
@@ -2344,6 +2359,7 @@ static bool LEGACY_NODELETE shouldCacheElementName(ElementName name)
     case ElementName::HTML_tbody:
     case ElementName::HTML_tfoot:
     case ElementName::HTML_output:
+    case ElementName::HTML_option:
         return true;
     default:
         return false;

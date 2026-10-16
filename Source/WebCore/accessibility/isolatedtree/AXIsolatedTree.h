@@ -674,6 +674,9 @@ private:
         // as focusedNodeID, or the clear would look like "not written" and be dropped by merge().
         Markable<AXID> rootNodeID;
         Vector<NodeChange> appends;
+#if ASSERT_ENABLED
+        Vector<AXID> unconnectedNodeIDs;
+#endif
         Vector<AXPropertyChange> propertyChanges;
         Vector<NodeAndParentID> subtreeRemovals;
         Vector<std::pair<AXID, Vector<AXID>>> childrenUpdates;
@@ -792,6 +795,9 @@ private:
 
     // Only accessed on AX thread.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
+#if ASSERT_ENABLED
+    HashSet<AXID> m_readerThreadUnconnectedNodes;
+#endif
     Markable<AXID> m_rootNodeID;
 
     // Written to by main thread under lock, accessed and applied by AX thread.

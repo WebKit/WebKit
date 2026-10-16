@@ -27,12 +27,12 @@ function expectListBox()
     window.axSelect = accessibilityController.accessibleElementById("select");
     var result = expect("axSelect.role", "'AXRole: AXList'");
     result += expect("axSelect.childrenCount", "4");
-    result += expect("platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple')", "true");
+    result += expect("axSelect.childAtIndex(0)?.stringValue", "'AXValue: Apple'");
     result += expect("axSelect.childAtIndex(1).isSelected", "true");
     result += expect("axSelect.childAtIndex(2)?.stringValue", "'AXValue: More'");
     result += expect("axSelect.childAtIndex(2)?.isEnabled", "false");
     window.axCherry = accessibilityController.accessibleElementById("cherry");
-    result += expect("platformTextAlternatives(axCherry).includes('Cherry')", "true");
+    result += expect("axCherry?.stringValue", "'AXValue: Cherry'");
     result += expect("axCherry.parentElement().isEqual(axSelect)", "true");
     return result;
 }

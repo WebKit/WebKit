@@ -1,0 +1,12 @@
+This test ensures that the options of a base appearance list box expose their text through AXValue without an AXTitle, like those of a native list box.
+
+PASS: describe("base-text") === describe("native-text")
+PASS: describe("base-label") === describe("native-label")
+PASS: describe("base-element") === describe("native-element")
+PASS: describe("base-image") === describe("native-image")
+PASS: describe("native-image") === "AXRole: AXStaticText | AXTitle:  | AXValue: Date | AXDescription: "
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

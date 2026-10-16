@@ -2,11 +2,11 @@ This test verifies that a base-appearance list box exposes its options as list b
 
 PASS: axSelect.role === 'AXRole: AXList'
 PASS: axSelect.childrenCount === 4
-PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
+PASS: axSelect.childAtIndex(0)?.stringValue === 'AXValue: Apple'
 PASS: axSelect.childAtIndex(1).isSelected === true
 PASS: axSelect.childAtIndex(2)?.stringValue === 'AXValue: More'
 PASS: axSelect.childAtIndex(2)?.isEnabled === false
-PASS: platformTextAlternatives(axCherry).includes('Cherry') === true
+PASS: axCherry?.stringValue === 'AXValue: Cherry'
 PASS: axCherry.parentElement().isEqual(axSelect) === true
 
 size=1
@@ -20,11 +20,11 @@ size=4
 PASS: accessibilityController.accessibleElementById('select').role === 'AXRole: AXList'
 PASS: axSelect.role === 'AXRole: AXList'
 PASS: axSelect.childrenCount === 4
-PASS: platformTextAlternatives(axSelect.childAtIndex(0)).includes('Apple') === true
+PASS: axSelect.childAtIndex(0)?.stringValue === 'AXValue: Apple'
 PASS: axSelect.childAtIndex(1).isSelected === true
 PASS: axSelect.childAtIndex(2)?.stringValue === 'AXValue: More'
 PASS: axSelect.childAtIndex(2)?.isEnabled === false
-PASS: platformTextAlternatives(axCherry).includes('Cherry') === true
+PASS: axCherry?.stringValue === 'AXValue: Cherry'
 PASS: axCherry.parentElement().isEqual(axSelect) === true
 
 PASS successfullyParsed is true

@@ -1,0 +1,100 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.base {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="native" size="5">
+    <option>Apple</option>
+    <optgroup label="Fruit">
+        <option>Banana</option>
+        <option><span>Cherry</span></option>
+    </optgroup>
+</select>
+
+<select id="base" class="base" size="5">
+    <option>Apple</option>
+    <optgroup label="Fruit">
+        <option>Banana</option>
+        <option><span>Cherry</span></option>
+    </optgroup>
+</select>
+
+<select id="native-switched" size="5">
+    <option>Apple</option>
+    <optgroup label="Fruit">
+        <option>Banana</option>
+        <option><span>Cherry</span></option>
+    </optgroup>
+</select>
+
+<select id="base-switched" class="base" size="5">
+    <option>Apple</option>
+    <optgroup label="Fruit">
+        <option>Banana</option>
+        <option><span>Cherry</span></option>
+    </optgroup>
+</select>
+<div id="labelled" role="group" aria-labelledby="cherry-label">Group</div>
+<select id="labelling" class="base" size="3">
+    <option>Apple</option>
+    <option><span id="cherry-label">Cherry</span></option>
+</select>
+</div>
+
+<script>
+var output = "This test ensures that the options and optgroups of a list box that switches appearance are exposed like those of a list box that always had that appearance, and that a relation to their content survives the switch.\n\n";
+
+function items(id)
+{
+    const select = accessibilityController.accessibleElementById(id);
+    const result = [];
+    for (let i = 0; i < (select?.childrenCount ?? 0); i++) {
+        const item = select.childAtIndex(i);
+        result.push(`${item?.role}|${item?.title}|${item?.stringValue}|${item?.description}|${item?.childrenCount}`);
+    }
+    return result.join(", ");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        for (const id of ["native", "base", "native-switched", "base-switched"])
+            await waitForElementById(id);
+        output += expect("items('native-switched')", "items('native')");
+        output += expect("items('base-switched')", "items('base')");
+
+        document.getElementById("native-switched").classList.add("base");
+        document.getElementById("base-switched").classList.remove("base");
+        output += await expectAsync("items('native-switched')", "items('base')");
+        output += await expectAsync("items('base-switched')", "items('native')");
+
+        document.getElementById("native-switched").classList.remove("base");
+        document.getElementById("base-switched").classList.add("base");
+        output += await expectAsync("items('native-switched')", "items('native')");
+        output += await expectAsync("items('base-switched')", "items('base')");
+
+        window.axLabelled = await waitForElementById("labelled");
+        window.axCherryLabel = axLabelled.ariaLabelledByElementAtIndex(0);
+        output += expect("axCherryLabel?.domIdentifier", "'cherry-label'");
+        document.getElementById("labelling").classList.remove("base");
+        await waitFor(() => !axLabelled.ariaLabelledByElementAtIndex(0)?.isEqual(axCherryLabel));
+        output += expect("axLabelled.ariaLabelledByElementAtIndex(0)?.domIdentifier", "'cherry-label'");
+
+        document.getElementById("content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

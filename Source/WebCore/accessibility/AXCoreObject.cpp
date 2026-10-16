@@ -1968,9 +1968,9 @@ String AXCoreObject::title(Vector<AccessibilityText>* computedText) const
             return title;
     }
 
-    // Static text should communicate its content through AXValue.
+    // Static text and the options of a list box should communicate their content through AXValue.
     // Meter elements should communicate their content via AXValueDescription.
-    if (isStaticText() || isMeter())
+    if (isStaticText() || isMeter() || (isListBoxOption() && elementName() == ElementName::HTML_option))
         return { };
 
     // A file upload button presents a challenge because it has button text and a value, but the

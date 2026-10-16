@@ -1,0 +1,15 @@
+This test ensures that the options and optgroups of a list box that switches appearance are exposed like those of a list box that always had that appearance, and that a relation to their content survives the switch.
+
+PASS: items('native-switched') === items('native')
+PASS: items('base-switched') === items('base')
+PASS: items('native-switched') === items('base')
+PASS: items('base-switched') === items('native')
+PASS: items('native-switched') === items('native')
+PASS: items('base-switched') === items('base')
+PASS: axCherryLabel?.domIdentifier === 'cherry-label'
+PASS: axLabelled.ariaLabelledByElementAtIndex(0)?.domIdentifier === 'cherry-label'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

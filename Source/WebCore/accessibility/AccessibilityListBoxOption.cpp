@@ -191,7 +191,7 @@ String AccessibilityListBoxOption::stringValue() const
         return ariaLabel;
 
     if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*m_node))
-        return option->label();
+        return option->displayLabel();
 
     if (RefPtr optgroup = dynamicDowncast<HTMLOptGroupElement>(*m_node))
         return optgroup->groupLabelText();

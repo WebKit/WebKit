@@ -6392,6 +6392,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
     AXLOGDeferredCollection("RendererChangedList"_s, m_deferredRendererChangedList);
     Vector<Ref<Element>> elementsNeedingNewObjects;
+    Vector<Ref<Element>> unrenderedListBoxItems;
     for (Ref object : m_deferredRendererChangedList) {
         // An object keeps its class when the renderer of its element changes, for instance when a select
         // switches appearance, so replace it when the new renderer calls for another class.
@@ -6402,6 +6403,8 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
             elementsNeedingNewObjects.append(element.releaseNonNull());
             continue;
         }
+        if (element && !renderer && object->isAccessibilityListBoxOptionInstance())
+            unrenderedListBoxItems.append(element.releaseNonNull());
         object->updateRole();
         object->recomputeIsIgnored();
     }
@@ -6422,6 +6425,27 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         // Move assistive technology to the new object if the old one had focus.
         if (protect(element->document())->focusedElement() == element.ptr() && !m_deferredFocusedNodeChange)
             m_deferredFocusedNodeChange = { nullptr, element.ptr() };
+    }
+
+    for (Ref listItem : unrenderedListBoxItems) {
+        bool removedObjects = false;
+        for (Ref descendant : composedTreeDescendants(listItem)) {
+            if (descendant->renderer() || isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(descendant))
+                continue;
+            RefPtr descendantObject = get(descendant);
+            if (!descendantObject)
+                continue;
+            if (m_relations.contains(descendantObject->objectID()) || m_relationTargets.contains(descendantObject->objectID()))
+                markRelationsDirty();
+            remove(descendant);
+            removedObjects = true;
+        }
+        RefPtr object = get(listItem);
+        if (!object)
+            continue;
+        if (removedObjects)
+            childrenChanged(object.get());
+        postNotification(object.get(), nullptr, AXNotification::TextUnderElementChanged);
     }
 
     AXLOGDeferredCollection("RecomputeActiveSummaryList"_s, m_deferredRecomputeActiveSummaryList);
