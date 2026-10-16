@@ -168,7 +168,7 @@ public:
     // FIXME: These are all functions which stop loads. We have too many.
     void stopAllLoadersAndCheckCompleteness();
     WEBCORE_EXPORT void stopAllLoaders(ClearProvisionalItem = ClearProvisionalItem::Yes, StopLoadingPolicy = StopLoadingPolicy::PreventDuringUnloadEvents);
-    WEBCORE_EXPORT void stopForUserCancel(bool deferCheckLoadComplete = false);
+    WEBCORE_EXPORT void stopForUserCancel(DeferCheckLoadComplete = DeferCheckLoadComplete::No, AbortOngoingNavigation = AbortOngoingNavigation::Yes);
     void stopForBackForwardCache();
     void stop();
     void stopLoading(UnloadEventPolicy);

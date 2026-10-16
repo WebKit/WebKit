@@ -2332,6 +2332,8 @@ private:
 
     void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
 
+    void stopLoadingInRootFrames(WebCore::AbortOngoingNavigation);
+
     void updateThrottleState();
 
     // IPC::MessageSender

@@ -2411,16 +2411,19 @@ void FrameLoader::stopAllLoadersAndCheckCompleteness()
     m_checkingLoadCompleteForDetachment = false;
 }
 
-void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
+void FrameLoader::stopForUserCancel(DeferCheckLoadComplete deferCheckLoadComplete, AbortOngoingNavigation abortOngoingNavigation)
 {
     if (m_inStopForBackForwardCache)
         return;
     // Calling stopAllLoaders can cause the frame to be deallocated, including the frame loader.
     Ref frame = m_frame.get();
 
-    stopAllLoaders();
+    {
+        SetForScope doNotAbortNavigationAPI { m_doNotAbortNavigationAPI, m_doNotAbortNavigationAPI || abortOngoingNavigation == AbortOngoingNavigation::No };
+        stopAllLoaders();
+    }
 
-    if (frame->document()->settings().navigationAPIEnabled()) {
+    if (abortOngoingNavigation == AbortOngoingNavigation::Yes && frame->document()->settings().navigationAPIEnabled()) {
         if (RefPtr window = frame->document()->window())
             protect(window->navigation())->abortOngoingNavigationIfNeeded();
     }
@@ -2433,7 +2436,7 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
         protect(view->layoutContext())->layout();
 #endif
 
-    if (deferCheckLoadComplete)
+    if (deferCheckLoadComplete == DeferCheckLoadComplete::Yes)
         scheduleCheckLoadComplete();
     else if (frame->page())
         checkLoadComplete();

@@ -2853,22 +2853,29 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
 
 void WebPage::stopLoading()
 {
+    stopLoadingInRootFrames(AbortOngoingNavigation::Yes);
+}
+
+// Only the main frame's Navigation API navigation can be left alone.
+void WebPage::stopLoadingInRootFrames(AbortOngoingNavigation abortOngoingNavigation)
+{
     if (!m_page)
         return;
 
     SendStopResponsivenessTimer stopper;
 
+    RefPtr localMainFrame = m_page->localMainFrame();
     for (Ref frame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames()))
-        frame->loader().stopForUserCancel();
+        frame->loader().stopForUserCancel(DeferCheckLoadComplete::No, frame.ptr() == localMainFrame ? abortOngoingNavigation : AbortOngoingNavigation::Yes);
 
-    if (RefPtr localMainFrame = m_page->localMainFrame())
+    if (localMainFrame)
         localMainFrame->loader().completePageTransitionIfNeeded();
 }
 
 void WebPage::stopLoadingDueToProcessSwap()
 {
     SetForScope isStoppingLoadingDueToProcessSwap(m_isStoppingLoadingDueToProcessSwap, true);
-    stopLoading();
+    stopLoadingInRootFrames(AbortOngoingNavigation::No);
 }
 
 void WebPage::keepBlobURLAliveForNewWindowNavigation(URL&& blobURL, std::optional<SecurityOriginData>&& topOrigin)

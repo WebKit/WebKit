@@ -8075,6 +8075,46 @@ TEST(ProcessSwap, MainFrameURLAfterServerSideRedirectToCOOP)
     EXPECT_WK_STREQ(server.request("/destination.html"_s).URL.absoluteString, [[createdWebView _mainFrameURL] absoluteString]);
 }
 
+TEST(ProcessSwap, COOPSwapDoesNotAbortNavigationAPINavigation)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/source.html"_s, { "<script>navigation.onnavigateerror = event => webkit.messageHandlers.testHandler.postMessage('navigateerror ' + event.error.name);</script>source"_s } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "destination"_s } },
+    }, HTTPServer::Protocol::Https);
+
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:psonProcessPoolConfiguration().get()]);
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"CrossOriginOpenerPolicyEnabled"])
+            [[webViewConfiguration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    RetainPtr messages = adoptNS([NSMutableArray<NSString *> new]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [messages addObject:message];
+    }];
+
+    [webView loadRequest:server.request("/source.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t sourceProcess = [webView _webProcessIdentifier];
+
+    // The same-origin navigation stays in its process until the COOP response arrives, so the old process is told to stop.
+    [webView evaluateJavaScript:@"const { committed, finished } = navigation.navigate('/destination.html'); committed.catch(error => webkit.messageHandlers.testHandler.postMessage('committed ' + error.name)); finished.catch(error => webkit.messageHandlers.testHandler.postMessage('finished ' + error.name)); true" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView URL].absoluteString, server.request("/destination.html"_s).URL.absoluteString);
+    EXPECT_NE([webView _webProcessIdentifier], sourceProcess);
+
+    // Messages from the old document would have arrived by now.
+    Util::runFor(0.2_s);
+    EXPECT_EQ([messages count], 0u);
+}
+
 TEST(ProcessSwap, COOPAndCOEPOn304Response)
 {
     using namespace TestWebKitAPI;
