@@ -456,8 +456,12 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (auto legacyLineClamp = layoutState.legacyLineClamp())
-        return Layout::BlockLayoutState::LineClamp { std::max(legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, static_cast<size_t>(0)), false, true };
+    if (auto legacyLineClamp = layoutState.legacyLineClamp()) {
+        // Content following the clamp point is not clamped (e.g. it still gets text-overflow ellipsis).
+        if (legacyLineClamp->currentLineCount >= legacyLineClamp->maximumLineCount)
+            return { };
+        return Layout::BlockLayoutState::LineClamp { legacyLineClamp->maximumLineCount - legacyLineClamp->currentLineCount, false, true };
+    }
     if (auto lineClamp = layoutState.lineClamp())
         return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLines, lineClamp->shouldDiscardOverflow, false, lineClamp->isStableTextWrap };
     return { };
