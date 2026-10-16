@@ -112,4 +112,5 @@ typedef (HTMLImageElement
   DOMRectInit rect;
   sequence<PlaneLayout> layout;
   VideoPixelFormat format;
+  PredefinedColorSpace colorSpace;
 };

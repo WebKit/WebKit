@@ -543,7 +543,7 @@ void WebCodecsVideoFrame::copyTo(BufferSource&& source, CopyToOptions&& options,
     }
 
     auto buffer = source.mutableSpan();
-    protect(m_data.internalFrame)->copyTo(buffer, options.format ? *options.format : *m_data.format, WTF::move(combinedLayout.computedLayouts), [source = WTF::move(source), promise = WTF::move(promise)](auto planeLayouts) mutable {
+    protect(m_data.internalFrame)->copyTo(buffer, options.format ? *options.format : *m_data.format, toColorSpace(options.colorSpace.value_or(PredefinedColorSpace::SRGB)), WTF::move(combinedLayout.computedLayouts), [source = WTF::move(source), promise = WTF::move(promise)](auto planeLayouts) mutable {
         if (!planeLayouts) {
             promise.reject(Exception { ExceptionCode::TypeError,  "Unable to copy data"_s });
             return;

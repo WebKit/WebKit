@@ -390,8 +390,7 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
 {
     if (!source)
         return nullptr;
-    if (CVPixelBufferGetPixelFormatType(source) == targetPixelFormat)
-        return source;
+
     NSDictionary *targetOptions = nullptr;
     const bool shouldUseIOSurface = CVPixelBufferGetIOSurface(source);
     if (shouldUseIOSurface)
@@ -405,6 +404,11 @@ RetainPtr<CVPixelBufferRef> ImageTransferSessionVT::convertPixelBuffer(CVPixelBu
     } else if (colorSpace == DestinationColorSpace::SRGB) {
         VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationColorPrimaries, kCMFormatDescriptionColorPrimaries_ITU_R_709_2);
         VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationTransferFunction, PAL::kCMFormatDescriptionTransferFunction_sRGB);
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    } else if (colorSpace == DestinationColorSpace::DisplayP3) {
+        VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationColorPrimaries, PAL::kCMFormatDescriptionColorPrimaries_P3_D65);
+        VTSessionSetProperty(transferSession.get(), kVTPixelTransferPropertyKey_DestinationTransferFunction, PAL::kCMFormatDescriptionTransferFunction_sRGB);
+#endif
     }
 
     CVPixelBufferRef rawTarget = nullptr;

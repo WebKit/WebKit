@@ -32,6 +32,7 @@
 #include <WebCore/DOMRectReadOnly.h>
 #include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/PlaneLayout.h>
+#include <WebCore/PredefinedColorSpace.h>
 #include <WebCore/VideoColorSpaceInit.h>
 #include <WebCore/WebCodecsAlphaOption.h>
 #include <WebCore/WebCodecsVideoFrameData.h>
@@ -119,6 +120,7 @@ public:
         std::optional<DOMRectInit> rect;
         std::optional<Vector<PlaneLayout>> layout;
         std::optional<VideoPixelFormat> format;
+        std::optional<PredefinedColorSpace> colorSpace;
     };
     ExceptionOr<size_t> allocationSize(const CopyToOptions&);
 

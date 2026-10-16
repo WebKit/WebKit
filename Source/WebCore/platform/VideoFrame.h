@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include <JavaScriptCore/TypedArrays.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/PlaneLayout.h>
 #include <WebCore/PlatformVideoColorSpace.h>
@@ -102,7 +103,7 @@ public:
     Ref<VideoFrame> updateShouldIgnoreAlpha(bool, ShouldClone);
 
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
-    void copyTo(std::span<uint8_t>, VideoPixelFormat, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
+    void copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
 
     virtual IntSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;

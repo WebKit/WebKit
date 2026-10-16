@@ -143,7 +143,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t>, size_t, siz
     return nullptr;
 }
 
-void VideoFrame::copyTo(std::span<uint8_t>, VideoPixelFormat, Vector<ComputedPlaneLayout>&&, CopyCallback&& callback)
+void VideoFrame::copyTo(std::span<uint8_t>, VideoPixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&&, CopyCallback&& callback)
 {
     // FIXME: Add support.
     callback({ });

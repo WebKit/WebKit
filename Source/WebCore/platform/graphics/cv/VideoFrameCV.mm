@@ -493,16 +493,21 @@ static Vector<PlaneLayout> copyI420OrI420A(std::span<uint8_t> span, const Comput
     return planeLayouts;
 }
 
-void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
+void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, ColorSpace colorSpace, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
     // FIXME: We should get the pixel buffer and copy the bytes asynchronously.
     RetainPtr pixelBuffer = this->pixelBuffer();
     auto currentVideoFramePixelFormat = convertVideoFramePixelFormat(pixelFormat());
 
     if (isRGBVideoPixelFormat(format)) {
-        auto shouldConvert = [](auto sourceFormat, auto destinationFormat) -> std::optional<OSType> {
+        auto shouldConvert = [](auto sourceFormat, auto sourceColorSpace, auto destinationFormat, auto destinationColorSpace) -> std::optional<OSType> {
             bool isDestinationFormatRGB = destinationFormat == VideoPixelFormat::RGBA || destinationFormat == VideoPixelFormat::RGBX;
             if (!sourceFormat || !isRGBVideoPixelFormat(*sourceFormat))
+                return isDestinationFormatRGB ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_32BGRA;
+
+            bool isDestinationColorSpaceSRGB = destinationColorSpace == ColorSpace::SRGB();
+            bool isSourceColorSpaceSRGB = sourceColorSpace == srgbColorSpace();
+            if (!isDestinationColorSpaceSRGB || !isSourceColorSpaceSRGB)
                 return isDestinationFormatRGB ? kCVPixelFormatType_32ARGB : kCVPixelFormatType_32BGRA;
 
             // FIXME: We could directly support RGBA -> BGRA at copyTo without doing a conversion.
@@ -512,8 +517,15 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
 
             return { };
         };
-        if (auto conversionFormat = shouldConvert(currentVideoFramePixelFormat, format))
-            pixelBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, *conversionFormat, ImageTransferSessionVT::DestinationColorSpace::SRGB);
+        if (auto conversionFormat = shouldConvert(currentVideoFramePixelFormat, this->colorSpace(), format, colorSpace)) {
+            ImageTransferSessionVT::DestinationColorSpace destinationColorSpace = ImageTransferSessionVT::DestinationColorSpace::SRGB;
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+            // FIXME: Decide whether to support linear variants when https://github.com/w3c/webcodecs/issues/973 is fixed.
+            if (colorSpace == ColorSpace::DisplayP3())
+                destinationColorSpace = ImageTransferSessionVT::DestinationColorSpace::DisplayP3;
+#endif
+            pixelBuffer = ImageTransferSessionVT::convertPixelBuffer(pixelBuffer, *conversionFormat, destinationColorSpace);
+        }
     }
 
     if (!pixelBuffer) {
@@ -575,7 +587,7 @@ void VideoFrame::copyTo(std::span<uint8_t> span, VideoPixelFormat format, Vector
 RefPtr<NativeImage> VideoFrame::copyNativeImage() const
 {
     RetainPtr source = pixelBuffer();
-    RetainPtr bgraSource = ImageTransferSessionVT::convertPixelBuffer(source.get(), kCVPixelFormatType_32BGRA);
+    RetainPtr bgraSource = CVPixelBufferGetPixelFormatType(source) != kCVPixelFormatType_32BGRA ? ImageTransferSessionVT::convertPixelBuffer(source.get(), kCVPixelFormatType_32BGRA, ImageTransferSessionVT::DestinationColorSpace::Unspecified) : source;
     if (!bgraSource)
         return nullptr;
 

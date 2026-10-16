@@ -616,7 +616,7 @@ static void copyPlane(std::span<uint8_t>& destination, const std::span<uint8_t>&
     }
 }
 
-void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFormat, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
+void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFormat, ColorSpace, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
     ensureVideoFrameDebugCategoryInitialized();
     auto& self = downcast<VideoFrameGStreamer>(*this);
