@@ -89,19 +89,4 @@ ASCIILiteral RenderInline::renderName() const
     return "RenderInline"_s;
 }
 
-void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
-{
-    if (!parent())
-        return;
-
-    bool isNonEmpty;
-    RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
-    if (styleImage && isNonEmpty) {
-        if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
-    }
-    // FIXME: We can do better.
-    repaint();
-}
-
 } // namespace WebCore

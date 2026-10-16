@@ -45,7 +45,6 @@ private:
     void layout() final { ASSERT_NOT_REACHED(); }
     void paint(PaintInfo&, const LayoutPoint&) override { ASSERT_NOT_REACHED(); }
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
-    void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 };
 
 } // namespace WebCore

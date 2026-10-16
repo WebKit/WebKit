@@ -198,6 +198,8 @@ public:
 
     void applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption>) const override;
 
+    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+
     bool LEGACY_NODELETE fixedBackgroundPaintsInLocalCoordinates() const;
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
 
