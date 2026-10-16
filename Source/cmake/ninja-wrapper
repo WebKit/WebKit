@@ -53,6 +53,10 @@ if (getcwd() =~ m{/CMakeFiles/}) {
 
 # Real compilation
 my $bundlePolicy = $ENV{WK_UNIFIED_SOURCES_BUNDLE_POLICY};
+if (!defined($bundlePolicy) && open(my $cache, '<', 'CMakeCache.txt')) {
+    $bundlePolicy = "Bundle" if grep({ /^ADAPTIVE_UNIFIED_BUILDS:BOOL=(OFF|NO|FALSE|0|N)$/i } <$cache>);
+    close($cache);
+}
 if (!defined($bundlePolicy)) {
     my $dryRun = `$ninja -n @ARGV 2>&1`;
     my ($totalCommands) = $dryRun =~ m{/(\d+)\]};
