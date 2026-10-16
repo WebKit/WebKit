@@ -36,9 +36,12 @@
 #include "InlineLineTypes.h"
 #include "InlineTextItem.h"
 #include "Latin1TextIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBox.h"
 #include "RenderGlyph.h"
+#include "RenderInline.h"
+#include "RenderText.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
@@ -59,6 +62,36 @@ InlineLayoutUnit TextUtil::singleSpaceWidth(const FontCascade& fontCascade, bool
     if (std::isnan(width) || std::isinf(width)) [[unlikely]]
         return std::isnan(width) ? 0.0f : maxInlineLayoutUnit();
     return width;
+}
+
+static std::optional<TextDirection> overridingDirectionFrom(auto ancestor, NOESCAPE const auto& isInlineBox, NOESCAPE const auto& parentOf)
+{
+    // Mirrors InlineItemsBuilder::buildBidiParagraph(): visual ordering, or else the closest ancestor with a unicode-bidi other than normal, decides.
+    for (; ancestor; ancestor = parentOf(*ancestor)) {
+        CheckedRef style = ancestor->style();
+        if (isInlineBox(*ancestor) && (style->rtlOrdering() == Order::Visual || style->unicodeBidi() == UnicodeBidi::Normal))
+            continue;
+        return isOverride(style->unicodeBidi()) || style->rtlOrdering() == Order::Visual ? std::optional { style->writingMode().bidiDirection() } : std::nullopt;
+    }
+    return std::nullopt;
+}
+
+std::optional<TextDirection> TextUtil::overridingDirection(const InlineTextBox& inlineTextBox)
+{
+    return overridingDirectionFrom(CheckedPtr { &inlineTextBox.parent() }, [](const auto& box) {
+        return box.isInlineBox();
+    }, [](const auto& box) {
+        return &box.parent();
+    });
+}
+
+std::optional<TextDirection> TextUtil::overridingDirection(const RenderText& renderText)
+{
+    return overridingDirectionFrom(CheckedPtr { renderText.parent() }, [](const auto& renderer) {
+        return is<RenderInline>(renderer);
+    }, [](const auto& renderer) {
+        return renderer.parent();
+    });
 }
 
 InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization useTrailingWhitespaceMeasuringOptimization, TextSpacing::SpacingState spacingState, GlyphOverflow* glyphOverflow)
@@ -85,17 +118,19 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     if (extendedMeasuring)
         ++to;
     auto width = 0.f;
+    auto forcedDirection = overridingDirection(inlineTextBox);
+    auto direction = forcedDirection.value_or(TextDirection::LTR);
+    auto directionalOverride = forcedDirection ? DirectionalOverride::Yes : DirectionalOverride::No;
     auto useSimplifiedContentMeasuring = inlineTextBox.canUseSimplifiedContentMeasuring();
     if (useSimplifiedContentMeasuring) {
         auto view = StringView(text).substring(from, to - from);
         if (fontCascade.canTakeFixedPitchFastContentMeasuring())
             width = fontCascade.widthForSimpleTextWithFixedPitch(view, inlineTextBox.style().collapseWhiteSpace());
         else
-            width = fontCascade.widthForTextUsingSimplifiedMeasuring(view);
+            width = fontCascade.widthForTextUsingSimplifiedMeasuring(view, direction, directionalOverride);
     } else {
         CheckedRef style = inlineTextBox.style();
-        auto directionalOverride = isOverride(style->unicodeBidi());
-        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style->writingMode().bidiDirection() : TextDirection::LTR, directionalOverride };
+        auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), direction, directionalOverride == DirectionalOverride::Yes };
         if (!style->collapseWhiteSpace() && !style->tabSize().isZero())
             run.setTabSize(true, Style::toPlatform(style->tabSize(), style->usedZoomForLength()));
         // FIXME: consider moving this to TextRun ctor
