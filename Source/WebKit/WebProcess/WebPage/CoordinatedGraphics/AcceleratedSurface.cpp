@@ -970,7 +970,7 @@ void AcceleratedSurface::visibilityDidChange(bool isVisible)
     m_isVisible = isVisible;
 
     // m_releaseUnusedBuffersTimer is owned by, and fires on, the compositing run loop; it must be
-    // started/stopped there. visibilityDidChange() is called on the main thread (from
+    // created, started and stopped there. visibilityDidChange() is called on the main thread (from
     // ThreadedCompositor::suspend()/resume()), so hop to the compositing run loop.
     RefPtr compositingRunLoop = m_compositingRunLoop;
     if (!compositingRunLoop)
@@ -978,14 +978,24 @@ void AcceleratedSurface::visibilityDidChange(bool isVisible)
 
     compositingRunLoop->dispatch([protectedThis = Ref { *this }, isVisible] {
         auto& timer = protectedThis->m_releaseUnusedBuffersTimer;
-        if (!timer)
+        if (isVisible) {
+            if (timer)
+                timer->stop();
             return;
-        if (isVisible)
-            timer->stop();
-        else {
-            static const Seconds releaseUnusedBuffersDelay = 10_s;
-            timer->startOneShot(releaseUnusedBuffersDelay);
         }
+
+        // Without targets there is nothing to release, or the surface was already invalidated.
+        if (protectedThis->m_swapChain.isEmpty())
+            return;
+
+        if (!timer) {
+            timer = makeUnique<RunLoop::Timer>(RunLoop::currentSingleton(), "AcceleratedSurface::ReleaseUnusedBuffersTimer"_s, protectedThis.ptr(), &AcceleratedSurface::releaseUnusedBuffersTimerFired);
+#if USE(GLIB_EVENT_LOOP)
+            timer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+#endif
+        }
+        static const Seconds releaseUnusedBuffersDelay = 10_s;
+        timer->startOneShot(releaseUnusedBuffersDelay);
     });
 }
 
@@ -1022,10 +1032,6 @@ void AcceleratedSurface::didCreateCompositingRunLoop(RunLoop& runLoop)
 #endif
 
     m_compositingRunLoop = &runLoop;
-    m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer>(runLoop, "AcceleratedSurface::ReleaseUnusedBuffersTimer"_s, this, &AcceleratedSurface::releaseUnusedBuffersTimerFired);
-#if USE(GLIB_EVENT_LOOP)
-    m_releaseUnusedBuffersTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
-#endif
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurface::messageReceiverName(), m_id);
 #endif
@@ -1040,13 +1046,7 @@ void AcceleratedSurface::willDestroyCompositingRunLoop()
         return;
 #endif
 
-    // m_releaseUnusedBuffersTimer is owned by the compositing run loop and its destructor stops it, so
-    // destroy it on that run loop's thread rather than here on the main thread.
-    if (RefPtr compositingRunLoop = std::exchange(m_compositingRunLoop, nullptr)) {
-        compositingRunLoop->dispatch([protectedThis = Ref { *this }] {
-            protectedThis->m_releaseUnusedBuffersTimer = nullptr;
-        });
-    }
+    m_compositingRunLoop = nullptr;
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurface::messageReceiverName(), m_id);
 #endif
@@ -1054,6 +1054,7 @@ void AcceleratedSurface::willDestroyCompositingRunLoop()
 
 void AcceleratedSurface::willDestroyGLContext()
 {
+    m_releaseUnusedBuffersTimer = nullptr;
     m_pendingFrameNotifyTargets.clear();
     m_target = nullptr;
     m_swapChain.reset();
