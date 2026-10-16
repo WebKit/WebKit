@@ -47,6 +47,7 @@ class Document;
 class Element;
 class EventListener;
 class EventTarget;
+class HTMLFrameOwnerElement;
 class HitTestResult;
 class InspectorHistory;
 class LocalFrame;
@@ -141,6 +142,7 @@ public:
     // InspectorInstrumentation hooks
     void didInsertDOMNode(Node&);
     void didRemoveDOMNode(Node&);
+    void frameOwnerContentFrameChanged(HTMLFrameOwnerElement&);
     void willDestroyDOMNode(Node&);
     void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);

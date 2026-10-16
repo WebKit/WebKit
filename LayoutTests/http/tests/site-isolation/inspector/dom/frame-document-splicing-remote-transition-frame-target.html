@@ -1,0 +1,122 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition");
+
+    let pageDocument = null;
+    let targetNames = new Map;
+
+    async function flushPageDOMAgent() {
+        let pageTarget = WI.assumingMainTarget();
+        await pageTarget.DOMAgent.getSupportedEventNames();
+        await pageTarget.DOMAgent.getSupportedEventNames();
+    }
+
+    function pageBodyChildWithId(id) {
+        return pageDocument.body.children?.find((node) => node.getAttribute("id") === id) ?? null;
+    }
+
+    function lateFrameElement() {
+        return pageBodyChildWithId("late-frame");
+    }
+
+    async function waitUntil(predicate, maxAttempts = 50) {
+        for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+            if (predicate())
+                return true;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return false;
+    }
+
+    function expectSplicedIntoLateFrame(frameDocument, label) {
+        let iframeElement = lateFrameElement();
+        InspectorTest.expectNotNull(iframeElement, "Should still find #late-frame.");
+        InspectorTest.expectEqual(frameDocument.parentNode, iframeElement, `The ${label} frame's document should be spliced into #late-frame.`);
+        InspectorTest.expectEqual(iframeElement?.children?.length, 1, "#late-frame should have exactly one child.");
+        InspectorTest.expectEqual(iframeElement?.children?.[0], frameDocument, `#late-frame's only child should be the ${label} frame's document.`);
+        InspectorTest.expectEqual(treeContainingNode(frameDocument, targetNames), "page", `The ${label} frame's document should be in the page tree.`);
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Load the <iframe> while its about:blank document is still in the page's process.",
+        async test() {
+            pageDocument = await WI.domManager.requestDocument();
+
+            let iframeElement = await descendFromPageBody(pageDocument, (node) => node.getAttribute("id") === "late-frame");
+            InspectorTest.expectNotNull(iframeElement, "Should find #late-frame.");
+
+            let blankDocument = iframeElement.children?.[0] ?? null;
+            InspectorTest.expectNotNull(blankDocument, "#late-frame should have a content document.");
+            InspectorTest.expectEqual(blankDocument?.nodeType(), Node.DOCUMENT_NODE, "#late-frame's child should be a document.");
+            InspectorTest.expectEqual(blankDocument?.owningTarget ?? null, null, "#late-frame's document should come from the page agent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.NavigateCrossOrigin",
+        description: "After the <iframe> navigates cross-origin, its frame target's document should be spliced under it.",
+        async test() {
+            await InspectorTest.evaluateInPage(`document.getElementById("late-frame").src = "http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html?late=http"`);
+
+            let frameTarget = await frameTargetForURLContainingWhenReady("late=http");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+            targetNames.set(frameTarget, "cross-origin frame target");
+
+            await flushPageDOMAgent();
+
+            expectSplicedIntoLateFrame(WI.domManager.frameTargetDocumentForTarget(frameTarget), "cross-origin");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.NavigateToAnotherRemoteProcess",
+        description: "After the remote frame moves to a third process, the page's process is not told, so only the frame's identity can splice its new document.",
+        async test() {
+            await InspectorTest.evaluateInPage(`document.getElementById("late-frame").src = "https://localhost:8443/site-isolation/inspector/dom/resources/dom-frame.html?late=https"`);
+
+            let frameTarget = await frameTargetForURLContainingWhenReady("late=https");
+            InspectorTest.expectNotNull(frameTarget, "Should find the frame target in the third process.");
+            targetNames.set(frameTarget, "third-process frame target");
+
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            await waitUntil(() => frameDocument.parentNode);
+            await flushPageDOMAgent();
+
+            expectSplicedIntoLateFrame(frameDocument, "third-process");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.RemoteTransition.RemoveOwnerElement",
+        description: "Removing an <iframe> whose frame target's document is spliced under it should unsplice that document.",
+        async test() {
+            let frameTarget = await frameTargetForURLContainingWhenReady("removed=1");
+            InspectorTest.expectNotNull(frameTarget, "Should find #removed-frame's frame target.");
+            targetNames.set(frameTarget, "removed frame target");
+
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.expectEqual(frameDocument.parentNode, pageBodyChildWithId("removed-frame"), "#removed-frame's document should be spliced into it.");
+
+            await InspectorTest.evaluateInPage(`document.getElementById("removed-frame").remove()`);
+            await waitUntil(() => !pageBodyChildWithId("removed-frame") && !frameDocument.parentNode);
+            await flushPageDOMAgent();
+
+            InspectorTest.expectNull(pageBodyChildWithId("removed-frame"), "#removed-frame should be gone from the page tree.");
+            InspectorTest.expectNull(frameDocument.parentNode, "#removed-frame's document should no longer be spliced.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that an &lt;iframe&gt; in the page tree holds its frame's current document as the frame moves between processes, and that removing an &lt;iframe&gt; unsplices its frame target's document.</p>
+<iframe id="late-frame"></iframe>
+<iframe id="removed-frame" src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html?removed=1"></iframe>
+</body>

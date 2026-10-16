@@ -72,6 +72,11 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         this._frame = null;
 
+        this._frameIdentifier = payload.frameId || null;
+        this._contentFrameIdentifier = payload.contentFrameId || null;
+        if (this._contentFrameIdentifier)
+            this._domManager._registerFrameOwnerElement(this);
+
         if (payload.frameId)
             this._frame = WI.networkManager.frameForIdentifier(payload.frameId);
 
@@ -222,6 +227,8 @@ WI.DOMNode = class DOMNode extends WI.Object
     get destroyed() { return this._destroyed; }
     get frame() { return this._frame || this.parentNode?.frame || null; }
     get owningTarget() { return this._owningTarget || this.parentNode?.owningTarget || null; }
+    get frameIdentifier() { return this._frameIdentifier; }
+    get contentFrameIdentifier() { return this._contentFrameIdentifier; }
     get backendNodeId() { return this._rawNodeId ?? this.id; }
     get nextSibling() { return this._nextSibling; }
     get previousSibling() { return this._previousSibling; }

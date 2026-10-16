@@ -87,6 +87,7 @@ class DocumentLoader;
 class DocumentThreadableLoader;
 class EventListener;
 class GPUDevice;
+class HTMLFrameOwnerElement;
 class HTTPHeaderMap;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
@@ -250,6 +251,7 @@ public:
     static void loadEventFired(LocalFrame*);
     static void frameDetachedFromParent(LocalFrame&);
     static void didCommitLoad(LocalFrame&, DocumentLoader*);
+    static void frameOwnerContentFrameChanged(Document&, HTMLFrameOwnerElement&);
     static void frameDocumentUpdated(LocalFrame&);
     static void loaderDetachedFromFrame(LocalFrame&, DocumentLoader&);
     static void frameStartedLoading(LocalFrame&);
@@ -486,6 +488,7 @@ private:
     static void loadEventFiredImpl(InstrumentingAgents&, LocalFrame*);
     static void frameDetachedFromParentImpl(InstrumentingAgents&, LocalFrame&);
     static void didCommitLoadImpl(InstrumentingAgents&, LocalFrame&, DocumentLoader*);
+    static void frameOwnerContentFrameChangedImpl(InstrumentingAgents&, HTMLFrameOwnerElement&);
     static void frameDocumentUpdatedImpl(InstrumentingAgents&, LocalFrame&);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents&, DocumentLoader&);
     static void frameStartedLoadingImpl(InstrumentingAgents&, LocalFrame&);
@@ -1314,6 +1317,13 @@ inline void InspectorInstrumentation::frameDetachedFromParent(LocalFrame& frame)
 inline void InspectorInstrumentation::didCommitLoad(LocalFrame& frame, DocumentLoader* loader)
 {
     didCommitLoadImpl(protect(instrumentingAgents(frame)), frame, loader);
+}
+
+inline void InspectorInstrumentation::frameOwnerContentFrameChanged(Document& document, HTMLFrameOwnerElement& frameOwner)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(document))
+        frameOwnerContentFrameChangedImpl(*agents, frameOwner);
 }
 
 inline void InspectorInstrumentation::frameDocumentUpdated(LocalFrame& frame)

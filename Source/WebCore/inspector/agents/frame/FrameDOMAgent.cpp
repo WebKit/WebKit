@@ -55,6 +55,7 @@
 #include "HitTestResult.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
+#include "InspectorIdentifierRegistry.h"
 #include "InspectorNodeFinder.h"
 #include "InspectorOverlayConfigParser.h"
 #include "InstrumentingAgents.h"
@@ -401,6 +402,8 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
 
         // FIXME: <https://webkit.org/b/298980> Skip if child frame has its own FrameDOMAgent.
         if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*element)) {
+            if (RefPtr contentFrame = frameOwner->contentFrame())
+                value->setContentFrameId(IdentifierRegistry::protocolFrameId(*contentFrame));
             if (RefPtr document = frameOwner->contentDocument())
                 value->setContentDocument(buildObjectForNode(document.get(), 0));
         }
@@ -433,7 +436,8 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
         value->setDocumentURL(InspectorDOMAgent::documentURLString(document.get()));
         value->setBaseURL(InspectorDOMAgent::documentBaseURLString(document.get()));
         value->setXmlVersion(document->xmlVersion());
-        // FIXME: <https://webkit.org/b/298980> Set frameId for frame targets to enable frontend frame-to-target association.
+        if (RefPtr frame = document->frame())
+            value->setFrameId(IdentifierRegistry::protocolFrameId(*frame));
     } else if (RefPtr doctype = dynamicDowncast<DocumentType>(*node)) {
         value->setPublicId(doctype->publicId());
         value->setSystemId(doctype->systemId());
@@ -733,6 +737,22 @@ void FrameDOMAgent::didInsertDOMNode(Node& node)
         auto value = buildObjectForNode(&node, 0);
         m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
     }
+}
+
+void FrameDOMAgent::frameOwnerContentFrameChanged(HTMLFrameOwnerElement& frameOwner)
+{
+    auto frameOwnerId = boundNodeId(&frameOwner);
+    if (!frameOwnerId)
+        return;
+
+    auto parentId = boundNodeId(protect(InspectorDOMAgent::innerParentNode(&frameOwner)));
+    m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
+    unbind(frameOwner);
+
+    auto value = buildObjectForNode(&frameOwner, 0);
+    RefPtr previousSibling = InspectorDOMAgent::innerPreviousSibling(&frameOwner);
+    auto prevId = boundNodeId(previousSibling.get());
+    m_frontendDispatcher->childNodeInserted(parentId, prevId, WTF::move(value));
 }
 
 void FrameDOMAgent::didRemoveDOMNode(Node& node)

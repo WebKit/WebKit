@@ -1,0 +1,27 @@
+Test that a spliced frame document returns to pending, without being destroyed, when the tree holding its <iframe> is rebuilt, and splices again once the <iframe> arrives.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDocumentSplicing.Teardown
+-- Running test case: Setup
+PASS: Should find the child frame target.
+PASS: Should find the grandchild frame target.
+PASS: The child frame's document should be spliced into the page's <iframe>.
+PASS: The grandchild frame's document should be spliced into the child frame's <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.Teardown.PageDocumentReset
+PASS: The child frame's document should be unspliced.
+PASS: The child frame's document should not be destroyed.
+PASS: Should find the page's new <iframe>.
+PASS: The child frame target should keep the same document.
+PASS: The child frame's document should be spliced into the new <iframe>.
+
+-- Running test case: SiteIsolation.DOM.FrameDocumentSplicing.Teardown.ParentFrameDocumentReset
+PASS: The grandchild frame's document should be unspliced.
+PASS: The grandchild frame's document should not be destroyed.
+PASS: The grandchild frame's document should still be registered.
+PASS: The child frame target should produce a new document.
+PASS: Should find the child frame's new <iframe>.
+PASS: The grandchild frame target should keep the same document.
+PASS: The grandchild frame's document should be spliced into the child frame's new <iframe>.
+

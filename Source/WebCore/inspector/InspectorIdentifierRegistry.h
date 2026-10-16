@@ -95,6 +95,8 @@ public:
         return makeString("frame-"_s, processID.toUInt64(), '.', frameID.toUInt64());
     }
 
+    static String protocolFrameId(const WebCore::Frame&);
+
     // FIXME: <https://webkit.org/b/310164> Callers that receive FrameIdentifier via IPC
     // without a separate ProcessIdentifier should be updated to pass one explicitly.
     // This qualifies by the process encoded in the FrameIdentifier's upper bits (its

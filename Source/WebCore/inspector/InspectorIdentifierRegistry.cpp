@@ -77,6 +77,11 @@ Protocol::Network::LoaderId IdentifierRegistry::takeLoader(WebCore::DocumentLoad
     return m_loaderToIdentifier.take(&loader);
 }
 
+String IdentifierRegistry::protocolFrameId(const WebCore::Frame& frame)
+{
+    return protocolFrameId(frame.frameID(), hostingProcessForFrame(frame));
+}
+
 LegacyIdentifierRegistry::LegacyIdentifierRegistry() = default;
 LegacyIdentifierRegistry::~LegacyIdentifierRegistry() = default;
 
@@ -123,7 +128,7 @@ Protocol::Network::FrameId BackendIdentifierRegistry::frameId(const WebCore::Fra
 {
     if (!frame)
         return emptyString();
-    auto identifier = protocolFrameId(frame->frameID(), hostingProcessForFrame(*frame));
+    auto identifier = protocolFrameId(*frame);
     m_identifierToFrame.set(identifier, frame);
     return identifier;
 }
@@ -143,7 +148,7 @@ RefPtr<WebCore::LocalFrame> BackendIdentifierRegistry::assertFrame(Protocol::Err
 
 Protocol::Network::FrameId BackendIdentifierRegistry::takeFrame(const WebCore::Frame& frame)
 {
-    auto identifier = protocolFrameId(frame.frameID(), hostingProcessForFrame(frame));
+    auto identifier = protocolFrameId(frame);
     m_identifierToFrame.remove(identifier);
     return identifier;
 }

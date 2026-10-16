@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing.Redirect");
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.Redirect.CrossOriginRedirect",
+        description: "A frame whose src redirected cross-origin should still be spliced under its <iframe>.",
+        async test() {
+            let frameTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            let iframeElement = await descendFromPageBody(pageDocument, (node) => node.nodeName() === "IFRAME");
+            InspectorTest.expectNotNull(iframeElement, "Should find the page's <iframe>.");
+
+            let frameDocument = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.expectNotEqual(iframeElement?.getAttribute("src"), frameDocument.documentURL, "The <iframe>'s src should differ from the frame's document URL.");
+            InspectorTest.expectEqual(frameDocument.parentNode, iframeElement, "The frame's document should be spliced into the <iframe>.");
+            InspectorTest.expectEqual(treeContainingNode(frameDocument, new Map([[frameTarget, "frame target"]])), "page", "The frame's document should be in the page tree.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that a frame target's document is spliced under its &lt;iframe&gt; when the &lt;iframe&gt;'s src redirected cross-origin.</p>
+<iframe src="/resources/redirect.py?url=http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

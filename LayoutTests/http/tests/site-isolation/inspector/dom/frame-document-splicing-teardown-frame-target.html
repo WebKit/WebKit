@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/frame-document-splicing-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDocumentSplicing.Teardown");
+
+    // main(127.0.0.1) -> child(localhost) -> grandchild(127.0.0.1). Each case destroys the tree holding
+    // a spliced frame document's <iframe> while that frame's target stays alive. The document should
+    // return to pending without being destroyed, then splice under the <iframe> once it arrives again.
+    let childTarget = null;
+    let grandchildTarget = null;
+
+    async function pageIframeElement(pageDocument) {
+        return descendFromPageBody(pageDocument, (node) => node.nodeName() === "IFRAME");
+    }
+
+    async function nestedIframeElement() {
+        let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+        let childHTML = childDocument.children.find((node) => node.nodeName() === "HTML");
+        let childBody = await childElement(childHTML, (node) => node.nodeName() === "BODY");
+        return childElement(childBody, (node) => node.nodeName() === "IFRAME");
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Splice both nested frame documents.",
+        async test() {
+            childTarget = await frameTargetForURLContainingWhenReady("splice-child-frame.html");
+            grandchildTarget = await frameTargetForURLContainingWhenReady("dom-frame.html");
+
+            InspectorTest.expectNotNull(childTarget, "Should find the child frame target.");
+            InspectorTest.expectNotNull(grandchildTarget, "Should find the grandchild frame target.");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            let iframeElement = await pageIframeElement(pageDocument);
+            InspectorTest.expectEqual(WI.domManager.frameTargetDocumentForTarget(childTarget).parentNode, iframeElement, "The child frame's document should be spliced into the page's <iframe>.");
+
+            let nestedIframe = await nestedIframeElement();
+            InspectorTest.expectEqual(WI.domManager.frameTargetDocumentForTarget(grandchildTarget).parentNode, nestedIframe, "The grandchild frame's document should be spliced into the child frame's <iframe>.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.Teardown.PageDocumentReset",
+        description: "A page document reset should return the child frame's document to pending, then re-splice it under the new <iframe>.",
+        async test() {
+            let childDocument = WI.domManager.frameTargetDocumentForTarget(childTarget);
+
+            // What `DOM.documentUpdated` on the page target does.
+            WI.domManager._documentUpdated();
+
+            InspectorTest.expectNull(childDocument.parentNode, "The child frame's document should be unspliced.");
+            InspectorTest.expectFalse(childDocument.destroyed, "The child frame's document should not be destroyed.");
+
+            let pageDocument = await WI.domManager.requestDocument();
+            let iframeElement = await pageIframeElement(pageDocument);
+            InspectorTest.expectNotNull(iframeElement, "Should find the page's new <iframe>.");
+
+            InspectorTest.expectEqual(WI.domManager.frameTargetDocumentForTarget(childTarget), childDocument, "The child frame target should keep the same document.");
+            InspectorTest.expectEqual(childDocument.parentNode, iframeElement, "The child frame's document should be spliced into the new <iframe>.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.FrameDocumentSplicing.Teardown.ParentFrameDocumentReset",
+        description: "Rebuilding the child frame target's tree should return the grandchild's document to pending, then re-splice it under the child's new <iframe>.",
+        async test() {
+            let grandchildDocument = WI.domManager.frameTargetDocumentForTarget(grandchildTarget);
+
+            // What `DOM.documentUpdated` on the child frame target does. Only the child target
+            // rebuilds, so the next `FrameDocumentAvailable` is its new document.
+            let childDocumentAvailable = WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            WI.domManager._frameTargetDocumentUpdated(childTarget);
+
+            InspectorTest.expectNull(grandchildDocument.parentNode, "The grandchild frame's document should be unspliced.");
+            InspectorTest.expectFalse(grandchildDocument.destroyed, "The grandchild frame's document should not be destroyed.");
+            InspectorTest.expectEqual(WI.domManager.nodeForIdInFrameTarget(grandchildDocument.backendNodeId, grandchildTarget), grandchildDocument, "The grandchild frame's document should still be registered.");
+
+            let {target} = (await childDocumentAvailable).data;
+            InspectorTest.expectEqual(target, childTarget, "The child frame target should produce a new document.");
+
+            let nestedIframe = await nestedIframeElement();
+            InspectorTest.expectNotNull(nestedIframe, "Should find the child frame's new <iframe>.");
+
+            InspectorTest.expectEqual(WI.domManager.frameTargetDocumentForTarget(grandchildTarget), grandchildDocument, "The grandchild frame target should keep the same document.");
+            InspectorTest.expectEqual(grandchildDocument.parentNode, nestedIframe, "The grandchild frame's document should be spliced into the child frame's new <iframe>.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a spliced frame document returns to pending, without being destroyed, when the tree holding its &lt;iframe&gt; is rebuilt, and splices again once the &lt;iframe&gt; arrives.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/splice-child-frame.html"></iframe>
+</body>
