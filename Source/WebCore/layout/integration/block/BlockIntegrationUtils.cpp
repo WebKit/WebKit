@@ -152,7 +152,7 @@ bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
     return !blockContainer || !canUseForNestedBlockLayout(*blockContainer);
 }
 
-BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, const Layout::BlockLayoutState& blockLayoutState)
+BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, std::optional<LayoutUnit> contentBoxBlockSize, const Layout::BlockLayoutState& blockLayoutState)
 {
     // Only the line layout of this block container and its inline content are written here, and nothing else in the block formatting
     // context reads them.
@@ -179,8 +179,31 @@ BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutIn
         inlineContentRoot.m_lineLayout = makeUnique<LineLayout>(inlineContentRoot);
     CheckedRef lineLayout = *inlineContentRoot.inlineLayout();
     lineLayout->updateFormattingContextGeometries(constraints, geometry);
-    // Without block-in-inline no margins cross into the inline content, so the margin state of the block layout state stays empty.
-    paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, invalidateChildren ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No).repaintRect);
+    // The inline formatting context lays out the atomic inline-level boxes through the render tree, and they read the size of their containing
+    // block, this block container, which the block formatting context writes once all of it is laid out. Like a leaf, only a box with a
+    // percentage block size gets its block size (layoutIndependentFormattingContext).
+    auto atomicInlineLevelBoxes = Vector<CheckedRef<RenderBox>> { };
+    for (CheckedPtr<RenderObject> descendant = inlineContentRoot.firstChild(); descendant;) {
+        CheckedPtr box = dynamicDowncast<RenderBox>(*descendant);
+        if (!box) {
+            descendant = descendant->nextInPreOrder(&inlineContentRoot);
+            continue;
+        }
+        box->setOverridingContainingBlockContentLogicalWidth(constraints.horizontal().logicalWidth);
+        if (Layout::BlockFormattingUtils::hasPercentageBlockSize(*box, box->writingMode()))
+            box->setOverridingContainingBlockContentLogicalHeight(contentBoxBlockSize);
+        atomicInlineLevelBoxes.append(*box);
+        descendant = descendant->nextInPreOrderAfterChildren(&inlineContentRoot);
+    }
+    {
+        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
+        CheckedRef layoutContext = inlineContentRoot.view().frameView().layoutContext();
+        auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
+        // Without block-in-inline no margins cross into the inline content, so the margin state of the block layout state stays empty.
+        paintInvalidationScope.setDamagedRect(lineLayout->layout(blockLayoutState, invalidateChildren ? LineLayout::ForceFullLayout::Yes : LineLayout::ForceFullLayout::No).repaintRect);
+    }
+    for (auto& box : atomicInlineLevelBoxes)
+        box->clearOverridingContainingBlockContentSize();
     return inlineContentLayoutResult(lineLayout.get());
 }
 
