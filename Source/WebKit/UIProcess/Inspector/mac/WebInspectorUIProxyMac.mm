@@ -416,19 +416,85 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
 {
     ASSERT(platformURL);
 
+    if (saveDatas.size() > 1) {
+        RetainPtr<NSMutableSet> baseNames = adoptNS([[NSMutableSet alloc] init]);
+        for (auto& saveData : saveDatas) {
+            RetainPtr fileURL = adoptNS([[NSURL alloc] initWithString:saveData.url.createNSString().get()]);
+            RetainPtr baseName = [[fileURL URLByDeletingPathExtension] lastPathComponent] ?: @"";
+            [baseNames addObject:baseName.get()];
+        }
+        if ([baseNames count] == saveDatas.size()) {
+            RetainPtr openPanel = [NSOpenPanel openPanel];
+            [openPanel setCanChooseFiles:NO];
+            [openPanel setCanChooseDirectories:YES];
+            [openPanel setCanCreateDirectories:YES];
+            [openPanel setPrompt:WEB_UI_STRING("Save", "Button label for the Web Inspector save-to-directory panel").createNSString().get()];
+
+            if (platformURL.isFileURL)
+                [openPanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
+
+            auto saveToDirectory = [saveDatas = WTF::move(saveDatas), completionHandler = WTF::move(completionHandler)] (NSURL *directoryURL) mutable {
+                if (!directoryURL) {
+                    completionHandler(nullptr);
+                    return;
+                }
+
+                for (auto& saveData : saveDatas) {
+                    RetainPtr fileURL = adoptNS([[NSURL alloc] initWithString:saveData.url.createNSString().get()]);
+                    RetainPtr fileName = [fileURL lastPathComponent];
+                    if (![fileName length])
+                        continue;
+
+                    RetainPtr destinationURL = [directoryURL URLByAppendingPathComponent:fileName.get()];
+                    if (saveData.base64Encoded) {
+                        auto decodedData = base64Decode(saveData.content, { Base64DecodeOption::ValidatePadding });
+                        if (!decodedData)
+                            continue;
+                        RetainPtr dataContent = toNSData(decodedData->span());
+                        [dataContent writeToURL:destinationURL.get() atomically:YES];
+                    } else
+                        [saveData.content.createNSString() writeToURL:destinationURL.get() atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+                }
+
+                completionHandler(directoryURL);
+            };
+
+            auto didShowModal = [openPanel, saveToDirectory = WTF::move(saveToDirectory)] (NSInteger result) mutable {
+                if (result == NSModalResponseCancel) {
+                    saveToDirectory(nullptr);
+                    return;
+                }
+
+                ASSERT(result == NSModalResponseOK);
+                saveToDirectory(retainPtr([openPanel URL]).get());
+            };
+
+            if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
+                [openPanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTF::move(didShowModal)).get()];
+            else
+                didShowModal([openPanel runModal]);
+            return;
+        }
+    }
+
     RetainPtr savePanel = [NSSavePanel savePanel];
     [savePanel setExtensionHidden:NO];
 
     auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTF::move(saveDatas) savePanel:savePanel.get()]);
 
     auto saveToURL = [controller, completionHandler = WTF::move(completionHandler)] (NSURL *actualURL) mutable {
-        ASSERT(actualURL);
+        if (!actualURL) {
+            completionHandler(nullptr);
+            return;
+        }
 
         if ([controller base64Encoded]) {
             String contentString = [controller content];
             auto decodedData = base64Decode(contentString, { Base64DecodeOption::ValidatePadding });
-            if (!decodedData)
+            if (!decodedData) {
+                completionHandler(nullptr);
                 return;
+            }
             RetainPtr dataContent = toNSData(decodedData->span());
             [dataContent writeToURL:actualURL atomically:YES];
         } else
@@ -451,8 +517,10 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
         [savePanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
 
     auto didShowModal = [savePanel, saveToURL = WTF::move(saveToURL)] (NSInteger result) mutable {
-        if (result == NSModalResponseCancel)
+        if (result == NSModalResponseCancel) {
+            saveToURL(nullptr);
             return;
+        }
 
         ASSERT(result == NSModalResponseOK);
         saveToURL(retainPtr([savePanel URL]).get());
@@ -710,7 +778,8 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
     }
 
     WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
-        protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
+        if (actualURL)
+            protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
     });
 }
 

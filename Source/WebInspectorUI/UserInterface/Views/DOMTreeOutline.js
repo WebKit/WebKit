@@ -288,9 +288,11 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     populateContextMenu(contextMenu, event, treeElement)
     {
+        let selectedTreeElements = this.selectedTreeElements;
+
         let subMenus = {};
 
-        if (this.selectedTreeElements.length === 1) {
+        if (selectedTreeElements.length === 1) {
             subMenus.add = new WI.ContextSubMenuItem(contextMenu, WI.UIString("Add"));
             subMenus.edit = new WI.ContextSubMenuItem(contextMenu, WI.UIString("Edit"));
         }
@@ -298,7 +300,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         subMenus.copy = new WI.ContextSubMenuItem(contextMenu, WI.UIString("Copy"));
         subMenus.delete = new WI.ContextSubMenuItem(contextMenu, WI.UIString("Delete"));
 
-        if (this.editable && treeElement.selected && this.selectedTreeElements.length > 1) {
+        if (this.editable && treeElement.selected && selectedTreeElements.length > 1) {
             subMenus.delete.appendItem(WI.UIString("Nodes"), () => {
                 this.ondelete();
             });
@@ -318,8 +320,8 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (treeElement.bindRevealDescendantBreakpointsMenuItemHandler)
             options.revealDescendantBreakpointsMenuItemHandler = treeElement.bindRevealDescendantBreakpointsMenuItemHandler();
 
-        if (this.selectedTreeElements.length === 1)
-            WI.appendContextMenuItemsForDOMNode(contextMenu, treeElement.representedObject, options);
+        let domNodes = treeElement.selected ? selectedTreeElements.map((selectedTreeElement) => selectedTreeElement.representedObject) : [treeElement.representedObject];
+        WI.appendContextMenuItemsForDOMNode(contextMenu, domNodes, options);
 
         super.populateContextMenu(contextMenu, event, treeElement);
     }

@@ -393,6 +393,7 @@ bool WebInspectorFrontendClient::canSave(InspectorFrontendClient::SaveMode saveM
         return true;
 
     case InspectorFrontendClient::SaveMode::FileVariants:
+    case InspectorFrontendClient::SaveMode::MultipleFiles:
         return false;
     }
 

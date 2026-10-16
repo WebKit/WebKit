@@ -176,7 +176,8 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     }
 
     WebInspectorUIProxy::showSavePanel(m_window.get(), platformURL.get(), WTF::move(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
-        protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
+        if (actualURL)
+            protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
     });
 }
 

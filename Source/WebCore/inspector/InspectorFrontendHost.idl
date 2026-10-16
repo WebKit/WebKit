@@ -128,7 +128,8 @@
 // Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendClient::SaveMode`.
 enum SaveMode {
     "single-file",
-    "file-variants"
+    "file-variants",
+    "multiple-files"
 };
 
 dictionary SaveData {
