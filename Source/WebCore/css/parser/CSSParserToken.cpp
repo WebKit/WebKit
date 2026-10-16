@@ -603,8 +603,9 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case UrlToken:
         return value() == other.value();
     case DimensionToken:
-        if (!m_nonUnitPrefixLength) {
+        if (!m_nonUnitPrefixLength || !other.m_nonUnitPrefixLength) {
             // The spec wants equality comparison of the original text but in some rare dimension cases we don't have it. Fall back to parsed values.
+            // This must be decided by both tokens so that the comparison is symmetric.
             if (unitString() != other.unitString())
                 return false;
             return m_numericSign == other.m_numericSign && m_numericValue == other.m_numericValue && m_numericValueType == other.m_numericValueType;

@@ -52,6 +52,23 @@ TEST(CSSTokenizerTest, TokenizeWhitespaceLikeInput)
     EXPECT_EQ(CSSParserTokenType::IdentToken, tokenRangeSpan[6].type());
 }
 
+TEST(CSSTokenizerTest, DimensionTokenEqualityIsSymmetric)
+{
+    CSSTokenizer plain("1px"_s);
+    CSSTokenizer escaped("1\\70x"_s);
+    auto plainRange = plain.tokenRange();
+    auto escapedRange = escaped.tokenRange();
+    auto plainSpan = plainRange.span();
+    auto escapedSpan = escapedRange.span();
+
+    ASSERT_EQ(1ul, plainSpan.size());
+    ASSERT_EQ(1ul, escapedSpan.size());
+    EXPECT_EQ(CSSParserTokenType::DimensionToken, plainSpan[0].type());
+    EXPECT_EQ(CSSParserTokenType::DimensionToken, escapedSpan[0].type());
+    EXPECT_EQ(plainSpan[0] == escapedSpan[0], escapedSpan[0] == plainSpan[0]);
+    EXPECT_TRUE(plainSpan[0] == escapedSpan[0]);
+}
+
 TEST(CSSTokenizerTest, TokenizeIdentAndCommaInput)
 {
     CSSTokenizer tokenizer("this, "_s);

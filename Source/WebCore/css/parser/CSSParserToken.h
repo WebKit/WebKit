@@ -110,7 +110,7 @@ public:
 
     static CSSUnitType LEGACY_NODELETE stringToUnitType(StringView);
 
-    bool operator==(const CSSParserToken& other) const;
+    WEBCORE_EXPORT bool operator==(const CSSParserToken& other) const;
 
     // Converts NumberToken to DimensionToken.
     void convertToDimensionWithUnit(CSSUnitType);
