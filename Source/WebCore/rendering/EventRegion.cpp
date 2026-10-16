@@ -110,7 +110,7 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion& region)
+static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion& region, bool shapeIsInset)
 {
     constexpr int minimumSize = 20;
     constexpr int occlusionMargin = 10;
@@ -133,7 +133,7 @@ static std::optional<FloatRect> guardRectForRegionBounds(const InteractionRegion
         isSmallRect = true;
     }
 
-    if (isSmallRect || isComplexShape)
+    if (isSmallRect || isComplexShape || shapeIsInset)
         return guardRect;
 
     return std::nullopt;
@@ -144,34 +144,35 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
     if (!renderer.page().shouldBuildInteractionRegions())
         return;
 
-    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, layerBounds, clipOffset, transform)) {
-        auto rectForTracking = enclosingIntRect(interactionRegion->rectInLayerCoordinates);
+    if (auto renderedRegion = interactionRegionForRenderedRegion(renderer, layerBounds, clipOffset, transform)) {
+        auto& [interactionRegion, shapeIsInset] = *renderedRegion;
+        auto rectForTracking = enclosingIntRect(interactionRegion.rectInLayerCoordinates);
 
-        if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
+        if (interactionRegion.type == InteractionRegion::Type::Occlusion) {
             auto result = m_occlusionRects.add(rectForTracking);
             if (!result.isNewEntry)
                 return;
 
-            m_interactionRegions.append(*interactionRegion);
+            m_interactionRegions.append(interactionRegion);
             return;
         }
 
-        if (interactionRegion->type == InteractionRegion::Type::Guard) {
+        if (interactionRegion.type == InteractionRegion::Type::Guard) {
             auto result = m_guardRects.add(rectForTracking, Inflated::No);
             if (!result.isNewEntry)
                 return;
 
-            m_interactionRegions.append(*interactionRegion);
+            m_interactionRegions.append(interactionRegion);
             return;
         }
 
-        auto result = m_interactionRectsAndContentHints.set(rectForTracking, interactionRegion->contentHint);
+        auto result = m_interactionRectsAndContentHints.set(rectForTracking, interactionRegion.contentHint);
         if (!result.isNewEntry)
             return;
 
-        bool defaultContentHint = interactionRegion->contentHint == InteractionRegion::ContentHint::Default;
-        if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion->nodeIdentifier)) {
-            m_consolidatedElements.add(interactionRegion->nodeIdentifier);
+        bool defaultContentHint = interactionRegion.contentHint == InteractionRegion::ContentHint::Default;
+        if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion.nodeIdentifier)) {
+            m_consolidatedElements.add(interactionRegion.nodeIdentifier);
             return;
         }
 
@@ -182,24 +183,24 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
                 m_containerRemovalCandidates.add(renderElement->element()->nodeIdentifier());
         }
 
-        auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion->nodeIdentifier, Vector<InteractionRegion>());
-        discoveredAddResult.iterator->value.append(*interactionRegion);
+        auto discoveredAddResult = m_discoveredRegionsByElement.add(interactionRegion.nodeIdentifier, Vector<InteractionRegion>());
+        discoveredAddResult.iterator->value.append(interactionRegion);
         if (!discoveredAddResult.isNewEntry)
             return;
 
-        auto guardRect = guardRectForRegionBounds(*interactionRegion);
+        auto guardRect = guardRectForRegionBounds(interactionRegion, shapeIsInset);
         if (guardRect) {
             auto result = m_guardRects.add(enclosingIntRect(guardRect.value()), Inflated::Yes);
             if (result.isNewEntry) {
                 m_interactionRegions.append({
                     InteractionRegion::Type::Guard,
-                    interactionRegion->nodeIdentifier,
+                    interactionRegion.nodeIdentifier,
                     guardRect.value()
                 });
             }
         }
 
-        m_interactionRegions.append(*interactionRegion);
+        m_interactionRegions.append(interactionRegion);
     }
 }
 

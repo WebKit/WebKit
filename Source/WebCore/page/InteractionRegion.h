@@ -87,7 +87,12 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
         && (!a.clipPath || &a.clipPath.value() == &b.clipPath.value());
 }
 
-WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
+struct RenderedInteractionRegion {
+    InteractionRegion region;
+    bool shapeIsInset { false };
+};
+
+WEBCORE_EXPORT std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(const RenderObject&, const FloatRect&, const FloatSize&, const std::optional<AffineTransform>&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 

@@ -36,7 +36,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "ElementRuleCollector.h"
-#include "FloatSizeHash.h"
 #include "FrameSnapshotting.h"
 #include "GeometryUtilities.h"
 #include "HTMLAnchorElement.h"
@@ -47,6 +46,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HitTestResult.h"
+#include "IntRectHash.h"
 #include "LayoutShape.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGShapeInlines.h"
@@ -89,8 +89,8 @@ class InteractionRegionPathCache {
 public:
     static InteractionRegionPathCache& LEGACY_NODELETE singleton();
 
-    std::optional<Path> get(const Image&, const FloatSize&);
-    void add(const Image&, const FloatSize&, Path);
+    std::optional<Path> get(const Image&, const IntRect&);
+    void add(const Image&, const IntRect&, Path);
 
     void clear();
 
@@ -99,7 +99,7 @@ private:
 
     InteractionRegionPathCache() = default;
 
-    WeakHashMap<const Image, HashMap<FloatSize, Path>> m_imageCache;
+    WeakHashMap<const Image, HashMap<IntRect, Path>> m_imageCache;
 };
 
 InteractionRegionPathCache& InteractionRegionPathCache::singleton()
@@ -108,18 +108,24 @@ InteractionRegionPathCache& InteractionRegionPathCache::singleton()
     return cache;
 }
 
-std::optional<Path> InteractionRegionPathCache::get(const Image& image, const FloatSize& size)
+std::optional<Path> InteractionRegionPathCache::get(const Image& image, const IntRect& rect)
 {
-    if (auto cacheBySize = m_imageCache.getOptional(image))
-        return cacheBySize->getOptional(size);
+    if (rect.isEmpty())
+        return std::nullopt;
+
+    if (auto cacheByRect = m_imageCache.getOptional(image))
+        return cacheByRect->getOptional(rect);
     return std::nullopt;
 }
 
-void InteractionRegionPathCache::add(const Image& image, const FloatSize& size, Path path)
+void InteractionRegionPathCache::add(const Image& image, const IntRect& rect, Path path)
 {
+    if (rect.isEmpty())
+        return;
+
     m_imageCache.ensure(image, [] {
-        return HashMap<FloatSize, Path>();
-    }).iterator->value.add(size, path);
+        return HashMap<IntRect, Path>();
+    }).iterator->value.add(rect, path);
 }
 
 void InteractionRegionPathCache::clear()
@@ -337,6 +343,29 @@ static FloatSize boundingSize(const RenderObject& renderer, const std::optional<
     return size;
 }
 
+static LayoutRect imagePaintRect(const RenderImage& renderImage)
+{
+    if (!renderImage.imageResource().naturalDimensions().hasUsableAspectRatio())
+        return renderImage.contentBoxRect();
+
+    return renderImage.computePaintRectForObjectViewBox(renderImage.replacedContentRect());
+}
+
+static FloatRect iconImageRect(const RenderImage& renderImage, const std::optional<AffineTransform>& transform)
+{
+    FloatRect rect = imagePaintRect(renderImage);
+    if (!transform)
+        return rect;
+
+    FloatSize borderBoxSize = renderImage.borderBoxSize();
+    if (transform->a() < 0)
+        rect.setX(borderBoxSize.width() - rect.maxX());
+    if (transform->d() < 0)
+        rect.setY(borderBoxSize.height() - rect.maxY());
+    rect.scale(transform->xScale(), transform->yScale());
+    return rect;
+}
+
 static bool cachedImageIsPhoto(const CachedImage& cachedImage)
 {
     if (cachedImage.errorOccurred())
@@ -357,6 +386,10 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
 {
     if (const auto& renderImage = dynamicDowncast<RenderImage>(renderer)) {
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
+            return nullptr;
+
+        auto paintRect = snappedIntRect(imagePaintRect(*renderImage));
+        if (paintRect.isEmpty() || !enclosingIntRect(renderImage->contentBoxRect()).contains(paintRect))
             return nullptr;
 
         RefPtr image = protect(*renderImage->cachedImage())->image();
@@ -401,7 +434,7 @@ static String interactionRegionTextContentForNode(Node& node)
 }
 #endif
 
-std::optional<InteractionRegion> interactionRegionForRenderedRegion(const RenderObject& regionRenderer, const FloatRect& bounds, const FloatSize& clipOffset, const std::optional<AffineTransform>& transform)
+std::optional<RenderedInteractionRegion> interactionRegionForRenderedRegion(const RenderObject& regionRenderer, const FloatRect& bounds, const FloatSize& clipOffset, const std::optional<AffineTransform>& transform)
 {
     if (bounds.isEmpty())
         return std::nullopt;
@@ -498,7 +531,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 
     if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
         if (isOriginalMatch && shouldGetOcclusion(renderer.get()) && !isTooBigForOcclusion) {
-            return { {
+            return RenderedInteractionRegion { {
                 InteractionRegion::Type::Occlusion,
                 nodeIdentifier,
                 bounds
@@ -539,7 +572,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     bool matchedElementIsGuardContainer = isGuardContainer(*matchedElement);
 
     if (isOriginalMatch && matchedElementIsGuardContainer) {
-        return { {
+        return RenderedInteractionRegion { {
             InteractionRegion::Type::Guard,
             nodeIdentifier,
             bounds
@@ -566,6 +599,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
     float cornerRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners { };
     std::optional<Path> clipPath;
+    bool shapeIsInset = false;
 
     CheckedRef style = regionRenderer.style();
     CheckedPtr<const RenderBox> regionRendererBox;
@@ -579,24 +613,26 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 
         clipPath = path;
     } else if (iconImage && originalElement) {
-        auto size = boundingSize(regionRenderer, transform);
+        CheckedRef renderImage = downcast<RenderImage>(regionRenderer);
+        auto imageRect = snappedIntRect(LayoutRect(iconImageRect(renderImage, transform)));
         auto generateAndCachePath = [&] {
-            LayoutRect imageRect(FloatPoint(), size);
             auto iconSize = iconImage ? iconImage->size() : FloatSize { };
             Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0, ConcreteObjectSize::fixed(iconSize), iconSize);
             LayoutShape::DisplayPaths paths;
             shape->buildDisplayPaths(paths);
             auto path = paths.shape;
-            InteractionRegionPathCache::singleton().add(*iconImage.get(), size, path);
+            InteractionRegionPathCache::singleton().add(*iconImage.get(), imageRect, path);
             return path;
         };
-        auto cachedPath = InteractionRegionPathCache::singleton().get(*iconImage.get(), size);
+        auto cachedPath = InteractionRegionPathCache::singleton().get(*iconImage.get(), imageRect);
         auto path = cachedPath ? *cachedPath : generateAndCachePath();
 
         if (!clipOffset.isZero())
             path.translate(clipOffset);
 
         clipPath = path;
+
+        shapeIsInset = imagePaintRect(renderImage) != renderImage->borderBoxRect();
     } else if (svgClipElements) {
         auto& [svgSVGElement, shapeElement] = *svgClipElements;
         auto path = shapeElement->toClipPath();
@@ -716,7 +752,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
             rect.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
     }
 
-    return { {
+    return RenderedInteractionRegion { {
         InteractionRegion::Type::Interaction,
         nodeIdentifier,
         rect,
@@ -728,7 +764,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
 #if ENABLE(INTERACTION_REGION_TEXT_CONTENT)
         interactionRegionTextContentForNode(*regionRenderer.node())
 #endif
-    } };
+    }, shapeIsInset };
 }
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
