@@ -9,7 +9,7 @@ bytecompiler/BytecodeGenerator.h
 bytecompiler/Label.h
 debugger/Debugger.cpp
 dfg/DFGFinalizer.h
-[ macOS ] dfg/DFGGraph.h
+dfg/DFGGraph.h
 dfg/DFGLazyJSValue.h
 dfg/DFGNode.h
 dfg/DFGSpeculativeJIT.h

@@ -1,16 +1,18 @@
 StyleBuilderGenerated.cpp
-[ macOS ] css/CSSStyleProperties.cpp
+[ iOS ] accessibility/AccessibilityScrollView.cpp
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+css/CSSStyleProperties.cpp
 dom/Attr.cpp
-[ macOS ] dom/ComposedTreeIterator.h
+dom/ComposedTreeIterator.h
 dom/Document.cpp
 dom/Element.cpp
-[ macOS ] dom/EventLoop.cpp
-[ macOS ] dom/InlineStyleSheetOwner.cpp
-[ macOS ] dom/MutationObserver.cpp
+dom/EventLoop.cpp
+dom/InlineStyleSheetOwner.cpp
+dom/MutationObserver.cpp
 dom/PendingScript.cpp
-[ macOS ] dom/Range.cpp
+dom/Range.cpp
 dom/ShadowRoot.cpp
-[ macOS ] dom/ViewTransition.cpp
+dom/ViewTransition.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp
 layout/formattingContexts/inline/InlineContentAligner.cpp
@@ -30,7 +32,7 @@ layout/formattingContexts/inline/RangeBasedLineBuilder.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp
-[ macOS ] layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
+layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
@@ -43,6 +45,9 @@ layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
+[ iOS ] page/cocoa/ContentChangeObserver.cpp
+[ iOS ] page/ios/EventHandlerIOS.mm
+[ iOS ] platform/ios/WebCoreMotionManager.mm
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
@@ -164,6 +169,7 @@ rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 rendering/updating/RenderTreeUpdaterViewTransition.cpp
 style/AnchorPositionEvaluator.cpp
 style/AttributeChangeInvalidation.cpp
+[ iOS ] style/ChildChangeInvalidation.cpp
 style/ClassChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/InlineTextBoxStyle.cpp
@@ -179,13 +185,17 @@ style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
 style/StyleInvalidator.cpp
+[ iOS ] style/StyleResolveForDocument.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
+[ iOS ] style/StyleScopeRuleSets.cpp
+[ iOS ] style/StyleSubstitutionResolver.cpp
 style/StyleTreeResolver.cpp
 style/Styleable.cpp
 style/Styleable.h
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
+[ iOS ] style/computed/data/StyleFontData.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleGradientImage.cpp
 style/values/primitives/StyleLengthResolution.cpp

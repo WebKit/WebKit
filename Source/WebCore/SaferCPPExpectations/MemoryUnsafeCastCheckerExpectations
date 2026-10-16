@@ -1,0 +1,7 @@
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+[ iOS ] editing/cocoa/AttributedString.mm
+[ iOS ] editing/cocoa/FontShadowCocoa.mm
+[ iOS ] editing/cocoa/NodeHTMLConverter.mm
+[ iOS ] platform/ios/PlatformPasteboardIOS.mm
+[ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
+[ iOS ] platform/ios/wak/WebCoreThread.mm

@@ -1,17 +1,23 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ macOS ] css/CSSStyleProperties.cpp
+[ iOS ] bindings/js/ScriptController.cpp
+css/CSSStyleProperties.cpp
 dom/Attr.cpp
-[ macOS ] dom/ComposedTreeIterator.h
-[ macOS ] dom/ContainerNode.cpp
+dom/ComposedTreeIterator.h
+dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Element.cpp
-[ macOS ] dom/EventPath.cpp
-[ macOS ] dom/InlineStyleSheetOwner.cpp
-[ macOS ] dom/MutationObserver.cpp
+dom/EventPath.cpp
+dom/InlineStyleSheetOwner.cpp
+dom/MutationObserver.cpp
+[ iOS ] dom/Node.cpp
 dom/ShadowRoot.cpp
-[ macOS ] dom/ViewTransition.cpp
+dom/ViewTransition.cpp
+[ iOS ] loader/ios/LegacyPreviewLoader.mm
+[ iOS ] page/Quirks.cpp
+[ iOS ] page/WebKitNamespace.cpp
+[ iOS ] page/cocoa/ContentChangeObserver.cpp
+[ iOS ] platform/PreviewConverter.cpp
 rendering/BackgroundPainter.cpp
-[ iOS ] rendering/BorderPainter.cpp
 rendering/HitTestResult.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/MarkedText.cpp
@@ -51,24 +57,29 @@ rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 style/AnchorPositionEvaluator.cpp
+[ iOS ] style/ChildChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/RuleData.h
 style/RuleSet.cpp
 style/StyleAdjuster.cpp
+[ iOS ] style/StyleBuilder.cpp
 style/StyleDocumentScope.cpp
+[ iOS ] style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidator.cpp
 style/StyleResolver.cpp
 style/StyleScopeRuleSets.cpp
 style/StyleTreeResolver.cpp
+[ iOS ] style/Styleable.cpp
 style/Styleable.h
 style/UserAgentStyle.cpp
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
 style/values/filter-effects/StyleFilterReference.cpp
-[ iOS ] style/values/primitives/StyleLengthResolution.cpp
+[ iOS ] style/values/images/kinds/StyleImageSet.cpp
 style/values/transforms/StyleRotate.h
 style/values/transforms/StyleScale.h
 style/values/transforms/StyleTransformList.cpp
 style/values/transforms/StyleTranslate.h
+[ iOS ] style/values/ui/StyleCursor.cpp
 style/values/will-change/StyleWillChange.h

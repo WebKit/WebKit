@@ -9,11 +9,9 @@ API/JSScript.mm
 API/JSTypedArray.cpp
 API/JSWrapperMap.mm
 assembler/LinkBuffer.cpp
-[ macOS ] b3/B3CheckSpecial.cpp
+b3/B3CheckSpecial.cpp
 b3/B3PatchpointSpecial.cpp
 b3/B3Procedure.cpp
-[ iOS ] b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
-[ iOS ] b3/air/AirGenerate.cpp
 bytecode/AccessCase.cpp
 bytecode/BytecodeDumper.cpp
 bytecode/CallLinkInfo.cpp
@@ -42,7 +40,7 @@ dfg/DFGCommonData.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGDesiredGlobalProperties.cpp
 dfg/DFGGraph.cpp
-[ macOS ] dfg/DFGGraphSafepoint.cpp
+dfg/DFGGraphSafepoint.cpp
 dfg/DFGJITCode.cpp
 dfg/DFGJITCompiler.cpp
 dfg/DFGJITCompiler.h
@@ -65,7 +63,7 @@ heap/GCIncomingRefCountedSetInlines.h
 heap/Heap.cpp
 heap/IsoCellSetInlines.h
 heap/JITStubRoutineSet.cpp
-[ macOS ] heap/MarkedSpace.cpp
+heap/MarkedSpace.cpp
 heap/MarkingConstraintSolver.cpp
 heap/ParallelSourceAdapter.h
 heap/SubspaceInlines.h
@@ -77,9 +75,8 @@ inspector/agents/InspectorDebuggerAgent.cpp
 inspector/agents/InspectorHeapAgent.cpp
 inspector/agents/InspectorRuntimeAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
-[ macOS ] interpreter/Interpreter.cpp
+interpreter/Interpreter.cpp
 jit/BaselineJITPlan.cpp
-[ iOS ] jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/ICStats.cpp
 jit/JIT.cpp
@@ -94,7 +91,6 @@ parser/Parser.h
 parser/SourceProvider.h
 parser/UnlinkedSourceCode.cpp
 parser/UnlinkedSourceCode.h
-[ iOS ] profiler/ProfilerDatabase.cpp
 profiler/ProfilerEvent.cpp
 runtime/ArrayBufferView.cpp
 runtime/AtomicsObject.cpp
@@ -118,12 +114,12 @@ runtime/JSGlobalObject.cpp
 runtime/JSObject.cpp
 runtime/JSObjectInlines.h
 runtime/JSRunLoopTimer.cpp
-[ macOS ] runtime/MicrotaskQueue.cpp
+runtime/MicrotaskQueue.cpp
 runtime/ModuleProgramExecutable.cpp
 runtime/NativeExecutable.cpp
 runtime/ProgramExecutable.cpp
 runtime/RegExpKey.h
-[ macOS ] runtime/RegExpObject.cpp
+runtime/RegExpObject.cpp
 runtime/SamplingProfiler.cpp
 runtime/ScriptExecutable.h
 runtime/Structure.cpp
@@ -132,25 +128,24 @@ runtime/SymbolTable.cpp
 runtime/TypeProfiler.cpp
 runtime/TypeProfilerLog.cpp
 runtime/TypeSet.cpp
-[ macOS ] runtime/VM.cpp
+runtime/VM.cpp
 runtime/VMTraps.cpp
 runtime/Watchdog.cpp
 tools/FunctionOverrides.cpp
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
-[ iOS ] wasm/WasmBBQJIT64.cpp
-[ macOS ] wasm/WasmBBQPlan.cpp
+wasm/WasmBBQPlan.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntPlan.cpp
-[ macOS ] wasm/WasmIPIntSlowPaths.cpp
+wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmMemory.cpp
 wasm/WasmMemory.h
 wasm/WasmOMGIRGenerator.cpp
-[ macOS ] wasm/WasmOMGPlan.cpp
-[ macOS ] wasm/WasmOSREntryPlan.cpp
+wasm/WasmOMGPlan.cpp
+wasm/WasmOSREntryPlan.cpp
 wasm/WasmOperationsInlines.h
 wasm/WasmPlan.cpp
 wasm/WasmStreamingCompiler.cpp
@@ -167,5 +162,4 @@ wasm/js/JSWebAssemblyMemory.h
 wasm/js/WebAssemblyFunction.cpp
 wasm/js/WebAssemblyFunction.h
 wasm/js/WebAssemblyInstanceConstructor.cpp
-[ iOS ] wasm/js/WebAssemblyModuleConstructor.cpp
 wasm/js/WebAssemblyModuleRecord.cpp

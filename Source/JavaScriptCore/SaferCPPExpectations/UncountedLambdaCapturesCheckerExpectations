@@ -1,7 +1,6 @@
 bytecompiler/NodesCodegen.cpp
 debugger/Debugger.cpp
 dfg/DFGLazyJSValue.cpp
-[ iOS ] dfg/DFGObjectAllocationSinkingPhase.cpp
 ftl/FTLCompile.cpp
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLOSRExitHandle.cpp
@@ -9,6 +8,5 @@ ftl/FTLPatchpointExceptionHandle.cpp
 jit/JITSizeStatistics.cpp
 runtime/CachedTypes.cpp
 runtime/SamplingProfiler.cpp
-[ iOS ] runtime/WaiterListManager.h
-[ macOS ] wasm/WasmCalleeGroup.cpp
+wasm/WasmCalleeGroup.cpp
 wasm/WasmTable.cpp
