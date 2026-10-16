@@ -31,6 +31,7 @@
 #include "AudioDecoderCocoa.h"
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
+#include "AudioUtilitiesCocoa.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
@@ -49,6 +50,11 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+static bool isMPEG4AudioFormat(AudioFormatID format)
+{
+    return format == kAudioFormatMPEG4AAC || format == kAudioFormatMPEG4AAC_HE || format == kAudioFormatMPEG4AAC_LD || format == kAudioFormatMPEG4AAC_HE_V2 || format == kAudioFormatMPEG4AAC_ELD;
+}
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioEncoderCocoa);
 
@@ -132,7 +138,7 @@ std::expected<InternalAudioEncoderCocoa::InternalConfig, String> InternalAudioEn
         internalConfig.complexity = opusConfig.complexity;
         internalConfig.packetlossperc = opusConfig.packetlossperc;
         internalConfig.useinbandfec = opusConfig.useinbandfec;
-    } else if ((internalConfig.codec == kAudioFormatMPEG4AAC || internalConfig.codec == kAudioFormatMPEG4AAC_HE || internalConfig.codec == kAudioFormatMPEG4AAC_LD || internalConfig.codec == kAudioFormatMPEG4AAC_HE_V2 || internalConfig.codec == kAudioFormatMPEG4AAC_ELD)) {
+    } else if (isMPEG4AudioFormat(internalConfig.codec)) {
         if (config.isAacADTS.value_or(false))
             return makeUnexpected("AAC ADTS format is unsupported"_s);
     }
@@ -226,7 +232,11 @@ Vector<uint8_t> InternalAudioEncoderCocoa::generateDecoderDescriptionFromSample(
     auto* cookie = PAL::CMAudioFormatDescriptionGetMagicCookie(formatDescription.get(), &cookieSize);
     if (!cookieSize)
         return { };
-    return unsafeMakeSpan(static_cast<const uint8_t*>(cookie), cookieSize);
+
+    auto cookieSpan = unsafeMakeSpan(static_cast<const uint8_t*>(cookie), cookieSize);
+    if (isMPEG4AudioFormat(asbd->mFormatID))
+        return extractAudioSpecificConfigFromESDescriptor(cookieSpan);
+    return cookieSpan;
 }
 
 AudioEncoder::ActiveConfiguration InternalAudioEncoderCocoa::activeConfiguration(CMSampleBufferRef sample) const

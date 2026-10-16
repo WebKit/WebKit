@@ -140,6 +140,91 @@ Vector<uint8_t> createESDescriptor(std::span<const uint8_t> audioSpecificConfig)
     return esDescriptor;
 }
 
+// Reads the length of a descriptor, encoded as 1 to 4 bytes holding 7 bits each, the high bit meaning another byte follows.
+static std::optional<size_t> readDescriptorLength(std::span<const uint8_t>& data)
+{
+    size_t length = 0;
+    for (unsigned i = 0; i < 4; ++i) {
+        if (data.empty())
+            return std::nullopt;
+        uint8_t byte = data.front();
+        data = data.subspan(1);
+        length = (length << 7) | (byte & 0x7f);
+        if (!(byte & 0x80))
+            return length;
+    }
+    return std::nullopt;
+}
+
+// Reads the tag and the content of the descriptor at the start of data, and moves data after the descriptor.
+static std::optional<std::pair<uint8_t, std::span<const uint8_t>>> readDescriptor(std::span<const uint8_t>& data)
+{
+    if (data.empty())
+        return std::nullopt;
+    uint8_t tag = data.front();
+    data = data.subspan(1);
+    auto length = readDescriptorLength(data);
+    if (!length || *length > data.size())
+        return std::nullopt;
+    auto content = data.first(*length);
+    data = data.subspan(*length);
+    return std::pair { tag, content };
+}
+
+Vector<uint8_t> extractAudioSpecificConfigFromESDescriptor(std::span<const uint8_t> esDescriptor)
+{
+    constexpr uint8_t esDescriptorTag = 0x03;
+    constexpr uint8_t decoderConfigDescriptorTag = 0x04;
+    constexpr uint8_t decoderSpecificInfoTag = 0x05;
+
+    // ES_Descriptor: ES_ID (2 bytes), flags (1 byte), optional fields, then the DecoderConfigDescriptor.
+    auto esDescriptorContent = readDescriptor(esDescriptor);
+    if (!esDescriptorContent || esDescriptorContent->first != esDescriptorTag)
+        return { };
+
+    auto content = esDescriptorContent->second;
+    if (content.size() < 3)
+        return { };
+    uint8_t flags = content[2];
+    content = content.subspan(3);
+
+    constexpr uint8_t streamDependenceFlag = 0x80;
+    constexpr uint8_t urlFlag = 0x40;
+    constexpr uint8_t ocrStreamFlag = 0x20;
+    if (flags & streamDependenceFlag) {
+        if (content.size() < 2)
+            return { };
+        content = content.subspan(2); // dependsOn_ES_ID
+    }
+    if (flags & urlFlag) {
+        if (content.empty() || content.size() < 1u + content.front())
+            return { };
+        content = content.subspan(1u + content.front()); // URLlength and URLstring
+    }
+    if (flags & ocrStreamFlag) {
+        if (content.size() < 2)
+            return { };
+        content = content.subspan(2); // OCR_ES_Id
+    }
+
+    // DecoderConfigDescriptor: objectTypeIndication (1 byte), streamType (1 byte), bufferSizeDB (3 bytes), maxBitrate (4 bytes), avgBitrate (4 bytes), then the DecoderSpecificInfo.
+    auto decoderConfigDescriptor = readDescriptor(content);
+    if (!decoderConfigDescriptor || decoderConfigDescriptor->first != decoderConfigDescriptorTag)
+        return { };
+
+    constexpr size_t decoderConfigDescriptorFixedSize = 1 + 1 + 3 + 4 + 4;
+    auto decoderConfigContent = decoderConfigDescriptor->second;
+    if (decoderConfigContent.size() < decoderConfigDescriptorFixedSize)
+        return { };
+    decoderConfigContent = decoderConfigContent.subspan(decoderConfigDescriptorFixedSize);
+
+    auto decoderSpecificInfo = readDescriptor(decoderConfigContent);
+    if (!decoderSpecificInfo || decoderSpecificInfo->first != decoderSpecificInfoTag)
+        return { };
+
+    return decoderSpecificInfo->second;
+}
+
 }
 
 #endif
