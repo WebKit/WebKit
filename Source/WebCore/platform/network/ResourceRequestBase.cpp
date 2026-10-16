@@ -740,6 +740,11 @@ void ResourceRequestBase::setWasSchemeOptimisticallyUpgraded(bool wasSchemeOptim
     m_requestData.m_wasSchemeOptimisticallyUpgraded = wasSchemeOptimisticallyUpgraded;
 }
 
+void ResourceRequestBase::setLatchedThirdPartyCookieBlockingDecision(ThirdPartyCookieBlockingDecision decision)
+{
+    m_requestData.m_latchedThirdPartyCookieBlockingDecision = decision;
+}
+
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())

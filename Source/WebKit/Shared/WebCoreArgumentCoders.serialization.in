@@ -1161,6 +1161,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_isPrivateTokenUsageByThirdPartyAllowed;
     [BitField] bool m_wasSchemeOptimisticallyUpgraded;
     WebCore::IPAddressSpace m_targetAddressSpace;
+    WebCore::ThirdPartyCookieBlockingDecision m_latchedThirdPartyCookieBlockingDecision;
 };
 
 #if USE(SOUP)
@@ -3646,6 +3647,15 @@ enum class WebCore::ThirdPartyCookieBlockingMode : uint8_t {
 #endif
     AllOnSitesWithoutUserInteraction,
     OnlyAccordingToPerDomainPolicy
+};
+
+header: <WebCore/ThirdPartyCookieBlockingMode.h>
+enum class WebCore::ThirdPartyCookieBlockingDecision : uint8_t {
+    None,
+    All,
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    AllExceptPartitioned
+#endif
 };
 
 header: <WebCore/TrackingPreventionTypes.h>
