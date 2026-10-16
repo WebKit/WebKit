@@ -63,6 +63,7 @@ struct RemoteMediaPlayerState {
     bool hasVideo { false };
     bool hasClosedCaptions { false };
     bool hasAvailableVideoFrame { false };
+    bool videoFrameHasAlpha { false };
     bool wirelessVideoPlaybackDisabled { false };
     bool didPassCORSAccessCheck { false };
 };

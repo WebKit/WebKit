@@ -176,6 +176,14 @@ void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef pixelBuffer, const Pr
     IOSurface::setOwnershipIdentity(surface.get(), owner);
 }
 
+CGImageAlphaInfo alphaInfoForCVPixelBuffer(CVPixelBufferRef buffer)
+{
+    RetainPtr alphaMode = dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(buffer, kCVImageBufferAlphaChannelModeKey, nullptr));
+    if (alphaMode && CFEqual(alphaMode.get(), kCVImageBufferAlphaChannelMode_PremultipliedAlpha))
+        return kCGImageAlphaPremultipliedFirst;
+    return kCGImageAlphaFirst;
+}
+
 RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, bool shouldUseIOSurface)
 {
     OSType format = preferedPixelBufferFormat();
