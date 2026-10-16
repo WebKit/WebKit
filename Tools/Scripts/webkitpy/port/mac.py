@@ -40,7 +40,6 @@ from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions, Config
 from webkitpy.port.darwin import DarwinPort
-from webkitpy.port.driver import DriverInput
 
 _log = logging.getLogger(__name__)
 
@@ -396,12 +395,8 @@ class MacPort(DarwinPort):
         super(MacPort, self).setup_test_run(device_type)
         # Warm up only when multiple workers will spawn concurrently (webkit.org/b/242106):
         # with one worker the first real test does the same first-run binary verification.
-        # Also skipped under --no-timeout so `lldb --wait-for --attach-name ...` doesn't
-        # latch onto the warmup process.
-        if self.get_option('child_processes', 1) > 1 and not self.get_option('no_timeout'):
-            _log.debug('Warming up the runner ...')
-            warmup_driver = self.create_driver(0)
-            warmup_driver.run_test(DriverInput('file:///warmup-does-not-exist', 60000., None, should_run_pixel_test=False), stop_when_done=True)
+        if self.get_option('child_processes', 1) > 1:
+            self._warm_up_runner()
 
         # rdar://132098879, ensure webarchive is quarantined.
         webarchive_test_path = self.layout_tests_dir() + '/webarchive/loading/resources/quarantined_top.webarchive'

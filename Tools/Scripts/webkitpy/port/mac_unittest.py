@@ -29,6 +29,8 @@
 
 import logging
 
+from unittest.mock import patch
+
 from webkitcorepy import Version, OutputCapture
 
 from webkitpy.port.mac import MacPort
@@ -129,6 +131,20 @@ class MacTest(darwin_testcase.DarwinTest):
             "This machine could support 2 child processes, but only has enough memory for 1.\n"
         )
         self.assertEqual(child_processes, 1)
+
+    def test_setup_test_run_warms_up_with_multiple_workers(self):
+        port = self.make_port()
+        port.set_option('child_processes', 2)
+        with patch.object(port, '_warm_up_runner') as warm_up_runner:
+            port.setup_test_run()
+        warm_up_runner.assert_called_once_with()
+
+    def test_setup_test_run_with_one_worker_does_not_warm_up(self):
+        port = self.make_port()
+        port.set_option('child_processes', 1)
+        with patch.object(port, '_warm_up_runner') as warm_up_runner:
+            port.setup_test_run()
+        warm_up_runner.assert_not_called()
 
     def test_32bit(self):
         port = self.make_port(options=MockOptions(architecture='x86'))

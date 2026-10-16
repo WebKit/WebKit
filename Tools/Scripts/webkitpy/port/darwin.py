@@ -30,6 +30,7 @@ from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.port.apple import ApplePort
+from webkitpy.port.driver import DriverInput
 from webkitpy.port.leakdetector import LeakDetector
 
 from webkitcorepy import decorators, Version
@@ -137,6 +138,14 @@ class DarwinPort(ApplePort):
         if self.get_option('guard_malloc'):
             return 350 * 1000
         return super(DarwinPort, self).default_timeout_ms()
+
+    def _warm_up_runner(self, worker_number=0):
+        # Skipped under --no-timeout so `lldb --wait-for --attach-name ...` doesn't latch onto the warmup process.
+        if self.get_option('no_timeout'):
+            return
+        _log.debug('Warming up the runner for worker {} ...'.format(worker_number))
+        warmup_driver = self.create_driver(worker_number)
+        warmup_driver.run_test(DriverInput('file:///warmup-does-not-exist', 60000., None, should_run_pixel_test=False), stop_when_done=True)
 
     def _api_test_version_name(self, version, table=PUBLIC_TABLE):
         name = VersionNameMap.map(self.host.platform).to_name(version, platform=self.port_name, table=table)

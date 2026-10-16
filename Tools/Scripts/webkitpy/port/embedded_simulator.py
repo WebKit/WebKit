@@ -69,6 +69,12 @@ class EmbeddedSimulatorPort(EmbeddedPort):
             env['__XPC_MallocScribble'] = '1'
         return env
 
+    def did_spawn_worker(self, worker_number):
+        super().did_spawn_worker(worker_number)
+        # The first launch of the runner on a simulator booted for this run can outlast a test's timeout.
+        if self.target_host(worker_number).platform_device.booted_by_script:
+            self._warm_up_runner(worker_number)
+
     def reset_preferences(self):
         SimulatedDeviceManager.tear_down(self.host)
 

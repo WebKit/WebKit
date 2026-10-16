@@ -25,6 +25,8 @@ import os
 import re
 import time
 
+from unittest.mock import Mock
+
 from webkitpy.port import darwin as darwin_module
 from webkitpy.port import port_testcase
 from webkitpy.tool.mocktool import MockOptions
@@ -53,6 +55,21 @@ class DarwinTest(port_testcase.PortTestCase):
     def test_default_timeout_ms(self):
         super(DarwinTest, self).test_default_timeout_ms()
         self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
+
+    def test_warm_up_runner(self):
+        port = self.make_port()
+        port.create_driver = Mock()
+        port._warm_up_runner(1)
+        port.create_driver.assert_called_once_with(1)
+        run_test = port.create_driver.return_value.run_test
+        self.assertEqual(run_test.call_args.args[0].test_name, 'file:///warmup-does-not-exist')
+        self.assertEqual(run_test.call_args.kwargs, {'stop_when_done': True})
+
+    def test_warm_up_runner_with_no_timeout(self):
+        port = self.make_port(options=MockOptions(configuration='Release', no_timeout=True))
+        port.create_driver = Mock()
+        port._warm_up_runner(1)
+        port.create_driver.assert_not_called()
 
     def test_api_test_allowlist_platform_gating(self):
         port = self.make_port()
