@@ -53,19 +53,19 @@ class TemporaryDirectory(object):
                 raise
 
 
-def get_item_name(item, ignore_param):
+def remove_ignored_param(item_name, ignore_param):
     if ignore_param is None:
-        return item.name
+        return item_name
 
     single_param = '[%s]' % ignore_param
-    if item.name.endswith(single_param):
-        return item.name[:-len(single_param)]
+    if item_name.endswith(single_param):
+        return item_name[:-len(single_param)]
 
     param = '[%s-' % ignore_param
-    if param in item.name:
-        return item.name.replace('%s-' % ignore_param, '')
+    if param in item_name:
+        return item_name.replace('%s-' % ignore_param, '')
 
-    return item.name
+    return item_name
 
 
 class CollectRecorder(object):
@@ -78,7 +78,7 @@ class CollectRecorder(object):
         if report.nodeid and report.result:
             self.tests.setdefault(report.nodeid, [])
             for subtest in report.result:
-                self.tests[report.nodeid].append(get_item_name(subtest, self._ignore_param))
+                self.tests[report.nodeid].append(remove_ignored_param(subtest.name, self._ignore_param))
 
 
 class HarnessResultRecorder(object):
@@ -95,8 +95,9 @@ class HarnessResultRecorder(object):
 
 class SubtestResultRecorder(object):
 
-    def __init__(self):
+    def __init__(self, ignore_param):
         self.results = []
+        self._ignore_param = ignore_param
 
     def pytest_runtest_logreport(self, report):
         if report.passed and report.when == 'call':
@@ -151,7 +152,8 @@ class SubtestResultRecorder(object):
     def record(self, test, status, message=None, stack=None):
         if stack is not None:
             stack = str(stack)
-        new_result = (test, status, message, stack)
+        test_name = remove_ignored_param(test, self._ignore_param)
+        new_result = (test_name, status, message, stack)
         self.results.append(new_result)
 
 
@@ -166,7 +168,7 @@ class TestExpectationsMarker(object):
     def pytest_collection_modifyitems(self, session, config, items):
         for item in items:
             test = os.path.relpath(str(item.fspath), self._base_dir)
-            item_name = get_item_name(item, self._ignore_param)
+            item_name = remove_ignored_param(item.name, self._ignore_param)
             if self._expectations.is_slow(test, item_name):
                 item.add_marker(pytest.mark.timeout(self._timeout * 5))
             expected = self._expectations.get_expectation(test, item_name)
@@ -237,7 +239,7 @@ def collect(directory, args, ignore_param=None):
 
 def run(path, args, timeout, env, expectations, ignore_param=None, extra_plugins=None):
     harness_recorder = HarnessResultRecorder()
-    subtests_recorder = SubtestResultRecorder()
+    subtests_recorder = SubtestResultRecorder(ignore_param)
     expectations_marker = TestExpectationsMarker(expectations, timeout, ignore_param)
     _environ = dict(os.environ)
     os.environ.clear()
