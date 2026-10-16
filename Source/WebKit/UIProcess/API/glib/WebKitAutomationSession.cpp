@@ -21,6 +21,7 @@
 #include "WebKitAutomationSession.h"
 
 #include "APIAutomationSessionClient.h"
+#include "BidiUserContext.h"
 #include "WebKitApplicationInfo.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitNetworkProxySettingsPrivate.h"
@@ -100,16 +101,76 @@ private:
 #endif
     }
 
-    void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebPageProxy*)>&& completionHandler) override
+    void requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, WebsiteDataStore* websiteDataStore, CompletionHandler<void(WebPageProxy*)>&& completionHandler) override
     {
+#if ENABLE(WEBDRIVER_BIDI)
+        BidiUserContext* userContext = websiteDataStore ? session.userContextForWebsiteDataStore(*websiteDataStore) : nullptr;
+        if (websiteDataStore && !userContext) {
+            completionHandler(nullptr);
+            return;
+        }
+#else
+        UNUSED_PARAM(session);
+        if (websiteDataStore) {
+            completionHandler(nullptr);
+            return;
+        }
+#endif
+
         WebKitWebView* webView = nullptr;
         GQuark detail = options & API::AutomationSessionBrowsingContextOptionsPreferNewTab ? g_quark_from_string("tab") : g_quark_from_string("window");
-        g_signal_emit(m_session, signals[CREATE_WEB_VIEW], detail, &webView);
+        {
+#if ENABLE(WEBDRIVER_BIDI)
+            PendingAutomationWebViewStorageScope storageScope(m_session->priv->webContext, userContext);
+#endif
+            g_signal_emit(m_session, signals[CREATE_WEB_VIEW], detail, &webView);
+        }
+
         if (!webView || !webkit_web_view_is_controlled_by_automation(webView))
             completionHandler(nullptr);
         else
             completionHandler(&webkitWebViewGetPage(webView));
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // Signal handlers may re-enter the automation session, so every request sets the storage of the view it
+    // asks for, the default one included, and restores the outer request's storage afterwards.
+    class PendingAutomationWebViewStorageScope {
+        WTF_MAKE_NONCOPYABLE(PendingAutomationWebViewStorageScope);
+    public:
+        PendingAutomationWebViewStorageScope(WebKitWebContext* webContext, const BidiUserContext* userContext)
+            : m_webContext(webContext)
+#if ENABLE(2022_GLIB_API)
+            , m_previous(webkitWebContextNetworkSessionForPendingAutomationWebView(webContext))
+        {
+            webkitWebContextSetNetworkSessionForPendingAutomationWebView(m_webContext, userContext ? userContext->networkSession() : nullptr);
+        }
+
+        ~PendingAutomationWebViewStorageScope()
+        {
+            webkitWebContextSetNetworkSessionForPendingAutomationWebView(m_webContext, m_previous.get());
+        }
+#else
+            , m_previous(webkitWebContextWebsiteDataManagerForPendingAutomationWebView(webContext))
+        {
+            webkitWebContextSetWebsiteDataManagerForPendingAutomationWebView(m_webContext, userContext ? userContext->websiteDataManager() : nullptr);
+        }
+
+        ~PendingAutomationWebViewStorageScope()
+        {
+            webkitWebContextSetWebsiteDataManagerForPendingAutomationWebView(m_webContext, m_previous.get());
+        }
+#endif
+
+    private:
+        WebKitWebContext* m_webContext;
+#if ENABLE(2022_GLIB_API)
+        GRefPtr<WebKitNetworkSession> m_previous;
+#else
+        GRefPtr<WebKitWebsiteDataManager> m_previous;
+#endif
+    };
+#endif
 
     void requestMaximizeWindowOfPage(WebAutomationSession&, WebPageProxy& page, CompletionHandler<void()>&& completionHandler) override
     {

@@ -181,7 +181,8 @@
                 { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true }
             ],
             "returns": [
-                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to close. It is an error to pass a non-top level traversable." }
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the created browsing context." },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "description": "The user context the browsing context was created in." }
             ]
         },
         {

@@ -43,6 +43,7 @@ namespace WebKit {
 
 struct FrameTreeNodeData;
 class WebAutomationSession;
+class WebFrameProxy;
 class WebPageProxy;
 
 class BidiBrowsingContextAgent final : public Inspector::BidiBrowsingContextBackendDispatcherHandler, public RefCountedAndCanMakeWeakPtr<BidiBrowsingContextAgent> {
@@ -55,7 +56,7 @@ public:
     void activate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Inspector::CommandCallback<void>&&) override;
     void captureScreenshot(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, RefPtr<JSON::Object>&& optionalImageSize, Inspector::CommandCallback<String>&&) override;
     void close(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalPromptUnload, Inspector::CommandCallback<void>&&) override;
-    void create(Inspector::Protocol::BidiBrowsingContext::CreateType, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, Inspector::CommandCallback<String>&&) override;
+    void create(Inspector::Protocol::BidiBrowsingContext::CreateType, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, Inspector::CommandCallbackOf<Inspector::Protocol::BidiBrowsingContext::BrowsingContext, String>&&) override;
     void getTree(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalRoot, std::optional<double>&& optionalMaxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&) override;
     void handleUserPrompt(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalShouldAccept, const String& userText, Inspector::CommandCallback<void>&&) override;
     void locateNodes(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, Ref<JSON::Object>&& locator, std::optional<double>&& optionalMaxNodeCount, RefPtr<JSON::Object>&& optionalSerializationOptions, RefPtr<JSON::Array>&& optionalStartNodes, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RemoteValue>>>&&) override;
@@ -64,12 +65,15 @@ public:
     void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, int delta, Inspector::CommandCallback<void>&&) override;
     void setViewport(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, RefPtr<JSON::Object>&&, std::optional<double>&&, RefPtr<JSON::Array>&&, Inspector::CommandCallback<void>&&) override;
 
+    Ref<Inspector::Protocol::BidiBrowsingContext::Info> createNavigableInfoSubtree(const WebFrameProxy&, HashSet<WebCore::FrameIdentifier>& reportedFrameIDs);
+
 private:
     BidiBrowsingContextAgent(WebAutomationSession&, Inspector::BackendDispatcher&);
 
     enum class IncludeParentID: bool { No, Yes };
 
     void getNextTree(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>, std::optional<uint64_t> maxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&);
+    Ref<Inspector::Protocol::BidiBrowsingContext::Info> createNavigableInfoWithoutChildren(const WebCore::FrameIdentifier&, const String& url);
     Ref<Inspector::Protocol::BidiBrowsingContext::Info> getNavigableInfo(const WebKit::FrameTreeNodeData&, std::optional<uint64_t> maxDepth, IncludeParentID);
     Inspector::Protocol::BidiBrowsingContext::BrowsingContext getBrowsingContextID(const WebCore::FrameIdentifier&) const;
 

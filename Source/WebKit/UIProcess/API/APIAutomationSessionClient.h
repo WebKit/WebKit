@@ -33,6 +33,7 @@
 namespace WebKit {
 class WebAutomationSession;
 class WebPageProxy;
+class WebsiteDataStore;
 }
 
 namespace API {
@@ -76,7 +77,8 @@ public:
 
     virtual WTF::String sessionIdentifier() const { return WTF::String(); }
     virtual void didDisconnectFromRemote(WebKit::WebAutomationSession&) { }
-    virtual void requestNewPageWithOptions(WebKit::WebAutomationSession&, AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler) { completionHandler(nullptr); }
+    // A null data store asks for the embedder's default one; a client that cannot honour a data store completes with no page.
+    virtual void requestNewPageWithOptions(WebKit::WebAutomationSession&, AutomationSessionBrowsingContextOptions, WebKit::WebsiteDataStore*, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler) { completionHandler(nullptr); }
     virtual void requestMaximizeWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void requestHideWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
     virtual void requestRestoreWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }

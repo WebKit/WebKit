@@ -45,7 +45,7 @@ private:
     // From API::AutomationSessionClient
     void didDisconnectFromRemote(WebAutomationSession&) override;
 
-    void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebPageProxy*)>&&) override;
+    void requestNewPageWithOptions(WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, WebsiteDataStore*, CompletionHandler<void(WebPageProxy*)>&&) override;
     void requestSwitchToPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
     void requestHideWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;
     void requestRestoreWindowOfPage(WebKit::WebAutomationSession&, WebKit::WebPageProxy&, CompletionHandler<void()>&&) override;

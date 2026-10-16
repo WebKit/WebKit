@@ -98,8 +98,13 @@ static inline _WKAutomationSessionWebExtensionResourceOptions LEGACY_NODELETE to
 }
 #endif
 
-void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
+void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, WebsiteDataStore* websiteDataStore, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
 {
+    if (websiteDataStore) {
+        completionHandler(nullptr);
+        return;
+    }
+
     if (m_delegateMethods.requestNewWebViewWithOptions) {
         [m_delegate.get() _automationSession:RetainPtr { wrapper(session) }.get() requestNewWebViewWithOptions:toAPI(options) completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](WKWebView *webView) mutable {
             completionHandler(webView->_page.get());

@@ -280,6 +280,9 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitAutomationSession> automationSession;
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitNetworkSession> automationNetworkSession;
+    GRefPtr<WebKitNetworkSession> networkSessionForPendingAutomationWebView;
+#else
+    GRefPtr<WebKitWebsiteDataManager> websiteDataManagerForPendingAutomationWebView;
 #endif
 #endif
     std::unique_ptr<WebKitProtocolHandler> webkitProtocolHandler;
@@ -2047,3 +2050,27 @@ WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext* context, WebP
 {
     return page ? context->priv->webViews.get(page->identifier()) : nullptr;
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+#if ENABLE(2022_GLIB_API)
+void webkitWebContextSetNetworkSessionForPendingAutomationWebView(WebKitWebContext* context, WebKitNetworkSession* networkSession)
+{
+    context->priv->networkSessionForPendingAutomationWebView = networkSession;
+}
+
+WebKitNetworkSession* webkitWebContextNetworkSessionForPendingAutomationWebView(WebKitWebContext* context)
+{
+    return context->priv->networkSessionForPendingAutomationWebView.get();
+}
+#else
+void webkitWebContextSetWebsiteDataManagerForPendingAutomationWebView(WebKitWebContext* context, WebKitWebsiteDataManager* websiteDataManager)
+{
+    context->priv->websiteDataManagerForPendingAutomationWebView = websiteDataManager;
+}
+
+WebKitWebsiteDataManager* webkitWebContextWebsiteDataManagerForPendingAutomationWebView(WebKitWebContext* context)
+{
+    return context->priv->websiteDataManagerForPendingAutomationWebView.get();
+}
+#endif
+#endif

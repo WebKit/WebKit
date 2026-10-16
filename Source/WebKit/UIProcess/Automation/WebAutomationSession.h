@@ -96,6 +96,8 @@ class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPageInspectorController;
+class WebsiteDataStore;
+class BidiUserContext;
 class WebProcessPool;
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -195,12 +197,16 @@ public:
     void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationAbortedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void fragmentNavigatedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
-    void emitContextCreatedEvent(const WebPageProxy&);
+    void contextCreatedForPage(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
-    void willDestroyFrame(const WebFrameProxy&);
+    void clearContextDestroyedStateForFrame(const WebFrameProxy&);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
+    void clearStateForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
+    void contextDestroyedForChildFramesOfPreviousDocument(const WebFrameProxy& mainFrame);
+    void updateChildFrameContextsForMainFrameCommit(WebPageProxy&, const WebFrameProxy& mainFrame, bool isBackForwardNavigation);
+    std::pair<String, String> clientWindowAndUserContextForPage(const WebPageProxy&) const;
     void setViewportForPage(WebPageProxy&, std::optional<int> width, std::optional<int> height, std::optional<double> devicePixelRatio, Inspector::CommandCallback<void>&&);
 #endif
     void willClosePage(const WebPageProxy&);
@@ -252,6 +258,7 @@ public:
     void getBrowsingContexts(Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&) override;
     void getBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::BrowsingContext>>&&) override;
     void createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&) override;
+    void createBrowsingContextInWebsiteDataStore(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, WebsiteDataStore*, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&);
     void closeBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     Inspector::CommandResult<void> deleteSession() override;
     void resolveBrowsingContext(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, Inspector::CommandCallback<void>&&) override;
@@ -356,11 +363,17 @@ public:
 
 #if ENABLE(WEBDRIVER_BIDI)
     bool isValidUserContext(const String& userContextID) const;
+    WebsiteDataStore* websiteDataStoreForUserContext(const String& userContextID) const;
+    BidiUserContext* userContextForWebsiteDataStore(const WebsiteDataStore&) const;
 #endif
 
 private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);
+
+    void releaseHandleForFrame(WebCore::FrameIdentifier);
+    void releaseHandlesForFrameSubtree(const WebFrameProxy&);
+    void clearStateForFramesOfPage(const WebPageProxy&);
 
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
     void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
@@ -375,7 +388,7 @@ private:
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void recursivelyEmitContextCreatedEvent(const FrameTreeNodeData&, std::optional<String>&& parentContext);
+    void contextCreatedForFramesRestoredFromBackForwardCache(WebPageProxy&, uint64_t generation);
     WebPageProxy* getOpenerPage(const WebPageProxy&);
 #endif
 
@@ -449,6 +462,10 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+    HashSet<WebCore::FrameIdentifier> m_framesReportedDestroyed;
+    HashMap<WebPageProxyIdentifier, uint64_t> m_mainFrameDocumentGenerations;
+    HashMap<WebPageProxyIdentifier, String> m_originalOpenerHandles;
+    HashSet<WebPageProxyIdentifier> m_pagesReportedCreated;
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;

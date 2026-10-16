@@ -29,11 +29,13 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "BidiUserContext.h"
+#include "WebAutomationSession.h"
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
 #endif
-#include "WebKitWebContextPrivate.h"
+#include "WebKitWebsiteDataManager.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -41,30 +43,24 @@ using namespace Inspector;
 
 std::unique_ptr<BidiUserContext> BidiBrowserAgent::platformCreateUserContext(String& error)
 {
-#if ENABLE(2022_GLIB_API)
-    GRefPtr<WebKitNetworkSession> networkSession = adoptGRef(webkit_network_session_new_ephemeral());
-    GRefPtr<WebKitWebsiteDataManager> dataManager = webkit_network_session_get_website_data_manager(networkSession.get());
-#else
-    GRefPtr<WebKitWebsiteDataManager> dataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
-#endif
-
-    GRefPtr<WebKitWebContext> context = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
-#if !ENABLE(2022_GLIB_API)
-        "website-data-manager", dataManager.get(),
-#endif
-    // WPE has PSON enabled by default and doesn't have such parameter.
-#if PLATFORM(GTK)
-#if !ENABLE(2022_GLIB_API)
-        "process-swap-on-cross-site-navigation-enabled", true,
-#endif
-#endif
-        nullptr)));
-    if (!context) {
-        error = "Failed to create GLib ephemeral context"_s;
+    // Pages of a user context live in the session's own web context and process pool, with their own
+    // ephemeral storage, so that the session sees them like any other automation page.
+    RefPtr session = m_session.get();
+    RefPtr processPool = session ? session->processPool() : nullptr;
+    if (!processPool) {
+        error = "The automation session has no process pool"_s;
         return nullptr;
     }
 
-    return makeUnique<BidiUserContext>(webkitWebsiteDataManagerGetDataStore(dataManager.get()), webkitWebContextGetProcessPool(context.get()), WTF::move(context));
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> networkSession = adoptGRef(webkit_network_session_new_ephemeral());
+    auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession.get()));
+    return makeUnique<BidiUserContext>(dataStore, *processPool, WTF::move(networkSession));
+#else
+    GRefPtr<WebKitWebsiteDataManager> dataManager = adoptGRef(webkit_website_data_manager_new_ephemeral());
+    auto& dataStore = webkitWebsiteDataManagerGetDataStore(dataManager.get());
+    return makeUnique<BidiUserContext>(dataStore, *processPool, WTF::move(dataManager));
+#endif
 }
 
 } // namespace WebKit

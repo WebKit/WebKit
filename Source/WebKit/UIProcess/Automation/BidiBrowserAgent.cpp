@@ -41,6 +41,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
@@ -57,13 +58,13 @@ String toUserContextIDProtocolString(const PAL::SessionID& sessionID)
     return builder.toString();
 }
 
+} // namespace
+
 const String& defaultUserContextID()
 {
     static NeverDestroyed<const String> contextID(MAKE_STATIC_STRING_IMPL("default"));
     return contextID;
 }
-
-} // namespace
 
 struct BidiBrowserAgent::BidiUserContextDeletionRecord {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(BidiUserContextDeletionRecord);
@@ -89,15 +90,20 @@ BidiBrowserAgent::BidiBrowserAgent(WebAutomationSession& session, BackendDispatc
 
 BidiBrowserAgent::~BidiBrowserAgent() = default;
 
-void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
+bool BidiBrowserAgent::didCreatePage(WebPageProxy& page)
 {
     String userContextID = toUserContextIDProtocolString(page.sessionID());
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
-        return;
+        return true;
 
     ++it->value->pageCount;
-    page.closePage();
+    // Inside the page's constructor the embedder has not attached the client that closes views yet.
+    RunLoop::mainSingleton().dispatch([weakPage = WeakPtr { page }] {
+        if (RefPtr page = weakPage.get(); page && !page->isClosed())
+            page->closePage();
+    });
+    return false;
 }
 
 void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
@@ -108,11 +114,59 @@ void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
         return;
 
     --it->value->pageCount;
-    if (it->value->pageCount)
+    resolveUserContextRemovalIfComplete(userContextID);
+}
+
+bool BidiBrowserAgent::willCreatePageInWebsiteDataStore(const WebsiteDataStore& dataStore)
+{
+    auto* userContext = userContextForWebsiteDataStore(dataStore);
+    if (!userContext)
+        return false;
+
+    userContext->didStartPageCreation();
+    return true;
+}
+
+void BidiBrowserAgent::didFinishCreatingPageInWebsiteDataStore(const WebsiteDataStore& dataStore)
+{
+    if (auto* userContext = userContextForWebsiteDataStore(dataStore)) {
+        userContext->didFinishPageCreation();
+        return;
+    }
+
+    for (auto& pair : m_userContextsPendingDeletion) {
+        if (&pair.value->userContext->dataStore() != &dataStore)
+            continue;
+        pair.value->userContext->didFinishPageCreation();
+        resolveUserContextRemovalIfComplete(pair.key);
+        return;
+    }
+}
+
+void BidiBrowserAgent::resolveUserContextRemovalIfComplete(const String& userContextID)
+{
+    auto it = m_userContextsPendingDeletion.find(userContextID);
+    if (it == m_userContextsPendingDeletion.end())
+        return;
+    if (it->value->pageCount || it->value->userContext->pendingPageCreationCount())
         return;
 
-    it->value->callback({ });
-    m_userContextsPendingDeletion.remove(it);
+    auto record = m_userContextsPendingDeletion.take(it);
+    record->callback({ });
+}
+
+BidiUserContext* BidiBrowserAgent::userContext(const String& userContextID) const
+{
+    return m_userContexts.get(userContextID);
+}
+
+BidiUserContext* BidiBrowserAgent::userContextForWebsiteDataStore(const WebsiteDataStore& dataStore) const
+{
+    for (auto& userContext : m_userContexts.values()) {
+        if (&userContext->dataStore() == &dataStore)
+            return userContext.get();
+    }
+    return nullptr;
 }
 
 bool BidiBrowserAgent::isValidUserContext(const String& userContextID) const
@@ -124,6 +178,16 @@ bool BidiBrowserAgent::isValidUserContext(const String& userContextID) const
         return true;
 
     return m_userContexts.contains(userContextID);
+}
+
+String BidiBrowserAgent::userContextIDForPage(const WebPageProxy& page) const
+{
+    // A user context that is being removed stays the owner of its pages until the last one has closed,
+    // so that their browsingContext.contextDestroyed events still name it.
+    String userContextID = toUserContextIDProtocolString(page.sessionID());
+    if (m_userContexts.contains(userContextID) || m_userContextsPendingDeletion.contains(userContextID))
+        return userContextID;
+    return defaultUserContextID();
 }
 
 // MARK: Inspector::BidiBrowserDispatcherHandler methods.
@@ -174,16 +238,20 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
 
     auto it = m_userContexts.find(userContextID);
     // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 4.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(it == m_userContexts.end(), InvalidParameter, "no such user context"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(it == m_userContexts.end(), NoSuchUserContext);
 
     auto userContext = m_userContexts.take(it);
-    size_t pageCount = userContext->allPages().size();
-    if (!pageCount) {
+    auto pages = userContext->allPages();
+    if (pages.isEmpty() && !userContext->pendingPageCreationCount()) {
         callback({ });
         return;
     }
 
-    m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTF::move(userContext), pageCount, WTF::move(callback)));
+    // The record resolves once every page has closed and every creation in flight has settled; a page may
+    // already close inside closePage().
+    m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTF::move(userContext), pages.size(), WTF::move(callback)));
+    for (auto& page : pages)
+        page->closePage();
 }
 
 #if !USE(GLIB)

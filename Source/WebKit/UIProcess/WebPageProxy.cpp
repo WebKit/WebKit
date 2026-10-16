@@ -6738,6 +6738,12 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i", provisionalPage->process().processID());
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
+#if ENABLE(WEBDRIVER_BIDI)
+    if (mainFrameInPreviousProcess) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForChildFramesOfPreviousDocument(*mainFrameInPreviousProcess);
+    }
+#endif
     Ref preferences = m_preferences;
 
     // The committed main frame has a new FrameIdentifier, so node references issued under the old
@@ -8660,10 +8666,37 @@ void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier n
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
+void WebPageProxy::frameWillBeDetached(IPC::Connection& connection, FrameIdentifier frameID)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != this)
+        return;
+
+    // Only the process hosting a frame detaches it locally.
+    if (&frame->process() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->contextDestroyedForFrame(*frame);
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(frameID);
+#endif
+}
+
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
 {
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
+#endif
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+#if ENABLE(WEBDRIVER_BIDI)
+    // A frame hosted in another process is removed without FrameWillBeDetached.
+    if (frame && frame->page() == this && !frame->isMainFrame() && frame->isConnected()) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForFrame(*frame);
+    }
 #endif
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
@@ -8676,7 +8709,7 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 
     revokeOutstandingForcedUserActivationsForFrame(frameID);
 
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+    if (frame)
         frame->disconnect();
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
@@ -9557,6 +9590,14 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 #endif
     }
 
+#if ENABLE(WEBDRIVER_BIDI)
+    // The subframes a restored document brings back below are not children of the document being replaced.
+    if (frame->isMainFrame()) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForChildFramesOfPreviousDocument(*frame);
+    }
+#endif
+
     // Reattach iframe subtree from BFCache restore. Always drain the pending entry to avoid
     // leaking iframe processes when the BFCache restore fails (RestoredFromBackForwardCache::No).
     if (frame->isMainFrame() && navigation) {
@@ -9690,8 +9731,11 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     protectedPageLoadState->commitChanges();
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
+    if (RefPtr automationSession = activeAutomationSession()) {
+        if (frame->isMainFrame())
+            automationSession->updateChildFrameContextsForMainFrameCommit(*this, *frame, isBackForwardLoadType(frameLoadType));
         automationSession->navigationCommittedForFrame(*frame, navigationID);
+    }
 #endif
     if (m_loaderClient)
         m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation, process->transformHandlesToObjects(protect(userData.object()).get()).get());
@@ -21155,6 +21199,12 @@ void WebPageProxy::didCacheBackForwardItem(BackForwardItemIdentifier itemID, Com
 
     // Frame processes need to be fetched before child frames are removed.
     auto iframeProcesses = activeRemoteFrameProcesses();
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // The subframes leave the frame tree here, before the replacing document commits.
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->contextDestroyedForChildFramesOfPreviousDocument(*mainFrame);
+#endif
 
     // WebCore detaches the cached page's subframes from the main frame's FrameTree, so do the same here.
     // They are stored in the cache entry, reattached in didCommitLoadForFrame when the page is restored,

@@ -30,6 +30,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "AutomationProtocolObjects.h"
+#include "BidiBrowserAgent.h"
 #include "FrameTreeNodeData.h"
 #include "Logging.h"
 #include "PageLoadState.h"
@@ -40,6 +41,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include <JavaScriptCore/MathCommon.h>
 #include <limits>
 #include <wtf/Borrow.h>
@@ -306,28 +308,51 @@ static Inspector::Protocol::Automation::BrowsingContextPresentation LEGACY_NODEL
     return defaultBrowsingContextPresentation;
 }
 
-void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::CreateType createType, const BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, CommandCallback<BrowsingContext>&& callback)
+void BidiBrowsingContextAgent::create(Inspector::Protocol::BidiBrowsingContext::CreateType createType, const BrowsingContext& optionalReferenceContext, std::optional<bool>&& optionalBackground, const String& optionalUserContext, CommandCallbackOf<BrowsingContext, String>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-create
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    if (!optionalUserContext.isNull()) {
-        bool isValid = session->isValidUserContext(optionalUserContext);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!isValid, NoSuchUserContext);
+    String userContextID = defaultUserContextID();
+    if (!optionalReferenceContext.isNull()) {
+        // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
+        // https://w3c.github.io/webdriver-bidi/#get-a-navigable
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(optionalReferenceContext.isEmpty(), FrameNotFound);
+        auto handles = session->extractBrowsingContextHandles(optionalReferenceContext);
+        ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+        auto [pageHandle, frameHandle] = handles.value();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!frameHandle.isEmpty(), InvalidParameter);
+        RefPtr referencePage = session->webPageProxyForHandle(pageHandle);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!referencePage, FrameNotFound);
+        userContextID = session->clientWindowAndUserContextForPage(*referencePage).second;
     }
 
-    // FIXME: implement `referenceContext` option.
-    // FIXME: implement `background` option.
-    // FIXME: implement `userContext` option (use validated context to create in specific user context).
+    if (!optionalUserContext.isNull()) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(optionalUserContext), NoSuchUserContext);
+        userContextID = optionalUserContext;
+    }
 
-    session->createBrowsingContext(browsingContextPresentationFromCreateType(createType), [callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) {
+    RefPtr<WebsiteDataStore> websiteDataStore;
+    if (userContextID != defaultUserContextID()) {
+        websiteDataStore = session->websiteDataStoreForUserContext(userContextID);
+        // The reference context's user context may have been removed since the reference was created.
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!websiteDataStore, NoSuchUserContext);
+    }
+
+    // FIXME: implement `background` option.
+
+    session->createBrowsingContextInWebsiteDataStore(browsingContextPresentationFromCreateType(createType), websiteDataStore.get(), [session, callback = WTF::move(callback)](CommandResultOf<BrowsingContext, Inspector::Protocol::Automation::BrowsingContextPresentation>&& result) mutable {
         if (!result) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
         auto [resultContext, resultPresentation] = WTF::move(result.value());
-        callback(WTF::move(resultContext));
+        String userContextID = defaultUserContextID();
+        if (RefPtr page = session->webPageProxyForHandle(resultContext))
+            userContextID = session->clientWindowAndUserContextForPage(*page).second;
+        callback({ { WTF::move(resultContext), WTF::move(userContextID) } });
     });
 }
 
@@ -345,20 +370,46 @@ Inspector::Protocol::BidiBrowsingContext::BrowsingContext BidiBrowsingContextAge
     return session->handleForWebFrameID(frameID);
 }
 
-Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::createNavigableInfoWithoutChildren(const WebCore::FrameIdentifier& frameID, const String& url)
 {
     // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
+    String clientWindow = "unknown-window"_s;
+    String userContext = "default"_s;
+    if (RefPtr session = m_session.get()) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID)) {
+            if (RefPtr page = frame->page())
+                std::tie(clientWindow, userContext) = session->clientWindowAndUserContextForPage(*page);
+        }
+    }
 
-    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
-    // https://bugs.webkit.org/show_bug.cgi?id=288104
-    auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
-        .setContext(getBrowsingContextID(tree.info.frameID))
-        .setUrl(tree.info.request.url().string())
-        .setClientWindow("placeholder_window"_s)
-        .setUserContext("default"_s)
+    return Inspector::Protocol::BidiBrowsingContext::Info::create()
+        .setContext(getBrowsingContextID(frameID))
+        .setUrl(url)
+        .setClientWindow(clientWindow)
+        .setUserContext(userContext)
         .setChildrenIsNull()
         .setOriginalOpenerIsNull()
         .release();
+}
+
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::createNavigableInfoSubtree(const WebFrameProxy& frame, HashSet<WebCore::FrameIdentifier>& reportedFrameIDs)
+{
+    reportedFrameIDs.add(frame.frameID());
+
+    auto info = createNavigableInfoWithoutChildren(frame.frameID(), frame.url().string());
+    auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    for (auto& childFrame : frame.childFrames())
+        childrenInfo->addItem(createNavigableInfoSubtree(childFrame.get(), reportedFrameIDs));
+
+    info->setChildren(WTF::move(childrenInfo));
+    return info;
+}
+
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
+{
+    // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
+    // https://bugs.webkit.org/show_bug.cgi?id=288104
+    auto info = createNavigableInfoWithoutChildren(tree.info.frameID, tree.info.request.url().string());
 
     // FIXME: Support originalOpener attribute.
     // https://w3c.github.io/webdriver-bidi/#original-opener
