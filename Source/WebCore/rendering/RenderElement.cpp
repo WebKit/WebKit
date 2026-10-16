@@ -323,9 +323,9 @@ Style::Difference RenderElement::adjustStyleDifference(Style::Difference diff) c
     if (diff.result == Style::DifferenceResult::Overflow && !canRecomputeOverflowWithoutLayout())
         diff.result = Style::DifferenceResult::Layout;
 
-    // If transform changed, and we are not composited, need to do a layout.
+    // If transform changed, and we are not composited, need to do a layout. A composited layer only
+    // needs its ancestors' overflow updated (see setNeedsLayoutForStyleDifference()).
     if (diff.contextSensitiveProperties & Style::DifferenceContextSensitiveProperty::Transform) {
-        // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
         if (!hasLayer() || !downcast<RenderLayerModelObject>(*this).layer()->isComposited()) {
             if (!hasLayer())
                 diff.result = std::max(diff.result, Style::DifferenceResult::Layout);
@@ -1421,6 +1421,32 @@ void RenderElement::setNeedsLayoutForStyleDifference(Style::Difference diff, con
         setNeedsLayoutForOverflowChange();
     } else if (diff == Style::DifferenceResult::Overflow)
         setNeedsLayoutForOverflowChange();
+    else if (diff < Style::DifferenceResult::LayoutOutOfFlowMovementOnly && diff.contextSensitiveProperties.contains(Style::DifferenceContextSensitiveProperty::Transform))
+        setContainingBlockNeedsLayoutForOverflowChange();
+}
+
+// Recomputes the scrollable overflow this box contributes to, without laying out or repainting the box itself.
+void RenderElement::setContainingBlockNeedsLayoutForOverflowChange()
+{
+    if (!is<RenderBox>(*this) || isRenderSVGBlock())
+        return;
+    // The main thread does not follow an accelerated animation frame by frame, so the overflow would snapshot
+    // an arbitrary point of it. The style change that ends the animation updates the overflow.
+    if (auto styleable = Styleable::fromRenderer(*this); styleable && styleable->isRunningOrAboutToRunAcceleratedTransformRelatedAnimation())
+        return;
+    CheckedPtr<RenderElement> containingBlock = this->containingBlock();
+    if (!containingBlock || containingBlock->isRenderSVGBlock())
+        return;
+    ASSERT(!containingBlock->isSetNeedsLayoutForbidden());
+    if (containingBlock->overflowChangesMayAffectLayout()) {
+        containingBlock->setNeedsLayout();
+        return;
+    }
+    if (containingBlock->needsSimplifiedNormalFlowLayout())
+        return;
+    InspectorInstrumentation::willInvalidateLayout(*containingBlock);
+    containingBlock->setNeedsSimplifiedNormalFlowLayoutBit(true);
+    scheduleLayout(containingBlock->markContainingBlocksForLayout());
 }
 
 void RenderElement::setNeedsLayoutForOverflowChange()
