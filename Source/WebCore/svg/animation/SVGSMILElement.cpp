@@ -1264,8 +1264,10 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
             smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().endEventEvent);
 
         // Coalesce the skipped repeat iterations into a single event instead of one per interval.
-        if (repeat > 1 || (repeat && m_activeState == Inactive))
+        if (repeat > 1 || (repeat && m_activeState == Inactive)) {
+            m_pendingRepeatIterations.append(repeat);
             smilEventSenderSingleton().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+        }
     }
 
     m_nextProgressTime = calculateNextProgressTime(elapsed);
