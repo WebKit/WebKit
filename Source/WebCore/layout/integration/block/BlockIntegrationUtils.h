@@ -113,6 +113,8 @@ public:
     // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
     // (RenderBlock::recomputeLogicalWidth).
     static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
+    // A table, a flex or grid container, or a block formatting context root whose content the block formatting context cannot lay out (canUseForNestedBlockLayout).
+    static bool laysOutThroughRenderTree(const RenderBox&);
 
 private:
     PaintInvalidation& m_paintInvalidation;
