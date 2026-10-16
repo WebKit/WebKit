@@ -6071,7 +6071,7 @@ static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMileston
 - (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->saveResources(protect(_page->mainFrame()), { }, directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+    _page->saveResources(protect(_page->mainFrame()), { }, directory.path, name, { }, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()).createNSString().get() }]).get());
 
@@ -6101,7 +6101,7 @@ static inline OptionSet<WebCore::LayoutMilestone> LEGACY_NODELETE layoutMileston
         markupExclusionRules.append(WebCore::MarkupExclusionRule { AtomString { rule.elementLocalName }, WTF::move(attibutes) });
     }
 
-    _page->saveResources(protect(_page->mainFrame()), WTF::move(markupExclusionRules), configuration.directory.path, configuration.suggestedFileName, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+    _page->saveResources(protect(_page->mainFrame()), WTF::move(markupExclusionRules), configuration.directory.path, configuration.suggestedFileName, configuration.originalURLsFileName, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()).createNSString().get() }]).get());
 
