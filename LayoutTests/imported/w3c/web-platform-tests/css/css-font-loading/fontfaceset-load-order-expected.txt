@@ -1,0 +1,3 @@
+
+PASS FontFaceSet.load() returns matching faces in the order of the font family list
+
