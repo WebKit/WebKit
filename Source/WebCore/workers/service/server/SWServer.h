@@ -422,6 +422,7 @@ private:
     ServiceWorkerIsInspectable m_isInspectable { ServiceWorkerIsInspectable::Yes };
 
     const RefPtr<BackgroundFetchEngine> m_backgroundFetchEngine;
+    HashMap<ServiceWorkerIdentifier, Vector<CompletionHandler<void(bool)>>> m_loadingScriptCallbacks;
 };
 
 } // namespace WebCore

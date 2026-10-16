@@ -1,0 +1,5 @@
+
+
+PASS Setup activated-but-cold service worker at the redirect target scope
+PASS Handle the case of forgetting about a not yet started service worker fetch task
+
