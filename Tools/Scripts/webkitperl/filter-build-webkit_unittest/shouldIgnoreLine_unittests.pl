@@ -43,6 +43,7 @@ require "filter-build-webkit";
 FilterBuildWebKit->import(qw(shouldIgnoreLine));
 
 sub description($);
+sub filteredOutput($);
 
 #
 # Test whitespace
@@ -89,6 +90,35 @@ for my $i (0..scalar(@buildSettingsLines) - 1) {
     my $previousLine = $i ? $buildSettingsLines[$i - 1] : "";
     my $line = $buildSettingsLines[$i];
     is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+}
+
+my @moduleVerifierLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Generating inputs for module verifier...
+Generated inputs for module verifier!
+Verifying clang module (c, gnu99, arm64e-apple-macos26.0) ...
+xcrun clang -x c -target arm64e-apple-macos26.0 -std=gnu99 -fmodules -fsyntax-only -fdiagnostics-show-note-include-stack -Wsystem-headers-in-module=bmalloc -Werror=non-modular-include-in-module -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -F/Users/u/Build/bmalloc.build/Release/VerifyModule/bmalloc/c /Users/u/Build/bmalloc.build/Release/VerifyModule/bmalloc/c/Test.c
+/Users/u/Build/Release/usr/local/include/bmalloc/Foo.h:12:10: error: include of non-modular header inside framework module 'Test': 'x.h' [-Werror,-Wnon-modular-include-in-framework-module]
+error: Failed to verify module.
+END
+
+for my $line (@moduleVerifierLines) {
+    if ($line =~ /^(Generating inputs|Generated inputs|Verifying clang module)/) {
+        is(shouldIgnoreLine("", $line), 1, description("Ignored: " . $line));
+    } else {
+        is(shouldIgnoreLine("", $line), 0, description("Printed: " . $line));
+    }
+}
+
+my @moduleVerifierSummaries = (
+    [q{xcrun clang -x objective-c++ -target arm64e-apple-macos27.5 -std=c++23 -fmodules -fsyntax-only -fdiagnostics-show-note-include-stack -fwrapv -fcxx-modules -Wsystem-headers-in-module=PAL -Werror=non-modular-include-in-module -ferror-limit=0 -iframework /Volumes/Data/Build/Debug/SDKAdditions/System/Library/Frameworks -Wsystem-headers-in-module=pal -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -F/Volumes/Data/Build/Debug -F/Volumes/Data/Build/PAL.build/Debug/PAL.build/VerifyModule/PAL/objective-c++ /Volumes/Data/Build/PAL.build/Debug/PAL.build/VerifyModule/PAL/objective-c++/Test.mm}, "VerifyModule pal (objective-c++, c++23)"],
+    [q{VerifyModuleC /Volumes/Data/Build/Debug/Example.framework "" "" arm64e objective-c++ c++23 "" com.apple.compilers.llvm.clang.1_0.verify_module (in target 'Example' from project 'Example')}, "VerifyModule Example (objective-c++, c++23)"],
+    [q{VerifyModuleC /Volumes/Data/Build/Debug/Example.framework "" "" arm64e objective-c c23 "" com.apple.compilers.llvm.clang.1_0.verify_module (in target 'Example' from project 'Example')}, "VerifyModule Example (objective-c, c23)"],
+    [q{VerifyPrecompileModule /Volumes/Data/Build/ExplicitPrecompiledModules/Example_Private-3MUAY12E0EG510JXN76MVJ8EI-verify.scan}, "VerifyPrecompileModule Example_Private"],
+);
+
+for my $summary (@moduleVerifierSummaries) {
+    my ($line, $expected) = @$summary;
+    is(filteredOutput($line), "$expected\n", description("Summarized: " . $line));
 }
 
 #
@@ -311,4 +341,20 @@ sub description($)
     $description .= $ellipsis if length($line) != length($description);
 
     return $description;
+}
+
+sub filteredOutput($)
+{
+    my ($input) = @_;
+
+    my $script = File::Spec->catfile($FindBin::Bin, "..", "..", "filter-build-webkit");
+    require IPC::Open2;
+    my $pid = IPC::Open2::open2(my $outputHandle, my $inputHandle, $EXECUTABLE_NAME, $script, "--format=text");
+    print $inputHandle "$input\n";
+    close($inputHandle);
+    my $output = do { local $INPUT_RECORD_SEPARATOR; <$outputHandle> };
+    close($outputHandle);
+    waitpid($pid, 0);
+
+    return $output;
 }
