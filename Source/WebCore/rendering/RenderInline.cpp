@@ -77,16 +77,4 @@ RenderInline::RenderInline(Type type, Document& document, Style::ComputedStyle&&
 
 RenderInline::~RenderInline() = default;
 
-ASCIILiteral RenderInline::renderName() const
-{
-    if (isRelativelyPositioned())
-        return "RenderInline (relative positioned)"_s;
-    if (isStickilyPositioned())
-        return "RenderInline (sticky positioned)"_s;
-    // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement() || isAnonymous())
-        return "RenderInline (generated)"_s;
-    return "RenderInline"_s;
-}
-
 } // namespace WebCore

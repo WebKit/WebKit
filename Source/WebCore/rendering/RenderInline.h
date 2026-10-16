@@ -38,13 +38,6 @@ public:
     RenderInline(Type, Element&, Style::ComputedStyle&&);
     RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
-
-private:
-    ASCIILiteral renderName() const override;
-    bool canHaveChildren() const final { return true; }
-    void layout() final { ASSERT_NOT_REACHED(); }
-    void paint(PaintInfo&, const LayoutPoint&) override { ASSERT_NOT_REACHED(); }
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 };
 
 } // namespace WebCore

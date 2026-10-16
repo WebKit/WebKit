@@ -212,6 +212,22 @@ RenderBoxModelObject::~RenderBoxModelObject()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
+ASCIILiteral RenderBoxModelObject::renderName() const
+{
+    if (isInlineBox()) {
+        // FIXME: Inline boxes still report the RenderInline name to keep render tree dump based test results unchanged.
+        if (isRelativelyPositioned())
+            return "RenderInline (relative positioned)"_s;
+        if (isStickilyPositioned())
+            return "RenderInline (sticky positioned)"_s;
+        if (isPseudoElement() || isAnonymous())
+            return "RenderInline (generated)"_s;
+        return "RenderInline"_s;
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 void RenderBoxModelObject::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed())
