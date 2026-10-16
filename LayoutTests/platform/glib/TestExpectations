@@ -4220,10 +4220,6 @@ fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ] # Timeout
 
 webkit.org/b/251107 webgl/1.0.x/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Timeout ]
 
-# assertion failure
-webkit.org/b/286127 [ Debug ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
-webkit.org/b/286127 [ Release ] editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash Pass ]
-
 # Test causes OOM in the EWS release bots
 webkit.org/b/283558 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Skip ]
 
