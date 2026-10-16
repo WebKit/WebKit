@@ -34,6 +34,7 @@
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -45,6 +46,8 @@ struct DataDetectorHighlightGeometry {
     CGPoint buttonCenter;
 };
 
+RetainPtr<DDHighlightRef> createDataDetectorHighlight(CGRect textRect, CGRect visibleRect);
+bool pointIsOnDataDetectorHighlight(DDHighlightRef, CGPoint);
 DataDetectorHighlightGeometry dataDetectorHighlightGeometry(CGRect textRect, CGRect visibleRect);
 bool rectsAreNear(CGRect, CGRect, CGFloat tolerance);
 Vector<std::pair<RetainPtr<CALayer>, CGRect>> visibleLayersAndFrames(CALayer *rootLayer);

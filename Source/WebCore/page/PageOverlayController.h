@@ -81,7 +81,7 @@ public:
 
     int overlayCount() const;
 
-    bool handleMouseEvent(const PlatformMouseEvent&);
+    bool handleMouseEvent(const PlatformMouseEvent&, LocalFrame& handlingFrame);
 
     WEBCORE_EXPORT bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint, String& value);
     WEBCORE_EXPORT bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint, bool& value);
