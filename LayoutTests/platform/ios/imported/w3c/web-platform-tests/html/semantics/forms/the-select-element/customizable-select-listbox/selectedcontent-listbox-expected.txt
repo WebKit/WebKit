@@ -1,7 +1,7 @@
 
-two
+one
 one
 two
 
-FAIL <select size=4> should support <selectedcontent>. assert_equals: <selectedcontent> should respond to assigning to option.selected. expected "" but got "two"
+FAIL <select size=4> should support <selectedcontent>. assert_equals: <selectedcontent> should respond to assigning to option.selected. expected "" but got "one"
 

@@ -165,6 +165,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-writing-mode-vertical-rl.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-wrong-picker-argument-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-wrong-picker-argument.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-ask-for-reset-base-appearance.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-ordering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-ordering-ref.html

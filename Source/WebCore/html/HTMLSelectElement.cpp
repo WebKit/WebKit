@@ -1698,12 +1698,23 @@ void HTMLSelectElement::setSelectedIndex(int index)
 void HTMLSelectElement::optionSelectionStateChanged(HTMLOptionElement& option, bool optionIsSelected)
 {
     ASSERT(option.ownerSelectElement() == this);
-    if (optionIsSelected)
+    if (optionIsSelected) {
         selectOption(option.index());
-    else if (!isSingleSelectDropdownBox())
+        return;
+    }
+
+    if (!isSingleSelectDropdownBox()) {
         selectOption(-1);
-    else
-        selectOption(nextSelectableListIndex(-1));
+        return;
+    }
+
+    for (auto& item : listItems()) {
+        if (RefPtr candidate = dynamicDowncast<HTMLOptionElement>(item); candidate && !candidate->isDisabledFormControl()) {
+            selectOption(candidate->index());
+            return;
+        }
+    }
+    selectOption(-1);
 }
 
 void HTMLSelectElement::selectOption(int optionIndex, OptionSet<SelectOptionFlag> flags)
