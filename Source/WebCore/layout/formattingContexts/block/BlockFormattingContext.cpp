@@ -101,6 +101,7 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
 
 void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockContainer)
 {
+    LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(downcast<RenderBlockFlow>(blockContainer));
     auto blockContainerState = computeContainingBlockStateAtBlockStart(blockContainer);
     if (blockContainerState.geometry.borderAndPaddingBefore())
         resolveBorderBoxLogicalTops(blockContainerState);
@@ -156,10 +157,12 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root))
         layoutIndependentFormattingContextThroughRenderTree(box, rootState);
     else if (root->childrenInline()) {
+        LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         // A block container with only inline-level content establishes an inline formatting context for it (CSS Display 3).
         if (root->firstChild())
             handleInlineContent(box, rootState, blockLayoutState);
     } else {
+        LayoutIntegration::BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(*root);
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
         auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.relayoutChildren });
         result.boxes.appendVector(WTF::move(rootResult.boxes));
