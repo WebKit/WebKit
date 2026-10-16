@@ -640,8 +640,12 @@ void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WT
     m_workQueue->dispatch([protectedThis = Ref { *this }, filePath = WTF::move(filePath).isolatedCopy(), identifier = WTF::move(identifier).isolatedCopy(), json = WTF::move(json).isolatedCopy(), parsedRules = crossThreadCopy(WTF::move(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTF::move(completionHandler), cssSelectorsAllowed] () mutable {
         if (cssSelectorsAllowed == WebCore::ContentExtensions::CSSSelectorsAllowed::No) {
             auto parsedRulesOnBackgroundQueue = WebCore::ContentExtensions::parseRuleList(json, cssSelectorsAllowed);
-            if (!parsedRulesOnBackgroundQueue.has_value())
-                return completionHandler(nullptr, parsedRulesOnBackgroundQueue.error());
+            if (!parsedRulesOnBackgroundQueue.has_value()) {
+                RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), error = parsedRulesOnBackgroundQueue.error(), completionHandler = WTF::move(completionHandler)] mutable {
+                    completionHandler(nullptr, error);
+                });
+                return;
+            }
 
             parsedRules = parsedRulesOnBackgroundQueue.value();
         }

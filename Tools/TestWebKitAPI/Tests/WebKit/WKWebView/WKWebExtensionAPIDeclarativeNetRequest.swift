@@ -2984,6 +2984,108 @@ struct WKWebExtensionAPIDeclarativeNetRequestTests {
     }
     #endif
 
+    @Test
+    func staticRulesetThatIsNotAnArray() async throws {
+        let backgroundScript = """
+            let enabledRulesets = await browser.declarativeNetRequest.getEnabledRulesets()
+            browser.test.assertEq(enabledRulesets.length, 1, 'The static ruleset should be enabled.')
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "name": "Test",
+            "description": "Test dNR extension",
+            "version": "1",
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+            "declarative_net_request": [
+                "rule_resources": [
+                    [
+                        "id": "not_an_array",
+                        "enabled": true,
+                        "path": "rules.json",
+                    ]
+                ]
+            ],
+        ]
+
+        let rules =
+            "{ \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"foo\" } }"
+
+        let manager = try loadWebExtension(
+            manifest: declarativeNetRequestManifest,
+            resources: ["background.js": backgroundScript, "rules.json": rules]
+        )
+        let context = try #require(manager.context)
+        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+
+        try await manager.waitForTestMessage("Load Tab")
+
+        let errors = context.errors
+        try #require(errors.count == 1)
+        try #require(
+            errors.first?.localizedDescription
+                == "`declarative_net_request` ruleset with id `not_an_array` is invalid. The top level of the ruleset must be an array."
+        )
+    }
+
+    @Test
+    func staticRulesetWithMalformedJSON() async throws {
+        let backgroundScript = """
+            let enabledRulesets = await browser.declarativeNetRequest.getEnabledRulesets()
+            browser.test.assertEq(enabledRulesets.length, 1, 'The static ruleset should be enabled.')
+
+            browser.test.sendMessage('Load Tab')
+            """
+
+        let declarativeNetRequestManifest: [String: Any] = [
+            "name": "Test",
+            "description": "Test dNR extension",
+            "version": "1",
+            "manifest_version": 3,
+            "permissions": ["declarativeNetRequest"],
+            "background": [
+                "scripts": ["background.js"],
+                "type": "module",
+                "persistent": false,
+            ],
+            "declarative_net_request": [
+                "rule_resources": [
+                    [
+                        "id": "malformed_json",
+                        "enabled": true,
+                        "path": "rules.json",
+                    ]
+                ]
+            ],
+        ]
+
+        let rules =
+            "[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"foo\" } }"
+
+        let manager = try loadWebExtension(
+            manifest: declarativeNetRequestManifest,
+            resources: ["background.js": backgroundScript, "rules.json": rules]
+        )
+        let context = try #require(manager.context)
+        context.setPermissionStatus(.grantedExplicitly, for: WKWebExtension.Permission.declarativeNetRequest)
+
+        try await manager.waitForTestMessage("Load Tab")
+
+        let errors = context.errors
+        try #require(errors.count == 1)
+        try #require(
+            errors.first?.localizedDescription
+                .hasPrefix("`declarative_net_request` ruleset with id `malformed_json` is invalid. Unable to parse JSON: ") == true
+        )
+    }
+
     // MARK: Rule translation tests
 
     /// Adds the keys a converted rule carries for `onRuleMatchedDebug`, when that is enabled.

@@ -104,14 +104,24 @@ using namespace WebKit;
 
     for (NSString *rulesetID in jsonData.allKeys) {
         NSError *error;
-        NSArray<NSDictionary *> *json = parseJSON(jsonData[rulesetID], JSONOptions::FragmentsAllowed, &error);
+        id json = parseJSON(jsonData[rulesetID], JSONOptions::FragmentsAllowed, &error);
 
-        // The top level of a declarativeNetRequest ruleset should be an array.
-        if (json && [json isKindOfClass:NSArray.class])
-            allJSONObjects[rulesetID] = json;
+        if (error) {
+            NSString *errorReason = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]) ?: error.localizedDescription;
+            ALLOW_NONLITERAL_FORMAT_BEGIN
+            [errors addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. Unable to parse JSON: %@", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not valid JSON").createNSString().get(), rulesetID, errorReason]];
+            ALLOW_NONLITERAL_FORMAT_END
+            continue;
+        }
 
-        if (error)
-            [errors addObject:checked_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey])];
+        if (auto *rules = dynamic_objc_cast<NSArray>(json)) {
+            allJSONObjects[rulesetID] = rules;
+            continue;
+        }
+
+        ALLOW_NONLITERAL_FORMAT_BEGIN
+        [errors addObject:[NSString stringWithFormat:WEB_UI_STRING("`declarative_net_request` ruleset with id `%@` is invalid. The top level of the ruleset must be an array.", "WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not an array").createNSString().get(), rulesetID]];
+        ALLOW_NONLITERAL_FORMAT_END
     }
 
     if (outErrorStrings)

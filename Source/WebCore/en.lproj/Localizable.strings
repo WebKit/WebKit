@@ -1855,6 +1855,12 @@
 /* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id */
 "`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`." = "`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.";
 
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not an array */
+"`declarative_net_request` ruleset with id `%@` is invalid. The top level of the ruleset must be an array." = "`declarative_net_request` ruleset with id `%@` is invalid. The top level of the ruleset must be an array.";
+
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a ruleset that is not valid JSON */
+"`declarative_net_request` ruleset with id `%@` is invalid. Unable to parse JSON: %@" = "`declarative_net_request` ruleset with id `%@` is invalid. Unable to parse JSON: %@";
+
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */
 "activate" = "activate";
 
