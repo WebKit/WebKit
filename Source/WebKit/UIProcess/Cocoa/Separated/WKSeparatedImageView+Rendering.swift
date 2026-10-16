@@ -24,7 +24,11 @@
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
 import os
+#if USE_APPLE_INTERNAL_SDK
 @_weakLinked @_spi(Private) @_spi(RealityKit) import RealityKit
+#else
+import RealityKit_SPI
+#endif
 @_weakLinked @_spi(Private) @_spi(ForUIKitOnly) import SwiftUI
 import WebKit_Internal
 

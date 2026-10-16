@@ -1,0 +1,14 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -module-name RealityKit_SPI -module-abi-name RealityFoundation
+import Foundation
+import Swift
+@_exported import RealityFoundation
+
+extension RealityFoundation.ImagePresentationComponent {
+  public var enableSpatial3DDepthPatching: Swift.Bool {
+    // RealityFoundation.ImagePresentationComponent.enableSpatial3DDepthPatching.getter : Swift.Bool
+    @_silgen_name("$s17RealityFoundation26ImagePresentationComponentV28enableSpatial3DDepthPatchingSbvg") get
+    // RealityFoundation.ImagePresentationComponent.enableSpatial3DDepthPatching.setter : Swift.Bool
+    @_silgen_name("$s17RealityFoundation26ImagePresentationComponentV28enableSpatial3DDepthPatchingSbvs") set
+  }
+}
