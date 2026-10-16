@@ -39,7 +39,7 @@
 
 namespace WTF {
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
+template<std::integral LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
 void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
 {
     SpinBackoff backoff;
@@ -99,22 +99,22 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<Lo
     }
 }
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
+template<std::integral LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
 void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<LockType>& lock, Fairness fairness)
 {
     // We could get here because the weak CAS in unlock() failed spuriously, or because there is
     // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could
     // be held and parked if someone attempts to lock just as we are unlocking.
     for (;;) {
-        uint8_t oldByteValue = lock.load();
-        if ((oldByteValue & mask) != isHeldBit
-            && (oldByteValue & mask) != (isHeldBit | hasParkedBit)) {
-            dataLog("Invalid value for lock: ", oldByteValue, "\n");
-            CRASH_WITH_INFO(oldByteValue);
+        LockType oldValue = lock.load();
+        if ((oldValue & mask) != isHeldBit
+            && (oldValue & mask) != (isHeldBit | hasParkedBit)) {
+            dataLog("Invalid value for lock: ", oldValue, "\n");
+            CRASH_WITH_INFO(oldValue);
         }
-        
-        if ((oldByteValue & mask) == isHeldBit) {
-            if (lock.compareExchangeWeak(oldByteValue, Hooks::unlockHook(oldByteValue & ~isHeldBit)))
+
+        if ((oldValue & mask) == isHeldBit) {
+            if (lock.compareExchangeWeak(oldValue, Hooks::unlockHook(oldValue & ~isHeldBit)))
                 return;
             continue;
         }
@@ -123,7 +123,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
         // directly, or we will unlock the lock at the same time as we unpark to allow for barging.
         // When we unlock, we may leave the parked bit set if there is a chance that there are still
         // other threads parked.
-        ASSERT((oldByteValue & mask) == (isHeldBit | hasParkedBit));
+        ASSERT((oldValue & mask) == (isHeldBit | hasParkedBit));
         ParkingLot::unparkOne(
             &lock,
             [&] (ParkingLot::UnparkResult result) -> intptr_t {

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/Lock.h>
+#include <wtf/LockAlgorithmInlines.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/UniqueArray.h>
@@ -223,6 +224,19 @@ TEST(WTF_Lock, Basic)
     MyValue v;
     v.setValue(7);
     v.maybeSetOtherValue(34);
+}
+
+TEST(WTF_Lock, UnlockSlowPreservesBitsAboveLowByte)
+{
+    using Algorithm = LockAlgorithm<uint32_t, 1, 2>;
+    constexpr uint32_t otherBits = 0x12345600;
+
+    Atomic<uint32_t> word { otherBits };
+    Algorithm::lock(word);
+    EXPECT_EQ(otherBits | 1, word.load());
+
+    Algorithm::unlockSlow(word);
+    EXPECT_EQ(otherBits, word.load());
 }
 
 } // namespace TestWebKitAPI

@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <concepts>
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
+#include <wtf/MathExtras.h>
 
 namespace WTF {
 
@@ -42,8 +44,12 @@ struct EmptyLockHooks {
     static LockType handoffHook(LockType value) { return value; }
 };
 
-template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks = EmptyLockHooks<LockType>>
+template<std::integral LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks = EmptyLockHooks<LockType>>
 class LockAlgorithm {
+    static_assert(hasOneBitSet(isHeldBit));
+    static_assert(hasOneBitSet(hasParkedBit));
+    static_assert(isHeldBit != hasParkedBit);
+
     static constexpr bool verbose = false;
     static constexpr LockType mask = isHeldBit | hasParkedBit;
 
