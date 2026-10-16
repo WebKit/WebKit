@@ -162,10 +162,24 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 // BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
 // A block-level independent formatting context root the block formatting context lays out through the render tree
-// (BlockIntegrationUtils::layoutIndependentFormattingContext): a table or a flex container.
+// (BlockIntegrationUtils::layoutIndependentFormattingContext): a table, a flex or grid container, or a block formatting context root whose
+// content the block formatting context cannot lay out.
 static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
 {
-    return !renderer.isInline() && !renderer.isFloatingOrOutOfFlowPositioned() && (renderer.type() == RenderObject::Type::Table || renderer.type() == RenderObject::Type::FlexibleBox);
+    if (renderer.isInline() || renderer.isFloatingOrOutOfFlowPositioned())
+        return false;
+    switch (renderer.type()) {
+    case RenderObject::Type::Table:
+    case RenderObject::Type::FlexibleBox:
+    case RenderObject::Type::Grid:
+        return true;
+    case RenderObject::Type::BlockFlow: {
+        auto& blockContainer = downcast<RenderBlockFlow>(renderer);
+        return blockContainer.createsNewFormattingContext() && !canUseForNestedBlockLayout(blockContainer);
+    }
+    default:
+        return false;
+    }
 }
 
 static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
@@ -237,6 +251,8 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
 
 static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
+    if (box.isForceHiddenByLineClamp())
+        return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
     // Form controls are flex containers with content of their own.
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
@@ -299,8 +315,6 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return reason;
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer);
-    if (isLaidOutThroughRenderTree(renderer))
-        return independentFormattingContextAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (!blockContainer || blockContainer->type() != RenderObject::Type::BlockFlow)
@@ -379,25 +393,36 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     return { };
 }
 
-static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const RenderBlockFlow& rootContainer, bool* laysOutOutOfFlowBoxes = nullptr)
+static std::optional<BlockAvoidanceReason> descendantsAvoidanceReason(const RenderBlockFlow& rootContainer, bool* laysOutOutOfFlowBoxes = nullptr)
 {
-    if (auto reason = rootAvoidanceReason(rootContainer))
-        return reason;
     // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one. The content of an
     // out-of-flow box laid out by a containing block outside the root, or of a box laid out through the render tree, is not part of it.
     for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
+        auto laidOutThroughRenderTree = renderer && isLaidOutThroughRenderTree(*renderer);
         if (renderer) {
-            if (auto reason = contentAvoidanceReason(*renderer, rootContainer))
+            if (auto reason = laidOutThroughRenderTree ? independentFormattingContextAvoidanceReason(downcast<RenderBox>(*renderer), rootContainer) : contentAvoidanceReason(*renderer, rootContainer))
                 return reason;
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
-        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || (renderer && isLaidOutThroughRenderTree(*renderer));
+        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || laidOutThroughRenderTree;
         if (laysOutOutOfFlowBoxes && isOutOfFlowBox && !skipsContent)
             *laysOutOutOfFlowBoxes = true;
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
     return { };
+}
+
+static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const RenderBlockFlow& rootContainer, bool* laysOutOutOfFlowBoxes = nullptr)
+{
+    if (auto reason = rootAvoidanceReason(rootContainer))
+        return reason;
+    return descendantsAvoidanceReason(rootContainer, laysOutOutOfFlowBoxes);
+}
+
+bool canUseForNestedBlockLayout(const RenderBlockFlow& blockContainer)
+{
+    return isSupportedBlockFormattingContextRoot(blockContainer) && !descendantsAvoidanceReason(blockContainer);
 }
 
 bool canUseForBlockLayout(const RenderBlockFlow& rootContainer)
