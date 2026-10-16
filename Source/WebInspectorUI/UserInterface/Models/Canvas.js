@@ -421,7 +421,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         // Called from WI.CanvasManager.
 
-        this._cssCanvasClientNodes = null;
+        this._cssCanvasClientNodes = [];
         this._requestCSSCanvasClientNodesPromise = null;
 
         this.dispatchEventToListeners(Canvas.Event.CSSCanvasClientNodesChanged);
