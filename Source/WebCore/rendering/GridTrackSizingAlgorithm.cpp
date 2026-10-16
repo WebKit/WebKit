@@ -1151,9 +1151,6 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
     if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection)) {
         gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
 
-        if (auto& intrinsicLogicalHeightsForRowSizingFirstPass = renderGrid()->intrinsicLogicalHeightsForRowSizingFirstPass())
-            intrinsicLogicalHeightsForRowSizingFirstPass->invalidateSizeForItem(gridItem);
-
         // For a grid item with relative width constraints to the grid area, such as percentaged paddings, we reset the overridingContainingBlockContentSizeForGridItem value for columns when we are executing a definite strategy
         // for columns. Since we have updated the overridingContainingBlockContentSizeForGridItem inline-axis/width value here, we might need to recompute the grid item's relative width. For some cases, we probably will not
         // be able to do it during the RenderGrid::layoutGridItems() function as the grid area does't change there any more. Also, as we are doing a layout inside GridTrackSizingAlgorithmStrategy::logicalHeightForGridItem()
@@ -1196,11 +1193,8 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::maxContentContributionForGridItem(R
         return maxContentLogicalWidth + GridLayoutFunctions::marginLogicalSizeForGridItem(*renderGrid(), gridItemInlineDirection, gridItem) + m_algorithm.baselineOffsetForGridItem(gridItem, direction());
     }
 
-    if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection)) {
-        if (auto& intrinsicLogicalHeightsForRowSizingFirstPass = renderGrid()->intrinsicLogicalHeightsForRowSizingFirstPass())
-            intrinsicLogicalHeightsForRowSizingFirstPass->invalidateSizeForItem(gridItem);
+    if (updateOverridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection))
         gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
-    }
     return logicalHeightForGridItem(gridItem, gridLayoutState);
 }
 
@@ -1391,6 +1385,13 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
     if (!overrideSize)
         overrideSize = m_algorithm.gridAreaBreadthForGridItem(gridItem, direction);
 
+    // Whenever this changes the override size, the item's intrinsic block size may differ, so any value cached
+    // for the first row sizing pass is stale and must not be used by a later contribution.
+    auto invalidateIntrinsicLogicalHeightForRowSizingFirstPass = [&] {
+        if (auto& intrinsicLogicalHeightsForRowSizingFirstPass = renderGrid()->intrinsicLogicalHeightsForRowSizingFirstPass())
+            intrinsicLogicalHeightsForRowSizingFirstPass->invalidateSizeForItem(gridItem);
+    };
+
     if (renderGrid() != gridItem.parent()) {
         // If |gridItem| is part of a subgrid, find the nearest ancestor this is directly part of this grid
         // (either by being a child of the grid, or via being subgridded in this dimension.
@@ -1416,6 +1417,8 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
             bool overrideSizeHasChanged =
                 updateOverridingContainingBlockContentSizeForGridItem(*grid, direction);
             layoutGridItemForMinSizeComputation(*grid, overrideSizeHasChanged);
+            if (overrideSizeHasChanged)
+                invalidateIntrinsicLogicalHeightForRowSizingFirstPass();
             return overrideSizeHasChanged;
         }
     }
@@ -1424,6 +1427,7 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
         return false;
 
     setOverridingContainingBlockContentSizeForGridItem(*renderGrid(), gridItem, direction, overrideSize);
+    invalidateIntrinsicLogicalHeightForRowSizingFirstPass();
     return true;
 }
 
