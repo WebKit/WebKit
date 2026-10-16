@@ -2206,6 +2206,71 @@ TEST(WKWebExtension, CommandsParsing)
         @"manifest_version": @3,
         @"name": @"Test",
         @"description": @"Test",
+        @"version": @"1.0",
+        @"action": @{
+            @"default_title": @"Test Action"
+        },
+        @"commands": @{
+            @"_execute_action": @{ }
+        }
+    };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_TRUE(testExtension.hasCommands);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary = @{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"browser_action": @{
+            @"default_title": @"Test Action"
+        },
+        @"commands": @{
+            @"_execute_browser_action": @{ }
+        }
+    };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_TRUE(testExtension.hasCommands);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary = @{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"page_action": @{
+            @"default_title": @"Test Action"
+        },
+        @"commands": @{
+            @"_execute_page_action": @{ }
+        }
+    };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_TRUE(testExtension.hasCommands);
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+        @"commands": @{
+            @"show-popup": @{ }
+        }
+    };
+
+    testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary];
+    EXPECT_FALSE(testExtension.hasCommands);
+    EXPECT_EQ(testExtension.errors.count, 1ul);
+
+    testManifestDictionary = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
         @"version": @"1.0"
     };
 

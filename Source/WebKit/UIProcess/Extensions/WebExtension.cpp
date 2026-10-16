@@ -2337,8 +2337,14 @@ void WebExtension::populateCommandsIfNeeded()
                 continue;
             }
 
+            bool isActionCommand = false;
+            if (supportsManifestVersion(3) && commandIdentifier == "_execute_action"_s)
+                isActionCommand = true;
+            else if (!supportsManifestVersion(3) && (commandIdentifier == "_execute_browser_action"_s || commandIdentifier == "_execute_page_action"_s))
+                isActionCommand = true;
+
             RefPtr commandObject = commandsObject->getObject(commandIdentifier);
-            if (!commandObject || !commandObject->size()) {
+            if (!commandObject || (!commandObject->size() && !isActionCommand)) {
                 error = WEB_UI_STRING("Empty or invalid command in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command");
                 continue;
             }
@@ -2347,12 +2353,6 @@ void WebExtension::populateCommandsIfNeeded()
             commandData.identifier = commandIdentifier;
             commandData.activationKey = emptyString();
             commandData.modifierFlags = { };
-
-            bool isActionCommand = false;
-            if (supportsManifestVersion(3) && commandData.identifier == "_execute_action"_s)
-                isActionCommand = true;
-            else if (!supportsManifestVersion(3) && (commandData.identifier == "_execute_browser_action"_s || commandData.identifier == "_execute_page_action"_s))
-                isActionCommand = true;
 
             if (isActionCommand && !hasActionCommand)
                 hasActionCommand = true;

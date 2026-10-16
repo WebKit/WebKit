@@ -1026,6 +1026,22 @@ static void testCommandsParsing(Test*, gconstpointer)
     g_assert_true(webkit_web_extension_get_has_commands(extension.get()));
     g_assert_no_error(error.get());
 
+    extension = parse("{ \"commands\": { \"_execute_action\": { } }, \"action\": { \"default_title\": \"Test Action\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_true(webkit_web_extension_get_has_commands(extension.get()));
+    g_assert_no_error(error.get());
+
+    extension = parse("{ \"commands\": { \"_execute_browser_action\": { } }, \"browser_action\": { \"default_title\": \"Test Action\" }, \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_true(webkit_web_extension_get_has_commands(extension.get()));
+    g_assert_no_error(error.get());
+
+    extension = parse("{ \"commands\": { \"_execute_page_action\": { } }, \"page_action\": { \"default_title\": \"Test Action\" }, \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_true(webkit_web_extension_get_has_commands(extension.get()));
+    g_assert_no_error(error.get());
+
+    extension = parse("{ \"commands\": { \"show-popup\": { } }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_false(webkit_web_extension_get_has_commands(extension.get()));
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+
     extension = parse("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_false(webkit_web_extension_get_has_commands(extension.get()));
     g_assert_no_error(error.get());
