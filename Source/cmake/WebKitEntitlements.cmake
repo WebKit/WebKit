@@ -95,11 +95,10 @@ function(WEBKIT_EMBED_ENTITLEMENTS _target _xml_path)
     set_property(TARGET ${_target} APPEND PROPERTY LINK_DEPENDS "${_xml_path}" "${_der_output}")
 endfunction()
 
-# Writes the get-task-allow entitlements used to sign simulator binaries.
-# FIXME: get-task-allow isn't just used for simulated binaries; it's used by
-# any binary built for at-desk development. Most non-simulated binaries get
-# this entitlements through a process-entitlements.sh script applied above.
-function(WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS _output)
+# Executables built for debugging need this entitlement to allow e.g. debuggers
+# to attach without a TCC prompt. Xcode supplies it by default; we use it when
+# a target doesn't provide custom entitlements.
+function(WEBKIT_WRITE_DEFAULT_DEVELOPMENT_ENTITLEMENTS _output)
     string(CONCAT _content
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"

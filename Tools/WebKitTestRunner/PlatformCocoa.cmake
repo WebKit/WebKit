@@ -381,13 +381,11 @@ endif ()
 
 if (WEBKIT_SDK_IS_SIMULATOR)
     WEBKIT_EMBED_ENTITLEMENTS(WebKitTestRunner ${_wktr_entitlements})
-    set(_wktr_sign_entitlements "${CMAKE_CURRENT_BINARY_DIR}/WebKitTestRunnerApp-get-task-allow.entitlements")
-    WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS(${_wktr_sign_entitlements})
 else ()
-    set(_wktr_sign_entitlements "${_wktr_entitlements}")
+    set_target_properties(WebKitTestRunner PROPERTIES
+        CODE_SIGN_ENTITLEMENTS "${_wktr_entitlements}")
 endif ()
 set_target_properties(WebKitTestRunner PROPERTIES
-    CODE_SIGN_ENTITLEMENTS "${_wktr_sign_entitlements}"
     CODE_SIGN_BUNDLE "$<TARGET_BUNDLE_DIR:WebKitTestRunner>"
 )
 

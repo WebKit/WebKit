@@ -1002,7 +1002,7 @@ function(WEBKIT_DEFINE_AUXILIARY_PROCESSES)
     endfunction()
 
     set(_get_task_allow "${CMAKE_CURRENT_BINARY_DIR}/XPCService-get-task-allow.entitlements")
-    WEBKIT_WRITE_SIMULATOR_SIGNING_ENTITLEMENTS(${_get_task_allow})
+    WEBKIT_WRITE_DEFAULT_DEVELOPMENT_ENTITLEMENTS(${_get_task_allow})
 
     if (USE_EXTENSIONKIT)
         WEBKIT_DEFINE_PROCESS_EXTENSIONS()
@@ -1233,7 +1233,7 @@ function(WEBKIT_DEFINE_DAEMONS)
 
     # adattributiond doesn't have any custom entitlements on macOS.
     if (WEBKIT_SDK_IS_MACOS AND DEVELOPER_MODE)
-        set(_adattributiond_entitlements ENTITLEMENTS "${_get_task_allow}")
+        set(_adattributiond_entitlements ENTITLEMENTS OFF)
     endif ()
     WEBKIT_DAEMON(adattributiond
         ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.cpp
