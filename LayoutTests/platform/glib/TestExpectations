@@ -3100,10 +3100,25 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 
 http/tests/xmlhttprequest/gzip-content-type.html [ Failure ]
 
-# TestExpectations doesn't seem to support test names containing space characters, so skip the whole
-# xhr test suite for now. See also webkit.org/b/264596.
-webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/ [ Skip ]
+# Tests that fail after unskipping imported/w3c/web-platform-tests/xhr.
+imported/w3c/web-platform-tests/xhr/access-control-preflight-request-must-not-contain-cookie.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Pass Failure ]
 
+# Timing-sensitive tests that fail with a harness timeout under load.
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-aborted.html?only%20open()ed,%20not%20aborted [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted%20immediately%20after%20send() [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call%20abort()%20after%20TIME_NORMAL_LOAD [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?only%20open()ed,%20not%20aborted [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20expired%20value%20before%20load%20fires [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20expiring%20value%20after%20load%20fires [ Pass Failure ]
+webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout%20set%20to%20non-expiring%20value%20after%20timeout%20fires [ Pass Failure ]
+
+# Times out on GTK and fails on WPE.
+imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Skip ]
+
+# Crashes on an assertion in SubresourceLoader::didReceiveResponse.
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
