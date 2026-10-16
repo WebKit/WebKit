@@ -13517,6 +13517,152 @@ TEST(SiteIsolation, CommitsFromCrossSiteIframeDoNotReparentItsLayers)
     EXPECT_EQ(redundantAddSublayerCount, 0u);
 }
 
+TEST(SiteIsolation, FileOpenPanelRequestWhileAnotherFramesPanelIsOpen)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"
+            "<iframe src='https://domain3.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html>"
+            "<input type='file'>"
+            "<script>"
+            "window.cancelCount = 0;"
+            "document.querySelector('input').addEventListener('cancel', () => { window.cancelCount++; });"
+            "</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+
+    __block unsigned openPanelCount = 0;
+    __block RetainPtr<WKFrameInfo> openPanelFrame;
+    __block BlockPtr<void(NSArray<NSURL *> *)> completeOpenPanel;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setRunOpenPanelWithParameters:^(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *frame, void (^completionHandler)(NSArray<NSURL *> *)) {
+        openPanelCount++;
+        openPanelFrame = frame;
+        completeOpenPanel = makeBlockPtr(completionHandler);
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [webView mainFrame].childFrames.count >= 2;
+    }));
+
+    RetainPtr<WKFrameInfo> firstFrame = [webView mainFrame].childFrames[0].info;
+    RetainPtr<WKFrameInfo> secondFrame = [webView mainFrame].childFrames[1].info;
+    EXPECT_NE([firstFrame _processIdentifier], [secondFrame _processIdentifier]);
+
+    auto showPicker = [&](WKFrameInfo *frame) {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').showPicker()" inFrame:frame];
+    };
+    // A cancel event means that frame's process is no longer waiting on a panel.
+    auto waitForCancelCount = [&](WKFrameInfo *frame, int count) {
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView objectByEvaluatingJavaScript:@"window.cancelCount" inFrame:frame] intValue] >= count;
+        }));
+    };
+
+    showPicker(firstFrame.get());
+    EXPECT_TRUE(Util::waitFor(^{
+        return openPanelCount >= 1;
+    }));
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain2.com");
+
+    // The second frame's request is refused, and the open panel is left alone.
+    showPicker(secondFrame.get());
+    waitForCancelCount(secondFrame.get(), 1);
+    EXPECT_EQ(openPanelCount, 1u);
+
+    // The open panel still delivers its files to the frame that opened it.
+    // On iOS, the chosen files are copied, and a file that does not exist is dropped.
+    RetainPtr<NSString> filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"test"];
+    [[NSFileManager defaultManager] createFileAtPath:filePath.get() contents:nil attributes:nil];
+    completeOpenPanel(@[ [NSURL fileURLWithPath:filePath.get()] ]);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelector('input').files.length" inFrame:firstFrame.get()] intValue] == 1;
+    }));
+
+    // Both processes can still open a panel.
+    showPicker(secondFrame.get());
+    EXPECT_TRUE(Util::waitFor(^{
+        return openPanelCount >= 2;
+    }));
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain3.com");
+    completeOpenPanel(nil);
+
+    showPicker(firstFrame.get());
+    EXPECT_TRUE(Util::waitFor(^{
+        return openPanelCount >= 3;
+    }));
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain2.com");
+    completeOpenPanel(nil);
+}
+
+TEST(SiteIsolation, FileOpenPanelRequestAfterTheOpeningFramesProcessExits)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe>"
+            "<iframe src='https://domain3.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html>"
+            "<input type='file'>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+
+    __block unsigned openPanelCount = 0;
+    __block RetainPtr<WKFrameInfo> openPanelFrame;
+    __block BlockPtr<void(NSArray<NSURL *> *)> completeOpenPanel;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setRunOpenPanelWithParameters:^(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *frame, void (^completionHandler)(NSArray<NSURL *> *)) {
+        openPanelCount++;
+        openPanelFrame = frame;
+        completeOpenPanel = makeBlockPtr(completionHandler);
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    ASSERT_TRUE(Util::waitFor([&] {
+        return [webView mainFrame].childFrames.count >= 2;
+    }));
+
+    RetainPtr<WKFrameInfo> firstFrame = [webView mainFrame].childFrames[0].info;
+    RetainPtr<WKFrameInfo> secondFrame = [webView mainFrame].childFrames[1].info;
+    EXPECT_NE([firstFrame _processIdentifier], [secondFrame _processIdentifier]);
+
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').showPicker()" inFrame:firstFrame.get()];
+    EXPECT_TRUE(Util::waitFor(^{
+        return openPanelCount >= 1;
+    }));
+    auto completeStalePanel = completeOpenPanel;
+
+    pid_t firstFramePID = [firstFrame _processIdentifier];
+    kill(firstFramePID, SIGKILL);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !processStillRunning(firstFramePID);
+    }));
+
+    // Nothing is waiting on the first panel any more, so the second frame's request replaces it.
+    [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').showPicker()" inFrame:secondFrame.get()];
+    EXPECT_TRUE(Util::waitFor(^{
+        return openPanelCount >= 2;
+    }));
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain3.com");
+
+    // Closing the stale panel does not disturb the one that replaced it.
+    completeStalePanel(nil);
+    // On iOS, the chosen files are copied, and a file that does not exist is dropped.
+    RetainPtr<NSString> filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"test"];
+    [[NSFileManager defaultManager] createFileAtPath:filePath.get() contents:nil attributes:nil];
+    completeOpenPanel(@[ [NSURL fileURLWithPath:filePath.get()] ]);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelector('input').files.length" inFrame:secondFrame.get()] intValue] == 1;
+    }));
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(SiteIsolation, SelectMultiplePickerLocationInCrossOriginIframe)
