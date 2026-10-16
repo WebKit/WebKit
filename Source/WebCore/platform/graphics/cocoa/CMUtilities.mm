@@ -423,6 +423,76 @@ static CFStringRef convertToCMFieldDetail(PlatformVideoFieldDetail fieldDetail)
     return nullptr;
 }
 
+static std::optional<OSType> pixelFormatTypeForDecodedVideo(const VideoInfo& info)
+{
+    if (!info.pixelFormat())
+        return { };
+
+    // The 8-bit planar formats are repacked into a biplanar buffer when the CVPixelBuffer is created.
+    switch (*info.pixelFormat()) {
+    case VideoPixelFormat::I420:
+        return info.colorSpace().fullRange.value_or(false) ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+    default:
+        return { };
+    }
+}
+
+// Calls add() with every property that can be expressed both as a CMFormatDescription extension and
+// as a CVImageBuffer attachment.
+template<typename Add>
+static void addImageBufferProperties(const VideoInfo& videoInfo, Add&& add)
+{
+    if (videoInfo.colorSpace().primaries) {
+        if (RetainPtr cmColorPrimaries = convertToCMColorPrimaries(*videoInfo.colorSpace().primaries))
+            add(kCVImageBufferColorPrimariesKey, cmColorPrimaries.get());
+    }
+    if (videoInfo.colorSpace().transfer) {
+        if (RetainPtr cmTransferFunction = convertToCMTransferFunction(*videoInfo.colorSpace().transfer))
+            add(kCVImageBufferTransferFunctionKey, cmTransferFunction.get());
+        if (*videoInfo.colorSpace().transfer == PlatformVideoTransferCharacteristics::Gamma22curve)
+            add(kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.2));
+        else if (*videoInfo.colorSpace().transfer == PlatformVideoTransferCharacteristics::Gamma28curve)
+            add(kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.8));
+    }
+
+    if (videoInfo.colorSpace().matrix) {
+        if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace().matrix))
+            add(kCVImageBufferYCbCrMatrixKey, cmMatrix.get());
+    }
+
+    if (videoInfo.colorSpace().chromaLocation) {
+        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*videoInfo.colorSpace().chromaLocation)) {
+            add(kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get());
+            add(kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get());
+        }
+    }
+
+    if (videoInfo.fieldCount())
+        add(kCVImageBufferFieldCountKey, (__bridge CFTypeRef)@(std::to_underlying(*videoInfo.fieldCount())));
+
+    if (videoInfo.fieldDetail()) {
+        if (RetainPtr cmFieldDetail = convertToCMFieldDetail(*videoInfo.fieldDetail()))
+            add(kCVImageBufferFieldDetailKey, cmFieldDetail.get());
+    }
+
+    if (!videoInfo.size().isEmpty() && !videoInfo.displaySize().isEmpty() && videoInfo.size() != videoInfo.displaySize()) {
+        // The two spacings are the numerator and denominator of a single fraction, as stored in
+        // the `pasp` box. Emit them as an exact integer pair rather than as the two quotients
+        // displaySize / size, which only approximate the ratio.
+        auto horizontalSpacing = std::llround(videoInfo.displaySize().width() * videoInfo.size().height());
+        auto verticalSpacing = std::llround(videoInfo.displaySize().height() * videoInfo.size().width());
+        if (horizontalSpacing > 0 && verticalSpacing > 0) {
+            auto divisor = std::gcd(horizontalSpacing, verticalSpacing);
+            horizontalSpacing /= divisor;
+            verticalSpacing /= divisor;
+            add(kCVImageBufferPixelAspectRatioKey, @{
+                (__bridge NSString*)kCVImageBufferPixelAspectRatioHorizontalSpacingKey : @(horizontalSpacing),
+                (__bridge NSString*)kCVImageBufferPixelAspectRatioVerticalSpacingKey : @(verticalSpacing)
+            });
+        }
+    }
+}
+
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo& info)
 {
     ASSERT(info.isVideo() || info.isAudio());
@@ -442,6 +512,9 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
             return createAudioFormatDescription(*audioInfo);
 #endif
         case kAudioFormatLinearPCM: {
+            if (audioInfo->isDecoded() && audioInfo->sampleFormat() != AudioSampleFormat::F32)
+                return nullptr;
+
             auto absd = CAAudioStreamDescription { static_cast<double>(audioInfo->rate()), audioInfo->channels(), AudioStreamDescription::Float32, CAAudioStreamDescription::IsInterleaved::Yes }.streamDescription();
 
             RetainPtr extensions = createExtensionsDictionary(info);
@@ -460,6 +533,14 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     auto& videoInfo = downcast<const VideoInfo>(info);
     RetainPtr extensions = createExtensionsDictionary(info);
 
+    OSType codecType = videoInfo.codecName().value;
+    if (videoInfo.isDecoded()) {
+        auto pixelFormatType = pixelFormatTypeForDecodedVideo(videoInfo);
+        if (!pixelFormatType)
+            return nullptr;
+        codecType = *pixelFormatType;
+    }
+
     if (videoInfo.colorSpace().fullRange.value_or(false))
         CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_FullRangeVideo, kCFBooleanTrue);
 
@@ -467,55 +548,9 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     RetainPtr bitsPerComponent = adoptCF(CFNumberCreate(nullptr, kCFNumberIntType, &bitDepth));
     CFDictionaryAddValue(extensions.get(), PAL::kCMFormatDescriptionExtension_BitsPerComponent, bitsPerComponent.get());
 
-    if (videoInfo.colorSpace().primaries) {
-        if (RetainPtr cmColorPrimaries = convertToCMColorPrimaries(*videoInfo.colorSpace().primaries))
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferColorPrimariesKey, cmColorPrimaries.get());
-    }
-    if (videoInfo.colorSpace().transfer) {
-        if (RetainPtr cmTransferFunction = convertToCMTransferFunction(*videoInfo.colorSpace().transfer))
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferTransferFunctionKey, cmTransferFunction.get());
-        if (*videoInfo.colorSpace().transfer == PlatformVideoTransferCharacteristics::Gamma22curve)
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.2));
-        else if (*videoInfo.colorSpace().transfer == PlatformVideoTransferCharacteristics::Gamma28curve)
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferGammaLevelKey, (__bridge CFTypeRef)@(2.8));
-    }
-
-    if (videoInfo.colorSpace().matrix) {
-        if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace().matrix))
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferYCbCrMatrixKey, cmMatrix.get());
-    }
-
-    if (videoInfo.colorSpace().chromaLocation) {
-        if (RetainPtr cmChromaLocation = convertToCMChromaLocation(*videoInfo.colorSpace().chromaLocation)) {
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferChromaLocationTopFieldKey, cmChromaLocation.get());
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferChromaLocationBottomFieldKey, cmChromaLocation.get());
-        }
-    }
-
-    if (videoInfo.fieldCount())
-        CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldCountKey, (__bridge CFTypeRef)@(std::to_underlying(*videoInfo.fieldCount())));
-
-    if (videoInfo.fieldDetail()) {
-        if (RetainPtr cmFieldDetail = convertToCMFieldDetail(*videoInfo.fieldDetail()))
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferFieldDetailKey, cmFieldDetail.get());
-    }
-
-    if (!videoInfo.size().isEmpty() && !videoInfo.displaySize().isEmpty() && videoInfo.size() != videoInfo.displaySize()) {
-        // The two spacings are the numerator and denominator of a single fraction, as stored in
-        // the `pasp` box. Emit them as an exact integer pair rather than as the two quotients
-        // displaySize / size, which only approximate the ratio.
-        auto horizontalSpacing = std::llround(videoInfo.displaySize().width() * videoInfo.size().height());
-        auto verticalSpacing = std::llround(videoInfo.displaySize().height() * videoInfo.size().width());
-        if (horizontalSpacing > 0 && verticalSpacing > 0) {
-            auto divisor = std::gcd(horizontalSpacing, verticalSpacing);
-            horizontalSpacing /= divisor;
-            verticalSpacing /= divisor;
-            CFDictionaryAddValue(extensions.get(), kCVImageBufferPixelAspectRatioKey, @{
-                (__bridge NSString*)kCVImageBufferPixelAspectRatioHorizontalSpacingKey : @(horizontalSpacing),
-                (__bridge NSString*)kCVImageBufferPixelAspectRatioVerticalSpacingKey : @(verticalSpacing)
-            });
-        }
-    }
+    addImageBufferProperties(videoInfo, [&](CFStringRef key, CFTypeRef value) {
+        CFDictionaryAddValue(extensions.get(), key, value);
+    });
 
 #if PLATFORM(VISION)
     if (videoInfo.immersiveVideoMetadata()) {
@@ -529,7 +564,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
 #endif
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto error = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, videoInfo.codecName().value, videoInfo.size().width(), videoInfo.size().height(), extensions.get(), &formatDescription);
+    auto error = PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, codecType, videoInfo.size().width(), videoInfo.size().height(), extensions.get(), &formatDescription);
     if (error != noErr) {
         RELEASE_LOG_ERROR(Media, "CMVideoFormatDescriptionCreate failed with error %d (%.4s)", (int)error, (char*)&error);
         return nullptr;
@@ -614,10 +649,196 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
     });
 }
 
+static bool isInterleavedFloat32Format(CMFormatDescriptionRef format, const AudioInfo& info)
+{
+    const AudioStreamBasicDescription* description = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(format);
+    return description
+        && description->mFormatID == kAudioFormatLinearPCM
+        && (description->mFormatFlags & kAudioFormatFlagIsFloat)
+        && !(description->mFormatFlags & kAudioFormatFlagIsNonInterleaved)
+        && description->mBitsPerChannel == 32
+        && description->mChannelsPerFrame == info.channels()
+        && description->mSampleRate == static_cast<double>(info.rate());
+}
+
+// Decoded audio is interleaved F32, so the format is constant bitrate: the sample count is a frame count
+// and the timing entry holds the duration of one frame.
+static std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> decodedAudioToCMSampleBuffer(const MediaSamplesBlock& samples, const AudioInfo& info, CMFormatDescriptionRef formatDescription)
+{
+    if (samples.isEmpty())
+        return makeUnexpected("No decoded audio sample"_s);
+
+    if (info.sampleFormat() != AudioSampleFormat::F32)
+        return makeUnexpected("Unsupported decoded audio sample format"_s);
+
+    size_t bytesPerFrame = info.channels() * sizeof(float);
+    if (!bytesPerFrame || !info.rate())
+        return makeUnexpected("Invalid decoded audio format"_s);
+
+    RetainPtr format = formatDescription ? retainPtr(formatDescription) : createFormatDescriptionFromTrackInfo(info);
+    if (!format)
+        return makeUnexpected("No CMFormatDescription available"_s);
+    if (!isInterleavedFloat32Format(format.get(), info))
+        return makeUnexpected("CMFormatDescription doesn't match the decoded audio format"_s);
+
+    RetainPtr<CMBlockBufferRef> completeBlockBuffers;
+    if (samples.size() > 1) {
+        CMBlockBufferRef rawBlockBuffer = nullptr;
+        auto err = PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, samples.size(), 0, &rawBlockBuffer);
+        if (err != kCMBlockBufferNoErr || !rawBlockBuffer)
+            return makeUnexpected("CMBlockBufferCreateEmpty failed"_s);
+        completeBlockBuffers = adoptCF(rawBlockBuffer);
+    }
+
+    size_t totalBytes = 0;
+    for (auto& sample : samples) {
+        RefPtr sampleData = sample.data;
+        if (!sampleData || !sampleData->size() || sampleData->size() % bytesPerFrame)
+            return makeUnexpected("Invalid decoded audio data"_s);
+
+        auto blockBuffer = sampleData->createCMBlockBuffer();
+        if (!blockBuffer)
+            return makeUnexpected("Couldn't create CMBlockBuffer"_s);
+
+        if (!completeBlockBuffers)
+            completeBlockBuffers = WTF::move(blockBuffer);
+        else {
+            auto err = PAL::CMBlockBufferAppendBufferReference(completeBlockBuffers.get(), blockBuffer.get(), 0, 0, 0);
+            if (err != kCMBlockBufferNoErr)
+                return makeUnexpected("CMBlockBufferAppendBufferReference failed"_s);
+        }
+        totalBytes += sampleData->size();
+    }
+
+    // The items of a block are contiguous, so the first presentation time and a per-frame duration describe all of them.
+    CMSampleTimingInfo timing { PAL::CMTimeMake(1, info.rate()), PAL::toCMTime(samples.first().presentationTime), PAL::kCMTimeInvalid };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, completeBlockBuffers.get(), format.get(), totalBytes / bytesPerFrame, 1, &timing, 0, nullptr, &rawSampleBuffer))
+        return makeUnexpected("CMSampleBufferCreateReady failed: OOM"_s);
+    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
+
+    if (samples.discontinuity())
+        PAL::CMSetAttachment(rawSampleBuffer, PAL::kCMSampleBufferAttachmentKey_FillDiscontinuitiesWithSilence, *samples.discontinuity() ? kCFBooleanTrue : kCFBooleanFalse, kCMAttachmentMode_ShouldPropagate);
+
+    return sampleBuffer;
+}
+
+static bool copyI420ToBiplanarPixelBuffer(std::span<const uint8_t> source, CVPixelBufferRef pixelBuffer, size_t width, size_t height)
+{
+    size_t chromaWidth = (width + 1) / 2;
+    size_t chromaHeight = (height + 1) / 2;
+    size_t lumaSize = width * height;
+    size_t chromaSize = chromaWidth * chromaHeight;
+    if (source.size() != lumaSize + 2 * chromaSize)
+        return false;
+
+    if (CVPixelBufferGetPlaneCount(pixelBuffer) != 2
+        || CVPixelBufferGetWidthOfPlane(pixelBuffer, 0) != width
+        || CVPixelBufferGetHeightOfPlane(pixelBuffer, 0) != height
+        || CVPixelBufferGetWidthOfPlane(pixelBuffer, 1) != chromaWidth
+        || CVPixelBufferGetHeightOfPlane(pixelBuffer, 1) != chromaHeight)
+        return false;
+
+    if (CVPixelBufferLockBaseAddress(pixelBuffer, 0) != kCVReturnSuccess)
+        return false;
+    auto unlock = makeScopeExit([pixelBuffer] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    });
+
+    auto lumaSource = source.first(lumaSize);
+    auto uSource = source.subspan(lumaSize, chromaSize);
+    auto vSource = source.subspan(lumaSize + chromaSize, chromaSize);
+
+    auto lumaDestination = CVPixelBufferGetSpanOfPlane(pixelBuffer, 0);
+    size_t lumaStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
+    auto chromaDestination = CVPixelBufferGetSpanOfPlane(pixelBuffer, 1);
+    size_t chromaStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
+    if (lumaStride < width || chromaStride < 2 * chromaWidth || lumaDestination.size() < lumaStride * height || chromaDestination.size() < chromaStride * chromaHeight)
+        return false;
+
+    for (size_t y = 0; y < height; ++y)
+        memcpySpan(lumaDestination.subspan(y * lumaStride, width), lumaSource.subspan(y * width, width));
+
+    for (size_t y = 0; y < chromaHeight; ++y) {
+        auto destination = chromaDestination.subspan(y * chromaStride, 2 * chromaWidth);
+        auto u = uSource.subspan(y * chromaWidth, chromaWidth);
+        auto v = vSource.subspan(y * chromaWidth, chromaWidth);
+        for (size_t x = 0; x < chromaWidth; ++x) {
+            destination[2 * x] = u[x];
+            destination[2 * x + 1] = v[x];
+        }
+    }
+    return true;
+}
+
+// A CMSampleBuffer holds a single image buffer, so the block must hold exactly one frame.
+// The format description is always derived from the image buffer.
+static std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> decodedVideoToCMSampleBuffer(const MediaSamplesBlock& samples, const VideoInfo& info)
+{
+    if (samples.size() != 1)
+        return makeUnexpected("A decoded video block must hold exactly one frame"_s);
+
+    auto pixelFormatType = pixelFormatTypeForDecodedVideo(info);
+    if (!pixelFormatType)
+        return makeUnexpected("Unsupported decoded video pixel format"_s);
+
+    auto& sample = samples.first();
+    RefPtr sampleData = sample.data;
+    if (!sampleData)
+        return makeUnexpected("No decoded video data"_s);
+
+    int width = info.size().width();
+    int height = info.size().height();
+    if (width <= 0 || height <= 0)
+        return makeUnexpected("Invalid decoded video size"_s);
+
+    RetainPtr attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr surfaceProperties = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFDictionarySetValue(attributes.get(), kCVPixelBufferIOSurfacePropertiesKey, surfaceProperties.get());
+
+    CVPixelBufferRef rawPixelBuffer = nullptr;
+    if (CVPixelBufferCreate(kCFAllocatorDefault, width, height, *pixelFormatType, attributes.get(), &rawPixelBuffer) != kCVReturnSuccess || !rawPixelBuffer)
+        return makeUnexpected("CVPixelBufferCreate failed"_s);
+    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
+
+    Ref contiguousData = sampleData->makeContiguous();
+    if (!copyI420ToBiplanarPixelBuffer(contiguousData->span(), pixelBuffer.get(), width, height))
+        return makeUnexpected("Invalid decoded video data"_s);
+
+    addImageBufferProperties(info, [&](CFStringRef key, CFTypeRef value) {
+        CVBufferSetAttachment(pixelBuffer.get(), key, value, kCVAttachmentMode_ShouldPropagate);
+    });
+
+    CMVideoFormatDescriptionRef rawFormatDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &rawFormatDescription) != noErr || !rawFormatDescription)
+        return makeUnexpected("CMVideoFormatDescriptionCreateForImageBuffer failed"_s);
+    RetainPtr formatDescription = adoptCF(rawFormatDescription);
+
+    CMSampleTimingInfo timing { PAL::toCMTime(sample.duration), PAL::toCMTime(sample.presentationTime), PAL::toCMTime(sample.decodeTime) };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &timing, &rawSampleBuffer) != noErr || !rawSampleBuffer)
+        return makeUnexpected("CMSampleBufferCreateReadyWithImageBuffer failed"_s);
+    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
+
+    if (sample.flags & MediaSample::SampleFlags::IsNonDisplaying) {
+        if (RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true)) {
+            RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), 0));
+            CFDictionarySetValue(attachments.get(), PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
+        }
+    }
+
+    return sampleBuffer;
+}
+
 std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
 {
     if (!samples.info())
         return makeUnexpected("No TrackInfo found"_s);
+
+    if (RefPtr audioInfo = dynamicDowncast<AudioInfo>(samples.info()); audioInfo && audioInfo->isDecoded())
+        return decodedAudioToCMSampleBuffer(samples, *audioInfo, formatDescription);
+    if (RefPtr videoInfo = dynamicDowncast<VideoInfo>(samples.info()); videoInfo && videoInfo->isDecoded())
+        return decodedVideoToCMSampleBuffer(samples, *videoInfo);
 
     RetainPtr format = formatDescription ? retainPtr(formatDescription) : createFormatDescriptionFromTrackInfo(*protect(samples.info()));
     if (!format)
