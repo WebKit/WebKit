@@ -1,8 +1,4 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ macOS ] animation/KeyframeEffect.cpp
-[ macOS ] animation/KeyframeEffectStack.cpp
-[ macOS ] animation/StyleOriginatedAnimation.cpp
-[ macOS ] animation/WebAnimation.cpp
 [ macOS ] css/CSSCounterStyleDescriptors.cpp
 [ macOS ] css/CSSStyleProperties.cpp
 [ macOS ] css/CSSValue.cpp

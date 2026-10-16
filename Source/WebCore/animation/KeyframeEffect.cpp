@@ -1719,7 +1719,7 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
         return false;
 
     ASSERT(document());
-    return Style::Interpolation::isAccelerated(property, document()->settings()) && m_blendingKeyframes.properties().contains(property);
+    return Style::Interpolation::isAccelerated(property, protect(document()->settings())) && m_blendingKeyframes.properties().contains(property);
 }
 
 bool KeyframeEffect::isRunningAcceleratedTransformRelatedAnimation() const
@@ -2479,7 +2479,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
             return Style::ComputedStyle::clonePtr(protect(renderer->style()));
         }();
 
-        for (const auto& effect : effectStack->sortedEffects()) {
+        for (RefPtr effect : effectStack->sortedEffects()) {
             if (this == effect.get())
                 break;
             auto computedTiming = effect->getComputedTiming();
@@ -2614,7 +2614,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         return true;
 
     auto rendererBox = snapRectToDevicePixels(box->borderBoxRect(), protect(box->document())->deviceScaleFactor());
-    TransformOperationData transformOperationData(rendererBox, renderer());
+    TransformOperationData transformOperationData(rendererBox, box);
     LayoutRect cumulativeBounds;
 
     CheckedPtr unanimatedStyle = [&]() {

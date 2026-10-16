@@ -1920,12 +1920,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
                 if (string.isEmpty())
                     return false;
                 auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(propertyId, animatedStyle->writingMode());
-                return inlineStyle->setProperty(resolvedCSSProperty, WTF::move(string), { styledElement->document() });
+                return inlineStyle->setProperty(resolvedCSSProperty, WTF::move(string), { protect(styledElement->document()) });
             },
             [&](const AtomString& customProperty) {
                 auto string = computedStyleExtractor.customPropertyValueSerializationInStyle(*animatedStyle, customProperty, CSS::defaultSerializationContext());
                 if (!string.isEmpty())
-                    return inlineStyle->setCustomProperty(customProperty, WTF::move(string), { styledElement->document() });
+                    return inlineStyle->setCustomProperty(customProperty, WTF::move(string), { protect(styledElement->document()) });
                 return false;
             }
         );

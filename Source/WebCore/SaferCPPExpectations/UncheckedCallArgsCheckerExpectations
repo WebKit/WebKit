@@ -1,8 +1,4 @@
 StyleBuilderGenerated.cpp
-[ macOS ] animation/KeyframeEffect.cpp
-[ macOS ] animation/KeyframeEffectStack.cpp
-[ macOS ] animation/StyleOriginatedAnimation.cpp
-[ macOS ] animation/WebAnimation.cpp
 [ macOS ] css/CSSStyleProperties.cpp
 [ macOS ] css/FontFace.cpp
 [ macOS ] css/MediaQueryMatcher.cpp
