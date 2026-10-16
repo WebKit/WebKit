@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+.container {
+  width: 100px;
+  border-bottom: 1px solid black; /* stop margin collapsing across tests */
+  margin-bottom: 20px;
+}
+
+.blue {
+  height: 50px;
+  background: blue;
+}
+
+.green {
+  height: 30px;
+  background: green;
+}
+
+.gap {
+  height: 30px;
+}
+
+.self-collapsing-gap {
+  height: 20px;
+}
+</style>
+<div class=container>
+  <div class=blue></div>
+  <div class=gap></div>
+  <div class=green></div>
+</div>
+
+<div class=container>
+  <div>text</div>
+  <div class=gap></div>
+  <div class=green></div>
+</div>
+
+<div class=container>
+  <div class=blue></div>
+  <div class=self-collapsing-gap></div>
+</div>
