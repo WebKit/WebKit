@@ -153,7 +153,7 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
     // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
     auto blockLayoutState = BlockLayoutState { { } };
-    if (!root)
+    if (!root || LayoutIntegration::BlockIntegrationUtils::laysOutThroughRenderTree(*root))
         layoutIndependentFormattingContextThroughRenderTree(box, rootState);
     else if (root->childrenInline()) {
         // A block container with only inline-level content establishes an inline formatting context for it (CSS Display 3).
