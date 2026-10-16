@@ -536,7 +536,9 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
             if (!naturalDimensions.width || !naturalDimensions.height) {
                 CheckedPtr containingBlock = renderImage->isOutOfFlowPositioned() ? renderImage->container() : renderImage->containingBlock();
                 if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(containingBlock)) {
-                    intrinsicSize.setWidth(renderBox->contentBoxLogicalWidth());
+                    // The new block formatting context gives the content width of a containing block it has not committed yet.
+                    auto overridingContainingBlockContentLogicalWidth = !renderImage->isGridItem() ? renderImage->overridingContainingBlockContentLogicalWidth() : std::nullopt;
+                    intrinsicSize.setWidth(overridingContainingBlockContentLogicalWidth ? overridingContainingBlockContentLogicalWidth->value_or(0_lu) : renderBox->contentBoxLogicalWidth());
                     intrinsicSize.setHeight(renderBox->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
                 }
             }
@@ -794,6 +796,9 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
             logicalWidth = containerWidth - left - right;
         } else
             logicalWidth = containerWidth;
+    } else if (auto containingBlockContentLogicalWidth = overridingContainingBlockContentLogicalWidth(); containingBlockContentLogicalWidth && !isGridItem()) {
+        // The new block formatting context gives the content width of a containing block it has not committed yet.
+        logicalWidth = containingBlockContentLogicalWidth->value_or(0_lu);
     } else
         logicalWidth = containingBlock()->contentBoxLogicalWidth();
 

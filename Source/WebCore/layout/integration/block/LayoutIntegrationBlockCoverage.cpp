@@ -155,10 +155,6 @@ static bool isAtomicInlineLevelBox(const RenderObject& renderer)
 // formatting context gives it (BlockIntegrationUtils::layoutInlineContent).
 static std::optional<BlockAvoidanceReason> atomicInlineLevelBoxAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
 {
-    // FIXME: Replaced elements read the size of their containing block from its renderer (RenderReplaced::computeReplacedLogicalWidth,
-    // RenderSVGRoot::computeReplacedLogicalWidth), past the containing block size the block formatting context gives them.
-    if (box.isRenderReplaced() || box.isRenderOrLegacyRenderSVGRoot())
-        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
     // In quirks mode a percentage height inside it looks through it for an ancestor with a height (RenderBox::computePercentageLogicalHeight),
     // past the containing block size the block formatting context gives it.
     if (box.document().inQuirksMode())

@@ -148,6 +148,13 @@ bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, La
     return block && block->hasBorderOrPaddingLogicalWidthChanged();
 }
 
+void BlockIntegrationUtils::markPercentageHeightDescendantsForLayout(const RenderBlockFlow& blockContainer)
+{
+    // Only the dirty bits of boxes laid out through the render tree inside this block container are written.
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableBlockContainer = const_cast<RenderBlockFlow&>(blockContainer);
+    mutableBlockContainer->dirtyForLayoutFromPercentageHeightDescendants();
+}
+
 bool BlockIntegrationUtils::laysOutThroughRenderTree(const RenderBox& box)
 {
     // FIXME: A block formatting context root whose content the block formatting context cannot lay out yet runs render tree block layout
