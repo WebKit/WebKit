@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
-
 #include <WebCore/AudioEncodedData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>
@@ -72,5 +70,3 @@ public:
 };
 
 }
-
-#endif // ENABLE(WEB_CODECS)

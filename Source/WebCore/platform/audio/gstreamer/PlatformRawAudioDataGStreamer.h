@@ -21,7 +21,7 @@
 
 #include "PlatformRawAudioData.h"
 
-#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include <gst/audio/audio.h>
@@ -65,4 +65,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PlatformRawAudioDataGStreamer)
 static bool isType(const WebCore::PlatformRawAudioData& data) { return data.platformType() == WebCore::MediaPlatformType::GStreamer; }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // USE(GSTREAMER)

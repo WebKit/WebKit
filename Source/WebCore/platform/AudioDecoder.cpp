@@ -27,8 +27,6 @@
 #include "config.h"
 #include "AudioDecoder.h"
 
-#if ENABLE(WEB_CODECS)
-
 #if USE(AVFOUNDATION)
 #include "AudioDecoderCocoa.h"
 #endif
@@ -82,7 +80,7 @@ Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, c
     UNUSED_PARAM(config);
     UNUSED_PARAM(outputCallback);
 
-    return CreatePromise::createAndReject("Not supported"_s));
+    return CreatePromise::createAndReject("Not supported"_s);
 #endif
 }
 
@@ -90,5 +88,3 @@ AudioDecoder::AudioDecoder() = default;
 AudioDecoder::~AudioDecoder() = default;
 
 }
-
-#endif // ENABLE(WEB_CODECS)

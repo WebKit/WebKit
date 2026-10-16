@@ -20,13 +20,12 @@
 #include "config.h"
 #include "PlatformRawAudioDataGStreamer.h"
 
-#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#if USE(GSTREAMER)
 
 #include "AudioSampleFormat.h"
 #include "GStreamerCommon.h"
 #include "MediaSampleGStreamer.h"
 #include "SharedBuffer.h"
-#include "WebCodecsAudioDataAlgorithms.h"
 #include <wtf/glib/GUniquePtr.h>
 
 GST_DEBUG_CATEGORY(webkit_audio_data_debug);
@@ -296,4 +295,4 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
 
 #undef GST_CAT_DEFAULT
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // USE(GSTREAMER)

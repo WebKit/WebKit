@@ -22,10 +22,7 @@
 
 #include "AudioSampleFormat.h"
 #include "NotImplemented.h"
-#include "WebCodecsAudioDataAlgorithms.h"
 #include <wtf/RefPtr.h>
-
-#if ENABLE(WEB_CODECS)
 
 namespace WebCore {
 
@@ -66,5 +63,3 @@ void PlatformRawAudioData::copyToInterleaved(PlaneData source, std::span<uint8_t
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CODECS)

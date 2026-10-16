@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 
 #include "AudioDecoder.h"
 #include <WebCore/AudioStreamDescription.h>
@@ -64,4 +64,4 @@ private:
 
 }
 
-#endif // ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#endif // USE(AVFOUNDATION)

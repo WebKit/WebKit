@@ -29,7 +29,7 @@
 #include <WebCore/PlatformRawAudioData.h>
 #include <wtf/Forward.h>
 
-#if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 struct AudioStreamBasicDescription;
@@ -73,4 +73,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::PlatformRawAudioDataCocoa)
 static bool isType(const WebCore::PlatformRawAudioData& data) { return data.platformType() == WebCore::MediaPlatformType::AVFObjC; }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // USE(AVFOUNDATION)

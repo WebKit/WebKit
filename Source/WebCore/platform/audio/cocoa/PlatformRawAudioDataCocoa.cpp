@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformRawAudioDataCocoa.h"
 
-#if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 
 #include "AudioSampleFormat.h"
 #include "CAAudioStreamDescription.h"
@@ -36,7 +36,6 @@
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
 #include "WebAudioBufferList.h"
-#include "WebCodecsAudioDataAlgorithms.h"
 
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/MediaTime.h>
@@ -99,7 +98,7 @@ static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescri
         // This is an out-parameter which is immediately adopted below.
         SUPPRESS_UNRETAINED_LOCAL CMBlockBufferRef rawTrimmedBuffer;
         if (auto error = PAL::CMBlockBufferCreateContiguous(kCFAllocatorDefault, blockBuffer, kCFAllocatorDefault, nullptr, 0, dataSize, 0, &rawTrimmedBuffer)) {
-            RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't trim the block buffer with error %d", error);
+            RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't trim the block buffer with error %d", static_cast<int>(error));
             return nullptr;
         }
         blockBuffer = adoptCF(rawTrimmedBuffer);
@@ -108,7 +107,7 @@ static RetainPtr<CMSampleBufferRef> createSampleBuffer(const CAAudioStreamDescri
     // This is an out-parameter which is immediately adopted below.
     SUPPRESS_UNRETAINED_LOCAL CMSampleBufferRef rawSampleBuffer;
     if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, blockBuffer, true, nullptr, nullptr, formatDescription, numberOfFrames, time, nullptr, &rawSampleBuffer)) {
-        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't create a sample buffer with error %d", error);
+        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create createSampleBuffer couldn't create a sample buffer with error %d", static_cast<int>(error));
         return nullptr;
     }
     return adoptCF(rawSampleBuffer);
@@ -314,4 +313,4 @@ CMSampleBufferRef PlatformRawAudioDataCocoa::sampleBuffer() const
 
 #undef GST_CAT_DEFAULT
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // USE(AVFOUNDATION)

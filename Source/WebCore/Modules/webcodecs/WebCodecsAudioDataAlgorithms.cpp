@@ -57,43 +57,6 @@ bool isValidAudioDataInit(const WebCodecsAudioData::Init& init)
     return init.data.byteLength() >= totalSize;
 }
 
-bool isAudioSampleFormatInterleaved(AudioSampleFormat format)
-{
-    switch (format) {
-    case AudioSampleFormat::U8:
-    case AudioSampleFormat::S16:
-    case AudioSampleFormat::S32:
-    case AudioSampleFormat::F32:
-        return true;
-    case AudioSampleFormat::U8Planar:
-    case AudioSampleFormat::S16Planar:
-    case AudioSampleFormat::S32Planar:
-    case AudioSampleFormat::F32Planar:
-        return false;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
-}
-
-size_t computeBytesPerSample(AudioSampleFormat format)
-{
-    switch (format) {
-    case AudioSampleFormat::U8:
-    case AudioSampleFormat::U8Planar:
-        return 1;
-    case AudioSampleFormat::S16:
-    case AudioSampleFormat::S16Planar:
-        return 2;
-    case AudioSampleFormat::S32:
-    case AudioSampleFormat::F32:
-    case AudioSampleFormat::S32Planar:
-    case AudioSampleFormat::F32Planar:
-        return 4;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
-}
-
 // https://www.w3.org/TR/webcodecs/#compute-copy-element-count
 ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, const WebCodecsAudioData::CopyToOptions& options)
 {
@@ -147,50 +110,6 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
     }
 
     return copyFrameCount;
-}
-
-AudioSampleFormat audioSampleElementFormat(AudioSampleFormat format)
-{
-    switch (format) {
-    case AudioSampleFormat::U8:
-    case AudioSampleFormat::U8Planar:
-        return AudioSampleFormat::U8;
-    case AudioSampleFormat::S16:
-    case AudioSampleFormat::S16Planar:
-        return AudioSampleFormat::S16;
-    case AudioSampleFormat::S32:
-    case AudioSampleFormat::S32Planar:
-        return AudioSampleFormat::S32;
-    case AudioSampleFormat::F32:
-    case AudioSampleFormat::F32Planar:
-        return AudioSampleFormat::F32;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return AudioSampleFormat::U8;
-}
-
-AudioSampleFormatSpan audioElementSpan(AudioSampleFormat format, std::span<uint8_t> buffer)
-{
-    auto bytesPerSample = computeBytesPerSample(format);
-    auto clampedBufferSize = buffer.size_bytes();
-    clampedBufferSize -= clampedBufferSize % bytesPerSample;
-
-    switch (format) {
-    case AudioSampleFormat::U8:
-    case AudioSampleFormat::U8Planar:
-        return buffer;
-    case AudioSampleFormat::S16:
-    case AudioSampleFormat::S16Planar:
-        return spanReinterpretCast<int16_t>(buffer.first(clampedBufferSize));
-    case AudioSampleFormat::S32:
-    case AudioSampleFormat::S32Planar:
-        return spanReinterpretCast<int32_t>(buffer.first(clampedBufferSize));
-    case AudioSampleFormat::F32:
-    case AudioSampleFormat::F32Planar:
-        return spanReinterpretCast<float>(buffer.first(clampedBufferSize));
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return buffer;
 }
 
 } // namespace WebCore

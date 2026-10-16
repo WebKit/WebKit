@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AudioDecoderCocoa.h"
 
-#if ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#if USE(AVFOUNDATION)
 
 #include "AudioSampleBufferConverter.h"
 #include "AudioSampleFormat.h"
@@ -397,4 +397,4 @@ void InternalAudioDecoderCocoa::close()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_CODECS) && USE(AVFOUNDATION)
+#endif // USE(AVFOUNDATION)
