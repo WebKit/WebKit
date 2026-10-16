@@ -190,7 +190,7 @@ static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector&
 
 Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(StringView string, const Element& element)
 {
-    CSSParserContext context(element.document());
+    CSSParserContext context(protect(element.document()));
     context.mode = strictToCSSParserMode(element.isHTMLElement() && !element.document().inQuirksMode());
 
     CSSParser parser(context, string);

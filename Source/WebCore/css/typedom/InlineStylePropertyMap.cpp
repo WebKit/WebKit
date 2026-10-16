@@ -96,7 +96,7 @@ void InlineStylePropertyMap::removeProperty(CSSPropertyID propertyID)
 {
     if (!m_element)
         return;
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     if (protect(m_element)->removeInlineStyleProperty(propertyID))
         mutationScope.enqueueMutationRecord();
 }
@@ -105,7 +105,7 @@ bool InlineStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, cons
 {
     if (!m_element)
         return false;
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     bool didFailParsing = false;
     protect(m_element)->setInlineStyleProperty(propertyID, value, IsImportant::No, &didFailParsing);
     if (!didFailParsing)
@@ -117,7 +117,7 @@ bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
 {
     if (!m_element)
         return false;
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     bool didFailParsing = false;
     // FIXME: We should be able to validate CSSValues without having to serialize to text and go through the
     // parser. This is inefficient.
@@ -134,7 +134,7 @@ bool InlineStylePropertyMap::setCustomProperty(Document&, const AtomString& prop
     if (!m_element)
         return false;
 
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     Ref customPropertyValue = CSSCustomPropertyValue::createUnresolved(property, WTF::move(value));
     if (protect(m_element)->setInlineStyleCustomProperty(WTF::move(customPropertyValue)))
         mutationScope.enqueueMutationRecord();
@@ -145,7 +145,7 @@ void InlineStylePropertyMap::removeCustomProperty(const AtomString& property)
 {
     if (!m_element)
         return;
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     if (protect(m_element)->removeInlineStyleCustomProperty(property))
         mutationScope.enqueueMutationRecord();
 }
@@ -154,7 +154,7 @@ void InlineStylePropertyMap::clear()
 {
     if (!m_element)
         return;
-    StyleAttributeMutationScope mutationScope { m_element.get() };
+    StyleAttributeMutationScope mutationScope { protect(m_element) };
     protect(m_element)->removeAllInlineStyleProperties();
     mutationScope.enqueueMutationRecord();
 }

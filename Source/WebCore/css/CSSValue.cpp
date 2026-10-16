@@ -295,8 +295,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESC
 
 template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESCAPE const Visitor& visitor) const
 {
-    return const_cast<CSSValue&>(*this).visitDerived([&](auto& value) {
-        return std::invoke(visitor, std::as_const(value));
+    return const_cast<CSSValue&>(*this).visitDerived([&](const auto& value) {
+        return std::invoke(visitor, value);
     });
 }
 

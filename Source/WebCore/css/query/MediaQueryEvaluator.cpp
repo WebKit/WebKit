@@ -81,13 +81,14 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         if (!document->view() || !document->documentElement())
             return EvaluationResult::Unknown;
 
+        CheckedRef initialStyle = document->initialStyle();
         FeatureEvaluationContext context {
             .document = *document,
             .conversionData = CSSToLengthConversionData {
-                document->initialStyle(),
-                &document->initialStyle(),
-                &document->initialStyle(),
-                document->renderView(),
+                initialStyle,
+                initialStyle.ptr(),
+                initialStyle.ptr(),
+                protect(document->renderView()),
                 nullptr
             },
             .renderer = nullptr

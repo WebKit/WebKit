@@ -442,7 +442,7 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
         RectEdges<bool> scrollable;
         if (CheckedPtr renderer = context.renderer.get()) {
             if (CheckedPtr containerElement = renderer->element())
-                scrollable = context.document->styleScope().scrollStateSnapshotFor(*containerElement).scrollableEdges;
+                scrollable = protect(context.document->styleScope())->scrollStateSnapshotFor(*containerElement).scrollableEdges;
         }
 
         // Edges the container can currently be scrolled further toward.

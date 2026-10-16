@@ -123,7 +123,7 @@ CSSCounterStyleDescriptors::Pad padFromCSSValue(const CSSValue& value)
     ASSERT(list.size() == 2);
     auto length = Style::deprecatedToStyleFromCSSValue<Style::Integer<CSS::Nonnegative>>(protect(downcast<CSSPrimitiveValue>(list[0])))->value;
     ASSERT(length >= 0);
-    return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(&list[1]) };
+    return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(protect(&list[1])) };
 }
 
 static CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromStyleProperties(const StyleProperties& properties)
@@ -139,8 +139,8 @@ CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromCSSValue(const CS
     CSSCounterStyleDescriptors::NegativeSymbols result;
     if (auto* list = dynamicDowncast<CSSValueList>(value)) {
         ASSERT(list->size() == 2);
-        result.m_prefix = symbolFromCSSValue(list->item(0));
-        result.m_suffix = symbolFromCSSValue(list->item(1));
+        result.m_prefix = symbolFromCSSValue(protect(list->item(0)));
+        result.m_suffix = symbolFromCSSValue(protect(list->item(1)));
     } else
         result.m_prefix = symbolFromCSSValue(&value);
     return result;

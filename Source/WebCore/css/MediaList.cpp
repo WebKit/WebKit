@@ -82,7 +82,7 @@ void MediaList::setMediaQueries(MQ::MediaQueryList&& queries)
         return;
     }
 
-    CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule.get());
+    CSSStyleSheet::RuleMutationScope mutationScope(protect(m_parentRule));
     if (RefPtr rule = dynamicDowncast<CSSImportRule>(m_parentRule.get()))
         rule->setMediaQueries(WTF::move(queries));
     if (RefPtr rule = dynamicDowncast<CSSMediaRule>(m_parentRule.get()))

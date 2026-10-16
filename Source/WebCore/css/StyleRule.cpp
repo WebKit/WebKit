@@ -161,8 +161,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
 
 template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(NOESCAPE const Visitor& visitor) const
 {
-    return const_cast<StyleRuleBase&>(*this).visitDerived([&](auto& value) {
-        return std::invoke(visitor, std::as_const(value));
+    return const_cast<StyleRuleBase&>(*this).visitDerived([&](const auto& value) {
+        return std::invoke(visitor, value);
     });
 }
 

@@ -290,7 +290,7 @@ static const IntegerSchema& colorFeatureSchema()
         "color"_s,
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            return screenDepthPerComponent(protect(context.document->frame()->mainFrame().virtualView()).get());
+            return screenDepthPerComponent(protect(protect(context.document->frame()->mainFrame())->virtualView()));
         }
     };
     return schema;
@@ -305,7 +305,7 @@ static const IdentifierSchema& colorGamutFeatureSchema()
         [](auto& context) {
             // FIXME: At some point we should start detecting displays that support more colors.
             MatchingIdentifiers identifiers { CSSValueID::SRGB };
-            if (screenSupportsExtendedColor(protect(protect(context.document->frame())->mainFrame().virtualView()).get()))
+            if (screenSupportsExtendedColor(protect(protect(protect(context.document->frame())->mainFrame())->virtualView())))
                 identifiers.append(CSSValueID::P3);
             return identifiers;
         }
@@ -410,7 +410,7 @@ static const IdentifierSchema& dynamicRangeFeatureSchema()
                     return true;
                 if (frame->settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::Off)
                     return false;
-                return screenSupportsHighDynamicRange(protect(frame->mainFrame().virtualView()).get());
+                return screenSupportsHighDynamicRange(protect(protect(frame->mainFrame())->virtualView()));
             }();
 
             MatchingIdentifiers identifiers { CSSValueID::Standard };
@@ -507,7 +507,7 @@ static const IntegerSchema& monochromeFeatureSchema()
         MediaQueryDynamicDependency::Accessibility,
         [](auto& context) {
             Ref frame = *context.document->frame();
-            RefPtr mainFrameView = frame->mainFrame().virtualView();
+            RefPtr mainFrameView = protect(frame->mainFrame())->virtualView();
             bool isMonochrome = [&] {
                 if (frame->settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::On)
                     return true;
@@ -897,7 +897,7 @@ static const IdentifierSchema& prefersColorSchemeFeatureSchema()
         FixedVector { CSSValueID::Light, CSSValueID::Dark },
         MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
-            bool useDarkAppearance = frameOwnerElementAncestorsUseDarkAppearance(*context.document->frame());
+            bool useDarkAppearance = frameOwnerElementAncestorsUseDarkAppearance(*protect(context.document->frame()));
 
             return MatchingIdentifiers { useDarkAppearance ? CSSValueID::Dark : CSSValueID::Light };
         }

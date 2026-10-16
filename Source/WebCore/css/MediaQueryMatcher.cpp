@@ -49,7 +49,7 @@ void MediaQueryMatcher::documentDestroyed()
 {
     m_document = nullptr;
     auto mediaQueryLists = std::exchange(m_mediaQueryLists, { });
-    for (auto& mediaQueryList : mediaQueryLists) {
+    for (RefPtr mediaQueryList : mediaQueryLists) {
         if (mediaQueryList)
             mediaQueryList->detachFromMatcher();
     }
@@ -67,7 +67,7 @@ bool MediaQueryMatcher::evaluate(const MQ::MediaQueryList& queries)
 {
     if (!m_document)
         return false;
-    return MQ::MediaQueryEvaluator { mediaType(), *m_document }.evaluate(queries);
+    return MQ::MediaQueryEvaluator { mediaType(), *protect(m_document) }.evaluate(queries);
 }
 
 void MediaQueryMatcher::addMediaQueryList(MediaQueryList& list)
@@ -102,7 +102,7 @@ void MediaQueryMatcher::evaluateAll(EventMode eventMode)
 
     LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryMatcher::styleResolverChanged " << m_document->url());
 
-    MQ::MediaQueryEvaluator evaluator { mediaType(), *m_document };
+    MQ::MediaQueryEvaluator evaluator { mediaType(), *protect(m_document) };
 
     auto mediaQueryLists = m_mediaQueryLists;
     for (auto& list : mediaQueryLists) {

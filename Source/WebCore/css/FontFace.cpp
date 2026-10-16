@@ -59,7 +59,7 @@ void FontFace::setErrorState()
 Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString& family, Source&& source, const Descriptors& descriptors)
 {
     ASSERT(context.cssFontSelector());
-    auto result = adoptRef(*new FontFace(*context.cssFontSelector()));
+    Ref result = adoptRef(*new FontFace(*protect(context.cssFontSelector())));
     result->suspendIfNeeded();
 
 #if COMPILER(GCC) && (CPU(ARM) || CPU(ARM64))
@@ -179,7 +179,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext* context, CSSFontFace& fac
 }
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
-    : ActiveDOMObject(fontSelector.scriptExecutionContext())
+    : ActiveDOMObject(protect(fontSelector.scriptExecutionContext()))
     , m_backing(CSSFontFace::create(fontSelector, nullptr, this))
     , m_loadedPromise(makeUniqueRef<LoadedPromise>(*this, &FontFace::loadedPromiseResolve))
 {

@@ -1,14 +1,5 @@
 StyleBuilderGenerated.cpp
 [ macOS ] css/CSSStyleProperties.cpp
-[ macOS ] css/FontFace.cpp
-[ macOS ] css/MediaQueryMatcher.cpp
-[ macOS ] css/PropertySetCSSDescriptors.cpp
-[ macOS ] css/parser/CSSParser.cpp
-[ macOS ] css/parser/SizesAttributeParser.cpp
-[ macOS ] css/query/ContainerQueryFeatures.cpp
-[ macOS ] css/query/MediaQueryEvaluator.cpp
-[ macOS ] css/typedom/ComputedStylePropertyMapReadOnly.cpp
-[ macOS ] css/typedom/InlineStylePropertyMap.cpp
 dom/Attr.cpp
 [ macOS ] dom/ComposedTreeIterator.h
 dom/Document.cpp

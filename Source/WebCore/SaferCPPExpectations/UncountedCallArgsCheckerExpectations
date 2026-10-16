@@ -1,19 +1,5 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ macOS ] css/CSSCounterStyleDescriptors.cpp
 [ macOS ] css/CSSStyleProperties.cpp
-[ macOS ] css/CSSValue.cpp
-[ macOS ] css/FontFace.cpp
-[ macOS ] css/MediaList.cpp
-[ macOS ] css/MediaQueryMatcher.cpp
-[ macOS ] css/PropertySetCSSDescriptors.cpp
-[ macOS ] css/ShorthandSerializer.cpp
-[ macOS ] css/StyleRule.cpp
-[ macOS ] css/parser/CSSParser.cpp
-[ macOS ] css/parser/SizesAttributeParser.cpp
-[ macOS ] css/query/MediaQueryFeatures.cpp
-[ macOS ] css/typedom/ComputedStylePropertyMapReadOnly.cpp
-[ macOS ] css/typedom/DeclaredStylePropertyMap.cpp
-[ macOS ] css/typedom/InlineStylePropertyMap.cpp
 dom/Attr.cpp
 [ macOS ] dom/ComposedTreeIterator.h
 [ macOS ] dom/ContainerNode.cpp

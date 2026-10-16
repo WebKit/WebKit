@@ -238,7 +238,7 @@ std::optional<float> SizesAttributeParser::parseLength(CSSParserTokenRange token
 bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCondition)
 {
     // A Media Condition cannot have a media type other than screen.
-    return MQ::MediaQueryEvaluator { screenAtom(), m_document.get() }.evaluate(mediaCondition);
+    return MQ::MediaQueryEvaluator { screenAtom(), protect(m_document) }.evaluate(mediaCondition);
 }
 
 std::optional<CSSToLengthConversionData> SizesAttributeParser::conversionData() const

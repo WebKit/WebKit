@@ -316,7 +316,7 @@ bool ShorthandSerializer::commonSerializationChecks(const StyleProperties& prope
         return true;
     }
     if (*firstValueFromShorthand) {
-        m_result = (*firstValueFromShorthand)->shorthandValue().cssText(m_serializationContext);
+        m_result = protect((*firstValueFromShorthand)->shorthandValue())->cssText(m_serializationContext);
         return true;
     }
     return false;
