@@ -2883,6 +2883,12 @@ Reviewed by NOBODY (OOPS!).
             pr = remote.GitHub(self.remote).pull_requests.get(1)
             self.assertEqual(pr.title, 'New Title')
 
+    def test_create_with_owner_assign_failure(self):
+        with OutputCapture() as captured, self.webserver(), patch('webkitbugspy.Issue.assign', return_value=False):
+            pr = remote.GitHub(self.remote).pull_requests.create(head='tcontributor:eng/other', title='Other Change', body='Body')
+            self.assertEqual(pr.number, 2)
+        self.assertEqual(captured.stderr.getvalue(), "Failed to assign 'PR 2 | Other Change' to 'tcontributor'\n")
+
     def test_update_head_mismatch(self):
         with self.webserver():
             pr = remote.GitHub(self.remote).pull_requests.get(1)
