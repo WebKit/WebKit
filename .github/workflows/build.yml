@@ -829,7 +829,7 @@ jobs:
       # separately named engine bundle whenever the complete target and install pass.
       - name: Build full WebCore + Web Audio + WebRTC API (Wii U PPC engine bring-up)
         id: full-engine-probe
-        if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore) }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore)) }}
         shell: bash
         run: |
           echo "engine_ready=false" >> "$GITHUB_OUTPUT"
@@ -1056,7 +1056,7 @@ jobs:
           retention-days: 30
 
       - name: Upload full WebCore + WebRTC engine bundle
-        if: ${{ steps.full-engine-probe.outputs.engine_ready == 'true' }}
+        if: ${{ !cancelled() && steps.full-engine-probe.outputs.engine_ready == 'true' }}
         uses: actions/upload-artifact@v7.0.0
         with:
           name: webkit-wiiu-full-engine
