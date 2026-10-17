@@ -317,11 +317,12 @@ MouseEvent::MouseEvent(
     IsTrusted isTrusted
 )
     : MouseRelatedEvent(eventInterface, eventType, initializer, isTrusted)
-    , m_button(initializer.button == std::to_underlying(MouseButton::None) ? std::to_underlying(MouseButton::Left) : initializer.button)
+    , m_button(initializer.button)
     , m_buttons(initializer.buttons)
-    , m_buttonDown(initializer.button != std::to_underlying(MouseButton::None))
+    , m_buttonDown(true)
     , m_relatedTarget(initializer.relatedTarget)
 {
+    ASSERT(isTrusted == IsTrusted::No || initializer.button != std::to_underlying(MouseButton::None));
     initCoordinates({ initializer.clientX, initializer.clientY });
 }
 
@@ -361,9 +362,9 @@ void MouseEvent::initMouseEvent(
 
     setScreenLocation({ screenX, screenY });
     setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
-    m_button = button == std::to_underlying(MouseButton::None) ? std::to_underlying(MouseButton::Left) : button;
+    m_button = button;
     m_syntheticClickType = SyntheticClickType::NoTap;
-    m_buttonDown = button != std::to_underlying(MouseButton::None);
+    m_buttonDown = true;
     m_relatedTarget = WTF::move(relatedTarget);
 
     initCoordinates({ clientX, clientY });
