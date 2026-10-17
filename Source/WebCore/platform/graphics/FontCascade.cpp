@@ -458,13 +458,9 @@ float FontCascade::zeroWidth() const
 GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVariant variant, std::optional<ResolvedEmojiPolicy> resolvedEmojiPolicy) const
 {
     if (variant == FontVariant::Auto) {
-        if (m_fontDescription.variantCaps() == FontVariantCaps::Small) {
-            char32_t upperC = u_toupper(c);
-            if (upperC != c) {
-                c = upperC;
-                variant = FontVariant::SmallCaps;
-            } else
-                variant = FontVariant::Normal;
+        if (capitalizesForSmallCaps(c)) {
+            c = u_toupper(c);
+            variant = FontVariant::SmallCaps;
         } else
             variant = FontVariant::Normal;
     }
@@ -477,6 +473,14 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
     SUPPRESS_UNCOUNTED_ARG return fonts()->glyphDataForCharacter(c, m_fontDescription, fontSelector(), variant, emojiPolicy);
 }
 
+bool FontCascade::capitalizesForSmallCaps(char32_t character) const
+{
+    if (!isSmallCaps() || static_cast<char32_t>(u_toupper(character)) == character)
+        return false;
+    // A small-caps face renders the character itself.
+    auto glyphData = glyphDataForCharacter(character, false, FontVariant::Normal);
+    return !glyphData.font || !glyphData.font->isSmallCapsFace();
+}
 
 bool FontCascade::canUseSimplifiedTextMeasuring(char32_t character, FontVariant fontVariant, bool whitespaceIsCollapsed, const Font& primaryFont) const
 {
@@ -1939,6 +1943,8 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
     if (dontSynthesizeSmallCaps)
         return false;
     if (!nextFont || nextFont->isSystemFontFallbackPlaceholder())
+        return false;
+    if (fontVariantCaps == FontVariantCaps::Small && nextFont->isSmallCapsFace())
         return false;
     if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
         return false;
