@@ -357,7 +357,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    template<typename Command> static Variant<typename Command::To, typename Command::By> fromOffsetLength(float offset, PathCoordinateMode mode)
+    template<typename Command> static Variant<typename Command::To, typename Command::By> LEGACY_NODELETE fromOffsetLength(float offset, PathCoordinateMode mode)
     {
         switch (mode) {
         case AbsoluteCoordinates:
@@ -733,7 +733,7 @@ template<> struct Evaluation<SmoothCommand::To, AcceleratedEffectShapeFunction::
 template<> struct Evaluation<SmoothCommand::By, AcceleratedEffectShapeFunction::SmoothCommand::By> { AcceleratedEffectShapeFunction::SmoothCommand::By operator()(const SmoothCommand::By&, const FloatRect&, ZoomFactor); };
 
 template<> struct Evaluation<ArcCommand, AcceleratedEffectShapeFunction::ArcCommand> { AcceleratedEffectShapeFunction::ArcCommand operator()(const ArcCommand&, const FloatRect&, ZoomFactor); };
-template<> struct Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand> { AcceleratedEffectShapeFunction::CloseCommand operator()(const CloseCommand&, const FloatRect&, ZoomFactor); };
+template<> struct Evaluation<CloseCommand, AcceleratedEffectShapeFunction::CloseCommand> { AcceleratedEffectShapeFunction::CloseCommand LEGACY_NODELETE operator()(const CloseCommand&, const FloatRect&, ZoomFactor); };
 
 AcceleratedEffectShapeFunction::ControlPointAnchor Evaluation<ControlPointAnchor, AcceleratedEffectShapeFunction::ControlPointAnchor>::operator()(const ControlPointAnchor& value)
 {

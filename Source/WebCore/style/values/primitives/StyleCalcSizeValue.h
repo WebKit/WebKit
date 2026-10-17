@@ -55,7 +55,7 @@ public:
         Ref<CalcSizeValue>
     >;
 
-    WEBCORE_EXPORT static Ref<CalcSizeValue> create(Basis&&, Calculation::Tree&&, bool basisHasPercentage, bool hasPercentage);
+    WEBCORE_EXPORT static Ref<CalcSizeValue> LEGACY_NODELETE create(Basis&&, Calculation::Tree&&, bool basisHasPercentage, bool hasPercentage);
     WEBCORE_EXPORT ~CalcSizeValue();
 
     const Basis& basis() const LIFETIME_BOUND { return m_basis; }

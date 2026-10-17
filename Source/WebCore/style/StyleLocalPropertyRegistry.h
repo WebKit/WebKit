@@ -44,7 +44,7 @@ public:
     const CSSRegisteredCustomProperty* get(const AtomString&) const;
     // Whether this function declares the name itself. A name declared by an enclosing function has its
     // value inherited from the calling context rather than resolving to a registered value here.
-    bool declares(const AtomString&) const;
+    bool LEGACY_NODELETE declares(const AtomString&) const;
     bool isInherited(const AtomString&) const;
 
     void add(CSSRegisteredCustomProperty&&);

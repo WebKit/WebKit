@@ -98,7 +98,7 @@ static bool containsURLTokens(std::span<const CSSParserToken> tokens)
 // A comma-containing value can be passed as a single free-form-production argument by wrapping it in
 // curly braces. The braces are syntactic and the argument is the block's contents.
 // https://drafts.csswg.org/css-values-5/#component-function-commas
-static CSSParserTokenRange unwrapArgumentBraces(CSSParserTokenRange argument)
+static CSSParserTokenRange LEGACY_NODELETE unwrapArgumentBraces(CSSParserTokenRange argument)
 {
     auto range = argument;
     range.consumeWhitespace();

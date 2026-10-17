@@ -47,15 +47,15 @@ struct CustomIdent {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<CustomIdent> { auto operator()(const CustomIdent&, const Style::ComputedStyle&) -> CSS::CustomIdent; };
-template<> struct ToStyle<CSS::CustomIdent> { auto operator()(const CSS::CustomIdent&, const BuilderState&) -> CustomIdent; };
+template<> struct ToCSS<CustomIdent> { CSS::CustomIdent LEGACY_NODELETE operator()(const CustomIdent&, const Style::ComputedStyle&); };
+template<> struct ToStyle<CSS::CustomIdent> { CustomIdent LEGACY_NODELETE operator()(const CSS::CustomIdent&, const BuilderState&); };
 
 template<> struct CSSValueCreation<CustomIdent> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const CustomIdent&);
 };
 
 template<> struct CSSValueConversion<CustomIdent> {
-    auto operator()(BuilderState&, const CSSCustomIdentValue&) -> CustomIdent;
+    CustomIdent LEGACY_NODELETE operator()(BuilderState&, const CSSCustomIdentValue&);
     auto operator()(BuilderState&, const CSSValue&) -> CustomIdent;
 };
 

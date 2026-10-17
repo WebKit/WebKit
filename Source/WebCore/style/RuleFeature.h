@@ -178,7 +178,7 @@ private:
 MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector&);
 
 enum class InvalidationKeyType : uint8_t { Universal = 1, Class, Id, Attribute, Tag };
-PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
+PseudoClassInvalidationKey LEGACY_NODELETE makePseudoClassInvalidationKey(CSSSelector::PseudoClass, InvalidationKeyType, const AtomString& = starAtom());
 
 bool LEGACY_NODELETE unlikelyToHaveSelectorForAttribute(const AtomString&);
 

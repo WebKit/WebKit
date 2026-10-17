@@ -34,14 +34,14 @@ namespace WebCore {
 namespace Style {
 namespace Calculation {
 
-static auto evaluate(const CSS::Keyword::None&, const EvaluationOptions&) -> CSS::Keyword::None;
+static CSS::Keyword::None LEGACY_NODELETE evaluate(const CSS::Keyword::None&, const EvaluationOptions&);
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> Variant<double, CSS::Keyword::None>;
 static auto evaluate(const std::optional<Child>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Child&, const EvaluationOptions&) -> double;
-static auto evaluate(const Number&, const EvaluationOptions&) -> double;
-static auto evaluate(const Percentage&, const EvaluationOptions&) -> double;
-static auto evaluate(const Dimension&, const EvaluationOptions&) -> double;
-static auto evaluate(const Size&, const EvaluationOptions&) -> double;
+static double LEGACY_NODELETE evaluate(const Number&, const EvaluationOptions&);
+static double LEGACY_NODELETE evaluate(const Percentage&, const EvaluationOptions&);
+static double LEGACY_NODELETE evaluate(const Dimension&, const EvaluationOptions&);
+static double LEGACY_NODELETE evaluate(const Size&, const EvaluationOptions&);
 static auto evaluate(const IndirectNode<Sum>&, const EvaluationOptions&) -> double;
 static auto evaluate(const IndirectNode<Product>&, const EvaluationOptions&) -> double;
 static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> double;

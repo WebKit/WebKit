@@ -108,7 +108,7 @@ private:
 
     RefPtr<const CustomProperty> propertyValueForVariableName(const AtomString&, CSSValueID);
     RefPtr<CSSVariableData> trySimpleSubstitution(const CSSSubstitutionValue&);
-    bool isBaseAppearance();
+    bool LEGACY_NODELETE isBaseAppearance();
     bool isInURLContext() const { return m_urlContextDepth; }
     void updateURLContext(const CSSParserToken&);
     void propagateAttrTaint(IsAttrTainted, std::span<const CSSParserToken>);

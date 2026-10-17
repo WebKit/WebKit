@@ -302,7 +302,7 @@ struct HasArgumentSiblingInfo {
     bool hasPositionalPseudo { false }; // :nth-child(), :first-child, ... (sibling-relative)
     bool hasNonLogicalPseudo { false }; // any non-logical pseudo-class (positional, stateful, etc.)
 
-    OptionSet<HasArgumentProperty> properties() const
+    OptionSet<HasArgumentProperty> LEGACY_NODELETE properties() const
     {
         OptionSet<HasArgumentProperty> result;
         if (hasSiblingCombinator || hasPositionalPseudo)
@@ -313,7 +313,7 @@ struct HasArgumentSiblingInfo {
     }
 };
 
-static void scanHasArgument(const CSSSelector& complexSelector, HasArgumentSiblingInfo& info)
+static void LEGACY_NODELETE scanHasArgument(const CSSSelector& complexSelector, HasArgumentSiblingInfo& info)
 {
     for (const CSSSelector* simpleSelector = &complexSelector; simpleSelector; simpleSelector = simpleSelector->precedingInComplexSelector()) {
         auto relation = simpleSelector->relation();
@@ -331,7 +331,7 @@ static void scanHasArgument(const CSSSelector& complexSelector, HasArgumentSibli
     }
 }
 
-static OptionSet<HasArgumentProperty> hasArgumentProperties(const CSSSelectorList& argument)
+static OptionSet<HasArgumentProperty> LEGACY_NODELETE hasArgumentProperties(const CSSSelectorList& argument)
 {
     HasArgumentSiblingInfo info;
     for (const auto& complexSelector : argument)
@@ -347,7 +347,7 @@ static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVe
         const CSSSelectorList* invalidationSelector { nullptr };
         const CSSSelectorList* scopeSelector { nullptr };
 
-        unsigned hash() const
+        unsigned LEGACY_NODELETE hash() const
         {
             Hasher hasher;
             add(hasher, matchElement.relation, matchElement.hasRelation, isNegation);

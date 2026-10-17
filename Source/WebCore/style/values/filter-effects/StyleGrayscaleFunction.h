@@ -72,7 +72,7 @@ template<> struct Evaluation<Grayscale, Ref<FilterEffect>> { auto operator()(con
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Grayscale> { auto operator()(const Grayscale&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Grayscale> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Grayscale&); };
 
 } // namespace Style
 } // namespace WebCore

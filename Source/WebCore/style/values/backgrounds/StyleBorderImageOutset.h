@@ -132,8 +132,8 @@ template<> struct Blending<BorderImageOutsetValue> {
 };
 
 template<> struct Blending<BorderImageOutset> {
-    auto canBlend(const BorderImageOutset&, const BorderImageOutset&) -> bool;
-    auto requiresInterpolationForAccumulativeIteration(const BorderImageOutset&, const BorderImageOutset&) -> bool;
+    bool LEGACY_NODELETE canBlend(const BorderImageOutset&, const BorderImageOutset&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const BorderImageOutset&, const BorderImageOutset&);
     auto blend(const BorderImageOutset&, const BorderImageOutset&, const BlendingContext&) -> BorderImageOutset;
 };
 

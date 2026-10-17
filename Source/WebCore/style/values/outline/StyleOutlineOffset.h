@@ -61,7 +61,7 @@ template<> struct CSSValueConversion<OutlineOffset> { OutlineOffset operator()(B
 // MARK: - Blending
 
 template<> struct Blending<OutlineOffset> {
-    auto canBlend(const OutlineOffset&, const OutlineOffset&) -> bool;
+    bool LEGACY_NODELETE canBlend(const OutlineOffset&, const OutlineOffset&);
     auto blend(const OutlineOffset&, const OutlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&, const Interpolation::Context&) -> OutlineOffset;
 };
 

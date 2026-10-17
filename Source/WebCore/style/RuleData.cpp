@@ -130,7 +130,7 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
     return PropertyAllowlist::None;
 }
 
-static bool isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
+static bool LEGACY_NODELETE isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
 {
     if (auto* list = dynamicDowncast<CSSValueList>(value)) {
         for (auto& item : *list) {
@@ -143,7 +143,7 @@ static bool isKeywordOrKeywordList(const CSSValue& value, CSSValueID keyword)
 }
 
 // ::before/::after may follow another pseudo-element, like ::part(foo)::before or ::slotted(span)::after.
-static bool selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
+static bool LEGACY_NODELETE selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
 {
     for (auto* component = &selector; component; component = component->precedingInComplexSelector()) {
         if (component->matchesPseudoElement() && (component->pseudoElement() == CSSSelector::PseudoElement::Before || component->pseudoElement() == CSSSelector::PseudoElement::After))
@@ -153,7 +153,7 @@ static bool selectorHasBeforeOrAfterPseudoElement(const CSSSelector& selector)
 }
 
 // ::before/::after only generate a box with non-'none' content, which animations and transitions can also supply.
-static PseudoElementBoxGeneration computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
+static PseudoElementBoxGeneration LEGACY_NODELETE computePseudoElementBoxGeneration(const CSSSelector& selector, const StyleProperties& properties)
 {
     if (!selectorHasBeforeOrAfterPseudoElement(selector))
         return PseudoElementBoxGeneration::NotForBeforeOrAfter;

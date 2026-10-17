@@ -85,7 +85,7 @@ static double lengthForRayPath(const Ray& ray, const MotionPathData& data)
     );
 }
 
-static double lengthForRayContainPath(const FloatRect& elementRect, double computedPathLength)
+static double LEGACY_NODELETE lengthForRayContainPath(const FloatRect& elementRect, double computedPathLength)
 {
     return std::max(0.0, computedPathLength - (std::max(elementRect.width(), elementRect.height()) / 2));
 }

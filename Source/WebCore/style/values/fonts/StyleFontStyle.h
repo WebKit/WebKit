@@ -93,7 +93,7 @@ template<> struct CSSValueCreation<FontStyle> { Ref<CSSValue> LEGACY_NODELETE op
 
 template<> struct Blending<FontStyle> {
     bool LEGACY_NODELETE canBlend(const FontStyle&, const FontStyle&);
-    auto blend(const FontStyle&, const FontStyle&, const BlendingContext&) -> FontStyle;
+    FontStyle LEGACY_NODELETE blend(const FontStyle&, const FontStyle&, const BlendingContext&);
 };
 
 } // namespace Style

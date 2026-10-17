@@ -34,7 +34,7 @@ namespace Style {
 class ImageSet final : public MultiImage {
     WTF_MAKE_TZONE_ALLOCATED(ImageSet);
 public:
-    static Ref<ImageSet> create(Vector<ImageWithScale>&&, Vector<size_t>&&);
+    static Ref<ImageSet> LEGACY_NODELETE create(Vector<ImageWithScale>&&, Vector<size_t>&&);
     virtual ~ImageSet();
 
     bool operator==(const Image& other) const;

@@ -43,7 +43,7 @@ class FlexibleBoxData : public RefCounted<FlexibleBoxData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FlexibleBoxData, FlexibleBoxData);
 public:
     static Ref<FlexibleBoxData> create() { return adoptRef(*new FlexibleBoxData); }
-    Ref<FlexibleBoxData> copy() const;
+    Ref<FlexibleBoxData> LEGACY_NODELETE copy() const;
 
     bool operator==(const FlexibleBoxData&) const;
 

@@ -90,7 +90,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<TextUnderlinePosition> { auto operator()(BuilderState&, const CSSValue&) -> TextUnderlinePosition; };
+template<> struct CSSValueConversion<TextUnderlinePosition> { TextUnderlinePosition operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

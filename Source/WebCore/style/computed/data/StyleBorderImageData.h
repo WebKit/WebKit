@@ -37,7 +37,7 @@ class BorderImageData : public RefCounted<BorderImageData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BorderImageData, BorderImageData);
 public:
     static Ref<BorderImageData> create() { return adoptRef(*new BorderImageData); }
-    Ref<BorderImageData> copy() const;
+    Ref<BorderImageData> LEGACY_NODELETE copy() const;
 
     bool operator==(const BorderImageData&) const;
 

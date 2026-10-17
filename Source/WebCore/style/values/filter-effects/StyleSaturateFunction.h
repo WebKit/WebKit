@@ -69,7 +69,7 @@ template<> struct ToStyle<CSS::Saturate> { auto operator()(const CSS::Saturate&,
 // MARK: - Blending
 
 template<> struct Blending<Saturate> {
-    auto blend(const Saturate&, const Saturate&, const BlendingContext&) -> Saturate;
+    Saturate LEGACY_NODELETE blend(const Saturate&, const Saturate&, const BlendingContext&);
 };
 
 // MARK: - Evaluation
@@ -78,7 +78,7 @@ template<> struct Evaluation<Saturate, Ref<FilterEffect>> { auto operator()(cons
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Saturate> { auto operator()(const Saturate&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Saturate> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Saturate&); };
 
 } // namespace Style
 } // namespace WebCore

@@ -99,7 +99,7 @@ private:
     std::unique_ptr<Style::ComputedStyle> resolveStartingStyle(const ResolvedStyle&, const Styleable&, const ResolutionContext&);
     std::unique_ptr<Style::ComputedStyle> resolveAfterChangeStyleForNonAnimated(const ResolvedStyle&, const Styleable&, const ResolutionContext&);
     std::unique_ptr<Style::ComputedStyle> resolveAgainInDifferentContext(const ResolvedStyle&, const Styleable&, const Style::ComputedStyle& parentStyle,  OptionSet<PropertyCascade::PropertyType>, std::optional<BuilderPositionTryFallback>&&, const ResolutionContext&);
-    const Style::ComputedStyle& parentAfterChangeStyle(const Styleable&, const ResolutionContext&) const;
+    const Style::ComputedStyle& LEGACY_NODELETE parentAfterChangeStyle(const Styleable&, const ResolutionContext&) const;
 
     HashSet<AnimatableCSSProperty> applyCascadeAfterAnimation(Style::ComputedStyle&, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>&, const MatchResult&, const Element&, const ResolutionContext&);
 
@@ -167,12 +167,12 @@ private:
     static std::optional<ResolutionType> determineResolutionType(const Element&, const Style::ComputedStyle*, DescendantsToResolve, OptionSet<Change> parentChange);
     void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
-    ResolutionContext makeResolutionContext();
+    ResolutionContext LEGACY_NODELETE makeResolutionContext();
     ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&);
-    std::optional<ResolutionContext> makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const Style::ComputedStyle& inheritStyle);
-    const Parent* boxGeneratingParent() const LIFETIME_BOUND;
-    const Style::ComputedStyle* parentBoxStyle() const LIFETIME_BOUND;
-    const Style::ComputedStyle* parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
+    std::optional<ResolutionContext> LEGACY_NODELETE makeResolutionContextForInheritedFirstLine(const ElementUpdate&, const Style::ComputedStyle& inheritStyle);
+    const Parent* LEGACY_NODELETE boxGeneratingParent() const LIFETIME_BOUND;
+    const Style::ComputedStyle* LEGACY_NODELETE parentBoxStyle() const LIFETIME_BOUND;
+    const Style::ComputedStyle* LEGACY_NODELETE parentBoxStyleForPseudoElement(const ElementUpdate&) const LIFETIME_BOUND;
     const Style::ComputedStyle* LEGACY_NODELETE documentElementStyle() const;
 
     LayoutInterleavingAction updateAnchorPositioningState(Element&, const Style::ComputedStyle*);

@@ -32,14 +32,14 @@ namespace Style {
 
 // Snaps a non-negative length, in CSS pixels, to an integer number of device pixels.
 // https://drafts.csswg.org/css-values-4/#snap-a-length-as-a-border-width
-float snapLengthAsBorderWidth(float, float deviceScaleFactor);
-Length<CSS::Nonnegative> snapLengthAsBorderWidth(Length<CSS::Nonnegative>, float deviceScaleFactor);
+float LEGACY_NODELETE snapLengthAsBorderWidth(float, float deviceScaleFactor);
+Length<CSS::Nonnegative> LEGACY_NODELETE snapLengthAsBorderWidth(Length<CSS::Nonnegative>, float deviceScaleFactor);
 
 // As above, but for lengths that may be negative, such as `outline-offset`. The magnitude is
 // snapped and the sign restored, so a magnitude smaller than 1 device pixel rounds away from
 // zero and a larger magnitude rounds toward zero.
-float snapSignedLengthAsBorderWidth(float, float deviceScaleFactor);
-Length<> snapSignedLengthAsBorderWidth(Length<>, float deviceScaleFactor);
+float LEGACY_NODELETE snapSignedLengthAsBorderWidth(float, float deviceScaleFactor);
+Length<> LEGACY_NODELETE snapSignedLengthAsBorderWidth(Length<>, float deviceScaleFactor);
 
 } // namespace Style
 } // namespace WebCore

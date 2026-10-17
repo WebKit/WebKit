@@ -127,7 +127,7 @@ public:
     void addCurrentSVGFontFaceRules();
 
     std::unique_ptr<Style::ComputedStyle> styleForKeyframe(Element&, const Style::ComputedStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&) const;
-    bool isAnimationNameValid(const AtomString&) const;
+    bool LEGACY_NODELETE isAnimationNameValid(const AtomString&) const;
 
     void setViewTransitionStyles(CSSSelector::PseudoElement, const AtomString&, Ref<MutableStyleProperties>);
 

@@ -64,7 +64,7 @@ DEFINE_TYPE_WRAPPER_GET(Blur, value);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<Blur> { auto operator()(const Blur&, const Style::ComputedStyle&) -> CSS::Blur; };
+template<> struct ToCSS<Blur> { CSS::Blur LEGACY_NODELETE operator()(const Blur&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::Blur> { auto operator()(const CSS::Blur&, const BuilderState&) -> Blur; };
 
 // MARK: - Evaluation
@@ -73,7 +73,7 @@ template<> struct Evaluation<Blur, Ref<FilterEffect>> { auto operator()(const Bl
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Blur> { auto operator()(const Blur&, const Style::ComputedStyle&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Blur> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Blur&, const Style::ComputedStyle&); };
 
 } // namespace Style
 } // namespace WebCore

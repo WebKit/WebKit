@@ -72,7 +72,7 @@ template<> struct Evaluation<Sepia, Ref<FilterEffect>> { auto operator()(const S
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Sepia> { auto operator()(const Sepia&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Sepia> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Sepia&); };
 
 } // namespace Style
 } // namespace WebCore

@@ -176,7 +176,7 @@ template<> struct CSSValueConversion<SVGPaint> { auto operator()(BuilderState&, 
 
 template<> struct Blending<SVGPaint> {
     auto equals(const SVGPaint&, const SVGPaint&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    auto canBlend(const SVGPaint&, const SVGPaint&) -> bool;
+    bool LEGACY_NODELETE canBlend(const SVGPaint&, const SVGPaint&);
     auto blend(const SVGPaint&, const SVGPaint&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> SVGPaint;
 };
 

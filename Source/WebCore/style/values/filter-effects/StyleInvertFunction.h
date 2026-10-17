@@ -73,7 +73,7 @@ template<> struct Evaluation<Invert, Ref<FilterEffect>> { auto operator()(const 
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Invert> { auto operator()(const Invert&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Invert> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Invert&); };
 
 } // namespace Style
 } // namespace WebCore

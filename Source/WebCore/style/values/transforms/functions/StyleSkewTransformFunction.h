@@ -40,7 +40,7 @@ namespace Style {
 
 class SkewTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const SkewTransformFunction> create(Angle<>, Angle<>, TransformFunctionBase::Type);
+    static Ref<const SkewTransformFunction> LEGACY_NODELETE create(Angle<>, Angle<>, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

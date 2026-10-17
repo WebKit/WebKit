@@ -459,7 +459,7 @@ bool PropertyCascade::addNormalMatches(Origin origin)
     return hasImportant;
 }
 
-static bool hasImportantProperties(const StyleProperties& properties)
+static bool LEGACY_NODELETE hasImportantProperties(const StyleProperties& properties)
 {
     for (auto property : properties) {
         if (property.isImportant())

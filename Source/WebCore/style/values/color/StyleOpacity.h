@@ -76,7 +76,7 @@ DEFINE_TYPE_WRAPPER_GET(Opacity, value);
 #if ENABLE(THREADED_ANIMATIONS)
 
 template<> struct Evaluation<Opacity, AcceleratedEffectOpacity> {
-    auto operator()(const Opacity&) -> AcceleratedEffectOpacity;
+    AcceleratedEffectOpacity LEGACY_NODELETE operator()(const Opacity&);
 };
 
 #endif

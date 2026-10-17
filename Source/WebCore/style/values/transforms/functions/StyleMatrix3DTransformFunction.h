@@ -38,7 +38,7 @@ namespace Style {
 
 class Matrix3DTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const Matrix3DTransformFunction> create(const TransformationMatrix&);
+    static Ref<const Matrix3DTransformFunction> LEGACY_NODELETE create(const TransformationMatrix&);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

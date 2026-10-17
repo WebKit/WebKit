@@ -48,7 +48,7 @@ struct EvaluationOptions;
 class Value : public RefCounted<Value> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(Value);
 public:
-    WEBCORE_EXPORT static Ref<Value> create(Tree&&);
+    WEBCORE_EXPORT static Ref<Value> LEGACY_NODELETE create(Tree&&);
     WEBCORE_EXPORT ~Value();
 
     double evaluate(CSS::Range, double percentResolutionLength, ZoomFactor) const;

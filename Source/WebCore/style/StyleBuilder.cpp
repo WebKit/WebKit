@@ -101,7 +101,7 @@ static const StyleProperties* LEGACY_NODELETE positionTryFallbackProperties(cons
     return context.positionTryFallback ? context.positionTryFallback->properties.get() : nullptr;
 }
 
-static bool isInheritedCustomProperty(const CSSRegisteredCustomProperty* registered)
+static bool LEGACY_NODELETE isInheritedCustomProperty(const CSSRegisteredCustomProperty* registered)
 {
     return !registered || registered->inherits;
 }

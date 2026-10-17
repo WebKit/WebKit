@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Style {
 
-static Visibility visibilityIncludingForceHidden(const ComputedStyle& style)
+static Visibility LEGACY_NODELETE visibilityIncludingForceHidden(const ComputedStyle& style)
 {
     return style.isForceHidden() ? Visibility::Hidden : style.visibility();
 }

@@ -39,7 +39,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<WebkitBoxReflection::Direction> { auto operator()(const WebkitBoxReflection::Direction&, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection::Direction; };
+template<> struct ToCSS<WebkitBoxReflection::Direction> { CSS::WebkitBoxReflection::Direction LEGACY_NODELETE operator()(const WebkitBoxReflection::Direction&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::WebkitBoxReflection::Direction> { auto operator()(const CSS::WebkitBoxReflection::Direction&, const BuilderState&) -> WebkitBoxReflection::Direction; };
 
 template<> struct ToCSS<WebkitBoxReflection> { auto operator()(const WebkitBoxReflection&, const Style::ComputedStyle&) -> CSS::WebkitBoxReflection; };

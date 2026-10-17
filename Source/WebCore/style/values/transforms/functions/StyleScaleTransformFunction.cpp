@@ -75,7 +75,7 @@ void ScaleTransformFunction::apply(TransformationMatrix& transform, const FloatS
     transform.scale3d(m_x.value.value, m_y.value.value, m_z.value.value);
 }
 
-static NumberOrPercentageResolvedToNumber<> blendScaleComponent(NumberOrPercentageResolvedToNumber<> from, NumberOrPercentageResolvedToNumber<> to, const BlendingContext& context)
+static NumberOrPercentageResolvedToNumber<> LEGACY_NODELETE blendScaleComponent(NumberOrPercentageResolvedToNumber<> from, NumberOrPercentageResolvedToNumber<> to, const BlendingContext& context)
 {
     switch (context.compositeOperation) {
     case CompositeOperation::Replace:

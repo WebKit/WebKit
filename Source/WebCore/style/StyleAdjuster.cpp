@@ -102,8 +102,8 @@
 #else
 namespace WebCore {
 namespace Style {
-static inline void adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
-static inline void adjustForBoxAnnotationQuirk(ComputedStyle&) { }
+static inline void LEGACY_NODELETE adjustForManipulationSurfaceQuirk(ComputedStyle&) { }
+static inline void LEGACY_NODELETE adjustForBoxAnnotationQuirk(ComputedStyle&) { }
 } // namespace Style
 } // namespace WebCore
 #endif

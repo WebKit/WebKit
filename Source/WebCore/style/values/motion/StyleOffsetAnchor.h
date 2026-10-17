@@ -54,7 +54,7 @@ struct OffsetAnchor {
 
 private:
 #if ENABLE(THREADED_ANIMATIONS)
-    static auto convert(const AcceleratedEffectOffsetAnchor&) -> Variant<CSS::Keyword::Auto, Position>;
+    static Variant<CSS::Keyword::Auto, Position> LEGACY_NODELETE convert(const AcceleratedEffectOffsetAnchor&);
 #endif
 
     Variant<CSS::Keyword::Auto, Position> m_value;

@@ -80,7 +80,7 @@ DEFINE_TYPE_WRAPPER_GET(BorderImageRepeat, values);
 
 // MARK: - Conversion
 
-template<> struct ToCSS<BorderImageRepeat> { auto operator()(const BorderImageRepeat&, const Style::ComputedStyle&) -> CSS::BorderImageRepeat; };
+template<> struct ToCSS<BorderImageRepeat> { CSS::BorderImageRepeat LEGACY_NODELETE operator()(const BorderImageRepeat&, const Style::ComputedStyle&); };
 template<> struct ToStyle<CSS::BorderImageRepeat> { auto operator()(const CSS::BorderImageRepeat&, const BuilderState&) -> BorderImageRepeat; };
 
 template<> struct CSSValueConversion<BorderImageRepeat> { BorderImageRepeat operator()(BuilderState&, const CSSValue&); };

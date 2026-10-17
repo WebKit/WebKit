@@ -145,7 +145,7 @@ public:
     CheckedPtr<const Scope> LEGACY_NODELETE hostScope() const;
 
     static Scope& LEGACY_NODELETE forNode(Node&);
-    static const Scope& forNode(const Node&);
+    static const Scope& LEGACY_NODELETE forNode(const Node&);
     static Scope* forOrdinal(Element&, ScopeOrdinal);
     static const Scope* forOrdinal(const Element&, ScopeOrdinal);
 
@@ -243,8 +243,8 @@ private:
     mutable HashMap<AtomString, AttributeAffectsShadowTree> m_substitutionAttributes;
 };
 
-RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
-RefPtr<Element> hostForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<HTMLSlotElement> LEGACY_NODELETE assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);
+RefPtr<Element> LEGACY_NODELETE hostForScopeOrdinal(const Element&, ScopeOrdinal);
 
 inline void Scope::flushPendingUpdate()
 {

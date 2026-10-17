@@ -372,7 +372,7 @@ static std::optional<FloatSize> fixedContentSize(const WebCore::Image& image, We
     return FloatSize { *naturalDimensions.width, *naturalDimensions.height };
 }
 
-static ConcreteObjectSize viewportSize(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize)
+static ConcreteObjectSize LEGACY_NODELETE viewportSize(const RenderElement& renderer, ConcreteObjectSize concreteObjectSize)
 {
     auto zoom = renderer.style().usedZoom();
     return ConcreteObjectSize::fixed(concreteObjectSize.size() * concreteObjectSize.zoom() / zoom, zoom);

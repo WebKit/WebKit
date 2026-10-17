@@ -36,7 +36,7 @@ namespace Style {
 
 class InvalidImage final : public GeneratedImage {
 public:
-    static Ref<InvalidImage> create();
+    static Ref<InvalidImage> LEGACY_NODELETE create();
 
     virtual ~InvalidImage();
 

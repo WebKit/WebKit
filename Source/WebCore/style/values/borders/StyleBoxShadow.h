@@ -86,7 +86,7 @@ template<> struct Blending<BoxShadow> {
 };
 
 template<> struct Blending<BoxShadows> {
-    auto canBlend(const BoxShadows&, const BoxShadows&, CompositeOperation) -> bool;
+    bool LEGACY_NODELETE canBlend(const BoxShadows&, const BoxShadows&, CompositeOperation);
     constexpr auto requiresInterpolationForAccumulativeIteration(const BoxShadows&, const BoxShadows&) -> bool { return true; }
     auto blend(const BoxShadows&, const BoxShadows&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> BoxShadows;
 };

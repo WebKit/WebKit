@@ -70,7 +70,7 @@ template<> struct ToStyle<CSS::Brightness> { auto operator()(const CSS::Brightne
 // MARK: - Blending
 
 template<> struct Blending<Brightness> {
-    auto blend(const Brightness&, const Brightness&, const BlendingContext&) -> Brightness;
+    Brightness LEGACY_NODELETE blend(const Brightness&, const Brightness&, const BlendingContext&);
 };
 
 // MARK: - Evaluation
@@ -79,7 +79,7 @@ template<> struct Evaluation<Brightness, Ref<FilterEffect>> { auto operator()(co
 
 // MARK: - Platform
 
-template<> struct ToPlatform<Brightness> { auto operator()(const Brightness&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<Brightness> { Ref<FilterOperation> LEGACY_NODELETE operator()(const Brightness&); };
 
 } // namespace Style
 } // namespace WebCore

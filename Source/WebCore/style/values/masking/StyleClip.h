@@ -128,7 +128,7 @@ template<> struct CSSValueCreation<Clip> { Ref<CSSValue> operator()(CSSValuePool
 template<> struct Blending<Clip> {
     bool LEGACY_NODELETE canBlend(const Clip&, const Clip&);
     bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const Clip&, const Clip&);
-    auto blend(const Clip&, const Clip&, const BlendingContext&) -> Clip;
+    Clip LEGACY_NODELETE blend(const Clip&, const Clip&, const BlendingContext&);
 };
 
 } // namespace Style

@@ -78,7 +78,7 @@ private:
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<WhiteSpaceTrim> {
-    auto operator()(BuilderState&, const CSSValue&) -> WhiteSpaceTrim;
+    WhiteSpaceTrim LEGACY_NODELETE operator()(BuilderState&, const CSSValue&);
 };
 
 } // namespace Style

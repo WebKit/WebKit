@@ -48,10 +48,10 @@ class GradientImage::CachedGradient {
 public:
     CachedGradient(GradientImage&, FloatSize, Ref<WebCore::Gradient>&&);
 
-    WebCore::Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
+    WebCore::Gradient& LEGACY_NODELETE gradient() const LIFETIME_BOUND { return m_gradient; }
     void puntEvictionTimer() { m_evictionTimer.restart(); }
 
-    RefPtr<ImageBuffer> patternBuffer(FloatSize adjustedSize, unsigned gradientHash, FloatSize scaleFactor) const
+    RefPtr<ImageBuffer> LEGACY_NODELETE patternBuffer(FloatSize adjustedSize, unsigned gradientHash, FloatSize scaleFactor) const
     {
         if (!m_patternBuffer || m_patternGradientHash != gradientHash || m_patternAdjustedSize != adjustedSize || !areEssentiallyEqual(scaleFactor, m_patternScaleFactor))
             return nullptr;

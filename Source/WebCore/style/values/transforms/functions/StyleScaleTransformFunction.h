@@ -42,8 +42,8 @@ namespace Style {
 
 class ScaleTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const ScaleTransformFunction> create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);
-    static Ref<const ScaleTransformFunction> create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);
+    static Ref<const ScaleTransformFunction> LEGACY_NODELETE create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);
+    static Ref<const ScaleTransformFunction> LEGACY_NODELETE create(NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, NumberOrPercentageResolvedToNumber<>, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

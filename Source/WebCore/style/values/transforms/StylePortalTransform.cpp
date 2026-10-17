@@ -39,7 +39,7 @@ namespace Style {
 
 // MARK: - Construction
 
-static const TransformList& emptyTransformList()
+static const TransformList& LEGACY_NODELETE emptyTransformList()
 {
     static NeverDestroyed<TransformList> list;
     return list.get();
@@ -114,7 +114,7 @@ static TransformList transformListSlice(BuilderState& state, const CSSValueConta
     }) };
 }
 
-static bool isAutoKeyword(const CSSValue& value)
+static bool LEGACY_NODELETE isAutoKeyword(const CSSValue& value)
 {
     auto* keyword = dynamicDowncast<CSSKeywordValue>(value);
     return keyword && keyword->valueID() == CSSValueID::Auto;

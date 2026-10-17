@@ -39,7 +39,7 @@
 
 namespace WebCore::Style {
 
-static bool elementIsEmptyForCSS(const Element& element)
+static bool LEGACY_NODELETE elementIsEmptyForCSS(const Element& element)
 {
     for (auto* node = element.firstChild(); node; node = node->nextSibling()) {
         if (is<Element>(*node))
@@ -52,7 +52,7 @@ static bool elementIsEmptyForCSS(const Element& element)
     return true;
 }
 
-static bool isInsertionForStyle(const ContainerNode::ChildChange& childChange)
+static bool LEGACY_NODELETE isInsertionForStyle(const ContainerNode::ChildChange& childChange)
 {
     switch (childChange.type) {
     case ContainerNode::ChildChange::Type::ElementMovedInto:
@@ -64,7 +64,7 @@ static bool isInsertionForStyle(const ContainerNode::ChildChange& childChange)
     }
 }
 
-static bool isElementRemovalForStyle(const ContainerNode::ChildChange& childChange)
+static bool LEGACY_NODELETE isElementRemovalForStyle(const ContainerNode::ChildChange& childChange)
 {
     return childChange.type == ContainerNode::ChildChange::Type::ElementRemoved || childChange.type == ContainerNode::ChildChange::Type::ElementMovedFrom;
 }
@@ -79,7 +79,7 @@ bool ChildChangeInvalidation::emptyStateMayChange() const
     return isInsertionForStyle(m_childChange) == wasEmpty;
 }
 
-static bool isSiblingHasRelation(const MatchElement& matchElement)
+static bool LEGACY_NODELETE isSiblingHasRelation(const MatchElement& matchElement)
 {
     if (!matchElement.hasRelation)
         return false;

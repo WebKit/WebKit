@@ -73,7 +73,7 @@ template<> struct CSSValueConversion<FontWidth> { auto operator()(BuilderState&,
 // MARK: - Blending
 
 template<> struct Blending<FontWidth> {
-    auto blend(const FontWidth&, const FontWidth&, const BlendingContext&) -> FontWidth;
+    FontWidth LEGACY_NODELETE blend(const FontWidth&, const FontWidth&, const BlendingContext&);
 };
 
 } // namespace Style

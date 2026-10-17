@@ -73,7 +73,7 @@ struct TextDecorationInset : ValueOrKeyword<TextDecorationInsetPair, CSS::Keywor
     }
 
     bool isAuto() const { return isKeyword(); }
-    bool hasPercentage() const;
+    bool LEGACY_NODELETE hasPercentage() const;
     bool hasNegativePercentage() const;
 
     // Resolves the start/end inset to used CSS pixels. For 'auto', returns the UA-chosen autoValue

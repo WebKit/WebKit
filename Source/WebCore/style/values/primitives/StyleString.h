@@ -46,15 +46,15 @@ struct String {
 
 // MARK: - Conversion
 
-template<> struct ToCSS<String> { auto operator()(const String&, const Style::ComputedStyle&) -> CSS::String; };
-template<> struct ToStyle<CSS::String> { auto operator()(const CSS::String&, const BuilderState&) -> String; };
+template<> struct ToCSS<String> { CSS::String LEGACY_NODELETE operator()(const String&, const Style::ComputedStyle&); };
+template<> struct ToStyle<CSS::String> { String LEGACY_NODELETE operator()(const CSS::String&, const BuilderState&); };
 
 template<> struct CSSValueCreation<String> {
     Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const String&);
 };
 
 template<> struct CSSValueConversion<String> {
-    auto operator()(BuilderState&, const CSSStringValue&) -> String;
+    String LEGACY_NODELETE operator()(BuilderState&, const CSSStringValue&);
     auto operator()(BuilderState&, const CSSValue&) -> String;
 };
 

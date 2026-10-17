@@ -77,7 +77,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<HangingPunctuation> { auto operator()(BuilderState&, const CSSValue&) -> HangingPunctuation; };
+template<> struct CSSValueConversion<HangingPunctuation> { HangingPunctuation operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

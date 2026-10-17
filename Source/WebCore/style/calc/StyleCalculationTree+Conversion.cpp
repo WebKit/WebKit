@@ -55,7 +55,7 @@ struct ToStyleConversionOptions {
     CSSCalc::EvaluationOptions evaluation;
 };
 
-static auto toCSS(const Random::Fixed&, const ToCSSConversionOptions&) -> CSSCalc::Random::Sharing;
+static CSSCalc::Random::Sharing LEGACY_NODELETE toCSS(const Random::Fixed&, const ToCSSConversionOptions&);
 static auto toCSS(const CSS::Keyword::None&, const ToCSSConversionOptions&) -> CSS::Keyword::None;
 static auto toCSS(const CalcMix::Item&, const ToCSSConversionOptions&) -> CSSCalc::CalcMix::Item;
 static auto toCSS(const Vector<CalcMix::Item>&, const ToCSSConversionOptions&) -> Vector<CSSCalc::CalcMix::Item>;

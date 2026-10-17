@@ -33,7 +33,7 @@ namespace WebCore {
 namespace Style {
 
 class CalcSizeValue;
-Ref<CalcSizeValue> CLANG_POINTER_CONVERSION protect(CalcSizeValue&);
+Ref<CalcSizeValue> CLANG_POINTER_CONVERSION LEGACY_NODELETE protect(CalcSizeValue&);
 
 struct ZoomFactor;
 

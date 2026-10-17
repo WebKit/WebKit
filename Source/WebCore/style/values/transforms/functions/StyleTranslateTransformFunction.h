@@ -48,8 +48,8 @@ public:
     using Y = Style::LengthPercentage<>;
     using Z = Style::Length<>;
 
-    static Ref<const TranslateTransformFunction> create(const X&, const Y&, TransformFunctionBase::Type);
-    static Ref<const TranslateTransformFunction> create(const X&, const Y&, const Z&, TransformFunctionBase::Type);
+    static Ref<const TranslateTransformFunction> LEGACY_NODELETE create(const X&, const Y&, TransformFunctionBase::Type);
+    static Ref<const TranslateTransformFunction> LEGACY_NODELETE create(const X&, const Y&, const Z&, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

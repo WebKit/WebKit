@@ -190,7 +190,7 @@ public:
 
     static constexpr float LEGACY_NODELETE maxExtent(float) { return 1; }
 
-    void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, WebCore::ColorInterpolationMethod)
+    void LEGACY_NODELETE normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, WebCore::ColorInterpolationMethod)
     {
         float firstOffset = *stops.first().offset;
         float lastOffset = *stops.last().offset;

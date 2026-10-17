@@ -376,7 +376,7 @@ UnadjustedStyle Resolver::unadjustedStyleForCachedMatchResult(Element& element, 
 
 // animation-timing-function and animation-composition in a keyframe describe the composite operation
 // and timing function between this keyframe and the next. interpolate-size is not animatable.
-static bool isAnimatedInKeyframe(CSSPropertyID property)
+static bool LEGACY_NODELETE isAnimatedInKeyframe(CSSPropertyID property)
 {
     switch (property) {
     case CSSPropertyID::AnimationTimingFunction:

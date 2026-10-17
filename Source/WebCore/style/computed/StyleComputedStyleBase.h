@@ -655,7 +655,7 @@ public:
     // MARK: - Fonts
 
     inline const FontCascade& fontCascade() const;
-    const FontCascade& fontCascadeOutOfLine() const;
+    const FontCascade& LEGACY_NODELETE fontCascadeOutOfLine() const;
     WEBCORE_EXPORT FontCascade& mutableFontCascadeWithoutUpdate();
     void setFontCascade(FontCascade&&);
 

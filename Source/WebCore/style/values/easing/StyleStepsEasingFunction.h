@@ -36,7 +36,7 @@ namespace Style {
 class BuilderState;
 class ComputedStyle;
 
-CSS::StepsEasingFunction toCSSStepsEasingFunction(const StepsTimingFunction&, const Style::ComputedStyle&);
+CSS::StepsEasingFunction LEGACY_NODELETE toCSSStepsEasingFunction(const StepsTimingFunction&, const Style::ComputedStyle&);
 
 Ref<TimingFunction> createTimingFunction(const BuilderState&, const CSS::StepsEasingFunction&);
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::StepsEasingFunction&);

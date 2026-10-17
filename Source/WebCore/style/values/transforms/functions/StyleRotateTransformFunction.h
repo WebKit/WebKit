@@ -44,8 +44,8 @@ namespace Style {
 
 class RotateTransformFunction final : public TransformFunctionBase {
 public:
-    static Ref<const RotateTransformFunction> create(Angle<>, TransformFunctionBase::Type);
-    static Ref<const RotateTransformFunction> create(Number<>, Number<>, Number<>, Angle<>, TransformFunctionBase::Type);
+    static Ref<const RotateTransformFunction> LEGACY_NODELETE create(Angle<>, TransformFunctionBase::Type);
+    static Ref<const RotateTransformFunction> LEGACY_NODELETE create(Number<>, Number<>, Number<>, Angle<>, TransformFunctionBase::Type);
 
     Ref<const TransformFunctionBase> clone() const override;
     Ref<TransformOperation> toPlatform(const FloatSize&, ZoomFactor) const override;

@@ -40,7 +40,7 @@ class MarqueeData : public RefCounted<MarqueeData> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MarqueeData, MarqueeData);
 public:
     static Ref<MarqueeData> create() { return adoptRef(*new MarqueeData); }
-    Ref<MarqueeData> copy() const;
+    Ref<MarqueeData> LEGACY_NODELETE copy() const;
 
     bool operator==(const MarqueeData&) const;
 

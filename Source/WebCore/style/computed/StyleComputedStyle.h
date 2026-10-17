@@ -158,7 +158,7 @@ public:
     WebCore::Color usedScrollbarThumbColor() const;
     WebCore::Color usedScrollbarTrackColor() const;
     WebCore::Color usedAccentColor(OptionSet<StyleColorOptions>) const;
-    BlendMode usedBlendMode() const;
+    BlendMode LEGACY_NODELETE usedBlendMode() const;
 
     // MARK: - Used background color
 
@@ -201,7 +201,7 @@ public:
     inline bool isOverflowVisible() const;
     inline bool isSkippedRootOrSkippedContent() const;
 
-    bool isListItemType() const;
+    bool LEGACY_NODELETE isListItemType() const;
 
     inline bool specifiesColumns() const;
 
@@ -232,7 +232,7 @@ private:
 // The outline and column rule widths after the used-value rules: zero for style none (and hidden for
 // column rules), the platform focus ring width for outline-style auto. Unzoomed style values.
 // Code with a renderer reads the resolved values through UsedStyle.
-LineWidth effectiveColumnRuleWidth(const ComputedStyle&);
+LineWidth LEGACY_NODELETE effectiveColumnRuleWidth(const ComputedStyle&);
 LineWidth effectiveOutlineWidth(const ComputedStyle&);
 // outline-offset with `inset` resolved against the effective outline width.
 WEBCORE_EXPORT UsedOutlineOffset effectiveOutlineOffset(const ComputedStyle&);

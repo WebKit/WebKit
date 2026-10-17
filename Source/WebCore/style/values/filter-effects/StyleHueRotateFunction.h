@@ -72,7 +72,7 @@ template<> struct Evaluation<HueRotate, Ref<FilterEffect>> { auto operator()(con
 
 // MARK: - Platform
 
-template<> struct ToPlatform<HueRotate> { auto operator()(const HueRotate&) -> Ref<FilterOperation>; };
+template<> struct ToPlatform<HueRotate> { Ref<FilterOperation> LEGACY_NODELETE operator()(const HueRotate&); };
 
 } // namespace Style
 } // namespace WebCore

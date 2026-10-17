@@ -51,7 +51,7 @@ double resolveLength(double value, CSS::LengthUnit, const BuilderState&);
 double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
-double resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
+double LEGACY_NODELETE resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 
 // If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
 //    Vw, Vh, Vb, Vi, Svw, Svh, Svb, Svi, Lvw, Lvh, Lvb, Lvi, Dvw, Dvh, Dvb, Dvi (width/height/block/inline viewport-percentage units)
@@ -64,8 +64,8 @@ bool equalForLengthResolution(const ComputedStyle&, const ComputedStyle&);
 
 // Utilities for common conversions.
 
-double emToPxDouble(double value, const ComputedStyle&);
-double emToPxDoubleZoomed(double value, const ComputedStyle&);
+double LEGACY_NODELETE emToPxDouble(double value, const ComputedStyle&);
+double LEGACY_NODELETE emToPxDoubleZoomed(double value, const ComputedStyle&);
 
 template<typename T> inline T emToPx(double value, const ComputedStyle& style)
 {

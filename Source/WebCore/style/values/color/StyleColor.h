@@ -148,7 +148,7 @@ public:
 
     bool operator==(const Color&) const;
 
-    static const Color& currentColor();
+    static const Color& LEGACY_NODELETE currentColor();
 
     bool containsCurrentColor() const;
     bool LEGACY_NODELETE isCurrentColor() const;

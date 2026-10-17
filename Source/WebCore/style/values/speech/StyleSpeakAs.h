@@ -78,7 +78,7 @@ private:
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<SpeakAs> { auto operator()(BuilderState&, const CSSValue&) -> SpeakAs; };
+template<> struct CSSValueConversion<SpeakAs> { SpeakAs operator()(BuilderState&, const CSSValue&); };
 
 } // namespace Style
 } // namespace WebCore

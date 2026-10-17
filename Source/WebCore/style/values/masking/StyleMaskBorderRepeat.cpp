@@ -34,7 +34,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-static auto toCSSMaskBorderRepeatValue(const MaskBorderRepeat::Value& value) -> CSS::MaskBorderRepeat::Value
+static CSS::MaskBorderRepeat::Value LEGACY_NODELETE toCSSMaskBorderRepeatValue(const MaskBorderRepeat::Value& value)
 {
     switch (value) {
     case NinePieceImageRule::Stretch: return CSS::Keyword::Stretch { };

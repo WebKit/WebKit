@@ -34,7 +34,7 @@ namespace Style {
 
 // MARK: - Conversion
 
-static auto toCSSBorderImageRepeatValue(const BorderImageRepeat::Value& value) -> CSS::BorderImageRepeat::Value
+static CSS::BorderImageRepeat::Value LEGACY_NODELETE toCSSBorderImageRepeatValue(const BorderImageRepeat::Value& value)
 {
     switch (value) {
     case NinePieceImageRule::Stretch: return CSS::Keyword::Stretch { };

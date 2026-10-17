@@ -80,7 +80,7 @@ void NamedImage::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
 }
 
-static WTF::String adjustNamedImage(const RenderElement& renderer, const AtomString& name)
+static WTF::String LEGACY_NODELETE adjustNamedImage(const RenderElement& renderer, const AtomString& name)
 {
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     return AXCustomColorModeController::adjustNamedImage(renderer, name);

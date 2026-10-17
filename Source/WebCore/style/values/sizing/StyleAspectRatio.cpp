@@ -65,7 +65,7 @@ auto CSSValueConversion<AspectRatio>::operator()(BuilderState& state, const CSSV
 
 // Per https://drafts.csswg.org/css-values-4/#combine-ratio, degenerate ratios (those with a zero or
 // infinite term) are not interpolable. Interpolating them in log space would produce NaN or infinity.
-static bool isInterpolable(const AspectRatio& aspectRatio)
+static bool LEGACY_NODELETE isInterpolable(const AspectRatio& aspectRatio)
 {
     auto width = aspectRatio.width().value;
     auto height = aspectRatio.height().value;

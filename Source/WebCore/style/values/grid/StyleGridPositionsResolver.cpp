@@ -80,7 +80,7 @@ class NamedLineCollection : public NamedLineCollectionBase {
 public:
     NamedLineCollection(const RenderGrid&, const CustomIdent& name, GridPositionSide, bool nameIsAreaName = false);
 
-    int firstPosition() const;
+    int LEGACY_NODELETE firstPosition() const;
 
     unsigned LEGACY_NODELETE lastLine() const;
 

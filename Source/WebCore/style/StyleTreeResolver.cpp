@@ -1120,7 +1120,7 @@ HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(Style::C
     return styleBuilder.overriddenAnimatedProperties();
 }
 
-static bool isInlineBox(Style::Display display)
+static bool LEGACY_NODELETE isInlineBox(Style::Display display)
 {
     return display == DisplayType::InlineFlow || display.isRubyContainerOrInternalRubyBox();
 }

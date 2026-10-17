@@ -34,7 +34,7 @@
 
 namespace WebCore::Style {
 
-static RefPtr<Element> findElementForUserAgentPart(Element& host, const AtomString& userAgentPartName)
+static RefPtr<Element> LEGACY_NODELETE findElementForUserAgentPart(Element& host, const AtomString& userAgentPartName)
 {
     auto* shadowRoot = host.userAgentShadowRoot();
     if (!shadowRoot)

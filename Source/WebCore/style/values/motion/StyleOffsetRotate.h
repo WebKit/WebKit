@@ -74,7 +74,7 @@ template<> struct CSSValueConversion<OffsetRotate> { OffsetRotate operator()(Bui
 
 template<> struct Blending<OffsetRotate> {
     bool LEGACY_NODELETE canBlend(const OffsetRotate&, const OffsetRotate&);
-    auto blend(const OffsetRotate&, const OffsetRotate&, const BlendingContext&) -> OffsetRotate;
+    OffsetRotate LEGACY_NODELETE blend(const OffsetRotate&, const OffsetRotate&, const BlendingContext&);
 };
 
 // MARK: - Evaluation

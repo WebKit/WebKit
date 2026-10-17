@@ -142,7 +142,7 @@ template<> struct Serialize<BackgroundSize> { void operator()(StringBuilder&, co
 // MARK: - Blending
 
 template<> struct Blending<BackgroundSize> {
-    auto canBlend(const BackgroundSize&, const BackgroundSize&) -> bool;
+    bool LEGACY_NODELETE canBlend(const BackgroundSize&, const BackgroundSize&);
     auto blend(const BackgroundSize&, const BackgroundSize&, const BlendingContext&) -> BackgroundSize;
 };
 

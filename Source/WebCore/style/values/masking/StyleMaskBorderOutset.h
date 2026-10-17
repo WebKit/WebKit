@@ -143,8 +143,8 @@ template<> struct Blending<MaskBorderOutsetValue> {
 };
 
 template<> struct Blending<MaskBorderOutset> {
-    auto canBlend(const MaskBorderOutset&, const MaskBorderOutset&) -> bool;
-    auto requiresInterpolationForAccumulativeIteration(const MaskBorderOutset&, const MaskBorderOutset&) -> bool;
+    bool LEGACY_NODELETE canBlend(const MaskBorderOutset&, const MaskBorderOutset&);
+    bool LEGACY_NODELETE requiresInterpolationForAccumulativeIteration(const MaskBorderOutset&, const MaskBorderOutset&);
     auto blend(const MaskBorderOutset&, const MaskBorderOutset&, const BlendingContext&) -> MaskBorderOutset;
 };
 

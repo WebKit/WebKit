@@ -90,7 +90,7 @@ private:
 
     friend struct Blending<PortalTransform>;
 
-    const TransformList& beforeAutoList() const LIFETIME_BOUND;
+    const TransformList& LEGACY_NODELETE beforeAutoList() const LIFETIME_BOUND;
     const TransformList& afterAutoList() const LIFETIME_BOUND;
 
     Value m_value;

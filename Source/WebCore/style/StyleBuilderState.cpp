@@ -356,7 +356,7 @@ static void LEGACY_NODELETE markTreeCountingFunctionUsed(const Element& element,
 
 // "Loosely-matched tree-scoped references" count as 0 for cross-tree styling.
 // https://drafts.csswg.org/css-shadow-1/#tree-scoped-name-loosely-matched
-static bool isLooselyMatchedTreeScopedReference(const PropertyCascade::Property* property)
+static bool LEGACY_NODELETE isLooselyMatchedTreeScopedReference(const PropertyCascade::Property* property)
 {
     return property && property->styleScopeOrdinal <= ScopeOrdinal::ContainingHost;
 }
