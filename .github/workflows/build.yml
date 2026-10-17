@@ -1069,3 +1069,21 @@ jobs:
           name: webkit-wiiu-libwebrtc
           path: dist-webrtc/
           retention-days: 30
+
+      # Keep compiler diagnostics available even when the required full page
+      # engine build fails. The full engine must never silently fall back to the
+      # bootstrap archive, so these logs are the recovery path for build failures.
+      - name: Upload WebKit build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: webkit-wiiu-build-diagnostics
+          path: |
+            build.log
+            build-full-configure.log
+            build-full.log
+            build-full/wkc-missing-webcore-sources.txt
+            webrtc-configure.log
+            webrtc-build.log
+          if-no-files-found: ignore
+          retention-days: 14
