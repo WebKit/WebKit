@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/StorageBlockingPolicy.h>
@@ -221,6 +222,12 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value, bool e
             page->configuration().processPool().configuration().setProcessSwapsOnNavigation(value);
 
         return;
+    }
+
+    if (key == WebPreferencesKey::exemptAllowlistedCookiesFromItpKey()) {
+        WebsiteDataStore::forEachWebsiteDataStore([value](WebsiteDataStore& dataStore) {
+            dataStore.setExemptAllowlistedCookiesFromITP(value);
+        });
     }
 
     update(); // FIXME: Only send over the changed key and value.

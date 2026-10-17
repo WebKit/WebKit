@@ -121,6 +121,12 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     completionHandler(hasCookieForDomain);
 }
 
+static bool isAllowlistedCookieName(const String& name)
+{
+    // To be implemented.
+    return false;
+}
+
 void NetworkStorageSession::setAllCookiesToSameSiteStrict(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -342,7 +348,7 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     }, WTF::move(completionHandler));
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, ExemptAllowlistedCookies exemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
 {
     HashSet<String> hostnamesSet;
     for (auto& hostname : hostnames)
@@ -351,6 +357,10 @@ void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> ho
     deleteCookiesMatching([&](NSHTTPCookie* cookie) {
         if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
             return false;
+        if (exemptAllowlistedCookies == ExemptAllowlistedCookies::Yes && m_exemptAllowlistedCookiesFromITP) {
+            if (isAllowlistedCookieName(cookie.name))
+                return false;
+        }
 #if ENABLE(JS_COOKIE_CHECKING)
         bool setInJS = [retainPtr([cookie properties]) valueForKey:@"SetInJavaScript"];
         if (scriptWrittenCookiesOnly == ScriptWrittenCookiesOnly::Yes && !setInJS)

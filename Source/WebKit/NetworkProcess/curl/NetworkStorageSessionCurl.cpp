@@ -205,7 +205,7 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHa
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(std::span<const String> cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, ExemptAllowlistedCookies, CompletionHandler<void()>&& completionHandler)
 {
     for (auto hostname : cookieHostNames)
         cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);

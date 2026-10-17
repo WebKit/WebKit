@@ -98,6 +98,8 @@ enum class ShouldPartitionCookie : bool;
 
 namespace WebKit {
 
+enum class ExemptAllowlistedCookies : bool { No, Yes };
+
 class NetworkStorageSession
     : public WebCore::CookieStorageSession
     , public CanMakeWeakPtr<NetworkStorageSession> {
@@ -163,7 +165,7 @@ public:
     void deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&&);
     void deleteCookies(const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
     void deleteCookiesForHostnames(std::span<const String> cookieHostNames, CompletionHandler<void()>&&);
-    void deleteCookiesForHostnames(std::span<const String> cookieHostNames, WebCore::IncludeHttpOnlyCookies, WebCore::ScriptWrittenCookiesOnly, CompletionHandler<void()>&&);
+    void deleteCookiesForHostnames(std::span<const String> cookieHostNames, WebCore::IncludeHttpOnlyCookies, WebCore::ScriptWrittenCookiesOnly, ExemptAllowlistedCookies, CompletionHandler<void()>&&);
     Vector<WebCore::Cookie> getAllCookies();
     Vector<WebCore::Cookie> getCookies(const URL&);
     void hasCookies(const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
@@ -204,6 +206,8 @@ public:
     void setDomainsWithCrossPageStorageAccess(const HashMap<TopFrameDomain, Vector<SubResourceDomain>>&);
     void grantCrossPageStorageAccess(const TopFrameDomain&, const SubResourceDomain&);
     void LEGACY_NODELETE setAgeCapForClientSideCookies(std::optional<Seconds>);
+    void setExemptAllowlistedCookiesFromITP(bool exempt) { m_exemptAllowlistedCookiesFromITP = exempt; }
+    bool exemptAllowlistedCookiesFromITP() const { return m_exemptAllowlistedCookiesFromITP; }
     bool hasStorageAccess(const WebCore::RegistrableDomain& resourceDomain, const WebCore::RegistrableDomain& firstPartyDomain, std::optional<WebCore::FrameIdentifier>, std::optional<WebPageProxyIdentifier>) const;
     Vector<String> getAllStorageAccessEntries() const;
     void grantStorageAccess(const WebCore::RegistrableDomain& resourceDomain, const WebCore::RegistrableDomain& firstPartyDomain, std::optional<WebCore::FrameIdentifier>, WebPageProxyIdentifier);
@@ -305,6 +309,7 @@ private:
 #endif
     HashMap<WebPageProxyIdentifier, WebCore::RegistrableDomain> m_navigatedToWithLinkDecorationByPrevalentResource;
     bool m_navigationWithLinkDecorationTestMode = false;
+    bool m_exemptAllowlistedCookiesFromITP { false };
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> m_appBoundDomains;
     HashSet<WebCore::RegistrableDomain> m_managedDomains;
