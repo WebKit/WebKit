@@ -31,6 +31,7 @@
 
 #import <WebCore/DataDetectorType.h>
 #import <WebCore/FloatRect.h>
+#import <WebCore/IntRect.h>
 #import <WebCore/SimpleRange.h>
 #import <wtf/OptionSet.h>
 
@@ -58,6 +59,7 @@ class HTMLElement;
 class HitTestResult;
 class QualifiedName;
 class LocalFrame;
+class LocalFrameView;
 struct TextRecognitionDataDetector;
 
 struct DetectedItem {
@@ -70,6 +72,7 @@ class DataDetection {
 public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static std::optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT static IntRect visibleContentRectForHighlights(const LocalFrameView& rootView);
 #endif
     WEBCORE_EXPORT static void detectContentInFrame(LocalFrame*, OptionSet<DataDetectorType>, std::optional<double>, CompletionHandler<void(NSArray *)>&&);
     WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double> referenceDate);

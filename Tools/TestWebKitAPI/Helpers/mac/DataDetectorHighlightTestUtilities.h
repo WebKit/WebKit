@@ -54,6 +54,7 @@ Vector<std::pair<RetainPtr<CALayer>, CGRect>> visibleLayersAndFrames(CALayer *ro
 RetainPtr<CALayer> visibleLayerNear(CALayer *rootLayer, CGRect expectedFrame, CGFloat tolerance);
 testing::AssertionResult hasVisibleLayerNear(CALayer *rootLayer, CGRect expectedFrame, CGFloat tolerance);
 testing::AssertionResult hoverUntilHighlightIsShown(TestWKWebView *, CGRect textRect, CGRect highlightBoundingRect, CGFloat tolerance);
+testing::AssertionResult waitUntilWindowClipRectWidthIs(TestWKWebView *, WKFrameInfo *, int width);
 
 } // namespace TestWebKitAPI
 
