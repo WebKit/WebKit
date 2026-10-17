@@ -1,0 +1,2 @@
+Tests that a WebContent process cannot send DidDestroyFrame, FrameNameChanged or SetFramePrinting for a frame of another page.
+PASS

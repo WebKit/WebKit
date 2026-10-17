@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<script>
+const summary = "Tests that a WebContent process cannot send DidDestroyFrame, FrameNameChanged or SetFramePrinting for a frame of another page.";
+
+let openedWindow;
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function takeInvalidMessageString() {
+    const reply = IPC.sendSyncMessage("UI", 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply?.arguments?.[0]?.value ?? "";
+}
+
+function isRejected(messageName, args) {
+    takeInvalidMessageString();
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages["WebPageProxy_" + messageName].name, [{ type: "FrameID", value: openedWindow.IPC.frameID }, ...args]);
+    return takeInvalidMessageString().includes("frame->page() == this");
+}
+
+addEventListener("message", (event) => {
+    if (event.data != "opened window loaded")
+        return;
+
+    const sizesAndShrinkRatio = [0, 0, 0, 0, 0].map((value) => ({ type: "float", value }));
+    const messages = {
+        DidDestroyFrame: [],
+        FrameNameChanged: [{ type: "String", value: "renamed" }],
+        SetFramePrinting: [{ type: "bool", value: 1 }, ...sizesAndShrinkRatio, { type: "bool", value: 0 }],
+    };
+    const accepted = Object.keys(messages).filter((messageName) => !isRejected(messageName, messages[messageName]));
+
+    if (accepted.length)
+        finish("FAIL: " + accepted.join(", ") + " accepted a frame belonging to another page.");
+    else
+        finish("PASS");
+});
+
+onload = () => {
+    if (!window.IPC) {
+        finish("PASS");
+        return;
+    }
+
+    openedWindow = window.open("resources/frame-messages-foreign-page-popup.html");
+};
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

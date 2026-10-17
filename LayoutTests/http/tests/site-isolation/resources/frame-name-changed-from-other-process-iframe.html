@@ -1,0 +1,22 @@
+<script>
+addEventListener("message", (event) => {
+    if (!window.IPC) {
+        parent.postMessage("ipc unavailable", "*");
+        return;
+    }
+
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_FrameNameChanged.name, [
+        { type: "FrameID", value: IPC.frameID },
+        { type: "String", value: "control" },
+    ]);
+    IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_FrameNameChanged.name, [
+        { type: "FrameID", value: [BigInt(event.data)] },
+        { type: "String", value: "renamed" },
+    ]);
+    parent.postMessage("sent", "*");
+});
+
+onload = () => {
+    parent.postMessage("loaded", "*");
+};
+</script>

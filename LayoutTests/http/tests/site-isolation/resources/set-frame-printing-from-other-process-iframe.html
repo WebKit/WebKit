@@ -1,0 +1,28 @@
+<script>
+addEventListener("message", (event) => {
+    if (event.data == "report") {
+        parent.postMessage("print " + matchMedia("print").matches, "*");
+        return;
+    }
+
+    const sizesAndShrinkRatio = [0, 0, 0, 0, 0].map((value) => ({ type: "float", value }));
+    for (const frameID of event.data) {
+        IPC.sendMessage("UI", IPC.pageID, IPC.messages.WebPageProxy_SetFramePrinting.name, [
+            { type: "FrameID", value: [BigInt(frameID)] },
+            { type: "bool", value: 1 },
+            ...sizesAndShrinkRatio,
+            { type: "bool", value: 0 },
+        ]);
+    }
+    parent.postMessage("sent", "*");
+});
+
+onload = () => {
+    if (!window.IPC) {
+        parent.postMessage("ipc unavailable", "*");
+        return;
+    }
+
+    parent.postMessage("loaded " + IPC.frameID[0], "*");
+};
+</script>
