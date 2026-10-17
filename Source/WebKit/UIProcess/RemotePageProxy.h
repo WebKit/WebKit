@@ -177,6 +177,9 @@ private:
 #if ENABLE(WEB_AUTHN)
     RefPtr<RemotePageWebAuthenticatorCoordinatorProxy> m_webAuthenticatorCoordinator;
 #endif
+#if ENABLE(WEBXR)
+    bool m_isReceivingXRMessages { false };
+#endif
     bool m_hasNetworkRequestsInProgress { false };
     bool m_canShortCircuitHorizontalWheelEvents { true };
 #if ASSERT_ENABLED

@@ -35,6 +35,8 @@
 #include "NavigationActionData.h"
 #include "NotificationManagerMessageHandlerMessages.h"
 #include "PageLoadState.h"
+#include "PlatformXRSystem.h"
+#include "PlatformXRSystemMessages.h"
 #include "ProvisionalFrameProxy.h"
 #include "RemoteMediaSessionManagerProxy.h"
 #include "RemotePageDrawingAreaProxy.h"
@@ -169,6 +171,12 @@ void RemotePageProxy::disconnect()
 #if ENABLE(WEB_AUTHN)
     m_webAuthenticatorCoordinator = nullptr;
 #endif
+#if ENABLE(WEBXR)
+    if (m_isReceivingXRMessages) {
+        m_process->removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_webPageID);
+        m_isReceivingXRMessages = false;
+    }
+#endif
 #if ASSERT_ENABLED
     m_disconnected = true;
 #endif
@@ -207,6 +215,13 @@ void RemotePageProxy::injectPageIntoNewProcess()
 #if ENABLE(WEB_AUTHN)
     if (RefPtr authenticatorCoordinator = page->webAuthenticatorCoordinatorProxy())
         m_webAuthenticatorCoordinator = RemotePageWebAuthenticatorCoordinatorProxy::create(m_webPageID, authenticatorCoordinator.get(), m_process);
+#endif
+
+#if ENABLE(WEBXR)
+    if (page->xrSystem()) {
+        m_process->addMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_webPageID, *this);
+        m_isReceivingXRMessages = true;
+    }
 #endif
 
     m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
@@ -288,6 +303,13 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         backForwardListReceiver->didReceiveMessage(connection, decoder);
         return;
     }
+#if ENABLE(WEBXR)
+    if (decoder.messageReceiverName() == Messages::PlatformXRSystem::messageReceiverName()) {
+        if (RefPtr xrSystem = page->xrSystem())
+            xrSystem->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
     page->didReceiveMessage(connection, decoder);
 }
 
@@ -297,7 +319,14 @@ void RemotePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
         if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName()) {
             Ref backForwardListReceiver = page->backForwardListMessageReceiver();
             backForwardListReceiver->didReceiveSyncMessage(connection, decoder, encoder);
-        } else
+        }
+#if ENABLE(WEBXR)
+        else if (decoder.messageReceiverName() == Messages::PlatformXRSystem::messageReceiverName()) {
+            if (RefPtr xrSystem = page->xrSystem())
+                xrSystem->didReceiveSyncMessage(connection, decoder, encoder);
+        }
+#endif
+        else
             page->didReceiveSyncMessage(connection, decoder, encoder);
     }
 }

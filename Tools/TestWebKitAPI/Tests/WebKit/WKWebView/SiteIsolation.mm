@@ -16763,6 +16763,48 @@ TEST(SiteIsolation, CrossSiteIFrameCanReceiveDeviceMotionEvents)
 
 #endif // ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
+#if ENABLE(WEBXR)
+
+static void checkIsSessionSupportedSettlesInCrossOriginIFrame(bool siteIsolationEnabled)
+{
+    auto mainframeHTML = "<iframe src='https://examplesubframe.com/subframe' allow='xr-spatial-tracking'></iframe>"_s;
+
+    auto subframeHTML = "<script>"
+        "    if (!navigator.xr)"
+        "        alert('navigator.xr is missing');"
+        "    else {"
+        "        navigator.xr.isSessionSupported('immersive-vr').then("
+        "            () => alert('isSessionSupported settled'),"
+        "            () => alert('isSessionSupported rejected'));"
+        "    }"
+        "</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server.httpsProxyConfiguration(), CGRectZero, siteIsolationEnabled);
+
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://examplemainframe.com/mainframe"]]];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "isSessionSupported settled");
+}
+
+TEST(SiteIsolation, CrossOriginIFrameIsSessionSupportedSettles)
+{
+    checkIsSessionSupportedSettlesInCrossOriginIFrame(true);
+}
+
+TEST(SiteIsolation, CrossOriginIFrameIsSessionSupportedSettlesWithSiteIsolationDisabled)
+{
+    checkIsSessionSupportedSettlesInCrossOriginIFrame(false);
+}
+
+#endif // ENABLE(WEBXR)
+
 TEST(SiteIsolation, ProcessActivityGroup)
 {
     HTTPServer server({

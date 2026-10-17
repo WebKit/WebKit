@@ -81,16 +81,16 @@ public:
     bool hasActiveSession() const;
     void ensureImmersiveSessionActivity();
 
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+
 private:
     explicit PlatformXRSystem(WebPageProxy&);
 
     static PlatformXRCoordinator* xrCoordinator();
 
     bool webXREnabled() const;
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Message handlers
     void enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&&);
@@ -134,8 +134,10 @@ private:
     ImmersiveSessionState m_immersiveSessionState { ImmersiveSessionState::Idle };
     void setImmersiveSessionState(ImmersiveSessionState, CompletionHandler<void(bool)>&&);
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
+    template<typename Message> void sendToImmersiveSessionProcess(Message&&);
 
     WeakPtr<WebPageProxy> m_page;
+    WeakPtr<WebProcessProxy> m_immersiveSessionProcess;
     Variant<std::monostate, Ref<ProcessThrottler::ForegroundActivity>, Ref<ProcessActivityGroup>> m_immersiveSessionActivity;
 };
 
