@@ -27,6 +27,7 @@
 #include "BlockFormattingContext.h"
 
 #include "BlockFormattingUtils.h"
+#include "BlockIntegrationUtils.h"
 #include "BlockItemsBuilder.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
@@ -44,8 +45,9 @@ namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlockFormattingContext);
 
-BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, BlockLayoutState& blockLayoutState)
+BlockFormattingContext::BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils& integrationUtils, BlockLayoutState& blockLayoutState)
     : m_root(root)
+    , m_integrationUtils(integrationUtils)
     , m_blockLayoutState(blockLayoutState)
 {
 }
@@ -70,6 +72,9 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
             break;
         case BlockItem::Type::BlockContainerEnd:
             handleBlockContainerEnd(box, result);
+            break;
+        case BlockItem::Type::InlineContent:
+            handleInlineContent(box);
             break;
         }
     }
@@ -120,6 +125,21 @@ void BlockFormattingContext::handleBlockContainerEnd(const RenderBox& blockConta
     if (!blockContainerState.borderBoxLogicalTop && !marginsCollapseThrough())
         resolveBorderBoxLogicalTops(blockContainerState);
     placeInContainingBlock(blockContainer, WTF::move(blockContainerState), result);
+}
+
+void BlockFormattingContext::handleInlineContent(const RenderBox& blockContainer)
+{
+    auto& blockContainerState = m_blockLayoutState.containingBlockStates().last();
+    ASSERT(blockContainerState.blockContainer.ptr() == &blockContainer);
+    // FIXME: Floats need the block container's top before the inline content is laid out; decide whether it has line boxes from its
+    // inline items then.
+    auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(downcast<RenderBlockFlow>(blockContainer), constraintsForInlineContent(blockContainer, blockContainerState), blockContainerState.geometry, m_blockLayoutState);
+    if (!inlineContentLayoutResult.hasLineBoxes)
+        return;
+    // The first line box separates the block-start margin from what follows (CSS 2.2 §8.3.1).
+    if (!blockContainerState.borderBoxLogicalTop)
+        resolveBorderBoxLogicalTops(blockContainerState);
+    m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop() + inlineContentLayoutResult.contentBlockSize);
 }
 
 ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const ConstraintsForBlockContent& constraints) const
@@ -204,6 +224,16 @@ void BlockFormattingContext::computeBlockSize(const RenderBox& box, LayoutUnit i
     geometry.setContentBoxHeight(blockSize - borderAndPaddingBlockSize);
 }
 
+ConstraintsForInlineContent BlockFormattingContext::constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const
+{
+    // Like the line boxes the inline formatting context produces, these are relative to the border box of the block container, in its own direction.
+    auto& geometry = blockContainerState.geometry;
+    auto horizontalConstraints = HorizontalConstraints { blockContainerState.inlineRange.min(), blockContainerState.inlineRange.size() };
+    auto visualLeft = blockContainer.writingMode().isLogicalLeftInlineStart() ? geometry.borderAndPaddingStart() : geometry.borderAndPaddingEnd();
+    // The border box height is only needed in vertical writing modes.
+    return { { horizontalConstraints, blockContainerState.borderAndPaddingBefore }, visualLeft, LayoutSize { geometry.borderBoxWidth(), 0_lu } };
+}
+
 // Quirks mode: body is at least as tall as the viewport leaves it inside html (RenderBox::computeLogicalHeight).
 LayoutUnit BlockFormattingContext::viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const
 {
@@ -281,6 +311,7 @@ void BlockFormattingContext::resolveBorderBoxLogicalTops(ContainingBlockState& b
             break;
         containingBlockState.borderBoxLogicalTop = borderBoxLogicalTop;
     }
+    // After the loop: the block container is still on the stack when its line boxes separate the margins, and its top would stop the loop.
     blockContainerState.borderBoxLogicalTop = borderBoxLogicalTop;
     m_blockLayoutState.marginCollapse().resetAdjoiningMargins(blockContainerState.contentBoxLogicalTop());
 }

@@ -69,6 +69,7 @@
 		9DAE6B91E7F40B76A6883FF1 /* JSRequestedGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CFE80DDA749005FD4E3712C /* JSRequestedGPU.cpp */; };
 		5E103D2583CF75B71F076331 /* BlockFormattingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = F299671307328EDB6025F464 /* BlockFormattingConstraints.h */; };
 		76D7972340A3FCE2F2F9583B /* LayoutIntegrationBlockLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D773E49CBB6D47AD7609060 /* LayoutIntegrationBlockLayout.h */; };
+		BA7C6C27E3FDC02097CBEC3C /* BlockIntegrationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D3C4FC2ADDF817EBCB58AAD /* BlockIntegrationUtils.h */; };
 		92D8C0584475E87F77DC30E3 /* LayoutIntegrationBlockCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = C25DB08F6D2B5D6DF479F38D /* LayoutIntegrationBlockCoverage.h */; };
 		D5AF72DFEB19D26E22C9FD3E /* BlockFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 94222E3E56832D50C0E3B3F2 /* BlockFormattingContext.h */; };
 		D9E5FC1472A06DBE8F314C5D /* BlockFormattingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = EAF60D2583B17ECF904A5D6E /* BlockFormattingUtils.h */; };
@@ -7767,6 +7768,8 @@
 		1D773E49CBB6D47AD7609060 /* LayoutIntegrationBlockLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutIntegrationBlockLayout.h; sourceTree = "<group>"; };
 		2B1E8BE1DBB7EF69CD2D104A /* BlockItemsBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockItemsBuilder.cpp; sourceTree = "<group>"; };
 		2F1368B089143145ADCB095D /* BlockItemsBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockItemsBuilder.h; sourceTree = "<group>"; };
+		390255EB3EAF05E0011C0702 /* BlockIntegrationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockIntegrationUtils.cpp; sourceTree = "<group>"; };
+		6D3C4FC2ADDF817EBCB58AAD /* BlockIntegrationUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockIntegrationUtils.h; sourceTree = "<group>"; };
 		C8D4EB03619F5CAD7E203B4C /* BlockMarginCollapse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockMarginCollapse.cpp; sourceTree = "<group>"; };
 		B7C3DAF2508E4B9C6D1F2A3B /* BlockMarginCollapse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BlockMarginCollapse.h; sourceTree = "<group>"; };
 		4F0F0E4EDB3590D1D089E734 /* LayoutIntegrationBlockCoverage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutIntegrationBlockCoverage.cpp; sourceTree = "<group>"; };
@@ -26641,6 +26644,8 @@
 		240E03C3942F287C2B05CE9A /* block */ = {
 			isa = PBXGroup;
 			children = (
+				390255EB3EAF05E0011C0702 /* BlockIntegrationUtils.cpp */,
+				6D3C4FC2ADDF817EBCB58AAD /* BlockIntegrationUtils.h */,
 				4F0F0E4EDB3590D1D089E734 /* LayoutIntegrationBlockCoverage.cpp */,
 				C25DB08F6D2B5D6DF479F38D /* LayoutIntegrationBlockCoverage.h */,
 				E42AC0167264BE45C006713C /* LayoutIntegrationBlockLayout.cpp */,
@@ -47416,6 +47421,7 @@
 				6FD09543251115220098877D /* LayoutGeometryRect.h in Headers */,
 				6F6383F62427AF4A00DABA53 /* LayoutInitialContainingBlock.h in Headers */,
 				6F0B98B523F268EC00EEC2F2 /* LayoutInlineTextBox.h in Headers */,
+				BA7C6C27E3FDC02097CBEC3C /* BlockIntegrationUtils.h in Headers */,
 				92D8C0584475E87F77DC30E3 /* LayoutIntegrationBlockCoverage.h in Headers */,
 				76D7972340A3FCE2F2F9583B /* LayoutIntegrationBlockLayout.h in Headers */,
 				DD5ACFD82B14DADE00B36C57 /* LayoutIntegrationBoxGeometryUpdater.h in Headers */,
