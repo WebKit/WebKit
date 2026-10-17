@@ -168,7 +168,6 @@
 #include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/IndexingHeader.h>
-#include <JavaScriptCore/IndexingHeaderInlines.h>
 #include <JavaScriptCore/InferredValue.h>
 #include <JavaScriptCore/Intrinsic.h>
 #include <JavaScriptCore/IterationKind.h>

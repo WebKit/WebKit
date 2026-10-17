@@ -100,7 +100,7 @@ JSArray* createRegExpMatchesArrayWithGroupsOrIndices(VM& vm, JSGlobalObject* glo
         array->putDirectOffset(vm, RegExpMatchesArrayInputPropertyOffset, input);
         array->putDirectOffset(vm, RegExpMatchesArrayGroupsPropertyOffset, hasNamedCaptures ? groups : jsUndefined());
 
-        ASSERT(!array->butterfly()->indexingHeader()->preCapacity(matchStructure));
+        ASSERT(!array->butterfly()->preCapacity(matchStructure));
         auto capacity = matchStructure->outOfLineCapacity();
         auto size = matchStructure->outOfLineSize();
         gcSafeZeroMemory(static_cast<JSValue*>(array->butterfly()->base(0, capacity)), (capacity - size) * sizeof(JSValue));
@@ -112,7 +112,7 @@ JSArray* createRegExpMatchesArrayWithGroupsOrIndices(VM& vm, JSGlobalObject* glo
 
             indicesArray->putDirectOffset(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups ? indicesGroups : jsUndefined());
 
-            ASSERT(!indicesArray->butterfly()->indexingHeader()->preCapacity(indicesStructure));
+            ASSERT(!indicesArray->butterfly()->preCapacity(indicesStructure));
             auto indicesCapacity = indicesStructure->outOfLineCapacity();
             auto indicesSize = indicesStructure->outOfLineSize();
             gcSafeZeroMemory(static_cast<JSValue*>(indicesArray->butterfly()->base(0, indicesCapacity)), (indicesCapacity - indicesSize) * sizeof(JSValue));
@@ -269,7 +269,7 @@ JSArray* createRegExpMatchesArrayForPlainRegExpHavingABadTime(VM& vm, JSGlobalOb
     array->putDirectOffset(vm, RegExpMatchesArrayInputPropertyOffset, input);
     array->putDirectOffset(vm, RegExpMatchesArrayGroupsPropertyOffset, jsUndefined());
 
-    ASSERT(!array->butterfly()->indexingHeader()->preCapacity(matchStructure));
+    ASSERT(!array->butterfly()->preCapacity(matchStructure));
     auto capacity = matchStructure->outOfLineCapacity();
     auto size = matchStructure->outOfLineSize();
     if (capacity > size) [[unlikely]]
