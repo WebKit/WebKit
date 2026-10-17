@@ -94,6 +94,8 @@ WI.FormattedValue.createElementForNode = function(object)
         if (!treeOutline.children[0].hasChildren)
             treeOutline.element.classList.add("single-node");
         span.appendChild(treeOutline.element);
+
+        WI.View.dispatchContentResizedEvent(span);
     });
 
     return span;
