@@ -13,7 +13,9 @@ on:
 # run for a ref so rapid WKC-only commits do not waste runner time.
 concurrency:
   group: webkit-wiiu-build-${{ github.ref }}
-  cancel-in-progress: true
+  # Full WebKit cross-builds are long-running; let the active revision finish.
+  # The pending run is replaced by newer commits, and consumers request the exact SHA.
+  cancel-in-progress: false
 
 jobs:
   build:
