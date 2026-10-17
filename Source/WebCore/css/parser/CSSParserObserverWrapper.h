@@ -69,7 +69,7 @@ private:
 
     CSSParserObserver& m_observer;
     Vector<unsigned> m_tokenOffsets;
-    CSSParserToken* m_firstParserToken;
+    CSSParserToken* m_firstParserToken { nullptr };
 
     struct CommentPosition {
         unsigned startOffset;

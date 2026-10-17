@@ -89,13 +89,13 @@ using Value = Variant<
 >;
 
 struct Comparison {
-    ComparisonOperator op;
+    ComparisonOperator op { ComparisonOperator::LessThan };
     std::optional<Value> value;
 };
 
 struct Feature {
     AtomString name;
-    Syntax syntax;
+    Syntax syntax { Syntax::Boolean };
     std::optional<Comparison> leftComparison { };
     std::optional<Comparison> rightComparison { };
 
