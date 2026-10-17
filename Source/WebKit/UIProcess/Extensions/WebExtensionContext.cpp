@@ -252,8 +252,10 @@ void WebExtensionContext::setHasAccessToPrivateData(bool hasAccess)
     if (m_hasAccessToPrivateData) {
         addDeclarativeNetRequestRulesToPrivateUserContentControllers();
 
+#if PLATFORM(COCOA)
         for (Ref controller : extensionController()->allPrivateUserContentControllers())
             addInjectedContent(controller);
+#endif
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
         loadInspectorBackgroundPagesForPrivateBrowsing();
@@ -659,9 +661,7 @@ WebExtensionContext::PermissionsMap& WebExtensionContext::removeExpired(Permissi
     if (removedPermissions.isEmpty() || notification == PermissionNotification::None)
         return permissionMap;
 
-#if PLATFORM(COCOA)
     permissionsDidChange(notification, removedPermissions);
-#endif
 
     return permissionMap;
 }
@@ -692,9 +692,7 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
     if (removedMatchPatterns.isEmpty() || notification == PermissionNotification::None)
         return matchPatternMap;
 
-#if PLATFORM(COCOA)
     permissionsDidChange(notification, removedMatchPatterns);
-#endif
 
     return matchPatternMap;
 }
@@ -896,11 +894,13 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (url.protocolIsFile() && !m_hasAccessToFileURLs)
         return PermissionState::Unknown;
 
+#if PLATFORM(COCOA)
     if (tab) {
         auto temporaryPattern = tab->temporaryPermissionMatchPattern();
         if (temporaryPattern && temporaryPattern->matchesURL(url))
             return PermissionState::GrantedExplicitly;
     }
+#endif
 
     bool skipRequestedPermissions = options.contains(PermissionStateOptions::SkipRequestedPermissions);
 
@@ -1444,7 +1444,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!registeredScript)
                     continue;
 
+#if PLATFORM(COCOA)
                 registeredScript->addUserScript(scriptID, userScript);
+#endif
             }
         }
 
@@ -1469,7 +1471,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
                 if (!registeredScript)
                     continue;
 
+#if PLATFORM(COCOA)
                 registeredScript->addUserStyleSheet(scriptID, userStyleSheet);
+#endif
             }
         }
     }
