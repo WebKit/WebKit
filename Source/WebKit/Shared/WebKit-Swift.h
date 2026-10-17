@@ -75,7 +75,15 @@ IGNORE_CLANG_WARNINGS_BEGIN("arc-bridge-casts-disallowed-in-nonarc")
 IGNORE_CLANG_WARNINGS_BEGIN("objc-property-no-attribute")
 // rdar://175148090
 IGNORE_CLANG_WARNINGS_BEGIN("#warnings")
+#if COMPILER(GCC)
+// Silences GCC warnings about the generated header's Clang-specific pragmas. This
+// applies to the rest of this file, so it must stay immediately before the include.
+#pragma GCC system_header
+#endif
+// GCC reports #warning even in system headers, e.g. libstdc++'s <cstdbool> deprecation.
+IGNORE_GCC_WARNINGS_BEGIN("cpp")
 #include "WebKit-Swift-Generated.h"
+IGNORE_GCC_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
