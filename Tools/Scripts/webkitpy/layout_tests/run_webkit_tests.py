@@ -170,6 +170,9 @@ def parse_args(args):
             dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
         optparse.make_option("--no-ref-tests", action="store_true",
             dest="no_ref_tests", help="Skip all ref tests"),
+        optparse.make_option(
+            "--no-cache-references", action="store_false", dest="cache_references", default=True,
+            help="Render every reftest's reference, instead of comparing the test against the hash its reference rendered in an earlier run."),
         optparse.make_option("--ignore-render-tree-dump-results", action="store_true",
             dest="ignore_render_tree_dump_results",
             help="Don't compare or save results for render tree dump tests (they still run and crashes are reported)"),
