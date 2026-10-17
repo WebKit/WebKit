@@ -85,7 +85,7 @@ public:
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebPageProxyIdentifier> webPageProxyID() const final { return m_webPageProxyID; }
 
-    bool isInitiatedByDedicatedWorker() const final { return m_isInitiatedByDedicatedWorker; }
+    bool isInitiatedByWorker() const final { return m_isInitiatedByWorker; }
 
     bool navigationLosesFrameSpecificStorageAccess() const final { return m_navigationLosesFrameSpecificStorageAccess; }
 

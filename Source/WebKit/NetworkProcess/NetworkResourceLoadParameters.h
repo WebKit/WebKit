@@ -132,7 +132,7 @@ struct NetworkResourceLoadParameters {
     bool shouldRecordFrameLoadForStorageAccess { false };
 
     bool isInitiatorPrefetch { false };
-    bool isInitiatedByDedicatedWorker { false };
+    bool isInitiatedByWorker { false };
     bool hasUnpartitionedStorageAccess { false };
     bool globalPrivacyControlEnabled { false };
     bool shouldConsiderEnhancedSecurityForInsecureResponse { false };

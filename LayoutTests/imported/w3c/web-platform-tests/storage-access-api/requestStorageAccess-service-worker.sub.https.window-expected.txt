@@ -1,0 +1,5 @@
+
+PASS ServiceWorkers don't inherit storage access for fetch
+PASS ServiceWorkers don't observe parent's storage access
+PASS ServiceWorker WebSocket doesn't inherit storage access
+
