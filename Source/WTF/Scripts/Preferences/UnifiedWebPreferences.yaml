@@ -5284,7 +5284,7 @@ SVG2TextLayoutAlgorithmEnabled:
   status: internal
   humanReadableName: "SVG 2 text layout algorithm"
   humanReadableDescription: "Use the SVG 2 text layout algorithm for SVG text"
-  defaultValue: false
+  defaultValue: true
 
 SVGExternalResourcesEnabled:
   type: bool
