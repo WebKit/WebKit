@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInspectorBackend.h"
 
+#include "EmulationManager.h"
 #include "FrameNetworkAgentProxy.h"
 #include "PageAgentProxy.h"
 #include "WebFrame.h"
@@ -80,6 +81,7 @@ Ref<WebInspectorBackend> WebInspectorBackend::create(WebPage& page)
 
 WebInspectorBackend::WebInspectorBackend(WebPage& page)
     : m_page(page)
+    , m_emulationManager(Inspector::EmulationManager::create(*this))
     , m_resourceDataStore(makeUniqueRef<BackendResourceDataStore>(BackendResourceDataStore::Settings { }))
 {
 }
@@ -276,6 +278,14 @@ void WebInspectorBackend::showPaintRectsChanged(bool show)
     // cross-origin subframe processes via ProxyingPageAgent (the frontend's Page domain only reaches
     // this main-frame process).
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowPaintRectsChanged(show), m_page->identifier());
+}
+
+void WebInspectorBackend::emulatedMediaChanged(const String& media)
+{
+    // Forward the main-frame process's emulated media override to the UIProcess, which fans it out to
+    // the cross-origin subframe processes via ProxyingPageAgent (the frontend's Page domain only reaches
+    // this main-frame process).
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::EmulatedMediaChanged(media), m_page->identifier());
 }
 
 void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
@@ -673,6 +683,12 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
     if (!corePage)
         return;
 
+    // A frame detached from its page has already had removeInstrumentationForFrame(); a proxy installed
+    // now would outlive its frame's InstrumentingAgents. Only check the page: a provisional frame is
+    // instrumented before it is parented.
+    if (frame.page() != corePage.get())
+        return;
+
     // Register the PageAgentProxy on the frame's OWN InstrumentingAgents (mirroring
     // FrameNetworkAgentProxy in ensureNetworkInstrumentationForFrame), rather than the page's.
     // The frame's first commit dispatches frameNavigated via instrumentingAgents(frame),
@@ -731,8 +747,18 @@ void WebInspectorBackend::enablePageInstrumentation()
     RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
 
+    // Install every proxy before applying anything: applyLocally() can run page script synchronously
+    // (media query change listeners), and that script can detach a frame later in the snapshot.
     corePage->forEachLocalFrame([&](LocalFrame& frame) {
         ensurePageInstrumentationForFrame(frame);
+    });
+
+    // Already-committed frames resolved their style before their proxy existed, so apply any override
+    // this process already holds. Frames created later resolve style under the proxy from the start.
+    Ref emulationManager = m_emulationManager;
+    corePage->forEachLocalFrame([&](LocalFrame& frame) {
+        if (Inspector::EmulationManager::isFrameInPage(frame, *corePage))
+            emulationManager->applyLocally(frame);
     });
 }
 
@@ -753,6 +779,11 @@ void WebInspectorBackend::disablePageInstrumentation()
     // resets on disable().
     m_showPaintRects = false;
     m_bootstrapScript = { };
+
+    // Restore real platform media, mirroring setEmulationOverrides.
+    Ref emulationManager = m_emulationManager;
+    emulationManager->setEmulatedMedia(emptyString());
+    emulationManager->applyLocally();
 }
 
 void WebInspectorBackend::setShowPaintRects(bool show)
@@ -769,6 +800,22 @@ void WebInspectorBackend::setBootstrapScript(const String& source)
     m_bootstrapScript = source;
     for (auto& proxy : m_framePageAgentProxies.values())
         proxy->setBootstrapScript(source);
+}
+
+void WebInspectorBackend::setEmulationOverrides(Inspector::EmulationOverrides&& overrides)
+{
+    // Apply each materialized emulation override forwarded from the UIProcess. Only emulatedMedia
+    // exists today; an absent value clears the override. The per-frame PageAgentProxies read the
+    // applied override back through the EmulationManager in applyEmulatedMedia, so there is nothing
+    // to push to them here. Bail out when nothing changed (e.g. the broadcast of a value this process
+    // relayed): every change to the EmulationManager is already followed by a style update.
+    // See webkit.org/b/308898.
+    Ref emulationManager = m_emulationManager;
+    if (emulationManager->overrides().emulatedMedia == overrides.emulatedMedia)
+        return;
+
+    emulationManager->setEmulatedMedia(overrides.emulatedMedia.value_or(emptyString()));
+    emulationManager->applyLocally();
 }
 
 void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&& completionHandler)

@@ -128,7 +128,7 @@ void InspectorPageAgent::didCreateFrontendAndBackend()
 
 void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    std::ignore = disable();
+    disableInternal(DisableReason::FrontendTeardown);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
@@ -150,6 +150,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 {
+    disableInternal(DisableReason::Command);
+    return { };
+}
+
+void InspectorPageAgent::disableInternal(DisableReason reason)
+{
     Ref { m_instrumentingAgents.get() }->setEnabledPageAgent(nullptr);
 
     std::ignore = setShowPaintRects(false);
@@ -157,7 +163,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     std::ignore = setShowRulers(false);
 #endif
     std::ignore = overrideUserAgent(nullString());
-    std::ignore = setEmulatedMedia(emptyString());
+    // Under Site Isolation a frontend teardown can be this process going away in a process swap while
+    // the override is still live in the page's other processes, so clear it here only. An explicit
+    // Page.disable clears it everywhere. See webkit.org/b/308898.
+    setEmulatedMediaInternal(emptyString(), reason == DisableReason::Command ? InspectorBackendClient::EmulatedMediaRelay::Yes : InspectorBackendClient::EmulatedMediaRelay::No);
     overridePrefersColorScheme(std::nullopt);
 
     auto& inspectedPageSettings = m_inspectedPage->settings();
@@ -186,8 +195,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::ITPDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::MockCaptureDevicesEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference::NeedsSiteSpecificQuirks, std::nullopt);
-
-    return { };
 }
 
 double InspectorPageAgent::timestamp()
@@ -981,10 +988,27 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String& media)
 {
-    if (media == m_emulatedMedia)
-        return { };
+    setEmulatedMediaInternal(media, InspectorBackendClient::EmulatedMediaRelay::Yes);
+    return { };
+}
 
-    m_emulatedMedia = AtomString(media);
+void InspectorPageAgent::setEmulatedMediaInternal(const String& media, InspectorBackendClient::EmulatedMediaRelay relay)
+{
+    // Under Site Isolation the client owns the override so that every process hosting a frame of this
+    // page reads the same copy; this agent keeps none and only forwards. A same-value call (including
+    // the clear from disable() when nothing is set) is not sent to other processes. See webkit.org/b/308898.
+    if (m_client->ownsEmulatedMedia()) {
+        auto currentMedia = m_client->emulatedMedia();
+        if (media.isEmpty() ? currentMedia.isEmpty() : media == currentMedia)
+            return;
+
+        m_client->setEmulatedMedia(media, relay);
+    } else {
+        if (media == m_emulatedMedia)
+            return;
+
+        m_emulatedMedia = AtomString(media);
+    }
 
     // FIXME: Schedule a rendering update instead of synchronously updating the layout.
     Ref inspectedPage = m_inspectedPage;
@@ -992,12 +1016,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(co
 
     RefPtr document = inspectedPage->localTopDocument();
     if (!document)
-        return { };
+        return;
 
     document->updateLayout();
     document->evaluateMediaQueriesAndReportChanges();
-
-    return { };
 }
 
 void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
@@ -1008,6 +1030,12 @@ void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
 
 void InspectorPageAgent::applyEmulatedMedia(AtomString& media)
 {
+    if (m_client->ownsEmulatedMedia()) {
+        if (auto emulatedMedia = m_client->emulatedMedia(); !emulatedMedia.isEmpty())
+            media = AtomString { emulatedMedia };
+        return;
+    }
+
     if (!m_emulatedMedia.isEmpty())
         media = m_emulatedMedia;
 }

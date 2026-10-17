@@ -579,10 +579,23 @@ bool WebPageInspectorController::isPageInstrumentationEnabled() const
     return m_pageAgent && m_pageAgent->isEnabled();
 }
 
+Inspector::EmulationOverrides WebPageInspectorController::emulationOverrides() const
+{
+    return m_pageAgent ? m_pageAgent->emulationOverrides() : Inspector::EmulationOverrides { };
+}
+
 void WebPageInspectorController::setShowPaintRects(bool show)
 {
     if (m_pageAgent)
         std::ignore = m_pageAgent->setShowPaintRects(show);
+}
+
+void WebPageInspectorController::setEmulatedMedia(const String& media)
+{
+    if (!m_pageAgent)
+        return;
+
+    m_pageAgent->emulatedMediaChangedOnPageTarget(media);
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)

@@ -27,6 +27,7 @@
 #include "WebInspectorBackendClient.h"
 
 #include "DrawingArea.h"
+#include "EmulationManager.h"
 #include "MessageSenderInlines.h"
 #include "WebInspectorBackend.h"
 #include "WebPage.h"
@@ -542,6 +543,49 @@ void WebInspectorBackendClient::setShowPaintRects(bool show)
     // every WebContent process (see WebInspectorBackend::setShowPaintRects).
     if (RefPtr inspector = page->inspector())
         inspector->showPaintRectsChanged(show);
+}
+
+bool WebInspectorBackendClient::ownsEmulatedMedia() const
+{
+    // Without Site Isolation the whole frame tree lives in this process, and the real
+    // InspectorPageAgent keeps the override itself. Leave that path untouched.
+    RefPtr page = m_page;
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    return corePage && corePage->settings().siteIsolationEnabled();
+}
+
+String WebInspectorBackendClient::emulatedMedia() const
+{
+    // Under Site Isolation the WebInspectorBackend's EmulationManager owns the override. With no
+    // backend nothing has set an override in this process.
+    RefPtr page = m_page;
+    if (!page)
+        return { };
+
+    RefPtr inspector = page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly);
+    if (!inspector)
+        return { };
+
+    return inspector->emulationManager().overrides().emulatedMedia.value_or(String { });
+}
+
+void WebInspectorBackendClient::setEmulatedMedia(const String& media, EmulatedMediaRelay relay)
+{
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    // Under Site Isolation cross-origin subframes run in their own processes, which the frontend's
+    // Page domain never reaches. Store the override in this process's EmulationManager, which both
+    // the main frame's PageAgentProxy and the InspectorPageAgent read, so the agent's style update
+    // right after this call already sees the new value. Then notify the UIProcess so its
+    // ProxyingPageAgent fans the override out to every WebContent process (see
+    // WebInspectorBackend::setEmulationOverrides).
+    if (RefPtr inspector = page->inspector()) {
+        protect(inspector->emulationManager())->setEmulatedMedia(media);
+        if (relay == EmulatedMediaRelay::Yes)
+            inspector->emulatedMediaChanged(media);
+    }
 }
 
 void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
