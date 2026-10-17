@@ -854,7 +854,9 @@ jobs:
             -DWKC_ENABLE_INDEXED_DATABASE=ON \
             -DWKC_ENABLE_GAMEPAD=OFF \
             -DWKC_ENABLE_WEBASSEMBLY=OFF \
-            -DWKC_ENABLE_WEBRTC_API=OFF > build-full-configure.log 2>&1
+            -DWKC_ENABLE_WEBRTC_API=OFF \
+            -DWKC_ENABLE_WEB_INSPECTOR=OFF \
+            -DWKC_ENABLE_NOTIFICATIONS=OFF > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
           # Preserve the source-list omission report even if the engine compile fails.
