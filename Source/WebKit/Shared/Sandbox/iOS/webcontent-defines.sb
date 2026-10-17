@@ -375,6 +375,7 @@
     SYS_mkdir
     SYS_msync
     SYS_rename
+    SYS_renameat
     SYS_sem_close
     SYS_sem_open
     SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
@@ -382,9 +383,7 @@
 
 (define (syscall-unix-allowed-with-telemetry)
     (syscall-number
-        SYS_fgetattrlist ;; <rdar://problem/50266257>
-        SYS_openat_dprotected_np
-        SYS_renameat))
+        SYS_fgetattrlist)) ;; <rdar://problem/50266257>
 
 (define (syscall-quicklook)
     (syscall-number
@@ -417,6 +416,7 @@
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
         SYS_open_dprotected_np
+        SYS_openat_dprotected_np
         SYS_setrlimit
 #if PLATFORM(WATCHOS)
         SYS_sigreturn

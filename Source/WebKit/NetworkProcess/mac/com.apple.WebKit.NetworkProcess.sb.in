@@ -757,11 +757,6 @@
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
-(allow syscall-unix (with telemetry)
-    (syscall-number
-        SYS_openat_dprotected_np
-        SYS_renameat))
-
 (define (allowed-mig-syscalls)
     (kernel-mig-routine
         _mach_make_memory_entry

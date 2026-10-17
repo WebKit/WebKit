@@ -1516,9 +1516,7 @@
 
 (allow syscall-unix (with report) (with telemetry)
     (syscall-number
-        SYS_fgetattrlist
-        SYS_openat_dprotected_np
-        SYS_renameat))
+        SYS_fgetattrlist))
 
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))

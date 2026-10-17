@@ -1304,11 +1304,6 @@
     (allow syscall-unix (syscall-number SYS_quotactl)))
 #endif
 
-(allow syscall-unix (with telemetry)
-    (syscall-number
-        SYS_openat_dprotected_np
-        SYS_renameat))
-
 (with-filter (lockdown-mode)
     (deny syscall-unix (with telemetry) (syscall-unix-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (syscalls-rarely-used-blocked-in-lockdown-mode)))
