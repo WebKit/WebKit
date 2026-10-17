@@ -49,9 +49,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+Ref<WebSocketChannel> WebSocketChannel::create(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client, IsInitiatedByWorker isInitiatedByWorker)
 {
-    return adoptRef(*new WebSocketChannel(webPageProxyID, document, client, isInitiatedByDedicatedWorker));
+    return adoptRef(*new WebSocketChannel(webPageProxyID, document, client, isInitiatedByWorker));
 }
 
 void WebSocketChannel::notifySendFrame(WebSocketFrame::OpCode opCode, std::span<const uint8_t> data)
@@ -85,13 +85,13 @@ Ref<NetworkSendQueue> WebSocketChannel::createMessageQueue(Document& document, W
     });
 }
 
-WebSocketChannel::WebSocketChannel(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+WebSocketChannel::WebSocketChannel(WebPageProxyIdentifier webPageProxyID, Document& document, WebSocketChannelClient& client, IsInitiatedByWorker isInitiatedByWorker)
     : m_document(document)
     , m_client(client)
     , m_messageQueue(createMessageQueue(document, *this))
     , m_inspector(document)
     , m_webPageProxyID(webPageProxyID)
-    , m_isInitiatedByDedicatedWorker(isInitiatedByDedicatedWorker)
+    , m_isInitiatedByWorker(isInitiatedByWorker)
 {
     WebProcess::singleton().webSocketChannelManager().addChannel(*this);
 }
@@ -174,7 +174,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
         return mainFrame;
     }();
 
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, std::optional(frame->frameID()), frame->pageID(), document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), policySourceFrame->allowPrivacyProxy(), policySourceFrame->advancedPrivacyProtections(), storedCredentialsPolicy, m_isInitiatedByDedicatedWorker });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, std::optional(frame->frameID()), frame->pageID(), document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), policySourceFrame->allowPrivacyProxy(), policySourceFrame->advancedPrivacyProtections(), storedCredentialsPolicy, m_isInitiatedByWorker });
     m_needsToCallClose = true;
     return ConnectStatus::OK;
 }

@@ -44,9 +44,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Document& document, WebSocketChannelClient& client, IsInitiatedByWorker isInitiatedByWorker)
 {
-    return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client, isInitiatedByDedicatedWorker);
+    return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client, isInitiatedByWorker);
 }
 
 void WebSocketProvider::countWebSocketChannelsForTesting(CompletionHandler<void(unsigned)>&& completionHandler)

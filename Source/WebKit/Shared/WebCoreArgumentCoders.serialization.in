@@ -1003,7 +1003,7 @@ enum class WebCore::ContentSniffingPolicy : bool;
 enum class WebCore::ContentEncodingSniffingPolicy : bool;
 enum class WebCore::ClientCredentialPolicy : bool;
 enum class WebCore::ShouldRelaxThirdPartyCookieBlocking : bool;
-enum class WebCore::IsInitiatedByDedicatedWorker : bool;
+enum class WebCore::IsInitiatedByWorker : bool;
 
 enum class WebCore::PreflightPolicy : uint8_t {
     Consider,

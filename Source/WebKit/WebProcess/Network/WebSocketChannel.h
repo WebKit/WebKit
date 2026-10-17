@@ -50,7 +50,7 @@ namespace WebKit {
 
 class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel> {
 public:
-    static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker = WebCore::IsInitiatedByDedicatedWorker::No);
+    static Ref<WebSocketChannel> create(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker = WebCore::IsInitiatedByWorker::No);
     ~WebSocketChannel();
 
     // IPC::MessageReceiver, WebCore::ThreadableWebSocketChannel.
@@ -61,7 +61,7 @@ public:
     void networkProcessCrashed();
 
 private:
-    WebSocketChannel(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByDedicatedWorker);
+    WebSocketChannel(WebPageProxyIdentifier, WebCore::Document&, WebCore::WebSocketChannelClient&, WebCore::IsInitiatedByWorker);
 
     static Ref<WebCore::NetworkSendQueue> createMessageQueue(WebCore::Document&, WebSocketChannel&);
 
@@ -118,7 +118,7 @@ private:
     WebCore::ResourceRequest m_handshakeRequest;
     WebCore::ResourceResponse m_handshakeResponse;
     WebPageProxyIdentifier m_webPageProxyID;
-    WebCore::IsInitiatedByDedicatedWorker m_isInitiatedByDedicatedWorker { WebCore::IsInitiatedByDedicatedWorker::No };
+    WebCore::IsInitiatedByWorker m_isInitiatedByWorker { WebCore::IsInitiatedByWorker::No };
 };
 
 } // namespace WebKit

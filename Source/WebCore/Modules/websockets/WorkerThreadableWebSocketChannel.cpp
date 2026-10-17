@@ -33,7 +33,6 @@
 #include "WorkerThreadableWebSocketChannel.h"
 
 #include "Blob.h"
-#include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
@@ -145,18 +144,18 @@ void WorkerThreadableWebSocketChannel::resume()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerThreadableWebSocketChannel::Peer);
 
-WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
     : m_workerClientWrapper(clientWrapper.ptr())
-    , m_mainWebSocketChannel(ThreadableWebSocketChannel::create(downcast<Document>(context), *this, provider, isInitiatedByDedicatedWorker))
+    , m_mainWebSocketChannel(ThreadableWebSocketChannel::create(downcast<Document>(context), *this, provider, isInitiatedByWorker))
     , m_taskMode(taskMode)
     , m_workerContextIdentifier(workerContextIdentifier)
 {
     ASSERT(isMainThread());
 }
 
-Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Peer::create(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+Ref<WorkerThreadableWebSocketChannel::Peer> WorkerThreadableWebSocketChannel::Peer::create(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider, IsInitiatedByWorker isInitiatedByWorker)
 {
-    return adoptRef(*new Peer(WTF::move(clientWrapper), context, workerContextIdentifier, taskMode, provider, isInitiatedByDedicatedWorker));
+    return adoptRef(*new Peer(WTF::move(clientWrapper), context, workerContextIdentifier, taskMode, provider, isInitiatedByWorker));
 }
 
 WorkerThreadableWebSocketChannel::Peer::~Peer()
@@ -365,7 +364,7 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider, IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker) -> RefPtr<Peer>
+auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecutionContext& context, WorkerThread& workerThread, ScriptExecutionContextIdentifier workerContextIdentifier, Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, const String& taskMode, Ref<SocketProvider>&& provider, IsInitiatedByWorker isInitiatedByWorker) -> RefPtr<Peer>
 {
     ASSERT(isMainThread());
     ASSERT(context.isDocument());
@@ -374,7 +373,7 @@ auto WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecut
     if (workerRunLoop.terminated())
         return nullptr;
 
-    return Peer::create(clientWrapper.copyRef(), context, workerContextIdentifier, taskMode, WTF::move(provider), isInitiatedByDedicatedWorker);
+    return Peer::create(clientWrapper.copyRef(), context, workerContextIdentifier, taskMode, WTF::move(provider), isInitiatedByWorker);
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& scope)
@@ -385,9 +384,8 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& sco
     RefPtr<Peer> peer;
 
     BinarySemaphore semaphore;
-    auto isInitiatedByDedicatedWorker = is<DedicatedWorkerGlobalScope>(scope) ? IsInitiatedByDedicatedWorker::Yes : IsInitiatedByDedicatedWorker::No;
-    m_loaderProxy->postTaskToLoader([&semaphore, &peer, workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider, isInitiatedByDedicatedWorker](ScriptExecutionContext& context) mutable {
-        peer = mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTF::move(workerClientWrapper), taskMode, WTF::move(provider), isInitiatedByDedicatedWorker);
+    m_loaderProxy->postTaskToLoader([&semaphore, &peer, workerThread = Ref { scope.thread() }, workerContextIdentifier = scope.identifier(), workerClientWrapper = m_workerClientWrapper, taskMode = m_taskMode.isolatedCopy(), provider = m_socketProvider](ScriptExecutionContext& context) mutable {
+        peer = mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTF::move(workerClientWrapper), taskMode, WTF::move(provider), IsInitiatedByWorker::Yes);
         semaphore.signal();
     });
     {
