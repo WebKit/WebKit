@@ -2,10 +2,17 @@
 PASS idl_test setup
 PASS idl_test validation
 PASS Element includes ARIAMixin: member names are unique
+PASS Element includes ARIANotifyMixin: member names are unique
+PASS Document includes ARIANotifyMixin: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
 PASS Element includes ChildNode: member names are unique
 PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+FAIL Document interface: operation ariaNotify(DOMString, optional AriaNotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "ariaNotify" missing
 PASS Element interface: attribute role
 PASS Element interface: attribute ariaActiveDescendantElement
 PASS Element interface: attribute ariaAtomic
@@ -58,6 +65,7 @@ PASS Element interface: attribute ariaValueMax
 PASS Element interface: attribute ariaValueMin
 PASS Element interface: attribute ariaValueNow
 PASS Element interface: attribute ariaValueText
+FAIL Element interface: operation ariaNotify(DOMString, optional AriaNotificationOptions) assert_own_property: interface prototype object missing non-static operation expected property "ariaNotify" missing
 PASS Element interface: element must inherit property "role" with the proper type
 PASS Element interface: element must inherit property "ariaActiveDescendantElement" with the proper type
 PASS Element interface: element must inherit property "ariaAtomic" with the proper type
@@ -110,4 +118,6 @@ PASS Element interface: element must inherit property "ariaValueMax" with the pr
 PASS Element interface: element must inherit property "ariaValueMin" with the proper type
 PASS Element interface: element must inherit property "ariaValueNow" with the proper type
 PASS Element interface: element must inherit property "ariaValueText" with the proper type
+FAIL Element interface: element must inherit property "ariaNotify(DOMString, optional AriaNotificationOptions)" with the proper type assert_inherits: property "ariaNotify" not found in prototype chain
+FAIL Element interface: calling ariaNotify(DOMString, optional AriaNotificationOptions) on element with too few arguments must throw TypeError assert_inherits: property "ariaNotify" not found in prototype chain
 

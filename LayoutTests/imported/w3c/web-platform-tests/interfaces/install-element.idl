@@ -1,0 +1,47 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into webref
+// (https://github.com/w3c/webref)
+// Source: Web Install (https://wicg.github.io/install-element/)
+
+partial interface Navigator {
+  Promise<WebInstallResult> install();
+  Promise<WebInstallResult> install(InstallParams options);
+};
+
+dictionary InstallParams {
+  required USVString manifest;
+  USVString? manifestId;
+};
+
+dictionary WebInstallResult {};
+
+[Exposed=Window]
+interface HTMLInstallElement : HTMLElement {
+  [HTMLConstructor] constructor();
+
+  [CEReactions, ReflectURL] attribute USVString manifest;
+  [CEReactions, ReflectURL] attribute USVString manifestId;
+};
+
+partial interface mixin GlobalEventHandlers {
+  attribute EventHandler oninstallresult;
+};
+
+HTMLInstallElement includes ActivationBlockersMixin;
+
+enum InstallResult {
+  "success",
+  "aborted",
+  "invalid-data"
+};
+
+[Exposed=Window]
+interface InstallResultEvent : Event {
+  constructor(DOMString type,
+              optional InstallResultEventInit eventInitDict = {});
+  readonly attribute InstallResult result;
+};
+
+dictionary InstallResultEventInit : EventInit {
+  InstallResult result = "aborted";
+};
