@@ -654,4 +654,25 @@ if (WKC_ENABLE_WEBRTC_API)
 endif ()
 
 install(TARGETS WebKitWKC DESTINATION lib)
-install(DIRECTORY ${WKC_DIR}/include/ DESTINATION include/wkc)
+
+# Export a consumer-ready SDK layout. Keep <wkc/...> headers at include/wkc,
+# while WKCWebView/WKCClientBuilders and their helper headers are also required
+# by embedders such as Wave Browser. Installing include/ wholesale under
+# include/wkc would incorrectly produce include/wkc/wkc/wkcbase.h.
+install(DIRECTORY ${WKC_DIR}/include/
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "wkc" EXCLUDE
+)
+install(DIRECTORY ${WKC_DIR}/include/wkc/
+    DESTINATION include/wkc
+    FILES_MATCHING PATTERN "*.h"
+)
+install(DIRECTORY ${WKC_DIR}/webkit/
+    DESTINATION include/wkc
+    FILES_MATCHING PATTERN "*.h"
+)
+install(DIRECTORY ${WKC_DIR}/helpers/
+    DESTINATION include/wkc/helpers
+    FILES_MATCHING PATTERN "*.h"
+)
