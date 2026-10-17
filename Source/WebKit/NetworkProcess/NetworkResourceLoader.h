@@ -211,6 +211,7 @@ public:
     void continueDidReceiveResponseAfterLocalNetworkAccessCheck(PrivateRelayed, ResourceLoadInfo&&, ResponseCompletionHandler&&);
     void continueDidRetrieveCacheEntryAfterLocalNetworkAccessCheck(std::unique_ptr<NetworkCache::Entry>);
     void sendDidReceiveResponseWithPotentialProcessSwap(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    bool shouldConsiderProcessSwapForDocumentIsolationPolicy(const WebCore::ResourceResponse&) const;
     void failWhileHandlingResponse(const WebCore::ResourceError&);
     void setIsFromPrevalentDomainIfNeeded(WebCore::ResourceResponse&) const;
 
@@ -418,6 +419,7 @@ private:
 
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
+    bool m_didSendResponse { false };
     bool m_hasReceivedEarlyHints { false };
     bool m_canUseCompressionDictionary { false };
 

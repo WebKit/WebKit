@@ -47,11 +47,13 @@
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
+#include "CrossOriginMode.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "CustomHeaderFields.h"
 #include "DNS.h"
 #include "DateComponents.h"
 #include "DocumentInlines.h"
+#include "DocumentIsolationPolicy.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -84,6 +86,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorker.h"
@@ -1531,6 +1534,14 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (request.cachePolicy() == ResourceRequestCachePolicy::RefreshAnyCacheData)
         return Reload;
 
+    // A navigation served from a prefetch stays in this process, so a document with a Document-Isolation-Policy can only use a
+    // prefetch once its response shows the same policy (see DocumentPrefetcher::canServeNavigations()).
+    // FIXME: A document without a policy can still join a prefetch whose response turns out to have one.
+    if (type == CachedResource::Type::MainResource && existingResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch && existingResource->response().isNull()) {
+        if (RefPtr document = frame() ? frame()->document() : nullptr; document && document->documentIsolationPolicy() != DocumentIsolationPolicy::None)
+            return Reload;
+    }
+
     if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
@@ -1670,6 +1681,12 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
             // and we could not make the swap work if the server responded with a 304.
             if (cachedResourceRequest.options().mode == FetchOptions::Mode::Navigate
                 && obtainCrossOriginOpenerPolicy(existingResource->response()).value != CrossOriginOpenerPolicyValue::UnsafeNone) {
+                return Reload;
+            }
+            // The same goes for navigations that may move to or from a process for documents with a Document-Isolation-Policy.
+            if (cachedResourceRequest.options().mode == FetchOptions::Mode::Navigate && frame()
+                && frame()->settings().documentIsolationPolicyEnabled() && frame()->settings().siteIsolationEnabled()
+                && (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated || obtainDocumentIsolationPolicy(existingResource->response(), IsSecureContext::Yes) != DocumentIsolationPolicy::None)) {
                 return Reload;
             }
             return Revalidate;

@@ -1513,7 +1513,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
         m_legacyMainFrameProcess = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_legacyMainFrameProcess.ptr(), m_legacyMainFrameProcess->processID());
     } else
-        m_legacyMainFrameProcess = processPool->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, site, site, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, currentEnhancedSecurityState(), m_configuration, WebCore::ProcessSwapDisposition::None, crossOriginMode);
+        m_legacyMainFrameProcess = processPool->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, site, site, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, currentEnhancedSecurityState(), m_configuration, WebCore::ProcessSwapDisposition::None, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode));
 
     m_shouldReloadDueToCrashWhenVisible = false;
     m_isLockdownModeExplicitlySet = m_configuration->isLockdownModeExplicitlySet();
@@ -6924,7 +6924,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         //     Set documentState's about base URL to initiatorBaseURLSnapshot.
         std::optional<SecurityOriginData> originator = shouldInheritOriginFromInitiator ? std::make_optional(navigation.originatingFrameInfo()->securityOrigin) : std::nullopt;
 
-        auto shouldTreatAsContinuingLoad = navigation.currentRequestIsRedirect() ? WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+        auto shouldTreatAsContinuingLoad = isProcessSwappingOnNavigationResponse || navigation.currentRequestIsRedirect() ? WebCore::ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
 
         // When a child frame's Back/Forward navigation triggers a process swap (Site Isolation),
         // send GoToBackForwardItem so the new process performs a proper history navigation using
@@ -6936,6 +6936,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
                 navigationID = navigation.navigationID(),
                 frameState = WTF::move(frameState),
                 shouldTreatAsContinuingLoad,
+                existingNetworkResourceLoadIdentifierToResume,
                 agentClusterAssignment = navigation.agentClusterAssignment(),
                 lastNavigationWasAppInitiated = m_lastNavigationWasAppInitiated,
                 publicSuffix = WTF::move(publicSuffix),
@@ -6943,7 +6944,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
                 preventProcessShutdownScope = newProcess->shutdownPreventingScope()
             ] (std::optional<PageIdentifier> pageID) mutable {
                 if (pageID)
-                    newProcess->send(Messages::WebPage::GoToBackForwardItem({ navigationID, frameState.releaseNonNull(), FrameLoadType::IndexedBackForward, shouldTreatAsContinuingLoad, std::nullopt, lastNavigationWasAppInitiated, ShouldRestoreFromBackForwardCache::Unspecified, std::nullopt, WTF::move(publicSuffix), { }, WebCore::ProcessSwapDisposition::None, agentClusterAssignment }), *pageID);
+                    newProcess->send(Messages::WebPage::GoToBackForwardItem({ navigationID, frameState.releaseNonNull(), FrameLoadType::IndexedBackForward, shouldTreatAsContinuingLoad, std::nullopt, lastNavigationWasAppInitiated, ShouldRestoreFromBackForwardCache::Unspecified, existingNetworkResourceLoadIdentifierToResume, WTF::move(publicSuffix), { }, WebCore::ProcessSwapDisposition::None, agentClusterAssignment }), *pageID);
             });
             return;
         }
@@ -6976,6 +6977,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             loadParameters.originalRequest = navigation.originalRequest();
         loadParameters.unpartitionedStorageSite = navigation.unpartitionedStorageSite();
         loadParameters.agentClusterAssignment = navigation.agentClusterAssignment();
+        loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
 
         if (isPendingInitialHistoryItem)
             frame.setIsPendingInitialHistoryItem(true);
@@ -11454,6 +11456,15 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         }();
         if (shouldForceDownload)
             policyAction = PolicyAction::Download;
+
+        // Never commit a document without a Document-Isolation-Policy in a process for documents with one.
+        if (policyAction == PolicyAction::Use && process->isDocumentIsolationPolicyProcess()) {
+            auto& response = navigationResponse->response();
+            if (response.url().protocolIsInHTTPFamilyOrBlob() && !needsDocumentIsolationPolicyProcess(response.url(), parseDocumentIsolationPolicy(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy)), frame->isMainFrame())) {
+                WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "decidePolicyForResponseShared: Ignoring a response without a Document-Isolation-Policy in a process for documents with one");
+                policyAction = PolicyAction::Ignore;
+            }
+        }
 #if USE(QUICK_LOOK) && ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
         bool supportsMIMEType = PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType());
 #endif
@@ -11647,10 +11658,19 @@ static Ref<WebsiteDataStore> websiteDataStoreOfLoad(WebProcessProxy& processLoad
     return pageDataStore;
 }
 
-RefPtr<WebProcessProxy> WebPageProxy::processLoadingNavigation(const API::Navigation& navigation, WebCore::ProcessIdentifier loadingWebProcess)
+RefPtr<WebProcessProxy> WebPageProxy::processLoadingNavigation(const API::Navigation& navigation, WebFrameProxy& frame, WebCore::ProcessIdentifier loadingWebProcess)
 {
-    RefPtr provisionalPage = m_provisionalPage;
-    RefPtr process = provisionalPage && provisionalPage->navigationID() == navigation.navigationID() ? &provisionalPage->process() : m_legacyMainFrameProcess.ptr();
+    RefPtr<WebProcessProxy> process;
+    if (frame.isMainFrame()) {
+        RefPtr provisionalPage = m_provisionalPage;
+        process = provisionalPage && provisionalPage->navigationID() == navigation.navigationID() ? &provisionalPage->process() : m_legacyMainFrameProcess.ptr();
+    } else if (RefPtr provisionalFrame = frame.provisionalFrame()) {
+        if (provisionalFrame->navigationID() != navigation.navigationID())
+            return nullptr;
+        process = &provisionalFrame->process();
+    } else
+        process = &frame.process();
+
     if (process->coreProcessIdentifier() != loadingWebProcess)
         return nullptr;
     return process;
@@ -11679,7 +11699,7 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
     ] mutable {
         RefPtr navigation = m_navigationState->navigation(navigationID);
         RefPtr mainFrame = m_mainFrame;
-        RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, loadingWebProcess) : nullptr;
+        RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, *mainFrame, loadingWebProcess) : nullptr;
         if (!processLoadingNavigation)
             return completionHandler(NavigationResponseWithoutProcessSwap::CancelLoad);
 
@@ -11718,15 +11738,17 @@ static bool canReuseProvisionalProcessForBrowsingContextGroupSwitch(const Provis
     return loadedWebArchive == LoadedWebArchive::No && allowedFirstParties.size() == 1 && allowedFirstParties.contains(responseSite.domain());
 }
 
-void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
+void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const NavigationResponseForProcessSwap& response, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
 {
     ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup);
     RefPtr navigation = m_navigationState->navigation(navigationID);
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: bcgDecision=%u, navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, static_cast<unsigned>(browsingContextGroupSwitchDecision), navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     RefPtr mainFrame = m_mainFrame;
-    RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, loadingWebProcess) : nullptr;
+    RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, *mainFrame, loadingWebProcess) : nullptr;
     if (!processLoadingNavigation)
         return completionHandler(NavigationResponseWithoutProcessSwap::CancelLoad);
+
+    Site responseSite { response.url };
 
     // FIXME: Subframe loads that skip COEP enforcement, such as custom URL scheme handler loads, still get an isolated process.
     auto crossOriginMode = browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup ? CrossOriginMode::Isolated : CrossOriginMode::Shared;
@@ -11744,9 +11766,12 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
     if (auto& url = navigation->currentRequest().url(); url.protocolIsInHTTPFamily() && Site { url } == responseSite)
         coopOrigin = SecurityOriginData::fromURL(url);
 
+    auto processCrossOriginIsolation = processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode);
+    if (crossOriginMode == CrossOriginMode::Shared && needsDocumentIsolationPolicyProcess(response.url, response.documentIsolationPolicy, true))
+        processCrossOriginIsolation = ProcessCrossOriginIsolation::DocumentIsolationPolicy;
     Ref dataStore = websiteDataStoreOfLoad(*processLoadingNavigation, protect(websiteDataStore()));
-    RefPtr reusableProvisionalProcess = crossOriginMode == CrossOriginMode::Shared && provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, coopOrigin, dataStore) ? &provisionalPage->process() : nullptr;
-    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(dataStore, WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP, crossOriginMode, coopOrigin, reusableProvisionalProcess.get());
+    RefPtr reusableProvisionalProcess = processCrossOriginIsolation == ProcessCrossOriginIsolation::None && provisionalPage && canReuseProvisionalProcessForBrowsingContextGroupSwitch(*provisionalPage, *navigation, responseSite, coopOrigin, dataStore) ? &provisionalPage->process() : nullptr;
+    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(dataStore, WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP, processCrossOriginIsolation, coopOrigin, reusableProvisionalProcess.get());
 
     performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
 }
@@ -11776,12 +11801,60 @@ static bool canMoveSiteToEnhancedSecurityProcess(BrowsingContextGroup& browsingC
     return usesExistingFrameProcess(mainFrame) || usesExistingFrameProcess(provisionalPage ? provisionalPage->mainFrame() : nullptr);
 }
 
+bool WebPageProxy::needsDocumentIsolationPolicyProcess(const URL& url, WebCore::DocumentIsolationPolicy headerPolicy, bool isMainFrame) const
+{
+    return documentIsolationPolicyForNavigationResponse(url, headerPolicy, topLevelIsSecureContext(url, isMainFrame) ? IsSecureContext::Yes : IsSecureContext::No, protect(preferences())) != WebCore::DocumentIsolationPolicy::None;
+}
+
+void WebPageProxy::triggerProcessSwapForDocumentIsolationPolicy(WebCore::NavigationIdentifier navigationID, const NavigationResponseForProcessSwap& response, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
+{
+    RefPtr navigation = m_navigationState->navigation(navigationID);
+    WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerProcessSwapForDocumentIsolationPolicy: navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
+    RefPtr frame = navigation && navigation->lastNavigationAction() ? WebFrameProxy::webFrame(navigation->lastNavigationAction()->frameInfo.frameID) : nullptr;
+    RefPtr processLoadingNavigation = frame && frame->page() == this ? this->processLoadingNavigation(*navigation, *frame, loadingWebProcess) : nullptr;
+    if (!processLoadingNavigation)
+        return completionHandler(NavigationResponseWithoutProcessSwap::CancelLoad);
+
+    // Every process of a cross-origin isolated group is already isolated.
+    Ref browsingContextGroupForSwap = browsingContextGroupForCommittingNavigation(navigation);
+    if (browsingContextGroupForSwap->crossOriginMode() == CrossOriginMode::Isolated)
+        return completionHandler(NavigationResponseWithoutProcessSwap::ResumeLoad);
+
+    // Unlike the network process, this takes the top-level creation URL into account.
+    bool needsIsolation = needsDocumentIsolationPolicyProcess(response.url, response.documentIsolationPolicy, frame->isMainFrame());
+    if (needsIsolation == processLoadingNavigation->isDocumentIsolationPolicyProcess())
+        return completionHandler(NavigationResponseWithoutProcessSwap::ResumeLoad);
+
+    Site responseSite { response.url };
+    auto crossOriginIsolation = needsIsolation ? ProcessCrossOriginIsolation::DocumentIsolationPolicy : ProcessCrossOriginIsolation::None;
+    RefPtr frameProcess = browsingContextGroupForSwap->processForSite(responseSite, crossOriginIsolation);
+    RefPtr<WebProcessProxy> processForNavigation = frameProcess ? &frameProcess->process() : nullptr;
+    // The navigation already picked its website data store, Lockdown Mode and Enhanced Security.
+    Ref dataStore = websiteDataStoreOfLoad(*processLoadingNavigation, protect(websiteDataStore()));
+    if (processForNavigation && (processForNavigation->websiteDataStore() != dataStore.ptr() || !processForNavigation->matchesLockdownModeAndEnhancedSecurity(processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity())))
+        processForNavigation = nullptr;
+    if (!processForNavigation) {
+        auto isolatedProcessType = frame->isMainFrame() ? WebProcessProxy::IsolatedProcessType::MainFrame : WebProcessProxy::IsolatedProcessType::SubFrame;
+        auto mainFrameSite = frame->isMainFrame() ? responseSite : Site { protect(mainFrame())->url() };
+        processForNavigation = protect(m_configuration->processPool())->processForSite(dataStore, isolatedProcessType, responseSite, mainFrameSite, processLoadingNavigation->lockdownMode(), processLoadingNavigation->enhancedSecurity(), m_configuration, WebCore::ProcessSwapDisposition::None, crossOriginIsolation);
+    }
+
+    if (frame->isMainFrame())
+        return performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), processForNavigation.releaseNonNull(), WebCore::ProcessSwapDisposition::None, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
+
+    // The old process must not report the provisional load as failed, as it continues in the new one.
+    processLoadingNavigation->send(Messages::WebFrame::StopLoadingDueToProcessSwap(navigationID), frame->frameID());
+    auto destinationWebProcessIdentifier = processForNavigation->coreProcessIdentifier();
+    continueNavigationInNewProcess(*navigation, *frame, nullptr, browsingContextGroupForSwap, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, WebCore::ProcessSwapDisposition::None, nullptr, originalNavigationStartTime);
+    completionHandler(destinationWebProcessIdentifier);
+}
+
 void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIdentifier navigationID, const Site& responseSite, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
 {
     RefPtr navigation = m_navigationState->navigation(navigationID);
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerProcessSwapForEnhancedSecurity: navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     RefPtr mainFrame = m_mainFrame;
-    RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, loadingWebProcess) : nullptr;
+    RefPtr processLoadingNavigation = navigation && mainFrame ? this->processLoadingNavigation(*navigation, *mainFrame, loadingWebProcess) : nullptr;
     if (!processLoadingNavigation)
         return completionHandler(NavigationResponseWithoutProcessSwap::CancelLoad);
 
@@ -11801,7 +11874,7 @@ void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIden
 
     internals().enhancedSecurityTracker.enableFor(EnhancedSecurityReason::InsecureProvisional, *navigation);
 
-    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(websiteDataStoreOfLoad(*processLoadingNavigation, protect(websiteDataStore())), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, processLoadingNavigation->lockdownMode(), EnhancedSecurity::EnabledInsecure, m_configuration, WebCore::ProcessSwapDisposition::None, browsingContextGroupForSwap->crossOriginMode());
+    Ref processForNavigation = protect(m_configuration->processPool())->processForSite(websiteDataStoreOfLoad(*processLoadingNavigation, protect(websiteDataStore())), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, processLoadingNavigation->lockdownMode(), EnhancedSecurity::EnabledInsecure, m_configuration, WebCore::ProcessSwapDisposition::None, processCrossOriginIsolationForBrowsingContextGroup(browsingContextGroupForSwap->crossOriginMode()));
 
     performProcessSwapForNavigationResponse(*navigation, WTF::move(browsingContextGroupForSwap), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::None, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
 }

@@ -131,6 +131,7 @@ private func statusText(code: UInt) -> String {
     case 101: "Switching Protocols"
     case 200: "OK"
     case 204: "No Content"
+    case 205: "Reset Content"
     case 301: "Moved Permanently"
     case 302: "Found"
     case 303: "See Other"

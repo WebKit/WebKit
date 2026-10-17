@@ -31,6 +31,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Document.h"
+#include "DocumentIsolationPolicy.h"
 #include "DocumentLoader.h"
 #include "DocumentResourceLoader.h"
 #include "Frame.h"
@@ -43,6 +44,7 @@
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -188,6 +190,18 @@ void DocumentPrefetcher::redirectReceived(CachedResource& resource, ResourceRequ
     completionHandler({ });
 }
 
+bool DocumentPrefetcher::canServeNavigations(const ResourceResponse& response) const
+{
+    if (!response.isSuccessful())
+        return false;
+    // A navigation served from a prefetch stays in this process, so its Document-Isolation-Policy has to match this document's.
+    RefPtr document = m_frame ? m_frame->document() : nullptr;
+    if (!document || !document->settings().documentIsolationPolicyEnabled() || !document->settings().siteIsolationEnabled())
+        return true;
+    auto documentIsolationPolicy = obtainDocumentIsolationPolicy(response, document->isSecureContext() ? IsSecureContext::Yes : IsSecureContext::No);
+    return documentIsolationPolicy == document->documentIsolationPolicy();
+}
+
 void DocumentPrefetcher::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     // Remove unsuccessful prefetches from the memory cache as soon as the
@@ -196,7 +210,7 @@ void DocumentPrefetcher::responseReceived(const CachedResource& resource, const 
     // error) response that is still in the cache while the body loads.
     // We only remove from the memory cache here (not the client registration),
     // since the load is still in progress. Full cleanup happens in notifyFinished.
-    if (!response.isSuccessful())
+    if (!canServeNavigations(response))
         MemoryCache::singleton().remove(const_cast<CachedResource&>(resource));
     if (completionHandler)
         completionHandler();
@@ -209,7 +223,7 @@ void DocumentPrefetcher::notifyFinished(CachedResource& resource, const NetworkL
     if (it != m_prefetchedData.end())
         it->value.metrics = Box<NetworkLoadMetrics>::create(metrics);
 
-    if (!resource.response().isSuccessful()) {
+    if (!canServeNavigations(resource.response())) {
         if (resource.hasClient(*this))
             resource.removeClient(*this);
         m_prefetchedData.remove(resourceURL);

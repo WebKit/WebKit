@@ -656,8 +656,9 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         loadParameters.isInitiatorPrefetch = handle->type() == CachedResource::Type::LinkPrefetch;
 
     std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume;
-    if (loadParameters.isMainFrameNavigation) {
+    if (request.requester() == ResourceRequestRequester::Main)
         existingNetworkResourceLoadIdentifierToResume = std::exchange(m_existingNetworkResourceLoadIdentifierToResume, std::nullopt);
+    if (loadParameters.isMainFrameNavigation) {
         if (RefPtr webFrame = WebFrame::webFrame(frame->frameID()))
             loadParameters.shouldConsiderEnhancedSecurityForInsecureResponse = webFrame->page() ? webFrame->page()->takeShouldConsiderEnhancedSecurityForInsecureResponseForCurrentNavigation() : false;
     }

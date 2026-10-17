@@ -80,6 +80,8 @@ struct AgentClusterRequest {
     WebCore::DocumentIsolationPolicy documentIsolationPolicy { WebCore::DocumentIsolationPolicy::None };
 };
 
+WebCore::DocumentIsolationPolicy documentIsolationPolicyForNavigationResponse(const URL&, WebCore::DocumentIsolationPolicy headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
+
 enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAndInjectBrowsingContext };
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
@@ -94,6 +96,7 @@ public:
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
     RefPtr<FrameProcess> processForSite(const WebCore::Site&);
+    RefPtr<FrameProcess> processForSite(const WebCore::Site&, ProcessCrossOriginIsolation);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     bool addFrameProcessWithoutInjectingPageContext(FrameProcess&);
@@ -137,7 +140,14 @@ private:
     HashSet<WebCore::Site> m_sharedProcessSites;
     WeakHashSet<WebPageProxy> m_pagesInSharedProcess;
 
-    HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
+    // A site can have a process for documents with a Document-Isolation-Policy next to its other one, so the
+    // key says which of the two it is.
+    enum class IsDocumentIsolationPolicyProcess : bool { No, Yes };
+    using ProcessMapKey = std::pair<WebCore::Site, IsDocumentIsolationPolicyProcess>;
+    ProcessMapKey processMapKey(const FrameProcess&) const;
+    bool hasProcessForSite(const WebCore::Site&) const;
+
+    HashMap<ProcessMapKey, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 

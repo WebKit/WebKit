@@ -937,16 +937,17 @@ void DocumentLoader::responseReceived(const CachedResource& resource, const Reso
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
 
-    // If we joined an in-flight prefetch and the response is not successful,
-    // set a flag to suppress committing the error response. The retry will be
+    RefPtr frame = m_frame;
+
+    // If we joined an in-flight prefetch whose response can't serve this navigation,
+    // set a flag to suppress committing it. The retry will be
     // scheduled in finishedLoading via the NavigationScheduler.
     if (m_mainResource
         && m_mainResource->options().cachingPolicy == CachingPolicy::AllowCachingMainResourcePrefetch
-        && !response.isSuccessful()
-        && response.httpStatusCode() > 0)
+        && response.httpStatusCode() > 0
+        && frame && !frame->loader().documentPrefetcher().canServeNavigations(response))
         m_prefetchResponseFailed = true;
 
-    RefPtr frame = m_frame.get();
     if (shouldClearContentSecurityPolicyForResponse(response))
         m_contentSecurityPolicy = nullptr;
     else {

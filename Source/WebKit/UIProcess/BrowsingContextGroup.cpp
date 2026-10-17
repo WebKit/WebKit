@@ -70,7 +70,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
         return completionHandler(nullptr);
 
-    if (site.isEmpty() || m_processMap.contains(site) || m_crossOriginMode == CrossOriginMode::Isolated)
+    if (site.isEmpty() || hasProcessForSite(site) || m_crossOriginMode == CrossOriginMode::Isolated)
         return completionHandler(nullptr);
 
     if (isLoopbackOrLocalNetworkSite(site, preferences.localNetworkAccessEnabled()))
@@ -119,7 +119,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
         return completionHandler(existingSharedProcess.get());
     }
 
-    Ref process = protect(pageConfiguration.processPool())->processForSite(websiteDataStore, WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessSwapDisposition::Other, m_crossOriginMode);
+    Ref process = protect(pageConfiguration.processPool())->processForSite(websiteDataStore, WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessSwapDisposition::Other, processCrossOriginIsolationForBrowsingContextGroup(m_crossOriginMode));
     ASSERT(!process->isInProcessCache());
     Ref frameProcess = FrameProcess::create(process, *this, std::nullopt, mainFrameSite, preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
     ASSERT(frameProcess->isSharedProcess());
@@ -132,11 +132,11 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
-    ASSERT(process.isDummyProcessProxy() || process.crossOriginMode() == m_crossOriginMode);
+    ASSERT(process.isDummyProcessProxy() || process.crossOriginMode() == m_crossOriginMode || (process.isDocumentIsolationPolicyProcess() && m_crossOriginMode == CrossOriginMode::Shared));
 
     if (preferences.siteIsolationEnabled()) {
         RefPtr sharedProcess = liveSharedProcess();
-        if (sharedProcess && (m_sharedProcessSites.contains(site) || process.isSharedProcess())) {
+        if (sharedProcess && !process.isDocumentIsolationPolicyProcess() && (m_sharedProcessSites.contains(site) || process.isSharedProcess())) {
             ASSERT(&sharedProcess->process() == &process);
             if (m_sharedProcessSites.add(site).isNewEntry) {
                 process.addSharedProcessDomain(site.domain());
@@ -144,7 +144,7 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
             }
             return sharedProcess.releaseNonNull();
         }
-        if (RefPtr existingProcess = processForSite(site)) {
+        if (RefPtr existingProcess = processForSite(site, process.crossOriginIsolation())) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
                 return existingProcess.releaseNonNull();
         }
@@ -171,13 +171,31 @@ void BrowsingContextGroup::clearSharedProcess()
     m_pagesInSharedProcess.clear();
 }
 
+auto BrowsingContextGroup::processMapKey(const FrameProcess& process) const -> ProcessMapKey
+{
+    bool isDocumentIsolationPolicyProcess = process.process().isDocumentIsolationPolicyProcess();
+    ASSERT(!isDocumentIsolationPolicyProcess || m_crossOriginMode == CrossOriginMode::Shared);
+    return { *process.site(), isDocumentIsolationPolicyProcess ? IsDocumentIsolationPolicyProcess::Yes : IsDocumentIsolationPolicyProcess::No };
+}
+
+bool BrowsingContextGroup::hasProcessForSite(const Site& site) const
+{
+    return m_processMap.contains({ site, IsDocumentIsolationPolicyProcess::No }) || m_processMap.contains({ site, IsDocumentIsolationPolicyProcess::Yes });
+}
+
 RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
 {
+    return processForSite(site, processCrossOriginIsolationForBrowsingContextGroup(m_crossOriginMode));
+}
+
+RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site, ProcessCrossOriginIsolation crossOriginIsolation)
+{
+    auto isDocumentIsolationPolicyProcess = crossOriginIsolation == ProcessCrossOriginIsolation::DocumentIsolationPolicy ? IsDocumentIsolationPolicyProcess::Yes : IsDocumentIsolationPolicyProcess::No;
     RefPtr<FrameProcess> process;
-    if (m_sharedProcessSites.contains(site))
+    if (isDocumentIsolationPolicyProcess == IsDocumentIsolationPolicyProcess::No && m_sharedProcessSites.contains(site))
         process = liveSharedProcess();
     else
-        process = m_processMap.get(site);
+        process = m_processMap.get({ site, isDocumentIsolationPolicyProcess });
     if (!process)
         return nullptr;
     if (process->process().state() == WebProcessProxy::State::Terminated)
@@ -246,9 +264,11 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
     for (Ref page : m_pages) {
         // Under site isolation, a same-site page should be hosted in the same process and
         // shouldn't need a remote page. Empty sites are the exception, as they can compare equal
-        // for pages that are not actually co-located in the same process.
+        // for pages that are not actually co-located in the same process, and so are documents
+        // with a Document-Isolation-Policy, which have their own process.
         bool sameSite = site == Site(URL(page->currentURL()));
-        if (sameSite && !site.isEmpty())
+        RefPtr mainFrame = page->mainFrame();
+        if (sameSite && !site.isEmpty() && mainFrame && mainFrame->process().isDocumentIsolationPolicyProcess() == processProxy->isDocumentIsolationPolicyProcess())
             continue;
         createRemotePageIfNeeded(page, site);
     }
@@ -276,11 +296,11 @@ static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, const 
 
 bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProcess& process)
 {
-    auto& site = *process.site();
-    if (m_processMap.get(site) == &process)
+    auto key = processMapKey(process);
+    if (m_processMap.get(key) == &process)
         return false;
-    ASSERT(!m_processMap.get(site) || canReplaceFrameProcessInProcessMap(site, *m_processMap.get(site)));
-    m_processMap.set(site, process);
+    ASSERT(!m_processMap.get(key) || canReplaceFrameProcessInProcessMap(key.first, *m_processMap.get(key)));
+    m_processMap.set(WTF::move(key), process);
     return true;
 }
 
@@ -290,12 +310,12 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
         if (m_sharedProcess.get() == &process)
             clearSharedProcess();
     } else {
-        auto& site = *process.site();
         // A later navigation may already have replaced this entry (see
         // canReplaceFrameProcessInProcessMap), in which case the site now belongs to a different
         // FrameProcess and this teardown must leave it alone.
-        if (m_processMap.get(site) == &process)
-            m_processMap.remove(site);
+        auto key = processMapKey(process);
+        if (m_processMap.get(key) == &process)
+            m_processMap.remove(key);
     }
     m_remotePages.removeIf([&] (auto& pair) {
         auto& set = pair.value;
@@ -340,8 +360,8 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
     if (RefPtr sharedProcess = liveSharedProcess(); sharedProcess && m_pagesInSharedProcess.add(page).isNewEntry)
         createRemotePageIfNeeded(sharedProcess->process(), *m_sharedProcessSites.begin());
 
-    m_processMap.removeIf([&] (auto& pair) {
-        auto& site = pair.key;
+    m_processMap.removeIf([&](auto& pair) {
+        auto& site = pair.key.first;
         auto& process = pair.value;
         if (!process) {
             ASSERT_NOT_REACHED_WITH_MESSAGE("FrameProcess should remove itself in the destructor so we should never find a null WeakPtr");
@@ -484,17 +504,26 @@ AgentClusterRequest AgentClusterRequest::forNavigationAction(const URL& url, con
     return { isSubstituteData == IsSubstituteData::Yes ? Source::SubstituteData : Source::NavigationAction, WebCore::SecurityOrigin::create(url)->data(), topLevelCreationURL };
 }
 
+static WebCore::IsSecureContext isSecureContextForNavigationResponse(const WebCore::SecurityOrigin& origin, WebCore::IsSecureContext topLevelIsSecureContext)
+{
+    return origin.isPotentiallyTrustworthy() && topLevelIsSecureContext == WebCore::IsSecureContext::Yes ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
+}
+
+WebCore::DocumentIsolationPolicy documentIsolationPolicyForNavigationResponse(const URL& url, WebCore::DocumentIsolationPolicy headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
+{
+    // The WebContent process only applies policies from response headers to http(s) and blob: documents.
+    if (!url.protocolIsInHTTPFamilyOrBlob() || !preferences.documentIsolationPolicyEnabled() || !preferences.siteIsolationEnabled())
+        return WebCore::DocumentIsolationPolicy::None;
+    return WebCore::obtainDocumentIsolationPolicy(url, headerPolicy, isSecureContextForNavigationResponse(WebCore::SecurityOrigin::create(url), topLevelIsSecureContext));
+}
+
 AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::ResourceResponse& response, const URL& topLevelCreationURL, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences& preferences)
 {
     Ref origin = WebCore::SecurityOrigin::create(response.url());
-    auto isSecureContext = origin->isPotentiallyTrustworthy() && topLevelIsSecureContext == WebCore::IsSecureContext::Yes ? WebCore::IsSecureContext::Yes : WebCore::IsSecureContext::No;
     AgentClusterRequest request { Source::NavigationResponse, origin->data(), topLevelCreationURL };
-    // The WebContent process only applies these policies to http(s) and blob: documents.
-    bool hasPolicyHeaders = response.url().protocolIsInHTTPFamilyOrBlob();
-    if (hasPolicyHeaders && preferences.documentIsolationPolicyEnabled() && preferences.siteIsolationEnabled())
-        request.documentIsolationPolicy = WebCore::obtainDocumentIsolationPolicy(response, isSecureContext);
+    request.documentIsolationPolicy = documentIsolationPolicyForNavigationResponse(response.url(), WebCore::parseDocumentIsolationPolicy(response.httpHeaderField(WebCore::HTTPHeaderName::DocumentIsolationPolicy)), topLevelIsSecureContext, preferences);
     if (preferences.originAgentClusterEnabled())
-        request.requestedKeying = hasPolicyHeaders ? WebCore::obtainOriginAgentClusterPolicy(response, isSecureContext, nullptr) : WebCore::OriginKeyed::No;
+        request.requestedKeying = response.url().protocolIsInHTTPFamilyOrBlob() ? WebCore::obtainOriginAgentClusterPolicy(response, isSecureContextForNavigationResponse(origin, topLevelIsSecureContext), nullptr) : WebCore::OriginKeyed::No;
     return request;
 }
 

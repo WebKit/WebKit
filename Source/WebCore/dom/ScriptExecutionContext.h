@@ -242,7 +242,7 @@ public:
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     WEBCORE_EXPORT static void LEGACY_NODELETE setCrossOriginMode(CrossOriginMode);
-    static CrossOriginMode LEGACY_NODELETE crossOriginMode();
+    WEBCORE_EXPORT static CrossOriginMode LEGACY_NODELETE crossOriginMode();
 
     virtual bool crossOriginIsolated() const { return false; }
     virtual String agentClusterID() const = 0;

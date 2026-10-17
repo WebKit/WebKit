@@ -27,6 +27,7 @@
 
 #include <WebCore/IsSecureContext.h>
 #include <WebCore/PlatformExportMacros.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,5 +41,8 @@ enum class DocumentIsolationPolicy : bool {
 
 // https://wicg.github.io/document-isolation-policy/#obtain-dip
 WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse&, IsSecureContext);
+WEBCORE_EXPORT DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL&, DocumentIsolationPolicy headerPolicy, IsSecureContext);
+
+WEBCORE_EXPORT DocumentIsolationPolicy parseDocumentIsolationPolicy(StringView headerValue);
 
 } // namespace WebCore

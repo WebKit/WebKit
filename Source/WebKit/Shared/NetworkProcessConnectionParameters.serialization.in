@@ -31,4 +31,12 @@ struct WebKit::NetworkProcessConnectionParameters {
     Vector<WebKit::WebPageProxyIdentifier> allowedWebPageProxyIdentifiers;
     std::optional<HashSet<WebCore::RegistrableDomain>> hostedDomains;
     HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
+    WebKit::ProcessCrossOriginIsolation crossOriginIsolation;
+};
+
+header: "ProcessCrossOriginIsolation.h"
+enum class WebKit::ProcessCrossOriginIsolation : uint8_t {
+    None,
+    BrowsingContextGroup,
+    DocumentIsolationPolicy,
 };

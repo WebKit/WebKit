@@ -25,9 +25,16 @@
 
 #pragma once
 
+#include <WebCore/DocumentIsolationPolicy.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
+
+struct NavigationResponseForProcessSwap {
+    URL url;
+    WebCore::DocumentIsolationPolicy documentIsolationPolicy { WebCore::DocumentIsolationPolicy::None };
+};
 
 enum class NavigationResponseWithoutProcessSwap : bool {
     CancelLoad,

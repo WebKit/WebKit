@@ -4083,6 +4083,7 @@ header: <WebCore/FrameLoaderTypes.h>
 enum class WebCore::NavigationResponseProcessSwapReason : uint8_t {
     COOP,
     EnhancedSecurity,
+    DocumentIsolationPolicy,
 };
 
 enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {

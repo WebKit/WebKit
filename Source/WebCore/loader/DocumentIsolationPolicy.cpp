@@ -34,11 +34,20 @@ namespace WebCore {
 
 DocumentIsolationPolicy obtainDocumentIsolationPolicy(const ResourceResponse& response, IsSecureContext isSecureContext)
 {
-    // FIXME: Get the blob URL entry's policy container directly instead of reading the headers it is reflected as.
-    if (isSecureContext == IsSecureContext::No && !response.url().protocolIsBlob())
-        return DocumentIsolationPolicy::None;
+    return obtainDocumentIsolationPolicy(response.url(), parseDocumentIsolationPolicy(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy)), isSecureContext);
+}
 
-    auto parsedItem = RFC8941::parseItemStructuredFieldValue(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy));
+DocumentIsolationPolicy obtainDocumentIsolationPolicy(const URL& url, DocumentIsolationPolicy headerPolicy, IsSecureContext isSecureContext)
+{
+    // FIXME: Get the blob URL entry's policy container directly instead of reading the headers it is reflected as.
+    if (isSecureContext == IsSecureContext::No && !url.protocolIsBlob())
+        return DocumentIsolationPolicy::None;
+    return headerPolicy;
+}
+
+DocumentIsolationPolicy parseDocumentIsolationPolicy(StringView headerValue)
+{
+    auto parsedItem = RFC8941::parseItemStructuredFieldValue(headerValue);
     if (!parsedItem)
         return DocumentIsolationPolicy::None;
 

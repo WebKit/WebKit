@@ -34,6 +34,7 @@
 #include "NetworkResourceLoadMap.h"
 #include "NetworkStorageSession.h"
 #include "PolicyDecision.h"
+#include "ProcessCrossOriginIsolation.h"
 #include "SandboxExtension.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "StorageAccessPermissionChangeObserver.h"
@@ -177,6 +178,7 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     SharedPreferencesForWebProcess sharedPreferencesForWebProcessValue() const { return m_sharedPreferencesForWebProcess; }
+    ProcessCrossOriginIsolation crossOriginIsolation() const { return m_crossOriginIsolation; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
     // std::nullopt means the process may host documents from any site.
@@ -590,6 +592,7 @@ private:
     HashCountedSet<BlobURLKey> m_blobURLHandles;
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     std::optional<HashSet<WebCore::RegistrableDomain>> m_hostedDomains;
+    const ProcessCrossOriginIsolation m_crossOriginIsolation;
     HashSet<String> m_allowedFilePaths;
 #if ENABLE(IPC_TESTING_API)
     const Ref<IPCTester> m_ipcTester;

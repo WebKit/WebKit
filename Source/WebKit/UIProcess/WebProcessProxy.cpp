@@ -430,9 +430,9 @@ void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableD
         m_allowedFirstPartiesForCookies.first = LoadedWebArchive::Yes;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, ShouldLaunchProcess shouldLaunchProcess)
 {
-    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity));
+    Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginIsolation, lockdownMode, enhancedSecurity));
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     // FIXME(rdar://188839922): disable jetsam boost on prewarmed processes always, not just when SI is enabled.
     if (isPrewarmed == IsPrewarmed::Yes && WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
@@ -489,7 +489,7 @@ void WebProcessProxy::reclaimProcessesIfNeeded()
 
 Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, Site&& site, WebsiteDataStore& websiteDataStore, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
 {
-    Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, crossOriginMode, lockdownMode, enhancedSecurity));
+    Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, processCrossOriginIsolationForBrowsingContextGroup(crossOriginMode), lockdownMode, enhancedSecurity));
     proxy->m_committedSites.add(site);
     proxy->m_remoteWorkerDomains.add(site.domain());
     proxy->m_site = WTF::move(site);
@@ -502,7 +502,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
     return proxy;
 }
 
-WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
+WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ProcessCrossOriginIsolation crossOriginIsolation, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
     : AuxiliaryProcessProxy("WebProcess"_s, processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
@@ -519,7 +519,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_isPrewarmed(isPrewarmed == IsPrewarmed::Yes)
     , m_lockdownMode(lockdownMode)
     , m_enhancedSecurity(enhancedSecurity)
-    , m_crossOriginMode(crossOriginMode)
+    , m_crossOriginIsolation(crossOriginIsolation)
     , m_shutdownPreventingScopeCounter([weakThis = WeakPtr { *this }](RefCounterEvent event) {
         if (RefPtr protectedThis = weakThis; protectedThis && event == RefCounterEvent::Decrement)
             protectedThis->maybeShutDown();
@@ -2192,7 +2192,7 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
         return false;
     }
 
-    if (m_crossOriginMode == CrossOriginMode::Isolated) {
+    if (crossOriginMode() == CrossOriginMode::Isolated) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canBeAddedToWebProcessCache: Not adding to process cache because the process is cross-origin isolated");
         return false;
     }

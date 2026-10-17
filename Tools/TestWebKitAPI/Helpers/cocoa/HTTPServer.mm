@@ -247,6 +247,8 @@ static ASCIILiteral statusText(unsigned statusCode)
         return "OK"_s;
     case 204:
         return "No Content"_s;
+    case 205:
+        return "Reset Content"_s;
     case 301:
         return "Moved Permanently"_s;
     case 302:

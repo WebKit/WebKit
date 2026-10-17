@@ -65,6 +65,7 @@ public:
     Box<NetworkLoadMetrics> takePrefetchedResourceMetrics(const URL&);
     void clearPrefetchedResourcesExcept(const URL&);
     void clearPrefetchedResourcesForOrigin(const SecurityOrigin&);
+    bool canServeNavigations(const ResourceResponse&) const;
 
     // CachedRawResourceClient
     void responseReceived(const CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) override;

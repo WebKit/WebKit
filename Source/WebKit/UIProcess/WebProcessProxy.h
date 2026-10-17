@@ -34,6 +34,7 @@
 #include "MessageReceiverMap.h"
 #include "NetworkProcessProxy.h"
 #include "PageClient.h"
+#include "ProcessCrossOriginIsolation.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
 #include "RemoteSnapshotIdentifier.h"
@@ -216,7 +217,7 @@ public:
         Shared
     };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, EnhancedSecurity, IsPrewarmed, ProcessCrossOriginIsolation = ProcessCrossOriginIsolation::None, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
 
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
@@ -605,9 +606,12 @@ public:
 
     void setAppBadgeFromWorker(IPC::Untrusted<WebCore::SecurityOriginData>&&, std::optional<uint64_t> badge);
 
-    WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
+    ProcessCrossOriginIsolation crossOriginIsolation() const { return m_crossOriginIsolation; }
+    WebCore::CrossOriginMode crossOriginMode() const { return toCrossOriginMode(m_crossOriginIsolation); }
+    bool isDocumentIsolationPolicyProcess() const { return m_crossOriginIsolation == ProcessCrossOriginIsolation::DocumentIsolationPolicy; }
     LockdownMode lockdownMode() const { return m_lockdownMode; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
+    bool matchesLockdownModeAndEnhancedSecurity(LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity) const { return m_lockdownMode == lockdownMode && enhancedSecurityStatesAreConsistent(m_enhancedSecurity, enhancedSecurity); }
 
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
@@ -715,7 +719,7 @@ public:
 private:
     Type type() const final { return Type::WebContent; }
 
-    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
+    WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, ProcessCrossOriginIsolation, LockdownMode, EnhancedSecurity);
 
     void updateSiteForMainFrameNavigation(const URL&);
     void sendHostedDomainsToNetworkProcess();
@@ -737,7 +741,7 @@ private:
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) override;
     bool shouldConfigureJSCForTesting() const final;
     bool isJITEnabled() const final;
-    bool shouldEnableSharedArrayBuffer() const final { return m_crossOriginMode == WebCore::CrossOriginMode::Isolated; }
+    bool shouldEnableSharedArrayBuffer() const final { return crossOriginMode() == WebCore::CrossOriginMode::Isolated; }
     bool shouldEnableLockdownMode() const final { return m_lockdownMode == LockdownMode::Enabled; }
     bool shouldEnableEnhancedSecurity() const final { return isEnhancedSecurityEnabledForState(m_enhancedSecurity); }
     bool shouldDisableJITCage() const final;
@@ -966,7 +970,7 @@ private:
     bool m_isPrewarmed;
     LockdownMode m_lockdownMode { LockdownMode::Disabled };
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
-    WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
+    const ProcessCrossOriginIsolation m_crossOriginIsolation;
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
     bool m_sentFontdMachExtensionHandles { false };

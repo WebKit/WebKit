@@ -656,7 +656,16 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     if (isMainFrame())
         return completionHandler(*webPageIDInCurrentProcess());
 
+    // A response can send the navigation back to the process of the frame's current document.
+    if (process.coreProcessIdentifier() == this->process().coreProcessIdentifier()) {
+        m_provisionalFrame = nullptr;
+        return completionHandler(*webPageIDInCurrentProcess());
+    }
+
     Site site = effectiveOrigin ? Site { *effectiveOrigin } : Site { navigation.currentRequest().url() };
+    // A document without a site, such as a data: URL document, joins the process's site.
+    if (auto& processSite = process.site(); site.isEmpty() && processSite)
+        site = *processSite;
     RefPtr page = m_page.get();
 
     // Joining a process to a suspended page would leave content running that `_suspendPage:`
@@ -708,7 +717,7 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        ASSERT(url().isEmpty() || WebCore::Site { url() } != WebCore::Site { request.url() });
+        ASSERT(url().isEmpty() || WebCore::Site { url() } != WebCore::Site { request.url() } || process().isDocumentIsolationPolicyProcess() != m_provisionalFrame->process().isDocumentIsolationPolicyProcess());
 
         // Keep FrameProcess alive until message reply, so the current active document could finish dispatching necessary events.
         protect(process())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->process().coreProcessIdentifier(), m_layerHostingContextIdentifier, nullptr), [keepAlive = FrameProcessRefWithExpiration::create(Ref { frameProcess() }, unloadEventsExpirationDelay)] { }, *webPageIDInCurrentProcess());

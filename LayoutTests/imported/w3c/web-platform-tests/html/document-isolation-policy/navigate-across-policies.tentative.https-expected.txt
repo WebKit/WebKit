@@ -1,0 +1,6 @@
+
+PASS navigation.navigate() from a document without a policy to one with does not abort the navigation
+PASS navigation.navigate() from a document with a policy to one without does not abort the navigation
+PASS A navigation to a 204 response from a document with a policy leaves the document alone
+PASS A navigation to a 205 response from a document with a policy leaves the document alone
+

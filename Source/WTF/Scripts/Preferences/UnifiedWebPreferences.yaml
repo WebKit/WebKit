@@ -2028,6 +2028,7 @@ DocumentIsolationPolicyEnabled:
   humanReadableName: "Document-Isolation-Policy header"
   humanReadableDescription: "Support for the Document-Isolation-Policy header"
   defaultValue: false
+  sharedPreferenceForWebProcess: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:

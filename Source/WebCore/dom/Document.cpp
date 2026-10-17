@@ -67,6 +67,7 @@
 #include "ContentfulPaintChecker.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "CrossOriginMode.h"
 #include "CryptoClient.h"
 #include "ContainerNodeInlines.h"
 #include "CustomEffect.h"
@@ -575,14 +576,16 @@ static bool canAccessAncestor(const SecurityOrigin& activeSecurityOrigin, Frame*
         return false;
 
     const bool isLocalActiveOrigin = activeSecurityOrigin.isLocal();
-    for (Ref localAncestor : inclusiveAncestorFrames<LocalFrame>(*targetFrame)) {
-        RefPtr ancestorDocument = localAncestor->document();
+    for (Ref ancestor : inclusiveAncestorFrames(*targetFrame)) {
         // FIXME: Should be an ASSERT? Frames should alway have documents.
-        if (!ancestorDocument)
+        if (RefPtr localAncestor = dynamicDowncast<LocalFrame>(ancestor); localAncestor && !localAncestor->document())
             return true;
 
-        Ref ancestorSecurityOrigin = ancestorDocument->securityOrigin();
-        if (activeSecurityOrigin.isSameOriginDomain(ancestorSecurityOrigin))
+        // Same-origin documents can be in different processes, such as when only one of them has a Document-Isolation-Policy.
+        RefPtr ancestorSecurityOrigin = ancestor->frameDocumentSecurityOrigin();
+        if (!ancestorSecurityOrigin)
+            continue;
+        if (activeSecurityOrigin.isSameOriginDomain(*ancestorSecurityOrigin))
             return true;
 
         // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
@@ -8867,7 +8870,9 @@ bool Document::isSecureContext() const
 
 bool Document::isInCrossOriginIsolatedAgentCluster() const
 {
-    return crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
+    if (crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
+        return true;
+    return documentIsolationPolicy() != DocumentIsolationPolicy::None && ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
 }
 
 bool Document::crossOriginIsolated() const

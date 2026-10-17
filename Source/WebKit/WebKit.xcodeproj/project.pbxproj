@@ -8709,6 +8709,7 @@
 		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
+		D010127C15772AD342A8E293 /* ProcessCrossOriginIsolation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessCrossOriginIsolation.h; sourceTree = "<group>"; };
 		D1460B47E4FD3B6910A6A868 /* GeneratedSerializersGPUProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersGPUProcess.mm; sourceTree = "<group>"; };
 		D22128312B224B8400DC4861 /* DidFilterKnownLinkDecoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DidFilterKnownLinkDecoration.h; path = Classifier/DidFilterKnownLinkDecoration.h; sourceTree = "<group>"; };
 		D243D71E2CC1764B006D5E35 /* ColorControlSupportsAlpha.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorControlSupportsAlpha.h; sourceTree = "<group>"; };
@@ -10629,6 +10630,7 @@
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				2D4EDA892AFA220B003396F7 /* PrintInfo.serialization.in */,
 				5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */,
+				D010127C15772AD342A8E293 /* ProcessCrossOriginIsolation.h */,
 				3D3C76402B6B1E280013828A /* ProcessQualified.serialization.in */,
 				0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,

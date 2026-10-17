@@ -73,6 +73,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/DocumentIsolationPolicy.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
@@ -1547,6 +1548,36 @@ void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessChe
     });
 }
 
+bool NetworkResourceLoader::shouldConsiderProcessSwapForDocumentIsolationPolicy(const ResourceResponse& response) const
+{
+    // Prefetches are navigation requests too, but are not the response of their navigation.
+    if (!m_parameters.navigationID || !isMainResource())
+        return false;
+
+    Ref connection = m_connection;
+    auto preferences = connection->sharedPreferencesForWebProcessValue();
+    if (!preferences.documentIsolationPolicyEnabled || !preferences.siteIsolationEnabled)
+        return false;
+
+    // Every process of a cross-origin isolated browsing context group is already isolated.
+    auto crossOriginIsolation = connection->crossOriginIsolation();
+    if (crossOriginIsolation == ProcessCrossOriginIsolation::BrowsingContextGroup)
+        return false;
+
+    auto& url = response.url();
+    if (!url.protocolIsInHTTPFamilyOrBlob())
+        return false;
+
+    // These responses don't replace the document.
+    if (response.httpStatusCode() == httpStatus204NoContent || response.httpStatusCode() == httpStatus205ResetContent)
+        return false;
+
+    // This ignores the top-level creation URL, which the UI process takes into account when it decides.
+    auto isSecureContext = SecurityOrigin::create(url)->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No;
+    bool needsIsolation = obtainDocumentIsolationPolicy(response, isSecureContext) != DocumentIsolationPolicy::None;
+    return needsIsolation != (crossOriginIsolation == ProcessCrossOriginIsolation::DocumentIsolationPolicy);
+}
+
 void NetworkResourceLoader::failWhileHandlingResponse(const ResourceError& error)
 {
     // Empty the queues before failing so that the failure is not itself deferred, and answer the response handlers
@@ -1577,6 +1608,9 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
 
     auto browsingContextGroupSwitchDecision = BrowsingContextGroupSwitchDecision::StayInGroup;
     bool shouldConsiderProcessSwapForEnhancedSecurity = false;
+    bool shouldConsiderProcessSwapForDocumentIsolationPolicy = false;
+    // Later responses, such as the parts of a multipart response, go to the process of the first.
+    bool isFirstResponse = !std::exchange(m_didSendResponse, true);
 
     if (!connection->usesSingleWebProcess()) {
         browsingContextGroupSwitchDecision = toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
@@ -1585,9 +1619,11 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
             && m_parameters.navigationID
             && response.url().protocolIs("http"_s)
             && !WebCore::SecurityOrigin::isLocalHostOrLoopbackIPAddress(response.url().host());
+        if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup && !shouldConsiderProcessSwapForEnhancedSecurity && isFirstResponse)
+            shouldConsiderProcessSwapForDocumentIsolationPolicy = this->shouldConsiderProcessSwapForDocumentIsolationPolicy(response);
     }
 
-    if (!shouldConsiderProcessSwapForEnhancedSecurity && browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
+    if (!shouldConsiderProcessSwapForEnhancedSecurity && !shouldConsiderProcessSwapForDocumentIsolationPolicy && browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
         send(Messages::WebResourceLoader::DidReceiveResponse { response, privateRelayed, needsContinueDidReceiveResponseMessage, computeResponseMetrics(response) });
         return;
     }
@@ -1642,12 +1678,14 @@ void NetworkResourceLoader::sendDidReceiveResponseWithPotentialProcessSwap(const
         connection->adoptNetworkResourceLoader(loaderCoreIdentifier, loader.releaseNonNull());
     };
 
-    auto reason = shouldConsiderProcessSwapForEnhancedSecurity ? NavigationResponseProcessSwapReason::EnhancedSecurity : NavigationResponseProcessSwapReason::COOP;
+    auto reason = shouldConsiderProcessSwapForDocumentIsolationPolicy ? NavigationResponseProcessSwapReason::DocumentIsolationPolicy : shouldConsiderProcessSwapForEnhancedSecurity ? NavigationResponseProcessSwapReason::EnhancedSecurity : NavigationResponseProcessSwapReason::COOP;
 
     // Propagating the original start time to a destination that fails the TAO check would leak cross-origin redirect timing.
     // https://fetch.spec.whatwg.org/#navigation-tao-check
     auto originalNavigationStartTime = (m_networkLoadChecker && m_networkLoadChecker->navigationTAOCheckPassed()) ? m_parameters.originalNavigationStartTime : MonotonicTime { };
-    protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, Site { response.url() }, connection->webProcessIdentifier(), existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
+
+    NavigationResponseForProcessSwap responseForProcessSwap { response.url(), parseDocumentIsolationPolicy(response.httpHeaderField(HTTPHeaderName::DocumentIsolationPolicy)) };
+    protect(NetworkProcess::singleton().parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::ConsiderProcessSwapForNavigationResponse(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, reason, responseForProcessSwap, connection->webProcessIdentifier(), existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime), WTF::move(swapResultHandler));
 }
 
 void NetworkResourceLoader::didReceiveBuffer(const WebCore::FragmentedSharedBuffer& buffer)

@@ -11,6 +11,7 @@ PASS A document without a policy cannot run a javascript: URL in a same-origin f
 PASS A document with a policy can run a javascript: URL in a same-origin frame with one
 PASS A navigate event in a same-origin frame without a policy does not expose a link of a document with one as its sourceElement
 PASS A navigate event in a same-origin frame without a policy exposes a link of a document without one as its sourceElement
+PASS A cross-document navigate event in a same-origin frame without a policy does not expose a link of a document with one as its sourceElement
 PASS A fragment navigation during a reload of a same-origin frame with a policy does not move the reloaded document into another agent cluster
 PASS Posting a WebAssembly.Module to a same-origin frame without a policy succeeds
 PASS Posting a WebAssembly.Module to a same-origin frame with a policy fails

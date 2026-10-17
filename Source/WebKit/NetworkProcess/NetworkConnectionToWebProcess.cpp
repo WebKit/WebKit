@@ -158,6 +158,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(WebCore::ProcessIde
     , m_originAccessPatterns(makeUniqueRef<NetworkOriginAccessPatterns>())
     , m_sharedPreferencesForWebProcess(parameters.sharedPreferencesForWebProcess)
     , m_hostedDomains(WTF::move(parameters.hostedDomains))
+    , m_crossOriginIsolation(parameters.crossOriginIsolation)
 #if ENABLE(IPC_TESTING_API)
     , m_ipcTester(IPCTester::create())
 #endif

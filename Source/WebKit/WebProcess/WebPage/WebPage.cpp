@@ -199,6 +199,7 @@
 #include <WebCore/ContainerNodeInlines.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
+#include <WebCore/CrossOriginMode.h>
 #include <WebCore/CrossOriginOpenerPolicy.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DOMWrapperWorld.h>
@@ -334,6 +335,7 @@
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/ScriptDisallowedScope.h>
+#include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/SelectionRestorationMode.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -10900,6 +10902,10 @@ bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&
 
     // Only the UI process determines these policies.
     if (response.httpHeaderFields().contains(HTTPHeaderName::DocumentIsolationPolicy) || response.httpHeaderFields().contains(HTTPHeaderName::OriginAgentCluster))
+        return false;
+
+    // The UI process checks that a document in a process for documents with a Document-Isolation-Policy has one.
+    if (ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated && m_page->settings().documentIsolationPolicyEnabled())
         return false;
 
     if (const Vector components = response.httpHeaderField(HTTPHeaderName::ContentDisposition).split(';'); !components.isEmpty() && equalIgnoringASCIICase(components[0].trim(isASCIIWhitespaceWithoutFF<char16_t>), "attachment"_s))

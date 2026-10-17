@@ -375,6 +375,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         .allowedWebPageProxyIdentifiers = WTF::move(allowedWebPageProxyIdentifiers),
         .hostedDomains = webProcessProxy.hostedDomains(),
         .corsDisablingPatternsPerPage = WTF::move(corsDisablingPatternsPerPage),
+        .crossOriginIsolation = webProcessProxy.crossOriginIsolation(),
     };
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTF::move(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -663,7 +664,7 @@ void NetworkProcessProxy::didBlockLoadToKnownTracker(WebPageProxyIdentifier page
         page->didBlockLoadToKnownTracker(url);
 }
 
-void NetworkProcessProxy::considerProcessSwapForNavigationResponse(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, NavigationResponseProcessSwapReason reason, const WebCore::Site& responseSite, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
+void NetworkProcessProxy::considerProcessSwapForNavigationResponse(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, NavigationResponseProcessSwapReason reason, const NavigationResponseForProcessSwap& response, WebCore::ProcessIdentifier loadingWebProcess, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(NavigationResponseProcessSwapResult&&)>&& completionHandler)
 {
     RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::considerProcessSwapForNavigationResponse: pageID=%" PRIu64 ", navigationID=%" PRIu64 ", reason=%u, browsingContextGroupSwitchDecision=%u, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, this, pageID.toUInt64(), navigationID.object().toUInt64(), (unsigned)reason, (unsigned)browsingContextGroupSwitchDecision, existingNetworkResourceLoadIdentifierToResume.toUInt64());
 
@@ -673,10 +674,13 @@ void NetworkProcessProxy::considerProcessSwapForNavigationResponse(WebPageProxyI
 
     switch (reason) {
     case NavigationResponseProcessSwapReason::EnhancedSecurity:
-        page->triggerProcessSwapForEnhancedSecurity(navigationID, responseSite, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
+        page->triggerProcessSwapForEnhancedSecurity(navigationID, WebCore::Site { response.url }, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
         break;
     case NavigationResponseProcessSwapReason::COOP:
-        page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, responseSite, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
+        page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, response, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
+        break;
+    case NavigationResponseProcessSwapReason::DocumentIsolationPolicy:
+        page->triggerProcessSwapForDocumentIsolationPolicy(navigationID, response, loadingWebProcess, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
         break;
     }
 }

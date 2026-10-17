@@ -548,6 +548,16 @@ void WebFrame::destroyProvisionalFrame()
     }
 }
 
+// The navigation's response moved to another process. Unlike loadDidCommitInAnotherProcess(), this runs before it commits
+// there, so the frame keeps its document and only drops the provisional load, without reporting it as failed.
+void WebFrame::stopLoadingDueToProcessSwap(WebCore::NavigationIdentifier navigationID)
+{
+    RefPtr localFrame = coreLocalFrame() ? coreLocalFrame() : m_provisionalFrame.get();
+    RefPtr documentLoader = localFrame ? localFrame->loader().provisionalDocumentLoader() : nullptr;
+    if (documentLoader && documentLoader->navigationID() == navigationID)
+        documentLoader->cancelMainResourceLoad({ }, LoadWillContinueInAnotherProcess::Yes);
+}
+
 void WebFrame::updateSandboxFlags(SandboxFlags sandboxFlags)
 {
     if (RefPtr localFrame = coreLocalFrame())

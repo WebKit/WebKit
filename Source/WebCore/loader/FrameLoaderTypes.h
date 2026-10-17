@@ -153,6 +153,7 @@ enum class BrowsingContextGroupSwitchDecision : uint8_t {
 enum class NavigationResponseProcessSwapReason : uint8_t {
     COOP,
     EnhancedSecurity,
+    DocumentIsolationPolicy,
 };
 
 // Passed to FrameLoader::urlSelected() and ScriptController::executeIfJavaScriptURL()

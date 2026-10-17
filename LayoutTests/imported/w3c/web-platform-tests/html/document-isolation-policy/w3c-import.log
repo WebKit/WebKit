@@ -30,11 +30,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-video.https.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-video.https.tentative.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/credentialless-websocket.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/cross-origin-isolated.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/header-parsing.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp-load-from-cache-storage.tentative.https.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/isolate-and-require-corp.tentative.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/navigate-across-policies.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context-https-iframe.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/no-secure-context.tentative.html.headers
@@ -42,4 +44,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/reporting-subresource-corp.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/service-worker-coep-credentialless-proxy.https.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/service-worker-coep-none-proxy.https.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/shared-array-buffer.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/document-isolation-policy/shared-workers.tentative.https.html
