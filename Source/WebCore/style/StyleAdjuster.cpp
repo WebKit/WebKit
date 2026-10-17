@@ -1400,7 +1400,7 @@ auto Adjuster::adjustmentForTextAutosizing(const Style::ComputedStyle& style, co
     AdjustmentForTextAutosizing adjustmentForTextAutosizing;
 
     Ref document = element.document();
-    if (!document->settings().textAutosizingEnabled()
+    if (!document->textAutosizingEnabled()
         || !document->settings().textAutosizingUsesIdempotentMode()
         || document->settings().idempotentModeAutosizingOnlyHonorsPercentages())
         return adjustmentForTextAutosizing;

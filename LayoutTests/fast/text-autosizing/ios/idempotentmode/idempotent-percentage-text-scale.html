@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6666">
+<meta name="text-scale" content="scale">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    window.internals.settings.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
+}
+</script>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="content">
+<div style="background: green;"><span id="target" style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target2" style="-webkit-text-size-adjust: 200%; font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+</div>
+<script>
+function fontSize(id) {
+    const target = document.getElementById(id);
+    target.offsetWidth;
+    return parseFloat(getComputedStyle(target).fontSize);
+}
+
+test(() => {
+    assert_equals(fontSize("target"), 12);
+    assert_equals(fontSize("target2"), 6);
+}, "text-size-adjust percentages are not applied with <meta name=text-scale content=scale>");
+
+test(t => {
+    const meta = document.querySelector("meta[name=text-scale]");
+    meta.remove();
+    t.add_cleanup(() => {
+        document.head.appendChild(meta);
+        document.getElementById("content").remove();
+    });
+    assert_equals(fontSize("target2"), 12, "after removing the meta");
+    document.head.appendChild(meta);
+    assert_equals(fontSize("target2"), 6, "after adding the meta back");
+}, "Removing and adding the text-scale meta toggles text-size-adjust percentages");
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="text-scale" content="scale">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
+<style>
+.ahem { font-family: Ahem; }
+#keyword { font-size: x-large; }
+#px { font-size: 20px; }
+</style>
+</head>
+<body>
+<span id="medium" class="ahem">X</span>
+<span id="keyword" class="ahem">X</span>
+<span id="px" class="ahem">X</span>
+<script>
+function usedFontSize(id) {
+    return document.getElementById(id).getBoundingClientRect().width;
+}
+
+for (const textZoom of [1, 2]) {
+    for (const category of ["L", "XXXL"]) {
+        test(t => {
+            setContentSizeCategory(t, category);
+            internals.setTextZoomFactor(textZoom);
+            t.add_cleanup(() => internals.setTextZoomFactor(1));
+            const scale = textScaleForCategory(category);
+            assertFontSize(document.getElementById("medium"), scaledMediumSize(scale), "computed medium");
+            assert_approx_equals(usedFontSize("medium"), scaledMediumSize(scale) * textZoom, 0.05, "used medium");
+            assert_approx_equals(usedFontSize("keyword"), scaledKeywordSize("x-large", scale) * textZoom, 0.05, "used x-large");
+            assert_approx_equals(usedFontSize("px"), 20 * textZoom, 0.05, "used 20px");
+        }, `Category ${category} with text zoom ${textZoom}: text zoom and text scale multiply`);
+    }
+}
+</script>
+</body>
+</html>
