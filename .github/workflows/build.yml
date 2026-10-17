@@ -651,11 +651,11 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=OFF \
-            -DWKC_ENABLE_WEB_AUDIO=OFF \
-            -DWKC_ENABLE_INDEXED_DATABASE=OFF \
-            -DWKC_ENABLE_GAMEPAD=OFF \
-            -DWKC_ENABLE_WEBRTC_API=OFF \
-            -DWKC_ENABLE_WEB_INSPECTOR=OFF
+            -DWKC_ENABLE_WEB_AUDIO=ON \
+            -DWKC_ENABLE_INDEXED_DATABASE=ON \
+            -DWKC_ENABLE_GAMEPAD=ON \
+            -DWKC_ENABLE_WEBRTC_API=ON \
+            -DWKC_ENABLE_WEB_INSPECTOR=ON
           ccache --zero-stats || true
 
       # Generate LLIntAssembly.h (the C_LOOP interpreter body that
@@ -850,13 +850,13 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
-            -DWKC_ENABLE_WEB_AUDIO=OFF \
+            -DWKC_ENABLE_WEB_AUDIO=ON \
             -DWKC_ENABLE_INDEXED_DATABASE=ON \
-            -DWKC_ENABLE_GAMEPAD=OFF \
-            -DWKC_ENABLE_WEBASSEMBLY=OFF \
-            -DWKC_ENABLE_WEBRTC_API=OFF \
-            -DWKC_ENABLE_WEB_INSPECTOR=OFF \
-            -DWKC_ENABLE_NOTIFICATIONS=OFF > build-full-configure.log 2>&1
+            -DWKC_ENABLE_GAMEPAD=ON \
+            -DWKC_ENABLE_WEBASSEMBLY=ON \
+            -DWKC_ENABLE_WEBRTC_API=ON \
+            -DWKC_ENABLE_WEB_INSPECTOR=ON \
+ > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
           # Preserve the source-list omission report even if the engine compile fails.
