@@ -53,6 +53,7 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "UndoOrRedo.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -193,6 +194,13 @@ bool PageClientImpl::isActiveViewVisible()
 #if ENABLE(WEBXR) && !USE(OPENXR)
     if (page && page->xrSystem() && page->xrSystem()->hasActiveSession())
         return true;
+#endif
+
+#if HAVE(AVEXPERIENCECONTROLLER)
+    if (page && page->preferences().isAVExperienceControllerFullscreenEnabled()) {
+        if (RefPtr videoPresentationManager = page->videoPresentationManager(); videoPresentationManager && videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard))
+            return true;
+    }
 #endif
 
     return false;
@@ -1276,6 +1284,13 @@ void PageClientImpl::didCleanupFullscreen()
 {
 #if ENABLE(FULLSCREEN_API)
     [[webView() fullScreenWindowController] didCleanupFullscreen];
+#endif
+
+#if HAVE(AVEXPERIENCECONTROLLER)
+    if (RetainPtr webView = this->webView()) {
+        if (RefPtr page = webView->_page; page && page->preferences().isAVExperienceControllerFullscreenEnabled())
+            page->activityStateDidChange(WebCore::ActivityState::IsVisible);
+    }
 #endif
 }
 

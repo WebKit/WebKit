@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media/media-file.js"></script>
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            window.addEventListener('load', async () => {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                findMediaElement();
+                internals.setMockVideoPresentationModeEnabled(true);
+                run("internals.setMediaSessionRestrictions('videoaudio', 'BackgroundProcessPlaybackRestricted')");
+
+                const canPlayThrough = waitFor(video, 'canplaythrough');
+                video.src = findMediaFile('video', '../../../media/content/test');
+                await canPlayThrough;
+
+                const playing = waitFor(video, 'playing');
+                runWithKeyDown("video.play()");
+                await playing;
+
+                const enteredFullscreen = waitFor(video, 'webkitpresentationmodechanged');
+                runWithKeyDown("video.webkitSetPresentationMode('fullscreen')");
+                await enteredFullscreen;
+                await testExpectedEventually('internals.isChangingPresentationMode(video)', false);
+                testExpected('video.webkitPresentationMode', 'fullscreen');
+
+                run('internals.applicationDidEnterBackground()');
+                testExpected('video.paused', true);
+
+                run('internals.applicationWillEnterForeground()');
+                const exitedFullscreen = waitFor(video, 'webkitpresentationmodechanged');
+                run("video.webkitSetPresentationMode('inline')");
+                await exitedFullscreen;
+
+                endTest();
+            });
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Test that a fullscreen &lt;video&gt; pauses when the application enters the background.</p>
+    </body>
+</html>

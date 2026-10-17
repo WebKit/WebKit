@@ -1,0 +1,18 @@
+
+Test that a fullscreen <video> pauses when the application enters the background.
+
+RUN(internals.setMediaSessionRestrictions('videoaudio', 'BackgroundProcessPlaybackRestricted'))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+RUN(video.webkitSetPresentationMode('fullscreen'))
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
+RUN(internals.applicationDidEnterBackground())
+EXPECTED (video.paused == 'true') OK
+RUN(internals.applicationWillEnterForeground())
+RUN(video.webkitSetPresentationMode('inline'))
+EVENT(webkitpresentationmodechanged)
+END OF TEST
+

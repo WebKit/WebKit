@@ -9817,6 +9817,12 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
         }
 #endif
+#if HAVE(AVEXPERIENCECONTROLLER)
+        if (m_videoFullscreenMode == VideoFullscreenModeStandard && document().settings().isAVExperienceControllerFullscreenEnabled()) {
+            INFO_LOG(LOGIDENTIFIER, "returning true, presented in Now Playing");
+            return true;
+        }
+#endif
     } else if (type == PlatformMediaSession::InterruptionType::SuspendedUnderLock) {
         if (isPlayingToExternalTarget()) {
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToExternalTarget() is true");
