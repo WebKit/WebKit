@@ -204,12 +204,12 @@ void CSSFontFace::setWeight(CSSValue& weight)
 static FontSelectionRange calculateWidthRange(CSSValue& value)
 {
     if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
-        auto result0 = Style::fontStretchFromCSSValueDeprecated(pair->first());
-        auto result1 = Style::fontStretchFromCSSValueDeprecated(pair->second());
+        auto result0 = Style::fontWidthFromCSSValueDeprecated(pair->first());
+        auto result1 = Style::fontWidthFromCSSValueDeprecated(pair->second());
         return { result0, result1 };
     }
 
-    FontSelectionValue result = Style::fontStretchFromCSSValueDeprecated(value);
+    auto result = Style::fontWidthFromCSSValueDeprecated(value);
     return { result, result };
 }
 

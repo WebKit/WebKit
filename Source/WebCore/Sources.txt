@@ -4096,6 +4096,9 @@ JSCanvasElementImage.cpp
 JSCanvasFillRule.cpp
 JSCanvasFillStrokeStyles.cpp
 JSCanvasFilters.cpp
+JSCanvasFontKerning.cpp
+JSCanvasFontStretch.cpp
+JSCanvasFontVariantCaps.cpp
 JSCanvasGradient.cpp
 JSCanvasImageData.cpp
 JSCanvasImageSmoothing.cpp
@@ -4114,6 +4117,7 @@ JSCanvasText.cpp
 JSCanvasTextAlign.cpp
 JSCanvasTextBaseline.cpp
 JSCanvasTextDrawingStyles.cpp
+JSCanvasTextRendering.cpp
 JSCanvasTransform.cpp
 JSCanvasUserInterface.cpp
 JSCaptionDisplaySettingsOptions.cpp

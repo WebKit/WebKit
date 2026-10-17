@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<title>fontKerning, fontStretch, fontVariantCaps and textRendering are part of the canvas drawing state</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<canvas id="canvas"></canvas>
+<script>
+function contexts()
+{
+    return [
+        ['canvas', document.getElementById('canvas').getContext('2d')],
+        ['offscreen', new OffscreenCanvas(100, 50).getContext('2d')],
+    ];
+}
+
+for (const [name, ctx] of contexts()) {
+    test(() => {
+        ctx.reset();
+        assert_equals(ctx.fontKerning, 'auto');
+        assert_equals(ctx.fontStretch, 'normal');
+        assert_equals(ctx.fontVariantCaps, 'normal');
+        assert_equals(ctx.textRendering, 'auto');
+    }, `${name}: initial values`);
+
+    test(() => {
+        ctx.reset();
+        ctx.fontKerning = 'none';
+        ctx.fontStretch = 'ultra-condensed';
+        ctx.fontVariantCaps = 'titling-caps';
+        ctx.textRendering = 'geometricPrecision';
+        ctx.fontKerning = 'Normal';
+        ctx.fontStretch = 'Condensed';
+        ctx.fontVariantCaps = 'unicase ';
+        ctx.textRendering = 'optimizespeed';
+        assert_equals(ctx.fontKerning, 'none');
+        assert_equals(ctx.fontStretch, 'ultra-condensed');
+        assert_equals(ctx.fontVariantCaps, 'titling-caps');
+        assert_equals(ctx.textRendering, 'geometricPrecision');
+    }, `${name}: invalid values are ignored`);
+
+    test(() => {
+        ctx.reset();
+        ctx.fontKerning = 'none';
+        ctx.fontStretch = 'expanded';
+        ctx.fontVariantCaps = 'all-petite-caps';
+        ctx.textRendering = 'optimizeLegibility';
+        ctx.reset();
+        assert_equals(ctx.fontKerning, 'auto');
+        assert_equals(ctx.fontStretch, 'normal');
+        assert_equals(ctx.fontVariantCaps, 'normal');
+        assert_equals(ctx.textRendering, 'auto');
+    }, `${name}: reset() restores the defaults`);
+
+    test(() => {
+        ctx.reset();
+        ctx.fontKerning = 'none';
+        ctx.fontStretch = 'semi-expanded';
+        ctx.fontVariantCaps = 'small-caps';
+        ctx.textRendering = 'optimizeSpeed';
+        ctx.save();
+        ctx.fontKerning = 'normal';
+        ctx.fontStretch = 'extra-condensed';
+        ctx.fontVariantCaps = 'petite-caps';
+        ctx.textRendering = 'geometricPrecision';
+        assert_equals(ctx.fontKerning, 'normal');
+        assert_equals(ctx.fontStretch, 'extra-condensed');
+        assert_equals(ctx.fontVariantCaps, 'petite-caps');
+        assert_equals(ctx.textRendering, 'geometricPrecision');
+        ctx.restore();
+        assert_equals(ctx.fontKerning, 'none');
+        assert_equals(ctx.fontStretch, 'semi-expanded');
+        assert_equals(ctx.fontVariantCaps, 'small-caps');
+        assert_equals(ctx.textRendering, 'optimizeSpeed');
+    }, `${name}: save() and restore()`);
+
+    test(() => {
+        // fontKerning and textRendering are independent of the font, so they stay in effect when it is set.
+        ctx.reset();
+        ctx.fontKerning = 'none';
+        ctx.textRendering = 'optimizeSpeed';
+        ctx.font = '20px serif';
+        assert_equals(ctx.fontKerning, 'none');
+        assert_equals(ctx.textRendering, 'optimizeSpeed');
+    }, `${name}: fontKerning and textRendering survive setting font`);
+
+    test(() => {
+        // fontStretch and fontVariantCaps come from the font shorthand.
+        ctx.reset();
+        ctx.font = 'small-caps condensed 20px serif';
+        assert_equals(ctx.fontVariantCaps, 'small-caps');
+        assert_equals(ctx.fontStretch, 'condensed');
+        ctx.font = '20px serif';
+        assert_equals(ctx.fontVariantCaps, 'normal');
+        assert_equals(ctx.fontStretch, 'normal');
+    }, `${name}: fontStretch and fontVariantCaps follow the font shorthand`);
+
+    test(() => {
+        ctx.reset();
+        ctx.font = '20px serif';
+        ctx.fontVariantCaps = 'all-small-caps';
+        ctx.fontStretch = 'expanded';
+        assert_equals(ctx.fontVariantCaps, 'all-small-caps');
+        assert_equals(ctx.fontStretch, 'expanded');
+        assert_equals(ctx.font.includes('20px'), true, 'font keeps its size');
+    }, `${name}: setting the attributes after font`);
+
+    test(() => {
+        ctx.reset();
+        ctx.font = '40px serif';
+        ctx.fontKerning = 'normal';
+        const kerned = ctx.measureText('TAWATAVA').width;
+        ctx.fontKerning = 'none';
+        const unkerned = ctx.measureText('TAWATAVA').width;
+        assert_less_than(kerned, unkerned);
+        ctx.fontKerning = 'normal';
+        assert_equals(ctx.measureText('TAWATAVA').width, kerned);
+    }, `${name}: fontKerning changes measureText`);
+
+    test(() => {
+        ctx.reset();
+        ctx.font = '40px serif';
+        ctx.letterSpacing = '5px';
+        ctx.wordSpacing = '7px';
+        const spaced = ctx.measureText('a b').width;
+        ctx.fontKerning = 'none';
+        ctx.fontVariantCaps = 'small-caps';
+        ctx.fontVariantCaps = 'normal';
+        assert_equals(ctx.letterSpacing, '5px');
+        assert_equals(ctx.wordSpacing, '7px');
+        ctx.fontKerning = 'auto';
+        assert_equals(ctx.measureText('a b').width, spaced);
+    }, `${name}: letterSpacing and wordSpacing are kept`);
+}
+</script>

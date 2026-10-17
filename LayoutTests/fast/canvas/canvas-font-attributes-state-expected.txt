@@ -1,0 +1,20 @@
+
+PASS canvas: initial values
+PASS canvas: invalid values are ignored
+PASS canvas: reset() restores the defaults
+PASS canvas: save() and restore()
+PASS canvas: fontKerning and textRendering survive setting font
+PASS canvas: fontStretch and fontVariantCaps follow the font shorthand
+PASS canvas: setting the attributes after font
+PASS canvas: fontKerning changes measureText
+PASS canvas: letterSpacing and wordSpacing are kept
+PASS offscreen: initial values
+PASS offscreen: invalid values are ignored
+PASS offscreen: reset() restores the defaults
+PASS offscreen: save() and restore()
+PASS offscreen: fontKerning and textRendering survive setting font
+PASS offscreen: fontStretch and fontVariantCaps follow the font shorthand
+PASS offscreen: setting the attributes after font
+PASS offscreen: fontKerning changes measureText
+PASS offscreen: letterSpacing and wordSpacing are kept
+

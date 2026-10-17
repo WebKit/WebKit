@@ -1786,6 +1786,9 @@ $(PROJECT_DIR)/html/canvas/CanvasElementImage.idl
 $(PROJECT_DIR)/html/canvas/CanvasFillRule.idl
 $(PROJECT_DIR)/html/canvas/CanvasFillStrokeStyles.idl
 $(PROJECT_DIR)/html/canvas/CanvasFilters.idl
+$(PROJECT_DIR)/html/canvas/CanvasFontKerning.idl
+$(PROJECT_DIR)/html/canvas/CanvasFontStretch.idl
+$(PROJECT_DIR)/html/canvas/CanvasFontVariantCaps.idl
 $(PROJECT_DIR)/html/canvas/CanvasGradient.idl
 $(PROJECT_DIR)/html/canvas/CanvasImageData.idl
 $(PROJECT_DIR)/html/canvas/CanvasImageSmoothing.idl
@@ -1805,6 +1808,7 @@ $(PROJECT_DIR)/html/canvas/CanvasText.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextAlign.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextBaseline.idl
 $(PROJECT_DIR)/html/canvas/CanvasTextDrawingStyles.idl
+$(PROJECT_DIR)/html/canvas/CanvasTextRendering.idl
 $(PROJECT_DIR)/html/canvas/CanvasTransform.idl
 $(PROJECT_DIR)/html/canvas/CanvasUserInterface.idl
 $(PROJECT_DIR)/html/canvas/EXTBlendMinMax.idl

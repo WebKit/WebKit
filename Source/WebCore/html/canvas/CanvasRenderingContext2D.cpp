@@ -252,7 +252,9 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, FontCascadeDescription { fontDescription }, document.get());
+    FontCascadeDescription resolutionDescription { fontDescription };
+    carryOverKerningAndTextRendering(resolutionDescription);
+    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(resolutionDescription), document.get());
     if (!fontCascade)
         return;
 
