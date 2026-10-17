@@ -167,10 +167,10 @@ void EventRegionContext::uniteInteractionRegions(const RenderObject& renderer, c
         }
 
         auto result = m_interactionRectsAndContentHints.set(rectForTracking, interactionRegion.contentHint);
-        if (!result.isNewEntry)
+        bool defaultContentHint = interactionRegion.contentHint == InteractionRegion::ContentHint::Default;
+        if (!result.isNewEntry && !(defaultContentHint && sharesRectWithContainerAncestor(renderer, rectForTracking, interactionRegion.nodeIdentifier)))
             return;
 
-        bool defaultContentHint = interactionRegion.contentHint == InteractionRegion::ContentHint::Default;
         if (defaultContentHint && shouldConsolidateInteractionRegion(renderer, rectForTracking, interactionRegion.nodeIdentifier)) {
             m_consolidatedElements.add(interactionRegion.nodeIdentifier);
             return;
@@ -262,6 +262,33 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(const RenderObject& 
             m_containersToRemove.add(ancestorElementIdentifier);
 
         return false;
+    }
+
+    return false;
+}
+
+bool EventRegionContext::sharesRectWithContainerAncestor(const RenderObject& renderer, const IntRect& bounds, const NodeIdentifier& nodeIdentifier) const
+{
+    if (!renderer.hasVisibleBoxDecorations())
+        return false;
+
+    for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        if (!ancestor.element())
+            continue;
+
+        auto ancestorElementIdentifier = ancestor.element()->nodeIdentifier();
+        auto discoveredIterator = m_discoveredRegionsByElement.find(ancestorElementIdentifier);
+        if (discoveredIterator == m_discoveredRegionsByElement.end()) {
+            if (ancestor.hasVisibleBoxDecorations())
+                return false;
+            continue;
+        }
+
+        auto& discoveredRegions = discoveredIterator->value;
+        return nodeIdentifier != ancestorElementIdentifier
+            && m_containerRemovalCandidates.contains(ancestorElementIdentifier)
+            && discoveredRegions.size() == 1
+            && enclosingIntRect(discoveredRegions.first().rectInLayerCoordinates) == bounds;
     }
 
     return false;
