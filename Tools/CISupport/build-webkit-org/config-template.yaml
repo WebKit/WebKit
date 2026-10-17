@@ -198,7 +198,7 @@
                     "$let": { "first": { "$if": "'first' in w", "then": { "$eval": "w.first" }, "else": { "$eval": "templates[w.template].first" } } },
                     "in": {
                       "$map": { "$eval": "range(0, w.count)" },
-                      "each(i)": { "$merge": [{ "name": "bot${first + i}" }, { "$eval": "templates[w.template].worker" }] }
+                      "each(i)": { "$merge": [{ "name": "bot${first + i}", "template": "${w.template}" }, { "$eval": "templates[w.template].worker" }] }
                     }
                   },
                   "else": [{ "$eval": "w" }]
@@ -257,7 +257,12 @@
                   { "name": "Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
                   "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default"],
-                  "workernames": ["bot10200", "bot10201", "bot10202", "bot10203"]
+                  "workernames": [
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_golden_gate_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_golden_gate_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_golden_gate_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_golden_gate_aircloud'\").name" }
+                  ]
                   },
                   { "name": "Apple-Tahoe-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -265,12 +270,12 @@
                       "tahoe-release-tests-wk2",
                       "tahoe-release-applesilicon-tests-wk2"
                   ],
-                  "workernames": ["bot678", "bot10004"]
+                  "workernames": ["bot678", { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aws'\").name" }]
                   },
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
-                  "workernames": ["bot246", "bot10003", "bot187"]
+                  "workernames": ["bot246", "bot187", { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aircloud'\").name" }]
                   },
                   { "name": "Apple-Tahoe-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -284,7 +289,7 @@
                       "tahoe-debug-tests-wk2",
                       "tahoe-debug-applesilicon-tests-wk2"
                   ],
-                  "workernames": ["bot621", "bot10002"]
+                  "workernames": ["bot621", { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aws'\").name" }]
                   },
                   { "name": "Apple-Tahoe-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -294,12 +299,21 @@
                   { "name": "Apple-Tahoe-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
-                  "workernames": ["bot257", "bot10001", "bot132", "bot10000"]
+                  "workernames": [
+                      "bot257",
+                      "bot132",
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aircloud'\").name" }
+                  ]
                   },
                   {
                     "name": "Apple-Tahoe-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
                     "platform": "mac-tahoe", "configuration": "release", "architectures": ["arm64"],
-                    "workernames": ["bot600", "bot10005", "bot10006"]
+                    "workernames": [
+                        "bot600",
+                        { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aircloud'\").name" },
+                        { "$eval": "pop(workers, \"defined('template') && template == 'mac_tahoe_aircloud'\").name" }
+                    ]
                   },
                   { "name": "Apple-Sequoia-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -315,7 +329,12 @@
                   { "name": "Apple-Sequoia-Release-WK2-Site-Isolation-Tree-Tests", "factory": "TestLayoutAndAPIOnlyFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default"],
-                  "workernames": ["bot10100", "bot10101", "bot10102", "bot10103"]
+                  "workernames": [
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_sequoia_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_sequoia_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_sequoia_aircloud'\").name" },
+                      { "$eval": "pop(workers, \"defined('template') && template == 'mac_sequoia_aircloud'\").name" }
+                  ]
                   },
                   { "name": "Apple-Sequoia-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -705,6 +724,10 @@
                     "workernames": ["wpe-linux-bot-41"]
                   }
                 ],
+
+  "unusedWorkers": { "$flatten": { "$map": { "$eval": "workers" },
+                    "each(w)": { "$if": "'template' in w", "then": ["${w.name}"], "else": [] }
+                  } },
 
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                     "builderNames": ["GTK-Linux-64-bit-Release-Build",
