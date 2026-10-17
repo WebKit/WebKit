@@ -412,12 +412,11 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize conc
 
     // Apply orientation transformation if needed.
     if (orientation != ImageOrientation::Orientation::None) {
-        auto containerSizeForTransform = containerSize();
-        auto orientationTransform = ImageOrientation(orientation).transformFromDefault(FloatSize(containerSizeForTransform));
+        auto orientationTransform = ImageOrientation(orientation).transformFromDefault(FloatSize(m_appliedDocumentState.containerSize));
         context.concatCTM(orientationTransform);
     }
 
-    view->resize(containerSize());
+    view->resize(m_appliedDocumentState.containerSize);
 
     {
         ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
@@ -440,6 +439,11 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, ConcreteObjectSize conc
         observer->didDraw(*this);
 
     return ImageDrawResult::DidDraw;
+}
+
+bool SVGImage::hasSomethingToDraw() const
+{
+    return embeddedSVGRoot();
 }
 
 RenderReplaced* SVGImage::embeddedSVGRoot() const
