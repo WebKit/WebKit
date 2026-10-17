@@ -11,6 +11,10 @@
 
 #include "common/PoolAlloc.h"
 
+#if defined(ANGLE_PLATFORM_POSIX)
+#    include <signal.h>
+#endif
+
 namespace angle
 {
 
@@ -113,13 +117,25 @@ TEST_F(PoolAllocatorTest, ResetRecyclesMemory)
 #if defined(ANGLE_POOL_ALLOC_GUARD_BLOCKS)
 
 class PoolAllocatorGuardTest : public PoolAllocatorTest
-{};
+{
+  protected:
+    // The death tests crash the child on purpose. Restore the default trap handlers so a
+    // crash backtracer installed by the runtime does not stop the child at an interactive prompt.
+    static void RestoreDefaultTrapHandlers()
+    {
+#    if defined(ANGLE_PLATFORM_POSIX)
+        signal(SIGTRAP, SIG_DFL);
+        signal(SIGILL, SIG_DFL);
+#    endif
+    }
+};
 
 #ifdef GTEST_HAS_DEATH_TEST
 // Verify that alignment guard detects overflowing write.
 TEST_F(PoolAllocatorGuardTest, AlignmentGuardDetectsOverflowWrite)
 {
     auto testOverflowAlignment = []() {
+        RestoreDefaultTrapHandlers();
         PoolAllocator poolAllocator;
         void *allocation = poolAllocator.allocate(15);
         memset(allocation, 11, 16);
@@ -131,6 +147,7 @@ TEST_F(PoolAllocatorGuardTest, AlignmentGuardDetectsOverflowWrite)
 TEST_F(PoolAllocatorGuardTest, AllocationGuardsDetectsOverflowWrite)
 {
     auto testOverflow = []() {
+        RestoreDefaultTrapHandlers();
         PoolAllocator poolAllocator;
         void *allocation1 = poolAllocator.allocate(16);
         memset(allocation1, 11, 17);
@@ -142,6 +159,7 @@ TEST_F(PoolAllocatorGuardTest, AllocationGuardsDetectsOverflowWrite)
 TEST_F(PoolAllocatorGuardTest, AllocationGuardsDetectsUnderflowWrite)
 {
     auto testUnderflow = []() {
+        RestoreDefaultTrapHandlers();
         PoolAllocator poolAllocator;
         void *allocation1 = poolAllocator.allocate(16);
         memset(reinterpret_cast<uint8_t *>(allocation1) - 1, 11, 1);
