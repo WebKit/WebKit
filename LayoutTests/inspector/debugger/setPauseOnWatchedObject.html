@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../console/resources/watch-utilities.js"></script>
+<script>
+let watchedObject = {value: 0};
+
+function writeWatchedObject()
+{
+    ++watchedObject.value;
+}
+
+async function test()
+{
+    await InspectorTest.WatchObject.watchObject("watchedObject");
+
+    let suite = InspectorTest.createAsyncSuite("Debugger.setPauseOnWatchedObject");
+    let {expectNoPause, expectPause} = InspectorTest.WatchObject;
+
+    suite.addTestCase({
+        name: "Debugger.setPauseOnWatchedObject.Toggle",
+        description: "Pause before writing an ordinary named property of a watched object only when enabled.",
+        async test() {
+            WI.debuggerManager.createWatchedObjectBreakpoint({disabled: true});
+
+            await expectNoPause("writeWatchedObject()", "Should not pause while disabled.");
+
+            WI.debuggerManager.watchedObjectBreakpoint.disabled = false;
+
+            await expectPause({
+                expression: "writeWatchedObject()",
+                beforeExpression: "watchedObject.value === 1",
+                afterExpression: "watchedObject.value === 2",
+                description: "an ordinary named property write while enabled",
+            });
+
+            WI.debuggerManager.watchedObjectBreakpoint.remove();
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.setPauseOnWatchedObject command.</p>
+</body>
+</html>
+

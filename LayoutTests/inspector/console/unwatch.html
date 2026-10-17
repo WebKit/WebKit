@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/watch-utilities.js"></script>
+<script>
+let Objects = {
+    target: {value: 1, removable: true, tail: true},
+    sibling: {value: 1},
+    preexistingUncacheableDictionary: {first: 1, removable: true, value: 0, last: 3},
+};
+
+function mutateTarget(value)
+{
+    Objects.target.value = value;
+}
+
+function mutateSibling()
+{
+    Objects.sibling.value = 2;
+}
+
+function mutatePreexistingUncacheableDictionary(value)
+{
+    Objects.preexistingUncacheableDictionary.value = value;
+}
+
+function currentStructureData(object)
+{
+    let transitionList = $vm.getStructureTransitionList(object);
+    return JSON.stringify({
+        id: transitionList[transitionList.length - 5],
+        maxOffset: transitionList[transitionList.length - 3],
+    });
+}
+
+function test()
+{
+    WI.debuggerManager.createWatchedObjectBreakpoint();
+
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.unwatch");
+    let {expectNoPause, expectPause, unwatchObject, watchObject} = InspectorTest.WatchObject;
+
+    suite.addTestCase({
+        name: "CommandLineAPI.unwatch.Object",
+        async test() {
+            await watchObject("Objects.target");
+            await watchObject("Objects.sibling");
+
+            await InspectorTest.evaluateInPage("delete Objects.target.removable");
+            let watchedStructureData = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.target)"));
+            await unwatchObject("Objects.target");
+
+            let unwatchedStructureData = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.target)"));
+            InspectorTest.expectLessThan(unwatchedStructureData.maxOffset, watchedStructureData.maxOffset, "Unwatching should flatten the dictionary created for watching.");
+
+            await expectNoPause("mutateTarget(2)", "Should not pause after unwatching the object.");
+
+            await watchObject("Objects.target");
+
+            let rewatchedStructureData = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.target)"));
+            InspectorTest.expectNotEqual(rewatchedStructureData.id, unwatchedStructureData.id, "Rewatching should convert the object to a new uncacheable dictionary Structure.");
+
+            await expectPause({
+                expression: "mutateTarget(3)",
+                beforeExpression: "Objects.target.value === 2",
+                afterExpression: "Objects.target.value === 3",
+                description: "a property write to a rewatched object",
+            });
+            await expectPause({
+                expression: "mutateSibling()",
+                beforeExpression: "Objects.sibling.value === 1",
+                afterExpression: "Objects.sibling.value === 2",
+                description: "a property write to a separately watched object",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.unwatch.PreexistingUncacheableDictionary",
+        async test() {
+            await InspectorTest.evaluateInPage("$vm.toUncacheableDictionary(Objects.preexistingUncacheableDictionary); delete Objects.preexistingUncacheableDictionary.removable");
+            let beforeWatch = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.preexistingUncacheableDictionary)"));
+
+            await watchObject("Objects.preexistingUncacheableDictionary");
+            let afterWatch = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.preexistingUncacheableDictionary)"));
+            InspectorTest.expectNotEqual(afterWatch.id, beforeWatch.id, "Watching should replace a preexisting uncacheable dictionary with a protected Structure.");
+
+            await InspectorTest.evaluateInPage("$vm.flattenDictionaryObject(Objects.preexistingUncacheableDictionary)");
+            let afterFlattenAttempt = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.preexistingUncacheableDictionary)"));
+            InspectorTest.expectEqual(afterFlattenAttempt.id, afterWatch.id, "An attempted flatten should preserve a preexisting dictionary while it is watched.");
+
+            await expectPause({
+                expression: "mutatePreexistingUncacheableDictionary(1)",
+                beforeExpression: "Objects.preexistingUncacheableDictionary.value === 0",
+                afterExpression: "Objects.preexistingUncacheableDictionary.value === 1",
+                description: "a property write to a watched preexisting dictionary",
+            });
+            await unwatchObject("Objects.preexistingUncacheableDictionary");
+
+            let afterUnwatch = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.preexistingUncacheableDictionary)"));
+            InspectorTest.expectEqual(afterUnwatch.maxOffset, beforeWatch.maxOffset, "Unwatching should preserve a preexisting uncacheable dictionary.");
+            InspectorTest.expectTrue(await InspectorTest.evaluateInPage("Objects.preexistingUncacheableDictionary.first === 1 && Objects.preexistingUncacheableDictionary.value === 1 && Objects.preexistingUncacheableDictionary.last === 3"), "Replacing the dictionary Structure should preserve its properties.");
+
+            await InspectorTest.evaluateInPage("$vm.flattenDictionaryObject(Objects.preexistingUncacheableDictionary)");
+            let afterExplicitFlatten = JSON.parse(await InspectorTest.evaluateInPage("currentStructureData(Objects.preexistingUncacheableDictionary)"));
+            InspectorTest.expectLessThan(afterExplicitFlatten.maxOffset, afterUnwatch.maxOffset, "The preexisting dictionary should remain flattenable after unwatching.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the <code>unwatch</code> function in the Command Line API.</p>
+</body>
+</html>
+

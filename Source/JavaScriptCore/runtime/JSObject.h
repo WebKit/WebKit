@@ -565,6 +565,7 @@ public:
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
     JS_EXPORT_PRIVATE void convertToUncacheableDictionary(VM&);
+    JS_EXPORT_PRIVATE void replaceWithUncacheableDictionary(VM&, HasBeenFlattenedBefore);
 
     void flattenDictionaryObject(VM& vm)
     {
