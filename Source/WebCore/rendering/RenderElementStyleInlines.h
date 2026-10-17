@@ -68,6 +68,10 @@ inline bool RenderElement::isInsideDrawableCanvas() const
 inline bool RenderElement::mayContainOutOfFlowPositionedObjects(const Style::ComputedStyle* styleToUse) const
 {
     auto shouldApplyLayoutOrPaintContainment = [this](const auto& style) {
+        if (!Style::ContainmentChecker::hasContainment(style, Style::ContainValue::Layout)
+            && !Style::ContainmentChecker::hasContainment(style, Style::ContainValue::Paint))
+            return false;
+
         RefPtr element = this->element();
         if (!element)
             return false;
