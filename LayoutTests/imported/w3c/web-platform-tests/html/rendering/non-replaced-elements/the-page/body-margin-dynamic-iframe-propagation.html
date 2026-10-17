@@ -1,0 +1,78 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Dynamic iframe margin attribute propagation to body</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+// Tests that dynamically changing marginwidth/marginheight on an iframe
+// correctly propagates to the child document's body element, while respecting
+// the spec precedence order:
+//   margin-left/right: body.marginwidth -> body.leftmargin -> container frame.marginwidth.
+//   margin-top/bottom: body.marginheight -> body.topmargin -> container frame.marginheight.
+
+function createIframe(bodyMarkup) {
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        // Use srcdoc so the child document is same-origin with the parent.
+        iframe.srcdoc = "<!doctype html>" + bodyMarkup;
+        iframe.onload = () => resolve(iframe);
+        document.body.appendChild(iframe);
+    });
+}
+
+function bodyStyle(iframe) {
+    return iframe.contentWindow.getComputedStyle(iframe.contentDocument.body);
+}
+
+promise_test(async t => {
+    const iframe = await createIframe("<body>");
+    t.add_cleanup(() => iframe.remove());
+    iframe.setAttribute("marginwidth", "30");
+    assert_equals(bodyStyle(iframe).marginLeft, "30px", "marginwidth propagated to margin-left");
+    assert_equals(bodyStyle(iframe).marginRight, "30px", "marginwidth propagated to margin-right");
+}, "Dynamically setting iframe marginwidth propagates to child body");
+
+promise_test(async t => {
+    const iframe = await createIframe("<body>");
+    t.add_cleanup(() => iframe.remove());
+    iframe.setAttribute("marginheight", "30");
+    assert_equals(bodyStyle(iframe).marginTop, "30px", "marginheight propagated to margin-top");
+    assert_equals(bodyStyle(iframe).marginBottom, "30px", "marginheight propagated to margin-bottom");
+}, "Dynamically setting iframe marginheight propagates to child body");
+
+promise_test(async t => {
+    const iframe = await createIframe("<body>");
+    t.add_cleanup(() => iframe.remove());
+    iframe.setAttribute("marginwidth", "30");
+    assert_equals(bodyStyle(iframe).marginLeft, "30px", "initially 30px");
+    iframe.setAttribute("marginwidth", "50");
+    assert_equals(bodyStyle(iframe).marginLeft, "50px", "updated to 50px");
+    iframe.removeAttribute("marginwidth");
+    assert_not_equals(bodyStyle(iframe).marginLeft, "50px", "removed marginwidth");
+}, "Updating and removing iframe marginwidth updates child body");
+
+promise_test(async t => {
+    const iframe = await createIframe("<body leftmargin=10>");
+    t.add_cleanup(() => iframe.remove());
+    // Body has leftmargin=10. Per spec, body.leftmargin takes precedence over
+    // container frame's marginwidth, so setting iframe.marginwidth must NOT
+    // override body's leftmargin.
+    assert_equals(bodyStyle(iframe).marginLeft, "10px", "leftmargin=10 initially");
+    iframe.setAttribute("marginwidth", "30");
+    assert_equals(bodyStyle(iframe).marginLeft, "10px", "body leftmargin takes precedence over iframe marginwidth");
+    iframe.removeAttribute("marginwidth");
+    assert_equals(bodyStyle(iframe).marginLeft, "10px", "body leftmargin remains after iframe marginwidth removed");
+}, "Body leftmargin takes precedence over iframe marginwidth");
+
+promise_test(async t => {
+    const iframe = await createIframe("<body topmargin=10>");
+    t.add_cleanup(() => iframe.remove());
+    assert_equals(bodyStyle(iframe).marginTop, "10px", "topmargin=10 initially");
+    iframe.setAttribute("marginheight", "30");
+    assert_equals(bodyStyle(iframe).marginTop, "10px", "body topmargin takes precedence over iframe marginheight");
+    iframe.removeAttribute("marginheight");
+    assert_equals(bodyStyle(iframe).marginTop, "10px", "body topmargin remains after iframe marginheight removed");
+}, "Body topmargin takes precedence over iframe marginheight");
+</script>
+</body>
