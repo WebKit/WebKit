@@ -44,6 +44,7 @@
 #include "RenderView.h"
 #include "TextBoxSelectableRange.h"
 #include "VisibleSelection.h"
+#include <wtf/IterationStatus.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -90,6 +91,21 @@ static CheckedPtr<RenderObject> rendererAfterOffset(const RenderObject& renderer
     return child ? child : CheckedPtr { renderer.nextInPreOrderAfterChildren() };
 }
 
+template<typename Functor>
+static void forEachRendererAfterRangeStart(const RenderRange& renderRange, NOESCAPE const Functor& functor)
+{
+    CheckedPtr rangeEnd = renderRange.end();
+    CheckedPtr highlightEnd = rangeEnd ? rendererAfterOffset(*rangeEnd, renderRange.endOffset()) : nullptr;
+
+    RenderRangeIterator highlightIterator(protect(renderRange.start()));
+    for (CheckedPtr currentRenderer = renderRange.start(); currentRenderer && currentRenderer != highlightEnd; currentRenderer = highlightIterator.next()) {
+        if (currentRenderer == renderRange.start())
+            continue;
+        if (functor(*currentRenderer) == IterationStatus::Done)
+            return;
+    }
+}
+
 void RenderHighlight::setRenderRange(const RenderRange& renderRange)
 {
     ASSERT(renderRange.start() && renderRange.end());
@@ -133,19 +149,26 @@ RenderObject::HighlightState RenderHighlight::highlightStateForRenderer(const Re
     if (&renderer == m_renderRange.end())
         return RenderObject::HighlightState::End;
 
-    CheckedPtr rangeEnd = m_renderRange.end();
-    CheckedPtr highlightEnd = rangeEnd ? rendererAfterOffset(*rangeEnd, m_renderRange.endOffset()) : nullptr;
+    auto state = RenderObject::HighlightState::None;
+    forEachRendererAfterRangeStart(m_renderRange, [&](const RenderObject& currentRenderer) {
+        if (&renderer != &currentRenderer || !currentRenderer.canBeSelectionLeaf())
+            return IterationStatus::Continue;
+        state = RenderObject::HighlightState::Inside;
+        return IterationStatus::Done;
+    });
+    return state;
+}
 
-    RenderRangeIterator highlightIterator(protect(m_renderRange.start()));
-    for (CheckedPtr currentRenderer = m_renderRange.start(); currentRenderer && currentRenderer != highlightEnd; currentRenderer = highlightIterator.next()) {
-        if (currentRenderer == m_renderRange.start())
-            continue;
-        if (!currentRenderer->canBeSelectionLeaf())
-            continue;
-        if (&renderer == currentRenderer)
-            return RenderObject::HighlightState::Inside;
-    }
-    return RenderObject::HighlightState::None;
+void RenderHighlight::forEachRendererInRange(NOESCAPE const Function<void(RenderObject&)>& function) const
+{
+    if (CheckedPtr start = m_renderRange.start())
+        function(*start);
+    if (CheckedPtr end = m_renderRange.end())
+        function(*end);
+    forEachRendererAfterRangeStart(m_renderRange, [&](RenderObject& renderer) {
+        function(renderer);
+        return IterationStatus::Continue;
+    });
 }
 
 RenderObject::HighlightState RenderHighlight::highlightStateForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
