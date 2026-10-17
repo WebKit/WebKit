@@ -75,10 +75,9 @@ for entry in compile_commands:
     # The paths we expect are in the style of:
     # - WebKit/WebKitBuild/Release/DerivedSources/WebKit/unified-sources/UnifiedSource-54928a2b-29.cpp
     # - WebKit/WebKitBuild/Release/WebCore/DerivedSources/unified-sources/UnifiedSource-42f7b70e-5.cpp
-    # And Windows too:
-    # - WebKit\WebKitBuild\Release\WebCore\DerivedSources\unified-sources\UnifiedSource-42f7b70e-5.cpp
     # So we extract the parent folders to map them to the source folders.
-    parent_dir_1, parent_dir_2 = entry_file.rsplit(os.path.sep, maxsplit=4)[1:3]
+    # (Windows paths are converted to use forward slashes)
+    parent_dir_1, parent_dir_2 = entry_file.rsplit('/', maxsplit=4)[1:3]
     search_directories = [
         os.path.join(build_dir, parent_dir_1, parent_dir_2),
     ]

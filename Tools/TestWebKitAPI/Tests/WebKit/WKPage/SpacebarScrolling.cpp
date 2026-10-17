@@ -123,6 +123,9 @@ TEST(WebKit, SpacebarScrolling)
 
 #if PLATFORM(COCOA)
     EXPECT_FALSE(didNotHandleKeyDownEvent);
+#else
+    // Silence -Wunused-but-set-global on non-Cocoa platforms.
+    (void)didNotHandleKeyDownEvent;
 #endif
 }
 
