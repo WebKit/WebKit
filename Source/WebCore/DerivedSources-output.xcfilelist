@@ -2680,6 +2680,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlayback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemotePlaybackAvailabilityCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRenderingMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRenderingMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSReportBody.cpp

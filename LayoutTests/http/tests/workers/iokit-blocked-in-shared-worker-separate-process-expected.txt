@@ -1,0 +1,9 @@
+Tests that IOKit is blocked in the sandbox of the process of a shared worker that runs in a process that does not have a page: the process cannot open an IOKit service.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS state is "blocked"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

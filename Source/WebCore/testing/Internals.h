@@ -1557,6 +1557,8 @@ public:
     bool hasSandboxMachLookupAccessToGlobalName(const String& process, const String& service);
     bool hasSandboxMachLookupAccessToXPCServiceName(const String& process, const String& service);
     bool hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass);
+    // Whether this process can open an IOKit service. Static so that WorkerInternals and ServiceWorkerInternals can use it.
+    static bool isIOKitAvailable();
     bool hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const;
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

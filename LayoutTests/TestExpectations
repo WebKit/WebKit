@@ -6139,6 +6139,15 @@ webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec
 # Only certain ports have WebGPU implementations.
 http/tests/webgpu [ Skip ]
 
+# IOKit blocking needs the sandbox state flags, which need the Apple internal SDK, and a sandboxed WebContent
+# process, which the iOS simulator does not have.
+http/tests/workers/iokit-blocked-in-main-thread.html [ Skip ]
+http/tests/workers/iokit-blocked-in-dedicated-worker.html [ Skip ]
+http/tests/workers/iokit-blocked-in-shared-worker.html [ Skip ]
+http/tests/workers/iokit-blocked-in-shared-worker-separate-process.html [ Skip ]
+http/tests/workers/iokit-blocked-in-service-worker.html [ Skip ]
+http/tests/workers/iokit-blocked-in-service-worker-separate-process.html [ Skip ]
+
 # Only some ports automatically relayout if a font is installed while the page is open
 fast/text/install-font-style-recalc.html [ Failure ]
 

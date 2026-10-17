@@ -3426,15 +3426,7 @@ bool CanvasRenderingContext2DBase::willReadFrequently() const
 
 std::optional<RenderingMode> CanvasRenderingContext2DBase::renderingModeForTesting() const
 {
-    if (!m_settings.renderingModeForTesting)
-        return std::nullopt;
-    switch (*m_settings.renderingModeForTesting) {
-    case CanvasRenderingContext2DSettings::RenderingMode::Unaccelerated:
-        return RenderingMode::Unaccelerated;
-    case CanvasRenderingContext2DSettings::RenderingMode::Accelerated:
-        return RenderingMode::Accelerated;
-    }
-    return std::nullopt;
+    return m_settings.renderingModeForTesting;
 }
 
 std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContext2DBase::getEffectiveRenderingModeForTesting()

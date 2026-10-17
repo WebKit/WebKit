@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/iokit-blocked-in-workers.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that IOKit is blocked in the sandbox of the process of the main thread: the process cannot open an IOKit service.");
+runMainThreadTest();
+</script>
+</body>
+</html>

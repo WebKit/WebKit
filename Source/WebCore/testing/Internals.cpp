@@ -8376,6 +8376,11 @@ bool Internals::isRemoteUIAppForAccessibility()
     return false;
 }
 
+bool Internals::isIOKitAvailable()
+{
+    return false;
+}
+
 bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass)
 {
     UNUSED_PARAM(process);

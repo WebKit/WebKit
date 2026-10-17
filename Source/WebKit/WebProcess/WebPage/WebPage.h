@@ -2072,6 +2072,8 @@ public:
 
     static void updatePreferencesGenerated(const WebPreferencesStore&);
     static void updateSettingsGenerated(const WebPreferencesStore&, WebCore::Settings&);
+    // Applies the preferences to the settings of a page, also of the pages of the shared and service workers.
+    static void updateSettings(const WebPreferencesStore&, WebCore::Settings&);
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
@@ -2984,12 +2986,7 @@ private:
     bool m_alwaysShowsHorizontalScroller { false };
     bool m_alwaysShowsVerticalScroller { false };
 
-    bool m_shouldRenderCanvasInGPUProcess { false };
     bool m_shouldRenderDOMInGPUProcess { false };
-    bool m_shouldPlayMediaInGPUProcess { false };
-#if ENABLE(WEBGL)
-    bool m_shouldRenderWebGLInGPUProcess { false };
-#endif
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
 #endif

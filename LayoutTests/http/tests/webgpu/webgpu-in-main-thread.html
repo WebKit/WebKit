@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+<script src="resources/webgpu-in-workers.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that WebGPU works in the main thread: a WebGPU buffer is written and read back.");
+runMainThreadTest();
+</script>
+</body>
+</html>

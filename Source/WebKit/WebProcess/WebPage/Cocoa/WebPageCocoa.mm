@@ -234,7 +234,7 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
     platformInitializeAccessibility(shouldInitializeAccessibility ? ShouldInitializeNSAccessibility::Yes : ShouldInitializeNSAccessibility::No);
 
 #if ENABLE(MEDIA_STREAM)
-    protect(WebProcess::singleton().userMediaCaptureManager())->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, parameters.shouldCaptureDisplayInGPUProcess,
+    protect(WebProcess::singleton().userMediaCaptureManager())->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.store.getBoolValueForKey(WebPreferencesKey::captureAudioInGPUProcessEnabledKey()), parameters.shouldCaptureVideoInUIProcess, parameters.store.getBoolValueForKey(WebPreferencesKey::captureVideoInGPUProcessEnabledKey()), parameters.shouldCaptureDisplayInUIProcess, parameters.store.getBoolValueForKey(WebPreferencesKey::useGPUProcessForDisplayCaptureKey()),
 #if ENABLE(WEB_RTC)
         m_page->settings().webRTCRemoteVideoFrameEnabled()
 #else

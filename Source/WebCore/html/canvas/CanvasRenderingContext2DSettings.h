@@ -42,10 +42,6 @@ struct CanvasRenderingContext2DSettings {
 #endif
     };
     ColorType colorType { ColorType::Unorm8 };
-    enum class RenderingMode {
-        Unaccelerated,
-        Accelerated
-    };
     std::optional<RenderingMode> renderingModeForTesting;
 };
 

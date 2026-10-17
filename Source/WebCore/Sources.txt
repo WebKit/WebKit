@@ -4996,6 +4996,7 @@ JSReducerCallback.cpp
 JSRegistrationResponseJSON.cpp
 JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
+JSRenderingMode.cpp
 JSReport.cpp
 JSReportBody.cpp
 JSReportingObserver.cpp

@@ -37,6 +37,8 @@
     CallTracer=InspectorCanvasCallTracer,
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
+
+    [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? getEffectiveRenderingModeForTesting();
 };
 
 OffscreenCanvasRenderingContext2D includes CanvasState;

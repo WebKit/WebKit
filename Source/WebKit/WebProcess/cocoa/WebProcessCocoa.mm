@@ -714,6 +714,21 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
+void WebProcess::blockIOKit()
+{
+#if HAVE(SANDBOX_STATE_FLAGS) && !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+    if (auto auditToken = auditTokenForSelf())
+        sandbox_enable_state_flag("BlockIOKitInWebContentSandbox", *auditToken);
+#endif
+    ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
+    ProcessCapabilities::setCanUseAcceleratedBuffers(false);
+    static bool disabled { false };
+    if (!std::exchange(disabled, true)) {
+        OSStatus ok = CGImageSourceDisableHardwareDecoding();
+        ASSERT_UNUSED(ok, ok == noErr);
+    }
+}
+
 std::optional<audit_token_t> WebProcess::auditTokenForSelf()
 {
     if (m_auditTokenForSelf)
