@@ -555,7 +555,9 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 {
     ASSERT(needsLayout());
 
-    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
+    // Simplified layout lays out the out-of-flow boxes through the render tree path, which the block formatting context does for the roots it
+    // covers: those are laid out in full.
+    if (relayoutChildren == RelayoutChildren::No && !LayoutIntegration::canUseForBlockLayoutWithOutOfFlowBoxes(*this) && simplifiedLayout())
         return;
 
     auto isPaginated = [&] {
@@ -599,6 +601,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
     LayoutUnit maxFloatLogicalBottom;
     LayoutUnit pageRemaining;
     const Style::ComputedStyle& styleToUse = style();
+    auto contentLayout = ContentLayout::RenderTree;
     do {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || styleToUse.writingMode().isBlockFlipped(), pageLogicalHeight, pageLogicalHeightChanged);
 
@@ -627,7 +630,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         if (!firstChild() && !isAnonymousBlock())
             setChildrenInline(true);
         dirtyForLayoutFromPercentageHeightDescendantsIfBasisChanged();
-        layoutInFlowChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom, maxFloatLogicalBottom);
+        contentLayout = layoutInFlowChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom, maxFloatLogicalBottom);
         // Expand our intrinsic height to encompass floats.
         LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
         if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext() && !establishesLineClampContainer())
@@ -713,12 +716,17 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         updateInFlowDescendantTransformsAfterLayout();
         computeInFlowOverflow(contentArea, isHorizontalWritingMode() ? ComputeOverflowOptions::MarginsExtendContentAreaX : ComputeOverflowOptions::MarginsExtendContentAreaY);
 
-        if (isDocumentElementRenderer() || previousHeight != newHeight || alignContentShift)
-            layoutOutOfFlowBoxes(RelayoutChildren::Yes);
-        else
-            layoutOutOfFlowBoxes(relayoutChildren);
-        updateOutOfFlowDescendantTransformsAfterLayout();
-        addOverflowFromOutOfFlowBoxes();
+        // The block formatting context lays out the out-of-flow boxes of a root whose content it laid out.
+        if (contentLayout == ContentLayout::BlockFormattingContext)
+            LayoutIntegration::BlockLayout { *this }.layoutOutOfFlowBoxes();
+        else {
+            if (isDocumentElementRenderer() || previousHeight != newHeight || alignContentShift)
+                layoutOutOfFlowBoxes(RelayoutChildren::Yes);
+            else
+                layoutOutOfFlowBoxes(relayoutChildren);
+            updateOutOfFlowDescendantTransformsAfterLayout();
+            addOverflowFromOutOfFlowBoxes();
+        }
     }
 
     auto* state = view().frameView().layoutContext().layoutState();
@@ -972,7 +980,7 @@ static bool contentFitsWithinMaximumLines(const RenderBlockFlow& lineClampContai
     return true;
 }
 
-void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
+auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom) -> ContentLayout
 {
     if (!firstChild()) {
         // Empty block containers produce empty formatting lines which may affect trim-start/end.
@@ -986,22 +994,26 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         repaintLogicalTop = { };
         repaintLogicalBottom = { };
         maxFloatLogicalBottom = { };
-        return;
+        return ContentLayout::RenderTree;
     }
 
     // FIXME: We should bail out sooner when subtree layout entry point is _inside_ a skipped subtree.
     if ((layoutContext().isSkippedContentRootForLayout(*this) || layoutContext().isSkippedContentForLayout(*this)) && !(isRenderMultiColumnFlow() || multiColumnFlow())) {
         clearNeedsLayoutForSkippedContent();
-        return;
+        return ContentLayout::RenderTree;
     }
 
+    auto contentLayout = ContentLayout::RenderTree;
     {
         auto textBoxTrimmer = TextBoxTrimmer { *this };
         auto lineClampUpdater = LineClampUpdater { *this };
         auto layoutChildren = [&](RelayoutChildren relayoutChildren) {
+            contentLayout = ContentLayout::RenderTree;
             if (childrenInline())
                 layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
-            else if (!layoutUsingBlockFormattingContext())
+            else if (layoutUsingBlockFormattingContext())
+                contentLayout = ContentLayout::BlockFormattingContext;
+            else
                 layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         };
         // Content takes its lines off the line-clamp budget as it gets laid out, so content in this line-clamp container's formatting context can't be skipped over.
@@ -1057,6 +1069,7 @@ void RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
         };
         applyTextBoxTrimEndIfNeeded();
     }
+    return contentLayout;
 }
 
 static inline bool isSkippedContentRootOrSkippedContent(const RenderBlockFlow& blockFlow)
