@@ -41,6 +41,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderLayoutState.h"
+#include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -59,13 +60,17 @@ enum class BlockAvoidanceReason : uint8_t {
     RootIsPaginated,
     RootIsInLineClampContext,
     RootIsInTextBoxTrimContext,
+    RootIsInLineGridContext,
     RootHasUnsupportedStyle,
     ContentHasFloat,
+    ContentIsHiddenByLineClamp,
     ContentHasOutOfFlowBox,
     ContentHasUnsupportedRenderer,
     ContentHasFormattingContextRoot,
     ContentHasLayer,
-    ContentHasInlineContent,
+    ContentHasBlockInInline,
+    ContentHasAtomicInlineLevelBox,
+    ContentHasUnsupportedInlineBox,
     ContentHasUnsupportedSize,
     ContentHasQuirksModePercentageHeight,
     ContentHasNestedQuirkContainer,
@@ -93,7 +98,9 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
         return BlockAvoidanceReason::RootIsFlexOrGridItem;
     if (rootContainer.childrenInline())
         return BlockAvoidanceReason::RootHasInlineContent;
-    if (!rootContainer.writingMode().isHorizontal())
+    // FIXME: Vertical writing modes, and horizontal-bt, whose inline content the inline formatting context places from the border and padding
+    // at the top, its block-end side (BoxGeometryUpdater::formattingContextConstraints).
+    if (!rootContainer.writingMode().isHorizontal() || rootContainer.writingMode().isBlockFlipped())
         return BlockAvoidanceReason::RootHasUnsupportedWritingMode;
     CheckedRef layoutContext = rootContainer.view().frameView().layoutContext();
     if (auto* layoutState = layoutContext->layoutState()) {
@@ -101,24 +108,50 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
             return BlockAvoidanceReason::RootIsPaginated;
         if (layoutState->lineClamp() || layoutState->legacyLineClamp())
             return BlockAvoidanceReason::RootIsInLineClampContext;
+        // The layout state has no entry for the boxes inside the block formatting context, so their inline content would see the
+        // root's line grid at the wrong offset.
+        if (layoutState->lineGrid())
+            return BlockAvoidanceReason::RootIsInLineGridContext;
     }
     if (rootContainer.enclosingFragmentedFlow())
         return BlockAvoidanceReason::RootIsPaginated;
     CheckedRef style = rootContainer.style();
     if (layoutContext->textBoxTrim() || style->textBoxTrim() != TextBoxTrim::None)
         return BlockAvoidanceReason::RootIsInTextBoxTrimContext;
+    if (!style->lineGrid().isNone())
+        return BlockAvoidanceReason::RootIsInLineGridContext;
     if (style->specifiesColumns() || rootContainer.multiColumnFlow() || !style->alignContent().isNormal() || !style->marginTrim().isNone()
         || style->scrollbarGutter().isStableBothEdges() || alignsBlockLevelChildren(style.get()))
         return BlockAvoidanceReason::RootHasUnsupportedStyle;
     return { };
 }
 
+static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer)
+{
+    if (is<RenderLineBreak>(renderer))
+        return { };
+    if (is<RenderBox>(renderer))
+        return BlockAvoidanceReason::ContentHasAtomicInlineLevelBox;
+    CheckedRef style = renderer.style();
+    if (renderer.type() != RenderObject::Type::Inline || style->display() != Style::DisplayType::InlineFlow || style->pseudoElementType() == PseudoElementType::FirstLetter)
+        return BlockAvoidanceReason::ContentHasUnsupportedInlineBox;
+    if (renderer.hasLayer())
+        return BlockAvoidanceReason::ContentHasLayer;
+    return { };
+}
+
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer)
 {
+    // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
+    // (RenderBlockFlow::layoutBlockChild, markInlineContentDirtyForLayout).
+    if (renderer.isForceHiddenByLineClamp())
+        return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
     if (renderer.isFloating())
         return BlockAvoidanceReason::ContentHasFloat;
     if (renderer.isOutOfFlowPositioned())
         return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+    if (renderer.isInline())
+        return inlineContentAvoidanceReason(renderer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (!blockContainer || blockContainer->type() != RenderObject::Type::BlockFlow)
@@ -126,12 +159,12 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     // Form controls and legends treat an auto width as fit-content (RenderBox::sizesLogicalWidthToFitContent).
     if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLLegendElement, HTMLSelectElement, HTMLTextAreaElement>(blockContainer->element()))
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
+    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
+        return BlockAvoidanceReason::ContentHasBlockInInline;
     if (blockContainer->createsNewFormattingContext())
         return BlockAvoidanceReason::ContentHasFormattingContextRoot;
     if (blockContainer->hasLayer())
         return BlockAvoidanceReason::ContentHasLayer;
-    if (blockContainer->childrenInline() && blockContainer->firstChild())
-        return BlockAvoidanceReason::ContentHasInlineContent;
 
     CheckedRef style = blockContainer->style();
     // Lengths, percentages and calc(); not the sizing keywords or calc-size().
@@ -161,8 +194,10 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         }
     }
 
-    // Empty editable boxes get a line (RenderBlock::hasLineIfEmpty).
-    if (style->clear() != Clear::None || !style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty())
+    // Empty editable boxes get a line (RenderBlock::hasLineIfEmpty). The layout state has no entry for the boxes inside the block
+    // formatting context, which is where line-clamp, text-box-trim and line grids reach the inline content below them.
+    if (style->clear() != Clear::None || !style->marginTrim().isNone() || alignsBlockLevelChildren(style.get()) || blockContainer->hasLineIfEmpty()
+        || !style->maxLines().isAuto() || style->textBoxTrim() != TextBoxTrim::None || !style->lineGrid().isNone())
         return BlockAvoidanceReason::ContentHasUnsupportedStyle;
     CheckedRef parentStyle = blockContainer->parent()->style();
     if (!style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy())
@@ -174,7 +209,7 @@ static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const Rend
 {
     if (auto reason = rootAvoidanceReason(rootContainer))
         return reason;
-    // Every descendant is a block box that takes part in the root's block formatting context (any other box would be a leaf).
+    // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one (any other box would be a leaf).
     for (CheckedRef descendant : descendantsOfType<RenderElement>(rootContainer)) {
         if (auto reason = contentAvoidanceReason(descendant))
             return reason;

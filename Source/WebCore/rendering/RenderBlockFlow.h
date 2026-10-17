@@ -42,7 +42,9 @@ class InlineContentCache;
 }
 
 namespace LayoutIntegration {
+class BlockIntegrationUtils;
 class BlockLayout;
+class PaintInvalidation;
 class LineLayout;
 }
 
@@ -459,7 +461,9 @@ protected:
     LayoutIntegration::LineLayout& ensureInlineLayout();
 
 private:
+    friend class LayoutIntegration::BlockIntegrationUtils;
     friend class LayoutIntegration::BlockLayout;
+    friend class LayoutIntegration::PaintInvalidation;
 
     bool LEGACY_NODELETE isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
 
@@ -520,6 +524,7 @@ private:
     };
     InlineContentStatus markInlineContentDirtyForLayout(RelayoutChildren);
     bool layoutSimpleBlockContentInInline(MarginInfo&);
+    void repaintInlineContentAfterLayout(LayoutUnit repaintLogicalTop, LayoutUnit repaintLogicalBottom);
     void updateRepaintTopAndBottomAfterLayout(RelayoutChildren, std::optional<LayoutRect> partialRepaintRect, std::pair<float, float> oldContentTopAndBottomIncludingInkOverflow, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     std::optional<LayoutUnit> updateLineClampStateAndLogicalHeightAfterLayout();
     void setStaticPositionsForSimpleOutOfFlowContent();

@@ -27,6 +27,7 @@
 
 #include "BlockFormattingConstraints.h"
 #include "BlockLayoutState.h"
+#include "InlineFormattingConstraints.h"
 #include <WebCore/AdjoiningMargins.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <wtf/CheckedRef.h>
@@ -37,6 +38,10 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
+
+namespace LayoutIntegration {
+class BlockIntegrationUtils;
+}
 
 namespace Layout {
 
@@ -60,18 +65,19 @@ struct BlockLayoutResult {
     LayoutUnit intrinsicContentBlockSize;
 };
 
-// Context only: what it changes as it lays out its content is in the block layout state, so the context can be built again from the root
-// and that state.
+// Context only: what it changes as it lays out its content is in the block layout state, so the context can be built again from the root,
+// the integration utils and that state.
 class BlockFormattingContext {
     WTF_MAKE_TZONE_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(const RenderBlockFlow& root, BlockLayoutState&);
+    BlockFormattingContext(const RenderBlockFlow& root, LayoutIntegration::BlockIntegrationUtils&, BlockLayoutState&);
 
     BlockLayoutResult layout(const ConstraintsForBlockContent&);
 
 private:
     void handleBlockContainerStart(const RenderBox&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
+    void handleInlineContent(const RenderBox& blockContainer);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
@@ -79,14 +85,17 @@ private:
     BoxGeometry computeBorderAndPadding(const RenderBox&, const ContainingBlockState&) const;
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
     void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
+    ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
     void resolveBorderBoxLogicalTops(ContainingBlockState& blockContainerState);
 
     const RenderBlockFlow& root() const { return m_root; }
+    LayoutIntegration::BlockIntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
     const CheckedRef<const RenderBlockFlow> m_root;
+    LayoutIntegration::BlockIntegrationUtils& m_integrationUtils;
     BlockLayoutState& m_blockLayoutState;
 };
 

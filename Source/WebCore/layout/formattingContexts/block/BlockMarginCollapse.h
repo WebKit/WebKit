@@ -80,9 +80,12 @@ public:
     // The same for a box whose margins collapse through it: in a quirk container, the margins of the child count when they are not all quirky.
     LayoutUnit collapsedLogicalBottomForCollapsedThroughBox() const;
     // Whether the margin after the last box that did not collapse through is quirky (RenderBlockFlow::MarginInfo::hasMarginAfterQuirk).
-    bool endsWithQuirk() const { return m_endsWithQuirk; }
+    bool endsWithQuirk() const { return m_endsWithQuirk.value_or(false); }
 
     void resetAdjoiningMargins(LayoutUnit logicalTop);
+    // The same at the bottom of the last line box of inline content. WebKit compatibility: like on the render tree path, the block-end margin
+    // of its block container keeps its own quirk.
+    void resetAdjoiningMarginsAfterLineBoxes(LayoutUnit logicalTop);
     // The block-start margin of a block container joins the adjoining margins, which collapse with its block-start edge until something
     // separates them.
     void startBlockContainer(ContainingBlockState& blockContainerState, const ContainingBlockState&, LayoutUnit marginBefore);
@@ -111,7 +114,8 @@ private:
 
     AdjoiningMargins m_adjoiningMargins;
     LayoutUnit m_logicalTop;
-    bool m_endsWithQuirk { false };
+    // Unset after line boxes, until the block-end margin of their block container.
+    std::optional<bool> m_endsWithQuirk { false };
     // Quirks mode: body is a quirk container (RenderBlockFlow::MarginInfo). At its block-start side, until something in it separates margins,
     // the margins that collapse with the block-start edge of its current child are kept here, apart from the adjoining margins, and dropped
     // when they are all quirky. A body inside another one stays on the render tree path.
