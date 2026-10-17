@@ -31,7 +31,7 @@ import os
 log = logging.getLogger('webkitscmpy')
 
 
-def _maybe_add_webkitcorepy_path():
+def _maybe_add_webkitcorepy_path() -> None:
     # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
     libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
     webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
@@ -73,3 +73,18 @@ from webkitscmpy.scm_base import ScmBase
 from webkitscmpy import local
 
 name = 'webkitscmpy'
+
+__all__ = [
+    'AutoInstall',
+    'Commit',
+    'CommitClassifier',
+    'Contributor',
+    'Package',
+    'PullRequest',
+    'ScmBase',
+    'Version',
+    'local',
+    'log',
+    'name',
+    'version',
+]

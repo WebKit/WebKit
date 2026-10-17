@@ -20,9 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import json
 import re
 import sys
+from typing import IO, Any, Iterator, Optional, Sequence
 
 from collections import defaultdict
 from webkitcorepy import string_utils
@@ -42,11 +45,11 @@ class Contributor(object):
 
     class Encoder(json.JSONEncoder):
 
-        def default(self, obj):
+        def default(self, obj: Any) -> Any:
             if not isinstance(obj, Contributor):
                 return super(Contributor.Encoder, self).default(obj)
 
-            result = dict(name=obj.name)
+            result: dict[str, Any] = dict(name=obj.name)
             if obj.status:
                 result['status'] = obj.status
             if obj.emails:
@@ -58,9 +61,10 @@ class Contributor(object):
 
             return result
 
-    class Mapping(defaultdict):
+    # Maps each of a contributor's names, emails and usernames to that contributor.
+    class Mapping(defaultdict[str, Optional['Contributor']]):
         @classmethod
-        def load(cls, file):
+        def load(cls, file: IO[str]) -> Contributor.Mapping:
             result = cls()
             contents = json.load(file)
             for contributor in contents:
@@ -68,6 +72,7 @@ class Contributor(object):
                 if not name:
                     continue
                 created = result.create(name, *contributor.get('emails', []))
+                assert created is not None  # Contributors with names are always created.
                 created.status = contributor.get('status', created.status)
                 created.github = contributor.get('github', created.github)
                 created.bitbucket = contributor.get('bitbucket', created.bitbucket)
@@ -89,18 +94,18 @@ class Contributor(object):
                     result[alias] = constructed
             return result
 
-        def __init__(self):
+        def __init__(self) -> None:
             super(Contributor.Mapping, self).__init__(lambda: None)
-            self.statuses = set()
+            self.statuses: set[str | None] = set()
 
-        def save(self, file):
-            alias_to_name = defaultdict(list)
+        def save(self, file: IO[str]) -> None:
+            alias_to_name: defaultdict[str, list[str]] = defaultdict(list)
             for alias, contributor in self.items():
                 if not contributor or alias in contributor.emails or alias == contributor.name:
                     continue
                 alias_to_name[contributor.name].append(alias)
 
-            contributors = []
+            contributors: list[dict[str, Any]] = []
             for alias, contributor in self.items():
                 if not contributor or alias != contributor.name:
                     continue
@@ -109,7 +114,7 @@ class Contributor(object):
 
             json.dump(contributors, file)
 
-        def add(self, contributor):
+        def add(self, contributor: Contributor) -> Contributor | None:
             if not isinstance(contributor, Contributor):
                 raise ValueError("'{}' is not a Contributor object".format(type(contributor)))
 
@@ -131,9 +136,9 @@ class Contributor(object):
 
             return result
 
-        def create(self, name=None, *emails, **kwargs):
-            emails = [email for email in emails or []]
-            if not name and not emails:
+        def create(self, name: str | None = None, *emails: str, **kwargs: Any) -> Contributor | None:
+            addresses = list(emails)
+            if not name and not addresses:
                 return None
 
             github = kwargs.pop('github', None)
@@ -142,7 +147,7 @@ class Contributor(object):
                 raise ValueError("'{}' is not a valid argument to Contributor.create".format(key))
 
             contributor = None
-            for argument in [name, github, bitbucket] + (emails or []):
+            for argument in [name, github, bitbucket] + addresses:
                 if not argument:
                     continue
                 contributor = self[argument]
@@ -150,7 +155,7 @@ class Contributor(object):
                     break
 
             if contributor:
-                for email in emails or []:
+                for email in addresses:
                     if email not in contributor.emails:
                         contributor.emails.append(email)
                 if contributor.name in contributor.emails and name:
@@ -160,7 +165,7 @@ class Contributor(object):
                 if bitbucket:
                     contributor.bitbucket = bitbucket
             else:
-                contributor = Contributor(name or emails[0], emails=emails, github=github, bitbucket=bitbucket)
+                contributor = Contributor(name or addresses[0], emails=addresses, github=github, bitbucket=bitbucket)
 
             self[contributor.name] = contributor
             for email in contributor.emails or []:
@@ -174,7 +179,8 @@ class Contributor(object):
                 self[contributor.bitbucket] = contributor
             return contributor
 
-        def __iter__(self):
+        # Iterating over a mapping yields each of its contributors once, rather than its keys.
+        def __iter__(self) -> Iterator[Contributor]:  # type: ignore[override]
             yielded = set()
             for contributor in self.values():
                 if not contributor or contributor.name in yielded:
@@ -183,9 +189,9 @@ class Contributor(object):
                 yield contributor
 
     @classmethod
-    def from_scm_log(cls, line, contributors=None):
-        emails = []
-        author = None
+    def from_scm_log(cls, line: str, contributors: Contributor.Mapping | None = None) -> Contributor | None:
+        emails: list[str] = []
+        author: str | None = None
 
         for expression in [
             cls.GIT_AUTHOR_RE,
@@ -227,26 +233,26 @@ class Contributor(object):
             return contributors.create(author, *emails)
         return cls(author or emails[0], emails=emails)
 
-    def __init__(self, name, emails=None, status=None, github=None, bitbucket=None):
+    def __init__(self, name: str | bytes, emails: Sequence[str | None] | None = None, status: str | None = None, github: str | None = None, bitbucket: str | None = None) -> None:
         self.name = string_utils.decode(name)
-        self.emails = list(filter(string_utils.decode, emails or []))
+        self.emails: list[str] = [email for email in emails or [] if email]
         self.status = status
         self.github = github
         self.bitbucket = bitbucket
 
     @property
-    def email(self):
+    def email(self) -> str | None:
         if not self.emails:
             return None
         return self.emails[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return u'{} <{}>'.format(self.name, self.email or '?')
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
-    def __cmp__(self, other):
+    def __cmp__(self, other: object) -> int:
         if isinstance(other, str):
             ref_value = other
         elif isinstance(other, Contributor):
@@ -260,20 +266,20 @@ class Contributor(object):
                 return 0
         return 1 if self.name > ref_value else -1
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return self.__cmp__(other) == 0
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return self.__cmp__(other) != 0
 
-    def __lt__(self, other):
+    def __lt__(self, other: Contributor | str | None) -> bool:
         return self.__cmp__(other) < 0
 
-    def __le__(self, other):
+    def __le__(self, other: Contributor | str | None) -> bool:
         return self.__cmp__(other) <= 0
 
-    def __gt__(self, other):
+    def __gt__(self, other: Contributor | str | None) -> bool:
         return self.__cmp__(other) > 0
 
-    def __ge__(self, other):
+    def __ge__(self, other: Contributor | str | None) -> bool:
         return self.__cmp__(other) >= 0
