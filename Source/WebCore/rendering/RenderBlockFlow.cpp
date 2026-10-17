@@ -1010,7 +1010,7 @@ auto RenderBlockFlow::layoutInFlowChildren(RelayoutChildren relayoutChildren, La
             contentLayout = ContentLayout::RenderTree;
             if (childrenInline())
                 layoutInlineChildren(relayoutChildren, previousHeight, repaintLogicalTop, repaintLogicalBottom);
-            else if (layoutUsingBlockFormattingContext())
+            else if (layoutUsingBlockFormattingContext(relayoutChildren))
                 contentLayout = ContentLayout::BlockFormattingContext;
             else
                 layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
@@ -1179,12 +1179,12 @@ void RenderBlockFlow::layoutBlockChildren(RelayoutChildren relayoutChildren, Lay
     setLogicalHeight(borderBoxLogicalHeight);
 }
 
-bool RenderBlockFlow::layoutUsingBlockFormattingContext()
+bool RenderBlockFlow::layoutUsingBlockFormattingContext(RelayoutChildren relayoutChildren)
 {
     if (!LayoutIntegration::canUseForBlockLayout(*this))
         return false;
 
-    LayoutIntegration::BlockLayout { *this }.layout();
+    LayoutIntegration::BlockLayout { *this }.layout(relayoutChildren);
     return true;
 }
 

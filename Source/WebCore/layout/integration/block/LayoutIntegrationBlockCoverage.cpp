@@ -161,6 +161,13 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
 
 // BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
 // between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
+// A block-level independent formatting context root the block formatting context lays out through the render tree
+// (BlockIntegrationUtils::layoutIndependentFormattingContext): a table or a flex container.
+static bool isLaidOutThroughRenderTree(const RenderObject& renderer)
+{
+    return !renderer.isInline() && !renderer.isFloatingOrOutOfFlowPositioned() && (renderer.type() == RenderObject::Type::Table || renderer.type() == RenderObject::Type::FlexibleBox);
+}
+
 static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
 {
     for (CheckedPtr<const RenderObject> descendant = &box; descendant;) {
@@ -169,6 +176,11 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
             descendant = descendant->nextInPreOrderAfterChildren(&box);
             continue;
         }
+        // FIXME: A box laid out through the render tree measures its content against its containing block's renderer, which the block
+        // formatting context has not committed yet (RenderBox::minContentLogicalWidthContribution reads its block size through an aspect
+        // ratio, for instance).
+        if (descendant != &box && isLaidOutThroughRenderTree(*descendant))
+            return false;
         if (CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant); blockContainer && !blockContainer->isInline()) {
             CheckedRef style = blockContainer->style();
             auto writingMode = blockContainer->writingMode();
@@ -223,6 +235,51 @@ static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const Ren
     return { };
 }
 
+static std::optional<BlockAvoidanceReason> independentFormattingContextAvoidanceReason(const RenderBox& box, const RenderBlockFlow& rootContainer)
+{
+    // Form controls are flex containers with content of their own.
+    if (isAnyOf<HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement>(box.element()))
+        return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
+    if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(box.parent()); !parent || parent->childrenInline())
+        return BlockAvoidanceReason::ContentHasBlockInInline;
+    // In quirks mode a percentage height inside it looks through it for an ancestor with a height (RenderBox::computePercentageLogicalHeight),
+    // past the containing block size the block formatting context gives it.
+    if (box.document().inQuirksMode())
+        return BlockAvoidanceReason::ContentHasQuirksModePercentageHeight;
+    // Scrollbars that come or go in a scroll container lay its ancestors out again (RenderObject::markContainingBlocksForLayout).
+    if (box.isWritingModeRoot() || box.hasNonVisibleOverflow())
+        return BlockAvoidanceReason::ContentHasUnsupportedStyle;
+    CheckedRef style = box.style();
+    auto writingMode = box.writingMode();
+    // The block formatting context decides the inline size from lengths, percentages and calc() (BlockFormattingUtils::inlineSizeAndMargins).
+    // FIXME: The sizing keywords, calc-size(), the stretch block size, which reads the containing block's renderer, and a preferred aspect ratio.
+    auto isSupportedInlineSize = [](auto& size) {
+        return (size.isAuto() || size.isSpecified()) && !size.isCalcSize();
+    };
+    auto isStretch = [](auto& size) {
+        return size.isStretch();
+    };
+    if (!isSupportedInlineSize(style->logicalWidth(writingMode)) || !isSupportedInlineSize(style->logicalMinWidth(writingMode))
+        || !(style->logicalMaxWidth(writingMode).isNone() || (style->logicalMaxWidth(writingMode).isSpecified() && !style->logicalMaxWidth(writingMode).isCalcSize()))
+        || isStretch(style->logicalHeight(writingMode)) || isStretch(style->logicalMinHeight(writingMode)) || isStretch(style->logicalMaxHeight(writingMode))
+        || style->aspectRatio().hasRatio())
+        return BlockAvoidanceReason::ContentHasUnsupportedSize;
+    // The block-step-size rounding of the margin box is the parent's job on the render tree path (RenderBlockFlow::performBlockStepSizing).
+    CheckedRef parentStyle = box.parent()->style();
+    if (style->clear() != Clear::None || !style->justifySelf().resolve(parentStyle.ptr()).isNormalStretchOrLegacy() || !style->blockStepSize().isNone())
+        return BlockAvoidanceReason::ContentHasUnsupportedStyle;
+    // An out-of-flow box inside whose containing block is outside it, in the block formatting context, would be registered on a box the
+    // block formatting context has not committed yet.
+    for (CheckedRef descendant : descendantsOfType<RenderBox>(box)) {
+        if (!descendant->isOutOfFlowPositioned())
+            continue;
+        CheckedPtr containingBlock = descendant->containingBlock();
+        if (containingBlock != &box && !containingBlock->isDescendantOf(&box) && isLaidOutByBlockFormattingContext(descendant, rootContainer))
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+    }
+    return { };
+}
+
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
     // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
@@ -242,6 +299,8 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
             return reason;
     } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer);
+    if (isLaidOutThroughRenderTree(renderer))
+        return independentFormattingContextAvoidanceReason(downcast<RenderBox>(renderer), rootContainer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
     if (!blockContainer || blockContainer->type() != RenderObject::Type::BlockFlow)
@@ -325,7 +384,7 @@ static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const Rend
     if (auto reason = rootAvoidanceReason(rootContainer))
         return reason;
     // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one. The content of an
-    // out-of-flow box laid out by a containing block outside the root is not part of it.
+    // out-of-flow box laid out by a containing block outside the root, or of a box laid out through the render tree, is not part of it.
     for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
         CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
         if (renderer) {
@@ -333,7 +392,7 @@ static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const Rend
                 return reason;
         }
         auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
-        auto skipsContent = isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer);
+        auto skipsContent = (isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer)) || (renderer && isLaidOutThroughRenderTree(*renderer));
         if (laysOutOutOfFlowBoxes && isOutOfFlowBox && !skipsContent)
             *laysOutOutOfFlowBoxes = true;
         descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);

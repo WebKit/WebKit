@@ -150,6 +150,21 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     if (auto& minimumWidth = style->logicalMinWidth(containingBlockWritingMode); minimumWidth.isSpecified() || minimumWidth.isIntrinsic())
         borderBoxInlineSize = std::max(borderBoxInlineSize, borderBoxInlineSizeFor(minimumWidth));
 
+    std::tie(marginStart, marginEnd) = inlineMargins(box, borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
+    return { borderBoxInlineSize, marginStart, marginEnd };
+}
+
+std::pair<LayoutUnit, LayoutUnit> BlockFormattingUtils::inlineMargins(const RenderBox& box, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle)
+{
+    auto containingBlockWritingMode = containingBlockStyle.writingMode();
+    CheckedRef style = box.style();
+    auto& marginStartLength = style->marginStart(containingBlockWritingMode);
+    auto& marginEndLength = style->marginEnd(containingBlockWritingMode);
+    auto usedMargin = [&](auto& margin) {
+        return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, style->usedZoomForLength());
+    };
+    auto marginStart = usedMargin(marginStartLength);
+    auto marginEnd = usedMargin(marginEndLength);
     if (borderBoxInlineSize < containingBlockInlineSize) {
         if (marginStartLength.isAuto() && marginEndLength.isAuto()) {
             marginStart = std::max(0_lu, (containingBlockInlineSize - borderBoxInlineSize) / 2);
@@ -166,7 +181,7 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     };
     if (containingBlockInlineSize && !isScrollContainer(containingBlockStyle.overflowX()) && !isScrollContainer(containingBlockStyle.overflowY()))
         marginEnd = containingBlockInlineSize - borderBoxInlineSize - marginStart;
-    return { borderBoxInlineSize, marginStart, marginEnd };
+    return { marginStart, marginEnd };
 }
 
 }

@@ -54,6 +54,8 @@ public:
     // way RenderBox::computeInlineDirectionMargins resolves them.
     // The min-content, max-content and fit-content inline sizes resolve against the inline sizes of the content (css-sizing-3 §3.2).
     static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes);
+    // The start and end margins of a box whose border box inline size is already known, from the same §10.3.3 equation.
+    static std::pair<LayoutUnit, LayoutUnit> inlineMargins(const RenderBox&, LayoutUnit borderBoxInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
     // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
     static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
