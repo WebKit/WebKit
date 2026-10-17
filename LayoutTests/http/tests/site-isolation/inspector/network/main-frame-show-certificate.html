@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function loadImage(url) {
+    let img = document.createElement("img");
+    img.src = url;
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let shownCertificate = null;
+    InspectorFrontendHost.showCertificate = (serializedCertificate) => {
+        shownCertificate = serializedCertificate;
+        return true;
+    };
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource?.url?.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    async function loadMainFrameImage(origin) {
+        let url = `${origin}/resources/square100.png?main-frame-${Math.random()}`;
+        let resourcePromise = waitForResource(url);
+        InspectorTest.evaluateInPage(`loadImage("${url}")`);
+        let resource = await resourcePromise;
+        if (!resource.hasResponse())
+            await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+        InspectorTest.expectEqual(resource.parentFrame, WI.networkManager.mainFrame, "Resource should belong to the main frame.");
+        return resource;
+    }
+
+    async function showCertificate(resource) {
+        shownCertificate = null;
+        try {
+            await resource.showCertificate();
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.MainFrame.ShowCertificate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.MainFrame.ShowCertificate.HTTPS",
+        description: "Showing the certificate of a main-frame resource loaded over https should pass its serialized certificate to the frontend host.",
+        async test() {
+            let resource = await loadMainFrameImage("https://localhost:8443");
+            InspectorTest.expectThat(await showCertificate(resource), "showCertificate should succeed.");
+            InspectorTest.expectGreaterThan(shownCertificate?.length ?? 0, 0, "Frontend host should receive a non-empty serialized certificate.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.MainFrame.ShowCertificate.HTTP",
+        description: "Showing the certificate of a main-frame resource loaded over http should fail because it has no certificate.",
+        async test() {
+            let resource = await loadMainFrameImage("http://localhost:8000");
+            InspectorTest.expectFalse(await showCertificate(resource), "showCertificate should fail.");
+            InspectorTest.expectNull(shownCertificate, "Frontend host should not receive a certificate.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the Security tab's "Show full certificate" works for main-frame resources under Site Isolation.</p>
+</body>
+</html>

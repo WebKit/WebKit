@@ -162,7 +162,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         // Network is enabled on the backend target; otherwise this resource's target handles it.
         // Mirrors Resource.requestContentFromBackend.
         let target = this._target;
-        if (WI.networkManager.networkEnabledOnBackendTarget && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
+        if (WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget !== target && WI.backendTarget.hasCommand("Network.loadResource"))
             target = WI.backendTarget;
 
         if (!target.hasCommand("Network.loadResource"))

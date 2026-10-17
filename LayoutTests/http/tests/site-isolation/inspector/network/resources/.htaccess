@@ -1,3 +1,6 @@
 <Files "cacheable-static-resource.txt">
     Header set Cache-Control "max-age=3600"
 </Files>
+<FilesMatch "^stylesheet-with-source-map.*\.(css|map|scss)$">
+    Header set Cache-Control "no-store"
+</FilesMatch>

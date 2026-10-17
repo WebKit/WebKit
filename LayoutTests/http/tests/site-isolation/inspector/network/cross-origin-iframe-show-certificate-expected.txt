@@ -1,0 +1,9 @@
+Tests that Resource.showCertificate retrieves the certificate of a cross-origin iframe resource under Site Isolation, through the backend target's NetworkAgent.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.ShowCertificate
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.ShowCertificate.SecureResource
+PASS: Resource should belong to the cross-origin iframe.
+PASS: showCertificate should not throw.
+PASS: showCertificate should pass a non-empty certificate to the host.
+
