@@ -445,6 +445,7 @@ platform/graphics/cg/NativeImageCG.cpp
 platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
+platform/graphics/cg/PrintColorCG.cpp
 platform/graphics/cg/ShareableBitmapCG.mm @nonARC @no-unify-when(bundle<=8)
 platform/graphics/cg/ShareableSpatialImage.cpp @no-unify-when(bundle<=8)
 platform/graphics/cg/TransformationMatrixCG.cpp

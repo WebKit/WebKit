@@ -72,6 +72,22 @@ DECLARE_SYSTEM_HEADER
 
 #else // USE(APPLE_INTERNAL_SDK)
 
+typedef CF_ENUM (int32_t, CGColorSpaceType)
+{
+    kCGColorSpaceNone = -1,
+    kCGColorSpaceDeviceGray,
+    kCGColorSpaceDeviceRGB,
+    kCGColorSpaceDeviceCMYK,
+    kCGColorSpaceCalibratedGray,
+    kCGColorSpaceCalibratedRGB,
+    kCGColorSpaceLAB,
+    kCGColorSpaceICCBased,
+    kCGColorSpaceIndexed,
+    kCGColorSpaceDeviceN,
+    kCGColorSpacePattern,
+    kCGColorSpaceProfileSets
+};
+
 struct CGFontHMetrics {
     int ascent;
     int descent;
@@ -454,6 +470,7 @@ const void *CGStyleGetData(CGStyleRef);
 CGColorRef CGStyleGetColor(CGStyleRef);
 bool CGColorSpaceEqualToColorSpace(CGColorSpaceRef, CGColorSpaceRef);
 CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
+CGColorSpaceType CGColorSpaceGetType(CGColorSpaceRef);
 
 #if HAVE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);

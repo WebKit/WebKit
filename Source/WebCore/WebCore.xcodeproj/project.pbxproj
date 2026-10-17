@@ -4859,6 +4859,7 @@
 		B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990C0D00D8B900BB825C /* SVGImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990D0D00D8B900BB825C /* EmptyClients.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535370B053814002CE64F /* PDFDocumentImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		23E98FC48FA7DA45AC958ACF /* PrintColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 773836A27436EC25C3AC075C /* PrintColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535670B053814002CE64F /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535390B053814002CE64F /* Color.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B27535690B053814002CE64F /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = B275353B0B053814002CE64F /* FloatPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B275356B0B053814002CE64F /* FloatRect.h in Headers */ = {isa = PBXBuildFile; fileRef = B275353D0B053814002CE64F /* FloatRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18644,6 +18645,8 @@
 		B27535350B053814002CE64F /* PathCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PathCG.cpp; sourceTree = "<group>"; };
 		B27535360B053814002CE64F /* PDFDocumentImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PDFDocumentImage.cpp; sourceTree = "<group>"; };
 		B27535370B053814002CE64F /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PDFDocumentImage.h; sourceTree = "<group>"; };
+		773836A27436EC25C3AC075C /* PrintColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintColor.h; sourceTree = "<group>"; };
+		963F3386C26AE7E005DC93C2 /* PrintColorCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrintColorCG.cpp; sourceTree = "<group>"; };
 		B27535380B053814002CE64F /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
 		B27535390B053814002CE64F /* Color.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Color.h; sourceTree = "<group>"; };
 		B275353A0B053814002CE64F /* FloatPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint.cpp; sourceTree = "<group>"; };
@@ -36545,6 +36548,7 @@
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
 				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
 				B27535370B053814002CE64F /* PDFDocumentImage.h */,
+				963F3386C26AE7E005DC93C2 /* PrintColorCG.cpp */,
 				46C963C32B6C993C002F46D1 /* ShareableBitmapCG.mm */,
 				B6F2010A2EAC180400BBF4AA /* ShareableSpatialImage.cpp */,
 				B6F201092EAC180400BBF4AA /* ShareableSpatialImage.h */,
@@ -36987,6 +36991,7 @@
 				A19759462A4F9AC700FEC5EA /* PlatformVideoPresentationInterface.h */,
 				CDD08AC1277E554E00EA3755 /* PlatformVideoTrackConfiguration.h */,
 				CD1F9AFC26FD38CA00617EB6 /* PlatformVideoTransferCharacteristics.h */,
+				773836A27436EC25C3AC075C /* PrintColor.h */,
 				BCAB417F13E356E800D8AAF3 /* Region.cpp */,
 				BCAB418013E356E800D8AAF3 /* Region.h */,
 				0FC5FB6429C4D7EC001EDFE5 /* RenderingMode.cpp */,
@@ -48197,6 +48202,7 @@
 				A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */,
 				A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */,
 				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
+				23E98FC48FA7DA45AC958ACF /* PrintColor.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				6B0A07F221FA4B5C00D57391 /* PrivateClickMeasurement.h in Headers */,
 				0F98C8F8286AA8FE00C7F4B2 /* ProcessCapabilities.h in Headers */,
