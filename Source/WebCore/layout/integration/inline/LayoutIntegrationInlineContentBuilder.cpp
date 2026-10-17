@@ -137,7 +137,7 @@ static inline FloatBoxExtent strokeAndTextShadowInkOverflowOutsets(const Style::
     return { strokeWidth - textShadow.top(), strokeWidth + textShadow.right(), strokeWidth + textShadow.bottom(), strokeWidth - textShadow.left() };
 }
 
-static float logicalBottomForTextDecorationContent(std::span<const InlineDisplay::Box> boxes, bool isHorizontalWritingMode)
+static float LEGACY_NODELETE logicalBottomForTextDecorationContent(std::span<const InlineDisplay::Box> boxes, bool isHorizontalWritingMode)
 {
     auto logicalBottom = std::optional<float> { };
     for (auto& displayBox : boxes) {

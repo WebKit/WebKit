@@ -91,8 +91,8 @@ public:
     inline LeafBoxIterator logicalLeftmostLeafBox() const;
     inline LeafBoxIterator logicalRightmostLeafBox() const;
 
-    LineBoxIterator next() const;
-    LineBoxIterator previous() const;
+    LineBoxIterator LEGACY_NODELETE next() const;
+    LineBoxIterator LEGACY_NODELETE previous() const;
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -119,18 +119,18 @@ public:
 
     LineBoxIterator& operator++() { return traverseNext(); }
     LineBoxIterator& operator--() { return traversePrevious(); }
-    WEBCORE_EXPORT LineBoxIterator& traverseNext();
-    LineBoxIterator& traversePrevious();
+    WEBCORE_EXPORT LineBoxIterator& LEGACY_NODELETE traverseNext();
+    LineBoxIterator& LEGACY_NODELETE traversePrevious();
 
-    WEBCORE_EXPORT explicit operator bool() const;
+    WEBCORE_EXPORT explicit LEGACY_NODELETE operator bool() const;
 
-    bool operator==(const LineBoxIterator&) const;
+    bool LEGACY_NODELETE operator==(const LineBoxIterator&) const;
     bool operator==(EndLineBoxIterator) const { return atEnd(); }
 
     const LineBox& operator*() const LIFETIME_BOUND { return m_lineBox; }
     const LineBox* operator->() const LIFETIME_BOUND { return &m_lineBox; }
 
-    bool atEnd() const;
+    bool LEGACY_NODELETE atEnd() const;
 
 private:
     LineBox m_lineBox;
@@ -138,7 +138,7 @@ private:
 
 WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
-LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+LineBoxIterator LEGACY_NODELETE lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 

@@ -107,7 +107,7 @@ public:
     LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
 
-    LayoutUnit contentLogicalHeight() const;
+    LayoutUnit LEGACY_NODELETE contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
     bool LEGACY_NODELETE hasEllipsisInBlockDirectionOnLastFormattedLine() const;
     bool contentFitsWithinMaximumLines() const { return m_inlineContent && m_inlineContent->contentFitsWithinMaximumLines(); }
@@ -175,7 +175,7 @@ public:
         // Lines kept from the previous layout.
         size_t reusedLineCount { 0 };
     };
-    WEBCORE_EXPORT static void setCollectsLayoutInfoForTesting(bool);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setCollectsLayoutInfoForTesting(bool);
     const LayoutInfoForTesting* layoutInfoForTesting() const { return m_layoutInfoForTesting.get(); }
 
 private:
@@ -189,7 +189,7 @@ private:
     InlineContent& ensureInlineContent() LIFETIME_BOUND;
     Layout::BlockFormattingState& ensureBlockFormattingState() LIFETIME_BOUND;
     Layout::InlineContentCache& ensureInlineContentCache() LIFETIME_BOUND;
-    const Layout::InlineItemList& inlineItemsForInvalidation() const LIFETIME_BOUND;
+    const Layout::InlineItemList& LEGACY_NODELETE inlineItemsForInvalidation() const LIFETIME_BOUND;
 
     Layout::LayoutState& layoutState() LIFETIME_BOUND { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const LIFETIME_BOUND { return *m_layoutState; }

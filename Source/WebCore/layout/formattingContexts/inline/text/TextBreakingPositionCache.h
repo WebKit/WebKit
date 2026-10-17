@@ -76,7 +76,7 @@ public:
 private:
     void evict();
     bool clearWidthsIfGenerationChanged();
-    static size_t approximateEntrySizeBytes(const String& text, const Entry&);
+    static size_t LEGACY_NODELETE approximateEntrySizeBytes(const String& text, const Entry&);
 
 private:
     using TextBreakingPositionMap = HashMap<Key, std::unique_ptr<Entry>>;

@@ -60,7 +60,7 @@ private:
         // lines against the end of the explicit grid. The leading implicit track count then shifts
         // negative resolved lines forward so the range maps to non-negative matrix indices. See
         // UnplacedGridItem::resolveDefinitePosition().
-        static GridPosition create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount);
+        static GridPosition LEGACY_NODELETE create(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount, size_t leadingImplicitTracksCount);
 
         bool isDefinite() const { return std::holds_alternative<DefinitePosition>(m_position); }
         bool isAuto() const { return std::holds_alternative<AutoPosition>(m_position); }
@@ -98,7 +98,7 @@ public:
     // of the explicit grid; the resolved lines may still be negative for negative line placements
     // that count past the start edge, and the leading implicit track count is applied later in
     // GridPosition::create().
-    static std::optional<std::pair<int, int>> resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount);
+    static std::optional<std::pair<int, int>> LEGACY_NODELETE resolveDefinitePosition(const Style::GridPosition& start, const Style::GridPosition& end, size_t explicitTrackCount);
 
 private:
     CheckedRef<const ElementBox> m_layoutBox;

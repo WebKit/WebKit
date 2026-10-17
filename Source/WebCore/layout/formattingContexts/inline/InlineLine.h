@@ -81,13 +81,13 @@ public:
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
-    void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
+    void LEGACY_NODELETE addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     enum class TrailingContentAction : uint8_t { Remove, Preserve };
     InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
-    const Box* removeOverflowingOutOfFlowContent();
+    const Box* LEGACY_NODELETE removeOverflowingOutOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
 
     using Run = LineRun;

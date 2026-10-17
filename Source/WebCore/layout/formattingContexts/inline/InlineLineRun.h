@@ -67,7 +67,7 @@ struct LineRun {
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
     bool isAtomicInlineBox() const { return m_type == Type::AtomicInlineBox; }
     bool isListMarker() const { return m_type == Type::ListMarker; }
-    bool isListMarkerOrItsContent() const;
+    bool LEGACY_NODELETE isListMarkerOrItsContent() const;
     bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
     bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }
     bool isHardLineBreak() const { return m_type == Type::HardLineBreak; }
@@ -134,7 +134,7 @@ private:
     LineRun(const InlineItem&, const Style::ComputedStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
 
     const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
-    void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
+    void LEGACY_NODELETE expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
     void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
     void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
     void setExpansion(InlineDisplay::Box::Expansion expansion) { m_expansion = expansion; }

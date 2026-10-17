@@ -94,8 +94,8 @@ public:
     bool hasStartPositioned() const;
     bool hasEndPositioned() const;
 
-    std::optional<LayoutUnit> highestPositionOnBlockAxis() const;
-    std::optional<LayoutUnit> lowestPositionOnBlockAxis(Clear = Clear::Both) const;
+    std::optional<LayoutUnit> LEGACY_NODELETE highestPositionOnBlockAxis() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE lowestPositionOnBlockAxis(Clear = Clear::Both) const;
 
     void shrinkToFit();
 

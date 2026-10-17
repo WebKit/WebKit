@@ -79,7 +79,7 @@ public:
     bool intersects(BoxGeometry::HorizontalEdges) const;
     bool containsFloatFromFormattingContext() const;
     PositionInContextRoot LEGACY_NODELETE highestBlockAxisPosition() const { return m_highestBlockAxisPosition; }
-    PositionInContextRoot lowestBlockAxisPosition() const;
+    PositionInContextRoot LEGACY_NODELETE lowestBlockAxisPosition() const;
 
     struct InlineAxisConstraints {
         std::optional<PositionInContextRoot> start;
@@ -348,7 +348,7 @@ std::optional<FloatingContext::BlockAxisPositionWithClearance> FloatingContext::
     return { };
 }
 
-static bool floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
+static bool LEGACY_NODELETE floatContainsLine(const Rect& floatBoxRect, LayoutUnit candidateTop, LayoutUnit candidateBottom, LayoutUnit candidateHeight)
 {
     if (floatBoxRect.isEmpty())
         return false;

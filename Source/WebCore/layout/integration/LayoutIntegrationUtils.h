@@ -61,7 +61,7 @@ public:
     std::optional<LayoutUnit> firstLineBaselineForGridItem(const ElementBox&) const;
     std::optional<LayoutUnit> lastLineBaselineForGridItem(const ElementBox&) const;
     void layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState&) const;
-    static const Style::ComputedStyle& firstNonAnonymousAncestorStyle(const Box&);
+    static const Style::ComputedStyle& LEGACY_NODELETE firstNonAnonymousAncestorStyle(const Box&);
 
     static BlockLayoutState::MarginState LEGACY_NODELETE toMarginState(const RenderBlockFlow::MarginInfo&);
     static RenderBlockFlow::MarginInfo toMarginInfo(const Layout::BlockLayoutState::MarginState&);

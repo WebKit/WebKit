@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-static LayoutUnit constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, LayoutUnit> minMaxSizes)
+static LayoutUnit LEGACY_NODELETE constrainSizeByMinMax(LayoutUnit size, std::pair<LayoutUnit, LayoutUnit> minMaxSizes)
 {
     return std::max(minMaxSizes.first, std::min(size, minMaxSizes.second));
 }

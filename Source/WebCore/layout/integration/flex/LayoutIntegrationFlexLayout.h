@@ -54,7 +54,7 @@ public:
 
     // Widens the container's allowed layout overflow by how far content-alignment pushed the items past the
     // content-box start edges. Takes RenderBox's writing-mode-only allowance, which only the renderer can compute.
-    LayoutOptionalOutsets adjustAllowedLayoutOverflow(LayoutOptionalOutsets) const;
+    LayoutOptionalOutsets LEGACY_NODELETE adjustAllowedLayoutOverflow(LayoutOptionalOutsets) const;
 
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
