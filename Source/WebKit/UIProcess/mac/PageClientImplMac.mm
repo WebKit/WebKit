@@ -860,7 +860,7 @@ WebCore::FloatRect PageClientImpl::documentRect() const
     if (!m_impl)
         return { };
 
-    CheckedPtr scrollingCoordinatorProxy = m_impl->page().scrollingCoordinatorProxy();
+    RefPtr scrollingCoordinatorProxy = m_impl->page().scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return { };
 

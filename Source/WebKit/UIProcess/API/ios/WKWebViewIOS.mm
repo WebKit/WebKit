@@ -1122,7 +1122,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     [_scrollView setMaximumZoomScale:maximumScaleFactor];
     [_scrollView _setZoomEnabledInternal:allowsUserScaling && self._allowsMagnification];
 
-    CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
+    RefPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
     if ([_scrollView showsHorizontalScrollIndicator] && [_scrollView showsVerticalScrollIndicator]) {
         [_scrollView setShowsHorizontalScrollIndicator:(scrollingCoordinator->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None)];
         [_scrollView setShowsVerticalScrollIndicator:(scrollingCoordinator->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None)];
@@ -1585,7 +1585,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     // Don't allow content to do programmatic scrolls for non-scrollable pages when zoomed.
-    if (!protect(_page->scrollingCoordinatorProxy())->hasScrollableMainFrame() && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], [_scrollView minimumZoomScale])) {
+    RefPtr scrollingCoordinatorProxy = _page->scrollingCoordinatorProxy();
+    if (scrollingCoordinatorProxy && !scrollingCoordinatorProxy->hasScrollableMainFrame() && !WebKit::scalesAreEssentiallyEqual([_scrollView zoomScale], [_scrollView minimumZoomScale])) {
         [self _scheduleForcedVisibleContentRectUpdate];
         return;
     }
@@ -2143,7 +2144,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     // FIXME: We will want to detect whether snapping will occur before beginning to drag. See WebPageProxy::didCommitLayerTree.
     ASSERT(scrollView == _scrollView.get());
-    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         [_scrollView _setDecelerationRateInternal:(coordinator->shouldSetScrollViewDecelerationRateFast()) ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal];
         coordinator->setRootNodeIsInUserScroll(true);
 
@@ -2176,7 +2177,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _page->scheduleAccessibilityFrameGeometryUpdate();
 #endif
 
-    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         coordinator->setRootNodeIsInUserScroll(false);
 
         auto scrollOffset = [self _scrollOffsetAdjustedForObscuredInset:scrollView.contentOffset];
@@ -2198,7 +2199,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             targetContentOffset->y = scrollView.contentOffset.y;
     }
 
-    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         UIEdgeInsets obscuredInsets;
         id<WKUIDelegatePrivate> uiDelegatePrivate = static_cast<id <WKUIDelegatePrivate>>([self UIDelegate]);
         if ([uiDelegatePrivate respondsToSelector:@selector(_webView:finalObscuredInsetsForScrollView:withVelocity:targetContentOffset:)])
@@ -2224,7 +2225,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
-    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         if (coordinator->scrollingPerformanceTestingEnabled()) {
             if (_scrollPerfIntervalState == ScrollPerfIntervalState::FingerDown) {
                 WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestFingerDownInterval, "isAnimation=YES;");
@@ -2244,7 +2245,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
+    if (RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
         if (coordinator->scrollingPerformanceTestingEnabled()) {
             if (_scrollPerfIntervalState == ScrollPerfIntervalState::Momentum) {
                 WTFEndSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
@@ -3306,7 +3307,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
 
     if (viewStability.isEmpty()) {
-        CheckedPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
+        RefPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy());
         if (coordinator && coordinator->hasActiveSnapPoint()) {
             CGPoint currentScrollOffset = [self _scrollOffsetAdjustedForObscuredInset:[_scrollView contentOffset]];
             CGPoint snappedScrollOffset = coordinator->scrollOffsetSnappedToNearestSnapPoint(currentScrollOffset, scaleFactor);
