@@ -1661,19 +1661,19 @@ void WebPageProxy::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifie
     completionHandler(makeUnexpected<WebCore::ExceptionData>({ ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s }));
 }
 
-void WebPageProxy::setCaptionDisplaySettingsPreviewProfileID(const FrameInfoData& frameInfo, const String& profileID)
+void WebPageProxy::setCaptionDisplaySettingsPreviewProfileID(WebProcessProxy& process, const String& profileID)
 {
-    sendToProcessContainingFrame(frameInfo.frameID, Messages::WebPage::SetCaptionDisplaySettingsPreviewProfileID(profileID));
+    process.send(Messages::WebPage::SetCaptionDisplaySettingsPreviewProfileID(profileID), webPageIDInProcess(process));
 }
 
-void WebPageProxy::showCaptionDisplaySettingsPreview(const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier identifier)
+void WebPageProxy::showCaptionDisplaySettingsPreview(WebProcessProxy& process, WebCore::HTMLMediaElementIdentifier identifier)
 {
-    sendToProcessContainingFrame(frameInfo.frameID, Messages::WebPage::ShowCaptionDisplaySettingsPreview(identifier));
+    process.send(Messages::WebPage::ShowCaptionDisplaySettingsPreview(identifier), webPageIDInProcess(process));
 }
 
-void WebPageProxy::hideCaptionDisplaySettingsPreview(const FrameInfoData& frameInfo, WebCore::HTMLMediaElementIdentifier identifier)
+void WebPageProxy::hideCaptionDisplaySettingsPreview(WebProcessProxy& process, WebCore::HTMLMediaElementIdentifier identifier)
 {
-    sendToProcessContainingFrame(frameInfo.frameID, Messages::WebPage::HideCaptionDisplaySettingsPreview(identifier));
+    process.send(Messages::WebPage::HideCaptionDisplaySettingsPreview(identifier), webPageIDInProcess(process));
 }
 
 #endif

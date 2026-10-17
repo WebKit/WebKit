@@ -1181,19 +1181,24 @@ void WebContextMenuProxyMac::didDismissContextMenu(NSMenu *menu)
 
 void WebContextMenuProxyMac::captionStyleMenuSetPreviewProfileID(const String& profileID)
 {
-    protect(page())->setCaptionDisplaySettingsPreviewProfileID(m_frameInfo, profileID);
+    RefPtr page = this->page();
+    page->setCaptionDisplaySettingsPreviewProfileID(page->processContainingFrame(m_frameInfo.frameID), profileID);
 }
 
 void WebContextMenuProxyMac::captionStyleMenuWillOpen()
 {
-    if (auto identifier = m_context.mediaElementIdentifier())
-        protect(page())->showCaptionDisplaySettingsPreview(m_frameInfo, *identifier);
+    if (auto identifier = m_context.mediaElementIdentifier()) {
+        RefPtr page = this->page();
+        page->showCaptionDisplaySettingsPreview(page->processContainingFrame(m_frameInfo.frameID), *identifier);
+    }
 }
 
 void WebContextMenuProxyMac::captionStyleMenuDidClose()
 {
-    if (auto identifier = m_context.mediaElementIdentifier())
-        protect(page())->hideCaptionDisplaySettingsPreview(m_frameInfo, *identifier);
+    if (auto identifier = m_context.mediaElementIdentifier()) {
+        RefPtr page = this->page();
+        page->hideCaptionDisplaySettingsPreview(page->processContainingFrame(m_frameInfo.frameID), *identifier);
+    }
 }
 
 } // namespace WebKit

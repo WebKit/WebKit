@@ -12545,17 +12545,20 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (void)captionStyleMenuSetPreviewProfileID:(NSString *)profileID frameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier
 {
-    protect(_page)->setCaptionDisplaySettingsPreviewProfileID(frameInfo, profileID);
+    RefPtr page = _page;
+    page->setCaptionDisplaySettingsPreviewProfileID(page->processContainingFrame(frameInfo.frameID), profileID);
 }
 
 - (void)captionStyleMenuWillOpenWithFrameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier
 {
-    protect(_page)->showCaptionDisplaySettingsPreview(frameInfo, identifier);
+    RefPtr page = _page;
+    page->showCaptionDisplaySettingsPreview(page->processContainingFrame(frameInfo.frameID), identifier);
 }
 
 - (void)captionStyleMenuDidCloseWithFrameInfo:(const WebKit::FrameInfoData&)frameInfo identifier:(WebCore::HTMLMediaElementIdentifier)identifier
 {
-    protect(_page)->hideCaptionDisplaySettingsPreview(frameInfo, identifier);
+    RefPtr page = _page;
+    page->hideCaptionDisplaySettingsPreview(page->processContainingFrame(frameInfo.frameID), identifier);
 }
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 

@@ -3149,9 +3149,9 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    void setCaptionDisplaySettingsPreviewProfileID(const FrameInfoData&, const String&);
-    void showCaptionDisplaySettingsPreview(const FrameInfoData&, WebCore::HTMLMediaElementIdentifier);
-    void hideCaptionDisplaySettingsPreview(const FrameInfoData&, WebCore::HTMLMediaElementIdentifier);
+    void setCaptionDisplaySettingsPreviewProfileID(WebProcessProxy&, const String&);
+    void showCaptionDisplaySettingsPreview(WebProcessProxy&, WebCore::HTMLMediaElementIdentifier);
+    void hideCaptionDisplaySettingsPreview(WebProcessProxy&, WebCore::HTMLMediaElementIdentifier);
 #endif
 
     void networkRequestsInProgressDidChange();
