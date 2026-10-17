@@ -373,6 +373,119 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, CreateWithJavaScriptURLIsRejected)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertRejects(browser.tabs.create({ url: 'javascript:void(0)' }), /it cannot be a JavaScript URL/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_TRUE(false);
+        completionHandler(nil, nil);
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, CreateWithFileURLIsRejected)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.test.assertRejects(browser.tabs.create({ url: 'file:///tmp/test.html' }), /it cannot be a local file URL/i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_TRUE(false);
+        completionHandler(nil, nil);
+    };
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, CreateWithFileURLWhenFileAccessIsAllowed)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.tabs.create({ url: 'file:///tmp/test.html' })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    manager.get().context._hasAccessToFileURLs = YES;
+
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    __block bool openedTab = false;
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"file:///tmp/test.html"]);
+        openedTab = true;
+
+        originalOpenNewTab(configuration, context, completionHandler);
+    };
+
+    [manager run];
+
+    EXPECT_TRUE(openedTab);
+}
+
+TEST(WKWebExtensionAPITabs, CreateWithDataURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.tabs.create({ url: 'data:text/html,Hello' })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    __block bool openedTab = false;
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"data:text/html,Hello"]);
+        openedTab = true;
+
+        originalOpenNewTab(configuration, context, completionHandler);
+    };
+
+    [manager run];
+
+    EXPECT_TRUE(openedTab);
+}
+
+TEST(WKWebExtensionAPITabs, CreateWithMailtoURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.tabs.create({ url: 'mailto:hello@example.com' })",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    __block bool openedTab = false;
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(configuration.url, [NSURL URLWithString:@"mailto:hello@example.com"]);
+        openedTab = true;
+
+        originalOpenNewTab(configuration, context, completionHandler);
+    };
+
+    [manager run];
+
+    EXPECT_TRUE(openedTab);
+}
+
 TEST(WKWebExtensionAPITabs, CreateWithRelativeURL)
 {
     auto *backgroundScript = Util::constructScript(@[

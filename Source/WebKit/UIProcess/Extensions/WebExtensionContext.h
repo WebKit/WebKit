@@ -412,6 +412,8 @@ public:
     void setBaseURL(URL&&);
 
     bool isURLForThisExtension(const URL&) const;
+    bool canOpenURLInNewTabOrWindow(const URL&) const;
+    String unsupportedURLForNewTabOrWindowMessage(const URL&) const;
 
     bool hasCustomUniqueIdentifier() const { return m_customUniqueIdentifier; }
 
