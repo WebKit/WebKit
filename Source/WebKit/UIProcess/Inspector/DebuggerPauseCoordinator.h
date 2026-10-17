@@ -29,6 +29,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,9 +42,10 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
 
-class DebuggerPauseCoordinator {
+class DebuggerPauseCoordinator final : public CanMakeCheckedPtr<DebuggerPauseCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED(DebuggerPauseCoordinator);
     WTF_MAKE_NONCOPYABLE(DebuggerPauseCoordinator);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DebuggerPauseCoordinator);
 public:
     explicit DebuggerPauseCoordinator(WebPageProxy&);
     ~DebuggerPauseCoordinator();
@@ -51,10 +53,14 @@ public:
     void frameDidPause(WebProcessProxy&, WebCore::FrameIdentifier);
     void frameDidContinue(WebProcessProxy&, WebCore::FrameIdentifier);
 
+    void frameDidChangeProcess(WebCore::FrameIdentifier, WebCore::ProcessIdentifier newProcessID);
+    void frameWillBeDestroyed(WebCore::FrameIdentifier);
+    void processDidTerminate(WebProcessProxy&);
     void closeSession();
 
 private:
     void openSession(WebProcessProxy& pausingProcess);
+    template<typename Predicate> void removeStoppingFramesIf(NOESCAPE const Predicate&);
 
     WeakRef<WebPageProxy> m_page;
     std::optional<WebCore::DebuggerPauseSessionIdentifier> m_sessionID;
