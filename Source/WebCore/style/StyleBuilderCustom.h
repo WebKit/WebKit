@@ -653,17 +653,30 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
 
 // CanvasText is the initial color according to spec.
 // https://www.w3.org/TR/css-color-4/#the-color-property
+// FIXME: the logic is almost identical to applyValueColor, so we should de-duplicate it.
 inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 {
     const CSS::Color initialColor { CSS::KeywordColor { CSSValueID::Canvastext } };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool axCustomColorModeActive = protect(builderState.document())->isAXCustomColorModeActive();
+#endif
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::No);
-        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle())));
+        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
     }
+
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle())));
+        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
     }
 
     builderState.style().setDisallowsFastPathInheritance();
@@ -673,13 +686,26 @@ inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 // For the color property, "currentcolor" is actually the inherited computed color.
 inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue& value)
 {
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool axCustomColorModeActive = protect(builderState.document())->isAXCustomColorModeActive();
+#endif
+
     if (builderState.applyPropertyToRegularStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No);
-        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle())));
+        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
     }
+
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle())));
+        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
     }
 
     builderState.style().setDisallowsFastPathInheritance();
@@ -700,16 +726,29 @@ inline void BuilderCustom::applyHighlightInitialColor(BuilderState& builderState
 // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
 inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState)
 {
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool axCustomColorModeActive = protect(builderState.document())->isAXCustomColorModeActive();
+#endif
+
     CheckedPtr parentHighlightStyle = builderState.parentHighlightStyle();
     auto& inheritedColor = parentHighlightStyle ? parentHighlightStyle->colorForHighlight() : Color::currentColor();
 
     if (builderState.applyPropertyToRegularStyle()) {
-        builderState.style().setColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle())));
+        builderState.style().setColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideColor(inheritedColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
         builderState.style().setColorForHighlight(Color { inheritedColor });
     }
     // FIXME: visitedLinkColor needs its own unresolved value for this.
-    if (builderState.applyPropertyToVisitedLinkStyle())
-        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle())));
+    if (builderState.applyPropertyToVisitedLinkStyle()) {
+        builderState.style().setVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::ComputedStyle)));
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (axCustomColorModeActive)
+            builderState.style().setOverrideVisitedLinkColor(inheritedColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle(), StyleColorOptionsPurpose::Rendering)));
+#endif
+    }
 
     builderState.style().setDisallowsFastPathInheritance();
     // Builder::applyHighlightInheritance() calls this with no declaration, so the origin comes from

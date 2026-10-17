@@ -7438,17 +7438,20 @@ class ColorPropertyTraitsVisitedLinkColorGetter(ColorPropertyTraitsFunctionBase)
         to.newline()
 
 
-class ColorPropertyTraitsColorResolvingCurrentColorGetter(ColorPropertyTraitsFunctionBase):
+class ColorPropertyTraitsResolveColorGetter(ColorPropertyTraitsFunctionBase):
     def __init__(self, property):
         super().__init__(
             property,
             ComputedStylePropertyFunctionSignature(
                 function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id}>>",
-                function_name=f"colorResolvingCurrentColor",
+                function_name=f"resolveColor",
                 function_static=True,
                 function_inline=True,
                 function_return_type='WebCore::Color',
-                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_arguments=[
+                    ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style'),
+                    ComputedStylePropertyFunctionSignature.Argument(type='StyleColorOptionsPurpose', name='purpose')
+                ],
                 function_qualifiers=[]
             )
         )
@@ -7465,17 +7468,20 @@ class ColorPropertyTraitsColorResolvingCurrentColorGetter(ColorPropertyTraitsFun
         raise Exception(f"'{self.signature.function_scope}::{self.signature.function_name}' always requires a custom definition")
 
 
-class ColorPropertyTraitsVisitedLinkColorResolvingCurrentColorGetter(ColorPropertyTraitsFunctionBase):
+class ColorPropertyTraitsResolveVisitedLinkColorGetter(ColorPropertyTraitsFunctionBase):
     def __init__(self, property):
         super().__init__(
             property,
             ComputedStylePropertyFunctionSignature(
                 function_scope=f"ColorPropertyTraits<PropertyNameConstant<{property.id}>>",
-                function_name=f"visitedLinkColorResolvingCurrentColor",
+                function_name=f"resolveVisitedLinkColor",
                 function_static=True,
                 function_inline=True,
                 function_return_type='WebCore::Color',
-                function_arguments=[ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style')],
+                function_arguments=[
+                    ComputedStylePropertyFunctionSignature.Argument(type='const ComputedStyleProperties&', name='style'),
+                    ComputedStylePropertyFunctionSignature.Argument(type='StyleColorOptionsPurpose', name='purpose')
+                ],
                 function_qualifiers=[]
             )
         )
@@ -7881,8 +7887,8 @@ class ColorPropertyTraitsGenerator(object):
 
         self.color_getter = ColorPropertyTraitsColorGetter(property)
         self.visited_link_color_getter = ColorPropertyTraitsVisitedLinkColorGetter(property)
-        self.color_resolving_current_color_getter = ColorPropertyTraitsColorResolvingCurrentColorGetter(property)
-        self.visited_link_color_resolving_current_color_getter = ColorPropertyTraitsVisitedLinkColorResolvingCurrentColorGetter(property)
+        self.resolve_color_getter = ColorPropertyTraitsResolveColorGetter(property)
+        self.resolve_visited_link_color_getter = ColorPropertyTraitsResolveVisitedLinkColorGetter(property)
         self.excludes_visited_link_color_getter = ColorPropertyTraitsExcludesVisitedLinkColorGetter(property)
 
     @property
@@ -7890,8 +7896,8 @@ class ColorPropertyTraitsGenerator(object):
         return ComputedStylePropertyFunctionSet([
             self.color_getter,
             self.visited_link_color_getter,
-            self.color_resolving_current_color_getter,
-            self.visited_link_color_resolving_current_color_getter,
+            self.resolve_color_getter,
+            self.resolve_visited_link_color_getter,
             self.excludes_visited_link_color_getter,
         ])
 
@@ -7900,8 +7906,8 @@ class ColorPropertyTraitsGenerator(object):
         return ComputedStylePropertyFunctionSet([
             self.color_getter,
             self.visited_link_color_getter,
-            self.color_resolving_current_color_getter,
-            self.visited_link_color_resolving_current_color_getter,
+            self.resolve_color_getter,
+            self.resolve_visited_link_color_getter,
             self.excludes_visited_link_color_getter,
         ])
 

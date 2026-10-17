@@ -28,23 +28,29 @@
 #include <WebCore/Color.h>
 
 namespace WebCore {
+
+enum class StyleColorOptionsPurpose : bool;
+
 namespace Style {
 
 class ComputedStyleProperties;
 
+// FIXME: rename this class, since it now carries more than just colors.
 class ResolvedColors {
     WTF_MAKE_TZONE_ALLOCATED(ResolvedColors);
 
 public:
-    explicit ResolvedColors(WebCore::Color);
+    ResolvedColors(WebCore::Color, StyleColorOptionsPurpose);
 
-    static ResolvedColors fromStyle(const ComputedStyleProperties&);
-    static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&);
+    static ResolvedColors fromStyle(const ComputedStyleProperties&, StyleColorOptionsPurpose);
+    static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&, StyleColorOptionsPurpose);
 
     WebCore::Color currentColor() const { return m_currentColor; }
+    StyleColorOptionsPurpose styleColorOptionsPurpose() const { return m_styleColorOptionsPurpose; }
 
 private:
     WebCore::Color m_currentColor;
+    StyleColorOptionsPurpose m_styleColorOptionsPurpose;
 };
 
 } // namespace Style

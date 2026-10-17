@@ -27,6 +27,8 @@
 #include "StyleKeywordColor.h"
 
 #include "CSSKeywordColor.h"
+#include "Color.h"
+#include "ColorSerialization.h"
 #include "Document.h"
 #include "PlatformRenderTheme.h"
 #include "RenderTheme.h"
@@ -37,24 +39,18 @@
 #include "StyleContrastColor.h"
 #include "StyleCurrentAccentColor.h"
 #include "StyleCurrentColor.h"
+#include "StyleResolvedColors.h"
 
 namespace WebCore {
 namespace Style {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(KeywordColor);
 
 Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& state)
 {
     switch (unresolved.valueID) {
     case CSSValueID::InternalDocumentTextColor:
         return { state.document->textColor() };
-    case CSSValueID::WebkitLink:
-        // FIXME: resolve differently based on purpose (Style vs Rendering)
-        return { state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style, StyleColorOptionsPurpose::Rendering) : state.document->linkColor(state.style, StyleColorOptionsPurpose::Rendering) };
-    case CSSValueID::WebkitActivelink:
-        // FIXME: resolve differently based on purpose (Style vs Rendering)
-        return { state.document->activeLinkColor(state.style, StyleColorOptionsPurpose::Rendering) };
-    case CSSValueID::WebkitFocusRingColor:
-        // FIXME: resolve differently based on purpose (Style vs Rendering)
-        return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr(), StyleColorOptionsPurpose::Rendering)) };
     case CSSValueID::Currentcolor:
         return { CurrentColor() };
     case CSSValueID::Accentcolor:
@@ -62,9 +58,65 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
     case CSSValueID::Accentcolortext:
         return { ContrastColor { CurrentAccentColor() } };
     default:
-        // FIXME: resolve differently based on purpose (Style vs Rendering)
-        return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr(), StyleColorOptionsPurpose::Rendering)) };
+        break;
     }
+
+    auto resolveColor = [&](StyleColorOptionsPurpose purpose) {
+        switch (unresolved.valueID) {
+        case CSSValueID::WebkitLink:
+            return state.forVisitedLink == ForVisitedLink::Yes ? state.document->visitedLinkColor(state.style, purpose) : state.document->linkColor(state.style, purpose);
+        case CSSValueID::WebkitActivelink:
+            return state.document->activeLinkColor(state.style, purpose);
+        case CSSValueID::WebkitFocusRingColor:
+            return RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr(), purpose));
+        default:
+            return CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr(), purpose));
+        }
+    };
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (state.document->isAXCustomColorModeActive()) {
+        auto computedStyleColor = resolveColor(StyleColorOptionsPurpose::ComputedStyle);
+        auto renderColor = resolveColor(StyleColorOptionsPurpose::Rendering);
+
+        if (computedStyleColor != renderColor)
+            return KeywordColor { WTF::move(computedStyleColor), WTF::move(renderColor) };
+        return ResolvedColor { WTF::move(computedStyleColor) };
+    }
+#endif
+
+    return ResolvedColor { resolveColor(StyleColorOptionsPurpose::Rendering) };
+}
+
+WebCore::Color resolveColor(const KeywordColor& color, const ResolvedColors& context)
+{
+    switch (context.styleColorOptionsPurpose()) {
+    case StyleColorOptionsPurpose::ComputedStyle:
+        return color.computedStyleColor;
+
+    case StyleColorOptionsPurpose::Rendering:
+        return color.renderColor;
+    }
+
+    ASSERT_NOT_REACHED();
+    return color.computedStyleColor;
+}
+
+void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const KeywordColor& keywordColor)
+{
+    builder.append(WebCore::serializationForCSS(keywordColor.computedStyleColor));
+}
+
+WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor& keywordColor)
+{
+    return WebCore::serializationForCSS(keywordColor.computedStyleColor);
+}
+
+// MARK: - TextStream
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const KeywordColor& keywordColor)
+{
+    return ts << "keywordColor(style color: "_s << keywordColor.computedStyleColor.debugDescription() << ", render color: " << keywordColor.renderColor.debugDescription() << ')';
 }
 
 } // namespace Style

@@ -32,19 +32,36 @@
 namespace WebCore {
 namespace Style {
 
-ResolvedColors::ResolvedColors(WebCore::Color currentColor)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor, StyleColorOptionsPurpose purpose)
     : m_currentColor(currentColor)
+    , m_styleColorOptionsPurpose(purpose)
 {
 }
 
-ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
+ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style, StyleColorOptionsPurpose purpose)
 {
-    return ResolvedColors(style.color());
+    switch (purpose) {
+    case StyleColorOptionsPurpose::ComputedStyle:
+        return ResolvedColors(style.color(), purpose);
+    case StyleColorOptionsPurpose::Rendering:
+        return ResolvedColors(style.usedColor(), purpose);
+    }
+
+    ASSERT_NOT_REACHED();
+    return ResolvedColors(style.color(), purpose);
 }
 
-ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
+ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style, StyleColorOptionsPurpose purpose)
 {
-    return ResolvedColors(style.visitedLinkColor());
+    switch (purpose) {
+    case StyleColorOptionsPurpose::ComputedStyle:
+        return ResolvedColors(style.visitedLinkColor(), purpose);
+    case StyleColorOptionsPurpose::Rendering:
+        return ResolvedColors(style.usedVisitedLinkColor(), purpose);
+    }
+
+    ASSERT_NOT_REACHED();
+    return ResolvedColors(style.visitedLinkColor(), purpose);
 }
 
 } // namespace Style

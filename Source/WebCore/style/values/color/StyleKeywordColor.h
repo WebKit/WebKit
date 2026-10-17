@@ -25,20 +25,53 @@
 
 #pragma once
 
+#include "Color.h"
+#include <wtf/text/WTFString.h>
+
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 namespace CSS {
 struct KeywordColor;
+struct SerializationContext;
 }
 
 namespace Style {
 
+class ResolvedColors;
+
 struct Color;
 struct ColorResolutionState;
 
-// NOTE: There is no Style::KeywordColor type. Style conversion of CSS::KeywordColor yields a Style::CurrentColor or a Style::ResolvedColor.
+struct KeywordColor {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(KeywordColor);
+
+    WebCore::Color computedStyleColor;
+    WebCore::Color renderColor;
+
+    friend bool operator==(const KeywordColor& a, const KeywordColor& b) { return a.computedStyleColor == b.computedStyleColor; }
+};
+
+inline bool operator==(const UniqueRef<KeywordColor>& a, const UniqueRef<KeywordColor>& b)
+{
+    return a.get() == b.get();
+}
 
 Color toStyleColor(const CSS::KeywordColor&, ColorResolutionState&);
+WebCore::Color resolveColor(const KeywordColor&, const ResolvedColors&);
+
+constexpr bool containsCurrentColor(const KeywordColor&)
+{
+    return false;
+}
+
+void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const KeywordColor&);
+WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const KeywordColor&);
+
+WTF::TextStream& operator<<(WTF::TextStream&, const KeywordColor&);
 
 } // namespace Style
 } // namespace WebCore

@@ -121,6 +121,8 @@ public:
     Color visitedLinkTextEmphasisColor;
     CaretColor caretColor;
     CaretColor visitedLinkCaretColor;
+    std::optional<WebCore::Color> overrideColor;
+    std::optional<WebCore::Color> overrideVisitedLinkColor;
 
     AccentColor accentColor;
 

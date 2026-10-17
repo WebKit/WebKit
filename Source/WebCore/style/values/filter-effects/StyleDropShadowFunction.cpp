@@ -96,7 +96,7 @@ auto Evaluation<DropShadow, Ref<FilterEffect>>::operator()(const DropShadow& val
     auto y = Style::roundForImpreciseConversion<int>(evaluate<float>(value.location.y(), zoom));
     auto stdDeviation = Style::roundForImpreciseConversion<int>(evaluate<float>(value.stdDeviation, zoom));
 
-    return FEDropShadow::create(stdDeviation, stdDeviation, x, y, value.color.resolveColor(ResolvedColors::fromStyle(style)), 1);
+    return FEDropShadow::create(stdDeviation, stdDeviation, x, y, value.color.resolveColor(ResolvedColors::fromStyle(style, StyleColorOptionsPurpose::Rendering)), 1);
 }
 
 // MARK: - Platform
@@ -106,7 +106,7 @@ auto ToPlatform<DropShadow>::operator()(const DropShadow& value, const Style::Co
     auto zoom = style.usedZoomForLength();
 
     return DropShadowFilterOperation::create(
-        value.color.resolveColor(ResolvedColors::fromStyle(style)),
+        value.color.resolveColor(ResolvedColors::fromStyle(style, StyleColorOptionsPurpose::Rendering)),
         IntPoint {
             Style::roundForImpreciseConversion<int>(evaluate<float>(value.location.x(), zoom)),
             Style::roundForImpreciseConversion<int>(evaluate<float>(value.location.y(), zoom)),

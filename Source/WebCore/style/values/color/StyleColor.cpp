@@ -134,6 +134,11 @@ Color::Color(ContrastColor&& contrastColor)
 {
 }
 
+Color::Color(KeywordColor&& color)
+    : value { makeIndirectColor(WTF::move(color)) }
+{
+}
+
 Color::Color(RelativeAlphaColor&& relativeAlphaColor)
     : value { makeIndirectColor(WTF::move(relativeAlphaColor)) }
 {

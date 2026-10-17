@@ -46,6 +46,8 @@ InheritedRareData::InheritedRareData()
     , visitedLinkTextEmphasisColor(ComputedStyle::initialTextEmphasisColor())
     , caretColor(ComputedStyle::initialCaretColor())
     , visitedLinkCaretColor(ComputedStyle::initialCaretColor())
+    , overrideColor()
+    , overrideVisitedLinkColor()
     , accentColor(ComputedStyle::initialAccentColor())
     , scrollbarColor(ComputedStyle::initialScrollbarColor())
     , textEmphasisStyle(ComputedStyle::initialTextEmphasisStyle())
@@ -158,6 +160,8 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , caretColor(o.caretColor)
     , visitedLinkCaretColor(o.visitedLinkCaretColor)
+    , overrideColor(o.overrideColor)
+    , overrideVisitedLinkColor(o.overrideVisitedLinkColor)
     , accentColor(o.accentColor)
     , scrollbarColor(o.scrollbarColor)
     , textEmphasisStyle(o.textEmphasisStyle)
@@ -278,6 +282,8 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
         && caretColor == o.caretColor
         && visitedLinkCaretColor == o.visitedLinkCaretColor
+        && overrideColor == o.overrideColor
+        && overrideVisitedLinkColor == o.overrideVisitedLinkColor
         && accentColor == o.accentColor
         && scrollbarColor == o.scrollbarColor
         && dynamicRangeLimit == o.dynamicRangeLimit
@@ -398,6 +404,9 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
 
     LOG_IF_DIFFERENT(caretColor);
     LOG_IF_DIFFERENT(visitedLinkCaretColor);
+
+    LOG_IF_DIFFERENT(overrideColor);
+    LOG_IF_DIFFERENT(overrideVisitedLinkColor);
 
     LOG_IF_DIFFERENT(accentColor);
 

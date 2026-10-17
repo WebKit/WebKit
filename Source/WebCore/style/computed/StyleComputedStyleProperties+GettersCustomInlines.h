@@ -319,46 +319,46 @@ inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::Stro
     return style.visitedLinkStroke().colorDisregardingType();
 }
 
-inline WebCore::Color ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::TextDecorationColor>>::colorResolvingCurrentColor(const ComputedStyleProperties& style)
+inline WebCore::Color ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::TextDecorationColor>>::resolveColor(const ComputedStyleProperties& style, StyleColorOptionsPurpose purpose)
 {
     auto& result = style.textDecorationColor();
     if (result.isCurrentColor()) {
         if ((style.hasExplicitlySetStrokeWidth() && style.strokeWidth().isPossiblyPositive()) || style.textStrokeWidth().isPositive()) {
             // Prefer stroke color if possible but not if it's fully transparent.
             if (style.hasExplicitlySetStrokeColor()) {
-                auto strokeColor = style.strokeColor().resolveColor(ResolvedColors::fromStyle(style));
+                auto strokeColor = style.strokeColor().resolveColor(ResolvedColors::fromStyle(style, purpose));
                 if (strokeColor.isVisible())
                     return strokeColor;
             } else {
-                auto strokeColor = style.textStrokeColor().resolveColor(ResolvedColors::fromStyle(style));
+                auto strokeColor = style.textStrokeColor().resolveColor(ResolvedColors::fromStyle(style, purpose));
                 if (strokeColor.isVisible())
                     return strokeColor;
             }
         }
-        return style.color();
     }
-    return result.resolveColor(ResolvedColors::fromStyle(style));
+
+    return result.resolveColor(ResolvedColors::fromStyle(style, purpose));
 }
 
-inline WebCore::Color ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::TextDecorationColor>>::visitedLinkColorResolvingCurrentColor(const ComputedStyleProperties& style)
+inline WebCore::Color ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::TextDecorationColor>>::resolveVisitedLinkColor(const ComputedStyleProperties& style, StyleColorOptionsPurpose purpose)
 {
     auto& result = style.visitedLinkTextDecorationColor();
     if (result.isCurrentColor()) {
         if ((style.hasExplicitlySetStrokeWidth() && style.strokeWidth().isPossiblyPositive()) || style.textStrokeWidth().isPositive()) {
             // Prefer stroke color if possible but not if it's fully transparent.
             if (style.hasExplicitlySetStrokeColor()) {
-                auto strokeColor = style.visitedLinkStrokeColor().resolveColor(ResolvedColors::fromVisitedLinkStyle(style));
+                auto strokeColor = style.visitedLinkStrokeColor().resolveColor(ResolvedColors::fromVisitedLinkStyle(style, purpose));
                 if (strokeColor.isVisible())
                     return strokeColor;
             } else {
-                auto strokeColor = style.visitedLinkTextStrokeColor().resolveColor(ResolvedColors::fromVisitedLinkStyle(style));
+                auto strokeColor = style.visitedLinkTextStrokeColor().resolveColor(ResolvedColors::fromVisitedLinkStyle(style, purpose));
                 if (strokeColor.isVisible())
                     return strokeColor;
             }
         }
-        return style.visitedLinkColor();
     }
-    return result.resolveColor(ResolvedColors::fromVisitedLinkStyle(style));
+
+    return result.resolveColor(ResolvedColors::fromVisitedLinkStyle(style, purpose));
 }
 
 inline bool ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::BackgroundColor>>::excludesVisitedLinkColor(const WebCore::Color& visitedLinkColor)

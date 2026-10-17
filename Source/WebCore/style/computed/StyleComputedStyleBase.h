@@ -160,6 +160,7 @@ enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
 enum class StyleAppearance : uint8_t;
 enum class StyleColorOptions : uint8_t;
+enum class StyleColorOptionsPurpose : bool;
 enum class TableLayoutType : bool;
 enum class TextBoxTrim : uint8_t;
 enum class TextCombine : bool;
@@ -752,6 +753,12 @@ public:
     inline void setTransformOrigin(TransformOrigin&&);
 
     inline bool hasLegacyLineClamp() const;
+
+    // The getters return the override color if set, otherwise they return the original color.
+    inline WebCore::Color usedColor() const;
+    inline WebCore::Color usedVisitedLinkColor() const;
+    inline void setOverrideColor(std::optional<WebCore::Color>);
+    inline void setOverrideVisitedLinkColor(std::optional<WebCore::Color>);
 
     // MARK: - Properties/descriptors that are not yet generated
 

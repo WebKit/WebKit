@@ -220,6 +220,16 @@ inline void ComputedStyleBase::setDisplayMaintainingOriginalDisplay(Display disp
     m_nonInheritedFlags.display = display.toRaw();
 }
 
+inline void ComputedStyleBase::setOverrideColor(std::optional<WebCore::Color> color)
+{
+    SET(m_inheritedRareData, overrideColor, WTF::move(color));
+}
+
+inline void ComputedStyleBase::setOverrideVisitedLinkColor(std::optional<WebCore::Color> color)
+{
+    SET(m_inheritedRareData, overrideVisitedLinkColor, WTF::move(color));
+}
+
 inline void ComputedStyleBase::setUsedAppearance(StyleAppearance a)
 {
     SET_NESTED(m_nonInheritedData, miscData, usedAppearance, static_cast<unsigned>(a));

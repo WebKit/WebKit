@@ -602,9 +602,18 @@ WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColor(OptionSet<Pain
 
 WebCore::Color ComputedStyle::visitedDependentUsedBackgroundColorApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
-    auto color = visitedDependentUsedBackgroundColor(paintBehavior);
-    appleColorFilter().transformColor(color);
-    return color;
+    auto colorResolver = backgroundColorResolver();
+    auto unvisitedLinkColor = usedBackgroundColorResolvingCurrentColorApplyingColorFilter();
+
+    if (colorResolver.visitedDependentShouldReturnUnvisitedLinkColor(paintBehavior))
+        return unvisitedLinkColor;
+
+    auto visitedLinkColor = visitedLinkBackgroundColorResolvingCurrentColorApplyingColorFilter();
+    if (ColorPropertyTraits<PropertyNameConstant<CSSPropertyID::BackgroundColor>>::excludesVisitedLinkColor(visitedLinkColor))
+        return unvisitedLinkColor;
+
+    // Take the alpha from the unvisited color, but get the RGB values from the visited color.
+    return visitedLinkColor.colorWithAlpha(unvisitedLinkColor.alphaAsFloat());
 }
 
 // MARK: - Derived Values

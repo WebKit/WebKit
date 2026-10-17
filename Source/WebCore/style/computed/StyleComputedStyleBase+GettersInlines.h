@@ -515,6 +515,22 @@ inline bool ComputedStyleBase::hasLegacyLineClamp() const
     return static_cast<OverflowContinue>(m_nonInheritedData->rareData->overflowContinue) == OverflowContinue::WebkitLegacy && !m_nonInheritedData->rareData->maxLines.isAuto();
 }
 
+// MARK: - Used colors
+
+inline WebCore::Color ComputedStyleBase::usedColor() const
+{
+    if (m_inheritedRareData->overrideColor) [[unlikely]]
+        return *m_inheritedRareData->overrideColor;
+    return m_inheritedData->color;
+}
+
+inline WebCore::Color ComputedStyleBase::usedVisitedLinkColor() const
+{
+    if (m_inheritedRareData->overrideVisitedLinkColor) [[unlikely]]
+        return *m_inheritedRareData->overrideVisitedLinkColor;
+    return m_inheritedData->visitedLinkColor;
+}
+
 // MARK: - Properties/descriptors that are not yet generated
 
 inline CursorType ComputedStyleBase::cursorType() const
