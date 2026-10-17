@@ -443,6 +443,23 @@ void InlineFormattingContext::updateBoxGeometryForPlacedFloats(const LineLayoutR
     }
 }
 
+static void measureMaxedOutGlyphOverflow(InlineDisplay::Content& displayContent, size_t firstBoxIndex)
+{
+    for (auto boxIndex = firstBoxIndex; boxIndex < displayContent.boxes.size(); ++boxIndex) {
+        auto& displayBox = displayContent.boxes[boxIndex];
+        if (!displayBox.isText() || !displayBox.hasMaxedOutGlyphOverflow())
+            continue;
+
+        CheckedRef inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
+        CheckedRef style = displayBox.style();
+        auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(displayBox.text().renderedContent(), style, inlineTextBox->shouldUseSimpleGlyphOverflowCodePath() ? TextUtil::ShouldUseSimpleGlyphOverflowCodePath::Yes : TextUtil::ShouldUseSimpleGlyphOverflowCodePath::No);
+        auto& fontMetrics = style->metricsOfPrimaryFont();
+        auto top = std::max(0.f, -enclosingAscentAndDescent.ascent - fontMetrics.ascent(FontBaseline::Alphabetic));
+        auto bottom = std::max(0.f, enclosingAscentAndDescent.descent - fontMetrics.descent(FontBaseline::Alphabetic));
+        displayContent.setMaxedOutGlyphOverflow(boxIndex, { top, 0.f, bottom, 0.f });
+    }
+}
+
 InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const LineBox& lineBox, const LineLayoutResult& lineLayoutResult, const ConstraintsForInlineContent& constraints, InlineDisplay::Content& displayContent, bool canUseSimplifiedDisplayContentBuild)
 {
     if (canUseSimplifiedDisplayContentBuild) {
@@ -451,8 +468,11 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         auto displayLine = InlineDisplay::Line { lineBoxRect, { lineBoxRect.top() + rootInlineBoxRect.top(), lineBoxRect.top() + rootInlineBoxRect.bottom() }, lineBox.alignmentBaseline(), rootInlineBoxRect.left(), rootInlineBoxRect.width() };
 
         auto numberOfDisplayBoxesFromPreviousLines = displayContent.boxes.size();
-        displayContent.boxes.appendVector(InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.buildTextOnlyContent(lineLayoutResult));
+        InlineDisplayContentBuilder displayContentBuilder { *this, constraints, lineBox, displayLine };
+        displayContent.boxes.appendVector(displayContentBuilder.buildTextOnlyContent(lineLayoutResult));
         ASSERT(displayContent.boxes.size() > numberOfDisplayBoxesFromPreviousLines);
+        if (displayContentBuilder.hasMaxedOutGlyphOverflow())
+            measureMaxedOutGlyphOverflow(displayContent, numberOfDisplayBoxesFromPreviousLines);
         displayLine.setBoxCount(displayContent.boxes.size() - numberOfDisplayBoxesFromPreviousLines);
         displayContent.lines.append(displayLine);
         return lineBoxRect;
@@ -466,7 +486,8 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
 
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed ? numberOfLinesWithInlineContent > *numberOfVisibleLinesAllowed : false;
     auto displayLine = InlineDisplayLineBuilder { *this, constraints }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
-    auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
+    InlineDisplayContentBuilder displayContentBuilder { *this, constraints, lineBox, displayLine };
+    auto boxes = displayContentBuilder.build(lineLayoutResult);
     displayLine.setBoxCount(boxes.size());
 
     auto ellipsis = std::optional<InlineDisplay::Line::Ellipsis> { };
@@ -484,7 +505,10 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
         }
     }
 
+    auto numberOfDisplayBoxesFromPreviousLines = displayContent.boxes.size();
     displayContent.boxes.appendVector(WTF::move(boxes));
+    if (displayContentBuilder.hasMaxedOutGlyphOverflow())
+        measureMaxedOutGlyphOverflow(displayContent, numberOfDisplayBoxesFromPreviousLines);
     displayContent.lines.append(displayLine);
     if (ellipsis)
         displayContent.setEllipsisOnTrailingLine(WTF::move(*ellipsis));

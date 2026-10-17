@@ -139,6 +139,10 @@ struct Box {
     void setInkOverflow(const FloatRect& inkOverflow) { m_inkOverflow = inkOverflow; }
     FloatBoxExtent glyphOverflow() const { return { static_cast<float>(m_glyphOverflowTop), 0.f, static_cast<float>(m_glyphOverflowBottom), 0.f }; }
     void setGlyphOverflow(uint8_t top, uint8_t bottom) { m_glyphOverflowTop = top; m_glyphOverflowBottom = bottom; }
+    // Maxed-out values mean the glyph overflow did not fit; InlineDisplay::Content holds the measured value.
+    static constexpr uint8_t maximumGlyphOverflowTop = 31;
+    static constexpr uint8_t maximumGlyphOverflowBottom = 7;
+    bool hasMaxedOutGlyphOverflow() const { return m_glyphOverflowTop == maximumGlyphOverflowTop || m_glyphOverflowBottom == maximumGlyphOverflowBottom; }
     void setLeft(float physicalLeft);
     void setRight(float physicalRight);
     void setTop(float physicalTop);
