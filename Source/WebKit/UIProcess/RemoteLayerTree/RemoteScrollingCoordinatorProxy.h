@@ -140,6 +140,8 @@ public:
     WebCore::OverscrollBehavior mainFrameHorizontalOverscrollBehavior() const;
     WebCore::OverscrollBehavior mainFrameVerticalOverscrollBehavior() const;
 
+    WebCore::ScrollAxisLock mainFrameScrollAxisLock() const;
+
     virtual void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) { }
     virtual void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) { }
