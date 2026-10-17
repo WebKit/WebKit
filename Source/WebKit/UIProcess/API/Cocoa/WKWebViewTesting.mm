@@ -433,6 +433,18 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
 }
 
+- (void)_delayNextDidStartProvisionalLoadForTesting:(void (^)(void))didDelayHandler
+{
+    _page->delayNextDidStartProvisionalLoadForTesting([didDelayHandler = makeBlockPtr(didDelayHandler)] {
+        didDelayHandler();
+    });
+}
+
+- (void)_resumeDelayedDidStartProvisionalLoadForTesting
+{
+    _page->resumeDelayedDidStartProvisionalLoadForTesting();
+}
+
 - (BOOL)_beginBackSwipeForTesting
 {
 #if PLATFORM(MAC)

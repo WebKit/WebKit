@@ -9041,7 +9041,21 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
+    if (auto didDelay = std::exchange(m_didDelayDidStartProvisionalLoadForTesting, nullptr)) {
+        m_delayedDidStartProvisionalLoadForTesting = [this, protectedThis = Ref { *this }, process = WebProcessProxy::fromConnection(connection), frameID, frameInfo = WTF::move(frameInfo), request = WTF::move(request), navigationID, url = WTF::move(url), unreachableURL = WTF::move(unreachableURL), userData, timestamp] mutable {
+            didStartProvisionalLoadForFrameShared(WTF::move(process), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
+        };
+        didDelay();
+        return;
+    }
+
     didStartProvisionalLoadForFrameShared(WebProcessProxy::fromConnection(connection), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
+}
+
+void WebPageProxy::resumeDelayedDidStartProvisionalLoadForTesting()
+{
+    if (auto delayedDidStartProvisionalLoad = std::exchange(m_delayedDidStartProvisionalLoadForTesting, nullptr))
+        delayedDidStartProvisionalLoad();
 }
 
 static bool shouldPrewarmWebProcessOnProvisionalLoad()
@@ -9073,9 +9087,14 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         purgeQueuedModalDialogs();
     }
 
+    // The network process may have triggered a process swap (e.g. because of COOP) for this very navigation, and the
+    // provisional page may already be continuing it, before this message from the old process arrived.
+    bool isForNavigationContinuedInProvisionalPage = frame->isMainFrame() && m_provisionalPage && m_provisionalPage->navigationID() == navigationID;
+
     // If a provisional load has since been started in another process, ignore this message.
     if (protect(preferences())->siteIsolationEnabled()) {
-        if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier()) {
+        if (frame->provisionalLoadProcess().coreProcessIdentifier() != process->coreProcessIdentifier()
+            && !(isForNavigationContinuedInProvisionalPage && frame->process().coreProcessIdentifier() == process->coreProcessIdentifier())) {
             // FIXME: The API test ProcessSwap.DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted
             // is probably not handled correctly with site isolation on.
             return;
@@ -9092,7 +9111,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
     }
 
     // If the page starts a new main frame provisional load, then cancel any pending one in a provisional process.
-    if (frame->isMainFrame() && m_provisionalPage && m_provisionalPage->mainFrame() != frame) {
+    if (frame->isMainFrame() && m_provisionalPage && m_provisionalPage->mainFrame() != frame && !isForNavigationContinuedInProvisionalPage) {
         protect(provisionalPageProxy())->cancel();
         m_provisionalPage = nullptr;
     }
