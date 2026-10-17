@@ -14,8 +14,6 @@ onload = function()
     if (sessionStorage.didNav) {
         delete sessionStorage.didNav;
         delete sessionStorage.topShouldNavAndGoBack;
-        if (window.testRunner)
-            testRunner.notifyDone();
     } else {
         sessionStorage.topShouldNavAndGoBack = true;
         document.getElementById('the-form').submit();

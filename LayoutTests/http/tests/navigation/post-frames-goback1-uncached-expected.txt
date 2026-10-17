@@ -6,7 +6,11 @@ Tests that a POST targetted to a frame is handled correctly when navigating away
 --------
 Frame: 'target-frame'
 --------
+This page was requested with the HTTP method POST.
 
+Parameters:
+
+the-input = input value goes here
 
 ============== Back Forward List ==============
 curr->  http://127.0.0.1:8000/navigation/post-frames-goback1-uncached.html
