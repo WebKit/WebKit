@@ -78,7 +78,8 @@ public:
 private:
     void handleBlockContainerStart(const RenderBox&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
-    void handleInlineContent(const RenderBox& blockContainer);
+    void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
+    void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
@@ -89,6 +90,7 @@ private:
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
+    ContainingBlockState computeContainingBlockStateAtBlockStart(const RenderBox&);
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
     LayoutUnit viewportStretchedBorderBoxBlockSize(LayoutUnit collapsedMarginBefore, LayoutUnit collapsedMarginAfter) const;
     void placeInContainingBlock(const RenderBox&, ContainingBlockState&& blockContainerState, BlockLayoutResult&);
