@@ -141,7 +141,6 @@ template <typename TextIterator>
 static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
 {
     auto isRTL = run.rtl();
-    auto isSmallCaps = fontCascade.isSmallCaps();
     Ref primaryFont = fontCascade.primaryFont();
 
     char32_t currentCharacter = 0;
@@ -149,7 +148,7 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto addFallbackFontForCharacterIfApplicable = [&](auto character) {
-            if (isSmallCaps)
+            if (fontCascade.capitalizesForSmallCaps(character))
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
@@ -200,7 +199,6 @@ static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(c
 {
     auto enclosingAscent = std::optional<InlineLayoutUnit> { };
     auto enclosingDescent = std::optional<InlineLayoutUnit> { };
-    auto isSmallCaps = fontCascade.isSmallCaps();
     Ref primaryFont = fontCascade.primaryFont();
 
     char32_t currentCharacter = 0;
@@ -208,7 +206,7 @@ static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(c
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto computeTopAndBottomForCharacter = [&](auto character) {
-            if (isSmallCaps)
+            if (fontCascade.capitalizesForSmallCaps(character))
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);

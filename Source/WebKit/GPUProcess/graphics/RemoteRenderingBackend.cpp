@@ -531,7 +531,7 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
 
     FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData.get());
 
-    Ref font = SharedFont::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
+    Ref font = SharedFont::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.isSmallCapsFace, fontAttributes.renderingResourceIdentifier);
 
     bool success = m_remoteResourceCache.cacheFont(WTF::move(font));
     MESSAGE_CHECK(success, "Font already cached.");

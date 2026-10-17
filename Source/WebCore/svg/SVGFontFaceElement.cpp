@@ -44,6 +44,7 @@
 #include "StyleDocumentScope.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "TextFlags.h"
 #include <math.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -243,6 +244,28 @@ int SVGFontFaceElement::descent() const
 String SVGFontFaceElement::fontFamily() const
 {
     return protect(protect(fontFaceRule())->properties())->getPropertyValue(CSSPropertyID::FontFamily);
+}
+
+bool SVGFontFaceElement::supportsVariantCaps(FontVariantCaps variantCaps) const
+{
+    // Spec: 'font-variant' takes a comma-separated list of [normal | small-caps | inherit]. A <font-face> without
+    // the attribute describes the 'normal' variant.
+    bool wantsSmallCaps = variantCaps == FontVariantCaps::Small;
+
+    bool supportsNormal = false;
+    bool supportsSmallCaps = false;
+    attributeWithoutSynchronization(font_variantAttr).string().splitAllowingEmptyEntries(',', [&](StringView entry) {
+        auto variant = entry.trim(isASCIIWhitespace<char16_t>);
+        if (equalLettersIgnoringASCIICase(variant, "normal"_s))
+            supportsNormal = true;
+        else if (equalLettersIgnoringASCIICase(variant, "small-caps"_s))
+            supportsSmallCaps = true;
+    });
+
+    if (!supportsNormal && !supportsSmallCaps)
+        supportsNormal = true;
+
+    return wantsSmallCaps ? supportsSmallCaps : supportsNormal;
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const

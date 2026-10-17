@@ -300,7 +300,7 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
 
 void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomString& familyName)
 {
-    const auto& segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), familyName);
+    const auto& segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), description.variantCaps(), familyName);
     if (!segmentedFontFace)
         return;
 
@@ -484,7 +484,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
     RefPtr document = dynamicDowncast<Document>(m_context.get());
-    if (RefPtr face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup)) {
+    if (RefPtr face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), fontDescriptionForLookup->variantCaps(), familyForLookup)) {
         if (document && document->settings().webAPIStatisticsEnabled())
             ResourceLoadObserver::singleton().logFontLoad(*document, familyForLookup.string(), true);
         return { face->fontRanges(*fontDescriptionForLookup, fontPaletteValues, fontFeatureValues), isGenericFontFamily };
