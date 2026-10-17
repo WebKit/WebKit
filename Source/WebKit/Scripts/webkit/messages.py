@@ -940,7 +940,7 @@ def generate_messages_header(receiver):
         else:
             result.append('class ' + forwarder_class + ': public RefCounted<' + forwarder_class + '>, public IPC::MessageReceiver {\n')
         result.append('public:\n')
-        result.append('    static Ref<' + forwarder_class + '> createFromWeak(' + handler_namespace + '::' + weak_ref_class + '* _Nonnull handler)\n')
+        result.append('    static Ref<' + forwarder_class + '> createFromWeak(' + handler_namespace + '::' + weak_ref_class + '* WTF_NONNULL handler)\n')
         result.append('    {\n')
         result.append('        return adoptRef(*new ' + forwarder_class + '(handler));\n')
         result.append('    }\n')
@@ -958,7 +958,7 @@ def generate_messages_header(receiver):
             result.append('    void ref() const final { RefCounted::ref(); }\n')
             result.append('    void deref() const final { RefCounted::deref(); }\n')
         result.append('private:\n')
-        result.append('    ' + forwarder_class + '(' + handler_namespace + '::' + weak_ref_class + '* _Nonnull);\n')
+        result.append('    ' + forwarder_class + '(' + handler_namespace + '::' + weak_ref_class + '* WTF_NONNULL);\n')
         result.append('    std::unique_ptr<' + handler_namespace + '::' + class_name + '> getMessageTarget();\n')
         result.append('    std::unique_ptr<' + handler_namespace + '::' + weak_ref_class + '> m_handler;\n')
         result.append('} DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);\n\n')
@@ -2211,14 +2211,14 @@ def generate_message_handler(receiver):
 
         result.append('\n')
         # Workaround for rdar://163107752
-        result.append('static std::unique_ptr<%s> make%sWeakRefUniquePtr(%s* _Nonnull handler)\n' % (weak_ref_class, class_name, weak_ref_class))
+        result.append('static std::unique_ptr<%s> make%sWeakRefUniquePtr(%s* WTF_NONNULL handler)\n' % (weak_ref_class, class_name, weak_ref_class))
         result.append('{\n')
         result.append('    auto newRef = _impl::_impl_%s::makeRetained(handler);\n' % (weak_ref_class))
         result.append('    return WTF::makeUniqueWithoutFastMallocCheck<%s>(newRef);\n' % (weak_ref_class))
         result.append('}\n')
         result.append('\n')
 
-        result.append('%s::%s(%s* _Nonnull target)\n' % (forwarder_class, forwarder_class, weak_ref_class))
+        result.append('%s::%s(%s* WTF_NONNULL target)\n' % (forwarder_class, forwarder_class, weak_ref_class))
         result.append('    : m_handler(make%sWeakRefUniquePtr(target))\n' % (class_name))
         result.append('{\n')
         result.append('}\n')
