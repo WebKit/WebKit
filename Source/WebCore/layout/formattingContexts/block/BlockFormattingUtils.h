@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FormattingConstraints.h"
 #include <WebCore/LayoutUnit.h>
 #include <WebCore/WritingMode.h>
 #include <optional>
@@ -51,7 +52,10 @@ public:
     };
     // CSS 2.2 §10.3.3 (block-level, non-replaced elements in normal flow) with min/max-width (§10.4). Auto margins resolve the
     // way RenderBox::computeInlineDirectionMargins resolves them.
-    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle);
+    // The min-content, max-content and fit-content inline sizes resolve against the inline sizes of the content (css-sizing-3 §3.2).
+    static InlineSizeAndMargins inlineSizeAndMargins(const RenderBox&, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes);
+    // Its inline size, min inline size or max inline size is min-content, max-content or fit-content.
+    static bool hasIntrinsicInlineSize(const RenderBox&, WritingMode);
     // CSS 2.2 §10.6.3 (block-level, non-replaced elements in normal flow) with min/max-height (§10.7).
     static LayoutUnit borderBoxBlockSize(const RenderBox&, LayoutUnit borderAndPaddingBlockSize, LayoutUnit intrinsicContentBlockSize, std::optional<LayoutUnit> containingBlockContentBoxBlockSize, WritingMode);
     // The border box block size a preferred aspect ratio gives an auto block size, from the inline size (css-sizing-4 §5.1, like
