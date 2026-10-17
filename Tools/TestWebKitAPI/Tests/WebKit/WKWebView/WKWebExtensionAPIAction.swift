@@ -1793,12 +1793,7 @@ struct WKWebExtensionAPIActionTests {
         action.closePopup()
     }
 
-    // FIXME when webkit.org/b/314652 is resolved.
-    #if WTF_PLATFORM_MAC && !ASSERT_ENABLED
-    @Test(.disabled("webkit.org/b/314652"))
-    #else
     @Test
-    #endif
     func clearTabSpecificActionPropertiesOnNavigation() async throws {
         var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
@@ -1809,20 +1804,28 @@ struct WKWebExtensionAPIActionTests {
         let backgroundScript = """
             const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })
 
-            browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })
-            browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })
-            browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })
-            browser.action.setBadgeText({ text: '42', tabId: currentTab.id })
-            browser.action.disable(currentTab.id)
-
-            browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be before navigation')
-            browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), browser.runtime.getURL('alt-popup.html'), 'Popup should be before navigation')
-            browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be before navigation')
-            browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled before navigation')
+            let completedCount = 0
 
             browser.webNavigation.onCompleted.addListener(async (details) => {
               browser.test.assertEq(details.tabId, currentTab.id, 'Only the tab we expect should be changing')
               browser.test.assertEq(details.frameId, 0, 'Only main frame should be changing')
+
+              if (++completedCount === 1) {
+                // Customize only after the initial navigation committed, since any commit clears them.
+                await browser.action.setTitle({ title: 'Tab Title', tabId: currentTab.id })
+                await browser.action.setIcon({ path: 'toolbar-48.png', tabId: currentTab.id })
+                await browser.action.setPopup({ popup: 'alt-popup.html', tabId: currentTab.id })
+                await browser.action.setBadgeText({ text: '42', tabId: currentTab.id })
+                await browser.action.disable(currentTab.id)
+
+                browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Tab Title', 'Title should be before navigation')
+                browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), browser.runtime.getURL('alt-popup.html'), 'Popup should be before navigation')
+                browser.test.assertEq(await browser.action.getBadgeText({ tabId: currentTab.id }), '42', 'Badge text should be before navigation')
+                browser.test.assertFalse(await browser.action.isEnabled({ tabId: currentTab.id }), 'Action should be disabled before navigation')
+
+                browser.test.sendMessage('Load Tab')
+                return
+              }
 
               browser.test.assertEq(await browser.action.getTitle({ tabId: currentTab.id }), 'Test Action', 'Title should be after navigation')
               browser.test.assertEq(await browser.action.getPopup({ tabId: currentTab.id }), browser.runtime.getURL('popup.html'), 'Popup should be after navigation')
@@ -1832,11 +1835,12 @@ struct WKWebExtensionAPIActionTests {
               browser.test.notifyPass()
             })
 
-            browser.test.sendMessage('Load Tab')
+            browser.test.sendMessage('Ready')
             """
 
         let resources: [String: Any] = [
             "background.js": backgroundScript,
+            "alt-popup.html": "<b>Alternate</b>",
             "toolbar-16.png": makePNGData(size: CGSize(width: 16, height: 16), color: .red),
             "toolbar-32.png": makePNGData(size: CGSize(width: 32, height: 32), color: .blue),
             "toolbar-48.png": makePNGData(size: CGSize(width: 48, height: 48), color: .yellow),
@@ -1857,6 +1861,8 @@ struct WKWebExtensionAPIActionTests {
             context.setPermissionStatus(.grantedExplicitly, for: addressURL)
 
             let webView = try #require(manager.defaultTab?.webView)
+
+            try await manager.waitForTestMessage("Ready")
 
             webView.load(URLRequest(url: localhostURL))
 
