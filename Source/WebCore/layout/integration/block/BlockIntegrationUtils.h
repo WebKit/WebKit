@@ -38,6 +38,7 @@ namespace Layout {
 class BlockLayoutState;
 class BoxGeometry;
 struct ConstraintsForInlineContent;
+struct IntrinsicWidthConstraints;
 }
 
 namespace LayoutIntegration {
@@ -91,6 +92,9 @@ public:
         bool hasLineBoxes { false };
     };
     InlineContentLayoutResult layoutInlineContent(const RenderBlockFlow&, const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry&, const Layout::BlockLayoutState&);
+    // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting
+    // context's own layout (LineLayout::computeIntrinsicWidthConstraints).
+    static Layout::IntrinsicWidthConstraints inlineContentIntrinsicInlineSizes(const RenderBlockFlow&);
 
 private:
     PaintInvalidation& m_paintInvalidation;

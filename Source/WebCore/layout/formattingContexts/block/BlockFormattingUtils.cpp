@@ -100,7 +100,13 @@ std::optional<LayoutUnit> BlockFormattingUtils::definiteContentBoxBlockSize(cons
     return borderBoxBlockSize(box, borderAndPaddingBlockSize, { }, containingBlockContentBoxBlockSize, writingMode) - borderAndPaddingBlockSize;
 }
 
-auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle) -> InlineSizeAndMargins
+bool BlockFormattingUtils::hasIntrinsicInlineSize(const RenderBox& box, WritingMode writingMode)
+{
+    CheckedRef style = box.style();
+    return style->logicalWidth(writingMode).isIntrinsic() || style->logicalMinWidth(writingMode).isIntrinsic() || style->logicalMaxWidth(writingMode).isIntrinsic();
+}
+
+auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit borderAndPaddingInlineSize, LayoutUnit containingBlockInlineSize, const Style::ComputedStyle& containingBlockStyle, std::optional<IntrinsicWidthConstraints> contentInlineSizes) -> InlineSizeAndMargins
 {
     auto containingBlockWritingMode = containingBlockStyle.writingMode();
     CheckedRef style = box.style();
@@ -110,26 +116,38 @@ auto BlockFormattingUtils::inlineSizeAndMargins(const RenderBox& box, LayoutUnit
     auto usedMargin = [&](auto& margin) {
         return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, containingBlockInlineSize, zoom);
     };
+    auto marginStart = usedMargin(marginStartLength);
+    auto marginEnd = usedMargin(marginEndLength);
+    // The stretch-fit inline size, auto margins as zero (css-sizing-3 §5.1).
+    auto stretchFitInlineSize = std::max(borderAndPaddingInlineSize, containingBlockInlineSize - marginStart - marginEnd);
     auto borderBoxInlineSizeFor = [&](auto& size) {
+        if (size.isIntrinsic()) {
+            ASSERT(contentInlineSizes);
+            auto minContentSize = contentInlineSizes->minimum + borderAndPaddingInlineSize;
+            auto maxContentSize = contentInlineSizes->maximum + borderAndPaddingInlineSize;
+            if (size.isMinContent())
+                return minContentSize;
+            if (size.isMaxContent())
+                return maxContentSize;
+            // The fit-content size: the stretch-fit size, floored by the min-content size and capped by the max-content size.
+            return std::min(std::max(minContentSize, stretchFitInlineSize), maxContentSize);
+        }
         auto value = Style::evaluate<LayoutUnit>(size, containingBlockInlineSize, zoom);
         if (style->boxSizing() == BoxSizing::BorderBox)
             return std::max(value, borderAndPaddingInlineSize);
         return value + borderAndPaddingInlineSize;
     };
 
-    auto marginStart = usedMargin(marginStartLength);
-    auto marginEnd = usedMargin(marginEndLength);
-
     auto borderBoxInlineSize = [&] {
         auto& inlineSize = style->logicalWidth(containingBlockWritingMode);
-        if (inlineSize.isSpecified())
+        if (inlineSize.isSpecified() || inlineSize.isIntrinsic())
             return borderBoxInlineSizeFor(inlineSize);
-        // FIXME: The sizing keywords (min-content, max-content, fit-content, stretch) are kept out by coverage.
-        return std::max(borderAndPaddingInlineSize, containingBlockInlineSize - marginStart - marginEnd);
+        // FIXME: The stretch keyword is kept out by coverage.
+        return stretchFitInlineSize;
     }();
-    if (auto& maximumWidth = style->logicalMaxWidth(containingBlockWritingMode); maximumWidth.isSpecified())
+    if (auto& maximumWidth = style->logicalMaxWidth(containingBlockWritingMode); maximumWidth.isSpecified() || maximumWidth.isIntrinsic())
         borderBoxInlineSize = std::min(borderBoxInlineSize, borderBoxInlineSizeFor(maximumWidth));
-    if (auto& minimumWidth = style->logicalMinWidth(containingBlockWritingMode); minimumWidth.isSpecified())
+    if (auto& minimumWidth = style->logicalMinWidth(containingBlockWritingMode); minimumWidth.isSpecified() || minimumWidth.isIntrinsic())
         borderBoxInlineSize = std::max(borderBoxInlineSize, borderBoxInlineSizeFor(minimumWidth));
 
     if (borderBoxInlineSize < containingBlockInlineSize) {
