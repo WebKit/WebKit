@@ -369,7 +369,7 @@ void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame
     };
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
-    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, resourceDataStore.get(), m_extraRequestHeaders);
+    auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, frameID, resourceDataStore.get(), m_extraRequestHeaders);
     std::ignore = proxy->enable();
     m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
 }
@@ -453,6 +453,25 @@ void WebInspectorBackend::getSerializedCertificate(ResourceLoaderIdentifier reso
     // See getResponseBody: a genuine failure must carry a non-empty message (empty is connection loss).
     ASSERT(result.has_value() || !result.error().isEmpty());
     completionHandler(WTF::move(result));
+}
+
+void WebInspectorBackend::resolveWebSocket(uint64_t channelID, const String& objectGroup, CompletionHandler<void(std::expected<String, String>&&)>&& completionHandler)
+{
+    RefPtr page = m_page;
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage) {
+        completionHandler(makeUnexpected("Inspected page is gone"_s));
+        return;
+    }
+
+    auto result = Inspector::ResourceUtilities::resolveWebSocketInFrame(*corePage, channelID, objectGroup);
+    if (!result) {
+        ASSERT(!result.error().isEmpty());
+        completionHandler(makeUnexpected(result.error()));
+        return;
+    }
+
+    completionHandler(result.value()->toJSONString());
 }
 
 void WebInspectorBackend::loadResource(WebCore::FrameIdentifier frameID, const String& url, CompletionHandler<void(std::expected<std::tuple<String, String, int>, String>&&)>&& completionHandler)

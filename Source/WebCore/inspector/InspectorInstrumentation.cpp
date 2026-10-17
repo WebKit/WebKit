@@ -1372,48 +1372,64 @@ void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents& instr
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didCreateWebSocket(identifier, requestURL);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didCreateWebSocket(identifier, requestURL);
 }
 
 void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, ResourceRequest& request)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendWebSocketHandshakeRequest(identifier, request);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->willSendWebSocketHandshakeRequest(identifier, request);
 }
 
 void InspectorInstrumentation::didSendWebSocketHandshakeRequestImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didSendWebSocketHandshakeRequest(identifier, request);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didSendWebSocketHandshakeRequest(identifier, request);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didReceiveWebSocketHandshakeResponse(identifier, response);
 }
 
 void InspectorInstrumentation::didCloseWebSocketImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didCloseWebSocket(identifier);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didCloseWebSocket(identifier);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketFrameImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveWebSocketFrame(identifier, frame);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didReceiveWebSocketFrame(identifier, frame);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketFrameErrorImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, const String& errorMessage)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveWebSocketFrameError(identifier, errorMessage);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didReceiveWebSocketFrameError(identifier, errorMessage);
 }
 
 void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& instrumentingAgents, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didSendWebSocketFrame(identifier, frame);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->didSendWebSocketFrame(identifier, frame);
 }
 
 void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents& instrumentingAgents, CanvasBase& canvasBase)
@@ -1773,6 +1789,18 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& doc
     if (!page && document.templateDocumentHost())
         page = document.templateDocumentHost()->page();
     return instrumentingAgents(page);
+}
+
+// A WebSocket's hooks resolve through its document's frame rather than its page: under Site Isolation the
+// FrameNetworkAgentProxy that reports the socket is registered on the frame's InstrumentingAgents. A frame's
+// agents fall back to its page's, so the page's InspectorNetworkAgent is still reached when no proxy is enabled.
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWebSocket(Document* document)
+{
+    if (!document)
+        return nullptr;
+    if (RefPtr frame = document->frame())
+        return &instrumentingAgents(*frame);
+    return instrumentingAgents(*document);
 }
 
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)

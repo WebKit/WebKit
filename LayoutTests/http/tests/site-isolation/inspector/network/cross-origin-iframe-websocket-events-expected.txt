@@ -1,0 +1,32 @@
+Tests that WebSocket activity in a cross-origin iframe and in the main frame reaches the Network domain under Site Isolation, attributed to the right frame, once each.
+
+
+
+== Running test suite: SiteIsolation.Network.WebSocket
+-- Running test case: SiteIsolation.Network.WebSocket.CrossOriginIFrame
+PASS: WebSocket resource should be created.
+PASS: WebSocket should have a parent WI.Frame.
+PASS: WebSocket should not be attributed to the main frame.
+PASS: WebSocket's frame should be a direct child of the main frame.
+PASS: WebSocket's frame should be the cross-origin iframe.
+PASS: WebSocket requestId should be process-qualified.
+PASS: Handshake response status should be 101.
+PASS: WebSocket should be closed.
+PASS: WebSocket should be reported once.
+Frame: outgoing opcode 1 "Hello from iframe"
+Frame: incoming opcode 1 "Hello from iframe"
+Frame: outgoing opcode 8
+Frame: incoming opcode 8
+
+-- Running test case: SiteIsolation.Network.WebSocket.MainFrame
+PASS: WebSocket should be attributed to the main frame.
+PASS: WebSocket requestId should be process-qualified.
+PASS: Main frame and iframe WebSockets should have distinct requestIds.
+PASS: Handshake response status should be 101.
+PASS: WebSocket should be closed.
+PASS: WebSocket should be reported once.
+Frame: outgoing opcode 1 "Hello from main frame"
+Frame: incoming opcode 1 "Hello from main frame"
+Frame: outgoing opcode 8
+Frame: incoming opcode 8
+
