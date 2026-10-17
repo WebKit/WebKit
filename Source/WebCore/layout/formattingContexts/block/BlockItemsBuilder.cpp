@@ -59,11 +59,13 @@ static bool hasInlineContent(const RenderBox& box)
 BlockItemList BlockItemsBuilder::build()
 {
     auto blockItems = BlockItemList { };
-    CheckedPtr<const RenderBox> box = root().firstInFlowChildBox();
+    CheckedPtr<const RenderBox> box = root().firstChildBox();
     while (box) {
-        // FIXME: Floats and out-of-flow boxes are kept out by coverage.
-        auto isIndependentFormattingContextRoot = establishesIndependentFormattingContext(*box);
-        if (isIndependentFormattingContextRoot)
+        // FIXME: Floats are kept out by coverage.
+        auto isSingleItem = box->isOutOfFlowPositioned() || establishesIndependentFormattingContext(*box);
+        if (box->isOutOfFlowPositioned())
+            blockItems.append({ *box, BlockItem::Type::OutOfFlowBox });
+        else if (isSingleItem)
             blockItems.append({ *box, BlockItem::Type::IndependentFormattingContextRoot });
         else {
             ASSERT(contentTakesPartInBlockFormattingContext(*box) || hasInlineContent(*box) || !box->firstChild());
@@ -71,16 +73,16 @@ BlockItemList BlockItemsBuilder::build()
             // FIXME: Block-level boxes inside the inline content split it into more ranges (block-in-inline is kept out by coverage).
             if (hasInlineContent(*box))
                 blockItems.append({ *box, BlockItem::Type::InlineContent });
-            else if (CheckedPtr firstChild = box->firstInFlowChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
+            else if (CheckedPtr firstChild = box->firstChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
                 box = WTF::move(firstChild);
                 continue;
             }
         }
-        // Close this box (unless it is a single item) and every ancestor whose last in-flow child it is.
-        for (auto closesBox = !isIndependentFormattingContextRoot; box; closesBox = true) {
+        // Close this box (unless it is a single item) and every ancestor whose last child it is.
+        for (auto closesBox = !isSingleItem; box; closesBox = true) {
             if (closesBox)
                 blockItems.append({ *box, BlockItem::Type::BlockContainerEnd });
-            if (CheckedPtr nextSibling = box->nextInFlowSiblingBox()) {
+            if (CheckedPtr nextSibling = box->nextSiblingBox()) {
                 box = WTF::move(nextSibling);
                 break;
             }
