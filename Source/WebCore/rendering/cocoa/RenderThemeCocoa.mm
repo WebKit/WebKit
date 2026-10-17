@@ -2294,7 +2294,7 @@ bool RenderThemeCocoa::paintColorWellSwatchForVectorBasedControls(const RenderEl
     GraphicsContextStateSaver stateSaver(context);
 
     auto inputValueIsOpaque = true;
-    auto primarySwatchColor = box.style().backgroundColor().resolvedColor();
+    auto primarySwatchColor = box.style().usedBackgroundColorResolvingCurrentColor();
     auto secondarySwatchColor = primarySwatchColor;
 
     const auto borderWidth = box.style().usedZoom() * 0.5f;
@@ -4230,7 +4230,7 @@ bool RenderThemeCocoa::paintSearchFieldForVectorBasedControls(const RenderElemen
 
     const auto& style = box.style();
     const auto borderThickness = style.usedZoom();
-    auto backgroundColor = style.backgroundColor().resolvedColor();
+    auto backgroundColor = style.usedBackgroundColorResolvingCurrentColor();
 
     const auto states = RenderTheme::singleton().extractControlStyleStatesForRenderer(box);
     const auto isEnabled = states.contains(ControlStyle::State::Enabled);

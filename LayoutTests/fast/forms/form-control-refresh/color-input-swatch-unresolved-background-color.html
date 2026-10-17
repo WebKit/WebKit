@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input::-webkit-color-swatch {
+    color: green;
+}
+#currentColor::-webkit-color-swatch {
+    background-color: currentcolor;
+}
+#relativeColor::-webkit-color-swatch {
+    background-color: rgb(from currentcolor r g b);
+}
+</style>
+</head>
+<body>
+    <p>Tests that a color input swatch paints a background-color that can only be resolved at use time.</p>
+    <input type="color" id="currentColor">
+    <input type="color" id="relativeColor">
+</body>
+</html>
