@@ -1428,7 +1428,9 @@ void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLaye
         return;
 
     // FIXME: Support view overlays in iframe processes if needed. <rdar://116202544>
-    if (page->mainWebFrame().coreLocalFrame())
+    // The main web frame isn't bound to its core frame yet while the page is being constructed, so ask the core page.
+    RefPtr corePage = page->corePage();
+    if (corePage && corePage->localMainFrame())
         drawingArea->attachViewOverlayGraphicsLayer(page->mainWebFrame().frameID(), graphicsLayer);
 }
 
