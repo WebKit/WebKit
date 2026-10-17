@@ -27,11 +27,16 @@
 #include "BlockIntegrationUtils.h"
 
 #include "BlockFormattingContext.h"
+#include "BlockFormattingUtils.h"
 #include "InlineFormattingConstraints.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockFlowInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderLayoutState.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -90,6 +95,52 @@ Layout::IntrinsicWidthConstraints BlockIntegrationUtils::inlineContentIntrinsicI
 {
     auto [minimum, maximum] = blockContainer.computeInlineIntrinsicLogicalWidths();
     return { minimum, maximum };
+}
+
+BlockIntegrationUtils::IndependentFormattingContextLayoutResult BlockIntegrationUtils::layoutIndependentFormattingContext(const RenderBox& root, const Layout::ConstraintsForIndependentFormattingContext& constraints)
+{
+    // Only the root and its content are written here, by the root's own formatting context, and nothing else in the block formatting context
+    // reads them.
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef box = const_cast<RenderBox&>(root);
+    CheckedRef containingBlock = downcast<RenderBlockFlow>(*box->parent());
+
+    // Like RenderBlockFlow::layoutBlockChildren, which lays a child out again when the inline size of its containing block changed.
+    containingBlock->updateBlockChildDirtyBitsBeforeLayout(constraints.relayoutChildren ? RelayoutChildren::Yes : RelayoutChildren::No, box);
+    if (constraints.borderBoxInlineSize) {
+        if (box->logicalWidth() != *constraints.borderBoxInlineSize)
+            box->setChildNeedsLayout(MarkingBehavior::OnlyThis);
+        box->setOverridingBorderBoxLogicalWidth(*constraints.borderBoxInlineSize);
+    }
+    // The block formatting context writes the geometry of the containing block once all of it is laid out. The render tree takes a containing
+    // block block size, definite or not, as the box's own (RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight), so only a box with a
+    // percentage block size, which resolves against it, gets one.
+    box->setOverridingContainingBlockContentLogicalWidth(constraints.containingBlockInlineSize);
+    if (Layout::BlockFormattingUtils::hasPercentageBlockSize(box, box->writingMode()))
+        box->setOverridingContainingBlockContentLogicalHeight(constraints.containingBlockBlockSize);
+    {
+        // The layout state has the paint offset of the block formatting context root only, not of the boxes inside.
+        CheckedRef layoutContext = box->view().frameView().layoutContext();
+        auto layoutStateDisabler = LayoutStateDisabler { layoutContext.get() };
+        box->layoutIfNeeded();
+    }
+    box->clearOverridingContainingBlockContentSize();
+    if (constraints.borderBoxInlineSize)
+        box->clearOverridingBorderBoxLogicalWidth();
+
+    return {
+        box->logicalWidth(),
+        box->logicalHeight(),
+        { { box->borderStart(), box->borderEnd() }, { box->borderBefore(), box->borderAfter() } },
+        { { box->paddingStart(), box->paddingEnd() }, { box->paddingBefore(), box->paddingAfter() } }
+    };
+}
+
+bool BlockIntegrationUtils::contentBoxInlineSizeChanged(const RenderBox& box, LayoutUnit contentBoxInlineSize)
+{
+    if (box.contentBoxLogicalWidth() != contentBoxInlineSize)
+        return true;
+    CheckedPtr block = dynamicDowncast<RenderBlock>(box);
+    return block && block->hasBorderOrPaddingLogicalWidthChanged();
 }
 
 BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, const Layout::BlockLayoutState& blockLayoutState)

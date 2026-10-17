@@ -33,6 +33,7 @@
 #include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
+#include "RenderTable.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -149,23 +150,54 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
     // Its margins do not collapse with its children's, nor through it, even when it is empty (CSS 2.2 §8.3.1).
     resolveBorderBoxLogicalTops(rootState);
 
-    // FIXME: Other independent formatting contexts (replaced elements, tables, flex and grid containers) are kept out by coverage.
-    CheckedRef root = downcast<RenderBlockFlow>(box);
-    // Its content is in a block formatting context of its own, with a block layout state of its own.
+    CheckedPtr root = dynamicDowncast<RenderBlockFlow>(box);
+    // Its content is in a formatting context of its own; a block formatting context gets a block layout state of its own.
     auto blockLayoutState = BlockLayoutState { { } };
-    if (root->childrenInline()) {
+    if (!root)
+        layoutIndependentFormattingContextThroughRenderTree(box, rootState);
+    else if (root->childrenInline()) {
         // A block container with only inline-level content establishes an inline formatting context for it (CSS Display 3).
         if (root->firstChild())
             handleInlineContent(box, rootState, blockLayoutState);
     } else {
         auto horizontalConstraints = HorizontalConstraints { rootState.inlineRange.min(), rootState.inlineRange.size() };
-        auto rootResult = BlockFormattingContext { root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize });
+        auto rootResult = BlockFormattingContext { *root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize, rootState.relayoutChildren });
         result.boxes.appendVector(WTF::move(rootResult.boxes));
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
         result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
     }
     m_blockLayoutState.marginCollapse().endBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last());
     placeInContainingBlock(box, WTF::move(rootState), result);
+}
+
+// Everything that belongs to the block formatting context is computed here: the margins, the position, the containing block and, for a box
+// whose inline size its own formatting context does not decide, the stretch-fit inline size. The rest comes back from the box's own formatting
+// context, laid out through the render tree, which lays out its content: a table's inline size (CSS 2.2 §17.5.2), the block size, border and
+// padding.
+void BlockFormattingContext::layoutIndependentFormattingContextThroughRenderTree(const RenderBox& box, ContainingBlockState& boxState)
+{
+    auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
+    auto containingBlockInlineSize = containingBlockState.inlineRange.size();
+    auto& geometry = boxState.geometry;
+    auto constraints = ConstraintsForIndependentFormattingContext {
+        .containingBlockInlineSize = containingBlockInlineSize,
+        .containingBlockBlockSize = containingBlockState.contentBoxBlockSize,
+        .relayoutChildren = containingBlockState.relayoutChildren,
+        .borderBoxInlineSize = is<RenderTable>(box) ? std::nullopt : std::optional { geometry.borderBoxWidth() }
+    };
+    auto layoutResult = integrationUtils().layoutIndependentFormattingContext(box, constraints);
+
+    geometry.setBorder(layoutResult.border);
+    geometry.setPadding(layoutResult.padding);
+    geometry.setContentBoxWidth(layoutResult.borderBoxInlineSize - geometry.horizontalBorderAndPadding());
+    geometry.setContentBoxHeight(layoutResult.borderBoxBlockSize - geometry.verticalBorderAndPadding());
+    CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
+    auto [marginStart, marginEnd] = BlockFormattingUtils::inlineMargins(box, layoutResult.borderBoxInlineSize, containingBlockInlineSize, containingBlockStyle);
+    geometry.setHorizontalMargin({ marginStart, marginEnd });
+    computeLogicalLeft(containingBlockState, geometry);
+    boxState.borderAndPaddingBefore = geometry.borderAndPaddingBefore();
+    boxState.isLaidOutThroughRenderTree = true;
+    m_blockLayoutState.marginCollapse().resetAdjoiningMargins(boxState.contentBoxLogicalTop() + geometry.contentBoxHeight());
 }
 
 void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayoutResult& result)
@@ -232,7 +264,9 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = contentBoxBlockSize,
-        .margins = { }
+        .margins = { },
+        .isLaidOutThroughRenderTree = false,
+        .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(box, geometry.contentBoxWidth())
     };
     auto intrinsicContentBlockSize = LayoutUnit { };
     if (box->firstChild()) {
@@ -244,7 +278,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
                 intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
         } else {
             auto horizontalConstraints = HorizontalConstraints { boxState.inlineRange.min(), boxState.inlineRange.size() };
-            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize });
+            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize, boxState.relayoutChildren });
             intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
             result.boxes.appendVector(WTF::move(contentResult.boxes));
             result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
@@ -261,7 +295,7 @@ BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& ou
         adjoiningMargins.add(margin);
         return adjoiningMargins;
     };
-    result.boxes.append({ box, geometry, intrinsicContentBlockSize, margins(geometry.marginBefore()), margins(geometry.marginAfter()), false, false });
+    result.boxes.append({ box, geometry, intrinsicContentBlockSize, margins(geometry.marginBefore()), margins(geometry.marginAfter()), false, false, false });
     return result;
 }
 
@@ -275,7 +309,9 @@ ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const C
         .borderBoxLogicalTop = 0_lu,
         .borderAndPaddingBefore = constraints.logicalTop(),
         .contentBoxBlockSize = constraints.contentBoxBlockSize(),
-        .margins = { }
+        .margins = { },
+        .isLaidOutThroughRenderTree = false,
+        .relayoutChildren = constraints.relayoutChildren()
     };
 }
 
@@ -288,7 +324,9 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
         .borderBoxLogicalTop = { },
         .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
         .contentBoxBlockSize = BlockFormattingUtils::definiteContentBoxBlockSize(blockContainer, geometry, parentState.contentBoxBlockSize, root().writingMode()),
-        .margins = { }
+        .margins = { },
+        .isLaidOutThroughRenderTree = false,
+        .relayoutChildren = LayoutIntegration::BlockIntegrationUtils::contentBoxInlineSizeChanged(blockContainer, geometry.contentBoxWidth())
     };
 }
 
@@ -408,6 +446,7 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
             break;
         }
         case BlockItem::Type::IndependentFormattingContextRoot:
+            // Coverage keeps out the boxes laid out through the render tree (canComputeContentInlineSizes).
             addContribution(blockContainerSizes.last(), outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
             break;
         case BlockItem::Type::OutOfFlowBox:
@@ -494,7 +533,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
         m_blockLayoutState.marginCollapse().addCollapsedThroughBlockEndMargin(blockContainerState, containingBlockState, geometry.marginAfter());
         auto collapsedMarginsAfter = AdjoiningMargins { };
         collapsedMarginsAfter.add(geometry.marginAfter());
-        result.boxes.append({ box, WTF::move(geometry), { }, collapsedMarginsBefore, collapsedMarginsAfter, blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), box.style().marginAfter().hasQuirk() });
+        result.boxes.append({ box, WTF::move(geometry), { }, collapsedMarginsBefore, collapsedMarginsAfter, blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), box.style().marginAfter().hasQuirk(), false });
         return;
     }
 
@@ -502,16 +541,19 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     // or below the collapsed margin after it when that margin does not collapse with the box's (CSS 2.2 §10.6.3).
     CheckedRef style = box.style();
     auto writingMode = root().writingMode();
+    // A box that is not a block container establishes a formatting context of its own.
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
     auto establishesBlockFormattingContext = [&] {
-        CheckedPtr blockContainer = dynamicDowncast<RenderBlock>(box);
-        return blockContainer && blockContainer->createsNewFormattingContext();
+        return !blockContainer || blockContainer->createsNewFormattingContext();
     };
     auto marginAfterCollapsesWithChildren = !establishesBlockFormattingContext() && !geometry.borderAndPaddingAfter() && BlockFormattingUtils::blockSizeBehavesAsAuto(style->logicalHeight(writingMode), containingBlockState.contentBoxBlockSize);
     // A quirk container leaves out a quirky margin after its last child (RenderBlockFlow::handleAfterSideOfBlock).
     auto contentBoxLogicalBottom = marginAfterCollapsesWithChildren || (BlockMarginCollapse::isQuirkContainer(box) && m_blockLayoutState.marginCollapse().endsWithQuirk()) ? m_blockLayoutState.marginCollapse().logicalTop() : m_blockLayoutState.marginCollapse().collapsedLogicalBottom();
     // Negative margins may pull that above the content box top.
     auto intrinsicContentBlockSize = std::max(0_lu, contentBoxLogicalBottom - blockContainerState.contentBoxLogicalTop());
-    computeBlockSize(box, intrinsicContentBlockSize, containingBlockState, geometry);
+    // A box laid out through the render tree has its block size from its own formatting context already.
+    if (!blockContainerState.isLaidOutThroughRenderTree)
+        computeBlockSize(box, intrinsicContentBlockSize, containingBlockState, geometry);
     if (box.stretchesToViewport()) {
         auto collapsedMarginAfter = geometry.marginAfter();
         if (marginAfterCollapsesWithChildren) {
@@ -530,7 +572,7 @@ void BlockFormattingContext::placeInContainingBlock(const RenderBox& box, Contai
     auto marginAfterIsQuirky = m_blockLayoutState.marginCollapse().addBlockEndMargin(geometry.marginAfter(), style->marginAfter().hasQuirk(), marginAfterCollapsesWithChildren && !minimumBlockSizeSeparatesMargins, borderBoxLogicalTop + geometry.borderBoxHeight());
 
     geometry.setTop(borderBoxLogicalTop - *containingBlockState.borderBoxLogicalTop);
-    result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins(), blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), marginAfterIsQuirky });
+    result.boxes.append({ box, WTF::move(geometry), intrinsicContentBlockSize, collapsedMarginsBefore, m_blockLayoutState.marginCollapse().adjoiningMargins(), blockContainerState.margins.collapsedMarginsBeforeAreQuirky(), marginAfterIsQuirky, blockContainerState.isLaidOutThroughRenderTree });
 }
 
 // The block container separates the adjoining margins from the margins that follow (CSS 2.2 §8.3.1), so they collapse into one margin. It

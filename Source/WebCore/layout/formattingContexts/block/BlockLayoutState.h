@@ -58,6 +58,11 @@ struct ContainingBlockState {
     // Percentage block sizes of the children resolve against this, and behave as auto without it (CSS 2.2 §10.5).
     std::optional<LayoutUnit> contentBoxBlockSize;
     BlockMarginCollapse::BlockContainer margins;
+    // Its own formatting context lays it out through the render tree and gives it its block size.
+    bool isLaidOutThroughRenderTree { false };
+    // The children laid out through the render tree are laid out again (RenderBlockFlow::layoutBlockChildren), like when its content box
+    // inline size, border or padding changed since its last layout (RenderBlock::recomputeLogicalWidth).
+    bool relayoutChildren { false };
 
     LayoutUnit contentBoxLogicalTop() const { return *borderBoxLogicalTop + borderAndPaddingBefore; }
 };

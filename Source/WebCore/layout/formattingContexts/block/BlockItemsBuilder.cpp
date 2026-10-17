@@ -46,8 +46,9 @@ static bool contentTakesPartInBlockFormattingContext(const RenderBox& box)
 
 static bool establishesIndependentFormattingContext(const RenderBox& box)
 {
+    // A block-level box that is not a block container, such as a table or a flex container, establishes a formatting context of its own.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
-    return blockContainer && blockContainer->createsNewFormattingContext();
+    return !blockContainer || blockContainer->createsNewFormattingContext();
 }
 
 static bool hasInlineContent(const RenderBox& box)
