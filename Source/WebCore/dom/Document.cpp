@@ -1726,7 +1726,7 @@ ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(St
     if (data.contains("?>"_s))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return ProcessingInstruction::create(*this, WTF::move(target), WTF::move(data));
+    return ProcessingInstruction::create(*this, AtomString { WTF::move(target) }, WTF::move(data));
 }
 
 Ref<Text> Document::createEditingTextNode(String&& text)

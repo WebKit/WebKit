@@ -51,13 +51,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessingInstruction);
 
-inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
+inline ProcessingInstruction::ProcessingInstruction(Document& document, AtomString target, String data)
     : CharacterData(document, WTF::move(data), NodeType::ProcessingInstruction)
-    , m_target(WTF::move(target))
+    , m_target(target.releaseString())
 {
 }
 
-Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, String&& target, String&& data)
+Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, AtomString target, String data)
 {
     return adoptRef(*new ProcessingInstruction(document, WTF::move(target), WTF::move(data)));
 }
@@ -91,7 +91,7 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& document, CloningOp
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(document, String { m_target }, String { data() });
+    return create(document, AtomString { m_target }, String { data() });
 }
 
 SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
