@@ -30,7 +30,7 @@ import pathlib
 import sys
 import textwrap
 from typing import Optional
-from urllib.parse import urljoin, urlencode, parse_qs
+from urllib.parse import urljoin, urlencode, parse_qs, quote
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
@@ -234,7 +234,7 @@ def report_test(args):
         configuration.add_param(limit=args.limit)
     query = configuration.as_query_string()
 
-    url = urljoin(BASE_URL, endpoint + "/" + args.test) + "?" + query
+    url = urljoin(BASE_URL, endpoint + "/" + quote(args.test, safe="/")) + "?" + query
 
     logging.info("Loading test data from %s", url)
     with urlopen(url) as response:
