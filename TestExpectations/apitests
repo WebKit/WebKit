@@ -9,52 +9,6 @@
 #
 # Examples:
 #     TestWebKitAPI.WTF.HashSet [ Fail ]
-#     webkit.org/b/12345 TestWebKitAPI.WTF.Test [ Pass Fail ]
-#     rdar://98765432 TestWebKitAPI.WebKit.Bug [ Crash ]
-webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
-webkit.org/b/326127 [ ios ] TestWebKitAPI.WKAttachmentTests.ChangeFileWrapperForPastedImage [ Pass Timeout ]
-webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
-webkit.org/b/326553 [ ios debug ] TestWebKitAPI.WritingTools.ProofreadingUndoRevertsEverySuggestionInBatch [ Failure ]
-#     [ debug ] TestWebKitAPI.WTF.DebugOnly [ Skip ]
-#     [ mac Sonoma+ ] TestWebKitAPI.WebKit.NewFeature [ Pass ]
-#     [ ios simulator arm64 ] TestWebKitAPI.WTF.Test [ Timeout ]
-#     TestWebKitAPI.WTF.* [ Skip ]
-#     TestWebKitAPI.WebKit.SlowTest [ Slow ]
-#     TestWebKitAPI.WebKit.VerySlowTest [ Slow:120s ]
-#     [ wk2 siteisolation ] TestWebKitAPI.WebKit.SiteIsolation [ Pass ]
-#
-# Supported expectations:
-#     Pass     - Test expected to pass
-#     Fail     - Test expected to fail
-#     Crash    - Test expected to crash
-#     Timeout  - Test expected to timeout
-#     Skip     - Don't run this test
-#
-# Supported modifiers:
-#     Slow       - Use 5x default timeout
-#     Slow:NNs   - Use NN seconds as timeout (e.g., Slow:120s)
-#
-# Configuration specifiers (order: less to more specific):
-#     Platform:     mac, ios, linux, win, gtk, wpe
-#     Version:      Sonoma, Ventura, iOS17, iOS18, etc.
-#                   Sonoma+       (Sonoma and later)
-#                   Sonoma-       (Sonoma and earlier)
-#                   Ventura-Sequoia (range, inclusive)
-#     Style:        debug, release, asan, guardmalloc
-#     Hardware:     simulator, device, iphone, ipad
-#     Architecture: arm64, x86_64, x86, arm64_32, armv7k
-#     Flavor:       wk1, wk2, siteisolation, etc. (freeform)
-#
-# Wildcards:
-#     TestWebKitAPI.WTF.*   - Matches all tests in WTF suite
-#     TestWTF.*             - Matches all tests in TestWTF binary
-#
-# Bug identifiers (optional):
-#     webkit.org/b/12345    - WebKit bug tracker
-#     rdar://12345          - Apple radar
-#     rdar://problem/12345  - Apple radar (alternate format)
-#     Bug(identifier)       - Other bug tracker
-#
 
 TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 
@@ -292,6 +246,7 @@ rdar://136525714 [ mac ] TestWebKitAPI.ResourceLoadStatistics.UserGestureLogsUse
 webkit.org/b/225167 TestWebKitAPI.SampledPageTopColor.DisplayP3 [ Skip ]
 webkit.org/b/326919 [ mac GoldenGate ] TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithNonUniformCornerRadii [ Failure ]
 webkit.org/b/326919 [ mac GoldenGate ] TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithUniformCornerRadii [ Failure ]
+webkit.org/b/327889 [ debug ] TestWebKitAPI.ScrollingCoordinatorTests.MainFrameScrollUpdatesDuringRootNodeReplacement [ Skip ]
 webkit.org/b/308786 [ mac ] TestWebKitAPI.ScrollingCoordinatorTests.ScrollingTreeAfterDetachReattach [ Skip ]
 webkit.org/b/326119 [ ios ] TestWebKitAPI.ServiceWorker.WindowClientNavigate [ Pass Timeout ]
 webkit.org/b/305954 TestWebKitAPI.ShareableBitmap.ensureCOWBothMapsROSenderWrite [ Skip ]
@@ -442,6 +397,7 @@ webkit.org/b/253387 [ visionos ] TestWebKitAPI.WebKit.CookieAccessFromPDFInAbout
 webkit.org/b/176250 [ mac ] TestWebKitAPI.WebKit.DOMWindowExtensionBasic [ Skip ]
 webkit.org/b/176250 [ mac ] TestWebKitAPI.WebKit.DOMWindowExtensionNoCache [ Skip ]
 rdar://107850827 [ mac ] TestWebKitAPI.WebKit.FirstResponderScrollingPosition [ Skip ]
+webkit.org/b/326122 [ ios release siteisolation ] TestWebKitAPI.WebKit.InterruptionBetweenSameProcessPages [ Pass Failure ]
 webkit.org/b/278563 [ mac debug ] TestWebKitAPI.Webkit.LoadMoreThan4GB [ Skip ]
 webkit.org/b/318485 [ sequoia ] TestWebKitAPI.WebKit.MediaBufferingPolicy [ Pass Failure ]
 webkit.org/b/318485 [ sequoia ] TestWebKitAPI.WebKit.MediaBufferingPolicyWhenSuspendedOrHidden [ Pass Failure ]
@@ -486,6 +442,7 @@ rdar://147876703 TestWebKitAPI.WebSocket.CloseCode [ Skip ]
 rdar://157795985 TestWebKitAPI.WebTransport.ClientStreamAborts [ Skip ]
 rdar://161858543 [ ios ] TestWebKitAPI.WebTransport.CSP [ Skip ]
 rdar://157795985 TestWebKitAPI.WebTransport.ServerStreamAborts [ Skip ]
+webkit.org/b/326127 [ ios ] TestWebKitAPI.WKAttachmentTests.ChangeFileWrapperForPastedImage [ Skip ]
 webkit.org/b/315119 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedContactAsAttachment [ Skip ]
 webkit.org/b/315119 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedFilesAsAttachments [ Skip ]
 webkit.org/b/314846 [ ios ] TestWebKitAPI.WKAttachmentTestsIOS.InsertPastedMapItemAsAttachment [ Skip ]
@@ -520,6 +477,7 @@ rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.InspectedWindow
 rdar://137268889 [ mac ] TestWebKitAPI.WKWebExtensionAPIDevTools.PortMessagePassingToBackground [ Skip ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noNotificationsObjectWithoutPermission() [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionAPINamespaceTests/noWebNavigationObjectWithoutPermission() [ Pass Timeout ]
+webkit.org/b/326130 [ ios release siteisolation ] TestWebKitAPI.WKWebExtensionAPITabs.CaptureVisibleTab [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtensionController.WebAccessibleResourceInSubframeFromAboutBlank [ Pass Timeout ]
 rdar://167044676 [ mac ] TestWebKitAPI.WKWebExtensionDataRecord.GetDataRecords [ Skip ]
 rdar://147858640 TestWebKitAPI.WKWebExtensionDataRecord.GetDataRecordsForMultipleContexts [ Skip ]
@@ -541,6 +499,7 @@ rdar://169658576 [ mac ] TestWebKitAPI.WKWebViewSuspendAllMediaPlayback.PauseWhe
 webkit.org/b/307003 [ ios ipad ] TestWebKitAPI.WKWebViewSuspendAllMediaPlayback.PauseWhenResume [ Pass Failure ]
 webkit.org/b/316706 [ ios ] TestWebKitAPI.WritingTools.CompositionWithMultipleChunks [ Pass Timeout ]
 webkit.org/b/292940 [ ios ] TestWebKitAPI.WritingTools.PanelHidesInputAccessoryView [ Skip ]
+webkit.org/b/326553 [ ios debug ] TestWebKitAPI.WritingTools.ProofreadingUndoRevertsEverySuggestionInBatch [ Failure ]
 webkit.org/b/326553 [ debug ] TestWebKitAPI.WritingTools.ProofreadingUndoRevertsEverySuggestionInBatch [ Failure ]
 webkit.org/b/315673 [ mac release ] TestWebKitAPI.WritingTools.ProofreadingWithUntitledImageAttachment [ Pass Failure ]
 webkit.org/b/292940 [ ios ] TestWebKitAPI.WritingTools.RevealOffScreenSuggestionWhenActive [ Skip ]
@@ -551,4 +510,3 @@ webkit.org/b/246271 TestWTF.CompletionHandlerDeathTest.MainThreadHandlerOnThread
 webkit.org/b/246271 TestWTF.CompletionHandlerDeathTest.UncalledHandlerAssertsDeathTest [ Skip ]
 webkit.org/b/257892 TestWTF.SequenceLockedTest.WithoutSequenceLockedFails [ Skip ]
 rdar://134447305 [ mac debug ] TestWTF.SequenceLockedTest.Works [ Skip ]
-webkit.org/b/326127 [ ios ] TestWebKitAPI.WKAttachmentTests.ChangeFileWrapperForPastedImage [ Skip ]
