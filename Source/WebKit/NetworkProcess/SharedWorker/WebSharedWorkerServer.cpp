@@ -126,8 +126,12 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
             serverConnection->notifyWorkerObjectOfLoadCompletion(sharedWorkerObjectIdentifier, fetchResult.error);
     });
 
+    // Copied before the early return below, which destroys |sharedWorker|.
+    auto registrableDomain = sharedWorker.topRegistrableDomain();
+
     if (!fetchResult.error.isNull()) {
         m_sharedWorkers.remove(sharedWorker.key());
+        startIdleTerminationTimerForUnneededContextConnections(registrableDomain);
         return;
     }
 
@@ -139,12 +143,35 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
         sharedWorker.didCreateContextConnection(*connection);
     else
         createContextConnection(sharedWorker.topSite(), sharedWorker.firstSharedWorkerObjectProcess(), workerCOEP);
+
+    startIdleTerminationTimerForUnneededContextConnections(registrableDomain);
+}
+
+void WebSharedWorkerServer::startIdleTerminationTimerForUnneededContextConnections(const WebCore::RegistrableDomain& registrableDomain)
+{
+    forEachContextConnectionForRegistrableDomain(registrableDomain, [&](auto& contextConnection) {
+        if (!needsContextConnection({ registrableDomain, contextConnection.crossOriginEmbedderPolicyValue() }))
+            contextConnection.startIdleTerminationTimerIfNeeded();
+    });
 }
 
 bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain& registrableDomain) const
 {
     for (auto& sharedWorker : m_sharedWorkers.values()) {
         if (registrableDomain == sharedWorker->topRegistrableDomain())
+            return true;
+    }
+    return false;
+}
+
+bool WebSharedWorkerServer::needsContextConnection(const ContextConnectionKey& key) const
+{
+    auto& [registrableDomain, coep] = key;
+    for (auto& sharedWorker : m_sharedWorkers.values()) {
+        if (registrableDomain != sharedWorker->topRegistrableDomain())
+            continue;
+        // A worker that has not finished fetching has no COEP value yet, so it may still need this connection.
+        if (!sharedWorker->didFinishFetching() || sharedWorker->fetchResult().crossOriginEmbedderPolicy.value == coep)
             return true;
     }
     return false;
@@ -223,6 +250,11 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
 
         sharedWorker->didCreateContextConnection(contextConnection);
     }
+
+    if (contextConnection.sharedWorkerObjects().isEmpty() && !needsContextConnection({ registrableDomain, coep })) {
+        RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::contextConnectionCreated(%p) is not needed by any shared worker, starting a timer to terminate it", &contextConnection);
+        contextConnection.startIdleTerminationTimerIfNeeded();
+    }
 }
 
 void WebSharedWorkerServer::sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
@@ -268,6 +300,9 @@ void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey&
 
     if (RefPtr contextConnection = sharedWorker->contextConnection())
         contextConnection->terminateSharedWorker(*sharedWorker);
+
+    // A worker that was still fetching may have been the only reason a connection was kept.
+    startIdleTerminationTimerForUnneededContextConnections(sharedWorker->topRegistrableDomain());
 }
 
 void WebSharedWorkerServer::addConnection(Ref<WebSharedWorkerServerConnection>&& connection)
