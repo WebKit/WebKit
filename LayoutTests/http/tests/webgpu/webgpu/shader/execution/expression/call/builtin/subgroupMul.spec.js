@@ -512,11 +512,8 @@ combineWithParams([{ format: 'rgba32uint' }])
 ).
 fn(async (t) => {
   t.skipIfDeviceDoesNotHaveFeature('subgroups');
-
-
-
-
-  const { subgroupMinSize, subgroupMaxSize } = t.device.adapterInfo;
+  const subgroupMinSize = t.device.adapterInfo.subgroupMinSize;
+  const subgroupMaxSize = t.device.adapterInfo.subgroupMaxSize;
   const innerTexels = (t.params.size[0] - 1) * (t.params.size[1] - 1);
   t.skipIf(innerTexels < subgroupMinSize, 'Too few texels to be reliable');
   t.skipIf(subgroupMaxSize === 4 && t.params.quadIndex !== 0, 'Duplicate test');

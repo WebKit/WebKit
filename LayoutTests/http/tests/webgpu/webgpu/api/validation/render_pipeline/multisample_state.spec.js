@@ -3,7 +3,12 @@
 **/export const description = `
 This test dedicatedly tests validation of GPUMultisampleState of createRenderPipeline.
 `;import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { kDefaultFragmentShaderCode } from '../../../util/shader.js';
+import {
+  kPossibleColorRenderableTextureFormats,
+  isColorTextureFormatWithAlpha,
+  isTextureFormatBlendable } from
+'../../../format_info.js';
+import { kDefaultVertexShaderCode, kDefaultFragmentShaderCode } from '../../../util/shader.js';
 import * as vtu from '../validation_test_utils.js';
 
 import { CreateRenderPipelineValidationTest } from './common.js';
@@ -44,6 +49,90 @@ fn((t) => {
   const descriptor = t.getDescriptor({ multisample: { count, alphaToCoverageEnabled } });
 
   const _success = alphaToCoverageEnabled ? count === 4 : count === 1 || count === 4;
+  vtu.doCreateRenderPipelineTest(t, isAsync, _success, descriptor);
+});
+
+g.test('alpha_to_coverage,fragment_stage_required').
+desc(`If multisample.alphaToCoverageEnabled is true, a fragment stage must be provided.`).
+params((u) =>
+u.
+combine('isAsync', [false, true]).
+combine('alphaToCoverageEnabled', [false, true]).
+beginSubcases().
+combine('noFragment', [false, true])
+).
+fn((t) => {
+  const { isAsync, alphaToCoverageEnabled, noFragment } = t.params;
+
+  const descriptor = t.getDescriptor({
+    multisample: { alphaToCoverageEnabled, count: 4 },
+    noFragment,
+    depthStencil: { format: 'depth32float', depthWriteEnabled: false }
+  });
+
+  const _success = !(alphaToCoverageEnabled && noFragment);
+  vtu.doCreateRenderPipelineTest(t, isAsync, _success, descriptor);
+});
+
+g.test('alpha_to_coverage,first_target_required').
+desc(`If multisample.alphaToCoverageEnabled is true, a fragment.targets[0] must exist.`).
+params((u) =>
+u.
+combine('isAsync', [false, true]).
+combine('alphaToCoverageEnabled', [false, true]).
+beginSubcases().
+combine('targetIndex', [0, 1])
+).
+fn((t) => {
+  const { isAsync, alphaToCoverageEnabled, targetIndex } = t.params;
+
+  const targets = [];
+  targets[targetIndex] = { format: 'rgba8unorm' };
+
+  const descriptor = {
+    vertex: { module: t.device.createShaderModule({ code: kDefaultVertexShaderCode }) },
+    fragment: {
+      module: t.device.createShaderModule({
+        code: `
+                    @fragment fn fs() -> @location(${targetIndex}) vec4f {
+                        return vec4f();
+                    }
+                `
+      }),
+      targets
+    },
+    multisample: { alphaToCoverageEnabled, count: 4 },
+    layout: 'auto'
+  };
+
+  const _success = !(alphaToCoverageEnabled && targetIndex === 1);
+  vtu.doCreateRenderPipelineTest(t, isAsync, _success, descriptor);
+});
+
+g.test('alpha_to_coverage,first_format_blendable_and_has_alpha').
+desc(
+  `If multisample.alphaToCoverageEnabled is true, a fragment.targets[0].format must be blendable.`
+).
+params((u) =>
+u.
+combine('isAsync', [false, true]).
+combine('alphaToCoverageEnabled', [false, true]).
+beginSubcases().
+combine('format', kPossibleColorRenderableTextureFormats)
+).
+fn((t) => {
+  const { isAsync, alphaToCoverageEnabled, format } = t.params;
+  t.skipIfTextureFormatNotSupported(format);
+  t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
+
+  const descriptor = t.getDescriptor({
+    targets: [{ format }],
+    multisample: { alphaToCoverageEnabled, count: 4 }
+  });
+
+  const blendableWithAlpha =
+  isTextureFormatBlendable(t.device.features, format) && isColorTextureFormatWithAlpha(format);
+  const _success = !alphaToCoverageEnabled || blendableWithAlpha;
   vtu.doCreateRenderPipelineTest(t, isAsync, _success, descriptor);
 });
 

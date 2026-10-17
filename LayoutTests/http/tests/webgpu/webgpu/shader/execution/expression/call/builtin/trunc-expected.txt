@@ -35,4 +35,12 @@ PASS :f16:inputSource="storage_rw";vectorize="_undef_"
 PASS :f16:inputSource="storage_rw";vectorize=2
 PASS :f16:inputSource="storage_rw";vectorize=3
 PASS :f16:inputSource="storage_rw";vectorize=4
+PASS :subnormal_division:inputSource="const";type="f32"
+PASS :subnormal_division:inputSource="const";type="f16"
+PASS :subnormal_division:inputSource="uniform";type="f32"
+PASS :subnormal_division:inputSource="uniform";type="f16"
+PASS :subnormal_division:inputSource="storage_r";type="f32"
+PASS :subnormal_division:inputSource="storage_r";type="f16"
+PASS :subnormal_division:inputSource="storage_rw";type="f32"
+PASS :subnormal_division:inputSource="storage_rw";type="f16"
 

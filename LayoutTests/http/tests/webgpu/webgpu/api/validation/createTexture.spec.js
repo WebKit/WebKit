@@ -2,12 +2,14 @@
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
 **/export const description = `createTexture validation tests.`;import { AllFeaturesMaxLimitsGPUTest } from '../.././gpu_test.js';
 import { makeTestGroup } from '../../../common/framework/test_group.js';
-import { assert, makeValueTestVariant } from '../../../common/util/util.js';
+import { assert, hasFeature, makeValueTestVariant } from '../../../common/util/util.js';
 import {
   kTextureDimensions,
   kTextureUsages,
   isValidTextureUsageCombination,
-  kValidCombinationsOfOneOrTwoTextureUsages } from
+  kValidCombinationsOfOneOrTwoTextureUsages,
+  kAllTextureUsages,
+  kSomeBogusTextureUsage } from
 '../../capability_info.js';
 import { GPUConst } from '../../constants.js';
 import {
@@ -358,7 +360,7 @@ fn((t) => {
   if ((usage & GPUConst.TextureUsage.RENDER_ATTACHMENT) !== 0) {
     t.skipIfTextureFormatNotUsableAsRenderAttachment(format);
   }
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if ((usage & GPUConst.TextureUsage.TRANSIENT_ATTACHMENT) !== 0) {
     t.skipIfTransientAttachmentNotSupported();
   }
@@ -492,9 +494,14 @@ fn((t) => {
     usage: GPUTextureUsage.TEXTURE_BINDING
   };
 
+  // With 'texture-compression-unaligned', mip level 0 is no longer required to be a multiple of
+  // the texel block size, so every (small, in-range) size in this test becomes valid.
+  const supportsUnaligned = hasFeature(t.device.features, 'texture-compression-unaligned');
+  const success = supportsUnaligned || _success;
+
   t.expectValidationError(() => {
     t.createTextureTracked(descriptor);
-  }, !_success);
+  }, !success);
 });
 
 g.test('texture_size,1d_texture').
@@ -753,9 +760,12 @@ fn((t) => {
     usage: GPUTextureUsage.TEXTURE_BINDING
   };
 
+  // With 'texture-compression-unaligned', mip level 0 of a compressed texture is no longer
+  // required to be a multiple of the texel block size, so unaligned widths/heights are valid.
+  const supportsUnaligned = hasFeature(t.device.features, 'texture-compression-unaligned');
   const success =
-  size[0] % info.blockWidth === 0 &&
-  size[1] % info.blockHeight === 0 &&
+  (supportsUnaligned ||
+  size[0] % info.blockWidth === 0 && size[1] % info.blockHeight === 0) &&
   size[0] <= t.device.limits.maxTextureDimension2D &&
   size[1] <= t.device.limits.maxTextureDimension2D &&
   size[2] <= t.device.limits.maxTextureArrayLayers;
@@ -987,9 +997,12 @@ fn((t) => {
     usage: GPUTextureUsage.TEXTURE_BINDING
   };
 
+  // With 'texture-compression-unaligned', mip level 0 of a compressed texture is no longer
+  // required to be a multiple of the texel block size, so unaligned widths/heights are valid.
+  const supportsUnaligned = hasFeature(t.device.features, 'texture-compression-unaligned');
   const success =
-  size[0] % info.blockWidth === 0 &&
-  size[1] % info.blockHeight === 0 &&
+  (supportsUnaligned ||
+  size[0] % info.blockWidth === 0 && size[1] % info.blockHeight === 0) &&
   size[0] <= maxTextureDimension3D &&
   size[1] <= maxTextureDimension3D &&
   size[2] <= maxTextureDimension3D &&
@@ -1035,7 +1048,7 @@ fn((t) => {
     usage
   };
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if ((usage & GPUConst.TextureUsage.TRANSIENT_ATTACHMENT) !== 0) {
     t.skipIfTransientAttachmentNotSupported();
   }
@@ -1075,7 +1088,7 @@ combine('depthOrArrayLayers', [1, 2]).
 combine('mipLevelCount', [1, 2])
 ).
 fn((t) => {
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   t.skipIfTransientAttachmentNotSupported();
 
   const { format, depthOrArrayLayers, mipLevelCount } = t.params;
@@ -1096,6 +1109,67 @@ fn((t) => {
   t.expectValidationError(() => {
     t.createTextureTracked(descriptor);
   }, !success);
+});
+
+g.test('usage').
+desc('Test combinations of zero to two usage flags are validated to be valid.').
+params((u) =>
+u.
+combine('usage1', [0, ...kTextureUsages, kSomeBogusTextureUsage]).
+combine('usage2', [0, ...kTextureUsages, kSomeBogusTextureUsage]).
+filter((p) => p.usage1 <= p.usage2)
+).
+fn((t) => {
+  const { usage1, usage2 } = t.params;
+  const usage = usage1 | usage2;
+
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
+  if ((usage & GPUConst.TextureUsage.TRANSIENT_ATTACHMENT) !== 0) {
+    t.skipIfTransientAttachmentNotSupported();
+  }
+
+  const isValid =
+  usage !== 0 &&
+  (usage & ~kAllTextureUsages) === 0 && (
+  (usage & GPUTextureUsage.TRANSIENT_ATTACHMENT) === 0 ||
+  usage === (GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TRANSIENT_ATTACHMENT));
+
+  t.expectGPUError(
+    'validation',
+    () => {
+      t.createTextureTracked({ format: 'rgba8unorm', size: [1, 1], usage });
+    },
+    !isValid
+  );
+});
+
+g.test('new_usages').
+desc(`Valid usages not present in GPUTextureUsage shouldn't be accepted by createTexture().`).
+params((u) =>
+u.
+combine('usage', [
+...kTextureUsages,
+GPUConst.TextureUsage.RENDER_ATTACHMENT | GPUConst.TextureUsage.TRANSIENT_ATTACHMENT]
+).
+filter((p) => isValidTextureUsageCombination(p.usage))
+).
+fn((t) => {
+  const { usage } = t.params;
+
+  let exposedUsages = 0;
+  for (const v of Object.values(GPUTextureUsage)) {
+    exposedUsages |= v;
+  }
+
+  const success = (usage & exposedUsages) === usage;
+
+  t.expectGPUError(
+    'validation',
+    () => {
+      t.createTextureTracked({ format: 'rgba8unorm', size: [1, 1], usage });
+    },
+    !success
+  );
 });
 
 g.test('viewFormats').
@@ -1150,4 +1224,57 @@ fn((t) => {
       viewFormats: [viewFormat, viewFormat]
     });
   }, !compatible);
+});
+
+g.test('transient_viewFormats').
+desc(`Test that viewFormats is not allowed with TRANSIENT_ATTACHMENT textures.`).
+params((u) =>
+u
+// Just test rgba8unorm formats as this check doesn't care about what the format is.
+.combineWithParams([
+{ format: 'rgba8unorm', _otherFormat: 'rgba8unorm-srgb' },
+{ format: 'rgba8unorm-srgb', _otherFormat: 'rgba8unorm' }]
+).
+beginSubcases().
+expandWithParams(({ format, _otherFormat }) => [
+// Control cases
+{ useTransient: true, viewFormat: undefined },
+{ useTransient: false, viewFormat: format },
+{ useTransient: false, viewFormat: _otherFormat },
+// Invalid cases
+{ useTransient: true, viewFormat: format },
+{ useTransient: true, viewFormat: _otherFormat }]
+)
+).
+fn((t) => {
+  const { format, viewFormat, useTransient } = t.params;
+  if (viewFormat && !textureFormatsAreViewCompatible(t.device.features, format, viewFormat)) {
+    t.skip(`"${format}" and "${viewFormat}" are not view-compatible`);
+  }
+
+  const { blockWidth, blockHeight } = getBlockInfoForTextureFormat(format);
+
+  const invalid = useTransient && viewFormat !== undefined;
+  let tex;
+  t.expectValidationError(() => {
+    tex = t.createTextureTracked({
+      format,
+      size: [blockWidth, blockHeight],
+      usage:
+      GPUConst.TextureUsage.RENDER_ATTACHMENT | (
+      useTransient ? GPUConst.TextureUsage.TRANSIENT_ATTACHMENT : 0),
+      // Doesn't matter what formats we request, TRANSIENT_ATTACHMENT doesn't allow it.
+      // So we use [format] since that's otherwise ALWAYS valid regardless of format.
+      viewFormats: viewFormat ? [viewFormat] : undefined
+    });
+  }, invalid);
+
+  if (invalid) {
+    // When we reach here the texture should be invalid, so creating a view should be invalid.
+    // But try it anyway just to see what happens - if the browser had a bug above, this could
+    // issue a bad command to the backend API.
+    t.expectValidationError(() => {
+      tex.createView({ format: viewFormat });
+    }, true);
+  }
 });

@@ -170,6 +170,28 @@ fn(async (t) => {
   await run(t, compoundBinary('%='), [Type.i32, Type.i32], Type.i32, t.params, cases);
 });
 
+g.test('remainder_negative').
+specURL('https://www.w3.org/TR/WGSL/#arithmetic-expr').
+desc(
+  `
+Expression: x % y, with negative dividends across non-power-of-two moduli.
+
+Regression coverage for implementations that compute signed remainder as
+unsigned for negative operands (e.g. lowering to a poison-prone OpSRem without
+VK_KHR_maintenance8), which returns 255 instead of -1 for -1 % 768.
+See https://github.com/gfx-rs/wgpu/issues/8191.
+`
+).
+params((u) =>
+u.combine('inputSource', allInputSources).combine('vectorize', [undefined, 2, 3, 4])
+).
+fn(async (t) => {
+  const cases = await d.get(
+    t.params.inputSource === 'const' ? 'remainder_negative_const' : 'remainder_negative_non_const'
+  );
+  await run(t, binary('%'), [Type.i32, Type.i32], Type.i32, t.params, cases);
+});
+
 g.test('addition_scalar_vector').
 specURL('https://www.w3.org/TR/WGSL/#arithmetic-expr').
 desc(

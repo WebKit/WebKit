@@ -106,7 +106,7 @@ combine(
 fn((t) => {
   const { canvasType, usage } = t.params;
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if ((usage & GPUConst.TextureUsage.TRANSIENT_ATTACHMENT) !== 0) {
     t.skipIfTransientAttachmentNotSupported();
   }
@@ -155,7 +155,7 @@ combine(
 fn((t) => {
   const { canvasType, usage } = t.params;
 
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   if ((usage & GPUConst.TextureUsage.TRANSIENT_ATTACHMENT) !== 0) {
     t.skipIfTransientAttachmentNotSupported();
   }

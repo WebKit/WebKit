@@ -14,7 +14,7 @@ desc(
   `
 ).
 fn((t) => {
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   t.skipIfTransientAttachmentNotSupported();
 
   const maxAttachments = t.device.limits.maxColorAttachments;
@@ -58,7 +58,7 @@ desc(
   `
 ).
 fn((t) => {
-  // MAINTENANCE_TODO(#4509): Remove this when TRANSIENT_ATTACHMENT is added to the WebGPU spec.
+  // MAINTENANCE_TODO(#4509): Remove this after all implementations have TRANSIENT_ATTACHMENT.
   t.skipIfTransientAttachmentNotSupported();
 
   const encoder = t.device.createCommandEncoder();

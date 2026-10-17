@@ -5,7 +5,11 @@ Here we test the validation for draw functions, mainly the buffer access validat
 of draw calls are tested, and test that validation errors do / don't occur for certain call type
 and parameters as expect.
 `;import { makeTestGroup } from '../../../../../../common/framework/test_group.js';
-import { kVertexFormatInfo } from '../../../../../capability_info.js';
+import {
+  kPrimitiveTopology,
+  kIndexFormat,
+  kVertexFormatInfo } from
+'../../../../../capability_info.js';
 import { AllFeaturesMaxLimitsGPUTest } from '../../../../../gpu_test.js';
 import * as vtu from '../../../validation_test_utils.js';
 
@@ -284,6 +288,147 @@ fn((t) => {
       // Binding a unused small index/vertex buffer will never cause validation error.
       commandBufferMaker.validateFinishAndSubmit(true, true);
     }
+  }
+});
+
+g.test(`index_buffer_format`).
+desc(
+  `
+Check that pipelines with a strip topology require their stripIndexFormat to match the setIndexBuffer calls' indexFormat.
+ - Issues an indexed draw call after a setPipeline and setIndexBuffer call.
+    - For all valid (stripIndexFormat, topology) combinations.
+    - For all setIndexBuffer indexFormats.
+    - For all render encoders.
+    - For both orderings of setIndexBuffer and setPipeline.
+`
+).
+paramsSubcasesOnly((u) =>
+u.
+combine('topology', kPrimitiveTopology).
+combine('stripIndexFormat', [undefined, ...kIndexFormat]).
+filter(
+  (p) =>
+  p.topology === 'line-strip' ||
+  p.topology === 'triangle-strip' ||
+  p.stripIndexFormat === undefined
+).
+combine('indexFormat', kIndexFormat).
+combine('drawType', ['drawIndexed', 'drawIndexedIndirect'])
+).
+fn((t) => {
+  const { indexFormat, topology, stripIndexFormat, drawType } = t.params;
+
+  const pipeline = t.device.createRenderPipeline({
+    layout: 'auto',
+    vertex: {
+      module: t.device.createShaderModule({ code: vtu.getNoOpShaderCode('VERTEX') })
+    },
+    fragment: {
+      module: t.device.createShaderModule({ code: vtu.getNoOpShaderCode('FRAGMENT') }),
+      targets: [{ format: 'rgba8unorm', writeMask: 0 }]
+    },
+    primitive: {
+      topology,
+      stripIndexFormat
+    }
+  });
+  const indexBuffer = vtu.createBufferWithState(t, 'valid', {
+    size: 16,
+    usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
+  });
+
+  // Make the encoders that test the validation.
+  const isStrip = topology === 'line-strip' || topology === 'triangle-strip';
+  const success = !isStrip || stripIndexFormat === indexFormat;
+
+  for (const encoderType of ['render bundle', 'render pass']) {
+    for (const setPipelineBeforeBuffer of [false, true]) {
+      const commandBufferMaker = t.createEncoder(encoderType);
+      const renderEncoder = commandBufferMaker.encoder;
+
+      if (setPipelineBeforeBuffer) {
+        renderEncoder.setPipeline(pipeline);
+      }
+      renderEncoder.setIndexBuffer(indexBuffer, indexFormat);
+      if (!setPipelineBeforeBuffer) {
+        renderEncoder.setPipeline(pipeline);
+      }
+
+      callDrawIndexed(t, renderEncoder, drawType, { indexCount: 3 });
+      commandBufferMaker.validateFinishAndSubmit(success, true);
+    }
+  }
+});
+
+g.test(`index_buffer_format_dirtying`).
+desc(
+  `
+    Check that the validation for indexFormat matching stripIndexFormat is dirtied if either the pipeline or the index buffer is changed.
+`
+).
+paramsSubcasesOnly((p) =>
+p.
+combine('dirty', ['pipeline', 'indexBuffer', 'neither']).
+combine('drawType', ['drawIndexed', 'drawIndexedIndirect'])
+).
+fn((t) => {
+  const { dirty, drawType } = t.params;
+
+  // Create render pipelines with both stripIndexFormats.
+  const makeStripIndexPipeline = (
+  topology,
+  stripIndexFormat) =>
+  {
+    return t.device.createRenderPipeline({
+      layout: 'auto',
+      vertex: {
+        module: t.device.createShaderModule({ code: vtu.getNoOpShaderCode('VERTEX') })
+      },
+      fragment: {
+        module: t.device.createShaderModule({ code: vtu.getNoOpShaderCode('FRAGMENT') }),
+        targets: [{ format: 'rgba8unorm', writeMask: 0 }]
+      },
+      primitive: {
+        topology,
+        stripIndexFormat
+      }
+    });
+  };
+
+  const pipelineUint32 = makeStripIndexPipeline('triangle-strip', 'uint32');
+  const pipelineUint16 = makeStripIndexPipeline('triangle-strip', 'uint16');
+
+  const indexBuffer = vtu.createBufferWithState(t, 'valid', {
+    size: 16,
+    usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
+  });
+
+  // Make the encoders that test the validation.
+  const success = dirty === 'neither';
+
+  for (const encoderType of ['render bundle', 'render pass']) {
+    const commandBufferMaker = t.createEncoder(encoderType);
+    const renderEncoder = commandBufferMaker.encoder;
+
+    // First draw that's valid (checked with 'dirty': 'neither').
+    renderEncoder.setPipeline(pipelineUint32);
+    renderEncoder.setIndexBuffer(indexBuffer, 'uint32');
+    callDrawIndexed(t, renderEncoder, drawType, { indexCount: 3 });
+
+    // Dirty the pipeline or the buffer such that the validation should fail.
+    switch (dirty) {
+      case 'pipeline':
+        renderEncoder.setPipeline(pipelineUint16);
+        break;
+      case 'indexBuffer':
+        renderEncoder.setIndexBuffer(indexBuffer, 'uint16');
+        break;
+      case 'neither':
+        break;
+    }
+
+    callDrawIndexed(t, renderEncoder, drawType, { indexCount: 3 });
+    commandBufferMaker.validateFinishAndSubmit(success, true);
   }
 });
 
