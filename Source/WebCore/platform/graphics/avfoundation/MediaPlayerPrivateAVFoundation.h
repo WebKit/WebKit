@@ -192,7 +192,7 @@ protected:
     MediaTime duration() const override;
     MediaTime currentTime() const override = 0;
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool seeking() const;
+    bool LEGACY_NODELETE seeking() const;
     bool paused() const override;
     void setVolume(float) override = 0;
     bool hasClosedCaptions() const override { return m_cachedHasCaptions; }

@@ -60,7 +60,7 @@ public:
 
     SpecialValueHandler(const Decimal& lhs, const Decimal& rhs);
     HandleResult handle();
-    Decimal value() const;
+    Decimal LEGACY_NODELETE value() const;
 
 private:
     enum Result {

@@ -43,7 +43,7 @@ public:
         return adoptRef(*new TranslateTransformOperation(tx, ty, 0, type));
     }
 
-    WEBCORE_EXPORT static Ref<TranslateTransformOperation> create(float, float, float, TransformOperation::Type);
+    WEBCORE_EXPORT static Ref<TranslateTransformOperation> LEGACY_NODELETE create(float, float, float, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {

@@ -33,8 +33,8 @@ namespace WebCore {
 
 class PlatformSpeechSynthesisVoice : public RefCounted<PlatformSpeechSynthesisVoice> {
 public:
-    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
-    static Ref<PlatformSpeechSynthesisVoice> create();
+    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisVoice> LEGACY_NODELETE create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
+    static Ref<PlatformSpeechSynthesisVoice> LEGACY_NODELETE create();
 
     const String& voiceURI() const LIFETIME_BOUND { return m_voiceURI; }
     void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }

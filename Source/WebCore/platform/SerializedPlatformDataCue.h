@@ -36,7 +36,7 @@ namespace WebCore {
 
 class SerializedPlatformDataCue : public RefCounted<SerializedPlatformDataCue> {
 public:
-    WEBCORE_EXPORT static Ref<SerializedPlatformDataCue> create(SerializedPlatformDataCueValue&&);
+    WEBCORE_EXPORT static Ref<SerializedPlatformDataCue> LEGACY_NODELETE create(SerializedPlatformDataCueValue&&);
 
     virtual ~SerializedPlatformDataCue() = default;
 

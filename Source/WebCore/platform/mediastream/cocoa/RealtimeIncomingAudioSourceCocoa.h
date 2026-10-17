@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RealtimeIncomingAudioSourceCocoa final : public RealtimeIncomingAudioSource {
 public:
-    static Ref<RealtimeIncomingAudioSourceCocoa> create(Ref<webrtc::AudioTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingAudioSourceCocoa> LEGACY_NODELETE create(Ref<webrtc::AudioTrackInterface>&&, String&&);
     ~RealtimeIncomingAudioSourceCocoa();
 
 private:

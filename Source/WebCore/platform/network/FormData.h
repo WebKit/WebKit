@@ -127,7 +127,7 @@ public:
         MultipartFormData // for multipart/form-data
     };
 
-    WEBCORE_EXPORT static Ref<FormData> create();
+    WEBCORE_EXPORT static Ref<FormData> LEGACY_NODELETE create();
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const uint8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const char8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
@@ -189,7 +189,7 @@ public:
 
     WEBCORE_EXPORT uint64_t lengthInBytes() const;
 
-    WEBCORE_EXPORT URL asBlobURL() const;
+    WEBCORE_EXPORT URL LEGACY_NODELETE asBlobURL() const;
 
 private:
     friend struct IPC::ArgumentCoder<FormData>;

@@ -83,8 +83,8 @@ public:
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     FontSelectionValue lighterWeight() const { return lighterWeight(weight()); }
     FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
-    static FontSelectionValue lighterWeight(FontSelectionValue);
-    static FontSelectionValue bolderWeight(FontSelectionValue);
+    static FontSelectionValue LEGACY_NODELETE lighterWeight(FontSelectionValue);
+    static FontSelectionValue LEGACY_NODELETE bolderWeight(FontSelectionValue);
 
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily().name == monospaceFamily; }

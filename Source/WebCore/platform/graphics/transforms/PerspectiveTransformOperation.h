@@ -35,7 +35,7 @@ struct BlendingContext;
 
 class PerspectiveTransformOperation final : public TransformOperation {
 public:
-    WEBCORE_EXPORT static Ref<PerspectiveTransformOperation> create(const std::optional<float>&);
+    WEBCORE_EXPORT static Ref<PerspectiveTransformOperation> LEGACY_NODELETE create(const std::optional<float>&);
 
     Ref<TransformOperation> clone() const override
     {

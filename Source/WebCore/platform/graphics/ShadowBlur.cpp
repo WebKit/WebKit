@@ -492,7 +492,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext, ImageBuffer&
     graphicsContext.fillRect(FloatRect(layerOrigin, layerSize));
 }
 
-static void computeSliceSizesFromRadii(const IntSize& twiceRadius, const CornerRadii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
+static void LEGACY_NODELETE computeSliceSizesFromRadii(const IntSize& twiceRadius, const CornerRadii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
 {
     leftSlice = twiceRadius.width() + std::max(radii.topLeft().width(), radii.bottomLeft().width());
     rightSlice = twiceRadius.width() + std::max(radii.topRight().width(), radii.bottomRight().width());

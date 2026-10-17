@@ -57,7 +57,7 @@ public:
 
 private:
     void initializeKernel();
-    void updateRegions(bool isSecondLoad);
+    void LEGACY_NODELETE updateRegions(bool isSecondLoad);
 
     float convolve(std::span<const float> inputP, std::span<const float> k1, std::span<const float> k2, float kernelInterpolationFactor);
     

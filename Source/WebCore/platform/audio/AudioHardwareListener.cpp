@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static AudioHardwareListener::CreationFunction& audioHardwareListenerCreationFunction()
+static AudioHardwareListener::CreationFunction& LEGACY_NODELETE audioHardwareListenerCreationFunction()
 {
     static NeverDestroyed<AudioHardwareListener::CreationFunction> creationFunction;
     return creationFunction;

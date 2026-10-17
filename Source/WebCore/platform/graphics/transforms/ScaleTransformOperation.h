@@ -43,7 +43,7 @@ public:
         return adoptRef(*new ScaleTransformOperation(sx, sy, 1, type));
     }
 
-    WEBCORE_EXPORT static Ref<ScaleTransformOperation> create(double, double, double, TransformOperation::Type);
+    WEBCORE_EXPORT static Ref<ScaleTransformOperation> LEGACY_NODELETE create(double, double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const final
     {

@@ -98,7 +98,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT DoublePoint(const CGPoint&);
-    WEBCORE_EXPORT operator CGPoint() const;
+    WEBCORE_EXPORT operator CGPoint LEGACY_NODELETE () const;
     CGPoint toCG() const { return static_cast<CGPoint>(*this); }
 #endif
 

@@ -103,7 +103,7 @@ std::optional<uint8_t> findAVCCMaxNumReorderFrames(std::span<const uint8_t> avcc
 }
 
 // Table A-1 of the H.264 spec: MaxDpbMbs for a given level.
-static uint64_t maxDpbMbsFromLevelNumber(uint32_t profileIDC, uint32_t levelIDC, bool constraintSet3Flag)
+static uint64_t LEGACY_NODELETE maxDpbMbsFromLevelNumber(uint32_t profileIDC, uint32_t levelIDC, bool constraintSet3Flag)
 {
     if ((profileIDC == 66 || profileIDC == 77) && levelIDC == 11 && constraintSet3Flag)
         return 396; // Level 1b.
@@ -129,7 +129,7 @@ static uint64_t maxDpbMbsFromLevelNumber(uint32_t profileIDC, uint32_t levelIDC,
     }
 }
 
-static void skipH264HRDParameters(BitReader& reader)
+static void LEGACY_NODELETE skipH264HRDParameters(BitReader& reader)
 {
     // cpb_cnt_minus1: ue(v)
     uint32_t cpbCntMinus1 = reader.readExpGolomb();

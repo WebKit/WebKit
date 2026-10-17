@@ -404,7 +404,7 @@ private:
     RefPtr<WebCoreAVFResourceLoader> takeResourceLoader(AVAssetResourceLoadingRequest *);
 
     void updateLayerAttachment();
-    bool shouldAttachLayerToPlayer();
+    bool LEGACY_NODELETE shouldAttachLayerToPlayer();
 
 #if PLATFORM(MAC)
     void screenReservedChanged(bool) final;

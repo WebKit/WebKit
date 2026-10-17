@@ -170,7 +170,7 @@ void PlatformMediaEngineConfigurationFactory::disableMock()
     mockEnabled() = false;
 }
 
-static PlatformMediaEngineConfigurationFactory::MediaSessionManagerProvider& mediaSessionManagerProvider()
+static PlatformMediaEngineConfigurationFactory::MediaSessionManagerProvider& LEGACY_NODELETE mediaSessionManagerProvider()
 {
     static NeverDestroyed<PlatformMediaEngineConfigurationFactory::MediaSessionManagerProvider> provider;
     return provider.get();

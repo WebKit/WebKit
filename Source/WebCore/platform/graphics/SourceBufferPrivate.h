@@ -90,7 +90,7 @@ public:
 
     Ref<MediaPromise> append(Ref<SharedBuffer>&&);
 
-    void abort();
+    void LEGACY_NODELETE abort();
     // Overrides must call the base class.
     virtual void resetParserState();
     virtual void removedFromMediaSource();
@@ -111,26 +111,26 @@ public:
     bool evictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     void asyncEvictCodedFrames(uint64_t newDataSize, const MediaTime& currentTime);
     WEBCORE_EXPORT virtual size_t platformEvictionThreshold() const;
-    WEBCORE_EXPORT uint64_t contentSize() const;
+    WEBCORE_EXPORT uint64_t LEGACY_NODELETE contentSize() const;
     void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType();
-    void setTimestampOffset(const MediaTime&);
-    WEBCORE_EXPORT MediaTime timestampOffset() const;
-    void setAppendWindowStart(const MediaTime&);
-    void setAppendWindowEnd(const MediaTime&);
-    std::pair<MediaTime, MediaTime> appendWindow() const;
+    void LEGACY_NODELETE setTimestampOffset(const MediaTime&);
+    WEBCORE_EXPORT MediaTime LEGACY_NODELETE timestampOffset() const;
+    void LEGACY_NODELETE setAppendWindowStart(const MediaTime&);
+    void LEGACY_NODELETE setAppendWindowEnd(const MediaTime&);
+    std::pair<MediaTime, MediaTime> LEGACY_NODELETE appendWindow() const;
 
     WEBCORE_EXPORT MediaTime computeSeekTime(const SeekTarget&);
     void reenqueueMediaForTime(const MediaTime&);
     WEBCORE_EXPORT virtual void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs);
 
-    WEBCORE_EXPORT void setClient(SourceBufferPrivateClient&);
+    WEBCORE_EXPORT void LEGACY_NODELETE setClient(SourceBufferPrivateClient&);
 
-    void setMediaSourceDuration(const MediaTime&);
+    void LEGACY_NODELETE setMediaSourceDuration(const MediaTime&);
 
-    WEBCORE_EXPORT bool isBufferFullFor(uint64_t requiredSize) const;
-    WEBCORE_EXPORT bool canAppend(uint64_t requiredSize) const;
-    WEBCORE_EXPORT SourceBufferEvictionData evictionData() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE isBufferFullFor(uint64_t requiredSize) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE canAppend(uint64_t requiredSize) const;
+    WEBCORE_EXPORT SourceBufferEvictionData LEGACY_NODELETE evictionData() const;
     WEBCORE_EXPORT Vector<PlatformTimeRanges> trackBuffersRanges() const;
 
     // Implements the SourceBuffer.buffered getter algorithm:
@@ -184,7 +184,7 @@ public:
 protected:
     WEBCORE_EXPORT explicit SourceBufferPrivate(MediaSourcePrivate&, WorkQueue&);
     MediaTime currentTime() const;
-    MediaTime mediaSourceDuration() const;
+    MediaTime LEGACY_NODELETE mediaSourceDuration() const;
 
     WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
     WEBCORE_EXPORT void ensureOnDispatcherSync(NOESCAPE Function<void()>&&);
@@ -223,7 +223,7 @@ protected:
     // Must be called once all samples have been processed.
     WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, Function<void()>&& = [] { });
 
-    WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
+    WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> LEGACY_NODELETE client() const;
 
     ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
     const Ref<WorkQueue> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate

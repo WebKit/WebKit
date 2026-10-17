@@ -107,9 +107,9 @@ private:
         unsigned offsetIndex { 0 };
         std::optional<size_t> areaIndex;
     };
-    std::optional<SnapOffsetAndAreaIndices> snapOffsetAndAreaIndicesForNode(ScrollEventAxis, NodeIdentifier) const;
+    std::optional<SnapOffsetAndAreaIndices> LEGACY_NODELETE snapOffsetAndAreaIndicesForNode(ScrollEventAxis, NodeIdentifier) const;
 
-    std::optional<unsigned> snapOffsetIndexForNode(ScrollEventAxis, NodeIdentifier) const;
+    std::optional<unsigned> LEGACY_NODELETE snapOffsetIndexForNode(ScrollEventAxis, NodeIdentifier) const;
 
     using SnapOffsetPredicate = Function<bool(const SnapOffset<LayoutUnit>&)>;
     Markable<NodeIdentifier> flaggedNodeForAxis(ScrollEventAxis, bool SnapOffset<LayoutUnit>::*flag, NOESCAPE const SnapOffsetPredicate& isEligible = { }) const;
@@ -134,7 +134,7 @@ private:
     std::optional<NodeIdentifier> resolvePreferredBoxForAxisConflict(NodeIdentifier horizontalBox, NodeIdentifier verticalBox) const;
 
     // The snap area rect (scroll-offset space) for the box establishing this axis's snap offset.
-    std::optional<std::pair<LayoutRect, LayoutUnit>> snapAreaAndOffsetForNode(ScrollEventAxis, NodeIdentifier) const;
+    std::optional<std::pair<LayoutRect, LayoutUnit>> LEGACY_NODELETE snapAreaAndOffsetForNode(ScrollEventAxis, NodeIdentifier) const;
 
     // This axis's focused/targeted snapped box, skipping any whose area is off-screen in a
     // non-snapping cross axis.
@@ -142,7 +142,7 @@ private:
 
     // Whether the snap area is within the snapport in the (non-snapping) cross axis at the last known
     // scroll position; true (no filtering) when the cross axis snaps or no viewport is known yet.
-    bool isSnapAreaVisibleInCrossAxis(size_t areaIndex, ScrollEventAxis) const;
+    bool LEGACY_NODELETE isSnapAreaVisibleInCrossAxis(size_t areaIndex, ScrollEventAxis) const;
 
     bool setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale);
     void updateCurrentlySnappedBoxes();

@@ -56,7 +56,7 @@ public:
     // is reported to clients) and never reach the lambda.
     using IsAcceptableEnqueueGapFn = Function<bool(const MediaTime& fromTime, const MediaTime& toTime)>;
 
-    static UniqueRef<TrackBuffer> create(RefPtr<MediaDescription>&&, IsAcceptableEnqueueGapFn&& = nullptr);
+    static UniqueRef<TrackBuffer> LEGACY_NODELETE create(RefPtr<MediaDescription>&&, IsAcceptableEnqueueGapFn&& = nullptr);
 
     MediaTime LEGACY_NODELETE maximumBufferedTime() const;
     void addBufferedRange(const MediaTime& start, const MediaTime& end, AddTimeRangeOption = AddTimeRangeOption::None);

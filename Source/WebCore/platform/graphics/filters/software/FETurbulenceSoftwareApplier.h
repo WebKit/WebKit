@@ -90,7 +90,7 @@ private:
     static inline float smoothCurve(float t) { return t * t * (3 - 2 * t); }
 
     static ColorComponents<float, 4> noise2D(const PaintingData&, const StitchData&, const FloatPoint& noiseVector);
-    static ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents);
+    static ColorComponents<uint8_t, 4> LEGACY_NODELETE toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents);
     static ColorComponents<uint8_t, 4> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&);
 
     static void applyPlatformGeneric(const IntRect& filterRegion, const FloatSize& filterScale, PixelBuffer&, const PaintingData&, StitchData, int startY, int endY);

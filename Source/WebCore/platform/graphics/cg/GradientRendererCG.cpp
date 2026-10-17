@@ -49,7 +49,7 @@ struct SampledGradientCacheKey {
 };
 
 template<>
-bool TinyLRUCachePolicy<SampledGradientCacheKey, RetainPtr<CGGradientRef>>::isKeyNull(const SampledGradientCacheKey& key)
+bool LEGACY_NODELETE TinyLRUCachePolicy<SampledGradientCacheKey, RetainPtr<CGGradientRef>>::isKeyNull(const SampledGradientCacheKey& key)
 {
     return key.colorStops.isEmpty();
 }

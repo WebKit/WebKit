@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
-    WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(StringView mimeType);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isSupportedJavaScriptMIMEType(StringView mimeType);
     WEBCORE_EXPORT static bool isSupportedJSONMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a WebAssembly module.
@@ -103,13 +103,13 @@ public:
     static bool isApplicationPluginMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is one of the common PDF/PS types.
-    WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isPDFMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static bool isUSDMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isUSDMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static bool isGLTFMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isGLTFMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static bool isSupportedModelMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isSupportedModelMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.
     // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
@@ -151,7 +151,7 @@ public:
 private:
     // Check to see if the MIME type is not suitable for being loaded as a text
     // document in a frame. Only valid for MIME types begining with "text/".
-    static bool isUnsupportedTextMIMEType(const String& mimeType);
+    static bool LEGACY_NODELETE isUnsupportedTextMIMEType(const String& mimeType);
 };
 
 WEBCORE_EXPORT const String& defaultMIMEType();

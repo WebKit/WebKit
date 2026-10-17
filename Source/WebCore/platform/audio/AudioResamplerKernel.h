@@ -52,7 +52,7 @@ public:
     // process() resamples framesToProcess frames from the source into destination.
     // Each call to process() must be preceded by a call to getSourceSpan() so that source input may be supplied.
     // framesToProcess must be less than or equal to AudioUtilities::renderQuantumSize.
-    void process(std::span<float> destination, size_t framesToProcess);
+    void LEGACY_NODELETE process(std::span<float> destination, size_t framesToProcess);
 
     // Resets the processing state.
     void LEGACY_NODELETE reset();

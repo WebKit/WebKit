@@ -396,7 +396,7 @@ protected:
     virtual RefPtr<PixelBuffer> readCompositedResults() = 0;
     RefPtr<PixelBuffer> readPixelsForPaintResults();
 
-    void prepareTexture();
+    void LEGACY_NODELETE prepareTexture();
 #if PLATFORM(COCOA)
     static bool makeCurrent(GCGLDisplay, GCGLContext);
 #endif

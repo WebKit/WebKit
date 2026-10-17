@@ -55,7 +55,7 @@ struct PlatformVideoColorSpace;
 
 class WebCoreDecompressionSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCoreDecompressionSession> {
 public:
-    WEBCORE_EXPORT static Ref<WebCoreDecompressionSession> createOpenGL(GuaranteedSerialFunctionDispatcher* = nullptr);
+    WEBCORE_EXPORT static Ref<WebCoreDecompressionSession> LEGACY_NODELETE createOpenGL(GuaranteedSerialFunctionDispatcher* = nullptr);
     WEBCORE_EXPORT static Ref<WebCoreDecompressionSession> createRGB(GuaranteedSerialFunctionDispatcher* = nullptr);
     static Ref<WebCoreDecompressionSession> create(NSDictionary *pixelBufferAttributes, GuaranteedSerialFunctionDispatcher* dispatcher = nullptr) { return adoptRef(*new WebCoreDecompressionSession(pixelBufferAttributes, dispatcher)); }
 

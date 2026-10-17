@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
-static CGBitmapInfo bitmapInfoForPixelFormat(PixelFormat pixelFormat)
+static CGBitmapInfo LEGACY_NODELETE bitmapInfoForPixelFormat(PixelFormat pixelFormat)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (pixelFormat == PixelFormat::RGBA16F)

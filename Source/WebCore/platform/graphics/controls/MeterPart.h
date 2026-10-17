@@ -37,8 +37,8 @@ public:
         EvenLessGood
     };
 
-    static Ref<MeterPart> create();
-    WEBCORE_EXPORT static Ref<MeterPart> create(GaugeRegion, double value, double minimum, double maximum);
+    static Ref<MeterPart> LEGACY_NODELETE create();
+    WEBCORE_EXPORT static Ref<MeterPart> LEGACY_NODELETE create(GaugeRegion, double value, double minimum, double maximum);
 
     GaugeRegion gaugeRegion() const { return m_gaugeRegion; }
     void setGaugeRegion(GaugeRegion gaugeRegion) { m_gaugeRegion = gaugeRegion; }

@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCIceCandidateDescriptor : public RefCounted<RTCIceCandidateDescriptor> {
 public:
-    static Ref<RTCIceCandidateDescriptor> create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
+    static Ref<RTCIceCandidateDescriptor> LEGACY_NODELETE create(const String& candidate, const String& sdpMid, unsigned short sdpMLineIndex);
     virtual ~RTCIceCandidateDescriptor();
 
     const String& candidate() const LIFETIME_BOUND { return m_candidate; }

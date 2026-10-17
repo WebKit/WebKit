@@ -38,7 +38,7 @@ public:
 
     void reset();
 
-    void process(std::span<const float> source, std::span<float> destination);
+    void LEGACY_NODELETE process(std::span<const float> source, std::span<float> destination);
     void getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse, double nyquist);
     double tailTime(double sampleRate, bool isFilterStable);
 

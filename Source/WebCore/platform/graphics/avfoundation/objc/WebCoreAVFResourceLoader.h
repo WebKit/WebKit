@@ -55,7 +55,7 @@ class WebCoreAVFResourceLoader : public ThreadSafeRefCountedAndCanMakeThreadSafe
     WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
+    static Ref<WebCoreAVFResourceLoader> LEGACY_NODELETE create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, Ref<PlatformMediaResourceLoader>&&, GuaranteedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
@@ -82,7 +82,7 @@ private:
     void loadFinished();
 
     void startLoadingTimer();
-    void stopLoadingTimer();
+    void LEGACY_NODELETE stopLoadingTimer();
     void loadTimedOut();
 
 #if !RELEASE_LOG_DISABLED

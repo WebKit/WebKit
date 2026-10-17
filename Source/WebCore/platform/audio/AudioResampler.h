@@ -54,7 +54,7 @@ public:
     void configureChannels(unsigned numberOfChannels);
 
     // 0 < rate <= MaxRate
-    void setRate(double rate);
+    void LEGACY_NODELETE setRate(double rate);
     double rate() const { return m_rate; }
 
     static constexpr double MaxRate { 8 };

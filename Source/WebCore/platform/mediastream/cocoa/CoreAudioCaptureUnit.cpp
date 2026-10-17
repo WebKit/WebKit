@@ -249,7 +249,7 @@ void CoreAudioCaptureUnit::forEach(NOESCAPE const Function<void(CoreAudioCapture
     allCoreAudioCaptureUnits().forEach(callback);
 }
 
-static Function<void(CoreAudioCaptureUnit&)>& coreAudioCaptureNewUnitCallback()
+static Function<void(CoreAudioCaptureUnit&)>& LEGACY_NODELETE coreAudioCaptureNewUnitCallback()
 {
     ASSERT(isMainThread());
 

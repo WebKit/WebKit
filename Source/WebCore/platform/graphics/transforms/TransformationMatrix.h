@@ -181,7 +181,7 @@ public:
 
     // Maps a 2D point through the transform, returning a 2D point.
     // Note that this ignores the z component, effectively projecting the point into the z=0 plane.
-    WEBCORE_EXPORT FloatPoint mapPoint(const FloatPoint&) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE mapPoint(const FloatPoint&) const;
 
     // Like the version above, except that it rounds the mapped point to the nearest integer value.
     IntPoint mapPoint(const IntPoint& p) const
@@ -379,7 +379,7 @@ public:
     };
     using IPCData = Variant<std::monostate /* identity */, Translation2DIPCData, Translation3DIPCData, AffineTransform, FullIPCData>;
 
-    WEBCORE_EXPORT IPCData ipcData() const;
+    WEBCORE_EXPORT IPCData LEGACY_NODELETE ipcData() const;
     WEBCORE_EXPORT static TransformationMatrix fromIPCData(IPCData&&);
 
     bool operator==(const TransformationMatrix& m2) const
@@ -403,15 +403,15 @@ public:
 
 #if USE(CA)
     WEBCORE_EXPORT TransformationMatrix(const CATransform3D&);
-    WEBCORE_EXPORT operator CATransform3D() const;
+    WEBCORE_EXPORT operator CATransform3D LEGACY_NODELETE () const;
 #endif
 #if USE(CG)
     WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
-    WEBCORE_EXPORT operator CGAffineTransform() const;
+    WEBCORE_EXPORT operator CGAffineTransform LEGACY_NODELETE () const;
 #endif
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT TransformationMatrix(const simd_float4x4&);
-    WEBCORE_EXPORT operator simd_float4x4() const;
+    WEBCORE_EXPORT operator simd_float4x4 LEGACY_NODELETE () const;
 
     WEBCORE_EXPORT static TransformationMatrix makeLookAt(simd_float3, simd_float3);
 #endif
@@ -461,7 +461,7 @@ private:
         return FloatPoint(static_cast<float>(resultX), static_cast<float>(resultY));
     }
 
-    WEBCORE_EXPORT void multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
+    WEBCORE_EXPORT void LEGACY_NODELETE multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
     FloatPoint3D internalMapPoint(const FloatPoint3D& sourcePoint) const
     {
         double resultX;

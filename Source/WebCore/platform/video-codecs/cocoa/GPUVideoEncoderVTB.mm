@@ -48,7 +48,7 @@ namespace WebCore {
 class GPUVideoEncoderBitrateAdjuster {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GPUVideoEncoderBitrateAdjuster);
 public:
-    void setTargetBitrateBps(uint32_t bitrateBps)
+    void LEGACY_NODELETE setTargetBitrateBps(uint32_t bitrateBps)
     {
         Locker locker { m_lock };
         if (!isWithinTolerance(bitrateBps, m_targetBitrateBps) || !isWithinTolerance(bitrateBps, m_lastAdjustedTargetBitrateBps))
@@ -56,7 +56,7 @@ public:
         m_targetBitrateBps = bitrateBps;
     }
 
-    uint32_t adjustedBitrateBps() const
+    uint32_t LEGACY_NODELETE adjustedBitrateBps() const
     {
         Locker locker { m_lock };
         return m_adjustedBitrateBps;
@@ -77,7 +77,7 @@ private:
     static constexpr float minAdjustedRatio = .5;
     static constexpr float maxAdjustedRatio = .95;
 
-    static bool isWithinTolerance(uint32_t bitrateBps, uint32_t targetBitrateBps)
+    static bool LEGACY_NODELETE isWithinTolerance(uint32_t bitrateBps, uint32_t targetBitrateBps)
     {
         if (!targetBitrateBps)
             return false;
@@ -85,7 +85,7 @@ private:
         return (delta / targetBitrateBps) < toleranceRatio;
     }
 
-    void updateBitrate(MonotonicTime now) WTF_REQUIRES_LOCK(m_lock)
+    void LEGACY_NODELETE updateBitrate(MonotonicTime now) WTF_REQUIRES_LOCK(m_lock)
     {
         ++m_framesSinceLastUpdate;
         if (!m_lastUpdateTime)

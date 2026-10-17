@@ -53,7 +53,7 @@ Path path(const AcceleratedEffectPolygonFunction&, const FloatRect&);
 // MARK: - Blending
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectPolygonFunction> {
-    auto canBlend(const AcceleratedEffectPolygonFunction&, const AcceleratedEffectPolygonFunction&) -> bool;
+    bool LEGACY_NODELETE canBlend(const AcceleratedEffectPolygonFunction&, const AcceleratedEffectPolygonFunction&);
     auto blend(const AcceleratedEffectPolygonFunction&, const AcceleratedEffectPolygonFunction&, const BlendingContext&) -> AcceleratedEffectPolygonFunction;
 };
 

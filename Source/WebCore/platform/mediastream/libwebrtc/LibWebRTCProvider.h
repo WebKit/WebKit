@@ -95,8 +95,8 @@ public:
     // FIXME: Make these methods not static.
     static void callOnWebRTCNetworkThread(Function<void()>&&);
     static void callOnWebRTCSignalingThread(Function<void()>&&);
-    static bool hasWebRTCThreads();
-    static webrtc::Thread& signalingThread();
+    static bool LEGACY_NODELETE hasWebRTCThreads();
+    static webrtc::Thread& LEGACY_NODELETE signalingThread();
 
     // Used for mock testing
     void setPeerConnectionFactory(webrtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);

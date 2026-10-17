@@ -36,7 +36,7 @@ namespace WebCore {
 class FloatQuad;
 
 float LEGACY_NODELETE euclidianDistance(const FloatSize&);
-WEBCORE_EXPORT float euclidianDistance(const FloatPoint&, const FloatPoint&);
+WEBCORE_EXPORT float LEGACY_NODELETE euclidianDistance(const FloatPoint&, const FloatPoint&);
 
 float LEGACY_NODELETE dotProduct(const FloatSize&, const FloatSize&);
 
@@ -72,10 +72,10 @@ FloatRect LEGACY_NODELETE fullRectFromSubrectAndSize(const FloatSize& naturalSiz
 FloatSize LEGACY_NODELETE sizeWithAreaAndAspectRatio(float area, float aspectRatio);
 
 // Compute a rect that encloses all points covered by the given rect if it were rotated a full turn around (0,0).
-FloatRect boundsOfRotatingRect(const FloatRect&);
+FloatRect LEGACY_NODELETE boundsOfRotatingRect(const FloatRect&);
 
 bool LEGACY_NODELETE ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
-float eccentricAngle(FloatPoint, FloatPoint center, float radiusX, float radiusY);
+float LEGACY_NODELETE eccentricAngle(FloatPoint, FloatPoint center, float radiusX, float radiusY);
 
 FloatPoint LEGACY_NODELETE midPoint(const FloatPoint&, const FloatPoint&);
 
@@ -107,10 +107,10 @@ float LEGACY_NODELETE angleOfPointToSideOfIntersection(const FloatRect& bounding
 // Given a box and an offset from the top left corner, calculate the distance of the point from each side
 RectEdges<double> LEGACY_NODELETE distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
 
-float distanceToClosestSide(FloatPoint, FloatSize);
-float distanceToFarthestSide(FloatPoint, FloatSize);
-float distanceToClosestCorner(FloatPoint, FloatSize);
-float distanceToFarthestCorner(FloatPoint, FloatSize);
+float LEGACY_NODELETE distanceToClosestSide(FloatPoint, FloatSize);
+float LEGACY_NODELETE distanceToFarthestSide(FloatPoint, FloatSize);
+float LEGACY_NODELETE distanceToClosestCorner(FloatPoint, FloatSize);
+float LEGACY_NODELETE distanceToFarthestCorner(FloatPoint, FloatSize);
 
 // Given a box and an offset from the top left corner, construct a coordinate system with this offset as the origin,
 // and return the vertices of the box in this coordinate system

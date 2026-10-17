@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerHapticEffect);
 
-static double magnitudeToIntensity(double magnitude)
+static double LEGACY_NODELETE magnitudeToIntensity(double magnitude)
 {
     return std::clamp<double>(magnitude, 0, 1);
 }

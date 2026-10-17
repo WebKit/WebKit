@@ -91,7 +91,7 @@ private:
     bool LEGACY_NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
-    void didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
+    void LEGACY_NODELETE didRemoveSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
     void didUseSurfaceOfSize(IntSize) WTF_REQUIRES_LOCK(m_lock);
 
     void insertSurfaceIntoPool(std::unique_ptr<IOSurface>) WTF_REQUIRES_LOCK(m_lock);

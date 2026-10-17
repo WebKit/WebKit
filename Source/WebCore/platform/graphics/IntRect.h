@@ -177,9 +177,9 @@ public:
         { return px >= x() && px < maxX() && py >= y() && py < maxY(); }
     bool contains(const IntPoint& point) const { return contains(point.x(), point.y()); }
 
-    WEBCORE_EXPORT void intersect(const IntRect&);
-    WEBCORE_EXPORT void unite(const IntRect&);
-    void uniteIfNonZero(const IntRect&);
+    WEBCORE_EXPORT void LEGACY_NODELETE intersect(const IntRect&);
+    WEBCORE_EXPORT void LEGACY_NODELETE unite(const IntRect&);
+    void LEGACY_NODELETE uniteIfNonZero(const IntRect&);
 
     void inflateX(int dx)
     {
@@ -217,7 +217,7 @@ public:
 #endif
 
 #if USE(CG)
-    WEBCORE_EXPORT operator CGRect() const;
+    WEBCORE_EXPORT operator CGRect LEGACY_NODELETE () const;
 #endif
 
 #if USE(SKIA)

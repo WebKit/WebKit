@@ -54,8 +54,8 @@ struct AcceleratedEffectRayFunction {
 // MARK: - Blending
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectRayFunction> {
-    auto canBlend(const AcceleratedEffectRayFunction&, const AcceleratedEffectRayFunction&) -> bool;
-    auto blend(const AcceleratedEffectRayFunction&, const AcceleratedEffectRayFunction&, const BlendingContext&) -> AcceleratedEffectRayFunction;
+    bool LEGACY_NODELETE canBlend(const AcceleratedEffectRayFunction&, const AcceleratedEffectRayFunction&);
+    AcceleratedEffectRayFunction LEGACY_NODELETE blend(const AcceleratedEffectRayFunction&, const AcceleratedEffectRayFunction&, const BlendingContext&);
 };
 
 } // namespace WebCore

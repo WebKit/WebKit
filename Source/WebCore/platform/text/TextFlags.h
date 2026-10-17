@@ -249,7 +249,7 @@ public:
         return { };
     }
 
-    friend void add(Hasher&, const FontVariantAlternates&);
+    friend void LEGACY_NODELETE add(Hasher&, const FontVariantAlternates&);
 
 private:
     Markable<Values> m_values;

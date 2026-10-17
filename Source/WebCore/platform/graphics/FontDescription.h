@@ -202,6 +202,6 @@ private:
     PREFERRED_TYPE(bool) unsigned m_shouldDisableLigaturesForSpacing : 1; // If letter-spacing is nonzero, we need to disable ligatures, which affects font preparation
 };
 
-FontStyleAxis variationStyleAxis(const FontDescription&, const FontSelectionSpecifiedCapabilities& faceCapabilities);
+FontStyleAxis LEGACY_NODELETE variationStyleAxis(const FontDescription&, const FontSelectionSpecifiedCapabilities& faceCapabilities);
 
 } // namespace WebCore

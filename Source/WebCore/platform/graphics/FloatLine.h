@@ -52,7 +52,7 @@ public:
 
     WEBCORE_EXPORT const FloatPoint LEGACY_NODELETE pointAtAbsoluteDistance(float) const;
     const FloatPoint LEGACY_NODELETE pointAtRelativeDistance(float) const;
-    const FloatLine extendedToBounds(const FloatRect&) const;
+    const FloatLine LEGACY_NODELETE extendedToBounds(const FloatRect&) const;
     const std::optional<FloatPoint> LEGACY_NODELETE intersectionWith(const FloatLine&) const;
     
 private:

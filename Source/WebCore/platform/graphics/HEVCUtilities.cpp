@@ -568,7 +568,7 @@ std::optional<uint8_t> findHVCCMaxNumReorderPics(const HVCCParameterSets& parame
 namespace {
 
 // When n == 0, returns UINT32_MAX (matches libwebrtc's H265::Log2Ceiling(0) == -1).
-uint32_t hevcLog2Ceiling(uint32_t value)
+uint32_t LEGACY_NODELETE hevcLog2Ceiling(uint32_t value)
 {
     if (!value)
         return std::numeric_limits<uint32_t>::max();
@@ -576,7 +576,7 @@ uint32_t hevcLog2Ceiling(uint32_t value)
 }
 
 // From Table A.8 - General tier and level limits. |generalLevelIDC| is 30x the actual level.
-uint32_t hevcGetMaxLumaPs(int generalLevelIDC)
+uint32_t LEGACY_NODELETE hevcGetMaxLumaPs(int generalLevelIDC)
 {
     if (generalLevelIDC <= 30)
         return 36864;
@@ -596,12 +596,12 @@ uint32_t hevcGetMaxLumaPs(int generalLevelIDC)
 }
 
 // From A.4.2 - Profile-specific level limits for the video profiles (kProfileIdcMain..kProfileIdcHighThroughput is 1..5).
-size_t hevcGetDpbMaxPicBuf(int generalProfileIDC)
+size_t LEGACY_NODELETE hevcGetDpbMaxPicBuf(int generalProfileIDC)
 {
     return (generalProfileIDC >= 1 && generalProfileIDC <= 5) ? 6 : 7;
 }
 
-bool parsePredWeightTable(BitReader& reader, uint32_t chromaArrayType, uint32_t numRefIdxL0ActiveMinus1, bool isBSlice, uint32_t numRefIdxL1ActiveMinus1)
+bool LEGACY_NODELETE parsePredWeightTable(BitReader& reader, uint32_t chromaArrayType, uint32_t numRefIdxL0ActiveMinus1, bool isBSlice, uint32_t numRefIdxL1ActiveMinus1)
 {
     constexpr uint32_t maxRefIdxActive = 15;
     if (numRefIdxL0ActiveMinus1 >= maxRefIdxActive || (isBSlice && numRefIdxL1ActiveMinus1 >= maxRefIdxActive))

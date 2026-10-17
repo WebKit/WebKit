@@ -98,13 +98,13 @@ public:
 
     void startProducingData();
     void stopProducingData();
-    bool isProducingData() const;
+    bool LEGACY_NODELETE isProducingData() const;
 
-    WEBCORE_EXPORT bool hasVideo() const;
-    bool hasAudio() const;
-    bool muted() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasVideo() const;
+    bool LEGACY_NODELETE hasAudio() const;
+    bool LEGACY_NODELETE muted() const;
 
-    IntSize intrinsicSize() const;
+    IntSize LEGACY_NODELETE intrinsicSize() const;
 
     void monitorOrientation(OrientationNotifier&);
 
@@ -124,7 +124,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
     void characteristicsChanged();
-    void updateActiveVideoTrack();
+    void LEGACY_NODELETE updateActiveVideoTrack();
 
     bool computeActiveState();
     void forEachObserver(NOESCAPE const Function<void(MediaStreamPrivateObserver&)>&);

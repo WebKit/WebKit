@@ -81,7 +81,7 @@ static constexpr CMItemCount SampleQueueLowWaterMark = 15;
 static constexpr MediaTime DecodeLowWaterMark { 100, 1000 };
 static constexpr MediaTime DecodeHighWaterMark { 166, 1000 };
 
-static bool isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
+static bool LEGACY_NODELETE isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
 {
     if (!renderering)
         return true;

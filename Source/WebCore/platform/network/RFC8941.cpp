@@ -85,7 +85,7 @@ template<typename CharType> static std::optional<String> parseString(StringParsi
 }
 
 // Parsing an Integer or Decimal (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.4).
-template<typename CharType> static std::optional<BareItem> parseNumber(StringParsingBuffer<CharType>& buffer)
+template<typename CharType> static std::optional<BareItem> LEGACY_NODELETE parseNumber(StringParsingBuffer<CharType>& buffer)
 {
     bool isNegative = false;
     if (skipExactly(buffer, '-'))

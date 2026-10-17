@@ -62,7 +62,7 @@ public:
 
     using TextTrackRepresentationFactory = WTF::Function<std::unique_ptr<TextTrackRepresentation>(TextTrackRepresentationClient&, HTMLMediaElement&)>;
 
-    WEBCORE_EXPORT static TextTrackRepresentationFactory& representationFactory();
+    WEBCORE_EXPORT static TextTrackRepresentationFactory& LEGACY_NODELETE representationFactory();
 
 protected:
     // TextTrackRepresentation

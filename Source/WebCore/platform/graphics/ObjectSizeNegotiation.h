@@ -51,12 +51,12 @@ struct SpecifiedSize {
 };
 
 // https://drafts.csswg.org/css-images-3/#default-sizing-algorithm
-WEBCORE_EXPORT ConcreteObjectSize defaultSizingAlgorithm(NaturalDimensions, SpecifiedSize, FloatSize defaultObjectSize);
+WEBCORE_EXPORT ConcreteObjectSize LEGACY_NODELETE defaultSizingAlgorithm(NaturalDimensions, SpecifiedSize, FloatSize defaultObjectSize);
 
 // https://drafts.csswg.org/css-images-3/#contain-constraint
-WEBCORE_EXPORT ConcreteObjectSize resolveContainConstraint(NaturalDimensions, FloatSize constraintRectangle);
+WEBCORE_EXPORT ConcreteObjectSize LEGACY_NODELETE resolveContainConstraint(NaturalDimensions, FloatSize constraintRectangle);
 
 // https://drafts.csswg.org/css-images-3/#cover-constraint
-WEBCORE_EXPORT ConcreteObjectSize resolveCoverConstraint(NaturalDimensions, FloatSize constraintRectangle);
+WEBCORE_EXPORT ConcreteObjectSize LEGACY_NODELETE resolveCoverConstraint(NaturalDimensions, FloatSize constraintRectangle);
 
 } // namespace WebCore::ObjectSizeNegotiation

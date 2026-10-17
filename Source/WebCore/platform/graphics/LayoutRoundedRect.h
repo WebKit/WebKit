@@ -61,10 +61,10 @@ public:
     WEBCORE_EXPORT bool LEGACY_NODELETE isZero() const;
 
     bool LEGACY_NODELETE areRenderableInRect(const LayoutRect&) const;
-    void makeRenderableInRect(const LayoutRect&);
+    void LEGACY_NODELETE makeRenderableInRect(const LayoutRect&);
 
     void LEGACY_NODELETE scale(float factor);
-    WEBCORE_EXPORT void expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
+    WEBCORE_EXPORT void LEGACY_NODELETE expand(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth);
     void expand(LayoutUnit size) { expand(size, size, size, size); }
     void shrink(LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth) { expand(-topWidth, -bottomWidth, -leftWidth, -rightWidth); }
     void shrink(LayoutUnit size) { shrink(size, size, size, size); }
@@ -103,12 +103,12 @@ public:
     void move(const LayoutSize& size) { m_rect.move(size); }
     void moveBy(const LayoutPoint& offset) { m_rect.moveBy(offset); }
     void inflate(LayoutUnit size) { m_rect.inflate(size);  }
-    void inflateWithRadii(LayoutUnit size);
+    void LEGACY_NODELETE inflateWithRadii(LayoutUnit size);
     void expandRadii(LayoutUnit size) { m_radii.expand(size); }
     void shrinkRadii(LayoutUnit size) { m_radii.shrink(size); }
 
     bool LEGACY_NODELETE isRenderable() const;
-    void adjustRadii();
+    void LEGACY_NODELETE adjustRadii();
 
     // Tests whether the quad intersects any part of this rounded rectangle.
     // This only works for convex quads.

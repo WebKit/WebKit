@@ -101,7 +101,7 @@ public:
         return false;
     }
     bool LEGACY_NODELETE hasFullSizeNativeImage(DecodingDestination, SubsamplingLevel) const;
-    std::optional<DecodingDestination> compatibleDecodingDestinationWithOptions(const DecodingOptions&, SubsamplingLevel) const;
+    std::optional<DecodingDestination> LEGACY_NODELETE compatibleDecodingDestinationWithOptions(const DecodingOptions&, SubsamplingLevel) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
 private:

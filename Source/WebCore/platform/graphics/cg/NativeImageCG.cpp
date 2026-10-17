@@ -191,12 +191,12 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     return NativeImage::create(WTF::move(image));
 }
 
-static CGImageAlphaInfo alphaInfoForAlphaLast(bool isPremultiplied)
+static CGImageAlphaInfo LEGACY_NODELETE alphaInfoForAlphaLast(bool isPremultiplied)
 {
     return isPremultiplied ? kCGImageAlphaPremultipliedLast : kCGImageAlphaLast;
 }
 
-static CGImageAlphaInfo alphaInfoForAlphaFirst(bool isPremultiplied)
+static CGImageAlphaInfo LEGACY_NODELETE alphaInfoForAlphaFirst(bool isPremultiplied)
 {
     return isPremultiplied ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst;
 }

@@ -189,12 +189,12 @@ void registerSupplementalVP9Decoder()
         s_vp9HardwareDecoderAvailableInProcess = { };
 }
 
-bool shouldEnableVP9Decoder()
+bool LEGACY_NODELETE shouldEnableVP9Decoder()
 {
     return VP9TestingOverrides::singleton().shouldEnableVP9Decoder();
 }
 
-static bool isSWDecodersAlwaysEnabled()
+static bool LEGACY_NODELETE isSWDecodersAlwaysEnabled()
 {
     return VP9TestingOverrides::singleton().swVPDecodersAlwaysEnabled();
 }
@@ -204,7 +204,7 @@ bool shouldEnableSWVP9Decoder()
     return isSWDecodersAlwaysEnabled() || (!vp9HardwareDecoderAvailable() && !systemHasBattery());
 }
 
-static bool isVP9HardwareDecoderAvailabilityKnown()
+static bool LEGACY_NODELETE isVP9HardwareDecoderAvailabilityKnown()
 {
     return VP9TestingOverrides::singleton().hardwareDecoderDisabled() || VP9TestingOverrides::singleton().vp9HardwareDecoderEnabledOverride();
 }

@@ -56,12 +56,12 @@ namespace {
 enum class AlphaFormat : uint8_t { Opaque, Unpremultiplied, Premultiplied };
 
 // Whether the color components already have the alpha applied to them.
-constexpr bool isAlphaApplied(AlphaFormat alphaFormat)
+constexpr bool LEGACY_NODELETE isAlphaApplied(AlphaFormat alphaFormat)
 {
     return alphaFormat != AlphaFormat::Unpremultiplied;
 }
 
-constexpr AlphaFormat toAlphaFormat(AlphaPremultiplication alphaFormat, PixelFormat pixelFormat)
+constexpr AlphaFormat LEGACY_NODELETE toAlphaFormat(AlphaPremultiplication alphaFormat, PixelFormat pixelFormat)
 {
     if (pixelFormatIsOpaque(pixelFormat))
         return AlphaFormat::Opaque;

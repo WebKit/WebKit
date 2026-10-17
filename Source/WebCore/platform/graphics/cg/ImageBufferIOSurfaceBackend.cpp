@@ -77,7 +77,7 @@ private:
 
 class ImageBufferIOSurfaceDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<ImageBufferIOSurfaceDisplayDelegate> create(ContentsFormat contentsFormat)
+    static Ref<ImageBufferIOSurfaceDisplayDelegate> LEGACY_NODELETE create(ContentsFormat contentsFormat)
     {
         return adoptRef(*new ImageBufferIOSurfaceDisplayDelegate(contentsFormat));
     }

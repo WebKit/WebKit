@@ -110,7 +110,7 @@ private:
     RunLoop::Timer m_timer WTF_GUARDED_BY_LOCK(m_lock);
 
     static CGSubimageCacheWithTimer& subimageCacheSingleton();
-    static bool subimageCacheExists();
+    static bool LEGACY_NODELETE subimageCacheExists();
 };
 
 #endif // CACHE_SUBIMAGES

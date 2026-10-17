@@ -112,7 +112,7 @@ SUPPRESS_NODELETE std::span<const IntSize> RealtimeVideoCaptureSource::standardV
 }
 
 template <typename ValueType>
-static void updateMinMax(ValueType& min, ValueType& max, ValueType value)
+static void LEGACY_NODELETE updateMinMax(ValueType& min, ValueType& max, ValueType value)
 {
     min = std::min<ValueType>(min, value);
     max = std::max<ValueType>(max, value);

@@ -378,8 +378,8 @@ class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRef
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaPlayer, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(MediaPlayer);
 public:
-    static Ref<MediaPlayer> create(MediaPlayerClient&);
-    static Ref<MediaPlayer> create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
+    static Ref<MediaPlayer> LEGACY_NODELETE create(MediaPlayerClient&);
+    static Ref<MediaPlayer> LEGACY_NODELETE create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
     ~MediaPlayer();
 
     void invalidate();

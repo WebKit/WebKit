@@ -114,7 +114,7 @@ public:
     bool isCurrent(const FontSelector&) const;
     void updateFonts(Ref<FontCascadeFonts>&&) const;
     WEBCORE_EXPORT void update(RefPtr<FontSelector>&& = nullptr) const;
-    unsigned fontSelectorVersion() const;
+    unsigned LEGACY_NODELETE fontSelectorVersion() const;
 
     using CustomFontNotReadyAction = FontCascadeCustomFontNotReadyAction;
     WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
@@ -184,7 +184,7 @@ public:
     static bool LEGACY_NODELETE isCJKIdeographOrSymbol(char32_t);
 
     // FIXME: This is a layering violation. Platform code should not reference types in the Style namespace.
-    static bool canUseGlyphDisplayList(const Style::ComputedStyle&);
+    static bool LEGACY_NODELETE canUseGlyphDisplayList(const Style::ComputedStyle&);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.

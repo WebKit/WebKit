@@ -49,7 +49,7 @@ class AudioSampleDataSource : public ThreadSafeRefCounted<AudioSampleDataSource,
 #endif
     {
 public:
-    static Ref<AudioSampleDataSource> create(size_t, LoggerHelper&, size_t waitToStartForPushCount = 2);
+    static Ref<AudioSampleDataSource> LEGACY_NODELETE create(size_t, LoggerHelper&, size_t waitToStartForPushCount = 2);
 
     ~AudioSampleDataSource();
 

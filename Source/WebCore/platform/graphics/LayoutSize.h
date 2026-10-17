@@ -90,7 +90,7 @@ public:
         m_height *= heightScale;
     }
 
-    WEBCORE_EXPORT LayoutSize constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
+    WEBCORE_EXPORT LayoutSize LEGACY_NODELETE constrainedBetween(const LayoutSize& min, const LayoutSize& max) const;
 
     LayoutSize expandedTo(const LayoutSize& other) const
     {

@@ -43,7 +43,7 @@ class MediaPlaybackTargetMock final : public MediaPlaybackTarget {
 public:
     using State = MediaPlaybackTargetMockState;
 
-    WEBCORE_EXPORT static Ref<MediaPlaybackTargetMock> create(const String& mockDeviceName, State);
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetMock> LEGACY_NODELETE create(const String& mockDeviceName, State);
 
     ~MediaPlaybackTargetMock();
 

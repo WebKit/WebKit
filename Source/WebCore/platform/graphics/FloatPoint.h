@@ -158,9 +158,9 @@ public:
         return m_x * m_x + m_y * m_y;
     }
 
-    WEBCORE_EXPORT FloatPoint constrainedBetween(const FloatPoint& min, const FloatPoint& max) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE constrainedBetween(const FloatPoint& min, const FloatPoint& max) const;
     
-    WEBCORE_EXPORT FloatPoint constrainedWithin(const FloatRect&) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE constrainedWithin(const FloatRect&) const;
 
     constexpr FloatPoint shrunkTo(const FloatPoint& other) const
     {
@@ -184,7 +184,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT FloatPoint(const CGPoint&);
-    WEBCORE_EXPORT operator CGPoint() const;
+    WEBCORE_EXPORT operator CGPoint LEGACY_NODELETE () const;
 #endif
 
 #if PLATFORM(WIN)
@@ -192,7 +192,7 @@ public:
 #endif
 
     WEBCORE_EXPORT FloatPoint LEGACY_NODELETE matrixTransform(const TransformationMatrix&) const;
-    WEBCORE_EXPORT FloatPoint matrixTransform(const AffineTransform&) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE matrixTransform(const AffineTransform&) const;
 
     static constexpr FloatPoint nanPoint();
     constexpr bool isNaN() const;

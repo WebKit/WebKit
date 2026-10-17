@@ -36,7 +36,7 @@ public:
     using KeyID = std::array<uint8_t, 16>;
     using SystemID = std::array<uint8_t, 16>;
 
-    WEBCORE_EXPORT static const SystemID& commonSystemID();
+    WEBCORE_EXPORT static const SystemID& LEGACY_NODELETE commonSystemID();
 
     WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox();
     WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox(const ISOProtectionSystemSpecificHeaderBox&);

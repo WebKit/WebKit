@@ -79,7 +79,7 @@ public:
     AudioChannel* channel(unsigned channel) LIFETIME_BOUND { return m_channels[channel].get(); }
     const AudioChannel* channel(unsigned channel) const LIFETIME_BOUND { return m_channels[channel].get(); }
     AudioChannel* LEGACY_NODELETE channelByType(unsigned type) LIFETIME_BOUND;
-    const AudioChannel* channelByType(unsigned type) const LIFETIME_BOUND;
+    const AudioChannel* LEGACY_NODELETE channelByType(unsigned type) const LIFETIME_BOUND;
 
     // Number of sample-frames
     size_t length() const { return m_length; }

@@ -42,7 +42,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 namespace WebCore {
 
 #if USE(LIBWEBRTC)
-static inline webrtc::VideoRotation toWebRTCVideoRotation(VideoFrame::Rotation rotation)
+static inline webrtc::VideoRotation LEGACY_NODELETE toWebRTCVideoRotation(VideoFrame::Rotation rotation)
 {
     switch (rotation) {
     case VideoFrame::Rotation::None:
@@ -58,7 +58,7 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(VideoFrame::Rotation r
     return webrtc::kVideoRotation_0;
 }
 
-static inline VideoFrame::Rotation fromWebRTCEncodedVideoRotation(webrtc::WebKitEncodedVideoRotation rotation)
+static inline VideoFrame::Rotation LEGACY_NODELETE fromWebRTCEncodedVideoRotation(webrtc::WebKitEncodedVideoRotation rotation)
 {
     switch (rotation) {
     case webrtc::WebKitEncodedVideoRotation::kVideoRotation_0:
@@ -74,7 +74,7 @@ static inline VideoFrame::Rotation fromWebRTCEncodedVideoRotation(webrtc::WebKit
     return VideoFrame::Rotation::None;
 }
 
-static inline GPUVideoEncoderFrameInfo toGPUVideoEncoderFrameInfo(const webrtc::WebKitEncodedFrameInfo& info)
+static inline GPUVideoEncoderFrameInfo LEGACY_NODELETE toGPUVideoEncoderFrameInfo(const webrtc::WebKitEncodedFrameInfo& info)
 {
     return {
         .width = info.width,
@@ -93,7 +93,7 @@ static inline GPUVideoEncoderFrameInfo toGPUVideoEncoderFrameInfo(const webrtc::
 class GPULocalVideoEncoder final : public GPUVideoEncoder {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GPULocalVideoEncoder);
 public:
-    static Ref<GPULocalVideoEncoder> create(webrtc::LocalEncoder encoder) { return adoptRef(*new GPULocalVideoEncoder(encoder)); }
+    static Ref<GPULocalVideoEncoder> LEGACY_NODELETE create(webrtc::LocalEncoder encoder) { return adoptRef(*new GPULocalVideoEncoder(encoder)); }
 
     ~GPULocalVideoEncoder()
     {
