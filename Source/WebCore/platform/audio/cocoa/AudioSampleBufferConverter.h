@@ -99,6 +99,7 @@ private:
 
     bool LEGACY_NODELETE isPCM() const;
     void setTimeFromSample(CMSampleBufferRef);
+    void setTimeFromSampleIfDiscontinuous(CMSampleBufferRef);
 
     WorkQueue& queue() const { return m_serialDispatchQueue; }
     const Ref<WorkQueue> m_serialDispatchQueue;
@@ -120,6 +121,7 @@ private:
 
     CMTime m_currentNativePresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue());
     CMTime m_currentOutputPresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue());
+    CMTime m_nextInputPresentationTimeStamp WTF_GUARDED_BY_CAPABILITY(queue());
     CMTime m_remainingPrimeDuration WTF_GUARDED_BY_CAPABILITY(queue());
 
     Vector<uint8_t> m_destinationBuffer WTF_GUARDED_BY_CAPABILITY(queue());

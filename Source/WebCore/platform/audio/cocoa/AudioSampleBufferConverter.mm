@@ -65,6 +65,7 @@ AudioSampleBufferConverter::AudioSampleBufferConverter(Function<void()>&& output
     , m_destinationFormat(options.description ? *options.description : AudioStreamBasicDescription { })
     , m_currentNativePresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_currentOutputPresentationTimeStamp(PAL::kCMTimeInvalid)
+    , m_nextInputPresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_remainingPrimeDuration(PAL::kCMTimeInvalid)
     , m_outputCodecType(options.format)
     , m_options(options)
@@ -123,6 +124,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::drain()
         protectedThis->m_isDraining = true;
         protectedThis->processSampleBuffers();
         protectedThis->m_isDraining = false;
+        protectedThis->m_nextInputPresentationTimeStamp = PAL::kCMTimeInvalid;
 
         if (!protectedThis->m_converter)
             return GenericPromise::createAndReject();
@@ -143,6 +145,7 @@ Ref<GenericPromise> AudioSampleBufferConverter::flushInternal(bool isFinished)
         m_isDraining = isFinished;
         processSampleBuffers();
         m_isDraining = false;
+        m_nextInputPresentationTimeStamp = PAL::kCMTimeInvalid;
 
         if (!m_converter)
             return GenericPromise::createAndReject();
@@ -463,7 +466,7 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
             return kAudioConverterErr_BadPropertySizeError;
 
         if (!m_options.generateTimestamp)
-            setTimeFromSample(sampleBuffer.get());
+            setTimeFromSampleIfDiscontinuous(sampleBuffer.get());
 
         auto audioBufferListSpan = span(*audioBufferList);
         bool skipBlock = false;
@@ -509,6 +512,24 @@ void AudioSampleBufferConverter::setTimeFromSample(CMSampleBufferRef sample)
 
     m_currentNativePresentationTimeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(sample);
     m_currentOutputPresentationTimeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sample);
+}
+
+// A decoder with a delay outputs frames after the packet that produced them, so the output timestamps only follow the input across a discontinuity.
+void AudioSampleBufferConverter::setTimeFromSampleIfDiscontinuous(CMSampleBufferRef sample)
+{
+    assertIsCurrent(queue());
+    using namespace PAL; // For CMTIME_COMPARE_INLINE
+
+    auto presentationTimeStamp = CMSampleBufferGetPresentationTimeStamp(sample);
+    auto timeScale = static_cast<int32_t>(m_sourceFormat.mSampleRate);
+    bool isContiguous = false;
+    if (CMTIME_IS_VALID(m_nextInputPresentationTimeStamp) && timeScale > 0) {
+        auto difference = CMTimeSubtract(presentationTimeStamp, m_nextInputPresentationTimeStamp);
+        isContiguous = CMTIME_COMPARE_INLINE(difference, <, CMTimeMake(1, timeScale)) && CMTIME_COMPARE_INLINE(difference, >, CMTimeMake(-1, timeScale));
+    }
+    if (!isContiguous)
+        setTimeFromSample(sample);
+    m_nextInputPresentationTimeStamp = CMTimeAdd(presentationTimeStamp, CMSampleBufferGetDuration(sample));
 }
 
 void AudioSampleBufferConverter::processSampleBuffers()

@@ -953,16 +953,9 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
         }
     }
 
-    auto mediaSampleItemForSample = [](auto&& sample) {
-        MediaTime duration = sample->duration();
+    auto mediaSampleItemForSample = [](auto&& sample, const MediaTime& trimDurationAtStart, const MediaTime& trimDurationAtEnd) {
         RetainPtr sampleBuffer = sample->sampleBuffer();
         RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
-        auto trimDurationAtStart = MediaTime::zeroTime();
-        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sampleBuffer, PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart, nullptr)))
-            trimDurationAtStart = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict.get()));
-        auto trimDurationAtEnd = MediaTime::zeroTime();
-        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(sampleBuffer, PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd, nullptr)))
-            trimDurationAtEnd = PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict.get()));
 #if ENABLE(ENCRYPTED_MEDIA)
         SInt32 bytesOfClearDataCount = 0;
         RefPtr<SharedBuffer> cryptorIV;
@@ -981,7 +974,7 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
         }
 #endif
         return MediaSamplesBlock::MediaSampleItem {
-            .presentationTime = sample->presentationTime(),
+            .presentationTime = sample->presentationTime() - trimDurationAtStart,
             .decodeTime = sample->decodeTime(),
             .duration = sample->duration() + trimDurationAtStart + trimDurationAtEnd,
             .trimInterval = { trimDurationAtStart, trimDurationAtEnd },
@@ -995,16 +988,39 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
         };
     };
 
+    auto trimDurationAttachment = [&](CFStringRef key) {
+        if (RetainPtr trimDurationDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMGetAttachment(cmSample, key, nullptr)))
+            return PAL::toMediaTime(PAL::CMTimeMakeFromDictionary(trimDurationDict.get()));
+        return MediaTime::zeroTime();
+    };
+    auto trimDurationAtStart = trimDurationAttachment(PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart);
+    auto trimDurationAtEnd = trimDurationAttachment(PAL::kCMSampleBufferAttachmentKey_TrimDurationAtEnd);
+
     if (info && info->codecName() == kAudioFormatLinearPCM) {
         MediaSamplesBlock::SamplesVector sample;
         sample.reserveInitialCapacity(1);
-        sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID())));
+        sample.append(mediaSampleItemForSample(MediaSampleAVFObjC::create(cmSample, info->trackID()), trimDurationAtStart, trimDurationAtEnd));
         return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(sample));
     }
 
+    // Dividing drops the trim attachments, so the leading samples take the start trim and the trailing ones the end trim.
     auto subSamples = MediaSampleAVFObjC::create(cmSample, info ? info->trackID() : 0)->divide();
+    Vector<std::pair<MediaTime, MediaTime>> trims(subSamples.size(), [](auto) {
+        return std::pair { MediaTime::zeroTime(), MediaTime::zeroTime() };
+    });
+    auto fullDuration = [&](size_t index) {
+        return PAL::toMediaTime(PAL::CMSampleBufferGetDuration(protect(subSamples[index]->sampleBuffer())));
+    };
+    for (size_t index = 0; index < subSamples.size() && trimDurationAtStart > MediaTime::zeroTime(); ++index) {
+        trims[index].first = std::min(trimDurationAtStart, fullDuration(index));
+        trimDurationAtStart -= trims[index].first;
+    }
+    for (size_t index = subSamples.size(); index-- && trimDurationAtEnd > MediaTime::zeroTime();) {
+        trims[index].second = std::min(trimDurationAtEnd, fullDuration(index) - trims[index].first);
+        trimDurationAtEnd -= trims[index].second;
+    }
     MediaSamplesBlock::SamplesVector samples(subSamples.size(), [&](auto index) {
-        return mediaSampleItemForSample(subSamples[index]);
+        return mediaSampleItemForSample(subSamples[index], trims[index].first, trims[index].second);
     });
     return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(samples));
 }
