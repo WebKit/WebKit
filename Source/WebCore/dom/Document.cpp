@@ -8850,11 +8850,15 @@ bool Document::computeIsSecureContext() const
     if (!parentFrame)
         parentFrame = m_frame->loader().client().provisionalParentFrame();
     if (!parentFrame)
-        return isDocumentSecure(*this);
+        return !url().protocolIsData() && isDocumentSecure(*this);
 
     auto parentSecurityPolicy = parentFrame->frameDocumentSecurityPolicy();
     if (!parentSecurityPolicy || parentSecurityPolicy->isSecureContext == IsSecureContext::No)
         return false;
+
+    // A data: document's origin is opaque, but it is as secure as its parent.
+    if (url().protocolIsData())
+        return true;
 
     return isDocumentSecure(*this);
 }

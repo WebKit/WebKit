@@ -8,9 +8,9 @@ PASS get() from an opaque origin (plain iframes nested two deep inside a sandbox
 PASS get() from an opaque origin (allow-same-origin iframe nested inside a sandboxed iframe) rejects with SecurityError
 PASS get() from an opaque origin (plain iframe nested inside a Content-Security-Policy: sandbox document (CSP-derived flags propagate)) rejects with SecurityError
 PASS get() from an opaque origin (allow-same-origin iframe nested inside a Content-Security-Policy: sandbox document (cannot escape)) rejects with SecurityError
+PASS get() from an opaque origin (data: iframe (a secure context, as its parent is)) rejects with SecurityError
 PASS get() from a non-opaque origin (sandboxed iframe with allow-same-origin) is not rejected as opaque
 PASS get() from a non-opaque origin (srcdoc iframe without sandbox (inherits the parent origin)) is not rejected as opaque
 PASS get() from a non-opaque origin (blob: iframe (inherits the creator origin)) is not rejected as opaque
-PASS get() in a data: iframe is unavailable (not a secure context) and never reaches the opaque-origin check
 PASS get() in a blob: iframe created inside a sandboxed frame inherits the opaque origin and is unavailable
 

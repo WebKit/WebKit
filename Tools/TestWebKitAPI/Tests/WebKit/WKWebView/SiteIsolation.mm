@@ -6384,6 +6384,18 @@ TEST(SiteIsolation, LoadHTMLStringRecordsHistoricalAgentClusterKeying)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"frames[0].originAgentCluster"] boolValue]);
 }
 
+TEST(SiteIsolation, FrameUnderTopLevelDataURLIgnoresOriginAgentCluster)
+{
+    HTTPServer server({
+        { "/frame"_s, { { { "Content-Type"_s, "text/html"_s }, { "Origin-Agent-Cluster"_s, "?1"_s } }, "<script>alert(`${originAgentCluster} ${isSecureContext}`)</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    // A top-level data: document is not a secure context, so neither is its frame, which can't be origin-keyed.
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Ciframe%20src=%27https://example.com/frame%27%3E%3C/iframe%3E"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "false false");
+}
+
 TEST(SiteIsolation, AlternateHTMLStringIsInTheAgentClusterOfSameOriginFrames)
 {
     HTTPServer server({
