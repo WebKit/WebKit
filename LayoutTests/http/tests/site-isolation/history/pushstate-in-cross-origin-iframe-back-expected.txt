@@ -1,0 +1,10 @@
+Verifies that pushState entries in a cross-origin iframe are preserved across back navigation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframeUrl.includes('state=2') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

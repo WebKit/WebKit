@@ -1,0 +1,11 @@
+Verifies that history.go(-1) from a cross-origin iframe works correctly via the UIProcess path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframeUrl.includes('page=a') is true
+PASS iframeUrl.includes('page=b') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
