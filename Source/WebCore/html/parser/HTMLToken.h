@@ -51,6 +51,7 @@ public:
         StartTag,
         EndTag,
         Comment,
+        ProcessingInstruction,
         Character,
         EndOfFile,
     };
@@ -138,12 +139,27 @@ public:
     void beginComment();
     void appendToComment(char);
     void appendToComment(ASCIILiteral);
+    void appendToComment(std::span<const Latin1Character>);
     void appendToComment(char16_t);
+
+    // Processing instruction.
+
+    // Targets are restricted to ASCII alphanumerics, '-' and '_', so a small
+    // Latin-1 buffer is enough and keeps HTMLToken from growing another DataVector.
+    using TargetVector = Vector<Latin1Character, 16>;
+
+    const TargetVector& processingInstructionTarget() const LIFETIME_BOUND;
+    const DataVector& processingInstructionData() const LIFETIME_BOUND;
+
+    void beginProcessingInstruction();
+    void appendToProcessingInstructionTarget(Latin1Character);
+    void appendToProcessingInstructionData(char16_t);
 
 private:
     static constexpr size_t maximumRetainedDataCapacity = 16 * 1024;
 
     DataVector m_data;
+    TargetVector m_processingInstructionTarget;
     char16_t m_data8BitCheck { 0 };
     Type m_type { Type::Uninitialized };
 
@@ -169,6 +185,7 @@ inline void HTMLToken::clear()
         m_data.clear();
     else
         m_data.shrink(0);
+    m_processingInstructionTarget.shrink(0);
     m_data8BitCheck = 0;
     m_isReplacedNullCharacter = false;
 }
@@ -452,10 +469,50 @@ inline void HTMLToken::appendToComment(ASCIILiteral literal)
     m_data.append(literal.span8());
 }
 
+inline void HTMLToken::appendToComment(std::span<const Latin1Character> characters)
+{
+    ASSERT(m_type == Type::Comment);
+    m_data.append(characters);
+}
+
 inline void HTMLToken::appendToComment(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::Comment);
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline const HTMLToken::TargetVector& HTMLToken::processingInstructionTarget() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_processingInstructionTarget;
+}
+
+inline const HTMLToken::DataVector& HTMLToken::processingInstructionData() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_data;
+}
+
+inline void HTMLToken::beginProcessingInstruction()
+{
+    ASSERT(m_type == Type::Uninitialized);
+    m_type = Type::ProcessingInstruction;
+}
+
+inline void HTMLToken::appendToProcessingInstructionTarget(Latin1Character character)
+{
+    ASSERT(character);
+    ASSERT(isASCII(character));
+    ASSERT(m_type == Type::ProcessingInstruction);
+    m_processingInstructionTarget.append(character);
+}
+
+inline void HTMLToken::appendToProcessingInstructionData(char16_t character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Type::ProcessingInstruction);
     m_data.append(character);
     m_data8BitCheck |= character;
 }
