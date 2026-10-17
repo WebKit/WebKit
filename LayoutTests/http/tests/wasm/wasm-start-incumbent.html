@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Wasm start host imports should see the instantiate incumbent, not the WebAssembly realm.");
+jsTestIsAsync = true;
+
+// (module (import "m" "f" (func $f)) (start $f))
+const startIsImport = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+    0x01, 0x04, 0x01, 0x60, 0x00, 0x00,
+    0x02, 0x07, 0x01, 0x01, 0x6d, 0x01, 0x66, 0x00, 0x00,
+    0x08, 0x01, 0x00
+]);
+
+// (module (import "m" "f" (func $f)) (func $start call $f) (start $start))
+const startCallsImport = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00,
+    0x01, 0x04, 0x01, 0x60, 0x00, 0x00,
+    0x02, 0x07, 0x01, 0x01, 0x6d, 0x01, 0x66, 0x00, 0x00,
+    0x03, 0x02, 0x01, 0x00,
+    0x08, 0x01, 0x01,
+    0x0a, 0x06, 0x01, 0x04, 0x00, 0x10, 0x00, 0x0b
+]);
+
+function loadWindow(srcdoc) {
+    return new Promise((resolve) => {
+        const iframe = document.createElement("iframe");
+        iframe.srcdoc = srcdoc;
+        iframe.onload = () => resolve(iframe.contentWindow);
+        document.body.appendChild(iframe);
+    });
+}
+
+function waitForSource(target) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error("timed out waiting for postMessage")), 5000);
+        target.addEventListener("message", function handler(event) {
+            target.removeEventListener("message", handler);
+            clearTimeout(timer);
+            resolve(event.source);
+        });
+    });
+}
+
+async function run() {
+    const incumbent = await loadWindow(`<script>
+        window.instantiateBytes = (wasmRealm, bytes, imports) => wasmRealm.WebAssembly.instantiate(bytes, imports);
+        window.instantiateModule = (wasmRealm, module, imports) => wasmRealm.WebAssembly.instantiate(module, imports);
+        window.constructInstance = (wasmRealm, module, imports) => new wasmRealm.WebAssembly.Instance(module, imports);
+        window.instantiateStreaming = (wasmRealm, source, imports) => wasmRealm.WebAssembly.instantiateStreaming(source, imports);
+    <\/script>`);
+    const current = await loadWindow("");
+    const relevant = await loadWindow("");
+
+    function imports() {
+        return { m: { f: current.postMessage.bind(relevant, 0, "*") } };
+    }
+
+    async function expectIncumbent(name, start) {
+        const received = waitForSource(relevant);
+        start();
+        const source = await received;
+        if (source === incumbent)
+            testPassed(name);
+        else
+            testFailed(name + " source=" + (source && source.location ? source.location.href : source));
+    }
+
+    await expectIncumbent("instantiate(bytes) start-is-import via other realm", () => {
+        incumbent.instantiateBytes(current, startIsImport, imports());
+    });
+
+    await expectIncumbent("instantiate(bytes) start-calls-import via other realm", () => {
+        incumbent.instantiateBytes(current, startCallsImport, imports());
+    });
+
+    const module = await current.WebAssembly.compile(startIsImport);
+    await expectIncumbent("instantiate(Module) via other realm", () => {
+        incumbent.instantiateModule(current, module, imports());
+    });
+
+    const constructModule = await current.WebAssembly.compile(startIsImport);
+    await expectIncumbent("new Instance via other realm", () => {
+        incumbent.constructInstance(current, constructModule, imports());
+    });
+
+    await expectIncumbent("instantiateStreaming via other realm", () => {
+        const response = new Response(startIsImport, { headers: { "Content-Type": "application/wasm" } });
+        incumbent.instantiateStreaming(current, response, imports());
+    });
+
+    finishJSTest();
+}
+
+run().catch((error) => {
+    testFailed(String(error));
+    finishJSTest();
+});
+</script>
+</body>
+</html>
