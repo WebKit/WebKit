@@ -366,6 +366,21 @@ class PortTestCase(unittest.TestCase):
         image_differ = ImageDiffer(port)
         self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=b'test', difference=0.05, tolerance=0.1, fuzzy_data={'max_difference': 4, 'total_pixels': 10}))
 
+    def test_diff_image_uses_tolerance_of_each_comparison(self):
+        port = self.make_port()
+        processes = []
+
+        def make_proc(port, nm, cmd, env, crash_message=None):
+            proc = MockServerProcess()
+            proc.write = lambda bytes: proc.lines.extend([b'Content-Length: 4\n', b'test', b'diff: 0.05%\n', b'maxDifference=4; totalPixels=10\n', b'#EOF\n'])
+            processes.append(proc)
+            return proc
+        port._server_process_constructor = make_proc
+        image_differ = ImageDiffer(port)
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=True, diff_image=b'test', difference=0.05, tolerance=0.1, fuzzy_data={'max_difference': 4, 'total_pixels': 10}))
+        self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0), ImageDiffResult(passed=False, diff_image=b'test', difference=0.05, tolerance=0, fuzzy_data={'max_difference': 4, 'total_pixels': 10}))
+        self.assertEqual(len(processes), 1)
+
     def test_diff_image_failed_with_rounded_diff(self):
         port = self.make_port()
         port._server_process_constructor = lambda port, nm, cmd, env, crash_message=None: MockServerProcess(lines=['Content-Length: 4\n', 'test', 'diff: 0.101234%\n', 'maxDifference=8; totalPixels=20\n', '#EOF\n'])

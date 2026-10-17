@@ -79,8 +79,9 @@ class ImageDiffer(object):
             assert(actual_contents)
             assert(tolerance is not None)
 
+            self._tolerance = tolerance
             if not self._process:
-                self._start(tolerance)
+                self._start()
             # Note that although we are handed 'old', 'new', ImageDiff wants 'new', 'old'.
             buffer = BytesIO()
             buffer.write(string_utils.encode('Content-Length: {}\n'.format(len(actual_contents))))
@@ -93,14 +94,13 @@ class ImageDiffer(object):
             err_str = 'Failed to compute an image diff: %s' % str(exception)
             return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str)
 
-    def _start(self, tolerance):
+    def _start(self):
         command = [self._port._path_to_image_diff(), '--difference']
         if self._port._should_use_jhbuild():
             command = self._port._jhbuild_wrapper + command
         environment = self._port.setup_environ_for_server('ImageDiff')
         self._process = self._port._server_process_constructor(self._port, 'ImageDiff', command, environment, crash_message='Test marked as failed, ImageDiff crashed')
         self._process.start()
-        self._tolerance = tolerance
 
     def _read(self):
         deadline = time.time() + 2.0
