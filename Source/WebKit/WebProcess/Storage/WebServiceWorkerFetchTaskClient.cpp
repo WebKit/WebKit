@@ -330,8 +330,8 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 void WebServiceWorkerFetchTaskClient::cleanup()
 {
     m_connection = nullptr;
-    ensureOnMainRunLoop([serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier, needsContinueDidReceiveResponseMessage = m_needsContinueDidReceiveResponseMessage] {
-        SWContextManager::singleton().removeFetch(serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, needsContinueDidReceiveResponseMessage);
+    ensureOnMainRunLoop([protectedThis = Ref { *this }, serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier, needsContinueDidReceiveResponseMessage = m_needsContinueDidReceiveResponseMessage] {
+        SWContextManager::singleton().removeFetch(serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, protectedThis, needsContinueDidReceiveResponseMessage);
     });
 }
 
