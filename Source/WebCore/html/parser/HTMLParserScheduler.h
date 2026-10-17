@@ -92,6 +92,8 @@ public:
     void scheduleForResume();
     bool isScheduledForResume() const { return m_isSuspendedWithActiveTimer || m_continueNextChunkTimer.isActive() || m_documentHasActiveParserYieldTokens; }
 
+    void scheduleForResumeAfterRenderingUpdate();
+
     void suspend();
     void resume();
 
