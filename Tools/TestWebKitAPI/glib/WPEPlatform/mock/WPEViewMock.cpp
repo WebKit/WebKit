@@ -26,13 +26,17 @@
 #include "config.h"
 #include "WPEViewMock.h"
 
+#include <optional>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
 struct _WPEViewMockPrivate {
     GRefPtr<WPEBuffer> pendingBuffer;
     GRefPtr<WPEBuffer> committedBuffer;
     guint frameTimerID;
+    GUniquePtr<char> tooltipText;
+    std::optional<WPERectangle> tooltipArea;
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewMock, wpe_view_mock, WPE_TYPE_VIEW, WPEView)
 
@@ -86,6 +90,13 @@ static gboolean wpeViewMockRenderBuffer(WPEView* view, WPEBuffer* buffer, const 
     return TRUE;
 }
 
+static void wpeViewMockSetTooltip(WPEView* view, const char* text, const WPERectangle* area)
+{
+    auto* priv = WPE_VIEW_MOCK(view)->priv;
+    priv->tooltipText.reset(g_strdup(text));
+    priv->tooltipArea = area ? std::optional<WPERectangle>(*area) : std::nullopt;
+}
+
 static void wpe_view_mock_class_init(WPEViewMockClass* viewMockClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewMockClass);
@@ -94,4 +105,15 @@ static void wpe_view_mock_class_init(WPEViewMockClass* viewMockClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewMockClass);
     viewClass->render_buffer = wpeViewMockRenderBuffer;
+    viewClass->set_tooltip = wpeViewMockSetTooltip;
+}
+
+const char* wpeViewMockGetTooltipText(WPEViewMock* view)
+{
+    return view->priv->tooltipText.get();
+}
+
+const WPERectangle* wpeViewMockGetTooltipArea(WPEViewMock* view)
+{
+    return view->priv->tooltipArea ? &view->priv->tooltipArea.value() : nullptr;
 }

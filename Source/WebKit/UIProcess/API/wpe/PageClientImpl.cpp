@@ -165,8 +165,11 @@ void PageClientImpl::preferencesDidChange()
 {
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String&)
+void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
+    // Tooltips are set along with their area by webkitWebViewMouseTargetChanged(), this only handles resets.
+    if (newToolTip.isEmpty())
+        m_view.setToolTip({ }, { });
 }
 
 void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)

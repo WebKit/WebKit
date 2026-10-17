@@ -32,6 +32,7 @@
 #include "WPEEnumTypes.h"
 #include "WPEEvent.h"
 #include "WPEGestureControllerImpl.h"
+#include "WPERectangle.h"
 #include "WPESettings.h"
 #include "WPEToplevelPrivate.h"
 #include "WPEViewPrivate.h"
@@ -60,6 +61,24 @@
  * implementations dispatch events with [method@View.event], which a
  * browser application can observe through the [signal@View::event] signal.
  */
+
+/**
+ * WPEViewClass::set_tooltip:
+ * @view: a #WPEView
+ * @text: (nullable): the tooltip text, or %NULL to hide the tooltip
+ * @area: (nullable): the area of @view the tooltip belongs to, or %NULL
+ *
+ * Show @text as the tooltip of @view, or hide it when @text is %NULL.
+ *
+ * Called by [method@View.set_tooltip], which never passes an empty @text or
+ * an empty @area, and passes a %NULL @area whenever @text is %NULL.
+ *
+ * When given, @area is the bounding box of the element the tooltip belongs
+ * to, in view coordinates.
+ *
+ * Since: 2.56
+ */
+
 struct _WPEViewPrivate {
     GRefPtr<WPEDisplay> display;
     GRefPtr<WPEToplevel> toplevel;
@@ -901,6 +920,38 @@ void wpe_view_set_cursor_from_bytes(WPEView* view, GBytes* bytes, guint width, g
     auto* viewClass = WPE_VIEW_GET_CLASS(view);
     if (viewClass->set_cursor_from_bytes)
         viewClass->set_cursor_from_bytes(view, bytes, width, height, stride, hotspotX, hotspotY);
+}
+
+/**
+ * wpe_view_set_tooltip:
+ * @view: a #WPEView
+ * @text: (nullable): the tooltip text, or %NULL
+ * @area: (nullable): the area of @view the tooltip belongs to, or %NULL
+ *
+ * Set the tooltip to be shown for @view, or %NULL or the empty @text to hide
+ * it. This is set by WebKit when the pointer moves over an element with a
+ * tooltip, and is meant to be rendered by the platform implementation.
+ *
+ * When given, @area is the bounding box of that element in view coordinates,
+ * which platform implementations can use to keep the tooltip in place while
+ * the pointer stays within the same element. An empty @area is ignored.
+ *
+ * Since: 2.56
+ */
+void wpe_view_set_tooltip(WPEView* view, const char* text, const WPERectangle* area)
+{
+    g_return_if_fail(WPE_IS_VIEW(view));
+
+    auto* viewClass = WPE_VIEW_GET_CLASS(view);
+    if (!viewClass->set_tooltip)
+        return;
+
+    if (!text || !*text)
+        text = nullptr;
+    if (!text || (area && (area->width <= 0 || area->height <= 0)))
+        area = nullptr;
+
+    viewClass->set_tooltip(view, text, area);
 }
 
 /**
