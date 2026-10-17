@@ -126,7 +126,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance() NS_RETURNS_RETAINED
 
 @interface WebVideoFullscreenController () <WebAVPlayerViewDelegate, NSWindowDelegate> {
     RefPtr<WebCore::PlaybackSessionModelMediaElement> _playbackModel;
-    RefPtr<WebCore::PlaybackSessionInterfaceIOS> _playbackInterface;
+    RefPtr<WebCore::PlaybackSessionInterfaceCocoa> _playbackInterface;
     RetainPtr<NSView> _contentOverlay;
     RetainPtr<WebAVPlayerView> _playerView;
     BOOL _isFullScreen;

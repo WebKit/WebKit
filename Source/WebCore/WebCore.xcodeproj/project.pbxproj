@@ -6027,8 +6027,8 @@
 		CDA29A0F1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A141CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm */; };
 		CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.mm */; };
-		CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.mm */; };
+		CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595932146DEC300A84185 /* HEVCUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595912146DEC300A84185 /* HEVCUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
@@ -21361,8 +21361,8 @@
 		CDA29A151CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceMac.h; sourceTree = "<group>"; };
 		CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAVPlayerController.h; sourceTree = "<group>"; };
 		CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAVPlayerController.mm; sourceTree = "<group>"; };
-		CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceIOS.h; sourceTree = "<group>"; };
-		CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionInterfaceIOS.mm; sourceTree = "<group>"; };
+		CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceCocoa.h; sourceTree = "<group>"; };
+		CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionInterfaceCocoa.mm; sourceTree = "<group>"; };
 		CDA595912146DEC300A84185 /* HEVCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilities.h; sourceTree = "<group>"; };
 		CDA595922146DEC300A84185 /* HEVCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HEVCUtilities.cpp; sourceTree = "<group>"; };
 		CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilitiesCocoa.h; sourceTree = "<group>"; };
@@ -34522,10 +34522,6 @@
 				26601EBE14B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm */,
 				C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */,
 				E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */,
-				1F95C34C2B644AF6006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.h */,
-				1F95C34E2B644B1E006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.mm */,
-				CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */,
-				CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.mm */,
 				A113D6E62C7E491E0072D770 /* PlaybackSessionInterfaceTVOS.cpp */,
 				A113D6E52C7E491E0072D770 /* PlaybackSessionInterfaceTVOS.h */,
 				A1C150771E3F2B3E0032C98C /* PreviewConverterIOS.mm */,
@@ -34554,8 +34550,6 @@
 				3FBC4AF1189881560046EE38 /* VideoPresentationInterfaceIOS.mm */,
 				A113D6E22C7E442C0072D770 /* VideoPresentationInterfaceTVOS.h */,
 				A113D6E32C7E442C0072D770 /* VideoPresentationInterfaceTVOS.mm */,
-				CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */,
-				CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */,
 				1F36EA9A1E21BA1700621E25 /* WebBackgroundTaskController.h */,
 				1F36EA9B1E21BA1700621E25 /* WebBackgroundTaskController.mm */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
@@ -34725,6 +34719,10 @@
 				AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerCocoa.mm */,
 				F4E90A3B2B52038E002DA469 /* PlatformTextAlternatives.h */,
 				95BA4FAB26D981AA002A0E62 /* PlatformViewController.h */,
+				1F95C34C2B644AF6006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.h */,
+				1F95C34E2B644B1E006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.mm */,
+				CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.h */,
+				CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceCocoa.mm */,
 				CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */,
 				F491A66D2AA0FC7300F96146 /* PlaybackSessionModel.serialization.in */,
 				CDA29A0D1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.h */,
@@ -34764,6 +34762,8 @@
 				52D5A1A61C57488900DE34A3 /* VideoPresentationModelVideoElement.mm */,
 				CDC939A51E9BDFB100BB768D /* VideoToolboxSoftLink.cpp */,
 				CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */,
+				CDA29A2C1CBF73FC00901CCF /* WebAVPlayerController.h */,
+				CDA29A2D1CBF73FC00901CCF /* WebAVPlayerController.mm */,
 				511D6702286C1DA7008C2AED /* WebAVPlayerLayer.h */,
 				511D6700286C1D70008C2AED /* WebAVPlayerLayer.mm */,
 				CD0445DF2992F1740059B997 /* WebAVPlayerLayerView.h */,
@@ -48133,7 +48133,7 @@
 				3A3A05812B04973800017309 /* PlatformXRPose.h in Headers */,
 				712BE4801FE864A7002031CC /* PlaybackDirection.h in Headers */,
 				1F95C34D2B644B08006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.h in Headers */,
-				CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceIOS.h in Headers */,
+				CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceCocoa.h in Headers */,
 				CDA29A171CBDA56C00901CCF /* PlaybackSessionInterfaceMac.h in Headers */,
 				A113D6E72C7E4B450072D770 /* PlaybackSessionInterfaceTVOS.h in Headers */,
 				CDA29A0B1CBD9A7400901CCF /* PlaybackSessionModel.h in Headers */,
@@ -51091,7 +51091,7 @@
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerCocoa.mm in Sources */,
 				A19311042D113B7C003C8410 /* PlatformTimeRangesCocoa.mm in Sources */,
 				1F95C34F2B644B28006F7B93 /* PlaybackSessionInterfaceAVKitLegacy.mm in Sources */,
-				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceIOS.mm in Sources */,
+				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceCocoa.mm in Sources */,
 				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,
 				CD20ED3D27878FFB0038BE44 /* QueuedVideoOutput.mm in Sources */,
 				BC51156E12B1749C00C96754 /* ScrollAnimatorMac.mm in Sources */,

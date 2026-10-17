@@ -770,12 +770,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceAVKitLegacy);
 
-Ref<VideoPresentationInterfaceAVKitLegacy> VideoPresentationInterfaceAVKitLegacy::create(PlaybackSessionInterfaceIOS& playbackSessionInterface)
+Ref<VideoPresentationInterfaceAVKitLegacy> VideoPresentationInterfaceAVKitLegacy::create(PlaybackSessionInterfaceCocoa& playbackSessionInterface)
 {
     return adoptRef(*new VideoPresentationInterfaceAVKitLegacy(playbackSessionInterface));
 }
 
-VideoPresentationInterfaceAVKitLegacy::VideoPresentationInterfaceAVKitLegacy(PlaybackSessionInterfaceIOS& playbackSessionInterface)
+VideoPresentationInterfaceAVKitLegacy::VideoPresentationInterfaceAVKitLegacy(PlaybackSessionInterfaceCocoa& playbackSessionInterface)
     : VideoPresentationInterfaceIOS(playbackSessionInterface)
     , m_playerViewControllerDelegate(adoptNS([[WebAVPlayerViewControllerDelegate alloc] init]))
 {

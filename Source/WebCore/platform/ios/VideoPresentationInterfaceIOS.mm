@@ -118,7 +118,7 @@ RetainPtr<UIViewController> VideoPresentationInterfaceIOS::presentingViewControl
     return controller;
 }
 
-VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceIOS& playbackSessionInterface)
+VideoPresentationInterfaceIOS::VideoPresentationInterfaceIOS(PlaybackSessionInterfaceCocoa& playbackSessionInterface)
     : m_watchdogTimer(RunLoop::mainSingleton(), "VideoPresentationInterfaceIOS::WatchdogTimer"_s, this, &VideoPresentationInterfaceIOS::watchdogTimerFired)
     , m_playbackSessionInterface(playbackSessionInterface)
 {

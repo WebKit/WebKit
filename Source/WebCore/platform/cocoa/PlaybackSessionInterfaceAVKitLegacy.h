@@ -28,12 +28,12 @@
 #include <wtf/Platform.h>
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
-#include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <WebCore/PlaybackSessionInterfaceCocoa.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class WEBCORE_EXPORT PlaybackSessionInterfaceAVKitLegacy final : public PlaybackSessionInterfaceIOS {
+class WEBCORE_EXPORT PlaybackSessionInterfaceAVKitLegacy final : public PlaybackSessionInterfaceCocoa {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlaybackSessionInterfaceAVKitLegacy, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceAVKitLegacy);
 public:

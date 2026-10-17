@@ -28,7 +28,7 @@
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 
 #include <WebCore/NowPlayingMetadataObserver.h>
-#include <WebCore/PlaybackSessionInterfaceIOS.h>
+#include <WebCore/PlaybackSessionInterfaceCocoa.h>
 #include <wtf/Observer.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -36,7 +36,7 @@ OBJC_CLASS WKLinearMediaPlayerDelegate;
 
 namespace WebKit {
 
-class PlaybackSessionInterfaceLMK final : public WebCore::PlaybackSessionInterfaceIOS {
+class PlaybackSessionInterfaceLMK final : public WebCore::PlaybackSessionInterfaceCocoa {
     WTF_MAKE_TZONE_ALLOCATED(PlaybackSessionInterfaceLMK);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PlaybackSessionInterfaceLMK);
 public:
@@ -70,7 +70,7 @@ public:
 
     void nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata&);
 
-    void swapFullscreenModesWith(PlaybackSessionInterfaceIOS&);
+    void swapFullscreenModesWith(PlaybackSessionInterfaceCocoa&);
 
 private:
     PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel&);
