@@ -2719,22 +2719,75 @@ public:
         }
     }
 
-    void computeEndAnchoredFixedSize()
+    std::optional<unsigned> maximumSize(const PatternDisjunction& disjunction)
     {
-        if (m_pattern.sticky() || m_pattern.m_containsModifiers || m_pattern.m_containsBOL || m_pattern.m_containsUnsignedLengthPattern || !m_pattern.m_body->m_hasFixedSize || m_pattern.m_saveInitialStartValue)
+        if (!isSafeToRecurse()) [[unlikely]]
+            return std::nullopt;
+
+        unsigned result = 0;
+        for (auto& alternative : disjunction.m_alternatives) {
+            CheckedUint32 alternativeSize = 0;
+            for (auto& term : alternative->m_terms) {
+                if (term.quantityMaxCount == quantifyInfinite)
+                    return std::nullopt;
+
+                unsigned termSize = 0;
+                switch (term.type) {
+                case PatternTerm::Type::AssertionBOL:
+                case PatternTerm::Type::AssertionEOL:
+                case PatternTerm::Type::AssertionBOI:
+                case PatternTerm::Type::AssertionEOI:
+                case PatternTerm::Type::AssertionWordBoundary:
+                case PatternTerm::Type::NumberedForwardReference:
+                case PatternTerm::Type::NamedForwardReference:
+                case PatternTerm::Type::ParentheticalAssertion:
+                    break;
+
+                case PatternTerm::Type::NumberedBackReference:
+                case PatternTerm::Type::NamedBackReference:
+                case PatternTerm::Type::DotStarEnclosure:
+                    return std::nullopt;
+
+                case PatternTerm::Type::PatternCharacter:
+                    termSize = U16_LENGTH(term.patternCharacter);
+                    break;
+
+                case PatternTerm::Type::CharacterClass:
+                    termSize = m_pattern.eitherUnicode() && (term.invert() || term.characterClass->hasNonBMPCharacters()) ? 2 : 1;
+                    break;
+
+                case PatternTerm::Type::ParenthesesSubpattern: {
+                    auto size = maximumSize(*term.parentheses.disjunction);
+                    if (!size)
+                        return std::nullopt;
+                    termSize = *size;
+                    break;
+                }
+                }
+                alternativeSize += CheckedUint32(term.quantityMaxCount) * termSize;
+            }
+            if (alternativeSize.hasOverflowed()) [[unlikely]]
+                return std::nullopt;
+            result = std::max(result, alternativeSize.value());
+        }
+        return result;
+    }
+
+    void computeEndAnchoredMaximumSize()
+    {
+        if (m_pattern.sticky() || m_pattern.m_containsModifiers || m_pattern.m_containsBOL || m_pattern.m_containsUnsignedLengthPattern || m_pattern.m_saveInitialStartValue)
             return;
 
-        unsigned maximumSize = 0;
         for (auto& alternative : m_pattern.m_body->m_alternatives) {
-            if (!alternative->m_hasFixedSize || alternative->m_terms.isEmpty())
+            if (alternative->m_terms.isEmpty())
                 return;
             // Non-multiline $ and \z anchor the alternative at the end of input; \Z does not, since it can match before a trailing line terminator.
             const PatternTerm& lastTerm = alternative->m_terms.last();
             if (!(lastTerm.type == PatternTerm::Type::AssertionEOL && !lastTerm.multiline()) && !(lastTerm.type == PatternTerm::Type::AssertionEOI && !lastTerm.m_withOptionalLineTerminator))
                 return;
-            maximumSize = std::max(maximumSize, alternative->m_minimumSize);
         }
-        m_pattern.m_endAnchoredFixedSize = maximumSize;
+        if (auto size = maximumSize(*m_pattern.m_body))
+            m_pattern.m_endAnchoredMaximumSize = *size;
     }
 
     void extractSpecificPattern()
@@ -3252,7 +3305,7 @@ ErrorCode YarrPattern::compile(StringView patternString)
             return error;
     }
 
-    constructor.computeEndAnchoredFixedSize();
+    constructor.computeEndAnchoredMaximumSize();
     constructor.setupNamedCaptures();
 
     constructor.extractSpecificPattern();
@@ -3642,8 +3695,8 @@ void YarrPattern::dumpPattern(PrintStream& out, StringView patternString)
     out.print(":\n");
     if (m_specificPattern != SpecificPattern::None)
         out.print("    specific pattern: ", m_specificPattern, "\n");
-    if (hasEndAnchoredFixedSize())
-        out.print("    end anchored fixed size: ", m_endAnchoredFixedSize, "\n");
+    if (hasEndAnchoredMaximumSize())
+        out.print("    end anchored maximum size: ", m_endAnchoredMaximumSize, "\n");
     if (m_body->m_callFrameSize)
         out.print("    callframe size: ", m_body->m_callFrameSize, "\n");
     m_body->dump(out, this);
