@@ -173,6 +173,8 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 + (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 + (void)_clearCaptivePortalModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 + (BOOL)_lockdownModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
++ (void)_setHasEnhancedSecurityDefaultOptOutEntitlementForTesting:(BOOL)hasEntitlement WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
++ (void)_clearHasEnhancedSecurityDefaultOptOutEntitlementForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 // Test only. Should be called before a GPU process has been launched.
 + (void)_setEnableMetalDebugDeviceInNewGPUProcessesForTesting:(BOOL)enable WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));

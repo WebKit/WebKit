@@ -365,7 +365,7 @@ bool PageConfiguration::isEnhancedSecurityEnabled() const
 
 bool PageConfiguration::isEnhancedSecurityEnabledByDefault(bool isLockdownModeActive) const
 {
-    return !isLockdownModeActive && protect(preferences())->enhancedSecurityEnabledByDefault();
+    return !isLockdownModeActive && shouldEnableEnhancedSecurityByDefault(protect(preferences()).get());
 }
 
 void PageConfiguration::setAllowPostingLegacySynchronousMessages(bool allow)

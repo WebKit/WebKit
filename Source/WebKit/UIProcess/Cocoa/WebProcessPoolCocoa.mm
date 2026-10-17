@@ -55,6 +55,7 @@
 #import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"
 #import "WebPrivacyHelpers.h"
@@ -1278,6 +1279,38 @@ void setLockdownModeEnabledGloballyForTesting(std::optional<bool> enabledForTest
 
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->lockdownModeStateChanged();
+}
+
+static std::optional<bool>& hasEnhancedSecurityDefaultOptOutEntitlementForTesting()
+{
+    static std::optional<bool> hasEntitlement;
+    return hasEntitlement;
+}
+
+void WebProcessPool::setHasEnhancedSecurityDefaultOptOutEntitlementForTesting(std::optional<bool> hasEntitlement)
+{
+    if (!isRunningTest(retainPtr([[NSBundle mainBundle] bundleIdentifier]).get()))
+        return;
+    hasEnhancedSecurityDefaultOptOutEntitlementForTesting() = hasEntitlement;
+}
+
+static bool hasEnhancedSecurityDefaultOptOutEntitlement()
+{
+    if (auto& entitlementForTesting = hasEnhancedSecurityDefaultOptOutEntitlementForTesting())
+        return *entitlementForTesting;
+    static bool hasEntitlement = WTF::processHasEntitlement("com.apple.private.security.webkit.disable-enhanced-security-default"_s);
+    return hasEntitlement;
+}
+
+bool shouldEnableEnhancedSecurityByDefault(const WebPreferences& preferences)
+{
+    bool platformDefault = preferences.enhancedSecurityEnabledByDefault();
+    bool systemAppsDefault = preferences.enhancedSecurityEnabledByDefaultForSystemApps();
+    if (!platformDefault && !systemAppsDefault)
+        return false;
+    if (hasEnhancedSecurityDefaultOptOutEntitlement())
+        return false;
+    return platformDefault || (isSystemApplicationOrRunningTest() && !isSafariOrWebApp());
 }
 
 #if PLATFORM(IOS_FAMILY)
