@@ -46,7 +46,7 @@ template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationS
 template<VariantLike CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
     template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const CSSType& value, Rest&&... rest)
     {
-        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(value, [&](const auto& alternative) { return createDeprecatedCSSOMValue(pool, owner, alternative, std::forward<Rest>(rest)...); });
+        return WTF::switchOn(value, [&](const auto& alternative) { return createDeprecatedCSSOMValue(pool, owner, alternative, std::forward<Rest>(rest)...); });
     }
 };
 
@@ -64,7 +64,8 @@ template<TupleLike CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
         } else {
             DeprecatedCSSOMValueListBuilder list;
 
-            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto caller = WTF::makeVisitor(
+            // FIXME: WTF::visit(WTF::makeVisitor(~)) is not recognized by static analysis.
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto caller = WTF::makeVisitor(
                 [&]<OptionalLike T>(const T& element) {
                     if (!element)
                         return;

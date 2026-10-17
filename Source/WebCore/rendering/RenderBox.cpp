@@ -3670,13 +3670,13 @@ LayoutUnit RenderBox::blockAxisMarginForStretch() const
 
 template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsingGeneric(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
 {
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto intrinsic = [&] -> std::optional<LayoutUnit> {
+    auto intrinsic = [&] -> std::optional<LayoutUnit> {
         if (intrinsicContentHeight)
             return adjustIntrinsicLogicalHeightForBoxSizing(*intrinsicContentHeight);
         return { };
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto minMaxContent = [&] -> std::optional<LayoutUnit> {
+    auto minMaxContent = [&] -> std::optional<LayoutUnit> {
         // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
         // If that happens, this code will have to change.
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(this)) {
@@ -3707,7 +3707,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return intrinsic();
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalHeight = logicalHeight.switchOnKeyword(
+    auto keywordLogicalHeight = logicalHeight.switchOnKeyword(
         [&](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> {
             return minMaxContent();
         },
@@ -3743,7 +3743,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
                 }
 
                 if (!isOrthogonal(*this, containingBlock))
-                    view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+                    SUPPRESS_MEMORY_UNSAFE_CAST view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
                 if (!isBlockSizeResolvableForStretch())
                     return { };
                 if (isOrthogonal(*this, containingBlock))
@@ -3812,13 +3812,13 @@ std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsi
 
 template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordSize = [&] {
+    auto keywordSize = [&] {
         // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
         // If that happens, this code will have to change.
         return computeSizingKeywordLogicalContentHeightUsing(logicalHeight, intrinsicContentHeight, borderAndPaddingLogicalHeight());
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalHeight,
+    return WTF::switchOn(logicalHeight,
         [&](const typename SizeType::Fixed& fixedLogicalHeight) -> std::optional<LayoutUnit> {
             return LayoutUnit { fixedLogicalHeight.resolveZoom(style().usedZoomForLength()) };
         },
@@ -4418,7 +4418,7 @@ void RenderBox::computeOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValu
 
 template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalWidthUsing(const SizeType& logicalWidth, const PositionedLayoutConstraints& inlineConstraints) const
 {
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto fallback = [&] -> LayoutUnit {
+    auto fallback = [&] -> LayoutUnit {
         bool shrinkToFit = inlineConstraints.insetFitsContent() || !inlineConstraints.alignmentAppliesStretch(ItemPosition::Stretch);
         if (shrinkToFit) {
             auto preferredWidth = maxContentLogicalWidthContribution() - inlineConstraints.bordersPlusPadding();
@@ -4428,7 +4428,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         return inlineConstraints.availableContentSpace();
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto intrinsic = [&](const auto& keyword) -> LayoutUnit {
+    auto intrinsic = [&](const auto& keyword) -> LayoutUnit {
         auto availableSpace = inlineConstraints.containingSize();
         availableSpace -= inlineConstraints.insetBeforeValue();
         availableSpace -= inlineConstraints.insetAfterValue();
@@ -4436,7 +4436,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         return std::max(0_lu, computeSizingKeywordLogicalWidthUsing(keyword, availableSpace, inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalWidth = WTF::switchOn(logicalWidth,
+    auto keywordLogicalWidth = WTF::switchOn(logicalWidth,
         [&](const typename SizeType::Fixed& fixedLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(fixedLogicalWidth);
         },

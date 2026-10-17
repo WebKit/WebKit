@@ -42,7 +42,8 @@ auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Styl
 {
     ASSERT(from.index() == to.index());
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
+    // FIXME: WTF::visit(WTF::makeVisitor(~)) is not recognized by static analysis.
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return WTF::visit(WTF::makeVisitor(
         [&]<typename T>(const T& fromValue, const T& toValue) -> FilterValue {
             return Style::blend(fromValue, toValue, fromStyle, toStyle, context);
         },
@@ -55,27 +56,27 @@ auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Styl
 template<typename FilterValue>
 auto blendFilterValueFromOnly(const FilterValue& from, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
+    return WTF::switchOn(from.value,
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& fromValue) -> FilterValue {
             return Style::blend(fromValue, FunctionNotation<C, T> { T::passthroughForInterpolation() }, fromStyle, toStyle, context);
         },
         [](const auto&) -> FilterValue {
             RELEASE_ASSERT_NOT_REACHED();
         }
-    ), from.value);
+    );
 }
 
 template<typename FilterValue>
 auto blendFilterValueToOnly(const FilterValue& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
+    return WTF::switchOn(to.value,
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& toValue) -> FilterValue {
             return Style::blend(FunctionNotation<C, T> { T::passthroughForInterpolation() }, toValue, fromStyle, toStyle, context);
         },
         [](const auto&) -> FilterValue {
             RELEASE_ASSERT_NOT_REACHED();
         }
-    ), to.value);
+    );
 }
 
 template<typename FilterList>
