@@ -7950,6 +7950,7 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
 
         self.commands = [
             util.ShellArg(command=self.shell_command('rm -rf ../build'), logname='stdio', haltOnFailure=False),
+            util.ShellArg(command=self.shell_command(f'rm -rf {swift_install_dir} {swift_symroot_dir}'), logname='stdio', haltOnFailure=False),
             util.ShellArg(command=self.shell_command('rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'), logname='stdio', haltOnFailure=False),
             util.ShellArg(command=self.shell_command('rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'), logname='stdio'),
             util.ShellArg(command=self.shell_command(filter_command), logname='stdio', haltOnFailure=True),

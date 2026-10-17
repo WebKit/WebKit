@@ -12530,6 +12530,11 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf webkit/{SWIFT_DIR}/swift-nightly-install webkit/{SWIFT_DIR}/swift-nightly-symroot'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
@@ -12568,6 +12573,11 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf webkit/{SWIFT_DIR}/swift-nightly-install webkit/{SWIFT_DIR}/swift-nightly-symroot'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
@@ -12597,6 +12607,11 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
                         timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf webkit/{SWIFT_DIR}/swift-nightly-install webkit/{SWIFT_DIR}/swift-nightly-symroot'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'])
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
@@ -12621,6 +12636,11 @@ class TestBuildSwift(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=1200,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -rf ../build'])
+            .exit(0),
+            ExpectShell(workdir=SWIFT_DIR,
+                        log_environ=False,
+                        timeout=1200,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'rm -rf webkit/{SWIFT_DIR}/swift-nightly-install webkit/{SWIFT_DIR}/swift-nightly-symroot'])
             .exit(0),
             ExpectShell(workdir=SWIFT_DIR,
                         log_environ=False,
