@@ -1,5 +1,8 @@
 name: Build WebKit WiiU (WKC)
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main]
@@ -934,6 +937,30 @@ jobs:
           else
             echo "::error::Full WebKit page-engine build failed; refusing to publish a bootstrap-only archive as the engine."
             exit 1
+          fi
+
+      # Publish the successfully built page engine as a public release asset.
+      # GitHub Actions artifacts are not a reliable cross-repository download
+      # mechanism for Wave Browser's repository-scoped GITHUB_TOKEN. A release
+      # asset is public, versioned to this exact source SHA, and needs no user token.
+      - name: Publish full page-engine release asset
+        if: ${{ github.event_name != 'pull_request' && steps.full-engine-probe.outputs.engine_ready == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ASSET="webkit-wiiu-full-engine.tar.gz"
+          tar -czf "$ASSET" -C dist-full .
+          test -s "$ASSET"
+          TAG="engine-$GITHUB_SHA"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ASSET" --clobber
+          else
+            gh release create "$TAG" "$ASSET" \
+              --target "$GITHUB_SHA" \
+              --title "WebKit Wii U Engine $GITHUB_SHA" \
+              --notes "Full WebKit page-engine bundle built from commit $GITHUB_SHA. See BUILD_PROFILE.txt for enabled and disabled features."
           fi
 
       # This is a required feature build, not a diagnostic-only probe. Fail before
