@@ -159,7 +159,6 @@ public:
         MultiColumnSet,
         MultiColumnSpannerPlaceholder,
         Progress,
-        Quote,
         Replica,
         ScrollbarPart,
         SearchField,
@@ -443,7 +442,6 @@ public:
 
     bool isRenderCounter() const { return type() == Type::Counter; }
     bool isRenderGlyph() const { return type() == Type::Glyph; }
-    bool isRenderQuote() const { return type() == Type::Quote; }
 
     bool isRenderEmbeddedObject() const { return type() == Type::EmbeddedObject; }
     bool LEGACY_NODELETE isFieldset() const;
