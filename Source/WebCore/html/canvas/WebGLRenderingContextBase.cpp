@@ -1017,9 +1017,13 @@ void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
         return;
     // The display buffer must be replaced with the cleared drawing buffer of the new size. The
     // reallocation does not necessarily replace it, for example when the canvas is resized and
-    // resized back to the size of the storage without using the default framebuffer.
-    m_compositingResultsNeedUpdating = true;
-    willUpdateCanvasContents();
+    // resized back to the size of the storage without using the default framebuffer. If the storage
+    // is not allocated, nothing has been displayed, so there is nothing to replace. Then preparing
+    // for display would only allocate the storage that the canvas does not use.
+    if (!m_defaultFramebuffer->allocatedSize().isEmpty()) {
+        m_compositingResultsNeedUpdating = true;
+        willUpdateCanvasContents();
+    }
     updateMemoryCost();
 }
 
