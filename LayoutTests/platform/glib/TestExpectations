@@ -1893,6 +1893,9 @@ media/media-source/media-managedmse-eviction.html [ Timeout ]
 media/media-source/media-source-evict-invalid-time-crash.html [ Timeout ]
 media/media-source/media-source-evict-ignorable-gap.html [ Skip ]
 
+# This tests behavior specific to the AVFoundation MSE player
+media/media-source/media-source-video-flush-after-late-audio-track.html [ Skip ]
+
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Timeout ]
 
 # Player is often not rendering in image tests, especially in Release

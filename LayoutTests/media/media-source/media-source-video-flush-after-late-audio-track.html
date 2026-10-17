@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-video-flush-after-late-audio-track</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var videoLoader;
+    var audioLoader;
+    var source;
+    var videoSourceBuffer;
+    var audioSourceBuffer;
+    var timeBeforeFlush;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function appendAll(sourceBuffer, loader) {
+        for (let i = 0; i < loader.mediaSegmentsLength(); ++i) {
+            sourceBuffer.appendBuffer(loader.mediaSegment(i));
+            await waitFor(sourceBuffer, 'updateend', true);
+        }
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        videoLoader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+        audioLoader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        await Promise.all([ loaderPromise(videoLoader), loaderPromise(audioLoader) ]);
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        run('videoSourceBuffer = source.addSourceBuffer(videoLoader.type())');
+        const loadedDataPromise = waitFor(video, 'loadeddata');
+        run('videoSourceBuffer.appendBuffer(videoLoader.initSegment())');
+        await waitFor(videoSourceBuffer, 'updateend', true);
+        await appendAll(videoSourceBuffer, videoLoader);
+        await loadedDataPromise;
+
+        run('audioSourceBuffer = source.addSourceBuffer(audioLoader.type())');
+        run('audioSourceBuffer.appendBuffer(audioLoader.initSegment())');
+        await waitFor(audioSourceBuffer, 'updateend', true);
+        await appendAll(audioSourceBuffer, audioLoader);
+
+        const playingPromise = waitFor(video, 'playing');
+        run('video.play()');
+        await playingPromise;
+        await testExpectedEventually('video.currentTime', 0.5, '>=');
+
+        timeBeforeFlush = video.currentTime;
+        consoleWrite('Re-appending overlapping video to flush the video track');
+        await appendAll(videoSourceBuffer, videoLoader);
+
+        await testExpectedEventually('video.currentTime - timeBeforeFlush', 1, '>=');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

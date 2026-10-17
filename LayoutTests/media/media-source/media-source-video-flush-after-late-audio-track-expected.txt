@@ -1,0 +1,17 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+EVENT(sourceopen)
+RUN(videoSourceBuffer = source.addSourceBuffer(videoLoader.type()))
+RUN(videoSourceBuffer.appendBuffer(videoLoader.initSegment()))
+EVENT(loadeddata)
+RUN(audioSourceBuffer = source.addSourceBuffer(audioLoader.type()))
+RUN(audioSourceBuffer.appendBuffer(audioLoader.initSegment()))
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime >= '0.5') OK
+Re-appending overlapping video to flush the video track
+EXPECTED (video.currentTime - timeBeforeFlush >= '1') OK
+END OF TEST
+

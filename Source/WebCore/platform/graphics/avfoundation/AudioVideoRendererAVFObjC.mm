@@ -1293,6 +1293,7 @@ void AudioVideoRendererAVFObjC::addAudioRenderer(TrackIdentifier trackId)
 
     if (!m_audioTracksMap.add(trackId, AudioTrackProperties()).isNewEntry)
         return;
+    updateAllRenderersHaveAvailableSamples();
 
     RetainPtr renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
 
@@ -1335,6 +1336,7 @@ void AudioVideoRendererAVFObjC::removeAudioRenderer(TrackIdentifier trackId)
         m_audioRenderers.remove(trackId);
         ASSERT(m_audioTracksMap.contains(trackId));
         m_audioTracksMap.remove(trackId);
+        updateAllRenderersHaveAvailableSamples();
     }
 }
 
