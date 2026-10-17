@@ -1,0 +1,8 @@
+Test that Page.getResourceTree includes the fragment a resource was requested with.
+
+
+
+== Running test suite: Page.getResourceTree.URLFragment
+-- Running test case: Page.getResourceTree.URLFragment
+PASS: Should find the image by its URL with the fragment.
+

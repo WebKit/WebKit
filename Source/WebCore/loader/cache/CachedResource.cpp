@@ -242,7 +242,6 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         URL url = request.url();
         url.setFragmentIdentifier(m_fragmentIdentifierForRequest);
         request.setURL(WTF::move(url));
-        m_fragmentIdentifierForRequest = String();
     }
 
     if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {

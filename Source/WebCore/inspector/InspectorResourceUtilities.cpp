@@ -235,7 +235,10 @@ Vector<Inspector::FrameResource> buildResourceDataForFrame(LocalFrame& frame)
     Vector<Inspector::FrameResource> resources;
     for (RefPtr cachedResource : cachedResourcesForFrame(&frame)) {
         Inspector::FrameResource resource;
-        resource.url = cachedResource->url().string();
+        URL url = cachedResource->url();
+        if (auto& fragmentIdentifier = cachedResource->fragmentIdentifierForRequest(); !fragmentIdentifier.isNull())
+            url.setFragmentIdentifier(fragmentIdentifier);
+        resource.url = url.string();
         resource.type = inspectorResourceType(*cachedResource);
         resource.mimeType = cachedResource->response().mimeType();
         if (cachedResource->wasCanceled())
