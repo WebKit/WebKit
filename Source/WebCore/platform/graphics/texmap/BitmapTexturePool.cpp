@@ -31,6 +31,7 @@
 #include "GLContext.h"
 #include "GLContextWrapper.h"
 #include "PlatformDisplay.h"
+#include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB)
@@ -113,6 +114,20 @@ Ref<BitmapTexture> BitmapTexturePool::createTextureForImage(EGLImage image, cons
     return texture;
 }
 #endif
+
+void BitmapTexturePool::releaseAllTextures()
+{
+    ASSERT(isMainThread());
+    ASSERT(GLContextWrapper::currentContext());
+    Locker locker { m_lock };
+    m_releaseUnusedTexturesTimer.stop();
+    m_textures.clear();
+#if USE(GBM)
+    m_imageTextures.clear();
+#endif
+    m_poolSizeInBytes = 0;
+    exitLimitExceededModeIfNeeded();
+}
 
 void BitmapTexturePool::scheduleReleaseUnusedTextures()
 {

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformDisplay.h"
 
+#include "BitmapTexturePool.h"
 #include "GLContext.h"
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -79,6 +80,11 @@ void PlatformDisplay::destroySharedDisplay()
     RELEASE_ASSERT(isMainThread());
     if (!s_sharedDisplay)
         return;
+
+    if (auto* context = s_sharedDisplay->m_sharingGLContext.get()) {
+        GLContext::ScopedGLContextCurrent scopedCurrent(*context);
+        BitmapTexturePool::singleton().releaseAllTextures();
+    }
 
     s_sharedDisplay->clearGLContexts();
     s_sharedDisplay->terminateEGLDisplay();
