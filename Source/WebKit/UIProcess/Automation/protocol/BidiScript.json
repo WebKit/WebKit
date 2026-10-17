@@ -96,6 +96,7 @@
             "properties": [
                 { "name": "type", "$ref": "BidiScript.RemoteValueType" },
                 { "name": "value", "type": "any", "optional": true },
+                { "name": "sharedId", "type": "string", "optional": true, "description": "A reference to a DOM Node that is usable in any realm. Applicable if `type` property is `node`." },
                 { "name": "handle", "$ref": "BidiScript.Handle", "optional": true, "description": "Represents a reference to a remote Node. Applicable if `type` property is `node`, `nodelist`, `htmlcollection`." },
                 { "name": "internalId", "$ref": "BidiScript.InternalId", "optional": true, "description": "Represents a reference to a remote script value. If both `handle` and `internalId` are specified, `internalId` takes precedence." }
             ]
