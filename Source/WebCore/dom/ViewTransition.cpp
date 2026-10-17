@@ -33,6 +33,7 @@
 #include "CSSTransformListValue.h"
 #include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
+#include "Chrome.h"
 #include "ContainerNodeInlines.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentEventLoop.h"
@@ -45,8 +46,10 @@
 #include "JSDOMPromiseDeferred.h"
 #include "LayoutRect.h"
 #include "Logging.h"
+#include "Page.h"
 #include "PlatformScreen.h"
 #include "PseudoElementRequest.h"
+#include "RemoteFrame.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
@@ -55,6 +58,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
+#include "RenderWidget.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
@@ -65,7 +69,9 @@
 #include "TransformState.h"
 #include "ViewTransitionTypeSet.h"
 #include "WebAnimation.h"
+#include <wtf/NativePromise.h>
 #include <wtf/OrderedHashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -199,6 +205,8 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
         if (outboundPostCaptureSteps)
             outboundPostCaptureSteps(nullptr);
     });
+
+    stopWaitingForPendingCaptures();
 
     Ref document = *this->document();
     if (m_phase < ViewTransitionPhase::UpdateCallbackCalled) {
@@ -369,28 +377,34 @@ void ViewTransition::setupViewTransition()
     Ref document = *this->document();
     if (m_outboundPostCaptureSteps) {
         document->setRenderingIsSuppressedForViewTransitionImmediately();
-        runOutboundPostCaptureSteps();
+        whenPendingCapturesComplete([weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->runOutboundPostCaptureSteps();
+        });
         return;
     }
 
-    if (m_isCrossDocument)
-        document->setRenderingIsSuppressedForViewTransitionImmediately();
-    else
-        document->setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
+    ASSERT(!m_isCrossDocument);
+    document->setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
 
-    protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+    whenPendingCapturesComplete([weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis || !protectedThis->document())
             return;
-        if (protectedThis->m_phase == ViewTransitionPhase::Done)
-            return;
+        protect(protect(protectedThis->document())->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (protectedThis->m_phase == ViewTransitionPhase::Done)
+                return;
 
-        RefPtr document = protectedThis->document();
-        if (!document)
-            return;
+            RefPtr document = protectedThis->document();
+            if (!document)
+                return;
 
-        document->viewTransitionUpdateCallbackQueue().append(*protectedThis);
-        flushUpdateCallbackQueue(*document);
+            document->viewTransitionUpdateCallbackQueue().append(*protectedThis);
+            flushUpdateCallbackQueue(*document);
+        });
     });
 }
 
@@ -494,7 +508,15 @@ static LayoutPoint layerToLayoutOffset(const RenderLayerModelObject& renderer)
     return { };
 }
 
-static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalFrame& frame, RenderLayerModelObject& renderer, const LayoutRect& snapshotRect, const LayoutSize& subpixelOffset = { })
+struct ElementSnapshotParameters {
+    CheckedRef<RenderLayerModelObject> layerRenderer;
+    Ref<LocalFrameView> frameView;
+    IntRect paintRect;
+    float scaleFactor { 1 };
+    ColorSpace colorSpace { ColorSpace::SRGB() };
+};
+
+static std::optional<ElementSnapshotParameters> elementSnapshotParameters(LocalFrame& frame, RenderLayerModelObject& renderer, const LayoutRect& snapshotRect)
 {
     ASSERT(renderer.hasLayer());
     CheckedRef layerRenderer = renderer;
@@ -515,20 +537,21 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
     ASSERT(frame.document());
     RefPtr frameView = frame.document()->view();
     if (!frameView)
-        return nullptr;
+        return std::nullopt;
 
-    auto hostWindow = frameView->root() ? protect(frameView->root())->hostWindow() : nullptr;
     auto colorSpace = screenColorSpace(frameView);
 #if PLATFORM(IOS_FAMILY)
     colorSpace = ColorSpace::SRGB(); // FIXME: We should use the screen colorspace on iOS too, but that has blending issues: webkit.org/b/318764.
 #endif
 
-    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, colorSpace, PixelFormat::BGRA8, hostWindow);
-    if (!buffer)
-        return nullptr;
+    return ElementSnapshotParameters { WTF::move(layerRenderer), frameView.releaseNonNull(), paintRect, scaleFactor, colorSpace };
+}
 
-    buffer->context().translate(-paintRect.location());
+static void paintElementSnapshot(const ElementSnapshotParameters& parameters, GraphicsContext& context, const LayoutSize& subpixelOffset)
+{
+    context.translate(-parameters.paintRect.location());
 
+    Ref frameView = parameters.frameView;
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(oldPaintBehavior | PaintBehavior::FlattenCompositingLayers | PaintBehavior::Snapshotting);
 
@@ -536,10 +559,65 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
     paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
     paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
     paintFlags.add(RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition);
-    protect(layerRenderer->layer())->paint(buffer->context(), paintRect, subpixelOffset, frameView->paintBehavior(), nullptr, paintFlags);
+    protect(parameters.layerRenderer->layer())->paint(context, parameters.paintRect, subpixelOffset, frameView->paintBehavior(), nullptr, paintFlags);
 
     frameView->setPaintBehavior(oldPaintBehavior);
+}
+
+static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalFrame& frame, RenderLayerModelObject& renderer, const LayoutRect& snapshotRect, const LayoutSize& subpixelOffset = { })
+{
+    auto parameters = elementSnapshotParameters(frame, renderer, snapshotRect);
+    if (!parameters)
+        return nullptr;
+
+    auto hostWindow = parameters->frameView->root() ? protect(parameters->frameView->root())->hostWindow() : nullptr;
+    auto buffer = ImageBuffer::create(parameters->paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, parameters->scaleFactor, parameters->colorSpace, PixelFormat::BGRA8, hostWindow);
+    if (!buffer)
+        return nullptr;
+
+    paintElementSnapshot(*parameters, buffer->context(), subpixelOffset);
     return buffer;
+}
+
+// Frames hosted elsewhere record into the image themselves; its pixels never reach this process.
+static RefPtr<NativePromise<Ref<NativeImage>, void>> recordElementVisualOverflowClippedToViewport(LocalFrame& frame, RenderLayerModelObject& renderer, const LayoutRect& snapshotRect, const LayoutSize& subpixelOffset = { })
+{
+    RefPtr page = frame.page();
+    if (!page)
+        return nullptr;
+
+    auto parameters = elementSnapshotParameters(frame, renderer, snapshotRect);
+    if (!parameters)
+        return nullptr;
+
+    return page->chrome().createDisplayOnlyImage(frame.frameID(), parameters->paintRect.size(), parameters->scaleFactor, parameters->colorSpace, [&](GraphicsContext& context) {
+        paintElementSnapshot(*parameters, context, subpixelOffset);
+    });
+}
+
+// A frame hosted here paints its subframes, so a remote frame nested in one counts too.
+static bool isPaintedInto(const Frame& remoteFrame, const LocalFrame& frame, const RenderElement& root)
+{
+    CheckedPtr<const RenderWidget> owner = remoteFrame.ownerRenderer();
+    while (owner && &owner->frame() != &frame)
+        owner = owner->frame().ownerRenderer();
+    return owner && owner->isDescendantOf(&root);
+}
+
+// Also counts frames outside the capture, such as hidden ones, at the cost of a round trip.
+static bool subtreeContainsRemoteFrame(const LocalFrame& frame, RenderLayerModelObject& renderer)
+{
+    CheckedRef<const RenderElement> root = renderer.isDocumentElementRenderer() ? renderer.view() : renderer;
+    for (RefPtr descendant = frame.tree().traverseNext(&frame); descendant;) {
+        if (!is<RemoteFrame>(*descendant)) {
+            descendant = descendant->tree().traverseNext(&frame);
+            continue;
+        }
+        if (isPaintedInto(*descendant, frame, root.get()))
+            return true;
+        descendant = descendant->tree().traverseNextSkippingChildren(&frame);
+    }
+    return false;
 }
 
 // This only iterates through elements with a RenderLayer, which is sufficient for View Transitions which force their creation.
@@ -638,8 +716,14 @@ ExceptionOr<void> ViewTransition::captureOldState()
         CapturedElement capture;
 
         copyElementBaseProperties(renderer.get(), capture.oldState);
-        if (RefPtr frame = document()->frame())
-            capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldState.overflowRect, capture.oldState.subpixelOffset);
+        if (RefPtr frame = document()->frame()) {
+            if (subtreeContainsRemoteFrame(*frame, renderer.get()))
+                capture.pendingCapture = recordElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldState.overflowRect, capture.oldState.subpixelOffset);
+            if (capture.pendingCapture)
+                capture.oldImage = nullptr;
+            else
+                capture.oldImage = snapshotElementVisualOverflowClippedToViewport(*frame, renderer.get(), capture.oldState.overflowRect, capture.oldState.subpixelOffset);
+        }
 
         auto styleable = Styleable::fromRenderer(renderer);
         ASSERT(styleable);
@@ -809,6 +893,65 @@ ExceptionOr<void> ViewTransition::checkForViewportSizeChange()
     if (view->sizeForCSSLargeViewportUnits() != m_initialLargeViewportSize || m_initialPageZoom != (frame->pageZoomFactor() * frame->frameScaleFactor()))
         return Exception { ExceptionCode::InvalidStateError, "Skipping view transition because viewport size changed."_s };
     return { };
+}
+
+// Capturing the old state is asynchronous: https://drafts.csswg.org/css-view-transitions-2/#issue-ca114a78
+// Not in the spec: bounded, since a busy process may never reply.
+void ViewTransition::whenPendingCapturesComplete(Function<void()>&& then)
+{
+    if (!hasPendingCaptures()) {
+        then();
+        return;
+    }
+
+    for (auto& [name, capturedElement] : m_namedElements.map()) {
+        if (RefPtr pendingCapture = capturedElement->pendingCapture) {
+            pendingCapture->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, name](auto&& result) {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->didCompletePendingCapture(name, result ? RefPtr<NativeImage> { WTF::move(*result) } : nullptr);
+            });
+        }
+    }
+
+    m_whenPendingCapturesComplete = WTF::move(then);
+    m_pendingCapturesTimeout = protect(protect(document())->eventLoop())->scheduleTask(defaultTimeout, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->m_phase == ViewTransitionPhase::Done)
+            return;
+        LOG_WITH_STREAM(ViewTransitions, stream << "ViewTransition " << protectedThis.get() << " timed out waiting for pending captures to complete");
+        protectedThis->skipViewTransition(Exception { ExceptionCode::TimeoutError, "View transition timed out waiting for the old state to be captured."_s });
+    });
+}
+
+void ViewTransition::didCompletePendingCapture(const AtomString& name, RefPtr<NativeImage>&& image)
+{
+    auto* capturedElement = m_namedElements.find(name);
+    if (!capturedElement || !capturedElement->pendingCapture)
+        return;
+
+    capturedElement->pendingCapture = nullptr;
+    capturedElement->oldDisplayOnlyImage = WTF::move(image);
+    if (hasPendingCaptures())
+        return;
+
+    m_pendingCapturesTimeout = nullptr;
+    if (auto then = std::exchange(m_whenPendingCapturesComplete, nullptr))
+        then();
+}
+
+void ViewTransition::stopWaitingForPendingCaptures()
+{
+    m_whenPendingCapturesComplete = nullptr;
+    m_pendingCapturesTimeout = nullptr;
+    for (auto& capturedElement : m_namedElements.map().values())
+        capturedElement->pendingCapture = nullptr;
+}
+
+bool ViewTransition::hasPendingCaptures() const
+{
+    return std::ranges::any_of(m_namedElements.map().values(), [](auto& capturedElement) {
+        return !!capturedElement->pendingCapture;
+    });
 }
 
 // https://drafts.csswg.org/css-view-transitions/#activate-view-transition
@@ -1157,6 +1300,7 @@ void ViewTransition::stop()
         return;
 
     m_phase = ViewTransitionPhase::Done;
+    stopWaitingForPendingCaptures();
 
     // The document is going away before it could capture, so the navigation proceeds without it.
     if (auto outboundPostCaptureSteps = std::exchange(m_outboundPostCaptureSteps, nullptr))

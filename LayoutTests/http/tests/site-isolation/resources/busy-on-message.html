@@ -1,0 +1,11 @@
+<body style='background-color:green'/>
+<script>
+onload = () => { window.parent.postMessage("onload", "*"); }
+onmessage = (event) => {
+    // Before the loop, which would hold this message back.
+    window.parent.postMessage("busy", "*");
+    const end = Date.now() + event.data;
+    while (Date.now() < end) { }
+    window.parent.postMessage("idle", "*");
+};
+</script>

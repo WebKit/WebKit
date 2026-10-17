@@ -149,6 +149,7 @@
 #include "UnloadCountIncrementer.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
+#include "ViewTransition.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <ranges>
@@ -4665,7 +4666,9 @@ void FrameLoader::dispatchPageswapEvent(DocumentLoader* provisionalLoader, bool 
     auto canTriggerCrossDocumentViewTransition = CanTriggerCrossDocumentViewTransition::No;
     RefPtr<NavigationActivation> activation;
     if (provisionalLoader) {
-        canTriggerCrossDocumentViewTransition = provisionalLoader->navigationCanTriggerCrossDocumentViewTransition(*document, fromBackForwardCache);
+        // A navigation that can't wait would tear down the old document, and its subframes, before the capture completes.
+        if (proceedWithNavigation)
+            canTriggerCrossDocumentViewTransition = provisionalLoader->navigationCanTriggerCrossDocumentViewTransition(*document, fromBackForwardCache);
 
         RefPtr window = document->window();
         auto navigationAPIType = provisionalLoader->triggeringAction().navigationAPIType();
@@ -4715,9 +4718,15 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     
     provisionalLoader->setCommitted(true);
     waitForOutboundViewTransitionCapture(*provisionalLoader, true, [frame = Ref { m_frame.get() }, provisionalLoader] {
-        // Another navigation may have started meanwhile.
-        if (frame->loader().provisionalDocumentLoader() != provisionalLoader.get())
+        // Another navigation may have started meanwhile. Unless it waits for a transition of its own,
+        // the current document may stay, so it stops holding its rendering for this one.
+        if (RefPtr currentLoader = frame->loader().provisionalDocumentLoader(); currentLoader != provisionalLoader.get()) {
+            RefPtr document = frame->document();
+            RefPtr viewTransition = document ? document->activeViewTransition() : nullptr;
+            if (viewTransition && (!currentLoader || !currentLoader->hasDispatchedPageswapEvent()))
+                viewTransition->skipTransition();
             return;
+        }
         protect(frame->loader())->commitProvisionalLoad();
     });
 }

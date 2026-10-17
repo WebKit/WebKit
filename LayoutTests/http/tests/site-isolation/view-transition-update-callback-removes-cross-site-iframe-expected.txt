@@ -1,0 +1,11 @@
+The update callback of a view transition is only called once the old state is captured, including a cross-site iframe recorded out of process, so removing the iframe in the callback does not leave a hole in the old capture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stateInUpdateCallback is "remote"
+PASS stateWhenReady is "remote"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -847,6 +847,8 @@ enum ContentsFormat {
     const unsigned short LAYER_TREE_INCLUDES_ROOT_LAYERS = 4096;
     DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
+    DOMString viewTransitionOldCaptureState(Document document, [AtomString] DOMString name);
+
     unsigned long long layerIDForElement(Element element);
     unsigned long long horizontalScrollbarLayerID(optional Node? node = null);
     unsigned long long verticalScrollbarLayerID(optional Node? node = null);
