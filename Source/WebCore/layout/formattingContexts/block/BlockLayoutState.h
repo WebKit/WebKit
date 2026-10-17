@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include <WebCore/AdjoiningMargins.h>
 #include <WebCore/Font.h>
-#include <WebCore/PlacedFloats.h>
+#include <WebCore/LayoutUnits.h>
 #include <WebCore/StyleTextBoxEdge.h>
 #include <algorithm>
+#include <wtf/EnumSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -61,41 +63,38 @@ public:
         LayoutUnit pageLogicalTop;
     };
 
+    // The margins coming into the inline content of one block container, which its inline formatting context carries across the lines and
+    // the block-level boxes of the content (InlineLayoutState::marginState), and which the parent reads back once the content is laid out.
     struct MarginState {
-        void resetBeforeSideOfBlock()
+        // While the margins collapse with the block container's block-start margin, they do not move the lines.
+        bool marginsCollapseWithBlockContainerTop() const { return atBlockContainerStart && blockContainerMarginBeforeCollapsesWithContent; }
+        // What the margins move the next line down by.
+        LayoutUnit marginToPlace() const { return adjoiningMargins.collapsedValue() - marginBeforeIncludedInClearance; }
+        void resetAdjoiningMargins()
         {
-            ASSERT(atBeforeSideOfBlock);
-            atBeforeSideOfBlock = { };
+            adjoiningMargins = { };
+            marginBeforeIncludedInClearance = { };
         }
 
-        void resetMarginValues()
-        {
-            positiveMargin = { };
-            negativeMargin = { };
-            marginBeforeWithClearance = { };
-        }
-
-        LayoutUnit margin() const { return positiveMargin - negativeMargin - marginBeforeWithClearance; }
-
-        // FIXME: This tracks RenderBlockFlow's MarginInfo for now.
-        bool canCollapseWithChildren : 1 { false };
-        bool canCollapseMarginBeforeWithChildren : 1 { false };
-        bool canCollapseMarginAfterWithChildren : 1 { false };
-        bool quirkContainer : 1 { false };
-        bool atBeforeSideOfBlock : 1 { true };
-        bool atAfterSideOfBlock : 1 { false };
-        bool hasMarginBeforeQuirk : 1 { false };
-        bool hasMarginAfterQuirk : 1 { false };
-        bool determinedMarginBeforeQuirk : 1 { false };
-        LayoutUnit positiveMargin;
-        LayoutUnit negativeMargin;
-        LayoutUnit marginBeforeWithClearance;
+        // The margins nothing has separated yet (CSS 2.2 §8.3.1).
+        AdjoiningMargins adjoiningMargins;
+        // The block-start margin of a box whose margins collapse through it and which has clearance: the content after the box starts past it
+        // (CSS 2.2 §9.5.2), so it is not left to place.
+        LayoutUnit marginBeforeIncludedInClearance;
+        // Nothing has separated the margins from the block-start edge of the block container yet.
+        bool atBlockContainerStart : 1 { true };
+        // The block container's block-start margin collapses with the margins of its content (it has no block-start border or padding and
+        // establishes no block formatting context).
+        bool blockContainerMarginBeforeCollapsesWithContent : 1 { false };
+        // The block container's block-end margin collapses with the margins after its content, which ends with a block-level box.
+        bool blockContainerMarginAfterCollapsesWithContent : 1 { false };
+        // FIXME: The quirks of the render tree path, which the block-level boxes in the content change (RenderBlockFlow::MarginInfo).
+        bool marginBeforeIsQuirky : 1 { false };
+        bool marginAfterIsQuirky : 1 { false };
+        bool marginBeforeQuirkIsDetermined : 1 { false };
     };
 
-    BlockLayoutState(PlacedFloats&, MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
-
-    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
-    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
+    BlockLayoutState(MarginState, std::optional<LineClamp> = { }, TextBoxTrim = { }, Style::TextBoxEdge = CSS::Keyword::Auto { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { }, std::optional<LineGrid> lineGrid = { });
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
     TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
@@ -104,11 +103,10 @@ public:
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
     const std::optional<LineGrid>& lineGrid() const LIFETIME_BOUND { return m_lineGrid; }
 
-    MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
+    // The margins coming into the inline content; the inline formatting context carries its own copy (InlineLayoutState::marginState).
     const MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
 
 private:
-    PlacedFloats& m_placedFloats;
     std::optional<LineClamp> m_lineClamp;
     TextBoxTrim m_textBoxTrim;
     Style::TextBoxEdge m_textBoxEdge;
@@ -117,9 +115,8 @@ private:
     MarginState m_marginState;
 };
 
-inline BlockLayoutState::BlockLayoutState(PlacedFloats& placedFloats, MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
-    : m_placedFloats(placedFloats)
-    , m_lineClamp(lineClamp)
+inline BlockLayoutState::BlockLayoutState(MarginState marginState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, Style::TextBoxEdge textBoxEdge, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom, std::optional<LineGrid> lineGrid)
+    : m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
     , m_textBoxEdge(textBoxEdge)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
