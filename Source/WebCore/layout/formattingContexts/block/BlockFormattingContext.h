@@ -61,6 +61,8 @@ struct BlockLayoutResult {
         AdjoiningMargins collapsedMarginsAfter;
         bool marginBeforeIsQuirky { false };
         bool marginAfterIsQuirky { false };
+        // Its own formatting context laid it out through the render tree, including its overflow and its out-of-flow boxes.
+        bool isLaidOutThroughRenderTree { false };
     };
     // Post-order: a box is added once its content is laid out, after its descendants.
     Vector<Box> boxes;
@@ -108,6 +110,7 @@ private:
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
     void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
+    void layoutIndependentFormattingContextThroughRenderTree(const RenderBox&, ContainingBlockState& boxState);
     void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
