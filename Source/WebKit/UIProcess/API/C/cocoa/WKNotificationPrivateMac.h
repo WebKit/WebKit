@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKObjCTypeWrapperRef_h
-#define WKObjCTypeWrapperRef_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <Foundation/Foundation.h>
+#pragma once
+
 #include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapper);
+#ifdef __OBJC__
+
+@class NSDictionary;
+
+WK_EXPORT NSDictionary *WKNotificationCopyDictionaryRepresentation(WKNotificationRef notification) NS_RETURNS_RETAINED;
+
+#endif // __OBJC__
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKObjCTypeWrapperRef_h */

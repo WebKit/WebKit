@@ -117,7 +117,7 @@ UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
 UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm @nonARC
 UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm @nonARC
 
-WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm @nonARC
+WebProcess/InjectedBundle/API/c/cocoa/WKBundlePageMac.mm @nonARC
 
 WebProcess/Inspector/ServiceWorkerDebuggableFrontendChannel.cpp
 WebProcess/Inspector/ServiceWorkerDebuggableProxy.cpp

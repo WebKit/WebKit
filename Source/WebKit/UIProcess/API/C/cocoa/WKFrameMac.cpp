@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKURLRequestNS_h
-#define WKURLRequestNS_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <Foundation/Foundation.h>
-#include <WebKit/WKBase.h>
+#import "config.h"
+#import "WKFrameMac.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "WKAPICast.h"
+#include "WebFrameProxy.h"
 
-WK_EXPORT WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest);
-WK_EXPORT NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest) NS_RETURNS_RETAINED;
-
-#ifdef __cplusplus
+SecTrustRef WKFrameGetServerTrust(WKFrameRef frame)
+{
+    return WebKit::toImpl(frame)->certificateInfo().trust().get();
 }
-#endif
-
-#endif /* WKURLRequestNS_h */

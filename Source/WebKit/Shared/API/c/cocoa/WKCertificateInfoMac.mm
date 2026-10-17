@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
 #import "config.h"
-#import "WKWebsiteDataStoreRefPrivateMac.h"
+#import "WKCertificateInfoMac.h"
 
-#import "WKAPICast.h"
-#import "WKWebsiteDataStoreInternal.h"
-
-WKWebsiteDataStore *WKWebsiteDataStoreGetDataStore(WKWebsiteDataStoreRef dataStore)
+WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust)
 {
-    if (!dataStore)
-        return nil;
-    RefPtr impl = WebKit::toImpl(dataStore);
-    return wrapper(impl);
+    return nullptr;
+}
+
+WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
+{
+    return nullptr;
+}
+
+CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
+{
+    return nullptr;
+}
+
+SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfoRef)
+{
+    return nullptr;
 }

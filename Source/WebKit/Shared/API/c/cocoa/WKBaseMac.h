@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBaseMac_h
-#define WKBaseMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
+#pragma once
 
 #ifndef WKBase_h
 #error "Please #include \"WKBase.h\" instead of this file directly."
 #endif
 
 typedef const struct OpaqueWKObjCTypeWrapper* WKObjCTypeWrapperRef;
-
-#endif /* WKBaseMac_h */

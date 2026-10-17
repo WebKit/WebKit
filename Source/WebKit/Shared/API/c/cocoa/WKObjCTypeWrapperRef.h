@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNotificationPrivateMac.h"
+#pragma once
 
-#import "WKAPICast.h"
-#import "WebNotification.h"
-#import <WebCore/NotificationData.h>
+#include <Foundation/Foundation.h>
+#include <WebKit/WKBase.h>
 
-NSDictionary *WKNotificationCopyDictionaryRepresentation(WKNotificationRef notification)
-{
-    return protect(WebKit::toImpl(notification)->data().dictionaryRepresentation()).leakRef();
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT id WKObjCTypeWrapperGetObject(WKObjCTypeWrapperRef wrapper);
+
+#ifdef __cplusplus
 }
+#endif
