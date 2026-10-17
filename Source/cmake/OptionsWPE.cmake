@@ -11,7 +11,7 @@ list(APPEND WEBKIT_UNSAFE_BUFFER_WARNING_FLAGS -Wno-unsafe-buffer-usage-in-forma
 set(ENABLE_THREAD_SAFETY_WARNING ON)
 
 # Update Source/WTF/wtf/Platform.h to match required GLib versions.
-find_package(GLib 2.70.0 REQUIRED COMPONENTS GioUnix Thread Module)
+find_package(GLib 2.74.0 REQUIRED COMPONENTS GioUnix Thread Module)
 find_package(HarfBuzz 2.7.4 REQUIRED COMPONENTS ICU)
 find_package(ICU 70.1 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
