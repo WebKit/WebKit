@@ -10814,10 +10814,16 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     RefPtr hitTestJSHandle = takeHitTestJSHandle(navigationActionData);
 
     RefPtr<FrameState> frameStateForBackForwardNavigation;
+    bool webProcessHasFrameStateForBackForwardNavigation = false;
     if (protect(preferences())->shouldUseUIProcessForBackForwardItemLoading() && navigationActionData.navigationType == WebCore::NavigationType::BackForward && navigationActionData.targetBackForwardItemIdentifier) {
         if (RefPtr frameState = frameStateForBackForwardChildFrame(frame, *navigationActionData.targetBackForwardItemIdentifier)) {
             WEBPAGEPROXY_RELEASE_LOG(Loading, "frameStateForBackForwardChildFrame: Back/Forward child frame, rewriting URL to %" SENSITIVE_LOG_STRING, frameState->urlString.utf8());
             navigationActionData.request.setURL(URL { frameState->urlString });
+
+            if (auto navigationID = navigationActionData.navigationID) {
+                if (RefPtr existingNavigation = m_navigationState->navigation(*navigationID))
+                    webProcessHasFrameStateForBackForwardNavigation = existingNavigation->backForwardTraversalWasDispatched();
+            }
 
             frameStateForBackForwardNavigation = WTF::move(frameState);
         }
@@ -10825,9 +10831,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     auto completionHandler = [
         originalCompletionHandler = WTF::move(originalCompletionHandler),
-        frameStateForBackForwardNavigation
+        frameStateForBackForwardNavigation,
+        webProcessHasFrameStateForBackForwardNavigation
     ](PolicyDecision&& policyDecision) mutable {
-        if (frameStateForBackForwardNavigation && policyDecision.policyAction == PolicyAction::Use)
+        if (frameStateForBackForwardNavigation && !webProcessHasFrameStateForBackForwardNavigation && policyDecision.policyAction == PolicyAction::Use)
             policyDecision.backForwardFrameState = WTF::move(frameStateForBackForwardNavigation);
         originalCompletionHandler(WTF::move(policyDecision));
     };
