@@ -484,9 +484,45 @@ WebCore::OriginKeyed BrowsingContextGroup::resolveAgentClusterKeying(const WebCo
     }).iterator->value;
 }
 
-WebCore::OriginKeyed BrowsingContextGroup::historicalAgentClusterKeying(const WebCore::SecurityOriginData& origin) const
+WebCore::OriginKeyed BrowsingContextGroup::knownAgentClusterKeying(const WebCore::SecurityOriginData& origin) const
 {
-    return m_historicalAgentClusterKeyMap.getOptional(origin).value_or(WebCore::OriginKeyed::No);
+    if (auto keying = m_historicalAgentClusterKeyMap.getOptional(origin))
+        return *keying;
+    if (RefPtr reservation = m_agentClusterKeyingReservations.get(origin))
+        return reservation->keying();
+    return WebCore::OriginKeyed::No;
+}
+
+RefPtr<AgentClusterKeyingReservation> BrowsingContextGroup::reserveAgentClusterKeying(const WebCore::SecurityOriginData& origin, WebCore::OriginKeyed requested)
+{
+    if (m_historicalAgentClusterKeyMap.contains(origin))
+        return nullptr;
+    auto& existingReservation = m_agentClusterKeyingReservations.add(origin, nullptr).iterator->value;
+    if (RefPtr reservation = existingReservation)
+        return reservation;
+    Ref reservation = AgentClusterKeyingReservation::create(*this, origin, requested);
+    existingReservation = reservation;
+    return reservation;
+}
+
+void BrowsingContextGroup::removeAgentClusterKeyingReservation(const AgentClusterKeyingReservation& reservation)
+{
+    auto it = m_agentClusterKeyingReservations.find(reservation.origin());
+    if (it != m_agentClusterKeyingReservations.end() && it->value == &reservation)
+        m_agentClusterKeyingReservations.remove(it);
+}
+
+AgentClusterKeyingReservation::AgentClusterKeyingReservation(BrowsingContextGroup& group, const WebCore::SecurityOriginData& origin, WebCore::OriginKeyed keying)
+    : m_group(group)
+    , m_origin(origin)
+    , m_keying(keying)
+{
+}
+
+AgentClusterKeyingReservation::~AgentClusterKeyingReservation()
+{
+    if (RefPtr group = m_group)
+        group->removeAgentClusterKeyingReservation(*this);
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-similar-origin-window-agent
@@ -527,10 +563,11 @@ AgentClusterRequest AgentClusterRequest::forNavigationResponse(const WebCore::Re
     return request;
 }
 
-WebCore::AgentClusterAssignment BrowsingContextGroup::assignAgentCluster(const AgentClusterRequest& request)
+std::pair<WebCore::AgentClusterAssignment, RefPtr<AgentClusterKeyingReservation>> BrowsingContextGroup::assignAgentCluster(const AgentClusterRequest& request, AgentClusterKeyingRecording recording)
 {
     auto& origin = request.origin;
     WebCore::AgentClusterAssignment assignment { std::nullopt, WebCore::OriginKeyed::No, request.documentIsolationPolicy };
+    std::optional<WebCore::OriginKeyed> keyingToSettle;
     // https://html.spec.whatwg.org/multipage/origin.html#origin-keyed-agent-clusters
     // A document with a Document-Isolation-Policy is origin-keyed and does not use the historical agent cluster key map.
     if (assignment.documentIsolationPolicy != WebCore::DocumentIsolationPolicy::None)
@@ -538,24 +575,33 @@ WebCore::AgentClusterAssignment BrowsingContextGroup::assignAgentCluster(const A
     else {
         switch (request.source) {
         case AgentClusterRequest::Source::NavigationAction:
-            assignment.isOriginKeyed = historicalAgentClusterKeying(origin);
+            assignment.isOriginKeyed = knownAgentClusterKeying(origin);
             break;
         case AgentClusterRequest::Source::SubstituteData:
-            // Substitute data gets no response decision, so its keying is recorded right away.
+            // Substitute data gets no response decision, so its keying is settled now.
             if (!origin.isOpaque())
-                assignment.isOriginKeyed = resolveAgentClusterKeying(origin, WebCore::OriginKeyed::No);
+                keyingToSettle = WebCore::OriginKeyed::No;
             break;
         case AgentClusterRequest::Source::NavigationResponse:
-            if (request.requestedKeying)
-                assignment.isOriginKeyed = resolveAgentClusterKeying(origin, *request.requestedKeying);
+            keyingToSettle = request.requestedKeying;
             break;
+        }
+    }
+
+    RefPtr<AgentClusterKeyingReservation> reservation;
+    if (keyingToSettle) {
+        if (recording == AgentClusterKeyingRecording::Now)
+            assignment.isOriginKeyed = resolveAgentClusterKeying(origin, *keyingToSettle);
+        else {
+            reservation = reserveAgentClusterKeying(origin, *keyingToSettle);
+            assignment.isOriginKeyed = knownAgentClusterKeying(origin);
         }
     }
 
     // FIXME: Assign opaque origins an agent cluster too. Their responses can then no longer skip the policy decision through the injected bundle.
     // A blob URL created by an opaque origin belongs to its creator's agent cluster, which needs the blob URL entry rather than the URL.
     if (origin.isOpaque())
-        return assignment;
+        return { assignment, WTF::move(reservation) };
 
     // https://wicg.github.io/document-isolation-policy/#coi-agent-cluster-key
     std::optional<WebCore::SecurityOriginData> crossOriginIsolationKey;
@@ -564,13 +610,14 @@ WebCore::AgentClusterAssignment BrowsingContextGroup::assignAgentCluster(const A
     else if (m_crossOriginMode == WebCore::CrossOriginMode::Isolated)
         crossOriginIsolationKey = WebCore::SecurityOriginData::fromURL(request.topLevelCreationURL);
     assignment.identifier = agentClusterIdentifier(origin, assignment.isOriginKeyed, crossOriginIsolationKey);
-    return assignment;
+    return { assignment, WTF::move(reservation) };
 }
 
 void BrowsingContextGroup::clearBrowsingContextGroupForTesting()
 {
     m_identifier = WebCore::BrowsingContextGroupIdentifier::generate();
     m_historicalAgentClusterKeyMap.clear();
+    m_agentClusterKeyingReservations.clear();
     m_agentClusterIdentifiers.clear();
 }
 

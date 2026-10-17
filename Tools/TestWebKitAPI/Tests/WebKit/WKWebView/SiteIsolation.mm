@@ -6384,6 +6384,30 @@ TEST(SiteIsolation, LoadHTMLStringRecordsHistoricalAgentClusterKeying)
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"frames[0].originAgentCluster"] boolValue]);
 }
 
+TEST(SiteIsolation, ReplacedLoadHTMLStringDoesNotRecordHistoricalAgentClusterKeying)
+{
+    HTTPServer server({
+        { "/origin-keyed"_s, { { { "Content-Type"_s, "text/html"_s }, { "Origin-Agent-Cluster"_s, "?1"_s } }, "origin-keyed"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr<TestWKWebView> view = webView;
+
+    // The HTML string is assigned to a site-keyed agent cluster, but a load of the same origin replaces it before its document exists.
+    __block bool replaced = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+        if (std::exchange(replaced, true))
+            return;
+        [view loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/origin-keyed"]]];
+    };
+    [webView loadHTMLString:@"site-keyed" baseURL:[NSURL URLWithString:@"https://example.com/"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"document.body.textContent"], "origin-keyed");
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"originAgentCluster"] boolValue]);
+}
+
 TEST(SiteIsolation, AlternateHTMLStringIsInTheAgentClusterOfSameOriginFrames)
 {
     HTTPServer server({
