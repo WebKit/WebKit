@@ -1091,7 +1091,7 @@ RefPtr<StyleRuleCounterStyle> CSSParser::consumeCounterStyleRule(CSSParserTokenR
     auto descriptors = CSSCounterStyleDescriptors::create(name, createStyleProperties(declarations, m_context.mode));
     if (!descriptors.isValid())
         return nullptr;
-    return StyleRuleCounterStyle::create(name, WTF::move(descriptors));
+    return StyleRuleCounterStyle::create(WTF::move(descriptors));
 }
 
 RefPtr<StyleRuleViewTransition> CSSParser::consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

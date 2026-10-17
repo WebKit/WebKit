@@ -42,16 +42,15 @@
 
 namespace WebCore {
 
-StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
+StyleRuleCounterStyle::StyleRuleCounterStyle(CSSCounterStyleDescriptors&& descriptors)
     : StyleRuleBase(StyleRuleType::CounterStyle)
-    , m_name(name)
     , m_descriptors(WTF::move(descriptors))
 {
 }
 
-Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name, CSSCounterStyleDescriptors&& descriptors)
+Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(CSSCounterStyleDescriptors&& descriptors)
 {
-    return adoptRef(*new StyleRuleCounterStyle(name, WTF::move(descriptors)));
+    return adoptRef(*new StyleRuleCounterStyle(WTF::move(descriptors)));
 }
 
 CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* system)

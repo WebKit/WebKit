@@ -1,0 +1,6 @@
+
+PASS Setting name is reflected by the name getter
+PASS Setting name is reflected in cssText
+PASS Setting name repeatedly is reflected by the name getter
+PASS Setting an invalid name leaves the name unchanged
+
