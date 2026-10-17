@@ -78,35 +78,35 @@ LayoutUnit FlexFormattingUtils::flowAwareBorderAndPaddingBefore() const
 
 LayoutUnit FlexFormattingUtils::flowAwareMarginStartForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    CheckedRef flexItem = flexLayoutItem.renderer;
+    auto& margins = flexLayoutItem.margins;
     if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexItem->marginLeft() : flexItem->marginRight();
-    return isLeftToRightFlow() ? flexItem->marginTop() : flexItem->marginBottom();
+        return isLeftToRightFlow() ? margins.left() : margins.right();
+    return isLeftToRightFlow() ? margins.top() : margins.bottom();
 }
 
 LayoutUnit FlexFormattingUtils::flowAwareMarginEndForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    CheckedRef flexItem = flexLayoutItem.renderer;
+    auto& margins = flexLayoutItem.margins;
     if (isHorizontalFlow(flexBox()))
-        return isLeftToRightFlow() ? flexItem->marginRight() : flexItem->marginLeft();
-    return isLeftToRightFlow() ? flexItem->marginBottom() : flexItem->marginTop();
+        return isLeftToRightFlow() ? margins.right() : margins.left();
+    return isLeftToRightFlow() ? margins.bottom() : margins.top();
 }
 
 LayoutUnit FlexFormattingUtils::flowAwareMarginBeforeForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    CheckedRef flexItem = flexLayoutItem.renderer;
+    auto& margins = flexLayoutItem.margins;
     switch (transformedBlockFlowDirection()) {
     case FlowDirection::TopToBottom:
-        return flexItem->marginTop();
+        return margins.top();
     case FlowDirection::BottomToTop:
-        return flexItem->marginBottom();
+        return margins.bottom();
     case FlowDirection::LeftToRight:
-        return flexItem->marginLeft();
+        return margins.left();
     case FlowDirection::RightToLeft:
-        return flexItem->marginRight();
+        return margins.right();
     }
     ASSERT_NOT_REACHED();
-    return flexItem->marginTop();
+    return margins.top();
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisExtentForFlexItem(const RenderBox& flexItem) const
@@ -175,7 +175,7 @@ LayoutUnit FlexFormattingUtils::usedMainAxisMarginExtentForFlexItem(const Render
 
 LayoutUnit FlexFormattingUtils::usedMainAxisMarginExtentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    return usedMainAxisMarginExtentForFlexItem(flexLayoutItem.renderer.get());
+    return flexLayoutItem.mainAxisMarginExtent();
 }
 
 LayoutUnit FlexFormattingUtils::crossAxisMarginExtentForFlexItem(const RenderBox& flexItem)
@@ -408,6 +408,11 @@ bool FlexFormattingUtils::needToStretchFlexItemLogicalHeight(const FlexLayoutIte
 
 LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexItem)
 {
+    return innerCrossSizeForFlexItem(flexItem, crossAxisMarginExtentForFlexItem(flexItem));
+}
+
+LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexItem, LayoutUnit crossAxisMarginExtent)
+{
     CheckedRef flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
     if (isColumnFlow(flexBox))
         return flexBox->contentBoxLogicalWidth();
@@ -438,7 +443,7 @@ LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const RenderBox& flexI
 
         return innerCrossSize;
     };
-    return std::max(0_lu, flexContainerInnerCrossSize() - crossAxisMarginExtentForFlexItem(flexItem));
+    return std::max(0_lu, flexContainerInnerCrossSize() - crossAxisMarginExtent);
 }
 
 LayoutUnit FlexFormattingUtils::columnInnerMainSize(LayoutUnit hypotheticalMainSize) const
@@ -534,7 +539,7 @@ LayoutUnit FlexFormattingUtils::availableAlignmentSpaceForFlexItem(LayoutUnit li
 
 LayoutUnit FlexFormattingUtils::availableAlignmentSpaceForFlexItem(LayoutUnit lineCrossAxisExtent, const FlexLayoutItem& flexLayoutItem, LayoutUnit crossSize) const
 {
-    return availableAlignmentSpaceForFlexItem(lineCrossAxisExtent, flexLayoutItem.renderer.get(), crossSize);
+    return lineCrossAxisExtent - (flexLayoutItem.crossAxisMarginExtent() + crossSize);
 }
 
 LayoutUnit FlexFormattingUtils::marginBoxAscentForFlexItem(const FlexLayoutItem& flexLayoutItem, LayoutUnit crossSize) const
@@ -838,7 +843,7 @@ LayoutUnit FlexFormattingUtils::computeGap(GapType gapType) const
 
 LayoutUnit FlexFormattingUtils::crossAxisMarginExtentForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    return crossAxisMarginExtentForFlexItem(flexLayoutItem.renderer.get());
+    return flexLayoutItem.crossAxisMarginExtent();
 }
 
 const Style::PreferredSize& FlexFormattingUtils::preferredMainSizeLengthForFlexItem(const FlexLayoutItem& flexLayoutItem) const
@@ -868,7 +873,7 @@ bool FlexFormattingUtils::useContentBasedMinimumSize(const FlexLayoutItem& flexL
 
 LayoutUnit FlexFormattingUtils::innerCrossSizeForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
-    return innerCrossSizeForFlexItem(flexLayoutItem.renderer.get());
+    return innerCrossSizeForFlexItem(flexLayoutItem.renderer.get(), flexLayoutItem.crossAxisMarginExtent());
 }
 
 Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const FlexLayoutItem& flexLayoutItem) const

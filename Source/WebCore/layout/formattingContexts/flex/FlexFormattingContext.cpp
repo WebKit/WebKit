@@ -127,6 +127,37 @@ FlexFormattingContext::Result FlexFormattingContext::layout(FlexLayoutItems& fle
     return m_result;
 }
 
+std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minimumMaximumContentSize(const RenderFlexibleBox& flexBox, const Vector<IntrinsicWidthContribution>& contributions)
+{
+    auto isColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox);
+    auto isMultiline = FlexFormattingUtils::isMultiline(flexBox);
+    auto minimumContentSize = LayoutUnit { };
+    auto maximumContentSize = LayoutUnit { };
+
+    for (auto& contribution : contributions) {
+        if (!isColumnFlow) {
+            maximumContentSize += contribution.maximum;
+            if (isMultiline) {
+                // For multiline, the min preferred width is if you put a break between
+                // each item.
+                minimumContentSize = std::max(minimumContentSize, contribution.minimum);
+            } else
+                minimumContentSize += contribution.minimum;
+        } else {
+            minimumContentSize = std::max(contribution.minimum, minimumContentSize);
+            maximumContentSize = std::max(contribution.maximum, maximumContentSize);
+        }
+    }
+
+    if (!isColumnFlow && contributions.size() > 1) {
+        auto inlineGapSize = (contributions.size() - 1) * FlexFormattingUtils::computeGap(flexBox, FlexFormattingUtils::GapType::BetweenItems);
+        maximumContentSize += inlineGapSize;
+        if (!isMultiline)
+            minimumContentSize += inlineGapSize;
+    }
+    return { minimumContentSize, maximumContentSize };
+}
+
 FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext::computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems& flexItems)
 {
     layoutState().setPhase(LayoutPhase::ComputingFlexBaseSizes);
@@ -135,9 +166,6 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
     for (size_t index = 0; index < flexItems.size(); ++index) {
         auto& flexItem = flexItems[index];
         auto flexBase = flexBaseSizeForFlexItem(flexItem);
-        // flexBaseSizeForFlexItem just laid out an orthogonal item, so its physical margins are now resolved.
-        if (!flexItem.mainAxisIsInlineAxis)
-            flexItem.mainAxisMargin = flexFormattingUtils().usedMainAxisMarginExtentForFlexItem(flexItem);
         auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem);
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
         flexBaseAndHypotheticalMainSizeList[index] = { flexBase, constrainSizeByMinMax(flexBase, minMaxMainSizes), minMaxMainSizes };
@@ -1211,12 +1239,13 @@ FlexLayoutState& FlexFormattingContext::layoutState() const
     return m_layoutState;
 }
 
-FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent)
+FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizontalFlow, const LayoutBoxExtent& margins, bool everHadLayout, bool shouldInvalidateChildContent)
     : renderer(flexItem)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
-    , mainAxisMargin(flexContainerIsHorizontalFlow ? flexItem.horizontalMarginExtent() : flexItem.verticalMarginExtent())
     , crossAxisBorderAndPadding(flexContainerIsHorizontalFlow ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent())
+    , flexContainerIsHorizontalFlow(flexContainerIsHorizontalFlow)
     , mainAxisIsInlineAxis(flexContainerIsHorizontalFlow == flexItem.isHorizontalWritingMode())
+    , margins(margins)
     , everHadLayout(everHadLayout)
     , shouldInvalidateChildContent(shouldInvalidateChildContent)
 {
@@ -1225,7 +1254,17 @@ FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizont
 
 LayoutUnit FlexLayoutItem::outerMainSize(LayoutUnit mainSize) const
 {
-    return mainSize + mainAxisBorderAndPadding + mainAxisMargin;
+    return mainSize + mainAxisBorderAndPadding + mainAxisMarginExtent();
+}
+
+LayoutUnit FlexLayoutItem::mainAxisMarginExtent() const
+{
+    return flexContainerIsHorizontalFlow ? margins.left() + margins.right() : margins.top() + margins.bottom();
+}
+
+LayoutUnit FlexLayoutItem::crossAxisMarginExtent() const
+{
+    return flexContainerIsHorizontalFlow ? margins.top() + margins.bottom() : margins.left() + margins.right();
 }
 
 const Style::ComputedStyle& FlexLayoutItem::style() const
