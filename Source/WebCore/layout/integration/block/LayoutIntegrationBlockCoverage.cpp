@@ -34,6 +34,7 @@
 #include "HTMLLegendElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "RenderAncestorIterator.h"
@@ -139,6 +140,23 @@ static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const Re
     return { };
 }
 
+// BlockFormattingContext::computeIntrinsicInlineSizes measures inline content with the inline formatting context and the block-level boxes
+// between them itself, without percentage padding, which RenderBox resolves against the containing block's current inline size.
+static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
+{
+    for (CheckedPtr<const RenderObject> descendant = &box; descendant; descendant = descendant->nextInPreOrder(&box)) {
+        CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(*descendant);
+        if (!blockContainer || blockContainer->isInline())
+            continue;
+        CheckedRef style = blockContainer->style();
+        if (style->paddingLeft().isPercentOrCalculated() || style->paddingRight().isPercentOrCalculated() || blockContainer->shouldApplyInlineSizeContainment())
+            return false;
+        if (blockContainer->childrenInline() && blockContainer->firstChild() && !LineLayout::canUseForIntrinsicWidthComputation(*blockContainer))
+            return false;
+    }
+    return true;
+}
+
 static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer)
 {
     // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
@@ -180,9 +198,14 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return isSupportedSize(size) || (size.isIntrinsic() && !size.isCalcSize() && resolvesToContentBlockSize);
     };
     auto blockSizeIsAutomatic = isAuto(style->logicalHeight()) || (style->logicalHeight().isIntrinsic() && !style->logicalHeight().isCalcSize());
-    if ((!isAuto(style->logicalWidth()) && !isSupportedSize(style->logicalWidth()))
-        || (!isAuto(style->logicalMinWidth()) && !isSupportedSize(style->logicalMinWidth()))
-        || (!style->logicalMaxWidth().isNone() && !isSupportedSize(style->logicalMaxWidth()))
+    // Inline sizes may also be min-content, max-content or fit-content, from the inline sizes of the content (css-sizing-3 §3.2).
+    auto isSupportedInlineSize = [&](auto& size) {
+        return isSupportedSize(size) || (size.isIntrinsic() && !size.isCalcSize());
+    };
+    if ((!isAuto(style->logicalWidth()) && !isSupportedInlineSize(style->logicalWidth()))
+        || (!isAuto(style->logicalMinWidth()) && !isSupportedInlineSize(style->logicalMinWidth()))
+        || (!style->logicalMaxWidth().isNone() && !isSupportedInlineSize(style->logicalMaxWidth()))
+        || (Layout::BlockFormattingUtils::hasIntrinsicInlineSize(*blockContainer, blockContainer->writingMode()) && !canComputeContentInlineSizes(*blockContainer))
         || (!isAuto(style->logicalHeight()) && !isSupportedBlockSize(style->logicalHeight(), true))
         || (!isAuto(style->logicalMinHeight()) && !isSupportedBlockSize(style->logicalMinHeight(), blockSizeIsAutomatic))
         || (!style->logicalMaxHeight().isNone() && !isSupportedBlockSize(style->logicalMaxHeight(), blockSizeIsAutomatic))
