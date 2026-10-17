@@ -39,7 +39,7 @@ public:
     struct Init : EventInit {
         Vector<Ref<Element>> changedElements;
     };
-    static Ref<CanvasPaintEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    static Ref<CanvasPaintEvent> LEGACY_NODELETE create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
     ~CanvasPaintEvent();
 
     const Vector<Ref<Element>>& changedElements() const LIFETIME_BOUND { return m_changedElements; }

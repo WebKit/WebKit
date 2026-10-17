@@ -210,7 +210,7 @@ public:
     void queueSelectedContentUpdate();
     RefPtr<HTMLOptionElement> selectedOptionForSelectedContent() const;
     void resetSelectedness(HTMLOptionElement* oldSelectedOption);
-    bool updatesSelectedContent() const;
+    bool LEGACY_NODELETE updatesSelectedContent() const;
 
     void LEGACY_NODELETE registerSelectedContentElement();
     void LEGACY_NODELETE unregisterSelectedContentElement();
@@ -227,7 +227,7 @@ public:
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
     void clearPickerOpeningMouseLocation() { m_pickerOpeningMouseLocation = { }; }
-    bool consumePickerOpeningPress(const MouseEvent&);
+    bool LEGACY_NODELETE consumePickerOpeningPress(const MouseEvent&);
     void closePickerIfNoLongerBaseAppearance();
 
     struct NavigationKeyIdentifiers {

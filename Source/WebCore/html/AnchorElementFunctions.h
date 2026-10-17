@@ -60,7 +60,7 @@ AtomString parseDownloadAttribute(const Element&, const URL& completedURL, const
 
 void sendPings(const Element&, const QualifiedName& pingAttr, const URL& destinationURL);
 
-ReferrerPolicy effectiveReferrerPolicy(OptionSet<Relation>, ReferrerPolicy explicitPolicy);
+ReferrerPolicy LEGACY_NODELETE effectiveReferrerPolicy(OptionSet<Relation>, ReferrerPolicy explicitPolicy);
 
 void navigateHyperlink(
     Element& sourceElement,

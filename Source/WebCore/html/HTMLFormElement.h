@@ -153,7 +153,7 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<Ref<ValidatedFormListedElement>>&);
 
-    RefPtr<HTMLElement> elementFromPastNamesMap(const AtomString&) const;
+    RefPtr<HTMLElement> LEGACY_NODELETE elementFromPastNamesMap(const AtomString&) const;
     void addToPastNamesMap(FormAssociatedElement&, const AtomString& pastName);
 #if ASSERT_ENABLED
     void assertItemCanBeInPastNamesMap(FormAssociatedElement&) const;

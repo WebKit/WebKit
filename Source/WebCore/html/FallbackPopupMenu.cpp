@@ -55,7 +55,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FallbackPopupMenu);
 
 class FallbackPopupMenuItemEventListener final : public EventListener {
 public:
-    static Ref<FallbackPopupMenuItemEventListener> create(FallbackPopupMenu& menu, int listIndex)
+    static Ref<FallbackPopupMenuItemEventListener> LEGACY_NODELETE create(FallbackPopupMenu& menu, int listIndex)
     {
         return adoptRef(*new FallbackPopupMenuItemEventListener(menu, listIndex));
     }
@@ -138,7 +138,7 @@ static void applyMenuStyle(HTMLElement& container, const PopupMenuStyle& style)
 
 class FallbackPopupMenuDismissListener final : public EventListener {
 public:
-    static Ref<FallbackPopupMenuDismissListener> create(FallbackPopupMenu& menu)
+    static Ref<FallbackPopupMenuDismissListener> LEGACY_NODELETE create(FallbackPopupMenu& menu)
     {
         return adoptRef(*new FallbackPopupMenuDismissListener(menu));
     }

@@ -44,7 +44,7 @@ using namespace HTMLNames;
 // reference, and '\0' is a parse error. '\r' and '\n' require special handling
 // for line counting and newline normalization in the input stream preprocessor.
 // Everything else is plain text that can be emitted as-is.
-static bool isDataStateSpecialCharacter(Latin1Character c)
+static bool LEGACY_NODELETE isDataStateSpecialCharacter(Latin1Character c)
 {
     return c == '<' || c == '&' || c == '\r' || c == '\n' || c == '\0';
 }
@@ -64,7 +64,7 @@ static std::span<const Latin1Character> findPlainTextInDataState(std::span<const
 // handling for line counting and newline normalization. Everything else is plain
 // text that can be appended to the attribute value as-is.
 template<Latin1Character quoteCharacter>
-static bool isQuotedAttributeValueSpecialCharacter(Latin1Character c)
+static bool LEGACY_NODELETE isQuotedAttributeValueSpecialCharacter(Latin1Character c)
 {
     return c == quoteCharacter || c == '&' || c == '\r' || c == '\n' || c == '\0';
 }
@@ -154,7 +154,7 @@ inline bool HTMLTokenizer::emitEndOfFile(SegmentedString& source)
     return true;
 }
 
-static bool isReplacedNullCharacter(const SegmentedString& source, char16_t character)
+static bool LEGACY_NODELETE isReplacedNullCharacter(const SegmentedString& source, char16_t character)
 {
     return character == replacementCharacter && !source.currentCharacter();
 }

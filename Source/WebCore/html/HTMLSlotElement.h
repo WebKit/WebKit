@@ -35,7 +35,7 @@ class HTMLSlotElement final : public HTMLElement {
 public:
     using ElementOrText = Variant<Ref<Element>, Ref<Text>>;
 
-    static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSlotElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodes() const;
     struct AssignedNodesOptions {

@@ -476,12 +476,12 @@ private:
 
     Path transformAreaToDevice(const Path&) const;
     Path transformAreaToDevice(const FloatRect&) const;
-    bool rectContainsCanvas(const FloatRect&) const;
+    bool LEGACY_NODELETE rectContainsCanvas(const FloatRect&) const;
 
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
     void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
-    FloatRect inflatedStrokeRect(const FloatRect&) const;
+    FloatRect LEGACY_NODELETE inflatedStrokeRect(const FloatRect&) const;
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, ImagePaintingOptions = { });
 

@@ -53,7 +53,7 @@ public:
 private:
     explicit Origin(Ref<SecurityOrigin>&&);
 
-    static Ref<Origin> create(Ref<SecurityOrigin>&&);
+    static Ref<Origin> LEGACY_NODELETE create(Ref<SecurityOrigin>&&);
 
     const Ref<SecurityOrigin> m_origin;
 };

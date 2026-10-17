@@ -42,7 +42,7 @@ public:
         virtual void autoFillButtonElementWasClicked() = 0;
     };
 
-    static Ref<AutoFillButtonElement> create(Document&, AutoFillButtonOwner&);
+    static Ref<AutoFillButtonElement> LEGACY_NODELETE create(Document&, AutoFillButtonOwner&);
 
     void removeOwner() { m_owner = nullptr; }
 

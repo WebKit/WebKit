@@ -982,8 +982,8 @@ private:
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();
-    void cancelPendingTasks();
-    void closeTaskQueues();
+    void LEGACY_NODELETE cancelPendingTasks();
+    void LEGACY_NODELETE closeTaskQueues();
 
     void seek(const MediaTime&);
     void seekInternal(const MediaTime&);

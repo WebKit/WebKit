@@ -200,7 +200,7 @@ private:
         DocumentFragment* fragment() const;
         Element& LEGACY_NODELETE contextElement();
         HTMLStackItem& LEGACY_NODELETE contextElementStackItem() LIFETIME_BOUND;
-        bool contextElementIsTemplate() const;
+        bool LEGACY_NODELETE contextElementIsTemplate() const;
 
     private:
         WeakPtr<DocumentFragment, WeakPtrImplWithEventTargetData> m_fragment;

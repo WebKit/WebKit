@@ -53,7 +53,7 @@ public:
 #if PLATFORM(COCOA)
     bool displaySurface(const MachSendRight&, ContentsFormat, bool opaque, PlaceholderFrameIdentifier);
 #endif
-    bool needsFrameBuffers() const;
+    bool LEGACY_NODELETE needsFrameBuffers() const;
     void requestFrameBuffers();
     void setRecommitHandler(Function<void()>&&);
     // Like copyFrame(), for a buffer that nothing will draw into again. It reaches the compositor
@@ -79,7 +79,7 @@ private:
 class LocalPlaceholderRenderingContextSource final : public PlaceholderRenderingContextSource {
     WTF_MAKE_TZONE_ALLOCATED(LocalPlaceholderRenderingContextSource);
 public:
-    static Ref<LocalPlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
+    static Ref<LocalPlaceholderRenderingContextSource> LEGACY_NODELETE create(PlaceholderRenderingContext&);
 
     void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) final;
 #if PLATFORM(COCOA)
@@ -101,7 +101,7 @@ class PlaceholderRenderingContext final : public CanvasRenderingContext {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContext);
 public:
     static std::unique_ptr<PlaceholderRenderingContext> create(HTMLCanvasElement&);
-    static PlaceholderRenderingContext* fromIdentifier(PlaceholderRenderingContextIdentifier);
+    static PlaceholderRenderingContext* LEGACY_NODELETE fromIdentifier(PlaceholderRenderingContextIdentifier);
 
     ~PlaceholderRenderingContext();
 

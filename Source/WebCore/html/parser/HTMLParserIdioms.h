@@ -56,7 +56,7 @@ double parseToDoubleForNumberType(StringView, double fallbackValue);
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
 enum class HTMLIntegerParsingError { NegativeOverflow, PositiveOverflow, Other };
 
-WEBCORE_EXPORT std::expected<int, HTMLIntegerParsingError> parseHTMLInteger(StringView);
+WEBCORE_EXPORT std::expected<int, HTMLIntegerParsingError> LEGACY_NODELETE parseHTMLInteger(StringView);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
 WEBCORE_EXPORT std::expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringView);

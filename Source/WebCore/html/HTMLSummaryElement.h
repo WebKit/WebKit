@@ -30,7 +30,7 @@ class HTMLSummaryElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLSummaryElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSummaryElement);
 public:
-    static Ref<HTMLSummaryElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSummaryElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
     bool isActiveSummary() const;
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;

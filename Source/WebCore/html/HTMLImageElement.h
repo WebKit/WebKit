@@ -85,7 +85,7 @@ public:
     const URL& currentURL() const LIFETIME_BOUND { return m_currentURL; }
     WEBCORE_EXPORT const AtomString& currentSrc();
 
-    bool isServerMap() const;
+    bool LEGACY_NODELETE isServerMap() const;
 
     const AtomString& LEGACY_NODELETE altText() const;
 
@@ -139,7 +139,7 @@ public:
 #endif
 
     HTMLPictureElement* LEGACY_NODELETE pictureElement() const;
-    void setPictureElement(HTMLPictureElement*);
+    void LEGACY_NODELETE setPictureElement(HTMLPictureElement*);
 
 #if USE(SYSTEM_PREVIEW)
     WEBCORE_EXPORT bool isSystemPreviewImage() const;

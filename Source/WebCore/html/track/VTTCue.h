@@ -141,13 +141,13 @@ public:
     bool snapToLines() const { return m_snapToLines; }
     void setSnapToLines(bool);
 
-    LineAndPositionSetting line() const;
+    LineAndPositionSetting LEGACY_NODELETE line() const;
     void setLine(const LineAndPositionSetting&);
 
     LineAlignSetting lineAlign() const { return m_lineAlignment; }
     void setLineAlign(LineAlignSetting);
 
-    LineAndPositionSetting position() const;
+    LineAndPositionSetting LEGACY_NODELETE position() const;
     virtual ExceptionOr<void> setPosition(const LineAndPositionSetting&);
 
     PositionAlignSetting positionAlign() const { return m_positionAlignment; }
@@ -240,7 +240,7 @@ private:
 
     void determineTextDirection();
     void calculateDisplayParameters();
-    void calculateDisplayParametersWithRegion();
+    void LEGACY_NODELETE calculateDisplayParametersWithRegion();
     void obtainCSSBoxes();
 
     enum CueSetting {

@@ -94,7 +94,7 @@ public:
     // Sets the size of the drawing buffer, reported by size(). The storage is reallocated to the
     // new size and cleared in the next ensureSize(). Resizing the canvas with separate width and
     // height assignments thus does not allocate the storage for the intermediate sizes.
-    void setSize(IntSize);
+    void LEGACY_NODELETE setSize(IntSize);
     // Reallocates the storage if the size was set since the last reallocation. Must be called
     // before the storage is used. Returns false if the storage could not be allocated. The caller
     // must then lose the context, as the default framebuffer is unusable. The reallocation stays

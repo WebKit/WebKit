@@ -59,7 +59,7 @@ public:
     static HTMLTableRowElement* LEGACY_NODELETE lastRow(HTMLTableElement&);
 
     // For CachedHTMLCollection.
-    Element* customElementAfter(Element*) const;
+    Element* LEGACY_NODELETE customElementAfter(Element*) const;
 
 private:
     explicit HTMLTableRowsCollection(HTMLTableElement&);

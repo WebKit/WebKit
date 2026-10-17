@@ -37,7 +37,7 @@ namespace WebCore {
 
 class WebGLTimerQueryEXT final : public WebGLObject {
 public:
-    static Ref<WebGLTimerQueryEXT> createLost();
+    static Ref<WebGLTimerQueryEXT> LEGACY_NODELETE createLost();
     static Ref<WebGLTimerQueryEXT> create(WebGLRenderingContextBase&);
     virtual ~WebGLTimerQueryEXT();
 

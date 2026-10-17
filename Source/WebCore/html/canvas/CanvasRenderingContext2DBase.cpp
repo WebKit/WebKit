@@ -3402,7 +3402,7 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static constexpr AllowExtendedColorSpace allowExtendedColorSpace(CanvasRenderingContext2DSettings::ColorType colorType)
+static constexpr AllowExtendedColorSpace LEGACY_NODELETE allowExtendedColorSpace(CanvasRenderingContext2DSettings::ColorType colorType)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (colorType == CanvasRenderingContext2DSettings::ColorType::Float16)

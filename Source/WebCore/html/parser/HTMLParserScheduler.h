@@ -67,7 +67,7 @@ class HTMLParserScheduler final : public RefCountedAndCanMakeWeakPtr<HTMLParserS
     WTF_MAKE_TZONE_ALLOCATED(HTMLParserScheduler);
     WTF_MAKE_NONCOPYABLE(HTMLParserScheduler);
 public:
-    static Ref<HTMLParserScheduler> create(HTMLDocumentParser&);
+    static Ref<HTMLParserScheduler> LEGACY_NODELETE create(HTMLDocumentParser&);
     ~HTMLParserScheduler();
 
     void detach();

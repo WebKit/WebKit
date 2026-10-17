@@ -39,7 +39,7 @@ class WebGL2RenderingContext;
 
 class WebGLVertexArrayObject final : public WebGLVertexArrayObjectBase {
 public:
-    static Ref<WebGLVertexArrayObject> createLost();
+    static Ref<WebGLVertexArrayObject> LEGACY_NODELETE createLost();
     static Ref<WebGLVertexArrayObject> create(WebGLRenderingContextBase&, Type);
     virtual ~WebGLVertexArrayObject();
 private:

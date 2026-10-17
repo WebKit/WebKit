@@ -49,7 +49,7 @@ class WebGLProgram;
 class WebGLTransformFeedback final : public WebGLObject {
 public:
     virtual ~WebGLTransformFeedback();
-    static Ref<WebGLTransformFeedback> createLost();
+    static Ref<WebGLTransformFeedback> LEGACY_NODELETE createLost();
     static Ref<WebGLTransformFeedback> create(WebGL2RenderingContext&);
 
     bool isActive() const { return m_active; }

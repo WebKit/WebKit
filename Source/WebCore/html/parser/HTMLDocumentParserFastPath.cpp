@@ -895,7 +895,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool LEGACY_NODELETE parsingFailed() const { return m_parseResult != HTMLFastPathResult::Succeeded; }
 
-    void didFail(HTMLFastPathResult result)
+    void LEGACY_NODELETE didFail(HTMLFastPathResult result)
     {
         if (m_parseResult == HTMLFastPathResult::Succeeded)
             m_parseResult = result;

@@ -103,7 +103,7 @@ private:
     void didCreateFileList(Ref<FileList>&&, RefPtr<Icon>&&);
     void requestIcon(const Vector<String>&);
 
-    bool allowsDirectories() const;
+    bool LEGACY_NODELETE allowsDirectories() const;
 
     bool dirAutoUsesValue() const final;
 

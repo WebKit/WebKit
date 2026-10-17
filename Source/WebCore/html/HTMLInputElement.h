@@ -242,7 +242,7 @@ public:
     Vector<String> acceptMIMETypes() const;
     Vector<String> acceptFileExtensions() const;
 
-    unsigned effectiveMaxLength() const;
+    unsigned LEGACY_NODELETE effectiveMaxLength() const;
 
     WEBCORE_EXPORT bool LEGACY_NODELETE multiple() const;
 
@@ -437,7 +437,7 @@ private:
     bool supportsMinLength() const { return isTextType(); }
     bool supportsMaxLength() const { return isTextType(); }
     bool LEGACY_NODELETE tooShort(StringView, NeedsToCheckDirtyFlag) const;
-    bool tooLong(StringView, NeedsToCheckDirtyFlag) const;
+    bool LEGACY_NODELETE tooLong(StringView, NeedsToCheckDirtyFlag) const;
 
     bool supportsPlaceholder() const final;
     void updatePlaceholderText() final;

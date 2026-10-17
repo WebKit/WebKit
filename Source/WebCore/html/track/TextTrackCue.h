@@ -90,7 +90,7 @@ public:
 
     TextTrack* LEGACY_NODELETE track() const;
     bool containsTrackAsOpaqueRootInGCThread(JSC::AbstractSlotVisitor&) const;
-    void setTrack(TextTrack*);
+    void LEGACY_NODELETE setTrack(TextTrack*);
 
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
 

@@ -56,7 +56,7 @@ class HTMLElement : public StyledElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLElement);
 public:
-    static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
+    static Ref<HTMLElement> LEGACY_NODELETE create(const QualifiedName& tagName, Document&);
 
     WEBCORE_EXPORT String title() const final;
 

@@ -36,7 +36,7 @@ class WebGLRenderbuffer final : public WebGLObject {
 public:
     virtual ~WebGLRenderbuffer();
 
-    static Ref<WebGLRenderbuffer> createLost();
+    static Ref<WebGLRenderbuffer> LEGACY_NODELETE createLost();
     static Ref<WebGLRenderbuffer> create(WebGLRenderingContextBase&);
 
     void setInternalFormat(GCGLenum internalformat)

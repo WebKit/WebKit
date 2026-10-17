@@ -33,7 +33,7 @@ class HTMLArticleElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLArticleElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLArticleElement);
 public:
-    static Ref<HTMLArticleElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLArticleElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
 private:
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;

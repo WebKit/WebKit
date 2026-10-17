@@ -37,7 +37,7 @@ namespace WebCore {
 
 class WebGLSampler final : public WebGLObject {
 public:
-    static Ref<WebGLSampler> createLost();
+    static Ref<WebGLSampler> LEGACY_NODELETE createLost();
     static Ref<WebGLSampler> create(WebGLRenderingContextBase&);
     virtual ~WebGLSampler();
     void didBind() { }

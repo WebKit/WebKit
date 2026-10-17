@@ -108,7 +108,7 @@ public:
     // For CachedHTMLCollection.
     bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
-    static bool elementMatches(const Element&, const AtomString&);
+    static bool LEGACY_NODELETE elementMatches(const Element&, const AtomString&);
 
 private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomString& name)

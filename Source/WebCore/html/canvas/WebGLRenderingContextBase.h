@@ -185,7 +185,7 @@ public:
 
     int LEGACY_NODELETE drawingBufferWidth() const;
     // For testing.
-    WEBCORE_EXPORT IntSize defaultFramebufferAllocatedSize() const;
+    WEBCORE_EXPORT IntSize LEGACY_NODELETE defaultFramebufferAllocatedSize() const;
     int LEGACY_NODELETE drawingBufferHeight() const;
 
     PredefinedColorSpace drawingBufferColorSpace() const { return m_drawingBufferColorSpace; }
@@ -750,7 +750,7 @@ protected:
         void clear();
         size_t memoryCost() const;
     };
-    ReadSurfaceBuffer& readSurfaceBuffer(SurfaceBuffer);
+    ReadSurfaceBuffer& LEGACY_NODELETE readSurfaceBuffer(SurfaceBuffer);
 
     ReadSurfaceBuffer m_readDrawingBuffer;
     ReadSurfaceBuffer m_readDisplayBuffer;

@@ -89,7 +89,7 @@ private:
     void endColorChooser();
     void setPopupIsVisible(bool);
     void updateColorSwatch();
-    HTMLElement* shadowColorSwatch() const;
+    HTMLElement* LEGACY_NODELETE shadowColorSwatch() const;
 
     RefPtr<ColorChooser> m_chooser;
     bool m_popupIsVisible { false };

@@ -70,7 +70,7 @@ struct RealNumberRenderSize {
     unsigned sizeBeforeDecimalPoint;
     unsigned sizeAfteDecimalPoint;
 
-    RealNumberRenderSize max(const RealNumberRenderSize& other) const
+    RealNumberRenderSize LEGACY_NODELETE max(const RealNumberRenderSize& other) const
     {
         return {
             std::max(sizeBeforeDecimalPoint, other.sizeBeforeDecimalPoint),

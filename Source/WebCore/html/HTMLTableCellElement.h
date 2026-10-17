@@ -43,7 +43,7 @@ public:
     static constexpr unsigned maxRowspan = 65534;
     static constexpr unsigned defaultRowspan = 1;
 
-    static Ref<HTMLTableCellElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableCellElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT int LEGACY_NODELETE cellIndex() const;
     WEBCORE_EXPORT unsigned colSpan() const;

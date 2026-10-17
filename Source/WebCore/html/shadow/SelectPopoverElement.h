@@ -35,7 +35,7 @@ class SelectPopoverElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_ALLOCATED(SelectPopoverElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SelectPopoverElement);
 public:
-    static Ref<SelectPopoverElement> create(Document&);
+    static Ref<SelectPopoverElement> LEGACY_NODELETE create(Document&);
 
     HTMLSelectElement* LEGACY_NODELETE selectElement() const;
 

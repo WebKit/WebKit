@@ -70,7 +70,7 @@ using namespace HTMLNames;
 #if !PLATFORM(IOS_FAMILY)
 class ImageEventListener final : public EventListener {
 public:
-    static Ref<ImageEventListener> create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
+    static Ref<ImageEventListener> LEGACY_NODELETE create(ImageDocument& document) { return adoptRef(*new ImageEventListener(document)); }
 
 private:
     explicit ImageEventListener(ImageDocument& document)

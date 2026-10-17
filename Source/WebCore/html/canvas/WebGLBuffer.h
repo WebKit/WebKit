@@ -40,7 +40,7 @@ namespace WebCore {
 class WebGLBuffer final : public WebGLObject {
 public:
     static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
-    static Ref<WebGLBuffer> createLost();
+    static Ref<WebGLBuffer> LEGACY_NODELETE createLost();
     virtual ~WebGLBuffer();
 
     GCGLenum getTarget() const { return m_target; }

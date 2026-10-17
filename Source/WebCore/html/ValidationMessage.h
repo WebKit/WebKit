@@ -53,7 +53,7 @@ class ValidationMessage : public RefCountedAndCanMakeWeakPtr<ValidationMessage> 
     WTF_MAKE_TZONE_ALLOCATED(ValidationMessage);
     WTF_MAKE_NONCOPYABLE(ValidationMessage);
 public:
-    static Ref<ValidationMessage> create(HTMLElement&);
+    static Ref<ValidationMessage> LEGACY_NODELETE create(HTMLElement&);
     ~ValidationMessage();
 
     void updateValidationMessage(HTMLElement&, const String&);

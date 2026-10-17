@@ -50,7 +50,7 @@ ExceptionOr<CanvasImageSourceUsability> checkUsability(ImageBitmap&);
 #if ENABLE(WEB_CODECS)
 ExceptionOr<CanvasImageSourceUsability> checkUsability(WebCodecsVideoFrame&);
 #endif
-ExceptionOr<CanvasImageSourceUsability> checkUsability(CSSStyleImageValue&);
+ExceptionOr<CanvasImageSourceUsability> LEGACY_NODELETE checkUsability(CSSStyleImageValue&);
 
 // For callers that treat an exception and "bad" alike, as createImageBitmap() and the
 // VideoFrame constructor do.

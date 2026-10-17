@@ -5935,7 +5935,7 @@ void HTMLMediaElement::configureTextTracks()
     configureTextTrackDisplay();
 }
 
-static bool isSubtitleOrCaptionTrackKind(TextTrack::Kind kind)
+static bool LEGACY_NODELETE isSubtitleOrCaptionTrackKind(TextTrack::Kind kind)
 {
     return kind == TextTrack::Kind::Subtitles || kind == TextTrack::Kind::Captions;
 }
@@ -9776,7 +9776,7 @@ bool HTMLMediaElement::supportsSeeking() const
 }
 
 #if ENABLE(MEDIA_STREAM)
-static bool isCameraTrack(const MediaStreamTrack& track)
+static bool LEGACY_NODELETE isCameraTrack(const MediaStreamTrack& track)
 {
     return track.isCaptureTrack() && track.isVideo();
 }

@@ -61,7 +61,7 @@ namespace WebCore {
 
 class GPUDisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<GPUDisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
+    static Ref<GPUDisplayBufferDisplayDelegate> LEGACY_NODELETE create(bool isOpaque = true, float contentsScale = 1)
     {
         return adoptRef(*new GPUDisplayBufferDisplayDelegate(isOpaque, contentsScale));
     }
@@ -102,13 +102,13 @@ public:
     {
         m_contentsFormat = contentsFormat;
     }
-    ContentsFormat contentsFormat() const { return m_contentsFormat; }
-    bool isOpaque() const { return m_isOpaque; }
+    ContentsFormat LEGACY_NODELETE contentsFormat() const { return m_contentsFormat; }
+    bool LEGACY_NODELETE isOpaque() const { return m_isOpaque; }
     void LEGACY_NODELETE setOpaque(bool opaque)
     {
         m_isOpaque = opaque;
     }
-    bool hasExtendedRange() const
+    bool LEGACY_NODELETE hasExtendedRange() const
     {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         return m_contentsFormat == ContentsFormat::RGBA16F;
@@ -133,7 +133,7 @@ struct ScreenHeadroom {
     float maxEDRHeadroom { 1.f };
     bool suppressEDR { false };
 
-    friend bool operator==(const ScreenHeadroom&, const ScreenHeadroom&) = default;
+    friend bool LEGACY_NODELETE operator==(const ScreenHeadroom&, const ScreenHeadroom&) = default;
 };
 
 static ScreenHeadroom gatherScreenHeadroom()
@@ -150,7 +150,7 @@ static ScreenHeadroom gatherScreenHeadroom()
 
 class GPUOffMainThreadScreenHeadroom final : public ThreadSafeRefCounted<GPUOffMainThreadScreenHeadroom> {
 public:
-    static Ref<GPUOffMainThreadScreenHeadroom> create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
+    static Ref<GPUOffMainThreadScreenHeadroom> LEGACY_NODELETE create() { return adoptRef(*new GPUOffMainThreadScreenHeadroom); }
 
     // Screen properties are only available on the main thread, but this must never wait on it: the main
     // thread can itself be blocked on the calling worker, e.g. while terminating it. Returns the last
@@ -392,7 +392,7 @@ void GPUCanvasContextCocoa::didUpdateCanvasSizeProperties(bool)
     }
 }
 
-static PixelFormat readbackPixelFormat(PixelFormat format)
+static PixelFormat LEGACY_NODELETE readbackPixelFormat(PixelFormat format)
 {
     // ImageBufferCGBitmapBackend only supports BGRA8 and RGBA16F.
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

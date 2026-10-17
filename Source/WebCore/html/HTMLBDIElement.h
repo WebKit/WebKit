@@ -28,7 +28,7 @@ class HTMLBDIElement final : public HTMLElement {
     WTF_MAKE_TZONE_ALLOCATED(HTMLBDIElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLBDIElement);
 public:
-    static Ref<HTMLBDIElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLBDIElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
     ~HTMLBDIElement();
 

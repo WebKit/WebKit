@@ -209,7 +209,7 @@ static PixelFormat imageBufferPixelFormat(const ColorSpace& colorSpace)
     return PixelFormat::BGRA8;
 }
 
-static AllowExtendedColorSpace allowExtendedColorSpace(const ImageData& imageData)
+static AllowExtendedColorSpace LEGACY_NODELETE allowExtendedColorSpace(const ImageData& imageData)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (imageData.pixelFormat() == ImageDataPixelFormat::RgbaFloat16)

@@ -81,7 +81,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setWidth(unsigned);
     WEBCORE_EXPORT ExceptionOr<void> setHeight(unsigned);
 
-    const AtomString& canvasContentForBindings() const;
+    const AtomString& LEGACY_NODELETE canvasContentForBindings() const;
     CanvasContent canvasContent() const;
     bool hasDrawableContent() const;
 
@@ -205,7 +205,7 @@ private:
     mutable RefPtr<BitmapImage> m_copiedImage; // For CSSCanvasValue.
 };
 
-WebCoreOpaqueRoot root(HTMLCanvasElement*);
+WebCoreOpaqueRoot LEGACY_NODELETE root(HTMLCanvasElement*);
 
 } // namespace WebCore
 

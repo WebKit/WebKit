@@ -50,7 +50,7 @@ class CustomPaintCanvas final : public CanvasBase, public RefCounted<CustomPaint
     WTF_MAKE_TZONE_ALLOCATED(CustomPaintCanvas);
 public:
 
-    static Ref<CustomPaintCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
+    static Ref<CustomPaintCanvas> LEGACY_NODELETE create(ScriptExecutionContext&, unsigned width, unsigned height);
     virtual ~CustomPaintCanvas();
     bool isCustomPaintCanvas() const final { return true; }
 

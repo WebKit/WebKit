@@ -170,7 +170,7 @@ public:
     WEBCORE_EXPORT void removeBehaviorRestriction(BehaviorRestrictions);
     bool hasBehaviorRestriction(BehaviorRestrictions restriction) const { return restriction & m_restrictions; }
 
-    void mediaUsageManagerSessionWillBeSuspended();
+    void LEGACY_NODELETE mediaUsageManagerSessionWillBeSuspended();
 
     inline HTMLMediaElement* element() const; // Defined in HTMLMediaElement.h.
 

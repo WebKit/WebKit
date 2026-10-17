@@ -52,9 +52,9 @@ public:
     const AtomString& shadowRootMode() const;
     const AtomString& shadowRootSlotAssignment() const;
 
-    void setDeclarativeShadowRoot(ShadowRoot&);
+    void LEGACY_NODELETE setDeclarativeShadowRoot(ShadowRoot&);
 
-    void adoptDeserializedContent(Ref<TemplateContentDocumentFragment>&&);
+    void LEGACY_NODELETE adoptDeserializedContent(Ref<TemplateContentDocumentFragment>&&);
 
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);

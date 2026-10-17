@@ -84,7 +84,7 @@ class HTMLResourcePreloader : public RefCountedAndCanMakeWeakPtr<HTMLResourcePre
     WTF_MAKE_TZONE_ALLOCATED(HTMLResourcePreloader);
     WTF_MAKE_NONCOPYABLE(HTMLResourcePreloader);
 public:
-    static Ref<HTMLResourcePreloader> create(Document&);
+    static Ref<HTMLResourcePreloader> LEGACY_NODELETE create(Document&);
     ~HTMLResourcePreloader();
 
     void preload(PreloadRequestStream);

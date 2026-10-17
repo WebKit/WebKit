@@ -54,7 +54,7 @@ class WebGLFramebuffer final : public WebGLObject {
 public:
     virtual ~WebGLFramebuffer();
 
-    static Ref<WebGLFramebuffer> createLost();
+    static Ref<WebGLFramebuffer> LEGACY_NODELETE createLost();
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 #if ENABLE(WEBXR)
     static RefPtr<WebGLFramebuffer> createOpaque(WebGLRenderingContextBase&);

@@ -33,8 +33,8 @@ namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {
 public:
-    static Ref<WebGLVertexArrayObjectOES> createLost();
-    static Ref<WebGLVertexArrayObjectOES> createDefault(WebGLRenderingContextBase&);
+    static Ref<WebGLVertexArrayObjectOES> LEGACY_NODELETE createLost();
+    static Ref<WebGLVertexArrayObjectOES> LEGACY_NODELETE createDefault(WebGLRenderingContextBase&);
     static Ref<WebGLVertexArrayObjectOES> createUser(WebGLRenderingContextBase&);
 
     virtual ~WebGLVertexArrayObjectOES();

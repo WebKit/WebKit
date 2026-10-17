@@ -189,7 +189,7 @@ void LocalPlaceholderRenderingContextSource::setPlaceholderFrameWithoutBuffer(co
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
-static HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>& placeholderRenderingContexts()
+static HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>& LEGACY_NODELETE placeholderRenderingContexts()
 {
     assertIsMainThread();
     static NeverDestroyed<HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>> contexts;

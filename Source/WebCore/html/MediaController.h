@@ -50,7 +50,7 @@ class MediaController final
     , public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(MediaController);
 public:
-    static Ref<MediaController> create(ScriptExecutionContext&);
+    static Ref<MediaController> LEGACY_NODELETE create(ScriptExecutionContext&);
     virtual ~MediaController();
 
     // ContextDestructionObserver.

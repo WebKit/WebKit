@@ -34,7 +34,7 @@ namespace WebCore {
 
 class WebGLShader final : public WebGLObject {
 public:
-    static Ref<WebGLShader> createLost(GCGLenum);
+    static Ref<WebGLShader> LEGACY_NODELETE createLost(GCGLenum);
     static Ref<WebGLShader> create(WebGLRenderingContextBase&, GCGLenum);
     virtual ~WebGLShader();
 

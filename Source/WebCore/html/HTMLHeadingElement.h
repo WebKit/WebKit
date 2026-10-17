@@ -34,7 +34,7 @@ public:
 
     ~HTMLHeadingElement();
 
-    unsigned level() const;
+    unsigned LEGACY_NODELETE level() const;
 
     unsigned effectiveHeadingOffset() const { return m_effectiveHeadingOffset; }
     void setEffectiveHeadingOffset(unsigned offset) { m_effectiveHeadingOffset = std::min<unsigned>(9, offset); }

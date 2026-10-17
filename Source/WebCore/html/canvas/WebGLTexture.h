@@ -37,13 +37,13 @@ public:
 
     virtual ~WebGLTexture();
 
-    static Ref<WebGLTexture> createLost();
+    static Ref<WebGLTexture> LEGACY_NODELETE createLost();
     static Ref<WebGLTexture> create(WebGLRenderingContextBase&);
 
     void LEGACY_NODELETE didBind(GCGLenum);
     GCGLenum getTarget() const { return m_target; }
 
-    static GCGLint computeLevelCount(GCGLsizei width, GCGLsizei height);
+    static GCGLint LEGACY_NODELETE computeLevelCount(GCGLsizei width, GCGLsizei height);
 
     bool isUsable() const { return object() && !isDeleted(); }
     bool isInitialized() const { return m_target; }

@@ -36,7 +36,7 @@ class Document;
 
 class TextTrackCueList : public RefCounted<TextTrackCueList> {
 public:
-    static Ref<TextTrackCueList> create();
+    static Ref<TextTrackCueList> LEGACY_NODELETE create();
 
     void didMoveToNewDocument(Document&);
 

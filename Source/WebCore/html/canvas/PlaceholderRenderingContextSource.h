@@ -71,7 +71,7 @@ public:
     // another process can be routed to it. Process wide rather than through the page, which the
     // placeholder's document has often lost by the time its canvas element is collected.
     using PlaceholderLifetimeHandler = void (*)(PlaceholderRenderingContextIdentifier);
-    WEBCORE_EXPORT static void setPlaceholderLifetimeHandlers(PlaceholderLifetimeHandler created, PlaceholderLifetimeHandler destroyed);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setPlaceholderLifetimeHandlers(PlaceholderLifetimeHandler created, PlaceholderLifetimeHandler destroyed);
 
 protected:
     explicit PlaceholderRenderingContextSource(const RemotePlaceholderRenderingContextIdentifier& identifier)

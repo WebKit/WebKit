@@ -38,7 +38,7 @@ public:
     struct Range {
         Range(int minimum, int maximum)
             : minimum(minimum), maximum(maximum) { }
-        int clampValue(int) const;
+        int LEGACY_NODELETE clampValue(int) const;
         bool LEGACY_NODELETE isInRange(int) const;
 
         int minimum;

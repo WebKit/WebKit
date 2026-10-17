@@ -131,7 +131,7 @@ double parseToDoubleForNumberType(StringView string)
 }
 
 template <typename CharacterType>
-static std::expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(std::span<const CharacterType> data)
+static std::expected<int, HTMLIntegerParsingError> LEGACY_NODELETE parseHTMLIntegerInternal(std::span<const CharacterType> data)
 {
     skipWhile<isASCIIWhitespace>(data);
 

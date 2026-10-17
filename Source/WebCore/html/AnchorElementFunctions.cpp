@@ -79,7 +79,7 @@ bool isSupportedRelToken(const Document& document, StringView token)
         || equalLettersIgnoringASCIICase(token, "opener"_s);
 }
 
-inline bool hasRel(OptionSet<Relation> linkRelations, Relation relation)
+inline bool LEGACY_NODELETE hasRel(OptionSet<Relation> linkRelations, Relation relation)
 {
     return linkRelations.contains(relation);
 }
