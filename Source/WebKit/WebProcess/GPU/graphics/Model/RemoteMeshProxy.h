@@ -68,6 +68,15 @@ public:
 private:
     friend class ModelDowncastConvertToBackingContext;
 
+#if PLATFORM(COCOA)
+    struct ModelBounds {
+        simd_float4 minCorner { simd_make_float4(FLT_MAX, FLT_MAX, FLT_MAX, 1.f) };
+        simd_float4 maxCorner { simd_make_float4(-FLT_MAX, -FLT_MAX, -FLT_MAX, 1.f) };
+
+        bool boundsAreEmpty() const { return minCorner.x > maxCorner.x; }
+    };
+#endif
+
     RemoteMeshProxy(Ref<RemoteGPUProxy>&&, ModelConvertToBackingContext&, WebModelIdentifier);
 
     RemoteMeshProxy(const RemoteMeshProxy&) = delete;
@@ -99,7 +108,10 @@ private:
     void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&) final;
     void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&) final;
 #if PLATFORM(COCOA)
-    std::pair<simd_float4, simd_float4> getCenterAndExtents() const final;
+    std::pair<simd_float4, simd_float4> mergedCenterAndExtents() const;
+    void updateModel(WebCore::NodeIdentifier, Vector<WebModel::UpdateMeshDescriptor>&&) final;
+    std::optional<std::pair<simd_float4, simd_float4>> centerAndExtents(WebCore::NodeIdentifier) const final;
+    void removeModel(WebCore::NodeIdentifier) final;
     void sizeDidChange(unsigned, unsigned, CompletionHandler<void(Vector<MachSendRight>&&)>&&) final;
     void paintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier, uint32_t bufferIndex) final;
 #endif
@@ -128,8 +140,7 @@ private:
     const Ref<ModelConvertToBackingContext> m_convertToBackingContext;
     const Ref<RemoteGPUProxy> m_root;
 #if PLATFORM(COCOA)
-    simd_float4 m_minCorner;
-    simd_float4 m_maxCorner;
+    HashMap<WebCore::NodeIdentifier, ModelBounds> m_modelBounds;
     std::optional<WebModel::Float4x4> m_transform;
     std::optional<WebModel::Float4x4> m_computedTransform;
 #endif

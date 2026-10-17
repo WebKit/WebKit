@@ -128,10 +128,6 @@ RemoteMeshProxy::RemoteMeshProxy(Ref<RemoteGPUProxy>&& root, ModelConvertToBacki
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(WTF::move(root))
-#if PLATFORM(COCOA)
-    , m_minCorner(simd_make_float4(FLT_MAX, FLT_MAX, FLT_MAX, 1.f))
-    , m_maxCorner(simd_make_float4(-FLT_MAX, -FLT_MAX, -FLT_MAX, 1.f))
-#endif
 {
 }
 
@@ -146,21 +142,9 @@ RemoteMeshProxy::~RemoteMeshProxy()
 void RemoteMeshProxy::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptorArray)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    bool needBoundingBoxUpdate = m_minCorner.x > m_maxCorner.x;
-    if (needBoundingBoxUpdate) {
-        for (auto& descriptor : descriptorArray) {
-            auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms, descriptor.deformationData);
-            m_minCorner = simd_min(m_minCorner, minCorner);
-            m_maxCorner = simd_max(m_maxCorner, maxCorner);
-        }
-    }
-
     auto sendResult = sendWithAsyncReply(Messages::RemoteMesh::Update(WTF::move(descriptorArray)), [](auto) mutable {
     });
     UNUSED_VARIABLE(sendResult);
-
-    if (needBoundingBoxUpdate)
-        computeTransform();
 #else
     UNUSED_PARAM(descriptorArray);
 #endif
@@ -209,11 +193,69 @@ void RemoteMeshProxy::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&
 }
 
 #if PLATFORM(COCOA)
-std::pair<simd_float4, simd_float4> RemoteMeshProxy::getCenterAndExtents() const
+void RemoteMeshProxy::updateModel(WebCore::NodeIdentifier nodeID, Vector<WebModel::UpdateMeshDescriptor>&& descriptorArray)
 {
-    auto center = .5f * (m_minCorner + m_maxCorner);
-    auto extents = m_maxCorner - m_minCorner;
+#if ENABLE(GPU_PROCESS_MODEL)
+    bool needBoundingBoxUpdate = false;
+
+    auto& bounds = m_modelBounds.add(nodeID, ModelBounds { }).iterator->value;
+    if (bounds.boundsAreEmpty()) {
+        for (auto& descriptor : descriptorArray) {
+            auto [minCorner, maxCorner] = computeMinAndMaxCorners(descriptor.parts, descriptor.instanceTransforms, descriptor.deformationData);
+            bounds.minCorner = simd_min(bounds.minCorner, minCorner);
+            bounds.maxCorner = simd_max(bounds.maxCorner, maxCorner);
+        }
+        needBoundingBoxUpdate = !bounds.boundsAreEmpty();
+    }
+
+    update(WTF::move(descriptorArray));
+
+    if (needBoundingBoxUpdate)
+        computeTransform();
+#else
+    UNUSED_PARAM(nodeID);
+    UNUSED_PARAM(descriptorArray);
+#endif
+}
+
+static std::pair<simd_float4, simd_float4> makeCenterAndExtents(simd_float4 minCorner, simd_float4 maxCorner)
+{
+    auto center = .5f * (minCorner + maxCorner);
+    auto extents = maxCorner - minCorner;
     return std::make_pair(center, extents);
+}
+
+std::pair<simd_float4, simd_float4> RemoteMeshProxy::mergedCenterAndExtents() const
+{
+    ModelBounds merged;
+    for (auto& bounds : m_modelBounds.values()) {
+        merged.minCorner = simd_min(merged.minCorner, bounds.minCorner);
+        merged.maxCorner = simd_max(merged.maxCorner, bounds.maxCorner);
+    }
+
+    if (merged.boundsAreEmpty())
+        return { simd_make_float4(0.f), simd_make_float4(0.f) };
+
+    return makeCenterAndExtents(merged.minCorner, merged.maxCorner);
+}
+
+std::optional<std::pair<simd_float4, simd_float4>> RemoteMeshProxy::centerAndExtents(WebCore::NodeIdentifier nodeID) const
+{
+    auto it = m_modelBounds.find(nodeID);
+    if (it == m_modelBounds.end() || it->value.boundsAreEmpty())
+        return std::nullopt;
+
+    return makeCenterAndExtents(it->value.minCorner, it->value.maxCorner);
+}
+
+void RemoteMeshProxy::removeModel(WebCore::NodeIdentifier nodeID)
+{
+    if (!m_modelBounds.remove(nodeID))
+        return;
+
+#if ENABLE(GPU_PROCESS_MODEL)
+    computeTransform();
+#endif
 }
 #endif
 
@@ -402,7 +444,7 @@ void RemoteMeshProxy::computeTransform()
     // Fixed camera distance matching the ModelRenderer
     static constexpr float kCameraDistance = 0.5;
 
-    auto [center, extents] = getCenterAndExtents();
+    auto [center, extents] = mergedCenterAndExtents();
 
     float viewportWidth = m_viewportWidth / kCSSPixelsPerMeter;
     float viewportHeight = m_viewportHeight / kCSSPixelsPerMeter;
