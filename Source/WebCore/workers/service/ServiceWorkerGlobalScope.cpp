@@ -282,8 +282,7 @@ CookieStore& ServiceWorkerGlobalScope::cookieStore()
 
 void ServiceWorkerGlobalScope::addFetchTask(FetchKey key, Ref<ServiceWorkerFetch::Client>&& client)
 {
-    ASSERT(!m_ongoingFetchTasks.contains(key));
-    m_ongoingFetchTasks.add(key, FetchTask { WTF::move(client), nullptr });
+    m_ongoingFetchTasks.set(key, FetchTask { WTF::move(client), nullptr });
 }
 
 void ServiceWorkerGlobalScope::addFetchEvent(FetchKey key, FetchEvent& event)
@@ -310,9 +309,11 @@ void ServiceWorkerGlobalScope::addFetchEvent(FetchKey key, FetchEvent& event)
         iterator->value.navigationPreload = Ref { event };
 }
 
-void ServiceWorkerGlobalScope::removeFetchTask(FetchKey key)
+void ServiceWorkerGlobalScope::removeFetchTask(FetchKey key, ServiceWorkerFetch::Client& client)
 {
-    m_ongoingFetchTasks.remove(key);
+    auto iterator = m_ongoingFetchTasks.find(key);
+    if (iterator != m_ongoingFetchTasks.end() && iterator->value.client == &client)
+        m_ongoingFetchTasks.remove(iterator);
 }
 
 RefPtr<ServiceWorkerFetch::Client> ServiceWorkerGlobalScope::fetchTask(FetchKey key)
