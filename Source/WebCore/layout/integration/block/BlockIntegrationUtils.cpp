@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BlockIntegrationUtils.h"
 
+#include "BlockFormattingContext.h"
 #include "InlineFormattingConstraints.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -83,6 +84,12 @@ static bool inlineContentConstraintsChanged(const LineLayout& lineLayout, const 
         || previousConstraints->logicalTop() != constraints.logicalTop()
         || previousConstraints->visualLeft() != constraints.visualLeft()
         || previousConstraints->formattingRootBorderBoxSize() != constraints.formattingRootBorderBoxSize();
+}
+
+Layout::IntrinsicWidthConstraints BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(const RenderBlockFlow& blockContainer)
+{
+    auto [minimum, maximum] = blockContainer.computeInlineIntrinsicLogicalWidths();
+    return { minimum, maximum };
 }
 
 BlockIntegrationUtils::InlineContentLayoutResult BlockIntegrationUtils::layoutInlineContent(const RenderBlockFlow& blockContainer, const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& geometry, const Layout::BlockLayoutState& blockLayoutState)

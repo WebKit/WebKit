@@ -93,7 +93,7 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
 void BlockFormattingContext::handleBlockContainerStart(const RenderBox& blockContainer)
 {
     auto& containingBlockState = m_blockLayoutState.containingBlockStates().last();
-    auto geometry = computeBorderAndPadding(blockContainer, containingBlockState);
+    auto geometry = computeBorderAndPadding(blockContainer, containingBlockState.inlineRange.size());
     computeInlineSizeAndMargins(blockContainer, containingBlockState, geometry);
     computeLogicalLeft(containingBlockState, geometry);
     // FIXME: Clearance separates the block-start margin from the margins before it (CSS 2.2 §9.5.2).
@@ -169,7 +169,7 @@ ContainingBlockState BlockFormattingContext::containingBlockStateFor(const Rende
     };
 }
 
-BoxGeometry BlockFormattingContext::computeBorderAndPadding(const RenderBox& box, const ContainingBlockState& containingBlockState) const
+BoxGeometry BlockFormattingContext::computeBorderAndPadding(const RenderBox& box, LayoutUnit containingBlockInlineSize) const
 {
     CheckedRef style = box.style();
     // Start and end follow the box's own direction. A box whose writing mode differs from its parent's establishes
@@ -184,7 +184,7 @@ BoxGeometry BlockFormattingContext::computeBorderAndPadding(const RenderBox& box
     });
     // Percentages refer to the inline size of the containing block, on every side (CSS 2.2 §8.4).
     auto padding = [&](auto& paddingEdge) {
-        return Style::evaluateMinimum<LayoutUnit>(paddingEdge, containingBlockState.inlineRange.size(), style->usedZoomForLength());
+        return Style::evaluateMinimum<LayoutUnit>(paddingEdge, containingBlockInlineSize, style->usedZoomForLength());
     };
     geometry.setPadding({
         { padding(style->paddingStart(writingMode)), padding(style->paddingEnd(writingMode)) },
@@ -204,11 +204,93 @@ void BlockFormattingContext::computeInlineSizeAndMargins(const RenderBox& box, c
     };
     geometry.setVerticalMargin({ blockDirectionMargin(style->marginBefore(writingMode)), blockDirectionMargin(style->marginAfter(writingMode)) });
 
+    auto contentInlineSizes = [&] -> std::optional<IntrinsicWidthConstraints> {
+        if (!BlockFormattingUtils::hasIntrinsicInlineSize(box, writingMode))
+            return { };
+        return computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box));
+    }();
     CheckedRef containingBlockStyle = containingBlockState.blockContainer->style();
-    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle);
+    auto [borderBoxInlineSize, marginStart, marginEnd] = BlockFormattingUtils::inlineSizeAndMargins(box, geometry.horizontalBorderAndPadding(), containingBlockInlineSize, containingBlockStyle, contentInlineSizes);
     geometry.setContentBoxWidth(borderBoxInlineSize - geometry.horizontalBorderAndPadding());
     // Unlike border and padding, start and end margins follow the direction of the containing block.
     geometry.setHorizontalMargin({ marginStart, marginEnd });
+}
+
+// Goes through the block items of the block container's content the way layout does, collecting the outer min-content and max-content
+// contributions of the boxes in it (§5.2).
+IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const
+{
+    if (blockContainer.childrenInline())
+        return blockContainer.firstChild() ? LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(blockContainer) : IntrinsicWidthConstraints { };
+
+    auto writingMode = root().writingMode();
+    // The outer size: the inline size, clamped by the min and max inline sizes, plus border, padding and margins, where auto margins and
+    // percentages, which are cyclic here, count as zero and percentage inline sizes as auto (§5.2.1). Coverage keeps out percentage padding,
+    // which the render tree path resolves against the containing block's current inline size.
+    auto outerInlineSizes = [&](const RenderBox& box, IntrinsicWidthConstraints contentSizes) -> IntrinsicWidthConstraints {
+        CheckedRef style = box.style();
+        auto zoom = style->usedZoomForLength();
+        auto borderAndPadding = computeBorderAndPadding(box, 0_lu).horizontalBorderAndPadding();
+        // A size under a min-content and under a max-content constraint: a fixed size, or the content's for the sizing keywords.
+        auto contentBoxSizes = [&](auto& size) -> std::optional<IntrinsicWidthConstraints> {
+            if (size.isFixed()) {
+                auto value = Style::evaluate<LayoutUnit>(size, 0_lu, zoom);
+                value = std::max(0_lu, style->boxSizing() == BoxSizing::BorderBox ? value - borderAndPadding : value);
+                return IntrinsicWidthConstraints { value, value };
+            }
+            if (size.isMinContent())
+                return IntrinsicWidthConstraints { contentSizes.minimum, contentSizes.minimum };
+            if (size.isMaxContent())
+                return IntrinsicWidthConstraints { contentSizes.maximum, contentSizes.maximum };
+            if (size.isFitContent())
+                return contentSizes;
+            return { };
+        };
+        auto [minimum, maximum] = contentSizes;
+        if (auto sizes = contentBoxSizes(style->logicalWidth(writingMode)))
+            std::tie(minimum, maximum) = std::pair { sizes->minimum, sizes->maximum };
+        if (auto sizes = contentBoxSizes(style->logicalMaxWidth(writingMode))) {
+            minimum = std::min(minimum, sizes->minimum);
+            maximum = std::min(maximum, sizes->maximum);
+        }
+        if (auto sizes = contentBoxSizes(style->logicalMinWidth(writingMode))) {
+            minimum = std::max(minimum, sizes->minimum);
+            maximum = std::max(maximum, sizes->maximum);
+        }
+        auto margin = [&](auto& margin) {
+            return margin.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(margin, 0_lu, zoom);
+        };
+        auto outerSpace = borderAndPadding + margin(style->marginStart(writingMode)) + margin(style->marginEnd(writingMode));
+        return { minimum + outerSpace, maximum + outerSpace };
+    };
+    auto addContribution = [](IntrinsicWidthConstraints& containerSizes, IntrinsicWidthConstraints contribution) {
+        containerSizes.minimum = std::max(containerSizes.minimum, contribution.minimum);
+        containerSizes.maximum = std::max(containerSizes.maximum, contribution.maximum);
+    };
+
+    // Each block container collects the contributions of its children between its start and end.
+    auto blockContainerSizes = Vector<IntrinsicWidthConstraints> { { } };
+    for (auto& blockItem : BlockItemsBuilder { blockContainer }.build()) {
+        CheckedRef box = blockItem.renderer();
+        switch (blockItem.type()) {
+        case BlockItem::Type::BlockContainerStart:
+            blockContainerSizes.constructAndAppend();
+            break;
+        case BlockItem::Type::InlineContent:
+            addContribution(blockContainerSizes.last(), LayoutIntegration::BlockIntegrationUtils::inlineContentIntrinsicInlineSizes(downcast<RenderBlockFlow>(box)));
+            break;
+        case BlockItem::Type::BlockContainerEnd: {
+            auto contentSizes = blockContainerSizes.takeLast();
+            addContribution(blockContainerSizes.last(), outerInlineSizes(box, contentSizes));
+            break;
+        }
+        }
+    }
+    ASSERT(blockContainerSizes.size() == 1);
+    auto sizes = blockContainerSizes.first();
+    sizes.minimum = std::max(0_lu, sizes.minimum);
+    sizes.maximum = std::max(sizes.minimum, sizes.maximum);
+    return sizes;
 }
 
 void BlockFormattingContext::computeLogicalLeft(const ContainingBlockState& containingBlockState, BoxGeometry& geometry) const
