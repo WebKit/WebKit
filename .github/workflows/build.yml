@@ -878,7 +878,7 @@ jobs:
           echo "===== first failing full-WebCore sources ====="
           grep '^FAILED:' build-full.log | sed -E 's#.*(Source/WebCore/[^ ]+\.obj).*#\1#' | sort -u | head -100 || true
           if [ "$BUILD_STATUS" -eq 0 ]; then
-            echo "Full WebCore and WebRTC compilation passed; packaging the full static-library bundle."
+            echo "Full WebCore page-engine compilation passed; packaging the full static-library bundle."
             mkdir -p "$GITHUB_WORKSPACE/dist-full/lib" "$GITHUB_WORKSPACE/dist-full/diagnostics"
             if cmake --install build-full --prefix "$GITHUB_WORKSPACE/dist-full"; then
               # A static WebKit archive does not absorb its linked static dependencies.
@@ -890,6 +890,28 @@ jobs:
               if [ -s build-full/wkc-missing-webcore-sources.txt ]; then
                 cp build-full/wkc-missing-webcore-sources.txt "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               fi
+
+              # A successful compile is not enough if install/package output is
+              # incomplete. Refuse to advertise a full-engine artifact unless the
+              # actual non-empty archive, core public SDK headers and archive
+              # members are present and readable by the Wii U toolchain.
+              FULL_ARCHIVE="$GITHUB_WORKSPACE/dist-full/lib/libWebKitWKC.a"
+              if [ ! -s "$FULL_ARCHIVE" ]; then
+                echo "::error::Full WebKit build produced no non-empty libWebKitWKC.a."
+                exit 1
+              fi
+              for header in wkcbase.h WKCWebView.h WKCClientBuilders.h; do
+                if [ ! -s "$GITHUB_WORKSPACE/dist-full/include/wkc/$header" ]; then
+                  echo "::error::Full WebKit SDK header is missing: include/wkc/$header"
+                  exit 1
+                fi
+              done
+              MEMBER_COUNT=$("$DEVKITPPC/bin/powerpc-eabi-ar" t "$FULL_ARCHIVE" 2>/dev/null | wc -l)
+              if [ "${MEMBER_COUNT:-0}" -lt 500 ]; then
+                echo "::error::Full WebKit archive has only ${MEMBER_COUNT:-0} members; refusing to publish an incomplete engine."
+                exit 1
+              fi
+              echo "Full WebKit archive verified: $MEMBER_COUNT members." | tee -a "$GITHUB_WORKSPACE/dist-full/BUILD_PROFILE.txt"
               {
                 echo "Profile: Full WebKit page engine (DOM/HTML/CSS/loader/layout/rendering + JavaScriptCore)"
                 echo "Target: Wii U PowerPC 750 / devkitPPC"
@@ -1061,7 +1083,7 @@ jobs:
           path: dist/
           retention-days: 30
 
-      - name: Upload full WebCore + WebRTC engine bundle
+      - name: Upload full WebKit page-engine bundle
         if: ${{ !cancelled() && steps.full-engine-probe.outputs.engine_ready == 'true' }}
         uses: actions/upload-artifact@v7.0.0
         with:
