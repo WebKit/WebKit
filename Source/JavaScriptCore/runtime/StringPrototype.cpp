@@ -720,7 +720,10 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceAll, (JSGlobalObject* globalObjec
     auto thisString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto searchString = searchValue.toWTFString(globalObject);
+    JSString* searchJSString = searchValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto searchString = searchJSString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch<StringReplaceMode::Global>(vm, globalObject, string, thisString, searchString, callFrame->argument(1))));
@@ -2480,13 +2483,13 @@ static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
         return thisString;
 
     JSValue fillStringValue = callFrame->argument(1);
-    String fillString;
+    JSString* fillJSString;
     if (fillStringValue.isUndefined())
-        fillString = " "_s;
+        fillJSString = vm.smallStrings.singleCharacterString(' ');
     else {
-        fillString = fillStringValue.toWTFString(globalObject);
+        fillJSString = fillStringValue.toString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        if (fillString.isEmpty())
+        if (!fillJSString->length())
             return thisString;
     }
 
@@ -2499,13 +2502,16 @@ static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
     if (maxLength <= maxResultLengthForFlatRepeat) {
         auto thisView = thisString->view(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        StringView fillStringView(fillString);
+        auto fillStringView = fillJSString->view(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
         scope.release();
-        if (thisView->is8Bit() && fillString.is8Bit())
+        if (thisView->is8Bit() && fillStringView->is8Bit())
             return createPaddedString<Latin1Character, padKind>(globalObject, thisView, fillStringView, maxLength, fillLength);
         return createPaddedString<char16_t, padKind>(globalObject, thisView, fillStringView, maxLength, fillLength);
     }
 
+    String fillString = fillJSString->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     unsigned fillStringLength = fillString.length();
     JSString* fillerString;
 
@@ -2536,8 +2542,6 @@ static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
             RETURN_IF_EXCEPTION(scope, { });
         } else {
             // Long string: use rope construction
-            JSString* fillJSString = jsString(vm, fillString);
-
             JSRopeString::RopeBuilder<RecordOverflow> ropeBuilder(vm);
             JSString* operand = fillJSString;
             while (true) {
