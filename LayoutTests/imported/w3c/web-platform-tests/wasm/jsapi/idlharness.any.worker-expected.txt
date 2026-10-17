@@ -13,10 +13,14 @@ PASS WebAssembly namespace: operation compile(AllowSharedBufferSource, optional 
 PASS WebAssembly namespace: operation instantiate(AllowSharedBufferSource, optional object, optional WebAssemblyCompileOptions)
 PASS WebAssembly namespace: operation instantiate(Module, optional object)
 PASS WebAssembly namespace: attribute JSTag
-PASS Module interface: existence and properties of interface object
+FAIL Module interface: existence and properties of interface object assert_equals: prototype of self's property "Module" is not Function.prototype expected function "function () {
+    [native code]
+}" but got function "function AbstractModuleSource() {
+    [native code]
+}"
 PASS Module interface object length
 PASS Module interface object name
-PASS Module interface: existence and properties of interface prototype object
+FAIL Module interface: existence and properties of interface prototype object assert_equals: prototype of Module.prototype is not Object.prototype expected object "[object Object]" but got object "[object Object]"
 PASS Module interface: existence and properties of interface prototype object's "constructor" property
 PASS Module interface: existence and properties of interface prototype object's @@unscopables property
 PASS Module interface: operation exports(Module)

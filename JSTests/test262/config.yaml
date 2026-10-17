@@ -9,6 +9,7 @@ flags:
   explicit-resource-management: useExplicitResourceManagement
   import-defer: useImportDefer
   import-text: useImportText
+  source-phase-imports: useSourcePhaseImports
   joint-iteration: useJointIteration
 skip:
   features:
@@ -16,7 +17,7 @@ skip:
     - ShadowRealm
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
-    - source-phase-imports
+    - source-phase-imports-module-source
     - await-dictionary
     - import-bytes
     - immutable-arraybuffer

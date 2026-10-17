@@ -37,6 +37,7 @@ namespace JSC {
 
 class JSWebAssemblyInstance;
 class JSWebAssemblyModule;
+class SourceProvider;
 class WebAssemblyFunction;
 
 // Based on the WebAssembly.Instance specification
@@ -69,6 +70,12 @@ public:
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     JSObject* exportsObject() const LIFETIME_BOUND { return m_exportsObject.get(); }
+    JSWebAssemblyInstance* instance() const { return m_instance.get(); }
+    JSWebAssemblyModule* jsModule() const;
+    void setJSModule(VM&, JSWebAssemblyModule*);
+    void setSourceProvider(RefPtr<SourceProvider>&&);
+    SourceProvider* sourceProvider() const { return m_sourceProvider.get(); }
+    void ensureInstance(JSGlobalObject*);
 
     static constexpr ptrdiff_t offsetOfExportsObject() { return OBJECT_OFFSETOF(WebAssemblyModuleRecord, m_exportsObject); }
 
@@ -79,8 +86,10 @@ private:
     JSValue evaluateConstantExpression(JSGlobalObject*, uint64_t constantExpressionIndex, uint64_t&);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
+    WriteBarrier<JSWebAssemblyModule> m_jsModule;
     WriteBarrier<JSObject> m_startFunction;
     WriteBarrier<JSObject> m_exportsObject;
+    RefPtr<SourceProvider> m_sourceProvider;
 };
 
 } // namespace JSC
