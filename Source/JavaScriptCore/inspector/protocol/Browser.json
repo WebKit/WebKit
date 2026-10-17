@@ -5,6 +5,29 @@
     "targetTypes": ["web-page"],
     "types": [
         {
+            "id": "VirtualizationEvidence",
+            "type": "object",
+            "description": "One observation used to determine virtualization status. Negative observations do not prove that the app runs on physical hardware.",
+            "properties": [
+                { "name": "source", "type": "string", "description": "The check or OS property, such as ios-simulator, kern.hv_vmm_present, or hw.model." },
+                { "name": "status", "type": "string", "enum": ["detected", "not-detected", "unavailable"], "description": "Whether this check found a virtualization signal, found no signal, or could not provide usable evidence." },
+                { "name": "description", "type": "string", "description": "Explanation of the observation or why the check is unavailable." },
+                { "name": "value", "type": "string", "optional": true, "description": "The observed value, when available." },
+                { "name": "errorCode", "type": "integer", "optional": true, "description": "The native errno when an OS query fails. Absent for skipped checks or unusable results without an OS error." }
+            ]
+        },
+        {
+            "id": "EnvironmentInfo",
+            "type": "object",
+            "description": "Execution environment of the app hosting the inspected web page, rather than its WebContent process.",
+            "properties": [
+                { "name": "isBeingDebugged", "type": "boolean", "description": "Whether a native debugger is attached to the host app. An attached Web Inspector alone does not set this flag." },
+                { "name": "isVirtualMachine", "type": "boolean", "optional": true, "description": "True when virtualization is detected, false when the kernel reports no virtual machine and no positive evidence overrides it. Omitted when virtualizationStatus is unknown." },
+                { "name": "virtualizationStatus", "type": "string", "enum": ["detected", "not-detected", "unknown"], "description": "Detected when any check finds a virtualization signal. Not-detected when the kernel reports no virtual machine and no check finds a signal. Otherwise unknown. Not-detected is not proof of physical hardware." },
+                { "name": "virtualizationEvidence", "type": "array", "items": { "$ref": "VirtualizationEvidence" }, "description": "Observations explaining virtualizationStatus, including unavailable checks. Positive simulator or virtual model evidence overrides a negative kernel flag. Simulator builds skip kernel and model checks because those can describe the host instead of the simulated device." }
+            ]
+        },
+        {
             "id": "ExtensionId",
             "type": "string",
             "description": "Unique extension identifier."
@@ -27,6 +50,20 @@
         {
             "name": "disable",
             "description": "Disables Browser domain events."
+        },
+        {
+            "name": "getHardwareId",
+            "description": "Returns the persistent platform UUID on macOS or identifierForVendor on iOS. The macOS identifier can identify the machine across apps. The iOS identifier is scoped to the app vendor and may change after all apps from that vendor are uninstalled; it is not a persistent machine UUID. Returns an error when unavailable. Does not require Browser.enable.",
+            "returns": [
+                { "name": "hardwareId", "type": "string", "description": "The macOS IOPlatformUUID or iOS identifierForVendor UUID. In a virtual machine or simulator this identifies the guest, not the physical host." }
+            ]
+        },
+        {
+            "name": "getEnvironmentInfo",
+            "description": "Returns the current execution environment of the app hosting the inspected web page. Supported on macOS and iOS. Does not require Browser.enable.",
+            "returns": [
+                { "name": "environmentInfo", "$ref": "EnvironmentInfo" }
+            ]
         }
     ],
     "events": [

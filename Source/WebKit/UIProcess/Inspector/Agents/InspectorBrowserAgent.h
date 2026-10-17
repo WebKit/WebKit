@@ -55,6 +55,8 @@ public:
     // BrowserBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
+    Inspector::Protocol::ErrorStringOr<String> getHardwareId();
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Browser::EnvironmentInfo>> getEnvironmentInfo();
 
     void extensionsEnabled(HashMap<String, String>&&);
     void extensionsDisabled(HashSet<String>&&);

@@ -551,6 +551,8 @@ UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm @nonARC
 UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm @nonARC
 UIProcess/Gamepad/mac/UIGamepadProviderMac.mm @nonARC
 
+UIProcess/Inspector/Agents/InspectorBrowserAgentCocoa.mm
+
 UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm @nonARC
 
 UIProcess/Inspector/ios/WKInspectorHighlightView.mm @nonARC

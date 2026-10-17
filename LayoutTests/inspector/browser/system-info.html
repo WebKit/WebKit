@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Browser.SystemInfo");
+    let agent = WI.backendTarget.BrowserAgent;
+    let isCocoa = WI.Platform.name === "mac" || WI.Platform.name === "ios";
+
+    suite.addTestCase({
+        name: "Browser.getHardwareId",
+        description: "The hardware or vendor UUID should be stable across requests without logging its value.",
+        async test() {
+            let [first, second] = await Promise.allSettled([agent.getHardwareId(), agent.getHardwareId()]);
+            let validResult = isCocoa
+                ? first.status === "fulfilled" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(first.value.hardwareId)
+                : first.status === "rejected" && first.reason.message === "Hardware ID is not available on this platform";
+            InspectorTest.expectThat(validResult, "Should return a UUID or an explicit unsupported-platform error.");
+            let sameResult = first.status === second.status && (isCocoa
+                ? first.value?.hardwareId === second.value?.hardwareId
+                : first.reason?.message === second.reason?.message);
+            InspectorTest.expectThat(sameResult, "Repeated requests should return the same result.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Browser.getEnvironmentInfo",
+        description: "Environment observations should explain virtualization status, including unavailable checks.",
+        async test() {
+            let [response] = await Promise.allSettled([agent.getEnvironmentInfo()]);
+            let environmentInfo = response.value?.environmentInfo;
+            let validResult = isCocoa
+                ? response.status === "fulfilled" && typeof environmentInfo?.isBeingDebugged === "boolean"
+                : response.status === "rejected" && response.reason.message === "Execution environment information is not available on this platform";
+            InspectorTest.expectThat(validResult, "Should report native debugger attachment or an explicit unsupported-platform error.");
+            InspectorTest.expectThat(environmentInfo?.isVirtualMachine === undefined || typeof environmentInfo.isVirtualMachine === "boolean", "Virtualization status should be a boolean or absent when unknown.");
+            InspectorTest.expectThat(!isCocoa || ["detected", "not-detected", "unknown"].includes(environmentInfo?.virtualizationStatus), "Should report an explicit virtualization status.");
+
+            let evidence = environmentInfo?.virtualizationEvidence;
+            let validEvidence = Array.isArray(evidence) && evidence.length > 0 && evidence.every((entry) =>
+                typeof entry.source === "string" && !!entry.source
+                && ["detected", "not-detected", "unavailable"].includes(entry.status)
+                && typeof entry.description === "string" && !!entry.description
+                && (entry.value === undefined || typeof entry.value === "string")
+                && (entry.errorCode === undefined || (entry.status === "unavailable" && Number.isInteger(entry.errorCode))));
+            InspectorTest.expectThat(!isCocoa || validEvidence, "Should explain each virtualization check with structured evidence.");
+            InspectorTest.expectThat(!isCocoa || ["ios-simulator", "kern.hv_vmm_present", "hw.model"].every((source) => evidence?.some((entry) => entry.source === source)), "Should include simulator, kernel, and hardware model checks even when unavailable.");
+
+            let expectedStatus = evidence?.some((entry) => entry.status === "detected") ? "detected"
+                : evidence?.some((entry) => entry.source === "kern.hv_vmm_present" && entry.status === "not-detected") ? "not-detected" : "unknown";
+            let expectedBoolean = expectedStatus === "unknown" ? undefined : expectedStatus === "detected";
+            InspectorTest.expectThat(!isCocoa || (environmentInfo?.virtualizationStatus === expectedStatus && environmentInfo?.isVirtualMachine === expectedBoolean), "Summary and legacy boolean should agree with the evidence, with positive evidence taking precedence.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Browser.SystemInfo.Disabled",
+        description: "System information commands should not require Browser events to be enabled.",
+        async test() {
+            await agent.disable();
+            try {
+                let responses = await Promise.allSettled([agent.getHardwareId(), agent.getEnvironmentInfo()]);
+                InspectorTest.expectThat(responses.every((response) => response.status === (isCocoa ? "fulfilled" : "rejected")), "Both commands should work while Browser events are disabled.");
+            } finally {
+                await agent.enable();
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Browser hardware ID and execution environment commands.</p>
+</body>
+</html>

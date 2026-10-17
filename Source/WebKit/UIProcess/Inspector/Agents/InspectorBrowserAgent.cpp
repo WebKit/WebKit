@@ -88,6 +88,18 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
     return { };
 }
 
+#if !PLATFORM(COCOA)
+Inspector::Protocol::ErrorStringOr<String> InspectorBrowserAgent::getHardwareId()
+{
+    return makeUnexpected("Hardware ID is not available on this platform"_s);
+}
+
+Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Browser::EnvironmentInfo>> InspectorBrowserAgent::getEnvironmentInfo()
+{
+    return makeUnexpected("Execution environment information is not available on this platform"_s);
+}
+#endif
+
 void InspectorBrowserAgent::extensionsEnabled(HashMap<String, String>&& extensionIDToName)
 {
     ASSERT(enabled());

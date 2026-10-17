@@ -7498,6 +7498,7 @@
 		905620E912BC248B000799B6 /* WebMemorySampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMemorySampler.h; sourceTree = "<group>"; };
 		9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBrowserAgent.h; sourceTree = "<group>"; };
 		9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBrowserAgent.cpp; sourceTree = "<group>"; };
+		919794062EE0000100171017 /* InspectorBrowserAgentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InspectorBrowserAgentCocoa.mm; sourceTree = "<group>"; };
 		9197940723DBC4CA00257892 /* WebPageInspectorAgentBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageInspectorAgentBase.h; sourceTree = "<group>"; };
 		9197940923DBC4E000257892 /* APIInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInspectorClient.h; sourceTree = "<group>"; };
 		9197940B23DBC50300257892 /* _WKInspectorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorDelegate.h; sourceTree = "<group>"; };
@@ -15487,6 +15488,7 @@
 			children = (
 				9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */,
 				9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */,
+				919794062EE0000100171017 /* InspectorBrowserAgentCocoa.mm */,
 				AA1057000000000000000001 /* InspectorStorageAgent.cpp */,
 				AA1057000000000000000002 /* InspectorStorageAgent.h */,
 				D2CB01DAB4428B76CDA8AECC /* ProxyingNetworkAgent.cpp */,

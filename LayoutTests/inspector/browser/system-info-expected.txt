@@ -1,0 +1,19 @@
+Tests for Browser hardware ID and execution environment commands.
+
+
+== Running test suite: Browser.SystemInfo
+-- Running test case: Browser.getHardwareId
+PASS: Should return a UUID or an explicit unsupported-platform error.
+PASS: Repeated requests should return the same result.
+
+-- Running test case: Browser.getEnvironmentInfo
+PASS: Should report native debugger attachment or an explicit unsupported-platform error.
+PASS: Virtualization status should be a boolean or absent when unknown.
+PASS: Should report an explicit virtualization status.
+PASS: Should explain each virtualization check with structured evidence.
+PASS: Should include simulator, kernel, and hardware model checks even when unavailable.
+PASS: Summary and legacy boolean should agree with the evidence, with positive evidence taking precedence.
+
+-- Running test case: Browser.SystemInfo.Disabled
+PASS: Both commands should work while Browser events are disabled.
+
