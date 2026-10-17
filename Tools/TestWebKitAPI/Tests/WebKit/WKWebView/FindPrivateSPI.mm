@@ -174,8 +174,7 @@ TEST_P(FindPrivateSPI, StepAcrossCrossOriginFrames)
     PrivateFindSPITester find { page.webView() };
 
     Vector<Vector<unsigned>> expectedFrames { { }, { 0 }, { 1 }, { 2 }, { } };
-    // FIXME(326396): With site isolation, the match index doesn't follow frame tree order, even though the selection does.
-    Vector<int> expectedIndices = GetParam() == SiteIsolation::On ? Vector<int> { 0, 2, 3, 1, 0 } : Vector<int> { 0, 1, 2, 3, 0 };
+    Vector<int> expectedIndices { 0, 1, 2, 3, 0 };
     for (size_t i = 0; i < expectedFrames.size(); ++i) {
         auto result = find.findString(@"hello", stepOptions);
         EXPECT_EQ(result.matchCount, 4u);
@@ -253,8 +252,7 @@ TEST_P(FindPrivateSPI, NestedFrames)
     find.findString(@"hello", stepOptions);
     find.findString(@"hello", stepOptions);
     auto result = find.findString(@"hello", stepOptions);
-    // FIXME(326396): With site isolation, the match index doesn't follow frame tree order, even though the selection does.
-    EXPECT_EQ(result.matchIndex, GetParam() == SiteIsolation::On ? 1 : 2);
+    EXPECT_EQ(result.matchIndex, 2);
     auto grandchildFrame = FindStateSnapshot::capture(page.webView()).frame({ 0, 0 });
     ASSERT_TRUE(grandchildFrame);
     EXPECT_WK_STREQ("hello", grandchildFrame->selectedText);

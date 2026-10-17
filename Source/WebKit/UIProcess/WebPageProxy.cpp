@@ -8057,6 +8057,14 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
                 callbackAggregator->foundString(frameID, matchCount, didWrap);
             }, pageID);
         });
+
+        if (willFindAllMatches(options)) {
+            forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                webProcess.sendWithAsyncReply(Messages::WebPage::CountStringMatchesByFrame(string, options, maxMatchCount), [callbackAggregator](Vector<std::pair<FrameIdentifier, uint32_t>>&& counts) {
+                    callbackAggregator->foundMatchCountsByFrame(WTF::move(counts));
+                }, pageID);
+            });
+        }
     };
 
 #if ENABLE(IMAGE_ANALYSIS)
