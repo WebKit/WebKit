@@ -4989,8 +4989,6 @@ webkit.org/b/314809 fast/repaint/table-row-move-after-content-change.html [ Pass
 
 webkit.org/b/315756 fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass ]
 
-webkit.org/b/316158 fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Crash Pass ]
-
 webkit.org/b/316427 webkit.org/b/315994 animations/restart-after-scroll.html [ Pass Failure Crash ]
 
 webkit.org/b/316428 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-inert-invoker.html [ Pass Failure ]
