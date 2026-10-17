@@ -1,0 +1,5 @@
+PASS: FrameCanCreatePaymentSession was rejected
+PASS: FrameDocumentSecurityPolicy was rejected
+PASS: FrameDocumentIsSandboxedOrigin was accepted
+PASS: FrameURLProtocol was rejected
+

@@ -83,7 +83,6 @@ protected:
     void updateOpener(std::optional<WebCore::FrameIdentifier>);
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize);
 
-    void broadcastAllFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncData&);
     void broadcastFrameTreeSyncDataToOtherProcesses(WebCore::FrameTreeSyncSerializationData&&);
 
     void didNotifyUserActivation(MonotonicTime, std::optional<WebCore::UserGestureTokenIdentifier> forcedActivationToken);
