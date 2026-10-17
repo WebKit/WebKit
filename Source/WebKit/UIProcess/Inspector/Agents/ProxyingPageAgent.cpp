@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProxyingPageAgent.h"
 
+#include "APIData.h"
 #include "HandleMessage.h"
 #include "ProxyingPageAgentMessages.h"
 #include "ValidationProcedures.h"
@@ -42,6 +43,7 @@
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/Base64.h>
 
 #define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
     EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, (void)0, __VA_ARGS__)
@@ -744,9 +746,15 @@ CommandResult<String> ProxyingPageAgent::snapshotRect(int, int, int, int, Protoc
 }
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-CommandResult<String> ProxyingPageAgent::archive()
+void ProxyingPageAgent::archive(Ref<ArchiveCallback>&& callback)
 {
-    return makeUnexpected("Not yet implemented under Site Isolation"_s);
+    protect(m_inspectedPage.get())->getWebArchiveData([callback = WTF::move(callback)](API::Data* data) {
+        if (!data) {
+            callback->sendFailure("Could not create web archive"_s);
+            return;
+        }
+        callback->sendSuccess(base64EncodeToString(data->span()));
+    });
 }
 #endif
 

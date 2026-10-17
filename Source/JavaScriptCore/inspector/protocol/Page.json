@@ -318,7 +318,8 @@
             "name": "archive",
             "description": "Grab an archive of the page.",
             "condition": "(defined(ENABLE_WEB_ARCHIVE) && ENABLE_WEB_ARCHIVE) && (defined(USE_CF) && USE_CF)",
-            "targetTypes": ["page"],
+            "targetTypes": ["page", "web-page"],
+            "async": true,
             "returns": [
                 { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
             ]
