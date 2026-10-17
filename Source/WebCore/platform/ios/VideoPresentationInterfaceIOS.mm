@@ -602,8 +602,11 @@ void VideoPresentationInterfaceIOS::doExitFullscreen()
 
 void VideoPresentationInterfaceIOS::exitFullscreenHandler(BOOL success, NSError* error, NextActions nextActions)
 {
-    if (!success)
+    if (!success) {
         SAFE_WTFLOGALWAYS("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %@", [error localizedDescription]);
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::didExitFullscreen(%p) - %d", this, success);
 
@@ -662,8 +665,11 @@ void VideoPresentationInterfaceIOS::cleanupFullscreen()
     if (m_currentMode.hasFullscreen()) {
         [[playerViewController view] layoutIfNeeded];
         dismissFullscreen(false, [](BOOL success, NSError *error) {
-            if (!success)
+            if (!success) {
                 SAFE_WTFLOGALWAYS("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %@", [error localizedDescription]);
+                ASSERT_NOT_REACHED();
+                return;
+            }
         });
     }
 
