@@ -14,6 +14,9 @@ if (grep({ /^-t/ || /^--version$/ } @ARGV)) {
     # log entries for whatever we just removed.
     my ($toolIndex) = grep({ $ARGV[$_] eq '-t' } 0 .. $#ARGV);
     my $isRestat = defined($toolIndex) && ($ARGV[$toolIndex + 1] // '') eq 'restat';
+    # CMake splits the restat into several invocations to keep command lines
+    # short; only the one for build.ninja needs to be preceded by cleandead.
+    $isRestat &&= grep({ $_ eq 'build.ninja' } @ARGV);
 
     # CMake runs us from wherever it was invoked, not from the build directory, so
     # cleandead has to be told where to look. try_compile scratch builds get their
