@@ -166,7 +166,6 @@ private:
     // Members are ordered by descending alignment to minimize padding.
     // 8-byte aligned:
     TrailingWhitespace m_trailingWhitespace { };
-    Markable<size_t> m_lastNonWhitespaceContentStart { };
     const Box* m_layoutBox { nullptr };
     const Style::ComputedStyle& m_style;
     Text m_textContent;
@@ -175,9 +174,13 @@ private:
     InlineLayoutUnit m_logicalWidth { 0 };
     InlineLayoutUnit m_textSpacingAdjustment { 0 };
     InlineDisplay::Box::Expansion m_expansion;
+    Markable<unsigned> m_lastNonWhitespaceContentStart { };
+    InlineLayoutUnit m_lastNonWhitespaceItemWidth { 0 };
     // 1-byte:
     Type m_type { Type::Text };
-    LineShapingBoundary m_shapingBoundary { LineShapingBoundary::NotApplicable };
+    LineShapingBoundary m_shapingBoundary : 2 { LineShapingBoundary::NotApplicable };
+    bool m_hasAdjacentNonWhitespaceItems : 1 { false };
+    bool m_hasInnerWhitespace : 1 { false };
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     GlyphOverflow m_glyphOverflow;
 };

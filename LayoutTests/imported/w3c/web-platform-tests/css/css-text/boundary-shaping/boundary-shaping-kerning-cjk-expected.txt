@@ -1,0 +1,7 @@
+すペす
+すペす
+すペす
+
+PASS The test font applies kerning to the pair "すペ"
+PASS Kerning is applied across an inline box boundary with no change in formatting
+

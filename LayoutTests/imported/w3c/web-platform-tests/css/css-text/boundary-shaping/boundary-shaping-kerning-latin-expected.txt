@@ -1,0 +1,7 @@
+YeYe
+YeYe
+YeYe
+
+PASS The test font applies kerning to the pair "Ye"
+PASS Kerning is applied across an inline box boundary with no change in formatting
+
