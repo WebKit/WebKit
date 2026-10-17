@@ -63,13 +63,6 @@
     return YES;
 }
 
-#if !PLATFORM(IOS_FAMILY)
-- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
-{
-    return YES;
-}
-#endif
-
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id<WebFormSubmissionListener>)listener
 {
     [listener continue];

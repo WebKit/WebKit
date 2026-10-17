@@ -48,4 +48,4 @@ bool SearchPopupMenuIOS::enabled()
     return false;
 }
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
