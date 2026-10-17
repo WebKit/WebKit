@@ -747,12 +747,14 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
         driverUniforms->getDriverUniformsVariable()->getType().getInterfaceBlock()->uniqueId(),
         vk::spirv::kIdDriverUniformsBlock);
 
-    if (getShaderType() == GL_VERTEX_SHADER)
+    if (!compileOptions.useIR)
     {
-        if (!ShaderBuiltinsWorkaround(this, root, driverUniforms, &getSymbolTable(),
-                                      compileOptions))
+        if (getShaderType() == GL_VERTEX_SHADER)
         {
-            return false;
+            if (!ShaderBuiltinsWorkaround(this, root, driverUniforms, &getSymbolTable()))
+            {
+                return false;
+            }
         }
     }
 

@@ -33,8 +33,10 @@ TEST(StringUtilsTest, SplitStringBasics)
     // Should split on any of the separators.
     r = SplitString("::,,;;", ",:;", KEEP_WHITESPACE, SPLIT_WANT_ALL);
     ASSERT_EQ(7u, r.size());
-    for (auto str : r)
+    for (const std::string &str : r)
+    {
         ASSERT_TRUE(str.empty());
+    }
 
     r = SplitString("red, green; blue:", ",:;", TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
     ASSERT_EQ(3u, r.size());

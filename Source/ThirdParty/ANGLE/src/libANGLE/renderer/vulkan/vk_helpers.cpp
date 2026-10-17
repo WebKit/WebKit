@@ -3843,9 +3843,8 @@ bool DynamicDescriptorPool::allocateFromExistingPool(ErrorContext *context,
                                                      const DescriptorSetLayout &descriptorSetLayout,
                                                      DescriptorSetPointer *descriptorSetOut)
 {
-    for (size_t poolIndex = 0; poolIndex < mDescriptorPools.size(); ++poolIndex)
+    for (DescriptorPoolPointer &pool : mDescriptorPools)
     {
-        DescriptorPoolPointer &pool = mDescriptorPools[poolIndex];
         if (!pool || !pool->valid())
         {
             continue;
@@ -4132,7 +4131,7 @@ void DynamicDescriptorPool::destroyUnusedPool(Renderer *renderer,
 void DynamicDescriptorPool::checkAndDestroyUnusedPool(Renderer *renderer)
 {
     ASSERT(renderer->getFeatures().descriptorSetCache.enabled);
-    for (auto pool : mDescriptorPools)
+    for (const DescriptorPoolPointer &pool : mDescriptorPools)
     {
         pool->cleanupPendingGarbage();
     }
@@ -6095,6 +6094,13 @@ angle::Result ImageHelper::initExternal(ErrorContext *context,
                     imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
                 }
             }
+            else if (renderer->getFeatures().simulateTileMemoryTransferSrcForTesting.enabled)
+            {
+                // Use SwiftShader to test VK_IMAGE_USAGE_TRANSFER_SRC_BIT capability
+                ASSERT(renderer->getFeatures().simulateTileMemoryForTesting.enabled);
+                mTileMemorySupportsTransferSrc = true;
+                imageInfo.usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+            }
             mUseTileMemory = true;
         }
         else
@@ -6732,6 +6738,12 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
 
         if (prevImage->mTileMemorySupportsTransferSrc)
         {
+            // If image has depth and stencil, copy to each individually per Vulkan spec
+            // VUID-VkImageMemoryBarrier-image-03320.
+            if (isCombinedDepthStencilFormat())
+            {
+                aspectFlags = kDepthStencilAspects;
+            }
             // Use vkCmdCopyImage for a bit-exact copy instead of sampling tile memory through a
             // shader.
             CommandResources resources;
@@ -6754,6 +6766,15 @@ angle::Result ImageHelper::fallbackFromTileMemory(ContextVk *contextVk)
 
             commandBuffer->copyImage(prevImage->getImage(), prevImage->getCurrentLayout(renderer),
                                      getImage(), getCurrentLayout(renderer), 1, &region);
+
+            // Seal mOutsideRenderPassCommands so the copy lands in the same vkQueueSubmit as
+            // the tile memory render pass (mirrors what copyImageFromTileMemory does below).
+            ANGLE_TRY(contextVk->flushCommandsAndEndRenderPassWithoutSubmit(
+                RenderPassClosureReason::TileMemorySimulatedClear));
+
+            // Restore the added extra content defined bits due to extra aspectFlags for copyImage.
+            mVkImageContentDefined[0]        = prevImage->mVkImageContentDefined[0];
+            mVkImageStencilContentDefined[0] = prevImage->mVkImageStencilContentDefined[0];
         }
         else
         {
@@ -9357,10 +9378,8 @@ angle::Result ImageHelper::reformatStagedImageUpdates(ContextVk *contextVk,
     VkDeviceSize readbackBatchCapacity = 0;
 
     // Bound readback batches by staging allocation capacity and mip level.
-    for (size_t level = 0; level < mSubresourceUpdates.size(); ++level)
+    for (SubresourceUpdates &levelUpdates : mSubresourceUpdates)
     {
-        SubresourceUpdates &levelUpdates = mSubresourceUpdates[level];
-
         for (SubresourceUpdate &update : levelUpdates)
         {
             if (update.updateSource != UpdateSource::Image ||

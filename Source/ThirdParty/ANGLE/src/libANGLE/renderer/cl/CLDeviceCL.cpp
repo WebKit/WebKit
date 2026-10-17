@@ -7,54 +7,25 @@
 
 #include "libANGLE/renderer/cl/CLDeviceCL.h"
 
+#include "common/string_utils.h"
+#include "libANGLE/CLCaps.h"
 #include "libANGLE/renderer/cl/cl_util.h"
 
 #include "libANGLE/CLDevice.h"
 #include "libANGLE/cl_utils.h"
 
-namespace rx
-{
-
 namespace
 {
 
-// Object information is queried in OpenCL by providing allocated memory into which the requested
-// data is copied. If the size of the data is unknown, it can be queried first with an additional
-// call to the same function, but without requesting the data itself. This function provides the
-// functionality to request and validate the size and the data.
-template <typename T>
-bool GetDeviceInfo(cl_device_id device, cl::DeviceInfo name, std::vector<T> &vector)
+bool HasExtension(const std::string &extensions, const std::string &extension)
 {
-    size_t size = 0u;
-    if (device->getDispatch().clGetDeviceInfo(device, cl::ToCLenum(name), 0u, nullptr, &size) ==
-            CL_SUCCESS &&
-        (size % sizeof(T)) == 0u)  // size has to be a multiple of the data type
-    {
-        vector.resize(size / sizeof(T));
-        if (device->getDispatch().clGetDeviceInfo(device, cl::ToCLenum(name), size, vector.data(),
-                                                  nullptr) == CL_SUCCESS)
-        {
-            return true;
-        }
-    }
-    ERR() << "Failed to query CL device info for " << name;
-    return false;
-}
-
-// This queries the OpenCL device info for value types with known size
-template <typename T>
-bool GetDeviceInfo(cl_device_id device, cl::DeviceInfo name, T &value)
-{
-    if (device->getDispatch().clGetDeviceInfo(device, cl::ToCLenum(name), sizeof(T), &value,
-                                              nullptr) != CL_SUCCESS)
-    {
-        ERR() << "Failed to query CL device info for " << name;
-        return false;
-    }
-    return true;
+    return angle::ContainsToken(extensions, ' ', extension);
 }
 
 }  // namespace
+
+namespace rx
+{
 
 CLDeviceCL::~CLDeviceCL()
 {
@@ -69,7 +40,7 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
     Info info(type);
     std::vector<char> valString;
 
-    if (!GetDeviceInfo(mNative, cl::DeviceInfo::MaxWorkItemSizes, info.maxWorkItemSizes))
+    if (!GetDeviceInfo(cl::DeviceInfo::MaxWorkItemSizes, info.maxWorkItemSizes))
     {
         return Info{};
     }
@@ -84,26 +55,26 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
         return Info{};
     }
 
-    if (!GetDeviceInfo(mNative, cl::DeviceInfo::MaxMemAllocSize, info.maxMemAllocSize) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::ImageSupport, info.imageSupport) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::Image2D_MaxWidth, info.image2D_MaxWidth) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::Image2D_MaxHeight, info.image2D_MaxHeight) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::Image3D_MaxWidth, info.image3D_MaxWidth) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::Image3D_MaxHeight, info.image3D_MaxHeight) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::Image3D_MaxDepth, info.image3D_MaxDepth) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::MemBaseAddrAlign, info.memBaseAddrAlign) ||
-        !GetDeviceInfo(mNative, cl::DeviceInfo::ExecutionCapabilities, info.execCapabilities))
+    if (!GetDeviceInfo(cl::DeviceInfo::MaxMemAllocSize, info.maxMemAllocSize) ||
+        !GetDeviceInfo(cl::DeviceInfo::ImageSupport, info.imageSupport) ||
+        !GetDeviceInfo(cl::DeviceInfo::Image2D_MaxWidth, info.image2D_MaxWidth) ||
+        !GetDeviceInfo(cl::DeviceInfo::Image2D_MaxHeight, info.image2D_MaxHeight) ||
+        !GetDeviceInfo(cl::DeviceInfo::Image3D_MaxWidth, info.image3D_MaxWidth) ||
+        !GetDeviceInfo(cl::DeviceInfo::Image3D_MaxHeight, info.image3D_MaxHeight) ||
+        !GetDeviceInfo(cl::DeviceInfo::Image3D_MaxDepth, info.image3D_MaxDepth) ||
+        !GetDeviceInfo(cl::DeviceInfo::MemBaseAddrAlign, info.memBaseAddrAlign) ||
+        !GetDeviceInfo(cl::DeviceInfo::ExecutionCapabilities, info.execCapabilities))
     {
         return Info{};
     }
 
-    if (!GetDeviceInfo(mNative, cl::DeviceInfo::Version, valString))
+    if (!GetDeviceInfo(cl::DeviceInfo::Version, valString))
     {
         return Info{};
     }
     info.versionStr.assign(valString.data());
 
-    if (!GetDeviceInfo(mNative, cl::DeviceInfo::Extensions, valString))
+    if (!GetDeviceInfo(cl::DeviceInfo::Extensions, valString))
     {
         return Info{};
     }
@@ -126,33 +97,32 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
 
     if (info.version >= CL_MAKE_VERSION(1, 2, 0))
     {
-        if (!GetDeviceInfo(mNative, cl::DeviceInfo::ImageMaxBufferSize, info.imageMaxBufferSize) ||
-            !GetDeviceInfo(mNative, cl::DeviceInfo::ImageMaxArraySize, info.imageMaxArraySize) ||
-            !GetDeviceInfo(mNative, cl::DeviceInfo::BuiltInKernels, valString))
+        if (!GetDeviceInfo(cl::DeviceInfo::ImageMaxBufferSize, info.imageMaxBufferSize) ||
+            !GetDeviceInfo(cl::DeviceInfo::ImageMaxArraySize, info.imageMaxArraySize) ||
+            !GetDeviceInfo(cl::DeviceInfo::BuiltInKernels, valString))
         {
             return Info{};
         }
         info.builtInKernels.assign(valString.data());
-        if (!GetDeviceInfo(mNative, cl::DeviceInfo::PartitionProperties,
-                           info.partitionProperties) ||
-            !GetDeviceInfo(mNative, cl::DeviceInfo::PartitionType, info.partitionType))
+        if (!GetDeviceInfo(cl::DeviceInfo::PartitionProperties, info.partitionProperties) ||
+            !GetDeviceInfo(cl::DeviceInfo::PartitionType, info.partitionType))
         {
             return Info{};
         }
     }
 
     if (info.version >= CL_MAKE_VERSION(2, 0, 0) &&
-        (!GetDeviceInfo(mNative, cl::DeviceInfo::ImagePitchAlignment, info.imagePitchAlignment) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::ImageBaseAddressAlignment,
+        (!GetDeviceInfo(cl::DeviceInfo::ImagePitchAlignment, info.imagePitchAlignment) ||
+         !GetDeviceInfo(cl::DeviceInfo::ImageBaseAddressAlignment,
                         info.imageBaseAddressAlignment) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::QueueOnDeviceMaxSize, info.queueOnDeviceMaxSize)))
+         !GetDeviceInfo(cl::DeviceInfo::QueueOnDeviceMaxSize, info.queueOnDeviceMaxSize)))
     {
         return Info{};
     }
 
     if (info.version >= CL_MAKE_VERSION(2, 1, 0))
     {
-        if (!GetDeviceInfo(mNative, cl::DeviceInfo::IL_Version, valString))
+        if (!GetDeviceInfo(cl::DeviceInfo::IL_Version, valString))
         {
             return Info{};
         }
@@ -160,13 +130,12 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
     }
 
     if (info.version >= CL_MAKE_VERSION(3, 0, 0) &&
-        (!GetDeviceInfo(mNative, cl::DeviceInfo::ILsWithVersion, info.ILsWithVersion) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::BuiltInKernelsWithVersion,
+        (!GetDeviceInfo(cl::DeviceInfo::ILsWithVersion, info.ILsWithVersion) ||
+         !GetDeviceInfo(cl::DeviceInfo::BuiltInKernelsWithVersion,
                         info.builtInKernelsWithVersion) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::OpenCL_C_AllVersions, info.OpenCL_C_AllVersions) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::OpenCL_C_Features, info.OpenCL_C_Features) ||
-         !GetDeviceInfo(mNative, cl::DeviceInfo::ExtensionsWithVersion,
-                        info.extensionsWithVersion)))
+         !GetDeviceInfo(cl::DeviceInfo::OpenCL_C_AllVersions, info.OpenCL_C_AllVersions) ||
+         !GetDeviceInfo(cl::DeviceInfo::OpenCL_C_Features, info.OpenCL_C_Features) ||
+         !GetDeviceInfo(cl::DeviceInfo::ExtensionsWithVersion, info.extensionsWithVersion)))
     {
         return Info{};
     }
@@ -175,39 +144,17 @@ CLDeviceImpl::Info CLDeviceCL::createInfo(cl::DeviceType type) const
     return info;
 }
 
-angle::Result CLDeviceCL::getInfoUInt(cl::DeviceInfo name, cl_uint *value) const
+bool CLDeviceCL::getInfoString(cl::DeviceInfo name, std::string *value) const
 {
-    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                        value, nullptr));
-    return angle::Result::Continue;
-}
+    std::vector<char> buf;
+    if (!GetDeviceInfo<char>(name, buf))
+    {
+        return false;
+    }
 
-angle::Result CLDeviceCL::getInfoULong(cl::DeviceInfo name, cl_ulong *value) const
-{
-    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                        value, nullptr));
-    return angle::Result::Continue;
-}
+    value->assign(buf.data());
 
-angle::Result CLDeviceCL::getInfoSizeT(cl::DeviceInfo name, size_t *value) const
-{
-    ANGLE_CL_TRY(mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), sizeof(*value),
-                                                        value, nullptr));
-    return angle::Result::Continue;
-}
-
-angle::Result CLDeviceCL::getInfoStringLength(cl::DeviceInfo name, size_t *value) const
-{
-    ANGLE_CL_TRY(
-        mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), 0u, nullptr, value));
-    return angle::Result::Continue;
-}
-
-angle::Result CLDeviceCL::getInfoString(cl::DeviceInfo name, size_t size, char *value) const
-{
-    ANGLE_CL_TRY(
-        mNative->getDispatch().clGetDeviceInfo(mNative, cl::ToCLenum(name), size, value, nullptr));
-    return angle::Result::Continue;
+    return true;
 }
 
 angle::Result CLDeviceCL::createSubDevices(const cl_device_partition_property *properties,
@@ -237,6 +184,187 @@ angle::Result CLDeviceCL::createSubDevices(const cl_device_partition_property *p
 
 CLDeviceCL::CLDeviceCL(const cl::Device &device, cl_device_id native)
     : CLDeviceImpl(device), mNative(native)
-{}
+{
+    bool getInfoPassed = true;
+
+    // Querying an info name that is missing before the device's OpenCL version, or that belongs to
+    // an extension the device does not support, fails with CL_INVALID_VALUE. So gate the queries
+    // below on the device version and extensions, matching table 5 of the OpenCL 3.0 spec.
+    // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clGetDeviceInfo
+    std::string extensions;
+    getInfoPassed &= getInfoString(cl::DeviceInfo::Version, &mCaps.version);
+    getInfoPassed &= getInfoString(cl::DeviceInfo::Extensions, &extensions);
+    const cl_version version = ExtractCLVersion(mCaps.version);
+
+    // Populate the caps supported by all versions.
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::VendorID, mCaps.vendorID);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxComputeUnits, mCaps.maxComputeUnits);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::MaxWorkItemDimensions, mCaps.maxWorkItemDimensions);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthChar, mCaps.preferredVectorWidthChar);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthShort, mCaps.preferredVectorWidthShort);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthInt, mCaps.preferredVectorWidthInt);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthLong, mCaps.preferredVectorWidthLong);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthFloat, mCaps.preferredVectorWidthFloat);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthDouble, mCaps.preferredVectorWidthDouble);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxClockFrequency, mCaps.maxClockFrequency);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::AddressBits, mCaps.addressBits);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxReadImageArgs, mCaps.maxReadImageArgs);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxWriteImageArgs, mCaps.maxWriteImageArgs);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxSamplers, mCaps.maxSamplers);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::MinDataTypeAlignSize, mCaps.minDataTypeAlignSize);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::GlobalMemCacheType, mCaps.globalMemCacheType);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::GlobalMemCachelineSize, mCaps.globalMemCachelineSize);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxConstantArgs, mCaps.maxConstantArgs);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::LocalMemType, mCaps.localMemType);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::ErrorCorrectionSupport, mCaps.errorCorrectionSupport);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::EndianLittle, mCaps.endianLittle);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::Available, mCaps.available);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::CompilerAvailable, mCaps.compilerAvailable);
+
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::SingleFpConfig, mCaps.singleFpConfig);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::GlobalMemCacheSize, mCaps.globalMemCacheSize);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::GlobalMemSize, mCaps.globalMemSize);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::MaxConstantBufferSize, mCaps.maxConstantBufferSize);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::LocalMemSize, mCaps.localMemSize);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::ExecutionCapabilities, mCaps.executionCapabilities);
+    // CL_DEVICE_QUEUE_ON_HOST_PROPERTIES shares its value with CL_DEVICE_QUEUE_PROPERTIES.
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::QueueOnHostProperties, mCaps.queueOnHostProperties);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxMemAllocSize, mCaps.maxMemAllocSize);
+
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxWorkGroupSize, mCaps.maxWorkGroupSize);
+    getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxParameterSize, mCaps.maxParameterSize);
+    getInfoPassed &=
+        GetDeviceInfo(cl::DeviceInfo::ProfilingTimerResolution, mCaps.profilingTimerResolution);
+
+    getInfoPassed &= getInfoString(cl::DeviceInfo::Name, &mCaps.name);
+    getInfoPassed &= getInfoString(cl::DeviceInfo::Vendor, &mCaps.vendor);
+    getInfoPassed &= getInfoString(cl::DeviceInfo::DriverVersion, &mCaps.driverVersion);
+    getInfoPassed &= getInfoString(cl::DeviceInfo::Profile, &mCaps.profile);
+
+    // Populate the caps added in OpenCL 1.1.
+    if (version >= CL_MAKE_VERSION(1, 1, 0))
+    {
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::PreferredVectorWidthHalf, mCaps.preferredVectorWidthHalf);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthChar, mCaps.nativeVectorWidthChar);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthShort, mCaps.nativeVectorWidthShort);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthInt, mCaps.nativeVectorWidthInt);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthLong, mCaps.nativeVectorWidthLong);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthFloat, mCaps.nativeVectorWidthFloat);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthDouble, mCaps.nativeVectorWidthDouble);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::NativeVectorWidthHalf, mCaps.nativeVectorWidthHalf);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::HostUnifiedMemory, mCaps.hostUnifiedMemory);
+        getInfoPassed &= getInfoString(cl::DeviceInfo::OpenCL_C_Version, &mCaps.openCL_C_Version);
+    }
+
+    // Populate the caps added in OpenCL 1.2.
+    if (version >= CL_MAKE_VERSION(1, 2, 0))
+    {
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::LinkerAvailable, mCaps.linkerAvailable);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::PreferredInteropUserSync, mCaps.preferredInteropUserSync);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::PartitionMaxSubDevices, mCaps.partitionMaxSubDevices);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::PartitionAffinityDomain, mCaps.partitionAffinityDomain);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PrintfBufferSize, mCaps.printfBufferSize);
+    }
+
+    // Populate the caps added in OpenCL 2.0.
+    if (version >= CL_MAKE_VERSION(2, 0, 0))
+    {
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::MaxReadWriteImageArgs, mCaps.maxReadWriteImageArgs);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxPipeArgs, mCaps.maxPipeArgs);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PipeMaxActiveReservations,
+                                       mCaps.pipeMaxActiveReservations);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PipeMaxPacketSize, mCaps.pipeMaxPacketSize);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::QueueOnDevicePreferredSize,
+                                       mCaps.queueOnDevicePreferredSize);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::QueueOnDeviceMaxSize, mCaps.queueOnDeviceMaxSize);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxOnDeviceQueues, mCaps.maxOnDeviceQueues);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxOnDeviceEvents, mCaps.maxOnDeviceEvents);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PreferredPlatformAtomicAlignment,
+                                       mCaps.preferredPlatformAtomicAlignment);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PreferredGlobalAtomicAlignment,
+                                       mCaps.preferredGlobalAtomicAlignment);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PreferredLocalAtomicAlignment,
+                                       mCaps.preferredLocalAtomicAlignment);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::QueueOnDeviceProperties, mCaps.queueOnDeviceProperties);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::SVM_Capabilities, mCaps.sVM_Capabilities);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::MaxGlobalVariableSize, mCaps.maxGlobalVariableSize);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::GlobalVariablePreferredTotalSize,
+                                       mCaps.globalVariablePreferredTotalSize);
+    }
+
+    // Populate the caps added in OpenCL 2.1.
+    if (version >= CL_MAKE_VERSION(2, 1, 0))
+    {
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::MaxNumSubGroups, mCaps.maxNumSubGroups);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::SubGroupIndependentForwardProgress,
+                                       mCaps.subGroupIndependentForwardProgress);
+    }
+
+    // Populate the caps added in OpenCL 3.0.
+    if (version >= CL_MAKE_VERSION(3, 0, 0))
+    {
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::NonUniformWorkGroupSupport,
+                                       mCaps.nonUniformWorkGroupSupport);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::WorkGroupCollectiveFunctionsSupport,
+                                       mCaps.workGroupCollectiveFunctionsSupport);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::GenericAddressSpaceSupport,
+                                       mCaps.genericAddressSpaceSupport);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PipeSupport, mCaps.pipeSupport);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::AtomicMemoryCapabilities, mCaps.atomicMemoryCapabilities);
+        getInfoPassed &=
+            GetDeviceInfo(cl::DeviceInfo::AtomicFenceCapabilities, mCaps.atomicFenceCapabilities);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::DeviceEnqueueCapabilities,
+                                       mCaps.deviceEnqueueCapabilities);
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::PreferredWorkGroupSizeMultiple,
+                                       mCaps.preferredWorkGroupSizeMultiple);
+        getInfoPassed &= getInfoString(cl::DeviceInfo::LatestConformanceVersionPassed,
+                                       &mCaps.latestConformanceVersionPassed);
+    }
+
+    // Populate the caps that depend on extensions.
+    // CL_DEVICE_DOUBLE_FP_CONFIG was part of cl_khr_fp64 before becoming core in OpenCL 1.2.
+    if (version >= CL_MAKE_VERSION(1, 2, 0) || HasExtension(extensions, "cl_khr_fp64"))
+    {
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::DoubleFpConfig, mCaps.doubleFpConfig);
+    }
+    if (HasExtension(extensions, "cl_khr_fp16"))
+    {
+        getInfoPassed &= GetDeviceInfo(cl::DeviceInfo::HalfFpConfig, mCaps.halfFpConfig);
+    }
+
+    if (!getInfoPassed)
+    {
+        WARN() << "failure(s) detected for some getInfo queries!";
+    }
+}
 
 }  // namespace rx

@@ -1224,14 +1224,14 @@ void OutputSPIRVTraverser::accessChainStore(NodeData *data,
 
 void OutputSPIRVTraverser::makeAccessChainIdList(NodeData *data, spirv::IdRefList *idsOut)
 {
-    for (size_t index = 0; index < data->idList.size(); ++index)
+    for (const SpirvIdOrLiteral &chainIndex : data->idList)
     {
-        spirv::IdRef indexId = data->idList[index].id;
+        spirv::IdRef indexId = chainIndex.id;
 
         if (!indexId.valid())
         {
             // The index is a literal integer, so replace it with an OpConstant id.
-            indexId = mBuilder.getUintConstant(data->idList[index].literal);
+            indexId = mBuilder.getUintConstant(chainIndex.literal);
         }
 
         idsOut->push_back(indexId);
@@ -1241,10 +1241,10 @@ void OutputSPIRVTraverser::makeAccessChainIdList(NodeData *data, spirv::IdRefLis
 void OutputSPIRVTraverser::makeAccessChainLiteralList(NodeData *data,
                                                       spirv::LiteralIntegerList *literalsOut)
 {
-    for (size_t index = 0; index < data->idList.size(); ++index)
+    for (const SpirvIdOrLiteral &chainIndex : data->idList)
     {
-        ASSERT(!data->idList[index].id.valid());
-        literalsOut->push_back(data->idList[index].literal);
+        ASSERT(!chainIndex.id.valid());
+        literalsOut->push_back(chainIndex.literal);
     }
 }
 

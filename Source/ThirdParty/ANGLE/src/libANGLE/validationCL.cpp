@@ -1795,14 +1795,9 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
         // as the MaxByteOffset SPIR-V decoration. This error code is missing before version 2.2.
         for (const auto &device : krnl.getProgram().getDevices())
         {
-            cl_ulong maxLocalMemSize      = 0;
+            cl_ulong maxLocalMemSize      = device->getImpl().getCaps().localMemSize;
             cl_ulong compiledLocalMemSize = krnl.getImpl().getCompiledLocalMemSize(*device);
-            if (ANGLE_UNLIKELY(IsError(device->getImpl<rx::CLDeviceImpl>().getInfoULong(
-                    cl::DeviceInfo::LocalMemSize, &maxLocalMemSize))))
-            {
-                // The implementation shouldn't come this far if device query can report errors.
-                ASSERT(false);
-            }
+
             if (arg_size + compiledLocalMemSize > maxLocalMemSize)
             {
                 if (krnl.getProgram().getContext().getPlatform().getVersion() >
@@ -2718,17 +2713,15 @@ cl_int ValidateEnqueueNDRangeKernel(cl_command_queue command_queue,
     }
 
     cl_ulong localMemSize    = 0;
-    cl_ulong maxLocalMemSize = 0;
-    if (ANGLE_UNLIKELY(
-            IsError(krnl.getWorkGroupInfo(const_cast<cl_device_id>(device.getNative()),
-                                          cl::KernelWorkGroupInfo::LocalMemSize,
-                                          sizeof(localMemSize), &localMemSize, nullptr)) ||
-            IsError(device.getImpl<rx::CLDeviceImpl>().getInfoULong(cl::DeviceInfo::LocalMemSize,
-                                                                    &maxLocalMemSize))))
+    cl_ulong maxLocalMemSize = device.getImpl().getCaps().localMemSize;
+    if (ANGLE_UNLIKELY(IsError(krnl.getWorkGroupInfo(
+            const_cast<cl_device_id>(device.getNative()), cl::KernelWorkGroupInfo::LocalMemSize,
+            sizeof(localMemSize), &localMemSize, nullptr))))
     {
         // The implementation shouldn't come this far if device query can report errors.
         ASSERT(false);
     }
+
     if (localMemSize > maxLocalMemSize)
     {
         ERR() << "Kernel exceeds the maximum local mem size capability";

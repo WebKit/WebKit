@@ -1455,9 +1455,9 @@ bool DisplayMtl::isAMDBronzeDriver() const
         @"Radeon Pro 570",  @"Radeon Pro 570X", @"Radeon Pro 575", @"Radeon Pro 575X",
         @"Radeon Pro 580",  @"Radeon Pro 580X"};
 
-    for (size_t i = 0; i < ArraySize(kMTLBronzeDeviceNames); ++i)
+    for (NSString *deviceName : kMTLBronzeDeviceNames)
     {
-        if (ANGLE_UNSAFE_TODO([[mMetalDevice name] hasSuffix:kMTLBronzeDeviceNames[i]]))
+        if ([[mMetalDevice name] hasSuffix:deviceName])
         {
             mIsAMDBronze = true;
             break;

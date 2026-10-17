@@ -2565,7 +2565,6 @@
 42266907 WGPU : DebugMarkerTest.Rendering/* = SKIP
 42266907 WGPU : DepthStencilFormatsTest.DepthBuffer16/* = SKIP
 42266907 WGPU : DepthStencilTest.StencilOnlyEmulatedWithPacked/* = SKIP
-42266907 WGPU : DepthStencilTestES3.ReadOnlyDepthStencilThenOutputDepthStencil/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB565Renderbuffer/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8AndRGBA8Renderbuffers/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8Renderbuffer/* = SKIP
@@ -2745,7 +2744,6 @@
 42266907 WGPU : WebGLCompatibilityTest.BuiltInInvariant/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.StencilTestDisabledAllowsDifferentStencilMaskAndRef/* = SKIP
 42266907 WGPU : WebGLCompatibilityTest.StencilTestEnabledDisallowsDifferentStencilMaskAndRef/* = SKIP
-42266907 WGPU : WebGLFramebufferTest.TestAttachments/* = SKIP
 42266907 WGPU : WebGLFramebufferTest.TestFramebufferRequiredCombinations/* = SKIP
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexSubImage2D/* = SKIP
 42266907 WGPU : WebGLReadOutsideFramebufferTest.CopyTexImage2D/* = SKIP
@@ -3036,6 +3034,7 @@
 
 // Unimplemented parts.
 515493666 D3D11 : Restart/DrawElementsVariantsTest.Draw/* = SKIP
+565475913 D3D11 : ProvokingVertexTest.FlatIndexedDrawWithOffset/* = SKIP
 
 0 METAL : IncompatibleTextureTest.*/* = SKIP
 0 METAL : WebGL2GLSLValidationTest.ManyChainedBinaryExpressions/* = SKIP

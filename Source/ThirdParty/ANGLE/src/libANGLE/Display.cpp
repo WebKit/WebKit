@@ -1335,7 +1335,8 @@ Display::Display(EGLenum platform, EGLNativeDisplayType displayId, Device *eglDe
       mGlobalSemaphoreShareGroupUsers(0),
       mImageHandleAllocator(gl::IMPLEMENTATION_MAX_OBJECT_HANDLES),
       mSurfaceHandleAllocator(gl::IMPLEMENTATION_MAX_OBJECT_HANDLES, 64),
-      mTerminatedByApi(false)
+      mTerminatedByApi(false),
+      mPendingInternalCleanup(false)
 {}
 
 Display::~Display()
@@ -1636,6 +1637,7 @@ void Display::waitUntilUnreferenced(uint32_t expectedCount)
 Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 {
     mDisplayMutex.assertLocked();
+    mPendingInternalCleanup = false;
 
     if (terminateReason == TerminateReason::Api)
     {
@@ -1749,6 +1751,11 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 
 Error Display::releaseThread()
 {
+    if (mPendingInternalCleanup)
+    {
+        mPendingInternalCleanup = false;
+        ANGLE_TRY(terminate(nullptr, TerminateReason::InternalCleanup));
+    }
     // Need to check if initialized, because makeCurrent() may terminate the Display.
     if (!isInitialized())
     {
@@ -1756,6 +1763,16 @@ Error Display::releaseThread()
     }
     ANGLE_TRY(mImplementation->releaseThread());
     return destroyInvalidEglObjects();
+}
+
+void Display::onUnlockMutex()
+{
+    mDisplayMutex.assertLocked();
+    if (mPendingInternalCleanup)
+    {
+        mPendingInternalCleanup = false;
+        (void)terminate(nullptr, TerminateReason::InternalCleanup);
+    }
 }
 
 std::vector<const Config *> Display::getConfigs(const egl::AttributeMap &attribs) const
@@ -1782,9 +1799,9 @@ std::vector<const Config *> Display::chooseConfig(const egl::AttributeMap &attri
 
     // Add the caller-specified values (Note: the poorly-named insert() method will replace any
     // of the default values from above):
-    for (auto attribIter = attribs.begin(); attribIter != attribs.end(); attribIter++)
+    for (const auto &attrib : attribs)
     {
-        attribsWithDefaults.insert(attribIter->first, attribIter->second);
+        attribsWithDefaults.insert(attrib.first, attrib.second);
     }
 
     return mConfigSet.filter(attribsWithDefaults);
@@ -2166,12 +2183,12 @@ Error Display::makeCurrent(Thread *thread,
         }
     }
 
-    // If eglTerminate() has previously been called and Context was changed, perform InternalCleanup
-    // to invalidate any non-current Contexts, and possibly fully terminate the Display and release
-    // all of its resources.
+    // If eglTerminate() has previously been called and Context was changed, schedule
+    // InternalCleanup to invalidate any non-current Contexts, and possibly fully terminate the
+    // Display and release all of its resources once the entry point's surface locks are released.
     if (mTerminatedByApi && contextChanged)
     {
-        return terminate(thread, TerminateReason::InternalCleanup);
+        mPendingInternalCleanup = true;
     }
 
     return NoError();
@@ -2205,7 +2222,7 @@ Error Display::destroySurfaceImpl(Surface *surface, SurfaceMap *surfaces)
         ASSERT(surfaceFound);
     }
     mSurfaceHandleAllocator.release(surface->id().value);
-    ANGLE_TRY(surface->onDestroy(this));
+    ANGLE_TRY(surface->releaseRef(this));
     return NoError();
 }
 
@@ -2309,12 +2326,6 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
     {
         // Keep |currentContext| alive, while releasing |context|.
         gl::ScopedContextRef scopedContextRef(currentContext);
-
-        // keep |currentDrawSurface| and |currentReadSurface| alive as well
-        // while releasing |context|.
-        ScopedSurfaceRef drawSurfaceRef(currentDrawSurface);
-        ScopedSurfaceRef readSurfaceRef(
-            currentReadSurface == currentDrawSurface ? nullptr : currentReadSurface);
 
         // Make the context current, so we can release resources belong to the context, and then
         // when context is released from the current, it will be destroyed.
@@ -2421,7 +2432,7 @@ bool Display::isValidContext(const gl::ContextID contextID) const
 
 bool Display::isValidSurface(SurfaceID surfaceID) const
 {
-    return getSurface(surfaceID) != nullptr;
+    return getSurfaceRef(surfaceID).get() != nullptr;
 }
 
 bool Display::isValidImage(ImageID imageID) const
@@ -3022,9 +3033,14 @@ const gl::Context *Display::getContext(gl::ContextID contextID) const
     return mState.contextMap.find(contextID);
 }
 
-const egl::Surface *Display::getSurface(egl::SurfaceID surfaceID) const
+ScopedSurfaceRef Display::getSurfaceRef(egl::SurfaceID surfaceID) const
 {
-    return mState.surfaceMap.find(surfaceID);
+    return mState.surfaceMap.getSurfaceRef(this, surfaceID);
+}
+
+ScopedSurfaceLockAndRef Display::getSurface(egl::SurfaceID surfaceID) const
+{
+    return mState.surfaceMap.getSurface(this, surfaceID);
 }
 
 const egl::Image *Display::getImage(egl::ImageID imageID) const
@@ -3036,11 +3052,6 @@ const egl::Image *Display::getImage(egl::ImageID imageID) const
 gl::Context *Display::getContext(gl::ContextID contextID)
 {
     return mState.contextMap.find(contextID);
-}
-
-egl::Surface *Display::getSurface(egl::SurfaceID surfaceID)
-{
-    return mState.surfaceMap.find(surfaceID);
 }
 
 egl::Image *Display::getImage(egl::ImageID imageID)

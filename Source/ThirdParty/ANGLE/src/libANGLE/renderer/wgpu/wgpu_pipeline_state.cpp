@@ -241,6 +241,17 @@ bool RenderPipelineDesc::setDepthFunc(WGPUCompareFunction compareFunc)
     return true;
 }
 
+bool RenderPipelineDesc::setDepthWriteEnabled(bool enabled)
+{
+    uint32_t uintEnabled = enabled ? 1 : 0;
+    if (mDepthStencilState.depthWriteEnabled == uintEnabled)
+    {
+        return false;
+    }
+    mDepthStencilState.depthWriteEnabled = uintEnabled;
+    return true;
+}
+
 bool RenderPipelineDesc::setStencilFrontFunc(WGPUCompareFunction compareFunc)
 {
     if (mDepthStencilState.stencilFrontCompare == static_cast<uint8_t>(compareFunc))

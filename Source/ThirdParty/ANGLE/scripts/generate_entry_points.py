@@ -2207,6 +2207,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     dpy_raw_param_name = None
     sync_param = None
     sync_raw_param_name = None
+    surface_params = []
+    surface_raw_param_names = []
     if api == apis.EGL:
         for param in params:
             param_type = just_the_type_packed(param, packed_enums)
@@ -2216,6 +2218,9 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             elif param_type == "egl::SyncID":
                 sync_param = just_the_name_packed(param, packed_enums)
                 sync_raw_param_name = just_the_name(param)
+            elif param_type == "SurfaceID":
+                surface_params.append(just_the_name_packed(param, packed_enums))
+                surface_raw_param_names.append(just_the_name(param))
 
     for param in params:
         param_name = just_the_name(param)
@@ -2231,6 +2236,50 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                     f"        egl::ScopedSyncRef {internal_name}Ref = GetSyncIfValid(validDisplay, {internal_name});\n"
                     f"        egl::Sync *{internal_name}Object = {internal_name}Ref.get();"
                 ]
+            elif api == apis.EGL and param_name in surface_raw_param_names:
+                if cmd_name in ["eglDestroySurface", "eglAcquireExternalContextANGLE"]:
+                    packed_gl_enum_conversions += [
+                        f"\n        SurfaceID {internal_name} = PackParam<SurfaceID>({param_name});\n"
+                        f"        egl::ScopedSurfacesLockAndRef<3> {internal_name}Ref({{\n"
+                        f"            GetSurfaceRefIfValid(validDisplay, {internal_name}),\n"
+                        f"            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentDrawSurface()),\n"
+                        f"            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),\n"
+                        f"        }});\n"
+                        f"        egl::Surface *{internal_name}Object = {internal_name}Ref.get(0);"
+                    ]
+                elif cmd_name in ["eglSwapBuffers", "eglSwapBuffersWithDamageKHR"]:
+                    packed_gl_enum_conversions += [
+                        f"\n        SurfaceID {internal_name} = PackParam<SurfaceID>({param_name});\n"
+                        f"        egl::ScopedSurfacesLockAndRef<2> {internal_name}Ref({{\n"
+                        f"            GetSurfaceRefIfValid(validDisplay, {internal_name}),\n"
+                        f"            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),\n"
+                        f"        }});\n"
+                        f"        egl::Surface *{internal_name}Object = {internal_name}Ref.get(0);"
+                    ]
+                elif len(surface_raw_param_names) == 1:
+                    packed_gl_enum_conversions += [
+                        f"\n        SurfaceID {internal_name} = PackParam<SurfaceID>({param_name});\n"
+                        f"        egl::ScopedSurfaceLockAndRef {internal_name}Ref = GetSurfaceIfValid(validDisplay, {internal_name});\n"
+                        f"        egl::Surface *{internal_name}Object = {internal_name}Ref.get();"
+                    ]
+                elif param_name == surface_raw_param_names[0]:
+                    packed_gl_enum_conversions += [
+                        f"\n        SurfaceID {internal_name} = PackParam<SurfaceID>({param_name});"
+                    ]
+                else:
+                    assert len(surface_raw_param_names) == 2
+                    first_surface = surface_params[0]
+                    packed_gl_enum_conversions += [
+                        f"        SurfaceID {internal_name} = PackParam<SurfaceID>({param_name});\n"
+                        f"        egl::ScopedSurfacesLockAndRef<4> surfacesPackedRef({{\n"
+                        f"            GetSurfaceRefIfValid(validDisplay, {first_surface}),\n"
+                        f"            GetSurfaceRefIfValid(validDisplay, {internal_name}),\n"
+                        f"            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentDrawSurface()),\n"
+                        f"            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),\n"
+                        f"        }});\n"
+                        f"        egl::Surface *{first_surface}Object = surfacesPackedRef.get(0);\n"
+                        f"        egl::Surface *{internal_name}Object = surfacesPackedRef.get(1);"
+                    ]
             else:
                 packed_gl_enum_conversions += [
                     "\n        " + internal_type + " " + internal_name + " = PackParam<" +
@@ -2239,6 +2288,28 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
 
             if 'AttributeMap' in internal_type:
                 attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
+
+    if api == apis.EGL:
+        if cmd_name == "eglSwapInterval":
+            packed_gl_enum_conversions += [
+                "\n        egl::ScopedSurfaceLockAndRef drawSurfaceRef("
+                "thread->getDisplay(), thread->getCurrentDrawSurface());\n"
+                "        egl::Surface *drawSurface = drawSurfaceRef.get();"
+            ]
+        elif cmd_name == "eglLabelObjectKHR":
+            packed_gl_enum_conversions += [
+                "\n        egl::ScopedSurfaceLockAndRef surfaceObjectRef =\n"
+                "            (objectTypePacked == ObjectType::Surface)\n"
+                "                ? GetSurfaceIfValid(validDisplay, PackParam<SurfaceID>(object))\n"
+                "                : egl::ScopedSurfaceLockAndRef();"
+            ]
+        elif cmd_name == "eglDestroyContext":
+            packed_gl_enum_conversions += [
+                "\n        egl::ScopedSurfacesLockAndRef<2> prevSurfaceLocks({\n"
+                "            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentDrawSurface()),\n"
+                "            egl::ScopedSurfaceRef(thread->getDisplay(), thread->getCurrentReadSurface()),\n"
+                "        });"
+            ]
 
     labeled_object = get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params,
                                                         packed_enums)
@@ -2278,6 +2349,11 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
                 f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
                 f"    egl::ScopedDisplayRef {dpy_param}Ref = GetDisplayIfValid({dpy_param});\n"
                 f"    const egl::Display *validDisplay = {dpy_param}Ref.get();\n\n    ")
+        elif surface_params and cmd_name not in ["eglMakeCurrent", "eglDestroySurface"]:
+            packed_display_conversions = (
+                f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
+                f"        egl::ScopedDisplayRef {dpy_param}Ref = GetDisplayIfValid({dpy_param});\n"
+                f"        const egl::Display *validDisplay = {dpy_param}Ref.get();\n\n        ")
         else:
             packed_display_conversions = (
                 f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
@@ -2292,6 +2368,10 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         if sync_param and (labeled_object == f"GetSyncIfValid({dpy_param}, {sync_param})" or
                            labeled_object == f"GetSyncIfValid(validDisplay, {sync_param})"):
             labeled_object = f"{sync_param}Object"
+        for surface_param in surface_params:
+            if (labeled_object == f"GetSurfaceIfValid({dpy_param}, {surface_param})" or
+                    labeled_object == f"GetSurfaceIfValid(validDisplay, {surface_param})"):
+                labeled_object = f"{surface_param}Object"
 
     internal_val_params = internal_params
     if api == apis.EGL:
@@ -2304,6 +2384,20 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             internal_val_params = [
                 f"{sync_param}Object" if p == sync_param else p for p in internal_val_params
             ]
+        if surface_params:
+            if name == "MakeCurrent":
+                new_val_params = []
+                for p in internal_val_params:
+                    new_val_params.append(p)
+                    if p in surface_params:
+                        new_val_params.append(f"{p}Object")
+                internal_val_params = new_val_params
+            else:
+                internal_val_params = [
+                    f"{p}Object" if p in surface_params else p for p in internal_val_params
+                ]
+        if cmd_name == "eglSwapInterval":
+            internal_val_params = [internal_val_params[0], "drawSurface"] + internal_val_params[1:]
 
     internal_stub_params = internal_params
     if api == apis.EGL:
@@ -2315,6 +2409,13 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             internal_stub_params = [
                 f"{sync_param}Object" if p == sync_param else p for p in internal_stub_params
             ]
+        if surface_params:
+            internal_stub_params = [
+                f"{p}Object" if p in surface_params else p for p in internal_stub_params
+            ]
+        if cmd_name == "eglSwapInterval":
+            internal_stub_params = [internal_stub_params[0], "drawSurface"
+                                   ] + internal_stub_params[1:]
 
     internal_val_str = ", ".join(internal_val_params)
     if return_type == "void":
@@ -2549,6 +2650,8 @@ def const_pointer_type(param, packed_gl_enums, use_threadsafe_display=False):
         return "const egl::ThreadSafeDisplay *"
     if type == "egl::SyncID":
         return "const egl::Sync *"
+    if type == "SurfaceID":
+        return "const egl::Surface *"
     if just_the_name(param) == "errcode_ret" or type == "ErrorSet *" or "(" in type:
         return type
     elif "**" in type and "const" not in type:
@@ -2587,11 +2690,19 @@ def get_validation_params(api, cmd_name, params, cmd_packed_gl_enums, packed_par
                                        params)
     use_threadsafe_display = api == apis.EGL and is_egl_sync_entry_point(cmd_name)
     last = -1 if params and just_the_name(params[-1]) == "errcode_ret" else None
-    return ", ".join([
-        make_param(
-            const_pointer_type(param, packed_gl_enums, use_threadsafe_display),
-            just_the_name_packed(param, packed_gl_enums)) for param in params[:last]
-    ])
+    result = []
+    for param in params[:last]:
+        param_name = just_the_name_packed(param, packed_gl_enums)
+        param_type = const_pointer_type(param, packed_gl_enums, use_threadsafe_display)
+        if cmd_name == "eglMakeCurrent" and just_the_type_packed(param,
+                                                                 packed_gl_enums) == "SurfaceID":
+            result.append(make_param("SurfaceID", param_name))
+            result.append(make_param(param_type, f"{param_name}Object"))
+        else:
+            result.append(make_param(param_type, param_name))
+            if cmd_name == "eglSwapInterval" and param_name == "dpyPacked":
+                result.append(make_param("const egl::Surface *", "drawSurface"))
+    return ", ".join(result)
 
 
 def get_context_private_call_params(api, cmd_name, params, cmd_packed_gl_enums,
@@ -3788,7 +3899,11 @@ def get_stub_params(api, cmd_name, params, cmd_packed_egl_enums, packed_param_ty
             param_type = "egl::ThreadSafeDisplay *"
         if api == apis.EGL and param_type == "egl::SyncID":
             param_type = "egl::Sync *"
+        if api == apis.EGL and param_type == "SurfaceID":
+            param_type = "egl::Surface *"
         stub_params.append(make_param(param_type, param_name))
+        if cmd_name == "eglSwapInterval" and param_name == "dpyPacked":
+            stub_params.append(make_param("egl::Surface *", "drawSurface"))
     return ", ".join(stub_params)
 
 

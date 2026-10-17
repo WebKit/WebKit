@@ -2213,9 +2213,9 @@ angle::Result ContextVk::handleDirtyEventLogImpl(CommandBufferT *commandBuffer)
     label.pLabelName    = oglCmds.c_str();
     // This is #2 from comment above
     commandBuffer->beginDebugUtilsLabelEXT(label);
-    for (uint32_t i = 0; i < mEventLog.size(); ++i)
+    for (const std::string &event : mEventLog)
     {
-        label.pLabelName = mEventLog[i].c_str();
+        label.pLabelName = event.c_str();
         // NOTE: We have to use a begin/end pair here because AGI does not promote the
         // pLabelName from an insertDebugUtilsLabelEXT() call to the Commands panel.
         // Internal bug b/169243237 is tracking this and once the insert* call shows the

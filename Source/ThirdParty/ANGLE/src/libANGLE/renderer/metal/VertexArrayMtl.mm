@@ -250,9 +250,8 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
     const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
     const std::vector<gl::VertexBinding> &bindings  = mState.getVertexBindings();
 
-    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
+    for (size_t dirtyBit : dirtyBits)
     {
-        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
@@ -725,13 +724,13 @@ static void AppendDrawCommands(std::vector<DrawCommandRange> &drawCommands,
             AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::Lines:
-            AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
+        case gl::PrimitiveMode::Triangles:
+            // Rewritten index buffers only contain complete primitives.
+            AppendDrawCommandsTemplate<0>(drawCommands, count - count % perPrimitiveIndexCount,
+                                          firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::LineStrip:
             AppendDrawCommandsTemplate<1>(drawCommands, count, firstIndex, elementSize);
-            break;
-        case gl::PrimitiveMode::Triangles:
-            AppendDrawCommandsTemplate<0>(drawCommands, count, firstIndex, elementSize);
             break;
         case gl::PrimitiveMode::TriangleStrip:
             AppendDrawCommandsTemplate<2>(drawCommands, count, firstIndex, elementSize);
@@ -922,9 +921,15 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     // processes the non-restart runs (not the full buffer).
     if (rewriteProvokingVertex)
     {
+        ConversionBufferMtl *conversion =
+            glElementArrayBuffer
+                ? mtl::GetImpl(glElementArrayBuffer)
+                      ->getProvokingVertexConversionBuffer(contextMtl, mode, type, firstIndex,
+                                                           count, isPrimitiveRestartEnabled)
+                : nullptr;
         ANGLE_TRY(contextMtl->getProvokingVertexHelper().preconditionIndexBuffer(
             contextMtl, count, mode, firstIndex, isPrimitiveRestartEnabled, *indexRanges,
-            std::move(indexBuffer), indexBufferType, &indexBuffer));
+            std::move(indexBuffer), indexBufferType, conversion, &indexBuffer));
     }
 
     // Step 4: Compute draw command ranges (handles primitive restart splitting and large draw
@@ -940,6 +945,21 @@ angle::Result VertexArrayMtl::resolveDrawElementsDraw(
     {
         AppendDrawCommands(drawCommands, mode, static_cast<uint32_t>(count), firstIndex, newMode,
                            indexBufferType);
+    }
+
+    if (rewriteProvokingVertex)
+    {
+        // The rewritten index buffer starts at firstIndex, so rebase the draw commands onto it.
+        size_t rewrittenOffset = firstIndex * gl::GetDrawElementsTypeSize(indexBufferType);
+        if (mode != newMode)
+        {
+            // Strips expand to one primitive per source index.
+            rewrittenOffset *= newMode == gl::PrimitiveMode::Triangles ? 3 : 2;
+        }
+        for (DrawCommandRange &command : drawCommands)
+        {
+            command.offset -= rewrittenOffset;
+        }
     }
 
     *outNewMode         = newMode;

@@ -2203,6 +2203,14 @@
             "issue": "https://issuetracker.google.com/447633563"
         },
         {
+            "name": "simulate_tile_memory_transfer_src_for_testing",
+            "category": "Features",
+            "description": [
+                "Simulate TRANSFER_SRC capability of VK_QCOM_tile_memory_heap for images on GPUs that do not support VK_QCOM_tile_memory_heap extension for testing purpose."
+            ],
+            "issue": "https://issuetracker.google.com/447633563"
+        },
+        {
             "name": "supports_cl_khr_subgroups",
             "category": "Features",
             "description": [

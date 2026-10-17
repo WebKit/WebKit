@@ -90,20 +90,17 @@ fn broadcast(
         //
         //
         let mut postamble = Block::new();
+        let mut builder = instruction::Builder::<&mut Block>::new(&mut postamble);
 
         let replacement = TypedId::from_variable_id(&ir.meta, original_id);
-        let color = postamble.add_typed_instruction(instruction::load(&mut ir.meta, replacement));
+        let color = builder.load(&mut ir.meta, replacement);
         for index in 0..array_size {
             // index should have a precision assigned after propagate_precision pass.
             // Since array_size is capped at Options.max_draw_buffers or
             // Option.max_dual_source_draw_buffers, a Precision::Low is sufficient.
             let index = ir.meta.get_constant_uint_typed(index, Precision::Low);
-            let indexed = postamble.add_typed_instruction(instruction::index(
-                &mut ir.meta,
-                arrayed_built_in,
-                index,
-            ));
-            postamble.add_void_instruction(OpCode::Store(indexed, color));
+            let indexed = builder.index(&mut ir.meta, arrayed_built_in, index);
+            builder.store(&mut ir.meta, indexed, color);
         }
 
         ir.append_to_main(postamble);

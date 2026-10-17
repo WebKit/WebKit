@@ -752,6 +752,270 @@ TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithPartialBufferSubUpdatesBetwe
     checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
 }
 
+// Reusing a converted index buffer must remain valid after other buffers have been drawn and their
+// GPU work has completed. In particular, a shared streaming pool must not overwrite cached indices.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithOtherIndexBuffers)
+{
+    std::array<GLBuffer, 8> buffers;
+    for (size_t i = 0; i < buffers.size(); ++i)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[i]);
+        const std::vector<GLushort> &indices = i % 2 == 0 ? mIndicesBlueYellow : mIndicesRedGreen;
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(indices), indices.data(),
+                     GL_STATIC_DRAW);
+    }
+    for (size_t round = 0; round < 3; ++round)
+    {
+        for (size_t i = 0; i < buffers.size(); ++i)
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[i]);
+            glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+            checkFlatQuadColors(kWidth, kHeight, i % 2 == 0 ? GLColor::blue : GLColor::red,
+                                i % 2 == 0 ? GLColor::yellow : GLColor::green);
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// CopyBufferSubData invalidates cached index conversions just like a direct CPU update.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithBufferCopyBetweenDraws)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STATIC_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::blue, GLColor::yellow);
+
+    GLBuffer source;
+    glBindBuffer(GL_COPY_READ_BUFFER, source);
+    glBufferData(GL_COPY_READ_BUFFER, sizeOfVectorContents(mIndicesRedGreen),
+                 mIndicesRedGreen.data(), GL_STATIC_DRAW);
+    glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0,
+                        sizeOfVectorContents(mIndicesRedGreen));
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Writable mappings must invalidate previously cached provoking vertex indices.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithMappedBufferUpdate)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STATIC_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::blue, GLColor::yellow);
+
+    void *mapped = glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0,
+                                    sizeOfVectorContents(mIndicesRedGreen), GL_MAP_WRITE_BIT);
+    ASSERT_NE(nullptr, mapped);
+    // SAFETY: The range mapped above is sizeOfVectorContents(mIndicesRedGreen) bytes, which is
+    // exactly the size of the copy.
+    ANGLE_UNSAFE_BUFFERS(
+        memcpy(mapped, mIndicesRedGreen.data(), sizeOfVectorContents(mIndicesRedGreen)));
+    ASSERT_GL_TRUE(glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
+// The same source buffer may be converted for several independent draw ranges.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithDifferentIndexRanges)
+{
+    std::vector<GLushort> indices = mIndicesBlueYellow;
+    indices.insert(indices.end(), mIndicesRedGreen.begin(), mIndicesRedGreen.end());
+    // More ranges than fit in the conversion cache exercise eviction while draws are in flight.
+    for (size_t i = 0; i < 4; ++i)
+    {
+        const std::vector<GLushort> &range = i % 2 == 0 ? mIndicesBlueYellow : mIndicesRedGreen;
+        indices.insert(indices.end(), range.begin(), range.end());
+    }
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(indices), indices.data(),
+                 GL_STATIC_DRAW);
+    for (size_t round = 0; round < 3; ++round)
+    {
+        glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+        checkFlatQuadColors(kWidth, kHeight, GLColor::blue, GLColor::yellow);
+        glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT,
+                       reinterpret_cast<void *>(sizeOfVectorContents(mIndicesBlueYellow)));
+        checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawElements(GL_TRIANGLES, mNumVertsToDraw / 2, GL_UNSIGNED_SHORT, nullptr);
+        checkFlatQuadColors(kWidth / 2, kHeight, GLColor::blue, GLColor::yellow);
+        EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 0, GLColor::transparentBlack);
+        for (size_t i = 0; i < 6; ++i)
+        {
+            glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT,
+                           reinterpret_cast<void *>(i * sizeOfVectorContents(mIndicesBlueYellow)));
+        }
+        checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// A cached conversion depends on both the input index type and primitive topology.
+TEST_P(ProvokingVertexTest, FlatIndexedDrawStateChanges)
+{
+    // Give each corner a distinct integer value so the provoking vertex can be identified.
+    constexpr std::array<GLint, 4> kValues      = {1, 2, 3, 4};
+    constexpr std::array<GLfloat, 8> kPositions = {-1, -1, 1, -1, -1, 1, 1, 1};
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, kValues.data());
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, kPositions.data());
+
+    // Keep the source bytes unchanged while changing how each draw interprets them.
+    constexpr std::array<GLuint, 4> kIndices = {0, 1, 2, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+    glUseProgram(mProgram);
+
+    // Cycle through the configurations to exercise changes to the conversion cache key.
+    constexpr std::array<GLint, 4> kZero = {};
+    for (size_t round = 0; round < 3; ++round)
+    {
+        for (GLenum mode : {GL_TRIANGLES, GL_TRIANGLE_STRIP})
+        {
+            for (GLenum type : {GL_UNSIGNED_INT, GL_UNSIGNED_SHORT, GL_UNSIGNED_BYTE})
+            {
+                glClearBufferiv(GL_COLOR, 0, kZero.data());
+                glDrawElements(mode, 4, type, nullptr);
+
+                std::array<GLint, 4> bottomLeft = {};
+                std::array<GLint, 4> topRight   = {};
+                glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, bottomLeft.data());
+                glReadPixels(getWindowWidth() - 1, getWindowHeight() - 1, 1, 1, GL_RGBA_INTEGER,
+                             GL_INT, topRight.data());
+
+                // The 32-bit indices produce one triangle or a two-triangle strip. The smaller
+                // index types read repeated zero indices, leaving the sampled pixels untouched.
+                EXPECT_EQ(type == GL_UNSIGNED_INT ? 3 : 0, bottomLeft[0]);
+                EXPECT_EQ(type == GL_UNSIGNED_INT && mode == GL_TRIANGLE_STRIP ? 4 : 0,
+                          topRight[0]);
+            }
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Indexed draws at a non-zero offset keep the last vertex through each draw command path.
+TEST_P(ProvokingVertexTest, FlatIndexedDrawWithOffset)
+{
+    // Give each corner a distinct integer value so the provoking vertex can be identified.
+    constexpr std::array<GLint, 4> kValues      = {1, 2, 3, 4};
+    constexpr std::array<GLfloat, 8> kPositions = {-1, -1, 1, -1, -1, 1, 1, 1};
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, kValues.data());
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, kPositions.data());
+    glUseProgram(mProgram);
+
+    // Unused leading indices put the draw at a non-zero offset in the element buffer.
+    constexpr GLuint kRestart              = 0xFFFFFFFF;
+    constexpr size_t kFirstIndex           = 5;
+    const std::vector<GLuint> kTriangles   = {0, 1, 2, 1, 2, 3};
+    const std::vector<GLuint> kStrip       = {0, 1, 2, 3};
+    const std::vector<GLuint> kWithRestart = {0, 1, 2, kRestart, 1, 2, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    // Draw each configuration twice so the second draw reuses the cached conversion.
+    constexpr std::array<GLint, 4> kZero = {};
+    for (bool primitiveRestart : {false, true})
+    {
+        if (primitiveRestart)
+        {
+            glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+        }
+        for (GLenum mode : {GL_TRIANGLES, GL_TRIANGLE_STRIP})
+        {
+            const std::vector<GLuint> &drawIndices =
+                primitiveRestart ? kWithRestart : (mode == GL_TRIANGLES ? kTriangles : kStrip);
+            std::vector<GLuint> indices(kFirstIndex, 0);
+            indices.insert(indices.end(), drawIndices.begin(), drawIndices.end());
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(indices), indices.data(),
+                         GL_STATIC_DRAW);
+
+            for (size_t round = 0; round < 2; ++round)
+            {
+                glClearBufferiv(GL_COLOR, 0, kZero.data());
+                glDrawElements(mode, static_cast<GLsizei>(drawIndices.size()), GL_UNSIGNED_INT,
+                               reinterpret_cast<void *>(kFirstIndex * sizeof(GLuint)));
+
+                // Each triangle ends on its highest-valued vertex.
+                std::array<GLint, 4> bottomLeft = {};
+                std::array<GLint, 4> topRight   = {};
+                glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, bottomLeft.data());
+                glReadPixels(getWindowWidth() - 1, getWindowHeight() - 1, 1, 1, GL_RGBA_INTEGER,
+                             GL_INT, topRight.data());
+                EXPECT_EQ(3, bottomLeft[0]);
+                EXPECT_EQ(4, topRight[0]);
+            }
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// GPU writes to an element buffer must invalidate previously cached conversions as well.
+TEST_P(ProvokingVertexTest, FlatIndexBufferWrittenByTransformFeedback)
+{
+    constexpr std::array<GLint, 3> kValues      = {1, 2, 3};
+    constexpr std::array<GLfloat, 6> kPositions = {-1, -1, 1, -1, -1, 1};
+    constexpr std::array<GLuint, 3> kIndices    = {0, 1, 2};
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, kValues.data());
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    glEnableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, kPositions.data());
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices.data(), GL_STATIC_DRAW);
+
+    // Populate the conversion cache using the original last vertex, whose value is 3.
+    glUseProgram(mProgram);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    std::array<GLint, 4> pixel = {};
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, pixel.data());
+    EXPECT_EQ(3, pixel[0]);
+
+    constexpr char kVS[] = R"(#version 300 es
+flat out highp uint index;
+void main()
+{
+    index = 2u - uint(gl_VertexID);
+    gl_Position = vec4(0, 0, 0, 1);
+}
+)";
+    constexpr char kFS[] = R"(#version 300 es
+out highp int result;
+void main()
+{
+    result = 0;
+}
+)";
+    GLProgram feedbackProgram;
+    feedbackProgram.makeRasterWithTransformFeedback(kVS, kFS, {"index"}, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_TRUE(feedbackProgram.valid());
+
+    // Reverse the index order through a GPU write, without modifying it from the CPU.
+    GLVertexArray feedbackVAO;
+    GLTransformFeedback feedback;
+    glBindVertexArray(feedbackVAO);
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, feedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, indexBuffer);
+    glUseProgram(feedbackProgram);
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 3);
+    glEndTransformFeedback();
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
+    glBindVertexArray(0);
+
+    // The updated conversion must use vertex 0 as the last vertex and produce value 1.
+    glUseProgram(mProgram);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, pixel.data());
+    EXPECT_EQ(1, pixel[0]);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Only run these tests on Metal. Other backends tend to time out the test suite but not crash.
 class ProvokingVertexTestMetal : public ProvokingVertexTest
 {};

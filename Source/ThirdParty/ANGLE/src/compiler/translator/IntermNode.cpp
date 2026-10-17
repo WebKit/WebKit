@@ -556,9 +556,9 @@ TIntermDeclaration::TIntermDeclaration(const TIntermDeclaration &node)
 
 bool TIntermAggregateBase::replaceChildNodeInternal(TIntermNode *original, TIntermNode *replacement)
 {
-    for (size_t ii = 0; ii < getSequence()->size(); ++ii)
+    for (TIntermNode *&child : *getSequence())
     {
-        REPLACE_IF_IS((*getSequence())[ii], getAsNode, original, replacement);
+        REPLACE_IF_IS(child, getAsNode, original, replacement);
     }
     return false;
 }

@@ -1351,18 +1351,20 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
     //        B: eglTerminate() <<--- this release context A
     // Thread A: eglMakeCurrent(context B)
 
+    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
+
     EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
                              EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
-                             static_cast<EGLAttrib>(GetPbufferOnlyDefaultPlatformType()), EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
-                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                             static_cast<EGLAttrib>(mOsWindow->getNativeDisplayPlatformType()),
+                             EGL_NONE};
+    mDisplay              = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
     EXPECT_TRUE(chooseConfig(mDisplay, &config));
 
-    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
@@ -1408,8 +1410,8 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Terminate));
 
         // First Display was terminated, so we need to create a new one to create a new Context.
-        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
-                                         reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        mDisplay = eglGetPlatformDisplay(
+            GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         config = EGL_NO_CONFIG_KHR;
@@ -1471,19 +1473,20 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
 // errors.
 TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
 {
+    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
+
     EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
                              EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
                              static_cast<EGLAttrib>(mOsWindow->getNativeDisplayPlatformType()),
                              EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
-                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+    mDisplay              = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
     EXPECT_TRUE(chooseConfig(mDisplay, &config));
 
-    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 
@@ -1529,8 +1532,8 @@ TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
         ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Terminate));
 
         // First Display was terminated, so we need to create a new one to create a new Context.
-        mDisplay = eglGetPlatformDisplay(GetEglPlatform(),
-                                         reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        mDisplay = eglGetPlatformDisplay(
+            GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         config = EGL_NO_CONFIG_KHR;
@@ -1610,19 +1613,20 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultipleTimes)
     //   eglDestroySurface(srf1)
     //   eglTerminate(shared-display)
 
+    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
+
     EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
                              EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
                              static_cast<EGLAttrib>(mOsWindow->getNativeDisplayPlatformType()),
                              EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
-                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+    mDisplay              = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
     EXPECT_TRUE(chooseConfig(mDisplay, &config));
 
-    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
     EXPECT_TRUE(mSurface != EGL_NO_SURFACE);
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
@@ -1656,19 +1660,20 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultipleTimes)
 // Test that we can eglSwapBuffers in one thread while another thread renders to a texture.
 TEST_P(EGLContextSharingTestNoFixture, SwapBuffersShared)
 {
+    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
+
     EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
                              EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE,
                              static_cast<EGLAttrib>(mOsWindow->getNativeDisplayPlatformType()),
                              EGL_NONE};
-    mDisplay              = eglGetPlatformDisplay(GetEglPlatform(),
-                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+    mDisplay              = eglGetPlatformDisplay(
+        GetEglPlatform(), reinterpret_cast<void *>(mOsWindow->getNativeDisplay()), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
     EXPECT_TRUE(chooseConfig(mDisplay, &config));
 
-    mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
     ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
 

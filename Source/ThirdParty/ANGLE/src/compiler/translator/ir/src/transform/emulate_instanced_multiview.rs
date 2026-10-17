@@ -100,6 +100,7 @@ fn generate_preamble(
     view_id: TypedId,
 ) -> Block {
     let mut preamble = Block::new();
+    let mut builder = instruction::Builder::<&mut Block>::new(&mut preamble);
 
     // Initialize InstanceID and ViewID_OVR as such:
     //
@@ -115,14 +116,8 @@ fn generate_preamble(
     //     instance'      = ConstructScalarFromScalar instance       // cast to int
     //                      Store instance_id instance'
     //                      Store view_id view
-    let flat_instance =
-        preamble.add_typed_instruction(instruction::load(state.ir_meta, instance_id_built_in));
-    let flat_instance = preamble.add_typed_instruction(instruction::construct(
-        state.ir_meta,
-        TYPE_ID_UINT,
-        vec![flat_instance],
-        None,
-    ));
+    let flat_instance = builder.load(state.ir_meta, instance_id_built_in);
+    let flat_instance = builder.construct(state.ir_meta, TYPE_ID_UINT, vec![flat_instance], None);
     // Note: if multiview is enabled via #extension all, num_views may not be set.
     // For BinaryOpCode::Div and BinaryOpCode::IMod,
     // Result precision should propagate to both operands. See ir::instruction::propagate()
@@ -132,19 +127,12 @@ fn generate_preamble(
     let num_views = state
         .ir_meta
         .get_constant_uint_typed(state.ir_meta.get_num_views().max(1), flat_instance.precision);
-    let instance =
-        preamble.add_typed_instruction(instruction::div(state.ir_meta, flat_instance, num_views));
-    let view =
-        preamble.add_typed_instruction(instruction::imod(state.ir_meta, flat_instance, num_views));
-    let instance = preamble.add_typed_instruction(instruction::construct(
-        state.ir_meta,
-        TYPE_ID_INT,
-        vec![instance],
-        None,
-    ));
+    let instance = builder.div(state.ir_meta, flat_instance, num_views);
+    let view = builder.imod(state.ir_meta, flat_instance, num_views);
+    let instance = builder.construct(state.ir_meta, TYPE_ID_INT, vec![instance], None);
 
-    preamble.add_void_instruction(OpCode::Store(instance_id, instance));
-    preamble.add_void_instruction(OpCode::Store(view_id, view));
+    builder.store(state.ir_meta, instance_id, instance);
+    builder.store(state.ir_meta, view_id, view);
 
     // If needed, set gl_Layer as well
     if options.select_viewport_layer {
@@ -175,17 +163,11 @@ fn generate_preamble(
         //     base  = Load multiviewBaseViewLayerIndex
         //     layer = Add view' base
         //             Store gl_layer layer
-        let view = preamble.add_typed_instruction(instruction::construct(
-            state.ir_meta,
-            TYPE_ID_INT,
-            vec![view],
-            None,
-        ));
-        let base =
-            preamble.add_typed_instruction(instruction::load(state.ir_meta, base_layer_index));
-        let layer = preamble.add_typed_instruction(instruction::add(state.ir_meta, view, base));
+        let view = builder.construct(state.ir_meta, TYPE_ID_INT, vec![view], None);
+        let base = builder.load(state.ir_meta, base_layer_index);
+        let layer = builder.add(state.ir_meta, view, base);
 
-        preamble.add_void_instruction(OpCode::Store(layer_built_in, layer));
+        builder.store(state.ir_meta, layer_built_in, layer);
     }
 
     preamble

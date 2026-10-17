@@ -96,9 +96,9 @@ TEST(ConfigSetTest, IDs)
     std::set<EGLint> ids;
 
     std::vector<egl::Config> uniqueConfigs = GenerateUniqueConfigs(16);
-    for (size_t i = 0; i < uniqueConfigs.size(); i++)
+    for (const egl::Config &uniqueConfig : uniqueConfigs)
     {
-        EGLint id = set.add(uniqueConfigs[i]);
+        EGLint id = set.add(uniqueConfig);
 
         // Check that the config that was inserted has the ID that was returned
         // by ConfigSet::add

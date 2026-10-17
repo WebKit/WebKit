@@ -983,7 +983,7 @@ void main()
     }
 })";
 
-    for (auto vs : {kVSClip, kVSCull})
+    for (const std::string &vs : {kVSClip, kVSCull})
     {
         GLProgram prg;
         prg.makeRaster(vs.c_str(), essl1_shaders::fs::Red());
@@ -1051,7 +1051,7 @@ TEST_P(ClipCullDistanceTest, StorageQualifiers)
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
-    for (auto entry : entries)
+    for (const auto &entry : entries)
     {
         if (entry.second == 0)
             continue;
@@ -1218,7 +1218,7 @@ TEST_P(ClipCullDistanceTest, SizeCheck)
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
-    for (auto entry : entries)
+    for (const auto &entry : entries)
     {
         const std::string name = entry.first;
         const int maxSize      = entry.second;
@@ -1451,7 +1451,7 @@ TEST_P(ClipCullDistanceTest, Unused)
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
-    for (auto entry : entries)
+    for (const auto &entry : entries)
     {
         if (entry.second == 0)
             continue;
@@ -1607,7 +1607,7 @@ void main()
 
     std::pair<std::string, int> entries[2] = {{"gl_ClipDistance", maxClipDistances},
                                               {"gl_CullDistance", maxCullDistances}};
-    for (auto entry : entries)
+    for (const auto &entry : entries)
     {
         const std::string name = entry.first;
         const int maxSize      = entry.second;

@@ -80,10 +80,11 @@ fn add_base_vertex_to_vertex_id(ir: &mut IR) {
         //                  Store vertex_id adjusted
 
         let mut preamble = Block::new();
-        let id = preamble.add_typed_instruction(instruction::load(&mut ir.meta, vertex_id));
-        let base = preamble.add_typed_instruction(instruction::load(&mut ir.meta, base_vertex));
-        let adjusted = preamble.add_typed_instruction(instruction::add(&mut ir.meta, id, base));
-        preamble.add_void_instruction(OpCode::Store(replaced_vertex_id, adjusted));
+        let mut builder = instruction::Builder::<&mut Block>::new(&mut preamble);
+        let id = builder.load(&mut ir.meta, vertex_id);
+        let base = builder.load(&mut ir.meta, base_vertex);
+        let adjusted = builder.add(&mut ir.meta, id, base);
+        builder.store(&mut ir.meta, replaced_vertex_id, adjusted);
 
         ir.prepend_to_main(preamble);
     }

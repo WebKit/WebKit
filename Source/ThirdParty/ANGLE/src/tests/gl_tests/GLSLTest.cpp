@@ -18943,6 +18943,7 @@ TEST_P(GLSLTestLoops, ForContinueInSwitchComplex)
 {
     constexpr char kFS[] = R"(#version 300 es
 precision mediump float;
+precision highp int;
 out vec4 color;
 
 void main()
@@ -24037,6 +24038,7 @@ TEST_P(GLSLTest_ES3, DenormFloatsToIntValues)
     constexpr char kFS[] =
         "#version 300 es\n"
         "precision highp float;\n"
+        "precision highp int;\n"
         "out vec4 out_color;\n"
         "uniform float u;\n"
         "void main()\n"
@@ -27635,6 +27637,94 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Test that uninitialized local struct containing arrays compiles when both
+// AvoidComplexExpressionsInStructConstructor and ForceInitShaderVariables are enabled.
+// https://crbug.com/562777838
+TEST_P(GLSLTest_ES3, StructConstructorUninitializedWithArrayMember)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision mediump int;
+uniform int u_zero;
+struct S {
+    int prime_numbers[10];
+};
+
+out vec4 color;
+void main()
+{
+    S s;
+    s.prime_numbers[0] = u_zero + 42;
+    color = vec4(s.prime_numbers[0] == 42, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that uninitialized local array of structs compiles when both
+// AvoidComplexExpressionsInStructConstructor and ForceInitShaderVariables are enabled.
+// https://crbug.com/562777838
+TEST_P(GLSLTest_ES3, StructConstructorUninitializedArrayOfStructs)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision mediump int;
+uniform int u_zero;
+struct BST {
+    int data;
+    int leftIndex;
+    int rightIndex;
+};
+
+out vec4 color;
+void main()
+{
+    BST tree[10];
+    tree[0].data = u_zero + 42;
+    color = vec4(tree[0].data == 42, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that uninitialized nested local struct containing arrays compiles when both
+// AvoidComplexExpressionsInStructConstructor and ForceInitShaderVariables are enabled.
+// https://crbug.com/562777838
+TEST_P(GLSLTest_ES3, StructConstructorUninitializedNestedWithArrayMember)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform float u_zero;
+struct Leaf {
+    float a[4];
+};
+struct Branch {
+    Leaf leaves[3];
+};
+struct Tree {
+    Branch branches[2];
+};
+
+out vec4 color;
+void main()
+{
+    Tree t;
+    t.branches[1].leaves[2].a[3] = u_zero + 1.0;
+    color = vec4(t.branches[1].leaves[2].a[3] == 1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that having dynamic indexing of a vector inside the right hand side of logical or works
 // correctly.
 TEST_P(GLSLTest_ES3, DynamicIndexingOfVectorOnRightSideOfLogicalOr)
@@ -28390,8 +28480,14 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_ES32(
     ES3_OPENGL().enable(Feature::ForceInitShaderVariables),
     ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGL().enable(Feature::AvoidComplexExpressionsInStructConstructor),
+    ES3_OPENGL()
+        .enable(Feature::AvoidComplexExpressionsInStructConstructor)
+        .enable(Feature::ForceInitShaderVariables),
     ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGLES().enable(Feature::AvoidComplexExpressionsInStructConstructor),
+    ES3_OPENGLES()
+        .enable(Feature::AvoidComplexExpressionsInStructConstructor)
+        .enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().enable(Feature::AvoidOpSelectWithMismatchingRelaxedPrecision),
     ES3_VULKAN().enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14),
@@ -28408,8 +28504,14 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_OPENGL().enable(Feature::ForceInitShaderVariables),
     ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGL().enable(Feature::AvoidComplexExpressionsInStructConstructor),
+    ES3_OPENGL()
+        .enable(Feature::AvoidComplexExpressionsInStructConstructor)
+        .enable(Feature::ForceInitShaderVariables),
     ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs),
     ES3_OPENGLES().enable(Feature::AvoidComplexExpressionsInStructConstructor),
+    ES3_OPENGLES()
+        .enable(Feature::AvoidComplexExpressionsInStructConstructor)
+        .enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().enable(Feature::AvoidOpSelectWithMismatchingRelaxedPrecision),
     ES3_VULKAN().enable(Feature::ForceInitShaderVariables),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14),

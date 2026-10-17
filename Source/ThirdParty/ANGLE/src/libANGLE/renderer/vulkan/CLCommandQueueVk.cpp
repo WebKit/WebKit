@@ -2610,7 +2610,7 @@ angle::Result CommandsStateMap::setEventsWithQueueSerialToState(const QueueSeria
     {
         if (serial <= queueSerial)
         {
-            for (cl::EventPtr event : state.mEvents)
+            for (const cl::EventPtr &event : state.mEvents)
             {
                 CLEventVk *eventVk   = &event->getImpl<CLEventVk>();
                 cl_int currentStatus = CL_QUEUED;
@@ -2641,7 +2641,7 @@ angle::Result CommandsStateMap::processQueueSerialUpTo(const QueueSerial queueSe
 
         cl::KernelPtrs kernels = pair.second.mKernels;
 
-        for (cl::KernelPtr kernel : kernels)
+        for (const cl::KernelPtr &kernel : kernels)
         {
             CLKernelVk *kernelVk = &kernel->getImpl<CLKernelVk>();
 

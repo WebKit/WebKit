@@ -17,7 +17,8 @@ pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
         //     clamped = Clamp size min max
         //               Store point_size clamped
         let mut clamp_block = Block::new();
-        let size = clamp_block.add_typed_instruction(instruction::load(&mut ir.meta, point_size));
+        let mut builder = instruction::Builder::<&mut Block>::new(&mut clamp_block);
+        let size = builder.load(&mut ir.meta, point_size);
         // For OpCode::Clamp, result precision should propagate to operands,
         // See ir::instruction::propagate().
         // Since result precision is the highest precision of all operands,
@@ -26,12 +27,12 @@ pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
         // Use size.precision for simplicity.
         let min_size_constant = ir.meta.get_constant_float_typed(min_point_size, size.precision);
         let max_size_constant = ir.meta.get_constant_float_typed(max_point_size, size.precision);
-        let clamped = clamp_block.add_typed_instruction(instruction::built_in(
+        let clamped = builder.built_in(
             &mut ir.meta,
             BuiltInOpCode::Clamp,
             vec![size, min_size_constant, max_size_constant],
-        ));
-        clamp_block.add_void_instruction(OpCode::Store(point_size, clamped));
+        );
+        builder.store(&mut ir.meta, point_size, clamped);
 
         ir.append_to_main(clamp_block);
     }
