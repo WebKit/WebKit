@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+    <pre id="scrollingTree"></pre>
+</body>
+<script>
+description("Verifies that the scrolling tree is fully reconstructed across three levels of frames spanning two processes: a cross-site middle frame, and a grandchild frame nested inside it that is cross-site relative to the middle frame but same-site as the main frame.");
+jsTestIsAsync = true;
+
+window.addEventListener('load', async () => {
+    if (!window.internals)
+        return
+
+    document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+    finishJSTest();
+}, false);
+</script>
+<iframe width="300" height="400" src="http://localhost:8000/site-isolation/scrolling/resources/middle-frame-with-nested-cross-site-iframe.html"></iframe>
