@@ -1,0 +1,64 @@
+Testing the geometry SpatialVideoSupport builds for each projection: vertex and index consistency, texture coordinates confined to the texture, vertices on the sphere, the coverage each projection claims, the fisheye mapping law, and for the equi-angular cubemap the per-tile confinement, cube-edge continuity and constant angular step.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+equirect360:
+PASS results.equirect360.consistentArrays is true
+PASS results.equirect360.wholeTriangles is true
+PASS results.equirect360.indicesInRange is true
+PASS results.equirect360.indicesFitUint16 is true
+PASS results.equirect360.texCoordsInRange is true
+PASS results.equirect360.maxRadiusError < 1e-9 is true
+
+equirect180:
+PASS results.equirect180.consistentArrays is true
+PASS results.equirect180.wholeTriangles is true
+PASS results.equirect180.indicesInRange is true
+PASS results.equirect180.indicesFitUint16 is true
+PASS results.equirect180.texCoordsInRange is true
+PASS results.equirect180.maxRadiusError < 1e-9 is true
+
+fisheye:
+PASS results.fisheye.consistentArrays is true
+PASS results.fisheye.wholeTriangles is true
+PASS results.fisheye.indicesInRange is true
+PASS results.fisheye.indicesFitUint16 is true
+PASS results.fisheye.texCoordsInRange is true
+PASS results.fisheye.maxRadiusError < 1e-9 is true
+
+wideFOV:
+PASS results.wideFOV.consistentArrays is true
+PASS results.wideFOV.wholeTriangles is true
+PASS results.wideFOV.indicesInRange is true
+PASS results.wideFOV.indicesFitUint16 is true
+PASS results.wideFOV.texCoordsInRange is true
+PASS results.wideFOV.maxRadiusError < 1e-9 is true
+
+equiAngularCubemap:
+PASS results.equiAngularCubemap.consistentArrays is true
+PASS results.equiAngularCubemap.wholeTriangles is true
+PASS results.equiAngularCubemap.indicesInRange is true
+PASS results.equiAngularCubemap.indicesFitUint16 is true
+PASS results.equiAngularCubemap.texCoordsInRange is true
+PASS results.equiAngularCubemap.maxRadiusError < 1e-9 is true
+
+coverage:
+PASS results.coverage.sphereReachesEveryAxis is true
+PASS Math.abs(results.coverage.hemisphereLongitudeSpan - Math.PI) < 1e-6 is true
+
+fisheye mapping law:
+PASS results.fisheye.proportionalityError < 1e-9 is true
+PASS results.wideFOV.proportionalityError < 1e-9 is true
+
+equi-angular cubemap:
+PASS results.equiAngularCubemap.faceCount is 6
+PASS results.equiAngularCubemap.squareFaces is true
+PASS results.equiAngularCubemap.facesConfinedToTiles is true
+PASS results.equiAngularCubemap.maximumSeamGap < 1e-6 is true
+PASS results.equiAngularCubemap.maximumStepDeviation < 1e-6 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
