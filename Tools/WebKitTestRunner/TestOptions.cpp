@@ -86,6 +86,7 @@ const TestFeatures& TestOptions::defaults()
             { "AppBadgeEnabled", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
+            { "BlockFormattingContextCoverageIndicatorEnabled", false },
             { "BuiltInNotificationsEnabled", false },
             { "CSSUnprefixedBackdropFilterEnabled", true },
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },

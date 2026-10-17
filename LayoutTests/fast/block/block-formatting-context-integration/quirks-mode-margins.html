@@ -1,0 +1,16 @@
+<!-- webkit-test-runner [ BlockFormattingContextIntegrationEnabled=true ] -->
+<style>
+.root { display: flow-root; width: 300px; background: lightgray; margin-bottom: 10px; }
+p, h1, ul, li { background: rgba(0, 128, 0, 0.3); height: 20px; }
+</style>
+<div class="root">
+  <p></p>
+  <h1></h1>
+  <ul><li style="display: block"></li></ul>
+  <div><p></p></div>
+  <p style="margin-top: 30px"></p>
+</div>
+<div class="root" style="padding: 5px">
+  <div style="margin: 10px 0"><div style="margin-top: 20px; height: 10px; background: green"></div></div>
+  <div style="height: 50%; background: blue"></div>
+</div>
