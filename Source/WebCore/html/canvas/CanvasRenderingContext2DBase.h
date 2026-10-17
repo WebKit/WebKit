@@ -76,8 +76,8 @@ struct GlyphOverflow;
 
 using CanvasImageSource = Variant<
       Ref<HTMLImageElement>
-    , Ref<SVGImageElement>
     , Ref<HTMLCanvasElement>
+    , Ref<SVGImageElement>
     , Ref<ImageBitmap>
     , Ref<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
