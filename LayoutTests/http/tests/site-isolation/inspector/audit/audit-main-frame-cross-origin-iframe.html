@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/audit-main.css">
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.id = "cross-origin-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/audit/resources/audit-frame.html`;
+    return new Promise(resolve => {
+        iframe.addEventListener("load", () => resolve(), { once: true });
+        document.body.appendChild(iframe);
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Audit.MainFrameCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Audit.MainFrameCrossOriginIFrame.RunInMainDocument",
+        description: "An audit should run in the main frame's document and must not see into the cross-origin iframe.",
+        async test() {
+            let auditAgent = WI.assumingMainTarget().AuditAgent;
+
+            await auditAgent.setup();
+            let {result, wasThrown} = await auditAgent.run(`function() {
+                let frame = document.querySelector("iframe");
+                let resources = WebInspectorAudit.Resources.getResources();
+                return JSON.stringify({
+                    pathname: location.pathname.split("/").pop(),
+                    iframeCount: document.querySelectorAll("iframe").length,
+                    auditedCount: document.querySelectorAll(".audited").length,
+                    frameMarkerCount: document.querySelectorAll("#frame-marker").length,
+                    contentDocumentIsNull: frame.contentDocument === null,
+                    resourceURLs: resources.map((resource) => resource.url.split("/").pop()).sort(),
+                });
+            }`);
+            await auditAgent.teardown();
+
+            InspectorTest.expectThat(!wasThrown, "Audit should not throw an exception.");
+            InspectorTest.log(JSON.stringify(JSON.parse(result.value), null, 2));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Audit.MainFrameCrossOriginIFrame.DOMNodes",
+        description: "DOM nodes returned by an audit should resolve to main document nodes only.",
+        async test() {
+            let audit = new WI.AuditTestCase("cross-origin-iframe", `function() {
+                return {
+                    level: "fail",
+                    domNodes: Array.from(document.querySelectorAll(".audited, iframe")),
+                    frameMarkerCount: document.querySelectorAll("#frame-marker").length,
+                };
+            }`);
+            await WI.auditManager.start([audit]);
+
+            let results = WI.auditManager.results.lastValue;
+            InspectorTest.expectEqual(results.length, 1, "There should be 1 result.");
+
+            let result = results[0];
+            InspectorTest.expectEqual(result.level, WI.AuditTestCaseResult.Level.Fail, "Result should be \"fail\".");
+            InspectorTest.expectEqual(result.data.frameMarkerCount, 0, "Audit should not find the iframe's content.");
+            InspectorTest.expectEqual(result.resolvedDOMNodes.length, 2, "Should resolve 2 DOM nodes.");
+            for (let domNode of result.resolvedDOMNodes) {
+                InspectorTest.log(domNode.displayName);
+                InspectorTest.expectThat(domNode.ownerDocument.documentURL.endsWith("/audit-main-frame-cross-origin-iframe.html"), "Node should belong to the main document.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="addCrossOriginIFrame().then(runTest)">
+<p>Test that an audit runs against the main frame's document on a page with a cross-origin iframe.</p>
+<div id="main-marker" class="audited"></div>
+</body>
