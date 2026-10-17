@@ -383,14 +383,28 @@ ConcreteObjectSize RenderImage::concreteObjectSizeForPasteboard() const
 {
     static constexpr float maximumLength = 4096;
 
-    RefPtr cachedImage = this->cachedImage();
-    RefPtr image = cachedImage ? cachedImage->image() : nullptr;
-    auto naturalDimensions = image ? image->naturalDimensions() : NaturalDimensions::none();
-
-    auto size = DefaultSizing { usedImageSize() }.resolve(naturalDimensions).size();
+    auto size = defaultConcreteObjectSize().size();
     if (auto scale = maximumLength / size.maxDimension(); scale < 1)
         size.scale(scale);
     return ConcreteObjectSize::fixed(size);
+}
+
+ConcreteObjectSize RenderImage::concreteObjectSizeForAccessibility() const
+{
+    return defaultConcreteObjectSize();
+}
+
+ConcreteObjectSize RenderImage::defaultConcreteObjectSize() const
+{
+    return defaultConcreteObjectSize(imageResource().naturalDimensions());
+}
+
+ConcreteObjectSize RenderImage::defaultConcreteObjectSize(NaturalDimensions naturalDimensions) const
+{
+    auto containerSize = FloatSize { imageContainerSize() };
+    if (auto usedZoom = style().usedZoom(); usedZoom != 1)
+        containerSize.scale(1 / usedZoom);
+    return DefaultSizing { containerSize }.resolve(naturalDimensions);
 }
 
 RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareableBitmapFromImageOptions& options) const
@@ -435,11 +449,7 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareable
     if ((naturalDimensions.width && *naturalDimensions.width <= 1) || (naturalDimensions.height && *naturalDimensions.height <= 1))
         return { };
 
-    auto containerSize = FloatSize { imageContainerSize() };
-    if (auto usedZoom = style().usedZoom(); usedZoom != 1)
-        containerSize.scale(1 / usedZoom);
-    auto concreteObjectSize = DefaultSizing { containerSize }.resolve(naturalDimensions);
-
+    auto concreteObjectSize = defaultConcreteObjectSize(naturalDimensions);
     auto bitmapSize = concreteObjectSize.size();
     if (bitmapSize.isEmpty())
         return { };

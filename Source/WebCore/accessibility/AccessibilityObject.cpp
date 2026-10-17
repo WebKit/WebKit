@@ -3389,33 +3389,38 @@ String AccessibilityObject::embeddedImageDescription() const
     return renderImage->accessibilityDescription();
 }
 
-static RefPtr<Image> imageFromRenderer(RenderObject* renderer)
+static RefPtr<Image> imageFromRenderer(const RenderImage& renderImage)
 {
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
-    RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
+    RefPtr cachedImage = renderImage.cachedImage();
     return cachedImage ? cachedImage->image() : nullptr;
 }
 
 FloatSize AccessibilityObject::imageDataSize() const
 {
-    if (RefPtr image = imageFromRenderer(renderer()))
-        return image->size();
-    return { };
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
+    if (!renderImage || !imageFromRenderer(*renderImage))
+        return { };
+    return renderImage->concreteObjectSizeForAccessibility().size();
 }
 
 RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters& parameters) const
 {
-    RefPtr image = imageFromRenderer(renderer());
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
+    if (!renderImage)
+        return nullptr;
+
+    RefPtr image = imageFromRenderer(*renderImage);
     if (!image || !image->hasSomethingToDraw())
         return nullptr;
 
-    auto nativeSize = image->size();
-    if (nativeSize.isEmpty())
+    auto concreteObjectSize = renderImage->concreteObjectSizeForAccessibility();
+    auto imageSize = concreteObjectSize.size();
+    if (imageSize.isEmpty())
         return nullptr;
 
     // Determine the resize dimensions.
-    float targetWidth = parameters.resizeWidth ? parameters.resizeWidth : nativeSize.width();
-    float targetHeight = parameters.resizeHeight ? parameters.resizeHeight : nativeSize.height();
+    float targetWidth = parameters.resizeWidth ? parameters.resizeWidth : imageSize.width();
+    float targetHeight = parameters.resizeHeight ? parameters.resizeHeight : imageSize.height();
 
     // Clamp to a maximum of maxDimension x maxDimension pixels, preserving aspect ratio.
     constexpr float maxPixelArea = AXImageDataParameters::maxDimension * AXImageDataParameters::maxDimension;
@@ -3432,7 +3437,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
         return nullptr;
 
     // Draw the source image scaled into the buffer.
-    imageBuffer->context().drawImage(*image, ConcreteObjectSize::fixed(nativeSize), FloatRect({ }, bufferSize), FloatRect({ }, nativeSize));
+    imageBuffer->context().drawImage(*image, concreteObjectSize, FloatRect({ }, bufferSize), FloatRect({ }, imageSize), { renderImage->imageOrientation() });
 
     // Determine the extraction rect from subrect parameters or full image.
     IntRect extractionRect;

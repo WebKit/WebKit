@@ -1,0 +1,7 @@
+
+
+PASS An SVG with a width and height uses them
+PASS An SVG with only a width takes its height from the shown size
+PASS An SVG with only a viewBox fits its aspect ratio in the shown size
+PASS An SVG with no natural dimensions takes the shown size
+

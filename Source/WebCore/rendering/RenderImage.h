@@ -107,6 +107,9 @@ public:
 
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
     ConcreteObjectSize concreteObjectSizeForPasteboard() const;
+    ConcreteObjectSize concreteObjectSizeForAccessibility() const;
+    ConcreteObjectSize defaultConcreteObjectSize() const;
+    ConcreteObjectSize defaultConcreteObjectSize(NaturalDimensions) const;
 
     FloatSize preferredAspectRatioAsSize() const final;
 

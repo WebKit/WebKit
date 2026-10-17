@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AXImageDataSize and AXImageData for SVG images use the natural dimensions, taking any missing ones from the shown size</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<img id="sized" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='100'/>">
+<img id="width-only" style="height: 50px" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200'/>">
+<img id="viewbox-only" style="width: 320px" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'/>">
+<img id="unsized" style="width: 120px; height: 120px" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
+<script>
+const loaded = new Promise(resolve => window.addEventListener("load", resolve));
+
+function testImageData(id, width, height, description)
+{
+    promise_test(async () => {
+        await loaded;
+        let image = accessibilityController.accessibleElementById(id);
+        assert_true(image.imageDataSize.includes(`{${width}, ${height}}`), image.imageDataSize);
+        assert_equals(image.imageDataForParameters(0, 0), `AXImageData: ${width * height * 4} bytes`);
+    }, description);
+}
+
+testImageData("sized", 200, 100, "An SVG with a width and height uses them");
+testImageData("width-only", 200, 50, "An SVG with only a width takes its height from the shown size");
+testImageData("viewbox-only", 320, 180, "An SVG with only a viewBox fits its aspect ratio in the shown size");
+testImageData("unsized", 120, 120, "An SVG with no natural dimensions takes the shown size");
+</script>
+</body>
+</html>
