@@ -84,6 +84,19 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& 
     return enclosingLayoutRect(renderer.computeFloatRectForRepaint(renderer.repaintRectInLocalCoordinates(context.repaintRectCalculation()), repaintContainer));
 }
 
+LayoutRect SVGRenderSupport::repaintRectIncludingFilteredAncestors(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, const LayoutRect& rect)
+{
+    // A filter's output covers its full filter region whenever any of its inputs change, so a
+    // descendant's invalidation must dirty the filtered ancestor's region, not just the descendant's box.
+    auto result = rect;
+    for (CheckedPtr ancestor = renderer.parent(); ancestor && is<SVGElement>(ancestor->element()); ancestor = ancestor->parent()) {
+        auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*ancestor);
+        if (resources && resources->filter())
+            result.unite(ancestor->clippedOverflowRectForRepaint(repaintContainer));
+    }
+    return result;
+}
+
 std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(const RenderElement& renderer, const FloatRect& rect, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state)
 {
     // Ensure our parent is an SVG object.
