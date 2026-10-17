@@ -139,7 +139,6 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
 
     auto originatingFrameInfoData = originator ? FrameInfoData { WTF::move(*originator) } : FrameInfoData {
         ResourceRequest { URL { requester.url } },
-        requester.securityOrigin->data(),
         { },
         WTF::move(originatingFrameID),
         document ? std::optional { document->identifier() } : std::nullopt,
