@@ -131,6 +131,7 @@ public:
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     RefPtr<ModelPlayer> liveModelPlayer() const;
+    void exitVolumetricPresentation();
 #endif
 
 private:

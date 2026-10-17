@@ -1,0 +1,12 @@
+A <model> restored from the back/forward cache after a volumetric scene should be fitted inline again, not keep the fit of the volume.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS volumetricFit is not inlineFit
+PASS model.entityTransform became different from transformBeforeReload
+PASS restoredFit is inlineFit
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

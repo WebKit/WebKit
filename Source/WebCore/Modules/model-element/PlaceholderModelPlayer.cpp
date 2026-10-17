@@ -299,4 +299,13 @@ void PlaceholderModelPlayer::exitImmersivePresentation(CompletionHandler<void()>
 
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void PlaceholderModelPlayer::exitVolumetricPresentation()
+{
+    m_transformState->invalidateTransform();
+}
+
+#endif
+
 } // namespace WebCore

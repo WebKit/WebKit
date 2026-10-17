@@ -222,6 +222,7 @@ public:
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     RefPtr<ModelPlayer> liveModelPlayer() const;
+    void exitVolumetricPresentation();
     bool isPresentedInVolumetricScene() const { return m_presentationMode == ModelPresentationMode::Volumetric; }
 #endif
 

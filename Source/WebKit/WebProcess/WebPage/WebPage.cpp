@@ -10160,9 +10160,6 @@ void WebPage::volumetricSceneDidClose(WebCore::NodeIdentifier nodeID)
         return;
 
     WebCore::ElementVolumetricScene::volumetricSceneDidClose(*element);
-
-    if (RefPtr modelPlayer = WebCore::ElementVolumetricScene::playerForElement(*element))
-        modelPlayer->exitVolumetricPresentation();
 }
 
 void WebPage::updateVolumetricSceneSize(WebCore::NodeIdentifier nodeID, WebCore::FloatSize volumeSizeInMeters)

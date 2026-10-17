@@ -639,6 +639,7 @@ void ModelProcessModelPlayer::enterVolumetricPresentation(CompletionHandler<void
 
 void ModelProcessModelPlayer::exitVolumetricPresentation()
 {
+    m_entityTransform = std::nullopt;
     send(Messages::ModelProcessModelPlayerProxy::ExitVolumetricPresentation());
 }
 

@@ -82,6 +82,10 @@ private:
     void exitImmersivePresentation(CompletionHandler<void()>&&) final;
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void exitVolumetricPresentation() final;
+#endif
+
     // Empty implementation
     void LEGACY_NODELETE configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) final;
     void LEGACY_NODELETE sizeDidChange(LayoutSize) final;

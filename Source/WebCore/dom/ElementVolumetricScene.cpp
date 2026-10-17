@@ -212,6 +212,15 @@ void ElementVolumetricScene::volumetricSceneDidClose(Element& element)
 {
     setPresentationMode(element, ModelPresentationMode::Inline);
     setInVolumetricScene(element, false);
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (CheckedPtr controller = element.spatialPortalController()) {
+        controller->exitVolumetricPresentation();
+        return;
+    }
+#endif
+    if (RefPtr model = eligibleModelElement(element))
+        model->exitVolumetricPresentation();
 }
 
 void ElementVolumetricScene::documentVisibilityDidChange(Element& element)

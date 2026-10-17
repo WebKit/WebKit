@@ -2460,6 +2460,12 @@ RefPtr<ModelPlayer> HTMLModelElement::liveModelPlayer() const
         return nullptr;
     return modelPlayer;
 }
+
+void HTMLModelElement::exitVolumetricPresentation()
+{
+    if (RefPtr modelPlayer = m_modelPlayer)
+        modelPlayer->exitVolumetricPresentation();
+}
 #endif
 
 bool HTMLModelElement::isModelLoading() const

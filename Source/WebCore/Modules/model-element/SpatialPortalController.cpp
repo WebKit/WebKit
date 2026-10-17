@@ -493,6 +493,12 @@ RefPtr<ModelPlayer> SpatialPortalController::liveModelPlayer() const
         return nullptr;
     return modelPlayer;
 }
+
+void SpatialPortalController::exitVolumetricPresentation()
+{
+    if (RefPtr modelPlayer = m_modelPlayer)
+        modelPlayer->exitVolumetricPresentation();
+}
 #endif
 
 ModelPlayer* SpatialPortalController::ensureModelPlayer()
