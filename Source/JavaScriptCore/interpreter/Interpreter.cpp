@@ -529,23 +529,6 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
         return nullptr;
     };
 
-    auto computeBytecodeIndex = [&](CodeBlock* codeBlock, JSAsyncFunctionGenerator* generator) -> BytecodeIndex {
-        BytecodeIndex bytecodeIndex(0);
-        JSValue stateValue = generator->internalField(static_cast<unsigned>(JSAsyncFunctionGenerator::Field::State)).get();
-        if (stateValue.isInt32()) {
-            int32_t state = stateValue.asInt32();
-            size_t numberOfJumpTables = codeBlock->numberOfUnlinkedSwitchJumpTables();
-            if (state > 0 && numberOfJumpTables > 0) {
-                size_t lastTableIndex = numberOfJumpTables - 1;
-                const UnlinkedSimpleJumpTable& jumpTable = codeBlock->unlinkedSwitchJumpTable(lastTableIndex);
-                int32_t offset = jumpTable.offsetForValue(state);
-                if (offset)
-                    bytecodeIndex = BytecodeIndex(offset);
-            }
-        }
-        return bytecodeIndex;
-    };
-
     JSAsyncFunctionGenerator* currentGenerator = getParentGenerator(generator);
     while (currentGenerator && results.size() < maxStackSize) {
         JSValue nextValue = currentGenerator->internalField(static_cast<unsigned>(JSAsyncFunctionGenerator::Field::Next)).get();
@@ -554,7 +537,7 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
             if (FunctionExecutable* executable = asyncFunction->jsExecutable()) {
                 // If a CodeBlock doesn't already exist, the stack trace will only show the filename and won't show line column
                 if (CodeBlock* codeBlock = executable->codeBlockForCall()) {
-                    BytecodeIndex bytecodeIndex = computeBytecodeIndex(codeBlock, currentGenerator);
+                    BytecodeIndex bytecodeIndex = currentGenerator->suspendedBytecodeIndex(*codeBlock).value_or(BytecodeIndex(0));
                     results.append(StackFrame(vm, owner, asyncFunction, codeBlock, bytecodeIndex, /* isAsyncFrame */ true));
                 } else
                     results.append(StackFrame(vm, owner, asyncFunction, /* isAsyncFrame */ true));
@@ -993,12 +976,19 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     return catchInfo;
 }
 
+static JSPromise* toPromise(JSCell* cell)
+{
+    if (auto* generator = dynamicDowncast<JSAsyncFunctionGenerator>(cell))
+        return dynamicDowncast<JSPromise>(generator->context());
+    return dynamicDowncast<JSPromise>(cell);
+}
+
 void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, Exception* exception)
 {
     ASSERT(!vm.isTerminationException(exception));
 
     Debugger* debugger = globalObject->debugger();
-    if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
+    if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) [[unlikely]] {
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
         // frames.
@@ -1013,8 +1003,10 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
         if (!hasCatchHandler) {
             if (vm.topEntryFrame) {
                 auto* entryRecord = vmEntryRecord(vm.topEntryFrame);
-                if (entryRecord->m_context)
-                    hasCatchHandler = true;
+                if (auto* context = entryRecord->m_context) {
+                    JSPromise* promise = toPromise(context);
+                    hasCatchHandler = !promise || !promise->hasUnhandledRejectionChain();
+                }
             }
         }
 

@@ -1,0 +1,71 @@
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: throwing TestError
+Checking uncaught exception pauses in async functions and awaiting callers.
+
+
+== Running test suite: BreakOnUncaughtException.AsyncAwait
+-- Running test case: Async.NoCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause the expected number of times.
+
+-- Running test case: Async.Catch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Async.ChainWithoutCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause the expected number of times.
+
+-- Running test case: Async.ChainWithCatch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Async.LocalCatch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Await.NoCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause in the expected function.
+PASS: Should pause the expected number of times.
+
+-- Running test case: Await.Catch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Await.PromiseWithoutCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause in the expected function.
+PASS: Should pause the expected number of times.
+
+-- Running test case: Await.PromiseWithCatch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Await.NestedCatch
+PASS: Should pause the expected number of times.
+
+-- Running test case: Existing.BeforeAwaitWithCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause the expected number of times.
+
+-- Running test case: All.AwaitCatch
+PASS: Should pause in the expected function.
+PASS: Should pause at the original throw location.
+PASS: Should pause in the expected function.
+PASS: Should pause the expected number of times.
+
