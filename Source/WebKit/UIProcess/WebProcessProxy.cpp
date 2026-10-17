@@ -1328,6 +1328,12 @@ void WebProcessProxy::didCommitLoadClientOrigin(WebCore::ClientOrigin&& clientOr
     m_committedClientOrigins.add(WTF::move(clientOrigin));
 }
 
+void WebProcessProxy::didCommitWebArchiveOrigin(const WebCore::SecurityOriginData& origin)
+{
+    if (RegistrableDomain domain { origin }; !domain.isEmpty())
+        m_committedWebArchiveDomains.add(WTF::move(domain));
+}
+
 bool WebProcessProxy::hasCommittedStorageClientOrigin(const WebCore::ClientOrigin& clientOrigin) const
 {
     return m_committedStorageClientOrigins.contains(clientOrigin) || hasCommittedClientOrigin(clientOrigin);
