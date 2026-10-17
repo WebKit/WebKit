@@ -774,11 +774,6 @@ void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerT
     [contentView() _didCommitLayerTree:layerTreeTransaction mainFrameData:mainFrameData pageData:pageData transactionID:transactionID];
 }
 
-void PageClientImpl::didCommitMainFrameData(const MainFrameData& mainFrameData)
-{
-    PageClientImplCocoa::didCommitMainFrameData(mainFrameData);
-}
-
 void PageClientImpl::layerTreeCommitComplete()
 {
     [contentView() _layerTreeCommitComplete];

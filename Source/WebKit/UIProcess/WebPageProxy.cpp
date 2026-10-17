@@ -15387,6 +15387,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     internals().visibleScrollerThumbRect = IntRect();
 
     internals().needsFixedContainerEdgesUpdateAfterNextCommit = false;
+    internals().mainFrameFixedContainerEdges = { };
+    internals().resolvedFixedContainerEdges = { };
+    internals().fixedContainerEdgeSamplingFrames.clear();
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (RefPtr playbackSessionManager = std::exchange(m_playbackSessionManager, nullptr))
@@ -20692,6 +20695,7 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::Scrolli
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(RemoteScrollingCoordinator::RequestFullScrollingTreeCommit);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::InsertDictatedTextAsync);
+INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::SetFixedContainerEdgeSamplingSides);
 #endif
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebInspectorBackend::ShowMainResourceForFrame);
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::LoadURLInFrame);

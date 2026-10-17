@@ -334,6 +334,7 @@ struct ElementContext;
 struct ExceptionData;
 struct ExceptionDetails;
 struct FileChooserSettings;
+struct FixedContainerEdges;
 struct FocusOptions;
 struct FontAttributes;
 struct FrameGeometryUpdate;
@@ -1415,6 +1416,10 @@ public:
 #endif
     void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
     void didCommitMainFrameData(const MainFrameData&, const TransactionID&);
+#if PLATFORM(COCOA)
+    void didReceiveFixedContainerEdges(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::FixedContainerEdges&);
+    void resendFixedContainerEdgeSamplingSides(WebCore::FrameIdentifier);
+#endif
     void layerTreeCommitComplete();
 
 #if ENABLE(UI_SIDE_COMPOSITING)
@@ -3302,6 +3307,10 @@ private:
 #if PLATFORM(MAC)
     void performAccessibilitySearchInRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
     void continueAccessibilitySearchFromChildFrame(IPC::Connection&, WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
+#endif
+#if PLATFORM(COCOA)
+    void updateFixedContainerEdgeSampling(const WebCore::FixedContainerEdges&);
+    void resolveFixedContainerEdges();
 #endif
     void updateSandboxFlags(IPC::Connection&, WebCore::FrameIdentifier, WebCore::SandboxFlags);
     void updateReferrerPolicy(IPC::Connection&, WebCore::FrameIdentifier, WebCore::ReferrerPolicy);
