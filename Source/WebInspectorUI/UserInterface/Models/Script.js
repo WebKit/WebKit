@@ -159,7 +159,7 @@ WI.Script = class Script extends WI.SourceCode
         }
 
         if (this._url && !this._dynamicallyAddedScriptElement)
-            return WI.displayNameForURL(this._url, this.urlComponents);
+            return this.displayNameWithAffix();
 
         if (isWebInspectorConsoleEvaluationScript(this._sourceURL)) {
             console.assert(this._uniqueDisplayNameNumber);
