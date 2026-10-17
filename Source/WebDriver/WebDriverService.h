@@ -38,6 +38,7 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "WebSocketServer.h"
+#include <span>
 #endif
 
 namespace WebDriver {
@@ -142,6 +143,7 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    void bidiSessionEnd(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
 #endif
 
     static Capabilities platformCapabilities();
@@ -177,8 +179,9 @@ private:
         String method;
         BidiCommandHandler handler;
     };
-    static const BidiCommand s_bidiCommands[];
-    static bool findBidiCommand(const RefPtr<JSON::Object>&, BidiCommandHandler*, RefPtr<JSON::Object>& parsedParams);
+    static const BidiCommand s_staticBidiCommands[];
+    static const BidiCommand s_sessionBoundBidiCommands[];
+    static bool findBidiCommand(std::span<const BidiCommand>, const RefPtr<JSON::Object>&, BidiCommandHandler*, RefPtr<JSON::Object>& parsedParams);
 #endif // ENABLE(WEBDRIVER_BIDI)
 
     HTTPServer m_server;
