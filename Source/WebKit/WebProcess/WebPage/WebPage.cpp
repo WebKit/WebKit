@@ -5873,6 +5873,11 @@ void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> fl
 #endif
 }
 
+void WebPage::didPaintForRenderingUpdate()
+{
+    protect(corePage())->didPaintForRenderingUpdate();
+}
+
 void WebPage::willStartRenderingUpdateDisplay()
 {
     if (m_isClosed)

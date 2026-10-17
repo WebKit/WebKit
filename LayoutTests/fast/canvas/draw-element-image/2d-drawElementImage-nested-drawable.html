@@ -52,7 +52,7 @@
                 testRunner.notifyDone();
         }
 
-        // Let the drawable child be painted so that a snapshot exists.
-        requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(runTest, 0))));
+        canvas.onpaint = runTest;
+        canvas.requestPaint();
     </script>
 </body>

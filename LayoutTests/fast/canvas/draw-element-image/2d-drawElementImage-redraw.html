@@ -8,8 +8,11 @@
     if (window.testRunner)
         testRunner.waitUntilDone();
 
-    function nextFrames() {
-        return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    function nextPaint() {
+        return new Promise(resolve => {
+            canvas.addEventListener('paint', resolve, { once: true });
+            canvas.requestPaint();
+        });
     }
 
     const canvas = document.getElementById('canvas');
@@ -18,14 +21,10 @@
     canvas.onpaint = () => ctx.drawElementImage(box, 0, 0);
 
     (async () => {
-        await nextFrames();
-        canvas.requestPaint();
-        await nextFrames();
+        await nextPaint();
 
         box.style.backgroundColor = 'green';
-        await nextFrames();
-        canvas.requestPaint();
-        await nextFrames();
+        await nextPaint();
 
         if (window.testRunner)
             testRunner.notifyDone();
