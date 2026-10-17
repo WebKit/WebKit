@@ -1035,7 +1035,7 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, this, videoElementClientRect, videoDimensions, viewRef, mode, allowsPictureInPicture] {
         ASSERT(isUIThread());
         WebThreadLock();
-        Ref<PlaybackSessionInterfaceIOS> sessionInterface = PlaybackSessionInterfaceAVKitLegacy::create(*this);
+        Ref<PlaybackSessionInterfaceCocoa> sessionInterface = PlaybackSessionInterfaceAVKitLegacy::create(*this);
         m_interface = VideoPresentationInterfaceAVKitLegacy::create(sessionInterface.get());
         protect(m_interface)->setVideoPresentationModel(this);
 

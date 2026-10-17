@@ -37,7 +37,7 @@ class VideoPresentationInterfaceTVOS final : public VideoPresentationInterfaceIO
     WTF_MAKE_TZONE_ALLOCATED(VideoPresentationInterfaceTVOS);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(VideoPresentationInterfaceTVOS);
 public:
-    WEBCORE_EXPORT static Ref<VideoPresentationInterfaceTVOS> create(PlaybackSessionInterfaceIOS&);
+    WEBCORE_EXPORT static Ref<VideoPresentationInterfaceTVOS> create(PlaybackSessionInterfaceCocoa&);
 
     // VideoPresentationInterfaceIOS
     void hasVideoChanged(bool) final { }
@@ -47,7 +47,7 @@ public:
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
     
 private:
-    VideoPresentationInterfaceTVOS(PlaybackSessionInterfaceIOS&);
+    VideoPresentationInterfaceTVOS(PlaybackSessionInterfaceCocoa&);
 
     // VideoPresentationInterfaceIOS
     void updateRouteSharingPolicy() final { }

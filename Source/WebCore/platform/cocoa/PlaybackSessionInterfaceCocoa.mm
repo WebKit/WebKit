@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PlaybackSessionInterfaceIOS.h"
+#import "PlaybackSessionInterfaceCocoa.h"
 
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
@@ -44,20 +44,20 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceIOS);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaybackSessionInterfaceCocoa);
 
-PlaybackSessionInterfaceIOS::PlaybackSessionInterfaceIOS(PlaybackSessionModel& model)
+PlaybackSessionInterfaceCocoa::PlaybackSessionInterfaceCocoa(PlaybackSessionModel& model)
     : m_playbackSessionModel(&model)
 {
     model.addClient(*this);
 }
 
-PlaybackSessionInterfaceIOS::~PlaybackSessionInterfaceIOS()
+PlaybackSessionInterfaceCocoa::~PlaybackSessionInterfaceCocoa()
 {
     ASSERT(isUIThread());
 }
 
-void PlaybackSessionInterfaceIOS::initialize()
+void PlaybackSessionInterfaceCocoa::initialize()
 {
     CheckedRef model = *m_playbackSessionModel;
 
@@ -78,7 +78,7 @@ void PlaybackSessionInterfaceIOS::initialize()
     wirelessVideoPlaybackDisabledChanged(model->wirelessVideoPlaybackDisabled());
 }
 
-void PlaybackSessionInterfaceIOS::invalidate()
+void PlaybackSessionInterfaceCocoa::invalidate()
 {
     if (!m_playbackSessionModel)
         return;
@@ -86,60 +86,60 @@ void PlaybackSessionInterfaceIOS::invalidate()
     m_playbackSessionModel = nullptr;
 }
 
-PlaybackSessionModel* PlaybackSessionInterfaceIOS::playbackSessionModel() const
+PlaybackSessionModel* PlaybackSessionInterfaceCocoa::playbackSessionModel() const
 {
     return m_playbackSessionModel.get();
 }
 
-void PlaybackSessionInterfaceIOS::modelDestroyed()
+void PlaybackSessionInterfaceCocoa::modelDestroyed()
 {
     ASSERT(isUIThread());
     invalidate();
     ASSERT(!m_playbackSessionModel);
 }
 
-std::optional<MediaPlayerIdentifier> PlaybackSessionInterfaceIOS::playerIdentifier() const
+std::optional<MediaPlayerIdentifier> PlaybackSessionInterfaceCocoa::playerIdentifier() const
 {
     return m_playerIdentifier;
 }
 
-void PlaybackSessionInterfaceIOS::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
+void PlaybackSessionInterfaceCocoa::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
 {
     m_playerIdentifier = WTF::move(identifier);
 }
 
-void PlaybackSessionInterfaceIOS::setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS> videoPresentationInterface)
+void PlaybackSessionInterfaceCocoa::setVideoPresentationInterface(WeakPtr<VideoPresentationInterfaceIOS> videoPresentationInterface)
 {
     m_videoPresentationInterface = WTF::move(videoPresentationInterface);
 }
 
-void PlaybackSessionInterfaceIOS::startObservingNowPlayingMetadata()
+void PlaybackSessionInterfaceCocoa::startObservingNowPlayingMetadata()
 {
 }
 
-void PlaybackSessionInterfaceIOS::stopObservingNowPlayingMetadata()
+void PlaybackSessionInterfaceCocoa::stopObservingNowPlayingMetadata()
 {
 }
 
 #if HAVE(AVEXPERIENCECONTROLLER)
-WKAVContentSource *PlaybackSessionInterfaceIOS::contentSource() const
+WKAVContentSource *PlaybackSessionInterfaceCocoa::contentSource() const
 {
     return nullptr;
 }
 #endif
 
 #if !RELEASE_LOG_DISABLED
-uint64_t PlaybackSessionInterfaceIOS::logIdentifier() const
+uint64_t PlaybackSessionInterfaceCocoa::logIdentifier() const
 {
     return m_playbackSessionModel ? protect(m_playbackSessionModel)->logIdentifier() : 0;
 }
 
-const Logger* PlaybackSessionInterfaceIOS::loggerPtr() const
+const Logger* PlaybackSessionInterfaceCocoa::loggerPtr() const
 {
     return m_playbackSessionModel ? protect(m_playbackSessionModel)->loggerPtr() : nullptr;
 }
 
-WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
+WTFLogChannel& PlaybackSessionInterfaceCocoa::logChannel() const
 {
     return LogMedia;
 }

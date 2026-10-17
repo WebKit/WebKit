@@ -94,7 +94,7 @@ public:
             controller.get().pictureInPictureActive = active;
     }
 
-    void setInterface(WebCore::PlaybackSessionInterfaceIOS* interface)
+    void setInterface(WebCore::PlaybackSessionInterfaceCocoa* interface)
     {
         if (m_interface == interface)
             return;
@@ -119,7 +119,7 @@ public:
 
 private:
     WeakObjCPtr<WKFullScreenViewController> m_parent;
-    RefPtr<WebCore::PlaybackSessionInterfaceIOS> m_interface;
+    RefPtr<WebCore::PlaybackSessionInterfaceCocoa> m_interface;
 };
 
 #pragma mark - _WKInsetLabel

@@ -76,12 +76,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceLMK);
 
 VideoPresentationInterfaceLMK::~VideoPresentationInterfaceLMK() = default;
 
-Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
+Ref<VideoPresentationInterfaceLMK> VideoPresentationInterfaceLMK::create(WebCore::PlaybackSessionInterfaceCocoa& playbackSessionInterface)
 {
     return adoptRef(*new VideoPresentationInterfaceLMK(playbackSessionInterface));
 }
 
-VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceIOS& playbackSessionInterface)
+VideoPresentationInterfaceLMK::VideoPresentationInterfaceLMK(WebCore::PlaybackSessionInterfaceCocoa& playbackSessionInterface)
     : VideoPresentationInterfaceIOS { playbackSessionInterface }
 {
 }
