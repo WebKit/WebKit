@@ -944,7 +944,7 @@ jobs:
       # mechanism for Wave Browser's repository-scoped GITHUB_TOKEN. A release
       # asset is public, versioned to this exact source SHA, and needs no user token.
       - name: Publish full page-engine release asset
-        if: ${{ github.event_name != 'pull_request' && steps.full-engine-probe.outputs.engine_ready == 'true' }}
+        if: ${{ !cancelled() && github.event_name != 'pull_request' && steps.full-engine-probe.outputs.engine_ready == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
