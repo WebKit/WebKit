@@ -34,7 +34,7 @@ bool SVGPathByteStreamSource::hasMoreData() const
 
 SVGPathSegType SVGPathByteStreamSource::nextCommand(SVGPathSegType)
 {
-    return readSVGSegmentType();
+    return readSVGSegmentType().value_or(SVGPathSegType::Unknown);
 }
 
 std::optional<SVGPathSegType> SVGPathByteStreamSource::parseSVGSegmentType()
@@ -44,73 +44,118 @@ std::optional<SVGPathSegType> SVGPathByteStreamSource::parseSVGSegmentType()
 
 std::optional<SVGPathSource::MoveToSegment> SVGPathByteStreamSource::parseMoveToSegment(FloatPoint)
 {
+    auto targetPoint = readFloatPoint();
+    if (!targetPoint)
+        return std::nullopt;
+
     MoveToSegment segment;
-    segment.targetPoint = readFloatPoint();
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::LineToSegment> SVGPathByteStreamSource::parseLineToSegment(FloatPoint)
 {
+    auto targetPoint = readFloatPoint();
+    if (!targetPoint)
+        return std::nullopt;
+
     LineToSegment segment;
-    segment.targetPoint = readFloatPoint();
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathByteStreamSource::parseLineToHorizontalSegment(FloatPoint)
 {
+    auto x = readFloat();
+    if (!x)
+        return std::nullopt;
+
     LineToHorizontalSegment segment;
-    segment.x = readFloat();
+    segment.x = *x;
     return segment;
 }
 
 std::optional<SVGPathSource::LineToVerticalSegment> SVGPathByteStreamSource::parseLineToVerticalSegment(FloatPoint)
 {
+    auto y = readFloat();
+    if (!y)
+        return std::nullopt;
+
     LineToVerticalSegment segment;
-    segment.y = readFloat();
+    segment.y = *y;
     return segment;
 }
 
 std::optional<SVGPathSource::CurveToCubicSegment> SVGPathByteStreamSource::parseCurveToCubicSegment(FloatPoint)
 {
+    auto point1 = readFloatPoint();
+    auto point2 = readFloatPoint();
+    auto targetPoint = readFloatPoint();
+    if (!point1 || !point2 || !targetPoint)
+        return std::nullopt;
+
     CurveToCubicSegment segment;
-    segment.point1 = readFloatPoint();
-    segment.point2 = readFloatPoint();
-    segment.targetPoint = readFloatPoint();
+    segment.point1 = *point1;
+    segment.point2 = *point2;
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathByteStreamSource::parseCurveToCubicSmoothSegment(FloatPoint)
 {
+    auto point2 = readFloatPoint();
+    auto targetPoint = readFloatPoint();
+    if (!point2 || !targetPoint)
+        return std::nullopt;
+
     CurveToCubicSmoothSegment segment;
-    segment.point2 = readFloatPoint();
-    segment.targetPoint = readFloatPoint();
+    segment.point2 = *point2;
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathByteStreamSource::parseCurveToQuadraticSegment(FloatPoint)
 {
+    auto point1 = readFloatPoint();
+    auto targetPoint = readFloatPoint();
+    if (!point1 || !targetPoint)
+        return std::nullopt;
+
     CurveToQuadraticSegment segment;
-    segment.point1 = readFloatPoint();
-    segment.targetPoint = readFloatPoint();
+    segment.point1 = *point1;
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathByteStreamSource::parseCurveToQuadraticSmoothSegment(FloatPoint)
 {
+    auto targetPoint = readFloatPoint();
+    if (!targetPoint)
+        return std::nullopt;
+
     CurveToQuadraticSmoothSegment segment;
-    segment.targetPoint = readFloatPoint();
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 
 std::optional<SVGPathSource::ArcToSegment> SVGPathByteStreamSource::parseArcToSegment(FloatPoint)
 {
+    auto rx = readFloat();
+    auto ry = readFloat();
+    auto angle = readFloat();
+    auto largeArc = readFlag();
+    auto sweep = readFlag();
+    auto targetPoint = readFloatPoint();
+    if (!rx || !ry || !angle || !largeArc || !sweep || !targetPoint)
+        return std::nullopt;
+
     ArcToSegment segment;
-    segment.rx = readFloat();
-    segment.ry = readFloat();
-    segment.angle = readFloat();
-    segment.largeArc = readFlag();
-    segment.sweep = readFlag();
-    segment.targetPoint = readFloatPoint();
+    segment.rx = *rx;
+    segment.ry = *ry;
+    segment.angle = *angle;
+    segment.largeArc = *largeArc;
+    segment.sweep = *sweep;
+    segment.targetPoint = *targetPoint;
     return segment;
 }
 

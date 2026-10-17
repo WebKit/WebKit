@@ -347,6 +347,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/RegistrableDomain.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/STUNMessageParsingTest.cpp
+        Tests/WebCore/SVGPathByteStreamTests.cpp
         Tests/WebCore/SampleMap.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/SerializedScriptValue.cpp
