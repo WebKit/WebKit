@@ -51,7 +51,7 @@ BlockLayout::BlockLayout(RenderBlockFlow& rootRenderer)
 {
 }
 
-static Layout::ConstraintsForBlockContent constraintsForBlockContent(const RenderBlockFlow& rootRenderer)
+static Layout::ConstraintsForBlockContent constraintsForBlockContent(const RenderBlockFlow& rootRenderer, RelayoutChildren relayoutChildren)
 {
     // The root lives in its parent's formatting context, which has already decided its size.
     auto contentBoxLogicalLeft = rootRenderer.borderAndPaddingStart();
@@ -60,15 +60,15 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
     if (rootRenderer.shouldPlaceVerticalScrollbarOnLeft() == rootRenderer.writingMode().isLogicalLeftInlineStart())
         contentBoxLogicalLeft += std::min<LayoutUnit>(rootRenderer.verticalScrollbarWidth(), std::max(0_lu, rootRenderer.logicalWidth() - rootRenderer.borderAndPaddingLogicalWidth()));
     auto horizontalConstraints = Layout::HorizontalConstraints { contentBoxLogicalLeft, rootRenderer.contentBoxLogicalWidth() };
-    return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, rootRenderer.availableLogicalHeightForPercentageComputation() };
+    return { { horizontalConstraints, rootRenderer.borderAndPaddingBefore() }, rootRenderer.availableLogicalHeightForPercentageComputation(), relayoutChildren == RelayoutChildren::Yes };
 }
 
-void BlockLayout::layout()
+void BlockLayout::layout(RelayoutChildren relayoutChildren)
 {
     auto paintInvalidation = PaintInvalidation { };
     auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
-    auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer()));
+    auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer(), relayoutChildren));
     LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
 
     updateRenderers(result, paintInvalidation);
@@ -180,7 +180,8 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     for (auto& box : result.boxes) {
         CheckedRef renderer = mutableRenderer(box.renderer);
         previousStates.append({ renderer->borderBoxRectInContainer(), renderer->everHadLayout() });
-        layoutRepainters.append(LayoutRepainter { renderer });
+        // The formatting context of a box laid out through the render tree invalidated it when it laid it out.
+        layoutRepainters.append(LayoutRepainter { renderer, box.isLaidOutThroughRenderTree ? std::optional { LayoutRepainter::CheckForRepaint::No } : std::nullopt });
     }
 
     for (auto& box : result.boxes) {
@@ -259,7 +260,9 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     for (size_t boxIndex = 0; boxIndex < result.boxes.size(); ++boxIndex) {
         auto& box = result.boxes[boxIndex];
         CheckedRef renderer = mutableRenderer(box.renderer);
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+        // The formatting context of a box laid out through the render tree did what follows for it.
+        CheckedPtr blockFlow = box.isLaidOutThroughRenderTree ? nullptr : dynamicDowncast<RenderBlockFlow>(renderer);
+        if (blockFlow) {
             blockFlow->clearOverflow();
             // Like RenderBlockFlow::layoutBlock, the content area ends where the content does, not where the box does.
             auto contentArea = blockFlow->flippedContentBoxRect();
@@ -282,7 +285,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
 
         // What RenderBlockFlow::layoutBlock invalidates: changes inside the box, at the place it had before it moved.
         auto damagedInlineContent = std::optional<PaintInvalidation::LogicalTopAndBottom> { };
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+        if (blockFlow) {
             damagedInlineContent = paintInvalidation.damagedInlineContentLogicalTopAndBottom(*blockFlow, box.geometry.verticalBorderAndPadding() + box.intrinsicContentBlockSize);
             if (CheckedPtr cache = protect(blockFlow->document())->existingAXObjectCache(); cache && damagedInlineContent)
                 cache->onLaidOutInlineContent(*blockFlow);
@@ -294,7 +297,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
         });
         // What RenderBlock::layout and RenderBlock::recomputeLogicalWidth do once the box is laid out. The scroll size and position of a
         // scroll container follow its new overflow; coverage keeps out the ones whose scrollbars would come or go with it.
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+        if (blockFlow) {
             blockFlow->updateScrollInfoAfterLayout();
             blockFlow->setShouldForceRelayoutChildren(false);
         }

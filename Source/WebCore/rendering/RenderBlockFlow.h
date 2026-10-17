@@ -150,7 +150,7 @@ protected:
     enum class ContentLayout : bool { RenderTree, BlockFormattingContext };
     ContentLayout layoutInFlowChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void layoutBlockChildren(RelayoutChildren, LayoutUnit& maxFloatLogicalBottom);
-    bool layoutUsingBlockFormattingContext();
+    bool layoutUsingBlockFormattingContext(RelayoutChildren);
     void layoutInlineChildren(RelayoutChildren, LayoutUnit previousHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void simplifiedNormalFlowLayout() override;
