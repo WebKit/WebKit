@@ -25,15 +25,20 @@
 
 WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
 {
-    constructor(symbol, {caseSensitive, isRegex, disabled, actions, condition, ignoreCount, autoContinue} = {})
+    constructor(symbol, {caseSensitive, isRegex, sourceMapped, disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
         console.assert(typeof symbol === "string" && symbol.trim().length, symbol);
+        console.assert(!sourceMapped || !ignoreCount, ignoreCount, sourceMapped);
 
         super({disabled, condition, actions, ignoreCount, autoContinue});
 
         this._symbol = symbol;
         this._caseSensitive = caseSensitive !== undefined ? !!caseSensitive : true;
         this._isRegex = isRegex !== undefined ? !!isRegex : false;
+        this._sourceMapped = !!sourceMapped;
+
+        this._symbolRegex = null;
+        this._lowercaseSymbol = null;
     }
 
     // Static
@@ -49,6 +54,7 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         return new WI.SymbolicBreakpoint(json.symbol, {
             caseSensitive: json.caseSensitive,
             isRegex: json.isRegex,
+            sourceMapped: json.sourceMapped,
             disabled: json.disabled,
             condition: json.condition,
             actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
@@ -62,15 +68,20 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
     get symbol() { return this._symbol; }
     get caseSensitive() { return this._caseSensitive; }
     get isRegex() { return this._isRegex; }
+    get sourceMapped() { return this._sourceMapped; }
 
     get displayName()
     {
+        let displayName;
         if (this._isRegex)
-            return "/" + this._symbol + "/" + (!this._caseSensitive ? "i" : "");
-
-        let displayName = this._symbol;
-        if (!this._caseSensitive)
-            displayName = WI.UIString("%s (Case Insensitive)", "%s (Case Insensitive) @ Symbolic Breakpoint", "Label for case-insensitive match pattern of a symbolic breakpoint.").format(displayName);
+            displayName = "/" + this._symbol + "/" + (!this._caseSensitive ? "i" : "");
+        else {
+            displayName = this._symbol;
+            if (!this._caseSensitive)
+                displayName = WI.UIString("%s (Case Insensitive)", "%s (Case Insensitive) @ Symbolic Breakpoint", "Label for case-insensitive match pattern of a symbolic breakpoint.").format(displayName);
+        }
+        if (this._sourceMapped)
+            displayName = WI.UIString("%s (Source Mapped)", "%s (Source Mapped) @ Symbolic Breakpoint", "Label for a source-mapped symbolic breakpoint.").format(displayName);
         return displayName;
     }
 
@@ -84,11 +95,15 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         if (!symbol || this.disabled)
             return false;
 
-        if (this._isRegex)
-            return (new RegExp(this._symbol, !this._caseSensitive ? "i" : "")).test(symbol);
+        if (this._isRegex) {
+            this._symbolRegex ||= new RegExp(this._symbol, !this._caseSensitive ? "i" : "");
+            return this._symbolRegex.test(symbol);
+        }
 
-        if (!this._caseSensitive)
-            return symbol.toLowerCase() === this._symbol.toLowerCase();
+        if (!this._caseSensitive) {
+            this._lowercaseSymbol ||= this._symbol.toLowerCase();
+            return this._lowercaseSymbol === symbol.toLowerCase();
+        }
 
         return symbol === this._symbol;
     }
@@ -99,7 +114,8 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
 
         return this._symbol === other.symbol
             && this._caseSensitive === other.caseSensitive
-            && this._isRegex === other.isRegex;
+            && this._isRegex === other.isRegex
+            && this._sourceMapped === other.sourceMapped;
     }
 
     remove()
@@ -114,6 +130,7 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         cookie["symbolic-breakpoint-symbol"] = this._symbol;
         cookie["symbolic-breakpoint-symbolic-case-sensitive"] = this._caseSensitive;
         cookie["symbolic-breakpoint-symbolic-is-regex"] = this._isRegex;
+        cookie["symbolic-breakpoint-symbolic-source-mapped"] = this._sourceMapped;
     }
 
     toJSON(key)
@@ -122,8 +139,9 @@ WI.SymbolicBreakpoint = class SymbolicBreakpoint extends WI.Breakpoint
         json.symbol = this._symbol;
         json.caseSensitive = this._caseSensitive;
         json.isRegex = this._isRegex;
+        json.sourceMapped = this._sourceMapped;
         if (key === WI.ObjectStore.toJSONSymbol)
-            json[WI.objectStores.eventBreakpoints.keyPath] = this._symbol + "-" + this._caseSensitive + "-" + this._isRegex;
+            json[WI.objectStores.symbolicBreakpoints.keyPath] = this._symbol + "-" + this._caseSensitive + "-" + this._isRegex + "-" + this._sourceMapped;
         return json;
     }
 };

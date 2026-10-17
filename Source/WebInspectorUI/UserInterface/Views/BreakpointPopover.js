@@ -37,6 +37,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
         this._contentElement = null;
         this._conditionCodeMirror = null;
+        this._ignoreCountRowElement = null;
         this._ignoreCountInputElement = null;
         this._actionsContainerElement = null;
         this._actionViews = [];
@@ -198,7 +199,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             ignoreCountLabelElement.setAttribute("for", this._ignoreCountInputElement.id);
             this._ignoreCountText.setAttribute("for", this._ignoreCountInputElement.id);
 
-            this.addRow("ignore-count", ignoreCountLabelElement, ignoreCountContentFragment);
+            this._ignoreCountRowElement = this.addRow("ignore-count", ignoreCountLabelElement, ignoreCountContentFragment);
 
             let actionsLabelElement = document.createElement("label");
             actionsLabelElement.textContent = WI.UIString("Action");
@@ -238,6 +239,8 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             this._optionsRowElement = this.addRow("options", optionsLabelElement, optionsDocumentFragment);
             if (!this._breakpoint?.actions.length)
                 this._optionsRowElement.classList.add("hidden");
+
+            this.handleConfigurationChanged();
 
             // CodeMirror needs to refresh after the popover is shown as otherwise it doesn't appear.
             setTimeout(() => {
@@ -340,6 +343,19 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
         return WI.CodeMirrorCompletionController.Mode.Basic;
     }
 
+    get supportsIgnoreCount()
+    {
+        return true;
+    }
+
+    handleConfigurationChanged()
+    {
+        if (this._ignoreCountRowElement)
+            this._ignoreCountRowElement.hidden = !this.supportsIgnoreCount;
+
+        this.update();
+    }
+
     populateContent()
     {
         throw WI.NotImplementedError.subclassMustOverride();
@@ -378,7 +394,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
     _parseIgnoreCountNumber()
     {
         let ignoreCount = 0;
-        if (this._ignoreCountInputElement.value) {
+        if (this.supportsIgnoreCount && this._ignoreCountInputElement.value) {
             ignoreCount = parseInt(this._ignoreCountInputElement.value, 10);
             if (isNaN(ignoreCount) || ignoreCount < 0)
                 ignoreCount = 0;
