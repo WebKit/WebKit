@@ -127,6 +127,16 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     return { };
 }
 
+// Only display: flow-root: the other ways to establish a block formatting context also clip, scroll, contain, align or fragment the content.
+static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
+{
+    CheckedRef style = blockContainer.style();
+    return style->display() == Style::DisplayType::BlockFlowRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
+        && !blockContainer.hasNonVisibleOverflow() && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
+        && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
+        && style->overflowContinue() == OverflowContinue::Normal && !style->containerType().hasSizeContainment();
+}
+
 static std::optional<BlockAvoidanceReason> inlineContentAvoidanceReason(const RenderElement& renderer)
 {
     if (is<RenderLineBreak>(renderer))
@@ -177,7 +187,7 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
     if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(blockContainer->parent()); !parent || parent->childrenInline())
         return BlockAvoidanceReason::ContentHasBlockInInline;
-    if (blockContainer->createsNewFormattingContext())
+    if (blockContainer->createsNewFormattingContext() && !isSupportedBlockFormattingContextRoot(*blockContainer))
         return BlockAvoidanceReason::ContentHasFormattingContextRoot;
     if (blockContainer->hasLayer())
         return BlockAvoidanceReason::ContentHasLayer;
