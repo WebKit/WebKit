@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function exerciseMetaElements(doc) {
+    const meta = doc.createElement("meta");
+    meta.name = "text-scale";
+    meta.content = "scale";
+    doc.head.appendChild(meta);
+    meta.content = "legacy";
+    meta.content = "scale";
+    meta.name = "other";
+    meta.name = "text-scale";
+    const second = doc.createElement("meta");
+    second.name = "text-scale";
+    doc.head.insertBefore(second, meta);
+    second.remove();
+    const element = doc.createElement("div");
+    element.style.fontSize = "1.5rem";
+    doc.body.appendChild(element);
+    getComputedStyle(element).fontSize;
+    meta.remove();
+    doc.head.appendChild(meta);
+    doc.head.replaceChildren();
+    return meta;
+}
+
+test(() => {
+    exerciseMetaElements(document.implementation.createHTMLDocument(""));
+}, "Changing text-scale meta elements in a createHTMLDocument document does not crash");
+
+test(() => {
+    const doc = new DOMParser().parseFromString(`<!DOCTYPE html><html><head><meta name="text-scale" content="scale"></head><body><p style="font-size: 1rem">text</p></body></html>`, "text/html");
+    doc.querySelector("meta").content = "legacy";
+    doc.querySelector("meta").remove();
+    exerciseMetaElements(doc);
+}, "Changing text-scale meta elements in a DOMParser document does not crash");
+
+test(() => {
+    const doc = document.implementation.createHTMLDocument("");
+    const meta = exerciseMetaElements(doc);
+    document.head.appendChild(meta);
+    assert_equals(internals.textScaleMetaMode(), "scale");
+    doc.head.appendChild(meta);
+    assert_equals(internals.textScaleMetaMode(), "legacy");
+    document.head.appendChild(document.adoptNode(meta));
+    assert_equals(internals.textScaleMetaMode(), "scale");
+    meta.remove();
+    assert_equals(internals.textScaleMetaMode(), "legacy");
+}, "Moving a text-scale meta between a frameless document and the main document does not crash");
+
+test(() => {
+    const doc = document.implementation.createHTMLDocument("");
+    const meta = doc.createElement("meta");
+    meta.name = "text-scale";
+    meta.content = "scale";
+    doc.head.appendChild(meta);
+    internals.setContentSizeCategory("XXXL");
+    internals.setContentSizeCategory("L");
+    doc.head.replaceChildren();
+}, "Changing the content size category with a frameless document that has a text-scale meta does not crash");
+
+test(() => {
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    const doc = iframe.contentDocument;
+    const meta = doc.createElement("meta");
+    meta.name = "text-scale";
+    meta.content = "scale";
+    doc.head.appendChild(meta);
+    iframe.remove();
+    meta.content = "legacy";
+    meta.remove();
+}, "Changing a text-scale meta in a document of a removed iframe does not crash");
+</script>
+</body>
+</html>

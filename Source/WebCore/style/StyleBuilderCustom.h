@@ -326,7 +326,7 @@ static inline float computeBaseComputedFontSize(const Document& document, const 
 
 static inline float computeLineHeightMultiplierDueToFontSize(const Document& document, const ComputedStyle& style, const CSSValue& value)
 {
-    bool percentageAutosizingEnabled = document.settings().textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
+    bool percentageAutosizingEnabled = document.textAutosizingEnabled() && style.textSizeAdjust().isPercentage();
 
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && primitiveValue->isLength()) {
         auto minimumFontSize = document.settings().minimumFontSize();

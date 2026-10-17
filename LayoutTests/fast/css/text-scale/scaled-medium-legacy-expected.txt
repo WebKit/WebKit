@@ -1,0 +1,6 @@
+
+PASS Category L: content=legacy does not scale font sizes
+PASS Category L: no text-scale meta does not scale font sizes
+PASS Category XXXL: content=legacy does not scale font sizes
+PASS Category XXXL: no text-scale meta does not scale font sizes
+

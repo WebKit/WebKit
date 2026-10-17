@@ -44,6 +44,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationDidBecomeActiveNotificati
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationDidEnterBackgroundNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIContentSizeCategoryDidChangeNotification, NSNotificationName)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIApplicationDidChangeStatusBarOrientationNotification, NSNotificationName)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIContentSizeCategoryLarge, UIContentSizeCategory)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIFontTextStyleBody, UIFontTextStyle)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIFontTextStyleCallout, UIFontTextStyle)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UIPasteboardNameGeneral, UIPasteboardName)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, UIKit, UITextEffectsBeneathStatusBarWindowLevel, UIWindowLevel)

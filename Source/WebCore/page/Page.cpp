@@ -1184,12 +1184,7 @@ void Page::initGroup()
 void Page::updateStyleAfterChangeInEnvironment()
 {
     forEachDocument([] (Document& document) {
-        if (RefPtr styleResolver = document.styleScope().resolverIfExists())
-            styleResolver->invalidateMatchedDeclarationsCache();
-        document.scheduleFullStyleRebuild();
-        document.styleScope().didChangeStyleSheetEnvironment();
-        document.updateElementsAffectedByMediaQueries();
-        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+        document.updateStyleAfterChangeInEnvironment();
     });
 }
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="text-scale" content="scale">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
+<style>
+#wide-em, #narrow-em, #wide-rem { width: 10px; }
+</style>
+</head>
+<body>
+<div id="wide-em"></div>
+<div id="narrow-em"></div>
+<div id="wide-rem"></div>
+<script>
+// The threshold comes from the viewport width, so that the queries flip between L and XXXL at any viewport width.
+const threshold = mediaQueryThresholdEm();
+const minWidthEm = `(min-width: ${threshold}em)`;
+const maxWidthEm = `(max-width: ${threshold}em)`;
+const minWidthRem = `(min-width: ${threshold}rem)`;
+
+const style = document.createElement("style");
+style.textContent = `
+@media ${minWidthEm} { #wide-em { width: 40px; } }
+@media ${maxWidthEm} { #narrow-em { width: 55px; } }
+@media ${minWidthRem} { #wide-rem { width: 40px; } }
+`;
+document.head.appendChild(style);
+
+function width(id) {
+    return document.getElementById(id).getBoundingClientRect().width;
+}
+
+test(() => {
+    assert_true(innerWidth >= threshold * scaledMediumSize(contentSizeCategoryScales.L), "the threshold matches at L");
+    assert_true(innerWidth < threshold * scaledMediumSize(contentSizeCategoryScales.XXXL), "the threshold does not match at XXXL");
+}, "The media queries flip between L and XXXL");
+
+for (const category of ["L", "XXXL"]) {
+    test(t => {
+        setContentSizeCategory(t, category);
+        const expectWide = innerWidth >= threshold * scaledMediumSize(textScaleForCategory(category));
+        assert_equals(matchMedia(minWidthEm).matches, expectWide, "matchMedia min-width em");
+        assert_equals(matchMedia(maxWidthEm).matches, !expectWide, "matchMedia max-width em");
+        assert_equals(matchMedia(minWidthRem).matches, expectWide, "matchMedia min-width rem");
+        assert_equals(width("wide-em"), expectWide ? 40 : 10, "@media min-width em");
+        assert_equals(width("narrow-em"), expectWide ? 10 : 55, "@media max-width em");
+        assert_equals(width("wide-rem"), expectWide ? 40 : 10, "@media min-width rem");
+    }, `Category ${category}: em and rem in media queries use the scaled medium`);
+}
+
+promise_test(async t => {
+    setContentSizeCategory(t, "XXXL");
+    const query = matchMedia(minWidthEm);
+    if (!platformHasTextScale) {
+        assert_true(query.matches, "XXXL without a text scale source");
+        return;
+    }
+    assert_false(query.matches, "XXXL");
+    const changed = new Promise(resolve => query.addEventListener("change", resolve, { once: true }));
+    internals.setContentSizeCategory("L");
+    await changed;
+    assert_true(query.matches, "L");
+}, "A MediaQueryList with em gets a change event when the text scale changes");
+</script>
+</body>
+</html>

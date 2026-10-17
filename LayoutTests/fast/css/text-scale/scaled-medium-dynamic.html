@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-5/#text-scale-meta">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/text-scale-helpers.js"></script>
+<style>
+#rem { font-size: 1.5rem; }
+#keyword { font-size: x-large; }
+#media-query { width: 10px; }
+</style>
+</head>
+<body>
+<div id="rem"></div>
+<div id="keyword"></div>
+<div id="media-query"></div>
+<div id="container"></div>
+<script>
+const scale = textScaleForCategory("XXXL");
+const threshold = mediaQueryThresholdEm();
+const mediaQuery = `(min-width: ${threshold}em)`;
+const style = document.createElement("style");
+style.textContent = `@media ${mediaQuery} { #media-query { width: 40px; } }`;
+document.head.appendChild(style);
+
+function assertSizes(expectedScale, description) {
+    assertFontSize(document.documentElement, scaledMediumSize(expectedScale), `root ${description}`);
+    assertFontSize(document.getElementById("rem"), 1.5 * scaledMediumSize(expectedScale), `1.5rem ${description}`);
+    assertFontSize(document.getElementById("keyword"), scaledKeywordSize("x-large", expectedScale), `x-large ${description}`);
+    const expectWide = innerWidth >= threshold * scaledMediumSize(expectedScale);
+    assert_equals(matchMedia(mediaQuery).matches, expectWide, `matchMedia ${description}`);
+    assert_equals(document.getElementById("media-query").getBoundingClientRect().width, expectWide ? 40 : 10, `@media ${description}`);
+}
+
+function createMeta(content) {
+    const meta = document.createElement("meta");
+    meta.name = "text-scale";
+    meta.content = content;
+    return meta;
+}
+
+function dynamicTest(func, description) {
+    test(t => {
+        setContentSizeCategory(t, "XXXL");
+        t.add_cleanup(() => {
+            for (const meta of [...document.querySelectorAll("meta[name]")])
+                meta.remove();
+            document.getElementById("container").replaceChildren();
+        });
+        assertSizes(1, "before");
+        func(t);
+    }, description);
+}
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta("scale"));
+    assertSizes(scale, "after insertion");
+    meta.remove();
+    assertSizes(1, "after removal");
+}, "Inserting and removing a scale meta updates font sizes and media queries");
+
+dynamicTest(() => {
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(createMeta("scale"));
+    document.getElementById("container").appendChild(wrapper);
+    assertSizes(scale, "after insertion in body");
+    wrapper.remove();
+    assertSizes(1, "after removing the parent");
+}, "Inserting a meta in body and removing its parent");
+
+dynamicTest(() => {
+    const meta = document.head.appendChild(createMeta("legacy"));
+    assertSizes(1, "with content=legacy");
+    meta.content = "scale";
+    assertSizes(scale, "after changing content to scale");
+    meta.content = "legacy";
+    assertSizes(1, "after changing content back to legacy");
+    meta.removeAttribute("content");
+    meta.setAttribute("content", "SCALE");
+    assertSizes(scale, "after setting content to SCALE");
+    meta.name = "other";
+    assertSizes(1, "after changing the name");
+    meta.name = "text-scale";
+    assertSizes(scale, "after changing the name back");
+}, "Changing the content and name attributes updates font sizes");
+
+dynamicTest(() => {
+    const first = document.head.appendChild(createMeta("scale"));
+    const second = document.head.appendChild(createMeta("legacy"));
+    assertSizes(scale, "first meta is scale");
+    first.remove();
+    assertSizes(1, "second meta is legacy");
+    second.content = "scale";
+    assertSizes(scale, "second meta changed to scale");
+}, "Only the first meta applies after dynamic changes");
+
+dynamicTest(t => {
+    document.head.appendChild(createMeta("scale"));
+    assertSizes(scale, "at XXXL");
+    internals.setContentSizeCategory("L");
+    assertSizes(textScaleForCategory("L"), "after changing the category to L");
+    internals.setContentSizeCategory("XXXL");
+    assertSizes(scale, "after changing the category back to XXXL");
+}, "Changing the content size category after load updates font sizes and media queries");
+</script>
+</body>
+</html>

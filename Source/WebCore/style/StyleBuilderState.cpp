@@ -200,7 +200,7 @@ void BuilderState::updateFont()
 void BuilderState::updateFontForTextSizeAdjust()
 {
     if (m_style->textSizeAdjust().isAuto()
-        || !document().settings().textAutosizingEnabled()
+        || !document().textAutosizingEnabled()
         || (document().settings().textAutosizingUsesIdempotentMode()
             && !m_style->textSizeAdjust().isNone()
             && !document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
@@ -229,7 +229,7 @@ void BuilderState::updateFontForZoomChange()
     // computed the correct size (incorporating both the multiplier and the current zoom factor).
     // Skip recalculation here to avoid overwriting that result, which would lose the
     // text-size-adjust multiplier.
-    if (document().settings().textAutosizingEnabled()
+    if (document().textAutosizingEnabled()
         && !m_style->textSizeAdjust().isAuto()
         && !m_style->textSizeAdjust().isNone()
         && (!document().settings().textAutosizingUsesIdempotentMode()

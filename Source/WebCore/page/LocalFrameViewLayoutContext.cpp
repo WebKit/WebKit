@@ -862,11 +862,12 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
 void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
     ASSERT(document());
-    if (protect(document())->quirks().shouldIgnoreTextAutoSizing())
+    Ref document = *this->document();
+    if (document->quirks().shouldIgnoreTextAutoSizing())
         return;
     Ref settings = layoutRoot.settings();
     bool idempotentMode = settings->textAutosizingUsesIdempotentMode();
-    if (!settings->textAutosizingEnabled() || idempotentMode || protect(renderView())->printing())
+    if (!document->textAutosizingEnabled() || idempotentMode || protect(renderView())->printing())
         return;
     auto minimumZoomFontSize = settings->minimumZoomFontSize();
     if (!idempotentMode && !minimumZoomFontSize)

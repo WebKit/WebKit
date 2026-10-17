@@ -420,6 +420,10 @@
 #include "DOMTimerHoldingTank.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "FontCacheCoreText.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include "DeviceMotionClientIOS.h"
 #include "DeviceMotionController.h"
@@ -5765,7 +5769,17 @@ void Document::metaElementTextScaleChanged()
             textScaleMeta = TextScaleMeta::Scale;
         break;
     }
+    auto oldTextScaleMeta = this->textScaleMeta();
     m_textScaleMeta = textScaleMeta;
+    auto newTextScaleMeta = this->textScaleMeta();
+    if (newTextScaleMeta == oldTextScaleMeta)
+        return;
+
+    if (newTextScaleMeta == TextScaleMeta::Scale && settings().textAutosizingEnabled() && !settings().textAutosizingUsesIdempotentMode()) {
+        if (CheckedPtr renderView = this->renderView())
+            renderView->setTextAutosizingState(RenderView::TextAutosizingState::ResetScheduled);
+    }
+    updateStyleAfterChangeInEnvironment();
 }
 
 TextScaleMeta Document::textScaleMeta() const
@@ -5773,6 +5787,32 @@ TextScaleMeta Document::textScaleMeta() const
     if (!settings().cssTextScaleMetaEnabled())
         return TextScaleMeta::Legacy;
     return m_textScaleMeta;
+}
+
+float Document::textScaleFactor() const
+{
+    if (textScaleMeta() != TextScaleMeta::Scale)
+        return 1;
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    return textScaleFactorForContentSizeCategory();
+#else
+    return 1;
+#endif
+}
+
+bool Document::textAutosizingEnabled() const
+{
+    return settings().textAutosizingEnabled() && textScaleMeta() != TextScaleMeta::Scale;
+}
+
+void Document::updateStyleAfterChangeInEnvironment()
+{
+    if (RefPtr styleResolver = styleScope().resolverIfExists())
+        styleResolver->invalidateMatchedDeclarationsCache();
+    scheduleFullStyleRebuild();
+    styleScope().didChangeStyleSheetEnvironment();
+    updateElementsAffectedByMediaQueries();
+    scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -11985,7 +12025,7 @@ const Style::ComputedStyle& Document::initialStyle() const
         cachedInitialStyle->setZoom(zoom);
 
         auto initialFontFamily = FontFamily { standardFamily, FontFamilyKind::Generic };
-        auto initialComputedFontSize = Style::fontSizeForKeyword(CSSValueID::Medium, false, settingsValues(), inQuirksMode());
+        auto initialComputedFontSize = Style::fontSizeForKeyword(CSSValueID::Medium, false, *this);
         auto initialUsedFontSize = Style::usedFontSizeFromComputedSize(initialComputedFontSize, false, zoomForFontDescription, Style::MinimumFontSizeRule::AbsoluteAndRelative, settingsValues());
         auto allowUserInstalledFonts = settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
 

@@ -56,7 +56,7 @@ float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, con
 float fontSizeForKeyword(CSSValueID keyword, bool shouldUseFixedDefaultSize, const Document&);
 
 // Given a font size in pixel, this function will return legacy font size between 1 and 7.
-int LEGACY_NODELETE legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document&);
+int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document&);
 
 } // namespace Style
 } // namespace WebCore

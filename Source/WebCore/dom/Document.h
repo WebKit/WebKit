@@ -1064,6 +1064,7 @@ public:
     inline Element* cssTarget() const; // Defined in ElementInlines.h.
 
     WEBCORE_EXPORT void scheduleFullStyleRebuild();
+    void updateStyleAfterChangeInEnvironment();
     void scheduleStyleRecalc();
     void unscheduleStyleRecalc();
     bool LEGACY_NODELETE hasPendingStyleRecalc() const;
@@ -1213,6 +1214,8 @@ public:
 
     void metaElementTextScaleChanged();
     WEBCORE_EXPORT TextScaleMeta textScaleMeta() const;
+    float textScaleFactor() const;
+    bool textAutosizingEnabled() const;
 
 #if ENABLE(APPLICATION_MANIFEST)
     void processApplicationManifest(const ApplicationManifest&);
