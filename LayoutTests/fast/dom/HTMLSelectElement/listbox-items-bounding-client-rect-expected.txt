@@ -1,0 +1,21 @@
+Tests getBoundingClientRect() on list box items when layout is out of date, and on an optgroup that follows an option.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS option1BoxAfterLayout.width is > 0
+PASS option1Box.left is option1BoxAfterLayout.left
+PASS option1Box.top is option1BoxAfterLayout.top
+PASS option1Box.width is option1BoxAfterLayout.width
+PASS option1Box.height is option1BoxAfterLayout.height
+PASS groupClientRects.length is 1
+PASS groupBox.left is option1BoxAfterLayout.left
+PASS groupBox.top is option1BoxAfterLayout.bottom
+PASS groupBox.width is option1BoxAfterLayout.width
+PASS groupBox.height is 2 * option1BoxAfterLayout.height
+PASS groupClientRects[0].top is groupBox.top
+PASS groupClientRects[0].height is groupBox.height
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<div id="container"></div>
+<script>
+description("Tests getBoundingClientRect() on list box items when layout is out of date, and on an optgroup that follows an option.");
+
+document.getElementById("container").innerHTML = `
+    <select id="list" multiple>
+        <option id="option1">Option 1</option>
+        <optgroup id="group" label="Group">
+            <option id="option2">Option 2</option>
+        </optgroup>
+    </select>`;
+
+var option1 = document.getElementById("option1");
+var group = document.getElementById("group");
+
+// The list box was just inserted, so layout is out of date.
+var option1Box = option1.getBoundingClientRect();
+
+document.body.offsetTop;
+var option1BoxAfterLayout = option1.getBoundingClientRect();
+var groupBox = group.getBoundingClientRect();
+var groupClientRects = group.getClientRects();
+
+shouldBeGreaterThan("option1BoxAfterLayout.width", "0");
+shouldBe("option1Box.left", "option1BoxAfterLayout.left");
+shouldBe("option1Box.top", "option1BoxAfterLayout.top");
+shouldBe("option1Box.width", "option1BoxAfterLayout.width");
+shouldBe("option1Box.height", "option1BoxAfterLayout.height");
+
+shouldBe("groupClientRects.length", "1");
+shouldBe("groupBox.left", "option1BoxAfterLayout.left");
+shouldBe("groupBox.top", "option1BoxAfterLayout.bottom");
+shouldBe("groupBox.width", "option1BoxAfterLayout.width");
+shouldBe("groupBox.height", "2 * option1BoxAfterLayout.height");
+shouldBe("groupClientRects[0].top", "groupBox.top");
+shouldBe("groupClientRects[0].height", "groupBox.height");
+
+document.getElementById("container").remove();
+</script>
