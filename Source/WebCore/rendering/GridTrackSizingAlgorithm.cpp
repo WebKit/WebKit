@@ -2139,6 +2139,12 @@ bool GridTrackSizingAlgorithm::isValidTransition() const
 void GridTrackSizingAlgorithm::setup(Style::GridTrackSizingDirection direction, unsigned numTracks, SizingOperation sizingOperation, std::optional<LayoutUnit> availableSpace)
 {
     ASSERT(m_needsSetup);
+    // The baselines come from the items' layout, which computing an item's intrinsic widths can leave stale.
+    for (CheckedPtr gridItem = m_renderGrid->firstChildBox(); gridItem; gridItem = gridItem->nextSiblingBox()) {
+        if (!gridItem->isOutOfFlowPositioned() && gridItem->needsLayout() && m_renderGrid->isBaselineAlignmentForGridItem(*gridItem))
+            gridItem->layoutIfNeeded();
+    }
+
     m_direction = direction;
     setAvailableSpace(direction, availableSpace ? std::max(0_lu, *availableSpace) : availableSpace);
 
