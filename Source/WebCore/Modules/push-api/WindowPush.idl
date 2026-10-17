@@ -27,6 +27,7 @@
 [
     Conditional=DECLARATIVE_WEB_PUSH,
     EnabledBySetting=DeclarativeWebPush,
+    SecureContext,
 ] interface mixin WindowPush {
     [SameObject] readonly attribute PushManager pushManager;
 };

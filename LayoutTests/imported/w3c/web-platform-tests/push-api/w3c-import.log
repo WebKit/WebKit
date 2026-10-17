@@ -16,3 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/push-api/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/push-api/idlharness.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/push-api/window-pushManager-non-secure-context.http.html
