@@ -1329,7 +1329,7 @@ public:
     bool applyAutocorrection(const String& correction, const String& originalText, bool isCandidate);
     void requestAutocorrectionContext();
     bool requestAutocorrectionContextAndWaitForReply(Seconds timeout);
-    void handleAutocorrectionContext(const WebAutocorrectionContext&);
+    void handleAutocorrectionContext(IPC::Connection&, const WebAutocorrectionContext&);
     void clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint);
 #if ENABLE(REVEAL)
     void requestRVItemInCurrentSelectedRange(CompletionHandler<void(const RevealItem&)>&&);
