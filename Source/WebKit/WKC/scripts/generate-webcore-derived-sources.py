@@ -25,14 +25,15 @@ WKC_CPP_DIR = WEBCORE / "WebCore"
 WEBCORE_CMAKE = WEBCORE / "CMakeLists.txt"
 WEBCORE_MACROS = WEBCORE / "WebCoreMacros.cmake"
 
-# These are the feature switches passed to the generator, not C++ options.
-# Keep them in step with the full-WebCore profile in build.yml. WebRTC API
-# bindings are enabled by the experimental full-engine CMake profile; WebAssembly
-# remains excluded until the Wii U PPC interpreter integration is enabled.
+# These switches control generated DOM/JSC bindings, so they must match the
+# *full-engine* CMake profile in .github/workflows/build.yml. The bootstrap
+# archive is built separately and must not dictate the generated interface set.
+# Keep notifications and MediaStream bindings because the full profile enables
+# their WebCore APIs; Gamepad, WebGL, Web Audio, WebRTC and WebAssembly are
+# deliberately disabled until their Wii U backends are complete.
 FEATURE_DEFINES = (
-    "LANGUAGE_JAVASCRIPT ENABLE_WKC ENABLE_CSS_ANIMATIONS ENABLE_GAMEPAD "
-    "ENABLE_INDEXED_DATABASE ENABLE_MEDIA_STREAM ENABLE_SVG ENABLE_WEBGL "
-    "ENABLE_WEB_AUDIO ENABLE_WEB_RTC"
+    "LANGUAGE_JAVASCRIPT ENABLE_WKC ENABLE_CSS_ANIMATIONS "
+    "ENABLE_INDEXED_DATABASE ENABLE_MEDIA_STREAM ENABLE_NOTIFICATIONS ENABLE_SVG"
 )
 
 
