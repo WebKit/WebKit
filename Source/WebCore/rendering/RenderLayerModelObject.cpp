@@ -928,6 +928,11 @@ static void invalidateNonScalingStrokeCachesInSubtree(RenderElement& renderer)
         return;
     }
 
+    if (CheckedPtr text = dynamicDowncast<RenderSVGText>(renderer)) {
+        text->invalidateNonScalingStrokeCaches();
+        return;
+    }
+
     if (CheckedPtr svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer)) {
         svgRenderer->invalidateCachedSVGTransformDependentBoundingBoxes();
         svgRenderer->invalidateCachedVisualOverflowRect();

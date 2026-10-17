@@ -913,8 +913,40 @@ FloatRect RenderSVGText::strokeBoundingBox() const
 
     Ref textElement = this->textElement();
     SVGLengthContext lengthContext(textElement.ptr());
-    strokeBoundaries.inflate(lengthContext.valueForLength(style().strokeWidth(), style().usedZoomForLength()));
+    auto strokeWidth = lengthContext.valueForLength(style().strokeWidth(), style().usedZoomForLength());
+
+    // A non scaling stroke keeps its on-screen width, so it covers fewer user units when scaled up.
+    if (hasNonScalingStroke() && document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto scalingFactor = RenderSVGInlineText::computeScalingFactorForRenderer(*this); scalingFactor > 0) {
+            strokeBoundaries.inflate(strokeWidth * style().usedZoom() * protect(document())->deviceScaleFactor() / scalingFactor);
+            return strokeBoundaries;
+        }
+    }
+
+    strokeBoundaries.inflate(strokeWidth);
     return strokeBoundaries;
+}
+
+bool RenderSVGText::hasNonScalingStroke() const
+{
+    return style().vectorEffect() == VectorEffect::NonScalingStroke;
+}
+
+void RenderSVGText::updateFromStyle()
+{
+    RenderSVGBlock::updateFromStyle();
+
+    if (hasNonScalingStroke() && document().settings().layerBasedSVGEngineEnabled())
+        setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+}
+
+void RenderSVGText::invalidateNonScalingStrokeCaches()
+{
+    if (!hasNonScalingStroke() || !m_hasPerformedLayout)
+        return;
+
+    invalidateCachedVisualOverflowRect();
+    updateVisualOverflow();
 }
 
 FloatRect RenderSVGText::decoratedBoundingBox() const
@@ -945,19 +977,13 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates(RepaintRectCalculation re
 void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        clearOverflow();
-
         m_objectBoundingBox = boundaries;
         m_cachedVisualOverflowRect = std::nullopt;
 
         setLocation(SVGContainerLayout::layoutLocationRelativeToContainer(*this));
         setBorderBoxSize(enclosingLayoutRect(m_objectBoundingBox).size());
 
-        auto overflowRect = visualOverflowRectEquivalent();
-        if (auto& textShadow = style().textShadow(); !textShadow.isNone())
-            Style::adjustRectForShadow(overflowRect, textShadow, style().usedZoomForLength());
-
-        addVisualOverflow(overflowRect);
+        updateVisualOverflow();
         return;
     }
 
@@ -966,6 +992,17 @@ void RenderSVGText::updatePositionAndOverflow(const FloatRect& boundaries)
     setBorderBoxSize(boundingRect.size());
     m_objectBoundingBox = boundingRect;
     ASSERT(m_objectBoundingBox == borderBoxRectInContainer());
+}
+
+void RenderSVGText::updateVisualOverflow()
+{
+    clearOverflow();
+
+    auto overflowRect = visualOverflowRectEquivalent();
+    if (auto& textShadow = style().textShadow(); !textShadow.isNone())
+        Style::adjustRectForShadow(overflowRect, textShadow, style().usedZoomForLength());
+
+    addVisualOverflow(overflowRect);
 }
 
 void RenderSVGText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
