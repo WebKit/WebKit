@@ -208,6 +208,7 @@ public:
     void addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&&);
     void setParkedLoaderDestinationAndResolvePendingClaims(NetworkResourceLoadIdentifier, WebCore::ProcessIdentifier destinationWebProcess);
     void removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadIdentifier);
+    size_t loadersAwaitingWebProcessTransferCount() const { return m_loadersAwaitingWebProcessTransfer.size(); }
 
     enum class LoaderAwaitingWebProcessTransferOutcome : uint8_t {
         Success, // loader returned in claim.loader
