@@ -90,7 +90,7 @@ public:
     void setTimingAllowFailedFlag();
     std::optional<WebCore::FrameIdentifier> LEGACY_NODELETE webFrameID() const;
     std::optional<WebCore::PageIdentifier> LEGACY_NODELETE webPageID() const;
-    Ref<NetworkProcess> LEGACY_NODELETE networkProcess();
+    NetworkProcess& LEGACY_NODELETE networkProcess();
 
     size_t LEGACY_NODELETE bytesTransferredOverNetwork() const;
 
@@ -120,7 +120,6 @@ private:
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 
     WeakPtr<NetworkLoadClient> m_client;
-    const Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;
     WeakPtr<NetworkLoadScheduler> m_scheduler;

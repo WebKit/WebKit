@@ -1742,7 +1742,7 @@ void NetworkConnectionToWebProcess::establishSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerServerConnection:");
 
     CheckedRef server = session->ensureSharedWorkerServer();
-    auto connection = WebSharedWorkerServerConnection::create(NetworkProcess::singleton(), server.get(), m_connection.get(), m_webProcessIdentifier);
+    auto connection = WebSharedWorkerServerConnection::create(server.get(), m_connection.get(), m_webProcessIdentifier);
 
     m_sharedWorkerConnection = connection;
     server->addConnection(WTF::move(connection));

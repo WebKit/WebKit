@@ -44,12 +44,12 @@ namespace WebKit {
 // Via the "allowsFirstPartyForCookies" check, we know which domains a given IPC::Connection should have access to.
 bool NetworkBroadcastChannelRegistry::isOriginAllowedForConnection(IPC::Connection& connection, const WebCore::ClientOrigin& origin) const
 {
-    RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    RefPtr webProcessConnection = NetworkProcess::singleton().webProcessConnection(connection);
     if (!webProcessConnection)
         return false;
 
     WebCore::RegistrableDomain registrableDomain { origin.topOrigin };
-    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(webProcessConnection->webProcessIdentifier(), registrableDomain);
+    auto allowCookieAccess = NetworkProcess::singleton().allowsFirstPartyForCookies(webProcessConnection->webProcessIdentifier(), registrableDomain);
 
     return allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow;
 }
@@ -61,15 +61,12 @@ static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkBroadcastChannelRegistry);
 
-Ref<NetworkBroadcastChannelRegistry> NetworkBroadcastChannelRegistry::create(NetworkProcess& networkProcess)
+Ref<NetworkBroadcastChannelRegistry> NetworkBroadcastChannelRegistry::create()
 {
-    return adoptRef(*new NetworkBroadcastChannelRegistry(networkProcess));
+    return adoptRef(*new NetworkBroadcastChannelRegistry);
 }
 
-NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess& networkProcess)
-    : m_networkProcess(networkProcess)
-{
-}
+NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry() = default;
 
 NetworkBroadcastChannelRegistry::~NetworkBroadcastChannelRegistry() = default;
 
@@ -120,7 +117,7 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
         return completionHandler();
 
     CompletionHandlerCallingScope blobURLsInFlight;
-    if (RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection))
+    if (RefPtr webProcessConnection = NetworkProcess::singleton().webProcessConnection(connection))
         blobURLsInFlight = webProcessConnection->retainBlobURLsWhileMessageIsInFlight(blobURLs);
 
     auto callbackAggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler), blobURLsInFlight = WTF::move(blobURLsInFlight)]() mutable {
@@ -152,7 +149,7 @@ void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connecti
 
 std::optional<SharedPreferencesForWebProcess> NetworkBroadcastChannelRegistry::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    auto* webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    auto* webProcessConnection = NetworkProcess::singleton().webProcessConnection(connection);
     if (!webProcessConnection)
         return std::nullopt;
     return webProcessConnection->sharedPreferencesForWebProcess();
