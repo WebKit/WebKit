@@ -3,6 +3,20 @@
     "description": "Automation domain exposes commands for automating user interactions with the browser.",
     "types": [
         {
+            "id": "AccessibilityProperties",
+            "type": "object",
+            "description": "Snapshot of a DOM node's computed accessibility properties used in WebDriver contexts.",
+            "properties": [
+                { "name": "accessibilityNodeId", "type": "string", "description": "The opaque handle of the accessibility node. The handle identifies the frame that contains the node." },
+                { "name": "role", "type": "string", "description": "The computed role." },
+                { "name": "label", "type": "string", "description": "The computed label." },
+                { "name": "checked", "type": "string", "optional": true, "description": "The checked state (\"true\", \"false\", or \"mixed\"). Omitted if the node does not support a checked state." },
+                { "name": "pressed", "type": "string", "optional": true, "description": "The pressed state (\"true\", \"false\", or \"mixed\"). Omitted if the node is not a toggle button." },
+                { "name": "parent", "type": "string", "optional": true, "description": "The opaque handle of the parent accessibility node, which may be in a different frame hosted by the same process. Omitted if the node has no parent, including when the node is the root of a frame whose parent frame is hosted by a different process." },
+                { "name": "children", "type": "array", "items": { "type": "string" }, "description": "The opaque handles of the unignored child accessibility nodes, which may be in different frames hosted by the same process. A frame hosted by a different process (for example, a cross-origin iframe with site isolation) appears as a single <code>RemoteFrame</code> node with no children." }
+            ]
+        },
+        {
             "id": "Point",
             "type": "object",
             "properties": [
@@ -733,6 +747,31 @@
             ],
             "returns": [
                 { "name": "consume", "type": "boolean", "description": "True if transient activation was present and was consumed; otherwise false." }
+            ],
+            "async": true
+        },
+        {
+            "name": "getAccessibilityPropertiesForElement",
+            "description": "Get computed accessibility properties for the accessibility node backing a DOM element. Use this when starting from an element reference; the returned <code>accessibilityNodeId</code>, <code>parent</code>, and <code>children</code> values can be passed to <code>getAccessibilityPropertiesForAccessibilityNode</code> to walk the accessibility tree, which may contain nodes that have no corresponding DOM element.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame that contains the element. The main frame is used if this parameter is empty string or excluded." },
+                { "name": "nodeHandle", "$ref": "NodeHandle", "description": "The handle of the element to get the accessibility properties for." }
+            ],
+            "returns": [
+                { "name": "properties", "$ref": "AccessibilityProperties" }
+            ],
+            "async": true
+        },
+        {
+            "name": "getAccessibilityPropertiesForAccessibilityNode",
+            "description": "Get computed accessibility properties for an accessibility node from WebKit's accessibility tree. Use this to inspect nodes reached via the <code>accessibilityNodeId</code>, <code>parent</code>, or <code>children</code> values returned by either accessibility properties command. Accessibility node handles identify the frame that contains the node, so no frame handle is needed.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "accessibilityNodeId", "type": "string", "description": "The accessibility node to get the accessibility properties for. This is an <code>accessibilityNodeId</code>, <code>parent</code>, or <code>children</code> value previously returned by an accessibility properties command." }
+            ],
+            "returns": [
+                { "name": "properties", "$ref": "AccessibilityProperties" }
             ],
             "async": true
         },

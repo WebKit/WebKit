@@ -2013,6 +2013,7 @@
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
 		99D808292E85F04200A3EFCC /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */; };
+		9B589CF4EB16F82BCC7A10E4 /* ComputedAccessibilityProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 30C23592AB1F52867340262E /* ComputedAccessibilityProperties.h */; };
 		99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07AC25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h */; };
 		9ACC07B125C815D800DC6386 /* MediaKeySystemPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07B025C815D800DC6386 /* MediaKeySystemPermissionRequest.h */; };
@@ -7777,6 +7778,8 @@
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
 		99CA66C8203668220074F35E /* EnterFullscreen.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = EnterFullscreen.js; sourceTree = "<group>"; };
 		99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionMacros.h; sourceTree = "<group>"; };
+		30C23592AB1F52867340262E /* ComputedAccessibilityProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComputedAccessibilityProperties.h; sourceTree = "<group>"; };
+		390485CF807720A4946BAA38 /* ComputedAccessibilityProperties.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ComputedAccessibilityProperties.serialization.in; sourceTree = "<group>"; };
 		99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationDelegate.h; sourceTree = "<group>"; };
 		99F642D21FABE378009621E9 /* CoordinateSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoordinateSystem.h; sourceTree = "<group>"; };
 		9A8C42AE535B28E40886C56B /* WKImmersiveEnvironment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImmersiveEnvironment.mm; sourceTree = "<group>"; };
@@ -15780,6 +15783,8 @@
 		99D808282E85F04200A3EFCC /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				30C23592AB1F52867340262E /* ComputedAccessibilityProperties.h */,
+				390485CF807720A4946BAA38 /* ComputedAccessibilityProperties.serialization.in */,
 				99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */,
 			);
 			path = Automation;
@@ -18456,6 +18461,7 @@
 				D243D71F2CC1764C006D5E35 /* ColorControlSupportsAlpha.h in Headers */,
 				F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */,
 				37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */,
+				9B589CF4EB16F82BCC7A10E4 /* ComputedAccessibilityProperties.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,
 				461A50632B6C48A000BF6FA1 /* ConnectionHandle.h in Headers */,

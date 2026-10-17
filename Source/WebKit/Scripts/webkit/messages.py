@@ -437,6 +437,7 @@ def serialized_identifiers():
     # FIXME: This can be derived from *.serialization.in files.
     return [
         'IPC::AsyncReplyID',
+        'WebCore::AXID',
         'WebCore::AgentClusterIdentifier',
         'WebCore::AttributedStringTextListID',
         'WebCore::AttributedStringTextTableBlockID',
@@ -621,6 +622,7 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::TransientInputHitTestSource',
         'PlatformXR::VisibilityState',
         'String',
+        'WebCore::AXID',
         'WebCore::BackForwardFrameItemIdentifier',
         'WebCore::BackForwardItemIdentifier',
         'WebCore::ColorSpace',
@@ -1389,6 +1391,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WTF::UUID': ['<wtf/UUID.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
         'WebCore::AXDebugInfo': ['<WebCore/AXObjectTypes.h>'],
+        'WebCore::AXID': ['<WebCore/AXID.h>'],
         'WebCore::ActivityStateForCPUSampling': ['<WebCore/ActivityState.h>'],
         'WebCore::AccessibilityMode': ['<WebCore/AXObjectTypes.h>'],
         'WebCore::AccessibilityRemoteToken': ['<WebCore/AccessibilityRemoteToken.h>'],
