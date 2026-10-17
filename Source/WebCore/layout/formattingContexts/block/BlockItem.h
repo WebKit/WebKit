@@ -43,7 +43,8 @@ public:
     enum class Type : uint8_t {
         // A block container whose content takes part in this block formatting context: its children come between its start and end.
         BlockContainerStart,
-        BlockContainerEnd
+        BlockContainerEnd,
+        InlineContent
     };
     BlockItem(const RenderBox&, Type);
 
