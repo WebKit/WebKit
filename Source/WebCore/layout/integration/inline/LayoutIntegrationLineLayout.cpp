@@ -353,6 +353,13 @@ void LineLayout::updateFormattingContextGeometries(LayoutUnit availableLogicalWi
     m_boxGeometryUpdater.setFormattingContextContentGeometry(m_inlineContentConstraints->horizontal().logicalWidth, { });
 }
 
+void LineLayout::updateFormattingContextGeometries(const Layout::ConstraintsForInlineContent& constraints, const Layout::BoxGeometry& rootGeometry)
+{
+    layoutState().ensureGeometryForBox(rootLayoutBox()) = rootGeometry;
+    m_inlineContentConstraints = constraints;
+    m_boxGeometryUpdater.setFormattingContextContentGeometry(constraints.horizontal().logicalWidth, { });
+}
+
 void LineLayout::updateStyle(const RenderElement& renderer)
 {
     BoxTreeUpdater::updateStyle(renderer);

@@ -78,6 +78,9 @@ public:
     static bool shouldInvalidateLineLayoutAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout&, bool isRemoval);
 
     void updateFormattingContextGeometries(LayoutUnit availableLogicalWidth);
+    // Block formatting context integration: the block formatting context computes the root's geometry and constraints.
+    // FIXME: Temporary, until the inline formatting context drops layout boxes and block layout runs it directly.
+    void updateFormattingContextGeometries(const Layout::ConstraintsForInlineContent&, const Layout::BoxGeometry& rootGeometry);
 
     std::optional<LayoutRect> updateOverflow();
 
