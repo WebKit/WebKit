@@ -57,16 +57,6 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
         return currentContentView?.constructor.ReferencePage;
     }
 
-    // Protected
-
-    attached()
-    {
-        super.attached();
-
-        if (this._contentBrowser && this._contentViewCookie && "lineNumber" in this._contentViewCookie && "columnNumber" in this._contentViewCookie)
-            this._contentBrowser.navigationBar.selectedNavigationItem = this.detailNavigationItemForIdentifier("preview");
-    }
-
     // ResourceHeadersContentView delegate
 
     headersContentViewGoToRequestData(headersContentView)
@@ -119,6 +109,20 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
         this.createDetailNavigationItem("security", WI.UIString("Security"));
 
         super.initialLayout();
+    }
+
+    showContentViewForCookie()
+    {
+        if (!this._contentViewCookie || !("lineNumber" in this._contentViewCookie) || !("columnNumber" in this._contentViewCookie)) {
+            super.showContentViewForCookie();
+            return;
+        }
+
+        let previewNavigationItem = this.detailNavigationItemForIdentifier("preview");
+        this._contentBrowser.navigationBar.selectedNavigationItem = previewNavigationItem;
+
+        if (this._contentViewCookie)
+            this.showContentViewForIdentifier(previewNavigationItem.identifier);
     }
 
     // Private
