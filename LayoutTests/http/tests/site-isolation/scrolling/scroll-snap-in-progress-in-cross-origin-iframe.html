@@ -1,0 +1,84 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; }
+iframe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Tests that a cross-site iframe knows when the UI process is scroll snapping its document.");
+jsTestIsAsync = true;
+
+let iframe;
+
+function loadIframe()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (!event.data.loaded)
+                return;
+            removeEventListener('message', listener);
+            resolve();
+        });
+        iframe = document.createElement('iframe');
+        iframe.src = 'http://localhost:8000/site-isolation/scrolling/resources/scroll-snap-iframe.html';
+        document.body.appendChild(iframe);
+    });
+}
+
+function isScrollSnapInProgressInIframe()
+{
+    return new Promise((resolve) => {
+        addEventListener('message', function listener(event) {
+            if (event.data.snapping === undefined)
+                return;
+            removeEventListener('message', listener);
+            resolve(event.data.snapping);
+        });
+        iframe.contentWindow.postMessage('query', '*');
+    });
+}
+
+async function waitForScrollSnapInProgressInIframe(expected)
+{
+    for (let i = 0; i < 100; ++i) {
+        await UIHelper.renderingUpdate();
+        if (await isScrollSnapInProgressInIframe() == expected)
+            return true;
+    }
+    return false;
+}
+
+onload = async () => {
+    if (!window.eventSender) {
+        finishJSTest();
+        return;
+    }
+
+    await loadIframe();
+    await UIHelper.renderingUpdate();
+    await UIHelper.ensurePresentationUpdate();
+
+    eventSender.mouseMoveTo(100, 100);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -50, 'changed', 'none');
+
+    if (await waitForScrollSnapInProgressInIframe(true))
+        testPassed('Scroll snap is in progress in the iframe during the gesture.');
+    else
+        testFailed('Scroll snap is never in progress in the iframe during the gesture.');
+
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+    if (await waitForScrollSnapInProgressInIframe(false))
+        testPassed('Scroll snap is no longer in progress in the iframe after the gesture.');
+    else
+        testFailed('Scroll snap is still in progress in the iframe after the gesture.');
+
+    iframe.remove();
+    finishJSTest();
+};
+</script>
+</body>
