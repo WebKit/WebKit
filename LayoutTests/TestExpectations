@@ -513,9 +513,6 @@ imported/w3c/web-platform-tests/editing/crashtests/insertparagraph-in-listitem-i
 imported/w3c/web-platform-tests/selection/anonymous/details-ancestor.html [ Pass Failure ]
 imported/w3c/web-platform-tests/selection/caret/move-around-contenteditable-false.html [ Pass Failure ]
 
-# This test hits a debug assertion
-[ Debug ] imported/w3c/web-platform-tests/selection/caret/move-around-generated-content.html [ Skip ]
-
 # This crash test is a timeout.
 # These crash tests time out.
 imported/w3c/web-platform-tests/selection/crashtests/selectall-and-find-svg-text-on-selectstart.html [ Timeout ]
