@@ -3578,6 +3578,10 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     if (!isAccessibilityRenderObject() && WebCore::elementName(*node) == ElementName::HTML_select)
         return;
 
+    // Like the optgroup of a native list box, the label of an optgroup in a list box only has a value.
+    if (optGroupForLabel() && role() == AccessibilityRole::ListBoxOption)
+        return;
+
     if (dependsOnTextUnderElement()) {
         TextUnderElementMode mode;
 
