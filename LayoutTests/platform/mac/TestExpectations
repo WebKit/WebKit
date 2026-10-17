@@ -898,8 +898,6 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 webkit.org/b/229101 http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html [ Pass Failure ]
 
-webkit.org/b/174066 inspector/canvas/console-record-webgl2.html [ Pass Timeout ]
-webkit.org/b/174066 inspector/canvas/console-record-offscreen-webgl2.html [ Pass Timeout ]
 webkit.org/b/173931 inspector/canvas/context-attributes.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/recording-offscreen-webgl2-full.html [ Slow ]
 webkit.org/b/174272 inspector/canvas/requestClientNodes-css.html [ Pass Failure Timeout ]
@@ -1669,9 +1667,6 @@ webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-chang
 
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
 webkit.org/b/322959 [ x86_64 ] fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
-
-webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
-webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
