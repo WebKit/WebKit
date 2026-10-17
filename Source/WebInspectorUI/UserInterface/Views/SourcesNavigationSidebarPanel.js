@@ -2908,7 +2908,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (workerTreeElement)
             workerTreeElement.parent.removeChild(workerTreeElement);
 
-        if (target instanceof WI.FrameTarget)
+        if (target instanceof WI.FrameTarget && WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
             this._handleResourceGroupingModeChanged();
 
         let callStackTreeElement = this._findCallStackTargetTreeElement(target);
