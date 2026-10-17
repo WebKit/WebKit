@@ -26,7 +26,9 @@
 #include "config.h"
 #include "LayoutIntegrationBlockLayout.h"
 
+#include "AXObjectCache.h"
 #include "BlockFormattingContext.h"
+#include "BlockIntegrationUtils.h"
 #include "LayoutRepainter.h"
 #include "LocalFrameViewInlines.h"
 #include "LocalFrameViewLayoutContext.h"
@@ -60,16 +62,18 @@ static Layout::ConstraintsForBlockContent constraintsForBlockContent(const Rende
 
 void BlockLayout::layout()
 {
+    auto paintInvalidation = PaintInvalidation { };
+    auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
     auto blockLayoutState = Layout::BlockLayoutState { { } };
-    auto result = Layout::BlockFormattingContext { rootRenderer(), blockLayoutState }.layout(constraintsForBlockContent(rootRenderer()));
+    auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layout(constraintsForBlockContent(rootRenderer()));
     LOG_WITH_STREAM(Layout, stream << "BlockLayout for root (" << &rootRenderer() << "): " << result);
 
-    updateRenderers(result);
+    updateRenderers(result, paintInvalidation);
     // RenderBlockFlow::layoutBlock resolves the used block size of the root from this.
     rootRenderer().setLogicalHeight(rootRenderer().borderAndPaddingLogicalHeight() + rootRenderer().scrollbarLogicalHeight() + result.intrinsicContentBlockSize);
 }
 
-void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result)
+void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
 {
     // This is the only place where the block formatting context's renderers are written, and the only place where its logical
     // coordinates (from the inline start of each containing block) are mapped to the render tree's.
@@ -167,10 +171,20 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result)
         }
 
         // What RenderBlockFlow::layoutBlock invalidates: changes inside the box, at the place it had before it moved.
+        auto damagedInlineContent = std::optional<PaintInvalidation::LogicalTopAndBottom> { };
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+            damagedInlineContent = paintInvalidation.damagedInlineContentLogicalTopAndBottom(*blockFlow, box.geometry.verticalBorderAndPadding() + box.intrinsicContentBlockSize);
+            if (CheckedPtr cache = protect(blockFlow->document())->existingAXObjectCache(); cache && damagedInlineContent)
+                cache->onLaidOutInlineContent(*blockFlow);
+        }
         invalidateWithLayoutDelta(locationChanges[boxIndex], [&] {
-            layoutRepainters[boxIndex].repaintAfterLayout();
+            auto didInvalidateWholeBox = layoutRepainters[boxIndex].repaintAfterLayout();
+            if (damagedInlineContent && !didInvalidateWholeBox)
+                downcast<RenderBlockFlow>(renderer).repaintInlineContentAfterLayout(damagedInlineContent->logicalTop, damagedInlineContent->logicalBottom);
         });
-        // What RenderBlock::layout does once the box is laid out.
+        // What RenderBlock::layout and RenderBlock::recomputeLogicalWidth do once the box is laid out.
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer))
+            blockFlow->setShouldForceRelayoutChildren(false);
         renderer->invalidateBackgroundObscurationStatus();
         renderer->setScrollAnchoringSuppressionStyleChanged(false);
         renderer->clearNeedsLayout();
