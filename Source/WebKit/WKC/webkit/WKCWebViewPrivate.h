@@ -40,7 +40,9 @@ namespace WebCore {
     class GraphicsContext;
     class LocalFrame;   // modern WebKit: AbstractFrame splits into LocalFrame / RemoteFrame
     class Node;
+#if ENABLE(NOTIFICATIONS)
     class NotificationClient;
+#endif
 }
 
 namespace WKC {
@@ -161,7 +163,9 @@ private:
     WKCWebView* m_parent;
     WKCClientBuilders& m_clientBuilders;
     ChromeClientWKC* m_chromeClient; // non-owning; owned by WebCore::Page
+#if ENABLE(NOTIFICATIONS)
     std::unique_ptr<WebCore::NotificationClient> m_notificationClient;
+#endif
 
     // core
     WebCore::Page* m_corePage;
