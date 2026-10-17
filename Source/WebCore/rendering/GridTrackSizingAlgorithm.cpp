@@ -1316,10 +1316,19 @@ void GridTrackSizingAlgorithm::updateBaselineAlignmentContext(const RenderBox& g
     ASSERT(wasSetup());
     ASSERT(canParticipateInBaselineAlignment(gridItem, alignmentContextType));
 
-    auto align = m_renderGrid->selfAlignmentForGridItem(gridItem, Style::logicalAxis(alignmentContextType)).position();
+    auto align = baselineAlignmentPositionForGridItem(gridItem, alignmentContextType);
     const auto& span = m_renderGrid->gridSpanForGridItem(gridItem, alignmentContextType);
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
     m_baselineAlignment.updateBaselineAlignmentContext(align, alignmentContext, gridItem, alignmentContextType);
+}
+
+ItemPosition GridTrackSizingAlgorithm::baselineAlignmentPositionForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
+{
+    // align-self: auto resolves against the item's own grid container, which for an item of a subgrid
+    // is the subgrid rather than the grid running the algorithm.
+    auto& parentGrid = downcast<RenderGrid>(*gridItem.parent());
+    auto parentAlignmentContextType = GridLayoutFunctions::flowAwareDirectionForParent(*m_renderGrid, parentGrid, alignmentContextType);
+    return parentGrid.selfAlignmentForGridItem(gridItem, Style::logicalAxis(parentAlignmentContextType)).position();
 }
 
 LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection alignmentContextType) const
@@ -1333,7 +1342,7 @@ LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& 
         return LayoutUnit();
 
     ASSERT_IMPLIES(alignmentContextType == Style::GridTrackSizingDirection::Rows, !m_renderGrid->isSubgridRows());
-    auto align = m_renderGrid->selfAlignmentForGridItem(gridItem, Style::logicalAxis(alignmentContextType)).position();
+    auto align = baselineAlignmentPositionForGridItem(gridItem, alignmentContextType);
     const auto& span = m_renderGrid->gridSpanForGridItem(gridItem, alignmentContextType);
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
     return m_baselineAlignment.baselineOffsetForGridItem(align, alignmentContext, gridItem, alignmentContextType);

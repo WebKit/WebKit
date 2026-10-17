@@ -2477,10 +2477,6 @@ imported/w3c/web-platform-tests/css/css-grid/parsing/grid-template-columns-crash
 imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-columns-invalid.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-grid/parsing/grid-auto-rows-invalid.html [ Failure ]
 
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-016.html [ Pass Crash ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-017.html [ Pass Crash ]
-imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-018.html [ Pass Crash ]
-
 # Flaky tests at import time
 imported/w3c/web-platform-tests/css/css-shadow/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
 

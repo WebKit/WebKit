@@ -236,6 +236,7 @@ private:
 
     void computeBaselineAlignmentContext();
     void updateBaselineAlignmentContext(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType);
+    ItemPosition baselineAlignmentPositionForGridItem(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
     bool canParticipateInBaselineAlignment(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
     bool participateInBaselineAlignment(const RenderBox&, Style::GridTrackSizingDirection alignmentContextType) const;
 
