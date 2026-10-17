@@ -44,6 +44,12 @@ static bool contentTakesPartInBlockFormattingContext(const RenderBox& box)
     return blockContainer && !blockContainer->childrenInline() && !blockContainer->createsNewFormattingContext();
 }
 
+static bool establishesIndependentFormattingContext(const RenderBox& box)
+{
+    CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
+    return blockContainer && blockContainer->createsNewFormattingContext();
+}
+
 static bool hasInlineContent(const RenderBox& box)
 {
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(box);
@@ -55,19 +61,25 @@ BlockItemList BlockItemsBuilder::build()
     auto blockItems = BlockItemList { };
     CheckedPtr<const RenderBox> box = root().firstInFlowChildBox();
     while (box) {
-        // FIXME: Boxes that establish an independent formatting context, floats and out-of-flow boxes are kept out by coverage.
-        ASSERT(contentTakesPartInBlockFormattingContext(*box) || hasInlineContent(*box) || !box->firstChild());
-        blockItems.append({ *box, BlockItem::Type::BlockContainerStart });
-        // FIXME: Block-level boxes inside the inline content split it into more ranges (block-in-inline is kept out by coverage).
-        if (hasInlineContent(*box))
-            blockItems.append({ *box, BlockItem::Type::InlineContent });
-        else if (CheckedPtr firstChild = box->firstInFlowChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
-            box = WTF::move(firstChild);
-            continue;
+        // FIXME: Floats and out-of-flow boxes are kept out by coverage.
+        auto isIndependentFormattingContextRoot = establishesIndependentFormattingContext(*box);
+        if (isIndependentFormattingContextRoot)
+            blockItems.append({ *box, BlockItem::Type::IndependentFormattingContextRoot });
+        else {
+            ASSERT(contentTakesPartInBlockFormattingContext(*box) || hasInlineContent(*box) || !box->firstChild());
+            blockItems.append({ *box, BlockItem::Type::BlockContainerStart });
+            // FIXME: Block-level boxes inside the inline content split it into more ranges (block-in-inline is kept out by coverage).
+            if (hasInlineContent(*box))
+                blockItems.append({ *box, BlockItem::Type::InlineContent });
+            else if (CheckedPtr firstChild = box->firstInFlowChildBox(); firstChild && contentTakesPartInBlockFormattingContext(*box)) {
+                box = WTF::move(firstChild);
+                continue;
+            }
         }
-        // Close this box and every ancestor whose last in-flow child it is.
-        while (box) {
-            blockItems.append({ *box, BlockItem::Type::BlockContainerEnd });
+        // Close this box (unless it is a single item) and every ancestor whose last in-flow child it is.
+        for (auto closesBox = !isIndependentFormattingContextRoot; box; closesBox = true) {
+            if (closesBox)
+                blockItems.append({ *box, BlockItem::Type::BlockContainerEnd });
             if (CheckedPtr nextSibling = box->nextInFlowSiblingBox()) {
                 box = WTF::move(nextSibling);
                 break;
