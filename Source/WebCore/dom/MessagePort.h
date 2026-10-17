@@ -136,6 +136,8 @@ private:
     enum class State : uint8_t { NotStartedYet, Started, Disentangled };
     State m_state { State::NotStartedYet };
     bool m_hasMessageEventListener { false };
+    // Set when the provider lost its record of this port's channel while the port was entangled locally.
+    bool m_isUnknownToProvider { false };
 
     MessagePortIdentifier m_identifier;
     MessagePortIdentifier m_remoteIdentifier;

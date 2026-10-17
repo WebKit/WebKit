@@ -522,10 +522,16 @@ TEST(MessagePortSecurity, CrossProcessTransferChannelCreationWithForgedProcessId
 // so that we cannot trigger this message check under normal operation.
 TEST(MessagePortSecurity, MessagePortsSurviveNetworkProcessRestart)
 {
+    // port2 is shipped, so that messages for it go through the Networking process.
+    // A channel that never leaves its context keeps working, see LocalMessagePortsKeepWorkingAfterNetworkProcessRestart.
     TestWebKitAPI::HTTPServer server({
         { "/main"_s, { "<!doctype html><script>"
             "window.channel = new MessageChannel();"
-            "window.channel.port2.onmessage = function(e) { alert('received-' + e.data); };"
+            "window.onmessage = function(e) {"
+            "    window.port2 = e.ports[0];"
+            "    window.port2.onmessage = function(e) { alert('received-' + e.data); };"
+            "};"
+            "window.postMessage('port', '*', [window.channel.port2]);"
             "</script>"_s } },
         { "/ping"_s, { "ok"_s } },
     });
@@ -864,3 +870,244 @@ TEST(MessagePortSecurity, SharedWorkerPortStillWorksAfterContextProcessDiesWithC
     EXPECT_EQ(webProcessPIDB, [webViewB _webProcessIdentifier]);
 }
 
+static void restartNetworkProcess(TestWKWebView *webView, TestWebKitAPI::HTTPServer& server)
+{
+    pid_t initialNetworkProcessPID = [[webView configuration].websiteDataStore _networkProcessIdentifier];
+    EXPECT_TRUE(!!initialNetworkProcessPID);
+
+    [[webView configuration].websiteDataStore _terminateNetworkProcess];
+
+    // Force a new Networking process to fire up and connect.
+    NSString *fetchJS = [NSString stringWithFormat:
+        @"fetch('%@/ping').then(r => r.text()).catch(e => 'err')",
+        server.origin().createNSString().get()];
+    __block bool fetchSettled = false;
+    [webView evaluateJavaScript:fetchJS completionHandler:^(id, NSError *) {
+        fetchSettled = true;
+    }];
+    TestWebKitAPI::Util::run(&fetchSettled);
+
+    EXPECT_NE(initialNetworkProcessPID, [[webView configuration].websiteDataStore _networkProcessIdentifier]);
+}
+
+static RetainPtr<NSString> alertAfterEvaluating(TestWKWebView *webView, TestUIDelegate *uiDelegate, NSString *script)
+{
+    __block bool alertReceived = false;
+    __block RetainPtr<NSString> alertText;
+    uiDelegate.runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^handler)(void)) {
+        alertText = message;
+        alertReceived = true;
+        handler();
+    };
+    [webView evaluateJavaScript:script completionHandler:nil];
+    TestWebKitAPI::Util::runFor(&alertReceived, 5_s);
+    return alertText;
+}
+
+// A MessageChannel whose ports never left their context delivers without the Networking process.
+// Pages use such a channel to schedule their own work, so it has to keep delivering across a restart.
+TEST(MessagePortSecurity, LocalMessagePortsKeepWorkingAfterNetworkProcessRestart)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { "<!doctype html><script>"
+            "window.channel = new MessageChannel();"
+            "window.channel.port2.onmessage = function(e) { alert('received-' + e.data); };"
+            "</script>"_s } },
+        { "/ping"_s, { "ok"_s } },
+    });
+
+    RetainPtr<TestNavigationDelegate> navDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr<TestUIDelegate> uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr<WKWebViewConfiguration> config = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webView setNavigationDelegate:navDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:server.request("/main"_s)];
+    [navDelegate waitForDidFinishNavigation];
+
+    pid_t initialWebProcessPID = [webView _webProcessIdentifier];
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), @"channel.port1.postMessage('first');").get(), "received-first");
+
+    __block bool webContentTerminated = false;
+    navDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webContentTerminated = true;
+    };
+
+    restartNetworkProcess(webView.get(), server);
+
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), @"channel.port1.postMessage('second');").get(), "received-second");
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(webContentTerminated);
+    EXPECT_EQ(initialWebProcessPID, [webView _webProcessIdentifier]);
+}
+
+TEST(MessagePortSecurity, WorkerLocalMessagePortsKeepWorkingAfterNetworkProcessRestart)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { "<!doctype html><script>"
+            "window.worker = new Worker('/worker.js');"
+            "window.worker.onmessage = function(e) { alert('worker-' + e.data); };"
+            "</script>"_s } },
+        { "/worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } },
+            "const channel = new MessageChannel();"
+            "channel.port2.onmessage = function(e) { self.postMessage('received-' + e.data); };"
+            "self.onmessage = function(e) { channel.port1.postMessage(e.data); };"_s } },
+        { "/ping"_s, { "ok"_s } },
+    });
+
+    RetainPtr<TestNavigationDelegate> navDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr<TestUIDelegate> uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr<WKWebViewConfiguration> config = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webView setNavigationDelegate:navDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:server.request("/main"_s)];
+    [navDelegate waitForDidFinishNavigation];
+
+    pid_t initialWebProcessPID = [webView _webProcessIdentifier];
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), @"worker.postMessage('first');").get(), "worker-received-first");
+
+    __block bool webContentTerminated = false;
+    navDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webContentTerminated = true;
+    };
+
+    restartNetworkProcess(webView.get(), server);
+
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), @"worker.postMessage('second');").get(), "worker-received-second");
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(webContentTerminated);
+    EXPECT_EQ(initialWebProcessPID, [webView _webProcessIdentifier]);
+}
+
+static constexpr auto portEchoSharedWorkerBytes =
+    "onconnect = function(e) {"
+    "    var clientPort = e.ports[0];"
+    "    clientPort.onmessage = function(event) {"
+    "        var port = event.ports[0];"
+    "        port.onmessage = function(message) { port.postMessage('echo-' + message.data); };"
+    "        clientPort.postMessage('port-received');"
+    "    };"
+    "};"_s;
+
+// The new Networking process has never heard of a channel that outlived the old one.
+// Shipping one of its ports to another process has to create the channel there first, or the transfer fails a message check.
+TEST(MessagePortSecurity, LocalMessagePortsCanBeTransferredAfterNetworkProcessRestart)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/host"_s, { "<!doctype html>"_s } },
+        { "/main"_s, { "<!doctype html><script>"
+            "window.channel = new MessageChannel();"
+            "window.channel.port1.onmessage = function(e) { alert('page-' + e.data); };"
+            "</script>"_s } },
+        { "/shared-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, portEchoSharedWorkerBytes } },
+        { "/ping"_s, { "ok"_s } },
+    });
+
+    RetainPtr config = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    // `hostWebView` establishes the SharedWorker below, so its process is the one the worker is launched into.
+    RetainPtr hostNavDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr hostWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [hostWebView setNavigationDelegate:hostNavDelegate.get()];
+    [hostWebView loadRequest:server.request("/host"_s)];
+    [hostNavDelegate waitForDidFinishNavigation];
+
+    RetainPtr navDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webView setNavigationDelegate:navDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:server.request("/main"_s)];
+    [navDelegate waitForDidFinishNavigation];
+
+    pid_t initialWebProcessPID = [webView _webProcessIdentifier];
+    EXPECT_NE([hostWebView _webProcessIdentifier], initialWebProcessPID);
+
+    __block bool webContentTerminated = false;
+    navDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webContentTerminated = true;
+    };
+
+    restartNetworkProcess(webView.get(), server);
+
+    [hostWebView evaluateJavaScript:@"window.worker = new SharedWorker('/shared-worker.js');" completionHandler:nil];
+    pid_t sharedWorkerPID = 0;
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] {
+        sharedWorkerPID = sharedWorkerHostProcessIdentifier();
+        return !!sharedWorkerPID;
+    }));
+    EXPECT_NE(sharedWorkerPID, initialWebProcessPID);
+
+    // 'queued' waits in port2 when it is shipped, so it also covers the messages drained on the way.
+    NSString *transferJS = @"channel.port1.postMessage('queued');"
+        "window.worker = new SharedWorker('/shared-worker.js');"
+        "window.worker.port.postMessage('port', [channel.port2]);";
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), transferJS).get(), "page-echo-queued");
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), @"channel.port1.postMessage('later');").get(), "page-echo-later");
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(webContentTerminated);
+    EXPECT_EQ(initialWebProcessPID, [webView _webProcessIdentifier]);
+}
+
+TEST(MessagePortSecurity, LocalMessagePortCanBeTransferredAfterItsPartnerClosedAndNetworkProcessRestart)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/host"_s, { "<!doctype html>"_s } },
+        { "/main"_s, { "<!doctype html><script>"
+            "window.channel = new MessageChannel();"
+            "</script>"_s } },
+        { "/shared-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, portEchoSharedWorkerBytes } },
+        { "/ping"_s, { "ok"_s } },
+    });
+
+    RetainPtr config = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    // `hostWebView` establishes the SharedWorker below, so its process is the one the worker is launched into.
+    RetainPtr hostNavDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr hostWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [hostWebView setNavigationDelegate:hostNavDelegate.get()];
+    [hostWebView loadRequest:server.request("/host"_s)];
+    [hostNavDelegate waitForDidFinishNavigation];
+
+    RetainPtr navDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webView setNavigationDelegate:navDelegate.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView loadRequest:server.request("/main"_s)];
+    [navDelegate waitForDidFinishNavigation];
+
+    pid_t initialWebProcessPID = [webView _webProcessIdentifier];
+    EXPECT_NE([hostWebView _webProcessIdentifier], initialWebProcessPID);
+
+    __block bool webContentTerminated = false;
+    navDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webContentTerminated = true;
+    };
+
+    restartNetworkProcess(webView.get(), server);
+
+    [hostWebView evaluateJavaScript:@"window.worker = new SharedWorker('/shared-worker.js');" completionHandler:nil];
+    pid_t sharedWorkerPID = 0;
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] {
+        sharedWorkerPID = sharedWorkerHostProcessIdentifier();
+        return !!sharedWorkerPID;
+    }));
+    EXPECT_NE(sharedWorkerPID, initialWebProcessPID);
+
+    NSString *transferJS = @"channel.port1.close();"
+        "window.worker = new SharedWorker('/shared-worker.js');"
+        "window.worker.port.onmessage = function(e) { alert('worker-' + e.data); };"
+        "window.worker.port.postMessage('port', [channel.port2]);";
+    EXPECT_WK_STREQ(alertAfterEvaluating(webView.get(), uiDelegate.get(), transferJS).get(), "worker-port-received");
+
+    TestWebKitAPI::Util::runFor(0.5_s);
+    EXPECT_FALSE(webContentTerminated);
+    EXPECT_EQ(initialWebProcessPID, [webView _webProcessIdentifier]);
+}
