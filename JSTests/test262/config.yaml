@@ -10,6 +10,7 @@ flags:
   import-defer: useImportDefer
   import-text: useImportText
   joint-iteration: useJointIteration
+  await-dictionary: usePromiseAllKeyed
 skip:
   features:
     - callable-boundary-realms
@@ -17,7 +18,6 @@ skip:
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
     - source-phase-imports
-    - await-dictionary
     - import-bytes
     - immutable-arraybuffer
     - error-stack-accessor
