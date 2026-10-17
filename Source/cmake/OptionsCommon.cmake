@@ -102,6 +102,10 @@ set(LD_SUPPORTS_ALLOW_MULTIPLE_DEFINITION FALSE)
 if (LD_USAGE MATCHES "allow-multiple-definition")
     set(LD_SUPPORTS_ALLOW_MULTIPLE_DEFINITION TRUE)
 endif ()
+set(LD_SUPPORTS_PACK_RELATIVE_RELOCS FALSE)
+if (LD_USAGE MATCHES "pack-relative-relocs" OR LD_USAGE MATCHES "--pack-dyn-relocs=[^ ]*relr")
+    set(LD_SUPPORTS_PACK_RELATIVE_RELOCS TRUE)
+endif ()
 unset(LD_USAGE)
 
 message(STATUS "Linker variant in use: ${LD_VARIANT} ")
@@ -110,6 +114,7 @@ message(STATUS "  Linker supports split debug info - ${LD_SUPPORTS_SPLIT_DEBUG}"
 message(STATUS "  Linker supports --gdb-index - ${LD_SUPPORTS_GDB_INDEX}")
 message(STATUS "  Linker supports --disable-new-dtags - ${LD_SUPPORTS_DISABLE_NEW_DTAGS}")
 message(STATUS "  Linker supports --gc-sections - ${LD_SUPPORTS_GC_SECTIONS}")
+message(STATUS "  Linker supports -z pack-relative-relocs - ${LD_SUPPORTS_PACK_RELATIVE_RELOCS}")
 
 # Determine whether the archiver in use supports thin archives.
 separate_arguments(AR_VERSION_COMMAND UNIX_COMMAND "${CMAKE_AR} -V")
@@ -153,6 +158,11 @@ endif ()
 # for developers.
 if (LD_SUPPORTS_DISABLE_NEW_DTAGS)
     add_link_options("LINKER:--disable-new-dtags")
+endif ()
+
+option(LD_PACK_RELATIVE_RELOCS "Pack relative relocations using DT_RELR" ${LD_SUPPORTS_PACK_RELATIVE_RELOCS})
+if (LD_PACK_RELATIVE_RELOCS)
+    add_link_options("LINKER:-z,pack-relative-relocs")
 endif ()
 
 # Prefer thin archives by default if they can be both created by the
