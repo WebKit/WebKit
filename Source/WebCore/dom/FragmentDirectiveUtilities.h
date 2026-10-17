@@ -48,7 +48,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const ParsedTextDirective&);
 
 namespace FragmentDirectiveUtilities {
 
-ContainerNode& nearestBlockAncestor(Node&);
+ContainerNode& LEGACY_NODELETE nearestBlockAncestor(Node&);
 
 }
 

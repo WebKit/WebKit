@@ -112,7 +112,7 @@ public:
     std::pair<RenderObject*, unsigned> rendererAndOffset() const;
     std::pair<RenderText*, unsigned> resolvedTextRendererAndOffset() const;
 
-    RefPtr<Node> firstNode() const;
+    RefPtr<Node> LEGACY_NODELETE firstNode() const;
 
     // These are convenience methods which are smart about whether the position is neighbor anchored or parent anchored
     WEBCORE_EXPORT Node* LEGACY_NODELETE computeNodeBeforePosition() const;
@@ -142,7 +142,7 @@ public:
     bool isNotNull() const { return m_anchorNode; }
     bool isOrphan() const { return m_anchorNode && !m_anchorNode->isConnected(); }
 
-    RefPtr<Element> anchorElementAncestor() const;
+    RefPtr<Element> LEGACY_NODELETE anchorElementAncestor() const;
 
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when
@@ -190,7 +190,7 @@ public:
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool LEGACY_NODELETE nodeIsUserSelectNone(const Node*);
     static bool LEGACY_NODELETE nodeIsUserSelectAll(const Node*);
-    static RefPtr<Node> rootUserSelectAllForNode(Node*);
+    static RefPtr<Node> LEGACY_NODELETE rootUserSelectAllForNode(Node*);
 
     void debugPosition(ASCIILiteral msg = ""_s) const;
 

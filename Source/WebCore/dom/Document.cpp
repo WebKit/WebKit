@@ -668,7 +668,7 @@ auto Document::allDocuments() -> DocumentsMap::ValuesIteratorRange
     return allDocumentsMap().values();
 }
 
-static inline IntDegrees currentOrientation(LocalFrame* frame)
+static inline IntDegrees LEGACY_NODELETE currentOrientation(LocalFrame* frame)
 {
 #if ENABLE(ORIENTATION_EVENTS)
     if (frame)
@@ -1906,7 +1906,7 @@ CustomElementRegistry* Document::effectiveGlobalCustomElementRegistry()
     return customElementRegistry();
 }
 
-static inline bool isPotentialCustomElementNameCharacter(char32_t character)
+static inline bool LEGACY_NODELETE isPotentialCustomElementNameCharacter(char32_t character)
 {
     static constexpr auto ranges = WTF::toArray<UnicodeCodePointRange>({
         { '-', '.' },
@@ -1979,7 +1979,7 @@ static ALWAYS_INLINE CustomElementNameCharacterKind LEGACY_NODELETE customElemen
     return table[character];
 }
 
-static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
+static ALWAYS_INLINE CustomElementNameValidationStatus LEGACY_NODELETE validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString& localName)
 {
     if (!isASCIILower(localName[0]))
         return CustomElementNameValidationStatus::FirstCharacterIsNotLowercaseASCIILetter;

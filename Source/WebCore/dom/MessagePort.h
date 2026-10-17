@@ -80,7 +80,7 @@ public:
     static ExceptionOr<Vector<TransferredMessagePort>> disentanglePorts(Vector<Ref<MessagePort>>&&);
     static Vector<Ref<MessagePort>> entanglePorts(ScriptExecutionContext&, Vector<TransferredMessagePort>&&);
 
-    WEBCORE_EXPORT static bool isMessagePortAliveForTesting(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static bool LEGACY_NODELETE isMessagePortAliveForTesting(const MessagePortIdentifier&);
     WEBCORE_EXPORT static void notifyMessageAvailable(const MessagePortIdentifier&);
     WEBCORE_EXPORT static void notifyAllConnectionsClosed();
 

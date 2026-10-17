@@ -3062,7 +3062,7 @@ struct AncestorAndChildren {
     const Node* distinctAncestorB;
 };
 
-template<TreeType treeType> AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
+template<TreeType treeType> AncestorAndChildren LEGACY_NODELETE commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
 {
     // This check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.

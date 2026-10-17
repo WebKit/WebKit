@@ -39,7 +39,7 @@ public:
     virtual ~LoadableModuleScript();
 
     enum class IsInline : bool { No, Yes };
-    static Ref<LoadableModuleScript> create(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
+    static Ref<LoadableModuleScript> LEGACY_NODELETE create(IsInline, const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final { return m_isLoaded; }
     bool hasError() const final;

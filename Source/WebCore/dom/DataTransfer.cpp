@@ -67,7 +67,7 @@ class DragImageLoader final : public CachedImageClient, public RefCounted<DragIm
     WTF_MAKE_TZONE_ALLOCATED(DragImageLoader);
     WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
-    static Ref<DragImageLoader> create(DataTransfer&, const Document&);
+    static Ref<DragImageLoader> LEGACY_NODELETE create(DataTransfer&, const Document&);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
     void LEGACY_NODELETE moveToDataTransfer(DataTransfer&);

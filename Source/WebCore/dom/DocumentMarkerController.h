@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT void addDictationStreamingOpacityMarker(const SimpleRange&, float opacity);
     WEBCORE_EXPORT void removeAllDictationStreamingOpacityMarkers();
 
-    WEBCORE_EXPORT size_t appliedGrammarTextEffectCount() const;
+    WEBCORE_EXPORT size_t LEGACY_NODELETE appliedGrammarTextEffectCount() const;
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
     bool hasMarkers() const;

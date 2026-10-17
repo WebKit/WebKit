@@ -71,7 +71,7 @@ static PartitionedSecurityOrigin partitionedSecurityOriginFromContext(ScriptExec
 
 class BroadcastChannel::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main>, public Identified<BroadcastChannelIdentifier> {
 public:
-    static Ref<MainThreadBridge> create(BroadcastChannel& channel, const String& name)
+    static Ref<MainThreadBridge> LEGACY_NODELETE create(BroadcastChannel& channel, const String& name)
     {
         return adoptRef(*new MainThreadBridge(channel, name));
     }
@@ -79,7 +79,7 @@ public:
     void registerChannel();
     void unregisterChannel();
     void postMessage(Ref<SerializedScriptValue>&&);
-    void detach() { m_broadcastChannel = nullptr; }
+    void LEGACY_NODELETE detach() { m_broadcastChannel = nullptr; }
 
     String name() const { return m_name.isolatedCopy(); }
 

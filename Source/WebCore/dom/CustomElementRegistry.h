@@ -60,8 +60,8 @@ class QualifiedName;
 
 class CustomElementRegistry : public RefCounted<CustomElementRegistry>, public ContextDestructionObserver {
 public:
-    static Ref<CustomElementRegistry> create(ScriptExecutionContext&, LocalDOMWindow&);
-    static Ref<CustomElementRegistry> create(ScriptExecutionContext&);
+    static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&, LocalDOMWindow&);
+    static Ref<CustomElementRegistry> LEGACY_NODELETE create(ScriptExecutionContext&);
     ~CustomElementRegistry();
 
     // ContextDestructionObserver.

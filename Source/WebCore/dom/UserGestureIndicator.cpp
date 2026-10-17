@@ -166,7 +166,7 @@ public:
         return runnability;
     }
 
-    static Ref<UserGestureInitiatedMicrotaskDispatcher> create(EventLoopTaskGroup& group, Ref<UserGestureToken>&& userGestureToken)
+    static Ref<UserGestureInitiatedMicrotaskDispatcher> LEGACY_NODELETE create(EventLoopTaskGroup& group, Ref<UserGestureToken>&& userGestureToken)
     {
         return adoptRef(*new UserGestureInitiatedMicrotaskDispatcher(group, WTF::move(userGestureToken)));
     }

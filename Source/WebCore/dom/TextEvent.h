@@ -39,12 +39,12 @@ namespace WebCore {
     class TextEvent final : public UIEvent {
         WTF_MAKE_TZONE_ALLOCATED(TextEvent);
     public:
-        static Ref<TextEvent> create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
-        static Ref<TextEvent> createForBindings();
+        static Ref<TextEvent> LEGACY_NODELETE create(RefPtr<WindowProxy>&&, const String& data, TextEventInputType = TextEventInputKeyboard);
+        static Ref<TextEvent> LEGACY_NODELETE createForBindings();
         static Ref<TextEvent> createForPlainTextPaste(RefPtr<WindowProxy>&&, const String& data, bool shouldSmartReplace);
-        static Ref<TextEvent> createForFragmentPaste(RefPtr<WindowProxy>&&, RefPtr<DocumentFragment>&& data, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
-        static Ref<TextEvent> createForDrop(RefPtr<WindowProxy>&&, const String& data);
-        static Ref<TextEvent> createForDictation(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
+        static Ref<TextEvent> LEGACY_NODELETE createForFragmentPaste(RefPtr<WindowProxy>&&, RefPtr<DocumentFragment>&& data, TextEventInputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling);
+        static Ref<TextEvent> LEGACY_NODELETE createForDrop(RefPtr<WindowProxy>&&, const String& data);
+        static Ref<TextEvent> LEGACY_NODELETE createForDictation(RefPtr<WindowProxy>&&, const String& data, const Vector<DictationAlternative>& dictationAlternatives);
 
         virtual ~TextEvent();
     

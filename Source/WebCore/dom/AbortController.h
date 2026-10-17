@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
     WTF_MAKE_TZONE_ALLOCATED(AbortController);
 public:
-    static Ref<AbortController> create(ScriptExecutionContext&);
+    static Ref<AbortController> LEGACY_NODELETE create(ScriptExecutionContext&);
     ~AbortController();
 
     AbortSignal& signal() { return m_signal; }

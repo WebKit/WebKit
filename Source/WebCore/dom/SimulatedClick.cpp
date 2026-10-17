@@ -110,7 +110,7 @@ private:
         return keyStateEvent->modifierKeys();
     }
 
-    static int detailForDevice(SimulatedPointingDevice device)
+    static int LEGACY_NODELETE detailForDevice(SimulatedPointingDevice device)
     {
         // The click count of a single click. Pages commonly treat a click with a detail of 0 as one that no pointing device
         // produced, like keyboard activation.

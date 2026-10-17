@@ -79,7 +79,7 @@ protected:
 
 class LoadableClassicScript final : public LoadableNonModuleScriptBase {
 public:
-    static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
+    static Ref<LoadableClassicScript> LEGACY_NODELETE create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync);
 
     ScriptType scriptType() const final { return ScriptType::Classic; }
 

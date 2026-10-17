@@ -38,7 +38,7 @@ namespace NameValidation {
 
 // https://dom.spec.whatwg.org/#valid-element-name
 bool LEGACY_NODELETE isValidElementName(StringView);
-bool isValidElementName(const QualifiedName&);
+bool LEGACY_NODELETE isValidElementName(const QualifiedName&);
 
 // https://dom.spec.whatwg.org/#valid-attribute-name
 bool LEGACY_NODELETE isValidAttributeName(StringView);

@@ -313,7 +313,7 @@ template<TreeType treeType> bool contains(const Node& outer, const Node& inner)
     return false;
 }
 
-template<> bool contains<Tree>(const Node& outer, const Node& inner)
+template<> bool LEGACY_NODELETE contains<Tree>(const Node& outer, const Node& inner)
 {
     // We specialize here because we want to take advantage of optimizations in Node::isDescendantOf.
     return outer.contains(inner);

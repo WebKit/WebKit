@@ -84,7 +84,7 @@ private:
 class WEBCORE_EXPORT EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
     WTF_MAKE_TZONE_ALLOCATED(EventTarget);
 public:
-    static Ref<EventTarget> create(ScriptExecutionContext&);
+    static Ref<EventTarget> LEGACY_NODELETE create(ScriptExecutionContext&);
 
     inline void ref(); // Defined in EventTargetInlines.h.
     inline void deref(); // Defined in EventTargetInlines.h.
@@ -120,7 +120,7 @@ public:
 
     inline bool hasEventListeners() const; // Defined in EventTargetInlines.h
     inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
-    bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
+    bool LEGACY_NODELETE hasAnyEventListeners(std::span<const AtomString> eventTypes) const;
     inline bool hasCapturingEventListeners(const AtomString& eventType); // Defined in EventTargetInlines.h
     bool LEGACY_NODELETE hasActiveEventListeners(const AtomString& eventType) const;
 

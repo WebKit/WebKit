@@ -46,7 +46,7 @@ public:
 
     virtual ~InputEvent();
 
-    static Ref<InputEvent> create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
+    static Ref<InputEvent> LEGACY_NODELETE create(const AtomString& eventType, const String& inputType, IsCancelable, RefPtr<WindowProxy>&& view,
         const String& data, RefPtr<DataTransfer>&&, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing);
 
     static Ref<InputEvent> create(const AtomString& type, const Init& initializer)

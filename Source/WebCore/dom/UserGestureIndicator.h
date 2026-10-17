@@ -129,7 +129,7 @@ public:
 
     bool removesTransientActivation() const { return m_data.removesTransientActivation; }
     void didGrantForcedActivation(LocalDOMWindow&);
-    void didGrantForcedActivationInOtherProcesses(LocalFrame&);
+    void LEGACY_NODELETE didGrantForcedActivationInOtherProcesses(LocalFrame&);
 
     std::optional<WTF::UUID> authorizationToken() const { return m_data.authorizationToken; }
 

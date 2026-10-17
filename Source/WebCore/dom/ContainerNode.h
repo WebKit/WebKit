@@ -147,7 +147,7 @@ public:
     WEBCORE_EXPORT Ref<HTMLCollection> children();
     WEBCORE_EXPORT Element* LEGACY_NODELETE firstElementChild() const;
     WEBCORE_EXPORT Element* LEGACY_NODELETE lastElementChild() const;
-    WEBCORE_EXPORT unsigned childElementCount() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE childElementCount() const;
     ExceptionOr<void> append(FixedVector<NodeOrString>&&);
     ExceptionOr<void> prepend(FixedVector<NodeOrString>&&);
 
@@ -201,7 +201,7 @@ private:
     CheckedPtr<Node> m_lastChild;
 };
 
-bool containsIncludingHostElements(const Node& possibleAncestor, const Node&);
+bool LEGACY_NODELETE containsIncludingHostElements(const Node& possibleAncestor, const Node&);
 
 } // namespace WebCore
 

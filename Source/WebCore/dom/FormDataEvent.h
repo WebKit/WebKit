@@ -39,8 +39,8 @@ public:
         Ref<DOMFormData> formData;
     };
 
-    static Ref<FormDataEvent> create(const AtomString&, Init&&);
-    static Ref<FormDataEvent> create(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
+    static Ref<FormDataEvent> LEGACY_NODELETE create(const AtomString&, Init&&);
+    static Ref<FormDataEvent> LEGACY_NODELETE create(const AtomString&, CanBubble, IsCancelable, IsComposed, Ref<DOMFormData>&&);
 
     const DOMFormData& formData() const { return m_formData.get(); }
     

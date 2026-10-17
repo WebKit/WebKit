@@ -46,7 +46,7 @@ typedef Function<void(ViewportErrorCode, StringView, StringView)> InternalViewpo
 const float ViewportArguments::deprecatedTargetDPI = 160;
 #endif
 
-static inline float clampLengthValue(float value)
+static inline float LEGACY_NODELETE clampLengthValue(float value)
 {
     ASSERT(value != ViewportArguments::ValueDeviceWidth);
     ASSERT(value != ViewportArguments::ValueDeviceHeight);
@@ -57,7 +57,7 @@ static inline float clampLengthValue(float value)
     return value;
 }
 
-static inline float clampScaleValue(float value)
+static inline float LEGACY_NODELETE clampScaleValue(float value)
 {
     ASSERT(value != ViewportArguments::ValueDeviceWidth);
     ASSERT(value != ViewportArguments::ValueDeviceHeight);

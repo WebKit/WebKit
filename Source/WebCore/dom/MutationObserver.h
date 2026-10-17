@@ -84,7 +84,7 @@ public:
     void observationEnded(MutationObserverRegistration&);
     void enqueueMutationRecord(Ref<MutationRecord>&&);
     void setHasTransientRegistration(Document&);
-    bool canDeliver();
+    bool LEGACY_NODELETE canDeliver();
 
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 

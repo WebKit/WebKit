@@ -43,7 +43,7 @@ class ScriptElement;
 class PendingScript final : public RefCounted<PendingScript>, public LoadableScriptClient {
 public:
     static Ref<PendingScript> create(ScriptElement&, LoadableScript&);
-    static Ref<PendingScript> create(ScriptElement&, TextPosition scriptStartPosition);
+    static Ref<PendingScript> LEGACY_NODELETE create(ScriptElement&, TextPosition scriptStartPosition);
 
     virtual ~PendingScript();
 

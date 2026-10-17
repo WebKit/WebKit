@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT void deref() const;
 
     Element* LEGACY_NODELETE focusedElementInScope();
-    Element* pointerLockElement() const;
+    Element* LEGACY_NODELETE pointerLockElement() const;
 
     void setCustomElementRegistry(RefPtr<CustomElementRegistry>&&);
     CustomElementRegistry* customElementRegistry() const { return m_customElementRegistry.get(); }

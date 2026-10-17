@@ -190,7 +190,7 @@ class Element : public ContainerNode {
     WTF_MAKE_TZONE_ALLOCATED(Element);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Element);
 public:
-    static Ref<Element> create(const QualifiedName&, Document&);
+    static Ref<Element> LEGACY_NODELETE create(const QualifiedName&, Document&);
     WEBCORE_EXPORT virtual ~Element();
 
     WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
@@ -917,7 +917,7 @@ public:
     std::optional<OptionSet<ContentRelevancy>> LEGACY_NODELETE contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 
-    bool hasCustomState(const AtomString& state) const;
+    bool LEGACY_NODELETE hasCustomState(const AtomString& state) const;
     CustomStateSet& ensureCustomStateSet();
 
     bool hasValidTextDirectionState() const;

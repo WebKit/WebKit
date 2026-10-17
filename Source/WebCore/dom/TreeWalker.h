@@ -48,7 +48,7 @@ public:
     Node& currentNode() { assertIsOwnerThread(); return m_current.get(); }
     const Node& currentNode() const { assertIsOwnerThread(); return m_current.get(); }
 
-    WebCoreOpaqueRoot opaqueRootForCurrentNodeInGCThread() const;
+    WebCoreOpaqueRoot LEGACY_NODELETE opaqueRootForCurrentNodeInGCThread() const;
 
     WEBCORE_EXPORT void setCurrentNode(Node&);
 

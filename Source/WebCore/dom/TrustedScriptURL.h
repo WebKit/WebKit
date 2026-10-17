@@ -35,7 +35,7 @@ namespace WebCore {
 class TrustedScriptURL : public ScriptWrappable, public RefCounted<TrustedScriptURL> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TrustedScriptURL, WEBCORE_EXPORT);
 public:
-    static Ref<TrustedScriptURL> create(const String& data);
+    static Ref<TrustedScriptURL> LEGACY_NODELETE create(const String& data);
     ~TrustedScriptURL();
 
     String toString() const { return m_data; }

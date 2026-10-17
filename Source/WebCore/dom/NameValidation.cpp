@@ -97,7 +97,7 @@ bool isValidAttributeName(StringView name)
 }
 
 // https://dom.spec.whatwg.org/#valid-namespace-prefix
-static bool isValidNamespacePrefix(StringView prefix)
+static bool LEGACY_NODELETE isValidNamespacePrefix(StringView prefix)
 {
     return !prefix.isEmpty() && !prefix.contains(isInvalidNamespacePrefixCharacter);
 }

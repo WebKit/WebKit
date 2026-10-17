@@ -62,7 +62,7 @@ struct DocumentSharedObjectPool::ShareableElementDataHash {
     {
         return computeHash(data->attributes());
     }
-    static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
+    static bool LEGACY_NODELETE equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
     {
         // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
         // return false. Attribute contains pointers but memcmp() is safe because those pointers were
@@ -78,7 +78,7 @@ struct AttributeSpanTranslator {
         return computeHash(attributes);
     }
 
-    static bool equal(const Ref<ShareableElementData>& a, std::span<const Attribute> b)
+    static bool LEGACY_NODELETE equal(const Ref<ShareableElementData>& a, std::span<const Attribute> b)
     {
         // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
         // return false. Attribute contains pointers but memcmp() is safe because those pointers were

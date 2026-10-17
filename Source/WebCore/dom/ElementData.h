@@ -166,7 +166,7 @@ public:
 
 class UniqueElementData : public ElementData {
 public:
-    static Ref<UniqueElementData> create();
+    static Ref<UniqueElementData> LEGACY_NODELETE create();
     Ref<ShareableElementData> makeShareableCopy() const;
 
     // These functions do no error/duplicate checking.

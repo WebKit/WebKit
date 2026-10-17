@@ -373,7 +373,7 @@ public:
     void setHasLoggedAuthenticatedEncryptionWarning(bool value) { m_hasLoggedAuthenticatedEncryptionWarning = value; }
 
     void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
-    WEBCORE_EXPORT bool shouldBlockThirdPartyStorage() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE shouldBlockThirdPartyStorage() const;
 
     enum class ResourceType : uint8_t {
         Cookies,

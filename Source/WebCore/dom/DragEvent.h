@@ -43,9 +43,9 @@ class DragEvent final : public MouseEvent {
 public:
     using Init = DragEventInit;
 
-    static Ref<DragEvent> create(const AtomString& eventType, Init&&);
-    static Ref<DragEvent> createForBindings();
-    static Ref<DragEvent> create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
+    static Ref<DragEvent> LEGACY_NODELETE create(const AtomString& eventType, Init&&);
+    static Ref<DragEvent> LEGACY_NODELETE createForBindings();
+    static Ref<DragEvent> LEGACY_NODELETE create(const AtomString& type, CanBubble, IsCancelable, IsComposed, MonotonicTime timestamp, RefPtr<WindowProxy>&&, int detail,
         const IntPoint& screenLocation, const IntPoint& windowLocation, double movementX, double movementY, OptionSet<Modifier>, MouseButton, unsigned short buttons,
         RefPtr<EventTarget>&& relatedTarget, double force, SyntheticClickType, DataTransfer* = nullptr, IsSimulated = IsSimulated::No, IsTrusted = IsTrusted::Yes);
 

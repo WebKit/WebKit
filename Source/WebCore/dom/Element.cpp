@@ -1244,7 +1244,7 @@ inline ScrollAlignment LEGACY_NODELETE toScrollAlignmentForBlockDirection(std::o
     }
 }
 
-static HTMLSelectElement* owningSelectElement(const Element& element)
+static HTMLSelectElement* LEGACY_NODELETE owningSelectElement(const Element& element)
 {
     if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(element))
         return optionElement->ownerSelectElement();
@@ -1945,7 +1945,7 @@ inline RefPtr<const SVGElement> elementWithSVGLayoutBox(const Element& element)
 // The walk stops at the SVG root: hidden containers only exist inside an SVG fragment, and
 // <foreignObject> gets no renderer at all under one (SVGForeignObjectElement::rendererIsNeeded),
 // so there is no hidden container to find above a root.
-inline bool isInNonRenderedSVGSubtree(const Element& element)
+inline bool LEGACY_NODELETE isInNonRenderedSVGSubtree(const Element& element)
 {
     if (!element.isSVGElement())
         return false;

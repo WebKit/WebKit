@@ -41,7 +41,7 @@ public:
     static Ref<DOMException> create(const Exception&);
 
     // For DOM bindings.
-    static Ref<DOMException> create(const String& message, const String& name);
+    static Ref<DOMException> LEGACY_NODELETE create(const String& message, const String& name);
 
     virtual ~DOMException() { }
 

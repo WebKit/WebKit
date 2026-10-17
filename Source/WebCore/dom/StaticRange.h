@@ -49,8 +49,8 @@ public:
     };
 
     static ExceptionOr<Ref<StaticRange>> create(Init&&);
-    WEBCORE_EXPORT static Ref<StaticRange> create(const SimpleRange&);
-    WEBCORE_EXPORT static Ref<StaticRange> create(SimpleRange&&);
+    WEBCORE_EXPORT static Ref<StaticRange> LEGACY_NODELETE create(const SimpleRange&);
+    WEBCORE_EXPORT static Ref<StaticRange> LEGACY_NODELETE create(SimpleRange&&);
 
     Node& startContainer() const final { return SimpleRange::startContainer(); }
     unsigned startOffset() const final { return SimpleRange::startOffset(); }

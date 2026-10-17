@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory>, public ContextDestructionObserver {
     WTF_MAKE_TZONE_ALLOCATED(TrustedTypePolicyFactory);
 public:
-    static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
+    static Ref<TrustedTypePolicyFactory> LEGACY_NODELETE create(ScriptExecutionContext&);
     ~TrustedTypePolicyFactory();
 
     // ContextDestructionObserver.

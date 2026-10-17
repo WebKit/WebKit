@@ -162,7 +162,7 @@ public:
     Node* LEGACY_NODELETE pseudoAwareFirstChild() const;
     Node* LEGACY_NODELETE pseudoAwareLastChild() const;
 
-    WEBCORE_EXPORT const URL& baseURI() const;
+    WEBCORE_EXPORT const URL& LEGACY_NODELETE baseURI() const;
     
     void getSubresourceURLs(OrderedHashSet<URL>&) const;
     void getCandidateSubresourceURLs(OrderedHashSet<URL>&) const;
@@ -519,7 +519,7 @@ public:
     // https://dom.spec.whatwg.org/#concept-node-move-ext
     virtual void movingSteps(MovingType, ContainerNode& oldParent);
 
-    void updateShadowIncludingRootForSubtree();
+    void LEGACY_NODELETE updateShadowIncludingRootForSubtree();
 
     virtual String description() const;
     virtual String debugDescription() const;
@@ -815,7 +815,7 @@ private:
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocumentFastCase(Document& oldDocument, Document& newDocument);
     void moveNodeToNewDocumentSlowCase(Document& oldDocument, Document& newDocument);
-    void adoptCustomElementRegistryIntoScopedRegistryDocument();
+    void LEGACY_NODELETE adoptCustomElementRegistryIntoScopedRegistryDocument();
 
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
 
@@ -842,10 +842,10 @@ bool LEGACY_NODELETE connectedInSameTreeScope(const Node*, const Node*);
 
 enum TreeType { Tree, ShadowIncludingTree, ComposedTree, ComposedTreeIncludingPseudoElements };
 template<TreeType = Tree> ContainerNode* LEGACY_NODELETE parent(const Node&);
-template<TreeType = Tree> Node* commonInclusiveAncestor(const Node&, const Node&);
-template<TreeType = Tree> std::partial_ordering treeOrder(const Node&, const Node&);
+template<TreeType = Tree> Node* LEGACY_NODELETE commonInclusiveAncestor(const Node&, const Node&);
+template<TreeType = Tree> std::partial_ordering LEGACY_NODELETE treeOrder(const Node&, const Node&);
 
-WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, const Node&);
+WEBCORE_EXPORT std::partial_ordering LEGACY_NODELETE treeOrderForTesting(TreeType, const Node&, const Node&);
 
 bool LEGACY_NODELETE isTouchRelatedEventType(const EventTypeInfo&, const EventTarget&);
 

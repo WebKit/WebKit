@@ -110,7 +110,7 @@ struct ViewportArguments {
     }
 
     // All arguments are in CSS units.
-    ViewportAttributes resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
+    ViewportAttributes LEGACY_NODELETE resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
 
     float width { ValueAuto };
     float height { ValueAuto };
@@ -149,11 +149,11 @@ struct ViewportArguments {
 #endif
 };
 
-WEBCORE_EXPORT ViewportAttributes computeViewportAttributes(const ViewportArguments&, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
+WEBCORE_EXPORT ViewportAttributes LEGACY_NODELETE computeViewportAttributes(const ViewportArguments&, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
 
-WEBCORE_EXPORT void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
+WEBCORE_EXPORT void LEGACY_NODELETE restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
 WEBCORE_EXPORT void LEGACY_NODELETE restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
-WEBCORE_EXPORT float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
+WEBCORE_EXPORT float LEGACY_NODELETE computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
 
 typedef Function<void(ViewportErrorCode, const String&)> ViewportErrorHandler;
 void setViewportFeature(ViewportArguments&, Document&, StringView key, StringView value);

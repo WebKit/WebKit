@@ -68,7 +68,7 @@ public:
     WEBCORE_EXPORT static void breakToAllowRenderingUpdate();
 
 private:
-    static Ref<WindowEventLoop> create(const String&);
+    static Ref<WindowEventLoop> LEGACY_NODELETE create(const String&);
     WindowEventLoop(const String&);
 
     void scheduleToRun() final;
