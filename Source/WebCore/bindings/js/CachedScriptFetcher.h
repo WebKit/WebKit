@@ -48,7 +48,7 @@ public:
 
     virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, String&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
 
-    static Ref<CachedScriptFetcher> create(const AtomString& charset);
+    static Ref<CachedScriptFetcher> LEGACY_NODELETE create(const AtomString& charset);
 
 protected:
     CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)

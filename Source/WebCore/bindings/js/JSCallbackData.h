@@ -61,8 +61,8 @@ public:
     JSCallbackData(JSC::JSObject* callback, JSDOMGlobalObject*, void* owner);
     ~JSCallbackData();
 
-    JSDOMGlobalObject* globalObject();
-    JSC::JSObject* callback();
+    JSDOMGlobalObject* LEGACY_NODELETE globalObject();
+    JSC::JSObject* LEGACY_NODELETE callback();
 
     template<typename Visitor> void visitJSFunctionInGCThread(Visitor&);
 

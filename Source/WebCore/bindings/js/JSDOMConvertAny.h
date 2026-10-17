@@ -59,7 +59,7 @@ template<> struct JSConverter<IDLAny> {
         return value.get();
     }
 
-    static JSC::JSValue convert(const JSValueInWrappedObject&);
+    static JSC::JSValue LEGACY_NODELETE convert(const JSValueInWrappedObject&);
 };
 
 template<> struct VariadicConverter<IDLAny> {

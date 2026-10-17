@@ -40,7 +40,7 @@ class JSWindowProxy;
 class WindowProxy : public RefCounted<WindowProxy> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(WindowProxy, WEBCORE_EXPORT);
 public:
-    static Ref<WindowProxy> create(Frame&);
+    static Ref<WindowProxy> LEGACY_NODELETE create(Frame&);
     WEBCORE_EXPORT ~WindowProxy();
 
     WEBCORE_EXPORT Frame* LEGACY_NODELETE frame() const;

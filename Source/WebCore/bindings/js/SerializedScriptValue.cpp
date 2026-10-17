@@ -181,7 +181,7 @@ static bool isInterfaceExposedInGlobalObject(JSC::JSGlobalObject& globalObject, 
     return traits.isExposedInGlobalObject(*domGlobalObject);
 }
 
-static const PlatformObjectSerializationTraits* platformObjectSerializationTraitsForTag(SerializationTag tag)
+static const PlatformObjectSerializationTraits* LEGACY_NODELETE platformObjectSerializationTraitsForTag(SerializationTag tag)
 {
     switch (tag) {
     case ArrayTag:
@@ -315,7 +315,7 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     return !traits || isInterfaceExposedInGlobalObject(globalObject, *traits);
 }
 
-static bool isTagRestrictedToSameAgentCluster(SerializationTag tag)
+static bool LEGACY_NODELETE isTagRestrictedToSameAgentCluster(SerializationTag tag)
 {
     auto* traits = platformObjectSerializationTraitsForTag(tag);
     return traits && traits->isRestrictedToSameAgentCluster;
@@ -1141,7 +1141,7 @@ public:
         return m_forStorage == SerializationForStorage::No && (isCrossOriginIsolatedContext(m_lexicalGlobalObject) || JSC::Options::useSharedArrayBuffer());
     }
 
-    bool allowsWasmModuleSerialization()
+    bool LEGACY_NODELETE allowsWasmModuleSerialization()
     {
         return m_forStorage == SerializationForStorage::No;
     }

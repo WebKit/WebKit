@@ -64,7 +64,7 @@ public:
     ~ScriptModuleLoader();
 
 
-    ScriptExecutionContext* context();
+    ScriptExecutionContext* LEGACY_NODELETE context();
 
     JSC::Identifier resolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
     JSC::JSPromise* fetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, const String& referrer, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);

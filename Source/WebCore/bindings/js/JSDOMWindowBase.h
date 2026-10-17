@@ -114,7 +114,7 @@ LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&, JSC::CallFrame&);
 LocalDOMWindow& incumbentDOMWindow(JSC::JSGlobalObject&);
 
 LocalDOMWindow& LEGACY_NODELETE activeDOMWindow(JSC::JSGlobalObject&);
-LocalDOMWindow& firstDOMWindow(JSC::JSGlobalObject&);
+LocalDOMWindow& LEGACY_NODELETE firstDOMWindow(JSC::JSGlobalObject&);
 
 LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&, JSC::CallFrame&);
 LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSC::JSGlobalObject&);

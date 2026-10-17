@@ -78,8 +78,8 @@ WEBCORE_EXPORT JSC::JSObject* constructEmptyObject(JSC::JSGlobalObject*, JSC::JS
 WEBCORE_EXPORT JSC::JSObject* constructEmptyObject(JSC::JSGlobalObject*, JSC::Structure*);
 
 WEBCORE_EXPORT JSC::PropertyOffset structureGet(JSC::Structure*, JSC::VM&, JSC::PropertyName);
-WEBCORE_EXPORT JSC::JSValue storedPrototype(JSC::Structure*, const JSC::JSObject*);
-WEBCORE_EXPORT JSC::JSObject* storedPrototypeObject(JSC::Structure*);
+WEBCORE_EXPORT JSC::JSValue LEGACY_NODELETE storedPrototype(JSC::Structure*, const JSC::JSObject*);
+WEBCORE_EXPORT JSC::JSObject* LEGACY_NODELETE storedPrototypeObject(JSC::Structure*);
 
 // Reconcile a prototype property against its runtime-enable condition after the prototype has already
 // been created. See ScriptController::reevaluateQuirkDependentProperties(). Both return whether they

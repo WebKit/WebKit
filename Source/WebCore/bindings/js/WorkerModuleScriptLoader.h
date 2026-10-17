@@ -47,7 +47,7 @@ class WorkerScriptLoader;
 
 class WorkerModuleScriptLoader final : public ModuleScriptLoader, private WorkerScriptLoaderClient {
 public:
-    static Ref<WorkerModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
+    static Ref<WorkerModuleScriptLoader> LEGACY_NODELETE create(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     virtual ~WorkerModuleScriptLoader();
 

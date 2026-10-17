@@ -48,7 +48,7 @@ class JSDOMGlobalObject;
 
 class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedStyleSheetClient {
 public:
-    static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
+    static Ref<CachedModuleScriptLoader> LEGACY_NODELETE create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     virtual ~CachedModuleScriptLoader();
 
