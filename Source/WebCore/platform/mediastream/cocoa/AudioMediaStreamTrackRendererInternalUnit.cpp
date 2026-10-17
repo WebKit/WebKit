@@ -35,6 +35,9 @@
 #include "CoreAudioCaptureDevice.h"
 #include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioFormat.h"
+#endif
 #include <Accelerate/Accelerate.h>
 #include <pal/cf/CoreAudioExtras.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
@@ -47,6 +50,17 @@
 #include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+#if USE(LIBWEBRTC)
+static_assert(maxAudioRendererSampleRate == LibWebRTCAudioFormat::sampleRate, "AudioUnit input rate must be capped at the libwebrtc source rate");
+#endif
+
+double clampedAudioRendererSampleRate(double deviceSampleRate)
+{
+    if (deviceSampleRate > 0 && deviceSampleRate < maxAudioRendererSampleRate)
+        return deviceSampleRate;
+    return maxAudioRendererSampleRate;
+}
 
 class LocalAudioMediaStreamTrackRendererInternalUnit final : public AudioMediaStreamTrackRendererInternalUnit, public RefCounted<LocalAudioMediaStreamTrackRendererInternalUnit>  {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(LocalAudioMediaStreamTrackRendererInternalUnit);
@@ -232,7 +246,7 @@ void LocalAudioMediaStreamTrackRendererInternalUnit::createAudioUnitIfNeeded()
             return;
         }
 
-        outputDescription.mSampleRate = AudioSession::singleton().sampleRate();
+        outputDescription.mSampleRate = clampedAudioRendererSampleRate(AudioSession::singleton().sampleRate());
         m_outputDescription = outputDescription;
     }
     error = PAL::AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &m_outputDescription->streamDescription(), sizeof(m_outputDescription->streamDescription()));
