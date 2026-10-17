@@ -136,7 +136,10 @@ inline int posixStatx(int directoryFileDescriptor, UTF8CStringView path, int fla
 {
     return dlopen(path.utf8(), mode);
 }
+#endif
 
+// Bionic has no POSIX shared memory objects.
+#if !PLATFORM(PLAYSTATION) && !OS(ANDROID)
 [[nodiscard]] inline int posixShmOpen(UTF8CStringView name, int flags, mode_t mode)
 {
     return shm_open(name.utf8(), flags, mode);
@@ -175,6 +178,8 @@ using WTF::posixStatx;
 #endif
 #if !PLATFORM(PLAYSTATION)
 using WTF::posixDlopen;
+#endif
+#if !PLATFORM(PLAYSTATION) && !OS(ANDROID)
 using WTF::posixShmOpen;
 using WTF::posixShmUnlink;
 #endif
