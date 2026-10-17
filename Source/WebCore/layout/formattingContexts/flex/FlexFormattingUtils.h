@@ -148,6 +148,7 @@ public:
 private:
     static bool isStretchedFlexItem(const RenderBox& flexItem);
     static LayoutUnit crossAxisMarginExtentForFlexItem(const RenderBox& flexItem);
+    static LayoutUnit innerCrossSizeForFlexItem(const RenderBox& flexItem, LayoutUnit crossAxisMarginExtent);
     LayoutUnit usedMainAxisMarginExtentForFlexItem(const RenderBox& flexItem) const;
     static const Style::PreferredSize& preferredMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);
     static const Style::MinimumSize& minMainSizeLengthForFlexItem(const RenderBox& flexItem LIFETIME_BOUND);

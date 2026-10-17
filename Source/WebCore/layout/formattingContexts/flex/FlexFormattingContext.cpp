@@ -135,9 +135,6 @@ FlexFormattingContext::FlexBaseAndHypotheticalMainSizeList FlexFormattingContext
     for (size_t index = 0; index < flexItems.size(); ++index) {
         auto& flexItem = flexItems[index];
         auto flexBase = flexBaseSizeForFlexItem(flexItem);
-        // flexBaseSizeForFlexItem just laid out an orthogonal item, so its physical margins are now resolved.
-        if (!flexItem.mainAxisIsInlineAxis)
-            flexItem.mainAxisMargin = flexFormattingUtils().usedMainAxisMarginExtentForFlexItem(flexItem);
         auto minMaxMainSizes = minMaxMainSizesForFlexItem(flexItem);
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes.
         flexBaseAndHypotheticalMainSizeList[index] = { flexBase, constrainSizeByMinMax(flexBase, minMaxMainSizes), minMaxMainSizes };
@@ -1211,12 +1208,13 @@ FlexLayoutState& FlexFormattingContext::layoutState() const
     return m_layoutState;
 }
 
-FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent)
+FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizontalFlow, const LayoutBoxExtent& margins, bool everHadLayout, bool shouldInvalidateChildContent)
     : renderer(flexItem)
     , mainAxisBorderAndPadding(flexContainerIsHorizontalFlow ? flexItem.horizontalBorderAndPaddingExtent() : flexItem.verticalBorderAndPaddingExtent())
-    , mainAxisMargin(flexContainerIsHorizontalFlow ? flexItem.horizontalMarginExtent() : flexItem.verticalMarginExtent())
     , crossAxisBorderAndPadding(flexContainerIsHorizontalFlow ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent())
+    , flexContainerIsHorizontalFlow(flexContainerIsHorizontalFlow)
     , mainAxisIsInlineAxis(flexContainerIsHorizontalFlow == flexItem.isHorizontalWritingMode())
+    , margins(margins)
     , everHadLayout(everHadLayout)
     , shouldInvalidateChildContent(shouldInvalidateChildContent)
 {
@@ -1225,7 +1223,17 @@ FlexLayoutItem::FlexLayoutItem(RenderBox& flexItem, bool flexContainerIsHorizont
 
 LayoutUnit FlexLayoutItem::outerMainSize(LayoutUnit mainSize) const
 {
-    return mainSize + mainAxisBorderAndPadding + mainAxisMargin;
+    return mainSize + mainAxisBorderAndPadding + mainAxisMarginExtent();
+}
+
+LayoutUnit FlexLayoutItem::mainAxisMarginExtent() const
+{
+    return flexContainerIsHorizontalFlow ? margins.left() + margins.right() : margins.top() + margins.bottom();
+}
+
+LayoutUnit FlexLayoutItem::crossAxisMarginExtent() const
+{
+    return flexContainerIsHorizontalFlow ? margins.top() + margins.bottom() : margins.left() + margins.right();
 }
 
 const Style::ComputedStyle& FlexLayoutItem::style() const

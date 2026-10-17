@@ -43,10 +43,12 @@ namespace LayoutIntegration { class FlexIntegrationUtils; }
 
 class FlexLayoutItem {
 public:
-    FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, bool everHadLayout, bool shouldInvalidateChildContent);
+    FlexLayoutItem(RenderBox&, bool flexContainerIsHorizontalFlow, const LayoutBoxExtent& margins, bool everHadLayout, bool shouldInvalidateChildContent);
 
     // The item's content-box main size plus its main-axis border, padding and margin.
     LayoutUnit LEGACY_NODELETE outerMainSize(LayoutUnit mainSize) const;
+    LayoutUnit mainAxisMarginExtent() const;
+    LayoutUnit crossAxisMarginExtent() const;
     const Style::ComputedStyle& LEGACY_NODELETE style() const LIFETIME_BOUND;
 
     // The item's current, laid-out geometry.
@@ -63,10 +65,13 @@ public:
 
     CheckedRef<RenderBox> renderer;
     const LayoutUnit mainAxisBorderAndPadding;
-    LayoutUnit mainAxisMargin;
     const LayoutUnit crossAxisBorderAndPadding;
+    const bool flexContainerIsHorizontalFlow;
     // True when the flex container's main axis is this item's inline axis (i.e. the item is not orthogonal to the container).
     const bool mainAxisIsInlineAxis;
+    // The margins the flex algorithm works with: resolved from style before it runs, with 'auto' as 0, then with the
+    // auto margins it resolves. The renderer gets them along with the item's position.
+    LayoutBoxExtent margins;
     bool everHadLayout { false };
     // Whether the container is relaying out all its items this pass (RelayoutChildren::Yes); layoutFlexItemWithMainSize
     // combines it with !hasFlexItemCompletedLayout to decide whether to invalidate this child's content.
