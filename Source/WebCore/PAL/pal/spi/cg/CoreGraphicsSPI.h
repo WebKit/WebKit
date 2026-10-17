@@ -84,12 +84,22 @@ typedef struct CGFontHMetrics CGFontHMetrics;
 
 typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
 {
+    deFinalize = 0,
+    deGetColorTransform = 1,
+    deGetTransform = 2,
+    deGetBounds = 3,
+    deDrawLines = 4,
+    deDrawRects = 5,
     deDrawPath = 6,
     deDrawImage = 7,
     deDrawGlyphs = 8,
+    deOperation = 14,
     deBeginLayer = 17,
     deEndLayer = 18,
+    deGetDelegateName = 24,
+    deDrawPathDirect = 25,
     deGetColorSpace = 30,
+    deStrokeArc = 32,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -108,9 +118,59 @@ typedef enum {
 } CGContextType;
 
 typedef enum {
+    kCGCompositeClear = 0,
     kCGCompositeCopy = 1,
     kCGCompositeSover = 2,
+    kCGCompositeSin = 3,
+    kCGCompositeSout = 4,
+    kCGCompositeSatop = 5,
+    kCGCompositeDover = 6,
+    kCGCompositeDin = 7,
+    kCGCompositeDout = 8,
+    kCGCompositeDatop = 9,
+    kCGCompositeXor = 10,
+    kCGCompositePlusd = 11,
+    kCGCompositePlusl = 12,
+    kCGCompositeMultiply = 13,
+    kCGCompositeScreen = 14,
+    kCGCompositeOverlay = 15,
+    kCGCompositeDarken = 16,
+    kCGCompositeLighten = 17,
+    kCGCompositeColorDodge = 18,
+    kCGCompositeColorBurn = 19,
+    kCGCompositeSoftLight = 20,
+    kCGCompositeHardLight = 21,
+    kCGCompositeDifference = 22,
+    kCGCompositeExclusion = 23,
+    kCGCompositeHue = 24,
+    kCGCompositeSaturation = 25,
+    kCGCompositeColor = 26,
+    kCGCompositeLuminosity = 27,
 } CGCompositeOperation;
+
+typedef CF_ENUM (int32_t, CGClipMode)
+{
+    kCGNoClip = -1,
+    kCGClip,
+    kCGEOClip,
+    kCGStrokeClip
+};
+
+typedef CF_ENUM (int32_t, CGClipType)
+{
+    kCGClipTypeNone = -1,
+    kCGClipTypeRect,
+    kCGClipTypeGlyphs_obsolete,
+    kCGClipTypePath,
+    kCGClipTypeMask,
+    kCGClipTypeTextClipping
+};
+
+typedef struct CGClip *CGClipRef;
+typedef const struct CGClipStack *CGClipStackRef;
+typedef struct CGClipStroke CGClipStroke;
+typedef struct CGDash *CGDashRef;
+typedef struct CGSoftMask *CGSoftMaskRef;
 
 enum {
     kCGFontRenderingStyleAntialiasing = 1 << 0,
@@ -441,6 +501,12 @@ CGContextDelegateRef CGContextDelegateCreate(void* info);
 void CGContextDelegateSetCallback(CGContextDelegateRef, CGContextDelegateCallbackName, CGContextDelegateCallback);
 CGContextRef CGContextCreateWithDelegate(CGContextDelegateRef, CGContextType, CGRenderingStateRef, CGGStateRef);
 void* CGContextDelegateGetInfo(CGContextDelegateRef);
+extern const CFStringRef kCGContextClear;
+extern const CFStringRef kCGContextErase;
+extern const CFStringRef kCGContextFlush;
+extern const CFStringRef kCGContextSynchronize;
+extern const CFStringRef kCGContextSynchronizeAttributes;
+extern const CFStringRef kCGContextWait;
 void CGContextDelegateRelease(CGContextDelegateRef);
 CGFloat CGGStateGetAlpha(CGGStateRef);
 CGFontRef CGGStateGetFont(CGGStateRef);
@@ -449,6 +515,29 @@ const CGAffineTransform *CGGStateGetCTM(CGGStateRef);
 CGColorRef CGGStateGetFillColor(CGGStateRef);
 CGColorRef CGGStateGetStrokeColor(CGGStateRef);
 CGStyleRef CGGStateGetStyle(CGGStateRef);
+CGClipStackRef CGGStateGetClipStack(CGGStateRef);
+bool CGRenderingStateGetAllowsAntialiasing(CGRenderingStateRef);
+CGRect CGGStateGetClipBoundingBox(CGGStateRef);
+CGCompositeOperation CGGStateGetCompositeOperation(CGGStateRef);
+bool CGGStateGetShouldAntialias(CGGStateRef);
+CGInterpolationQuality CGGStateGetInterpolationQuality(CGGStateRef);
+CGSoftMaskRef CGGStateGetSoftMask(CGGStateRef);
+CGFloat CGGStateGetLineWidth(CGGStateRef);
+CGLineCap CGGStateGetLineCap(CGGStateRef);
+CGLineJoin CGGStateGetLineJoin(CGGStateRef);
+CGFloat CGGStateGetMiterLimit(CGGStateRef);
+CGDashRef CGGStateGetLineDash(CGGStateRef);
+const CGFloat* CGDashGetPattern(CGDashRef, CGFloat* phase, size_t* count);
+bool CGClipStackIsInfinite(CGClipStackRef);
+CGRect CGClipStackGetRect(CGClipStackRef);
+size_t CGClipStackGetCount(CGClipStackRef);
+CGClipRef CGClipStackGetClipAtIndex(CGClipStackRef, size_t index);
+CGClipType CGClipGetType(CGClipRef);
+CGClipMode CGClipGetMode(CGClipRef);
+bool CGClipGetShouldAntialias(CGClipRef);
+CGRect CGClipGetRect(CGClipRef);
+CGClipStroke* CGClipGetStroke(CGClipRef);
+CGPathRef CGClipCreateClipPath(CGClipRef);
 CGStyleType CGStyleGetType(CGStyleRef);
 const void *CGStyleGetData(CGStyleRef);
 CGColorRef CGStyleGetColor(CGStyleRef);

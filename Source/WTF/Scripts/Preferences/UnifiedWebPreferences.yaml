@@ -5116,6 +5116,15 @@ RemoteSnapshottingEnabled:
   defaultValue: false
   sharedPreferenceForWebProcess: true
 
+RemoteSnapshottingUnifiedPDFVectorDrawingEnabled:
+  type: bool
+  status: internal
+  category: media
+  humanReadableName: "Remote Snapshotting: UnifiedPDF Vector Drawing"
+  humanReadableDescription: "Draw PDF content as vectors rather than a bitmap in remote snapshots"
+  condition: USE(CG)
+  defaultValue: false
+
 RemoveBackgroundEnabled:
   type: bool
   # FIXME: Change to "embedder" when there is a way to enable/disable embedder features from API tests.
