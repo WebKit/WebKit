@@ -27,10 +27,12 @@
 #include "FlexFormattingUtils.h"
 
 #include "FlexFormattingContext.h"
+#include "LocalFrameViewLayoutContext.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderFlexibleBox.h"
+#include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -148,7 +150,9 @@ LayoutUnit FlexFormattingUtils::computeGap(const RenderFlexibleBox& flexBox, Gap
     if (gap.isNormal()) [[likely]]
         return { };
 
-    auto availableSize = usesRowGap ? flexBox.availableLogicalHeightForPercentageComputation().value_or(0_lu) : flexBox.contentBoxLogicalWidth();
+    // css-align-3 8.3: while the container's intrinsic widths are computed, an inline-axis percentage gap resolves against zero.
+    auto availableSize = usesRowGap ? flexBox.availableLogicalHeightForPercentageComputation().value_or(0_lu)
+        : flexBox.layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox) ? 0_lu : flexBox.contentBoxLogicalWidth();
     return Style::evaluateMinimum<LayoutUnit>(gap, availableSize, flexBox.style().usedZoomForLength());
 }
 
