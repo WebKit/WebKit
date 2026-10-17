@@ -163,6 +163,8 @@ public:
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
+    void setExemptAllowlistedCookiesFromITP(bool);
+    void setExtendAllowlistedCookieLifetime(bool);
     void setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain);
     std::optional<WebCore::RegistrableDomain> firstPartyHostCNAMEDomain(const String& firstPartyHost);
     void setFirstPartyHostIPAddress(const String& firstPartyHost, const String& addressString);

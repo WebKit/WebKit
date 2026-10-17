@@ -1754,6 +1754,16 @@ void WebsiteDataStore::setResourceLoadStatisticsShouldEnbleSameSiteStrictEnforce
     protect(networkProcess())->setShouldEnbleSameSiteStrictEnforcementForTesting(m_sessionID, flag, WTF::move(completionHandler));
 }
 
+void WebsiteDataStore::setExtendAllowlistedCookieLifetime(bool extend)
+{
+    protect(networkProcess())->setExtendAllowlistedCookieLifetime(m_sessionID, extend, [] { });
+}
+
+void WebsiteDataStore::setExemptAllowlistedCookiesFromITP(bool exempt)
+{
+    protect(networkProcess())->setExemptAllowlistedCookiesFromITP(m_sessionID, exempt, [] { });
+}
+
 void WebsiteDataStore::setResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting(bool enabled, CompletionHandler<void()>&& completionHandler)
 {
     auto mode = enabled ? WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies : WebCore::FirstPartyWebsiteDataRemovalMode::None;

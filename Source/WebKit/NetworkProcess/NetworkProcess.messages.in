@@ -176,6 +176,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetThirdPartyCookieBlockingMode(PAL::SessionID sessionID, enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetShouldEnbleSameSiteStrictEnforcementForTesting(PAL::SessionID sessionID, enum:bool WebCore::SameSiteStrictEnforcementEnabled enabled) -> ()
     SetFirstPartyWebsiteDataRemovalModeForTesting(PAL::SessionID sessionID, enum:uint8_t WebCore::FirstPartyWebsiteDataRemovalMode mode) -> ()
+    SetExemptAllowlistedCookiesFromITP(PAL::SessionID sessionID, bool exempt) -> ()
+    SetExtendAllowlistedCookieLifetime(PAL::SessionID sessionID, bool extend) -> ()
     SetToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()
     SetFirstPartyHostCNAMEDomainForTesting(PAL::SessionID sessionID, String firstPartyHost, WebCore::RegistrableDomain cnameDomain) -> ()
     SetThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()

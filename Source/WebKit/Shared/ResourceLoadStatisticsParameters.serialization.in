@@ -38,4 +38,6 @@ enum class WebCore::SameSiteStrictEnforcementEnabled : bool;
     HashSet<WebCore::RegistrableDomain> managedDomains;
     HashSet<WebCore::RegistrableDomain> persistedDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
+    bool exemptAllowlistedCookiesFromITP;
+    bool extendAllowlistedCookieLifetime;
 }

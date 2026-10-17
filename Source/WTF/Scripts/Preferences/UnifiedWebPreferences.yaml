@@ -2222,6 +2222,14 @@ EventTimingEnabled:
     default: true
     WebKitLegacy: false
 
+ExemptAllowlistedCookiesFromItp:
+  type: bool
+  status: unstable
+  category: privacy
+  humanReadableName: "Exempt Allowlisted Cookies From ITP Data Removal"
+  humanReadableDescription: "Exempt allowlisted cookies and local storage from ITP data deletion"
+  defaultValue: false
+
 ExperimentalSandboxEnabled:
   type: bool
   status: internal
@@ -2299,6 +2307,14 @@ ExposeSpeakersWithoutMicrophoneEnabled:
     "PLATFORM(COCOA)": true
     default: false
     WebCore: false
+
+ExtendAllowlistedCookieLifetime:
+  type: bool
+  status: unstable
+  category: privacy
+  humanReadableName: "Extend Allowlisted Cookie Lifetime"
+  humanReadableDescription: "Extend lifetime of allowlisted cookies to 1 year after most recent visit, on a rolling basis"
+  defaultValue: false
 
 ExtendedAudioDescriptionsEnabled:
   type: bool

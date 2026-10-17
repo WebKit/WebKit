@@ -49,6 +49,8 @@ struct ResourceLoadStatisticsParameters {
     HashSet<WebCore::RegistrableDomain> managedDomains;
     HashSet<WebCore::RegistrableDomain> persistedDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
+    bool exemptAllowlistedCookiesFromITP { false };
+    bool extendAllowlistedCookieLifetime { false };
 };
 
 } // namespace WebKit
