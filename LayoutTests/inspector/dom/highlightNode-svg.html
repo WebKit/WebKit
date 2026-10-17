@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.highlightNode.SVG");
+
+    async function getNode(selector) {
+        let doc = await WI.domManager.requestDocument();
+        let nodeId = await doc.querySelector(selector);
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function getHighlightRects() {
+        return JSON.parse(await InspectorTest.evaluateInPage("JSON.stringify(Array.from(window.internals.inspectorHighlightRects()))"));
+    }
+
+    async function getBoundingClientRect(selector) {
+        return JSON.parse(await InspectorTest.evaluateInPage(`JSON.stringify(document.querySelector("${selector}").getBoundingClientRect())`));
+    }
+
+    function addTestCase({name, description, selector}) {
+        suite.addTestCase({
+            name: "DOM.highlightNode.SVG." + name,
+            description,
+            async test() {
+                let node = await getNode(selector);
+                node.highlight();
+
+                let highlightRects = await getHighlightRects();
+                InspectorTest.expectEqual(highlightRects.length, 1, "Should be one highlight rect.");
+
+                let boundingClientRect = await getBoundingClientRect(selector);
+                for (let key of ["x", "y", "width", "height"])
+                    InspectorTest.expectEqual(highlightRects[0][key], boundingClientRect[key], `Highlight ${key} should match the bounding client rect.`);
+
+                WI.domManager.hideDOMNodeHighlight();
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Rect",
+        description: "Should highlight a <rect> where it is drawn.",
+        selector: "#rect",
+    });
+
+    addTestCase({
+        name: "ForeignObject",
+        description: "Should highlight a <foreignObject> where it is drawn.",
+        selector: "#foreign-object",
+    });
+
+    addTestCase({
+        name: "Text",
+        description: "Should highlight a <text> where it is drawn.",
+        selector: "#text",
+    });
+
+    addTestCase({
+        name: "TextAnchorEnd",
+        description: "Should highlight a <text> with text-anchor=\"end\" where it is drawn.",
+        selector: "#text-anchor-end",
+    });
+
+    addTestCase({
+        name: "TextInTranslatedGroup",
+        description: "Should highlight a <text> inside a translated <g> where it is drawn.",
+        selector: "#text-in-translated-group",
+    });
+
+    addTestCase({
+        name: "TextRotated",
+        description: "Should highlight a rotated <text> where it is drawn.",
+        selector: "#text-rotated",
+    });
+
+    addTestCase({
+        name: "TSpan",
+        description: "Should highlight a <tspan> where it is drawn.",
+        selector: "#tspan",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the DOM.highlightNode command on SVG elements, including in an SVG scaled by its viewBox.</p>
+    <svg width="400" height="200" viewBox="0 0 200 100" font-size="10">
+        <rect id="rect" x="10" y="10" width="30" height="20"/>
+        <foreignObject id="foreign-object" x="150" y="10" width="40" height="30"><div xmlns="http://www.w3.org/1999/xhtml">x</div></foreignObject>
+        <text id="text" x="60" y="30">Text</text>
+        <text id="text-anchor-end" x="140" y="50" text-anchor="end">End</text>
+        <g transform="translate(10 60)"><text id="text-in-translated-group" x="20" y="10">Group</text></g>
+        <text id="text-rotated" x="20" y="90" transform="rotate(-90 20 90)">Rotated</text>
+        <text x="100" y="90">Before <tspan id="tspan">Span</tspan></text>
+    </svg>
+</body>
+</html>
