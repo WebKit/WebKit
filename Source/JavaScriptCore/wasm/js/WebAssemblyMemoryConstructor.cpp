@@ -38,6 +38,7 @@
 #include "WasmAddressType.h"
 #include "WasmLimits.h"
 #include "WasmMemory.h"
+#include "WasmMemoryInformation.h"
 #include "WebAssemblyMemoryPrototype.h"
 
 namespace JSC {
@@ -77,7 +78,8 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
     // Page counts are declarative, so accept everything a module's own memory type may declare.
     // What can actually be allocated is bounded separately, and more tightly.
-    uint64_t maxDeclarablePageCount = Wasm::maxDeclarablePages(addressType);
+    // A memory created through the JS API always has the default page size.
+    uint64_t maxDeclarablePageCount = Wasm::maxDeclarablePages(addressType, Wasm::MemoryInformation::defaultLog2PageSize);
 
     PageCount initialPageCount;
     {

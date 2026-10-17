@@ -33,6 +33,7 @@
 #include "Options.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmLimits.h"
+#include "WasmMemoryInformation.h"
 #include "WeakGCSetInlines.h"
 #include <bmalloc/Gigacage.h>
 #include <wtf/CheckedArithmetic.h>
@@ -67,7 +68,9 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH void webAssemblyCouldntGetFastMemory() { CRA
 // tighter than what PageCount can represent.
 static bool isDeclarablePageCount(PageCount pageCount, AddressType addressType)
 {
-    return pageCount && pageCount.isValid() && pageCount.pageCount() <= maxDeclarablePages(addressType);
+    // FIXME: Every Wasm::Memory still has 64 KiB pages; take the memory's own exponent once it
+    // carries one.
+    return pageCount && pageCount.isValid() && pageCount.pageCount() <= maxDeclarablePages(addressType, MemoryInformation::defaultLog2PageSize);
 }
 
 template<typename Func>

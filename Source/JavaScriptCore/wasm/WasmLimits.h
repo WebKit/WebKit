@@ -34,6 +34,8 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <limits>
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -71,20 +73,45 @@ constexpr unsigned maxTables = 100000;
 constexpr uint64_t maxMemory32Pages = PageCount::maxMemory32PageCount;
 constexpr uint64_t maxMemory64Pages = PageCount::maxPageCount;
 
-constexpr uint64_t maxDeclarablePages(AddressType addressType)
+// The number of 2**log2PageSize-byte pages spanning a 2**log2AddressSpaceBytes-byte address space,
+// saturating when that count does not fit in a uint64_t.
+constexpr uint64_t pagesSpanningAddressSpace(unsigned log2AddressSpaceBytes, uint8_t log2PageSize)
 {
-    return addressType.is64Bit() ? maxMemory64Pages : maxMemory32Pages;
+    if (log2PageSize > log2AddressSpaceBytes)
+        return 0;
+    const unsigned log2Pages = log2AddressSpaceBytes - log2PageSize;
+    if (log2Pages >= 64)
+        return std::numeric_limits<uint64_t>::max();
+    return 1ULL << log2Pages;
 }
+
+constexpr uint64_t maxDeclarablePages(AddressType addressType, uint8_t log2PageSize)
+{
+    if (addressType.is64Bit()) {
+        // FIXME: A PageCount still counts 64 KiB pages, and its invalid sentinel is UINT64_MAX, so
+        // a small-page i64 memory cannot yet declare the 2**64 pages the proposal allows. Lift this
+        // to pagesSpanningAddressSpace(64, log2PageSize) once PageCount carries its own page size.
+        return std::min<uint64_t>(pagesSpanningAddressSpace(64, log2PageSize), PageCount::maxPageCount);
+    }
+    // An i32 memory's limits must fit in a u32 as well as in its address space.
+    return std::min<uint64_t>(pagesSpanningAddressSpace(32, log2PageSize), std::numeric_limits<uint32_t>::max());
+}
+
+static_assert(maxDeclarablePages(AddressType { AddressType::I32 }, WTF::fastLog2(PageCount::pageSize)) == maxMemory32Pages);
+static_assert(maxDeclarablePages(AddressType { AddressType::I64 }, WTF::fastLog2(PageCount::pageSize)) == maxMemory64Pages);
+static_assert(maxDeclarablePages(AddressType { AddressType::I32 }, 0) == (1ULL << 32) - 1);
+static_assert(maxDeclarablePages(AddressType { AddressType::I64 }, 0) <= PageCount::maxPageCount);
 
 // MAX_ARRAY_BUFFER_SIZE is not a page multiple on 32-bit, and a memory's size always is.
 constexpr uint64_t maxPageAlignedArrayBufferBytes = (MAX_ARRAY_BUFFER_SIZE / PageCount::pageSize) * PageCount::pageSize;
 
-// The largest byte length the buffer of a memory of this address type may advertise. A memory64 may
-// declare more pages than a byte length can express, and on 32-bit a declared maximum need not be
-// representable either; growth is bounded separately.
+// The largest byte length the buffer of a memory of this address type may advertise. This is a
+// property of the address type alone: the page size only changes how many pages span those bytes.
 constexpr uint64_t maxBufferByteLength(AddressType addressType)
 {
-    return std::min<uint64_t>(maxDeclarablePages(addressType), maxPageAlignedArrayBufferBytes / PageCount::pageSize) * PageCount::pageSize;
+    if (addressType.is64Bit())
+        return maxPageAlignedArrayBufferBytes;
+    return std::min<uint64_t>(PageCount::maxMemory32Bytes, maxPageAlignedArrayBufferBytes);
 }
 
 #if USE(LARGE_TYPED_ARRAYS)

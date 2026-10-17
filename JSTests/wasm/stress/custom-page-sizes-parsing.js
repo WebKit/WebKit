@@ -71,17 +71,17 @@ if (customPageSizesEnabled) {
     failsToParse(memoryModule([0x08, 0x00, 0x40]), "page size 2**64 is too large");
     failsToParse(memoryModule([0x08, 0x00, 0x41]), "page size 2**65 is too large");
 
-    // 63 is the largest exponent this commit accepts. Validation narrowing it
-    // to 0 or 16 comes later, at which point this becomes a CompileError.
-    parses(memoryModule([0x08, 0x00, 0x3f]));
+    // 63 is the largest exponent the encoding admits. It parses, and is then
+    // rejected by validation, which accepts only 0 and 16.
+    failsToParse(memoryModule([0x08, 0x00, 0x3f]), "invalid custom page size");
 
     // Page size 1 and the default both parse.
     parses(memoryModule([0x08, 0x01, 0x00]));
     parses(memoryModule([0x08, 0x01, 0x10]));
 
     // The exponent trails the maximum rather than preceding it. These two
-    // modules hold the same three bytes in the two possible orders, and only
+    // modules hold the same four bytes in the two possible orders, and only
     // the second reads 0x40 as the maximum instead of as the exponent.
     failsToParse(memoryModule([0x09, 0x01, 0x01, 0x40]), "page size 2**64 is too large");
-    parses(memoryModule([0x09, 0x01, 0x40, 0x01]));
+    parses(memoryModule([0x09, 0x01, 0x40, 0x10]));
 }

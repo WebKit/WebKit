@@ -45,7 +45,7 @@ MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool 
 {
     RELEASE_ASSERT(!!m_initial);
     RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
-    RELEASE_ASSERT(m_log2PageSize < 64);
+    RELEASE_ASSERT(!m_log2PageSize || m_log2PageSize == defaultLog2PageSize);
     ASSERT(!!*this);
 }
 
