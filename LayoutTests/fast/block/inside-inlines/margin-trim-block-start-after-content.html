@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<style>
+.container {
+  margin-trim: block-start;
+  width: 100px;
+  border-bottom: 1px solid black; /* stop margin collapsing across tests */
+  margin-bottom: 20px;
+}
+
+.content {
+  height: 50px;
+  background: blue;
+}
+
+.margin {
+  margin-top: 30px;
+  height: 30px;
+  background: green;
+}
+
+.self-collapsing {
+  margin: 20px 0;
+}
+</style>
+<div class=container>
+  <span>
+    <div class=content></div>
+    <div class=margin></div>
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    text
+    <div class=margin></div>
+  </span>
+</div>
+
+<div class=container>
+  <span>
+    <div class=content></div>
+    <div class=self-collapsing></div>
+  </span>
+</div>
