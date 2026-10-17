@@ -1341,7 +1341,11 @@ LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForGridItem(const RenderBox& 
     if (!participateInBaselineAlignment(gridItem, alignmentContextType))
         return LayoutUnit();
 
-    ASSERT_IMPLIES(alignmentContextType == Style::GridTrackSizingDirection::Rows, !m_renderGrid->isSubgridRows());
+    // In a subgridded axis the baseline alignment context belongs to the outer grid, see
+    // RenderGrid::columnAxisBaselineOffsetForGridItem().
+    if (m_renderGrid->isSubgrid(alignmentContextType))
+        return LayoutUnit();
+
     auto align = baselineAlignmentPositionForGridItem(gridItem, alignmentContextType);
     const auto& span = m_renderGrid->gridSpanForGridItem(gridItem, alignmentContextType);
     auto alignmentContext = GridLayoutFunctions::alignmentContextForBaselineAlignment(span, align);
