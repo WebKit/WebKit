@@ -35,9 +35,17 @@ class SpatialVideoSupport extends MediaControllerSupport
         this._moved = false;
         this._lastX = 0;
         this._lastY = 0;
+        this._pinching = false;
+        this._needsPanAnchor = false;
+        this._pinchStartFieldOfView = 0;
         this._projection = "equirect360";
         this._cameraFieldOfView = 0;
         this._maybeEnable();
+    }
+
+    get active()
+    {
+        return this._active;
     }
 
     get mediaEvents()
@@ -407,12 +415,22 @@ class SpatialVideoSupport extends MediaControllerSupport
         container.style.touchAction = "none";
 
         this._onPointerDown = (event) => {
+            if (this._pinching)
+                return;
             this._dragging = true;
             this._moved = false;
             this._lastX = event.clientX;
             this._lastY = event.clientY;
         };
         this._onPointerMove = (event) => {
+            if (this._pinching)
+                return;
+            if (this._needsPanAnchor) {
+                this._needsPanAnchor = false;
+                this._lastX = event.clientX;
+                this._lastY = event.clientY;
+                return;
+            }
             if (!this._dragging)
                 return;
             const dx = event.clientX - this._lastX, dy = event.clientY - this._lastY;
@@ -452,6 +470,34 @@ class SpatialVideoSupport extends MediaControllerSupport
         container.addEventListener("pointercancel", this._onPointerUp, true);
         container.addEventListener("click", this._onClick, true);
         container.addEventListener("wheel", this._onWheel, true);
+
+        this._pinchGestureRecognizer = new PinchGestureRecognizer(container, this);
+        this._pinchGestureRecognizer.scaleThreshold = SpatialVideoSupport.PinchScaleThreshold;
+    }
+
+    gestureRecognizerStateDidChange(recognizer)
+    {
+        if (recognizer !== this._pinchGestureRecognizer)
+            return;
+
+        switch (recognizer.state) {
+        case GestureRecognizer.States.Began:
+            this._pinching = true;
+            this._dragging = false;
+            this._pinchStartFieldOfView = this._cameraFieldOfView;
+            break;
+        case GestureRecognizer.States.Changed:
+            this._cameraFieldOfView = clampFieldOfView(this._pinchStartFieldOfView / recognizer.scale);
+            break;
+        case GestureRecognizer.States.Ended:
+        case GestureRecognizer.States.Cancelled:
+        case GestureRecognizer.States.Failed:
+            if (this._pinching) {
+                this._pinching = false;
+                this._needsPanAnchor = true;
+            }
+            break;
+        }
     }
 
     _removeInteraction()
@@ -465,6 +511,13 @@ class SpatialVideoSupport extends MediaControllerSupport
         container.removeEventListener("pointercancel", this._onPointerUp, true);
         container.removeEventListener("click", this._onClick, true);
         container.removeEventListener("wheel", this._onWheel, true);
+        if (this._pinchGestureRecognizer) {
+            this._pinchGestureRecognizer.enabled = false;
+            this._pinchGestureRecognizer = null;
+        }
+        this._dragging = false;
+        this._pinching = false;
+        this._needsPanAnchor = false;
         if (this._savedContainerTouchAction !== undefined)
             container.style.touchAction = this._savedContainerTouchAction;
     }
@@ -589,6 +642,7 @@ SpatialVideoSupport.FieldOfViewScale = 1000;
 SpatialVideoSupport.MinimumCameraFieldOfView = 30;
 SpatialVideoSupport.MaximumCameraFieldOfView = 110;
 SpatialVideoSupport.DragTolerance = 3;
+SpatialVideoSupport.PinchScaleThreshold = 0.02;
 SpatialVideoSupport.DragSpeed = 0.005;
 SpatialVideoSupport.ZoomSpeed = 0.1;
 SpatialVideoSupport.CubemapColumns = 3;
