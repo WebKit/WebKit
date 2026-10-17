@@ -449,6 +449,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/GradientCG.cpp
     platform/graphics/cg/GradientRendererCG.cpp
     platform/graphics/cg/GraphicsContextCG.cpp
+    platform/graphics/cg/GraphicsContextCGDelegate.cpp
     platform/graphics/cg/GraphicsContextGLCG.cpp
     platform/graphics/cg/IOSurfacePool.cpp
     platform/graphics/cg/ImageBufferCGBackend.cpp
@@ -1301,6 +1302,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cg/ColorSpaceCG.h
     platform/graphics/cg/GradientRendererCG.h
     platform/graphics/cg/GraphicsContextCG.h
+    platform/graphics/cg/GraphicsContextCGDelegate.h
     platform/graphics/cg/IOSurfacePool.h
     platform/graphics/cg/IOSurfacePoolIdentifier.h
     platform/graphics/cg/ImageBufferCGBackend.h

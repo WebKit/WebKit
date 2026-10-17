@@ -83,6 +83,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextCGDelegate.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -769,6 +770,17 @@ bool UnifiedPDFPlugin::shouldShowDebugIndicators() const
     return page && page->settings().showDebugBorders();
 }
 
+bool UnifiedPDFPlugin::shouldDrawPDFContentThroughCGDelegate(const GraphicsContext& context) const
+{
+    if (context.hasPlatformContext())
+        return false;
+    auto renderingMode = context.renderingMode();
+    if (renderingMode != RenderingMode::DisplayList && renderingMode != RenderingMode::PDFDocument)
+        return false;
+    RefPtr page = this->page();
+    return page && page->settings().remoteSnapshottingUnifiedPDFVectorDrawingEnabled();
+}
+
 void UnifiedPDFPlugin::didChangeSettings()
 {
     RefPtr page = this->page();
@@ -960,6 +972,7 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
 
     auto showDebugIndicators = shouldShowDebugIndicators();
     auto displayMode = accessibilityDisplayMode();
+    bool shouldDrawPagesDirectly = context.hasPlatformContext() || shouldDrawPDFContentThroughCGDelegate(context);
 
     auto pageWithAnnotation = pageIndexWithHoveredAnnotation();
 
@@ -1019,12 +1032,12 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
                 pageContext.translate(pageOrigin);
                 pageContext.scale({ 1, -1 });
 
-                RetainPtr platformContext = pageContext.platformContext();
-                applyPDFContentAXColorAdjustment(platformContext, page.get(), displayMode);
-                [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext];
+                RetainPtr platformContext = pageContext.hasPlatformContext() ? RetainPtr { pageContext.platformContext() } : GraphicsContextCGDelegate::createCGContext(pageContext);
+                applyPDFContentAXColorAdjustment(platformContext.get(), page.get(), displayMode);
+                [page drawWithBox:kPDFDisplayBoxCropBox toContext:platformContext.get()];
             };
 
-            if (context.hasPlatformContext())
+            if (shouldDrawPagesDirectly)
                 drawPage(context, pageDestinationRect.minXMaxYCorner());
             else if (RefPtr pageBuffer = context.createAlignedImageBuffer(pageDestinationRect.size(), context.colorSpace(), RenderingMethod::Local)) {
                 // Recording contexts (e.g. for remote snapshotting) have no platform context for PDFKit to draw into,

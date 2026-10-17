@@ -631,6 +631,7 @@ private:
     bool isTaggedPDF() const;
 
     bool shouldShowDebugIndicators() const;
+    bool shouldDrawPDFContentThroughCGDelegate(const WebCore::GraphicsContext&) const;
 
     float scaleForPagePreviews() const;
 

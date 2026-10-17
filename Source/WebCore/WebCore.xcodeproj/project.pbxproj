@@ -3745,6 +3745,7 @@
 		93445084276A6357001F712B /* FileSystemHandleCloseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 93445082276A6356001F712B /* FileSystemHandleCloseScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9345744C2C2F6BBD00755E5D /* MediaPlayerPrivateWebM.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5AEBAD8A283583AE0069741F /* MediaPlayerPrivateWebM.mm */; };
 		934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A158ED19DF39873704EAB3A7 /* GraphicsContextCGDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 98164AD77D4CD2A91C979F19 /* GraphicsContextCGDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934950CD253943610099F171 /* SpeechRecognition.h in Headers */ = {isa = PBXBuildFile; fileRef = 934950B1253943480099F171 /* SpeechRecognition.h */; };
 		934950CE253943650099F171 /* SpeechRecognitionAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = 934950BC2539434E0099F171 /* SpeechRecognitionAlternative.h */; };
 		934950D02539436C0099F171 /* SpeechRecognitionErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 934950AF253943470099F171 /* SpeechRecognitionErrorCode.h */; };
@@ -16258,6 +16259,8 @@
 		93443E7D26E8A6BC0058538F /* StorageManagerFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageManagerFileSystem.h; sourceTree = "<group>"; };
 		93445082276A6356001F712B /* FileSystemHandleCloseScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemHandleCloseScope.h; sourceTree = "<group>"; };
 		934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextCG.h; sourceTree = "<group>"; };
+		B6CF5180C3A1435EF8225D8E /* GraphicsContextCGDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCGDelegate.cpp; sourceTree = "<group>"; };
+		98164AD77D4CD2A91C979F19 /* GraphicsContextCGDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextCGDelegate.h; sourceTree = "<group>"; };
 		934950AD253943460099F171 /* SpeechRecognition.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SpeechRecognition.idl; sourceTree = "<group>"; };
 		934950AF253943470099F171 /* SpeechRecognitionErrorCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionErrorCode.h; sourceTree = "<group>"; };
 		934950B1253943480099F171 /* SpeechRecognition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechRecognition.h; sourceTree = "<group>"; };
@@ -36510,6 +36513,8 @@
 				BC19CDF0276FFB260053F734 /* GradientRendererCG.h */,
 				B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */,
 				934907E3125BBBC8007F23A0 /* GraphicsContextCG.h */,
+				B6CF5180C3A1435EF8225D8E /* GraphicsContextCGDelegate.cpp */,
+				98164AD77D4CD2A91C979F19 /* GraphicsContextCGDelegate.h */,
 				6E21C6C11126339900A7BE02 /* GraphicsContextGLCG.cpp */,
 				1C5B71A72905E53000973EF5 /* ImageBackingStoreCG.cpp */,
 				72BAC3AC23E1E545008D741C /* ImageBufferCGBackend.cpp */,
@@ -45891,6 +45896,7 @@
 				A7D8E64A28C80F2A0019F92F /* GraphicsClient.h in Headers */,
 				B2A015A90AF6CD53006BCE0E /* GraphicsContext.h in Headers */,
 				934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */,
+				A158ED19DF39873704EAB3A7 /* GraphicsContextCGDelegate.h in Headers */,
 				313DE87023A96973008FC47B /* GraphicsContextGL.h in Headers */,
 				3ABD156C297A340100AF9D76 /* GraphicsContextGLActiveInfo.h in Headers */,
 				7B95CFED2754FF7C000060CE /* GraphicsContextGLANGLE.h in Headers */,
