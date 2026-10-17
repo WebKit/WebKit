@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    width: 220px;
+    height: 220px;
+    background-color: green;
+    mask-image: url(#mask);
+}
+svg {
+    height: 0px;
+    width: 0px;
+}
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function changeMaskAndFinish()
+    {
+        if (window.internals)
+            window.internals.startTrackingRepaints();
+
+        const rect = document.getElementById('rect');
+        rect.setAttribute('width', 100);
+        rect.setAttribute('height', 100);
+
+        document.getElementById('log').textContent = window.internals.repaintRectsAsText();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            changeMaskAndFinish()
+        }, 0);
+    }, false);
+</script>
+</head>
+<body>
+<div></div>
+<svg>
+  <mask id="mask">
+    <rect id="rect" width="200" height="200" fill="white"/>
+  </mask>
+</svg>
+<pre id="log"></pre>
+</body>
+</html>
