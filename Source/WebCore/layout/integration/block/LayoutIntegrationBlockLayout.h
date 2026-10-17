@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+enum class RelayoutChildren : bool;
+
 class RenderBlock;
 class RenderBlockFlow;
 
@@ -45,7 +47,7 @@ class BlockLayout {
 public:
     explicit BlockLayout(RenderBlockFlow&);
 
-    void layout();
+    void layout(RelayoutChildren);
     // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
     static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
     // The out-of-flow boxes registered on the root, once RenderBlockFlow::layoutBlock has resolved the size of the root.

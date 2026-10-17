@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/LayoutBoxGeometry.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LayoutUnit.h>
 #include <wtf/CheckedRef.h>
@@ -33,10 +34,12 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderBox;
 
 namespace Layout {
 class BlockLayoutState;
 class BoxGeometry;
+struct ConstraintsForIndependentFormattingContext;
 struct ConstraintsForInlineContent;
 struct IntrinsicWidthConstraints;
 }
@@ -95,6 +98,21 @@ public:
     // The min-content and max-content inline sizes of the inline content of a block container (css-sizing-3 §5.1), from the inline formatting
     // context's own layout (LineLayout::computeIntrinsicWidthConstraints).
     static Layout::IntrinsicWidthConstraints inlineContentIntrinsicInlineSizes(const RenderBlockFlow&);
+
+    struct IndependentFormattingContextLayoutResult {
+        LayoutUnit borderBoxInlineSize;
+        LayoutUnit borderBoxBlockSize;
+        // In the root's writing mode, which coverage keeps the block formatting context's.
+        Layout::BoxGeometry::Edges border;
+        Layout::BoxGeometry::Edges padding;
+    };
+    // An independent formatting context root the block formatting context does not lay out itself, such as a table or a flex container,
+    // laid out by its own formatting context through the render tree (RenderBox::layoutIfNeeded). Its position and margins are the block
+    // formatting context's, which BlockLayout::updateRenderers writes.
+    IndependentFormattingContextLayoutResult layoutIndependentFormattingContext(const RenderBox&, const Layout::ConstraintsForIndependentFormattingContext&);
+    // Whether the content box inline size, border or padding of a box differ from its last layout, which its renderer still has
+    // (RenderBlock::recomputeLogicalWidth).
+    static bool contentBoxInlineSizeChanged(const RenderBox&, LayoutUnit contentBoxInlineSize);
 
 private:
     PaintInvalidation& m_paintInvalidation;
