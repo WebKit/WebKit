@@ -30,6 +30,7 @@
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorSerialization.h>
 #include <WebCore/ColorTypes.h>
+#include <WebCore/PrintColor.h>
 #include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
@@ -456,5 +457,44 @@ TEST(Color, ColorWithAlphaMultipliedBy)
         EXPECT_FLOAT_EQ(a, 0.);
     }
 }
+
+#if USE(CG)
+TEST(PrintColor, DeviceCMYK)
+{
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateDeviceCMYK());
+    CGFloat components[] = { 0, 0.5, 1, 0.25, 0.75 };
+    RetainPtr cgColor = adoptCF(CGColorCreate(colorSpace.get(), components));
+
+    auto printColor = PrintColor::create(cgColor.get());
+    ASSERT_TRUE(printColor);
+    auto& cmyk = std::get<DeviceCMYK>(printColor->color);
+    EXPECT_FLOAT_EQ(cmyk.cyan, 0);
+    EXPECT_FLOAT_EQ(cmyk.magenta, 0.5);
+    EXPECT_FLOAT_EQ(cmyk.yellow, 1);
+    EXPECT_FLOAT_EQ(cmyk.black, 0.25);
+    EXPECT_FLOAT_EQ(printColor->alpha, 0.75);
+
+    EXPECT_TRUE(*printColor == (PrintColor { DeviceCMYK { 0, 0.5, 1, 0.25 }, 0.75 }));
+    EXPECT_FALSE(*printColor == (PrintColor { DeviceCMYK { 0, 0.5, 1, 0.25 }, 1 }));
+
+    RetainPtr roundTrippedColor = printColor->createCGColor();
+    EXPECT_EQ(CGColorSpaceGetModel(CGColorGetColorSpace(roundTrippedColor.get())), kCGColorSpaceModelCMYK);
+    EXPECT_TRUE(CGColorEqualToColor(roundTrippedColor.get(), cgColor.get()));
+
+    EXPECT_EQ(printColor->equivalentColor(), Color::createAndPreserveColorSpace(cgColor.get()));
+}
+
+TEST(PrintColor, OtherColorsAreNotPrintColors)
+{
+    EXPECT_FALSE(PrintColor::create(nullptr));
+
+    CGFloat cmykComponents[] = { 0, 0.5, 1, 0.25, 1 };
+    RetainPtr iccBasedColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericCMYK));
+    RetainPtr iccBasedColor = adoptCF(CGColorCreate(iccBasedColorSpace.get(), cmykComponents));
+    EXPECT_FALSE(PrintColor::create(iccBasedColor.get()));
+
+    EXPECT_FALSE(PrintColor::create(cachedCGColor(Color::red).get()));
+}
+#endif
 
 } // namespace TestWebKitAPI
