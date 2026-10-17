@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationBlockCoverage.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "BlockFormattingUtils.h"
 #include "BlockMarginCollapse.h"
 #include "Document.h"
@@ -127,7 +128,7 @@ static std::optional<BlockAvoidanceReason> rootAvoidanceReason(const RenderBlock
     return { };
 }
 
-// Only display: flow-root and overflow: hidden. The other ways to establish a block formatting context also contain, align or fragment the
+// Only display: flow-root, overflow: hidden and out-of-flow boxes. The other ways to establish a block formatting context also contain, align or fragment the
 // content, or give it scrollbars: those take space, and RenderBlock::layout lays the box out again when they come or go.
 static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockContainer)
 {
@@ -136,7 +137,7 @@ static bool isSupportedBlockFormattingContextRoot(const RenderBlockFlow& blockCo
         // Marquees scroll their content and size their children differently (RenderBox::sizesLogicalWidthToFitContent).
         return style->overflowX() == Overflow::Hidden && style->overflowY() == Overflow::Hidden && style->scrollbarGutter().isAuto() && !blockContainer.isHTMLMarquee();
     };
-    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? isScrollContainerWithoutScrollbars() : style->display() == Style::DisplayType::BlockFlowRoot;
+    auto isSupportedRoot = blockContainer.hasNonVisibleOverflow() ? isScrollContainerWithoutScrollbars() : style->display() == Style::DisplayType::BlockFlowRoot || blockContainer.isOutOfFlowPositioned();
     return isSupportedRoot && !blockContainer.isWritingModeRoot() && !blockContainer.isFieldset()
         && !blockContainer.shouldApplyAnyContainment() && style->alignContent().isNormal()
         && !style->specifiesColumns() && style->columnSpan() != ColumnSpan::All && style->blockStepSize().isNone()
@@ -174,7 +175,40 @@ static bool canComputeContentInlineSizes(const RenderBlockFlow& box)
     return true;
 }
 
-static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer)
+// The block formatting context lays out the out-of-flow boxes whose containing block it lays out.
+static bool isLaidOutByBlockFormattingContext(const RenderElement& outOfFlowBox, const RenderBlockFlow& rootContainer)
+{
+    CheckedPtr containingBlock = outOfFlowBox.containingBlock();
+    return containingBlock == &rootContainer || containingBlock->isDescendantOf(&rootContainer);
+}
+
+static std::optional<BlockAvoidanceReason> outOfFlowBoxAvoidanceReason(const RenderBox& outOfFlowBox)
+{
+    // Block containers only, which establish a block formatting context for their content.
+    if (outOfFlowBox.type() != RenderObject::Type::BlockFlow)
+        return BlockAvoidanceReason::ContentHasUnsupportedRenderer;
+    CheckedRef style = outOfFlowBox.style();
+    // FIXME: Anchor positioning, position-area and position-try fallbacks, and alignment other than normal (css-position-3 §4.5).
+    if (Style::AnchorPositionEvaluator::isAnchorPositioned(style.get()) || !style->positionTryFallbacks().isNone()
+        || !(style->justifySelf().isAuto() || style->justifySelf().isNormal()) || !(style->alignSelf().isAuto() || style->alignSelf().isNormal()))
+        return BlockAvoidanceReason::ContentHasUnsupportedStyle;
+    // FIXME: A flipped block flow direction (horizontal-bt), where the block-start inset is the physical bottom one and the render tree
+    // stores flipped block positions.
+    if (outOfFlowBox.writingMode().isBlockFlipped())
+        return BlockAvoidanceReason::ContentHasUnsupportedStyle;
+    // A scroll container with a definite size is a layout boundary, which the render tree path lays out on its own (RenderObject::markContainingBlocksForLayout).
+    if (outOfFlowBox.hasNonVisibleOverflow())
+        return BlockAvoidanceReason::ContentHasUnsupportedStyle;
+    // FIXME: An auto inline size with an auto inset is the fit-content size, which needs the intrinsic sizes of the content (css-position-3 §4.3).
+    if (style->width().isAuto() && (style->left().isAuto() || style->right().isAuto()))
+        return BlockAvoidanceReason::ContentHasUnsupportedSize;
+    // FIXME: The automatic size a preferred aspect ratio gives in the other axis (css-sizing-4 §5.1).
+    if (style->aspectRatio().hasRatio())
+        return BlockAvoidanceReason::ContentHasUnsupportedSize;
+    return { };
+}
+
+static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderElement& renderer, const RenderBlockFlow& rootContainer)
 {
     // A box a line-clamp container hid after its clamp point stays hidden until the render tree path lays it out again
     // (RenderBlockFlow::layoutBlockChild, markInlineContentDirtyForLayout).
@@ -182,9 +216,16 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
         return BlockAvoidanceReason::ContentIsHiddenByLineClamp;
     if (renderer.isFloating())
         return BlockAvoidanceReason::ContentHasFloat;
-    if (renderer.isOutOfFlowPositioned())
-        return BlockAvoidanceReason::ContentHasOutOfFlowBox;
-    if (renderer.isInline())
+    if (renderer.isOutOfFlowPositioned()) {
+        // FIXME: An inline-level out-of-flow box gets its static position from the inline formatting context.
+        if (CheckedPtr parent = dynamicDowncast<RenderBlockFlow>(renderer.parent()); !parent || parent->childrenInline())
+            return BlockAvoidanceReason::ContentHasOutOfFlowBox;
+        // A containing block outside the root lays it out through the render tree path.
+        if (!isLaidOutByBlockFormattingContext(renderer, rootContainer))
+            return { };
+        if (auto reason = outOfFlowBoxAvoidanceReason(downcast<RenderBox>(renderer)))
+            return reason;
+    } else if (renderer.isInline())
         return inlineContentAvoidanceReason(renderer);
     // Block boxes only: not list items, replaced elements, tables, flex or grid containers or form controls.
     CheckedPtr blockContainer = dynamicDowncast<RenderBlockFlow>(renderer);
@@ -263,14 +304,23 @@ static std::optional<BlockAvoidanceReason> contentAvoidanceReason(const RenderEl
     return { };
 }
 
-static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const RenderBlockFlow& rootContainer)
+static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const RenderBlockFlow& rootContainer, bool* laysOutOutOfFlowBoxes = nullptr)
 {
     if (auto reason = rootAvoidanceReason(rootContainer))
         return reason;
-    // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one (any other box would be a leaf).
-    for (CheckedRef descendant : descendantsOfType<RenderElement>(rootContainer)) {
-        if (auto reason = contentAvoidanceReason(descendant))
-            return reason;
+    // Every descendant is a block box that takes part in the root's block formatting context, or inline content of one. The content of an
+    // out-of-flow box laid out by a containing block outside the root is not part of it.
+    for (CheckedPtr<const RenderObject> descendant = rootContainer.firstChild(); descendant;) {
+        CheckedPtr renderer = dynamicDowncast<RenderElement>(*descendant);
+        if (renderer) {
+            if (auto reason = contentAvoidanceReason(*renderer, rootContainer))
+                return reason;
+        }
+        auto isOutOfFlowBox = renderer && renderer->isOutOfFlowPositioned();
+        auto skipsContent = isOutOfFlowBox && !isLaidOutByBlockFormattingContext(*renderer, rootContainer);
+        if (laysOutOutOfFlowBoxes && isOutOfFlowBox && !skipsContent)
+            *laysOutOutOfFlowBoxes = true;
+        descendant = skipsContent ? descendant->nextInPreOrderAfterChildren(&rootContainer) : descendant->nextInPreOrder(&rootContainer);
     }
     return { };
 }
@@ -278,6 +328,12 @@ static std::optional<BlockAvoidanceReason> blockLayoutAvoidanceReason(const Rend
 bool canUseForBlockLayout(const RenderBlockFlow& rootContainer)
 {
     return !blockLayoutAvoidanceReason(rootContainer);
+}
+
+bool canUseForBlockLayoutWithOutOfFlowBoxes(const RenderBlockFlow& rootContainer)
+{
+    auto laysOutOutOfFlowBoxes = false;
+    return !blockLayoutAvoidanceReason(rootContainer, &laysOutOutOfFlowBoxes) && laysOutOutOfFlowBoxes;
 }
 
 bool canUseForIntrinsicInlineSizes(const RenderBlockFlow& rootContainer)
