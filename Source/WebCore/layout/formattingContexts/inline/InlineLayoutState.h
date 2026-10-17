@@ -27,13 +27,14 @@
 
 #include <WebCore/AvailableLineWidthOverride.h>
 #include <WebCore/BlockLayoutState.h>
+#include <WebCore/PlacedFloats.h>
 
 namespace WebCore {
 namespace Layout {
 
 class InlineLayoutState {
 public:
-    InlineLayoutState(BlockLayoutState&);
+    InlineLayoutState(const BlockLayoutState&, PlacedFloats&);
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
@@ -42,10 +43,15 @@ public:
     InlineLayoutUnit clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
 
     const BlockLayoutState& parentBlockLayoutState() const LIFETIME_BOUND { return m_parentBlockLayoutState; }
-    BlockLayoutState& parentBlockLayoutState() LIFETIME_BOUND { return m_parentBlockLayoutState; }
 
-    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
-    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_parentBlockLayoutState.placedFloats(); }
+    // The floats the lines avoid: the ones of the block formatting context placed before the content, then the ones the content places.
+    const PlacedFloats& placedFloats() const LIFETIME_BOUND { return m_placedFloats; }
+    PlacedFloats& placedFloats() LIFETIME_BOUND { return m_placedFloats; }
+
+    // The margins carried across the lines and the block-level boxes of the content: the parent's to start with, and once the content is
+    // laid out, what is left for the parent.
+    const BlockLayoutState::MarginState& marginState() const LIFETIME_BOUND { return m_marginState; }
+    BlockLayoutState::MarginState& marginState() LIFETIME_BOUND { return m_marginState; }
 
     void setAvailableLineWidthOverride(AvailableLineWidthOverride availableLineWidthOverride) { m_availableLineWidthOverride = availableLineWidthOverride; }
     const AvailableLineWidthOverride& availableLineWidthOverride() const LIFETIME_BOUND { return m_availableLineWidthOverride; }
@@ -88,7 +94,9 @@ public:
     bool contentMayHaveInkOverflow() const { return m_contentMayHaveInkOverflow; }
 
 private:
-    BlockLayoutState& m_parentBlockLayoutState;
+    const BlockLayoutState& m_parentBlockLayoutState;
+    PlacedFloats& m_placedFloats;
+    BlockLayoutState::MarginState m_marginState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     InlineLayoutUnit m_firstLineStartTrimForInitialLetter { 0.f };
@@ -107,8 +115,10 @@ private:
     bool m_shouldShapeTextAcrossInlineBoxes { false };
 };
 
-inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState)
+inline InlineLayoutState::InlineLayoutState(const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
     : m_parentBlockLayoutState(parentBlockLayoutState)
+    , m_placedFloats(placedFloats)
+    , m_marginState(parentBlockLayoutState.marginState())
 {
 }
 
