@@ -4256,8 +4256,10 @@ void MediaPlayerPrivateGStreamer::managePlayerSuspend()
         GstState actualState = pendingState != GST_STATE_VOID_PENDING ? pendingState : currentState;
         m_isSuspended = true;
         auto targetState = suspendTargetState();
-        if (actualState == targetState) {
-            GST_DEBUG_OBJECT(pipeline(), "Pipeline is already in %s state, no need to suspend playback.", gst_state_get_name(actualState));
+        // Suspending must never raise the state: an MSE pipeline still in GST_STATE_NULL has no URI yet,
+        // so setting it to GST_STATE_PAUSED fails and breaks the later preroll.
+        if (actualState <= targetState) {
+            GST_DEBUG_OBJECT(pipeline(), "Pipeline is in %s state, no need to suspend playback.", gst_state_get_name(actualState));
             return;
         }
         m_stateToResume = actualState;
