@@ -36,12 +36,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 - (void)appendChild:(WKDOMNode *)node;
 - (void)removeChild:(WKDOMNode *)node;
 
-@property(readonly) WKDOMDocument *document;
-@property(readonly) WKDOMNode *parentNode;
-@property(readonly) WKDOMNode *firstChild;
-@property(readonly) WKDOMNode *lastChild;
-@property(readonly) WKDOMNode *previousSibling;
-@property(readonly) WKDOMNode *nextSibling;
-@property(readonly) NSArray *textRects;
+@property (readonly) WKDOMDocument *document;
+@property (readonly) WKDOMNode *parentNode;
+@property (readonly) WKDOMNode *firstChild;
+@property (readonly) WKDOMNode *lastChild;
+@property (readonly) WKDOMNode *previousSibling;
+@property (readonly) WKDOMNode *nextSibling;
+@property (readonly) NSArray *textRects;
 
 @end

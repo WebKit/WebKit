@@ -39,7 +39,7 @@
 
 @implementation WKWebProcessPlugInController {
     AlignedStorage<WebKit::InjectedBundle> _bundle;
-    RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
+    RetainPtr<id<WKWebProcessPlugIn>> _principalClassInstance;
 }
 
 - (void)dealloc
@@ -55,7 +55,7 @@
 static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     auto plugInController = (__bridge WKWebProcessPlugInController *)clientInfo;
-    RetainPtr principalClassInstance = plugInController->_principalClassInstance.get();
+    RetainPtr principalClassInstance = plugInController->_principalClassInstance;
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:didCreateBrowserContextController:)])
         [principalClassInstance webProcessPlugIn:plugInController didCreateBrowserContextController:protect(wrapper(*protect(WebKit::toImpl(page)))).get()];
@@ -64,7 +64,7 @@ static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* 
 static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
     auto plugInController = (__bridge WKWebProcessPlugInController *)clientInfo;
-    RetainPtr principalClassInstance = plugInController->_principalClassInstance.get();
+    RetainPtr principalClassInstance = plugInController->_principalClassInstance;
 
     if ([principalClassInstance respondsToSelector:@selector(webProcessPlugIn:willDestroyBrowserContextController:)])
         [principalClassInstance webProcessPlugIn:plugInController willDestroyBrowserContextController:protect(wrapper(*protect(WebKit::toImpl(page)))).get()];
@@ -83,7 +83,7 @@ static void setUpBundleClient(WKWebProcessPlugInController *plugInController, We
     WKBundleSetClient(toAPI(&bundle), &bundleClient.base);
 }
 
-- (void)_setPrincipalClassInstance:(id <WKWebProcessPlugIn>)principalClassInstance
+- (void)_setPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance
 {
     ASSERT(!_principalClassInstance);
     _principalClassInstance = principalClassInstance;
@@ -101,13 +101,13 @@ static Ref<API::Array> createWKArray(NSArray *array)
     NSUInteger count = [array count];
     Vector<RefPtr<API::Object>> strings;
     strings.reserveInitialCapacity(count);
-    
+
     // FIXME: Remove the suppression once https://github.com/llvm/llvm-project/pull/230818 is deployed (rdar://189710680).
     for (SUPPRESS_UNRETAINED_LOCAL id entry in array) {
         if ([entry isKindOfClass:[NSString class]])
             strings.append(adoptRef(WebKit::toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
     }
-    
+
     return API::Array::create(WTF::move(strings));
 }
 

@@ -59,7 +59,7 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 {
     auto currentModifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     NSEventModifierFlags modifiers = 0;
-    
+
     if (currentModifiers.contains(PlatformEvent::Modifier::ShiftKey))
         modifiers |= NSEventModifierFlagShift;
     if (currentModifiers.contains(PlatformEvent::Modifier::ControlKey))
@@ -70,7 +70,7 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
         modifiers |= NSEventModifierFlagCommand;
     if (currentModifiers.contains(PlatformEvent::Modifier::CapsLockKey))
         modifiers |= NSEventModifierFlagCapsLock;
-    
+
     return modifiers;
 }
 #endif
@@ -186,7 +186,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    auto instance = adoptNS((id <WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init]);
+    RetainPtr instance = adoptNS((id<WKWebProcessPlugIn>)[(NSObject *)[principalClass alloc] init]);
     if (!instance) {
         RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not initialize an instance of the principal class %{public}s", class_getName(principalClass.get()));
         return false;
@@ -223,7 +223,7 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
 {
     size_t size = classes.size();
 
-    auto mutableSet = adoptNS([classesForCoder() mutableCopy]);
+    RetainPtr mutableSet = adoptNS([classesForCoder() mutableCopy]);
 
     for (size_t i = 0; i < size; ++i) {
         RefPtr classNameString = classes.at<API::String>(i);

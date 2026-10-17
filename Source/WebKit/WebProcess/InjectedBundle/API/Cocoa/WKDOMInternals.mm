@@ -48,7 +48,7 @@ namespace WebKit {
 template<typename WebCoreType, typename WKDOMType>
 static WKDOMType toWKDOMType(WebCoreType impl, DOMCache<WebCoreType, WKDOMType>& cache);
 
-// -- Caches -- 
+// -- Caches --
 
 DOMCache<WebCore::Node*, __unsafe_unretained WKDOMNode *>& WKDOMNodeCache()
 {
@@ -102,7 +102,7 @@ WKDOMNode *toWKDOMNode(WebCore::Node* impl)
 
 WebCore::Element* toWebCoreElement(WKDOMElement *wrapper)
 {
-    return wrapper ? downcast<WebCore::Element>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Element>(wrapper->_impl) : 0;
 }
 
 WKDOMElement *toWKDOMElement(WebCore::Element* impl)
@@ -112,7 +112,7 @@ WKDOMElement *toWKDOMElement(WebCore::Element* impl)
 
 WebCore::Document* toWebCoreDocument(WKDOMDocument *wrapper)
 {
-    return wrapper ? downcast<WebCore::Document>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Document>(wrapper->_impl) : 0;
 }
 
 WKDOMDocument *toWKDOMDocument(WebCore::Document* impl)
@@ -122,7 +122,7 @@ WKDOMDocument *toWKDOMDocument(WebCore::Document* impl)
 
 WebCore::Text* toWebCoreText(WKDOMText *wrapper)
 {
-    return wrapper ? downcast<WebCore::Text>(wrapper->_impl.get()) : 0;
+    return wrapper ? downcast<WebCore::Text>(wrapper->_impl) : 0;
 }
 
 WKDOMText *toWKDOMText(WebCore::Text* impl)

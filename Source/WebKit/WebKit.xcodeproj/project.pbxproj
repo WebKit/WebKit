@@ -8161,7 +8161,7 @@
 		BC1DFEA312B31F87005DF730 /* WebOpenPanelResultListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebOpenPanelResultListenerProxy.cpp; sourceTree = "<group>"; };
 		BC204EE011C83E98008F3375 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
 		BC204EE111C83E98008F3375 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
-		BC204EE511C83EA9008F3375 /* InjectedBundleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleMac.mm; sourceTree = "<group>"; };
+		BC204EE511C83EA9008F3375 /* InjectedBundleCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleCocoa.mm; sourceTree = "<group>"; };
 		BC204EE911C83EC8008F3375 /* WKBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundle.cpp; sourceTree = "<group>"; };
 		BC204EEA11C83EC8008F3375 /* WKBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundle.h; sourceTree = "<group>"; };
 		BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleAPICast.h; sourceTree = "<group>"; };
@@ -11948,8 +11948,15 @@
 		1F0181681858DC1500F92884 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				BC017D1016260FFD007054F5 /* DOM */,
 				1AA2E56518D77508003814BD /* WKWebProcessBundleParameters.h */,
 				1AA2E56418D77508003814BD /* WKWebProcessBundleParameters.mm */,
+				BC989D80161A7E5C000D46D3 /* WKWebProcessPlugIn.h */,
+				BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */,
+				BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */,
+				BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */,
+				BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */,
+				29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */,
 				952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */,
 				952BC09F2797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.mm */,
 				952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */,
@@ -11961,6 +11968,7 @@
 				1F01816C1858DC1500F92884 /* WKWebProcessPlugInHitTestResult.h */,
 				1F01816D1858DC1600F92884 /* WKWebProcessPlugInHitTestResult.mm */,
 				1F01816E1858DC1600F92884 /* WKWebProcessPlugInHitTestResultInternal.h */,
+				BC989D84161A988F000D46D3 /* WKWebProcessPlugInInternal.h */,
 				1F335BBF185B84D8001A201A /* WKWebProcessPlugInLoadDelegate.h */,
 				1F01816F1858DC1600F92884 /* WKWebProcessPlugInNodeHandle.h */,
 				1F0181701858DC1600F92884 /* WKWebProcessPlugInNodeHandle.mm */,
@@ -11968,6 +11976,7 @@
 				CEC8F9CA1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h */,
 				1FB00AC4185F76460019142E /* WKWebProcessPlugInPageGroup.h */,
 				1FB00AC5185F76460019142E /* WKWebProcessPlugInPageGroup.mm */,
+				BC04EFFB16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h */,
 				374942191DF1F9FF0033C19F /* WKWebProcessPlugInRangeHandle.h */,
 				374942181DF1F9FF0033C19F /* WKWebProcessPlugInRangeHandle.mm */,
 				3749421C1DF1FAB90033C19F /* WKWebProcessPlugInRangeHandleInternal.h */,
@@ -16912,8 +16921,8 @@
 			isa = PBXGroup;
 			children = (
 				BC204EE711C83EAD008F3375 /* API */,
+				FD9A6BBE8C861D9D5531E4CB /* cocoa */,
 				BC4BEE96120A091700FBA0C7 /* DOM */,
-				BC204EE411C83E9C008F3375 /* mac */,
 				3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */,
 				3769079818F31CB2001DFF04 /* APIInjectedBundlePageUIClient.h */,
 				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
@@ -16943,20 +16952,11 @@
 			path = InjectedBundle;
 			sourceTree = "<group>";
 		};
-		BC204EE411C83E9C008F3375 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				BC204EE511C83EA9008F3375 /* InjectedBundleMac.mm */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
 		BC204EE711C83EAD008F3375 /* API */ = {
 			isa = PBXGroup;
 			children = (
 				BC204EE811C83EB7008F3375 /* c */,
 				1F0181681858DC1500F92884 /* Cocoa */,
-				BC989D4516181691000D46D3 /* mac */,
 				7A8A9D591EF13020009801AE /* APIInjectedBundleBundleClient.h */,
 				377512301DF0DEE2008A351C /* APIInjectedBundleEditorClient.h */,
 				076E884F1A13CBC6005E90FC /* APIInjectedBundlePageContextMenuClient.h */,
@@ -17203,22 +17203,6 @@
 				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm */,
 				29232DF318B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h */,
 				29232DF118B29D1100D0596F /* WKAccessibilityWebPageObjectMac.mm */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
-		BC989D4516181691000D46D3 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				BC017D1016260FFD007054F5 /* DOM */,
-				BC989D80161A7E5C000D46D3 /* WKWebProcessPlugIn.h */,
-				BC989D7F161A7E5B000D46D3 /* WKWebProcessPlugIn.mm */,
-				BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */,
-				BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */,
-				BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */,
-				29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */,
-				BC989D84161A988F000D46D3 /* WKWebProcessPlugInInternal.h */,
-				BC04EFFB16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -18061,6 +18045,14 @@
 				FA0B46CF2E8C80F30073E9B3 /* WebTransport.serialization.in */,
 			);
 			path = webtransport;
+			sourceTree = "<group>";
+		};
+		FD9A6BBE8C861D9D5531E4CB /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				BC204EE511C83EA9008F3375 /* InjectedBundleCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

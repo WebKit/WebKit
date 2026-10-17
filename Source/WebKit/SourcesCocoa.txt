@@ -823,7 +823,16 @@ WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm @nonARC
 WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm @nonARC
 
+WebProcess/InjectedBundle/API/Cocoa/WKDOMDocument.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMElement.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMInternals.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMNode.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMRange.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMText.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKDOMTextIterator.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugIn.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInBrowserContextController.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm @nonARC
@@ -832,17 +841,7 @@ WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm @nonARC
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm @nonARC
 
-WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMElement.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMNode.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMRange.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMText.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm @nonARC
-WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm @nonARC
-
-WebProcess/InjectedBundle/mac/InjectedBundleMac.mm @nonARC
+WebProcess/InjectedBundle/cocoa/InjectedBundleCocoa.mm @nonARC
 
 WebProcess/Inspector/mac/RemoteWebInspectorUIMac.mm @nonARC
 WebProcess/Inspector/mac/WebInspectorUIMac.mm @nonARC

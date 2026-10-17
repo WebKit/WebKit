@@ -63,7 +63,7 @@ public:
     {
         m_map.add(core, kit);
     }
-    
+
     WKDOMType get(WebCoreType core)
     {
         return m_map.get(core);

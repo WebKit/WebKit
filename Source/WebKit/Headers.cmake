@@ -508,6 +508,17 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     WebProcess/Extensions/Cocoa/_WKWebExtensionWebNavigationURLFilter.h
     WebProcess/Extensions/Cocoa/_WKWebExtensionWebRequestFilter.h
 
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMDocument.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMElement.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMNode.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMNodePrivate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMRange.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMRangePrivate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMText.h
+    WebProcess/InjectedBundle/API/Cocoa/WKDOMTextIterator.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugIn.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInBrowserContextController.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInBrowserContextControllerPrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h
@@ -517,25 +528,13 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h
 
     WebProcess/InjectedBundle/API/c/mac/WKBundleMac.h
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.h
-
-    WebProcess/InjectedBundle/API/mac/WKDOMDocument.h
-    WebProcess/InjectedBundle/API/mac/WKDOMElement.h
-    WebProcess/InjectedBundle/API/mac/WKDOMNode.h
-    WebProcess/InjectedBundle/API/mac/WKDOMNodePrivate.h
-    WebProcess/InjectedBundle/API/mac/WKDOMRange.h
-    WebProcess/InjectedBundle/API/mac/WKDOMRangePrivate.h
-    WebProcess/InjectedBundle/API/mac/WKDOMText.h
-    WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h
-    WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h
-    WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h
-    WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h
-    WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInPrivate.h
 )
 endif ()
 

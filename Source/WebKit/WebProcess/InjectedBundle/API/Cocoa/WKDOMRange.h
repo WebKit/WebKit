@@ -25,15 +25,35 @@
 
 #import <WebKit/WKFoundation.h>
 
-#import <WebKit/WKDOMNode.h>
+#import <Foundation/Foundation.h>
+
+@class WKDOMNode, WKDOMDocument;
+
+typedef NS_ENUM(NSInteger, WKDOMRangeDirection) {
+    WKDOMRangeDirectionForward,
+    WKDOMRangeDirectionBackword
+};
+
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
-@interface WKDOMElement : WKDOMNode
+@interface WKDOMRange : NSObject
 
-- (BOOL)hasAttribute:(NSString *)attribute;
-- (NSString *)getAttribute:(NSString *)attribute;
-- (void)setAttribute:(NSString *)name value:(NSString *)value;
+- (id)initWithDocument:(WKDOMDocument *)document;
 
-@property(readonly) NSString *tagName;
+- (void)setStart:(WKDOMNode *)node offset:(int)offset;
+- (void)setEnd:(WKDOMNode *)node offset:(int)offset;
+- (void)collapse:(BOOL)toStart;
+- (void)selectNode:(WKDOMNode *)node;
+- (void)selectNodeContents:(WKDOMNode *)node;
+
+- (WKDOMRange *)rangeByExpandingToWordBoundaryByCharacters:(NSUInteger)characters inDirection:(WKDOMRangeDirection)direction;
+
+@property (readonly, retain) WKDOMNode *startContainer;
+@property (readonly) NSInteger startOffset;
+@property (readonly, retain) WKDOMNode *endContainer;
+@property (readonly) NSInteger endOffset;
+@property (readonly, copy) NSString *text;
+@property (readonly) BOOL isCollapsed;
+@property (readonly) NSArray *textRects;
 
 @end
