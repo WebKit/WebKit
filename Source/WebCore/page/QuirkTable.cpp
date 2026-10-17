@@ -1248,18 +1248,10 @@ RuntimeQuirk RuntimeQuirk::from(const Quirk& quirk)
     };
 }
 
-static const RuntimeQuirkTable& compiledQuirkTable()
-{
-    static MainThreadNeverDestroyed<RuntimeQuirkTable> table { RuntimeQuirkTable {
-        .quirks = WTF::map(SiteSpecificQuirks::table, RuntimeQuirk::from),
-    } };
-    return table.get();
-}
-
 static QuirksData resolveSiteSpecificQuirks(const URLMatchContext& topContext, const URLMatchContext& documentContext, IsTopDocument documentIsTopDocument)
 {
     QuirksData quirksData;
-    for (auto& quirk : compiledQuirkTable().quirks) {
+    for (auto& quirk : quirkTable().quirks) {
         if (quirk.appliesTo(topContext, documentContext, documentIsTopDocument))
             quirk.apply(quirksData);
     }

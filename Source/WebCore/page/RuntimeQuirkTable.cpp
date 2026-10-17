@@ -26,12 +26,15 @@
 #include "config.h"
 #include "RuntimeQuirkTable.h"
 
+#include "Logging.h"
 #include "QuirkBehaviorDeclarations.h"
 #include <array>
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/JSONValues.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
@@ -601,6 +604,59 @@ String QuirkTableParseError::description() const
 
     builder.append(": "_s, message(*this));
     return builder.toString();
+}
+
+static RuntimeQuirkTable loadQuirkTable()
+{
+    auto json = loadQuirkTableJSON();
+    if (json.isNull()) {
+        RELEASE_LOG_ERROR(Loading, "QuirkTable.json could not be loaded; no site-specific quirks will apply");
+        return { };
+    }
+
+    auto result = parseQuirkTable(json);
+    for (auto& error : result.errors)
+        RELEASE_LOG_ERROR(Loading, "QuirkTable.json: %" PUBLIC_LOG_STRING, error.description().utf8());
+    ASSERT_WITH_MESSAGE(result.errors.isEmpty(), "QuirkTable.json has errors; see the log");
+    return WTF::move(result.table);
+}
+
+class QuirkTableHolder {
+public:
+    static QuirkTableHolder& singleton()
+    {
+        static MainThreadNeverDestroyed<QuirkTableHolder> holder;
+        return holder.get();
+    }
+
+    const RuntimeQuirkTable& table()
+    {
+        if (!m_table)
+            m_table = loadQuirkTable();
+        return *m_table;
+    }
+
+    void install(RuntimeQuirkTable&& table)
+    {
+        m_table = WTF::move(table);
+    }
+
+private:
+    friend class WTF::NeverDestroyed<QuirkTableHolder, WTF::MainThreadAccessTraits>;
+
+    QuirkTableHolder() = default;
+
+    std::optional<RuntimeQuirkTable> m_table;
+};
+
+void setQuirkTable(RuntimeQuirkTable&& table)
+{
+    QuirkTableHolder::singleton().install(WTF::move(table));
+}
+
+const RuntimeQuirkTable& quirkTable()
+{
+    return QuirkTableHolder::singleton().table();
 }
 
 } // namespace WebCore

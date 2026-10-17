@@ -41,6 +41,7 @@ list(APPEND WebCore_SOURCES
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
     page/win/FrameWin.cpp
+    page/win/QuirkTableWin.cpp
     page/win/ResourceUsageOverlayWin.cpp
     page/win/ResourceUsageThreadWin.cpp
 
@@ -169,6 +170,8 @@ set(iconFiles
 )
 
 file(COPY ${iconFiles} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/icons)
+
+configure_file(page/QuirkTable.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/quirks/QuirkTable.json COPYONLY)
 
 file(COPY ${ModernMediaControlsImageFiles}
     DESTINATION

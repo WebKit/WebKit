@@ -223,6 +223,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     WebKit::ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
+    WebCore::RuntimeQuirkTable quirkTable;
 
     Seconds hiddenPageDOMTimerThrottlingIncreaseLimit;
     Seconds memoryFootprintPollIntervalForTesting;

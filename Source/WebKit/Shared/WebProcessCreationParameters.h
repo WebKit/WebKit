@@ -37,6 +37,7 @@
 
 #include "WebProcessDataStoreParameters.h"
 #include <WebCore/CrossOriginMode.h>
+#include <WebCore/RuntimeQuirkTable.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
@@ -285,6 +286,7 @@ struct WebProcessCreationParameters {
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
+    WebCore::RuntimeQuirkTable quirkTable;
 
     Seconds hiddenPageDOMTimerThrottlingIncreaseLimit;
     Seconds memoryFootprintPollIntervalForTesting;
