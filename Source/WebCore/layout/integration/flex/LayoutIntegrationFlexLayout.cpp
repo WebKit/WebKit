@@ -261,14 +261,10 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
     // https://crbug.com/240765.
     auto [legendMinWidth, legendMaxWidth] = flexBox().computeIntrinsicLogicalWidthsForFieldsetLegend();
 
-    auto minLogicalWidth = LayoutUnit { };
-    auto maxLogicalWidth = LayoutUnit { };
-
-    size_t numItemsWithNormalLayout = 0;
+    Vector<FlexFormattingContext::IntrinsicWidthContribution> contributions;
     for (CheckedPtr flexItem = flexBox().firstChildBox(); flexItem; flexItem = flexItem->nextSiblingBox()) {
         if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
             continue;
-        ++numItemsWithNormalLayout;
 
         // Pre-layout orthogonal children in order to get a valid value for the preferred width.
         if (flexBox().writingMode().isOrthogonal(flexItem->writingMode()))
@@ -284,41 +280,18 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
             return flexBox().computeChildIntrinsicLogicalWidths(*flexItem);
         }();
 
-        minContentInParentInlineAxis += margin;
-        maxContentInParentInlineAxis += margin;
-
-        if (!FlexFormattingUtils::isColumnFlow(flexBox())) {
-            maxLogicalWidth += maxContentInParentInlineAxis;
-            if (FlexFormattingUtils::isMultiline(flexBox())) {
-                // For multiline, the min preferred width is if you put a break between
-                // each item.
-                minLogicalWidth = std::max(minLogicalWidth, minContentInParentInlineAxis);
-            } else
-                minLogicalWidth += minContentInParentInlineAxis;
-        } else {
-            minLogicalWidth = std::max(minContentInParentInlineAxis, minLogicalWidth);
-            maxLogicalWidth = std::max(maxContentInParentInlineAxis, maxLogicalWidth);
-        }
+        contributions.append({ minContentInParentInlineAxis + margin, maxContentInParentInlineAxis + margin });
     }
 
-    if (!FlexFormattingUtils::isColumnFlow(flexBox()) && numItemsWithNormalLayout > 1) {
-        LayoutUnit inlineGapSize = (numItemsWithNormalLayout - 1) * FlexFormattingUtils::computeGap(flexBox(), FlexFormattingUtils::GapType::BetweenItems);
-        maxLogicalWidth += inlineGapSize;
-        if (!FlexFormattingUtils::isMultiline(flexBox()))
-            minLogicalWidth += inlineGapSize;
-    }
-
-    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
+    auto [minimumContentSize, maximumContentSize] = FlexFormattingContext::minimumMaximumContentSize(flexBox(), contributions);
+    maximumContentSize = std::max(minimumContentSize, maximumContentSize);
 
     // Due to negative margins, it is possible that we calculated a negative
     // intrinsic width. Make sure that we never return a negative width.
-    minLogicalWidth = std::max(0_lu, minLogicalWidth);
-    maxLogicalWidth = std::max(0_lu, maxLogicalWidth);
+    minimumContentSize = std::max(0_lu, minimumContentSize);
+    maximumContentSize = std::max(0_lu, maximumContentSize);
 
-    minLogicalWidth = std::max(minLogicalWidth, legendMinWidth);
-    maxLogicalWidth = std::max(maxLogicalWidth, legendMaxWidth);
-
-    return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
+    return { std::max(minimumContentSize, legendMinWidth) + scrollbarWidth, std::max(maximumContentSize, legendMaxWidth) + scrollbarWidth };
 }
 
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const
