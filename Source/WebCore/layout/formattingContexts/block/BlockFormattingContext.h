@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BlockFormattingConstraints.h"
+#include "BlockFormattingUtils.h"
 #include "BlockLayoutState.h"
 #include "InlineFormattingConstraints.h"
 #include <WebCore/AdjoiningMargins.h>
@@ -82,8 +83,10 @@ private:
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;
 
-    BoxGeometry computeBorderAndPadding(const RenderBox&, const ContainingBlockState&) const;
+    BoxGeometry computeBorderAndPadding(const RenderBox&, LayoutUnit containingBlockInlineSize) const;
     void computeInlineSizeAndMargins(const RenderBox&, const ContainingBlockState&, BoxGeometry&) const;
+    // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
+    IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
     void computeLogicalLeft(const ContainingBlockState&, BoxGeometry&) const;
     ConstraintsForInlineContent constraintsForInlineContent(const RenderBox& blockContainer, const ContainingBlockState& blockContainerState) const;
     void computeBlockSize(const RenderBox&, LayoutUnit intrinsicContentBlockSize, const ContainingBlockState&, BoxGeometry&) const;
