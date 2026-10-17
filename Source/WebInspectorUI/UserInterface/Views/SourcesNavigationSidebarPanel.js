@@ -1379,6 +1379,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _removeScriptsOfTarget(target)
+    {
+        for (let folderTreeElement of [this._extensionScriptsFolderTreeElement, this._extraScriptsFolderTreeElement, this._anonymousScriptsFolderTreeElement]) {
+            if (!folderTreeElement)
+                continue;
+
+            for (let script of Array.from(folderTreeElement.representedObject)) {
+                if (script.target === target)
+                    this._removeScript(script);
+            }
+        }
+    }
+
     _addWorkerTargetWithMainResource(target)
     {
         console.assert(target.type === WI.TargetType.Worker);
@@ -2519,6 +2532,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleFrameWasRemoved(event)
     {
+        // FIXME: <https://webkit.org/b/328686> Web Inspector: Sources tab in Path grouping mode rebuilds its whole tree for every removed frame
         if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
             this._handleResourceGroupingModeChanged();
     }
@@ -2909,8 +2923,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (workerTreeElement)
             workerTreeElement.parent.removeChild(workerTreeElement);
 
-        if (target instanceof WI.FrameTarget)
-            this._handleResourceGroupingModeChanged();
+        if (target instanceof WI.FrameTarget) {
+            // FIXME: <https://webkit.org/b/328686> Web Inspector: Sources tab in Path grouping mode rebuilds its whole tree for every removed frame
+            if (WI.settings.resourceGroupingMode.value === WI.Resource.GroupingMode.Path)
+                this._handleResourceGroupingModeChanged();
+            else
+                this._removeScriptsOfTarget(target);
+        }
 
         let callStackTreeElement = this._findCallStackTargetTreeElement(target);
         console.assert(callStackTreeElement);
