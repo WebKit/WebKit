@@ -245,9 +245,12 @@ static void testNavigationPolicyWithIframe(PolicyClientTest* test, gconstpointer
     WebKitFrameInfo* sourceFrameInfo = webkit_navigation_action_get_source_frame_info(navigationAction);
     g_assert_nonnull(sourceFrameInfo);
     g_assert_true(webkit_frame_info_is_main_frame(sourceFrameInfo));
+    ASSERT_CMP_CSTRING(webkit_frame_info_get_uri(sourceFrameInfo), ==, kServer->getURIForPath("/iframe"));
     WebKitFrameInfo* targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
     g_assert_nonnull(targetFrameInfo);
     g_assert_false(webkit_frame_info_is_main_frame(targetFrameInfo));
+    g_assert_false(webkit_frame_info_is_same_frame(sourceFrameInfo, targetFrameInfo));
+    g_assert_true(webkit_frame_info_is_same_frame(sourceFrameInfo, sourceFrameInfo));
 
     test->m_policyDecisionResponse = PolicyClientTest::Use;
     test->loadHtml("<html><body><iframe src='/iframe'></iframe></body></html>", kServer->getURIForPath("/").legacyCStringPointer());
@@ -262,6 +265,38 @@ static void testNavigationPolicyWithIframe(PolicyClientTest* test, gconstpointer
     targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
     g_assert_nonnull(targetFrameInfo);
     g_assert_false(webkit_frame_info_is_main_frame(targetFrameInfo));
+}
+
+static void testNavigationPolicyWithIframeLink(PolicyClientTest* test, gconstpointer)
+{
+    test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
+
+    test->m_policyDecisionResponse = PolicyClientTest::Use;
+    test->loadHtml("<html><body><iframe src='/iframe-link'></iframe></body></html>", kServer->getURIForPath("/").legacyCStringPointer());
+    test->waitUntilLoadFinished();
+
+    test->m_previousPolicyDecision = nullptr;
+    test->runJavaScriptAndWaitUntilFinished("document.querySelector('iframe').contentDocument.getElementById('link').click();", nullptr);
+    while (!test->m_previousPolicyDecision)
+        g_main_context_iteration(nullptr, TRUE);
+
+    WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
+    WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
+    g_assert_cmpint(webkit_navigation_action_get_navigation_type(navigationAction), ==, WEBKIT_NAVIGATION_TYPE_LINK_CLICKED);
+    WebKitFrameInfo* sourceFrameInfo = webkit_navigation_action_get_source_frame_info(navigationAction);
+    g_assert_nonnull(sourceFrameInfo);
+    g_assert_false(webkit_frame_info_is_main_frame(sourceFrameInfo));
+    ASSERT_CMP_CSTRING(webkit_frame_info_get_uri(sourceFrameInfo), ==, kServer->getURIForPath("/iframe-link"));
+
+    g_autoptr(WebKitSecurityOrigin) origin = webkit_frame_info_get_security_origin(sourceFrameInfo);
+    g_autoptr(WebKitSecurityOrigin) expectedOrigin = webkit_security_origin_new_for_uri(kServer->getURIForPath("/").legacyCStringPointer());
+    GUniquePtr<char> originString(webkit_security_origin_to_string(origin));
+    GUniquePtr<char> expectedOriginString(webkit_security_origin_to_string(expectedOrigin));
+    g_assert_cmpstr(originString.get(), ==, expectedOriginString.get());
+
+    WebKitFrameInfo* targetFrameInfo = webkit_navigation_action_get_target_frame_info(navigationAction);
+    g_assert_nonnull(targetFrameInfo);
+    g_assert_true(webkit_frame_info_is_same_frame(sourceFrameInfo, targetFrameInfo));
 }
 
 static void testResponsePolicy(PolicyClientTest* test, gconstpointer)
@@ -374,6 +409,12 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     }
     if (g_str_equal(path, "/iframe")) {
         static const char* responseString = "<html><body><iframe src='/'></iframe></body></html>";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
+        soup_message_body_complete(responseBody);
+    } else if (g_str_equal(path, "/iframe-link")) {
+        static const char* responseString = "<html><body><a id='link' href='/'>Link</a></body></html>";
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
         auto* responseBody = soup_server_message_get_response_body(message);
         soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
@@ -595,6 +636,7 @@ void beforeAll()
 
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy", testNavigationPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy-iframe", testNavigationPolicyWithIframe);
+    PolicyClientTest::add("WebKitPolicyClient", "navigation-policy-iframe-link", testNavigationPolicyWithIframeLink);
     PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "autoplay-policy", testAutoplayPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "custom-user-agent-policy", testCustomUserAgentPolicy);

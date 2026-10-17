@@ -22,11 +22,16 @@
 
 #include "APIFrameInfo.h"
 #include "WebKitFrameInfoPrivate.h"
+#include "WebKitSecurityOriginPrivate.h"
+#include <wtf/text/CString.h>
 
 /**
  * WebKitFrameInfo: (ref-func webkit_frame_info_ref) (unref-func webkit_frame_info_unref)
  *
  * Information about a frame on a webpage.
+ *
+ * A #WebKitFrameInfo is a snapshot of the frame taken when it was created, so it
+ * does not change when the frame navigates.
  *
  * Since: 2.56
  */
@@ -36,12 +41,8 @@ struct _WebKitFrameInfo {
     {
     }
 
-    explicit _WebKitFrameInfo(WebKitFrameInfo* frameInfo)
-        : info(frameInfo->info)
-    {
-    }
-
     RefPtr<API::FrameInfo> info;
+    std::optional<UTF8CString> uri;
     int referenceCount { 1 };
 };
 
@@ -109,6 +110,62 @@ webkit_frame_info_is_main_frame(WebKitFrameInfo* info)
     g_return_val_if_fail(info, FALSE);
 
     return info->info->isMainFrame();
+}
+
+/**
+ * webkit_frame_info_get_uri:
+ * @info: a #WebKitFrameInfo
+ *
+ * Gets the URI of the document loaded in the frame.
+ *
+ * Returns: the URI of the frame
+ *
+ * Since: 2.56
+ */
+const char* webkit_frame_info_get_uri(WebKitFrameInfo* info)
+{
+    g_return_val_if_fail(info, nullptr);
+
+    if (!info->uri)
+        info->uri = info->info->request().url().string().utf8();
+    return info->uri->legacyCStringPointer();
+}
+
+/**
+ * webkit_frame_info_get_security_origin:
+ * @info: a #WebKitFrameInfo
+ *
+ * Gets the security origin of the document loaded in the frame.
+ *
+ * Returns: (transfer full): a newly created #WebKitSecurityOrigin
+ *
+ * Since: 2.56
+ */
+WebKitSecurityOrigin* webkit_frame_info_get_security_origin(WebKitFrameInfo* info)
+{
+    g_return_val_if_fail(info, nullptr);
+
+    return webkitSecurityOriginCreate(info->info->securityOrigin().isolatedCopy());
+}
+
+/**
+ * webkit_frame_info_is_same_frame:
+ * @info: a #WebKitFrameInfo
+ * @other: another #WebKitFrameInfo
+ *
+ * Checks whether @info and @other describe the same frame, even if they
+ * were taken at different times.
+ *
+ * Returns: %TRUE if both describe the same frame, or %FALSE otherwise
+ *
+ * Since: 2.56
+ */
+gboolean webkit_frame_info_is_same_frame(WebKitFrameInfo* info, WebKitFrameInfo* other)
+{
+    g_return_val_if_fail(info, FALSE);
+    g_return_val_if_fail(other, FALSE);
+
+    return info->info->frameInfoData().frameID == other->info->frameInfoData().frameID;
 }
 
 namespace WTF {
