@@ -5620,6 +5620,30 @@
                 "url": "https://drafts.csswg.org/css-images-3/#propdef-image-rendering"
             }
         },
+        "initial-letter": {
+            "animation-type": "discrete",
+            "initial": "normal",
+            "values": [
+                "normal"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssInitialLetterEnabled",
+                "computed-style-initial-constexpr": true,
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::WebkitInitialLetter",
+                "parser-function": "consumeInitialLetter",
+                "parser-grammar-unused": "normal | [ <number [1,inf]> <integer [1,inf]> ] | [ <number [1,inf]> && [ drop | raise ]? ]",
+                "parser-grammar-unused-reason": "The && combinator with an optional keyword, combined with the alternative integer-sink branch and the number-vs-integer range distinctions, is not expressible in the grammar DSL."
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline/#propdef-initial-letter"
+            }
+        },
         "inline-size": {
             "animation-type": "by computed value",
             "initial": "auto",
@@ -11779,12 +11803,10 @@
                 "normal"
             ],
             "codegen-properties": {
-                "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
-                "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::WebkitInitialLetter",
+                "cascade-alias": "initial-letter",
+                "skip-style-builder": true,
                 "parser-grammar": "normal | <number [0,inf]>{1,2}@(type=CSSValuePair default=previous)",
-                "parser-grammar-comment": "Spec does not match our implementation. Spec is 'normal | [ <number [1,inf]> <integer [1,inf]> ] | [ <number [1,inf]> && [ drop | raise ]? ]'"
+                "parser-grammar-comment": "Legacy grammar, kept as shipped: a fractional sink is accepted and a bare number duplicates the size. It cascades into initial-letter's storage; the shared converter tells the two apart by the shape of the parsed value."
             },
             "status": {
                 "status": "experimental"

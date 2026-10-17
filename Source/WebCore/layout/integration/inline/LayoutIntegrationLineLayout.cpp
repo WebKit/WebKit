@@ -782,13 +782,13 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
     }
 
     HashMap<CheckedRef<const Layout::Box>, LayoutSize> floatPaginationOffsetMap;
-    if (!lineAdjustments.isEmpty()) {
-        for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
-            if (!floatItem.layoutBox() || !floatItem.placedByLine())
-                continue;
-            auto adjustmentOffset = visualAdjustmentOffset(*floatItem.placedByLine());
-            floatPaginationOffsetMap.add(*floatItem.layoutBox(), adjustmentOffset);
-        }
+    HashMap<CheckedRef<const Layout::Box>, size_t> floatLineIndexMap;
+    for (auto& floatItem : ensureBlockFormattingState().placedFloats().list()) {
+        if (!floatItem.layoutBox() || !floatItem.placedByLine())
+            continue;
+        floatLineIndexMap.add(*floatItem.layoutBox(), *floatItem.placedByLine());
+        if (!lineAdjustments.isEmpty())
+            floatPaginationOffsetMap.add(*floatItem.layoutBox(), visualAdjustmentOffset(*floatItem.placedByLine()));
     }
 
     for (CheckedRef layoutBox : formattingContextBoxes(rootLayoutBox())) {
@@ -832,6 +832,17 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             }
 
             flow().placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
+
+            if (isInitialLetter && m_inlineContent) {
+                auto& lines = m_inlineContent->displayContent().lines;
+                if (auto lineIndex = floatLineIndexMap.getOptional(layoutBox); lineIndex && *lineIndex < lines.size()) {
+                    auto blockAdjustment = lineAdjustments.isEmpty() ? 0_lu : lineAdjustments[*lineIndex].offset;
+                    auto floatBlockStart = Layout::BoxGeometry::borderBoxTopLeft(logicalGeometry).y() + blockAdjustment;
+                    auto lineBlockStart = LayoutUnit { lines[*lineIndex].lineBoxLogicalRect().y() };
+                    auto overhang = flow().fragmentainerBlockStartOverhangForFloat(floatBlockStart, lineBlockStart);
+                    flow().setInitialLetterFragmentainerBlockStartOverhang(overhang);
+                }
+            }
 
             auto oldRect = renderer->borderBoxRectInContainer();
             renderer->setLocation(borderBoxVisualRect.location());

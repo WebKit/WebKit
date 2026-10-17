@@ -43,6 +43,8 @@ public:
     static bool LEGACY_NODELETE lineBreakBoxIsOnlyContentOnLine(const LineBox&);
     static bool LEGACY_NODELETE lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const Style::ComputedStyle& lineBoxStyle) const;
+    // Extra offset from the first line's over-annotations, beyond initialLetterAlignmentOffset().
+    std::optional<LayoutUnit> initialLetterAnnotationOffset(const LineBox&, const Box& floatBox, const Style::ComputedStyle& lineBoxStyle, InlineLayoutUnit rootInlineBoxTrimShift) const;
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;
     std::optional<InlineLayoutUnit> adjustmentForLineGridLineSnap(const LineBox&) const;
     bool shouldCollapseLineBoxHeight(const LineRunList&, size_t numberOfOutsideListMarkers) const;
