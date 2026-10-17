@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-multicol/">
+<link rel="help" href="https://drafts.csswg.org/css-transforms/">
+<link rel="match" href="../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="A transformed element inside a clipping container that spans several columns of an offset multicol container is painted in every column.">
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div style="columns:2; column-gap:0; column-fill:auto; width:100px; height:100px; background:red;">
+  <div style="position:relative; overflow:hidden; width:50px; height:200px;">
+    <div style="transform:translateX(0); width:50px; height:200px; background:green;"></div>
+  </div>
+</div>
