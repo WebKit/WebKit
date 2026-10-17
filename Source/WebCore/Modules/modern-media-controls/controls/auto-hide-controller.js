@@ -131,6 +131,7 @@ class AutoHideController
 
         case "pointerup":
             this._pointerIdentifiersPreventingAutoHide.delete(event.pointerId);
+            this._pointerIdentifiersPreventingAutoHideForHover.delete(event.pointerId);
             this._resetAutoHideTimer();
             return;
         }
