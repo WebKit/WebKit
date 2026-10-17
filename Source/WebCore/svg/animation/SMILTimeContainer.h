@@ -79,7 +79,7 @@ private:
     using GroupedAnimationsMap = HashMap<ElementAttributePair, AnimationsVector>;
 
     void processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>&);
-    void updateDocumentOrderIndexes();
+    void LEGACY_NODELETE updateDocumentOrderIndexes();
     void sortByPriority(AnimationsVector& smilElements, SMILTime elapsed);
     MonotonicTime lastResumeTime() const { return m_resumeTime ? m_resumeTime : m_beginTime; }
 

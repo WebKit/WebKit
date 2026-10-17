@@ -81,7 +81,7 @@ static inline CSS::LengthPercentageUnit LEGACY_NODELETE svgLengthTypeToCSSLength
     }
 }
 
-static Variant<CSS::Number<>, CSS::LengthPercentage<>> createVariantForLengthType(float value, SVGLengthType lengthType)
+static Variant<CSS::Number<>, CSS::LengthPercentage<>> LEGACY_NODELETE createVariantForLengthType(float value, SVGLengthType lengthType)
 {
     if (lengthType == SVGLengthType::Number)
         return CSS::Number<>(value);
@@ -213,7 +213,7 @@ float SVGLengthValue::value(const SVGLengthContext& context) const
     return result.releaseReturnValue();
 }
 
-static float convertToPixels(float value, CSS::LengthPercentageUnit unit)
+static float LEGACY_NODELETE convertToPixels(float value, CSS::LengthPercentageUnit unit)
 {
     switch (unit) {
     case CSS::LengthPercentageUnit::Px:

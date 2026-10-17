@@ -48,7 +48,7 @@ public:
 
     RefPtr<Image> sourceImage() const;
 
-    ImageOrientation orientationForSourceImage();
+    ImageOrientation LEGACY_NODELETE orientationForSourceImage();
 
     bool renderingTaintsOrigin() const;
     String imageSourceURL() const final;

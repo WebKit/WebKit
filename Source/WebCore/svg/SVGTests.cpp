@@ -70,7 +70,7 @@ bool SVGTests::hasExtension(const String& extension)
 // FIXME: RFC 4647 Basic Filtering with parent language tags can cause cross-script
 // matches (e.g., "zh" matching "zh-Hant" when user prefers "zh-Hans"). Consider
 // Extended Filtering (RFC 4647 3.3.2) for script-aware matching.
-static bool matchesLanguageTag(StringView range, StringView tag)
+static bool LEGACY_NODELETE matchesLanguageTag(StringView range, StringView tag)
 {
     if (range.isEmpty())
         return false;
@@ -83,7 +83,7 @@ static bool matchesLanguageTag(StringView range, StringView tag)
 
 // SVG2 5.6.5 implementation note: try the full user language tag, then iteratively
 // strip subtags to synthesize parent language tags (e.g. "zh-Hans-CN" → "zh-Hans" → "zh").
-static bool userLanguageMatchesAnyListedTag(StringView userLanguage, const Vector<String>& listedTags)
+static bool LEGACY_NODELETE userLanguageMatchesAnyListedTag(StringView userLanguage, const Vector<String>& listedTags)
 {
     for (StringView range = userLanguage; !range.isEmpty(); ) {
         for (auto& listedTag : listedTags) {

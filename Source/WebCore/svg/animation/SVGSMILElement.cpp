@@ -75,14 +75,14 @@ static const AtomString& indefiniteAtom()
 
 class ConditionEventListener final : public EventListener {
 public:
-    static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
+    static Ref<ConditionEventListener> LEGACY_NODELETE create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {
         return adoptRef(*new ConditionEventListener(animation, condition));
     }
 
     bool operator==(const EventListener& other) const final;
     
-    void disconnectAnimation()
+    void LEGACY_NODELETE disconnectAnimation()
     {
         m_animation = nullptr;
     }

@@ -63,8 +63,8 @@ public:
     String valueAsString() const override;
 
     static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringView);
-    static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<Latin1Character>&);
-    static std::optional<SVGTransformValue::SVGTransformType> parseTransformType(StringParsingBuffer<char16_t>&);
+    static std::optional<SVGTransformValue::SVGTransformType> LEGACY_NODELETE parseTransformType(StringParsingBuffer<Latin1Character>&);
+    static std::optional<SVGTransformValue::SVGTransformType> LEGACY_NODELETE parseTransformType(StringParsingBuffer<char16_t>&);
 
     template<typename CharacterType>
     static bool parseAndReplaceTransform(SVGTransformValue::SVGTransformType, StringParsingBuffer<CharacterType>&, SVGTransform&); // Defined in SVGTransformListInlines.h

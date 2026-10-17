@@ -30,7 +30,7 @@ class SVGAnimateMotionElement final : public SVGAnimationElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateMotionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateMotionElement);
 public:
-    static Ref<SVGAnimateMotionElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateMotionElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
     void updateAnimationPath();
 
 private:

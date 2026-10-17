@@ -33,7 +33,7 @@ class SVGAnimateTransformElement final : public SVGAnimateElementBase {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateTransformElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateTransformElement);
 public:
-    static Ref<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateTransformElement> LEGACY_NODELETE create(const QualifiedName&, Document&);
 
     SVGTransformValue::SVGTransformType transformType() const { return m_type; }
 

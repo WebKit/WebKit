@@ -51,7 +51,7 @@ Ref<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Documen
 
 class SVGTRefTargetEventListener final : public EventListener {
 public:
-    static Ref<SVGTRefTargetEventListener> create(SVGTRefElement& trefElement)
+    static Ref<SVGTRefTargetEventListener> LEGACY_NODELETE create(SVGTRefElement& trefElement)
     {
         return adoptRef(*new SVGTRefTargetEventListener(trefElement));
     }
