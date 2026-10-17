@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,6 @@
 
 #pragma once
 
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#include <mach/mach_port.h>
 
-namespace WebKit {
-
-class SecItemResponseData {
-public:
-    using Result = Variant<
-        std::nullptr_t,
-        Vector<RetainPtr<SecCertificateRef>>
-#if HAVE(SEC_KEYCHAIN)
-        , Vector<RetainPtr<SecKeychainItemRef>>
-#endif
-        , RetainPtr<CFTypeRef>
-    >;
-    SecItemResponseData(OSStatus code, Result&& result)
-        : m_resultCode(code)
-        , m_resultObject(WTF::move(result)) { }
-
-    Result& resultObject() LIFETIME_BOUND { return m_resultObject; }
-    const Result& resultObject() const LIFETIME_BOUND { return m_resultObject; }
-    OSStatus resultCode() const { return m_resultCode; }
-
-private:
-    OSStatus m_resultCode;
-    Result m_resultObject;
-};
-    
-} // namespace WebKit
+void setMachPortQueueLength(mach_port_t, mach_port_msgcount_t queueLength);

@@ -31,8 +31,8 @@ DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <RunningBoardServices/RunningBoardServices.h>
 #import <RunningBoardServices/RBSProcessHandle_Private.h>
+#import <RunningBoardServices/RunningBoardServices.h>
 
 extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
@@ -48,7 +48,7 @@ extern const NSTimeInterval RBSProcessTimeLimitationNone;
 
 #import <mach/message.h>
 
-NS_ASSUME_NONNULL_BEGIN
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 @interface RBSAttribute : NSObject
 @end
@@ -177,6 +177,6 @@ typedef NS_OPTIONS(NSUInteger, RBSProcessStateValues) {
 @property (nonatomic, readwrite, copy, nullable) NSArray<NSString *> *endowmentNamespaces;
 @end
 
-NS_ASSUME_NONNULL_END
+NS_HEADER_AUDIT_END(nullability, sendability)
 
 #endif

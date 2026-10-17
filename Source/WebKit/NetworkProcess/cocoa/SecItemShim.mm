@@ -102,19 +102,19 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* CF_RETU
         return errSecInteractionNotAllowed;
 
     RetainPtr<CFTypeRef> result;
-    WTF::switchOn(response->resultObject(), [&] (std::nullptr_t) {
+    WTF::switchOn(response->resultObject(), [&](std::nullptr_t) {
         result = nullptr;
-    }, [&] (Vector<RetainPtr<SecCertificateRef>>& certificates) {
-        result = createCFArray(certificates, [] (auto& certificate) {
+    }, [&](Vector<RetainPtr<SecCertificateRef>>& certificates) {
+        result = createCFArray(certificates, [](auto& certificate) {
             return certificate.get();
         });
 #if HAVE(SEC_KEYCHAIN)
-    }, [&] (Vector<RetainPtr<SecKeychainItemRef>>& items) {
-        result = createCFArray(items, [] (auto& item) {
+    }, [&](Vector<RetainPtr<SecKeychainItemRef>>& items) {
+        result = createCFArray(items, [](auto& item) {
             return item.get();
         });
 #endif
-    }, [&] (RetainPtr<CFTypeRef>& type) {
+    }, [&](RetainPtr<CFTypeRef>& type) {
         result = type;
     });
     // FIXME: Ideally the static analysis would recognize out-parameters.

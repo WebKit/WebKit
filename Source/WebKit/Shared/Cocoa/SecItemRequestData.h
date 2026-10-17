@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MachUtilities_h
-#define MachUtilities_h
+#pragma once
 
-#include <mach/mach_port.h>
+#include "ArgumentCoders.h"
+#include <wtf/RetainPtr.h>
 
-void setMachPortQueueLength(mach_port_t, mach_port_msgcount_t queueLength);
+namespace IPC {
+class Decoder;
+class Encoder;
+}
 
-#endif // MachUtilities_h
+namespace WebKit {
+
+class SecItemRequestData {
+public:
+    enum class Type : uint8_t {
+        Invalid,
+        CopyMatching,
+        Add,
+        Update,
+        Delete,
+    };
+
+    SecItemRequestData() = default;
+    SecItemRequestData(Type, CFDictionaryRef query);
+    SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
+    SecItemRequestData(Type, RetainPtr<CFDictionaryRef>&& query, RetainPtr<CFDictionaryRef>&& attributesToMatch);
+
+    Type type() const { return m_type; }
+
+    CFDictionaryRef query() const { return m_queryDictionary.get(); }
+    CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
+
+private:
+    friend struct IPC::ArgumentCoder<WebKit::SecItemRequestData>;
+
+    Type m_type { Type::Invalid };
+    RetainPtr<CFDictionaryRef> m_queryDictionary;
+    RetainPtr<CFDictionaryRef> m_attributesToMatch;
+};
+
+} // namespace WebKit

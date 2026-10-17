@@ -7493,7 +7493,7 @@
 		8CFECE931490F140002AAA32 /* EditorState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorState.cpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMemorySampler.mac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		905620E512BC2476000799B6 /* WebMemorySamplerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMemorySamplerCocoa.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		905620E812BC248B000799B6 /* WebMemorySampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMemorySampler.cpp; sourceTree = "<group>"; };
 		905620E912BC248B000799B6 /* WebMemorySampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMemorySampler.h; sourceTree = "<group>"; };
 		9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBrowserAgent.h; sourceTree = "<group>"; };
@@ -9264,7 +9264,7 @@
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F63855BEB2200C51A99E3053 /* GeneratedSerializersWebProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersWebProcess.mm; sourceTree = "<group>"; };
-		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
+		F6A90811133C1F3D0082C3F4 /* WebCookieManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerCocoa.mm; sourceTree = "<group>"; };
 		F98D069BBFD9CAA8FCDA2943 /* GeneratedSerializersUIProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedSerializersUIProcess.mm; sourceTree = "<group>"; };
 		FA0657F62FAE6D9C00CB5D45 /* WKPageResourceLoadClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPageResourceLoadClient.h; sourceTree = "<group>"; };
 		FA07D6912CFFB09700915660 /* AuthenticationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationManager.h; sourceTree = "<group>"; };
@@ -10400,8 +10400,6 @@
 		1A7E814E1152D2240003695B /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
-				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				51933DEB1965EB24008AC3EA /* MenuUtilities.h */,
 				51933DEC1965EB24008AC3EA /* MenuUtilities.mm */,
 				296BD85B15019BC30071F424 /* StringUtilities.h */,
@@ -11053,6 +11051,9 @@
 				5CB7AFDE23C5273D00E49CF3 /* ResourceLoadDelegate.mm */,
 				F46CCD8E2EDD1B9C00D4BA3E /* SafeBrowsingUtilities.h */,
 				F46CCD8F2EDD1B9C00D4BA3E /* SafeBrowsingUtilities.mm */,
+				E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */,
+				E18E690A169B563F009B6670 /* SecItemShimProxy.h */,
+				E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */,
 				5E55104200000000000B0003 /* SecurityFlagsControllerCocoa.mm */,
 				1A002D47196B345D00B9AD44 /* SessionStateCoding.h */,
 				1A002D46196B345D00B9AD44 /* SessionStateCoding.mm */,
@@ -12135,6 +12136,8 @@
 				2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */,
 				463236842314825C00A48FA7 /* WebRemoteObjectRegistry.cpp */,
 				46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */,
+				29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */,
+				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -12878,7 +12881,6 @@
 			isa = PBXGroup;
 			children = (
 				5CB1C0071234567890ABCDEF /* cocoa */,
-				F638955A133BF57D008941D5 /* mac */,
 				5CB1C0041234567890ABCDEF /* CookieStorage.h */,
 				3309344C1315B94D0097A7BC /* WebCookieManager.cpp */,
 				3309344D1315B94D0097A7BC /* WebCookieManager.h */,
@@ -12955,6 +12957,7 @@
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				F4EB4AFC269CD23600D297AE /* OSStateSPI.h */,
 				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
+				46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
 				51632FDA2C4A1C960038F759 /* UserNotificationsSPI.h */,
@@ -13628,6 +13631,11 @@
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
 				7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */,
+				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,
+				51D130501382EAC000351EDD /* SecItemRequestData.h */,
+				86E6E357291959C3006C25CA /* SecItemRequestData.serialization.in */,
+				51D130521382EAC000351EDD /* SecItemResponseData.h */,
+				51D130511382EAC000351EDD /* SecItemResponseData.serialization.in */,
 				CD4B4D9A1E765E0000D27092 /* SharedCARingBuffer.cpp */,
 				CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */,
 				462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */,
@@ -13638,6 +13646,7 @@
 				F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */,
 				F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */,
 				465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */,
+				905620E512BC2476000799B6 /* WebMemorySamplerCocoa.mm */,
 				1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */,
 				517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */,
 				51E8284C2B213954009119F9 /* WKKeyedCoder.h */,
@@ -14230,6 +14239,8 @@
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				515A0C532E8284AC00D0B56C /* LayerHostingContextManager.h */,
 				515A0C542E8284AC00D0B56C /* LayerHostingContextManager.mm */,
+				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
+				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */,
 				A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */,
 				516E092C2B953EDC00A8C5B0 /* MediaPlaybackTargetContextSerialized.h */,
@@ -14444,8 +14455,6 @@
 				E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */,
 				C1C1B30E2540F45600D9100B /* NetworkConnectionToWebProcessMac.mm */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
-				86EB7202298D310900C1DC77 /* SecItemShim.h */,
-				86EB7201298D310900C1DC77 /* SecItemShim.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -15193,6 +15202,7 @@
 				5CB1C0061234567890ABCDEF /* CookieStorageCocoa.mm */,
 				5CD1E0061234567890ABCDEF /* CookieStorageObserver.h */,
 				5CD1E0081234567890ABCDEF /* CookieStorageObserver.mm */,
+				F6A90811133C1F3D0082C3F4 /* WebCookieManagerCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -15395,6 +15405,8 @@
 				5CD1E0051234567890ABCDEF /* NetworkStorageSessionCocoa.mm */,
 				D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */,
 				D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */,
+				86EB7202298D310900C1DC77 /* SecItemShim.h */,
+				86EB7201298D310900C1DC77 /* SecItemShim.mm */,
 				FA745C47302EA40D007231F3 /* SecuritySoftLink.h */,
 				FA745C48302EA40D007231F3 /* SecuritySoftLink.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
@@ -16902,17 +16914,11 @@
 				86BAAFD629A3D1ED0013F9A9 /* PDFContextMenuItem.serialization.in */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
 				2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */,
-				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,
-				51D130501382EAC000351EDD /* SecItemRequestData.h */,
-				86E6E357291959C3006C25CA /* SecItemRequestData.serialization.in */,
-				51D130521382EAC000351EDD /* SecItemResponseData.h */,
-				51D130511382EAC000351EDD /* SecItemResponseData.serialization.in */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
 				2D5036731BCED19F00E20BB3 /* WebGestureEvent.cpp */,
 				2D5036741BCED19F00E20BB3 /* WebGestureEvent.h */,
 				86AA521A292653700065399E /* WebHitTestResultPlatformData.serialization.in */,
-				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -17199,8 +17205,6 @@
 				0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */,
 				0FE27FAF2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.mm */,
 				BC963D6D113DD1A500574BE2 /* WebPageMac.mm */,
-				29CD55A8128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h */,
-				29CD55A9128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm */,
 				29232DF318B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h */,
 				29232DF118B29D1100D0596F /* WKAccessibilityWebPageObjectMac.mm */,
 			);
@@ -17262,9 +17266,6 @@
 				0FCB4E5918BBE3D9000FCFC9 /* PageClientImplMac.mm */,
 				33F1A0112FEFB66B00BD5D70 /* PositionInformationManager.cpp */,
 				33F1A0102FEFB66B00BD5D70 /* PositionInformationManager.h */,
-				E18E6909169B563F009B6670 /* SecItemShimProxy.cpp */,
-				E18E690A169B563F009B6670 /* SecItemShimProxy.h */,
-				E18E690D169B57DF009B6670 /* SecItemShimProxy.messages.in */,
 				514D9F5519119D35000063A7 /* ServicesController.h */,
 				514D9F5619119D35000063A7 /* ServicesController.mm */,
 				0773A93A3023B0FB002C57FE /* SpatialShim.swift */,
@@ -17755,7 +17756,6 @@
 				A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */,
 				E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */,
 				2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */,
-				46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */,
 				DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */,
 				079D1D9926960CD300883577 /* SystemStatusSPI.h */,
 				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
@@ -17995,14 +17995,6 @@
 				E88885662DC914C400C572B8 /* WKISO18013Request.h */,
 			);
 			path = IdentityDocumentServices;
-			sourceTree = "<group>";
-		};
-		F638955A133BF57D008941D5 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */,
-			);
-			path = mac;
 			sourceTree = "<group>";
 		};
 		FA07D6902CFFB06B00915660 /* Authentication */ = {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,32 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
 #include <wtf/RetainPtr.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include <wtf/Vector.h>
 
 namespace WebKit {
-    
-class SecItemRequestData {
+
+class SecItemResponseData {
 public:
-    enum class Type : uint8_t {
-        Invalid,
-        CopyMatching,
-        Add,
-        Update,
-        Delete,
-    };
+    using Result = Variant<
+        std::nullptr_t,
+        Vector<RetainPtr<SecCertificateRef>>
+#if HAVE(SEC_KEYCHAIN)
+        , Vector<RetainPtr<SecKeychainItemRef>>
+#endif
+        , RetainPtr<CFTypeRef>
+    >;
+    SecItemResponseData(OSStatus code, Result&& result)
+        : m_resultCode(code)
+        , m_resultObject(WTF::move(result)) { }
 
-    SecItemRequestData() = default;
-    SecItemRequestData(Type, CFDictionaryRef query);
-    SecItemRequestData(Type, CFDictionaryRef query, CFDictionaryRef attributesToMatch);
-    SecItemRequestData(Type, RetainPtr<CFDictionaryRef>&& query, RetainPtr<CFDictionaryRef>&& attributesToMatch);
-
-    Type type() const { return m_type; }
-
-    CFDictionaryRef query() const { return m_queryDictionary.get(); }
-    CFDictionaryRef attributesToMatch() const { return m_attributesToMatch.get(); }
+    Result& resultObject() LIFETIME_BOUND { return m_resultObject; }
+    const Result& resultObject() const LIFETIME_BOUND { return m_resultObject; }
+    OSStatus resultCode() const { return m_resultCode; }
 
 private:
-    friend struct IPC::ArgumentCoder<WebKit::SecItemRequestData>;
-
-    Type m_type { Type::Invalid };
-    RetainPtr<CFDictionaryRef> m_queryDictionary;
-    RetainPtr<CFDictionaryRef> m_attributesToMatch;
+    OSStatus m_resultCode;
+    Result m_resultObject;
 };
-    
+
 } // namespace WebKit

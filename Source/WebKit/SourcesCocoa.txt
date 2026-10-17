@@ -32,6 +32,7 @@ NetworkProcess/cocoa/NetworkProcessCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkSessionCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkStorageSessionCocoa.mm @nonARC
 NetworkProcess/cocoa/NetworkTaskCocoa.mm @nonARC
+NetworkProcess/cocoa/SecItemShim.mm @nonARC
 NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm @nonARC
 
 NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm @nonARC
@@ -41,7 +42,7 @@ NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/cocoa/CookieStorageCocoa.mm @nonARC
 NetworkProcess/Cookies/cocoa/CookieStorageObserver.mm @nonARC
-NetworkProcess/Cookies/mac/WebCookieManagerMac.mm @nonARC
+NetworkProcess/Cookies/cocoa/WebCookieManagerCocoa.mm @nonARC
 
 NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm @nonARC
 NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp @cost:3
@@ -61,7 +62,6 @@ NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm @nonARC
 NetworkProcess/ios/NetworkProcessIOS.mm @nonARC
 
 NetworkProcess/mac/NetworkProcessMac.mm @nonARC
-NetworkProcess/mac/SecItemShim.mm @nonARC
 
 NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
 NetworkProcess/webrtc/NetworkRTCMonitor.cpp
@@ -197,10 +197,12 @@ Shared/Cocoa/RevealItem.mm @nonARC
 Shared/Cocoa/SandboxExtensionCocoa.mm @nonARC
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm @nonARC
 Shared/Cocoa/SandboxUtilities.mm @nonARC
+Shared/Cocoa/SecItemRequestData.cpp
 Shared/Cocoa/SharedCARingBuffer.cpp
 Shared/Cocoa/TCCSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 Shared/Cocoa/WebErrorsCocoa.mm @nonARC
 Shared/Cocoa/WebKit2InitializeCocoa.mm @nonARC
+Shared/Cocoa/WebMemorySamplerCocoa.mm @nonARC
 Shared/Cocoa/WKNSArray.mm @nonARC
 Shared/Cocoa/WKNSData.mm @nonARC
 Shared/Cocoa/WKNSDictionary.mm @nonARC
@@ -238,10 +240,8 @@ Shared/mac/NativeWebWheelEventMac.mm @nonARC
 Shared/mac/PasteboardTypes.mm @nonARC
 Shared/mac/PrintInfoMac.mm @nonARC
 Shared/mac/ScrollingAccelerationCurveMac.mm @nonARC
-Shared/mac/SecItemRequestData.cpp
 Shared/mac/WebEventFactory.mm @nonARC
 Shared/mac/WebGestureEvent.cpp
-Shared/mac/WebMemorySampler.mac.mm @nonARC
 
 Shared/RemoteLayerTree/DynamicContentScalingBifurcatedImageBuffer.mm @nonARC
 Shared/RemoteLayerTree/DynamicContentScalingImageBufferBackend.mm @nonARC
@@ -470,6 +470,7 @@ UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
 UIProcess/Cocoa/ProcessAssertionCocoa.mm @nonARC
 UIProcess/Cocoa/ResourceLoadDelegate.mm @nonARC
 UIProcess/Cocoa/SafeBrowsingUtilities.mm @nonARC
+UIProcess/Cocoa/SecItemShimProxy.cpp
 UIProcess/Cocoa/SecurityFlagsControllerCocoa.mm @nonARC
 UIProcess/Cocoa/SessionStateCoding.mm @nonARC
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
@@ -640,7 +641,6 @@ UIProcess/mac/AppKitGestures/WKAppKitGestureController.mm @nonARC
 UIProcess/mac/CorrectionPanel.mm @nonARC
 UIProcess/mac/DisplayLinkMac.cpp
 UIProcess/mac/PageClientImplMac.mm @nonARC
-UIProcess/mac/SecItemShimProxy.cpp
 UIProcess/mac/ServicesController.mm @nonARC
 UIProcess/mac/SwipeProgressTrackerMac.mm @nonARC
 UIProcess/mac/TextCheckerMac.mm @nonARC
@@ -897,6 +897,7 @@ WebProcess/WebPage/Cocoa/TextAnimationController.mm @nonARC
 WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm @nonARC
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC @cost:10
 WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
+WebProcess/WebPage/Cocoa/WKAccessibilityWebPageObjectBase.mm @nonARC
 
 WebProcess/WebPage/ios/FindIndicatorIOS.cpp
 WebProcess/WebPage/ios/WebPageIOS.mm @nonARC
@@ -906,7 +907,6 @@ WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm @nonARC @cost:3
 WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm @nonARC
 WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm @nonARC
 WebProcess/WebPage/mac/WebPageMac.mm @nonARC @cost:7
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm @nonARC
 WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm @nonARC
 
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm @nonARC @cost:3

@@ -182,7 +182,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/VisitedLinkStore \
 	UIProcess/ios/WebDeviceOrientationUpdateProviderProxy \
 	UIProcess/ios/SmartMagnificationController \
-	UIProcess/mac/SecItemShimProxy \
+	UIProcess/Cocoa/SecItemShimProxy \
 	UIProcess/WebGeolocationManagerProxy \
 	UIProcess/WebLockRegistryProxy \
 	UIProcess/WebPermissionControllerProxy \
@@ -754,6 +754,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/InteractionInformationRequest.serialization.in \
 	Shared/Cocoa/RemoteObjectInvocation.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
+	Shared/Cocoa/SecItemRequestData.serialization.in \
+	Shared/Cocoa/SecItemResponseData.serialization.in \
 	Shared/Cocoa/SharedCARingBuffer.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
@@ -915,8 +917,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/cf/CoreIPCSecTrust.serialization.in \
 	Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
-	Shared/mac/SecItemRequestData.serialization.in \
-	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \
 	Shared/WebsiteDataStoreParameters.serialization.in \
 	Shared/WebsiteData/TimeBasedEvictionMode.serialization.in \

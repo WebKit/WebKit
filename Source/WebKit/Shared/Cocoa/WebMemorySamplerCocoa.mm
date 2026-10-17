@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -9,7 +9,7 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -40,7 +40,7 @@
 #import <wtf/WallTime.h>
 
 namespace WebKit {
-    
+
 struct SystemMallocStats {
     malloc_statistics_t defaultMallocZoneStats;
     malloc_statistics_t dispatchContinuationMallocZoneStats;
@@ -55,7 +55,7 @@ SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
     SystemMallocStats mallocStats;
     vm_address_t* rawZones;
     unsigned count;
-    
+
     // Zero out the structures in case a zone is missing
     malloc_statistics_t stats;
     stats.blocks_in_use = 0;
@@ -65,7 +65,7 @@ SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
     mallocStats.defaultMallocZoneStats = stats;
     mallocStats.dispatchContinuationMallocZoneStats = stats;
     mallocStats.purgeableMallocZoneStats = stats;
-    
+
     malloc_get_all_zones(mach_task_self(), 0, &rawZones, &count);
     auto zones = unsafeMakeSpan(rawZones, count);
     for (auto& zone : zones) {
@@ -101,31 +101,31 @@ String WebMemorySampler::processName() const
         appName = [[NSProcessInfo processInfo] processName];
     return String(appName.get());
 }
-  
+
 WebMemoryStatistics WebMemorySampler::sampleWebKit() const
 {
-    size_t totalBytesInUse = 0, totalBytesCommitted = 0; 
-    
+    size_t totalBytesInUse = 0, totalBytesCommitted = 0;
+
     WebMemoryStatistics webKitMemoryStats;
-    
+
     auto fastMallocStatistics = WTF::fastMallocStatistics();
     size_t fastMallocBytesInUse = fastMallocStatistics.committedVMBytes - fastMallocStatistics.freeListBytes;
     size_t fastMallocBytesCommitted = fastMallocStatistics.committedVMBytes;
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
-    
+
     JSC::JSLockHolder lock(WebCore::commonVM());
     size_t jscHeapBytesInUse = WebCore::commonVM().heap.size();
     size_t jscHeapBytesCommitted = WebCore::commonVM().heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;
     totalBytesCommitted += jscHeapBytesCommitted;
-    
+
     JSC::GlobalMemoryStatistics globalMemoryStats = JSC::globalMemoryStatistics();
     totalBytesInUse += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
-    
+
     SystemMallocStats systemStats = sampleSystemMalloc();
-    
+
     size_t defaultMallocZoneBytesInUse = systemStats.defaultMallocZoneStats.size_in_use;
     size_t dispatchContinuationMallocZoneBytesInUse = systemStats.dispatchContinuationMallocZoneStats.size_in_use;
     size_t purgeableMallocZoneBytesInUse = systemStats.purgeableMallocZoneStats.size_in_use;
@@ -134,11 +134,11 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     size_t purgeableMallocZoneBytesCommitted = systemStats.purgeableMallocZoneStats.size_allocated;
     totalBytesInUse += defaultMallocZoneBytesInUse + dispatchContinuationMallocZoneBytesInUse + purgeableMallocZoneBytesInUse;
     totalBytesCommitted += defaultMallocZoneBytesCommitted + dispatchContinuationMallocZoneBytesCommitted + purgeableMallocZoneBytesCommitted;
-    
+
     size_t residentSize = sampleProcessCommittedBytes();
 
     WallTime now = WallTime::now();
-        
+
     webKitMemoryStats.keys.append("Timestamp"_s);
     webKitMemoryStats.values.append(now.secondsSinceEpoch().seconds());
     webKitMemoryStats.keys.append("Total Bytes of Memory In Use"_s);
@@ -171,10 +171,10 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     webKitMemoryStats.values.append(globalMemoryStats.JITBytes);
     webKitMemoryStats.keys.append("Resident Size"_s);
     webKitMemoryStats.values.append(residentSize);
-    
+
     return webKitMemoryStats;
 }
- 
+
 void WebMemorySampler::sendMemoryPressureEvent()
 {
     // Free memory that could be released if we needed more.

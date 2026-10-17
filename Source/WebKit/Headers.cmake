@@ -547,7 +547,7 @@ set(WebKit_PROJECT_HEADERS
 
     Platform/Logging.h
 
-    Shared/mac/SecItemRequestData.h
+    Shared/Cocoa/SecItemRequestData.h
 
     UIProcess/Cocoa/WKShareSheet.h
 

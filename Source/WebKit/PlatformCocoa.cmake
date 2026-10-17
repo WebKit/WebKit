@@ -349,6 +349,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
 
     UIProcess/Cocoa/PlaybackSessionManagerProxy
+    UIProcess/Cocoa/SecItemShimProxy
     UIProcess/Cocoa/VideoPresentationManagerProxy
 
     UIProcess/Inspector/WebInspectorUIExtensionControllerProxy
@@ -363,8 +364,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     UIProcess/ios/SmartMagnificationController
     UIProcess/ios/WebDeviceOrientationUpdateProviderProxy
-
-    UIProcess/mac/SecItemShimProxy
 
     WebProcess/ApplePay/WebPaymentCoordinator
 
@@ -1702,8 +1701,8 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     Shared/API/c/mac/WKWebArchiveRef.h
     Shared/API/c/mac/WKWebArchiveResource.h
 
-    Shared/mac/SecItemRequestData.h
-    Shared/mac/SecItemResponseData.h
+    Shared/Cocoa/SecItemRequestData.h
+    Shared/Cocoa/SecItemResponseData.h
 
     UIProcess/API/C/mac/WKContextPrivateMac.h
     UIProcess/API/C/mac/WKInspectorPrivateMac.h

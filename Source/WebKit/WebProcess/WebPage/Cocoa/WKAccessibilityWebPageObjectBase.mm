@@ -79,7 +79,7 @@ namespace ax = WebCore::Accessibility;
 
 - (BOOL)shouldFallbackToWebContentAXObjectForMainFramePlugin
 {
-    RefPtr page = m_page.get();
+    RefPtr page = m_page;
     return page && page->shouldFallbackToWebContentAXObjectForMainFramePlugin();
 }
 
@@ -93,7 +93,7 @@ namespace ax = WebCore::Accessibility;
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainRunLoop()) {
-        if (RefPtr tree = m_isolatedTree.get()) {
+        if (RefPtr tree = m_isolatedTree) {
             tree->applyPendingChanges();
             if (RefPtr root = tree->rootNode())
                 return RetainPtr<id> { root->wrapper() }.autorelease();
@@ -101,7 +101,7 @@ namespace ax = WebCore::Accessibility;
     }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
-    return ax::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self), protectedFrame = RefPtr { frame }] () -> RetainPtr<id> {
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self), protectedFrame = RefPtr { frame }] -> RetainPtr<id> {
 
         // Immediately enable accessibility in the current web process, otherwise this
         // will happen asynchronously and could break certain flows (e.g., attribute
@@ -148,7 +148,7 @@ namespace ax = WebCore::Accessibility;
 
     m_page = nakedPage.get();
 
-    if (RefPtr webPage = nakedPage.get()) {
+    if (RefPtr webPage = m_page) {
         m_pageID = webPage->identifier();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         [self setPosition:webPage->accessibilityPosition()];
@@ -266,7 +266,7 @@ namespace ax = WebCore::Accessibility;
     if (!isMainRunLoop())
         return nullptr;
 #endif
-    RefPtr webPage = m_page.get();
+    RefPtr webPage = m_page;
     if (!webPage)
         return nullptr;
 
