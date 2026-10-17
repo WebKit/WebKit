@@ -41,6 +41,8 @@
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
 #if USE(GSTREAMER)
+#include "GStreamerCommon.h"
+#include "GStreamerVideoFrameConverter.h"
 #include "VideoFrameContentHint.h"
 #include "VideoFrameGStreamer.h"
 #endif
@@ -207,10 +209,157 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLEGL::layerContents
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+#if USE(GSTREAMER) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
+static bool isRGBVideoFormat(GstVideoFormat format)
 {
-    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer.
+    switch (format) {
+    case GST_VIDEO_FORMAT_RGBA:
+    case GST_VIDEO_FORMAT_BGRA:
+    case GST_VIDEO_FORMAT_RGBx:
+    case GST_VIDEO_FORMAT_BGRx:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// Painting a frame (the generic path) converts it to sRGB when its color space is a known
+// wide-gamut or non-sRGB transfer one. Only take the direct path when that would be a no-op.
+static bool paintingWouldConvertColorSpace(const PlatformVideoColorSpace& colorSpace)
+{
+    if (colorSpace.primaries) {
+        switch (*colorSpace.primaries) {
+        case PlatformVideoColorPrimaries::Bt2020:
+        case PlatformVideoColorPrimaries::Smpte432:
+            return true;
+        default:
+            break;
+        }
+    }
+    if (colorSpace.transfer) {
+        switch (*colorSpace.transfer) {
+        case PlatformVideoTransferCharacteristics::Linear:
+        case PlatformVideoTransferCharacteristics::Bt2020_10bit:
+        case PlatformVideoTransferCharacteristics::Bt2020_12bit:
+        case PlatformVideoTransferCharacteristics::PQ:
+        case PlatformVideoTransferCharacteristics::HLG:
+            return true;
+        default:
+            break;
+        }
+    }
     return false;
+}
+#endif
+
+bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame& frame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
+{
+#if USE(GSTREAMER) && (ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS))
+    // Upload the frame with a single texture upload, converting it to RGBA first if needed, instead
+    // of painting it into an intermediate image. FIXME: Import DMABuf frames without a copy.
+    if (target != GL_TEXTURE_2D || type != GL_UNSIGNED_BYTE || (format != GL_RGBA && format != GL_RGB) || internalFormat != format)
+        return false;
+    if (frame.rotation() != VideoFrame::Rotation::None || frame.isMirrored())
+        return false;
+
+    auto& gstFrame = downcast<VideoFrameGStreamer>(frame);
+    GRefPtr sample = gstFrame.sample();
+    auto* caps = gst_sample_get_caps(sample.get());
+    auto* buffer = gst_sample_get_buffer(sample.get());
+    if (!caps || !buffer || gst_buffer_get_video_crop_meta(buffer))
+        return false;
+    if (paintingWouldConvertColorSpace(videoColorSpaceFromCaps(caps)))
+        return false;
+
+    GstVideoInfo info;
+    if (!gst_video_info_from_caps(&info, caps))
+        return false;
+    IntSize size(GST_VIDEO_INFO_WIDTH(&info), GST_VIDEO_INFO_HEIGHT(&info));
+    if (gstFrame.presentationSize() != size)
+        return false;
+
+    // RGBA and BGRA are uploaded as they are. Padded (x) formats have undefined alpha, so they are
+    // converted like YUV formats.
+    auto* features = gst_caps_get_features(caps, 0);
+    bool isSystemMemory = !features || gst_caps_features_is_any(features) || gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_SYSTEM_MEMORY);
+    auto sourceFormat = GST_VIDEO_INFO_FORMAT(&info);
+    if (!isSystemMemory || (sourceFormat != GST_VIDEO_FORMAT_RGBA && sourceFormat != GST_VIDEO_FORMAT_BGRA)) {
+        GRefPtr rgbaCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "RGBA", "width", G_TYPE_INT, size.width(), "height", G_TYPE_INT, size.height(), nullptr));
+        sample = GStreamerVideoFrameConverter::singleton().convert(sample, rgbaCaps);
+        if (!sample)
+            return false;
+        sourceFormat = GST_VIDEO_FORMAT_RGBA;
+    }
+
+    GstMappedFrame mappedFrame(sample, GST_MAP_READ);
+    if (!mappedFrame || !isRGBVideoFormat(static_cast<GstVideoFormat>(mappedFrame.format())) || mappedFrame.width() != size.width() || mappedFrame.height() != size.height())
+        return false;
+    // WebGL 1 contexts have no UNPACK_ROW_LENGTH, so they can only take tightly packed rows.
+    int stride = mappedFrame.planeStride(0);
+    if (stride % 4 || (!m_isForWebGL2 && stride != size.width() * 4))
+        return false;
+
+    bool isBGRA = mappedFrame.format() == GST_VIDEO_FORMAT_BGRA;
+    bool needsCopy = isBGRA || flipY || premultiplyAlpha || format != GL_RGBA;
+
+    if (!makeContextCurrent())
+        return false;
+    if (needsCopy && !enableExtensionsImpl({ "GL_CHROMIUM_copy_texture"_s, "GL_EXT_texture_format_BGRA8888"_s }))
+        return false;
+
+    GLint previousTexture = 0, previousAlignment = 0, previousUnpackBuffer = 0, previousRowLength = 0, previousSkipRows = 0, previousSkipPixels = 0;
+    GL_GetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+    GL_GetIntegerv(GL_UNPACK_ALIGNMENT, &previousAlignment);
+    GL_PixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    if (m_isForWebGL2) {
+        GL_GetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &previousUnpackBuffer);
+        GL_GetIntegerv(GL_UNPACK_ROW_LENGTH, &previousRowLength);
+        GL_GetIntegerv(GL_UNPACK_SKIP_ROWS, &previousSkipRows);
+        GL_GetIntegerv(GL_UNPACK_SKIP_PIXELS, &previousSkipPixels);
+        GL_BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+        GL_PixelStorei(GL_UNPACK_ROW_LENGTH, stride / 4);
+        GL_PixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+        GL_PixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    }
+
+    auto* pixels = mappedFrame.planeData(0).data();
+    if (!needsCopy) {
+        GL_BindTexture(GL_TEXTURE_2D, texture);
+        GL_TexImage2D(GL_TEXTURE_2D, level, GL_RGBA, size.width(), size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    } else {
+        // Let ANGLE swizzle, flip and premultiply while copying into the destination texture.
+        GLuint sourceTexture = 0;
+        GL_GenTextures(1, &sourceTexture);
+        GL_BindTexture(GL_TEXTURE_2D, sourceTexture);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GLenum uploadFormat = isBGRA ? GL_BGRA_EXT : GL_RGBA;
+        GL_TexImage2D(GL_TEXTURE_2D, 0, uploadFormat, size.width(), size.height(), 0, uploadFormat, GL_UNSIGNED_BYTE, pixels);
+        GL_CopyTextureCHROMIUM(sourceTexture, 0, GL_TEXTURE_2D, texture, level, internalFormat, type, flipY, premultiplyAlpha, false);
+        GL_DeleteTextures(1, &sourceTexture);
+    }
+
+    GL_BindTexture(GL_TEXTURE_2D, previousTexture);
+    GL_PixelStorei(GL_UNPACK_ALIGNMENT, previousAlignment);
+    if (m_isForWebGL2) {
+        GL_BindBuffer(GL_PIXEL_UNPACK_BUFFER, previousUnpackBuffer);
+        GL_PixelStorei(GL_UNPACK_ROW_LENGTH, previousRowLength);
+        GL_PixelStorei(GL_UNPACK_SKIP_ROWS, previousSkipRows);
+        GL_PixelStorei(GL_UNPACK_SKIP_PIXELS, previousSkipPixels);
+    }
+    return true;
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(texture);
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(premultiplyAlpha);
+    UNUSED_PARAM(flipY);
+    return false;
+#endif
 }
 #endif
 
