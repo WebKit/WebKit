@@ -2018,9 +2018,12 @@ void WebPage::drawPrintContextPagesToGraphicsContext(GraphicsContext& context, c
 
         context.beginPage(pageRect);
 
-        context.scale(FloatSize(1, -1));
-        context.translate(0, -printContext->pageRect(page).height());
-        printContext->spoolPage(context, page, printContext->pageRect(page).width());
+        {
+            GraphicsContextStateSaver stateSaver(context);
+            context.scale(FloatSize(1, -1));
+            context.translate(0, -printContext->pageRect(page).height());
+            printContext->spoolPage(context, page, printContext->pageRect(page).width());
+        }
 
         context.endPage();
     }
