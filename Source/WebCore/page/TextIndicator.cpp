@@ -370,7 +370,7 @@ static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, cons
     // Use the exposedContentRect/viewExposedRect instead of visibleContentRect to avoid creating a huge indicator for a large view inside a scroll view.
     IntRect contentsClipRect;
 #if PLATFORM(IOS_FAMILY)
-    contentsClipRect = enclosingIntRect(frameView->exposedContentRect());
+    contentsClipRect = enclosingIntRect(frameView->exposedContentRect().raw());
 #else
     if (auto viewExposedRect = frameView->viewExposedRect())
         contentsClipRect = enclosingIntRect(*viewExposedRect);

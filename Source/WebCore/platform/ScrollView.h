@@ -214,10 +214,11 @@ public:
 #endif
 
     // This is the area that is partially or fully exposed, and may extend under overlapping UI elements.
-    WEBCORE_EXPORT FloatRect exposedContentRect() const;
+    WEBCORE_EXPORT ViewFloatRect exposedViewRect() const;
+    WEBCORE_EXPORT ContentsFloatRect exposedContentRect() const;
 
     // The given rects are only used if there is no platform widget.
-    WEBCORE_EXPORT void LEGACY_NODELETE setExposedContentRect(const FloatRect&);
+    WEBCORE_EXPORT void LEGACY_NODELETE setExposedViewRect(const ViewFloatRect&);
 
     void adjustExposedContentRectForProgrammaticScroll(ScrollPosition);
 
@@ -341,7 +342,7 @@ public:
     IntRect contentsToView(IntRect) const;
 
     FloatRect viewToContents(FloatRect) const;
-    FloatRect contentsToView(FloatRect) const;
+    WEBCORE_EXPORT FloatRect contentsToView(FloatRect) const;
 
     // The part of the view-to-contents translation that is not scaled by visibleContentScaleFactor().
     IntSize viewToContentsInsetOffset() const;
@@ -371,6 +372,7 @@ public:
 
     template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, RectType> contentsToRootView(const ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType>& rect) const { return inRootViewSpace(contentsToRootView(rect.raw())); }
     template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType> rootViewToContents(const ViewCoordinateSpaceRect<ViewCoordinateSpace::RootView, RectType>& rect) const { return inContentsSpace(rootViewToContents(rect.raw())); }
+    template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::View, RectType> contentsToView(const ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType>& rect) const { return inViewSpace(contentsToView(rect.raw())); }
     template<typename RectType> ViewCoordinateSpaceRect<ViewCoordinateSpace::Contents, RectType> viewToContents(const ViewCoordinateSpaceRect<ViewCoordinateSpace::View, RectType>& rect) const { return inContentsSpace(viewToContents(rect.raw())); }
 
     // The purpose of this function is to answer whether or not the scroll view is currently visible. Animations and painting updates can be suspended if
@@ -567,7 +569,8 @@ private:
     // FIXME: More things will move into here.
     struct DelegatedScrollingGeometry {
         FloatSize unobscuredContentSize;
-        FloatRect exposedContentRect;
+        // In view space, since the embedder of a root frame with a remote parent doesn't know its scroll position.
+        ViewFloatRect exposedViewRect;
     };
     std::optional<DelegatedScrollingGeometry> m_delegatedScrollingGeometry;
 

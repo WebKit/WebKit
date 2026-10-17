@@ -1586,13 +1586,13 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
         // FIXME (320601): this only affects tile coverage on iOS by setting exposedContentRect on
         // this child frame based on the exposedContentRect from the parent frame process. We need
         // to do something similar on macOS (see visibleRectForLayerFlushing).
-        auto fullChildViewRect = FloatRect { { }, childView->size() };
+        auto fullChildViewRect = inViewSpace(FloatRect { { }, childView->size() });
         auto exposedContentRectInChildView = layoutInfo->exposedContentRectInChildView();
-        auto projected = exposedContentRectInChildView;
+        auto projected = inViewSpace(exposedContentRectInChildView);
         projected.intersect(fullChildViewRect);
 
-        if (childView->exposedContentRect() != projected) {
-            childView->setExposedContentRect(projected);
+        if (childView->exposedViewRect() != projected) {
+            childView->setExposedViewRect(projected);
             needsRenderingUpdate = true;
         }
 

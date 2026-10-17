@@ -319,7 +319,7 @@ WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
     if (!frameView)
         return FloatRect();
 
-    return frameView->exposedContentRect();
+    return frameView->exposedContentRect().raw();
 }
 
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
@@ -327,10 +327,10 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     RefPtr frameView = protect(m_webPage)->localMainFrameView();
     if (!frameView)
         return;
-    if (frameView->exposedContentRect() == exposedContentRect)
+    if (frameView->exposedContentRect() == inContentsSpace(exposedContentRect))
         return;
 
-    frameView->setExposedContentRect(exposedContentRect);
+    frameView->setExposedViewRect(frameView->contentsToView(inContentsSpace(exposedContentRect)));
     triggerRenderingUpdate();
 }
 
