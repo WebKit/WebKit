@@ -35,6 +35,7 @@
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "StyleDisplay.h"
 #include "StyleMaximumLines.h"
 
@@ -42,9 +43,26 @@ namespace WebCore {
 
 bool LineClampUpdater::shouldDiscardOverflow(const RenderBlock& blockContainer)
 {
-    // FIXME: continue: discard should turn the box into a fragmentation container instead (https://drafts.csswg.org/css-overflow-4/#valdef-continue-discard).
-    auto overflowContinue = blockContainer.style().overflowContinue();
-    return overflowContinue == OverflowContinue::Discard || overflowContinue == OverflowContinue::Collapse;
+    CheckedRef style = blockContainer.style();
+    switch (style->overflowContinue()) {
+    case OverflowContinue::Discard:
+        // FIXME: continue: discard should turn the box into a fragmentation container instead (https://drafts.csswg.org/css-overflow-4/#valdef-continue-discard).
+    case OverflowContinue::Collapse:
+        return true;
+    case OverflowContinue::WebkitLegacy: {
+        if (!blockContainer.settings().cssWebkitLineClampAsLineClampEnabled())
+            return false;
+        // "The -webkit-legacy value behaves identically to collapse, except that it only takes effect if the specified value
+        // of the display property is -webkit-box or -webkit-inline-box and the value of the -webkit-box-orient property is vertical."
+        // https://drafts.csswg.org/css-overflow-4/#webkit-line-clamp
+        auto specifiedDisplay = style->originalDisplay();
+        return (specifiedDisplay == Style::DisplayType::BlockDeprecatedFlex || specifiedDisplay == Style::DisplayType::InlineDeprecatedFlex) && style->boxOrient() == BoxOrient::Vertical;
+    }
+    case OverflowContinue::Normal:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
@@ -72,8 +90,8 @@ LineClampUpdater::LineClampUpdater(const RenderBlock& blockContainer)
     }
 
     if (maximumLinesForBlockContainer) {
-        // Ignore top level legacy line clamp for now.
-        if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy)
+        // -webkit-line-clamp only clamps a vertical -webkit-box, which RenderDeprecatedFlexibleBox lays out unless it is laid out as line-clamp.
+        if (m_blockContainer->style().overflowContinue() == OverflowContinue::WebkitLegacy && !shouldDiscardOverflow(m_blockContainer))
             return;
         // New, top level line clamp.
         m_isLineClampRoot = true;

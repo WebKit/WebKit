@@ -1352,6 +1352,15 @@ CSSUserSelectEnabled:
   humanReadableDescription: "Enable the unprefixed user-select CSS property"
   defaultValue: true
 
+CSSWebkitLineClampAsLineClampEnabled:
+  type: bool
+  status: unstable
+  category: css
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  humanReadableName: "CSS -webkit-line-clamp as line-clamp"
+  humanReadableDescription: "Lay out -webkit-line-clamp with the line-clamp implementation, as specified in CSS Overflow 4"
+  defaultValue: false
+
 CSSWhiteSpaceTrimEnabled:
   type: bool
   status: stable
