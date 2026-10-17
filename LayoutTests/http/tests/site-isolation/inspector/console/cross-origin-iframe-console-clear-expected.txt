@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: subframe-ready
+CONSOLE MESSAGE: clear-scope-replay
+CONSOLE MESSAGE: clear-scope-refresh
+CONSOLE MESSAGE: clear-scope-refresh
+CONSOLE MESSAGE: subframe-error
+CONSOLE MESSAGE: clear-scope-error-after-clear
+Under Site Isolation, console.clear() in one frame must clear every frame's console agent.
+
+
+== Running test suite: SiteIsolation.Console.ClearScope
+-- Running test case: SiteIsolation.Console.ClearScope.ClearEmptiesEveryAgent
+PASS: Site Isolation should be enabled.
+PASS: The subframe should have its own target, distinct from the main frame's.
+PASS: The main frame's agent should have no messages left to replay after a console.clear() in another frame.
+
+-- Running test case: SiteIsolation.Console.ClearScope.ClearResetsDedupState
+PASS: A message logged after a console.clear() should arrive as a new message, not a repeat count update.
+
+-- Running test case: SiteIsolation.Console.ClearScope.MessageAfterClearIsKept
+PASS: The console should be cleared once.
+PASS: errorCount should include the error logged right after console.clear().
+

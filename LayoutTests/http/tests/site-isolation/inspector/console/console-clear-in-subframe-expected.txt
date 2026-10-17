@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: subframe-ready
+CONSOLE MESSAGE: clear-in-subframe-replay
+CONSOLE MESSAGE: clear-in-subframe-relog
+CONSOLE MESSAGE: clear-in-subframe-relog
+console.clear() in a subframe should clear the console for every frame.
+
+
+== Running test suite: Console.ClearInSubframe
+-- Running test case: Console.ClearInSubframe.NothingLeftToReplay
+PASS: The main frame should have no messages left to replay after console.clear() in a subframe.
+
+-- Running test case: Console.ClearInSubframe.RelogAfterClear
+PASS: A message logged after console.clear() should arrive as a new message.
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This test is symlinked and run from a different location to test site isolated behaviors. Attempt to find the test driver from two possible places. -->
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addSubframe() {
+    const iframe = document.createElement("iframe");
+    iframe.src = "resources/console-subframe.html";
+    document.body.appendChild(iframe);
+}
+
+function tellSubframe(what) {
+    frames[0].postMessage(what, "*");
+}
+
+function mainFrameError() {
+    console.error("main-frame-error");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Console.RepeatCountAcrossFrames");
+
+    // Resolves on whichever arrives: with Site Isolation, each frame dedups against its own messages.
+    function awaitMessageAddedOrRepeat() {
+        return Promise.race([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated),
+        ]);
+    }
+
+    suite.addTestCase({
+        name: "Console.RepeatCountAcrossFrames.InterleavedFrames",
+        description: "Repeating a message after another frame logged at a different level should count both messages at their own level.",
+        async test() {
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`addSubframe()`),
+            ]);
+
+            let errorCountBefore = WI.consoleManager.errorCount;
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`mainFrameError()`),
+            ]);
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`tellSubframe("log")`),
+            ]);
+            await Promise.all([
+                awaitMessageAddedOrRepeat(),
+                InspectorTest.evaluateInPage(`mainFrameError()`),
+            ]);
+
+            InspectorTest.expectEqual(WI.consoleManager.errorCount - errorCountBefore, 2, "errorCount should count both console.error() calls.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>A repeated console message should be counted at its own level, even when another frame logged in between.</p>
+</body>
+</html>
