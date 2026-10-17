@@ -44,7 +44,9 @@ public:
         // A block container whose content takes part in this block formatting context: its children come between its start and end.
         BlockContainerStart,
         BlockContainerEnd,
-        InlineContent
+        InlineContent,
+        // A box whose content is laid out in a formatting context of its own; to this one it is a single box.
+        IndependentFormattingContextRoot
     };
     BlockItem(const RenderBox&, Type);
 
