@@ -83,6 +83,10 @@ pas_large_heap_try_allocate_user_allocation(pas_large_heap* heap,
                                             const pas_heap_config* config,
                                             pas_physical_memory_transaction* transaction);
 
+/* Returns true if pas_large_heap_try_deallocate would find and deallocate the object. */
+PAS_API bool pas_large_heap_owns_object(uintptr_t base,
+                                        const pas_heap_config* config);
+
 /* Returns true if an object was found and deallocated. */
 PAS_API bool pas_large_heap_try_deallocate(uintptr_t base,
                                            const pas_heap_config* config);
