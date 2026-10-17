@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SVG2TextLayoutAlgorithmEnabled=true ] -->
+<meta charset="utf-8">
+<svg width="200" height="100">
+    <text x="10" y="20">
+        <a><tspan style="display: contents; fill: green">anchor child</tspan></a>
+    </text>
+    <text x="10" y="50">a <tspan id="contents" style="display: contents; fill: green">b<tspan>c</tspan></tspan> d</text>
+    <text x="10" y="80"><textPath href="#path" style="display: contents; fill: green">on path</textPath></text>
+    <path id="path" d="M 10 90 L 190 90"/>
+</svg>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+const contents = document.getElementById("contents");
+contents.appendChild(document.createTextNode("e"));
+document.body.offsetHeight;
+contents.firstChild.remove();
+document.body.offsetHeight;
+contents.style.display = "inline";
+document.body.offsetHeight;
+contents.style.display = "contents";
+document.body.offsetHeight;
+</script>
