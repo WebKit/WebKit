@@ -82,7 +82,7 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
         std::unique_ptr<FormatsAsyncData> data(static_cast<FormatsAsyncData*>(userData));
 
         Vector<String> result;
-        for (auto* atom : unsafeMakeSpan<GdkAtom>(atoms, atomsCount)) {
+        for (auto* atom : unsafeMakeSpan<GdkAtom>(atoms, static_cast<size_t>(std::max(0, atomsCount)))) {
             GUniquePtr<char> atomName(gdk_atom_name(atom));
             result.append(String::fromUTF8(atomName.get()));
         }
