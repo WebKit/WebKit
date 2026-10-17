@@ -43,6 +43,9 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/text/WTFString.h>
 #import <pal/ios/QuickLookSoftLink.h>
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM) && !PLATFORM(VISION)
+#import <pal/cocoa/ARKitSoftLink.h>
+#endif
 
 #if PLATFORM(VISION)
 SOFT_LINK_PRIVATE_FRAMEWORK(AssetViewer);
@@ -471,6 +474,67 @@ TEST(WebKit, PromptRealityLinkWithRelAR)
         [webView evaluateJavaScript:@"document.getElementById('reality-with-relar-link').click()" completionHandler:nil];
     });
 }
+
+
+#if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM) && !PLATFORM(VISION)
+TEST(WebKit, SystemPreviewCanonicalWebPageURLIsPageURL)
+{
+    RetainPtr<id> previewController;
+    RetainPtr<id> dataSource;
+    RetainPtr<NSURL> canonicalWebPageURL;
+    bool alertPresented = false;
+    bool dataSourceSet = false;
+
+    auto swizzledSetDataSourceBlock = makeBlockPtr([&](id self, SEL _cmd, id newDataSource) {
+        previewController = self;
+        dataSource = newDataSource;
+        dataSourceSet = true;
+    });
+    InstanceMethodSwizzler setDataSourceSwizzler { PAL::getQLPreviewControllerClassSingleton(), @selector(setDataSource:), imp_implementationWithBlock(swizzledSetDataSourceBlock.get()) };
+
+    auto swizzledSetCanonicalWebPageURLBlock = makeBlockPtr([&](id self, SEL _cmd, NSURL *url) {
+        canonicalWebPageURL = url;
+    });
+    InstanceMethodSwizzler canonicalURLSwizzler { PAL::getARQuickLookPreviewItemClassSingleton(), @selector(setCanonicalWebPageURL:), imp_implementationWithBlock(swizzledSetCanonicalWebPageURLBlock.get()) };
+
+    auto swizzledPresentBlock = makeBlockPtr([&](id self, UIViewController *controllerToPresent, BOOL animated, void (^completion)()) {
+        if ([controllerToPresent isKindOfClass:PAL::getQLPreviewControllerClassSingleton()])
+            return;
+
+        EXPECT_TRUE([controllerToPresent isKindOfClass:[UIAlertController class]]);
+        UIAlertController *alert = (UIAlertController *)controllerToPresent;
+        alertPresented = true;
+        // actions[1] is the "View in AR" action.
+        id handler = [alert.actions[1] valueForKey:@"handler"];
+        void (^handlerBlock)(UIAlertAction *) = handler;
+        handlerBlock(alert.actions[1]);
+    });
+    InstanceMethodSwizzler presentSwizzler { [UIViewController class], @selector(presentViewController:animated:completion:), imp_implementationWithBlock(swizzledPresentBlock.get()) };
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+
+    RetainPtr viewController = adoptNS([[UIViewController alloc] init]);
+    RetainPtr uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    [uiDelegate setViewController:viewController.get()];
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+    [webView evaluateJavaScript:@"document.getElementById('arlink').click()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&alertPresented);
+    TestWebKitAPI::Util::run(&dataSourceSet);
+
+    // The preview item is created lazily when QuickLook asks the data source for it.
+    [dataSource previewController:previewController.get() previewItemAtIndex:0];
+    EXPECT_TRUE(!!canonicalWebPageURL);
+
+    // The canonical URL must be the page, not the "UnitBox.usdz" model that the link points to.
+    EXPECT_WK_STREQ([webView URL].absoluteString, [canonicalWebPageURL absoluteString]);
+    EXPECT_FALSE([[canonicalWebPageURL pathExtension] isEqualToString:@"usdz"]);
+}
+#endif // HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM) && !PLATFORM(VISION)
 
 }
 
