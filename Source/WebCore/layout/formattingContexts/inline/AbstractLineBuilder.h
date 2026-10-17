@@ -71,7 +71,6 @@ protected:
     const InlineLayoutState& LEGACY_NODELETE layoutState() const LIFETIME_BOUND;
     InlineLayoutState& LEGACY_NODELETE layoutState() LIFETIME_BOUND;
     const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
-    BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
     const ElementBox& root() const { return m_rootBox; }
     const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND;
 
