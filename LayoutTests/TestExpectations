@@ -3021,7 +3021,6 @@ webkit.org/b/139186 imported/mozilla/svg/text/ignore-text-align-2.svg [ ImageOnl
 webkit.org/b/139192 imported/mozilla/svg/smil/transform/rotate-angle-4.svg [ ImageOnlyFailure ]
 webkit.org/b/139192 imported/mozilla/svg/smil/transform/rotate-angle-5.svg [ ImageOnlyFailure ]
 webkit.org/b/131354 imported/mozilla/svg/blend-difference-stacking.html [ ImageOnlyFailure ]
-webkit.org/b/139210 imported/mozilla/svg/text/textLength-5.svg [ ImageOnlyFailure ]
 webkit.org/b/139210 imported/mozilla/svg/text/textLength-6.svg [ ImageOnlyFailure ]
 webkit.org/b/139237 imported/mozilla/svg/filters/feComposite-1.svg [ ImageOnlyFailure ]
 webkit.org/b/139258 imported/mozilla/svg/text-layout-05.svg [ ImageOnlyFailure ]
@@ -3067,11 +3066,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001.svg [ Im
 imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
-
-# webkit.org/b/61855: textLength with lengthAdjust="spacing" and a list-valued
-# x/y attribute still produces per-chunk div-by-zero and silently drops
-# textLength. Pinned here until the spacing-mode follow-up patch lands.
-imported/w3c/web-platform-tests/svg/text/reftests/textLength-list-y-spacing.svg [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/svg/animations/scripted/syncbase-after-removal.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html [ ImageOnlyFailure ]
