@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKWebArchiveResource_h
-#define WKWebArchiveResource_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
+#pragma once
+
+#include <Security/SecTrust.h>
 #include <WebKit/WKBase.h>
-
-#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKWebArchiveResourceGetTypeID();
-
-WK_EXPORT WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef data, WKURLRef URL, WKStringRef MIMEType, WKStringRef textEncoding);
-
-WK_EXPORT WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResource);
-WK_EXPORT WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResource);
-WK_EXPORT WKStringRef WKWebArchiveResourceCopyMIMEType(WKWebArchiveResourceRef webArchiveResource);
-WK_EXPORT WKStringRef WKWebArchiveResourceCopyTextEncoding(WKWebArchiveResourceRef webArchiveResource);
+WK_EXPORT SecTrustRef WKFrameGetServerTrust(WKFrameRef frame);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif // WKWebArchiveResource_h

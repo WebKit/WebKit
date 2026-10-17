@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKContextPrivateMac_h
-#define WKContextPrivateMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
+#pragma once
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKDeprecated.h>
@@ -75,5 +76,3 @@ WK_EXPORT bool WKContextHandlesSafeBrowsing();
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKContextPrivateMac_h */

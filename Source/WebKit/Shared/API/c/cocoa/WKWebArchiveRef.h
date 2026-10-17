@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKCertificateInfoMac.h"
+#pragma once
 
-WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust)
-{
-    return nullptr;
-}
+#include <WebKit/WKBase.h>
 
-WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
-{
-    return nullptr;
-}
+#include <stddef.h>
 
-CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
-{
-    return nullptr;
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfoRef)
-{
-    return nullptr;
+WK_EXPORT WKTypeID WKWebArchiveGetTypeID();
+
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResource, WKArrayRef subresources, WKArrayRef subframeArchives);
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef data);
+WK_EXPORT WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef range);
+
+WK_EXPORT WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchive);
+WK_EXPORT WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchive);
+WK_EXPORT WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchive);
+WK_EXPORT WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchive);
+
+#ifdef __cplusplus
 }
+#endif

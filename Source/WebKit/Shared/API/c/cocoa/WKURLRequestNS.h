@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,16 @@
 
 #pragma once
 
-#ifdef __OBJC__
-
+#include <Foundation/Foundation.h>
 #include <WebKit/WKBase.h>
-#include <WebKit/WKBundlePage.h>
-#include <WebKit/WKDeprecated.h>
-
-@class PDFDocument;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef page, WKBundleFrameRef frame) WK_C_API_DEPRECATED;
+WK_EXPORT WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest);
+WK_EXPORT NSURLRequest* WKURLRequestCopyNSURLRequest(WKURLRequestRef urlRequest) NS_RETURNS_RETAINED;
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif // __OBJC__

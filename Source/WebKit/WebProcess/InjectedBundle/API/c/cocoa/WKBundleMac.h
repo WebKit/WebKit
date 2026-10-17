@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBundleMac_h
-#define WKBundleMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -41,5 +42,3 @@ WK_EXPORT id WKBundleGetParameters(WKBundleRef bundle);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // WKBundleMac_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKWebArchiveRef_h
-#define WKWebArchiveRef_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -34,19 +33,15 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKWebArchiveGetTypeID();
+WK_EXPORT WKTypeID WKWebArchiveResourceGetTypeID();
 
-WK_EXPORT WKWebArchiveRef WKWebArchiveCreate(WKWebArchiveResourceRef mainResource, WKArrayRef subresources, WKArrayRef subframeArchives);
-WK_EXPORT WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef data);
-WK_EXPORT WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef range);
+WK_EXPORT WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef data, WKURLRef URL, WKStringRef MIMEType, WKStringRef textEncoding);
 
-WK_EXPORT WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchive);
-WK_EXPORT WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchive);
-WK_EXPORT WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchive);
-WK_EXPORT WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchive);
+WK_EXPORT WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResource);
+WK_EXPORT WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResource);
+WK_EXPORT WKStringRef WKWebArchiveResourceCopyMIMEType(WKWebArchiveResourceRef webArchiveResource);
+WK_EXPORT WKStringRef WKWebArchiveResourceCopyTextEncoding(WKWebArchiveResourceRef webArchiveResource);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif // WKWebArchiveRef_h

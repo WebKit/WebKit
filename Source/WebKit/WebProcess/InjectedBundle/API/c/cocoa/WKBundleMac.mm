@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKCertificateInfoMac_h
-#define WKCertificateInfoMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <Security/SecTrust.h>
-#include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
+#import "config.h"
+#import "WKBundleMac.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "InjectedBundle.h"
+#import "WKBundleAPICast.h"
 
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust) WK_C_API_DEPRECATED;
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain) WK_C_API_DEPRECATED;
-WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
-
-// Deprecated
-WK_EXPORT CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
-
-#ifdef __cplusplus
+id WKBundleGetParameters(WKBundleRef bundle)
+{
+    return protect(WebKit::toImpl(bundle))->bundleParameters();
 }
-#endif
-
-#endif /* WKCertificateInfoMac_h */
