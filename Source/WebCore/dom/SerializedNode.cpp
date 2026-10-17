@@ -88,7 +88,7 @@ Ref<Node> SerializedNode::deserialize(SerializedNode&& serializedNode, WebCore::
     Ref node = WTF::switchOn(WTF::move(serializedNode.data), [&] (SerializedNode::Text&& text) -> Ref<Node> {
         return WebCore::Text::create(document, WTF::move(text.data));
     }, [&] (SerializedNode::ProcessingInstruction&& instruction) -> Ref<Node> {
-        return WebCore::ProcessingInstruction::create(document, WTF::move(instruction.target), WTF::move(instruction.data));
+        return WebCore::ProcessingInstruction::createWithoutValidation(document, WTF::move(instruction.target), WTF::move(instruction.data));
     }, [&] (SerializedNode::DocumentType&& type) -> Ref<Node> {
         return WebCore::DocumentType::create(document, type.name, type.publicId, type.systemId);
     }, [&] (SerializedNode::Comment&& comment) -> Ref<Node> {

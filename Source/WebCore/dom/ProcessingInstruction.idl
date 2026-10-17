@@ -22,7 +22,18 @@
 [
     Exposed=Window
 ] interface ProcessingInstruction : CharacterData {
+    [CallWith=CurrentDocument, EnabledBySetting=HTMLProcessingInstructionEnabled] constructor(DOMString target, optional DOMString data = "");
+
     readonly attribute DOMString target;
+
+    // https://dom.spec.whatwg.org/#processinginstruction
+    [EnabledBySetting=HTMLProcessingInstructionEnabled, ImplementedAs=hasPseudoAttributes] boolean hasAttributes();
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] sequence<DOMString> getAttributeNames();
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] DOMString? getAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] undefined setAttribute([AtomString] DOMString name, [AtomString] DOMString value);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] undefined removeAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] boolean toggleAttribute([AtomString] DOMString name, optional boolean force);
+    [EnabledBySetting=HTMLProcessingInstructionEnabled] boolean hasAttribute([AtomString] DOMString name);
 
     // Extension from CSSOM (https://drafts.csswg.org/cssom/#linkstyle).
     readonly attribute StyleSheet? sheet;
