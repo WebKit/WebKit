@@ -77,6 +77,10 @@ struct SizeFeatureSchema : public FeatureSchema {
         if (!renderer)
             return EvaluationResult::Unknown;
 
+        // A box that is not in the render tree yet has no layout to query.
+        if (!renderer->parent())
+            return EvaluationResult::Unknown;
+
         if (!renderer->hasEligibleContainmentForSizeQuery())
             return EvaluationResult::Unknown;
 
