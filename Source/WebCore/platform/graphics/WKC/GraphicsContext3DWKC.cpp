@@ -1679,9 +1679,14 @@ GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer*)
 
     RefPtr<ImageData> img = ImageData::create(IntSize(wsize.fWidth, wsize.fHeight));
     if (!img) {
-        wkcMemoryNotifyNoMemoryPeer(wsize.fWidth*wsize.fHeight);
+        wkcGLUnlockImagePeer(peer(), bitmap);
+        wkcMemoryNotifyNoMemoryPeer(wsize.fWidth * wsize.fHeight);
         return 0;
     }
+    // Readback must operate on the current GL context and write one RGBA
+    // pixel for every source pixel. Keeping the writes inside the x loop is
+    // important: writing once per row silently truncated canvas readback.
+    makeContextCurrent();
     unsigned char* dest = img->data()->data();
 
     int r=0, g=0, b=0, a=0;
@@ -1728,13 +1733,17 @@ GraphicsContext3D::paintRenderingResultsToImageData(DrawingBuffer*)
                 break;
             }
             default:
+                // Unknown peer formats cannot be decoded; return transparent
+                // black for the affected pixel rather than reusing the prior
+                // pixel's channel values.
+                r = g = b = a = 0;
                 break;
             }
+            *dest++ = static_cast<unsigned char>(r);
+            *dest++ = static_cast<unsigned char>(g);
+            *dest++ = static_cast<unsigned char>(b);
+            *dest++ = static_cast<unsigned char>(a);
         }
-        *dest++ = r;
-        *dest++ = g;
-        *dest++ = b;
-        *dest++ = a;
     }
 
     wkcGLUnlockImagePeer(peer(), bitmap);
