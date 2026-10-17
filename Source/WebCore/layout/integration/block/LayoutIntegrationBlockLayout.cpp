@@ -37,6 +37,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderDescendantIterator.h"
+#include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"
 #include "ScrollbarUpdateScope.h"
@@ -95,15 +96,76 @@ std::pair<LayoutUnit, LayoutUnit> BlockLayout::computeIntrinsicInlineSizes(const
     return { sizes.minimum, sizes.maximum };
 }
 
+void BlockLayout::layoutOutOfFlowBoxes()
+{
+    auto paintInvalidation = PaintInvalidation { };
+    layoutOutOfFlowBoxes(rootRenderer(), paintInvalidation);
+}
+
+// The static position the in-flow layout of its parent gave the box (RenderLayer::staticInlinePosition, staticBlockPosition), relative to the
+// border box of its block container, moved through the positions of the boxes in between (like PositionedLayoutConstraints::computedInlineStaticDistance)
+// to the padding box of its containing block. Coverage keeps those boxes horizontal and unflipped.
+static Layout::OutOfFlowGeometry::StaticPosition staticPosition(const RenderBox& outOfFlowBox, const RenderBlock& containingBlock)
+{
+    CheckedPtr<const RenderElement> staticPositionBlock = outOfFlowBox.parent();
+    while (staticPositionBlock->isInlineBox())
+        staticPositionBlock = staticPositionBlock->parent();
+    CheckedRef blockContainer = downcast<RenderBlock>(*staticPositionBlock);
+    CheckedRef layer = *outOfFlowBox.layer();
+    auto position = LayoutPoint { blockContainer->writingMode().isLogicalLeftInlineStart() ? layer->staticInlinePosition() : blockContainer->logicalWidth() - layer->staticInlinePosition(), layer->staticBlockPosition() };
+    // An out-of-flow box between them is positioned in its own containing block, which is where container() goes.
+    for (CheckedPtr<const RenderElement> box = blockContainer.ptr(); box != &containingBlock; box = box->container()) {
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*box))
+            position.moveBy(renderBox->location());
+    }
+    auto paddingBox = containingBlock.paddingBoxRect();
+    auto inlinePosition = containingBlock.writingMode().isLogicalLeftInlineStart() ? position.x() - paddingBox.x() : paddingBox.maxX() - position.x();
+    return { inlinePosition, position.y() - paddingBox.y(), blockContainer->writingMode().isBidiLTR() != containingBlock.writingMode().isBidiLTR() };
+}
+
+// Like RenderBlock::layoutOutOfFlowBoxes once the containing block has its size: the out-of-flow boxes BlockLayout::updateRenderers registered
+// on it (RenderBlock::outOfFlowBoxes()).
+void BlockLayout::layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation& paintInvalidation)
+{
+    auto* outOfFlowBoxes = containingBlock.outOfFlowBoxes();
+    if (!outOfFlowBoxes)
+        return;
+    auto paddingBox = containingBlock.paddingBoxRect();
+    auto paddingBoxInlineStart = containingBlock.writingMode().isLogicalLeftInlineStart() ? paddingBox.x() : containingBlock.borderBoxWidth() - paddingBox.maxX();
+    auto outOfFlowContainingBlock = Layout::OutOfFlowContainingBlock { containingBlock, paddingBoxInlineStart, paddingBox.y(), paddingBox.width(), paddingBox.height() };
+    auto integrationUtils = BlockIntegrationUtils { paintInvalidation };
+    auto blockLayoutState = Layout::BlockLayoutState { { } };
+    // Laying out a box registers the out-of-flow boxes in it, which can make the list grow while it is iterated (like in RenderBlock::layoutOutOfFlowBoxes).
+    for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
+        auto result = Layout::BlockFormattingContext { rootRenderer(), integrationUtils, blockLayoutState }.layoutOutOfFlowBox(outOfFlowBox, outOfFlowContainingBlock, staticPosition(outOfFlowBox, containingBlock));
+        LOG_WITH_STREAM(Layout, stream << "BlockLayout for out-of-flow box (" << outOfFlowBox.ptr() << "): " << result);
+        updateRenderers(result, paintInvalidation);
+    }
+    SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableContainingBlock = const_cast<RenderBlock&>(containingBlock);
+    // The transforms of the boxes that depend on the size of their containing block (offset-path), before the overflow they extend.
+    mutableContainingBlock->updateOutOfFlowDescendantTransformsAfterLayout();
+    // Fixed positioned boxes do not scroll with the content, so they add no scrollable overflow (RenderBlock::addOverflowFromOutOfFlowBoxes).
+    for (CheckedRef outOfFlowBox : *outOfFlowBoxes) {
+        if (outOfFlowBox->isAbsolutelyPositioned())
+            mutableContainingBlock->addOverflowFromContainedBox(outOfFlowBox);
+    }
+}
+
 void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, PaintInvalidation& paintInvalidation)
 {
     // This is the only place where the block formatting context's renderers are written, and the only place where its logical
     // coordinates (from the inline start of each containing block) are mapped to the render tree's.
-    auto mutableRenderer = [](const Layout::BlockLayoutResult::Box& box) -> CheckedRef<RenderBox> {
-        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef renderer = const_cast<RenderBox&>(box.renderer.get());
-        return renderer;
+    auto mutableRenderer = [](const CheckedRef<const RenderBox>& renderer) -> CheckedRef<RenderBox> {
+        SUPPRESS_MEMORY_UNSAFE_CAST CheckedRef mutableRenderer = const_cast<RenderBox&>(renderer.get());
+        return mutableRenderer;
     };
 
+    // The containing block of an in-flow block-level box is its parent.
+    auto containingBlockOf = [](const RenderBox& box) -> const RenderBox& {
+        if (box.isOutOfFlowPositioned())
+            return *box.containingBlock();
+        return downcast<RenderBox>(*box.parent());
+    };
     // The paint invalidation is what RenderBlockFlow::layoutBlockChild and layoutBlock do, from the geometry before anything is written.
     struct PreviousState {
         LayoutRect borderBoxRect;
@@ -114,16 +176,16 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     previousStates.reserveInitialCapacity(result.boxes.size());
     layoutRepainters.reserveInitialCapacity(result.boxes.size());
     for (auto& box : result.boxes) {
-        CheckedRef renderer = mutableRenderer(box);
+        CheckedRef renderer = mutableRenderer(box.renderer);
         previousStates.append({ renderer->borderBoxRectInContainer(), renderer->everHadLayout() });
         layoutRepainters.append(LayoutRepainter { renderer });
     }
 
     for (auto& box : result.boxes) {
-        CheckedRef renderer = mutableRenderer(box);
+        CheckedRef renderer = mutableRenderer(box.renderer);
         auto& geometry = box.geometry;
-        // Margins follow the direction of the containing block, which is the parent of an in-flow block-level box.
-        auto containingBlockWritingMode = renderer->parent()->writingMode();
+        // Margins follow the direction of the containing block.
+        auto containingBlockWritingMode = containingBlockOf(renderer).writingMode();
         renderer->setMarginStart(geometry.marginStart(), containingBlockWritingMode);
         renderer->setMarginEnd(geometry.marginEnd(), containingBlockWritingMode);
         renderer->setMarginBefore(geometry.marginBefore(), containingBlockWritingMode);
@@ -143,13 +205,29 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     // The render tree measures the logical left from the left (top in vertical writing modes) edge of the containing block in
     // either direction, so placing a box in a right-to-left containing block needs the containing block's final width.
     for (auto& box : result.boxes) {
-        CheckedRef renderer = mutableRenderer(box);
+        CheckedRef renderer = mutableRenderer(box.renderer);
         auto& geometry = box.geometry;
-        CheckedRef containingBlock = downcast<RenderBox>(*renderer->parent());
+        CheckedRef containingBlock = containingBlockOf(renderer);
         auto logicalLeft = Layout::BoxGeometry::borderBoxLeft(geometry);
         if (!containingBlock->writingMode().isLogicalLeftInlineStart())
             logicalLeft = containingBlock->logicalWidth() - logicalLeft - geometry.borderBoxWidth();
         renderer->setLogicalLocation({ logicalLeft, Layout::BoxGeometry::borderBoxTop(geometry) });
+    }
+
+    // What RenderBlockFlow::adjustOutOfFlowBlock and layoutBlockChildren do for an out-of-flow child: its layer keeps the static position, and its
+    // containing block registers it, to lay it out once it has its size.
+    for (auto& outOfFlowBox : result.outOfFlowBoxes) {
+        CheckedRef renderer = mutableRenderer(outOfFlowBox.renderer);
+        CheckedRef layer = *renderer->layer();
+        if (layer->staticBlockPosition() != outOfFlowBox.staticBlockPosition) {
+            layer->setStaticBlockPosition(outOfFlowBox.staticBlockPosition);
+            CheckedRef style = renderer->style();
+            if (style->hasStaticBlockPosition(renderer->parent()->isHorizontalWritingMode()))
+                renderer->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        }
+        layer->setStaticInlinePosition(outOfFlowBox.staticInlinePosition);
+        CheckedPtr containingBlock = renderer->containingBlock();
+        containingBlock->addOutOfFlowBox(renderer);
     }
 
     // How far each box and its containing block moved within the root. While a box is laid out, the render tree's layout delta holds
@@ -159,7 +237,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     auto containingBlockIndexes = Vector<size_t> { };
     for (auto boxIndex = result.boxes.size(); boxIndex--;) {
         CheckedRef renderer = result.boxes[boxIndex].renderer;
-        while (!containingBlockIndexes.isEmpty() && result.boxes[containingBlockIndexes.last()].renderer.ptr() != renderer->parent())
+        while (!containingBlockIndexes.isEmpty() && result.boxes[containingBlockIndexes.last()].renderer.ptr() != &containingBlockOf(renderer))
             containingBlockIndexes.removeLast();
         containingBlockLocationChanges[boxIndex] = containingBlockIndexes.isEmpty() ? LayoutSize { } : locationChanges[containingBlockIndexes.last()];
         locationChanges[boxIndex] = containingBlockLocationChanges[boxIndex] + (previousStates[boxIndex].borderBoxRect.location() - renderer->location());
@@ -178,7 +256,7 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
     // Descendants come before their ancestors, which the overflow of the ancestors needs.
     for (size_t boxIndex = 0; boxIndex < result.boxes.size(); ++boxIndex) {
         auto& box = result.boxes[boxIndex];
-        CheckedRef renderer = mutableRenderer(box);
+        CheckedRef renderer = mutableRenderer(box.renderer);
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
             blockFlow->clearOverflow();
             // Like RenderBlockFlow::layoutBlock, the content area ends where the content does, not where the box does.
@@ -192,6 +270,10 @@ void BlockLayout::updateRenderers(const Layout::BlockLayoutResult& result, Paint
             // The transforms of the children that depend on the size of their containing block (offset-path), before the overflow they extend.
             blockFlow->updateInFlowDescendantTransformsAfterLayout();
             blockFlow->computeInFlowOverflow(contentArea, isHorizontalWritingMode ? RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaX : RenderBox::ComputeOverflowOptions::MarginsExtendContentAreaY);
+            // Like RenderBlockFlow::layoutBlock, once the box has its size and its in-flow overflow.
+            invalidateWithLayoutDelta(locationChanges[boxIndex], [&] {
+                layoutOutOfFlowBoxes(*blockFlow, paintInvalidation);
+            });
         }
         // Like RenderBlockFlow::layoutBlock: the transform depends on the size of the box (transform-origin).
         renderer->updateLayerTransform();

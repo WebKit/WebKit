@@ -29,6 +29,8 @@
 #include "BlockFormattingUtils.h"
 #include "BlockIntegrationUtils.h"
 #include "BlockItemsBuilder.h"
+#include "Element.h"
+#include "OutOfFlowGeometry.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"
 #include "RenderView.h"
@@ -78,6 +80,9 @@ BlockLayoutResult BlockFormattingContext::layout(const ConstraintsForBlockConten
             break;
         case BlockItem::Type::IndependentFormattingContextRoot:
             handleIndependentFormattingContextRoot(box, result);
+            break;
+        case BlockItem::Type::OutOfFlowBox:
+            handleOutOfFlowBox(box, result);
             break;
         }
     }
@@ -157,9 +162,107 @@ void BlockFormattingContext::handleIndependentFormattingContextRoot(const Render
         auto rootResult = BlockFormattingContext { root, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, rootState.borderAndPaddingBefore }, rootState.contentBoxBlockSize });
         result.boxes.appendVector(WTF::move(rootResult.boxes));
         m_blockLayoutState.marginCollapse().resetAdjoiningMargins(rootState.contentBoxLogicalTop() + rootResult.intrinsicContentBlockSize);
+        result.outOfFlowBoxes.appendVector(WTF::move(rootResult.outOfFlowBoxes));
     }
     m_blockLayoutState.marginCollapse().endBlockContainer(rootState, m_blockLayoutState.containingBlockStates().last());
     placeInContainingBlock(box, WTF::move(rootState), result);
+}
+
+void BlockFormattingContext::handleOutOfFlowBox(const RenderBox& box, BlockLayoutResult& result)
+{
+    auto& parentState = m_blockLayoutState.containingBlockStates().last();
+    ASSERT(parentState.blockContainer.ptr() == box.parent());
+    CheckedRef parentStyle = parentState.blockContainer->style();
+    auto isLeftToRight = parentStyle->writingMode().isBidiLTR();
+    // Boxes in the top layer use the initial containing block as their static position rectangle (css-position-4 §2.1).
+    if (RefPtr element = box.element(); element && element->isInTopLayer()) [[unlikely]] {
+        result.outOfFlowBoxes.append({ box, { }, { } });
+        return;
+    }
+
+    // Like RenderBlockFlow::adjustOutOfFlowBlock: where the block-start margin edge of the box would be with position: static. While the
+    // parent still waits for its top, that is its content box top, which its block-start margins collapse with.
+    auto staticBlockPosition = parentState.borderBoxLogicalTop ? m_blockLayoutState.marginCollapse().collapsedLogicalBottom() - *parentState.borderBoxLogicalTop : parentState.borderAndPaddingBefore;
+
+    // A box that was inline-level before it got blockified goes where text-align puts the start of a line (RenderBlockFlow::staticInlinePositionForOriginalDisplayInline).
+    auto& inlineRange = parentState.inlineRange;
+    auto staticInlinePosition = [&] {
+        if (!box.style().originalDisplay().isInlineType())
+            return inlineRange.min();
+        switch (parentStyle->textAlign()) {
+        case Style::TextAlign::Left:
+        case Style::TextAlign::WebKitLeft:
+            return isLeftToRight ? inlineRange.min() : inlineRange.max();
+        case Style::TextAlign::Right:
+        case Style::TextAlign::WebKitRight:
+            return isLeftToRight ? inlineRange.max() : inlineRange.min();
+        case Style::TextAlign::Center:
+        case Style::TextAlign::WebKitCenter:
+            return inlineRange.min() + inlineRange.size() / 2;
+        case Style::TextAlign::End:
+            return inlineRange.max();
+        case Style::TextAlign::Justify:
+        case Style::TextAlign::Start:
+            break;
+        }
+        return inlineRange.min();
+    };
+    result.outOfFlowBoxes.append({ box, staticInlinePosition(), staticBlockPosition });
+}
+
+// Coverage keeps the writing mode of the containing block horizontal.
+BlockLayoutResult BlockFormattingContext::layoutOutOfFlowBox(const RenderBox& outOfFlowBox, const OutOfFlowContainingBlock& containingBlock, const OutOfFlowGeometry::StaticPosition& staticPosition)
+{
+    auto result = BlockLayoutResult { };
+    CheckedRef box = downcast<RenderBlockFlow>(outOfFlowBox);
+    auto geometry = computeBorderAndPadding(box, containingBlock.inlineSize);
+    auto outOfFlowGeometry = OutOfFlowGeometry { box, { containingBlock.inlineSize, containingBlock.blockSize, containingBlock.box->writingMode() }, staticPosition, geometry.horizontalBorderAndPadding(), geometry.verticalBorderAndPadding() };
+
+    auto inlineAxis = outOfFlowGeometry.computeInlineAxisGeometry();
+    geometry.setContentBoxWidth(inlineAxis.borderBoxSize - geometry.horizontalBorderAndPadding());
+    geometry.setHorizontalMargin({ inlineAxis.marginStart, inlineAxis.marginEnd });
+    geometry.setLeft(containingBlock.paddingBoxInlineStart + inlineAxis.borderBoxStart);
+    auto contentBoxBlockSize = outOfFlowGeometry.definiteContentBoxBlockSize();
+
+    // The box establishes an independent formatting context for its content.
+    auto boxState = ContainingBlockState {
+        .blockContainer = box,
+        .geometry = geometry,
+        .inlineRange = { geometry.borderAndPaddingStart(), geometry.contentBoxWidth() },
+        .borderBoxLogicalTop = 0_lu,
+        .borderAndPaddingBefore = geometry.borderAndPaddingBefore(),
+        .contentBoxBlockSize = contentBoxBlockSize,
+        .margins = { }
+    };
+    auto intrinsicContentBlockSize = LayoutUnit { };
+    if (box->firstChild()) {
+        // Its content is in a block formatting context of its own, with a block layout state of its own.
+        auto blockLayoutState = BlockLayoutState { { } };
+        if (box->childrenInline()) {
+            auto inlineContentLayoutResult = integrationUtils().layoutInlineContent(box.get(), constraintsForInlineContent(box, boxState), geometry, blockLayoutState);
+            if (inlineContentLayoutResult.hasLineBoxes)
+                intrinsicContentBlockSize = inlineContentLayoutResult.contentBlockSize;
+        } else {
+            auto horizontalConstraints = HorizontalConstraints { boxState.inlineRange.min(), boxState.inlineRange.size() };
+            auto contentResult = BlockFormattingContext { box, integrationUtils(), blockLayoutState }.layout({ { horizontalConstraints, boxState.borderAndPaddingBefore }, contentBoxBlockSize });
+            intrinsicContentBlockSize = contentResult.intrinsicContentBlockSize;
+            result.boxes.appendVector(WTF::move(contentResult.boxes));
+            result.outOfFlowBoxes.appendVector(WTF::move(contentResult.outOfFlowBoxes));
+        }
+    }
+
+    auto blockAxis = outOfFlowGeometry.computeBlockAxisGeometry(intrinsicContentBlockSize);
+    geometry.setContentBoxHeight(blockAxis.borderBoxSize - geometry.verticalBorderAndPadding());
+    geometry.setVerticalMargin({ blockAxis.marginStart, blockAxis.marginEnd });
+    geometry.setTop(containingBlock.paddingBoxBlockStart + blockAxis.borderBoxStart);
+
+    auto margins = [](LayoutUnit margin) {
+        auto adjoiningMargins = AdjoiningMargins { };
+        adjoiningMargins.add(margin);
+        return adjoiningMargins;
+    };
+    result.boxes.append({ box, geometry, intrinsicContentBlockSize, margins(geometry.marginBefore()), margins(geometry.marginAfter()), false, false });
+    return result;
 }
 
 ContainingBlockState BlockFormattingContext::containingBlockStateForRoot(const ConstraintsForBlockContent& constraints) const
@@ -306,6 +409,9 @@ IntrinsicWidthConstraints BlockFormattingContext::computeIntrinsicInlineSizes(co
         }
         case BlockItem::Type::IndependentFormattingContextRoot:
             addContribution(blockContainerSizes.last(), outerInlineSizes(box, computeIntrinsicInlineSizes(downcast<RenderBlockFlow>(box))));
+            break;
+        case BlockItem::Type::OutOfFlowBox:
+            // Out-of-flow boxes do not contribute to the intrinsic sizes of their parent (css-sizing-3 §5.2).
             break;
         }
     }

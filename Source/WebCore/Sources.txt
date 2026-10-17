@@ -2062,6 +2062,7 @@ layout/LayoutUnits.cpp
 layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp @header:RenderStyleGetters
 layout/floats/PlacedFloats.cpp @header:RenderStyleGetters
+layout/formattingContexts/OutOfFlowGeometry.cpp @header:RenderStyleGetters
 layout/formattingContexts/block/BlockFormattingContext.cpp @header:RenderStyleGetters
 layout/formattingContexts/block/BlockFormattingState.cpp
 layout/formattingContexts/block/BlockFormattingUtils.cpp
