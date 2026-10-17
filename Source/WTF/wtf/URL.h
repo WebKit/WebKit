@@ -318,7 +318,7 @@ WTF_EXPORT_PRIVATE bool isValidJavaScriptURL(StringView url);
 // These are operations that aren't faster on a parsed URL.
 // These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
 
-WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool LEGACY_NODELETE protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);

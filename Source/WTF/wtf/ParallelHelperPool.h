@@ -69,7 +69,7 @@ class ParallelHelperPool final : public ThreadSafeRefCounted<ParallelHelperPool>
     WTF_MAKE_TZONE_ALLOCATED(ParallelHelperPool);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ParallelHelperPool);
 public:
-    WTF_EXPORT_PRIVATE static Ref<ParallelHelperPool> create(ASCIILiteral threadName);
+    WTF_EXPORT_PRIVATE static Ref<ParallelHelperPool> LEGACY_NODELETE create(ASCIILiteral threadName);
     WTF_EXPORT_PRIVATE ~ParallelHelperPool();
 
     WTF_EXPORT_PRIVATE void ensureThreads(unsigned numThreads);

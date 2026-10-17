@@ -960,10 +960,10 @@ public:
     Iterator& operator=(const Iterator&) = delete;
     Iterator& operator=(Iterator&&) = delete;
 
-    WTF_EXPORT_PRIVATE StringView operator*() const;
+    WTF_EXPORT_PRIVATE StringView LEGACY_NODELETE operator*() const;
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
-    WTF_EXPORT_PRIVATE bool operator==(const Iterator&) const;
+    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE operator==(const Iterator&) const;
 
 private:
     class Impl;

@@ -59,7 +59,7 @@ public:
     MediaTime(const MediaTime&) = default;
 
     static MediaTime LEGACY_NODELETE createWithFloat(float floatTime);
-    static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
+    static MediaTime LEGACY_NODELETE createWithFloat(float floatTime, uint32_t timeScale);
     static MediaTime LEGACY_NODELETE createWithDouble(double doubleTime);
     static MediaTime createWithDouble(double doubleTime, uint32_t timeScale);
     static MediaTime createWithSeconds(Seconds seconds) { return createWithDouble(seconds.value()); }
@@ -76,9 +76,9 @@ public:
     MediaTime LEGACY_NODELETE operator-() const;
     MediaTime operator*(int32_t) const;
     bool LEGACY_NODELETE operator!() const;
-    explicit operator bool() const;
+    explicit LEGACY_NODELETE operator bool() const;
 
-    WTF_EXPORT_PRIVATE friend std::partial_ordering operator<=>(const MediaTime&, const MediaTime&);
+    WTF_EXPORT_PRIVATE friend std::partial_ordering LEGACY_NODELETE operator<=>(const MediaTime&, const MediaTime&);
     friend bool operator==(const MediaTime& a, const MediaTime& b) { return is_eq(a <=> b); }
     bool LEGACY_NODELETE isBetween(const MediaTime&, const MediaTime&) const;
 

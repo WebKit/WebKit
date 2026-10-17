@@ -367,11 +367,11 @@ class DoubleToStringConverter {
   bool HandleSpecialValues(double value, StringBuilder* result_builder) const;
   // Constructs an exponential representation (i.e. 1.234e56).
   // The given exponent assumes a decimal point after the first decimal digit.
-  void CreateExponentialRepresentation(std::span<const char> decimal_digits,
+  void LEGACY_NODELETE CreateExponentialRepresentation(std::span<const char> decimal_digits,
                                        int exponent,
                                        StringBuilder* result_builder) const;
   // Creates a decimal representation (i.e 1234.5678).
-  void CreateDecimalRepresentation(std::span<const char> decimal_digits,
+  void LEGACY_NODELETE CreateDecimalRepresentation(std::span<const char> decimal_digits,
                                    int decimal_point,
                                    int digits_after_point,
                                    StringBuilder* result_builder) const;

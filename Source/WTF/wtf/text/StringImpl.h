@@ -566,8 +566,8 @@ private:
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, std::span<const CharacterType>);
 
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(std::span<const Latin1Character>);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(std::span<const char16_t>);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> LEGACY_NODELETE createWithoutCopyingNonEmpty(std::span<const Latin1Character>);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> LEGACY_NODELETE createWithoutCopyingNonEmpty(std::span<const char16_t>);
 
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(std::span<const CharacterType> characters, NOESCAPE const Predicate&);

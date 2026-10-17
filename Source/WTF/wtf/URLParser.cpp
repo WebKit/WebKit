@@ -431,7 +431,7 @@ ALWAYS_INLINE void URLParser::appendToASCIIBuffer(std::span<const char16_t> char
     copyElements(m_asciiBuffer.mutableSpan().subspan(offset), characters);
 }
 
-template<bool special> static constexpr bool isInQueryEncodeSet(Latin1Character character) { return shouldPercentEncodeQueryByte(character, special); }
+template<bool special> static constexpr bool LEGACY_NODELETE isInQueryEncodeSet(Latin1Character character) { return shouldPercentEncodeQueryByte(character, special); }
 
 template<auto isInEncodeSet, Latin1Character... stopCharacters>
 static consteval bool stopCharactersCoverEncodeSet()

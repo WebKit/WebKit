@@ -46,7 +46,7 @@ NumberToStringSpan numberToStringWithTrailingPoint(double d, NumberToStringBuffe
     return builder.Finalize();
 }
 
-static inline void truncateTrailingZeros(std::span<const char> buffer, double_conversion::StringBuilder& builder)
+static inline void LEGACY_NODELETE truncateTrailingZeros(std::span<const char> buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();
     size_t decimalPointPosition = 0;

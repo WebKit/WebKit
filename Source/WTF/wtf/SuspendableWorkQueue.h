@@ -37,14 +37,14 @@ class WTF_EXPORT_PRIVATE SuspendableWorkQueue final : public WorkQueue {
 public:
     using QOS = WorkQueue::QOS;
     enum class ShouldLog : bool { No, Yes };
-    static Ref<SuspendableWorkQueue> create(ASCIILiteral name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
+    static Ref<SuspendableWorkQueue> LEGACY_NODELETE create(ASCIILiteral name, QOS = QOS::Default, ShouldLog = ShouldLog::No);
     void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
     void resume();
     void dispatch(Function<void()>&&) final;
     void dispatchWithQOS(Function<void()>&&, QOS);
     void dispatchAfter(Seconds, Function<void()>&&) final;
     void dispatchSync(Function<void()>&&) final;
-    bool isSuspended() const;
+    bool LEGACY_NODELETE isSuspended() const;
 
 private:
     SuspendableWorkQueue(ASCIILiteral name, QOS, ShouldLog);

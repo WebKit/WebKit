@@ -44,7 +44,7 @@ namespace detail {
 
 template <class Float, class FloatTraits, Mode mode, PrintTrailingZero print_trailing_zero>
 WTF_EXPORT_PRIVATE extern std::span<char> to_chars_impl(typename FloatTraits::carrier_uint significand, int32_t exponent, std::span<char> buffer);
-WTF_EXPORT_PRIVATE extern std::span<char> to_shortest(const uint64_t significand, int32_t exponent, std::span<char> buffer);
+WTF_EXPORT_PRIVATE extern std::span<char> LEGACY_NODELETE to_shortest(const uint64_t significand, int32_t exponent, std::span<char> buffer);
 
 template <>
 WTF_EXPORT_PRIVATE std::span<char> to_chars_impl<double, default_float_traits<double>, Mode::ToExponential, PrintTrailingZero::No>(uint64_t significand, int32_t exponent, std::span<char> buffer);

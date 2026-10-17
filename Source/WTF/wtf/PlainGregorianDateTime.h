@@ -122,7 +122,7 @@ public:
     // Decomposes a time value that the caller has already shifted into the zone the fields should
     // read in, which is why there is no offset to pass: utcOffsetInMinute and isDST come out zero.
     // Returns a value that converts to false for input outside the representable range.
-    WTF_EXPORT_PRIVATE static PlainGregorianDateTime fromMilliseconds(double millisecondsFromEpoch);
+    WTF_EXPORT_PRIVATE static PlainGregorianDateTime LEGACY_NODELETE fromMilliseconds(double millisecondsFromEpoch);
 
     WTF_EXPORT_PRIVATE static PlainGregorianDateTime currentLocalTime();
 

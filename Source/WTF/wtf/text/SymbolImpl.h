@@ -52,7 +52,7 @@ public:
 
     RegisteredSymbolImpl* asRegisteredSymbolImpl();
 
-    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> createNullSymbol();
+    WTF_EXPORT_PRIVATE static Ref<SymbolImpl> LEGACY_NODELETE createNullSymbol();
     WTF_EXPORT_PRIVATE static Ref<SymbolImpl> create(StringImpl& rep);
 
     class StaticSymbolImpl final : private StringImplShape {
