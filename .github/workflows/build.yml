@@ -55,7 +55,7 @@ jobs:
       - name: Install CMake + build tools
         run: |
           apt-get update -q
-          apt-get install -y cmake ninja-build python3 libicu-dev libssl-dev libcurl4-openssl-dev libsqlite3-dev libpsl-dev gperf ruby perl ccache
+          apt-get install -y cmake ninja-build python3 libicu-dev libssl-dev libcurl4-openssl-dev libsqlite3-dev libpsl-dev libxml2-dev gperf ruby perl ccache
 
       # ccache makes the WKC modernization loop fast: object files are keyed on
       # preprocessed content, not mtime, so a fresh checkout (which re-stamps every
