@@ -1565,6 +1565,198 @@ static void testWebKitInputMethodContextBlurRefocusInteraction(InputMethodTest* 
     g_assert_true(test->isInputMethodEnabled());
 }
 
+#if ENABLE(WPE_PLATFORM)
+// Hiding the view, as when switching to another tab, takes the focus away from the page. The focused field gets a
+// blur event but stays the focused element of its document, and gets a focus event again when the view is shown.
+// The second script in each helper makes sure that a state update held back until the next run loop iteration, if
+// any, has reached the UI process before the caller checks it.
+static void hideViewAndWaitUntilPageUnfocused(InputMethodTest* test)
+{
+    test->hideView();
+    test->assertJavaScriptBecomesTrue("!document.hasFocus()");
+    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+}
+
+static void showViewAndWaitUntilPageFocused(InputMethodTest* test)
+{
+    test->showInWindow();
+    test->assertJavaScriptBecomesTrue("document.hasFocus()");
+    test->runJavaScriptAndWaitUntilFinished("void 0", nullptr);
+}
+
+static bool loadFieldForViewFocusTest(InputMethodTest* test)
+{
+    if (!test->m_display) {
+        g_test_skip("Needs the WPE platform API");
+        return false;
+    }
+
+    test->loadHtml("<style>*{position:absolute;left:0;width:200px;height:30px;margin:0;padding:0;border:0}</style>"
+        "<input id='editable' style='top:0' spellcheck='false'>"
+        "<input id='second' style='top:50px' spellcheck='false'>", nullptr);
+    test->waitUntilLoadFinished();
+    return true;
+}
+
+static void clickFieldAndWaitUntilInputMethodEnabled(InputMethodTest* test)
+{
+    test->clickMouseButton(20, 15);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    test->waitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+}
+
+static void testWebKitInputMethodContextViewFocusOutAndIn(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A field focused by a user interaction gets the input method back, with the on-screen keyboard.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    g_assert_false(test->isInputMethodEnabled());
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_FREE_FORM);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+}
+
+static void testWebKitInputMethodContextViewFocusOutAndInScriptFocus(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A field focused by script, without a user interaction, gets the input method back, and the on-screen keyboard
+    // stays inhibited as it was before the view was hidden. The page getting the focus back is not a user interaction.
+    test->focusEditableAndWaitUntilInputMethodEnabled();
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+    hideViewAndWaitUntilPageUnfocused(test);
+    g_assert_false(test->isInputMethodEnabled());
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+}
+
+static void testWebKitInputMethodContextViewFocusOutRefocus(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A script focusing the focused field again while the page has no focus does not change anything: the field gets
+    // the input method back, with the on-screen keyboard as before the view was hidden.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    test->runJavaScriptAndWaitUntilFinished("editable.focus()", nullptr);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+}
+
+static void testWebKitInputMethodContextViewFocusOutFocusChange(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A script moving the focus while the page has no focus is a focus change by script, even if the focus ends up
+    // back on the field the user tapped: the field gets the input method back, with the on-screen keyboard inhibited.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    test->runJavaScriptAndWaitUntilFinished("second.focus(); editable.focus()", nullptr);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+}
+
+static void testWebKitInputMethodContextViewFocusOutWindowFocusHandler(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A window focus event handler moving the focus when the page gets the focus back is a focus change by script:
+    // the new field gets the input method with the on-screen keyboard inhibited, and the embedder sees one focus in.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    test->runJavaScriptAndWaitUntilFinished("addEventListener('focus', () => second.focus())", nullptr);
+    hideViewAndWaitUntilPageUnfocused(test);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'second'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_INHIBIT_OSK);
+}
+
+static void testWebKitInputMethodContextViewFocusOutBlur(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A field blurred while the page has no focus does not get the input method back.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    test->runJavaScriptAndWaitUntilFinished("editable.blur()", nullptr);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement === document.body");
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_false(test->isInputMethodEnabled());
+}
+
+static void testWebKitInputMethodContextViewFocusOutRemove(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A field removed while the page has no focus does not get the input method back.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    test->runJavaScriptAndWaitUntilFinished("editable.remove()", nullptr);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement === document.body");
+    g_assert_cmpuint(test->focusInCount(), ==, 0);
+    g_assert_false(test->isInputMethodEnabled());
+}
+
+static void testWebKitInputMethodContextViewFocusOutTypeChange(InputMethodTest* test, gconstpointer)
+{
+    if (!loadFieldForViewFocusTest(test))
+        return;
+
+    // A field whose type changes while the page has no focus gets the input method back with its new content type,
+    // and with the on-screen keyboard as before the view was hidden.
+    clickFieldAndWaitUntilInputMethodEnabled(test);
+    hideViewAndWaitUntilPageUnfocused(test);
+    test->runJavaScriptAndWaitUntilFinished("editable.type = 'email'", nullptr);
+
+    test->clearInputMethodCounters();
+    showViewAndWaitUntilPageFocused(test);
+    test->assertJavaScriptBecomesTrue("document.activeElement.id === 'editable'");
+    g_assert_true(test->isInputMethodEnabled());
+    g_assert_cmpuint(test->focusInCount(), ==, 1);
+    g_assert_cmpuint(test->purpose(), ==, WEBKIT_INPUT_PURPOSE_EMAIL);
+    g_assert_cmpuint(test->hints(), ==, WEBKIT_INPUT_HINT_NONE);
+}
+#endif
+
 static const char* navigationPageHTML = "<html><body>"
     "<input id='editable' type='text' spellcheck='false'>"
     "<script>addEventListener('pageshow', event => window.shownFromCache = event.persisted);</script>"
@@ -2131,6 +2323,16 @@ void beforeAll()
     InputMethodTest::add("WebKitInputMethodContext", "focus-blur-refocus", testWebKitInputMethodContextFocusBlurRefocus);
     InputMethodTest::add("WebKitInputMethodContext", "remove-focused-element", testWebKitInputMethodContextRemoveFocusedElement);
     InputMethodTest::add("WebKitInputMethodContext", "blur-refocus-interaction", testWebKitInputMethodContextBlurRefocusInteraction);
+#if ENABLE(WPE_PLATFORM)
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in", testWebKitInputMethodContextViewFocusOutAndIn);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-and-in-script-focus", testWebKitInputMethodContextViewFocusOutAndInScriptFocus);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-refocus", testWebKitInputMethodContextViewFocusOutRefocus);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-focus-change", testWebKitInputMethodContextViewFocusOutFocusChange);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-window-focus-handler", testWebKitInputMethodContextViewFocusOutWindowFocusHandler);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-blur", testWebKitInputMethodContextViewFocusOutBlur);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-remove", testWebKitInputMethodContextViewFocusOutRemove);
+    InputMethodTest::add("WebKitInputMethodContext", "view-focus-out-type-change", testWebKitInputMethodContextViewFocusOutTypeChange);
+#endif
     InputMethodTest::add("WebKitInputMethodContext", "focus-back-forward-cache", testWebKitInputMethodContextFocusBackForwardCache);
     InputMethodTest::add("WebKitInputMethodContext", "back-forward-cache-without-focus", testWebKitInputMethodContextBackForwardCacheWithoutFocus);
     InputMethodTest::add("WebKitInputMethodContext", "click-after-script-focus", testWebKitInputMethodContextClickAfterScriptFocus);
