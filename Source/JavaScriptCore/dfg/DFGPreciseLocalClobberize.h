@@ -161,16 +161,20 @@ private:
             readFrame(inlineCallFrame, numberOfArgumentsToSkip);
         };
 
-        auto readNewArrayWithSpreadNode = [&] (Node* arrayWithSpread) {
-            ASSERT(arrayWithSpread->op() == NewArrayWithSpread || arrayWithSpread->op() == PhantomNewArrayWithSpread);
-            BitVector* bitVector = arrayWithSpread->bitVector();
-            for (unsigned i = 0; i < arrayWithSpread->numChildren(); i++) {
-                if (bitVector->get(i)) {
-                    Node* child = m_graph.varArgChild(arrayWithSpread, i).node();
+        auto readSpreadOperands = [&] (Node* node, unsigned base) {
+            BitVector* bitVector = node->bitVector();
+            for (unsigned i = base; i < node->numChildren(); i++) {
+                if (bitVector->get(i - base)) {
+                    Node* child = m_graph.varArgChild(node, i).node();
                     if (child->op() == PhantomSpread)
                         readSpread(child);
                 }
             }
+        };
+
+        auto readNewArrayWithSpreadNode = [&] (Node* arrayWithSpread) {
+            ASSERT(arrayWithSpread->op() == NewArrayWithSpread || arrayWithSpread->op() == PhantomNewArrayWithSpread);
+            readSpreadOperands(arrayWithSpread, 0);
         };
 
         switch (m_node->op()) {
@@ -250,6 +254,12 @@ private:
         
         case NewArrayWithSpread: {
             readNewArrayWithSpreadNode(m_node);
+            break;
+        }
+
+        case CallVarargsWithSpread: {
+            readWorld(m_node);
+            readSpreadOperands(m_node, 2);
             break;
         }
 

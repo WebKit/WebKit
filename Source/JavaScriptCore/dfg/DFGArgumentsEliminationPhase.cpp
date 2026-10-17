@@ -317,6 +317,33 @@ private:
             }
         };
 
+        // Escape each spread operand independently, exactly like NewArrayWithSpread: a spread operand stays
+        // unescaped iff it is an eliminable Spread(CreateRest|NewArrayBuffer) candidate; everything else
+        // (non-candidate spreads and non-spread literals) is materialized. Because each decision is eager and
+        // local — never an all-or-nothing snapshot of m_candidates — a candidacy revoked later in the pass
+        // cannot leave a stale "keep unescaped" decision behind, so no fixpoint re-scan is needed. The mixed
+        // result (some operands eliminated, some materialized) is handled by the *WithSpread backends via the
+        // forwarded-segment buffer ops.
+        auto escapeSpreadOperands = [&] (Node* node, unsigned base) {
+            for (unsigned i = 0; i < base; ++i)
+                escape(m_graph.varArgChild(node, i), node);
+
+            BitVector* bitVector = node->bitVector();
+            unsigned numElems = node->numChildren() - base;
+            for (unsigned i = 0; i < numElems; ++i) {
+                Edge child = m_graph.varArgChild(node, base + i);
+                bool dontEscape = false;
+                if (bitVector->get(i)) {
+                    Node* spread = child.node();
+                    dontEscape = spread->op() == Spread
+                        && (spread->child1()->op() == CreateRest || spread->child1()->op() == NewArrayBuffer)
+                        && m_candidates.contains(spread);
+                }
+                if (!dontEscape)
+                    escape(child, node);
+            }
+        };
+
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
@@ -384,7 +411,12 @@ private:
                     if (node->loadVarargsData()->offset && (node->argumentsChild()->op() == NewArrayWithSpread || node->argumentsChild()->op() == Spread || node->argumentsChild()->op() == NewArrayBuffer))
                         escape(node->argumentsChild(), node);
                     break;
-                    
+
+                case VarargsLengthWithSpread:
+                case LoadVarargsWithSpread:
+                    escapeSpreadOperands(node, node->op() == LoadVarargsWithSpread ? 1 : 0);
+                    break;
+
                 case CallVarargs:
                 case ConstructVarargs:
                 case TailCallVarargs:
@@ -393,6 +425,10 @@ private:
                     escape(node->child2(), node);
                     if (node->callVarargsData()->firstVarArgOffset && (node->child3()->op() == NewArrayWithSpread || node->child3()->op() == Spread || node->child3()->op() == NewArrayBuffer))
                         escape(node->child3(), node);
+                    break;
+
+                case CallVarargsWithSpread:
+                    escapeSpreadOperands(node, 2);
                     break;
 
                 case Check:
@@ -1185,7 +1221,57 @@ private:
                     node->setOpAndDefaultFlags(ForwardVarargs);
                     break;
                 }
-                    
+
+                case VarargsLengthWithSpread: {
+                    BitVector* bitVector = node->bitVector();
+                    unsigned numElems = node->numChildren();
+                    bool allEliminated = true;
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        if (bitVector->get(e) && !isEliminatedAllocation(m_graph.varArgChild(node, e).node())) {
+                            allEliminated = false;
+                            break;
+                        }
+                    }
+                    if (!allEliminated)
+                        break;
+
+                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                    unsigned firstChild = m_graph.m_varArgChildren.size();
+                    for (unsigned e = 0; e < numElems; ++e)
+                        m_graph.m_varArgChildren.append(m_graph.varArgChild(node, e));
+                    Node* phantomArray = insertionSet.insertNode(
+                        nodeIndex, SpecNone, Node::VarArg, PhantomNewArrayWithSpread,
+                        node->origin.withExitOK(true), OpInfo(node->bitVector()), OpInfo(), firstChild, numElems);
+                    node->convertToIdentityOn(emitCodeToGetArgumentsArrayLength(insertionSet, phantomArray, nodeIndex, node->origin.withExitOK(true), /* addThis */ true));
+                    break;
+                }
+
+                case LoadVarargsWithSpread: {
+                    BitVector* bitVector = node->bitVector();
+                    unsigned numElems = node->numChildren() - 1;
+                    bool allEliminated = true;
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        if (bitVector->get(e) && !isEliminatedAllocation(m_graph.varArgChild(node, 1 + e).node())) {
+                            allEliminated = false;
+                            break;
+                        }
+                    }
+                    if (!allEliminated)
+                        break;
+
+                    DFG_ASSERT(m_graph, node, node->origin.exitOK);
+                    Edge countEdge = m_graph.varArgChild(node, 0);
+                    unsigned firstChild = m_graph.m_varArgChildren.size();
+                    for (unsigned e = 0; e < numElems; ++e)
+                        m_graph.m_varArgChildren.append(m_graph.varArgChild(node, 1 + e));
+                    Node* phantomArray = insertionSet.insertNode(
+                        nodeIndex, SpecNone, Node::VarArg, PhantomNewArrayWithSpread,
+                        node->origin.withExitOK(true), OpInfo(node->bitVector()), OpInfo(), firstChild, numElems);
+                    node->setOpAndDefaultFlags(ForwardVarargs);
+                    node->children = AdjacencyList(AdjacencyList::Fixed, countEdge, Edge(phantomArray));
+                    break;
+                }
+
                 case CallVarargs:
                 case ConstructVarargs:
                 case TailCallVarargs:
@@ -1347,7 +1433,91 @@ private:
 
                     break;
                 }
-                    
+
+                case CallVarargsWithSpread: {
+                    BitVector* bitVector = node->bitVector();
+                    unsigned numElems = node->numChildren() - 2;
+                    bool allEliminated = true;
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        if (bitVector->get(e) && !isEliminatedAllocation(m_graph.varArgChild(node, 2 + e).node())) {
+                            allEliminated = false;
+                            break;
+                        }
+                    }
+                    if (!allEliminated)
+                        break;
+
+                    // Only fold to a static Call if every eliminated spread can be statically expanded;
+                    // otherwise leave it for the forwarding codegen, matching CallVarargs -> CallForwardVarargs.
+                    auto isStaticallyExpandable = recursableLambda([&](auto self, Node* candidate) -> bool {
+                        if (candidate->op() == PhantomSpread)
+                            return self(candidate->child1().node());
+                        if (candidate->op() == PhantomNewArrayBuffer)
+                            return true;
+                        ASSERT(candidate->op() == PhantomCreateRest);
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
+                        return inlineCallFrame && !inlineCallFrame->isVarargs();
+                    });
+                    bool allStaticallyExpandable = true;
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        if (bitVector->get(e) && !isStaticallyExpandable(m_graph.varArgChild(node, 2 + e).node())) {
+                            allStaticallyExpandable = false;
+                            break;
+                        }
+                    }
+                    if (!allStaticallyExpandable)
+                        break;
+
+                    Node* callee = m_graph.varArgChild(node, 0).node();
+                    Node* thisArg = m_graph.varArgChild(node, 1).node();
+
+                    Vector<Node*> arguments;
+                    auto appendSpread = recursableLambda([&](auto self, Node* candidate) -> void {
+                        if (candidate->op() == PhantomSpread) {
+                            self(candidate->child1().node());
+                            return;
+                        }
+                        if (candidate->op() == PhantomNewArrayBuffer) {
+                            auto* array = candidate->castOperand<JSCellButterfly*>();
+                            for (unsigned index = 0; index < array->length(); ++index) {
+                                JSValue constant;
+                                if (candidate->indexingType() == ArrayWithDouble)
+                                    constant = jsDoubleNumber(array->get(index).asNumber());
+                                else
+                                    constant = array->get(index);
+                                arguments.append(insertionSet.insertConstant(nodeIndex, node->origin.withExitOK(true), constant));
+                            }
+                            return;
+                        }
+                        ASSERT(candidate->op() == PhantomCreateRest);
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
+                        unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
+                        for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->argumentCountIncludingThis; ++i) {
+                            StackAccessData* data = m_graph.m_stackAccessData.add(
+                                virtualRegisterForArgumentIncludingThis(i) + inlineCallFrame->stackOffset,
+                                FlushedJSValue);
+                            arguments.append(insertionSet.insertNode(nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data)));
+                        }
+                    });
+
+                    for (unsigned e = 0; e < numElems; ++e) {
+                        Node* elem = m_graph.varArgChild(node, 2 + e).node();
+                        if (bitVector->get(e))
+                            appendSpread(elem);
+                        else
+                            arguments.append(elem);
+                    }
+
+                    unsigned firstChild = m_graph.m_varArgChildren.size();
+                    m_graph.m_varArgChildren.append(Edge(callee));
+                    m_graph.m_varArgChildren.append(Edge(thisArg));
+                    for (Node* argument : arguments)
+                        m_graph.m_varArgChildren.append(Edge(argument));
+                    node->setOpAndDefaultFlags(Call);
+                    node->children = AdjacencyList(AdjacencyList::Variable, firstChild, m_graph.m_varArgChildren.size() - firstChild);
+                    break;
+                }
+
                 case CheckArrayOrEmpty:
                 case CheckArray:
                 case GetButterfly:
