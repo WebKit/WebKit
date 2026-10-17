@@ -1324,7 +1324,6 @@ webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-019.html [ Crash ImageOnlyFailure Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-015.html [ Crash ImageOnlyFailure Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-021.html [ Crash ImageOnlyFailure Timeout ]
-webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/selection/caret/move-around-generated-content.html [ Crash Failure Pass Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Crash Failure Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-003.html [ Crash Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-006.html [ Crash Timeout ]
