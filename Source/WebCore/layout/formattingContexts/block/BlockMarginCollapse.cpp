@@ -84,6 +84,12 @@ void BlockMarginCollapse::resetAdjoiningMargins(LayoutUnit logicalTop)
     m_endsWithQuirk = false;
 }
 
+void BlockMarginCollapse::resetAdjoiningMarginsAfterLineBoxes(LayoutUnit logicalTop)
+{
+    resetAdjoiningMargins(logicalTop);
+    m_endsWithQuirk = std::nullopt;
+}
+
 void BlockMarginCollapse::startBlockContainer(ContainingBlockState& blockContainerState, const ContainingBlockState& containingBlockState, LayoutUnit marginBefore)
 {
     m_endsWithQuirk = false;
@@ -142,11 +148,13 @@ bool BlockMarginCollapse::addBlockEndMargin(LayoutUnit margin, bool isQuirky, bo
 {
     if (!collapsesWithMarginsAfterContent)
         m_adjoiningMargins = { };
-    else
-        isQuirky = m_endsWithQuirk && (!margin || isQuirky);
+    else if (m_endsWithQuirk)
+        isQuirky = *m_endsWithQuirk && (!margin || isQuirky);
     m_adjoiningMargins.add(margin);
     if (m_adjoiningMargins.collapsedValue())
         m_endsWithQuirk = isQuirky;
+    else if (!m_endsWithQuirk)
+        m_endsWithQuirk = false;
     m_logicalTop = borderBoxLogicalBottom;
     return isQuirky;
 }
