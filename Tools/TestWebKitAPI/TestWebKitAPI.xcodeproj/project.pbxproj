@@ -795,6 +795,7 @@
 				WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp,
 				WebCore/cocoa/CaptionPreferencesTests.mm,
 				WebCore/cocoa/CoreMediaUtilities.mm,
+				WebCore/cocoa/CryptoAlgorithmAESCBC.cpp,
 				WebCore/cocoa/DatabaseTrackerTest.mm,
 				WebCore/cocoa/DecodedMediaSamplesBlockTests.mm,
 				WebCore/cocoa/GraphicsContextCGTests.mm,
