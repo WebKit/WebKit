@@ -329,13 +329,15 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem& targetItem)
 
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)
 // This includes recursion to handle loading into framesets properly
-void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoadType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
+void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoadType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(History, "%p - HistoryController::goToItem: item %p, type=%d", this, &targetItem, static_cast<int>(frameLoadType));
 
     RefPtr page = m_frame->page();
-    if (!page)
+    if (!page) {
+        completionHandler();
         return;
+    }
 
     auto finishGoToItem = [weakThis = WeakPtr { this }, frameLoadType, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache, page, isInSwipeAnimation = page->isInSwipeAnimation(), targetItem = Ref { targetItem }] (ShouldGoToHistoryItem result) {
         RefPtr protectedThis = weakThis.get();
@@ -375,7 +377,10 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType frameLoa
         protectedThis->recursiveGoToItem(targetItem, currentItem.get(), frameLoadType, shouldTreatAsContinuingLoad, shouldRestoreFromBackForwardCache);
     };
 
-    goToItemShared(targetItem, WTF::move(finishGoToItem), shouldTreatAsContinuingLoad);
+    goToItemShared(targetItem, [finishGoToItem = WTF::move(finishGoToItem), completionHandler = WTF::move(completionHandler)](ShouldGoToHistoryItem result) mutable {
+        finishGoToItem(result);
+        completionHandler();
+    }, shouldTreatAsContinuingLoad);
 }
 
 struct HistoryController::FrameToNavigate {

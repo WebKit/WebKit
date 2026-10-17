@@ -377,6 +377,7 @@ public:
 
     void clearDeferredTraversal();
     void resumeDeferredTraversal();
+    bool hasDeferredTraversal() const { return !!m_deferredTraversalItem; }
 
     void setWaitingForDelegatedBackForwardLoad() { m_isWaitingForDelegatedBackForwardLoad = true; }
     WEBCORE_EXPORT void clearWaitingForDelegatedBackForwardLoad();

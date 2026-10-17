@@ -106,7 +106,7 @@ public:
 private:
     friend class Page;
     bool LEGACY_NODELETE shouldStopLoadingForHistoryItem(HistoryItem&) const;
-    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
+    void goToItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { });
     void goToItemForNavigationAPI(HistoryItem&, FrameLoadType, LocalFrame& triggeringFrame, NavigationAPIMethodTracker*);
     void goToItemShared(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&, ShouldTreatAsContinuingLoad = ShouldTreatAsContinuingLoad::No);
 
