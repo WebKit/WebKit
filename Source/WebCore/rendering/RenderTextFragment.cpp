@@ -24,7 +24,6 @@
 #include "RenderTextFragment.h"
 
 #include "RenderBlock.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderMultiColumnFlow.h"

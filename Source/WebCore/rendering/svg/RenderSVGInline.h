@@ -21,14 +21,14 @@
 
 #pragma once
 
-#include "RenderInline.h"
+#include "RenderBoxModelObject.h"
 #include "SVGPaintServerCache.h"
 
 namespace WebCore {
 
 class SVGGraphicsElement;
 
-class RenderSVGInline : public RenderInline {
+class RenderSVGInline : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInline);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:

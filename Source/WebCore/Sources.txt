@@ -3073,7 +3073,6 @@ rendering/RenderHighlight.cpp
 rendering/RenderIFrame.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderImage.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderImageResource.cpp @header:RenderStyleGetters @cost:5
-rendering/RenderInline.cpp @header:RenderStyleGetters @cost:7
 rendering/RenderLayer.cpp @header:RenderStyleGetters @cost:11
 rendering/RenderLayerBacking.cpp @header:RenderStyleGetters @cost:10
 rendering/RenderLayerBackingSVGAdditions.cpp @header:RenderStyleGetters @cost:7

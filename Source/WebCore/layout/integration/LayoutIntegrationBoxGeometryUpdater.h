@@ -36,7 +36,6 @@ namespace WebCore {
 class RenderBox;
 class RenderBlock;
 class RenderLineBreak;
-class RenderInline;
 class RenderTable;
 class RenderListItem;
 class RenderListOutsideMarker;

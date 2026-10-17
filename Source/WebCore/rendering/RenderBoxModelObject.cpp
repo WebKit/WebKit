@@ -56,7 +56,6 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
-#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -187,7 +186,7 @@ void RenderBoxModelObject::setSelectionState(HighlightState state)
     else
         RenderLayerModelObject::setSelectionState(state);
 
-    // FIXME: We should consider whether it is OK propagating to ancestor RenderInlines.
+    // FIXME: We should consider whether it is OK propagating to ancestor inline boxes.
     // This is a workaround for http://webkit.org/b/32123
     // The containing block can be null in case of an orphaned tree.
     RenderBlock* containingBlock = this->containingBlock();
@@ -199,12 +198,24 @@ RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, Style::C
     : RenderLayerModelObject(type, element, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
+    setChildrenInline(isInlineBox());
 }
 
 RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderLayerModelObject(type, document, WTF::move(style), baseTypeFlags | TypeFlag::IsBoxModelObject, typeSpecificFlags)
 {
     ASSERT(isRenderBoxModelObject());
+    setChildrenInline(isInlineBox());
+}
+
+RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, Style::ComputedStyle&& style)
+    : RenderBoxModelObject(type, element, WTF::move(style), TypeFlag::IsInlineBox, { })
+{
+}
+
+RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, Style::ComputedStyle&& style)
+    : RenderBoxModelObject(type, document, WTF::move(style), TypeFlag::IsInlineBox, { })
+{
 }
 
 RenderBoxModelObject::~RenderBoxModelObject()
@@ -957,7 +968,7 @@ bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 void RenderBoxModelObject::applyTransform(TransformationMatrix&, const Style::ComputedStyle&, const FloatRect&, OptionSet<Style::TransformResolverOption>) const
 {
     // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
-    // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.
+    // inline boxes or RenderLineBreak.
     ASSERT_NOT_REACHED();
 }
 

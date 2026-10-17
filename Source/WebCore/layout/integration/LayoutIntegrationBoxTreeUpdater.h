@@ -36,7 +36,6 @@ class RenderBlock;
 class RenderBoxModelObject;
 class RenderElement;
 class RenderObject;
-class RenderInline;
 class RenderText;
 
 namespace Style {

@@ -82,7 +82,6 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
 #include "RenderBoxModelObject.h"
-#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderObjectStyle.h"

@@ -808,7 +808,7 @@ bool TextIterator::handleReplacedElement()
     if (m_fullyClippedStack.top())
         return false;
 
-    // Note that RenderInlines can get passed in as replaced elements.
+    // Note that inline boxes can get passed in as replaced elements.
     CheckedPtr renderer = dynamicDowncast<RenderElement>(m_currentNode->renderer());
     if (!renderer) {
         ASSERT_NOT_REACHED();

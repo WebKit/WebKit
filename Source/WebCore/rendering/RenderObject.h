@@ -65,7 +65,6 @@ class PositionWithAffinity;
 class ReferencedSVGResources;
 class RenderBox;
 class RenderBoxModelObject;
-class RenderInline;
 class RenderBlock;
 class RenderBlockFlow;
 class RenderElement;

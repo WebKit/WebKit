@@ -51,7 +51,6 @@
 #include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderObjectStyle.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"

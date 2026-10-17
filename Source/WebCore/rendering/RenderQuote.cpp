@@ -213,7 +213,7 @@ static constexpr std::array quoteTable {
 };
 
 RenderQuote::RenderQuote(Document& document, Style::ComputedStyle&& style, QuoteType quote)
-    : RenderInline(Type::Quote, document, WTF::move(style))
+    : RenderBoxModelObject(Type::Quote, document, WTF::move(style))
     , m_type(quote)
     , m_text(emptyString())
 {
@@ -225,19 +225,19 @@ RenderQuote::~RenderQuote() = default;
 
 void RenderQuote::insertedIntoTree()
 {
-    RenderInline::insertedIntoTree();
+    RenderBoxModelObject::insertedIntoTree();
     view().setHasQuotesNeedingUpdate(true);
 }
 
 void RenderQuote::willBeRemovedFromTree()
 {
     view().setHasQuotesNeedingUpdate(true);
-    RenderInline::willBeRemovedFromTree();
+    RenderBoxModelObject::willBeRemovedFromTree();
 }
 
 void RenderQuote::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
-    RenderInline::styleDidChange(diff, oldStyle);
+    RenderBoxModelObject::styleDidChange(diff, oldStyle);
     if (diff >= Style::DifferenceResult::Layout) {
         m_needsTextUpdate = true;
         view().setHasQuotesNeedingUpdate(true);

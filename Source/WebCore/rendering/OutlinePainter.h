@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class Path;
-class RenderInline;
 class RenderListBox;
 struct PaintInfo;
 

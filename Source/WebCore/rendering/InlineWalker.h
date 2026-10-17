@@ -26,7 +26,6 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderDescendantIterator.h"
-#include "RenderInline.h"
 
 namespace WebCore {
 

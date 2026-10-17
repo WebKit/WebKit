@@ -62,7 +62,6 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGrid.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -754,8 +753,8 @@ RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionT
     if (positionType == PositionType::Absolute) {
         auto containingBlockForAbsolutePosition = [&] {
             if (renderer.isInlineBox() && renderer.style().position() == PositionType::Relative) {
-                // A relatively positioned RenderInline forwards its absolute positioned descendants to
-                // its nearest non-anonymous containing block (to avoid having positioned objects list in RenderInlines).
+                // A relatively positioned inline box forwards its absolute positioned descendants to
+                // its nearest non-anonymous containing block (to avoid having positioned objects list in inline boxes).
                 return renderer.parent() ? renderer.parent()->nearestNonAnonymousContainingBlockIncludingSelf() : nullptr;
             }
             CheckedPtr ancestor = renderer.parent();

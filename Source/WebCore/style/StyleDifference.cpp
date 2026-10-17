@@ -218,7 +218,7 @@ public:
 
         if (a.opacity.isOpaque() != b.opacity.isOpaque()) {
             // FIXME: We would like to use SimplifiedLayout here, but we can't quite do that yet.
-            // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
+            // We need to make sure SimplifiedLayout can operate correctly on inline boxes (we will need
             // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
             // In addition we need to solve the floating object issue when layers come and go. Right now
             // a full layout is necessary to keep floating object lists sane.
@@ -451,7 +451,7 @@ public:
                 if (a.position() != PositionType::Static) {
                     if (a.nonInheritedData().surroundData->inset != b.nonInheritedData().surroundData->inset) {
                         // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
-                        // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
+                        // We need to make sure SimplifiedLayout can operate correctly on inline boxes (we will need
                         // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
                         if (a.position() != PositionType::Absolute)
                             return true;

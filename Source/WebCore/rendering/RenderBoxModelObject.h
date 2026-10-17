@@ -68,6 +68,9 @@ class RenderBoxModelObject : public RenderLayerModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderBoxModelObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderBoxModelObject);
 public:
+    // An inline box is a RenderBoxModelObject of its own. Boxes and line breaks use the protected constructors.
+    RenderBoxModelObject(Type, Element&, Style::ComputedStyle&&);
+    RenderBoxModelObject(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderBoxModelObject();
 
     ASCIILiteral renderName() const override;
@@ -209,7 +212,7 @@ public:
 
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 
-    // For RenderBlocks and RenderInlines with m_style->pseudoElementType() == PseudoElementType::FirstLetter, this tracks their remaining text fragments
+    // For RenderBlocks and inline boxes with m_style->pseudoElementType() == PseudoElementType::FirstLetter, this tracks their remaining text fragments
     RenderTextFragment* LEGACY_NODELETE firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderTextFragment&);
     void clearFirstLetterRemainingText();

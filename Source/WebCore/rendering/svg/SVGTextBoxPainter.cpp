@@ -32,7 +32,6 @@
 #include "LegacyRenderSVGResourceSolidColor.h"
 #include "OutlinePainter.h"
 #include "RenderElementInlines.h"
-#include "RenderInline.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"

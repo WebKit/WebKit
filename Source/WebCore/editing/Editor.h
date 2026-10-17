@@ -82,7 +82,6 @@ class KillRing;
 class LocalFrame;
 class Pasteboard;
 class PasteboardWriterData;
-class RenderInline;
 class RenderLayer;
 class FragmentedSharedBuffer;
 class Font;

@@ -37,7 +37,6 @@
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentContainer.h"
-#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayoutState.h"
@@ -804,7 +803,7 @@ LayoutUnit RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment(const Rende
     LayoutRect blockRect(0_lu, 0_lu, currentBox->borderBoxWidth(), currentBox->borderBoxHeight());
     auto nextBoxContainer = [](const RenderElement& renderer) -> const RenderElement* {
         auto* container = renderer.container();
-        // Skip non-box ancestors like RenderInline that don't contribute offsets.
+        // Skip non-box ancestors like inline boxes that don't contribute offsets.
         while (container && !is<RenderBox>(*container))
             container = container->container();
         return container;

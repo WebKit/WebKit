@@ -75,7 +75,6 @@
 #include "RenderGrid.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
@@ -222,7 +221,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
     case Style::DisplayType::InlineFlow:
         if (rendererTypeOverride.contains(ConstructBlockLevelRendererFor::Inline))
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
+        return createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, element, WTF::move(style));
     case Style::DisplayType::BlockFlow:
     case Style::DisplayType::BlockFlowRoot:
     case Style::DisplayType::InlineFlowRoot:
@@ -245,11 +244,11 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, Style::Compu
             return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
         return createRenderer<RenderDeprecatedFlexibleBox>(element, WTF::move(style));
     case Style::DisplayType::RubyBase:
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
+        return createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, element, WTF::move(style));
     case Style::DisplayType::RubyText:
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
     case Style::DisplayType::InlineRuby:
-        return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTF::move(style));
+        return createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, element, WTF::move(style));
     case Style::DisplayType::BlockRuby:
         return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, element, WTF::move(style));
 

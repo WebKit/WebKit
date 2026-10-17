@@ -34,7 +34,6 @@
 #include "InlineIteratorTextBox.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
-#include "RenderInline.h"
 #include "RenderObjectInlines.h"
 #include "StyleTextDecorationInset.h"
 

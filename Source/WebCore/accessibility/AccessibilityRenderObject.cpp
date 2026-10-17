@@ -110,7 +110,6 @@
 #include "RenderGlyph.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"

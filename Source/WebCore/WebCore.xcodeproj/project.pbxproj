@@ -5676,7 +5676,6 @@
 		BCEA486A097D93020094C9E4 /* RenderHTMLCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */; };
 		BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA482F097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h */; };
 		BCEA4876097D93020094C9E4 /* RenderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4837097D93020094C9E4 /* RenderImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4839097D93020094C9E4 /* RenderInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA483B097D93020094C9E4 /* RenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4841097D93020094C9E4 /* RenderObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4848097D93020094C9E4 /* RenderThemeMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -20686,8 +20685,6 @@
 		BCEA482F097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderDeprecatedFlexibleBox.h; sourceTree = "<group>"; };
 		BCEA4836097D93020094C9E4 /* RenderImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImage.cpp; sourceTree = "<group>"; };
 		BCEA4837097D93020094C9E4 /* RenderImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderImage.h; sourceTree = "<group>"; };
-		BCEA4838097D93020094C9E4 /* RenderInline.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInline.cpp; sourceTree = "<group>"; };
-		BCEA4839097D93020094C9E4 /* RenderInline.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderInline.h; sourceTree = "<group>"; };
 		BCEA483A097D93020094C9E4 /* RenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayer.cpp; sourceTree = "<group>"; };
 		BCEA483B097D93020094C9E4 /* RenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLayer.h; sourceTree = "<group>"; };
 		BCEA4840097D93020094C9E4 /* RenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderObject.cpp; sourceTree = "<group>"; };
@@ -42450,8 +42447,6 @@
 				BCEA4837097D93020094C9E4 /* RenderImage.h */,
 				08F2F0071213E61700DCEC48 /* RenderImageResource.cpp */,
 				08F2F0081213E61700DCEC48 /* RenderImageResource.h */,
-				BCEA4838097D93020094C9E4 /* RenderInline.cpp */,
-				BCEA4839097D93020094C9E4 /* RenderInline.h */,
 				B595FF461824CEE300FF51CD /* RenderIterator.h */,
 				BCEA483A097D93020094C9E4 /* RenderLayer.cpp */,
 				BCEA483B097D93020094C9E4 /* RenderLayer.h */,
@@ -48385,7 +48380,6 @@
 				72E5023129B669EE00E5B8E7 /* RenderingResource.h in Headers */,
 				729D05302531424300422098 /* RenderingResourceIdentifier.h in Headers */,
 				556C7C4B22123997009B06CA /* RenderingUpdateScheduler.h in Headers */,
-				BCEA4878097D93020094C9E4 /* RenderInline.h in Headers */,
 				B595FF471824CEE300FF51CD /* RenderIterator.h in Headers */,
 				BCEA487A097D93020094C9E4 /* RenderLayer.h in Headers */,
 				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,

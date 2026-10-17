@@ -468,7 +468,7 @@ void RenderTreeUpdater::GeneratedContent::updateWritingSuggestionsRenderer(Rende
             suffixText->setText(suffix);
         }
     } else {
-        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), WTF::move(newStyle));
+        auto newWritingSuggestionsRenderer = WebCore::createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, renderer.document(), WTF::move(newStyle));
         newWritingSuggestionsRenderer->initializeStyle();
 
         WeakPtr rendererAfterWritingSuggestions = nodeBeforeWritingSuggestionsTextRenderer->nextSibling();

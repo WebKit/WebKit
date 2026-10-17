@@ -48,7 +48,6 @@ class HitTestResult;
 class RenderBlockFlow;
 class RenderBox;
 class RenderBoxModelObject;
-class RenderInline;
 class RenderListOutsideMarker;
 struct PaintInfo;
 struct SVGTextFragment;

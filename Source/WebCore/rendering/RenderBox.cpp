@@ -79,7 +79,6 @@
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerInlines.h"

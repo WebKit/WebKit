@@ -42,7 +42,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"

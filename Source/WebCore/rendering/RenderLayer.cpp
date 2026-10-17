@@ -114,7 +114,6 @@
 #include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -4947,7 +4946,7 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 #endif
 
     auto offsetFromRoot = offsetFromAncestor(rootLayer);
-    // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
+    // FIXME: We need to correctly hit test the clip-path when we have an inline box too.
     if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()))))
         return { };
 

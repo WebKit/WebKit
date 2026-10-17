@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include "RenderInline.h"
+#include "RenderBoxModelObject.h"
 
 namespace WebCore {
 
-class RenderQuote final : public RenderInline {
+class RenderQuote final : public RenderBoxModelObject {
     WTF_MAKE_TZONE_ALLOCATED(RenderQuote);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderQuote);
 public:

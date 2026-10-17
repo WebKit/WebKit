@@ -37,7 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
-#include "RenderInline.h"
+#include "RenderBoxModelObject.h"
 #include "RenderLayer.h"
 #include "SimpleRange.h"
 #include "TextIterator.h"

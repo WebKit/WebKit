@@ -45,7 +45,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
-#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
@@ -650,11 +649,11 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
         // This is to support "<div style='display:contents;color:green'>text</div>" type cases
         auto wrapperStyle = Style::ComputedStyle::clone(**textUpdate->inheritedDisplayContentsStyle);
         auto& parent = renderTreePosition.parent();
-        RenderPtr<RenderInline> newDisplayContentsAnonymousWrapper;
+        RenderPtr<RenderBoxModelObject> newDisplayContentsAnonymousWrapper;
         if (parent.isRenderSVGText() || parent.isRenderSVGInline())
             newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, protect(textNode.document()), WTF::move(wrapperStyle));
         else
-            newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, protect(textNode.document()), WTF::move(wrapperStyle));
+            newDisplayContentsAnonymousWrapper = WebCore::createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, protect(textNode.document()), WTF::move(wrapperStyle));
         newDisplayContentsAnonymousWrapper->initializeStyle();
         auto& displayContentsAnonymousWrapper = *newDisplayContentsAnonymousWrapper;
         m_builder.attach(parent, WTF::move(newDisplayContentsAnonymousWrapper), renderTreePosition.nextSibling());

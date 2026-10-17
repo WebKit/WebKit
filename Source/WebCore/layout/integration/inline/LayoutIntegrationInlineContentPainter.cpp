@@ -34,7 +34,6 @@
 #include "PaintInfoInlines.h"
 #include "RenderBox.h"
 #include "RenderElementInlines.h"
-#include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "TextBoxPainter.h"

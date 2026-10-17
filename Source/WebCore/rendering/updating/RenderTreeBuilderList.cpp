@@ -29,7 +29,6 @@
 #include "RenderCombineText.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
-#include "RenderInline.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
@@ -227,7 +226,7 @@ static CheckedRef<RenderBlock> parentForInlineMarker(RenderListItem& listItemRen
 void RenderTreeBuilder::List::buildInlineMarker(RenderListItem& listItemRenderer, Style::ComputedStyle&& markerStyle)
 {
     adjustStyleForInlineMarker(markerStyle);
-    auto newMarker = WebCore::createRenderer<RenderInline>(RenderObject::Type::Inline, listItemRenderer.document(), WTF::move(markerStyle));
+    auto newMarker = WebCore::createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, listItemRenderer.document(), WTF::move(markerStyle));
     newMarker->initializeStyle();
     CheckedRef marker = *newMarker;
     CheckedRef markerParent = parentForInlineMarker(listItemRenderer, marker.get());

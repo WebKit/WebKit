@@ -28,7 +28,6 @@
 #include "NodeInlines.h"
 #include "RenderBlock.h"
 #include "RenderButton.h"
-#include "RenderInline.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
@@ -309,7 +308,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
     // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
     RenderPtr<RenderBoxModelObject> newFirstLetter;
     if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, protect(firstLetterBlock.document()), WTF::move(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, protect(firstLetterBlock.document()), WTF::move(*pseudoStyle));
     else
         newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, protect(firstLetterBlock.document()), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();
@@ -350,7 +349,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
     RenderPtr<RenderBoxModelObject> newFirstLetter;
     if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, protect(currentTextChild.document()), WTF::move(*pseudoStyle));
+        newFirstLetter = createRenderer<RenderBoxModelObject>(RenderObject::Type::Inline, protect(currentTextChild.document()), WTF::move(*pseudoStyle));
     else
         newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, protect(currentTextChild.document()), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();

@@ -41,13 +41,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderSVGInline);
     
 RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, Style::ComputedStyle&& style)
-    : RenderInline(type, element, WTF::move(style))
+    : RenderBoxModelObject(type, element, WTF::move(style))
 {
     ASSERT(isRenderSVGInline());
 }
 
 RenderSVGInline::RenderSVGInline(Type type, Document& document, Style::ComputedStyle&& style)
-    : RenderInline(type, document, WTF::move(style))
+    : RenderBoxModelObject(type, document, WTF::move(style))
 {
     ASSERT(isRenderSVGInline());
 }
@@ -102,14 +102,14 @@ FloatRect RenderSVGInline::decoratedBoundingBox() const
 LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext& context) const
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return RenderInline::clippedOverflowRect(repaintContainer, context);
+        return RenderBoxModelObject::clippedOverflowRect(repaintContainer, context);
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
 auto RenderSVGInline::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return RenderInline::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
+        return RenderBoxModelObject::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
 
     auto rects = RepaintRects { SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, visibleRectContextForRepaint()) };
     if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
@@ -130,7 +130,7 @@ std::optional<FloatRect> RenderSVGInline::computeFloatVisibleRectInContainer(con
 void RenderSVGInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        RenderInline::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
+        RenderBoxModelObject::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
         return;
     }
     SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
@@ -139,7 +139,7 @@ void RenderSVGInline::mapLocalToContainer(const RenderLayerModelObject* ancestor
 const RenderElement* RenderSVGInline::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     if (document().settings().layerBasedSVGEngineEnabled())
-        return RenderInline::pushMappingToContainer(ancestorToStopAt, geometryMap);
+        return RenderBoxModelObject::pushMappingToContainer(ancestorToStopAt, geometryMap);
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
@@ -175,19 +175,19 @@ void RenderSVGInline::willBeDestroyed()
     if (!document().settings().layerBasedSVGEngineEnabled())
         SVGResourcesCache::clientDestroyed(*this);
 
-    RenderInline::willBeDestroyed();
+    RenderBoxModelObject::willBeDestroyed();
 }
 
 void RenderSVGInline::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        RenderInline::styleDidChange(diff, oldStyle);
+        RenderBoxModelObject::styleDidChange(diff, oldStyle);
         return;
     }
 
     if (diff == Style::DifferenceResult::Layout)
         invalidateCachedBoundaries();
-    RenderInline::styleDidChange(diff, oldStyle);
+    RenderBoxModelObject::styleDidChange(diff, oldStyle);
     if (!isAnonymous())
         SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
@@ -201,7 +201,7 @@ bool RenderSVGInline::needsHasSVGTransformFlags() const
 
 void RenderSVGInline::updateFromStyle()
 {
-    RenderInline::updateFromStyle();
+    RenderBoxModelObject::updateFromStyle();
 
     if (document().settings().layerBasedSVGEngineEnabled())
         updateHasSVGTransformFlags();

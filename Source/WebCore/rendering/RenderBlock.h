@@ -33,7 +33,6 @@ namespace WebCore {
 class LayoutScope;
 class LogicalSelectionOffsetCaches;
 class RelayoutScopeForScrollbarChange;
-class RenderInline;
 class RenderText;
 class ScrollbarUpdateScope;
 
