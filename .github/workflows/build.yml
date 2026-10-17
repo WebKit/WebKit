@@ -5,12 +5,6 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
-    inputs:
-      experimental_full_webcore:
-        description: "Build full WebCore + Web Audio + WebRTC API for Wii U PPC and publish the engine bundle if it compiles"
-        type: boolean
-        required: false
-        default: true
 
 # Every push used to start a full Wii U cross-build. Keep only the newest
 # run for a ref so rapid WKC-only commits do not waste runner time.
@@ -824,12 +818,15 @@ jobs:
             find build-webrtc -name '*.obj' -exec touch {} + 2>/dev/null || true
           fi
 
-      # Full WebCore is the feature build (DOM/HTML/CSS/rendering + Web Audio + WebRTC).
-      # Keep its compile errors non-blocking while porting continues, but publish a
-      # separately named engine bundle whenever the complete target and install pass.
-      - name: Build full WebCore + Web Audio + WebRTC API (Wii U PPC engine bring-up)
+      # The engine's required job is real webpage loading: full WebCore DOM,
+      # HTML, CSS, loader, layout/rendering, SVG, and JavaScriptCore. Web Audio
+      # and WebRTC are not required for page loading, so keep them off here to
+      # avoid making the full page engine depend on unrelated media stacks.
+      # This is a required build, not a diagnostic probe: do not publish a
+      # bootstrap-only archive as a substitute if the full engine fails.
+      - name: Build full WebKit page engine (Wii U PPC)
         id: full-engine-probe
-        if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.experimental_full_webcore)) }}
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
           echo "engine_ready=false" >> "$GITHUB_OUTPUT"
@@ -842,11 +839,11 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
-            -DWKC_ENABLE_WEB_AUDIO=ON \
+            -DWKC_ENABLE_WEB_AUDIO=OFF \
             -DWKC_ENABLE_INDEXED_DATABASE=ON \
-            -DWKC_ENABLE_GAMEPAD=ON \
+            -DWKC_ENABLE_GAMEPAD=OFF \
             -DWKC_ENABLE_WEBASSEMBLY=OFF \
-            -DWKC_ENABLE_WEBRTC_API=ON > build-full-configure.log 2>&1
+            -DWKC_ENABLE_WEBRTC_API=OFF > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
           # Preserve the source-list omission report even if the engine compile fails.
@@ -858,10 +855,11 @@ jobs:
             sed -n '1,80p' build-full/wkc-missing-webcore-sources.txt
           fi
           if [ "$CONFIG_STATUS" -ne 0 ] || [ ! -f build-full/build.ninja ]; then
-            echo "===== full WebCore configure failed (diagnostic only) ====="
+            echo "===== full WebKit page-engine configure failed ====="
             grep -A5 -iE 'CMake Error|FATAL|Error' build-full-configure.log | head -100 || true
             tail -n 60 build-full-configure.log || true
-            exit 0
+            echo "::error::Full WebKit page-engine configuration failed; refusing to publish the bootstrap archive as the engine."
+            exit 1
           fi
 
           echo "===== full WebCore source selection ====="
@@ -887,26 +885,28 @@ jobs:
                 cp build-full/wkc-missing-webcore-sources.txt "$GITHUB_WORKSPACE/dist-full/diagnostics/"
               fi
               {
-                echo "Profile: WKC full WebCore + Web Audio (Wii U PPC bring-up)"
+                echo "Profile: Full WebKit page engine (DOM/HTML/CSS/loader/layout/rendering + JavaScriptCore)"
                 echo "Target: Wii U PowerPC 750 / devkitPPC"
                 echo "JavaScriptCore: CLoop interpreter; JIT disabled for Wii U"
                 echo "WebAssembly: disabled pending a Wii U PowerPC calling-convention implementation"
-                echo "WebRTC: WebCore API enabled; dependent static archives bundled; final executable link and on-console runtime not verified"
-                echo "Verification: full CMake build and install passed"
-                echo "Not yet verified: Wave Browser final executable link, hardware capture, or on-console runtime"
+                echo "Web Audio: disabled; not required for page loading"
+                echo "WebRTC: disabled; not required for page loading"
+                echo "Verification: full WebCore CMake build and install passed"
+                echo "Not yet verified: Wave Browser final executable link or on-console runtime"
                 echo
                 echo "Static archives included:"
                 find "$GITHUB_WORKSPACE/dist-full/lib" -maxdepth 1 -type f -name '*.a' -printf '%f\n' | sort
               } > "$GITHUB_WORKSPACE/dist-full/BUILD_PROFILE.txt"
               echo "engine_ready=true" >> "$GITHUB_OUTPUT"
-              echo "Full engine bundle ready at dist-full/."
+              echo "Full WebKit page-engine bundle ready at dist-full/."
             else
-              echo "Full build compiled but CMake install failed; withholding the full-engine artifact."
+              echo "::error::Full WebKit page engine compiled but CMake install failed."
+              exit 1
             fi
           else
-            echo "Full WebCore remains in porting bring-up; withholding this artifact and retaining diagnostics."
+            echo "::error::Full WebKit page-engine build failed; refusing to publish a bootstrap-only archive as the engine."
+            exit 1
           fi
-          exit 0
 
       # This is a required feature build, not a diagnostic-only probe. Fail before
       # Collect output/upload steps if WebRTC cannot produce its real static archive.
@@ -1018,7 +1018,7 @@ jobs:
           Profile: WKC bootstrap archive (not the complete WebCore engine)
           Includes: selected WTF/JSC interpreter sources, WKC glue and selected platform backends
           Excludes: the full DOM/HTML/CSS/rendering source list and the experimental WebRTC linkage
-          Use the manual workflow_dispatch input experimental_full_webcore to attempt the full WebCore + Web Audio + WebRTC profile.
+          This is the bootstrap WKC archive only; Wave Browser must use the separately published webkit-wiiu-full-engine bundle.
           PROFILE
           # Preserve build logs with the library artifact so porting errors can be
           # inspected without relying on truncated Actions console output.
