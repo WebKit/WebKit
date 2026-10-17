@@ -165,8 +165,8 @@ WebXRWebGLLayer::WebXRWebGLLayer(WebXRSession& session, WebXRRenderingContext&& 
     : WebXRLayer(session.scriptExecutionContext())
     , m_session(session)
     , m_context(WTF::move(context))
-    , m_leftViewportData({ WebXRViewport::create({ }) })
-    , m_rightViewportData({ WebXRViewport::create({ }) })
+    , m_leftViewport(WebXRViewport::create({ }))
+    , m_rightViewport(WebXRViewport::create({ }))
     , m_framebuffer(WTF::move(framebuffer))
     , m_antialias(antialias)
     , m_ignoreDepthValues(ignoreDepthValues)
@@ -190,6 +190,11 @@ bool WebXRWebGLLayer::antialias() const
 bool WebXRWebGLLayer::ignoreDepthValues() const
 {
     return m_ignoreDepthValues;
+}
+
+bool WebXRWebGLLayer::supportsViewportScaling() const
+{
+    return !m_framebuffer || m_framebuffer->supportsDynamicViewportScaling();
 }
 
 const WebGLFramebuffer* WebXRWebGLLayer::framebuffer() const
@@ -243,7 +248,11 @@ ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
     if (!view.frame().isActive() || !view.frame().isAnimationFrame())
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto& viewportData = view.eye() == XREye::Right ? m_rightViewportData : m_leftViewportData;
+    auto& viewport = view.eye() == XREye::Right ? m_rightViewport : m_leftViewport;
+
+    // 6. If the viewport modifiable flag is true and view's requested viewport scale is not equal to current viewport scale, obtain a scaled viewport and update the current viewport scale.
+    if (view.isViewportModifiable())
+        view.setCurrentViewportScale(view.requestedViewportScale());
 
     // 7. Set the view’s viewport modifiable flag to false.
     view.setViewportModifiable(false);
@@ -252,7 +261,7 @@ ExceptionOr<RefPtr<WebXRViewport>> WebXRWebGLLayer::getViewport(WebXRView& view)
 
     // 8. Let viewport be the XRViewport from the list of viewport objects associated with view.
     // 9. Return viewport.
-    auto result = RefPtr<WebXRViewport>(viewportData.viewport.copyRef());
+    auto result = RefPtr<WebXRViewport>(WebXRViewport::create(viewport->rect()));
     if (!result->width() || !result->height())
         result->updateViewport(IntRect(0, 0, 1, 1));
 
@@ -330,8 +339,8 @@ PlatformXR::DeviceLayer WebXRWebGLLayer::endFrame()
     m_framebuffer->endFrame();
 
     Vector<PlatformXR::DeviceLayer::LayerView> views {
-        { PlatformXR::Eye::Left, m_leftViewportData.viewport->rect() },
-        { PlatformXR::Eye::Right, m_rightViewportData.viewport->rect() }
+        { PlatformXR::Eye::Left, m_leftViewport->rect() },
+        { PlatformXR::Eye::Right, m_rightViewport->rect() }
     };
 
     return PlatformXR::DeviceLayer {
@@ -377,25 +386,26 @@ void WebXRWebGLLayer::updateViewports()
 
     if (isImmersiveMode(m_session->mode()) && m_session->views().size() > 1) {
         if (m_framebuffer && m_framebuffer->usesLayeredMode()) {
-            auto scale = m_leftViewportData.currentScale;
+            auto scale = m_session->views()[0].underlyingView->currentViewportScale;
             auto viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Left);
             viewport.setSize(roundDown(viewport.size(), scale));
-            m_leftViewportData.viewport->updateViewport(viewport);
+            m_leftViewport->updateViewport(viewport);
 
-            scale = m_rightViewportData.currentScale;
+            scale = m_session->views()[1].underlyingView->currentViewportScale;
             viewport = m_framebuffer->drawViewport(PlatformXR::Eye::Right);
             viewport.setSize(roundDown(viewport.size(), scale));
-            m_rightViewportData.viewport->updateViewport(viewport);
+            m_rightViewport->updateViewport(viewport);
             return;
         }
 
-        auto leftScale = m_leftViewportData.currentScale;
-        m_leftViewportData.viewport->updateViewport(IntRect(0, 0, roundDownShared(width * 0.5 * leftScale), roundDownShared(height * leftScale)));
-        auto rightScale = m_rightViewportData.currentScale;
-        m_rightViewportData.viewport->updateViewport(IntRect(width * 0.5, 0, roundDownShared(width * 0.5 * rightScale), roundDownShared(height * rightScale)));
+        auto leftScale = m_session->views()[0].underlyingView->currentViewportScale;
+        m_leftViewport->updateViewport(IntRect(0, 0, roundDownShared(width * 0.5 * leftScale), roundDownShared(height * leftScale)));
+        auto rightScale = m_session->views()[1].underlyingView->currentViewportScale;
+        m_rightViewport->updateViewport(IntRect(width * 0.5, 0, roundDownShared(width * 0.5 * rightScale), roundDownShared(height * rightScale)));
     } else {
         auto viewport = m_framebuffer ? m_framebuffer->drawViewport(PlatformXR::Eye::None) : IntRect(0, 0, framebufferWidth(), framebufferHeight());
-        m_leftViewportData.viewport->updateViewport(viewport);
+        viewport.setSize(roundDown(viewport.size(), m_session->views()[0].underlyingView->currentViewportScale));
+        m_leftViewport->updateViewport(viewport);
     }
 }
 

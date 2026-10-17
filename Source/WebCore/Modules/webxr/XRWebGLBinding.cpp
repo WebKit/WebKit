@@ -815,7 +815,9 @@ ExceptionOr<Ref<XRWebGLSubImage>> XRWebGLBinding::getViewSubImage(XRProjectionLa
         return Exception { ExceptionCode::InvalidStateError, "Cannot get view subimage."_s };
 
     // FIXME: if getViewSubImage() was called previously with the same binding, layer and view, the UA MAY return the same XRWebGLSubImage object as was returned previously.
-    Ref viewport = WebXRViewport::create(rectForView(layer, textureType, view));
+    auto viewRect = rectForView(layer, textureType, view);
+    layer.setViewport(view.eye() == XREye::Right ? 1 : 0, viewRect);
+    Ref viewport = WebXRViewport::create(viewRect);
     auto subImageResult = XRWebGLSubImage::create(WTF::move(viewport), layer);
     if (subImageResult.hasException())
         return subImageResult.releaseException();
