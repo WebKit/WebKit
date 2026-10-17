@@ -55,6 +55,7 @@ class ResourceResponse;
 
 namespace WebKit {
 
+class BrowsingContextGroup;
 class FrameProcess;
 class ProvisionalPageProxy;
 class RemotePageProxy;
@@ -81,6 +82,27 @@ struct AgentClusterRequest {
 };
 
 WebCore::DocumentIsolationPolicy documentIsolationPolicyForNavigationResponse(const URL&, WebCore::DocumentIsolationPolicy headerPolicy, WebCore::IsSecureContext topLevelIsSecureContext, const WebPreferences&);
+
+// Keying handed to loads of an origin that haven't committed yet, shared so that the ones in flight agree. When one of
+// them commits, the keying is recorded in the historical agent cluster key map for the lifetime of the browsing context
+// group. If none of them does, it lapses once the pages no longer track any of their navigations.
+class AgentClusterKeyingReservation : public RefCountedAndCanMakeWeakPtr<AgentClusterKeyingReservation> {
+public:
+    static Ref<AgentClusterKeyingReservation> create(BrowsingContextGroup& group, const WebCore::SecurityOriginData& origin, WebCore::OriginKeyed keying) { return adoptRef(*new AgentClusterKeyingReservation(group, origin, keying)); }
+    ~AgentClusterKeyingReservation();
+
+    const WebCore::SecurityOriginData& origin() const LIFETIME_BOUND { return m_origin; }
+    WebCore::OriginKeyed keying() const { return m_keying; }
+
+private:
+    AgentClusterKeyingReservation(BrowsingContextGroup&, const WebCore::SecurityOriginData&, WebCore::OriginKeyed);
+
+    const WeakPtr<BrowsingContextGroup> m_group;
+    const WebCore::SecurityOriginData m_origin;
+    const WebCore::OriginKeyed m_keying;
+};
+
+enum class AgentClusterKeyingRecording : bool { Now, OnCommit };
 
 enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAndInjectBrowsingContext };
 
@@ -120,12 +142,16 @@ public:
     bool LEGACY_NODELETE hasRemotePages(const WebPageProxy&);
 
     WebCore::OriginKeyed resolveAgentClusterKeying(const WebCore::SecurityOriginData&, WebCore::OriginKeyed requested);
-    WebCore::AgentClusterAssignment assignAgentCluster(const AgentClusterRequest&);
+    std::pair<WebCore::AgentClusterAssignment, RefPtr<AgentClusterKeyingReservation>> assignAgentCluster(const AgentClusterRequest&, AgentClusterKeyingRecording);
 
     void clearBrowsingContextGroupForTesting();
 
 private:
-    WebCore::OriginKeyed historicalAgentClusterKeying(const WebCore::SecurityOriginData&) const;
+    friend class AgentClusterKeyingReservation;
+
+    WebCore::OriginKeyed knownAgentClusterKeying(const WebCore::SecurityOriginData&) const;
+    RefPtr<AgentClusterKeyingReservation> reserveAgentClusterKeying(const WebCore::SecurityOriginData&, WebCore::OriginKeyed requested);
+    void removeAgentClusterKeyingReservation(const AgentClusterKeyingReservation&);
     WebCore::AgentClusterIdentifier agentClusterIdentifier(const WebCore::SecurityOriginData&, WebCore::OriginKeyed, const std::optional<WebCore::SecurityOriginData>& crossOriginIsolationKey);
 
     explicit BrowsingContextGroup(WebCore::CrossOriginMode);
@@ -152,6 +178,7 @@ private:
     WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 
     HashMap<WebCore::SecurityOriginData, WebCore::OriginKeyed> m_historicalAgentClusterKeyMap;
+    HashMap<WebCore::SecurityOriginData, WeakPtr<AgentClusterKeyingReservation>> m_agentClusterKeyingReservations;
     HashMap<std::tuple<WebCore::Site, WebCore::SecurityOriginData, WebCore::SecurityOriginData>, WebCore::AgentClusterIdentifier> m_agentClusterIdentifiers;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(refBrowsingContextGroup, derefBrowsingContextGroup);
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APINavigation.h"
 
+#include "BrowsingContextGroup.h"
 #include "BrowsingWarning.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
@@ -95,6 +96,21 @@ Navigation::Navigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRe
 }
 
 Navigation::~Navigation() = default;
+
+void Navigation::setAgentClusterAssignment(const WebCore::SecurityOriginData& origin, const WebCore::AgentClusterAssignment& assignment, RefPtr<WebKit::AgentClusterKeyingReservation>&& reservation)
+{
+    m_agentClusterOrigin = origin;
+    m_agentClusterAssignment = assignment;
+    // Once its page no longer tracks it, a navigation can't commit, so it must not keep the keying reserved.
+    if (m_canHoldAgentClusterKeyingReservation)
+        m_agentClusterKeyingReservation = WTF::move(reservation);
+}
+
+void Navigation::clearAgentClusterKeyingReservation()
+{
+    m_agentClusterKeyingReservation = nullptr;
+    m_canHoldAgentClusterKeyingReservation = false;
+}
 
 void Navigation::resetRequestStart()
 {
