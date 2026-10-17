@@ -15643,6 +15643,38 @@ TEST(SiteIsolation, MainPageNavigatesCrossOriginIframeToAboutBlank)
     });
 }
 
+TEST(SiteIsolation, AboutBlankIframesStayInProcessAfterCrossSiteNavigation)
+{
+    // A custom scheme is required: an HTTP(S) main resource load goes through the network process,
+    // which consumes the main frame navigation initiator before any subframe can take it.
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.host isEqualToString:@"example.com"])
+            respond(task, "example");
+        else if ([task.request.URL.host isEqualToString:@"webkit.org"])
+            respond(task, "<iframe src='about:blank'></iframe><iframe src='about:blank'></iframe>");
+        else
+            EXPECT_TRUE(false);
+    };
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"customscheme"];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t examplePID = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"customscheme://webkit.org/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE(examplePID, [webView _webProcessIdentifier]);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "customscheme://webkit.org"_s,
+            { { "customscheme://webkit.org"_s }, { "customscheme://webkit.org"_s } }
+        },
+    });
+}
+
 TEST(SiteIsolation, ChildIframeNavigatesCrossOriginGrandchildIframeToAboutBlank)
 {
     HTTPServer server({
