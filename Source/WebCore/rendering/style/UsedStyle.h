@@ -58,14 +58,14 @@ public:
     // adjustments, like collapsed table borders, are applied by RenderBoxModelObject::borderTop()
     // and friends.
     template<typename T = LayoutUnit> RectEdges<T> borderWidths() const;
-    LayoutUnit borderTopWidth() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).top()); }
-    LayoutUnit borderRightWidth() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).right()); }
-    LayoutUnit borderBottomWidth() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).bottom()); }
-    LayoutUnit borderLeftWidth() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).left()); }
-    LayoutUnit borderWidthStart() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).start(computedStyle().writingMode())); }
-    LayoutUnit borderWidthEnd() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).end(computedStyle().writingMode())); }
-    LayoutUnit borderWidthBefore() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).before(computedStyle().writingMode())); }
-    LayoutUnit borderWidthAfter() const { return evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).after(computedStyle().writingMode())); }
+    LayoutUnit borderTopWidth() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).top()); }
+    LayoutUnit borderRightWidth() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).right()); }
+    LayoutUnit borderBottomWidth() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).bottom()); }
+    LayoutUnit borderLeftWidth() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).left()); }
+    LayoutUnit borderWidthStart() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).start(computedStyle().writingMode())); }
+    LayoutUnit borderWidthEnd() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).end(computedStyle().writingMode())); }
+    LayoutUnit borderWidthBefore() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).before(computedStyle().writingMode())); }
+    LayoutUnit borderWidthAfter() const { return computedStyle().hasZeroEffectiveBorderWidths() ? 0_lu : evaluateZoomed<LayoutUnit>(Style::effectiveBorderWidths(computedStyle()).after(computedStyle().writingMode())); }
 
     // Zoomed and snapped to device pixels, like the border widths.
     template<typename T = LayoutUnit> T outlineWidth() const { return evaluateZoomed<T>(Style::effectiveOutlineWidth(computedStyle())); }
@@ -89,6 +89,8 @@ private:
 
 template<typename T> RectEdges<T> UsedStyle::borderWidths() const
 {
+    if (computedStyle().hasZeroEffectiveBorderWidths())
+        return { };
     return RectEdges<T>::map(Style::effectiveBorderWidths(computedStyle()), [&](const auto& width) {
         return evaluateZoomed<T>(width);
     });

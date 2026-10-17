@@ -419,6 +419,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'computed-style-resolving-current-color-exported': self.validate_boolean,
             'computed-style-setter-constexpr': self.validate_boolean,
             'computed-style-setter-custom': self.validate_boolean,
+            'computed-style-setter-did-set-function': self.validate_string,
             'computed-style-setter-exported': self.validate_boolean,
             'computed-style-setter-inline': self.validate_boolean,
             'computed-style-setter-requires-did-set': self.validate_boolean,

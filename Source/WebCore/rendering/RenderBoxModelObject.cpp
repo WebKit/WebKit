@@ -255,25 +255,26 @@ bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
         || !style().boxShadow().isNone();
 }
 
-RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const { return usedStyle().borderWidths(); }
+// Most boxes have no border and no padding. Checking the style flags first avoids constructing a UsedStyle.
+RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const { return style().hasZeroEffectiveBorderWidths() ? RectEdges<LayoutUnit> { } : usedStyle().borderWidths(); }
 
-LayoutUnit RenderBoxModelObject::borderTop() const { return usedStyle().borderTopWidth(); }
-LayoutUnit RenderBoxModelObject::borderBottom() const { return usedStyle().borderBottomWidth(); }
-LayoutUnit RenderBoxModelObject::borderLeft() const { return usedStyle().borderLeftWidth(); }
-LayoutUnit RenderBoxModelObject::borderRight() const { return usedStyle().borderRightWidth(); }
-LayoutUnit RenderBoxModelObject::borderBefore() const { return usedStyle().borderWidthBefore(); }
-LayoutUnit RenderBoxModelObject::borderAfter() const { return usedStyle().borderWidthAfter(); }
-LayoutUnit RenderBoxModelObject::borderStart() const { return usedStyle().borderWidthStart(); }
-LayoutUnit RenderBoxModelObject::borderEnd() const { return usedStyle().borderWidthEnd(); }
+LayoutUnit RenderBoxModelObject::borderTop() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderTopWidth(); }
+LayoutUnit RenderBoxModelObject::borderBottom() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderBottomWidth(); }
+LayoutUnit RenderBoxModelObject::borderLeft() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderLeftWidth(); }
+LayoutUnit RenderBoxModelObject::borderRight() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderRightWidth(); }
+LayoutUnit RenderBoxModelObject::borderBefore() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderWidthBefore(); }
+LayoutUnit RenderBoxModelObject::borderAfter() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderWidthAfter(); }
+LayoutUnit RenderBoxModelObject::borderStart() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderWidthStart(); }
+LayoutUnit RenderBoxModelObject::borderEnd() const { return style().hasZeroEffectiveBorderWidths() ? 0_lu : usedStyle().borderWidthEnd(); }
 
-LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const { return usedStyle().paddingTop(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return usedStyle().paddingBottom(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const { return usedStyle().paddingLeft(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const { return usedStyle().paddingRight(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return usedStyle().paddingBefore(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return usedStyle().paddingAfter(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const { return usedStyle().paddingStart(ReferenceSize::ContainingBlockLogicalWidth); }
-LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const { return usedStyle().paddingEnd(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingTop(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingBottom(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingLeft(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingRight(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingBefore(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingAfter(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingStart(ReferenceSize::ContainingBlockLogicalWidth); }
+LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const { return style().hasZeroPadding() ? 0_lu : usedStyle().paddingEnd(ReferenceSize::ContainingBlockLogicalWidth); }
 
 void RenderBoxModelObject::updateFromStyle()
 {

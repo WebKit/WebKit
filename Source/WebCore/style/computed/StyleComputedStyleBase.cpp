@@ -437,6 +437,29 @@ void ComputedStyleBase::updateUsedCounterSetDirectives()
 
 // MARK: - Flags Diffing
 
+static bool computeHasZeroEffectiveBorderWidths(const BorderData& border)
+{
+    return UsedBorderWidthsAccessor<BoxSide::Top>::get(border).isZero()
+        && UsedBorderWidthsAccessor<BoxSide::Right>::get(border).isZero()
+        && UsedBorderWidthsAccessor<BoxSide::Bottom>::get(border).isZero()
+        && UsedBorderWidthsAccessor<BoxSide::Left>::get(border).isZero();
+}
+
+static bool computeHasZeroPadding(const PaddingBox& padding)
+{
+    return padding.top().isKnownZero() && padding.right().isKnownZero() && padding.bottom().isKnownZero() && padding.left().isKnownZero();
+}
+
+void ComputedStyleBase::updateHasZeroEffectiveBorderWidths()
+{
+    m_nonInheritedFlags.hasZeroEffectiveBorderWidths = computeHasZeroEffectiveBorderWidths(m_nonInheritedData->surroundData->border);
+}
+
+void ComputedStyleBase::updateHasZeroPadding()
+{
+    m_nonInheritedFlags.hasZeroPadding = computeHasZeroPadding(m_nonInheritedData->surroundData->padding);
+}
+
 #if !LOG_DISABLED
 void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonInheritedFlags& other) const
 {
@@ -461,6 +484,8 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
 
     LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
     LOG_IF_DIFFERENT(disallowsFastPathInheritance);
+    LOG_IF_DIFFERENT(hasZeroEffectiveBorderWidths);
+    LOG_IF_DIFFERENT(hasZeroPadding);
 
     LOG_IF_DIFFERENT(firstChildState);
     LOG_IF_DIFFERENT(lastChildState);

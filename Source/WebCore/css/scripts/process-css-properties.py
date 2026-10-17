@@ -610,6 +610,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("computed-style-setter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-setter-exported", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-setter-inline", allowed_types=[bool], default_value=True),
+        Schema.Entry("computed-style-setter-did-set-function", allowed_types=[str]),
         Schema.Entry("computed-style-setter-requires-did-set", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-setter-returns-if-changed", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-setter", allowed_types=[str]),
@@ -6514,6 +6515,9 @@ class ComputedStylePropertyPrincipleSetter(ComputedStyleFunctionBase):
     def generate_function_definition(self, *, to):
         if self.property.codegen_properties.computed_style_setter_requires_did_set:
             did_set_expression = f"didSet{self.property.codegen_properties.computed_style_name_for_methods}()"
+        elif self.property.codegen_properties.computed_style_setter_did_set_function:
+            # A ComputedStyleProperties member called after the value changes.
+            did_set_expression = f"{self.property.codegen_properties.computed_style_setter_did_set_function}()"
         else:
             did_set_expression = None
 
