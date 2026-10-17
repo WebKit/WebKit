@@ -129,12 +129,6 @@ static bool LEGACY_NODELETE isFirstElementChildButton(const Node& child)
     return is<HTMLButtonElement>(child) && !child.previousElementSibling();
 }
 
-// The options in a selectedcontent element are clones, not options of its select.
-static bool LEGACY_NODELETE canHoldOptionClones(const Node& node)
-{
-    return is<HTMLSelectedContentElement>(node) && node.document().settings().htmlEnhancedSelectMultipleSelectedContentEnabled();
-}
-
 class SelectSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
@@ -272,7 +266,7 @@ HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, 
             return nullptr;
         return findOwnerSelect(startNode->parentNode(), ExcludeOptGroup::Yes);
     }
-    if (isAnyOf<HTMLDataListElement, HTMLHRElement, HTMLOptionElement>(*startNode) || canHoldOptionClones(*startNode))
+    if (isAnyOf<HTMLDataListElement, HTMLHRElement, HTMLOptionElement, HTMLSelectedContentElement>(*startNode))
         return nullptr;
     return findOwnerSelect(startNode->parentNode(), excludeOptGroup);
 }
@@ -1633,7 +1627,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
                         optGroupIt.traverseNextSkippingChildren();
                         continue;
                     }
-                    if (isAnyOf<HTMLOptGroupElement, HTMLDataListElement, HTMLSelectElement, HTMLHRElement>(optGroupDescendant) || canHoldOptionClones(optGroupDescendant)) {
+                    if (isAnyOf<HTMLDataListElement, HTMLHRElement, HTMLOptGroupElement, HTMLSelectElement, HTMLSelectedContentElement>(optGroupDescendant)) {
                         optGroupIt.traverseNextSkippingChildren();
                         continue;
                     }
@@ -1647,7 +1641,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInv
                 it.traverseNextSkippingChildren();
                 continue;
             }
-            if (isAnyOf<HTMLDataListElement, HTMLSelectElement>(descendant) || canHoldOptionClones(descendant)) {
+            if (isAnyOf<HTMLDataListElement, HTMLSelectElement, HTMLSelectedContentElement>(descendant)) {
                 it.traverseNextSkippingChildren();
                 continue;
             }

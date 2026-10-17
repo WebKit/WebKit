@@ -1,0 +1,3 @@
+
+PASS An option cloned into a selectedcontent element is not in the select's list of options
+
