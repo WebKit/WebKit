@@ -75,3 +75,32 @@ enum class Inspector::InitiatorType : uint8_t {
     std::optional<WebCore::ReferrerPolicy> referrerPolicy;
     String integrity;
 };
+
+header: <WebCore/NetworkInterception.h>
+
+enum class Inspector::NetworkInterceptionPhase : uint8_t {
+    BeforeRequestSent,
+    ResponseStarted,
+    AuthRequired,
+};
+
+enum class Inspector::NetworkInterceptOwner : uint8_t {
+    Inspector,
+    Automation,
+};
+
+[CustomHeader] struct Inspector::InspectorURLPattern {
+    String url;
+    bool caseSensitive;
+    bool isRegex;
+};
+
+[CustomHeader] struct Inspector::InterceptPattern {
+    Inspector::NetworkInterceptOwner owner;
+    Inspector::NetworkInterceptionPhase phase;
+    Variant<Inspector::InspectorURLPattern> urlPattern;
+};
+
+[CustomHeader] struct Inspector::NetworkInterception {
+    Vector<Inspector::InterceptPattern> patterns;
+};

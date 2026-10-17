@@ -58,6 +58,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntPointHash.h>
+#include <WebCore/NetworkInterception.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteUserInputEventData.h>
@@ -209,6 +210,13 @@ public:
     std::optional<VirtualWalletBehavior> testingVirtualWalletBehavior;
     CompletionHandler<void(std::expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)> testingPendingDigitalCredentialHandler;
 #endif
+
+    // The authoritative network interception configuration for this page, the union of the
+    // patterns of every consumer; see WebPageProxy::networkInterception().
+    Inspector::NetworkInterception networkInterception;
+    Vector<Inspector::InterceptPattern> inspectorInterceptPatterns;
+    bool inspectorInterceptionEnabled { false };
+    Vector<Inspector::InterceptPattern> automationInterceptPatterns;
 
     uint32_t checkedPtrCount() const { return WebPopupMenuProxy::Client::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const { return WebPopupMenuProxy::Client::checkedPtrCountWithoutThreadCheck(); }
