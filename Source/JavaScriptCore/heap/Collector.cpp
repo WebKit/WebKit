@@ -461,7 +461,15 @@ NEVER_INLINE bool Collector::runBeginPhase(GCConductor conn)
 
 void Collector::beginCollectionInEachHeap(CollectionScope scope, MonotonicTime startTime)
 {
+    HeapVersion markingVersion = m_heaps.first()->objectSpace().markingVersion();
     forEachHeap([&](Heap& heap) {
+        // SlotVisitor caches one marking version and uses it for every heap, so they must all have the
+        // same one. A heap that joined after the others have collected can take their version. That is
+        // safe only because it has never been collected: all of its blocks are still at nullVersion,
+        // which no heap's marking version ever equals.
+        // Note: This will need to change if we ever have alternating local and global collections.
+        if (heap.objectSpace().markingVersion() != markingVersion)
+            heap.objectSpace().adoptMarkingVersion(markingVersion);
         heap.m_currentGCStartTime = startTime;
         if (!Options::seedOfVMRandomForFuzzer())
             heap.vm().random().setSeed(cryptographicallyRandomNumber<uint32_t>());
@@ -472,9 +480,10 @@ void Collector::beginCollectionInEachHeap(CollectionScope scope, MonotonicTime s
 
 void Collector::setUpVisitors(CollectionScope scope)
 {
-    HeapVersion markingVersion = heap().objectSpace().markingVersion();
+    HeapVersion markingVersion = m_heaps.first()->objectSpace().markingVersion();
     bool isAnalyzingHeap = false;
     forEachHeap([&](Heap& heap) {
+        ASSERT(heap.objectSpace().markingVersion() == markingVersion);
         if (heap.vm().isAnalyzingHeap())
             isAnalyzingHeap = true;
     });

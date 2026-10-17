@@ -462,6 +462,16 @@ void MarkedSpace::endMarking()
     m_isMarking = false;
 }
 
+// For a space that has never been marked: each collection advances either the marking version or
+// the Eden version, so both are still initial, and every block is at nullVersion, which matches
+// neither the old version nor the new one, so no block's marks change meaning.
+void MarkedSpace::adoptMarkingVersion(HeapVersion version)
+{
+    ASSERT(!m_isMarking);
+    ASSERT(m_markingVersion == initialVersion && m_edenVersion == initialVersion);
+    m_markingVersion = version;
+}
+
 void MarkedSpace::willStartIterating()
 {
     ASSERT(!isIterating());
