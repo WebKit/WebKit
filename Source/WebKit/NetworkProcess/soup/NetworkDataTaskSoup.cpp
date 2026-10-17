@@ -1548,7 +1548,8 @@ void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
         auto mimeTypeFromContent = extractMIMETypeFromMediaType(contentType);
         // If an application calls g_app_info_get_default_for_type($ext) then Glib will return "application/x-extension-$ext" in mimeTypeFromExtension which WebKit doesn't know how to handle.
         // So, only prefer mimeTypeFromExtension if that is a mimeType that WebKit recognizes internally. See: https://gitlab.gnome.org/GNOME/glib/-/issues/2511
-        if (MIMETypeRegistry::canShowMIMEType(mimeTypeFromExtension) || mimeTypeFromContent.isEmpty())
+        bool isMediaType = startsWithLettersIgnoringASCIICase(mimeTypeFromExtension, "audio/"_s) || startsWithLettersIgnoringASCIICase(mimeTypeFromExtension, "video/"_s);
+        if (isMediaType || MIMETypeRegistry::canShowNonMediaMIMEType(mimeTypeFromExtension) || mimeTypeFromContent.isEmpty())
             m_response.setMimeType(WTF::move(mimeTypeFromExtension));
         else
             m_response.setMimeType(WTF::move(mimeTypeFromContent));
