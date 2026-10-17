@@ -37,6 +37,8 @@ struct BlockLayoutResult;
 
 namespace LayoutIntegration {
 
+class PaintInvalidation;
+
 class BlockLayout {
 public:
     explicit BlockLayout(RenderBlockFlow&);
@@ -44,7 +46,7 @@ public:
     void layout();
 
 private:
-    void updateRenderers(const Layout::BlockLayoutResult&);
+    void updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
 
     RenderBlockFlow& rootRenderer() const { return m_rootRenderer; }
 
