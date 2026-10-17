@@ -193,9 +193,11 @@ editing/cocoa/EditorCocoa.mm @nonARC
 editing/cocoa/FontAttributeChangesCocoa.mm @nonARC
 editing/cocoa/FontAttributesCocoa.mm @nonARC
 editing/cocoa/FontShadowCocoa.mm @nonARC
+editing/cocoa/FrameSelectionCocoa.mm @nonARC
 editing/cocoa/HTMLConverter.mm @nonARC @no-unify-when(bundle<=8) @cost:4
 editing/cocoa/NodeHTMLConverter.mm @nonARC @no-unify-when(bundle<=8) @cost:10
 editing/cocoa/EditingHTMLConverter.mm @nonARC @no-unify-when(bundle<=8) @cost:9
+editing/cocoa/TextAlternativeWithRange.mm @nonARC @no-unify-when(bundle<=8)
 editing/cocoa/WebArchiveResourceFromNSAttributedString.mm @nonARC
 editing/cocoa/WebArchiveResourceWebResourceHandler.mm @nonARC
 editing/cocoa/WebContentReaderCocoa.mm @nonARC
@@ -203,11 +205,9 @@ editing/cocoa/WebCoreTextAttachment.mm @nonARC
 editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm @nonARC
 editing/mac/EditorMac.mm @nonARC
-editing/mac/FrameSelectionMac.mm @nonARC
-editing/mac/TextAlternativeWithRange.mm @nonARC @no-unify-when(bundle<=8)
 editing/mac/TextUndoInsertionMarkupMac.mm @nonARC
 fileapi/FileCocoa.mm @nonARC
-history/mac/HistoryItemMac.mm @nonARC
+history/cocoa/HistoryItemCocoa.mm @nonARC
 html/HTMLMediaElementCocoa.mm @nonARC
 html/canvas/GPUCanvasContextCocoa.mm @nonARC
 html/shadow/YouTubeEmbedShadowElement.cpp
@@ -217,16 +217,18 @@ inspector/mac/PageDebuggerMac.mm @nonARC
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm @nonARC
 loader/cocoa/DiskCacheMonitorCocoa.mm @nonARC
+loader/cocoa/DocumentLoaderCocoa.cpp
+loader/cocoa/LoaderNSURLExtras.mm @nonARC
 loader/cocoa/PrivateClickMeasurementCocoa.mm @nonARC
+loader/cocoa/ResourceLoaderCocoa.mm @nonARC
 loader/cocoa/SubresourceLoaderCocoa.mm @nonARC
 loader/ios/LegacyPreviewLoader.mm @nonARC
-loader/mac/DocumentLoaderMac.cpp
-loader/mac/LoaderNSURLExtras.mm @nonARC
-loader/mac/ResourceLoaderMac.mm @nonARC
 page/CaptionUserPreferencesMediaAF.cpp
 page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm @nonARC
+page/cocoa/ChromeCocoa.mm @nonARC
 page/cocoa/ContentChangeObserver.cpp @header:RenderStyleGetters
 page/cocoa/DOMTimerHoldingTank.cpp
+page/cocoa/DragControllerCocoa.mm @nonARC
 page/cocoa/EventHandlerCocoa.mm @nonARC
 page/cocoa/MemoryReleaseCocoa.mm @nonARC
 page/cocoa/PageCocoa.mm @nonARC
@@ -238,9 +240,7 @@ page/cocoa/WebTextIndicatorLayer.mm @nonARC
 page/ios/EventHandlerIOS.mm @nonARC
 page/ios/FrameIOS.mm @nonARC
 page/ios/WebEventRegion.mm @nonARC
-page/mac/ChromeMac.mm @nonARC
 page/mac/CorrectionIndicator.mm @nonARC
-page/mac/DragControllerMac.mm @nonARC
 page/mac/EventHandlerMac.mm @nonARC
 page/mac/ImageOverlayControllerMac.mm @nonARC
 page/mac/ServicesOverlayController.mm @nonARC
@@ -329,6 +329,7 @@ platform/cocoa/PowerSourceNotifier.mm @nonARC
 platform/cocoa/PublicSuffixStoreCocoa.mm @nonARC
 platform/cocoa/RemoteCommandListenerCocoa.mm @nonARC
 platform/cocoa/SearchPopupMenuCocoa.mm @nonARC
+platform/cocoa/SerializedPlatformDataCueCocoa.mm @nonARC
 platform/cocoa/SerializedPlatformDataCueValue.mm @nonARC @no-unify-when(bundle<=8)
 platform/cocoa/SharedBufferCocoa.mm @nonARC
 platform/cocoa/SharedMemoryCocoa.mm @nonARC
@@ -647,7 +648,6 @@ platform/mac/ScrollbarsControllerMac.mm @nonARC @no-unify-when(bundle<=8) @cost:
 platform/mac/ScrollbarThemeMac.mm @nonARC @no-unify-when(bundle<=8) @cost:3
 platform/mac/ScrollingEffectsController.mm @nonARC
 platform/mac/ScrollingMomentumCalculatorMac.mm @nonARC
-platform/mac/SerializedPlatformDataCueMac.mm @nonARC
 platform/mac/SuddenTermination.mm @nonARC
 platform/mac/ThemeMac.mm @nonARC
 platform/mac/ThreadCheck.mm @nonARC @no-unify-when(bundle<=8)

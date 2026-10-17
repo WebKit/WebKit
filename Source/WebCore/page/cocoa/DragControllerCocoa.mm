@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
@@ -66,7 +66,7 @@ bool LEGACY_NODELETE DragController::isCopyKeyDown(const DragData& dragData)
 {
     return dragData.flags().contains(DragApplicationFlags::IsCopyKeyDown);
 }
-    
+
 std::optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     if (dragData.flags().contains(DragApplicationFlags::IsModal))
@@ -90,7 +90,7 @@ std::optional<DragOperation> DragController::dragOperation(const DragData& dragD
 const IntSize& LEGACY_NODELETE DragController::maxDragImageSize()
 {
     static const IntSize maxDragImageSize(400, 400);
-    
+
     return maxDragImageSize;
 }
 
@@ -99,7 +99,7 @@ void DragController::cleanupAfterSystemDrag()
 #if PLATFORM(MAC)
     // Drag has ended, dragEnded *should* have been called, however it is possible
     // for the UIDelegate to take over the drag, and fail to send the appropriate
-    // drag termination event.  As dragEnded just resets drag variables, we just
+    // drag termination event. As dragEnded just resets drag variables, we just
     // call it anyway to be on the safe side.
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.

@@ -20,9 +20,9 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #import "config.h"
 #import "FrameSelection.h"
 
@@ -58,7 +58,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
         }
     }
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     // if zoom feature is enabled, insertion point changes should update the zoom
     if (!m_selection.isCaret())
         return;
@@ -82,9 +82,9 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
     if (!m_document->page())
         return;
-    
+
     m_document->page()->chrome().client().changeUniversalAccessZoomFocus(viewRect, selectionRect);
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(MAC)
 }
 
 } // namespace WebCore

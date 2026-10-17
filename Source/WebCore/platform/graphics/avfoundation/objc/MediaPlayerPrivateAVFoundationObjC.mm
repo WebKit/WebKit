@@ -66,7 +66,7 @@
 #import "QueuedVideoOutput.h"
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
-#import "SerializedPlatformDataCueMac.h"
+#import "SerializedPlatformDataCueCocoa.h"
 #import "SpatialAudioExperienceHelper.h"
 #import "TextTrack.h"
 #import "TextTrackRepresentation.h"

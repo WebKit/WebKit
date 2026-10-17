@@ -2,6 +2,7 @@
 [ iOS ] editing/cocoa/AttributedString.mm
 [ iOS ] editing/cocoa/FontShadowCocoa.mm
 [ iOS ] editing/cocoa/NodeHTMLConverter.mm
+platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 [ iOS ] platform/ios/PlatformPasteboardIOS.mm
 [ iOS ] platform/ios/VideoPresentationInterfaceIOS.mm
 [ iOS ] platform/ios/wak/WebCoreThread.mm

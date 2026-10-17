@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-// FIXME: These values are straight out of DragControllerMac, so probably have
+// FIXME: These values are straight out of DragControllerCocoa, so probably have
 // little correlation with Haiku standards...
 const int DragController::MaxOriginalImageArea = 1500 * 1500;
 const int DragController::DragIconRightInset = 7;

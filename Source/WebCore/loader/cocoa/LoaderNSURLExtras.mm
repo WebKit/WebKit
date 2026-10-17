@@ -7,13 +7,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -49,11 +49,11 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
     RetainPtr filename = filenameByFixingIllegalCharacters(lastPathComponent.get());
     RetainPtr<NSString> extension;
 
-    if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
+    if (![filename length] || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
         auto host = URL(url).host().createNSString();
         filename = filenameByFixingIllegalCharacters(host.get());
-        if ([filename length] == 0) {
+        if (![filename length]) {
             // Can't make a filename using this URL, use the default value.
             filename = defaultValue.createNSString();
         }
@@ -66,7 +66,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
     if (!mimeType)
         return filename.autorelease();
 
-    // Do not correct filenames that are reported with a mime type of tar, and 
+    // Do not correct filenames that are reported with a mime type of tar, and
     // have a filename which has .tar in it or ends in .tgz
     if ((mimeType == "application/tar"_s || mimeType == "application/x-tar"_s)
         && (String(filename.get()).containsIgnoringASCIICase(".tar"_s)
@@ -82,7 +82,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType, cons
         if (extensions.isEmpty() || !extensions.contains(String(extension.get()))) {
             // The extension doesn't match the MIME type. Correct this.
             RetainPtr correctExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(mimeType).createNSString();
-            if ([correctExtension length] != 0) {
+            if ([correctExtension length]) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension.get()];
             }

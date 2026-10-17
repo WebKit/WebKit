@@ -229,7 +229,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/loader/cf"
     "${WEBCORE_DIR}/loader/cocoa"
-    "${WEBCORE_DIR}/loader/mac"
     "${WEBCORE_DIR}/page/cocoa"
     "${WEBCORE_DIR}/page/scrolling/cocoa"
     "${WEBCORE_DIR}/page/writing-tools"
@@ -324,6 +323,7 @@ list(APPEND WebCore_SOURCES
 
     editing/cocoa/AlternativeTextUIController.mm
     editing/cocoa/AutofillElements.cpp
+    editing/cocoa/TextAlternativeWithRange.mm
 
     editing/mac/UniversalAccessZoom.mm
 
@@ -368,6 +368,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ParentalControlsContentFilter.mm
     platform/cocoa/PasteboardCocoa.mm
     platform/cocoa/SearchPopupMenuCocoa.mm
+    platform/cocoa/SerializedPlatformDataCueCocoa.mm
     platform/cocoa/SharedBufferCocoa.mm
     platform/cocoa/SharedMemoryCocoa.mm
     platform/cocoa/SharedVideoFrameInfo.mm
@@ -571,7 +572,6 @@ list(APPEND WebCore_SOURCES
     dom/DataTransferMac.mm
 
     editing/mac/EditorMac.mm
-    editing/mac/TextAlternativeWithRange.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
 
     page/mac/EventHandlerMac.mm
@@ -606,7 +606,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/ScrollingEffectsController.mm
-    platform/mac/SerializedPlatformDataCueMac.mm
     platform/mac/SuddenTermination.mm
     platform/mac/ThemeMac.mm
     platform/mac/ThreadCheck.mm
@@ -1149,15 +1148,17 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/cocoa/AutofillElements.h
     editing/cocoa/DataDetection.h
     editing/cocoa/DataDetectorType.h
+    editing/cocoa/DictionaryLookup.h
     editing/cocoa/EditingHTMLConverter.h
     editing/cocoa/NodeHTMLConverter.h
+    editing/cocoa/TextAlternativeWithRange.h
     editing/cocoa/TextAttachmentForSerialization.h
 
     loader/archive/cf/LegacyWebArchive.h
 
     loader/cache/CachedRawResource.h
 
-    loader/mac/LoaderNSURLExtras.h
+    loader/cocoa/LoaderNSURLExtras.h
 
     page/CaptionUserPreferencesMediaAF.h
 
@@ -1166,6 +1167,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/cocoa/DataDetectionResultsStorage.h
     page/cocoa/DataDetectorElementInfo.h
     page/cocoa/ImageOverlayDataDetectionResultIdentifier.h
+    page/cocoa/WebCoreFrameView.h
     page/cocoa/WebTextIndicatorLayer.h
 
     page/ios/WebEventRegion.h
@@ -1231,6 +1233,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/PowerSourceNotifier.h
     platform/cocoa/SearchPopupMenuCocoa.h
+    platform/cocoa/SerializedPlatformDataCueCocoa.h
     platform/cocoa/SharedVideoFrameInfo.h
     platform/cocoa/StringUtilities.h
     platform/cocoa/SystemBattery.h
@@ -1566,12 +1569,8 @@ endif ()
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/mac/WebAccessibilityObjectWrapperMac.h
 
-    editing/mac/DictionaryLookup.h
-    editing/mac/TextAlternativeWithRange.h
     editing/mac/TextUndoInsertionMarkupMac.h
     editing/mac/UniversalAccessZoom.h
-
-    page/mac/WebCoreFrameView.h
 
     platform/gamepad/mac/HIDGamepadProvider.h
     platform/gamepad/mac/MultiGamepadProvider.h
@@ -1796,7 +1795,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mac/LocalDefaultSystemAppearance.h
     platform/mac/PowerObserverMac.h
     platform/mac/RevealUtilities.h
-    platform/mac/SerializedPlatformDataCueMac.h
     platform/mac/WebCoreFullScreenPlaceholderView.h
     platform/mac/WebPlaybackControlsManager.h
 

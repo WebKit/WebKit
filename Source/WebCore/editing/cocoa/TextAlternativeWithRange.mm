@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "TextAlternativeWithRange.h"
 
-#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
-#include "SerializedPlatformDataCue.h"
-#include "SerializedPlatformDataCueValue.h"
-#include <wtf/HashSet.h>
+#if USE(APPKIT)
+#import <AppKit/NSTextAlternatives.h>
+#elif PLATFORM(IOS_FAMILY)
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/ios/UIKitSPI.h>
+#endif
 
 namespace WebCore {
 
-class SerializedPlatformDataCueMac final : public SerializedPlatformDataCue {
-public:
-    SerializedPlatformDataCueMac(SerializedPlatformDataCueValue&&);
-    virtual ~SerializedPlatformDataCueMac() = default;
+TextAlternativeWithRange::TextAlternativeWithRange(PlatformTextAlternatives *textAlternatives, NSRange aRange)
+    : range(aRange)
+    , alternatives(textAlternatives)
+{
+}
 
-    JSC::JSValue deserialize(JSC::JSGlobalObject*) const final;
-    RefPtr<ArrayBuffer> data() const final;
-    bool isEqual(const SerializedPlatformDataCue&) const final;
-    PlatformType platformType() const final { return PlatformType::ObjC; }
-    bool encodingRequiresPlatformData() const final { return true; }
+#if PLATFORM(MAC)
 
-    WEBCORE_EXPORT SerializedPlatformDataCueValue encodableValue() const final;
+void collectDictationTextAlternatives(NSAttributedString *string, Vector<TextAlternativeWithRange>& alternatives)
+{
+    NSRange effectiveRange = NSMakeRange(0, 0);
+    NSUInteger length = [string length];
+    if (!length)
+        return;
+    do {
+        RetainPtr<NSDictionary> attributes = [string attributesAtIndex:effectiveRange.location effectiveRange:&effectiveRange];
+        if (!attributes)
+            break;
+        RetainPtr textAlternatives = dynamic_objc_cast<NSTextAlternatives>([attributes objectForKey:NSTextAlternativesAttributeName]);
+        if (textAlternatives)
+            alternatives.append(TextAlternativeWithRange(textAlternatives.get(), effectiveRange));
+        effectiveRange.location = NSMaxRange(effectiveRange);
+    } while (effectiveRange.location < length);
+}
 
-    WEBCORE_EXPORT static const HashSet<RetainPtr<Class>>& allowedClassesForNativeValues();
-
-private:
-    SerializedPlatformDataCueValue m_value;
-};
+#endif // PLATFORM(MAC)
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SerializedPlatformDataCueMac)
-    static bool isType(const WebCore::SerializedPlatformDataCue& cue) { return cue.platformType() == WebCore::SerializedPlatformDataCue::PlatformType::ObjC; }
-SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

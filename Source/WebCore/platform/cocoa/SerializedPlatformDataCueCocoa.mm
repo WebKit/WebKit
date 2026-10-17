@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "SerializedPlatformDataCueMac.h"
+#import "SerializedPlatformDataCueCocoa.h"
 
 #if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
 
@@ -56,21 +56,21 @@ static JSValue *jsValueWithValueInContext(id, JSContext *);
 
 Ref<SerializedPlatformDataCue> SerializedPlatformDataCue::create(SerializedPlatformDataCueValue&& value)
 {
-    return adoptRef(*new SerializedPlatformDataCueMac(WTF::move(value)));
+    return adoptRef(*new SerializedPlatformDataCueCocoa(WTF::move(value)));
 }
 
-SerializedPlatformDataCueMac::SerializedPlatformDataCueMac(SerializedPlatformDataCueValue&& value)
+SerializedPlatformDataCueCocoa::SerializedPlatformDataCueCocoa(SerializedPlatformDataCueValue&& value)
     : SerializedPlatformDataCue()
     , m_value(WTF::move(value))
 {
 }
 
-RefPtr<ArrayBuffer> SerializedPlatformDataCueMac::data() const
+RefPtr<ArrayBuffer> SerializedPlatformDataCueCocoa::data() const
 {
     return nullptr;
 }
 
-JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexicalGlobalObject) const
+JSC::JSValue SerializedPlatformDataCueCocoa::deserialize(JSC::JSGlobalObject* lexicalGlobalObject) const
 {
 #if JSC_OBJC_API_ENABLED
     auto dictionary = m_value.toNSDictionary();
@@ -88,18 +88,18 @@ JSC::JSValue SerializedPlatformDataCueMac::deserialize(JSC::JSGlobalObject* lexi
 #endif
 }
 
-bool SerializedPlatformDataCueMac::isEqual(const SerializedPlatformDataCue& other) const
+bool SerializedPlatformDataCueCocoa::isEqual(const SerializedPlatformDataCue& other) const
 {
-    return m_value == downcast<SerializedPlatformDataCueMac>(other).m_value;
+    return m_value == downcast<SerializedPlatformDataCueCocoa>(other).m_value;
 }
 
-const HashSet<RetainPtr<Class>>& SerializedPlatformDataCueMac::allowedClassesForNativeValues()
+const HashSet<RetainPtr<Class>>& SerializedPlatformDataCueCocoa::allowedClassesForNativeValues()
 {
     static NeverDestroyed<HashSet<RetainPtr<Class>>> allowedClasses(HashSet<RetainPtr<Class>> { [NSString class], [NSNumber class], [NSLocale class], [NSDictionary class], [NSArray class], [NSData class] });
     return allowedClasses;
 }
 
-SerializedPlatformDataCueValue SerializedPlatformDataCueMac::encodableValue() const
+SerializedPlatformDataCueValue SerializedPlatformDataCueCocoa::encodableValue() const
 {
     return m_value;
 }

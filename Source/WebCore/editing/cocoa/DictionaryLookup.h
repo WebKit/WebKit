@@ -63,7 +63,7 @@ public:
 
     WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, CocoaView *, NOESCAPE const Function<void(TextIndicator&)>& textIndicatorInstallationCallback, NOESCAPE const Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, Function<void()>&& clearTextIndicator = nullptr);
     WEBCORE_EXPORT static void LEGACY_NODELETE hidePopup();
-    
+
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static WKRevealController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, NOESCAPE const Function<void(TextIndicator&)>& textIndicatorInstallationCallback, NOESCAPE const Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, Function<void()>&& clearTextIndicator = nullptr);
 #endif

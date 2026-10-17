@@ -24,8 +24,8 @@
  */
 
 #import <WebCore/ScrollTypes.h>
-#import <wtf/Platform.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/Platform.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <WebCore/WAKAppKitStubs.h>
