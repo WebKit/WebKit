@@ -235,78 +235,9 @@ LayoutOptionalOutsets RenderFlexibleBox::allowedLayoutOverflow() const
 
 std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeIntrinsicLogicalWidths() const
 {
-    auto scrollbarWidth = scrollbarLogicalWidth();
-
-    if (shouldApplySizeOrInlineSizeContainment()) {
-        if (auto width = explicitIntrinsicInnerLogicalWidth())
-            return { width.value() + scrollbarWidth, width.value() + scrollbarWidth };
-        return { scrollbarWidth, scrollbarWidth };
-    }
-
-    // FIXME: We're ignoring flex-basis here and we shouldn't. We can't start
-    // honoring it though until the flex shorthand stops setting it to 0. See
-    // https://bugs.webkit.org/show_bug.cgi?id=116117 and
-    // https://crbug.com/240765.
-    auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
-
-    auto minLogicalWidth = LayoutUnit { };
-    auto maxLogicalWidth = LayoutUnit { };
-
-    size_t numItemsWithNormalLayout = 0;
-    for (RenderBox* flexItem = firstChildBox(); flexItem; flexItem = flexItem->nextSiblingBox()) {
-        if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
-            continue;
-        ++numItemsWithNormalLayout;
-
-        // Pre-layout orthogonal children in order to get a valid value for the preferred width.
-        if (writingMode().isOrthogonal(flexItem->writingMode()))
-            flexItem->layoutIfNeeded();
-
-        LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*flexItem);
-
-        auto [minContentInParentInlineAxis, maxContentInParentInlineAxis] = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
-            if (writingMode().isOrthogonal(flexItem->writingMode())) {
-                auto intrinsicBlockSize = flexItem->computeIntrinsicLogicalHeight();
-                return { intrinsicBlockSize, intrinsicBlockSize };
-            }
-            return computeChildIntrinsicLogicalWidths(*flexItem);
-        }();
-
-        minContentInParentInlineAxis += margin;
-        maxContentInParentInlineAxis += margin;
-
-        if (!FlexFormattingUtils::isColumnFlow(*this)) {
-            maxLogicalWidth += maxContentInParentInlineAxis;
-            if (FlexFormattingUtils::isMultiline(*this)) {
-                // For multiline, the min preferred width is if you put a break between
-                // each item.
-                minLogicalWidth = std::max(minLogicalWidth, minContentInParentInlineAxis);
-            } else
-                minLogicalWidth += minContentInParentInlineAxis;
-        } else {
-            minLogicalWidth = std::max(minContentInParentInlineAxis, minLogicalWidth);
-            maxLogicalWidth = std::max(maxContentInParentInlineAxis, maxLogicalWidth);
-        }
-    }
-
-    if (!FlexFormattingUtils::isColumnFlow(*this) && numItemsWithNormalLayout > 1) {
-        LayoutUnit inlineGapSize = (numItemsWithNormalLayout - 1) * FlexFormattingUtils::computeGap(*this, FlexFormattingUtils::GapType::BetweenItems);
-        maxLogicalWidth += inlineGapSize;
-        if (!FlexFormattingUtils::isMultiline(*this))
-            minLogicalWidth += inlineGapSize;
-    }
-
-    maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
-
-    // Due to negative margins, it is possible that we calculated a negative
-    // intrinsic width. Make sure that we never return a negative width.
-    minLogicalWidth = std::max(0_lu, minLogicalWidth);
-    maxLogicalWidth = std::max(0_lu, maxLogicalWidth);
-
-    minLogicalWidth = std::max(minLogicalWidth, legendMinWidth);
-    maxLogicalWidth = std::max(maxLogicalWidth, legendMaxWidth);
-
-    return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
+    // Measuring a multi-line column container lays out its items (see FlexLayout::maximumContentSizeForMultilineColumn).
+    SUPPRESS_MEMORY_UNSAFE_CAST auto& flexLayout = const_cast<LayoutIntegration::FlexLayout&>(m_flexLayout);
+    return flexLayout.computeIntrinsicLogicalWidths();
 }
 
 // This method is only called whenever a descendant of a flex item wants to resolve a percentage in its

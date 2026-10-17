@@ -174,35 +174,43 @@ FlexContainerUsedExtents FlexIntegrationUtils::updateFlexContainerLogicalHeight(
 
 void FlexIntegrationUtils::setFlexItemGeometry(const FlexLayoutItem& flexLayoutItem, const LayoutPoint& location, bool isHorizontalFlow)
 {
+    CheckedRef flexItem = flexLayoutItem.renderer;
     // For vertical flows the flex algorithm works in flow-relative coordinates, so transpose back to physical here.
-    flexLayoutItem.renderer->setLocation(isHorizontalFlow ? location : location.transposedPoint());
+    flexItem->setLocation(isHorizontalFlow ? location : location.transposedPoint());
+    auto& margins = flexLayoutItem.margins;
+    flexItem->setMarginTop(margins.top());
+    flexItem->setMarginRight(margins.right());
+    flexItem->setMarginBottom(margins.bottom());
+    flexItem->setMarginLeft(margins.left());
 }
 
-void FlexIntegrationUtils::updateAutoMarginsInMainAxis(const FlexLayoutItem& flexLayoutItem, LayoutUnit autoMarginOffset)
+void FlexIntegrationUtils::updateAutoMarginsInMainAxis(FlexLayoutItem& flexLayoutItem, LayoutUnit autoMarginOffset)
 {
-    CheckedRef flexItem = flexLayoutItem.renderer;
     ASSERT(autoMarginOffset >= 0_lu);
 
+    CheckedRef style = flexLayoutItem.style();
+    auto& margins = flexLayoutItem.margins;
     if (FlexFormattingUtils::isHorizontalFlow(flexBox())) {
-        if (flexItem->style().marginLeft().isAuto())
-            flexItem->setMarginLeft(autoMarginOffset);
-        if (flexItem->style().marginRight().isAuto())
-            flexItem->setMarginRight(autoMarginOffset);
+        if (style->marginLeft().isAuto())
+            margins.setLeft(autoMarginOffset);
+        if (style->marginRight().isAuto())
+            margins.setRight(autoMarginOffset);
     } else {
-        if (flexItem->style().marginTop().isAuto())
-            flexItem->setMarginTop(autoMarginOffset);
-        if (flexItem->style().marginBottom().isAuto())
-            flexItem->setMarginBottom(autoMarginOffset);
+        if (style->marginTop().isAuto())
+            margins.setTop(autoMarginOffset);
+        if (style->marginBottom().isAuto())
+            margins.setBottom(autoMarginOffset);
     }
 }
 
-bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(const FlexLayoutItem& flexLayoutItem, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace)
+bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(FlexLayoutItem& flexLayoutItem, LayoutUnit& crossOffset, LayoutUnit availableAlignmentSpace)
 {
     // 9.6. (#13) Resolve cross-axis auto margins: if both cross-axis margins are auto, split the free space
     // between them; if only one is auto, give it all the free space so the item's outer cross size fills the line.
     CheckedRef flexItem = flexLayoutItem.renderer;
     ASSERT(!flexItem->isOutOfFlowPositioned());
     ASSERT(availableAlignmentSpace >= 0_lu);
+    auto& margins = flexLayoutItem.margins;
 
     bool isHorizontal = FlexFormattingUtils::isHorizontalFlow(flexBox());
     CheckedRef style = flexLayoutItem.style();
@@ -211,11 +219,11 @@ bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(const FlexLayoutItem& fl
     if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
         crossOffset += availableAlignmentSpace / 2;
         if (isHorizontal) {
-            flexItem->setMarginTop(availableAlignmentSpace / 2);
-            flexItem->setMarginBottom(availableAlignmentSpace / 2);
+            margins.setTop(availableAlignmentSpace / 2);
+            margins.setBottom(availableAlignmentSpace / 2);
         } else {
-            flexItem->setMarginLeft(availableAlignmentSpace / 2);
-            flexItem->setMarginRight(availableAlignmentSpace / 2);
+            margins.setLeft(availableAlignmentSpace / 2);
+            margins.setRight(availableAlignmentSpace / 2);
         }
         return true;
     }
@@ -238,9 +246,9 @@ bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(const FlexLayoutItem& fl
             crossOffset += availableAlignmentSpace;
 
         if (isHorizontal)
-            flexItem->setMarginTop(availableAlignmentSpace);
+            margins.setTop(availableAlignmentSpace);
         else
-            flexItem->setMarginLeft(availableAlignmentSpace);
+            margins.setLeft(availableAlignmentSpace);
         return true;
     }
 
@@ -249,9 +257,9 @@ bool FlexIntegrationUtils::updateAutoMarginsInCrossAxis(const FlexLayoutItem& fl
             crossOffset += availableAlignmentSpace;
 
         if (isHorizontal)
-            flexItem->setMarginBottom(availableAlignmentSpace);
+            margins.setBottom(availableAlignmentSpace);
         else
-            flexItem->setMarginRight(availableAlignmentSpace);
+            margins.setRight(availableAlignmentSpace);
         return true;
     }
     return false;
@@ -361,8 +369,11 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     CheckedRef renderer = flexLayoutItem.renderer;
     // Reuse the size cached in a previous layout while the item stays clean.
     if (!renderer->needsLayout()) {
-        if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(renderer))
-            return *cachedBlockAxisContentSize;
+        if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(renderer)) {
+            auto overridingLogicalWidth = renderer->overridingBorderBoxLogicalWidth();
+            if (!overridingLogicalWidth || *overridingLogicalWidth == cachedBlockAxisContentSize->logicalWidth)
+                return cachedBlockAxisContentSize->size;
+        }
     }
 
     // Don't resolve percentages in children. This is especially important for the min-height calculation,
@@ -381,7 +392,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     }();
 
     // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
-    m_flexItemContentCache.setBlockAxisSize(renderer, blockAxisContentSize);
+    m_flexItemContentCache.setBlockAxisSize(renderer, { blockAxisContentSize, renderer->logicalWidth() });
     return blockAxisContentSize;
 }
 
@@ -647,6 +658,11 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogica
 std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
     return isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem.renderer.get(), &m_flexLayoutState);
+}
+
+bool FlexIntegrationUtils::isComputingIntrinsicLogicalWidths() const
+{
+    return flexBox().layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox());
 }
 
 template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const

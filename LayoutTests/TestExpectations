@@ -1901,19 +1901,10 @@ webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-si
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-003.html [ ImageOnlyFailure ]
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-004.html [ ImageOnlyFailure ]
 webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-007.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-001.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-002.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-003.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-006.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-007.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-008.html [ ImageOnlyFailure ]
-webkit.org/b/116117 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-checkbox-input.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/stretch-flex-item-radio-input.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/webkit-box-vertical-writing-mode.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/multiline-shrink-to-fit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/align-content-007.htm
 imported/w3c/web-platform-tests/css/css-flexbox/align-self-016.html
 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-align-self-safe-outer-cb-001.tentative.html [ ImageOnlyFailure ]
@@ -1924,9 +1915,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-available-size-0
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-percentage-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-dynamic.html [ ImageOnlyFailure ]
@@ -5179,8 +5167,6 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.h
 
 imported/w3c/web-platform-tests/css/css-flexbox/gap-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-013.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-014.html [ ImageOnlyFailure ]
 
 # text-combine-upright bugs
 webkit.org/b/234704 imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-layout-rules-001.html [ ImageOnlyFailure ]
