@@ -95,15 +95,15 @@ static bool LEGACY_NODELETE isEmptyInlineContent(const InlineItemList& inlineIte
     return inlineTextItem && !inlineTextItem->length();
 }
 
-InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, BlockLayoutState& parentBlockLayoutState)
+InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& globalLayoutState, const BlockLayoutState& parentBlockLayoutState, PlacedFloats& placedFloats)
     : m_rootBlockContainer(rootBlockContainer)
     , m_globalLayoutState(globalLayoutState)
-    , m_floatingContext(rootBlockContainer, globalLayoutState, parentBlockLayoutState.placedFloats())
+    , m_floatingContext(rootBlockContainer, globalLayoutState, placedFloats)
     , m_inlineFormattingUtils(*this)
     , m_inlineQuirks(*this)
     , m_integrationUtils(globalLayoutState)
     , m_inlineContentCache(globalLayoutState.inlineContentCache(rootBlockContainer))
-    , m_inlineLayoutState(parentBlockLayoutState)
+    , m_inlineLayoutState(parentBlockLayoutState, placedFloats)
 {
     initializeInlineLayoutState(globalLayoutState);
 }
@@ -300,7 +300,7 @@ static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t line
 static inline void handleAfterSideMargin(BlockLayoutState::MarginState& marginState, InlineDisplay::Content& displayContent)
 {
     if (!InlineDisplayLineBuilder::hasTrailingLineWithBlockContent(displayContent.lines))
-        marginState.canCollapseMarginAfterWithChildren = false;
+        marginState.blockContainerMarginAfterCollapsesWithContent = false;
 }
 
 UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBuilder& lineBuilder, const InlineItemList& inlineItemList, InlineItemRange needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, const InlineDamage* lineDamage, bool mayUseSimplifiedDisplayContentBuild)
@@ -308,7 +308,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
     ASSERT(!needsLayoutRange.isEmpty());
     auto layoutResult = makeUniqueRef<InlineLayoutResult>();
     auto& inlineLayoutState = layoutState();
-    auto& marginState = inlineLayoutState.parentBlockLayoutState().marginState();
+    auto& marginState = inlineLayoutState.marginState();
 
     auto isPartialLayout = InlineInvalidation::mayOnlyNeedPartialLayout(lineDamage);
     ASSERT(isPartialLayout || !previousLine);
