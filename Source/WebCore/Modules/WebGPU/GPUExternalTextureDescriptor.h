@@ -99,10 +99,12 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+// Keep dictionary storage in the same order as the generated WebIDL
+// dictionary initializer (alphabetical by member name).
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
 #if ENABLE(VIDEO)
     GPUVideoSource source;
 #endif
-    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
 };
 
 }
