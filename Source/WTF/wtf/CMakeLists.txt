@@ -867,6 +867,38 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     file(WRITE "${WTF_HEADERS_DIR}/ios/WebCoreThread.h" "")
 endif ()
 
+if (SWIFT_REQUIRED)
+    target_sources(WTF PRIVATE
+        ${WTF_DIR}/wtf/wtf.swift
+    )
+
+    # WTF exposes no Swift to C++, so skip generating the interop header.
+    set(WTF_SWIFT_TYPECHECK_SOURCES "")
+
+    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WTF wtf
+        "${WTF_HEADERS_DIR}"
+        "WTFSwift-Generated.h")
+
+    webkit_target_add_swift_options(WTF
+        "-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}"
+        "-Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers"
+        "-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}"
+        "-Xcc -I${CMAKE_BINARY_DIR}"
+    )
+    if (NOT APPLE)
+        # Matches the importer flags WebKit uses for the wtf module on these ports.
+        webkit_target_add_swift_options(WTF
+            -import-underlying-module
+            "-Xcc -D__glibcxx_want_coroutine=1"
+            "-Xcc -fmodule-map-file=${WTF_HEADERS_DIR}/module.modulemap"
+        )
+        # Most targets that link WTF are linked by the C++ driver, which does not add the Swift runtime.
+        string(JSON _swift_runtime_import_path ERROR_VARIABLE _swift_no_import_path GET ${_swift_target_paths} "runtimeLibraryImportPaths" 0)
+        find_library(WTF_SWIFTCORE_LIBRARY swiftCore HINTS ${_swift_runtime_library_path} ${_swift_runtime_import_path} REQUIRED)
+        list(APPEND WTF_LIBRARIES ${WTF_SWIFTCORE_LIBRARY})
+    endif ()
+endif ()
+
 WEBKIT_FRAMEWORK(WTF)
 
 # WTF is statically linked into JavaScriptCore, so it uses JSC's PGO profile.
