@@ -33,6 +33,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DefaultSizing.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "DocumentView.h"
@@ -381,9 +382,14 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                 if (!node->document().contains(*node)) {
                     auto snapshotImageElement = [&snapshot] (HTMLImageElement& imageElement) {
                         if (RefPtr cachedImage = imageElement.cachedImage()) {
-                            if (RefPtr image = cachedImage->image(); image && image != &Image::nullImage()) {
-                                snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
-                                snapshot->context().drawImage(*image, ConcreteObjectSize::fixed(image->size()), FloatPoint(0, 0));
+                            if (RefPtr image = cachedImage->image(); image && image->hasSomethingToDraw()) {
+                                auto concreteObjectSize = DefaultSizing { }.resolve(image->naturalDimensions());
+                                if (concreteObjectSize.size().isEmpty())
+                                    return;
+                                snapshot = ImageBuffer::create(concreteObjectSize.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
+                                if (!snapshot)
+                                    return;
+                                snapshot->context().drawImage(*image, concreteObjectSize, FloatPoint(0, 0));
                             }
                         }
                     };
