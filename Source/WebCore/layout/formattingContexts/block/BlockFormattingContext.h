@@ -29,6 +29,7 @@
 #include "BlockFormattingUtils.h"
 #include "BlockLayoutState.h"
 #include "InlineFormattingConstraints.h"
+#include "OutOfFlowGeometry.h"
 #include <WebCore/AdjoiningMargins.h>
 #include <WebCore/LayoutBoxGeometry.h>
 #include <wtf/CheckedRef.h>
@@ -63,7 +64,29 @@ struct BlockLayoutResult {
     };
     // Post-order: a box is added once its content is laid out, after its descendants.
     Vector<Box> boxes;
+    // An absolutely or fixed positioned box in the content, which BlockLayout::updateRenderers registers on its containing block
+    // (RenderBlock::addOutOfFlowBox), and which its containing block lays out once it has its size.
+    struct OutOfFlowBox {
+        CheckedRef<const RenderBox> renderer;
+        // Where the margin box of the box would start with position: static (CSS 2.2 §10.3.7, §10.6.4), relative to the border box of the
+        // block container it would be in: the inline axis runs from its inline start (in its direction), the block axis from its block start.
+        LayoutUnit staticInlinePosition;
+        LayoutUnit staticBlockPosition;
+    };
+    // In tree order.
+    Vector<OutOfFlowBox> outOfFlowBoxes;
+    // The content box block size of the root from its content (CSS 2.2 §10.6.7).
     LayoutUnit intrinsicContentBlockSize;
+};
+
+// The padding box of the containing block of an out-of-flow box (CSS 2.2 §10.1), relative to its border box: the inline axis runs from its
+// inline start (in its direction), the block axis from its block start.
+struct OutOfFlowContainingBlock {
+    CheckedRef<const RenderBox> box;
+    LayoutUnit paddingBoxInlineStart;
+    LayoutUnit paddingBoxBlockStart;
+    LayoutUnit inlineSize;
+    LayoutUnit blockSize;
 };
 
 // Context only: what it changes as it lays out its content is in the block layout state, so the context can be built again from the root,
@@ -76,12 +99,16 @@ public:
     BlockLayoutResult layout(const ConstraintsForBlockContent&);
     // The min-content and max-content inline sizes of the content of a block container (css-sizing-3 §5.1).
     IntrinsicWidthConstraints computeIntrinsicInlineSizes(const RenderBlockFlow& blockContainer) const;
+    // An out-of-flow box and its content, in its containing block that has its size (css-position-3 §4). The box establishes an independent
+    // formatting context for its content.
+    BlockLayoutResult layoutOutOfFlowBox(const RenderBox&, const OutOfFlowContainingBlock&, const OutOfFlowGeometry::StaticPosition&);
 
 private:
     void handleBlockContainerStart(const RenderBox&);
     void handleBlockContainerEnd(const RenderBox&, BlockLayoutResult&);
     void handleInlineContent(const RenderBox& blockContainer, ContainingBlockState& blockContainerState, const BlockLayoutState& inlineContentBlockLayoutState);
     void handleIndependentFormattingContextRoot(const RenderBox&, BlockLayoutResult&);
+    void handleOutOfFlowBox(const RenderBox&, BlockLayoutResult&);
 
     ContainingBlockState containingBlockStateForRoot(const ConstraintsForBlockContent&) const;
     ContainingBlockState containingBlockStateFor(const RenderBox& blockContainer, const BoxGeometry&, const ContainingBlockState& parentState) const;

@@ -46,7 +46,9 @@ public:
         BlockContainerEnd,
         InlineContent,
         // A box whose content is laid out in a formatting context of its own; to this one it is a single box.
-        IndependentFormattingContextRoot
+        IndependentFormattingContextRoot,
+        // An absolutely or fixed positioned box: it only gets its static position here (CSS 2.2 §10.3.7, §10.6.4).
+        OutOfFlowBox
     };
     BlockItem(const RenderBox&, Type);
 

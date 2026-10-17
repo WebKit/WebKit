@@ -33,6 +33,8 @@ class RenderView;
 namespace LayoutIntegration {
 
 bool canUseForBlockLayout(const RenderBlockFlow&);
+// Whether the new block formatting context lays out the root and an out-of-flow box whose containing block is the root or a box inside it.
+bool canUseForBlockLayoutWithOutOfFlowBoxes(const RenderBlockFlow&);
 bool canUseForIntrinsicInlineSizes(const RenderBlockFlow&);
 
 struct BlockLayoutCoverage {

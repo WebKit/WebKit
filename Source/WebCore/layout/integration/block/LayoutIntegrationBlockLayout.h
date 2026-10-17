@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class RenderBlock;
 class RenderBlockFlow;
 
 namespace Layout {
@@ -47,9 +48,12 @@ public:
     void layout();
     // The min-content and max-content inline sizes of the root's content (css-sizing-3 §5.1), from the block formatting context that lays it out.
     static std::pair<LayoutUnit, LayoutUnit> computeIntrinsicInlineSizes(const RenderBlockFlow&);
+    // The out-of-flow boxes registered on the root, once RenderBlockFlow::layoutBlock has resolved the size of the root.
+    void layoutOutOfFlowBoxes();
 
 private:
     void updateRenderers(const Layout::BlockLayoutResult&, PaintInvalidation&);
+    void layoutOutOfFlowBoxes(const RenderBlock& containingBlock, PaintInvalidation&);
 
     RenderBlockFlow& rootRenderer() const { return m_rootRenderer; }
 
