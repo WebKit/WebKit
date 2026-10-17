@@ -889,7 +889,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVariableDecla
     TreeExpression scratch2 = 0;
     JSTextPosition scratch3;
     bool scratchBool;
-    TreeExpression variableDecls = parseVariableDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3, VarDeclarationContext, declarationType, exportType, scratchBool);
+    TreeExpression variableDecls = parseVariableDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3, VarDeclarationContext, declarationType, exportType, scratchBool, /* isKeywordConsumed */ false);
     propagateError();
     failIfFalse(autoSemiColon(), "Expected ';' after variable declaration");
     
@@ -941,7 +941,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDeclarationList(TreeBuilder& context, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext declarationListContext, DeclarationType declarationType, ExportType exportType, bool& forLoopConstDoesNotHaveInitializer)
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDeclarationList(TreeBuilder& context, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext declarationListContext, DeclarationType declarationType, ExportType exportType, bool& forLoopConstDoesNotHaveInitializer, bool isKeywordConsumed)
 {
     ASSERT(declarationType == DeclarationType::LetDeclaration || declarationType == DeclarationType::VarDeclaration || declarationType == DeclarationType::ConstDeclaration || declarationType == DeclarationType::UsingDeclaration || declarationType == DeclarationType::AwaitUsingDeclaration);
     TreeExpression head = 0;
@@ -955,7 +955,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
         lastPattern = TreeDestructuringPattern(0);
         lastIdent = nullptr;
         JSTokenLocation location(tokenLocation());
-        next();
+        if (isKeywordConsumed) {
+            location = m_lastTokenLocation;
+            isKeywordConsumed = false;
+        } else
+            next();
         if (!head && declarationType == DeclarationType::AwaitUsingDeclaration) {
             ASSERT(match(IDENT) && *m_token.m_data.ident == m_vm.propertyNames->usingIdentifier);
             next();
@@ -1040,7 +1044,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
             }
             failIfFalse(pattern, "Cannot parse this destructuring pattern");
             hasInitializer = match(EQUAL);
-            failIfTrue(declarationListContext == VarDeclarationContext && !hasInitializer, "Expected an initializer in destructuring variable declaration");
+            failIfTrue(!hasInitializer && (declarationListContext == VarDeclarationContext || (!match(INTOKEN) && !matchContextualKeyword(m_vm.propertyNames->of))), "Expected an initializer in destructuring variable declaration");
             lastPattern = pattern;
             if (hasInitializer) {
                 next(TreeBuilder::DontBuildStrings); // consume '='
@@ -1497,8 +1501,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     TreeExpression decls = 0;
     TreeDestructuringPattern pattern = 0;
     bool isVarDeclaration = match(VAR);
-    bool isLetDeclaration = match(LET);
     bool isConstDeclaration = match(CONSTTOKEN);
+    bool isAsyncOf = false;
+    if (matchContextualKeyword(m_vm.propertyNames->async)) {
+        LexerState lexerState = internalSaveLexerState();
+        next();
+        isAsyncOf = matchContextualKeyword(m_vm.propertyNames->of);
+        restoreLexerState(lexerState);
+    }
     bool isUsingDeclaration = false;
     bool isAwaitUsingDeclaration = false;
     if (Options::useExplicitResourceManagement() && match(IDENT)
@@ -1538,6 +1548,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         restoreSavePoint(context, savePoint);
         if (isAwaitUsingDeclaration)
             currentFunctionScope()->setUsesAwait();
+    }
+    bool isLetDeclaration = match(LET);
+    bool isLetIdentifier = false;
+    if (isLetDeclaration) {
+        LexerState lexerState = internalSaveLexerState();
+        next();
+        if (!strictMode() && !matchIdentifierOrPossiblyEscapedContextualKeyword() && !match(OPENBRACE) && !match(OPENBRACKET)) {
+            restoreLexerState(lexerState);
+            isLetDeclaration = false;
+            isLetIdentifier = true;
+        }
     }
     bool isAnyUsingDeclaration = isUsingDeclaration || isAwaitUsingDeclaration;
     bool isLexicalDeclaration = isLetDeclaration || isConstDeclaration || isAnyUsingDeclaration;
@@ -1585,7 +1606,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         else
             RELEASE_ASSERT_NOT_REACHED();
         unsigned candidateCountBeforeInitializer = currentScope()->closedVariableCandidates().size();
-        decls = parseVariableDeclarationList(context, declarations, forInTarget, forInInitializer, declsStart, initStart, initEnd, ForLoopContext, declarationType, ExportType::NotExported, forLoopConstDoesNotHaveInitializer);
+        decls = parseVariableDeclarationList(context, declarations, forInTarget, forInInitializer, declsStart, initStart, initEnd, ForLoopContext, declarationType, ExportType::NotExported, forLoopConstDoesNotHaveInitializer, isLetDeclaration);
         forLoopinitializerContainsClosure = currentScope()->closedVariableCandidates().size() > candidateCountBeforeInitializer;
         m_allowsIn = true;
         propagateError();
@@ -1653,7 +1674,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
             restoreSavePoint(context, savePoint);
         }
         m_allowsIn = false;
-        decls = parseExpression(context);
+        if (isAsyncOf && isAwaitFor) {
+            next();
+            decls = createResolveAndUseVariable(context, &m_vm.propertyNames->async, false, declsStart, declLocation);
+        } else
+            decls = parseExpression(context);
         m_allowsIn = true;
         failIfFalse(decls, "Cannot parse for loop declarations");
         recordPauseLocation(context.breakpointLocation(decls));
@@ -1700,6 +1725,8 @@ enumerationLoop:
     JSTextPosition inLocation = tokenStartPosition();
     if (!match(INTOKEN)) {
         failIfFalse(matchContextualKeyword(m_vm.propertyNames->of), "Expected either 'in' or 'of' in enumeration syntax");
+        failIfTrue(isLetIdentifier, "The left hand side of a for-of statement cannot start with 'let'");
+        failIfTrue(isAsyncOf && !isAwaitFor, "The left hand side of a for-of statement cannot be 'async'");
         isOfEnumeration = true;
         next();
     } else {

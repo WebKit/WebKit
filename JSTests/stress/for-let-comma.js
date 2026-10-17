@@ -1,6 +1,6 @@
 function foo() {
     var array = [];
-    for (let x = 0, []; x < 10; ++x) { array.push(x); }
+    for (let x = 0, [] = []; x < 10; ++x) { array.push(x); }
     return array;
 }
 
