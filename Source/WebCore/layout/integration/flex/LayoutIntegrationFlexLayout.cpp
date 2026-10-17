@@ -245,7 +245,7 @@ void FlexLayout::layout(RelayoutChildren relayoutChildren)
     m_flexLayoutResult = WebCore::FlexFormattingContext(flexBox(), integrationUtils, constraints, *m_flexLayoutState).layout(flexLayoutItems);
 }
 
-std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() const
+std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths()
 {
     auto scrollbarWidth = flexBox().scrollbarLogicalWidth();
 
@@ -261,7 +261,9 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
     // https://crbug.com/240765.
     auto [legendMinWidth, legendMaxWidth] = flexBox().computeIntrinsicLogicalWidthsForFieldsetLegend();
 
+    auto isMultilineColumnFlow = FlexFormattingUtils::isColumnFlow(flexBox()) && FlexFormattingUtils::isMultiline(flexBox());
     Vector<FlexFormattingContext::IntrinsicWidthContribution> contributions;
+    Vector<MaxContentWidth> maxContentWidths;
     for (CheckedPtr flexItem = flexBox().firstChildBox(); flexItem; flexItem = flexItem->nextSiblingBox()) {
         if (flexItem->isOutOfFlowPositioned() || flexItem->isExcludedFromNormalLayout())
             continue;
@@ -281,9 +283,16 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
         }();
 
         contributions.append({ minContentInParentInlineAxis + margin, maxContentInParentInlineAxis + margin });
+        if (isMultilineColumnFlow)
+            maxContentWidths.append({ *flexItem, maxContentInParentInlineAxis });
     }
 
     auto [minimumContentSize, maximumContentSize] = FlexFormattingContext::minimumMaximumContentSize(flexBox(), contributions);
+    // CSS Flexbox 9.9.2
+    if (maxContentWidths.size() > 1) {
+        if (auto maximumContentSizeFromFlexLines = maximumContentSizeForMultilineColumn(WTF::move(maxContentWidths)))
+            maximumContentSize = *maximumContentSizeFromFlexLines;
+    }
     maximumContentSize = std::max(minimumContentSize, maximumContentSize);
 
     // Due to negative margins, it is possible that we calculated a negative
@@ -292,6 +301,132 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicLogicalWidths() co
     maximumContentSize = std::max(0_lu, maximumContentSize);
 
     return { std::max(minimumContentSize, legendMinWidth) + scrollbarWidth, std::max(maximumContentSize, legendMaxWidth) + scrollbarWidth };
+}
+
+// Scope for measuring the container's max-content width (9.9.2): each item gets its max-content width as its overriding
+// width, and the flex algorithm runs with its own FlexLayoutState. On destruction the items are put back, and the ones the
+// measurement laid out are laid out again.
+class FlexLayout::MaxContentWidthMeasurementScope {
+public:
+    MaxContentWidthMeasurementScope(FlexLayout&, const FlexLayoutItems&, const FlexFormattingContext::SizeList& flexItemsMaxContentWidths);
+    ~MaxContentWidthMeasurementScope();
+
+    FlexLayoutState& flexLayoutState() LIFETIME_BOUND { return *m_flexLayout.m_flexLayoutState; }
+
+private:
+    struct FlexItemState {
+        std::optional<LayoutUnit> overridingBorderBoxLogicalWidth;
+        std::optional<LayoutUnit> overridingBorderBoxLogicalHeight;
+        LayoutBoxExtent margins;
+        std::optional<FlexItemContentCache::BlockAxisSize> blockAxisSize;
+        std::optional<LayoutUnit> contentLogicalHeight;
+    };
+
+    FlexLayout& m_flexLayout;
+    const FlexLayoutItems& m_flexLayoutItems;
+    const bool m_containerWillLayOutItsItems;
+    Vector<FlexItemState, 4> m_savedFlexItemStates;
+    std::optional<SetForScope<std::optional<FlexLayoutState>>> m_flexLayoutStateScope;
+};
+
+FlexLayout::MaxContentWidthMeasurementScope::MaxContentWidthMeasurementScope(FlexLayout& flexLayout, const FlexLayoutItems& flexLayoutItems, const FlexFormattingContext::SizeList& flexItemsMaxContentWidths)
+    : m_flexLayout(flexLayout)
+    , m_flexLayoutItems(flexLayoutItems)
+    , m_containerWillLayOutItsItems(!flexLayout.m_flexLayoutState && (flexLayout.flexBox().selfNeedsLayout() || flexLayout.flexBox().normalChildNeedsLayout()))
+{
+    ASSERT(flexLayoutItems.size() == flexItemsMaxContentWidths.size());
+    m_savedFlexItemStates.reserveInitialCapacity(flexLayoutItems.size());
+    for (size_t index = 0; index < flexLayoutItems.size(); ++index) {
+        auto& flexLayoutItem = flexLayoutItems[index];
+        CheckedRef flexItem = flexLayoutItem.renderer;
+        m_savedFlexItemStates.append({
+            flexItem->overridingBorderBoxLogicalWidth(),
+            flexItem->overridingBorderBoxLogicalHeight(),
+            flexItem->marginBox(),
+            m_flexLayout.m_flexItemContentCache.blockAxisSize(flexItem),
+            m_flexLayout.m_flexItemContentCache.contentLogicalHeight(flexItem),
+        });
+
+        flexItem->clearOverridingBorderBoxLogicalHeight();
+        if (flexLayoutItem.mainAxisIsInlineAxis)
+            flexItem->clearOverridingBorderBoxLogicalWidth();
+        else
+            flexItem->setOverridingBorderBoxLogicalWidth(flexItemsMaxContentWidths[index]);
+    }
+
+    m_flexLayoutStateScope.emplace(m_flexLayout.m_flexLayoutState, FlexLayoutState { m_flexLayout.flexBox().hasDefiniteLogicalHeight() });
+}
+
+FlexLayout::MaxContentWidthMeasurementScope::~MaxContentWidthMeasurementScope()
+{
+    auto isLaidOutByMeasurement = Vector<bool, 4>(m_flexLayoutItems.size(), [&](size_t index) {
+        return flexLayoutState().hasFlexItemCompletedLayout(m_flexLayoutItems[index].renderer);
+    });
+    m_flexLayoutStateScope.reset();
+
+    auto& flexItemContentCache = m_flexLayout.m_flexItemContentCache;
+    for (size_t index = 0; index < m_flexLayoutItems.size(); ++index) {
+        CheckedRef flexItem = m_flexLayoutItems[index].renderer;
+        auto& savedFlexItemState = m_savedFlexItemStates[index];
+        if (auto width = savedFlexItemState.overridingBorderBoxLogicalWidth)
+            flexItem->setOverridingBorderBoxLogicalWidth(*width);
+        else
+            flexItem->clearOverridingBorderBoxLogicalWidth();
+        if (auto height = savedFlexItemState.overridingBorderBoxLogicalHeight)
+            flexItem->setOverridingBorderBoxLogicalHeight(*height);
+        else
+            flexItem->clearOverridingBorderBoxLogicalHeight();
+        if (auto blockAxisSize = savedFlexItemState.blockAxisSize)
+            flexItemContentCache.setBlockAxisSize(flexItem, *blockAxisSize);
+        else
+            flexItemContentCache.clearBlockAxisSize(flexItem);
+        if (auto contentLogicalHeight = savedFlexItemState.contentLogicalHeight)
+            flexItemContentCache.setContentLogicalHeight(flexItem, *contentLogicalHeight);
+        else
+            flexItemContentCache.clearContentLogicalHeight(flexItem);
+
+        if (isLaidOutByMeasurement[index]) {
+            flexItem->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
+            // FIXME: This runs outside of the container's layout state (pagination, line-clamp).
+            if (!m_containerWillLayOutItsItems)
+                flexItem->layoutIfNeeded();
+        }
+        auto& margins = savedFlexItemState.margins;
+        flexItem->setMarginTop(margins.top());
+        flexItem->setMarginRight(margins.right());
+        flexItem->setMarginBottom(margins.bottom());
+        flexItem->setMarginLeft(margins.left());
+    }
+}
+
+std::optional<LayoutUnit> FlexLayout::maximumContentSizeForMultilineColumn(Vector<MaxContentWidth>&& maxContentWidths)
+{
+    ASSERT(FlexFormattingUtils::isColumnFlow(flexBox()) && FlexFormattingUtils::isMultiline(flexBox()));
+
+    auto constraints = flexLayoutConstraints();
+    if (!FlexFormattingUtils::maximumContentSizeNeedsFlexLines(constraints, maxContentWidths.map([](auto& maxContentWidth) { return maxContentWidth.flexItem; })))
+        return { };
+
+    std::stable_sort(maxContentWidths.begin(), maxContentWidths.end(), [](auto& a, auto& b) {
+        return a.flexItem->style().order().value < b.flexItem->style().order().value;
+    });
+
+    FlexLayoutItems flexLayoutItems;
+    FlexFormattingContext::SizeList flexItemsMaxContentWidths;
+    for (auto& maxContentWidth : maxContentWidths) {
+        CheckedRef flexItem = maxContentWidth.flexItem;
+        // Like marginIntrinsicLogicalWidthForChild, resolve the margins against zero: the container's width, which percentages
+        // refer to, is what is being computed.
+        auto usedStyle = flexItem->usedStyle();
+        auto margins = LayoutBoxExtent { usedStyle.marginTop(0_lu).value_or(0_lu), usedStyle.marginRight(0_lu).value_or(0_lu), usedStyle.marginBottom(0_lu).value_or(0_lu), usedStyle.marginLeft(0_lu).value_or(0_lu) };
+        flexLayoutItems.append({ flexItem.get(), constraints.isHorizontalFlow, margins, flexItem->everHadLayout(), true });
+        flexItemsMaxContentWidths.append(maxContentWidth.borderBoxWidth);
+    }
+
+    auto measurementScope = MaxContentWidthMeasurementScope { *this, flexLayoutItems, flexItemsMaxContentWidths };
+    auto integrationUtils = FlexIntegrationUtils { flexBox(), measurementScope.flexLayoutState(), m_flexItemContentCache };
+    auto flexFormattingContext = FlexFormattingContext { flexBox(), integrationUtils, constraints, measurementScope.flexLayoutState() };
+    return flexFormattingContext.maximumContentSizeForMultilineColumn(flexLayoutItems, flexItemsMaxContentWidths);
 }
 
 std::optional<LayoutUnit> FlexLayout::firstLineBaseline() const

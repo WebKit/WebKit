@@ -96,6 +96,7 @@ public:
     // Whether the container's block size is definite as it applies to this item; absent when the item is one the
     // container cannot answer for and the renderer has to be asked instead.
     std::optional<bool> isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem&) const;
+    bool isComputingIntrinsicLogicalWidths() const;
     template<typename SizeType> std::optional<LayoutUnit> computeLogicalHeightUsingForFlexItem(const FlexLayoutItem&, const SizeType&) const;
     template<typename SizeType> LayoutUnit computeLogicalWidthUsingForFlexItem(const FlexLayoutItem&, const SizeType&, LayoutUnit availableWidth) const;
 

@@ -38,13 +38,18 @@ class FlexItemContentCache {
     WTF_MAKE_TZONE_ALLOCATED(FlexItemContentCache);
 public:
     // The item's inner main size, for flex items whose main axis is their block axis (column flex or orthogonal).
-    std::optional<LayoutUnit> blockAxisSize(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
-    void setBlockAxisSize(const RenderBox& flexItem, LayoutUnit size) { m_blockAxisSize.set(flexItem, size); }
+    struct BlockAxisSize {
+        LayoutUnit size;
+        LayoutUnit logicalWidth;
+    };
+    std::optional<BlockAxisSize> blockAxisSize(const RenderBox& flexItem) const { return m_blockAxisSize.getOptional(flexItem); }
+    void setBlockAxisSize(const RenderBox& flexItem, BlockAxisSize size) { m_blockAxisSize.set(flexItem, size); }
     void clearBlockAxisSize(const RenderBox& flexItem) { m_blockAxisSize.remove(flexItem); }
 
     // The item's content height on the cross axis, captured before min/max or a stretch override constrains it, so stretching does not need a relayout to recover it.
     std::optional<LayoutUnit> contentLogicalHeight(const RenderBox& flexItem) const { return m_contentLogicalHeights.getOptional(flexItem); }
     void setContentLogicalHeight(const RenderBox& flexItem, LayoutUnit height) { m_contentLogicalHeights.set(flexItem, height); }
+    void clearContentLogicalHeight(const RenderBox& flexItem) { m_contentLogicalHeights.remove(flexItem); }
 
     void remove(const RenderBox& flexItem)
     {
@@ -53,7 +58,7 @@ public:
     }
 
 private:
-    HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_blockAxisSize;
+    HashMap<SingleThreadWeakRef<const RenderBox>, BlockAxisSize> m_blockAxisSize;
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_contentLogicalHeights;
 };
 

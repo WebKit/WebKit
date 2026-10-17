@@ -27,6 +27,7 @@
 
 #include <WebCore/LayoutUnit.h>
 #include <optional>
+#include <span>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -52,6 +53,7 @@ class ComputedStyle;
 class RenderBox;
 class RenderFlexibleBox;
 class FlexLayoutItem;
+struct FlexLayoutConstraints;
 class StyleContentAlignmentData;
 
 // Stateless geometry and query helpers for the flex formatting context.
@@ -97,6 +99,11 @@ public:
     OverflowAlignment overflowAlignmentForFlexItem(const FlexLayoutItem&) const;
     static bool hasAutoMarginsInCrossAxis(const RenderBox& flexItem);
     bool hasAutoMarginsInCrossAxis(const FlexLayoutItem&) const;
+    static bool participatesInBaselineAlignment(const RenderBox& flexItem);
+    bool participatesInBaselineAlignment(const FlexLayoutItem&) const;
+    // CSS Flexbox 9.9.2: whether a multi-line column container's max-content width needs its items laid out into flex lines.
+    // It does unless they stay on a single line and none of them is baseline-aligned, which leaves the largest contribution.
+    static bool maximumContentSizeNeedsFlexLines(const FlexLayoutConstraints&, std::span<const CheckedRef<RenderBox>> flexItems);
     // Whether the container will stretch the item along containingAxis (RenderBlock::willStretchItem for flex).
     static bool willStretchFlexItem(const RenderFlexibleBox&, const RenderBox& flexItem, LogicalBoxAxis containingAxis, StretchingMode);
     static bool hasStretchedFlexItemWithAspectRatio(const RenderFlexibleBox&);

@@ -45,7 +45,7 @@ public:
 
     void layout(RelayoutChildren);
 
-    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const;
+    std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths();
 
     // The container's in-flow children in order-modified document order, rebuilt every layout. Weak pointers because
     // painting/hit-testing/baseline queries read the list after layout, when a child may have been removed.
@@ -82,6 +82,14 @@ public:
     void flexItemWillBeRemoved(const RenderBox& flexItem);
 
 private:
+    struct MaxContentWidth {
+        CheckedRef<RenderBox> flexItem;
+        LayoutUnit borderBoxWidth;
+    };
+    // CSS Flexbox 9.9.2; absent when the items stay on a single line, as wide as the largest contribution.
+    std::optional<LayoutUnit> maximumContentSizeForMultilineColumn(Vector<MaxContentWidth>&&);
+    class MaxContentWidthMeasurementScope;
+
     void buildFlexItemList();
     FlexLayoutItems buildFlexLayoutItems(RelayoutChildren, const FlexLayoutConstraints&);
     FlexLayoutConstraints flexLayoutConstraints() const;

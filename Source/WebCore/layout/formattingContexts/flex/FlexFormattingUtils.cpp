@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FlexFormattingUtils.h"
 
+#include "FlexFormattingContext.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
@@ -859,6 +860,28 @@ const Style::MinimumSize& FlexFormattingUtils::minMainSizeLengthForFlexItem(cons
 const Style::PreferredSize& FlexFormattingUtils::preferredCrossSizeLengthForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
     return preferredCrossSizeLengthForFlexItem(flexLayoutItem.renderer.get());
+}
+
+bool FlexFormattingUtils::participatesInBaselineAlignment(const RenderBox& flexItem)
+{
+    auto alignment = alignmentForFlexItem(flexItem);
+    return (alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline) && !hasAutoMarginsInCrossAxis(flexItem);
+}
+
+bool FlexFormattingUtils::participatesInBaselineAlignment(const FlexLayoutItem& flexLayoutItem) const
+{
+    return participatesInBaselineAlignment(flexLayoutItem.renderer.get());
+}
+
+bool FlexFormattingUtils::maximumContentSizeNeedsFlexLines(const FlexLayoutConstraints& constraints, std::span<const CheckedRef<RenderBox>> flexItems)
+{
+    ASSERT(constraints.isColumnFlow && constraints.isMultiline);
+    if (flexItems.size() <= 1)
+        return false;
+    auto isSingleLine = constraints.mainAxisAvailableSpace == LayoutUnit::max() && constraints.minimumLineCount <= 1;
+    return !isSingleLine || std::ranges::any_of(flexItems, [](auto& flexItem) {
+        return participatesInBaselineAlignment(flexItem);
+    });
 }
 
 bool FlexFormattingUtils::hasAutoMarginsInCrossAxis(const FlexLayoutItem& flexLayoutItem) const

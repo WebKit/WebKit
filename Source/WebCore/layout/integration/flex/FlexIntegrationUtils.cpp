@@ -369,8 +369,11 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     CheckedRef renderer = flexLayoutItem.renderer;
     // Reuse the size cached in a previous layout while the item stays clean.
     if (!renderer->needsLayout()) {
-        if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(renderer))
-            return *cachedBlockAxisContentSize;
+        if (auto cachedBlockAxisContentSize = m_flexItemContentCache.blockAxisSize(renderer)) {
+            auto overridingLogicalWidth = renderer->overridingBorderBoxLogicalWidth();
+            if (!overridingLogicalWidth || *overridingLogicalWidth == cachedBlockAxisContentSize->logicalWidth)
+                return cachedBlockAxisContentSize->size;
+        }
     }
 
     // Don't resolve percentages in children. This is especially important for the min-height calculation,
@@ -389,7 +392,7 @@ LayoutUnit FlexIntegrationUtils::computeBlockAxisContentSizeForFlexItem(const Fl
     }();
 
     // Cache it so a later layout can skip re-laying-out this item while it stays clean, and record that we laid it out this iteration.
-    m_flexItemContentCache.setBlockAxisSize(renderer, blockAxisContentSize);
+    m_flexItemContentCache.setBlockAxisSize(renderer, { blockAxisContentSize, renderer->logicalWidth() });
     return blockAxisContentSize;
 }
 
@@ -655,6 +658,11 @@ template std::optional<LayoutUnit> FlexIntegrationUtils::computePercentageLogica
 std::optional<bool> FlexIntegrationUtils::isFlexBoxBlockSizeDefiniteForFlexItem(const FlexLayoutItem& flexLayoutItem) const
 {
     return isFlexBoxBlockSizeDefiniteForFlexItem(flexLayoutItem.renderer.get(), &m_flexLayoutState);
+}
+
+bool FlexIntegrationUtils::isComputingIntrinsicLogicalWidths() const
+{
+    return flexBox().layoutContext().isComputingIntrinsicLogicalWidthFor(flexBox());
 }
 
 template<typename SizeType> std::optional<LayoutUnit> FlexIntegrationUtils::computeLogicalHeightUsingForFlexItem(const FlexLayoutItem& flexLayoutItem, const SizeType& size) const
