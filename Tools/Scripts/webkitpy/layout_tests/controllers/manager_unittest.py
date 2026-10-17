@@ -40,6 +40,8 @@ from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_expectations import *
+from webkitpy.layout_tests.models.test_failures import FailureCrash
+from webkitpy.layout_tests.models.test_results import TestResult
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.port.test import TestPort
 from webkitpy.thirdparty.mock import Mock
@@ -62,7 +64,44 @@ class ManagerTest(unittest.TestCase):
         expectations.parse_all_expectations()
         run_results = TestRunResults(expectations, len(tests))
         manager = self._get_manager()
-        manager._look_for_new_crash_logs(run_results, time.time())
+        manager._look_for_new_crash_logs(run_results, time.time(), [])
+
+    def _crash_results(self):
+        host = MockHost()
+        port = host.port_factory.get('test-mac-leopard')
+        tests = ['failures/expected/crash.html', 'failures/unexpected/crash.html']
+        expectations = test_expectations.TestExpectations(port, tests)
+        expectations.parse_all_expectations()
+        initial_results = TestRunResults(expectations, len(tests))
+        initial_results.add(TestResult('failures/expected/crash.html', failures=[FailureCrash(process_name='WebProcess', pid=1111)]), expected=True)
+        initial_results.add(TestResult('failures/unexpected/crash.html', failures=[FailureCrash(process_name='WebProcess', pid=2222)]), expected=False)
+        retry_results = TestRunResults(expectations, 1)
+        retry_results.add(TestResult('failures/unexpected/crash.html', failures=[FailureCrash(process_name='WebProcess', pid=3333)]), expected=False)
+        return initial_results, retry_results
+
+    def test_known_crashed_processes_include_expected_crashes_and_both_runs(self):
+        initial_results, retry_results = self._crash_results()
+        self.assertEqual([
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+            ['failures/unexpected/crash.html', 'WebProcess', 3333],
+        ], Manager._known_crashed_processes(initial_results, retry_results))
+        self.assertEqual([
+            ['failures/expected/crash.html', 'WebProcess', 1111],
+            ['failures/unexpected/crash.html', 'WebProcess', 2222],
+        ], Manager._known_crashed_processes(initial_results, None))
+
+    def test_look_for_new_crash_logs_gathers_only_unexpected_crashes_of_run(self):
+        initial_results, retry_results = self._crash_results()
+        known_crashed_processes = Manager._known_crashed_processes(initial_results, retry_results)
+
+        manager = self._get_manager()
+        calls = []
+        manager._port.look_for_new_samples = lambda crashed_processes, start_time: None
+        manager._port.look_for_new_crash_logs = lambda crashed_processes, start_time, known_crashed_processes: calls.append((crashed_processes, known_crashed_processes))
+        manager._look_for_new_crash_logs(retry_results, time.time(), known_crashed_processes)
+
+        self.assertEqual([([['failures/unexpected/crash.html', 'WebProcess', 3333]], known_crashed_processes)], calls)
 
     def test_print_expectations_for_subset(self):
         def get_test_names():

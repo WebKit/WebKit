@@ -253,13 +253,15 @@ class DarwinPort(ApplePort):
             return (stderr, None)
         return (stderr, crash_log)
 
-    def look_for_new_crash_logs(self, crashed_processes, start_time):
+    def look_for_new_crash_logs(self, crashed_processes, start_time, known_crashed_processes):
         """Since crash logs can take a long time to be written out if the system is
            under stress do a second pass at the end of the test run.
 
            crashes: test_name -> pid, process_name tuple of crashed process
            start_time: time the tests started at.  We're looking for crash
                logs after that time.
+           known_crashed_processes: like crashes, but only excluded from the new
+               crashes, not gathered.
         """
         crash_logs = {}
         for (test_name, process_name, pid) in crashed_processes:
@@ -270,7 +272,7 @@ class DarwinPort(ApplePort):
                 continue
             crash_logs[test_name] = crash_log
         all_crash_log = self._look_for_all_crash_logs_in_log_dir(start_time)
-        return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes)
+        return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes + known_crashed_processes)
 
     def sample_process(self, name, pid, target_host=None):
         host = target_host or self.host

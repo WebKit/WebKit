@@ -400,7 +400,7 @@ class WinPort(ApplePort):
             return (stderr, None)
         return (stderr, crash_log)
 
-    def look_for_new_crash_logs(self, crashed_processes, start_time):
+    def look_for_new_crash_logs(self, crashed_processes, start_time, known_crashed_processes):
         """Since crash logs can take a long time to be written out if the system is
            under stress do a second pass at the end of the test run.
 
