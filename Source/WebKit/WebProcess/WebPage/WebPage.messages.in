@@ -177,6 +177,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     RequestImageBitmap(struct WebCore::ElementContext elementContext) -> (std::optional<WebCore::ShareableBitmapHandle> image, String sourceMIMEType)
 
     SetControlledByAutomation(bool controlled)
+    SetNetworkInterception(Inspector::NetworkInterception configuration) -> ()
+    ResolveNetworkInterception(WebCore::ResourceLoaderIdentifier identifier, Inspector::NetworkInterceptOwner owner, Inspector::NetworkInterceptionPhase phase, Inspector::NetworkInterceptionResolution resolution)
 
     ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
     DisconnectInspector()
