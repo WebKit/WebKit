@@ -258,7 +258,7 @@ private:
     //   stopped, may read the bits without mutate(); see assertIsMutatorOrMutatorIsStopped().
     BlockDirectoryBits m_bits WTF_GUARDED_BY_LOCK(m_bitvectorLock); // Don't access this directly use one of the accessors above.
     MutateGrowLock m_bitvectorLock;
-    [[no_unique_address]] BlockOwnership m_blockOwnership;
+    NO_UNIQUE_ADDRESS BlockOwnership m_blockOwnership;
     Lock m_localAllocatorsLock;
     CellAttributes m_attributes;
 
