@@ -1,0 +1,7 @@
+Items of a subgrid whose inline size follows their block size through an aspect ratio size the outer grid's columns like direct children do, including when the row size is only known once the rows are sized.
+
+
+PASS .grid 1
+PASS .grid 2
+PASS .grid 3
+
