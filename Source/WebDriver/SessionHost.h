@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Capabilities.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Observer.h>
@@ -84,9 +85,20 @@ public:
 
     const String& sessionID() const LIFETIME_BOUND { return m_sessionID; }
     const Capabilities& capabilities() const LIFETIME_BOUND { return m_capabilities; }
+#if ENABLE(WEBDRIVER_BIDI)
+    void setUserAgent(String&& userAgent)
+    {
+        ASSERT(!userAgent.isEmpty());
+        ASSERT(!m_capabilities.userAgent);
+        m_capabilities.userAgent = WTF::move(userAgent);
+    }
+#endif
 
     void connectToBrowser(Function<void (std::optional<String> error)>&&);
-    void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
+    void cancelSessionCreation();
+
+    using StartAutomationSessionCompletionHandler = CompletionHandler<void(bool, std::optional<String>)>;
+    void startAutomationSession(StartAutomationSessionCompletionHandler&&);
 
     bool isRemoteBrowser() const;
 
@@ -113,6 +125,7 @@ private:
         bool paired { false };
     };
 
+    void completeStartAutomationSession(bool capabilitiesDidMatch, std::optional<String> error);
     void inspectorDisconnected();
     void sendMessageToBackend(const String&);
     void dispatchMessage(const String&);
@@ -125,6 +138,7 @@ private:
     enum class DisconnectReason {
         BrowserDidCloseConnection,
         AutomationTargetLost,
+        SessionCreationCancelled,
     };
 
     static const SocketConnection::MessageHandlers& messageHandlers();
@@ -165,14 +179,13 @@ private:
     String m_targetIp;
     uint16_t m_targetPort { 0 };
     bool m_isRemoteBrowser { false };
+    StartAutomationSessionCompletionHandler m_startSessionCompletionHandler;
 
 #if USE(GLIB)
-    Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
 #if PLATFORM(WIN)
     WTF::Win32Handle m_browserHandle;
