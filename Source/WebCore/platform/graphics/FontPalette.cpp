@@ -28,6 +28,8 @@
 
 #include "FontPaletteMix.h"
 #include <wtf/Hasher.h>
+#include <wtf/OrderedHashSet.h>
+#include <wtf/text/AtomStringHash.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -106,6 +108,27 @@ std::optional<AtomString> FontPalette::ident() const
     if (auto* ident = std::get_if<AtomString>(&m_value))
         return std::optional { *ident };
     return std::nullopt;
+}
+
+static void collectReferencedIdentifiers(const FontPalette& fontPalette, OrderedHashSet<AtomString>& identifiers)
+{
+    WTF::switchOn(fontPalette,
+        [&](const FontPalette::Keyword&) { },
+        [&](const AtomString& ident) {
+            identifiers.add(ident);
+        },
+        [&](const FontPaletteMixFunction& mix) {
+            for (auto& component : mix.components)
+                collectReferencedIdentifiers(component.palette, identifiers);
+        }
+    );
+}
+
+OrderedHashSet<AtomString> FontPalette::referencedIdentifiers() const
+{
+    OrderedHashSet<AtomString> identifiers;
+    collectReferencedIdentifiers(*this, identifiers);
+    return identifiers;
 }
 
 void add(Hasher& hasher, const FontPalette& fontPalette)

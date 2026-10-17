@@ -2876,6 +2876,7 @@ platform/graphics/iso/ISOSchemeInformationBox.cpp
 platform/graphics/iso/ISOSchemeTypeBox.cpp
 platform/graphics/iso/ISOTrackEncryptionBox.cpp
 platform/graphics/iso/ISOVTTCue.cpp
+platform/graphics/opentype/OpenTypeCPAL.cpp
 platform/graphics/opentype/OpenTypeMathData.cpp
 platform/graphics/transforms/AffineTransform.cpp
 platform/graphics/transforms/IdentityTransformOperation.cpp

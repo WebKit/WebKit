@@ -25,12 +25,17 @@
 
 #pragma once
 
+#include "Color.h"
 #include "ColorInterpolationMethod.h"
 #include "FontPalette.h"
+#include "OpenTypeCPAL.h"
 #include <optional>
+#include <span>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class FontPaletteValues;
 
 struct FontPaletteMixFunction {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FontPaletteMixFunction);
@@ -54,6 +59,8 @@ inline bool operator==(const UniqueRef<FontPaletteMixFunction>& a, const UniqueR
 {
     return arePointingToEqualData(a, b);
 }
+
+Vector<Color> mixedPaletteColors(const FontPaletteMixFunction&, const OpenTypeCPAL&, const FontPaletteValues*);
 
 void add(Hasher&, const FontPaletteMixFunction::Component&);
 void add(Hasher&, const FontPaletteMixFunction&);

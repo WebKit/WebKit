@@ -85,44 +85,58 @@ class FontPaletteValues {
 public:
     using OverriddenColor = std::pair<unsigned, Color>;
 
+    struct CustomPalette {
+        AtomString identifier;
+        std::optional<FontPaletteIndex> basePalette;
+        Vector<OverriddenColor> overrideColors;
+
+        bool operator==(const CustomPalette&) const = default;
+    };
+
     FontPaletteValues() = default;
 
-    FontPaletteValues(std::optional<FontPaletteIndex> basePalette, Vector<OverriddenColor>&& overrideColors)
-        : m_basePalette(basePalette)
-        , m_overrideColors(WTF::move(overrideColors))
+    explicit FontPaletteValues(Vector<CustomPalette>&& customPalettes)
+        : m_customPalettes(WTF::move(customPalettes))
     {
     }
 
-    std::optional<FontPaletteIndex> basePalette() const
+    const Vector<CustomPalette>& customPalettes() const
     {
-        return m_basePalette;
+        return m_customPalettes;
     }
 
-    const Vector<OverriddenColor>& overrideColors() const
+    const CustomPalette* customPalette(const AtomString& identifier) const
     {
-        return m_overrideColors;
+        for (auto& palette : m_customPalettes) {
+            if (palette.identifier == identifier)
+                return &palette;
+        }
+        return nullptr;
     }
 
     operator bool() const
     {
-        return m_basePalette || !m_overrideColors.isEmpty();
+        return !m_customPalettes.isEmpty();
     }
 
     bool operator==(const FontPaletteValues& other) const
     {
-        return m_basePalette == other.m_basePalette && m_overrideColors == other.m_overrideColors;
+        return m_customPalettes == other.m_customPalettes;
     }
     static constexpr bool safeToCompareToHashTableEmptyOrDeletedValue = true;
 
 private:
-    std::optional<FontPaletteIndex> m_basePalette;
-    Vector<OverriddenColor> m_overrideColors;
+    Vector<CustomPalette> m_customPalettes;
 };
+
+inline void add(Hasher& hasher, const FontPaletteValues::CustomPalette& customPalette)
+{
+    add(hasher, customPalette.identifier, customPalette.basePalette, customPalette.overrideColors);
+}
 
 inline void add(Hasher& hasher, const FontPaletteValues& fontPaletteValues)
 {
-    add(hasher, fontPaletteValues.basePalette());
-    add(hasher, fontPaletteValues.overrideColors());
+    add(hasher, fontPaletteValues.customPalettes());
 }
 
 } // namespace WebCore

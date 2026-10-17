@@ -522,7 +522,8 @@ StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, V
     : StyleRuleBase(StyleRuleType::FontPaletteValues)
     , m_name(name)
     , m_fontFamilies(WTF::move(fontFamilies))
-    , m_fontPaletteValues(basePalette, WTF::move(overrideColors))
+    , m_basePalette(basePalette)
+    , m_overrideColors(WTF::move(overrideColors))
 {
 }
 
