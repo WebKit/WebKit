@@ -754,7 +754,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     RefPtr document = frame->document();
     ASSERT(document);
-    
+
+    // The latched decision belongs to the redirect chain that set it. Drop it so loads that copy this request later (e.g. reload) start unlatched.
+    if (!didReceiveRedirectResponse && !isContinuingLoadAfterProvisionalLoadStarted())
+        newRequest.setLatchedThirdPartyCookieBlockingDecision(ThirdPartyCookieBlockingDecision::None);
+
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if (frame->isMainFrame())

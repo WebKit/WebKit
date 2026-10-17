@@ -41,7 +41,8 @@ setTimeout(async () => {
         m_didFilterLinkDecoration: false,
         m_isPrivateTokenUsageByThirdPartyAllowed: false,
         m_wasSchemeOptimisticallyUpgraded: false,
-        m_targetAddressSpace: 0
+        m_targetAddressSpace: 0,
+        m_latchedThirdPartyCookieBlockingDecision: 0
     };
 
     CoreIPC.UI.WebAuthenticatorCoordinatorProxy.GetAssertion(IPC.webPageProxyID, {

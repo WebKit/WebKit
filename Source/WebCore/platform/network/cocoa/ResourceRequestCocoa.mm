@@ -69,6 +69,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, boo
         setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
         setIsPrivateTokenUsageByThirdPartyAllowed(platformData.m_isPrivateTokenUsageByThirdPartyAllowed);
         setWasSchemeOptimisticallyUpgraded(platformData.m_wasSchemeOptimisticallyUpgraded);
+        setLatchedThirdPartyCookieBlockingDecision(platformData.m_latchedThirdPartyCookieBlockingDecision);
     }
 
     setShouldBlockThirdPartyStorage(shouldBlockThirdPartyStorage);
@@ -127,7 +128,8 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         useAdvancedPrivacyProtections(),
         didFilterLinkDecoration(),
         isPrivateTokenUsageByThirdPartyAllowed(),
-        wasSchemeOptimisticallyUpgraded()
+        wasSchemeOptimisticallyUpgraded(),
+        latchedThirdPartyCookieBlockingDecision()
     };
 }
 
