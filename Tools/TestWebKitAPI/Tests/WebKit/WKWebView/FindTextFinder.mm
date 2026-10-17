@@ -179,9 +179,21 @@ TEST_P(FindTextFinder, MatchRemovedAfterFindAll)
 
     auto result = find.findMatches(@"hello", caseInsensitive);
     [page.webView() objectByEvaluatingJavaScript:@"a.remove()"];
-    // FIXME(326400): Replacing a stale match removes the neighboring text and reports a replacement for it.
-    EXPECT_EQ(find.replaceMatches(result.matches.get(), @"goodbye"), 2u);
+    EXPECT_EQ(find.replaceMatches(result.matches.get(), @"goodbye"), 1u);
     EXPECT_WK_STREQ([page.webView() objectByEvaluatingJavaScript:@"document.querySelector('[contenteditable]').innerHTML"], "goodbye<br>");
+}
+
+TEST_P(FindTextFinder, EditableRootRemovedAfterFindAll)
+{
+    FindTestPage page { FindTestFixtures::singleFrame("<div id='a' contenteditable>hello</div><div id='b' contenteditable>hello</div>"_s), GetParam() };
+    TextFinderTester find { page.webView() };
+
+    auto result = find.findMatches(@"hello", caseInsensitive);
+    EXPECT_EQ([result.matches count], 2u);
+    [page.webView() objectByEvaluatingJavaScript:@"window.removed = a; a.remove()"];
+    EXPECT_EQ(find.replaceMatches(result.matches.get(), @"goodbye"), 1u);
+    EXPECT_WK_STREQ([page.webView() objectByEvaluatingJavaScript:@"b.textContent"], "goodbye");
+    EXPECT_WK_STREQ([page.webView() objectByEvaluatingJavaScript:@"removed.textContent"], "hello");
 }
 
 TEST_P(FindTextFinder, SelectMatchInCrossOriginFrame)

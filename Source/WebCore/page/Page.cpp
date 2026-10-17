@@ -1586,7 +1586,7 @@ uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace,
     });
 
     replaceRanges(*this, replacementRanges, replacementText);
-    return rangesToReplace.size();
+    return replacementRanges.size();
 }
 
 uint32_t Page::replaceSelectionWithText(const String& replacementText)
