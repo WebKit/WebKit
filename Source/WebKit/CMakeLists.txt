@@ -1491,6 +1491,7 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
         PROPERTIES GENERATED TRUE)
     list(APPEND WebKit_SOURCES
         ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
+        ${WEBKIT_DIR}/Platform/Logging.swift
         ${WEBKIT_DIR}/Shared/API/APIArray.swift
         ${WEBKIT_DIR}/UIProcess/StdlibExtras.swift
         ${WEBKIT_DIR}/UIProcess/WebBackForwardList.swift

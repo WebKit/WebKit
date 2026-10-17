@@ -46,10 +46,6 @@
 // Workaround for rdar://162358154
 using SpanConstChar = std::span<const char>;
 
-// These can't be inline due to rdar://162531519
-void doLog(const WTF::String& msg); // rdar://168139823
-void doLoadingReleaseLog(const WTF::String& msg); // rdar://168139823
-
 // Workaround for rdar://162357139
 template<typename T>
 inline bool contentsMatch(const T& lhs, const T& rhs)

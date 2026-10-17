@@ -1138,17 +1138,6 @@ WebCore::BackForwardFrameItemIdentifier generateBackForwardFrameItemIdentifier()
     return WebCore::BackForwardFrameItemIdentifier::generate();
 }
 
-// rdar://168139823 is the task of doing a productionized version of WebKit Swift logging
-void doLog(const WTF::String& msg)
-{
-    LOG_WITH_STREAM(BackForward, stream << msg);
-}
-
-void doLoadingReleaseLog(const WTF::String& msg)
-{
-    RELEASE_LOG(Loading, "%s", msg.utf8());
-}
-
 // Workarounds for rdar://171011011
 void appendToBackForwardStateItems(Vector<WebKit::BackForwardListItemState>& items, const WebKit::WebBackForwardListItem& entry)
 {
