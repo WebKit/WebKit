@@ -4698,8 +4698,7 @@ static CGRect webViewRectForMainFrameRect(WebKit::WebPageProxy& page, const std:
         if (!delegate)
             return;
 
-        RefPtr page = retainedSelf->_page;
-        auto createWKItem = [&page](const WebCore::TextManipulationItem& item) {
+        auto createWKItem = [&retainedSelf](const WebCore::TextManipulationItem& item) {
             auto tokens = createNSArray(item.tokens, [] (auto& token) {
                 auto wkToken = adoptNS([[_WKTextManipulationToken alloc] init]);
                 [wkToken setIdentifier:String::number(token.identifier.toUInt64()).createNSString().get()];
@@ -4709,8 +4708,9 @@ static CGRect webViewRectForMainFrameRect(WebKit::WebPageProxy& page, const std:
                 return wkToken;
             });
             auto identifier = makeString(item.frameID ? item.frameID->toUInt64() : 0, '-', item.identifier ? item.identifier->toUInt64() : 0);
-            CGRect webViewBoundingRect = page ? webViewRectForMainFrameRect(*page, item.mainFrameBoundingRect) : CGRectNull;
-            return adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString() tokens:tokens isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo) webViewBoundingRect:webViewBoundingRect]);
+            RetainPtr wkItem = adoptNS([[_WKTextManipulationItem alloc] initWithIdentifier:identifier.createNSString() tokens:tokens isSubframe:item.isSubframe isCrossSiteSubframe:item.isCrossSiteSubframe viewportProximityInfo:createViewportProximityInfo(item.viewportProximityInfo)]);
+            [wkItem _setWebView:retainedSelf mainFrameBoundingRect:item.mainFrameBoundingRect ? static_cast<CGRect>(*item.mainFrameBoundingRect) : CGRectNull];
+            return wkItem;
         };
 
         if ([delegate respondsToSelector:@selector(_webView:didFindTextManipulationItems:)])
@@ -7443,6 +7443,18 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 #else
     completionHandler(string);
 #endif // ENABLE(TEXT_EXTRACTION_FILTER)
+}
+
+@end
+
+@implementation WKWebView (WKTextManipulationInternal)
+
+- (CGRect)_webViewRectForTextManipulationMainFrameRect:(CGRect)mainFrameBoundingRect
+{
+    if (!_page || CGRectIsNull(mainFrameBoundingRect))
+        return CGRectNull;
+
+    return webViewRectForMainFrameRect(*_page, WebCore::FloatRect { mainFrameBoundingRect });
 }
 
 @end
