@@ -3,5 +3,5 @@
 Testing basic functionalities of fontVariant for canvas
 
 
-FAIL Testing basic functionalities of fontVariant for canvas assert_equals: ctx.fontVariantCaps === "normal" (got [undefined], expected normal[string]) expected (string) "normal" but got (undefined) undefined
+PASS Testing basic functionalities of fontVariant for canvas
 

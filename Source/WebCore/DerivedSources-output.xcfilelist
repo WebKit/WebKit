@@ -581,6 +581,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFillStrokeStyles.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFillStrokeStyles.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFilters.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFilters.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontKerning.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontKerning.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontStretch.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontStretch.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontVariantCaps.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasFontVariantCaps.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasGradient.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasGradient.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasImageData.cpp
@@ -619,6 +625,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextBaseline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextBaseline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextDrawingStyles.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextDrawingStyles.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextRendering.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTextRendering.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.cpp

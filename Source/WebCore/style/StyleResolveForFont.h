@@ -48,7 +48,7 @@ namespace Style {
 
 FontSelectionValue fontWeightFromCSSValueDeprecated(const CSSValue&);
 
-FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue&);
+FontSelectionValue fontWidthFromCSSValueDeprecated(const CSSValue&);
 
 std::optional<FontSelectionValue> fontStyleAngleFromCSSFontStyleWithAngleValueDeprecated(const CSSFontStyleWithAngleValue&);
 std::optional<FontSelectionValue> fontStyleFromCSSValueDeprecated(const CSSValue&);

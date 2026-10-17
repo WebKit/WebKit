@@ -1378,6 +1378,9 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasDirection.idl
     html/canvas/CanvasElementImage.idl
     html/canvas/CanvasFillRule.idl
+    html/canvas/CanvasFontKerning.idl
+    html/canvas/CanvasFontStretch.idl
+    html/canvas/CanvasFontVariantCaps.idl
     html/canvas/CanvasGradient.idl
     html/canvas/CanvasLineCap.idl
     html/canvas/CanvasLineJoin.idl
@@ -2125,6 +2128,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     html/canvas/CanvasState.idl
     html/canvas/CanvasText.idl
     html/canvas/CanvasTextDrawingStyles.idl
+    html/canvas/CanvasTextRendering.idl
     html/canvas/CanvasTransform.idl
     html/canvas/CanvasUserInterface.idl
     html/canvas/WebGLRenderingContextBase.idl

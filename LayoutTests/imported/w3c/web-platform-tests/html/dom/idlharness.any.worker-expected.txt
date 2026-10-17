@@ -407,10 +407,10 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
 PASS OffscreenCanvasRenderingContext2D interface: attribute direction
 PASS OffscreenCanvasRenderingContext2D interface: attribute letterSpacing
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute fontKerning
+PASS OffscreenCanvasRenderingContext2D interface: attribute fontStretch
+PASS OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps
+PASS OffscreenCanvasRenderingContext2D interface: attribute textRendering
 PASS OffscreenCanvasRenderingContext2D interface: attribute wordSpacing
 PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
 PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)

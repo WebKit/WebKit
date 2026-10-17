@@ -114,9 +114,9 @@ static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyPa
     );
 }
 
-// MARK: - 'font-stretch'
+// MARK: - 'font-width'
 
-FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue& value)
+FontSelectionValue fontWidthFromCSSValueDeprecated(const CSSValue& value)
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT(primitiveValue->isPercentage());
@@ -129,6 +129,20 @@ FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue& value)
 
     ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(keywordValue.valueID()));
     return normalWidthValue();
+}
+
+static FontSelectionValue fontWidthFromUnresolvedFontWidth(const CSSPropertyParserHelpers::UnresolvedFontWidth& unresolvedWidth)
+{
+    return WTF::switchOn(unresolvedWidth,
+        [&](CSSValueID ident) {
+            return fontWidthValue(ident).value_or(normalWidthValue());
+        },
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWidthPercentage& percentage) {
+            if (requiresConversionData(percentage))
+                return normalWidthValue();
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(percentage).value);
+        }
+    );
 }
 
 // MARK: - 'font-style'
@@ -390,6 +404,9 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
 
     auto resolvedWeight = fontWeightFromUnresolvedFontWeight(unresolvedFont.weight, fontDescription);
     fontDescription.setWeight(resolvedWeight);
+
+    auto resolvedWidth = fontWidthFromUnresolvedFontWidth(unresolvedFont.width);
+    fontDescription.setWidth(resolvedWidth);
 
     auto resolvedSize = fontSizeFromUnresolvedFontSize(unresolvedFont.size, parentSize, fontDescription, protectedContext);
     fontDescription.setKeywordSizeFromIdentifier(resolvedSize.keyword);
