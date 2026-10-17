@@ -35,7 +35,9 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "GeneratedSerializers.h"
+#if !defined(__OBJC__) || !PLATFORM(MAC)
 #include "NetworkConnectionToWebProcess.h"
+#endif
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
 
