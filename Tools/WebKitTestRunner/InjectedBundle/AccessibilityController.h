@@ -89,7 +89,7 @@ public:
     bool removeNotificationListener();
 #if PLATFORM(MAC)
     // Called when the UI process forwards a notification it observed in client accessibility mode.
-    void clientNotificationReceived(uint64_t elementToken, JSStringRef notificationName);
+    void clientNotificationReceived(uint64_t elementToken, JSStringRef notificationName, WKTypeRef userInfo);
 
     // Sends a client accessibility request to the UI process and returns its reply. Synchronous to the
     // caller, but the main run loop keeps running meanwhile (see TestController::handleAXAsyncRequest).

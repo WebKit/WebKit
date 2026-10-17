@@ -160,6 +160,7 @@ struct GraphicsContextGLAttributes;
 #endif
 
 struct AppHighlight;
+struct AXRemoteFrameSelectedTextChange;
 struct AccessibilityRemoteToken;
 struct AccessibilitySearchCriteriaIPC;
 struct ApplePayAMSUIRequest;
@@ -679,6 +680,8 @@ public:
     // Called by a child frame to continue a search in its parent frame.
     // The parent searches from the child frame's position in its tree.
     WEBCORE_EXPORT virtual void continueAccessibilitySearchFromChildFrame(FrameIdentifier childFrameID, const AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&&);
+    // Called by a cross-site frame's AXObjectCache to have the main frame's process post AXSelectedTextChanged.
+    virtual void relayAccessibilitySelectedTextChangeToMainFrame(FrameIdentifier, AXRemoteFrameSelectedTextChange&&) { }
 #endif
 
     virtual void isPlayingMediaDidChange(MediaProducerMediaStateFlags) { }

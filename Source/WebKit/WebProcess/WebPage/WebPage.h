@@ -314,6 +314,7 @@ enum class PaginationMode : uint8_t;
 enum class PaintBehavior : uint32_t;
 
 struct AXDebugInfo;
+struct AXRemoteFrameSelectedTextChange;
 struct AccessibilityRemoteToken;
 struct AccessibilitySearchCriteriaIPC;
 struct AppHighlight;
@@ -2884,6 +2885,7 @@ private:
 #if PLATFORM(MAC)
     void performAccessibilitySearchInRemoteFrame(WebCore::FrameIdentifier, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
     void continueAccessibilitySearchInParentFrame(WebCore::FrameIdentifier childFrameID, WebCore::AccessibilitySearchCriteriaIPC, CompletionHandler<void(Vector<WebCore::AccessibilityRemoteToken>&&)>&&);
+    void postAccessibilitySelectedTextChangeFromRemoteFrame(const WebCore::AXRemoteFrameSelectedTextChange&);
 #endif
 
     void requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&&);

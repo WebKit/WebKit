@@ -330,7 +330,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "AXClientNotification")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         if (m_accessibilityController)
-            m_accessibilityController->clientNotificationReceived(uint64Value(messageBodyDictionary, "elementToken"), toJS(stringValue(messageBodyDictionary, "notificationName")).get());
+            m_accessibilityController->clientNotificationReceived(uint64Value(messageBodyDictionary, "elementToken"), toJS(stringValue(messageBodyDictionary, "notificationName")).get(), value(messageBodyDictionary, "userInfo"));
         return;
     }
 #endif

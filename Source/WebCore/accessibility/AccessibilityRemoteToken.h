@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <wtf/ProcessID.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
 
