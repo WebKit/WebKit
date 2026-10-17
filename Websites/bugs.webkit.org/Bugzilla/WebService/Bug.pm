@@ -52,6 +52,14 @@ use constant BASE64_FIELDS => {
     add_attachment => ['data'],
 };
 
+#if WEBKIT_CHANGES
+# History fields whose values contain e-mail addresses. Keep in sync with the
+# fields filtered through "email" in bug/activity/table.html.tmpl.
+use constant HISTORY_EMAIL_FIELDS => {
+    map { $_ => 1 } qw(assigned_to reporter qa_contact cc flagtypes.name)
+};
+#endif // WEBKIT_CHANGES
+
 use constant READ_ONLY => qw(
     attachments
     comments
@@ -455,16 +463,17 @@ sub history {
         foreach my $changeset (@$activity) {
             my %bug_history;
             $bug_history{when} = $self->type('dateTime', $changeset->{when});
-            $bug_history{who}  = $self->type('string', $changeset->{who});
+            $bug_history{who}  = $self->type('email', $changeset->{who}); # WEBKIT_CHANGES
             $bug_history{changes} = [];
             foreach my $change (@{ $changeset->{changes} }) {
                 my $api_field = $api_name{$change->{fieldname}} || $change->{fieldname};
+                my $value_type = HISTORY_EMAIL_FIELDS->{$change->{fieldname}} ? 'email' : 'string'; # WEBKIT_CHANGES
                 my $attach_id = delete $change->{attachid};
                 if ($attach_id) {
                     $change->{attachment_id} = $self->type('int', $attach_id);
                 }
-                $change->{removed} = $self->type('string', $change->{removed});
-                $change->{added}   = $self->type('string', $change->{added});
+                $change->{removed} = $self->type($value_type, $change->{removed}); # WEBKIT_CHANGES
+                $change->{added}   = $self->type($value_type, $change->{added}); # WEBKIT_CHANGES
                 $change->{field_name} = $self->type('string', $api_field);
                 delete $change->{fieldname};
                 push (@{$bug_history{changes}}, $change);
