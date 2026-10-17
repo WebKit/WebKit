@@ -1275,15 +1275,6 @@ namespace JSC {
 
         using TDZStackEntry = std::pair<TDZMap, RefPtr<TDZEnvironmentLink>>;
 
-        class PreservedTDZStack {
-        private:
-            Vector<TDZStackEntry> m_preservedTDZStack;
-            friend class BytecodeGenerator;
-        };
-
-        void preserveTDZStack(PreservedTDZStack&);
-        void restoreTDZStack(const PreservedTDZStack&);
-
         template<typename Func>
         void withWriter(JSInstructionStreamWriter& writer, NOESCAPE const Func& fn)
         {
