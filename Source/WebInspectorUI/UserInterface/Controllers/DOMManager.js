@@ -111,7 +111,8 @@ WI.DOMManager = class DOMManager extends WI.Object
                 return;
 
             if (error) {
-                console.warn("FrameDOMAgent.getDocument failed:", error);
+                if (!target.isDestroyed)
+                    WI.reportInternalError(error);
                 return;
             }
 
