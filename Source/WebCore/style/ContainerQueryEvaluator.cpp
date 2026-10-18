@@ -210,7 +210,9 @@ RefPtr<const Element> ContainerQueryEvaluator::selectContainer(CQ::ContainerRequ
         if (scopeOrdinal >= ScopeOrdinal::FirstSlot && scopeOrdinal <= ScopeOrdinal::SlotLimit)
             return assignedSlotForScopeOrdinal(element, scopeOrdinal);
 
-        if (scopeOrdinal == ScopeOrdinal::Element && element.assignedSlot())
+        // A slotted element, whether queried from its own tree or from its own shadow tree (:host rules),
+        // has the slot's tree as the context for resolving container names.
+        if ((scopeOrdinal == ScopeOrdinal::Element || scopeOrdinal == ScopeOrdinal::Shadow) && element.assignedSlot())
             return element.assignedSlot();
 
         return nullptr;
