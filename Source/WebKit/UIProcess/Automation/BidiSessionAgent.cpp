@@ -92,6 +92,15 @@ void BidiSessionAgent::subscribe(Ref<JSON::Array>&& events, RefPtr<JSON::Array>&
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(contexts && userContexts && (contexts->length() > 0) && (userContexts->length() > 0), InvalidParameter, "Contexts and user contexts cannot be used together."_s);
 
+    if (userContexts) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContexts->length(), InvalidParameter, "At least one user context must be provided."_s);
+
+        for (const auto& userContextValue : *userContexts) {
+            String userContext;
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!userContextValue->asString(userContext), InvalidParameter, "User context must be a valid string."_s);
+        }
+    }
+
     // FIXME: Support by-userContext subscriptions
     // https://webkit.org/b/309502
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(userContexts && userContexts->length(), NotImplemented, "Subscriptions by userContext are not supported yet."_s);
