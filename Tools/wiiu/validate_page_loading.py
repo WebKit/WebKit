@@ -97,6 +97,15 @@ if '-DWKC_ENABLE_FULL_WEBCORE=ON' not in workflow:
 if 'python3 Tools/wiiu/validate_page_loading.py' not in workflow:
     errors.append('build.yml: semantic page-loading validation is not a required workflow step')
 
+# Generator failures must stop CI instead of leaving stale or empty outputs.
+if '|| echo "FAIL' in workflow:
+    errors.append('build.yml: a source generator failure is swallowed instead of failing CI')
+if 'MISSING — LowLevelInterpreter.cpp will fail, build continues' in workflow:
+    errors.append('build.yml: LLInt generation is allowed to fail while the build continues')
+for required_output in ('EventInterfaces.h', 'EventTargetInterfaces.h', 'EventNames.h', 'Lexer.lut.h', 'KeywordLookup.h', 'RegExpJitTables.h', 'LexerUnicodePropertyTables.h', 'UnicodePatternTables.h', 'yarr/YarrCanonicalizeUnicode.cpp', 'LLIntAssembly.h'):
+    if required_output not in workflow:
+        errors.append(f'build.yml: required generated output is not validated: {required_output}')
+
 if errors:
     print("WKC page-loading correctness checks FAILED:", file=sys.stderr)
     for error in errors:
