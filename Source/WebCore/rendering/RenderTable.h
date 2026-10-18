@@ -180,6 +180,9 @@ public:
     void invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange = nullptr);
     void invalidateCollapsedBordersAfterStyleChangeIfNeeded(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle, RenderTableCell* cellWithStyleChange = nullptr);
     void collapsedEmptyBorderIsPresent() { m_collapsedEmptyBorderIsPresent = true; }
+
+    LayoutUnit maxCollapsedInnerBorderHalfForFirstColumn() const;
+    LayoutUnit maxCollapsedInnerBorderHalfForLastColumn() const;
     const CollapsedBorderValue* currentBorderValue() const LIFETIME_BOUND { return m_currentBorder; }
     void paintCollapsedBordersForRow(PaintInfo&, RenderTableRow&, const LayoutPoint& paintOffset);
     
@@ -254,6 +257,7 @@ protected:
     void adjustBorderBoxRectForPainting(LayoutRect&) override;
 
     void recalcCollapsedBorders();
+    void recalcMaxCollapsedInnerBorderHalves() const;
     void recalcSections() const;
     enum class BottomCaptionLayoutPhase : bool { No, Yes };
     void layoutCaptions(BottomCaptionLayoutPhase = BottomCaptionLayoutPhase::No);
@@ -280,6 +284,10 @@ protected:
     const CollapsedBorderValue* m_currentBorder { nullptr };
     bool m_collapsedBordersValid : 1 { false };
     bool m_collapsedEmptyBorderIsPresent : 1 { false };
+
+    mutable LayoutUnit m_maxCollapsedInnerBorderHalfFirstColumn;
+    mutable LayoutUnit m_maxCollapsedInnerBorderHalfLastColumn;
+    mutable bool m_needsMaxCollapsedInnerBorderHalvesRecalc : 1 { true };
 
     mutable bool m_hasColElements : 1 { false };
     mutable bool m_needsSectionRecalc : 1 { false };

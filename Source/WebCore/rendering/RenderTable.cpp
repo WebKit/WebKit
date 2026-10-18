@@ -522,6 +522,7 @@ void RenderTable::setNeedsSectionRecalc()
     if (renderTreeBeingDestroyed())
         return;
     m_needsSectionRecalc = true;
+    m_needsMaxCollapsedInnerBorderHalvesRecalc = true;
     setNeedsLayout();
 }
 
@@ -741,6 +742,7 @@ void RenderTable::invalidateCollapsedBorders(RenderTableCell* cellWithStyleChang
 {
     m_collapsedBordersValid = false;
     m_collapsedBorders.clear();
+    m_needsMaxCollapsedInnerBorderHalvesRecalc = true;
 
     for (auto& section : childrenOfType<RenderTableSection>(*this))
         section.clearCachedCollapsedBorders();
@@ -789,6 +791,47 @@ void RenderTable::recalcCollapsedBorders()
     }
     RenderTableCell::sortBorderValues(m_collapsedBorders);
     m_collapsedBordersValid = true;
+}
+
+void RenderTable::recalcMaxCollapsedInnerBorderHalves() const
+{
+    m_maxCollapsedInnerBorderHalfFirstColumn = 0;
+    m_maxCollapsedInnerBorderHalfLastColumn = 0;
+    m_needsMaxCollapsedInnerBorderHalvesRecalc = false;
+
+    if (!collapseBorders())
+        return;
+
+    recalcSectionsIfNeeded();
+
+    unsigned columnCount = numEffCols();
+    if (!columnCount)
+        return;
+
+    unsigned lastColumn = columnCount - 1;
+    for (auto* section = topNonEmptySection(); section; section = sectionBelow(section, SkipEmptySections::Yes)) {
+        unsigned rowCount = section->numRows();
+        for (unsigned row = 0; row < rowCount; ++row) {
+            if (auto* cell = section->primaryCellAt(row, 0))
+                m_maxCollapsedInnerBorderHalfFirstColumn = std::max(m_maxCollapsedInnerBorderHalfFirstColumn, cell->borderLeft());
+            if (auto* cell = section->primaryCellAt(row, lastColumn))
+                m_maxCollapsedInnerBorderHalfLastColumn = std::max(m_maxCollapsedInnerBorderHalfLastColumn, cell->borderRight());
+        }
+    }
+}
+
+LayoutUnit RenderTable::maxCollapsedInnerBorderHalfForFirstColumn() const
+{
+    if (m_needsMaxCollapsedInnerBorderHalvesRecalc)
+        recalcMaxCollapsedInnerBorderHalves();
+    return m_maxCollapsedInnerBorderHalfFirstColumn;
+}
+
+LayoutUnit RenderTable::maxCollapsedInnerBorderHalfForLastColumn() const
+{
+    if (m_needsMaxCollapsedInnerBorderHalvesRecalc)
+        recalcMaxCollapsedInnerBorderHalves();
+    return m_maxCollapsedInnerBorderHalfLastColumn;
 }
 
 void RenderTable::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> options)
