@@ -7972,7 +7972,7 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
         ]
 
         if rc != SUCCESS:
-            if self.getProperty('current_swift_tag', '') and self.getProperty('has_swift_toolchain', False):
+            if self.getProperty('has_swift_toolchain', False):
                 return WARNINGS
             self.build.buildFinished(['Failed to set up swift, retrying update'], RETRY)
         else:
