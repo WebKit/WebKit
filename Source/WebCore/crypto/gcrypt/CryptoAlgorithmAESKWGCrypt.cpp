@@ -76,6 +76,10 @@ static std::optional<Vector<uint8_t>> gcryptWrapKey(const Vector<uint8_t>& key, 
 
 static std::optional<Vector<uint8_t>> gcryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
+    // RFC 3394 requires at least three 64-bit blocks of wrapped key data.
+    if (data.size() < 24 || data.size() % 8)
+        return std::nullopt;
+
     // Determine the AES algorithm for the given key size.
     auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
     if (!algorithm)
