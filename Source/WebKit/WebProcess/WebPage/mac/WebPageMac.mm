@@ -1031,7 +1031,7 @@ void WebPage::dataDetectorsDidHideUI(FrameIdentifier frameID, PageOverlay::PageO
     }
 }
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, MediaPlaybackTargetContextSerialized&& targetContext) const
 {
     protect(corePage())->setPlaybackTarget(contextId, MediaPlaybackTargetSerialized::create(WTF::move(targetContext)));

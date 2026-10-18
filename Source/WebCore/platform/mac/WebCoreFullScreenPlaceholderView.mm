@@ -109,4 +109,4 @@
 
 @end
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(MAC)

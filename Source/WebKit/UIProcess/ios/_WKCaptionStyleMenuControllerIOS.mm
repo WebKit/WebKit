@@ -161,7 +161,7 @@ static bool menuHasMenuAncestor(UIMenu *targetMenu, UIMenu *ancestorMenu)
     _menu = menu;
 }
 
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+#if !PLATFORM(WATCHOS)
 - (UIContextMenuInteraction *)interaction
 {
     return _interaction.get();
