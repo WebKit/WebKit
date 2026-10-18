@@ -32,13 +32,6 @@
 
 namespace IPC {
 
-// Version of round_msg() using CheckedSize for extra safety.
-static inline CheckedSize LEGACY_NODELETE safeRoundMsg(CheckedSize value)
-{
-    constexpr size_t alignment = sizeof(natural_t);
-    return ((value + (alignment - 1)) / alignment) * alignment;
-}
-
 std::unique_ptr<MachMessage> MachMessage::create(MessageName messageName, size_t size)
 {
     auto bufferSize = CheckedSize(sizeof(MachMessage)) + size;
@@ -60,18 +53,12 @@ MachMessage::~MachMessage()
         ::mach_msg_destroy(header());
 }
 
-CheckedSize MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
+CheckedSize MachMessage::checkedMessageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
 {
-    CheckedSize messageSize = sizeof(mach_msg_header_t);
-    messageSize += bodySize;
-
-    if (portDescriptorCount || memoryDescriptorCount) {
-        messageSize += sizeof(mach_msg_body_t);
-        messageSize += (portDescriptorCount * sizeof(mach_msg_port_descriptor_t));
-        messageSize += (memoryDescriptorCount * sizeof(mach_msg_ool_descriptor_t));
-    }
-
-    return safeRoundMsg(messageSize);
+    auto size = messageSize(bodySize, portDescriptorCount, memoryDescriptorCount);
+    if (!size)
+        return WTF::ResultOverflowed;
+    return *size;
 }
 
 void MachMessage::leakDescriptors()
