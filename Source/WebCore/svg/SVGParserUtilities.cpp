@@ -247,7 +247,9 @@ std::optional<FloatPoint> parsePoint(StringView string)
 
         // Disallow anything except spaces at the end.
         skipOptionalSVGSpaces(buffer);
-        
+        if (!buffer.atEnd())
+            return std::nullopt;
+
         return point;
     });
 }
