@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
 #import "config.h"
-#import "WKFrameMac.h"
+#import "WKNotificationPrivateMac.h"
 
-#include "WKAPICast.h"
-#include "WebFrameProxy.h"
+#import "WKAPICast.h"
+#import "WebNotification.h"
+#import <WebCore/NotificationData.h>
 
-SecTrustRef WKFrameGetServerTrust(WKFrameRef frame)
+NSDictionary *WKNotificationCopyDictionaryRepresentation(WKNotificationRef notification)
 {
-    return WebKit::toImpl(frame)->certificateInfo().trust().get();
+    return protect(WebKit::toImpl(notification)->data().dictionaryRepresentation()).leakRef();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBaseMac_h
-#define WKBaseMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#ifndef WKBase_h
-#error "Please #include \"WKBase.h\" instead of this file directly."
+#ifndef WKBundleMac_h
+#define WKBundleMac_h
+
+#include <WebKit/WKBase.h>
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-typedef const struct OpaqueWKObjCTypeWrapper* WKObjCTypeWrapperRef;
+#ifdef __OBJC__
 
-#endif /* WKBaseMac_h */
+WK_EXPORT id WKBundleGetParameters(WKBundleRef bundle);
+
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // WKBundleMac_h

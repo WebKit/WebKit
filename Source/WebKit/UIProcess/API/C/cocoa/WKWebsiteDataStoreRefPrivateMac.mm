@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFrameMac_h
-#define WKFrameMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <Security/SecTrust.h>
-#include <WebKit/WKBase.h>
+#import "config.h"
+#import "WKWebsiteDataStoreRefPrivateMac.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "WKAPICast.h"
+#import "WKWebsiteDataStoreInternal.h"
 
-WK_EXPORT SecTrustRef WKFrameGetServerTrust(WKFrameRef frame);
-
-#ifdef __cplusplus
+WKWebsiteDataStore *WKWebsiteDataStoreGetDataStore(WKWebsiteDataStoreRef dataStore)
+{
+    if (!dataStore)
+        return nil;
+    RefPtr impl = WebKit::toImpl(dataStore);
+    return wrapper(impl);
 }
-#endif
-
-#endif /* WKFrameMac_h */

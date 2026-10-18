@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKNotificationPrivateMac_h
-#define WKNotificationPrivateMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
+#pragma once
+
+#ifdef __OBJC__
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKDeprecated.h>
+
+@class PDFDocument;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef __OBJC__
-
-@class NSDictionary;
-
-WK_EXPORT NSDictionary *WKNotificationCopyDictionaryRepresentation(WKNotificationRef notification) NS_RETURNS_RETAINED;
-
-#endif // __OBJC__
+WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef page, WKBundleFrameRef frame) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKNotificationPrivateMac_h */
+#endif // __OBJC__

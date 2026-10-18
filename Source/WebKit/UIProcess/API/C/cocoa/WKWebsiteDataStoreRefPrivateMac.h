@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKBundleMac.h"
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#import "InjectedBundle.h"
-#import "WKBundleAPICast.h"
+#pragma once
 
-id WKBundleGetParameters(WKBundleRef bundle)
-{
-    return protect(WebKit::toImpl(bundle))->bundleParameters();
+#include <WebKit/WKBase.h>
+#include <sys/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __OBJC__
+
+@class WKWebsiteDataStore;
+
+WK_EXPORT WKWebsiteDataStore *WKWebsiteDataStoreGetDataStore(WKWebsiteDataStoreRef);
+
+#endif
+
+#ifdef __cplusplus
 }
+#endif

@@ -6263,8 +6263,8 @@
 		5197FADD2AFD33B3009180C5 /* CoreIPCColor.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCColor.serialization.in; sourceTree = "<group>"; };
 		5197FADE2AFD33B3009180C5 /* CoreIPCDictionary.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCDictionary.serialization.in; sourceTree = "<group>"; };
 		5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFType.h; sourceTree = "<group>"; };
-		519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNotificationPrivateMac.h; path = mac/WKNotificationPrivateMac.h; sourceTree = "<group>"; };
-		519DFBE628138756003FF6AD /* WKNotificationPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNotificationPrivateMac.mm; path = mac/WKNotificationPrivateMac.mm; sourceTree = "<group>"; };
+		519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNotificationPrivateMac.h; path = cocoa/WKNotificationPrivateMac.h; sourceTree = "<group>"; };
+		519DFBE628138756003FF6AD /* WKNotificationPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNotificationPrivateMac.mm; path = cocoa/WKNotificationPrivateMac.mm; sourceTree = "<group>"; };
 		519F6F7A2B2D77D900559CB3 /* CoreIPCCFURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFURL.h; sourceTree = "<group>"; };
 		519F6F7E2B2D7A4500559CB3 /* CoreIPCCFURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFURL.mm; sourceTree = "<group>"; };
 		519F6F802B2E194500559CB3 /* CoreIPCCFURL.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFURL.serialization.in; sourceTree = "<group>"; };
@@ -6420,8 +6420,8 @@
 		526C571D284AD0C000E08955 /* CcidService.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = CcidService.mm; sourceTree = "<group>"; };
 		526C5720284ADCBC00E08955 /* CtapCcidDriver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapCcidDriver.h; sourceTree = "<group>"; };
 		526C5721284ADCBC00E08955 /* CtapCcidDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapCcidDriver.cpp; sourceTree = "<group>"; };
-		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
-		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
+		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = cocoa/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
+		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = cocoa/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
 		527D1AEC2AD0A5BB00D145E5 /* WebUserContentControllerDataTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebUserContentControllerDataTypes.serialization.in; sourceTree = "<group>"; };
 		527DA5E22B697DC0004E6A68 /* CoreIPCCVPixelBufferRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCVPixelBufferRef.h; sourceTree = "<group>"; };
 		527DA5E42B69815F004E6A68 /* CoreIPCCVPixelBufferRef.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCVPixelBufferRef.serialization.in; sourceTree = "<group>"; };
@@ -6965,8 +6965,8 @@
 		5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfo.h; sourceTree = "<group>"; };
 		5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoPrivate.h; sourceTree = "<group>"; };
 		5CE0C36B229F2D4B003695F0 /* WKContextMenuElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoInternal.h; sourceTree = "<group>"; };
-		5CE3491028E238E400196304 /* WKFrameMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFrameMac.h; path = mac/WKFrameMac.h; sourceTree = "<group>"; };
-		5CE3491128E2390200196304 /* WKFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKFrameMac.cpp; path = mac/WKFrameMac.cpp; sourceTree = "<group>"; };
+		5CE3491028E238E400196304 /* WKFrameMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFrameMac.h; path = cocoa/WKFrameMac.h; sourceTree = "<group>"; };
+		5CE3491128E2390200196304 /* WKFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKFrameMac.cpp; path = cocoa/WKFrameMac.cpp; sourceTree = "<group>"; };
 		5CE4B61329CF87680038F565 /* NetworkingExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = NetworkingExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE4B62029CF877F0038F565 /* GPUExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE77801297BA396000BA9CF /* RemoteLayerTree.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteLayerTree.serialization.in; sourceTree = "<group>"; };
@@ -7825,8 +7825,8 @@
 		9BF622532C3E8559007F7021 /* SecurityFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityFlags.cpp; sourceTree = "<group>"; };
 		9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeolocationIdentifier.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessMac.mm; sourceTree = "<group>"; };
-		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
-		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = cocoa/WKContextPrivateMac.mm; sourceTree = "<group>"; };
+		9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = cocoa/WKContextPrivateMac.h; sourceTree = "<group>"; };
 		A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatter.h; sourceTree = "<group>"; };
 		A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSFileManagerExtras.mm; sourceTree = "<group>"; };
@@ -8370,8 +8370,8 @@
 		BCE0937514FB128B001138D9 /* LayerHostingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerHostingContext.mm; sourceTree = "<group>"; };
 		BCE0937614FB128B001138D9 /* LayerHostingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerHostingContext.h; sourceTree = "<group>"; };
 		BCE0E424168B7A280057E66A /* WebProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessSupplement.h; sourceTree = "<group>"; };
-		BCE17B7B1381F1170012A641 /* WKPagePrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPagePrivateMac.mm; path = mac/WKPagePrivateMac.mm; sourceTree = "<group>"; };
-		BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPagePrivateMac.h; path = mac/WKPagePrivateMac.h; sourceTree = "<group>"; };
+		BCE17B7B1381F1170012A641 /* WKPagePrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKPagePrivateMac.mm; path = cocoa/WKPagePrivateMac.mm; sourceTree = "<group>"; };
+		BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPagePrivateMac.h; path = cocoa/WKPagePrivateMac.h; sourceTree = "<group>"; };
 		BCE2315B122C30CA00D5C35A /* APIURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIURLRequest.h; sourceTree = "<group>"; };
 		BCE2315C122C30CA00D5C35A /* APIURLRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIURLRequest.cpp; sourceTree = "<group>"; };
 		BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFormClient.cpp; sourceTree = "<group>"; };
@@ -8980,8 +8980,8 @@
 		EB43329193327F9D842EE005 /* ProxyingPageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProxyingPageAgent.h; sourceTree = "<group>"; };
 		EB44A6992C8A4F6E006595BF /* WebClipCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebClipCache.h; sourceTree = "<group>"; };
 		EB44A69A2C8A4F6E006595BF /* WebClipCache.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebClipCache.mm; sourceTree = "<group>"; };
-		EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKWebsiteDataStoreRefPrivateMac.h; path = mac/WKWebsiteDataStoreRefPrivateMac.h; sourceTree = "<group>"; };
-		EB450E0E2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebsiteDataStoreRefPrivateMac.mm; path = mac/WKWebsiteDataStoreRefPrivateMac.mm; sourceTree = "<group>"; };
+		EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKWebsiteDataStoreRefPrivateMac.h; path = cocoa/WKWebsiteDataStoreRefPrivateMac.h; sourceTree = "<group>"; };
+		EB450E0E2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebsiteDataStoreRefPrivateMac.mm; path = cocoa/WKWebsiteDataStoreRefPrivateMac.mm; sourceTree = "<group>"; };
 		EB517B7A2D7BC03B0019E451 /* AboutSchemeHandlerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AboutSchemeHandlerCocoa.mm; sourceTree = "<group>"; };
 		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.mac.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.mac.sb.in; sourceTree = "<group>"; };
 		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.mac.sb; sourceTree = "<group>"; };
@@ -15428,6 +15428,26 @@
 			path = Modules;
 			sourceTree = "<group>";
 		};
+		8C31F02D3D8FD273329A30AF /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */,
+				BC407621124FF0400068F20A /* WKCertificateInfoMac.h */,
+				BC407622124FF0400068F20A /* WKCertificateInfoMac.mm */,
+				7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */,
+				7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */,
+				BC407623124FF0400068F20A /* WKURLRequestNS.h */,
+				BC407624124FF0400068F20A /* WKURLRequestNS.mm */,
+				BC407625124FF0400068F20A /* WKURLResponseNS.h */,
+				BC407626124FF0400068F20A /* WKURLResponseNS.mm */,
+				5136E513236A60D10074FD5D /* WKWebArchiveRef.cpp */,
+				5136E512236A60C80074FD5D /* WKWebArchiveRef.h */,
+				BC329DA916ACE5BF00316DE2 /* WKWebArchiveResource.cpp */,
+				BC329DAA16ACE5C000316DE2 /* WKWebArchiveResource.h */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		919793FE23DBC47400257892 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -15635,12 +15655,8 @@
 		9394AE411702B25B00344232 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A8B66B21BC45B010082DF77 /* WKBundleMac.h */,
-				1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */,
 				7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */,
 				7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */,
-				C6A4CA092252899800169289 /* WKBundlePageMac.h */,
-				C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -16970,6 +16986,7 @@
 		BC204EE811C83EB7008F3375 /* c */ = {
 			isa = PBXGroup;
 			children = (
+				F64D481536B26EA9618B16E3 /* cocoa */,
 				9394AE411702B25B00344232 /* mac */,
 				BC204EE911C83EC8008F3375 /* WKBundle.cpp */,
 				BC204EEA11C83EC8008F3375 /* WKBundle.h */,
@@ -17092,26 +17109,6 @@
 				BC407613124FF0370068F20A /* WKURLCF.mm */,
 			);
 			path = cf;
-			sourceTree = "<group>";
-		};
-		BC4075D6124FF0000068F20A /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */,
-				BC407621124FF0400068F20A /* WKCertificateInfoMac.h */,
-				BC407622124FF0400068F20A /* WKCertificateInfoMac.mm */,
-				7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */,
-				7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */,
-				BC407623124FF0400068F20A /* WKURLRequestNS.h */,
-				BC407624124FF0400068F20A /* WKURLRequestNS.mm */,
-				BC407625124FF0400068F20A /* WKURLResponseNS.h */,
-				BC407626124FF0400068F20A /* WKURLResponseNS.mm */,
-				5136E513236A60D10074FD5D /* WKWebArchiveRef.cpp */,
-				5136E512236A60C80074FD5D /* WKWebArchiveRef.h */,
-				BC329DA916ACE5BF00316DE2 /* WKWebArchiveResource.cpp */,
-				BC329DAA16ACE5C000316DE2 /* WKWebArchiveResource.h */,
-			);
-			path = mac;
 			sourceTree = "<group>";
 		};
 		BC4BEE96120A091700FBA0C7 /* DOM */ = {
@@ -17371,7 +17368,7 @@
 			children = (
 				BC4075D5124FEFFA0068F20A /* cf */,
 				BCCF6AC412C91F3B008F9C35 /* cg */,
-				BC4075D6124FF0000068F20A /* mac */,
+				8C31F02D3D8FD273329A30AF /* cocoa */,
 				934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */,
 				939F401B19FB0BBC002B2B42 /* WKActionMenuTypes.h */,
 				BC4075D7124FF0270068F20A /* WKArray.cpp */,
@@ -17990,6 +17987,17 @@
 				E88885662DC914C400C572B8 /* WKISO18013Request.h */,
 			);
 			path = IdentityDocumentServices;
+			sourceTree = "<group>";
+		};
+		F64D481536B26EA9618B16E3 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				1A8B66B21BC45B010082DF77 /* WKBundleMac.h */,
+				1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */,
+				C6A4CA092252899800169289 /* WKBundlePageMac.h */,
+				C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		FA07D6902CFFB06B00915660 /* Authentication */ = {

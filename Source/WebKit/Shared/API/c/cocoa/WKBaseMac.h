@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKCertificateInfoMac_h
-#define WKCertificateInfoMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <Security/SecTrust.h>
-#include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
+#ifndef WKBaseMac_h
+#define WKBaseMac_h
 
-#ifdef __cplusplus
-extern "C" {
+#ifndef WKBase_h
+#error "Please #include \"WKBase.h\" instead of this file directly."
 #endif
 
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust) WK_C_API_DEPRECATED;
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain) WK_C_API_DEPRECATED;
-WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
+typedef const struct OpaqueWKObjCTypeWrapper* WKObjCTypeWrapperRef;
 
-// Deprecated
-WK_EXPORT CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* WKCertificateInfoMac_h */
+#endif /* WKBaseMac_h */

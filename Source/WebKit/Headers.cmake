@@ -267,13 +267,13 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     Shared/API/c/cg/WKImageCG.h
 
-    Shared/API/c/mac/WKBaseMac.h
-    Shared/API/c/mac/WKCertificateInfoMac.h
-    Shared/API/c/mac/WKObjCTypeWrapperRef.h
-    Shared/API/c/mac/WKURLRequestNS.h
-    Shared/API/c/mac/WKURLResponseNS.h
-    Shared/API/c/mac/WKWebArchiveRef.h
-    Shared/API/c/mac/WKWebArchiveResource.h
+    Shared/API/c/cocoa/WKBaseMac.h
+    Shared/API/c/cocoa/WKCertificateInfoMac.h
+    Shared/API/c/cocoa/WKObjCTypeWrapperRef.h
+    Shared/API/c/cocoa/WKURLRequestNS.h
+    Shared/API/c/cocoa/WKURLResponseNS.h
+    Shared/API/c/cocoa/WKWebArchiveRef.h
+    Shared/API/c/cocoa/WKWebArchiveResource.h
 
     UIProcess/_WKWebViewPrintFormatter.h
 
@@ -282,13 +282,13 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     UIProcess/API/C/cg/WKIconDatabaseCG.h
 
-    UIProcess/API/C/mac/WKContextPrivateMac.h
-    UIProcess/API/C/mac/WKFrameMac.h
+    UIProcess/API/C/cocoa/WKContextPrivateMac.h
+    UIProcess/API/C/cocoa/WKFrameMac.h
+    UIProcess/API/C/cocoa/WKNotificationPrivateMac.h
+    UIProcess/API/C/cocoa/WKPagePrivateMac.h
+    UIProcess/API/C/cocoa/WKProtectionSpaceNS.h
+    UIProcess/API/C/cocoa/WKWebsiteDataStoreRefPrivateMac.h
     UIProcess/API/C/mac/WKInspectorPrivateMac.h
-    UIProcess/API/C/mac/WKNotificationPrivateMac.h
-    UIProcess/API/C/mac/WKPagePrivateMac.h
-    UIProcess/API/C/mac/WKProtectionSpaceNS.h
-    UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.h
 
     UIProcess/API/Cocoa/NSAttributedStringPrivate.h
     UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h
@@ -532,9 +532,9 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h
 
-    WebProcess/InjectedBundle/API/c/mac/WKBundleMac.h
+    WebProcess/InjectedBundle/API/c/cocoa/WKBundleMac.h
+    WebProcess/InjectedBundle/API/c/cocoa/WKBundlePageMac.h
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h
-    WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.h
 )
 endif ()
 

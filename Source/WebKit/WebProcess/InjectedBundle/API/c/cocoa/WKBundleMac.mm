@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
 #import "config.h"
-#import "WKCertificateInfoMac.h"
+#import "WKBundleMac.h"
 
-WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust)
-{
-    return nullptr;
-}
+#import "InjectedBundle.h"
+#import "WKBundleAPICast.h"
 
-WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
+id WKBundleGetParameters(WKBundleRef bundle)
 {
-    return nullptr;
-}
-
-CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
-{
-    return nullptr;
-}
-
-SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfoRef)
-{
-    return nullptr;
+    return protect(WebKit::toImpl(bundle))->bundleParameters();
 }

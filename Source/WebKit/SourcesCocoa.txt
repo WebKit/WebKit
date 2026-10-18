@@ -130,12 +130,12 @@ Shared/API/c/cf/WKURLCF.mm @nonARC
 
 Shared/API/c/cg/WKImageCG.cpp
 
-Shared/API/c/mac/WKCertificateInfoMac.mm @nonARC
-Shared/API/c/mac/WKObjCTypeWrapperRef.mm @nonARC
-Shared/API/c/mac/WKURLRequestNS.mm @nonARC
-Shared/API/c/mac/WKURLResponseNS.mm @nonARC
-Shared/API/c/mac/WKWebArchiveRef.cpp
-Shared/API/c/mac/WKWebArchiveResource.cpp
+Shared/API/c/cocoa/WKCertificateInfoMac.mm @nonARC
+Shared/API/c/cocoa/WKObjCTypeWrapperRef.mm @nonARC
+Shared/API/c/cocoa/WKURLRequestNS.mm @nonARC
+Shared/API/c/cocoa/WKURLResponseNS.mm @nonARC
+Shared/API/c/cocoa/WKWebArchiveRef.cpp
+Shared/API/c/cocoa/WKWebArchiveResource.cpp
 
 Shared/API/Cocoa/_WKFrameHandle.mm @nonARC
 Shared/API/Cocoa/_WKHitTestResult.mm @nonARC
@@ -274,12 +274,12 @@ UIProcess/API/C/WKTestingSupport.cpp
 
 UIProcess/API/C/cg/WKIconDatabaseCG.cpp
 
-UIProcess/API/C/mac/WKContextPrivateMac.mm @nonARC
-UIProcess/API/C/mac/WKFrameMac.cpp
-UIProcess/API/C/mac/WKNotificationPrivateMac.mm @nonARC
-UIProcess/API/C/mac/WKPagePrivateMac.mm @nonARC
-UIProcess/API/C/mac/WKProtectionSpaceNS.mm @nonARC
-UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.mm @nonARC
+UIProcess/API/C/cocoa/WKContextPrivateMac.mm @nonARC
+UIProcess/API/C/cocoa/WKFrameMac.cpp
+UIProcess/API/C/cocoa/WKNotificationPrivateMac.mm @nonARC
+UIProcess/API/C/cocoa/WKPagePrivateMac.mm @nonARC
+UIProcess/API/C/cocoa/WKProtectionSpaceNS.mm @nonARC
+UIProcess/API/C/cocoa/WKWebsiteDataStoreRefPrivateMac.mm @nonARC
 
 UIProcess/API/Cocoa/_WKActivatedElementInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKAppHighlight.mm @nonARC
@@ -820,7 +820,7 @@ WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 
-WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm @nonARC
+WebProcess/InjectedBundle/API/c/cocoa/WKBundleMac.mm @nonARC
 WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm @nonARC
 
 WebProcess/InjectedBundle/API/Cocoa/WKDOMDocument.mm @nonARC

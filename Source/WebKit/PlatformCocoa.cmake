@@ -178,7 +178,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
     WebProcess/cocoa/LaunchServicesDatabaseManager.mm
 
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c/cocoa/WKBundlePageMac.mm
 )
 
 # FIXME: Add the remaining `${WEBKIT_DIR}/UIProcess/API/Swift/` files once CMake has proper framework directories.
@@ -215,7 +215,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/Cocoa"
     "${WEBKIT_DIR}/Shared/API/c/cf"
     "${WEBKIT_DIR}/Shared/API/c/cg"
-    "${WEBKIT_DIR}/Shared/API/c/mac"
+    "${WEBKIT_DIR}/Shared/API/c/cocoa"
     "${WEBKIT_DIR}/Shared/ApplePay/cocoa/"
     "${WEBKIT_DIR}/Shared/Authentication/cocoa"
     "${WEBKIT_DIR}/Shared/Cocoa"
@@ -227,6 +227,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/mac"
+    "${WEBKIT_DIR}/UIProcess/API/C/cocoa"
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
     "${WEBKIT_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT_DIR}/UIProcess/API/ios"
@@ -679,7 +680,7 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c
 
     Shared/API/c/cf
-    Shared/API/c/mac
+    Shared/API/c/cocoa
 
     UIProcess/Cocoa
 
@@ -687,7 +688,7 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/API/Cocoa
     UIProcess/API/cpp
 
-    UIProcess/API/C/Cocoa
+    UIProcess/API/C/cocoa
     UIProcess/API/C/mac
 
     WebProcess/InjectedBundle/API/Cocoa
@@ -1693,23 +1694,23 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     Shared/API/c/cg/WKImageCG.h
 
-    Shared/API/c/mac/WKBaseMac.h
-    Shared/API/c/mac/WKCertificateInfoMac.h
-    Shared/API/c/mac/WKObjCTypeWrapperRef.h
-    Shared/API/c/mac/WKURLRequestNS.h
-    Shared/API/c/mac/WKURLResponseNS.h
-    Shared/API/c/mac/WKWebArchiveRef.h
-    Shared/API/c/mac/WKWebArchiveResource.h
+    Shared/API/c/cocoa/WKBaseMac.h
+    Shared/API/c/cocoa/WKCertificateInfoMac.h
+    Shared/API/c/cocoa/WKObjCTypeWrapperRef.h
+    Shared/API/c/cocoa/WKURLRequestNS.h
+    Shared/API/c/cocoa/WKURLResponseNS.h
+    Shared/API/c/cocoa/WKWebArchiveRef.h
+    Shared/API/c/cocoa/WKWebArchiveResource.h
 
     Shared/Cocoa/SecItemRequestData.h
     Shared/Cocoa/SecItemResponseData.h
 
-    UIProcess/API/C/mac/WKContextPrivateMac.h
+    UIProcess/API/C/cocoa/WKContextPrivateMac.h
+    UIProcess/API/C/cocoa/WKNotificationPrivateMac.h
+    UIProcess/API/C/cocoa/WKPagePrivateMac.h
+    UIProcess/API/C/cocoa/WKProtectionSpaceNS.h
+    UIProcess/API/C/cocoa/WKWebsiteDataStoreRefPrivateMac.h
     UIProcess/API/C/mac/WKInspectorPrivateMac.h
-    UIProcess/API/C/mac/WKNotificationPrivateMac.h
-    UIProcess/API/C/mac/WKPagePrivateMac.h
-    UIProcess/API/C/mac/WKProtectionSpaceNS.h
-    UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.h
 
     UIProcess/API/Cocoa/NSAttributedStringPrivate.h
     UIProcess/API/Cocoa/PageLoadStateObserver.h
@@ -1905,7 +1906,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     UIProcess/API/C/cg/WKIconDatabaseCG.h
 
-    UIProcess/API/C/mac/WKFrameMac.h
+    UIProcess/API/C/cocoa/WKFrameMac.h
 
     UIProcess/API/mac/WKWebViewPrivateForTestingMac.h
 
@@ -1913,9 +1914,9 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
 
     WebProcess/API/Cocoa/WKWebProcess.h
 
-    WebProcess/InjectedBundle/API/c/mac/WKBundleMac.h
+    WebProcess/InjectedBundle/API/c/cocoa/WKBundleMac.h
+    WebProcess/InjectedBundle/API/c/cocoa/WKBundlePageMac.h
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.h
-    WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.h
 )
 
 file(GLOB _webkit_api_headers RELATIVE "${WEBKIT_DIR}"

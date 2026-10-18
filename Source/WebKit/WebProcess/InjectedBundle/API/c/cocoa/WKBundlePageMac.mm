@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKPagePrivateMac_h
-#define WKPagePrivateMac_h
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKDeprecated.h>
-#include <sys/types.h>
+#import "config.h"
+#import "WKBundlePageMac.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __OBJC__
-
-@class WKWebView;
-
-@class WKNavigation;
-WK_EXPORT WKNavigation *WKPageLoadFileReturningNavigation(WKPageRef page, WKURLRef fileURL, WKURLRef resourceDirectoryURL);
-
-WK_EXPORT WKWebView *WKPageGetWebView(WKPageRef page);
-
-@class NSDictionary;
-@class NSArray;
-WK_EXPORT NSDictionary *WKPageGetAccessibilityWebProcessDebugInfo(WKPageRef page);
-WK_EXPORT NSArray *WKPageGetAccessibilityWebProcessDebugInfoForAllProcesses(WKPageRef page);
-WK_EXPORT void WKPageAccessibilityClearIsolatedTree(WKPageRef page);
-
-#endif // __OBJC__
-
-#if !TARGET_OS_IPHONE
-WK_EXPORT bool WKPageIsPlayingVideoInPictureInPicture(WKPageRef page);
-WK_EXPORT bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef page) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKPageIsPlayingVideoInPictureInPicture);
-#endif
-
-#ifdef __cplusplus
+WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef, WKBundleFrameRef)
+{
+    return nil;
 }
-#endif
-
-#endif /* WKPagePrivateMac_h */

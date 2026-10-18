@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Despite its name, this file is used on all Cocoa platforms, not just macOS.
+
 #ifndef WKContextPrivateMac_h
 #define WKContextPrivateMac_h
 
