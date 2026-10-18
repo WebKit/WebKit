@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseSymbol.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
 #include "CorpseExportsTrie.h"
@@ -433,4 +433,4 @@ Symbol::Symbol(Snapshot& snapshot, const char* name)
 
 #undef CORPSE_DIAGNOSTIC_DO
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
