@@ -69,14 +69,14 @@ public:
     friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, const WebAnimationTime&);
     friend std::partial_ordering LEGACY_NODELETE operator<=>(const WebAnimationTime&, Seconds);
 
-    WebAnimationTime operator+(const Seconds&) const;
-    WebAnimationTime operator-(const Seconds&) const;
+    WebAnimationTime LEGACY_NODELETE operator+(const Seconds&) const;
+    WebAnimationTime LEGACY_NODELETE operator-(const Seconds&) const;
     bool LEGACY_NODELETE operator==(const Seconds&) const;
 
     WebAnimationTime LEGACY_NODELETE operator*(double) const;
     WebAnimationTime LEGACY_NODELETE operator/(double) const;
 
-    WEBCORE_EXPORT operator Seconds() const;
+    WEBCORE_EXPORT operator Seconds LEGACY_NODELETE () const;
     operator CSSNumberish() const;
 
     void dump(TextStream&) const;

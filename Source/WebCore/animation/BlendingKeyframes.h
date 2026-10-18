@@ -162,7 +162,7 @@ public:
     auto end() const LIFETIME_BOUND { return m_keyframes.end(); }
 
     bool LEGACY_NODELETE usesContainerUnits() const;
-    bool usesViewportUnits() const;
+    bool LEGACY_NODELETE usesViewportUnits() const;
     bool LEGACY_NODELETE usesTreeCountingFunctions() const;
     bool usesRelativeFontWeight() const { return m_usesRelativeFontWeight; }
     bool hasSubstitutionFunctions() const { return m_containsSubstitutionFunctions; }

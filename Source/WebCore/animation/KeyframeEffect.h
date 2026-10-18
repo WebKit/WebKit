@@ -66,7 +66,7 @@ class KeyframeEffect final : public AnimationEffect, public Style::Interpolation
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, Variant<double, KeyframeEffectOptions>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
-    static Ref<KeyframeEffect> create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<KeyframeEffect> LEGACY_NODELETE create(const Element&, const std::optional<Style::PseudoElementIdentifier>&);
 
     using KeyframeOffset = Variant<std::nullptr_t, double, TimelineRangeOffset, String>;
 

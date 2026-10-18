@@ -56,7 +56,7 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleOriginatedTimelinesController);
 
-static const WeakStyleable& originatingStyleable(const Ref<ScrollTimeline>& timeline LIFETIME_BOUND)
+static const WeakStyleable& LEGACY_NODELETE originatingStyleable(const Ref<ScrollTimeline>& timeline LIFETIME_BOUND)
 {
     if (auto* viewTimeline = dynamicDowncast<ViewTimeline>(timeline.get()))
         return viewTimeline->subjectStyleable();

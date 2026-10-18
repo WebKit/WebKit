@@ -73,7 +73,7 @@ struct StickinessAdjustmentData {
 class ViewTimeline final : public ScrollTimeline {
 public:
     static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&&);
-    static Ref<ViewTimeline> create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
+    static Ref<ViewTimeline> LEGACY_NODELETE create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     const Element* LEGACY_NODELETE subject() const;
     const WeakStyleable& subjectStyleable() const LIFETIME_BOUND { return m_subject; }
