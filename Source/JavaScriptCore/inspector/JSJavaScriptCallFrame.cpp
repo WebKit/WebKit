@@ -111,12 +111,13 @@ static JSValue valueForScopeLocation(JSGlobalObject* globalObject, const Debugge
     if (location.sourceID == noSourceID)
         return jsNull();
 
-    // Debugger.Location protocol object.
+    // Debugger.Location uses zero-based positions.
+    ASSERT(location.line && location.column);
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, String::number(location.sourceID)));
-    result->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(location.line));
-    result->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(location.column));
+    result->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(location.line - 1));
+    result->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(location.column - 1));
     return result;
 }
 
