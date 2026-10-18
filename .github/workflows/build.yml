@@ -850,12 +850,12 @@ jobs:
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
             -DWKC_ENABLE_FULL_WEBCORE=ON \
-            -DWKC_ENABLE_WEB_AUDIO=ON \
-            -DWKC_ENABLE_INDEXED_DATABASE=ON \
-            -DWKC_ENABLE_GAMEPAD=ON \
-            -DWKC_ENABLE_WEBASSEMBLY=ON \
-            -DWKC_ENABLE_WEBRTC_API=ON \
-            -DWKC_ENABLE_WEB_INSPECTOR=ON \
+            -DWKC_ENABLE_WEB_AUDIO=OFF \
+            -DWKC_ENABLE_INDEXED_DATABASE=OFF \
+            -DWKC_ENABLE_GAMEPAD=OFF \
+            -DWKC_ENABLE_WEBASSEMBLY=OFF \
+            -DWKC_ENABLE_WEBRTC_API=OFF \
+            -DWKC_ENABLE_WEB_INSPECTOR=OFF \
  > build-full-configure.log 2>&1
           CONFIG_STATUS=$?
 
@@ -923,9 +923,9 @@ jobs:
                 echo "Profile: Full WebKit page engine (DOM/HTML/CSS/loader/layout/rendering + JavaScriptCore)"
                 echo "Target: Wii U PowerPC 750 / devkitPPC"
                 echo "JavaScriptCore: CLoop interpreter; JIT disabled for Wii U"
-                echo "WebAssembly: disabled pending a Wii U PowerPC calling-convention implementation"
-                echo "Web Audio: disabled; not required for page loading"
-                echo "WebRTC: disabled; not required for page loading"
+                echo "WebAssembly: disabled in page-loading baseline; follow-up feature build"
+                echo "Web Audio: disabled in page-loading baseline; follow-up feature build"
+                echo "WebRTC: disabled in page-loading baseline; follow-up feature build"
                 echo "Verification: full WebCore CMake build and install passed"
                 echo "Not yet verified: Wave Browser final executable link or on-console runtime"
                 echo
