@@ -63,31 +63,3 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentOpenID4VPVerifie
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequest);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKIdentityDocumentPresentmentRequestAuthenticationCertificate);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextAnimationManager)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUSDConfiguration)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeReceiver)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeModelLoader)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeMeshPart)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeVertexAttributeFormat)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeVertexLayout)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeMeshDescriptor)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeSkinningData)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeBlendShapeData)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeRenormalizationData)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeDeformationData)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeImageAsset)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeTextureLevelInfo)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateMesh)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateTexture)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeUpdateMaterial)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeInputOutput)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeEdge)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeBuiltin)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeValueString)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeConstantContainer)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeNode)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeMaterialGraph)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeRemovals)
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKBridgeTypedResourceId)

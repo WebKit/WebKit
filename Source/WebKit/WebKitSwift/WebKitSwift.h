@@ -25,7 +25,6 @@
 
 #import "CredentialUpdaterShim.h"
 
-#import "ModelTypes.h"
 #import "WKGroupSession.h"
 #import "WKIdentityDocumentPresentmentController.h"
 #import "WKIdentityDocumentPresentmentDelegate.h"

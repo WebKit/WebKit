@@ -37,11 +37,34 @@
 #import <wtf/MathExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-#import "WebKitSwiftSoftLink.h"
+#if ENABLE(GPU_PROCESS_MODEL)
+
+@implementation WKBridgeTypedResourceId (Equality)
+
+- (NSUInteger)hash
+{
+    return static_cast<NSUInteger>(self.cachedHashValue);
+}
+
+- (BOOL)isEqual:(id)object
+{
+    auto *other = dynamic_objc_cast<WKBridgeTypedResourceId>(object);
+    return other && self.cachedHashValue == other.cachedHashValue;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@@%@", self.path, self.value];
+}
+
+@end
+
+#endif
 
 namespace WebModel {
 
@@ -49,7 +72,7 @@ namespace WebModel {
 
 static WKBridgeTypedResourceId *convert(const TypedResourceId& update)
 {
-    return [WebKit::allocWKBridgeTypedResourceIdInstance() initWithValue:[[NSUUID alloc] initWithUUIDString:update.value.createNSString().get()] path:update.path.createNSString().get() hashValue:update.hashValue];
+    return [[WKBridgeTypedResourceId alloc] initWithValue:[[NSUUID alloc] initWithUUIDString:update.value.createNSString().get()] path:update.path.createNSString().get() hashValue:update.hashValue];
 }
 
 // Helper conversion functions from WebGPU types to Metal types
@@ -554,7 +577,7 @@ static WKBridgeConstant convert(const Constant constant)
 
 static WKBridgeMeshPart *convert(const MeshPart& part)
 {
-    return [WebKit::allocWKBridgeMeshPartInstance() initWithIndexOffset:part.indexOffset indexCount:part.indexCount topology:toMetal(part.topology) materialIndex:part.materialIndex boundsMin:part.boundsMin boundsMax:part.boundsMax];
+    return [[WKBridgeMeshPart alloc] initWithIndexOffset:part.indexOffset indexCount:part.indexCount topology:toMetal(part.topology) materialIndex:part.materialIndex boundsMin:part.boundsMin boundsMax:part.boundsMax];
 }
 
 static NSArray<WKBridgeMeshPart *> *convert(const Vector<MeshPart>& parts)
@@ -612,7 +635,7 @@ static NSArray<WKBridgeVertexAttributeFormat *> *convert(const Vector<VertexAttr
 
     NSMutableArray<WKBridgeVertexAttributeFormat *> *result = [NSMutableArray array];
     for (const auto& format : formats)
-        [result addObject:[WebKit::allocWKBridgeVertexAttributeFormatInstance() initWithSemantic:toMetal(format.semantic) format:toMetal(format.format) layoutIndex:format.layoutIndex offset:format.offset]];
+        [result addObject:[[WKBridgeVertexAttributeFormat alloc] initWithSemantic:toMetal(format.semantic) format:toMetal(format.format) layoutIndex:format.layoutIndex offset:format.offset]];
 
     return result;
 }
@@ -624,7 +647,7 @@ static NSArray<WKBridgeVertexLayout *> *convert(const Vector<VertexLayout>& layo
 
     NSMutableArray<WKBridgeVertexLayout *> *result = [NSMutableArray array];
     for (const auto& layout : layouts)
-        [result addObject:[WebKit::allocWKBridgeVertexLayoutInstance() initWithBufferIndex:layout.bufferIndex bufferOffset:layout.bufferOffset bufferStride:layout.bufferStride stepFunction:toMetal(layout.stepFunction) stepRate:layout.stepRate]];
+        [result addObject:[[WKBridgeVertexLayout alloc] initWithBufferIndex:layout.bufferIndex bufferOffset:layout.bufferOffset bufferStride:layout.bufferStride stepFunction:toMetal(layout.stepFunction) stepRate:layout.stepRate]];
 
     return result;
 }
@@ -634,7 +657,7 @@ static WKBridgeMeshDescriptor *convert(const MeshDescriptor& descriptor)
     if (!descriptor.vertexBufferCount)
         return nil;
 
-    return [WebKit::allocWKBridgeMeshDescriptorInstance() initWithVertexBufferCount:descriptor.vertexBufferCount
+    return [[WKBridgeMeshDescriptor alloc] initWithVertexBufferCount:descriptor.vertexBufferCount
         vertexCapacity:descriptor.vertexCapacity
         vertexAttributes:convert(descriptor.vertexAttributes)
         vertexLayouts:convert(descriptor.vertexLayouts)
@@ -647,7 +670,7 @@ static WKBridgeSkinningData *convert(const std::optional<SkinningData>& data)
     if (!data)
         return nil;
 
-    return [WebKit::allocWKBridgeSkinningDataInstance() initWithInfluencePerVertexCount:data->influencePerVertexCount jointTransforms:convert(data->jointTransforms) inverseBindPoses:convert(data->inverseBindPoses) influenceJointIndices:convert(data->influenceJointIndices) influenceWeights:convert(data->influenceWeights) geometryBindTransform:data->geometryBindTransform rootJointIndices:convert(data->rootJointIndices)];
+    return [[WKBridgeSkinningData alloc] initWithInfluencePerVertexCount:data->influencePerVertexCount jointTransforms:convert(data->jointTransforms) inverseBindPoses:convert(data->inverseBindPoses) influenceJointIndices:convert(data->influenceJointIndices) influenceWeights:convert(data->influenceWeights) geometryBindTransform:data->geometryBindTransform rootJointIndices:convert(data->rootJointIndices)];
 }
 
 static WKBridgeBlendShapeData *convert(const std::optional<BlendShapeData>& data)
@@ -655,7 +678,7 @@ static WKBridgeBlendShapeData *convert(const std::optional<BlendShapeData>& data
     if (!data)
         return nil;
 
-    return [WebKit::allocWKBridgeBlendShapeDataInstance() initWithWeights:convert(data->weights) positionOffsets:convert(data->positionOffsets) normalOffsets:convert(data->normalOffsets)];
+    return [[WKBridgeBlendShapeData alloc] initWithWeights:convert(data->weights) positionOffsets:convert(data->positionOffsets) normalOffsets:convert(data->normalOffsets)];
 }
 
 static WKBridgeRenormalizationData *convert(const std::optional<RenormalizationData>& data)
@@ -663,7 +686,7 @@ static WKBridgeRenormalizationData *convert(const std::optional<RenormalizationD
     if (!data)
         return nil;
 
-    return [WebKit::allocWKBridgeRenormalizationDataInstance() initWithVertexIndicesPerTriangle:convert(data->vertexIndicesPerTriangle) vertexAdjacencies:convert(data->vertexAdjacencies) vertexAdjacencyEndIndices:convert(data->vertexAdjacencyEndIndices)];
+    return [[WKBridgeRenormalizationData alloc] initWithVertexIndicesPerTriangle:convert(data->vertexIndicesPerTriangle) vertexAdjacencies:convert(data->vertexAdjacencies) vertexAdjacencyEndIndices:convert(data->vertexAdjacencyEndIndices)];
 }
 
 static WKBridgeDeformationData *convert(const std::optional<DeformationData>& data)
@@ -671,7 +694,7 @@ static WKBridgeDeformationData *convert(const std::optional<DeformationData>& da
     if (!data)
         return nil;
 
-    return [WebKit::allocWKBridgeDeformationDataInstance() initWithSkinningData:convert(data->skinningData) blendShapeData:convert(data->blendShapeData) renormalizationData:convert(data->renormalizationData)];
+    return [[WKBridgeDeformationData alloc] initWithSkinningData:convert(data->skinningData) blendShapeData:convert(data->blendShapeData) renormalizationData:convert(data->renormalizationData)];
 }
 
 static MTLTextureSwizzleChannels convert(ImageAssetSwizzle swizzle)
@@ -699,12 +722,12 @@ static WKBridgeImageAsset* convert(const ImageAsset& imageAsset)
         }
     }
 
-    return [WebKit::allocWKBridgeImageAssetInstance() initWithData:data width:imageAsset.width height:imageAsset.height depth:imageAsset.depth textureType:toMetal(imageAsset.textureType) pixelFormat:mtlPixelFormat mipmapLevelCount:imageAsset.mipmapLevelCount arrayLength:imageAsset.arrayLength textureUsage:toMetal(imageAsset.textureUsage) swizzle:convert(imageAsset.swizzle)];
+    return [[WKBridgeImageAsset alloc] initWithData:data width:imageAsset.width height:imageAsset.height depth:imageAsset.depth textureType:toMetal(imageAsset.textureType) pixelFormat:mtlPixelFormat mipmapLevelCount:imageAsset.mipmapLevelCount arrayLength:imageAsset.arrayLength textureUsage:toMetal(imageAsset.textureUsage) swizzle:convert(imageAsset.swizzle)];
 }
 
 static WKBridgeTextureLevelInfo* convert(const TextureLevelInfo& textureLevelInfo)
 {
-    return [WebKit::allocWKBridgeTextureLevelInfoInstance() initWithDataOffset:textureLevelInfo.dataOffset byteCountPerRow:textureLevelInfo.byteCountPerRow byteCountPerImage:textureLevelInfo.byteCountPerImage];
+    return [[WKBridgeTextureLevelInfo alloc] initWithDataOffset:textureLevelInfo.dataOffset byteCountPerRow:textureLevelInfo.byteCountPerRow byteCountPerImage:textureLevelInfo.byteCountPerImage];
 }
 
 static WKBridgeDataType convert(DataType type)
@@ -784,9 +807,9 @@ static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<String, doub
     NSMutableArray<WKBridgeValueString *> *result = [NSMutableArray array];
     for (const auto& c : constantValues) {
         [result addObject:WTF::switchOn(c, [&](const String& s) -> WKBridgeValueString * {
-            return [WebKit::allocWKBridgeValueStringInstance() initWithString:s.createNSString().get()];
+            return [[WKBridgeValueString alloc] initWithString:s.createNSString().get()];
         }, [&] (double d) -> WKBridgeValueString * {
-            return [WebKit::allocWKBridgeValueStringInstance() initWithNumber:[[NSNumber alloc] initWithDouble:d]];
+            return [[WKBridgeValueString alloc] initWithNumber:[[NSNumber alloc] initWithDouble:d]];
         })];
     }
 
@@ -796,7 +819,7 @@ static NSArray<WKBridgeValueString *> *convert(const Vector<Variant<String, doub
 static WKBridgeConstantContainer *convert(const ConstantContainer& constant)
 {
     NSString *colorSpaceName = constant.colorSpaceName ? constant.colorSpaceName->createNSString().get() : nil;
-    return [WebKit::allocWKBridgeConstantContainerInstance() initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get() colorSpaceName:colorSpaceName];
+    return [[WKBridgeConstantContainer alloc] initWithConstant:convert(constant.constant) constantValues:convert(constant.constantValues) name:constant.name.createNSString().get() colorSpaceName:colorSpaceName];
 }
 
 static NSArray<WKBridgeInputOutput *> *convert(const Vector<InputOutput>& inputOutputs)
@@ -809,7 +832,7 @@ static NSArray<WKBridgeInputOutput *> *convert(const Vector<InputOutput>& inputO
         if (io.defaultValue)
             defaultValue = convert(*io.defaultValue);
 
-        [result addObject:[WebKit::allocWKBridgeInputOutputInstance() initWithType:convert(io.type)
+        [result addObject:[[WKBridgeInputOutput alloc] initWithType:convert(io.type)
             name:io.name.createNSString().get()
             semanticTypeName:semanticTypeName
             defaultValue:defaultValue]];
@@ -822,7 +845,7 @@ static NSArray<WKBridgeEdge *> *convert(const Vector<Edge>& edges)
 {
     NSMutableArray<WKBridgeEdge *> *result = [NSMutableArray array];
     for (const auto& e : edges) {
-        [result addObject:[WebKit::allocWKBridgeEdgeInstance() initWithOutputNode:e.outputNode.createNSString().get()
+        [result addObject:[[WKBridgeEdge alloc] initWithOutputNode:e.outputNode.createNSString().get()
             outputPort:e.outputPort.createNSString().get()
             inputNode:e.inputNode.createNSString().get()
             inputPort:e.inputPort.createNSString().get()]];
@@ -847,12 +870,12 @@ static WKBridgeNodeType convert(NodeType bridgeNodeType)
 
 static WKBridgeBuiltin *convert(const Builtin& builtin)
 {
-    return [WebKit::allocWKBridgeBuiltinInstance() initWithDefinition:builtin.definition.createNSString().get() name:builtin.name.createNSString().get()];
+    return [[WKBridgeBuiltin alloc] initWithDefinition:builtin.definition.createNSString().get() name:builtin.name.createNSString().get()];
 }
 
 static WKBridgeNode *convert(const Node& node)
 {
-    return [WebKit::allocWKBridgeNodeInstance() initWithBridgeNodeType:convert(node.bridgeNodeType) builtin:convert(node.builtin) constant:convert(node.constant)];
+    return [[WKBridgeNode alloc] initWithBridgeNodeType:convert(node.bridgeNodeType) builtin:convert(node.builtin) constant:convert(node.constant)];
 }
 
 static NSArray<WKBridgeNode *> *convert(const Vector<Node>& nodes)
@@ -873,7 +896,7 @@ static NSArray<NSString *> *convertStrings(const Vector<String>& strings)
 
 static WKBridgeMaterialGraph *convert(const MaterialGraph& material)
 {
-    return [WebKit::allocWKBridgeMaterialGraphInstance()
+    return [[WKBridgeMaterialGraph alloc]
         initWithGraphName:material.graphName.createNSString().get()
         nodes:convert(material.nodes)
         edges:convert(material.edges)
@@ -915,7 +938,7 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
     m_textures = createMetalTextures(device, descriptor.ioSurfaces, descriptor.width, descriptor.height, pixelFormatForDynamicRange(m_standardDynamicRange));
 
 #if ENABLE(GPU_PROCESS_MODEL)
-    WKBridgeUSDConfiguration *configuration = [WebKit::allocWKBridgeUSDConfigurationInstance() initWithDevice:device memoryOwner:descriptor.processIdentity ? descriptor.processIdentity->taskIdToken() : 0];
+    WKBridgeUSDConfiguration *configuration = [[WKBridgeUSDConfiguration alloc] initWithDevice:device memoryOwner:descriptor.processIdentity ? descriptor.processIdentity->taskIdToken() : 0];
     WKBridgeImageAsset *diffuseAsset = WebModel::convert(descriptor.diffuseTexture);
     WKBridgeImageAsset *specularAsset = WebModel::convert(descriptor.specularTexture);
     if (configuration) {
@@ -935,7 +958,7 @@ WebMesh::WebMesh(const WebModelCreateMeshDescriptor& descriptor)
     }
 
     NSError *error;
-    m_receiver = [WebKit::allocWKBridgeReceiverInstance() initWithConfiguration:configuration diffuseAsset:diffuseAsset specularAsset:specularAsset error:&error];
+    m_receiver = [[WKBridgeReceiver alloc] initWithConfiguration:configuration diffuseAsset:diffuseAsset specularAsset:specularAsset error:&error];
     if (error)
         WTFLogAlways("Could not initialize USD renderer"); // NOLINT
 
@@ -976,7 +999,7 @@ void WebMesh::render(uint32_t textureIndex, Function<void(bool)>&& completionHan
 #if ENABLE(GPU_PROCESS_MODEL)
 static WKBridgeUpdateMesh *convert(const WebModel::UpdateMeshDescriptor& input)
 {
-    return [WebKit::allocWKBridgeUpdateMeshInstance() initWithIdentifier:convert(input.identifier)
+    return [[WKBridgeUpdateMesh alloc] initWithIdentifier:convert(input.identifier)
         updateType:static_cast<WKBridgeDataUpdateType>(input.updateType)
         descriptor:WebModel::convert(input.descriptor)
         parts:WebModel::convert(input.parts)
@@ -1008,7 +1031,7 @@ void WebMesh::update(Vector<WebModel::UpdateMeshDescriptor>&& inputArray)
 #if ENABLE(GPU_PROCESS_MODEL)
 static WKBridgeUpdateTexture *convert(const WebModel::UpdateTextureDescriptor& input)
 {
-    return [WebKit::allocWKBridgeUpdateTextureInstance() initWithImageAsset:WebModel::convert(input.imageAsset) identifier:convert(input.identifier) hashString:input.hashString.createNSString().get() layout:createNSArray(input.layout, [](const WebModel::TextureLevelInfo& desc) {
+    return [[WKBridgeUpdateTexture alloc] initWithImageAsset:WebModel::convert(input.imageAsset) identifier:convert(input.identifier) hashString:input.hashString.createNSString().get() layout:createNSArray(input.layout, [](const WebModel::TextureLevelInfo& desc) {
         return WebModel::convert(desc);
     })];
 }
@@ -1029,7 +1052,7 @@ void WebMesh::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& inputArr
 #if ENABLE(GPU_PROCESS_MODEL)
 static WKBridgeUpdateMaterial *convert(const WebModel::UpdateMaterialDescriptor& input)
 {
-    return [WebKit::allocWKBridgeUpdateMaterialInstance() initWithMaterialGraph:WebModel::convert(input.materialGraph) identifier:convert(input.identifier)];
+    return [[WKBridgeUpdateMaterial alloc] initWithMaterialGraph:WebModel::convert(input.materialGraph) identifier:convert(input.identifier)];
 }
 #endif
 

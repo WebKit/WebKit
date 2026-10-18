@@ -60,8 +60,6 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/threads/BinarySemaphore.h>
 
-#import "WebKitSwiftSoftLink.h"
-
 #if PLATFORM(COCOA)
 #import <Metal/Metal.h>
 #endif
@@ -256,7 +254,7 @@ void WebModelPlayer::load(WebCore::NodeIdentifier nodeID, WebCore::Model& modelS
         return;
     m_currentModel->setViewportSize(cssSize.width().toFloat(), cssSize.height().toFloat());
 
-    m_modelLoader = adoptNS([allocWKBridgeModelLoaderInstance() initWithGPUFamily:MTLGPUFamilyApple7]);
+    m_modelLoader = adoptNS([[WKBridgeModelLoader alloc] initWithGPUFamily:MTLGPUFamilyApple7]);
     Ref protectedThis { *this };
     [m_modelLoader setCallbacksWithModelUpdatedCallback:^(NSArray<WKBridgeUpdateMesh *> *updateRequest) {
         ensureOnMainThreadWithProtectedThis([updateRequest, nodeID] (Ref<WebModelPlayer> protectedThis) {

@@ -23,13 +23,12 @@
 
 import Metal
 import OSLog
-import WebKit
 import simd
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
-import USDKit
-import DirectResource
-import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import DirectResource
+@_weakLinked import RealityKit
 
 // Safe wrapper of unsafe functions
 extension MTLBuffer {
@@ -90,6 +89,7 @@ private func writeData(into span: inout MutableRawSpan, from data: Data) {
 // V2 deformation context. Holds the compiled pipeline, the live LowLevelDeformation
 // instance, and the buffers we own (for residency tracking and in-place updates
 // when only joint transforms / blend weights / etc. change between frames).
+@_expose(!Cxx)
 struct DeformationContext {
     let pipeline: LowLevelDeformation.Pipeline
     let deformation: LowLevelDeformation
@@ -121,6 +121,7 @@ struct DeformationContext {
     let renormalizingIndexCount: Int
 }
 
+@_expose(!Cxx)
 func configureDeformation(
     identifier: WKBridgeTypedResourceId,
     deformationData: WKBridgeDeformationData,

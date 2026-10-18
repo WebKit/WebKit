@@ -22,14 +22,14 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Metal
-import OSLog
-import WebKit
+import os
 import simd
 
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
-import USDKit
-import DirectResource
-import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import DirectResource
+@_weakLinked import RealityKit
+import CoreGraphics
 import UniformTypeIdentifiers
 
 extension MTLCaptureDescriptor {
@@ -350,16 +350,16 @@ private func makeParameters(
     )
 }
 
-extension Logger {
-    fileprivate static let modelGPU = Logger(subsystem: "com.apple.WebKit", category: "model")
+extension os.Logger {
+    fileprivate static let modelGPU = os.Logger(subsystem: "com.apple.WebKit", category: "model")
 }
 
 internal func logError(_ error: String) {
-    Logger.modelGPU.error("\(error)")
+    os.Logger.modelGPU.error("\(error)")
 }
 
 internal func logInfo(_ info: String) {
-    Logger.modelGPU.info("\(info)")
+    os.Logger.modelGPU.info("\(info)")
 }
 
 // Mirrors RemoteMeshProxy.cpp::computeMinAndMaxCorners: for each root joint, computes
@@ -1823,6 +1823,7 @@ extension ShaderGraph {
     }
 }
 
+@_optimize(none)
 private func fromWKBridgeDataType(_ dataType: WKBridgeDataType) -> ShaderGraph.DataType {
     switch dataType {
     case .bool: .bool
@@ -1954,7 +1955,7 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
             fatalError("fromWKBridgeConstant: expected 2 values for half2 constant '\(constant.name)', got \(values.count)")
         }
         return .half2(
-            SIMD2<Float16>(
+            SIMD2<Swift.Float16>(
                 .init(bitPattern: values[0].number.uint16Value),
                 .init(bitPattern: values[1].number.uint16Value)
             )
@@ -1965,7 +1966,7 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
             fatalError("fromWKBridgeConstant: expected 3 values for half3 constant '\(constant.name)', got \(values.count)")
         }
         return .half3(
-            SIMD3<Float16>(
+            SIMD3<Swift.Float16>(
                 .init(bitPattern: values[0].number.uint16Value),
                 .init(bitPattern: values[1].number.uint16Value),
                 .init(bitPattern: values[2].number.uint16Value)
@@ -1976,7 +1977,7 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
             fatalError("fromWKBridgeConstant: expected 4 values for half4 constant '\(constant.name)', got \(values.count)")
         }
         return .half4(
-            SIMD4<Float16>(
+            SIMD4<Swift.Float16>(
                 .init(bitPattern: values[0].number.uint16Value),
                 .init(bitPattern: values[1].number.uint16Value),
                 .init(bitPattern: values[2].number.uint16Value),
@@ -2068,8 +2069,8 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
         return .half2x2(
             simd_half2x2(
                 columns: (
-                    SIMD2<Float16>(.init(bitPattern: values[0].number.uint16Value), .init(bitPattern: values[1].number.uint16Value)),
-                    SIMD2<Float16>(.init(bitPattern: values[2].number.uint16Value), .init(bitPattern: values[3].number.uint16Value))
+                    SIMD2<Swift.Float16>(.init(bitPattern: values[0].number.uint16Value), .init(bitPattern: values[1].number.uint16Value)),
+                    SIMD2<Swift.Float16>(.init(bitPattern: values[2].number.uint16Value), .init(bitPattern: values[3].number.uint16Value))
                 )
             )
         )
@@ -2080,17 +2081,17 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
         return .half3x3(
             simd_half3x3(
                 columns: (
-                    SIMD3<Float16>(
+                    SIMD3<Swift.Float16>(
                         .init(bitPattern: values[0].number.uint16Value),
                         .init(bitPattern: values[1].number.uint16Value),
                         .init(bitPattern: values[2].number.uint16Value)
                     ),
-                    SIMD3<Float16>(
+                    SIMD3<Swift.Float16>(
                         .init(bitPattern: values[3].number.uint16Value),
                         .init(bitPattern: values[4].number.uint16Value),
                         .init(bitPattern: values[5].number.uint16Value)
                     ),
-                    SIMD3<Float16>(
+                    SIMD3<Swift.Float16>(
                         .init(bitPattern: values[6].number.uint16Value),
                         .init(bitPattern: values[7].number.uint16Value),
                         .init(bitPattern: values[8].number.uint16Value)
@@ -2105,25 +2106,25 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> Shad
         return .half4x4(
             simd_half4x4(
                 columns: (
-                    SIMD4<Float16>(
+                    SIMD4<Swift.Float16>(
                         .init(bitPattern: values[0].number.uint16Value),
                         .init(bitPattern: values[1].number.uint16Value),
                         .init(bitPattern: values[2].number.uint16Value),
                         .init(bitPattern: values[3].number.uint16Value)
                     ),
-                    SIMD4<Float16>(
+                    SIMD4<Swift.Float16>(
                         .init(bitPattern: values[4].number.uint16Value),
                         .init(bitPattern: values[5].number.uint16Value),
                         .init(bitPattern: values[6].number.uint16Value),
                         .init(bitPattern: values[7].number.uint16Value)
                     ),
-                    SIMD4<Float16>(
+                    SIMD4<Swift.Float16>(
                         .init(bitPattern: values[8].number.uint16Value),
                         .init(bitPattern: values[9].number.uint16Value),
                         .init(bitPattern: values[10].number.uint16Value),
                         .init(bitPattern: values[11].number.uint16Value)
                     ),
-                    SIMD4<Float16>(
+                    SIMD4<Swift.Float16>(
                         .init(bitPattern: values[12].number.uint16Value),
                         .init(bitPattern: values[13].number.uint16Value),
                         .init(bitPattern: values[14].number.uint16Value),
@@ -2240,6 +2241,7 @@ private func usdStageType(forMIMEType mimeType: String) -> UTType {
     }
 }
 
+@_expose(!Cxx)
 final class USDModelLoader {
     fileprivate var usdPlayer: USDPlayer?
     fileprivate var stage: USDStage?

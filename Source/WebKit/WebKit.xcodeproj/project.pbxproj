@@ -287,7 +287,6 @@
 		0D4C005D2F4182F100DF1BBF /* ModelParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D653B362F3453C40022454D /* ModelParameters.swift */; };
 		0D4C005E2F4182F100DF1BBF /* USDModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D653B3A2F3453C40022454D /* USDModel.swift */; };
 		0D4C005F2F4182F100DF1BBF /* ModelRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D653B372F3453C40022454D /* ModelRenderer.swift */; };
-		0D4C00632F41905000DF1BBF /* ModelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D653B382F3453C40022454D /* ModelTypes.h */; };
 		0D653B3B2F3459210022454D /* Float3.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D653B322F3453C40022454D /* Float3.h */; };
 		0D653B3C2F34592B0022454D /* Float4x4.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D653B332F3453C40022454D /* Float4x4.h */; };
 		0D653B3D2F3459340022454D /* ModelTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D653B382F3453C40022454D /* ModelTypes.h */; };
@@ -1732,6 +1731,8 @@
 		7B7C380F2EBABD7F00F71B4A /* TextManipulationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B7C380E2EBABD5300F71B4A /* TextManipulationParameters.h */; };
 		7B8486842ED9C1FC00E34DC1 /* TransferString.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B8486822ED9C1D500E34DC1 /* TransferString.h */; };
 		7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */; };
+		0D1891353110000000000005 /* libWebKitModelSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1891353110000000000001 /* libWebKitModelSwift.a */; };
+		0D1891353110000000000004 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D1891353110000000000003 /* Empty.swift */; };
 		7B9FC5BB28A5233B007570E7 /* libWebKitPlatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */; };
 		7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C628A52702007570E7 /* PlatformUnifiedSource2-nonARC.mm */; };
 		7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC5C428A526F5007570E7 /* PlatformUnifiedSource1-nonARC.mm */; };
@@ -3164,6 +3165,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7A7E8DE12748392500DCC97A;
 			remoteInfo = WebContent.CaptivePortal;
+		};
+		0D189135311000000000000C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
+			remoteInfo = "Derived Sources";
+		};
+		0D189135311000000000000E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0D189135311000000000000B;
+			remoteInfo = WebKitModelSwift;
 		};
 		7B29EDB028B38E8A00750631 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -7175,6 +7190,9 @@
 		7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLFunctionsGenerated.h; sourceTree = "<group>"; };
 		7B9FC59628A28D13007570E7 /* PlatformUnifiedSource1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUnifiedSource1.cpp; sourceTree = "<group>"; };
+		0D1891353110000000000001 /* libWebKitModelSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebKitModelSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D1891353110000000000002 /* WebKitModelSwift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitModelSwift.xcconfig; sourceTree = "<group>"; };
+		0D1891353110000000000003 /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
 		7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebKitPlatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitPlatform.xcconfig; sourceTree = "<group>"; };
 		7B9FC5AB28A3B440007570E7 /* IPCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCUtilities.h; sourceTree = "<group>"; };
@@ -9572,6 +9590,7 @@
 				52A69BEA286CFFAC00893E8F /* CryptoTokenKit.framework in Frameworks */,
 				3766F9EE189A1241003CF19B /* JavaScriptCore.framework in Frameworks */,
 				3766F9F1189A1254003CF19B /* libicucore.dylib in Frameworks */,
+				0D1891353110000000000005 /* libWebKitModelSwift.a in Frameworks */,
 				7B9FC5BB28A5233B007570E7 /* libWebKitPlatform.a in Frameworks */,
 				3766F9EF189A1244003CF19B /* QuartzCore.framework in Frameworks */,
 				37694525184FC6B600CDE21F /* Security.framework in Frameworks */,
@@ -9622,6 +9641,7 @@
 				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
 				5CE4B62029CF877F0038F565 /* GPUExtension.appex */,
+				0D1891353110000000000001 /* libWebKitModelSwift.a */,
 				7B9FC59D28A28F88007570E7 /* libWebKitPlatform.a */,
 				CD95493526159004008372D9 /* libWebKitSwift.dylib */,
 				5CE4B61329CF87680038F565 /* NetworkingExtension.appex */,
@@ -10108,6 +10128,7 @@
 		0D078EB72E7387FA00A9B266 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0D1891353110000000000003 /* Empty.swift */,
 				0D653B322F3453C40022454D /* Float3.h */,
 				0D653B332F3453C40022454D /* Float4x4.h */,
 				0D653B2F2F34517E0022454D /* MeshImpl.cpp */,
@@ -10349,6 +10370,7 @@
 				58E7CD7A2E7861B500338ED0 /* WebContentService.EnhancedSecurity.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
+				0D1891353110000000000002 /* WebKitModelSwift.xcconfig */,
 				7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */,
 				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
 				5C1579DD27165BE500ED5280 /* webpushd.xcconfig */,
@@ -20065,7 +20087,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0D4C00632F41905000DF1BBF /* ModelTypes.h in Headers */,
 				A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */,
 				0765D1C42DEBFF7E0029CDD0 /* WKGroupSession.h in Headers */,
 				F4D59C002DCBDC9F004492FB /* WKIdentityDocumentPresentmentController.h in Headers */,
@@ -20387,6 +20408,22 @@
 			productReference = 7A7E8DF82748392500DCC97A /* com.apple.WebKit.WebContent.CaptivePortal.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		0D189135311000000000000B /* WebKitModelSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D189135311000000000000A /* Build configuration list for PBXNativeTarget "WebKitModelSwift" */;
+			buildPhases = (
+				0D1891353110000000000006 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0D189135311000000000000D /* PBXTargetDependency */,
+			);
+			name = WebKitModelSwift;
+			productName = libWebKitModelSwift;
+			productReference = 0D1891353110000000000001 /* libWebKitModelSwift.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		7B9FC59C28A28F87007570E7 /* WebKitPlatform */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7B9FC5A128A28F8A007570E7 /* Build configuration list for PBXNativeTarget "WebKitPlatform" */;
@@ -20447,6 +20484,7 @@
 				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
+				0D189135311000000000000F /* PBXTargetDependency */,
 				7B9FC5BD28A5233B007570E7 /* PBXTargetDependency */,
 				DDFE17060000000000000001 /* PBXTargetDependency */,
 			);
@@ -20593,6 +20631,7 @@
 				CD0C36D52639D39A004E35D8 /* Everything */,
 				8DC2EF4F0486A6940098B216 /* WebKit */,
 				CD95493426159004008372D9 /* WebKitSwift */,
+				0D189135311000000000000B /* WebKitModelSwift */,
 				7B9FC59C28A28F87007570E7 /* WebKitPlatform */,
 				2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
@@ -22243,6 +22282,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0D1891353110000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D1891353110000000000004 /* Empty.swift in Sources */,
+				0D4C005C2F4182F100DF1BBF /* ModelBridge.swift in Sources */,
+				0D4C005D2F4182F100DF1BBF /* ModelParameters.swift in Sources */,
+				0D4C005F2F4182F100DF1BBF /* ModelRenderer.swift in Sources */,
+				0D4C005A2F4182F100DF1BBF /* ModelUtils.swift in Sources */,
+				0D433CF52F857D62004ED8DF /* USDModel+Deformation.swift in Sources */,
+				0D4C005E2F4182F100DF1BBF /* USDModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7B9FC59A28A28F87007570E7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -22872,14 +22925,8 @@
 				E838FCB02DE90BF800703353 /* ISO18013MobileDocumentRequest+Extras.swift in Sources */,
 				A14F9B772B68CA6C00AD9C56 /* LinearMediaPlayer.swift in Sources */,
 				A14F9B642B686DD300AD9C56 /* LinearMediaTypes.swift in Sources */,
-				0D4C005C2F4182F100DF1BBF /* ModelBridge.swift in Sources */,
-				0D4C005D2F4182F100DF1BBF /* ModelParameters.swift in Sources */,
-				0D4C005F2F4182F100DF1BBF /* ModelRenderer.swift in Sources */,
-				0D4C005A2F4182F100DF1BBF /* ModelUtils.swift in Sources */,
 				0785E8002CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift in Sources */,
 				DD5697CD2DC06F7700050321 /* rdar150228472.swift in Sources */,
-				0D433CF52F857D62004ED8DF /* USDModel+Deformation.swift in Sources */,
-				0D4C005E2F4182F100DF1BBF /* USDModel.swift in Sources */,
 				A1555C522E0C5B9400EB2341 /* WebKitSwift.swift in Sources */,
 				0765D1C52DEBFF840029CDD0 /* WKGroupSession.swift in Sources */,
 				F46C34352DCD369B00B476F8 /* WKIdentityDocumentPresentmentController.swift in Sources */,
@@ -23070,6 +23117,16 @@
 			isa = PBXTargetDependency;
 			target = 7A7E8DE12748392500DCC97A /* WebContent.CaptivePortal */;
 			targetProxy = 7A7E8DFB27483A1200DCC97A /* PBXContainerItemProxy */;
+		};
+		0D189135311000000000000D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
+			targetProxy = 0D189135311000000000000C /* PBXContainerItemProxy */;
+		};
+		0D189135311000000000000F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0D189135311000000000000B /* WebKitModelSwift */;
+			targetProxy = 0D189135311000000000000E /* PBXContainerItemProxy */;
 		};
 		7B29EDB128B38E8A00750631 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -23602,6 +23659,27 @@
 			};
 			name = Production;
 		};
+		0D1891353110000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D1891353110000000000002 /* WebKitModelSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		0D1891353110000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D1891353110000000000002 /* WebKitModelSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		0D1891353110000000000009 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D1891353110000000000002 /* WebKitModelSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 		7B9FC59E28A28F8A007570E7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B9FC5A228A2A0B5007570E7 /* WebKitPlatform.xcconfig */;
@@ -24000,6 +24078,16 @@
 				7A7E8DF52748392500DCC97A /* Debug */,
 				7A7E8DF62748392500DCC97A /* Release */,
 				7A7E8DF72748392500DCC97A /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		0D189135311000000000000A /* Build configuration list for PBXNativeTarget "WebKitModelSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D1891353110000000000007 /* Debug */,
+				0D1891353110000000000008 /* Release */,
+				0D1891353110000000000009 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

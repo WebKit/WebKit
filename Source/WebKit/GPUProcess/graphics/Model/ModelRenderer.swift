@@ -24,10 +24,11 @@
 #if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreDeformation, _version: 23.0.2) && canImport(ShaderGraph, _version: 159.0.3) && arch(arm64)
 
 import QuartzCore
-import USDKit
-import RealityKit
+@_weakLinked import USDKit
+@_weakLinked import RealityKit
 import simd
 
+@_expose(!Cxx)
 final class Renderer {
     private let device: any MTLDevice
     let commandQueue: any MTLCommandQueue
