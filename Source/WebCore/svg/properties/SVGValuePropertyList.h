@@ -39,6 +39,9 @@ public:
 
     SVGValuePropertyList& operator=(const SVGValuePropertyList& other)
     {
+        if (this == &other)
+            return *this;
+
         clearItems();
         for (const auto& item : other.items())
             append(PropertyType::create(item->value()));
