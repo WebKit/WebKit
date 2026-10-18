@@ -32,6 +32,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
@@ -166,7 +167,8 @@ private:
     void flushRequestQueueWithResult(CommandResult&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    bool acceptHandshake(HTTPRequestHandler::Request&&) override;
+    WebSocketHandshakeResult acceptHandshake(WebSocketHandshakeRequest&&) override;
+    bool isHostAllowed(const String&) const;
     void handleMessage(WebSocketMessageHandler::Message&&, Function<void (WebSocketMessageHandler::Message&&)>&& replyHandler) override;
     void clientDisconnected(const WebSocketMessageHandler::Connection&) override;
 
@@ -185,6 +187,8 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     const Ref<WebSocketServer> m_bidiServer;
     const Ref<SessionHost::BrowserTerminatedObserver> m_browserTerminatedObserver;
+    HashSet<String> m_allowedOrigins;
+    HashSet<String> m_allowedOriginHosts;
 #endif
     RefPtr<Session> m_session;
 

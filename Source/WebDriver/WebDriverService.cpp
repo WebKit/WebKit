@@ -52,8 +52,10 @@
 #include <cstdio>
 #include <limits>
 #include <optional>
+#include <wtf/ASCIICType.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GTypedefs.h>
 #endif
@@ -93,6 +95,61 @@ WebDriverService::~WebDriverService()
         request = nullptr;
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+static std::optional<URL> parseOrigin(const String& origin)
+{
+    URL originURL { origin };
+    if (!originURL.isValid() || !originURL.protocolIsInHTTPFamily() || originURL.host().isEmpty() || originURL.hasCredentials() || originURL.path() != "/"_s || originURL.hasQuery() || originURL.hasFragmentIdentifier())
+        return std::nullopt;
+    return originURL;
+}
+
+static bool isForbiddenHostHeaderCharacter(char16_t character)
+{
+    // Reject URL syntax that could be reinterpreted or canonicalized when the Host header is embedded in a URL.
+    if (!WTF::isASCIIGraphic(character))
+        return true;
+
+    switch (character) {
+    case '/':
+    case '\\':
+    case '@':
+    case '?':
+    case '#':
+    case '%':
+        return true;
+    default:
+        return false;
+    }
+}
+
+static std::optional<String> parseHostHeader(const String& hostAndPort)
+{
+    if (hostAndPort.isEmpty() || hostAndPort.endsWith(':') || hostAndPort.contains(isForbiddenHostHeaderCharacter))
+        return std::nullopt;
+
+    URL hostURL { makeString("http://"_s, hostAndPort) };
+    if (!hostURL.isValid() || hostURL.host().isEmpty() || hostURL.hasCredentials() || hostURL.path() != "/"_s || hostURL.hasQuery() || hostURL.hasFragmentIdentifier())
+        return std::nullopt;
+    return hostURL.host().toString();
+}
+
+static std::optional<String> parseEffectiveRequestURIHost(const String& effectiveRequestURI)
+{
+    URL requestURL { effectiveRequestURI };
+    if (!requestURL.isValid() || !requestURL.protocolIsInHTTPFamily() || requestURL.host().isEmpty() || requestURL.hasCredentials())
+        return std::nullopt;
+    return requestURL.host().toString();
+}
+
+static bool isIPAddressHost(StringView host)
+{
+    if (host.length() > 2 && host.startsWith('[') && host.endsWith(']'))
+        return URL::isIPv6Address(host.substring(1, host.length() - 2));
+    return URL::hostIsIPAddress(host);
+}
+#endif
+
 static void printUsageStatement(const char* programName)
 {
     SAFE_PRINTF("Usage: %s options\n", String::fromLatin1(programName).utf8());
@@ -102,6 +159,7 @@ static void printUsageStatement(const char* programName)
     SAFE_PRINTF("  -t <ip:port> --target=<ip:port> Target IP and port\n");
 #if ENABLE(WEBDRIVER_BIDI)
     SAFE_PRINTF("               --bidi-port=<port>        Port number to use for BiDi's WebSocket connections\n");
+    SAFE_PRINTF("               --allowed-origins=<origins> Comma-separated list of origins allowed to connect to BiDi\n");
 #endif
     SAFE_PRINTF("               --replace-on-new-session  Replace the existing session on new session request\n");
     SAFE_PRINTF("\nEnvironment variables:\n");
@@ -115,6 +173,7 @@ int WebDriverService::run(int argc, char** argv)
     std::optional<String> host;
 #if ENABLE(WEBDRIVER_BIDI)
     String bidiPortString;
+    std::optional<String> allowedOriginsString;
 #endif
     String targetString;
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
@@ -151,6 +210,18 @@ int WebDriverService::run(int argc, char** argv)
         static constexpr auto bidiPortArgument = "--bidi-port="_span;
         if (spanHasPrefix(arg, bidiPortArgument) && bidiPortString.isNull()) {
             bidiPortString = String::fromLatin1(arg.subspan(bidiPortArgument.size()));
+            continue;
+        }
+
+        static constexpr auto allowedOriginsArgument = "--allowed-origins="_span;
+        if (spanHasPrefix(arg, allowedOriginsArgument) && !allowedOriginsString) {
+            auto value = String::fromUTF8(arg.subspan(allowedOriginsArgument.size()));
+            if (value.isNull()) {
+                RELEASE_LOG_ERROR(WebDriverBiDi, "Invalid UTF-8 in --allowed-origins. Aborting.");
+                SAFE_FPRINTF(stderr, "Invalid UTF-8 in --allowed-origins. Aborting.\n");
+                return EXIT_FAILURE;
+            }
+            allowedOriginsString = WTF::move(value);
             continue;
         }
 #endif
@@ -197,6 +268,20 @@ int WebDriverService::run(int argc, char** argv)
     }
 
 #if ENABLE(WEBDRIVER_BIDI)
+    if (allowedOriginsString) {
+        for (auto& originString : allowedOriginsString->splitAllowingEmptyEntries(',')) {
+            auto origin = originString.trim(isASCIIWhitespace);
+            auto originURL = parseOrigin(origin);
+            if (!originURL) {
+                RELEASE_LOG_ERROR(WebDriverBiDi, "Invalid origin %s provided in --allowed-origins. Aborting.", origin.utf8());
+                SAFE_FPRINTF(stderr, "Invalid origin %s provided in --allowed-origins. Aborting.\n", origin.utf8());
+                return EXIT_FAILURE;
+            }
+            m_allowedOrigins.add(originURL->protocolHostAndPort());
+            m_allowedOriginHosts.add(originURL->host().toString());
+        }
+    }
+
     std::optional<uint16_t> bidiPort;
     if (!bidiPortString.isNull()) {
         bidiPort = parseInteger<uint16_t>(bidiPortString);
@@ -530,37 +615,91 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
 
 #if ENABLE(WEBDRIVER_BIDI)
 
-bool WebDriverService::acceptHandshake(HTTPRequestHandler::Request&& request)
+bool WebDriverService::isHostAllowed(const String& host) const
+{
+    if (host == "localhost"_s || isIPAddressHost(host) || m_allowedOriginHosts.contains(host))
+        return true;
+
+    auto& listenerHost = m_bidiServer->listener()->host;
+    if (listenerHost == "all"_s)
+        return false;
+
+    auto parsedListenerHost = parseHostHeader(listenerHost);
+    return parsedListenerHost && *parsedListenerHost == host;
+}
+
+WebSocketHandshakeResult WebDriverService::acceptHandshake(WebSocketHandshakeRequest&& request)
 {
     // https://w3c.github.io/webdriver-bidi/#transport
-    auto& resourceName = request.path;
+    auto host = parseHostHeader(request.host);
+    if (!host) {
+        RELEASE_LOG(WebDriverBiDi, "Missing or invalid Host header. Rejecting handshake.");
+        return WebSocketHandshakeResult::Forbidden;
+    }
+
+    auto effectiveHost = parseEffectiveRequestURIHost(request.effectiveRequestURI);
+    if (!effectiveHost) {
+        RELEASE_LOG(WebDriverBiDi, "Missing or invalid effective request URI. Rejecting handshake.");
+        return WebSocketHandshakeResult::Forbidden;
+    }
+
+    if (*host != *effectiveHost) {
+        RELEASE_LOG(WebDriverBiDi, "Host %s does not match effective request URI host %s. Rejecting handshake.", host->utf8(), effectiveHost->utf8());
+        return WebSocketHandshakeResult::Forbidden;
+    }
+
+    if (!isHostAllowed(*effectiveHost)) {
+        RELEASE_LOG(WebDriverBiDi, "Host %s is not allowed. Rejecting handshake.", effectiveHost->utf8());
+        return WebSocketHandshakeResult::Forbidden;
+    }
+
+    if (request.origin) {
+        if (!request.origin->containsOnlyASCII()) {
+            RELEASE_LOG(WebDriverBiDi, "Origin header contains non-ASCII characters. Rejecting handshake.");
+            return WebSocketHandshakeResult::Forbidden;
+        }
+
+        auto originURL = parseOrigin(*request.origin);
+        if (!originURL) {
+            RELEASE_LOG(WebDriverBiDi, "Invalid Origin header. Rejecting handshake.");
+            return WebSocketHandshakeResult::Forbidden;
+        }
+
+        auto origin = originURL->protocolHostAndPort();
+        if (!m_allowedOrigins.contains(origin)) {
+            RELEASE_LOG(WebDriverBiDi, "Origin %s is not allowed. Rejecting handshake.", origin.utf8());
+            return WebSocketHandshakeResult::Forbidden;
+        }
+    }
+
+    auto& resourceName = request.resourceName;
 
     auto& resources = m_bidiServer->listener()->resources;
     auto foundResource = std::ranges::find(resources, resourceName);
     if (foundResource == resources.end()) {
         RELEASE_LOG(WebDriverBiDi, "Resource name %s not found in listener's list of WebSocket resources. Rejecting handshake.", resourceName.utf8());
-        return false;
+        return WebSocketHandshakeResult::InvalidResource;
     }
 
     if (*foundResource == "/session"_s) {
         // FIXME: Add support for session.new and BiDi-only sessions.
         // https://bugs.webkit.org/show_bug.cgi?id=281722
-        return true;
+        return WebSocketHandshakeResult::Accepted;
     }
 
     auto sessionID = m_bidiServer->getSessionID(resourceName);
     if (sessionID.isNull()) {
         RELEASE_LOG(WebDriverBiDi, "No session ID found for resource name %s. Rejecting handshake.", resourceName.utf8());
-        return false;
+        return WebSocketHandshakeResult::InvalidResource;
     }
 
     // FIXME Properly support multiple sessions in the future
     if (!m_session || sessionID != m_session->id()) {
         RELEASE_LOG(WebDriverBiDi, "No active session found for session ID %s. Rejecting handshake.", sessionID.utf8());
-        return false;
+        return WebSocketHandshakeResult::InvalidResource;
     }
 
-    return true;
+    return WebSocketHandshakeResult::Accepted;
 }
 
 void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message, Function<void(WebSocketMessageHandler::Message&&)>&& completionHandler)

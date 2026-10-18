@@ -140,6 +140,12 @@ ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/Test
 ADD_WK2_TEST(TestFrame ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestFrame.cpp)
 ADD_WK2_TEST(TestWebProcessExtensions ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKPage/glib/TestWebProcessExtensions.cpp)
 
+# WebDriver tests
+if (ENABLE_WEBDRIVER AND ENABLE_WEBDRIVER_BIDI)
+    ADD_WK2_TEST(TestWebSocketHandshake ${TOOLS_DIR}/TestWebKitAPI/Tests/WebDriver/glib/TestWebSocketHandshake.cpp)
+    add_dependencies(TestWebSocketHandshake WebDriver)
+endif ()
+
 # UI process tests
 ADD_WK2_TEST(TestAuthentication ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestAuthentication.cpp)
 ADD_WK2_TEST(TestAutomationSession ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/glib/TestAutomationSession.cpp)

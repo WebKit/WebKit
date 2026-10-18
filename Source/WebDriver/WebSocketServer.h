@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CommandResult.h"
-#include "HTTPServer.h"
 #include <map>
 #include <optional>
 #include <vector>
@@ -56,6 +55,19 @@ struct Command {
     RefPtr<JSON::Object> parameters;
 
     static std::optional<Command> fromData(const char* data, size_t dataLength);
+};
+
+struct WebSocketHandshakeRequest {
+    String resourceName;
+    String host;
+    std::optional<String> origin;
+    String effectiveRequestURI;
+};
+
+enum class WebSocketHandshakeResult {
+    Accepted,
+    Forbidden,
+    InvalidResource,
 };
 
 // https://w3c.github.io/webdriver-bidi/#websocket-listener
@@ -100,7 +112,7 @@ public:
         static Message reply(const String& type, unsigned id, Ref<JSON::Value>&& result);
     };
 
-    virtual bool acceptHandshake(HTTPRequestHandler::Request&&) = 0;
+    virtual WebSocketHandshakeResult acceptHandshake(WebSocketHandshakeRequest&&) = 0;
     virtual void handleMessage(Message&&, Function<void(Message&&)>&& replyHandler) = 0;
     virtual void clientDisconnected(const Connection&) = 0;
 private:
