@@ -34,6 +34,8 @@
 #include "JSObject.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucol.h>
+#include <wtf/SIMDHelpers.h>
+#include <wtf/UnalignedAccess.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -241,20 +243,82 @@ UCollationResult compareASCIIWithUCADUCETLevel3(std::span<const CharacterType1> 
     return UCOL_EQUAL;
 }
 
+// Every byte in [0x20, 0x7E] has a non-zero DUCET level-1 weight, so a run of identical such bytes cannot
+// decide the comparison at any level. The overlapping final loads only revisit bytes already known to be
+// part of that run.
+ALWAYS_INLINE size_t identicalPrintableASCIIPrefixLength(const Latin1Character* characters1, const Latin1Character* characters2, size_t length)
+{
+    constexpr size_t stride = SIMD::stride<uint8_t>;
+    if (length >= stride) {
+        auto findStop = [&](size_t offset) {
+            auto input1 = SIMD::load(std::bit_cast<const uint8_t*>(characters1 + offset));
+            auto input2 = SIMD::load(std::bit_cast<const uint8_t*>(characters2 + offset));
+            auto different = SIMD::bitNot(SIMD::equal(input1, input2));
+            auto control = SIMD::lessThan(input1, SIMD::splat<uint8_t>(0x20));
+            auto deleteOrNonASCII = SIMD::greaterThan(input1, SIMD::splat<uint8_t>(0x7E));
+            return SIMD::findFirstNonZeroIndex(SIMD::bitOr(different, control, deleteOrNonASCII));
+        };
+        size_t position = 0;
+        for (; position + stride <= length; position += stride) {
+            if (auto index = findStop(position))
+                return position + *index;
+        }
+        if (position == length)
+            return length;
+        if (auto index = findStop(length - stride))
+            return length - stride + *index;
+        return length;
+    }
+
+    if (length >= sizeof(uint64_t)) {
+        // Only the lowest set bit is exact: borrows and carries out of a flagged byte can flag the bytes above it.
+        auto findStop = [&](size_t offset) -> std::optional<size_t> {
+            uint64_t word1 = WTF::unalignedLoad<uint64_t>(characters1 + offset);
+            uint64_t word2 = WTF::unalignedLoad<uint64_t>(characters2 + offset);
+            uint64_t nonPrintable = (word1 | (word1 - 0x2020202020202020ULL) | (word1 + 0x0101010101010101ULL)) & 0x8080808080808080ULL;
+            if (uint64_t stop = (word1 ^ word2) | nonPrintable)
+                return std::countr_zero(stop) / 8;
+            return std::nullopt;
+        };
+        if (auto index = findStop(0))
+            return *index;
+        if (auto index = findStop(length - sizeof(uint64_t)))
+            return length - sizeof(uint64_t) + *index;
+        return length;
+    }
+
+    return 0;
+}
+
 template<typename CharacterType1, typename CharacterType2>
 inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const CharacterType1> characters1, std::span<const CharacterType2> characters2)
 {
-    if (characters1.size() == characters2.size()) {
-        if (equal(characters1.data(), characters2))
-            return UCOL_EQUAL;
-    }
-
     auto* data1 = characters1.data();
     auto* data2 = characters2.data();
     size_t commonLength = std::min(characters1.size(), characters2.size());
-    for (unsigned position = 0; position < commonLength; ++position) {
+    size_t position = 0;
+
+    if constexpr (std::is_same_v<CharacterType1, Latin1Character> && std::is_same_v<CharacterType2, Latin1Character>)
+        position = identicalPrintableASCIIPrefixLength(data1, data2, commonLength);
+    else if (characters1.size() == characters2.size() && equal(data1, characters2))
+        return UCOL_EQUAL;
+
+    size_t firstDifference = commonLength;
+    for (; position < commonLength; ++position) {
         auto lhs = data1[position];
         auto rhs = data2[position];
+
+        if (lhs == rhs) {
+            if (canUseASCIIUCADUCETComparison(lhs)) [[likely]]
+                continue;
+            if constexpr (std::is_same_v<CharacterType1, Latin1Character> && std::is_same_v<CharacterType2, Latin1Character>) {
+                if (firstDifference == commonLength && characters1.size() == characters2.size() && equal(data1 + position, characters2.subspan(position)))
+                    return UCOL_EQUAL;
+            }
+            return std::nullopt;
+        }
+        if (firstDifference == commonLength)
+            firstDifference = position;
 
         if (!canUseASCIIUCADUCETComparison(lhs) || !canUseASCIIUCADUCETComparison(rhs))
             return std::nullopt;
@@ -271,8 +335,11 @@ inline std::optional<UCollationResult> compareASCIIWithUCADUCET(std::span<const 
         return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
     }
 
-    if (characters1.size() == characters2.size())
-        return compareASCIIWithUCADUCETLevel3(characters1, characters2);
+    if (characters1.size() == characters2.size()) {
+        if (firstDifference == commonLength)
+            return UCOL_EQUAL;
+        return compareASCIIWithUCADUCETLevel3(characters1.subspan(firstDifference), characters2.subspan(firstDifference));
+    }
 
     // If the next character is valid, then we do not need to look into the rest of characters.
     if (characters1.size() > characters2.size()) {
