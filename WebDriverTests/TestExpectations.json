@@ -217,7 +217,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/287929"}}
             },
             "test_add_event_handler_history_updated": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/287936"}}
+                "expected": {"all": {"status": ["PASS"]}}
             },
             "test_add_event_handler_load": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288340"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/288340"}}
@@ -3325,7 +3325,41 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/history_updated/history_updated.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287936"}}
+        "subtests": {
+            "test_history_url_update[-#foo-pushState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[-#foo-replaceState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#foo-#bar-pushState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#foo-#bar-replaceState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#foo-#foo-pushState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#foo-#foo-replaceState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#bar--pushState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_url_update[#bar--replaceState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_state_update[pushState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_state_update[replaceState]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288058"}}
+            },
+            "test_history_document_open": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/287936"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/load/load.py": {
         "subtests": {
