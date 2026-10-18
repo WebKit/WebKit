@@ -45,7 +45,7 @@ class WeakPtrImplWithEventTargetData;
 class ResizeObservation : public RefCounted<ResizeObservation> {
     WTF_MAKE_TZONE_ALLOCATED(ResizeObservation);
 public:
-    static Ref<ResizeObservation> create(Element& target, ResizeObserverBoxOptions);
+    static Ref<ResizeObservation> LEGACY_NODELETE create(Element& target, ResizeObserverBoxOptions);
 
     ~ResizeObservation();
     

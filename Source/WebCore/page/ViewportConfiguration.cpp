@@ -46,7 +46,7 @@ static inline bool LEGACY_NODELETE viewportArgumentValueIsValid(float value)
     return value > 0;
 }
 
-static inline void adjustViewportArgumentsToAvoidExcessiveZooming(ViewportArguments& arguments)
+static inline void LEGACY_NODELETE adjustViewportArgumentsToAvoidExcessiveZooming(ViewportArguments& arguments)
 {
     if (!viewportArgumentValueIsValid(arguments.zoom) || !viewportArgumentValueIsValid(arguments.width))
         return;
@@ -501,7 +501,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::testingParameters()
     return parameters;
 }
 
-static inline bool applyViewportArgument(double& value, float viewportArgumentValue, float minimum, float maximum)
+static inline bool LEGACY_NODELETE applyViewportArgument(double& value, float viewportArgumentValue, float minimum, float maximum)
 {
     if (viewportArgumentValueIsValid(viewportArgumentValue)) {
         value = std::min(maximum, std::max(minimum, viewportArgumentValue));

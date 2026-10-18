@@ -141,7 +141,7 @@ static String normalizeText(const String& string, unsigned maxDescriptionLength 
 static constexpr auto minimumClassOrIdLength = 6;
 static constexpr auto maximumClassOrIdLength = 24;
 
-static bool isCandidateClassOrId(StringView text)
+static bool LEGACY_NODELETE isCandidateClassOrId(StringView text)
 {
     if (text.length() < minimumClassOrIdLength)
         return false;
@@ -324,7 +324,7 @@ struct TraversalContext {
         return !rectInRootView || rectInRootView->intersects(rect);
     }
 
-    unsigned currentVisualBlockContainerNumber() const
+    unsigned LEGACY_NODELETE currentVisualBlockContainerNumber() const
     {
         return visualBlockContainerStack.isEmpty() ? 0 : visualBlockContainerStack.last();
     }
@@ -553,7 +553,7 @@ static inline bool paintsVisibleContent(const RenderObject& renderer)
 }
 
 template<typename RectOrSize>
-static inline bool isNearlyEmpty(const RectOrSize& rectOrSize)
+static inline bool LEGACY_NODELETE isNearlyEmpty(const RectOrSize& rectOrSize)
 {
     return rectOrSize.width() <= 1 || rectOrSize.height() <= 1;
 }
@@ -638,7 +638,7 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
 }
 
 template<typename T>
-RefPtr<T> shadowHostOrSelfInclusiveParent(Node& node)
+RefPtr<T> LEGACY_NODELETE shadowHostOrSelfInclusiveParent(Node& node)
 {
     if (node.isInUserAgentShadowTree())
         return dynamicDowncast<T>(node.shadowHost());
@@ -1120,7 +1120,7 @@ static bool containsInteractiveDescendant(const Element& element)
     return false;
 }
 
-static bool isProbablyNotInteractiveBasedOnTagName(const Element& element)
+static bool LEGACY_NODELETE isProbablyNotInteractiveBasedOnTagName(const Element& element)
 {
     return is<HTMLHeadingElement>(element)
         || element.hasTagName(HTMLNames::addressTag)

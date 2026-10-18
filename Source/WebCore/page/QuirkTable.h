@@ -81,6 +81,6 @@ WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL
 // For callers with no Document, which therefore only see top-URL quirks.
 WEBCORE_EXPORT QuirksData resolveTopURLQuirks(const URL&);
 
-WEBCORE_EXPORT std::span<const Quirk> compiledQuirks();
+WEBCORE_EXPORT std::span<const Quirk> LEGACY_NODELETE compiledQuirks();
 
 } // namespace WebCore

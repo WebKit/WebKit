@@ -86,7 +86,7 @@ private:
     class DisablementHeuristic {
     public:
         bool disabledByHeuristic(IntSize adjustment);
-        void reset();
+        void LEGACY_NODELETE reset();
 
     private:
         Markable<ApproximateTime> m_nextEnablementTime;
@@ -101,7 +101,7 @@ private:
         return status == AnchorSearchStatus::Constrain || status == AnchorSearchStatus::Choose;
     }
 
-    LocalFrameView& frameView() const;
+    LocalFrameView& LEGACY_NODELETE frameView() const;
 
     bool findPriorityCandidate(Document&);
 

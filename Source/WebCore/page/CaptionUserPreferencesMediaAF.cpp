@@ -74,7 +74,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CaptionUserPreferencesMediaAF);
 
-static std::unique_ptr<CaptionPreferencesDelegate>& captionPreferencesDelegate()
+static std::unique_ptr<CaptionPreferencesDelegate>& LEGACY_NODELETE captionPreferencesDelegate()
 {
     static NeverDestroyed<std::unique_ptr<CaptionPreferencesDelegate>> delegate;
     return delegate.get();

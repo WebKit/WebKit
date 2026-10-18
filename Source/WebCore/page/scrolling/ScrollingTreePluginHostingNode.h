@@ -37,7 +37,7 @@ class ScrollingTree;
 class ScrollingTreePluginHostingNode : public ScrollingTreeNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreePluginHostingNode, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreePluginHostingNode> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreePluginHostingNode> LEGACY_NODELETE create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreePluginHostingNode();
 
 private:

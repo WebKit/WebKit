@@ -54,7 +54,7 @@ public:
     bool handleWheelEventAfterMainThread(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>);
     void wheelEventWasProcessedByMainThread(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>);
 
-    WEBCORE_EXPORT void willSendEventToMainThread(const PlatformWheelEvent&);
+    WEBCORE_EXPORT void LEGACY_NODELETE willSendEventToMainThread(const PlatformWheelEvent&);
     WEBCORE_EXPORT void waitForEventToBeProcessedByMainThread(const PlatformWheelEvent&);
 
     void invalidate() override;

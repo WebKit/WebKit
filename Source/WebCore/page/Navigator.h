@@ -74,7 +74,7 @@ public:
     Page* LEGACY_NODELETE page();
 
     const Document* LEGACY_NODELETE document() const;
-    Document* document();
+    Document* LEGACY_NODELETE document();
 
     void setAppBadge(ScriptExecutionContext&, std::optional<unsigned long long>, Ref<DeferredPromise>&&);
     void clearAppBadge(ScriptExecutionContext&, Ref<DeferredPromise>&&);

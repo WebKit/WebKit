@@ -62,7 +62,7 @@ public:
 
     WEBCORE_EXPORT bool LEGACY_NODELETE isDescendantOf(const Frame* ancestor) const;
 
-    bool containsRemoteFrame() const;
+    bool LEGACY_NODELETE containsRemoteFrame() const;
     bool containsLocalFrame() const;
     WEBCORE_EXPORT bool hasRemoteFrameAncestor() const;
     
@@ -102,15 +102,15 @@ private:
     Frame* LEGACY_NODELETE deepLastChild() const;
     Frame* LEGACY_NODELETE nextAncestorSibling(const Frame* stayWithin) const;
 
-    unsigned remoteFrameCountIncludingSelf() const;
+    unsigned LEGACY_NODELETE remoteFrameCountIncludingSelf() const;
     void adjustRemoteFrameDescendantCountForSelfAndAncestors(int delta);
 #if ASSERT_ENABLED
     unsigned remoteFrameDescendantCountSlow() const;
 #endif
 
-    RefPtr<Frame> scopedChild(unsigned index, TreeScope*) const;
+    RefPtr<Frame> LEGACY_NODELETE scopedChild(unsigned index, TreeScope*) const;
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
-    unsigned scopedChildCount(TreeScope*) const;
+    unsigned LEGACY_NODELETE scopedChildCount(TreeScope*) const;
 
     template<typename F> RefPtr<Frame> find(const AtomString& name, NOESCAPE const F& nameGetter, Frame& activeFrame) const;
 

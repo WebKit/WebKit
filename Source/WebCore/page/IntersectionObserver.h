@@ -102,7 +102,7 @@ public:
     bool hasObservationTargets() const { return !m_observationTargets.isEmptyIgnoringNullReferences(); }
     bool LEGACY_NODELETE isObserving(const Element&) const;
 
-    void resetPreviousThresholdIndexForTarget(const Element&);
+    void LEGACY_NODELETE resetPreviousThresholdIndexForTarget(const Element&);
 
     void observe(Element&);
     void unobserve(Element&);

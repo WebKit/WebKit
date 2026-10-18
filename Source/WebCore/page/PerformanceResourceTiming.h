@@ -44,7 +44,7 @@ class ResourceTiming;
 
 class PerformanceResourceTiming : public PerformanceEntry {
 public:
-    static Ref<PerformanceResourceTiming> create(MonotonicTime timeOrigin, ResourceTiming&&);
+    static Ref<PerformanceResourceTiming> LEGACY_NODELETE create(MonotonicTime timeOrigin, ResourceTiming&&);
 
     const String& initiatorType() const LIFETIME_BOUND { return m_resourceTiming.initiatorType(); }
     String deliveryType() const { return m_resourceTiming.deliveryType(); }

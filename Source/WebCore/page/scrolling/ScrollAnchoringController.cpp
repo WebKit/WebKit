@@ -301,7 +301,7 @@ void ScrollAnchoringController::notifyChildHadSuppressingStyleChange(RenderEleme
     scrollerBox->setScrollAnchoringSuppressionStyleChanged(true);
 }
 
-static CheckedPtr<RenderElement> priorityCandidateForElement(Element* element)
+static CheckedPtr<RenderElement> LEGACY_NODELETE priorityCandidateForElement(Element* element)
 {
     while (element) {
         if (CheckedPtr renderer = element->renderer()) {

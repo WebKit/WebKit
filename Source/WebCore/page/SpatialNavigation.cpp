@@ -58,7 +58,7 @@ static bool areRectsMoreThanFullScreenApart(FocusDirection, const LayoutRect& cu
 static bool isRectInDirection(FocusDirection, const LayoutRect&, const LayoutRect&);
 static void deflateIfOverlapped(LayoutRect&, LayoutRect&);
 static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const LayoutRect&);
-static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
+static void LEGACY_NODELETE entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
 static bool isScrollableNode(const ContainerNode&);
 
 FocusCandidate::FocusCandidate(Element* element, FocusDirection direction)
@@ -398,7 +398,7 @@ bool scrollInDirection(const ContainerNode& container, FocusDirection direction)
     return false;
 }
 
-static void deflateIfOverlapped(LayoutRect& a, LayoutRect& b)
+static void LEGACY_NODELETE deflateIfOverlapped(LayoutRect& a, LayoutRect& b)
 {
     if (!a.intersects(b) || a.contains(b) || b.contains(a))
         return;

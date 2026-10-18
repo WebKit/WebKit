@@ -128,7 +128,7 @@ static bool LEGACY_NODELETE isZeroToOneCompositionType(WritingTools::Session::Co
     }
 }
 
-static CharacterRange rangeClampedToLength(CharacterRange range, unsigned length)
+static CharacterRange LEGACY_NODELETE rangeClampedToLength(CharacterRange range, unsigned length)
 {
     range.location = std::min<uint64_t>(range.location, length);
     range.length = std::min<uint64_t>(range.length, length - range.location);
@@ -1030,7 +1030,7 @@ void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::T
 }
 
 template<>
-void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool)
+void LEGACY_NODELETE WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool)
 {
 }
 

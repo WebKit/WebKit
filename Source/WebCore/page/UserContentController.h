@@ -33,7 +33,7 @@ namespace WebCore {
 
 class UserContentController final : public UserContentProvider {
 public:
-    WEBCORE_EXPORT static Ref<UserContentController> create();
+    WEBCORE_EXPORT static Ref<UserContentController> LEGACY_NODELETE create();
     WEBCORE_EXPORT ~UserContentController();
 
     WEBCORE_EXPORT void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);

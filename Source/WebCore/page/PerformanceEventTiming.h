@@ -40,7 +40,7 @@ struct PerformanceEventTimingCandidate;
 
 class PerformanceEventTiming final : public PerformanceEntry {
 public:
-    static Ref<PerformanceEventTiming> create(const PerformanceEventTimingCandidate&, bool isFirst = false);
+    static Ref<PerformanceEventTiming> LEGACY_NODELETE create(const PerformanceEventTimingCandidate&, bool isFirst = false);
     ~PerformanceEventTiming();
 
     DOMHighResTimeStamp processingStart() const { return m_processingStart.milliseconds(); }

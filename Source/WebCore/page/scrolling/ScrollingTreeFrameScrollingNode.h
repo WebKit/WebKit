@@ -61,8 +61,8 @@ public:
 
     // The page scale when the UI process owns it, otherwise 1. Scroll positions stay unscaled, so anything
     // converting them to layer coordinates has to apply this.
-    float delegatedPageScaleFactor() const;
-    void setDelegatedPageScaleFactor(float);
+    float LEGACY_NODELETE delegatedPageScaleFactor() const;
+    void LEGACY_NODELETE setDelegatedPageScaleFactor(float);
 
     // Repositions the scrolling layers after a delegated scale change, without the related-layer work
     // wasScrolledByDelegatedScrolling() has already done.
@@ -71,9 +71,9 @@ public:
     int footerHeight() const { return m_footerHeight; }
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     // The horizontal space taken up by a vertical scrollbar placed on the left, which the contents are shifted right by.
-    int insetForLeftScrollbarSpace() const;
+    int LEGACY_NODELETE insetForLeftScrollbarSpace() const;
     // The view size less the scrollbars, in view coordinates, so unlike the layout viewport it doesn't zoom.
-    FloatSize sizeForVisibleContent() const;
+    FloatSize LEGACY_NODELETE sizeForVisibleContent() const;
 #if HAVE(NSREFRESHCONTROLLER)
     float topScrollStretchForRefreshController() const { return m_topScrollStretchForRefreshController; }
 #endif

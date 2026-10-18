@@ -155,7 +155,7 @@ public:
     constexpr static float defaultHorizontalMargin { 2 };
     constexpr static float defaultVerticalMargin { 1 };
 
-    WEBCORE_EXPORT static Ref<TextIndicator> create();
+    WEBCORE_EXPORT static Ref<TextIndicator> LEGACY_NODELETE create();
     WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(LocalFrame&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));
     WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const SimpleRange&, OptionSet<TextIndicatorOption>, TextIndicatorPresentationTransition, FloatSize margin = FloatSize(defaultHorizontalMargin, defaultVerticalMargin));

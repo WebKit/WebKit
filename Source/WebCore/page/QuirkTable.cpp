@@ -1116,7 +1116,7 @@ consteval bool everyQuirkNamesAURL()
 
 static_assert(everyQuirkNamesAURL(), "A quirk in fullTable has neither matches nor embeddedMatches");
 
-consteval bool everyQuirkCarriesWhatItDeclares()
+consteval bool LEGACY_NODELETE everyQuirkCarriesWhatItDeclares()
 {
     for (auto& quirk : fullTable) {
         for (auto& behavior : quirk.behaviors.span()) {
@@ -1169,7 +1169,7 @@ consteval bool everyQuirkCarriesWhatItDeclares()
 
 static_assert(everyQuirkCarriesWhatItDeclares(), "A quirk in fullTable does not supply the parameters it declares, supplies parameters it does not declare, applies a condition the behavior does not support, or omits a condition the behavior needs");
 
-consteval bool shouldEmit(const Quirk& quirk)
+consteval bool LEGACY_NODELETE shouldEmit(const Quirk& quirk)
 {
     return quirk.isAvailable && !quirk.behaviors.span().empty();
 }
@@ -1179,7 +1179,7 @@ consteval size_t emittedQuirkCount()
     return std::ranges::count_if(fullTable, shouldEmit);
 }
 
-consteval auto emittedQuirkIndices()
+consteval auto LEGACY_NODELETE emittedQuirkIndices()
 {
     std::array<size_t, emittedQuirkCount()> indices { };
     size_t index = 0;
@@ -1192,7 +1192,7 @@ consteval auto emittedQuirkIndices()
     return indices;
 }
 
-template<size_t... indices> consteval auto prunedTable(std::index_sequence<indices...>)
+template<size_t... indices> consteval auto LEGACY_NODELETE prunedTable(std::index_sequence<indices...>)
 {
     constexpr auto emitted = emittedQuirkIndices();
     constexpr auto quirks = std::span { fullTable };

@@ -73,10 +73,10 @@ public:
     bool shouldSilenceResizeObservers() const;
     bool shouldSilenceWindowResizeEventsDuringApplicationSnapshotting() const;
     bool shouldSilenceMediaQueryListChangeEvents() const;
-    bool shouldIgnoreInvalidSignal() const;
+    bool LEGACY_NODELETE shouldIgnoreInvalidSignal() const;
     bool needsAutoplayPlayPauseEvents() const;
     bool needsPerDocumentAutoplayBehavior() const;
-    bool hasBrokenEncryptedMediaAPISupportQuirk() const;
+    bool LEGACY_NODELETE hasBrokenEncryptedMediaAPISupportQuirk() const;
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
@@ -88,12 +88,12 @@ public:
     bool LEGACY_NODELETE needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const;
     WEBCORE_EXPORT bool LEGACY_NODELETE inputMethodUsesCorrectKeyEventOrder() const;
 
-    WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT static bool shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin);
 
     WEBCORE_EXPORT bool LEGACY_NODELETE needsYouTubeMouseOutQuirk() const;
 
-    WEBCORE_EXPORT bool needsCaptionMirroringQuirk() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE needsCaptionMirroringQuirk() const;
 
     WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
@@ -115,9 +115,9 @@ public:
     static bool shouldMakeEventListenerPassive(const EventTarget&, const EventTypeInfo&);
 
     Ref<NodeList> applyFacebookFlagQuirk(Document&, NodeList&);
-    bool shouldEnableRTCEncodedStreamsQuirk() const;
+    bool LEGACY_NODELETE shouldEnableRTCEncodedStreamsQuirk() const;
 
-    bool shouldNotAutoUpgradeToHTTPSNavigation(const URL&);
+    bool LEGACY_NODELETE shouldNotAutoUpgradeToHTTPSNavigation(const URL&);
 
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     enum ShouldDispatchClick : bool { No, Yes };
@@ -136,12 +136,12 @@ public:
 
     WEBCORE_EXPORT Vector<String> activeQuirks() const;
 
-    bool shouldEnableFontLoadingAPIQuirk() const;
+    bool LEGACY_NODELETE shouldEnableFontLoadingAPIQuirk() const;
 
     bool shouldDisableScrollAnchoringQuirk() const;
 
     void setNeedsConfigurableIndexedPropertiesQuirk() { m_needsConfigurableIndexedPropertiesQuirk = true; }
-    bool needsConfigurableIndexedPropertiesQuirk() const;
+    bool LEGACY_NODELETE needsConfigurableIndexedPropertiesQuirk() const;
 
     // webkit.org/b/259091.
     bool needsToCopyUserSelectNoneQuirk() const { return m_needsToCopyUserSelectNoneQuirk; }
@@ -167,7 +167,7 @@ public:
     bool needsClaudeSidebarViewportUnitQuirk(Element&, const Style::ComputedStyle&) const;
     bool needsChromeOSNavigatorUserAgentQuirk(const Document&) const;
 
-    WEBCORE_EXPORT bool shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE shouldAvoidStartingSelectionOnMouseDownOverPointerCursor(const Node&) const;
 
     bool needsFacebookStoriesCreationFormQuirk(const Element&, const Style::ComputedStyle&) const;
 

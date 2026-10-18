@@ -88,7 +88,7 @@ struct ScrollSnapOffsetsInfo {
     // the snapport in an axis, then any scroll position in which the snap area covers the snapport is
     // a valid snap position in that axis. Returns true if any of the snap offset's areas is larger
     // than the snapport and covers it at the given offset.
-    bool snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
+    bool LEGACY_NODELETE snapOffsetCoversSnapport(const SnapOffset<UnitType>&, ScrollEventAxis, UnitType axisOffset, UnitType viewportLength) const;
 
     template<typename OutputType> OutputType convertUnits(float deviceScaleFactor = 0.0) const;
     template<typename SizeType, typename PointType>

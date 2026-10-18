@@ -1108,7 +1108,7 @@ private:
     {
     }
 
-    bool isWaiting() const { return m_totalPromises > m_settledPromises; }
+    bool LEGACY_NODELETE isWaiting() const { return m_totalPromises > m_settledPromises; }
 
     void resolve()
     {

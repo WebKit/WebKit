@@ -284,7 +284,7 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
 
     FloatRect rectForSettingAtIndex(unsigned) const;
-    bool valueForSetting(ASCIILiteral) const;
+    bool LEGACY_NODELETE valueForSetting(ASCIILiteral) const;
 
     std::optional<std::pair<RenderLayer&, GraphicsLayer&>> activeLayer() const;
     std::optional<InteractionRegion> activeRegion() const;

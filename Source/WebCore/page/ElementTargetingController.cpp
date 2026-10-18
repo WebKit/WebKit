@@ -175,7 +175,7 @@ ElementTargetingController::ElementTargetingController(Page& page)
 {
 }
 
-static inline bool elementAndAncestorsAreOnlyRenderedChildren(const Element& element)
+static inline bool LEGACY_NODELETE elementAndAncestorsAreOnlyRenderedChildren(const Element& element)
 {
     CheckedPtr renderer = element.renderer();
     if (!renderer)

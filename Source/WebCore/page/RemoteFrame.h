@@ -74,7 +74,7 @@ public:
     // this falls back to the process encoded in the FrameIdentifier's upper bits, which
     // matches the legacy IdentifierRegistry::protocolFrameId(FrameIdentifier) behavior.
     // See webkit.org/b/310164.
-    WEBCORE_EXPORT ProcessIdentifier hostingProcessIdentifier() const;
+    WEBCORE_EXPORT ProcessIdentifier LEGACY_NODELETE hostingProcessIdentifier() const;
     void setHostingProcessIdentifier(ProcessIdentifier processID) { m_hostingProcessIdentifier = processID; }
 
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
@@ -111,7 +111,7 @@ public:
 
     String debugDescription() const final;
     const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
-    bool frameDocumentIsSandboxedOrigin() const;
+    bool LEGACY_NODELETE frameDocumentIsSandboxedOrigin() const;
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);

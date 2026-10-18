@@ -150,11 +150,11 @@ public:
     WEBCORE_EXPORT void updateActivation(MonotonicTime activationTime, std::optional<UserGestureTokenIdentifier> forcedActivationToken = std::nullopt);
     WEBCORE_EXPORT void consumeLastActivationIfNecessary();
     void consumeHistoryActionActivation() { m_hasHistoryActionActivation = false; }
-    MonotonicTime lastActivationTimestamp() const;
+    MonotonicTime LEGACY_NODELETE lastActivationTimestamp() const;
     WEBCORE_EXPORT void revokeForcedActivation(UserGestureTokenIdentifier);
     void notifyActivated(UserGestureToken&);
     WEBCORE_EXPORT bool hasTransientActivation() const;
-    bool hasStickyActivation() const;
+    bool LEGACY_NODELETE hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool LEGACY_NODELETE hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool LEGACY_NODELETE consumeHistoryActionUserActivation();
@@ -368,7 +368,7 @@ public:
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
 
-    JSDOMGlobalObject* cachedMainWorldGlobalObject() const;
+    JSDOMGlobalObject* LEGACY_NODELETE cachedMainWorldGlobalObject() const;
     void setCachedMainWorldGlobalObject(JSDOMGlobalObject*);
 
     void enableSuddenTermination();

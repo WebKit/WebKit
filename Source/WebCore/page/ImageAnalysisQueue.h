@@ -56,7 +56,7 @@ struct ImageTranslationLanguageIdentifiers {
 class ImageAnalysisQueue final : public RefCountedAndCanMakeWeakPtr<ImageAnalysisQueue> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageAnalysisQueue, WEBCORE_EXPORT);
 public:
-    static Ref<ImageAnalysisQueue> create(Page&);
+    static Ref<ImageAnalysisQueue> LEGACY_NODELETE create(Page&);
     WEBCORE_EXPORT ~ImageAnalysisQueue();
 
     WEBCORE_EXPORT void enqueueAllImagesIfNeeded(Frame&, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);

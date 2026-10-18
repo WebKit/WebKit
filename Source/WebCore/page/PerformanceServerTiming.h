@@ -33,7 +33,7 @@ namespace WebCore {
 
 class PerformanceServerTiming : public RefCounted<PerformanceServerTiming> {
 public:
-    static Ref<PerformanceServerTiming> create(String&& name, double duration, String&& description);
+    static Ref<PerformanceServerTiming> LEGACY_NODELETE create(String&& name, double duration, String&& description);
     ~PerformanceServerTiming();
 
     const String& name() const LIFETIME_BOUND { return m_name; }

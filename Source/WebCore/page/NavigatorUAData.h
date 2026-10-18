@@ -39,7 +39,7 @@ struct UserAgentStringData;
 
 class NavigatorUAData : public RefCounted<NavigatorUAData> {
 public:
-    static Ref<NavigatorUAData> create();
+    static Ref<NavigatorUAData> LEGACY_NODELETE create();
     static Ref<NavigatorUAData> create(Ref<UserAgentStringData>&&);
     const Vector<NavigatorUABrandVersion>& brands() const;
     bool LEGACY_NODELETE mobile() const;

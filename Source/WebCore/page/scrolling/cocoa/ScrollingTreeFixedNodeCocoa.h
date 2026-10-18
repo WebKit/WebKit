@@ -36,7 +36,7 @@ namespace WebCore {
 class ScrollingTreeFixedNodeCocoa : public ScrollingTreeFixedNode {
     WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFixedNodeCocoa);
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeFixedNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreeFixedNodeCocoa> LEGACY_NODELETE create(ScrollingTree&, ScrollingNodeID);
 
     virtual ~ScrollingTreeFixedNodeCocoa();
 

@@ -57,7 +57,7 @@ public:
     Document* LEGACY_NODELETE document() const;
 
     UndoManager* LEGACY_NODELETE undoManager() const;
-    void setUndoManager(UndoManager*);
+    void LEGACY_NODELETE setUndoManager(UndoManager*);
 
     const String& label() const LIFETIME_BOUND { return m_label; }
     VoidCallback& undoHandler() const { return m_undoHandler.get(); }

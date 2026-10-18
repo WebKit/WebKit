@@ -121,7 +121,7 @@ static bool isBugReference(StringView bug)
 namespace {
 
 template<typename CharacterType>
-bool isBuildConditionNameCharacter(CharacterType character)
+bool LEGACY_NODELETE isBuildConditionNameCharacter(CharacterType character)
 {
     return isASCIIAlphanumeric(character) || character == '_';
 }
@@ -206,7 +206,7 @@ private:
         return isEnabled(*condition);
     }
 
-    bool skipOperator(Operator op)
+    bool LEGACY_NODELETE skipOperator(Operator op)
     {
         auto character = op == Operator::Or ? '|' : '&';
         skipWhile(m_buffer, ' ');

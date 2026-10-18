@@ -52,11 +52,11 @@ public:
     std::optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
     void nodeDidHandleEvent(ScrollingNodeID, OptionSet<WheelEventProcessingSteps>, const PlatformWheelEvent&, bool allowLatching);
 
-    std::optional<ScrollingNodeID> latchedNodeID() const;
-    std::optional<ScrollingNodeAndProcessingSteps> latchedNodeAndSteps() const;
+    std::optional<ScrollingNodeID> LEGACY_NODELETE latchedNodeID() const;
+    std::optional<ScrollingNodeAndProcessingSteps> LEGACY_NODELETE latchedNodeAndSteps() const;
 
-    void nodeWasRemoved(ScrollingNodeID);
-    void clearLatchedNode();
+    void LEGACY_NODELETE nodeWasRemoved(ScrollingNodeID);
+    void LEGACY_NODELETE clearLatchedNode();
 
 private:
     bool latchedNodeHasRecentInteraction() const WTF_REQUIRES_LOCK(m_latchedNodeLock);

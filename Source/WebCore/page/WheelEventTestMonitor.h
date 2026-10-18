@@ -64,7 +64,7 @@ public:
     
     using DeferReason = WheelEventTestMonitorDeferReason;
 
-    WEBCORE_EXPORT void receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
+    WEBCORE_EXPORT void LEGACY_NODELETE receivedWheelEventWithPhases(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase);
     WEBCORE_EXPORT void deferForReason(ScrollingNodeID, OptionSet<DeferReason>);
     WEBCORE_EXPORT void removeDeferralForReason(ScrollingNodeID, OptionSet<DeferReason>);
     

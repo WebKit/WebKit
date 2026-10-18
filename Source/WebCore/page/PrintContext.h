@@ -42,7 +42,7 @@ class Node;
 class PrintContext : public FrameDestructionObserver, public RefCounted<PrintContext> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PrintContext, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<PrintContext> create(LocalFrame*);
+    WEBCORE_EXPORT static Ref<PrintContext> LEGACY_NODELETE create(LocalFrame*);
     ~PrintContext();
 
     // FrameDestructionObserver.

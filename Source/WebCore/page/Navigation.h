@@ -57,7 +57,7 @@ class NavigationDestination;
 class NavigationAPIMethodTracker : public RefCounted<NavigationAPIMethodTracker> {
     WTF_MAKE_TZONE_ALLOCATED(NavigationAPIMethodTracker);
 public:
-    static Ref<NavigationAPIMethodTracker> create(JSC::JSGlobalObject&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
+    static Ref<NavigationAPIMethodTracker> LEGACY_NODELETE create(JSC::JSGlobalObject&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished, JSC::JSValue&& info, RefPtr<SerializedScriptValue>&& serializedState);
     ~NavigationAPIMethodTracker();
 
     bool operator==(const NavigationAPIMethodTracker& other) const
@@ -299,7 +299,7 @@ private:
         void addUpcomingTraverse(const String& key, Ref<NavigationAPIMethodTracker>&&) WTF_EXCLUDES_LOCK(m_lock);
         NavigationAPIMethodTracker* upcomingTraverse(const String& key) const WTF_EXCLUDES_LOCK(m_lock);
         Vector<Ref<NavigationAPIMethodTracker>> upcomingTraverseTrackers() const WTF_EXCLUDES_LOCK(m_lock);
-        NavigationAPIMethodTracker* ongoing() const WTF_EXCLUDES_LOCK(m_lock);
+        NavigationAPIMethodTracker* LEGACY_NODELETE ongoing() const WTF_EXCLUDES_LOCK(m_lock);
 
         RefPtr<NavigationAPIMethodTracker> takeUpcomingNonTraverseIfEquals(NavigationAPIMethodTracker&) WTF_EXCLUDES_LOCK(m_lock);
 
@@ -310,7 +310,7 @@ private:
         // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker-clean-up
         void unregister(NavigationAPIMethodTracker&) WTF_EXCLUDES_LOCK(m_lock);
 
-        bool isEmpty() const WTF_EXCLUDES_LOCK(m_lock);
+        bool LEGACY_NODELETE isEmpty() const WTF_EXCLUDES_LOCK(m_lock);
         void visitInGCThread(JSC::AbstractSlotVisitor&) const WTF_EXCLUDES_LOCK(m_lock);
 
     private:

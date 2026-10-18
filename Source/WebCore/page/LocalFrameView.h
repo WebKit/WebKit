@@ -108,7 +108,7 @@ public:
     virtual ~LocalFrameView();
 
     WEBCORE_EXPORT void setFrameRect(const IntRect&) final;
-    WEBCORE_EXPORT void primeResizeEventBaseline(IntSize);
+    WEBCORE_EXPORT void LEGACY_NODELETE primeResizeEventBaseline(IntSize);
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 
@@ -134,7 +134,7 @@ public:
 
     WEBCORE_EXPORT bool LEGACY_NODELETE didFirstLayout() const;
 
-    WEBCORE_EXPORT bool needsLayout() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE needsLayout() const;
     WEBCORE_EXPORT void setNeedsLayoutAfterViewConfigurationChange();
 
     void setNeedsCompositingConfigurationUpdate();
@@ -168,8 +168,8 @@ public:
     void setNeedsOneShotDrawingSynchronization();
 
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPlatformWidget(PlatformWidget);
-    WEBCORE_EXPORT GraphicsLayer* graphicsLayerForPageScale();
-    WEBCORE_EXPORT GraphicsLayer* graphicsLayerForRenderViewBacking() const;
+    WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE graphicsLayerForPageScale();
+    WEBCORE_EXPORT GraphicsLayer* LEGACY_NODELETE graphicsLayerForRenderViewBacking() const;
     WEBCORE_EXPORT GraphicsLayer* graphicsLayerForScrolledContents();
     WEBCORE_EXPORT GraphicsLayer* clipLayer() const;
 #if HAVE(RUBBER_BANDING)
@@ -384,25 +384,25 @@ public:
     // Static function can be called from another thread.
     WEBCORE_EXPORT static LayoutPoint scrollPositionForFixedPosition(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, const LayoutPoint& scrollPosition, const LayoutPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements, int headerHeight, int footerHeight);
 
-    WEBCORE_EXPORT static LayoutSize expandedLayoutViewportSize(const LayoutSize& baseLayoutViewportSize, const LayoutSize& documentSize, double heightExpansionFactor);
+    WEBCORE_EXPORT static LayoutSize LEGACY_NODELETE expandedLayoutViewportSize(const LayoutSize& baseLayoutViewportSize, const LayoutSize& documentSize, double heightExpansionFactor);
 
-    WEBCORE_EXPORT static LayoutRect computeUpdatedLayoutViewportRect(const LayoutRect& layoutViewport, const LayoutRect& documentRect, const LayoutSize& unobscuredContentSize, const LayoutRect& unobscuredContentRect, const LayoutSize& baseLayoutViewportSize, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, LayoutViewportConstraint);
+    WEBCORE_EXPORT static LayoutRect LEGACY_NODELETE computeUpdatedLayoutViewportRect(const LayoutRect& layoutViewport, const LayoutRect& documentRect, const LayoutSize& unobscuredContentSize, const LayoutRect& unobscuredContentRect, const LayoutSize& baseLayoutViewportSize, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, LayoutViewportConstraint);
     
-    WEBCORE_EXPORT static LayoutPoint computeLayoutViewportOrigin(const LayoutRect& visualViewport, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, const LayoutRect& layoutViewport, ScrollBehaviorForFixedElements);
+    WEBCORE_EXPORT static LayoutPoint LEGACY_NODELETE computeLayoutViewportOrigin(const LayoutRect& visualViewport, const LayoutPoint& stableLayoutViewportOriginMin, const LayoutPoint& stableLayoutViewportOriginMax, const LayoutRect& layoutViewport, ScrollBehaviorForFixedElements);
 
     // These layers are positioned differently when there are obscured content insets, a header, or a footer.
     // These value need to be computed on both the main thread and the scrolling thread.
     // FIXME (webkit.org/b/316233): this function should take scrollOffset instead of scrollPosition.
     static FloatRect insetClipLayerRect(const FloatPoint& scrollPosition, const FloatSize& totalContentsSize, const FloatBoxExtent& obscuredContentInsets, const FloatSize& sizeForVisibleContent);
-    WEBCORE_EXPORT static FloatPoint positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, const FloatBoxExtent& obscuredContentInsets, float headerHeight);
+    WEBCORE_EXPORT static FloatPoint LEGACY_NODELETE positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, const FloatBoxExtent& obscuredContentInsets, float headerHeight);
     WEBCORE_EXPORT FloatPoint positionForRootContentLayer() const;
 
     // The page scale is a transform on the scrolled-contents layer when the UI process owns it, so the content
     // root's non-content offset has to be compensated for here.
-    WEBCORE_EXPORT static FloatPoint scrolledContentsLayerPositionForDelegatedPageScale(const FloatPoint& scrollPosition, float delegatedPageScaleFactor, const FloatPoint& rootContentsLayerPosition);
+    WEBCORE_EXPORT static FloatPoint LEGACY_NODELETE scrolledContentsLayerPositionForDelegatedPageScale(const FloatPoint& scrollPosition, float delegatedPageScaleFactor, const FloatPoint& rootContentsLayerPosition);
 
-    WEBCORE_EXPORT static float yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topInset);
-    WEBCORE_EXPORT static float yPositionForFooterLayer(const FloatPoint& scrollPosition, float topInset, float totalContentsHeight, float footerHeight);
+    WEBCORE_EXPORT static float LEGACY_NODELETE yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topInset);
+    WEBCORE_EXPORT static float LEGACY_NODELETE yPositionForFooterLayer(const FloatPoint& scrollPosition, float topInset, float totalContentsHeight, float footerHeight);
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT LayoutRect viewportConstrainedObjectsRect() const;
@@ -564,7 +564,7 @@ public:
     WEBCORE_EXPORT FloatPoint clientToDocumentPoint(FloatPoint) const;
 
     // Unlike client coordinates, layout viewport coordinates are affected by page zoom.
-    WEBCORE_EXPORT FloatRect clientToLayoutViewportRect(FloatRect) const;
+    WEBCORE_EXPORT FloatRect LEGACY_NODELETE clientToLayoutViewportRect(FloatRect) const;
     WEBCORE_EXPORT FloatPoint LEGACY_NODELETE clientToLayoutViewportPoint(FloatPoint) const;
 
     bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner.get() == &scrollCorner; }
@@ -595,7 +595,7 @@ public:
 
     bool LEGACY_NODELETE shouldSuspendScrollAnimations() const final;
 
-    RenderReplaced* embeddedSVGRoot() const;
+    RenderReplaced* LEGACY_NODELETE embeddedSVGRoot() const;
     
     WEBCORE_EXPORT void setTracksRepaints(bool);
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
@@ -850,7 +850,7 @@ private:
     bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;
     void updateCanBlitOnScrollRecursively();
-    bool shouldLayoutAfterContentsResized() const;
+    bool LEGACY_NODELETE shouldLayoutAfterContentsResized() const;
     
     void cancelScheduledScrollToFocusedElement();
     void cancelScheduledTextFragmentIndicatorTimer();
@@ -974,7 +974,7 @@ private:
 
     void updateScrollCorner() final;
 
-    LocalFrameView* parentFrameView() const;
+    LocalFrameView* LEGACY_NODELETE parentFrameView() const;
 
     void markRootOrBodyRendererDirty() const;
 
@@ -987,7 +987,7 @@ private:
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);
 
-    RenderElement* viewportRenderer() const;
+    RenderElement* LEGACY_NODELETE viewportRenderer() const;
     
     void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
     void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bool canDeferUpdateLayerPositions);

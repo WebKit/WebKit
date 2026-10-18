@@ -39,7 +39,7 @@ class Exception;
 class NavigationTransition final : public RefCounted<NavigationTransition> {
     WTF_MAKE_TZONE_ALLOCATED(NavigationTransition);
 public:
-    static Ref<NavigationTransition> create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<NavigationDestination>&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
+    static Ref<NavigationTransition> LEGACY_NODELETE create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<NavigationDestination>&&, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
 
     NavigationNavigationType navigationType() { return m_navigationType; };
     NavigationHistoryEntry& from() { return m_from; };

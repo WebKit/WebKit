@@ -203,7 +203,7 @@ public:
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);
     WEBCORE_EXPORT void injectUserScriptImmediately(DOMWrapperWorld&, const UserScript&);
     UserContentProvider* LEGACY_NODELETE userContentProvider();
-    const UserContentProvider* userContentProvider() const;
+    const UserContentProvider* LEGACY_NODELETE userContentProvider() const;
     WEBCORE_EXPORT bool LEGACY_NODELETE hasUserContentProvider(const UserContentProvider&);
 
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;

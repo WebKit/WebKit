@@ -57,7 +57,7 @@ enum class CaptionUserPreferencesDisplayMode : uint8_t {
 class CaptionUserPreferences : public RefCountedAndCanMakeWeakPtr<CaptionUserPreferences> {
     WTF_MAKE_TZONE_ALLOCATED(CaptionUserPreferences);
 public:
-    static Ref<CaptionUserPreferences> create(PageGroup&);
+    static Ref<CaptionUserPreferences> LEGACY_NODELETE create(PageGroup&);
     virtual ~CaptionUserPreferences();
 
     using CaptionDisplayMode = CaptionUserPreferencesDisplayMode;

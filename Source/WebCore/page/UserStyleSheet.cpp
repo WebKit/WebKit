@@ -55,7 +55,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToApplicationCreatingUse
 }
 #endif
 
-static HashCountedSet<String>& styleStrings()
+static HashCountedSet<String>& LEGACY_NODELETE styleStrings()
 {
     static NeverDestroyed<HashCountedSet<String>> set;
     return set;

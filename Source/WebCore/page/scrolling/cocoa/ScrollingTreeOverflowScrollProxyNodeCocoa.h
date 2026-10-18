@@ -33,7 +33,7 @@ namespace WebCore {
 class ScrollingTreeOverflowScrollProxyNodeCocoa : public ScrollingTreeOverflowScrollProxyNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTreeOverflowScrollProxyNodeCocoa, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeOverflowScrollProxyNodeCocoa> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreeOverflowScrollProxyNodeCocoa> LEGACY_NODELETE create(ScrollingTree&, ScrollingNodeID);
     WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollProxyNodeCocoa();
 
 protected:

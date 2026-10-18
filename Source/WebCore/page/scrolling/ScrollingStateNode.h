@@ -300,7 +300,7 @@ public:
     void removeFromParent();
     void removeChild(ScrollingStateNode&);
 
-    RefPtr<ScrollingStateNode> childAtIndex(size_t) const;
+    RefPtr<ScrollingStateNode> LEGACY_NODELETE childAtIndex(size_t) const;
 
     String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const;
 #if ASSERT_ENABLED

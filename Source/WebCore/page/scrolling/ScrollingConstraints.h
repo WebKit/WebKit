@@ -145,7 +145,7 @@ public:
         , m_anchorLayerOffsetAtLastLayout(WTF::move(anchorLayerOffsetAtLastLayout))
     { }
 
-    FloatSize computeStickyOffset(const FloatRect& constrainingRect) const;
+    FloatSize LEGACY_NODELETE computeStickyOffset(const FloatRect& constrainingRect) const;
 
     const FloatSize& anchorLayerOffsetAtLastLayout() const LIFETIME_BOUND { return m_anchorLayerOffsetAtLastLayout; }
     void setAnchorLayerOffsetAtLastLayout(FloatSize offset) { m_anchorLayerOffsetAtLastLayout = offset; }
@@ -153,7 +153,7 @@ public:
     const FloatSize stickyOffsetAtLastLayout() const { return m_stickyOffsetAtLastLayout; }
     void setStickyOffsetAtLastLayout(FloatSize offset) { m_stickyOffsetAtLastLayout = offset; }
 
-    WEBCORE_EXPORT FloatPoint anchorLayerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
+    WEBCORE_EXPORT FloatPoint LEGACY_NODELETE anchorLayerPositionForConstrainingRect(const FloatRect& constrainingRect) const;
     FloatPoint LEGACY_NODELETE anchorLayerPositionAtLastLayout() const;
 
     float leftOffset() const { return m_leftOffset; }
@@ -181,7 +181,7 @@ public:
 
     // Sticky extent is the smallest rectangle, in the scrolling ancestor's coordinate space, that encloses
     // the sticky box at every permissible position during its sticky travel.
-    FloatRect computeStickyExtent() const;
+    FloatRect LEGACY_NODELETE computeStickyExtent() const;
 
     friend bool operator==(const StickyPositionViewportConstraints&, const StickyPositionViewportConstraints&) = default;
 

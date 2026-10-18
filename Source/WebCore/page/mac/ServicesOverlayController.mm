@@ -104,7 +104,7 @@ static const uint8_t AlignmentNone = 0;
 static const uint8_t AlignmentLeft = 1 << 0;
 static const uint8_t AlignmentRight = 1 << 1;
 
-static void expandForGap(Vector<LayoutRect>& rects, std::span<uint8_t> alignments, const GapRects& gap)
+static void LEGACY_NODELETE expandForGap(Vector<LayoutRect>& rects, std::span<uint8_t> alignments, const GapRects& gap)
 {
     if (!gap.left().isEmpty()) {
         LayoutUnit leftEdge = gap.left().x();

@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);
     WEBCORE_EXPORT LoginStatus(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, WallTime loggedInTime, Seconds timeToLive);
 
-    WEBCORE_EXPORT void setTimeToLive(Seconds);
+    WEBCORE_EXPORT void LEGACY_NODELETE setTimeToLive(Seconds);
     WEBCORE_EXPORT bool hasExpired() const;
     WEBCORE_EXPORT WallTime expiry() const;
 

@@ -42,8 +42,8 @@ class CSPViolationReportBody final : public ReportBody {
 public:
     using Init = SecurityPolicyViolationEventInit;
 
-    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
-    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> LEGACY_NODELETE create(Init&&);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> LEGACY_NODELETE create(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, std::optional<uint64_t> lineNumber, std::optional<uint64_t> columnNumber);
 
     const String& type() const LIFETIME_BOUND final;
     const String& documentURL() const LIFETIME_BOUND { return m_documentURL; }

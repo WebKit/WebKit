@@ -36,8 +36,8 @@ class Scrollbar;
 class ScrollingStatePluginHostingNode final : public ScrollingStateNode {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingStatePluginHostingNode, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<ScrollingStatePluginHostingNode> create(ScrollingStateTree&, ScrollingNodeID);
-    WEBCORE_EXPORT static Ref<ScrollingStatePluginHostingNode> create(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
+    WEBCORE_EXPORT static Ref<ScrollingStatePluginHostingNode> LEGACY_NODELETE create(ScrollingStateTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingStatePluginHostingNode> LEGACY_NODELETE create(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStatePluginHostingNode();

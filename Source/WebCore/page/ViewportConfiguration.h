@@ -72,10 +72,10 @@ public:
     WEBCORE_EXPORT ViewportConfiguration();
 
     const Parameters& defaultConfiguration() const LIFETIME_BOUND { return m_defaultConfiguration; }
-    WEBCORE_EXPORT void setDefaultConfiguration(const Parameters&);
+    WEBCORE_EXPORT void LEGACY_NODELETE setDefaultConfiguration(const Parameters&);
 
     const IntSize& contentsSize() const LIFETIME_BOUND { return m_contentSize; }
-    WEBCORE_EXPORT bool setContentsSize(const IntSize&);
+    WEBCORE_EXPORT bool LEGACY_NODELETE setContentsSize(const IntSize&);
 
     const FloatSize& viewLayoutSize() const LIFETIME_BOUND { return m_viewLayoutSize; }
 
@@ -166,7 +166,7 @@ public:
 #endif
 
 private:
-    void updateConfiguration();
+    void LEGACY_NODELETE updateConfiguration();
     double LEGACY_NODELETE viewportArgumentsLength(double length) const;
     double initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const;
 

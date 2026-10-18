@@ -4338,7 +4338,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
 #endif
 }
 
-static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
+static bool LEGACY_NODELETE shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& view)
 {
     auto* page = view.frame().page();
     return page && view.isVisuallyNonEmpty() && !page->progress().isMainLoadProgressing();

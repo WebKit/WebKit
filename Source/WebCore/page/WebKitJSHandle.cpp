@@ -39,14 +39,14 @@ namespace WebCore {
 
 using HandleToGlobalMap = JSC::WeakGCMap<JSHandleIdentifier, JSDOMGlobalObject>;
 
-static HandleToGlobalMap& handleToGlobalMap(JSC::VM& vm)
+static HandleToGlobalMap& LEGACY_NODELETE handleToGlobalMap(JSC::VM& vm)
 {
     return downcast<JSVMClientData>(vm.clientData)->jsHandleGlobalObjects();
 }
 
 // Handles are only ever created on the main thread, so the global object a handle names always
 // belongs to the common VM.
-static HandleToGlobalMap* handleToGlobalMapIfExists()
+static HandleToGlobalMap* LEGACY_NODELETE handleToGlobalMapIfExists()
 {
     ASSERT(isMainThread());
     auto* vm = commonVMOrNull();

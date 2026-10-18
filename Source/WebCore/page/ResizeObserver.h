@@ -58,8 +58,8 @@ using JSOrNativeResizeObserverCallback = Variant<Ref<ResizeObserverCallback>, Na
 class ResizeObserver : public RefCountedAndCanMakeWeakPtr<ResizeObserver> {
     WTF_MAKE_TZONE_ALLOCATED(ResizeObserver);
 public:
-    static Ref<ResizeObserver> create(Document&, Ref<ResizeObserverCallback>&&);
-    static Ref<ResizeObserver> createNativeObserver(Document&, NativeResizeObserverCallback&&);
+    static Ref<ResizeObserver> LEGACY_NODELETE create(Document&, Ref<ResizeObserverCallback>&&);
+    static Ref<ResizeObserver> LEGACY_NODELETE createNativeObserver(Document&, NativeResizeObserverCallback&&);
     ~ResizeObserver();
 
     bool hasObservations() const { return m_observations.size(); }
