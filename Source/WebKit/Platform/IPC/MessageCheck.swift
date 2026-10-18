@@ -23,8 +23,6 @@
 
 #if compiler(>=6.2.3)
 
-#if ENABLE_BACK_FORWARD_LIST_SWIFT || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
-
 import WebKit_Internal
 import wtf
 
@@ -115,7 +113,5 @@ private func logFailedMessageCheck(
         UInt32(truncatingIfNeeded: line)
     )
 }
-
-#endif // ENABLE_BACK_FORWARD_LIST_SWIFT || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
 
 #endif // compiler(>=6.2.3)

@@ -43,7 +43,7 @@ namespace WebKit {
 
 class TestWithStreamSwiftMessageForwarder final : public IPC::StreamMessageReceiver {
 public:
-    static Ref<TestWithStreamSwiftMessageForwarder> createFromWeak(WebKit::TestWithStreamSwiftWeakRef* _Nonnull handler)
+    static Ref<TestWithStreamSwiftMessageForwarder> createFromWeak(WebKit::TestWithStreamSwiftWeakRef* WTF_NONNULL handler)
     {
         return adoptRef(*new TestWithStreamSwiftMessageForwarder(handler));
     }
@@ -52,7 +52,7 @@ public:
     void ref() const { StreamMessageReceiver::ref(); }
     void deref() const { StreamMessageReceiver::deref(); }
 private:
-    TestWithStreamSwiftMessageForwarder(WebKit::TestWithStreamSwiftWeakRef* _Nonnull);
+    TestWithStreamSwiftMessageForwarder(WebKit::TestWithStreamSwiftWeakRef* WTF_NONNULL);
     std::unique_ptr<WebKit::TestWithStreamSwift> getMessageTarget();
     std::unique_ptr<WebKit::TestWithStreamSwiftWeakRef> m_handler;
 } DERIVED_CLASS_SWIFT_SHARED_REFERENCE(.ref, .deref);

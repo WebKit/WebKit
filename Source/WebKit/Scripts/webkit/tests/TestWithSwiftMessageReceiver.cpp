@@ -89,13 +89,13 @@ void TestWithSwiftMessageForwarder::didReceiveSyncMessage(IPC::Connection& conne
     decoder.markInvalid();
 }
 
-static std::unique_ptr<TestWithSwiftWeakRef> makeTestWithSwiftWeakRefUniquePtr(TestWithSwiftWeakRef* _Nonnull handler)
+static std::unique_ptr<TestWithSwiftWeakRef> makeTestWithSwiftWeakRefUniquePtr(TestWithSwiftWeakRef* WTF_NONNULL handler)
 {
     auto newRef = _impl::_impl_TestWithSwiftWeakRef::makeRetained(handler);
     return WTF::makeUniqueWithoutFastMallocCheck<TestWithSwiftWeakRef>(newRef);
 }
 
-TestWithSwiftMessageForwarder::TestWithSwiftMessageForwarder(TestWithSwiftWeakRef* _Nonnull target)
+TestWithSwiftMessageForwarder::TestWithSwiftMessageForwarder(TestWithSwiftWeakRef* WTF_NONNULL target)
     : m_handler(makeTestWithSwiftWeakRefUniquePtr(target))
 {
 }

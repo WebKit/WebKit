@@ -81,18 +81,16 @@ set_target_properties(WebGPU PROPERTIES
     MACOSX_FRAMEWORK_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/../Info.plist"
 )
 
-if (SWIFT_REQUIRED)
-    # These #import the generated Swift interop header, so they build in a
-    # subtarget that can be ordered after it. Keep them out of the bundles.
-    set(WebGPU_SWIFT_INTEROP_SOURCES
-        Buffer.mm
-        CommandEncoder.mm
-        Queue.mm
-    )
-    foreach (_f IN LISTS WebGPU_SWIFT_INTEROP_SOURCES)
-        list(APPEND WebGPU_UNIFIED_SOURCE_EXCLUDES "(^|/)${_f}( |$)")
-    endforeach ()
-endif ()
+# These #import the generated Swift interop header, so they build in a
+# subtarget that can be ordered after it. Keep them out of the bundles.
+set(WebGPU_SWIFT_INTEROP_SOURCES
+    Buffer.mm
+    CommandEncoder.mm
+    Queue.mm
+)
+foreach (_f IN LISTS WebGPU_SWIFT_INTEROP_SOURCES)
+    list(APPEND WebGPU_UNIFIED_SOURCE_EXCLUDES "(^|/)${_f}( |$)")
+endforeach ()
 
 WEBKIT_COMPUTE_SOURCES(WebGPU)
 
@@ -142,48 +140,44 @@ set(WebGPU_DEPENDENCIES
     wgsl-types
 )
 
-if (SWIFT_REQUIRED)
-    set(_webgpu_swiftmodule_dir "${_webgpu_modules_dir}/WebGPU.swiftmodule")
-    set(WebGPU_POST_BUILD_COMMAND
-        ${CMAKE_COMMAND} -E make_directory "${_webgpu_swiftmodule_dir}")
-    foreach (_ext IN ITEMS swiftmodule swiftdoc abi.json)
-        list(APPEND WebGPU_POST_BUILD_COMMAND
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_CURRENT_BINARY_DIR}/WebGPU.${_ext}"
-                "${_webgpu_swiftmodule_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.${_ext}")
-    endforeach ()
-endif ()
+set(_webgpu_swiftmodule_dir "${_webgpu_modules_dir}/WebGPU.swiftmodule")
+set(WebGPU_POST_BUILD_COMMAND
+    ${CMAKE_COMMAND} -E make_directory "${_webgpu_swiftmodule_dir}")
+foreach (_ext IN ITEMS swiftmodule swiftdoc abi.json)
+    list(APPEND WebGPU_POST_BUILD_COMMAND
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/WebGPU.${_ext}"
+            "${_webgpu_swiftmodule_dir}/${WEBKIT_SWIFT_MODULE_TRIPLE}.${_ext}")
+endforeach ()
 
 WEBKIT_FRAMEWORK(WebGPU)
 WEBKIT_ADD_PREFIX_HEADER(WebGPU WebGPUPrefix.h PREFIX_LANGUAGES OBJCXX)
 
-if (SWIFT_REQUIRED)
-    target_sources(WebGPU PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/Buffer.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/CommandEncoder.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/Queue.swift
-        ${CMAKE_CURRENT_SOURCE_DIR}/StdLibExtras.swift
-    )
+target_sources(WebGPU PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Buffer.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/CommandEncoder.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/Queue.swift
+    ${CMAKE_CURRENT_SOURCE_DIR}/StdLibExtras.swift
+)
 
-    webkit_target_add_swift_options(WebGPU
-        -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
-        "-library-level spi"
-        "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
-    )
+webkit_target_add_swift_options(WebGPU
+    -I${CMAKE_CURRENT_SOURCE_DIR}/Internal
+    "-library-level spi"
+    "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
+)
 
-    set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
+set(WebGPU_SWIFT_EMIT_CLANG_HEADER_MIN_ACCESS internal)
 
-    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
-        "${WebGPU_HEADERS_DIR}"
-        "WebGPUSwift-Generated.h")
+WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebGPU WebGPU
+    "${WebGPU_HEADERS_DIR}"
+    "WebGPUSwift-Generated.h")
 
-    WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
-    target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
-    # FIXME: This objects.rsp plumbing is duplicated in WebCore, WebKit and
-    # WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX; factor it into a shared helper.
-    set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebGPU_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
-    set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebGPU_SwiftInterop.dir/objects.rsp")
-    file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
-    target_link_options(WebGPU PRIVATE "@${_interop_rsp}")
-    set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
-endif ()
+WEBKIT_DEFINE_SUBTARGET(WebGPU_SwiftInterop WebGPU ${WebGPU_SWIFT_INTEROP_SOURCES})
+target_precompile_headers(WebGPU_SwiftInterop REUSE_FROM WebGPU)
+# FIXME: This objects.rsp plumbing is duplicated in WebCore, WebKit and
+# WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX; factor it into a shared helper.
+set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebGPU_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
+set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebGPU_SwiftInterop.dir/objects.rsp")
+file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
+target_link_options(WebGPU PRIVATE "@${_interop_rsp}")
+set_property(TARGET WebGPU APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")

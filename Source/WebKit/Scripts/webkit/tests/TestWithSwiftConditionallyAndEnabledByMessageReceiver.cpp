@@ -109,13 +109,13 @@ void TestWithSwiftConditionallyAndEnabledBy::didReceiveSyncMessage(IPC::Connecti
 }
 #if ENABLE(SWIFT_TEST_CONDITION)
 
-static std::unique_ptr<TestWithSwiftConditionallyAndEnabledByWeakRef> makeTestWithSwiftConditionallyAndEnabledByWeakRefUniquePtr(TestWithSwiftConditionallyAndEnabledByWeakRef* _Nonnull handler)
+static std::unique_ptr<TestWithSwiftConditionallyAndEnabledByWeakRef> makeTestWithSwiftConditionallyAndEnabledByWeakRefUniquePtr(TestWithSwiftConditionallyAndEnabledByWeakRef* WTF_NONNULL handler)
 {
     auto newRef = _impl::_impl_TestWithSwiftConditionallyAndEnabledByWeakRef::makeRetained(handler);
     return WTF::makeUniqueWithoutFastMallocCheck<TestWithSwiftConditionallyAndEnabledByWeakRef>(newRef);
 }
 
-TestWithSwiftConditionallyAndEnabledByMessageForwarder::TestWithSwiftConditionallyAndEnabledByMessageForwarder(TestWithSwiftConditionallyAndEnabledByWeakRef* _Nonnull target)
+TestWithSwiftConditionallyAndEnabledByMessageForwarder::TestWithSwiftConditionallyAndEnabledByMessageForwarder(TestWithSwiftConditionallyAndEnabledByWeakRef* WTF_NONNULL target)
     : m_handler(makeTestWithSwiftConditionallyAndEnabledByWeakRefUniquePtr(target))
 {
 }

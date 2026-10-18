@@ -28,9 +28,7 @@
 #import <optional>
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=306415
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
 #import "WebKit-Swift.h"
-#endif
 
 #if PLATFORM(MAC)
 
@@ -766,8 +764,6 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     return true;
 }
 
-#if ENABLE(BACK_FORWARD_LIST_SWIFT)
-
 std::optional<WebBackForwardList> ViewGestureController::backForwardListForNavigation() const
 {
     if (RefPtr page = m_webPageProxy.get())
@@ -775,15 +771,6 @@ std::optional<WebBackForwardList> ViewGestureController::backForwardListForNavig
 
     return std::nullopt;
 }
-
-#else
-
-WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
-{
-    return m_webPageProxy ? &m_webPageProxy->backForwardList() : nullptr;
-}
-
-#endif
 
 } // namespace WebKit
 
