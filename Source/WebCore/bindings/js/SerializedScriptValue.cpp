@@ -2540,12 +2540,28 @@ private:
         CryptoKeyOKP::NamedCurve namedCurve;
         if (!read(namedCurve))
             return false;
+        if ((algorithm == CryptoAlgorithmIdentifier::X25519) != (namedCurve == CryptoKeyOKP::NamedCurve::X25519))
+            return false;
         Vector<uint8_t> keyData;
         if (!read(keyData))
             return false;
 
-        result = CryptoKeyOKP::importRaw(algorithm, namedCurve, WTF::move(keyData), extractable, usages);
-        return true;
+        // The key type is not serialized, so infer it from the usages. Private keys always have
+        // non-empty usages, and public keys can only have "verify" (Ed25519) or no usages (X25519).
+        CryptoKeyType type = CryptoKeyType::Public;
+        switch (namedCurve) {
+        case CryptoKeyOKP::NamedCurve::Ed25519:
+            if (usages & CryptoKeyUsageSign)
+                type = CryptoKeyType::Private;
+            break;
+        case CryptoKeyOKP::NamedCurve::X25519:
+            if (usages & (CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits))
+                type = CryptoKeyType::Private;
+            break;
+        }
+
+        result = CryptoKeyOKP::create(algorithm, namedCurve, type, WTF::move(keyData), extractable, usages);
+        return !!result;
     }
 
     bool readRawKey(CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)

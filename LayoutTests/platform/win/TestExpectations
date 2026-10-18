@@ -677,6 +677,10 @@ crypto/subtle/rsa-indexeddb-non-exportable.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb-private.html [ Skip ] # Timeout
 crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 
+# WebCrypto X25519 and Ed25519 are not supported by the OpenSSL backend used on Windows.
+crypto/subtle/ed25519-indexeddb.html [ Skip ]
+crypto/subtle/x25519-indexeddb.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # js
 #//////////////////////////////////////////////////////////////////////////////////////////

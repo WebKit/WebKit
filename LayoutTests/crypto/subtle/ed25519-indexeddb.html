@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<script>
+description("Test storing non-extractable Ed25519 keys in IndexedDB, and retrieving them.");
+
+jsTestIsAsync = true;
+
+function openDatabase()
+{
+    return new Promise((resolve, reject) => {
+        var openRequest = indexedDB.open("crypto_subtle_ed25519");
+        openRequest.onupgradeneeded = (event) => event.target.result.createObjectStore("ed25519-indexeddb");
+        openRequest.onsuccess = (event) => resolve(event.target.result);
+        openRequest.onerror = (event) => reject(event.target.error);
+    });
+}
+
+function storeKeys(db, keys)
+{
+    return new Promise((resolve, reject) => {
+        var transaction = db.transaction("ed25519-indexeddb", "readwrite");
+        var objectStore = transaction.objectStore("ed25519-indexeddb");
+        objectStore.put(keys.privateKey, "privateKey");
+        objectStore.put(keys.publicKey, "publicKey");
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = (event) => reject(event.target.error);
+    });
+}
+
+function readKey(db, name)
+{
+    return new Promise((resolve, reject) => {
+        var request = db.transaction("ed25519-indexeddb").objectStore("ed25519-indexeddb").get(name);
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+(async () => {
+    try {
+        var keyPair = await crypto.subtle.generateKey({ name: "Ed25519" }, false, ["sign", "verify"]);
+
+        var db = await openDatabase();
+        await storeKeys(db, keyPair);
+        retrievedPrivateKey = await readKey(db, "privateKey");
+        retrievedPublicKey = await readKey(db, "publicKey");
+
+        shouldBeTrue("retrievedPrivateKey instanceof CryptoKey");
+        shouldBe("retrievedPrivateKey.type", "'private'");
+        shouldBe("retrievedPrivateKey.extractable", "false");
+        shouldBe("retrievedPrivateKey.algorithm.name", "'Ed25519'");
+        shouldBe("retrievedPrivateKey.usages", '["sign"]');
+
+        shouldBeTrue("retrievedPublicKey instanceof CryptoKey");
+        shouldBe("retrievedPublicKey.type", "'public'");
+        shouldBe("retrievedPublicKey.extractable", "true");
+        shouldBe("retrievedPublicKey.algorithm.name", "'Ed25519'");
+        shouldBe("retrievedPublicKey.usages", '["verify"]');
+
+        var data = asciiToUint8Array("Hello, world!");
+        var signature = await crypto.subtle.sign({ name: "Ed25519" }, retrievedPrivateKey, data);
+        verifiedWithOriginalKey = await crypto.subtle.verify({ name: "Ed25519" }, keyPair.publicKey, signature, data);
+        verifiedWithRetrievedKey = await crypto.subtle.verify({ name: "Ed25519" }, retrievedPublicKey, signature, data);
+        shouldBeTrue("verifiedWithOriginalKey");
+        shouldBeTrue("verifiedWithRetrievedKey");
+    } catch (e) {
+        testFailed("Unexpected exception: " + e);
+    }
+    finishJSTest();
+})();
+</script>
+</body>
+</html>
