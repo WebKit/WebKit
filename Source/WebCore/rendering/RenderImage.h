@@ -100,16 +100,20 @@ public:
 
     WEBCORE_EXPORT std::optional<FloatSize> usedImageSize() const final;
 
-    WEBCORE_EXPORT virtual RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const;
-
-    // Returns an image as `paint()` would draw it. Sized and placed respecting 'object-fit', 'object-position', 'object-view-box', and orientation, and clipped to the content box.
-    RefPtr<NativeImage> createNativeImageAsPainted(float deviceScaleFactor, const FloatSize& maximumSize);
-
     // FIXME: Condense these into fewer concrete categories of sizing algorithms once we know all the different sizing rules needed.
     ConcreteObjectSize concreteObjectSizeForPasteboard() const;
     ConcreteObjectSize concreteObjectSizeForAccessibility() const;
-    ConcreteObjectSize defaultConcreteObjectSize() const;
-    ConcreteObjectSize defaultConcreteObjectSize(NaturalDimensions) const;
+    ConcreteObjectSize concreteObjectSizeForImageAnalysis() const;
+    WEBCORE_EXPORT ConcreteObjectSize concreteObjectSizeForPositionInformation() const;
+
+    // FIXME: Condense these into fewer concrete categories of bitmap extraction once we know all the different behaviors needed.
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForHitTestResult() const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForPositionInformation(FloatSize screenSizeInPixels) const;
+    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmapForImageBitmapRequest() const;
+    WEBCORE_EXPORT Ref<NativePromise<Ref<ShareableBitmap>, void>> createShareableBitmapAsyncForImageAnalysis(CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages) const;
+
+    // Returns an image as `paint()` would draw it. Sized and placed respecting 'object-fit', 'object-position', 'object-view-box', and orientation, and clipped to the content box.
+    RefPtr<NativeImage> createNativeImageAsPainted(float deviceScaleFactor, const FloatSize& maximumSize);
 
     FloatSize preferredAspectRatioAsSize() const final;
 
@@ -140,6 +144,12 @@ protected:
     }
 
     NaturalDimensions zoomedNaturalDimensions() const override;
+
+    ConcreteObjectSize defaultConcreteObjectSize() const;
+    ConcreteObjectSize defaultConcreteObjectSize(NaturalDimensions) const;
+
+    virtual RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const;
+    virtual Ref<NativePromise<Ref<ShareableBitmap>, void>> createShareableBitmapAsync(const CreateShareableBitmapFromImageOptions& = { }) const;
 
 private:
     ASCIILiteral renderName() const override { return "RenderImage"_s; }

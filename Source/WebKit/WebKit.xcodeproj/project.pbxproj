@@ -2655,7 +2655,6 @@
 		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */; };
 		F43E893D2AEDBB9000097D2D /* CoreTelephonyUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E893B2AEDBB7E00097D2D /* CoreTelephonyUtilities.h */; };
 		F440B4B12BA52D3700AD1D1F /* _WKTargetedElementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = F440B4B02BA52D3700AD1D1F /* _WKTargetedElementRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F441AFEA2B8DA15F00F300B7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
@@ -9072,8 +9071,6 @@
 		F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebpagePreferences.mm; sourceTree = "<group>"; };
 		F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesInternal.h; sourceTree = "<group>"; };
 		F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesPrivate.h; sourceTree = "<group>"; };
-		F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareableBitmapUtilities.h; sourceTree = "<group>"; };
-		F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmapUtilities.cpp; sourceTree = "<group>"; };
 		F43E893B2AEDBB7E00097D2D /* CoreTelephonyUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonyUtilities.h; sourceTree = "<group>"; };
 		F43E893C2AEDBB7E00097D2D /* CoreTelephonyUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreTelephonyUtilities.mm; sourceTree = "<group>"; };
 		F440B4B02BA52D3700AD1D1F /* _WKTargetedElementRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTargetedElementRequest.h; sourceTree = "<group>"; };
@@ -16128,8 +16125,6 @@
 				46E9760B2757F6C900ACDD37 /* RemoteWebLockRegistry.messages.in */,
 				1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */,
 				1A7284451959ED100007BCE5 /* SessionStateConversion.h */,
-				F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */,
-				F43A9CDD25D72E0C00990E26 /* ShareableBitmapUtilities.h */,
 				CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */,
 				E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */,
 				E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */,
@@ -19032,7 +19027,6 @@
 				1AFDE65A1954A42B00C48FFA /* SessionState.h in Headers */,
 				1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */,
 				93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */,
-				F43A9CE025D72F1C00990E26 /* ShareableBitmapUtilities.h in Headers */,
 				A183494224EF467800BDC9A8 /* SharedBufferReference.h in Headers */,
 				CD4B4D9D1E765E0000D27092 /* SharedCARingBuffer.h in Headers */,
 				93122C862710CCDF001D819F /* SharedFileHandle.h in Headers */,
