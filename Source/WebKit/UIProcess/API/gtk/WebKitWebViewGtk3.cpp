@@ -120,16 +120,18 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
 /**
  * webkit_web_view_set_background_color:
  * @web_view: a #WebKitWebView
- * @rgba: a #GdkRGBA
+ * @rgba: (nullable): a #GdkRGBA, or %NULL to reset to the default system appearance color
  *
  * Sets the color that will be used to draw the @web_view background.
  *
  * Sets the color that will be used to draw the @web_view background before
  * the actual contents are rendered. Note that if the web page loaded in @web_view
  * specifies a background color, it will take precedence over the @rgba color.
- * By default the @web_view background color is opaque white.
+ * By default the @web_view background color is based on the system appearance.
  * Note that the parent window must have an RGBA visual and
  * #GtkWidget:app-paintable property set to %TRUE for background colors to work.
+ *
+ * Since 2.56, %NULL can be passed to reset the background color to the default system appearance color.
  *
  * ```c
  * static void browser_window_set_background_color (BrowserWindow *window,
