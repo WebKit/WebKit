@@ -31,6 +31,37 @@
 
 #include "pas_bootstrap_free_heap.h"
 
+static PAS_ALWAYS_INLINE pas_allocation_result bootstrap_heap_page_provider_impl(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_memory_flavor flavor)
+{
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
+    pas_allocation_result retval;
+
+    if (verbose)
+        pas_log("%s bootstrap heap page-provider allocating %zu for %s\n", pas_memory_flavor_get_string(flavor), size, name);
+
+    switch (flavor) {
+    case pas_memory_flavor_plain:
+        retval = pas_bootstrap_free_heap_try_allocate_with_alignment(size, alignment, name, pas_delegate_allocation);
+        break;
+    case pas_memory_flavor_mte:
+        retval = pas_mte_bootstrap_free_heap_try_allocate_with_alignment(size, alignment, name, pas_delegate_allocation);
+        break;
+    case pas_memory_flavor_rwx:
+        PAS_ASSERT_NOT_REACHED();
+        retval = pas_allocation_result_create_failure();
+        break;
+    }
+
+    if (verbose)
+        pas_log("%s bootstrap heap page-provider done allocating\n", pas_memory_flavor_get_string(flavor));
+
+    return retval;
+}
+
 pas_allocation_result pas_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
@@ -42,18 +73,21 @@ pas_allocation_result pas_bootstrap_heap_page_provider(
     PAS_UNUSED_PARAM(arg);
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
-    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
+    return bootstrap_heap_page_provider_impl(size, alignment, name, pas_memory_flavor_plain);
+}
 
-    if (verbose)
-        pas_log("bootstreap heap page-provider allocating %zu for %s\n", size, name);
-
-    pas_allocation_result retval = pas_bootstrap_free_heap_try_allocate_with_alignment(
-        size, alignment, name, pas_delegate_allocation);
-
-    if (verbose)
-        pas_log("bootstrap heap page-provider done allocating\n");
-
-    return retval;
+pas_allocation_result pas_mte_bootstrap_heap_page_provider(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
+    void *arg)
+{
+    PAS_UNUSED_PARAM(arg);
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
+    return bootstrap_heap_page_provider_impl(size, alignment, name, pas_memory_flavor_mte);
 }
 
 #endif /* LIBPAS_ENABLED */

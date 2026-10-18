@@ -49,7 +49,6 @@
 #include "pas_large_sharing_pool.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
-#include "pas_mte_bootstrap_free_heap.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_heap.h"
 #include "pas_segregated_size_directory.h"

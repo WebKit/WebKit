@@ -56,7 +56,7 @@ static pas_aligned_allocation_result compact_bootstrap_source_allocate_aligned(
     return retval;
 }
 
-static void initialize_config(pas_large_free_heap_config* config)
+static void pas_compact_bootstrap_free_heap_initialize_config(pas_large_free_heap_config* config)
 {
     config->type_size = 1;
     config->min_alignment = PAS_INTERNAL_MIN_ALIGN;

@@ -29,14 +29,25 @@
 #include "pas_allocation_config.h"
 #include "pas_allocation_kind.h"
 #include "pas_lock.h"
+#include "pas_memory_flavor.h"
 #include "pas_simple_large_free_heap.h"
 
 PAS_BEGIN_EXTERN_C;
 
 #define PAS_BOOTSTRAP_FREE_LIST_MINIMUM_SIZE 4u
 
+/* There is one bootstrap free heap per memory flavor that libpas can map itself. They must stay
+   separate so that memory of different flavors is never coalesced. pas_bootstrap_free_heap is the
+   plain one, which is what all of libpas's internal data structures use. */
+
 #define PAS_SIMPLE_FREE_HEAP_NAME pas_bootstrap_free_heap
 #define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_bootstrap_free_heap ## suffix
+#include "pas_simple_free_heap_declarations.def"
+#undef PAS_SIMPLE_FREE_HEAP_NAME
+#undef PAS_SIMPLE_FREE_HEAP_ID
+
+#define PAS_SIMPLE_FREE_HEAP_NAME pas_mte_bootstrap_free_heap
+#define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_mte_bootstrap_free_heap ## suffix
 #include "pas_simple_free_heap_declarations.def"
 #undef PAS_SIMPLE_FREE_HEAP_NAME
 #undef PAS_SIMPLE_FREE_HEAP_ID
