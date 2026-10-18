@@ -571,7 +571,11 @@ void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 
 void AuxiliaryProcessProxy::logInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
 {
-    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %s from WebContent process with PID %d", description(messageName), processID());
+    RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %s from %s process with PID %d", description(messageName), processName(), processID());
+#if ASAN_ENABLED
+    // Also log to stderr so test harnesses can attribute the resulting termination.
+    WTFLogAlways("Killing %s for invalid message %s with PID %d", processName().characters(), IPC::description(messageName).characters(), processID());
+#endif
 }
 
 bool AuxiliaryProcessProxy::platformIsBeingDebugged() const

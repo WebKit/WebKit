@@ -26,7 +26,10 @@
 #include "config.h"
 #include "XPCUtilities.h"
 
+#include "MessageNames.h"
 #include <wtf/spi/darwin/ReasonSPI.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -40,11 +43,14 @@ void terminateWithReason(xpc_connection_t connection, WebKitReasonCode reasonCod
     // Unlike xpc_connection_kill(), this leaves a crash report that run-webkit-tests can match.
     // Not done unconditionally because the SPI is blocked for embedders with a sandbox (Bug 224499).
     if (reasonCode == WebKitReasonCode::MessageCheckKilled || reasonCode == WebKitReasonCode::WatchdogTimerFired) {
-        // Encode the WebKitReasonCode in the low byte; for a message check, pack the failing
-        // IPC message name above it so the crash report identifies which check failed.
+        // Name the failing IPC message in the reason string since its enum value differs between builds.
         uint64_t code = std::to_underlying(reasonCode);
-        if (invalidMessageName)
+        ASCIICString reasonWithMessageName;
+        if (invalidMessageName) {
             code |= static_cast<uint64_t>(std::to_underlying(*invalidMessageName)) << 8;
+            reasonWithMessageName = makeString(unsafeSpan(reason), ": "_s, IPC::description(*invalidMessageName)).ascii();
+            reason = reasonWithMessageName.data();
+        }
         if (!terminate_with_reason(xpc_connection_get_pid(connection), OS_REASON_WEBKIT, code, reason, 0))
             return;
     }
