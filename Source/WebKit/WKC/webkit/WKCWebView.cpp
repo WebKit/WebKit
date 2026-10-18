@@ -207,6 +207,9 @@ public:
 #include "FastMalloc.h"
 #include "NotImplemented.h"
 
+#include <cctype>
+#include <string>
+
 namespace WebCore {
 // Concrete WKC GraphicsContext backend (GraphicsContext itself is abstract).
 // Defined in Source/WebCore/platform/graphics/WKC/GraphicsContextWKC.cpp.
@@ -1782,6 +1785,65 @@ void WKCWebView::loadURI(const char* uri, const char* referer)
 {
     if (!uri || !uri[0] || !m_private) return;
     m_private->m_mainFrame->loadURI(uri, referer);
+}
+
+/**
+ * Normalize address-bar input before handing it to WebCore.
+ *
+ * Bare host names are treated as HTTPS URLs; ordinary text is sent to Google
+ * Search. URL encoding is done on UTF-8 bytes so non-ASCII search terms remain
+ * valid and no browser-side JavaScript is needed.
+ */
+bool WKCWebView::loadURLOrSearch(const char* input, const char* referer)
+{
+    if (!input || !m_private || !m_private->m_mainFrame)
+        return false;
+
+    std::string value(input);
+    auto isSpace = [](unsigned char c) { return !!std::isspace(c); };
+    while (!value.empty() && isSpace(static_cast<unsigned char>(value.front())))
+        value.erase(value.begin());
+    while (!value.empty() && isSpace(static_cast<unsigned char>(value.back())))
+        value.pop_back();
+    if (value.empty())
+        return false;
+
+    std::string target;
+    if (value.compare(0, 8, "https://") == 0
+        || value.compare(0, 7, "http://") == 0
+        || value.compare(0, 7, "about:") == 0
+        || value.compare(0, 5, "file:") == 0
+        || value.find("://") != std::string::npos) {
+        target = value;
+    } else if (value.compare(0, 2, "//") == 0) {
+        target = "https:" + value;
+    } else {
+        // A dotted hostname, localhost, or bracketed IP is an address rather
+        // than a search phrase. HTTPS is the safe default for bare hosts.
+        bool looksLikeHost = value.find('.') != std::string::npos
+            || value.compare(0, 9, "localhost") == 0
+            || value[0] == '[';
+        if (looksLikeHost) {
+            target = "https://" + value;
+        } else {
+            static const char hex[] = "0123456789ABCDEF";
+            target = "https://www.google.com/search?q=";
+            for (unsigned char c : value) {
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9') || c == '-' || c == '_'
+                    || c == '.' || c == '~') {
+                    target += static_cast<char>(c);
+                } else {
+                    target += '%';
+                    target += hex[c >> 4];
+                    target += hex[c & 0x0F];
+                }
+            }
+        }
+    }
+
+    loadURI(target.c_str(), referer);
+    return true;
 }
 
 void WKCWebView::loadString(const char* content, const unsigned short* mimetype,
