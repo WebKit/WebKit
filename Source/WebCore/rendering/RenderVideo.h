@@ -66,8 +66,6 @@ public:
 
     void updateFromElement() final;
 
-    WEBCORE_EXPORT RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const final;
-
     bool hasVideoMetadata() const;
     bool hasPosterFrameSize() const;
     bool hasDefaultObjectSize() const;
@@ -106,6 +104,9 @@ private:
 
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const final;
     void invalidateLineLayout();
+
+    RefPtr<ShareableBitmap> createShareableBitmap(const CreateShareableBitmapFromImageOptions& = { }) const final;
+    Ref<NativePromise<Ref<ShareableBitmap>, void>> createShareableBitmapAsync(const CreateShareableBitmapFromImageOptions& = { }) const final;
 
     LayoutSize m_cachedImageSize;
 };

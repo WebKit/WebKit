@@ -484,6 +484,11 @@ RefPtr<ShareableBitmap> RenderVideo::createShareableBitmap(const CreateShareable
     return protect(videoElement())->bitmapImageForCurrentTimeSync();
 }
 
+Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderVideo::createShareableBitmapAsync(const CreateShareableBitmapFromImageOptions&) const
+{
+    return protect(videoElement())->bitmapImageForCurrentTime();
+}
+
 void RenderVideo::updateFromElement()
 {
     RenderMedia::updateFromElement();

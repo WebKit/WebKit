@@ -208,14 +208,15 @@ static std::optional<std::pair<WebCore::RenderImage&, WebCore::Image&>> imageRen
     if (!renderImage)
         return std::nullopt;
 
-    if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
+    RefPtr cachedImage = renderImage->cachedImage();
+    if (!cachedImage || !cachedImage->canRender())
         return std::nullopt;
 
-    RefPtr image = protect(renderImage->cachedImage())->image();
-    if (!image || image->width() <= 1 || image->height() <= 1)
+    auto imageSize = renderImage->concreteObjectSizeForPositionInformation().size();
+    if (imageSize.width() <= 1 || imageSize.height() <= 1)
         return std::nullopt;
 
-    return { { *renderImage, *image } };
+    return { { *renderImage, *cachedImage->image() } };
 }
 
 static WebCore::FloatSize platformBitmapSizeCap(const WebCore::LocalFrame& localRoot)
@@ -242,7 +243,7 @@ static void videoPositionInformation(WebPage& page, WebCore::HTMLVideoElement& e
     info.isPausedVideo = true;
 
     if (request.includeImageData)
-        info.image = renderVideo->createShareableBitmap();
+        info.image = element.bitmapImageForCurrentTimeSync();
 
     info.hostImageOrVideoElementContext = page.contextForElement(element);
 }
@@ -281,7 +282,7 @@ static void imagePositionInformation(WebPage& page, const WebCore::LocalFrame& l
 #endif
 
     if (request.includeSnapshot || request.includeImageData)
-        info.image = renderImage.createShareableBitmap({ platformBitmapSizeCap(localRoot) * page.corePage()->deviceScaleFactor(), WebCore::CreateShareableBitmapFromImageOptions::AllowAnimatedImages::Yes, WebCore::CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages::Yes });
+        info.image = renderImage.createShareableBitmapForPositionInformation(platformBitmapSizeCap(localRoot) * page.corePage()->deviceScaleFactor());
 
     info.hostImageOrVideoElementContext = page.contextForElement(element);
 }
@@ -349,7 +350,7 @@ static void elementPositionInformation(WebPage& page, const WebCore::LocalFrame&
                     auto& [renderImage, image] = *rendererAndImage;
                     info.imageURL = page.applyLinkDecorationFiltering(document->encodingParseURL(protect(renderImage.cachedImage())->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
                     info.imageMIMEType = image.mimeType();
-                    info.image = renderImage.createShareableBitmap({ platformBitmapSizeCap(localRoot) * page.corePage()->deviceScaleFactor(), WebCore::CreateShareableBitmapFromImageOptions::AllowAnimatedImages::Yes, WebCore::CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages::Yes });
+                    info.image = renderImage.createShareableBitmapForPositionInformation(platformBitmapSizeCap(localRoot) * page.corePage()->deviceScaleFactor());
                 }
             }
         }
