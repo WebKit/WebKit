@@ -110,7 +110,8 @@ FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& descri
         Vector<FontFamilyName, 3>(familyCount, [&](size_t familyIndex) { return description.familyAt(familyIndex).name; }),
         hasComplexFontSelector ? fontSelector->uniqueId() : 0,
         hasComplexFontSelector ? fontSelector->version() : 0,
-        hasComplexFontSelector
+        hasComplexFontSelector,
+        description.kerning()
     };
 }
 

@@ -223,14 +223,14 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorId { 0 };
     unsigned fontSelectorVersion { 0 };
     bool hasComplexFontSelector { true };
-
+    Kerning kerning { Kerning::Auto };
 
     friend bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&) = default;
 };
 
 inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
 {
-    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion);
+    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion, key.kerning);
 }
 
 FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&, FontSelector*);
