@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-static void timeZoneChangeNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+static void LEGACY_NODELETE timeZoneChangeNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     timeZoneDidChange();
 }

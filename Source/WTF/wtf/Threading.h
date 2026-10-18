@@ -129,7 +129,7 @@ public:
     static constexpr SchedulingPolicy defaultSchedulingPolicy = defaultThreadSchedulingPolicy;
 
 #if HAVE(QOS_CLASSES)
-    static dispatch_qos_class_t dispatchQOSClass(QOS);
+    static dispatch_qos_class_t LEGACY_NODELETE dispatchQOSClass(QOS);
 #endif
 
     // Returns nullptr if thread creation failed.

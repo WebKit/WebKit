@@ -197,7 +197,7 @@ public:
     WTF_EXPORT_PRIVATE ContinuousApproximateTime LEGACY_NODELETE operator+(ContinuousApproximateTime) const;
     WTF_EXPORT_PRIVATE TimeWithDynamicClockType LEGACY_NODELETE operator+(const TimeWithDynamicClockType&) const;
     
-    WTF_EXPORT_PRIVATE WallTime operator-(WallTime) const;
+    WTF_EXPORT_PRIVATE WallTime LEGACY_NODELETE operator-(WallTime) const;
     WTF_EXPORT_PRIVATE MonotonicTime LEGACY_NODELETE operator-(MonotonicTime) const;
     WTF_EXPORT_PRIVATE ApproximateTime LEGACY_NODELETE operator-(ApproximateTime) const;
     WTF_EXPORT_PRIVATE ContinuousTime LEGACY_NODELETE operator-(ContinuousTime) const;
