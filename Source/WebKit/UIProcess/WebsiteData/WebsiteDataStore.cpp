@@ -2989,6 +2989,7 @@ bool WebsiteDataStore::hasActivePages()
 #if HAVE(NW_PROXY_CONFIG)
 void WebsiteDataStore::clearProxyConfigData()
 {
+    m_proxyConfigData = std::nullopt;
     protect(networkProcess())->send(Messages::NetworkProcess::ClearProxyConfigData(m_sessionID), 0);
 }
 
