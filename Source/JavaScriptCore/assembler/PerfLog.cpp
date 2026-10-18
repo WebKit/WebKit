@@ -49,20 +49,6 @@
 #include <unistd.h>
 #endif
 
-#if OS(WINDOWS)
-#include <io.h>
-
-inline static int open(const char* filename, int oflag, int pmode)
-{
-    return _open(filename, oflag, pmode);
-}
-
-inline static FILE* fdopen(int fd, const char* mode)
-{
-    return _fdopen(fd, mode);
-}
-#endif
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {

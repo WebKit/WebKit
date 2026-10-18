@@ -102,6 +102,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 { }, /* request */
                 { }, /* invalidURLString */
                 std::nullopt, /* requester */
+                { }, /* pendingNavigateEventID */
             };
 
             auto userInitiatedActivity = API::UserInitiatedAction::create();
