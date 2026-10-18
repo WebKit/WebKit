@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -154,9 +154,6 @@ public:
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
-    bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
-    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
-
     static constexpr double defaultSpatialCameraFieldOfView = 80;
 
     double defaultYaw() const;
@@ -189,6 +186,12 @@ private:
     String imageSourceURL() const final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+
+    void runLazyLoadResumptionSteps() final;
+    void viewportIntersectionChanged() final;
+    bool tracksViewportIntersection() const final { return true; }
+    void loadDeferredPosterImage();
+    void resumePosterLoadIfAlreadyVisible();
 
     bool hasAvailableVideoFrame() const;
     void mediaPlayerFirstVideoFrameAvailable() final;
@@ -239,7 +242,6 @@ private:
     Vector<UniqueRef<VideoFrameRequest>> m_videoFrameRequests;
     Vector<UniqueRef<VideoFrameRequest>> m_servicedVideoFrameRequests;
     unsigned m_nextVideoFrameRequestIndex { 0 };
-    bool m_isIntersectingViewport { false };
 
 #if USE(GSTREAMER)
     bool m_enableGStreamerHolePunching { false };

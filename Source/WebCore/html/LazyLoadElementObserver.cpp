@@ -27,16 +27,21 @@
 #include "config.h"
 #include "LazyLoadElementObserver.h"
 
+#include "ElementInlines.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLNames.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
+#include "ScriptController.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringView.h>
 
 #if ENABLE(VIDEO)
-#include "HTMLVideoElement.h"
+#include "HTMLMediaElement.h"
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
@@ -46,6 +51,25 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadElementObserver);
+
+namespace LazyLoading {
+
+bool hasLazyAttributeValue(StringView attributeValue)
+{
+    return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
+}
+
+bool isLazyLoadable(const Element& element)
+{
+    // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#will-lazy-load-element-steps
+    RefPtr frame = element.document().frame();
+    if (!frame || !protect(frame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+        return false;
+
+    return hasLazyAttributeValue(element.attributeWithoutSynchronization(HTMLNames::loadingAttr));
+}
+
+} // namespace LazyLoading
 
 class LazyLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
@@ -72,7 +96,7 @@ private:
             else if (RefPtr element = dynamicDowncast<HTMLIFrameElement>(entry->target()))
                 element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
 #if ENABLE(VIDEO)
-            else if (RefPtr element = dynamicDowncast<HTMLVideoElement>(entry->target()))
+            else if (RefPtr element = dynamicDowncast<HTMLMediaElement>(entry->target()))
                 element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
 #endif
 #if ENABLE(MODEL_ELEMENT)
@@ -104,8 +128,22 @@ void LazyLoadElementObserver::observe(Element& element)
 
 void LazyLoadElementObserver::unobserve(Element& element, Document& document)
 {
-    if (auto& observer = document.lazyLoadElementObserver().m_observer)
+    CheckedPtr lazyLoadObserver = document.lazyLoadElementObserverIfExists();
+    if (!lazyLoadObserver)
+        return;
+    if (RefPtr observer = lazyLoadObserver->m_observer)
         observer->unobserve(element);
+}
+
+void LazyLoadElementObserver::unobserveIfLazyLoadOnly(Element& element, Document& document)
+{
+#if ENABLE(VIDEO)
+    // A <video> stays observed for its whole lifetime to drive accelerated rendering teardown
+    // (311380@main), so a finished poster load must not detach it.
+    if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(element); mediaElement && mediaElement->tracksViewportIntersection())
+        return;
+#endif
+    unobserve(element, document);
 }
 
 IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& document)
@@ -120,11 +158,6 @@ IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& do
         lazyInitialize(m_observer, observer.releaseReturnValue());
     }
     return m_observer.get();
-}
-
-bool LazyLoadElementObserver::isObserved(Element& element) const
-{
-    return m_observer && m_observer->isObserving(protect(element));
 }
 
 }
