@@ -440,6 +440,22 @@ file(GLOB_RECURSE WEBCORE_PLATFORM_SOURCES
     ${WEBCORE_DIR}/platform/mediastream/WKC/*.cpp
 )
 
+# A full in-process page engine must compile the WKC ResourceHandle bridge.
+# Modern WebKit's default ResourceHandle.cpp delegates networking to the
+# separate NetworkProcess, which this single-process Wii U port does not run.
+# Fail configuration rather than publishing an archive that can render local
+# content but cannot fetch the top-level document and its subresources.
+if (WKC_ENABLE_FULL_WEBCORE)
+    set(_WKC_RESOURCE_HANDLE_SOURCE "${WEBCORE_DIR}/platform/WKC/ResourceHandleWKC.cpp")
+    if (NOT EXISTS "${_WKC_RESOURCE_HANDLE_SOURCE}")
+        message(FATAL_ERROR "Full WebCore is enabled but the in-process WKC network backend is missing: ${_WKC_RESOURCE_HANDLE_SOURCE}")
+    endif ()
+    list(FIND WEBCORE_PLATFORM_SOURCES "${_WKC_RESOURCE_HANDLE_SOURCE}" _WKC_RESOURCE_HANDLE_SOURCE_INDEX)
+    if (_WKC_RESOURCE_HANDLE_SOURCE_INDEX EQUAL -1)
+        message(FATAL_ERROR "The in-process WKC network backend exists but is not selected for libWebKitWKC.a")
+    endif ()
+endif ()
+
 # GraphicsContext3DWKC.cpp is a legacy WebKit 4.3 adapter. It includes the
 # removed GraphicsContext3D.h and cannot be used by this modern WebCore build.
 # Do not compile the obsolete adapter when WebGL is disabled; WebGL may only be
