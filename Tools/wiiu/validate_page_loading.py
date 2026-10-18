@@ -74,15 +74,15 @@ if "if (WKC_ENABLE_FULL_WEBCORE)" not in cmake:
 # Compilation alone is insufficient: reject known compatibility shims that make
 # WebCore appear initialized while silently disabling its live network/cookie/TLS
 # management path. These are semantic failures even if every translation unit builds.
-view_without_comments = re.sub(r'/\\*.*?\\*/|//[^\\n]*', '', view, flags=re.S)
+view_without_comments = re.sub(r'/\*.*?\*/|//[^\n]*', '', view, flags=re.S)
 for pattern, description in (
-    (r'static\\s+ResourceHandleManager\\*\\s+sharedInstance\\s*\\(\\s*\\)\\s*\\{\\s*return\\s+nullptr\\s*;',
+    (r'static\s+ResourceHandleManager\*\s+sharedInstance\s*\(\s*\)\s*\{\s*return\s+nullptr\s*;',
      'ResourceHandleManager::sharedInstance always returns null'),
-    (r'static\\s+bool\\s+createSharedInstance\\s*\\(\\s*\\)\\s*\\{\\s*return\\s+true\\s*;',
+    (r'static\s+bool\s+createSharedInstance\s*\(\s*\)\s*\{\s*return\s+true\s*;',
      'ResourceHandleManager::createSharedInstance reports success without creating a manager'),
-    (r'void\\s+clearCookies\\s*\\(\\s*\\)\\s*\\{\\s*\\}',
+    (r'void\s+clearCookies\s*\(\s*\)\s*\{\s*\}',
      'cookie clearing is implemented as a no-op'),
-    (r'void\\s+CookieDeserialize\\s*\\([^)]*\\)\\s*\\{\\s*\\}',
+    (r'void\s+CookieDeserialize\s*\([^)]*\)\s*\{\s*\}',
      'cookie restoration is implemented as a no-op'),
 ):
     if re.search(pattern, view_without_comments):
