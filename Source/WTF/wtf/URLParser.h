@@ -139,7 +139,7 @@ private:
     enum class IPv4ParsingError;
     enum class IPv4PieceParsingError;
     template<typename CharacterTypeForSyntaxViolation, typename CharacterType> std::expected<IPv4Address, IPv4ParsingError> parseIPv4Host(const CodePointIterator<CharacterTypeForSyntaxViolation>&, CodePointIterator<CharacterType>);
-    template<typename CharacterType> std::expected<uint32_t, URLParser::IPv4PieceParsingError> parseIPv4Piece(CodePointIterator<CharacterType>&, bool& syntaxViolation);
+    template<typename CharacterType> std::expected<uint32_t, URLParser::IPv4PieceParsingError> LEGACY_NODELETE parseIPv4Piece(CodePointIterator<CharacterType>&, bool& syntaxViolation);
     using IPv6Address = std::array<uint16_t, 8>;
     template<typename CharacterType> std::optional<IPv6Address> parseIPv6Host(CodePointIterator<CharacterType>);
     template<typename CharacterType> std::optional<uint32_t> LEGACY_NODELETE parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>&);
@@ -156,6 +156,6 @@ private:
     bool LEGACY_NODELETE shouldPopPath(unsigned);
 };
 
-WTF_EXPORT_PRIVATE bool isForbiddenHostCodePoint(char16_t);
+WTF_EXPORT_PRIVATE bool LEGACY_NODELETE isForbiddenHostCodePoint(char16_t);
 
 }

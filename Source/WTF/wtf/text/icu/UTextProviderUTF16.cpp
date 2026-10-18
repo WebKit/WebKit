@@ -65,7 +65,7 @@ static inline UTextProviderContext LEGACY_NODELETE textUTF16ContextAwareGetCurre
     return text->chunkContents == text->p ? UTextProviderContext::PrimaryContext : UTextProviderContext::PriorContext;
 }
 
-static void textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+static void LEGACY_NODELETE textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->p);
     ASSERT_UNUSED(forward, forward ? nativeIndex >= text->b : nativeIndex > text->b);
@@ -83,14 +83,14 @@ static void textUTF16ContextAwareMoveInPrimaryContext(UText* text, int64_t nativ
     text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
-static void textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+static void LEGACY_NODELETE textUTF16ContextAwareSwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->q);
     text->chunkContents = static_cast<const char16_t*>(text->p);
     textUTF16ContextAwareMoveInPrimaryContext(text, nativeIndex, nativeLength, forward);
 }
 
-static void textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+static void LEGACY_NODELETE textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(text->chunkContents == text->q);
     ASSERT_UNUSED(forward, forward ? nativeIndex < text->b : nativeIndex <= text->b);
@@ -105,7 +105,7 @@ static void textUTF16ContextAwareMoveInPriorContext(UText* text, int64_t nativeI
     text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
-static void textUTF16ContextAwareSwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
+static void LEGACY_NODELETE textUTF16ContextAwareSwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
 {
     ASSERT(!text->chunkContents || text->chunkContents == text->p);
     text->chunkContents = static_cast<const char16_t*>(text->q);
@@ -122,7 +122,7 @@ static inline int64_t LEGACY_NODELETE uTextUTF16ContextAwareNativeLength(UText* 
     return text->a + text->b;
 }
 
-static UBool uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
+static UBool LEGACY_NODELETE uTextUTF16ContextAwareAccess(UText* text, int64_t nativeIndex, UBool forward)
 {
     if (!text->context)
         return false;

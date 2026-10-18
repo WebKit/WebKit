@@ -476,7 +476,7 @@ double Strtod(BufferReference<const char> buffer, int exponent) {
   }
 }
 
-static float SanitizedDoubletof(double d) {
+static float LEGACY_NODELETE SanitizedDoubletof(double d) {
   ASSERT(d >= 0.0);
   // ASAN has a sanitize check that disallows casting doubles to floats if
   // they are too big.

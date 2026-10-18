@@ -173,8 +173,8 @@ private:
     }
     
     WTF_EXPORT_PRIVATE bool addSlow(Table* table, unsigned mask, unsigned startIndex, unsigned index, void* ptr);
-    WTF_EXPORT_PRIVATE bool containsImplSlow(void* ptr) const;
-    WTF_EXPORT_PRIVATE size_t sizeSlow() const;
+    WTF_EXPORT_PRIVATE bool LEGACY_NODELETE containsImplSlow(void* ptr) const;
+    WTF_EXPORT_PRIVATE size_t LEGACY_NODELETE sizeSlow() const;
 
     void resizeIfNecessary();
     bool resizeAndAdd(void* ptr);

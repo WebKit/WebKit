@@ -327,7 +327,7 @@ IGNORE_CLANG_WARNINGS_END
     }
 }
 
-void unlockHashtable(const Vector<Bucket*>& buckets)
+void LEGACY_NODELETE unlockHashtable(const Vector<Bucket*>& buckets)
 {
 IGNORE_CLANG_WARNINGS_BEGIN("thread-safety")
     for (Bucket* bucket : buckets)

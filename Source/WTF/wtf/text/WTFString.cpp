@@ -553,7 +553,7 @@ double charactersToFixedDouble(std::span<const char16_t> data, bool* ok)
     return toDoubleType<char16_t, TrailingJunkPolicy::Disallow, WhitespacePolicy::Preserve, ParseMode::Fixed>(data, ok, parsedLength);
 }
 
-static inline float doubleToFloatCheckingOverflow(double number, bool* isValid)
+static inline float LEGACY_NODELETE doubleToFloatCheckingOverflow(double number, bool* isValid)
 {
     float result = static_cast<float>(number);
     if (isValid && *isValid && std::isfinite(number) && !std::isfinite(result))

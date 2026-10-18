@@ -494,8 +494,8 @@ constexpr UInt128Impl operator>>(UInt128Impl lhs, int amount);
 constexpr UInt128Impl operator+(UInt128Impl lhs, UInt128Impl rhs);
 constexpr UInt128Impl operator-(UInt128Impl lhs, UInt128Impl rhs);
 constexpr UInt128Impl operator*(UInt128Impl lhs, UInt128Impl rhs);
-WTF_EXPORT_PRIVATE UInt128Impl operator/(UInt128Impl lhs, UInt128Impl rhs);
-WTF_EXPORT_PRIVATE UInt128Impl operator%(UInt128Impl lhs, UInt128Impl rhs);
+WTF_EXPORT_PRIVATE UInt128Impl LEGACY_NODELETE operator/(UInt128Impl lhs, UInt128Impl rhs);
+WTF_EXPORT_PRIVATE UInt128Impl LEGACY_NODELETE operator%(UInt128Impl lhs, UInt128Impl rhs);
 
 inline UInt128Impl& UInt128Impl::operator<<=(int amount) {
   *this = *this << amount;
@@ -830,8 +830,8 @@ constexpr Int128Impl operator-(Int128Impl v);
 constexpr Int128Impl operator+(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator-(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator*(Int128Impl lhs, Int128Impl rhs);
-WTF_EXPORT_PRIVATE Int128Impl operator/(Int128Impl lhs, Int128Impl rhs);
-WTF_EXPORT_PRIVATE Int128Impl operator%(Int128Impl lhs, Int128Impl rhs);
+WTF_EXPORT_PRIVATE Int128Impl LEGACY_NODELETE operator/(Int128Impl lhs, Int128Impl rhs);
+WTF_EXPORT_PRIVATE Int128Impl LEGACY_NODELETE operator%(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator|(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator&(Int128Impl lhs, Int128Impl rhs);
 constexpr Int128Impl operator^(Int128Impl lhs, Int128Impl rhs);

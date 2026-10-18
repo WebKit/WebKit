@@ -43,7 +43,7 @@ public:
     size_t length() const { return m_buffer.size(); }
     size_t currentOffset() const { return static_cast<size_t>(std::distance(m_buffer.begin(), m_bufferPosition)); }
     
-    [[nodiscard]] WTF_EXPORT_PRIVATE bool rewind(size_t);
+    [[nodiscard]] WTF_EXPORT_PRIVATE bool LEGACY_NODELETE rewind(size_t);
 
     [[nodiscard]] WTF_EXPORT_PRIVATE bool verifyChecksum();
 
@@ -93,7 +93,7 @@ public:
     [[nodiscard]] WTF_EXPORT_PRIVATE std::span<const uint8_t> bufferPointerForDirectRead(size_t numBytes);
 
 private:
-    [[nodiscard]] WTF_EXPORT_PRIVATE bool bufferIsLargeEnoughToContain(size_t) const;
+    [[nodiscard]] WTF_EXPORT_PRIVATE bool LEGACY_NODELETE bufferIsLargeEnoughToContain(size_t) const;
     template<typename Type> Decoder& decodeNumber(std::optional<Type>&);
 
     const std::span<const uint8_t> m_buffer;

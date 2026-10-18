@@ -142,12 +142,12 @@ public:
         return *this = *this - other;
     }
     
-    WTF_EXPORT_PRIVATE Seconds operator-(const TimeWithDynamicClockType&) const;
+    WTF_EXPORT_PRIVATE Seconds LEGACY_NODELETE operator-(const TimeWithDynamicClockType&) const;
     
     friend bool operator==(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&) = default;
     
     // To do relative comparisons, you must be using times with the same clock type.
-    WTF_EXPORT_PRIVATE friend std::partial_ordering operator<=>(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&);
+    WTF_EXPORT_PRIVATE friend std::partial_ordering LEGACY_NODELETE operator<=>(const TimeWithDynamicClockType&, const TimeWithDynamicClockType&);
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
