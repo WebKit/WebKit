@@ -1,0 +1,1 @@
+PASS: highlight style change scheduled a repaint

@@ -30,6 +30,7 @@
 #include "BreakablePositions.h"
 #include "DocumentMarkerController.h"
 #include "DocumentView.h"
+#include "ElementInlines.h"
 #include "FloatQuad.h"
 #include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
@@ -56,9 +57,13 @@
 #include "RenderSVGInlineText.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePendingResources.h"
+#include "StyleResolver.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "Text.h"
 #include "TextResourceDecoder.h"
@@ -478,6 +483,31 @@ ASCIILiteral RenderText::renderName() const
 Text* LEGACY_NODELETE RenderText::textNode() const
 {
     return downcast<Text>(RenderObject::node());
+}
+
+const Style::ComputedStyle* RenderText::highlightPseudoStyle(const AtomString& name) const
+{
+    Style::PseudoElementIdentifier identifier { PseudoElementType::Highlight, name };
+    // The anonymous ::first-letter fragment has no Text node of its own, but its hit-test node is the original Text.
+    RefPtr text = dynamicDowncast<Text>(nodeForHitTest());
+    RefPtr element = text ? text->parentElementInComposedTree() : nullptr;
+    if (!element || !element->hasDisplayContents())
+        return lazyPseudoElementStyle(identifier);
+
+    // A boxless originating element cannot be found by walking render ancestors.
+    CheckedPtr originatingStyle = element->mutableDisplayContentsStyle();
+    if (!originatingStyle || !originatingStyle->hasPseudoStyle(PseudoElementType::Highlight))
+        return nullptr;
+    if (auto* cachedStyle = originatingStyle->pseudoElementStyle(identifier))
+        return cachedStyle;
+
+    Ref styleResolver = element->styleResolver();
+    auto resolvedStyle = styleResolver->styleForPseudoElement(*element, identifier, { .parentStyle = originatingStyle.get() });
+    if (!resolvedStyle)
+        return nullptr;
+
+    Style::loadPendingResources(*resolvedStyle->style, protect(document()), element.get());
+    return originatingStyle->addPseudoElementStyle(WTF::move(resolvedStyle->style));
 }
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
