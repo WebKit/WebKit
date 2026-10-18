@@ -86,7 +86,6 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
 {
     if (name == SVGNames::targetAttr) {
         Ref { m_target }->setBaseValInternal(newValue);
-        return;
     } else if (name == SVGNames::relAttr) {
         m_linkRelations = relationsForRelAttribute(newValue);
         if (m_relList)
@@ -102,6 +101,11 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         setIsLink(!href().isNull() && !shouldProhibitLinks(this));
+        return;
+    }
+
+    if (attrName == SVGNames::targetAttr) {
+        InstanceInvalidationGuard guard(*this);
         return;
     }
 
