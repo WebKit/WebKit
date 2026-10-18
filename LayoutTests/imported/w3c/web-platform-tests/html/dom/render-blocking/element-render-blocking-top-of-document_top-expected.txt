@@ -1,0 +1,3 @@
+
+PASS rel=expect blocks for the top-of-document value from #top
+

@@ -1,4 +1,6 @@
-abcdef
+abc
+def
+jkl
 
 PASS text-transform applied to child element ("<div id='target'><div id='child'>abc")
 PASS text-transform applied to parent element ("<div id='parent'><div id='target'>abc")
@@ -7,4 +9,6 @@ PASS display: none applied to parent element ("<div id='parent'>invisible<div id
 PASS insert node into sub-tree ("<div id='target'>abc")
 PASS remove node from sub-tree ("<div id='target'>abc<div id='remove'>def")
 PASS insert whole sub-tree ("<div id='target'>")
+PASS change text on last line of multi-line inline ("<span id='target'>abc<br>def<br><span id='child'>ghi</span></span>")
+PASS change text in reflow root on last line of multi-line inline ("<span id='target'>abc<br>def<br><span id='child' style='display: inline-block; contain: size layout; width: 50px; height: 20px'>ghi</span></span>")
 

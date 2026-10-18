@@ -3641,6 +3641,15 @@
     "imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-041.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-form-stack-removal.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-insert-named-anchor.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-top-of-document.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/beforematch-scroll-to-text-fragment.html": [
         "slow"
     ],
