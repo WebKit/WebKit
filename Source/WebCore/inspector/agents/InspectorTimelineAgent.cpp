@@ -613,11 +613,56 @@ bool InspectorTimelineAgent::shouldNestUnder(TimelineRecordType type, TimelineRe
         switch (previousType) {
         case TimelineRecordType::EvaluateScript:
         case TimelineRecordType::FunctionCall:
+        case TimelineRecordType::RenderingFrame:
             return true;
-        default:
+        case TimelineRecordType::EventDispatch:
+        case TimelineRecordType::ScheduleStyleRecalculation:
+        case TimelineRecordType::RecalculateStyles:
+        case TimelineRecordType::InvalidateLayout:
+        case TimelineRecordType::ScheduleLayout:
+        case TimelineRecordType::Layout:
+        case TimelineRecordType::Paint:
+        case TimelineRecordType::Composite:
+        case TimelineRecordType::TimerInstall:
+        case TimelineRecordType::TimerRemove:
+        case TimelineRecordType::TimerFire:
+        case TimelineRecordType::TimeStamp:
+        case TimelineRecordType::Time:
+        case TimelineRecordType::TimeEnd:
+        case TimelineRecordType::ProbeSample:
+        case TimelineRecordType::ConsoleProfile:
+        case TimelineRecordType::RequestAnimationFrame:
+        case TimelineRecordType::CancelAnimationFrame:
+        case TimelineRecordType::FireAnimationFrame:
+        case TimelineRecordType::ObserverCallback:
+        case TimelineRecordType::FirstContentfulPaint:
+        case TimelineRecordType::LargestContentfulPaint:
+        case TimelineRecordType::Screenshot:
             return false;
         }
-    default:
+    case TimelineRecordType::Paint:
+        return previousType == TimelineRecordType::Paint || previousType == TimelineRecordType::RenderingFrame;
+    case TimelineRecordType::ScheduleStyleRecalculation:
+    case TimelineRecordType::RecalculateStyles:
+    case TimelineRecordType::InvalidateLayout:
+    case TimelineRecordType::ScheduleLayout:
+    case TimelineRecordType::Layout:
+    case TimelineRecordType::Composite:
+    case TimelineRecordType::TimerInstall:
+    case TimelineRecordType::TimerRemove:
+    case TimelineRecordType::EvaluateScript:
+    case TimelineRecordType::ProbeSample:
+    case TimelineRecordType::RequestAnimationFrame:
+    case TimelineRecordType::CancelAnimationFrame:
+    case TimelineRecordType::FirstContentfulPaint:
+    case TimelineRecordType::LargestContentfulPaint:
+        return previousType == TimelineRecordType::RenderingFrame;
+    case TimelineRecordType::RenderingFrame:
+    case TimelineRecordType::TimeStamp:
+    case TimelineRecordType::Time:
+    case TimelineRecordType::TimeEnd:
+    case TimelineRecordType::ConsoleProfile:
+    case TimelineRecordType::Screenshot:
         return false;
     }
 }
@@ -627,6 +672,14 @@ void InspectorTimelineAgent::addRecordToTimeline(Ref<JSON::Object>&& record, Tim
     record->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(toProtocol(type)));
 
     const TimelineRecordEntry* previousEntry = m_recordStack.isEmpty() ? nullptr : &m_recordStack.last();
+    if (previousEntry && !shouldNestUnder(type, previousEntry->type)) {
+        // Flatten unrelated records into their rendering frame.
+        auto frameIndex = m_recordStack.reverseFindIf([](auto& entry) {
+            return entry.type == TimelineRecordType::RenderingFrame;
+        });
+        previousEntry = frameIndex != notFound ? &m_recordStack[frameIndex] : nullptr;
+    }
+
     if (previousEntry && shouldNestUnder(type, previousEntry->type)) {
         // Nested paint records are an implementation detail and add no information not already contained in the parent.
         if (type == TimelineRecordType::Paint && previousEntry->type == type)

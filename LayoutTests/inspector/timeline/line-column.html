@@ -41,7 +41,7 @@ function test()
     InspectorProtocol.sendCommand("Timeline.enable");
 
     // To avoid flakiness print only events that we always expect.
-    const eventAllowlist = new Set(["RenderingFrame", "ConsoleProfile", "EventDispatch", "FunctionCall"]);
+    const eventAllowlist = new Set(["ConsoleProfile", "EventDispatch", "FunctionCall"]);
 
     // The inspector injected script call frame(s) have different line numbers between release and debug builds. We only
     // want to filter those values for those specific call frames in order to ensure other line/column numbers remain stable.
@@ -87,6 +87,15 @@ function test()
             description,
             test(resolve, reject) {
                 let eventNames = [];
+                let records = [];
+
+                function collectRecord(record) {
+                    if (record.type === "RenderingFrame") {
+                        for (let child of record.children)
+                            collectRecord(child);
+                    } else if (eventAllowlist.has(record.type))
+                        records.push(record);
+                }
 
                 function handleEvent(eventName, handler) {
                     eventNames.push(eventName);
@@ -94,7 +103,7 @@ function test()
                 }
 
                 handleEvent("Timeline.eventRecorded", (event) => {
-                    ProtocolTest.log(JSON.stringify(event.params.record, replacer, 2));
+                    collectRecord(event.params.record);
                 });
 
                 handleEvent("Timeline.recordingStarted", () => {
@@ -102,6 +111,10 @@ function test()
                 });
 
                 handleEvent("Timeline.recordingStopped", () => {
+                    records.sort((a, b) => a.endTime - b.endTime);
+                    for (let record of records)
+                        ProtocolTest.log(JSON.stringify(record, replacer, 2));
+
                     ProtocolTest.pass("Capturing stopped.");
 
                     for (let eventName of eventNames)

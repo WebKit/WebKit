@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function renderFrames()
+{
+    let callbackIdentifiers = [];
+    let widths = [];
+    let target = document.getElementById("target");
+
+    function update()
+    {
+        target.style.width = `${101 + widths.length}px`;
+        widths.push(target.offsetWidth);
+
+        if (widths.length < 3)
+            callbackIdentifiers.push(requestAnimationFrame(update));
+        else {
+            setTimeout(() => {
+                savePageData({callbackIdentifiers, widths});
+                console.timeStamp("finished-frames");
+            }, 0);
+        }
+    }
+
+    callbackIdentifiers.push(requestAnimationFrame(update));
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.RenderingFrame");
+
+    WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout, WI.TimelineRecord.Type.Script, WI.TimelineRecord.Type.RenderingFrame];
+
+    for (let name of ["FirstCapture", "SecondCapture"]) {
+        suite.addTestCase({
+            name: `TimelineEvent.RenderingFrame.${name}`,
+            async test() {
+                let data = await InspectorTest.TimelineEvent.captureTimelineWithMarker({
+                    expression: "renderFrames()",
+                    silent: true,
+                });
+                InspectorTest.expectEqual(data.callbackIdentifiers.length, 3, "The page should complete three animation callbacks.");
+                InspectorTest.expectEqual(data.widths.join(","), "101,102,103", "Every animation callback should force layout.");
+
+                let recording = WI.timelineManager.activeRecording;
+                let frames = recording.timelines.get(WI.TimelineRecord.Type.RenderingFrame).records;
+                InspectorTest.expectGreaterThan(frames.length, 1, "The backend should produce multiple rendering frame records.");
+                InspectorTest.expectTrue(frames.every((frame) => frame.children.length && frame.endTime >= frame.startTime), "Every rendering frame should contain completed work.");
+                InspectorTest.expectTrue(frames.every((frame, index) => frame.frameIndex === index), "Rendering frame indices should start at zero and increase consecutively.");
+                InspectorTest.expectTrue(frames.every((frame, index) => !index || frame.startTime >= frames[index - 1].endTime), "Successive rendering frames should not overlap.");
+
+                let scripts = recording.timelines.get(WI.TimelineRecord.Type.Script).records;
+                let callbacks = scripts.filter((record) => record.eventType === WI.ScriptTimelineRecord.EventType.AnimationFrameFired && data.callbackIdentifiers.includes(record.details));
+                InspectorTest.expectEqual(callbacks.length, 3, "Every requested animation callback should have a Script record.");
+                InspectorTest.expectTrue(callbacks.every((record) => record.parent instanceof WI.RenderingFrameTimelineRecord && record.parent.children.includes(record)), "Animation callbacks should belong to their rendering frames.");
+
+                let layouts = recording.timelines.get(WI.TimelineRecord.Type.Layout).records.filter((record) => record.eventType === WI.LayoutTimelineRecord.EventType.ForcedLayout);
+                InspectorTest.expectGreaterThan(layouts.length, 1, "The backend should record the forced layouts.");
+                InspectorTest.expectTrue(layouts.every((record) => record.parent instanceof WI.RenderingFrameTimelineRecord && record.parent.children.includes(record)), "Forced layouts inside script should remain in their rendering frames.");
+                InspectorTest.expectTrue(frames.every((frame) => frame.children.every((record) => record.type === WI.TimelineRecord.Type.Script || record.type === WI.TimelineRecord.Type.Layout)), "Rendering frame tasks should contain only Script and Layout records.");
+                InspectorTest.expectTrue(frames.every((frame) => Object.values(WI.RenderingFrameTimelineRecord.TaskType).every((type) => Number.isFinite(frame.durationForTask(type)))), "Rendering frame task durations should be finite.");
+                InspectorTest.expectTrue(callbacks.every((record) => record.parent.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Script) > 0 && record.parent.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Layout) > 0), "Animation frames should account for both script and layout work.");
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+<style>
+#target { width: 100px; height: 100px; background: green; }
+</style>
+</head>
+<body onload="runTest()">
+<p>Tests that backend rendering frames retain animation callbacks and forced layouts across repeated captures.</p>
+<div id="target"></div>
+</body>
+</html>
