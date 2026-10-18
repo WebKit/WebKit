@@ -1,0 +1,21 @@
+Test storing non-extractable X25519 keys in IndexedDB, and retrieving them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS retrievedPrivateKey instanceof CryptoKey is true
+PASS retrievedPrivateKey.type is 'private'
+PASS retrievedPrivateKey.extractable is false
+PASS retrievedPrivateKey.algorithm.name is 'X25519'
+PASS retrievedPrivateKey.usages is ["deriveBits"]
+PASS retrievedPublicKey instanceof CryptoKey is true
+PASS retrievedPublicKey.type is 'public'
+PASS retrievedPublicKey.extractable is true
+PASS retrievedPublicKey.algorithm.name is 'X25519'
+PASS retrievedPublicKey.usages is []
+PASS actualBitsHex is expectedBitsHex
+PASS peerBitsHex is expectedBitsHex
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
