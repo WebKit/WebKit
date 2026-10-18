@@ -90,6 +90,8 @@ public:
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
+    void startIdleTerminationTimerIfNeeded();
+
     std::optional<SharedPreferencesForWebProcess> LEGACY_NODELETE sharedPreferencesForWebProcess() const;
 
 private:

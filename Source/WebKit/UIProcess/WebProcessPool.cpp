@@ -534,6 +534,7 @@ void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProc
         automationSession->terminate();
 
     terminateServiceWorkers();
+    terminateSharedWorkers();
 }
 
 void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, ProcessTerminationReason reason)
@@ -1957,6 +1958,17 @@ void WebProcessPool::terminateServiceWorkers()
     });
     for (Ref serviceWorkerProcess : serviceWorkerProcesses)
         serviceWorkerProcess->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
+}
+
+void WebProcessPool::terminateSharedWorkers()
+{
+    Vector<Ref<WebProcessProxy>> sharedWorkerProcesses;
+    remoteWorkerProcesses().forEach([&](auto& process) {
+        if (process.isRunningSharedWorkers() && &process.processPool() == this)
+            sharedWorkerProcesses.append(process);
+    });
+    for (auto& sharedWorkerProcess : sharedWorkerProcesses)
+        sharedWorkerProcess->disableRemoteWorkers(RemoteWorkerType::SharedWorker);
 }
 
 void WebProcessPool::updateAutomationCapabilities() const
