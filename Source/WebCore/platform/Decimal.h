@@ -101,15 +101,15 @@ public:
     constexpr Decimal(int32_t = 0);
     constexpr Decimal(Sign, int exponent, uint64_t coefficient);
 
-    Decimal& operator+=(const Decimal&);
-    Decimal& operator-=(const Decimal&);
+    Decimal& LEGACY_NODELETE operator+=(const Decimal&);
+    Decimal& LEGACY_NODELETE operator-=(const Decimal&);
     Decimal& LEGACY_NODELETE operator*=(const Decimal&);
     Decimal& LEGACY_NODELETE operator/=(const Decimal&);
 
     Decimal LEGACY_NODELETE operator-() const;
 
-    Decimal operator+(const Decimal&) const;
-    Decimal operator-(const Decimal&) const;
+    Decimal LEGACY_NODELETE operator+(const Decimal&) const;
+    Decimal LEGACY_NODELETE operator-(const Decimal&) const;
     Decimal LEGACY_NODELETE operator*(const Decimal&) const;
     Decimal LEGACY_NODELETE operator/(const Decimal&) const;
 
@@ -130,7 +130,7 @@ public:
     Decimal LEGACY_NODELETE abs() const;
     Decimal LEGACY_NODELETE ceil() const;
     Decimal LEGACY_NODELETE floor() const;
-    Decimal remainder(const Decimal&) const;
+    Decimal LEGACY_NODELETE remainder(const Decimal&) const;
     Decimal LEGACY_NODELETE round() const;
 
     double toDouble() const;
@@ -172,9 +172,9 @@ private:
     };
 
     Decimal(double);
-    WEBCORE_EXPORT Decimal compareTo(const Decimal&) const;
+    WEBCORE_EXPORT Decimal LEGACY_NODELETE compareTo(const Decimal&) const;
 
-    static AlignedOperands alignOperands(const Decimal& lhs, const Decimal& rhs);
+    static AlignedOperands LEGACY_NODELETE alignOperands(const Decimal& lhs, const Decimal& rhs);
     static inline Sign invertSign(Sign sign) { return sign == Negative ? Positive : Negative; }
 
     Sign sign() const { return m_data.sign(); }

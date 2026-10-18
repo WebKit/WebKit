@@ -49,7 +49,7 @@ class WEBCORE_EXPORT MediaSessionManagerCocoa
     WTF_MAKE_TZONE_ALLOCATED(MediaSessionManagerCocoa);
 public:
 #if PLATFORM(MAC)
-    static Ref<MediaSessionManagerCocoa> create(PageIdentifier);
+    static Ref<MediaSessionManagerCocoa> LEGACY_NODELETE create(PageIdentifier);
 #endif
 
     // NowPlayingManagerClient.

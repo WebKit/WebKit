@@ -59,7 +59,7 @@ namespace WebCore {
 
 static constexpr Seconds defaultResourceLoadTimeout = 10_s;
 
-static Seconds resourceLoadTimeout()
+static Seconds LEGACY_NODELETE resourceLoadTimeout()
 {
     if (auto milliseconds = DeprecatedGlobalSettings::mediaResourceLoadTimeoutForTesting())
         return Seconds::fromMilliseconds(milliseconds);

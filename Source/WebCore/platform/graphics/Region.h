@@ -98,7 +98,7 @@ public:
         static Shape intersectShapes(const Shape& shape1, const Shape& shape2);
         static Shape subtractShapes(const Shape& shape1, const Shape& shape2);
 
-        WEBCORE_EXPORT void translate(const IntSize&);
+        WEBCORE_EXPORT void LEGACY_NODELETE translate(const IntSize&);
 
         struct CompareContainsOperation;
         struct CompareIntersectsOperation;
@@ -123,7 +123,7 @@ public:
         void appendSpan(int y, std::span<const int> segments);
         void appendSpans(const Shape&, std::span<const Span> spans);
 
-        bool canCoalesce(std::span<const int> segments);
+        bool LEGACY_NODELETE canCoalesce(std::span<const int> segments);
 
         Vector<int, 32> m_segments;
         Vector<Span, 16> m_spans;

@@ -204,7 +204,7 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingPsshBox();
     WEBCORE_EXPORT ~ISOFairPlayStreamingPsshBox();
 
-    WEBCORE_EXPORT static const SystemID& fairPlaySystemID();
+    WEBCORE_EXPORT static const SystemID& LEGACY_NODELETE fairPlaySystemID();
 
     const ISOFairPlayStreamingInitDataBox& initDataBox() const LIFETIME_BOUND { return m_initDataBox; }
     ISOFairPlayStreamingInitDataBox& initDataBox() LIFETIME_BOUND { return m_initDataBox; }

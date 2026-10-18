@@ -64,11 +64,11 @@ public:
     uint32_t LEGACY_NODELETE formatFlags() const;
 
     bool operator==(const CAAudioStreamDescription& other) const { return operator==(static_cast<const AudioStreamDescription&>(other)); }
-    bool operator==(const AudioStreamBasicDescription&) const;
+    bool LEGACY_NODELETE operator==(const AudioStreamBasicDescription&) const;
     bool operator==(const AudioStreamDescription&) const;
 
     const AudioStreamBasicDescription& LEGACY_NODELETE streamDescription() const LIFETIME_BOUND;
-    AudioStreamBasicDescription& streamDescription() LIFETIME_BOUND;
+    AudioStreamBasicDescription& LEGACY_NODELETE streamDescription() LIFETIME_BOUND;
 
 private:
     AudioStreamBasicDescription m_streamDescription;

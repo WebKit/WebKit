@@ -210,7 +210,7 @@ public:
 private:
     bool operator==(const FilterOperation&) const override;
 
-    double passthroughAmount() const;
+    double LEGACY_NODELETE passthroughAmount() const;
 
     BasicComponentTransferFilterOperation(double amount, Type type)
         : FilterOperation(type)

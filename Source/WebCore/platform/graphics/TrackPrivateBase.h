@@ -109,8 +109,8 @@ protected:
     };
     using SharedDispatcher = Shared<TrackPrivateBaseClient::Dispatcher>;
 
-    bool hasClients() const;
-    bool hasOneClient() const;
+    bool LEGACY_NODELETE hasClients() const;
+    bool LEGACY_NODELETE hasOneClient() const;
     mutable Lock m_lock;
     using ClientRecord = std::tuple<RefPtr<SharedDispatcher>, WeakPtr<TrackPrivateBaseClient>, bool /* is main thread */>;
     Vector<ClientRecord> m_clients WTF_GUARDED_BY_LOCK(m_lock);

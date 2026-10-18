@@ -46,7 +46,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRFilter);
 constexpr int bufferLength = 32;
 static_assert(bufferLength >= IIRFilter::maxOrder + 1, "Internal IIR buffer length must be greater than maximum IIR Filter order.");
 
-static std::complex<double> evaluatePolynomial(std::span<const double> coefficients, std::complex<double> z, int order)
+static std::complex<double> LEGACY_NODELETE evaluatePolynomial(std::span<const double> coefficients, std::complex<double> z, int order)
 {
     // Use Horner's method to evaluate the polynomial P(z) = sum(coef[k]*z^k, k, 0, order);
     std::complex<double> result = 0;

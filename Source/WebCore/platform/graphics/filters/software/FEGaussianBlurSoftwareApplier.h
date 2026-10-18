@@ -57,10 +57,10 @@ private:
     static inline void LEGACY_NODELETE kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, int& deltaRight);
 
     static inline void LEGACY_NODELETE boxBlurAlphaOnly(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize);
-    static inline void boxBlur(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
+    static inline void LEGACY_NODELETE boxBlur(const PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType);
 
     static inline void boxBlurAccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight);
-    static inline void boxBlurUnaccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
+    static inline void LEGACY_NODELETE boxBlurUnaccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
 
     static inline void boxBlurGeneric(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType);
     static inline void boxBlurWorker(ApplyParameters*);

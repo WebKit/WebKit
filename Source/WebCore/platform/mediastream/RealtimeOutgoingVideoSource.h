@@ -52,7 +52,7 @@ class RealtimeOutgoingVideoSource
 #endif
 {
 public:
-    static Ref<RealtimeOutgoingVideoSource> create(Ref<MediaStreamTrackPrivate>&& videoSource);
+    static Ref<RealtimeOutgoingVideoSource> LEGACY_NODELETE create(Ref<MediaStreamTrackPrivate>&& videoSource);
     ~RealtimeOutgoingVideoSource();
 
     void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }

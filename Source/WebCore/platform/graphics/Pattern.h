@@ -67,7 +67,7 @@ struct PatternParameters {
 class Pattern final : public ThreadSafeRefCounted<Pattern> {
 public:
     using Parameters = PatternParameters;
-    WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
+    WEBCORE_EXPORT static Ref<Pattern> LEGACY_NODELETE create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
     WEBCORE_EXPORT const SourceImage& LEGACY_NODELETE tileImage() const;

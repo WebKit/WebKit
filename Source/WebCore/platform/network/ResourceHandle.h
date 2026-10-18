@@ -151,7 +151,7 @@ public:
     WEBCORE_EXPORT void setDefersLoading(bool);
 
     WEBCORE_EXPORT ResourceRequest& LEGACY_NODELETE firstRequest();
-    WEBCORE_EXPORT const ResourceRequest& firstRequest() const;
+    WEBCORE_EXPORT const ResourceRequest& LEGACY_NODELETE firstRequest() const;
     const String& LEGACY_NODELETE lastHTTPMethod() const;
 
     void failureTimerFired();

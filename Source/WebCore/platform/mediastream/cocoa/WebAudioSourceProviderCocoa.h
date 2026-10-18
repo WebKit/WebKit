@@ -66,10 +66,10 @@ public:
     WEBCORE_EXPORT void setPlaybackRate(double);
     double playbackRate() const { return m_playbackRate; }
 
-    WEBCORE_EXPORT void setPreservesPitch(bool);
+    WEBCORE_EXPORT void LEGACY_NODELETE setPreservesPitch(bool);
     bool preservesPitch() const { return m_preservesPitch; }
 
-    WEBCORE_EXPORT void setVolume(double);
+    WEBCORE_EXPORT void LEGACY_NODELETE setVolume(double);
     double volume() const { return m_volume; }
 
     WEBCORE_EXPORT void audioStorageChanged(std::unique_ptr<CARingBuffer>&&, const AudioStreamDescription&);

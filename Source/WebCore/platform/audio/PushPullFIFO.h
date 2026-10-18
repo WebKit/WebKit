@@ -52,7 +52,7 @@ public:
     //  - In case of overflow (FIFO full while push), the existing frames in FIFO
     //    will be overwritten and |indexRead| will be forcibly moved to
     //    |indexWrite| to avoid reading overwritten frames.
-    WEBCORE_EXPORT void push(const AudioBus& inputBus);
+    WEBCORE_EXPORT void LEGACY_NODELETE push(const AudioBus& inputBus);
 
     // Pulls |framesRequested| by the audio device thread and returns the actual
     // number of frames to be rendered by the source. (i.e. WebAudio graph)

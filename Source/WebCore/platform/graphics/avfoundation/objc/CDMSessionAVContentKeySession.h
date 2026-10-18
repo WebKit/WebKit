@@ -106,7 +106,7 @@ private:
     bool hasContentKeySession() const { return !!m_contentKeySession; }
     RetainPtr<AVContentKeySession> contentKeySession();
 
-    bool hasContentKeyRequest() const;
+    bool LEGACY_NODELETE hasContentKeyRequest() const;
     RetainPtr<AVContentKeyRequest> contentKeyRequest() const;
 
     WeakPtr<LegacyCDMPrivateAVFObjC> m_cdm;

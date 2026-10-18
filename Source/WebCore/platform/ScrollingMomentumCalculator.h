@@ -78,7 +78,7 @@ private:
 
     void LEGACY_NODELETE initializeInterpolationCoefficientsIfNecessary();
     void LEGACY_NODELETE initializeSnapProgressCurve();
-    float animationProgressAfterElapsedTime(Seconds) const;
+    float LEGACY_NODELETE animationProgressAfterElapsedTime(Seconds) const;
 
     FloatPoint LEGACY_NODELETE linearlyInterpolatedOffsetAtProgress(float progress);
     FloatPoint LEGACY_NODELETE cubicallyInterpolatedOffsetAtProgress(float progress) const;

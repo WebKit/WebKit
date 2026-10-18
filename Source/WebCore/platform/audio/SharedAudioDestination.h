@@ -38,7 +38,7 @@ class SharedAudioDestinationAdapter;
 class SharedAudioDestination final : public AudioDestination, public ThreadSafeRefCounted<SharedAudioDestination, WTF::DestructionThread::Main> {
 public:
     using AudioDestinationCreationFunction = Function<Ref<AudioDestination>(const CreationOptions&)>;
-    WEBCORE_EXPORT static Ref<SharedAudioDestination> create(const CreationOptions&, AudioDestinationCreationFunction&&);
+    WEBCORE_EXPORT static Ref<SharedAudioDestination> LEGACY_NODELETE create(const CreationOptions&, AudioDestinationCreationFunction&&);
     WEBCORE_EXPORT virtual ~SharedAudioDestination();
 
     void ref() const final { return ThreadSafeRefCounted::ref(); }

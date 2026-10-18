@@ -186,7 +186,7 @@ private:
 
 };
 
-IntPoint determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot = std::nullopt);
+IntPoint LEGACY_NODELETE determineHotSpot(const IntSize& imageSize, std::optional<IntPoint> specifiedHotSpot, std::optional<IntPoint> intrinsicHotSpot = std::nullopt);
 
 WEBCORE_EXPORT const Cursor& LEGACY_NODELETE pointerCursor();
 const Cursor& LEGACY_NODELETE crossCursor();

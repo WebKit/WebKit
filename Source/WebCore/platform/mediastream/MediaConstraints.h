@@ -636,9 +636,9 @@ public:
     WEBCORE_EXPORT void set(MediaConstraintType, std::optional<StringConstraint>&&);
     void set(MediaConstraintType, const MediaConstraint&);
 
-    void merge(MediaConstraintType, const IntConstraint&);
-    void merge(MediaConstraintType, const DoubleConstraint&);
-    void merge(MediaConstraintType, const BooleanConstraint&);
+    void LEGACY_NODELETE merge(MediaConstraintType, const IntConstraint&);
+    void LEGACY_NODELETE merge(MediaConstraintType, const DoubleConstraint&);
+    void LEGACY_NODELETE merge(MediaConstraintType, const BooleanConstraint&);
     void merge(MediaConstraintType, const StringConstraint&);
     void merge(MediaConstraintType, const MediaConstraint&);
 

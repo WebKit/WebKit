@@ -43,7 +43,7 @@ struct IncompleteMetaDataCue {
 class InbandMetadataTextTrackPrivateAVF : public InbandTextTrackPrivate {
     WTF_MAKE_TZONE_ALLOCATED(InbandMetadataTextTrackPrivateAVF);
 public:
-    static Ref<InbandMetadataTextTrackPrivateAVF> create(Kind, TrackID, CueFormat);
+    static Ref<InbandMetadataTextTrackPrivateAVF> LEGACY_NODELETE create(Kind, TrackID, CueFormat);
 
     ~InbandMetadataTextTrackPrivateAVF();
 

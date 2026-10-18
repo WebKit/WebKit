@@ -110,7 +110,7 @@ public:
     FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT void ensureImplForTesting();
-    WEBCORE_EXPORT const PathImpl* asImpl() const;
+    WEBCORE_EXPORT const PathImpl* LEGACY_NODELETE asImpl() const;
 
     void setNotTransient();
 

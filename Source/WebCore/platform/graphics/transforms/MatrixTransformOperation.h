@@ -44,7 +44,7 @@ public:
         return adoptRef(*new MatrixTransformOperation(a, b, c, d, e, f));
     }
 
-    WEBCORE_EXPORT static Ref<MatrixTransformOperation> create(const TransformationMatrix&);
+    WEBCORE_EXPORT static Ref<MatrixTransformOperation> LEGACY_NODELETE create(const TransformationMatrix&);
 
     Ref<TransformOperation> clone() const override
     {

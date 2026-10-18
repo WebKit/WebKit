@@ -67,7 +67,7 @@ public:
     void expandRadii(float size) { m_radii.expand(size); }
     void shrinkRadii(float size) { m_radii.shrink(size); }
     void LEGACY_NODELETE inflateWithRadii(float size);
-    void adjustRadii();
+    void LEGACY_NODELETE adjustRadii();
 
     FloatRect topLeftCorner() const
     {

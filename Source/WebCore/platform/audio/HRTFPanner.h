@@ -44,7 +44,7 @@ public:
     void reset() override;
 
     size_t fftSize() const { return fftSizeForSampleRate(m_sampleRate); }
-    static size_t fftSizeForSampleRate(float sampleRate);
+    static size_t LEGACY_NODELETE fftSizeForSampleRate(float sampleRate);
 
     float sampleRate() const { return m_sampleRate; }
 
@@ -55,7 +55,7 @@ public:
 private:
     // Given an azimuth angle in the range -180 -> +180, returns the corresponding azimuth index for the database,
     // and azimuthBlend which is an interpolation value from 0 -> 1.
-    int calculateDesiredAzimuthIndexAndBlend(double azimuth, double& azimuthBlend);
+    int LEGACY_NODELETE calculateDesiredAzimuthIndexAndBlend(double azimuth, double& azimuthBlend);
 
     const RefPtr<HRTFDatabaseLoader> m_databaseLoader;
 

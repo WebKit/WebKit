@@ -129,7 +129,7 @@ public:
 #if PLATFORM(COCOA)
     const String& pasteboardName() const LIFETIME_BOUND { return m_pasteboardName; }
     bool containsURLTypeIdentifier() const;
-    bool containsPromise() const;
+    bool LEGACY_NODELETE containsPromise() const;
 #endif
 
     bool LEGACY_NODELETE shouldMatchStyleOnDrop() const;

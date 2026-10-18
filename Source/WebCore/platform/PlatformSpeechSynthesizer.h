@@ -74,7 +74,7 @@ protected:
 class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCountedAndCanMakeWeakPtr<PlatformSpeechSynthesizer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient&);
+    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> LEGACY_NODELETE create(PlatformSpeechSynthesizerClient&);
 
     // FIXME: We have multiple virtual functions just so we can support a mock for testing.
     // Seems wasteful. Would be nice to find a better way.
@@ -88,7 +88,7 @@ public:
     virtual void resetState();
     virtual void voicesDidChange();
 
-    RefPtr<PlatformSpeechSynthesizerClient> client() const;
+    RefPtr<PlatformSpeechSynthesizerClient> LEGACY_NODELETE client() const;
 
 protected:
     explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient&);

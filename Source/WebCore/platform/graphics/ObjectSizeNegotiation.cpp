@@ -27,21 +27,21 @@
 
 namespace WebCore::ObjectSizeNegotiation {
 
-static NaturalDimensions usableNaturalDimensions(NaturalDimensions dimensions)
+static NaturalDimensions LEGACY_NODELETE usableNaturalDimensions(NaturalDimensions dimensions)
 {
     if (!dimensions.hasUsableAspectRatio())
         dimensions.aspectRatio = std::nullopt;
     return dimensions;
 }
 
-static FloatSize resolveConstraint(const NaturalDimensions& naturalDimensions, FloatSize constraintRectangle, AspectRatioFit fit)
+static FloatSize LEGACY_NODELETE resolveConstraint(const NaturalDimensions& naturalDimensions, FloatSize constraintRectangle, AspectRatioFit fit)
 {
     if (!naturalDimensions.aspectRatio)
         return constraintRectangle;
     return constraintRectangle.fitToAspectRatio(*naturalDimensions.aspectRatio, fit);
 }
 
-static FloatSize resolveSizingAlgorithm(const NaturalDimensions& naturalDimensions, SpecifiedSize specifiedSize, FloatSize defaultObjectSize)
+static FloatSize LEGACY_NODELETE resolveSizingAlgorithm(const NaturalDimensions& naturalDimensions, SpecifiedSize specifiedSize, FloatSize defaultObjectSize)
 {
     // If the specified size is a definite width and height, the concrete object size is
     // given that width and height.

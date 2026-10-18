@@ -43,7 +43,7 @@ public:
         return adoptRef(*new RotateTransformOperation(0, 0, 1, angle, type));
     }
 
-    WEBCORE_EXPORT static Ref<RotateTransformOperation> create(double, double, double, double, TransformOperation::Type);
+    WEBCORE_EXPORT static Ref<RotateTransformOperation> LEGACY_NODELETE create(double, double, double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const final
     {

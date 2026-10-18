@@ -80,7 +80,7 @@ static void ZeroRange(Vector<std::span<Byte>>& channels, size_t offset, size_t n
         zeroSpan(channel.subspan(offset, nbytes));
 }
 
-static void StoreABL(Vector<std::span<Byte>>& channels, size_t destOffset, const AudioBufferList* list, size_t srcOffset, size_t nbytes)
+static void LEGACY_NODELETE StoreABL(Vector<std::span<Byte>>& channels, size_t destOffset, const AudioBufferList* list, size_t srcOffset, size_t nbytes)
 {
     ASSERT(list->mNumberBuffers == channels.size());
     auto buffers = span(*list);
@@ -241,7 +241,7 @@ CARingBuffer::TimeBounds CARingBuffer::getFetchTimeBounds()
     return bounds;
 }
 
-static CARingBuffer::TimeBounds clamp(CARingBuffer::TimeBounds value, CARingBuffer::TimeBounds limit)
+static CARingBuffer::TimeBounds LEGACY_NODELETE clamp(CARingBuffer::TimeBounds value, CARingBuffer::TimeBounds limit)
 {
     return {
         std::clamp(value.startFrame, limit.startFrame, limit.endFrame),

@@ -172,7 +172,7 @@ static bool LEGACY_NODELETE validateAudioBufferList(AudioBufferList* bufferList)
     return true;
 }
 
-static OSStatus readProc(void* clientData, SInt64 position, UInt32 requestCount, void* rawBuffer, UInt32* actualCount)
+static OSStatus LEGACY_NODELETE readProc(void* clientData, SInt64 position, UInt32 requestCount, void* rawBuffer, UInt32* actualCount)
 {
     auto* dataSpan = static_cast<std::span<const uint8_t>*>(clientData);
     auto buffer = unsafeMakeSpan(static_cast<uint8_t*>(rawBuffer), requestCount);
@@ -276,9 +276,9 @@ public:
             destroyAudioBufferList(m_bufferList);
     }
 
-    explicit operator bool() const { return !!m_bufferList; }
+    explicit LEGACY_NODELETE operator bool() const { return !!m_bufferList; }
     AudioBufferList* LEGACY_NODELETE operator->() const { return m_bufferList; }
-    operator AudioBufferList*() const { return m_bufferList; }
+    operator AudioBufferList* LEGACY_NODELETE () const { return m_bufferList; }
     AudioBufferList& LEGACY_NODELETE operator*() const { ASSERT(m_bufferList); return *m_bufferList; }
     bool LEGACY_NODELETE isValid() const { return validateAudioBufferList(m_bufferList); }
 private:

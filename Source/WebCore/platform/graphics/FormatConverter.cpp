@@ -232,7 +232,7 @@ template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataForm
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void LEGACY_NODELETE unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     auto source32 = spanReinterpretCast<const uint32_t>(source);
     auto destination32 = spanReinterpretCast<uint32_t>(destination);

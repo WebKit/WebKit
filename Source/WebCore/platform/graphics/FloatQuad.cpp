@@ -229,7 +229,7 @@ bool FloatQuad::intersectsEllipse(const FloatPoint& center, const FloatSize& rad
 }
 
 // Returns positive if point is to the right of edgeStart→edgeEnd, negative if to the left, zero if on the line.
-static inline float sideOf(FloatPoint edgeStart, FloatPoint edgeEnd, FloatPoint point)
+static inline float LEGACY_NODELETE sideOf(FloatPoint edgeStart, FloatPoint edgeEnd, FloatPoint point)
 {
     FloatSize edge = edgeEnd - edgeStart;
     FloatSize toPoint = point - edgeStart;

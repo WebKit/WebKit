@@ -33,7 +33,7 @@ struct BlendingContext;
 
 class SkewTransformOperation final : public TransformOperation {
 public:
-    WEBCORE_EXPORT static Ref<SkewTransformOperation> create(double, double, TransformOperation::Type);
+    WEBCORE_EXPORT static Ref<SkewTransformOperation> LEGACY_NODELETE create(double, double, TransformOperation::Type);
 
     Ref<TransformOperation> clone() const override
     {

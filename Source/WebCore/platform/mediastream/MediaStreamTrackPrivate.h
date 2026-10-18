@@ -131,7 +131,7 @@ public:
     Ref<MediaStreamTrackPrivate> clone();
 
     WEBCORE_EXPORT RealtimeMediaSource& LEGACY_NODELETE source();
-    const RealtimeMediaSource& source() const;
+    const RealtimeMediaSource& LEGACY_NODELETE source() const;
     RealtimeMediaSource& LEGACY_NODELETE sourceForProcessor();
     bool LEGACY_NODELETE hasSource(const RealtimeMediaSource*) const;
 

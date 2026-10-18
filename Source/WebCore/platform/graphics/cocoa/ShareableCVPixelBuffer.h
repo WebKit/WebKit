@@ -101,7 +101,7 @@ class ShareableCVPixelBufferBytes : public ThreadSafeRefCounted<ShareableCVPixel
 public:
     using Handle = ShareableCVPixelBufferBytesHandle;
 
-    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferBytes> create(const ShareableCVPixelBufferBytesConfiguration&, Ref<SharedMemory>&&);
+    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferBytes> LEGACY_NODELETE create(const ShareableCVPixelBufferBytesConfiguration&, Ref<SharedMemory>&&);
     WEBCORE_EXPORT static RefPtr<ShareableCVPixelBufferBytes> create(const ShareableCVPixelBufferBytesConfiguration&, std::span<const uint8_t> sourceSpan);
 
     WEBCORE_EXPORT static RefPtr<ShareableCVPixelBufferBytes> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
@@ -109,7 +109,7 @@ public:
 
     WEBCORE_EXPORT std::optional<Handle> createReadOnlyHandle() const;
 
-    void copyPixels(std::span<uint8_t> destinationSpan, unsigned destinationHeight, unsigned destinationBytesPerRow);
+    void LEGACY_NODELETE copyPixels(std::span<uint8_t> destinationSpan, unsigned destinationHeight, unsigned destinationBytesPerRow);
 
 private:
     ShareableCVPixelBufferBytes(const ShareableCVPixelBufferBytesConfiguration&, Ref<SharedMemory>&&);
@@ -137,7 +137,7 @@ protected:
 
 class ShareableCVPixelBufferWithBytes : public ShareableCVPixelBuffer {
 public:
-    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithBytes> create(ShareableCVPixelBufferConfiguration&&, Ref<ShareableCVPixelBufferBytes>&&);
+    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithBytes> LEGACY_NODELETE create(ShareableCVPixelBufferConfiguration&&, Ref<ShareableCVPixelBufferBytes>&&);
 
     WEBCORE_EXPORT static RefPtr<ShareableCVPixelBufferWithBytes> create(const RetainPtr<CVPixelBufferRef>&);
 
@@ -153,7 +153,7 @@ private:
 
 class ShareableCVPixelBufferWithPlanarBytes : public ShareableCVPixelBuffer {
 public:
-    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithPlanarBytes> create(ShareableCVPixelBufferConfiguration&&, Vector<Ref<ShareableCVPixelBufferBytes>>&&);
+    WEBCORE_EXPORT static Ref<ShareableCVPixelBufferWithPlanarBytes> LEGACY_NODELETE create(ShareableCVPixelBufferConfiguration&&, Vector<Ref<ShareableCVPixelBufferBytes>>&&);
 
     WEBCORE_EXPORT static RefPtr<ShareableCVPixelBufferWithPlanarBytes> create(const RetainPtr<CVPixelBufferRef>&);
 

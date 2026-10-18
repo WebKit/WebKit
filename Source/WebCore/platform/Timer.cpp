@@ -90,7 +90,7 @@ public:
         : m_pointer(pointer)
     { }
 
-    TimerHeapReference operator*() const;
+    TimerHeapReference LEGACY_NODELETE operator*() const;
     Ref<ThreadTimerHeapItem>& LEGACY_NODELETE operator->() const { return *m_pointer; }
 private:
     Ref<ThreadTimerHeapItem>* m_pointer;
@@ -106,7 +106,7 @@ public:
         : m_reference(other.m_reference)
     { }
 
-    operator Ref<ThreadTimerHeapItem>&() const { return m_reference; }
+    operator Ref<ThreadTimerHeapItem>& LEGACY_NODELETE () const { return m_reference; }
     TimerHeapPointer LEGACY_NODELETE operator&() const { return &m_reference; }
     TimerHeapReference& operator=(TimerHeapReference&&);
     TimerHeapReference& operator=(Ref<ThreadTimerHeapItem>&&);
@@ -192,7 +192,7 @@ public:
     TimerHeapReference LEGACY_NODELETE operator*() const { return TimerHeapReference(m_container[m_index]); }
     Ref<ThreadTimerHeapItem>& LEGACY_NODELETE operator->() const { return m_container[m_index]; }
 
-    auto operator<=>(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index <=> other.m_index; }
+    auto LEGACY_NODELETE operator<=>(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index <=> other.m_index; }
     bool LEGACY_NODELETE operator==(TimerHeapIterator other) const { ASSERT(hasSameContainerAs(other)); return m_index == other.m_index; }
 
 #if ASSERT_ENABLED
@@ -235,7 +235,7 @@ public:
         return compare(a->time, a->insertionOrder, b.m_heapItemWithBitfields.pointer()->time, b.m_heapItemWithBitfields.pointer()->insertionOrder);
     }
 
-    bool operator()(const Ref<ThreadTimerHeapItem>& a, const Ref<ThreadTimerHeapItem>& b) const
+    bool LEGACY_NODELETE operator()(const Ref<ThreadTimerHeapItem>& a, const Ref<ThreadTimerHeapItem>& b) const
     {
         return compare(a->time, a->insertionOrder, b->time, b->insertionOrder);
     }

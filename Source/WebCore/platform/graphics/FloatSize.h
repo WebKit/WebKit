@@ -117,7 +117,7 @@ public:
         return { m_width * scaleX, m_height * scaleY };
     }
 
-    WEBCORE_EXPORT FloatSize constrainedBetween(const FloatSize& min, const FloatSize& max) const;
+    WEBCORE_EXPORT FloatSize LEGACY_NODELETE constrainedBetween(const FloatSize& min, const FloatSize& max) const;
 
     constexpr FloatSize expandedTo(const FloatSize& other) const
     {
@@ -185,7 +185,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT explicit FloatSize(const CGSize&); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT operator CGSize() const;
+    WEBCORE_EXPORT operator CGSize LEGACY_NODELETE () const;
 #endif
 
     static constexpr FloatSize nanSize();

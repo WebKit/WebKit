@@ -62,7 +62,7 @@ public:
     using Handle = ShareableResourceHandle;
 
     // Create a shareable resource that uses malloced memory.
-    WEBCORE_EXPORT static RefPtr<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
+    WEBCORE_EXPORT static RefPtr<ShareableResource> LEGACY_NODELETE create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
     static RefPtr<ShareableResource> map(Handle&&);

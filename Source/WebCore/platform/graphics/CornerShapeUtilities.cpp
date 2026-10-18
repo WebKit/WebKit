@@ -57,24 +57,24 @@ struct Corner {
     BoxCorner orientation;
 };
 
-static FloatSize cornerRadii(const FloatPoint& center, const FloatPoint& outer)
+static FloatSize LEGACY_NODELETE cornerRadii(const FloatPoint& center, const FloatPoint& outer)
 {
     return { std::abs(center.x() - outer.x()), std::abs(center.y() - outer.y()) };
 }
 
-static std::pair<float, float> inwardDirection(BoxCorner orientation)
+static std::pair<float, float> LEGACY_NODELETE inwardDirection(BoxCorner orientation)
 {
     float directionX = (orientation == BoxCorner::TopLeft || orientation == BoxCorner::BottomLeft) ? 1.0f : -1.0f; // left corners point right toward center
     float directionY = (orientation == BoxCorner::TopLeft || orientation == BoxCorner::TopRight) ? 1.0f : -1.0f; // top corners point down toward center
     return { directionX, directionY };
 }
 
-static bool startsOnVerticalEdge(BoxCorner orientation)
+static bool LEGACY_NODELETE startsOnVerticalEdge(BoxCorner orientation)
 {
     return orientation == BoxCorner::TopLeft || orientation == BoxCorner::BottomRight;
 }
 
-static std::pair<float, float> edgeBorders(BoxCorner orientation, double startInset, double endInset)
+static std::pair<float, float> LEGACY_NODELETE edgeBorders(BoxCorner orientation, double startInset, double endInset)
 {
     bool startOnVerticalEdge = startsOnVerticalEdge(orientation);
     float verticalEdgeBorder = float(startOnVerticalEdge ? startInset : endInset);
@@ -82,26 +82,26 @@ static std::pair<float, float> edgeBorders(BoxCorner orientation, double startIn
     return { verticalEdgeBorder, horizontalEdgeBorder };
 }
 
-static bool isConcave(const Corner& corner) { return corner.curvature < 0.0; }
-static bool isRound(const Corner& corner) { return corner.curvature == 1.0; }
-static bool isBevel(const Corner& corner) { return corner.curvature == 0.0; }
-static bool isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
-static bool isSquare(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature > 0.0; }
+static bool LEGACY_NODELETE isConcave(const Corner& corner) { return corner.curvature < 0.0; }
+static bool LEGACY_NODELETE isRound(const Corner& corner) { return corner.curvature == 1.0; }
+static bool LEGACY_NODELETE isBevel(const Corner& corner) { return corner.curvature == 0.0; }
+static bool LEGACY_NODELETE isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
+static bool LEGACY_NODELETE isSquare(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature > 0.0; }
 // A shallow concave corner (scoop and anything between scoop and bevel) is drawn from its endpoint tangents
 // rather than from the superellipse exponent.
-static bool isShallowConcave(const Corner& corner) { return corner.curvature < 0.0 && corner.curvature >= -1.0; }
-static bool isEmpty(const Corner& corner)
+static bool LEGACY_NODELETE isShallowConcave(const Corner& corner) { return corner.curvature < 0.0 && corner.curvature >= -1.0; }
+static bool LEGACY_NODELETE isEmpty(const Corner& corner)
 {
     return (corner.outer - corner.start).diagonalLength() < limit
         || (corner.end - corner.outer).diagonalLength() < limit;
 }
 
-static Corner inverseCorner(const Corner& corner)
+static Corner LEGACY_NODELETE inverseCorner(const Corner& corner)
 {
     return { corner.start, corner.center, corner.end, corner.outer, corner.radii, -corner.curvature, corner.orientation };
 }
 
-static Corner makeCorner(const CornerInput& input)
+static Corner LEGACY_NODELETE makeCorner(const CornerInput& input)
 {
     std::array<FloatPoint, 4> vertices = { {
         { float(input.x), float(input.y) },
@@ -136,7 +136,7 @@ struct ResolvedCorner {
     std::optional<FloatPoint> collapsePoint;
 };
 
-static std::optional<FloatPoint> findMiterArmCrossing(const FloatPoint& startArmOuter, const FloatPoint& startArmInner, const FloatPoint& endArmOuter, const FloatPoint& endArmInner)
+static std::optional<FloatPoint> LEGACY_NODELETE findMiterArmCrossing(const FloatPoint& startArmOuter, const FloatPoint& startArmInner, const FloatPoint& endArmOuter, const FloatPoint& endArmInner)
 {
     if (auto crossing = findSegmentLineIntersection(startArmOuter, startArmInner, endArmOuter, endArmInner))
         return crossing;
@@ -323,7 +323,7 @@ static SuperellipseBezierHandles superellipseBezierHandles(double parameter)
     return lastResult;
 }
 
-static FloatPoint mapPointToCorner(const Corner& corner, FloatSize normalizedPoint)
+static FloatPoint LEGACY_NODELETE mapPointToCorner(const Corner& corner, FloatSize normalizedPoint)
 {
     auto curveCenter = corner.center;
     auto centerToEnd = corner.end - curveCenter;
@@ -331,7 +331,7 @@ static FloatPoint mapPointToCorner(const Corner& corner, FloatSize normalizedPoi
     return curveCenter + centerToEnd * normalizedPoint.width() + centerToStart * normalizedPoint.height();
 }
 
-static FloatSize transpose(FloatSize size) { return FloatSize(size.height(), size.width()); }
+static FloatSize LEGACY_NODELETE transpose(FloatSize size) { return FloatSize(size.height(), size.width()); }
 
 static std::array<BezierSegment, 2> superellipseCornerBeziers(const Corner& cornerInput)
 {
@@ -346,7 +346,7 @@ static std::array<BezierSegment, 2> superellipseCornerBeziers(const Corner& corn
     return { firstHalf, secondHalf };
 }
 
-static BezierSegment shallowConcaveCornerBezier(const Corner& corner, const FloatPoint& tangentVertex)
+static BezierSegment LEGACY_NODELETE shallowConcaveCornerBezier(const Corner& corner, const FloatPoint& tangentVertex)
 {
     constexpr float circleHandle = 0.5522847498307933f; // 4 / 3 * (sqrt(2) - 1): cubic approximation of a quarter circle
     Corner mappingFrame = corner;
@@ -361,7 +361,7 @@ static BezierSegment shallowConcaveCornerBezier(const Corner& corner, const Floa
 
 using CornerCurves = Vector<BezierSegment, 2>;
 
-static BezierSegment straightBezierSegment(const FloatPoint& start, const FloatPoint& end)
+static BezierSegment LEGACY_NODELETE straightBezierSegment(const FloatPoint& start, const FloatPoint& end)
 {
     auto delta = end - start;
     return { start, start + delta * (1.0f / 3.0f), start + delta * (2.0f / 3.0f), end };
@@ -428,7 +428,7 @@ static void addCurvedCorner(Path& path, const ResolvedCorner& corner)
         path.addBezierCurveTo(curve.controlPoint1, curve.controlPoint2, curve.end);
 }
 
-static FloatPoint sharpInnerCornerPoint(const FloatRect& innerRect, BoxCorner orientation)
+static FloatPoint LEGACY_NODELETE sharpInnerCornerPoint(const FloatRect& innerRect, BoxCorner orientation)
 {
     switch (orientation) {
     case BoxCorner::TopRight:    return innerRect.maxXMinYCorner();
@@ -658,7 +658,7 @@ static Vector<FloatPoint> cornerHullPolygon(const CornerInput& input)
     });
 }
 
-static std::pair<double, double> offsetExtentAlongAxis(const Vector<FloatPoint>& hull, FloatSize axis)
+static std::pair<double, double> LEGACY_NODELETE offsetExtentAlongAxis(const Vector<FloatPoint>& hull, FloatSize axis)
 {
     auto origin = hull.first();
     double low = 0.0;

@@ -88,7 +88,7 @@ class CDMInstanceFairPlayStreamingAVFObjC final : public CDMInstance, public AVC
 public:
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<CDMInstanceFairPlayStreamingAVFObjC>);
 
-    static Ref<CDMInstanceFairPlayStreamingAVFObjC> create(const CDMPrivateFairPlayStreaming&);
+    static Ref<CDMInstanceFairPlayStreamingAVFObjC> LEGACY_NODELETE create(const CDMPrivateFairPlayStreaming&);
     virtual ~CDMInstanceFairPlayStreamingAVFObjC() = default;
 
     // AVContentKeySessionDelegateClient.
@@ -185,7 +185,7 @@ class CDMInstanceSessionFairPlayStreamingAVFObjC final
 public:
     USING_CAN_MAKE_WEAKPTR(AVContentKeySessionDelegateClient);
 
-    static Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
+    static Ref<CDMInstanceSessionFairPlayStreamingAVFObjC> LEGACY_NODELETE create(Ref<CDMInstanceFairPlayStreamingAVFObjC>&&);
     virtual ~CDMInstanceSessionFairPlayStreamingAVFObjC();
 
     // ContentKeyGroupDataSource, AVContentKeySessionDelegateClient.

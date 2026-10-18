@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT void saveMainThreadEnvironment();
     void propagateMainThreadEnvironment();
 
-    WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
+    WEBCORE_EXPORT static FloatingPointEnvironment& LEGACY_NODELETE singleton();
 
 private:
 
@@ -57,7 +57,7 @@ public:
     void enableDenormalSupport() { }
     void saveMainThreadEnvironment() { }
     void propagateMainThreadEnvironment() { }
-    WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
+    WEBCORE_EXPORT static FloatingPointEnvironment& LEGACY_NODELETE singleton();
 };
 
 #endif // PLATFORM(IOS_FAMILY) && (CPU(ARM) || CPU(ARM64))

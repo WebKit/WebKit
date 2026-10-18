@@ -51,11 +51,11 @@ public:
     using CreatePromise = NativePromise<Ref<MediaSamplesDecoder>, PlatformMediaError>;
     using DecodePromise = NativePromise<Vector<MediaSamplesBlock>, PlatformMediaError>;
 
-    static bool canDecode(const TrackInfo&, Filters);
+    static bool LEGACY_NODELETE canDecode(const TrackInfo&, Filters);
     static Ref<CreatePromise> create(const TrackInfo&, Filters);
     ~MediaSamplesDecoder();
 
-    bool canContinueWith(const TrackInfo&) const;
+    bool LEGACY_NODELETE canContinueWith(const TrackInfo&) const;
 
     Ref<DecodePromise> decode(MediaSamplesBlock&&);
     Ref<DecodePromise> drain();

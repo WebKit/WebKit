@@ -44,7 +44,7 @@ enum class VideoFrameRotation : uint16_t;
 
 class RealtimeIncomingVideoSourceCocoa final : public RealtimeIncomingVideoSource {
 public:
-    static Ref<RealtimeIncomingVideoSourceCocoa> create(Ref<webrtc::VideoTrackInterface>&&, String&&);
+    static Ref<RealtimeIncomingVideoSourceCocoa> LEGACY_NODELETE create(Ref<webrtc::VideoTrackInterface>&&, String&&);
     ~RealtimeIncomingVideoSourceCocoa();
 
 private:

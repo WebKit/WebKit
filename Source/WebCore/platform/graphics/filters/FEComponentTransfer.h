@@ -67,7 +67,7 @@ class FEComponentTransfer final : public FilterEffect {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComponentTransfer);
 public:
     WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, ColorSpace = ColorSpace::SRGB());
-    static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
+    static Ref<FEComponentTransfer> LEGACY_NODELETE create(ComponentTransferFunctions&&);
 
     using LookupTable = std::array<uint8_t, 256>;
     static LookupTable computeLookupTable(const ComponentTransferFunction&);

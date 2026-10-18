@@ -37,7 +37,7 @@ public:
     bool operator==(const FEDiffuseLighting& other) const { return FELighting::operator==(other); }
 
     float diffuseConstant() const { return m_diffuseConstant; }
-    bool setDiffuseConstant(float);
+    bool LEGACY_NODELETE setDiffuseConstant(float);
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

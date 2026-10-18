@@ -182,7 +182,7 @@ private:
         GlyphPageCacheEntry& operator=(GlyphPageCacheEntry&&) = default;
         ~GlyphPageCacheEntry();
 
-        GlyphData glyphDataForCharacter(char32_t);
+        GlyphData LEGACY_NODELETE glyphDataForCharacter(char32_t);
 
         void setSingleFontPage(RefPtr<GlyphPage>&&);
         void setGlyphDataForCharacter(char32_t, GlyphData);

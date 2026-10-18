@@ -157,7 +157,7 @@ Vector<BezierIntersection> intersectBezierAndLine(const BezierSegment& curve, co
 }
 
 // De Casteljau's algorithm
-std::pair<BezierSegment, BezierSegment> splitBezier(const BezierSegment& curve, float parameter)
+std::pair<BezierSegment, BezierSegment> LEGACY_NODELETE splitBezier(const BezierSegment& curve, float parameter)
 {
     auto startToControl1 = linearInterpolation(curve.start, curve.controlPoint1, parameter);
     auto control1ToControl2 = linearInterpolation(curve.controlPoint1, curve.controlPoint2, parameter);
@@ -200,7 +200,7 @@ Vector<BezierSegment> trimBezierToLine(const BezierSegment& curve, const FloatPo
 }
 
 // Inclusive overlap test, zero-area boxes (e.g. an axis-aligned line) and touching edges count as overlapping.
-static bool boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
+static bool LEGACY_NODELETE boxesTouchOrOverlap(const FloatRect& first, const FloatRect& second)
 {
     return first.maxX() >= second.x() && first.x() <= second.maxX()
         && first.maxY() >= second.y() && first.y() <= second.maxY();
@@ -234,7 +234,7 @@ static FloatRect monotonicBounds(const Vector<BezierSegment>& curves)
     return bounds;
 }
 
-static bool boxesCanReach(FloatRect first, const FloatRect& second)
+static bool LEGACY_NODELETE boxesCanReach(FloatRect first, const FloatRect& second)
 {
     first.inflate(crossingTolerance);
     return boxesTouchOrOverlap(first, second);

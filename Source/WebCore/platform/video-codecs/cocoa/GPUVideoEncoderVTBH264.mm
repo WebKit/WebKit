@@ -86,10 +86,10 @@ public:
     {
     }
 
-    bool isMatch(uint8_t value) const { return m_maskedValue == (value & m_mask); }
+    bool LEGACY_NODELETE isMatch(uint8_t value) const { return m_maskedValue == (value & m_mask); }
 
 private:
-    static constexpr uint8_t byteMaskString(char c, const char (&str)[9])
+    static constexpr uint8_t LEGACY_NODELETE byteMaskString(char c, const char (&str)[9])
     {
         return (str[0] == c) << 7 | (str[1] == c) << 6 | (str[2] == c) << 5 | (str[3] == c) << 4
             | (str[4] == c) << 3 | (str[5] == c) << 2 | (str[6] == c) << 1 | (str[7] == c) << 0;

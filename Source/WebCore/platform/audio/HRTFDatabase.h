@@ -50,7 +50,7 @@ public:
     // azimuthBlend must be in the range 0 -> 1.
     // Valid values for azimuthIndex are 0 -> HRTFElevation::NumberOfTotalAzimuths - 1 (corresponding to angles of 0 -> 360).
     // Valid values for elevationAngle are MinElevation -> MaxElevation.
-    void getKernelsFromAzimuthElevation(double azimuthBlend, unsigned azimuthIndex, double elevationAngle, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR);
+    void LEGACY_NODELETE getKernelsFromAzimuthElevation(double azimuthBlend, unsigned azimuthIndex, double elevationAngle, HRTFKernel* &kernelL, HRTFKernel* &kernelR, double& frameDelayL, double& frameDelayR);
 
     // Returns the number of different azimuth angles.
     static unsigned numberOfAzimuths() { return HRTFElevation::NumberOfTotalAzimuths; }
@@ -73,7 +73,7 @@ private:
     static constexpr unsigned NumberOfTotalElevations { NumberOfRawElevations * InterpolationFactor };
 
     // Returns the index for the correct HRTFElevation given the elevation angle.
-    static unsigned indexFromElevationAngle(double);
+    static unsigned LEGACY_NODELETE indexFromElevationAngle(double);
 
     Vector<std::unique_ptr<HRTFElevation>> m_elevations { NumberOfTotalElevations };
     float m_sampleRate;

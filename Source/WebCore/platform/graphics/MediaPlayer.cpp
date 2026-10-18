@@ -132,7 +132,7 @@ public:
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }
 
-    static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
+    static Ref<NullMediaPlayerPrivate> LEGACY_NODELETE create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
 
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::Null; }
 
@@ -266,7 +266,7 @@ class NullMediaPlayerClient final
     , public RefCounted<NullMediaPlayerClient>
     , public Identified<MediaPlayerClientIdentifier> {
 public:
-    static Ref<NullMediaPlayerClient> create()
+    static Ref<NullMediaPlayerClient> LEGACY_NODELETE create()
     {
         return adoptRef(*new NullMediaPlayerClient);
     }
@@ -303,7 +303,7 @@ static Vector<std::unique_ptr<MediaPlayerFactory>>& LEGACY_NODELETE mutableInsta
     return installedEngines;
 }
 
-static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& registerRemotePlayerCallback()
+static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& LEGACY_NODELETE registerRemotePlayerCallback()
 {
     static NeverDestroyed<RemoteMediaPlayerSupport::RegisterRemotePlayerCallback> callback;
     return callback;
@@ -399,12 +399,12 @@ MediaPlayerPrivateInterface* MediaPlayer::playerPrivate()
     return m_private.get();
 }
 
-static MediaPlayerScope effectiveSelectedScope(const MediaPlayerEngineSelection& selection)
+static MediaPlayerScope LEGACY_NODELETE effectiveSelectedScope(const MediaPlayerEngineSelection& selection)
 {
     return selection.scope.value_or(hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports);
 }
 
-static bool engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
+static bool LEGACY_NODELETE engineScopeMatchesSelection(MediaPlayerScope engineScope, MediaPlayerScope selectionScope)
 {
     if (selectionScope == MediaPlayerScope::Playback)
         return engineScope == MediaPlayerScope::Playback;

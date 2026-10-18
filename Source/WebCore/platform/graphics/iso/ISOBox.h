@@ -53,7 +53,7 @@ public:
     using MutableByteView = std::span<uint8_t>;
 
     using PeekResult = std::optional<std::pair<FourCC, uint64_t>>;
-    static PeekResult peekBox(const ByteView&, unsigned offset);
+    static PeekResult LEGACY_NODELETE peekBox(const ByteView&, unsigned offset);
     static constexpr size_t minimumBoxSize() { return 2 * sizeof(uint32_t); }
 
     WEBCORE_EXPORT bool read(const ByteView&);
@@ -150,7 +150,7 @@ public:
 protected:
     uint64_t partialSize() const override { return ISOBox::partialSize() + 4; }
     bool parse(const ByteView&, unsigned& offset) override;
-    bool parseVersionAndFlags(const ByteView&, unsigned& offset);
+    bool LEGACY_NODELETE parseVersionAndFlags(const ByteView&, unsigned& offset);
     bool pack(MutableByteView&, unsigned& offset) const override;
 
     uint8_t m_version { 0 };

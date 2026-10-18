@@ -233,7 +233,7 @@ void CDMSessionAVContentKeySession::releaseKeys()
     }
 }
 
-static bool isEqual(Uint8Array* data, ASCIILiteral literal)
+static bool LEGACY_NODELETE isEqual(Uint8Array* data, ASCIILiteral literal)
 {
     ASSERT(data);
     ASSERT(!literal.isNull());

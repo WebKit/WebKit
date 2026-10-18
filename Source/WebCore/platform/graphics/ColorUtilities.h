@@ -37,9 +37,9 @@ namespace WebCore {
 SRGBA<float> premultiplied(const SRGBA<float>&);
 SRGBA<float> unpremultiplied(const SRGBA<float>&);
 
-WEBCORE_EXPORT SRGBA<uint8_t> premultipliedFlooring(SRGBA<uint8_t>);
-SRGBA<uint8_t> premultipliedCeiling(SRGBA<uint8_t>);
-SRGBA<uint8_t> unpremultiplied(SRGBA<uint8_t>);
+WEBCORE_EXPORT SRGBA<uint8_t> LEGACY_NODELETE premultipliedFlooring(SRGBA<uint8_t>);
+SRGBA<uint8_t> LEGACY_NODELETE premultipliedCeiling(SRGBA<uint8_t>);
+SRGBA<uint8_t> LEGACY_NODELETE unpremultiplied(SRGBA<uint8_t>);
 
 uint8_t convertPrescaledSRGBAFloatToSRGBAByte(float);
 

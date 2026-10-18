@@ -43,7 +43,7 @@ struct AcceleratedEffectReferencePath {
     std::optional<Path> path;
     std::optional<AcceleratedEffectCoordBox> box;
 
-    bool operator==(const AcceleratedEffectReferencePath&) const;
+    bool LEGACY_NODELETE operator==(const AcceleratedEffectReferencePath&) const;
 };
 
 // MARK: - Path Evaluation
@@ -53,7 +53,7 @@ std::optional<WebCore::Path> tryPath(const AcceleratedEffectReferencePath&, cons
 // MARK: - Blending
 
 template<> struct AcceleratedEffectInterpolation<AcceleratedEffectReferencePath> {
-    auto canBlend(const AcceleratedEffectReferencePath&, const AcceleratedEffectReferencePath&) -> bool;
+    bool LEGACY_NODELETE canBlend(const AcceleratedEffectReferencePath&, const AcceleratedEffectReferencePath&);
     auto blend(const AcceleratedEffectReferencePath&, const AcceleratedEffectReferencePath&, const BlendingContext&) -> AcceleratedEffectReferencePath;
 };
 

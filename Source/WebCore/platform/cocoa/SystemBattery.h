@@ -40,7 +40,7 @@ WEBCORE_EXPORT std::optional<bool> LEGACY_NODELETE cachedSystemHasAC();
 
 class WEBCORE_EXPORT SystemBatteryStatusTestingOverrides {
 public:
-    static SystemBatteryStatusTestingOverrides& singleton();
+    static SystemBatteryStatusTestingOverrides& LEGACY_NODELETE singleton();
 
     void setHasAC(std::optional<bool>&&);
     std::optional<bool> hasAC() { return m_hasAC; }

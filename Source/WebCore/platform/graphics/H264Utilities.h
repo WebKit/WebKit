@@ -57,7 +57,7 @@ enum class H264SliceType : uint8_t { P = 0, B = 1, I = 2, Sp = 3, Si = 4 };
 
 constexpr size_t h264NaluHeaderSize = 1;
 
-WEBCORE_EXPORT H264NaluType h264NaluType(uint8_t);
+WEBCORE_EXPORT H264NaluType LEGACY_NODELETE h264NaluType(uint8_t);
 
 WEBCORE_EXPORT size_t findH264AnnexBSpsIndex(std::span<const uint8_t>, const Vector<NaluIndex>&);
 WEBCORE_EXPORT std::optional<uint8_t> findH264AnnexBMaxNumReorderFrames(std::span<const uint8_t>, const Vector<NaluIndex>&);

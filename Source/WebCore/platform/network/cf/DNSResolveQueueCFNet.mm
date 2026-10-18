@@ -103,7 +103,7 @@ private:
     std::optional<uint64_t> m_identifier;
 };
 
-static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
+static std::optional<IPAddress> LEGACY_NODELETE extractIPAddress(const struct sockaddr* address)
 {
     if (!address)
         return std::nullopt;

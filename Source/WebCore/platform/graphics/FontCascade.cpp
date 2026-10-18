@@ -1784,7 +1784,7 @@ static std::optional<float> LEGACY_NODELETE findIntersectionPoint(float y, Float
     return std::nullopt;
 }
 
-static void updateX(GlyphIterationState& state, float x)
+static void LEGACY_NODELETE updateX(GlyphIterationState& state, float x)
 {
     state.minX = std::min(state.minX, x);
     state.maxX = std::max(state.maxX, x);
@@ -1797,7 +1797,7 @@ static void updateX(GlyphIterationState& state, float x)
 // GlyphIterationState::y1 and GlyphIterationState::y2. It keeps track of the
 // leftmost and rightmost intersection in GlyphIterationState::minX and
 // GlyphIterationState::maxX.
-static void findPathIntersections(GlyphIterationState& state, const PathElement& element)
+static void LEGACY_NODELETE findPathIntersections(GlyphIterationState& state, const PathElement& element)
 {
     bool doIntersection = false;
     FloatPoint point = FloatPoint();

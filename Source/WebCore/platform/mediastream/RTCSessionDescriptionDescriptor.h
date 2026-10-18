@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCSessionDescriptionDescriptor : public RefCounted<RTCSessionDescriptionDescriptor> {
 public:
-    static Ref<RTCSessionDescriptionDescriptor> create(const String& type, const String& sdp);
+    static Ref<RTCSessionDescriptionDescriptor> LEGACY_NODELETE create(const String& type, const String& sdp);
     virtual ~RTCSessionDescriptionDescriptor();
 
     const String& type() const LIFETIME_BOUND { return m_type; }

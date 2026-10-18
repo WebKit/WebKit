@@ -65,7 +65,7 @@ public:
         ASSERT(m_unpackedIntermediateSrcData);
     }
 
-    void convert(GraphicsContextGL::DataFormat srcFormat, GraphicsContextGL::DataFormat dstFormat, GraphicsContextGL::AlphaOp);
+    void LEGACY_NODELETE convert(GraphicsContextGL::DataFormat srcFormat, GraphicsContextGL::DataFormat dstFormat, GraphicsContextGL::AlphaOp);
     bool success() const { return m_success; }
 
 private:

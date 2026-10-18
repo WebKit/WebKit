@@ -34,7 +34,7 @@ class SystemSoundDelegate;
 class SystemSoundManager {
     friend NeverDestroyed<SystemSoundManager>;
 public:
-    WEBCORE_EXPORT static SystemSoundManager& singleton();
+    WEBCORE_EXPORT static SystemSoundManager& LEGACY_NODELETE singleton();
     
     WEBCORE_EXPORT void setSystemSoundDelegate(std::unique_ptr<SystemSoundDelegate>&&);
     

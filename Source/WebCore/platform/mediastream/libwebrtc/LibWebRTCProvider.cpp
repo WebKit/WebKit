@@ -203,7 +203,7 @@ static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndTh
     ASSERT(result);
 }
 
-static inline PeerConnectionFactoryAndThreads& staticFactoryAndThreads()
+static inline PeerConnectionFactoryAndThreads& LEGACY_NODELETE staticFactoryAndThreads()
 {
     static NeverDestroyed<PeerConnectionFactoryAndThreads> factoryAndThreads;
     return factoryAndThreads.get();

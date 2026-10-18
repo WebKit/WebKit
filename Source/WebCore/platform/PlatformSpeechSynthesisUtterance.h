@@ -48,7 +48,7 @@ protected:
     
 class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
 public:
-    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient*);
+    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> LEGACY_NODELETE create(PlatformSpeechSynthesisUtteranceClient*);
 
     const String& text() const LIFETIME_BOUND { return m_text; }
     void setText(const String& text) { m_text = text; }

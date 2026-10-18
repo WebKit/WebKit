@@ -32,7 +32,7 @@ namespace WebCore {
 
 class NativeImageSource : public ImageSource {
 public:
-    static Ref<NativeImageSource> create(Ref<NativeImage>&&);
+    static Ref<NativeImageSource> LEGACY_NODELETE create(Ref<NativeImage>&&);
 
 private:
     NativeImageSource(Ref<NativeImage>&&);
