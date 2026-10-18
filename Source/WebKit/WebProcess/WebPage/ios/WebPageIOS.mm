@@ -48,7 +48,6 @@
 #import "RemoteWebTouchEvent.h"
 #import "RevealItem.h"
 #import "SandboxUtilities.h"
-#import "ShareableBitmapUtilities.h"
 #import "SharedBufferReference.h"
 #import "SyntheticEditingCommandType.h"
 #import "TapHandlingResult.h"

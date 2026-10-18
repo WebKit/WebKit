@@ -77,11 +77,11 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
         return;
 
     RefPtr cachedImage = renderer->cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
+    if (!cachedImage || !cachedImage->canRender())
         return;
 
-    RefPtr image = cachedImage->image();
-    if (!image || image->width() < minimumWidthForAnalysis || image->height() < minimumHeightForAnalysis)
+    auto imageSize = renderer->concreteObjectSizeForImageAnalysis().size();
+    if (imageSize.width() < minimumWidthForAnalysis || imageSize.height() < minimumHeightForAnalysis)
         return;
 
     bool shouldAddToQueue = [&] {

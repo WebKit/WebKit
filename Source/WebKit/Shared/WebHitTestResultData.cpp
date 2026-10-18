@@ -129,7 +129,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
 
     if (RefPtr target = hitTestResult.innerNonSharedNode()) {
         if (CheckedPtr renderer = dynamicDowncast<RenderImage>(target->renderer())) {
-            imageBitmap = renderer->createShareableBitmap();
+            imageBitmap = renderer->createShareableBitmapForHitTestResult();
             if (RefPtr cachedImage = renderer->cachedImage()) {
                 if (RefPtr image = cachedImage->image())
                     sourceImageMIMEType = image->mimeType();

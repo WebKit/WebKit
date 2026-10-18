@@ -81,6 +81,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
+#include <wtf/NativePromise.h>
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -394,6 +395,16 @@ ConcreteObjectSize RenderImage::concreteObjectSizeForAccessibility() const
     return defaultConcreteObjectSize();
 }
 
+ConcreteObjectSize RenderImage::concreteObjectSizeForImageAnalysis() const
+{
+    return defaultConcreteObjectSize();
+}
+
+ConcreteObjectSize RenderImage::concreteObjectSizeForPositionInformation() const
+{
+    return defaultConcreteObjectSize();
+}
+
 ConcreteObjectSize RenderImage::defaultConcreteObjectSize() const
 {
     return defaultConcreteObjectSize(imageResource().naturalDimensions());
@@ -470,6 +481,33 @@ RefPtr<ShareableBitmap> RenderImage::createShareableBitmap(const CreateShareable
 
     styleImage->draw(*graphicsContext, *this, concreteObjectSize, FloatRect { { }, bitmapSize }, FloatRect { { }, concreteObjectSize.size() }, { imageOrientation() });
     return sharedBitmap;
+}
+
+Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderImage::createShareableBitmapAsync(const CreateShareableBitmapFromImageOptions& options) const
+{
+    if (RefPtr shareableBitmap = createShareableBitmap(options))
+        return NativePromise<Ref<ShareableBitmap>, void>::createAndResolve(shareableBitmap.releaseNonNull());
+    return NativePromise<Ref<ShareableBitmap>, void>::createAndReject();
+}
+
+RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForHitTestResult() const
+{
+    return createShareableBitmap();
+}
+
+RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForPositionInformation(FloatSize screenSizeInPixels) const
+{
+    return createShareableBitmap({ screenSizeInPixels, CreateShareableBitmapFromImageOptions::AllowAnimatedImages::Yes, CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages::Yes });
+}
+
+RefPtr<ShareableBitmap> RenderImage::createShareableBitmapForImageBitmapRequest() const
+{
+    return createShareableBitmap();
+}
+
+Ref<NativePromise<Ref<ShareableBitmap>, void>> RenderImage::createShareableBitmapAsyncForImageAnalysis(CreateShareableBitmapFromImageOptions::UseSnapshotForTransparentImages useSnapshotForTransparentImages) const
+{
+    return createShareableBitmapAsync({ std::nullopt, CreateShareableBitmapFromImageOptions::AllowAnimatedImages::No, useSnapshotForTransparentImages });
 }
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
