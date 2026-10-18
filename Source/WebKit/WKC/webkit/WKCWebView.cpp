@@ -1842,7 +1842,24 @@ bool WKCWebView::loadURLOrSearch(const char* input, const char* referer)
         }
     }
 
-    loadURI(target.c_str(), referer);
+    // Validate the final target with WebKit's own URL parser before
+    // reporting success to the browser UI. ResourceHandle only supports web
+    // protocols here; rejecting malformed/unsupported targets prevents a
+    // broken address-bar value from looking like a successful navigation.
+    WTF::URL parsedTarget { WTF::URL(), WTF::String::fromUTF8(target) };
+    if (!parsedTarget.isValid())
+        return false;
+
+    if (!parsedTarget.protocolIsInHTTPFamily()
+        && !parsedTarget.protocolIs("about")
+        && !parsedTarget.protocolIs("file"))
+        return false;
+
+    auto normalizedTarget = parsedTarget.string().utf8();
+    if (normalizedTarget.isEmpty())
+        return false;
+
+    loadURI(normalizedTarget.data(), referer);
     return true;
 }
 
