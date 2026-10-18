@@ -1,0 +1,5 @@
+Enter fullscreen (keyboardLock: none)
+
+PASS Cross-origin iframe fullscreen with keyboardLock:browser — hold Escape exits
+PASS Nested fullscreen: top-level keyboardLock:none then cross-origin iframe keyboardLock:browser — hold Escape exits iframe fullscreen
+
