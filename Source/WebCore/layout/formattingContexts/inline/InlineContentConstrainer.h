@@ -42,7 +42,7 @@ public:
     InlineContentConstrainer(InlineFormattingContext&, const InlineItemList&, HorizontalConstraints);
     std::optional<Vector<LayoutUnit>> computeParagraphLevelConstraints(TextWrapStyle);
 
-    static bool constrainsContent(const Style::ComputedStyle&);
+    static bool LEGACY_NODELETE constrainsContent(const Style::ComputedStyle&);
 
 private:
     friend struct SlidingWidth;

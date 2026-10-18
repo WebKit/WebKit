@@ -47,14 +47,14 @@ public:
 
     TextBoxSelectableRange selectableRange() const;
 
-    const FontCascade& fontCascade() const;
+    const FontCascade& LEGACY_NODELETE fontCascade() const;
 
     TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
     // This returns the next text box generated for the same RenderText/Layout::InlineTextBox.
-    TextBoxIterator nextTextBox() const;
+    TextBoxIterator LEGACY_NODELETE nextTextBox() const;
 };
 
 class TextBoxIterator : public LeafBoxIterator {
@@ -68,7 +68,7 @@ public:
     const TextBox* operator->() const LIFETIME_BOUND { return &get(); }
 
     // This traverses to the next text box generated for the same RenderText/Layout::InlineTextBox.
-    TextBoxIterator& traverseNextTextBox();
+    TextBoxIterator& LEGACY_NODELETE traverseNextTextBox();
 
 private:
     BoxIterator& traverseLineRightwardOnLine() = delete;

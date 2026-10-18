@@ -86,7 +86,7 @@ static inline void adjustBorderForTable(const RenderBoxModelObject& renderer, Re
         borderWidths = tableCell->borderWidths();
 }
 
-static inline LayoutUnit intrinsicBorder(const RenderBoxModelObject& renderer)
+static inline LayoutUnit LEGACY_NODELETE intrinsicBorder(const RenderBoxModelObject& renderer)
 {
     if (auto* block = dynamicDowncast<RenderBlock>(renderer); block && renderer.isFieldset())
         return block->intrinsicBorderForFieldset();

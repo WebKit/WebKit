@@ -62,9 +62,9 @@ public:
 
     static bool mayOnlyNeedPartialLayout(const InlineDamage* inlineDamage) { return inlineDamage && inlineDamage->layoutStartPosition(); }
     static void resetInlineDamage(InlineDamage&);
-    static void inlineItemListWillChange(InlineDamage&);
+    static void LEGACY_NODELETE inlineItemListWillChange(InlineDamage&);
     // For content that was never laid out.
-    static bool isSafeToRemoveWithoutFullInvalidation(const Box&);
+    static bool LEGACY_NODELETE isSafeToRemoveWithoutFullInvalidation(const Box&);
 
 private:
     enum class ShouldApplyRangeLayout : bool { No, Yes };

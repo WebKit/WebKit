@@ -176,7 +176,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-static bool isNonReplacedInlineBlock(const Box& layoutBox)
+static bool LEGACY_NODELETE isNonReplacedInlineBlock(const Box& layoutBox)
 {
     // inline-block (InlineFlowRoot) is the inline-level block container 'white-space-trim' applies to; it already
     // implies isAtomicInlineBox(). A replaced box or iframe may carry InlineFlowRoot display but is not a block container.

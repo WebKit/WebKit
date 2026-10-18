@@ -43,7 +43,7 @@ namespace Layout {
 // A negative index is not a valid matrix position on its own; GridFormattingContext computes the
 // most-negative line across all items and shifts every line forward by that magnitude (the number
 // of leading implicit tracks) so, e.g., -2 above maps to matrix column 0. See GridPosition::create().
-static int explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
+static int LEGACY_NODELETE explicitLineToIndex(const Style::GridPosition& position, size_t explicitTrackCount)
 {
     ASSERT(position.isExplicit());
     auto line = position.explicitPosition();

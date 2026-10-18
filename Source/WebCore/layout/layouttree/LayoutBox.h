@@ -190,18 +190,18 @@ public:
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(size_t);
-    size_t rowSpan() const;
+    size_t LEGACY_NODELETE rowSpan() const;
 
     void setColumnSpan(size_t);
-    size_t columnSpan() const;
+    size_t LEGACY_NODELETE columnSpan() const;
 
     void setColumnWidth(LayoutUnit);
-    std::optional<LayoutUnit> columnWidth() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE columnWidth() const;
 
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
     void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
 
-    const LayoutShape* shape() const;
+    const LayoutShape* LEGACY_NODELETE shape() const;
     void setShape(RefPtr<const LayoutShape>);
 
     const ElementBox* LEGACY_NODELETE associatedRubyAnnotationBox() const;
@@ -209,8 +209,8 @@ public:
     RenderObject* rendererForIntegration() const { return m_renderer.get(); }
     void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
 
-    UsedStyle usedStyle() const;
-    UsedStyle firstLineUsedStyle() const;
+    UsedStyle LEGACY_NODELETE usedStyle() const;
+    UsedStyle LEGACY_NODELETE firstLineUsedStyle() const;
 
     UniqueRef<Box> removeFromParent();
 
