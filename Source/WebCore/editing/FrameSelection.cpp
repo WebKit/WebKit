@@ -601,7 +601,7 @@ void FrameSelection::updateDataDetectorsForSelection()
 #endif
 }
 
-static bool removingNodeRemovesPosition(Node& node, const Position& position)
+static bool LEGACY_NODELETE removingNodeRemovesPosition(Node& node, const Position& position)
 {
     if (!position.anchorNode())
         return false;
@@ -1887,7 +1887,7 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
     return m_absCaretBounds;
 }
 
-static LayoutBoxExtent computeOutsetFromInnerOuterRect(const LayoutRect& innerRect, const LayoutRect& outerRect)
+static LayoutBoxExtent LEGACY_NODELETE computeOutsetFromInnerOuterRect(const LayoutRect& innerRect, const LayoutRect& outerRect)
 {
     LayoutBoxExtent result;
     result.setLeft(std::max<LayoutUnit>(0, innerRect.x() - outerRect.x()));

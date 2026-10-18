@@ -161,7 +161,7 @@ EditAction EditCommand::editingAction() const
     return m_editingAction;
 }
 
-static RefPtr<EditCommandComposition> compositionIfPossible(EditCommand& command)
+static RefPtr<EditCommandComposition> LEGACY_NODELETE compositionIfPossible(EditCommand& command)
 {
     auto* compositeCommand = dynamicDowncast<CompositeEditCommand>(command);
     return compositeCommand ? compositeCommand->composition() : nullptr;

@@ -254,8 +254,8 @@ struct WEBCORE_EXPORT AttributedString {
     bool LEGACY_NODELETE isNull() const;
     void truncate(uint64_t length);
 
-    WEBCORE_EXPORT static unsigned encodeFontCacheMissesForTesting();
-    WEBCORE_EXPORT static unsigned decodeFontCacheMissesForTesting();
+    WEBCORE_EXPORT static unsigned LEGACY_NODELETE encodeFontCacheMissesForTesting();
+    WEBCORE_EXPORT static unsigned LEGACY_NODELETE decodeFontCacheMissesForTesting();
 };
 
 } // namespace WebCore

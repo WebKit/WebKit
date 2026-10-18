@@ -51,10 +51,10 @@ public:
     WEBCORE_EXPORT std::expected<unsigned, CacheUnusable> countMatches(const std::optional<SimpleRange>&, const String& target, FindOptions, std::optional<unsigned> limit = std::nullopt);
 
     WEBCORE_EXPORT bool matchesAreMarked(const String& target, FindOptions, std::optional<unsigned> limit) const;
-    WEBCORE_EXPORT void setMatchesMarked();
-    WEBCORE_EXPORT void clearMatchesMarked();
+    WEBCORE_EXPORT void LEGACY_NODELETE setMatchesMarked();
+    WEBCORE_EXPORT void LEGACY_NODELETE clearMatchesMarked();
 
-    WEBCORE_EXPORT static void setMaximumRunCountForTesting(std::optional<unsigned>);
+    WEBCORE_EXPORT static void LEGACY_NODELETE setMaximumRunCountForTesting(std::optional<unsigned>);
 
 private:
     struct TextRun {

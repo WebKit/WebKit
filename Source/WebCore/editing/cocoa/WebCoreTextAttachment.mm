@@ -57,7 +57,7 @@ CocoaImage *webCoreTextAttachmentMissingPlatformImage()
     return webCoreTextAttachmentMissingPlatformImageIfExists().get();
 }
 
-bool isWebCoreTextAttachmentMissingPlatformImage(CocoaImage *image)
+bool LEGACY_NODELETE isWebCoreTextAttachmentMissingPlatformImage(CocoaImage *image)
 {
     return image && image == webCoreTextAttachmentMissingPlatformImageIfExists();
 }

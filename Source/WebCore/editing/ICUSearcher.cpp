@@ -295,7 +295,7 @@ static std::pair<std::span<const char16_t>, size_t> extractSubspanIncludingConte
     return { buffer.subspan(contextStart, contextEnd - contextStart), contextStart };
 }
 
-static std::pair<std::span<const char16_t>, size_t> boundedWordContextForNonComplexText(std::span<const char16_t> buffer, size_t start, size_t length)
+static std::pair<std::span<const char16_t>, size_t> LEGACY_NODELETE boundedWordContextForNonComplexText(std::span<const char16_t> buffer, size_t start, size_t length)
 {
     size_t windowStart = start;
     while (windowStart && !isASCIIWhitespace(buffer[windowStart - 1]))

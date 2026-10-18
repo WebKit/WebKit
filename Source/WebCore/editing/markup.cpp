@@ -489,7 +489,7 @@ public:
 
     using MarkupAccumulator::append;
 
-    ContainerNode* parentNode(Node& node)
+    ContainerNode* LEGACY_NODELETE parentNode(Node& node)
     {
         if (m_useComposedTree) [[unlikely]]
             return parentInComposedTreeIgnoringUserAgentShadow(node);

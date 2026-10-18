@@ -47,7 +47,7 @@ static inline FindOptions matchAffectingOptions(FindOptions options)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedMatchFinder);
 
-static std::optional<unsigned>& maximumRunCountForTesting()
+static std::optional<unsigned>& LEGACY_NODELETE maximumRunCountForTesting()
 {
     static std::optional<unsigned> value;
     return value;
@@ -150,7 +150,7 @@ void CachedMatchFinder::performSearch(StringView buffer, unsigned startOffset, c
     }
 }
 
-static bool matchIsWithinSingleScope(const SimpleRange& range)
+static bool LEGACY_NODELETE matchIsWithinSingleScope(const SimpleRange& range)
 {
     return &range.start.container->rootNode() == &range.end.container->rootNode();
 }

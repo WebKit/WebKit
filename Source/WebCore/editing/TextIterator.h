@@ -123,7 +123,7 @@ public:
 
     StringView text() const LIFETIME_BOUND { ASSERT(!atEnd()); return m_text; }
     WEBCORE_EXPORT SimpleRange range() const;
-    WEBCORE_EXPORT TextIteratorPosition position() const;
+    WEBCORE_EXPORT TextIteratorPosition LEGACY_NODELETE position() const;
     WEBCORE_EXPORT Node* node() const;
 
     // Returns true when the current output is a newline emitted from exiting
