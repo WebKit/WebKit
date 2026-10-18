@@ -60,12 +60,12 @@ WI.ScriptClusterTimelineView = class ScriptClusterTimelineView extends WI.Cluste
 
         this._contentViewsForTarget = new Map;
 
+        this.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
+
         this._previousContentView = null;
         this._updateCurrentContentView();
 
         this.representedObject.addEventListener(WI.ScriptTimeline.Event.TargetAdded, this._handleTargetAdded, this);
-
-        this.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._scriptClusterViewCurrentContentViewDidChange, this);
     }
 
     // TimelineView
