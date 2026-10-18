@@ -103,6 +103,12 @@
             ]
         },
         {
+            "id": "JavaScriptDialogType",
+            "description": "The type of a JavaScript dialog.",
+            "type": "string",
+            "enum": ["alert", "beforeunload", "confirm", "prompt"]
+        },
+        {
             "id": "BrowsingContext",
             "type": "object",
             "description": "A handle representing an open window or tab in the automation session.",
@@ -754,6 +760,16 @@
             ],
             "returns": [
                 { "name": "result", "type": "boolean", "description": "If the browsing context is showing a JavaScript dialog or not." }
+            ]
+        },
+        {
+            "name": "typeOfCurrentJavaScriptDialog",
+            "description": "Returns the type of the JavaScript dialog currently showing in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ],
+            "returns": [
+                { "name": "type", "$ref": "JavaScriptDialogType", "description": "The type of the current JavaScript dialog." }
             ]
         },
         {
