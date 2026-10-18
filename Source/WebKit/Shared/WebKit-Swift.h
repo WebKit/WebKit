@@ -82,7 +82,14 @@ IGNORE_CLANG_WARNINGS_BEGIN("#warnings")
 #endif
 // GCC reports #warning even in system headers, e.g. libstdc++'s <cstdbool> deprecation.
 IGNORE_GCC_WARNINGS_BEGIN("cpp")
+#if COMPILER(GCC)
+// The generated header uses C11's _Alignas, which Clang accepts in C++ but GCC doesn't.
+#define _Alignas(n) alignas(n)
+#endif
 #include "WebKit-Swift-Generated.h"
+#if COMPILER(GCC)
+#undef _Alignas
+#endif
 IGNORE_GCC_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
