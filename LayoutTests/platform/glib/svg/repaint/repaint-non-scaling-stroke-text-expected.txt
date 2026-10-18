@@ -1,5 +1,5 @@
 Hello
  (repaint rects
-  (rect 9 13 48 28)
+  (rect 8 9 53 36)
 )
 

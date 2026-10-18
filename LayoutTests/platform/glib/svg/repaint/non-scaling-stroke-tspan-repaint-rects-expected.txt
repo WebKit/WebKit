@@ -1,0 +1,7 @@
+Hg
+(repaint rects
+  (rect 20 108 138 130)
+  (rect 0 44 89 85)
+  (rect 20 109 138 128)
+)
+

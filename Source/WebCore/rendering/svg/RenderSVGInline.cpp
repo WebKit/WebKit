@@ -203,8 +203,12 @@ void RenderSVGInline::updateFromStyle()
 {
     RenderBoxModelObject::updateFromStyle();
 
-    if (document().settings().layerBasedSVGEngineEnabled())
+    if (document().settings().layerBasedSVGEngineEnabled()) {
         updateHasSVGTransformFlags();
+
+        if (style().vectorEffect() == VectorEffect::NonScalingStroke)
+            setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+    }
 
     // SVG text layout code expects us to be an inline-level element.
     setInline(true);

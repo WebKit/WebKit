@@ -116,7 +116,7 @@ private:
 
     bool LEGACY_NODELETE shouldHandleSubtreeMutations() const;
 
-    bool hasNonScalingStroke() const;
+    float strokeInflation(float strokeWidth) const;
     void updateVisualOverflow();
 
     SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
