@@ -407,7 +407,7 @@ void registerThreadForMachExceptionHandling(Thread& thread)
 
 #endif // HAVE(MACH_EXCEPTIONS)
 
-inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
+inline std::tuple<int, std::optional<int>> LEGACY_NODELETE toSystemSignal(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return std::make_tuple(SIGSEGV, SIGBUS);

@@ -103,7 +103,7 @@ struct UTF16BufferTranslator {
         return buf.hash;
     }
 
-    static bool equal(AtomStringTable::StringEntry const& str, const UTF16Buffer& buf)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& str, const UTF16Buffer& buf)
     {
         return WTF::equal(str.get(), buf.characters);
     }
@@ -162,7 +162,7 @@ struct SubstringTranslator8 : SubstringTranslator {
         return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->span8().subspan(buffer.start, buffer.length));
     }
 
-    static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
         return WTF::equal(string.get(), buffer.baseString->span8().subspan(buffer.start, buffer.length));
     }
@@ -174,7 +174,7 @@ struct SubstringTranslator16 : SubstringTranslator {
         return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->span16().subspan(buffer.start, buffer.length));
     }
 
-    static bool equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& string, const SubstringLocation& buffer)
     {
         return WTF::equal(string.get(), buffer.baseString->span16().subspan(buffer.start, buffer.length));
     }
@@ -208,7 +208,7 @@ struct Latin1BufferTranslator {
         return buf.hash;
     }
 
-    static bool equal(AtomStringTable::StringEntry const& str, const Latin1Buffer& buf)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& str, const Latin1Buffer& buf)
     {
         return WTF::equal(str.get(), buf.characters);
     }
@@ -230,7 +230,7 @@ struct BufferFromStaticDataTranslator {
         return buf.hash;
     }
 
-    static bool equal(AtomStringTable::StringEntry const& str, const Buffer& buf)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& str, const Buffer& buf)
     {
         return WTF::equal(str.get(), buf.characters);
     }
@@ -264,12 +264,12 @@ struct StaticStringAtomTranslator {
         return buf.hash;
     }
 
-    static bool equal(AtomStringTable::StringEntry const& str, const Buffer& buf)
+    static bool LEGACY_NODELETE equal(AtomStringTable::StringEntry const& str, const Buffer& buf)
     {
         return WTF::equal(str.get(), buf.characters);
     }
 
-    static void translate(AtomStringTable::StringEntry& location, const Buffer& buf, unsigned)
+    static void LEGACY_NODELETE translate(AtomStringTable::StringEntry& location, const Buffer& buf, unsigned)
     {
         location = const_cast<StringImpl*>(&buf.staticImpl);
     }
@@ -449,7 +449,7 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, St
 // When removing a string from the table, we know it's already the one in the table, so no need for a string equality check.
 struct AtomStringTableRemovalHashTranslator {
     static unsigned hash(const AtomStringImpl* string) { return string->hash(); }
-    static bool equal(const AtomStringTable::StringEntry& a, const AtomStringImpl* b) { return a == b; }
+    static bool LEGACY_NODELETE equal(const AtomStringTable::StringEntry& a, const AtomStringImpl* b) { return a == b; }
 };
 
 void AtomStringImpl::remove(AtomStringImpl* string)

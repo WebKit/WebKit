@@ -103,7 +103,7 @@ public:
     WTF_EXPORT_PRIVATE bool LEGACY_NODELETE containsOnlyASCII() const;
 
 private:
-    static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);
+    static unsigned LEGACY_NODELETE expandedCapacity(unsigned capacity, unsigned requiredCapacity);
 
     template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(std::span<const CurrentCharacterType> currentCharacters, unsigned requiredCapacity);
     template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);

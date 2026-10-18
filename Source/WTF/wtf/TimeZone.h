@@ -33,11 +33,11 @@ namespace WTF {
 
 // Process-global, monotonically increasing counter. It is bumped whenever the
 // host time zone might have changed.
-WTF_EXPORT_PRIVATE uint64_t lastTimeZoneID();
+WTF_EXPORT_PRIVATE uint64_t LEGACY_NODELETE lastTimeZoneID();
 
 // Bumps lastTimeZoneID(). Call after any time-zone change that the platform
 // notifier does not observe, such as a process-local override.
-WTF_EXPORT_PRIVATE void timeZoneDidChange();
+WTF_EXPORT_PRIVATE void LEGACY_NODELETE timeZoneDidChange();
 WTF_EXPORT_PRIVATE void listenForTimeZoneChangeNotifications();
 
 WTF_EXPORT_PRIVATE bool setHostTimeZoneForTesting(const String&);

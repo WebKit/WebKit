@@ -141,10 +141,10 @@ public:
 
     WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(int);
     WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned);
-    WTF_EXPORT_PRIVATE static String number(long);
-    WTF_EXPORT_PRIVATE static String number(unsigned long);
-    WTF_EXPORT_PRIVATE static String number(long long);
-    WTF_EXPORT_PRIVATE static String number(unsigned long long);
+    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(long);
+    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned long);
+    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(long long);
+    WTF_EXPORT_PRIVATE static String LEGACY_NODELETE number(unsigned long long);
     WTF_EXPORT_PRIVATE static String number(float);
     WTF_EXPORT_PRIVATE static String number(double);
 

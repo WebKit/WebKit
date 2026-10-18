@@ -307,7 +307,7 @@ static void LEGACY_NODELETE TrimZeros(BufferReference<char> buffer, int& length,
 }
 
 
-bool FastFixedDtoa(double v,
+bool LEGACY_NODELETE FastFixedDtoa(double v,
                    int fractional_count,
                    BufferReference<char> buffer,
                    int& length,

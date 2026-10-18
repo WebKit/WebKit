@@ -233,12 +233,12 @@ public:
         m_indexEnd = computeIndexEnd();
     }
 
-    StringView operator*() const
+    StringView LEGACY_NODELETE operator*() const
     {
         return m_stringView.substring(m_index, m_indexEnd - m_index);
     }
 
-    bool operator==(const Impl& other) const
+    bool LEGACY_NODELETE operator==(const Impl& other) const
     {
         ASSERT(m_stringView.m_characters == other.m_stringView.m_characters);
         ASSERT(m_stringView.m_length == other.m_stringView.m_length);
