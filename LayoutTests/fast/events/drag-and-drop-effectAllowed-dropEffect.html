@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+/* js-test.js inserts its output above the body content; keep the elements where the mouse can reach them. */
+#test-container { position: absolute; top: 0; left: 0; background: white }
+#dropTarget { width: 256px; height: 128px; border: 1px dashed }
+#dragMe { -webkit-user-drag: element; -webkit-user-select: none; background: #ff0000; width: 64px; height: 64px; color: white }
+</style>
+<script>
+jsTestIsAsync = true;
+
+// "uninitialized" leaves effectAllowed at its default; "unset" leaves dropEffect alone in dragenter/dragover.
+const effectAllowedValues = ["uninitialized", "all", "copy", "move", "link", "copyMove", "copyLink", "linkMove", "none"];
+const dropEffectValues = ["unset", "none", "copy", "move", "link"];
+
+let currentEffectAllowed;
+let currentDropEffect;
+let dropFired;
+let dragEndDropEffect;
+let resolveDragEnd;
+
+function isDropEffectAllowed(dropEffect, effectAllowed)
+{
+    switch (dropEffect) {
+    case "copy":
+        return ["copy", "copyLink", "copyMove", "uninitialized", "all"].includes(effectAllowed);
+    case "move":
+        return ["move", "copyMove", "linkMove", "uninitialized", "all"].includes(effectAllowed);
+    case "link":
+        return ["link", "copyLink", "linkMove", "uninitialized", "all"].includes(effectAllowed);
+    }
+    return false;
+}
+
+// The operation chosen when the drop target accepts the drag without setting dropEffect.
+function defaultDropEffect(effectAllowed)
+{
+    switch (effectAllowed) {
+    case "none":
+        return "none";
+    case "uninitialized":
+    case "all":
+    case "copy":
+    case "copyLink":
+        return "copy";
+    case "move":
+    case "copyMove":
+    case "linkMove":
+        return "move";
+    case "link":
+        return "link";
+    }
+}
+
+function expectedDropEffect(dropEffect, effectAllowed)
+{
+    if (dropEffect == "unset")
+        return defaultDropEffect(effectAllowed);
+    return isDropEffectAllowed(dropEffect, effectAllowed) ? dropEffect : "none";
+}
+
+let dragStarted;
+
+function dragStart(event)
+{
+    dragStarted = true;
+    if (currentEffectAllowed != "uninitialized")
+        event.dataTransfer.effectAllowed = currentEffectAllowed;
+    event.dataTransfer.setData("text/plain", event.target.textContent);
+}
+
+function dragEnterOrOver(event)
+{
+    if (currentDropEffect != "unset")
+        event.dataTransfer.dropEffect = currentDropEffect;
+    event.preventDefault();
+}
+
+function drop(event)
+{
+    dropFired = true;
+    event.preventDefault();
+}
+
+function dragEnd(event)
+{
+    dragEndDropEffect = event.dataTransfer.dropEffect;
+    resolveDragEnd();
+}
+
+function mouseUp(event)
+{
+    // A drag that started always ends with dragend. Without a dragstart there is nothing to wait for.
+    if (!dragStarted) {
+        dragEndDropEffect = "no drag";
+        resolveDragEnd();
+    }
+}
+
+async function dragWith(effectAllowed, dropEffect)
+{
+    currentEffectAllowed = effectAllowed;
+    currentDropEffect = dropEffect;
+    dropFired = false;
+    dragStarted = false;
+    dragEndDropEffect = null;
+    const dragEnded = new Promise(resolve => resolveDragEnd = resolve);
+
+    const dragMe = document.getElementById("dragMe").getBoundingClientRect();
+    const dropTarget = document.getElementById("dropTarget").getBoundingClientRect();
+    await eventSender.asyncMouseMoveTo(dragMe.left + 10, dragMe.top + dragMe.height / 2);
+    await eventSender.asyncMouseDown();
+    eventSender.leapForward(100);
+    await eventSender.asyncMouseMoveTo(dropTarget.left + 10, dropTarget.top + dropTarget.height / 2);
+    await eventSender.asyncMouseUp();
+    await dragEnded;
+}
+
+async function runTest()
+{
+    const dragMe = document.getElementById("dragMe");
+    const dropTarget = document.getElementById("dropTarget");
+    dragMe.addEventListener("dragstart", dragStart);
+    dragMe.addEventListener("dragend", dragEnd);
+    document.addEventListener("mouseup", mouseUp);
+    dropTarget.addEventListener("dragenter", dragEnterOrOver);
+    dropTarget.addEventListener("dragover", dragEnterOrOver);
+    dropTarget.addEventListener("drop", drop);
+
+    for (const effectAllowed of effectAllowedValues) {
+        for (const dropEffect of dropEffectValues) {
+            await dragWith(effectAllowed, dropEffect);
+            const expected = expectedDropEffect(dropEffect, effectAllowed);
+            debug(`effectAllowed "${effectAllowed}", dropEffect "${dropEffect}":`);
+            shouldBeEqualToString("dragEndDropEffect", expected);
+            shouldBe("dropFired", expected == "none" ? "false" : "true");
+        }
+    }
+
+    document.getElementById("test-container").remove();
+    finishJSTest();
+}
+
+window.onload = () => {
+    description("Tests that the drop target's dropEffect is constrained by the drag source's effectAllowed, and that the default dropEffect follows from effectAllowed when the target does not set one.");
+    if (!window.eventSender) {
+        debug("This test requires eventSender.");
+        finishJSTest();
+        return;
+    }
+    runTest();
+};
+</script>
+</head>
+<body>
+<div id="test-container">
+    <div id="dropTarget">Drop the red square onto me.</div>
+    <div id="dragMe" draggable="true">Square</div>
+</div>
+</body>
+</html>
