@@ -435,6 +435,7 @@
 		0F9327531C20BCBA00CF6564 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		0F93275B1C20BCDF00CF6564 /* dynbench.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93275A1C20BCDF00CF6564 /* dynbench.cpp */; };
 		0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1F0B5C2D3E4F60718293A4C /* JSObjectInlinesLight.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F0B5C2D3E4F60718293A4B /* JSObjectInlinesLight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; };
 		0F9332A014CA7DCD0085F3C6 /* GetByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329614CA7DC10085F3C6 /* GetByStatus.h */; };
 		0F9332A414CA7DD90085F3C6 /* PutByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByStatus.h */; };
@@ -3521,6 +3522,7 @@
 		0F9327591C20BCBA00CF6564 /* dynbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dynbench; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F93275A1C20BCDF00CF6564 /* dynbench.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dynbench.cpp; sourceTree = "<group>"; };
 		0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectInlines.h; sourceTree = "<group>"; };
+		A1F0B5C2D3E4F60718293A4B /* JSObjectInlinesLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectInlinesLight.h; sourceTree = "<group>"; };
 		0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkStatus.cpp; sourceTree = "<group>"; };
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329514CA7DC10085F3C6 /* GetByStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByStatus.cpp; sourceTree = "<group>"; };
@@ -9415,6 +9417,7 @@
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
+				A1F0B5C2D3E4F60718293A4B /* JSObjectInlinesLight.h */,
 				DD9F6F27F5F64D0882634574 /* JSONCache.cpp */,
 				E32FEA2B27448F3600FF41C1 /* JSONCache.h */,
 				E32FEA2A27448F3600FF41C1 /* JSONCacheInlines.h */,
@@ -12471,6 +12474,7 @@
 				276B38D82A71D26400252F4E /* JSNativeStdFunctionInlines.h in Headers */,
 				BC18C4240E16F5CD00B34460 /* JSObject.h in Headers */,
 				0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */,
+				A1F0B5C2D3E4F60718293A4C /* JSObjectInlinesLight.h in Headers */,
 				BC18C4250E16F5CD00B34460 /* JSObjectRef.h in Headers */,
 				A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */,
 				E32FEA2D27448F3700FF41C1 /* JSONCache.h in Headers */,
