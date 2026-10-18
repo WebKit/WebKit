@@ -284,6 +284,7 @@ public:
     void setDisableFontSubpixelAntialiasingForTesting(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
+    bool isEmptyDocumentURL(const URL&) const;
     void registerURLSchemeAsSecure(const String&);
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&);
     void setDomainRelaxationForbiddenForURLScheme(const String&);
