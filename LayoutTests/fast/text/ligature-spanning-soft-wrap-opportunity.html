@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Ligature spanning an in-word soft-wrap opportunity (hyphen) is measured at its full advance</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#word-break-property">
+<meta name="assert" content="A ligature whose input spans an in-word soft-wrap opportunity (a hyphen) must contribute its full shaped advance width, matching the same glyph accessed directly, even when the ligature's component glyphs have zero advance.">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+@font-face {
+    font-family: hyphlig;
+    /* 5-glyph test font: 'a','-','b' are zero-advance; GSUB 'liga' maps a+'-'+b to a 1em glyph
+       that is also mapped directly from 'c'. See Tools note in the bug. */
+    src: url(data:font/ttf;base64,AAEAAAALAIAAAwAwR1NVQrEKtAQAAAC8AAAAUk9TLzJRqWMSAAABEAAAAGBjbWFwARQArwAAAXAAAABEZ2x5ZgO+CAwAAAG0AAAAImhlYWRjBURqAAAB2AAAADZoaGVhB24DJgAAAhAAAAAkaG10eAXcAAAAAAI0AAAAFGxvY2EAAAAiAAACSAAAABhtYXhwAEgABgAAAmAAAAAgbmFtZQqzHpsAAAKAAAAAqHBvc3QAAwAAAAADKAAAACAAAQAAAAoAHgAsAAFERkxUAAgABAAAAAD//wABAAAAAWxpZ2EACAAAAAEAAAABAAQABAAAAAEACAABAAgAAQAOAAEAAQABAAEABAAEAAMAAgADAAAABAH0AZAABQAAAooCvAAAAAABwgLuAAAAAAAyASwAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAV0VCSwBAAC0AYwMg/zgAAAOEAMgAAAABAAAAAAH0ArwAAAAgAAMAAAABAAMAAQAAAAwABAA4AAAACgAIAAIAAgAtAGEAYgBj//8AAAAtAGEAYgBj////1f+g/6H/oQABAAAAAAAAAAAAAAABAGQAAAOEArwAAwAAAQEBAQBkAyAAAPzgAAAAAAK8AAAAAAABAAAAAAAAWJ0zr18PPPUACwPoAAAAAAAAAAAAAAAAAAAAAAAAAAAD6AOEAAAACAACAAEAAAAAAAEAAAOE/zgAAAPoAAAAAAPoAAEAAAAAAAAAAAAAAAAAAAAFAfQAAAAAAAAAAAAAAAAAAAPoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIAAQAAAAUABAABAAAAAAACAAEAAAAAAAAAQAAAAAAAAAAAAAUAQgADAAEECQABAA4AAAADAAEECQACAA4ADgADAAEECQADAB4AHAADAAEECQAEAA4AOgADAAEECQAGAB4ASABIAHkAcABoAEwAaQBnAFIAZQBnAHUAbABhAHIASAB5AHAAaABMAGkAZwAtAFIAZQBnAHUAbABhAHIASAB5AHAAaABMAGkAZwBIAHkAcABoAEwAaQBnAC0AUgBlAGcAdQBsAGEAcgADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA);
+}
+span { font: 100px/1 hyphlig; white-space: pre; }
+</style>
+<div id="content"><span id="ligature">a-b</span><span id="reference">c</span><span id="noLigature">ab</span></div>
+<script>
+promise_test(async () => {
+    await document.fonts.ready;
+    const ligature = document.getElementById("ligature").getBoundingClientRect().width;
+    const reference = document.getElementById("reference").getBoundingClientRect().width;
+    const noLigature = document.getElementById("noLigature").getBoundingClientRect().width;
+
+    // Sanity: the font is active and the ligature glyph has a non-zero advance.
+    assert_greater_than(reference, 0, "reference glyph should have a non-zero advance");
+    // The non-ligated pair has zero-advance components (font is active, no ligature formed).
+    assert_equals(noLigature, 0, "non-ligated 'ab' should have zero advance");
+    // The bug: the ligature spans the hyphen soft-wrap opportunity and used to measure as zero width.
+    assert_approx_equals(ligature, reference, 0.5, "ligated 'a-b' must have the same advance as the ligature glyph");
+}, "A ligature spanning an in-word hyphen is measured at its full advance");
+</script>

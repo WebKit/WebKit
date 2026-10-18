@@ -1,0 +1,4 @@
+a-bcab
+
+PASS A ligature spanning an in-word hyphen is measured at its full advance
+
