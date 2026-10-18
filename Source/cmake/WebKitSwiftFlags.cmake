@@ -153,6 +153,12 @@ webkit_add_swift_options(
 set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY
     ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
 
+# Ninja tricks compilers into turning off color support. See the matching clang
+# flags in WebKitCompilerFlags.cmake.
+if (CMAKE_GENERATOR STREQUAL "Ninja")
+    webkit_add_swift_options(-color-diagnostics)
+endif ()
+
 if (APPLE)
     webkit_add_swift_options(
         ${WEBKIT_SWIFT_EXPERIMENTAL_FEATURE_FLAGS}
