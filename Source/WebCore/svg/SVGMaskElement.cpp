@@ -170,14 +170,14 @@ FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation
     };
     FloatRect maskRepaintRect;
     for (RefPtr childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
-        CheckedPtr renderer = dynamicDowncast<RenderElement>(childNode->renderer());
+        CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(childNode->renderer());
         if (!renderer || !childNode->isSVGElement())
             continue;
         CheckedRef style = renderer->style();
         if (style->display() == Style::DisplayType::None)
             continue;
         auto r = renderer->repaintRectInLocalCoordinates(repaintRectCalculation);
-        if (auto transform = transformationMatrixFromChild(downcast<RenderLayerModelObject>(*renderer)))
+        if (auto transform = transformationMatrixFromChild(*renderer))
             r = transform->mapRect(r);
         maskRepaintRect.unite(r);
     }
