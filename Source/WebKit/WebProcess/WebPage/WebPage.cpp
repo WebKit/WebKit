@@ -189,6 +189,7 @@
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/BitmapImage.h>
+#include <WebCore/CSSValueKeywords.h>
 #include <WebCore/CachedImage.h>
 #include <WebCore/CachedPage.h>
 #include <WebCore/CaptionUserPreferences.h>
@@ -319,6 +320,7 @@
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerCompositor.h>
+#include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderVideoInlines.h>
 #include <WebCore/RenderView.h>
@@ -1009,6 +1011,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_backgroundColor = parameters.backgroundColor;
+    setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
     // We need to set the device scale factor before creating the drawing area
     // to ensure it's created with the right size.
@@ -1145,8 +1148,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setPaginationBehavesLikeColumns(parameters.paginationBehavesLikeColumns);
     setPageLength(parameters.pageLength);
     setGapBetweenPages(parameters.gapBetweenPages);
-
-    setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
     if (parameters.isEditable)
         setEditable(true);
@@ -4850,6 +4851,18 @@ void WebPage::setBackgroundColor(const std::optional<WebCore::Color>& background
     drawingArea->setNeedsDisplay();
 }
 
+WebCore::Color WebPage::effectiveBackgroundColor() const
+{
+    if (m_backgroundColor)
+        return *m_backgroundColor;
+
+    OptionSet<WebCore::StyleColorOptions> styleColorOptions;
+    if (RefPtr page = corePage(); page && page->useDarkAppearance())
+        styleColorOptions.add(WebCore::StyleColorOptions::UseDarkAppearance);
+
+    return WebCore::RenderTheme::singleton().systemColor(WebCore::CSSValueID::Canvas, styleColorOptions);
+}
+
 void WebPage::setObscuredContentInsets(const FloatBoxExtent& obscuredContentInsets)
 {
     RefPtr page = m_page;
@@ -7300,6 +7313,13 @@ void WebPage::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUser
 #if ENABLE(PDF_PLUGIN)
     for (Ref pluginView : m_pluginViews)
         pluginView->effectiveAppearanceDidChange();
+#endif
+
+#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    if (!m_backgroundColor) {
+        if (RefPtr drawingArea = m_drawingArea)
+            drawingArea->backgroundColorDidChange();
+    }
 #endif
 }
 
