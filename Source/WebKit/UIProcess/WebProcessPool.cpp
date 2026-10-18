@@ -899,6 +899,9 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
         if (process->lockdownMode() != lockdownMode || process->enhancedSecurity() != enhancedSecurity || process->crossOriginIsolation() != crossOriginIsolation)
             continue;
 
+        if (process->hasWebsiteDataStore() && process->websiteDataStore() != &websiteDataStore)
+            continue;
+
         if (process->wasTerminated()) {
             // There is sometimes a delay until we get notified that a prewarmed process has been terminated (e.g. after resuming
             // from suspension) so make sure the process is still running here before deciding to use it.
@@ -916,20 +919,14 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
         return nullptr;
     }
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    // In platforms using Bubblewrap for sandboxing, prewarmed process is launched using the WebProcessPool primary WebsiteDataStore,
-    // so we don't use it in case of using a different WebsiteDataStore.
-    if (m_sandboxEnabled)
-        return nullptr;
-#endif
-
     WTFEmitSignpost(this, ProcessPrewarming, "Using prewarmed process with pid %d", prewarmedProcess->processID());
 
     bool didRemove = m_prewarmedProcesses.remove(*prewarmedProcess);
     ASSERT_UNUSED(didRemove, didRemove);
 
     ASSERT(prewarmedProcess->isPrewarmed());
-    prewarmedProcess->setWebsiteDataStore(websiteDataStore);
+    if (!prewarmedProcess->hasWebsiteDataStore())
+        prewarmedProcess->setWebsiteDataStore(websiteDataStore);
     prewarmedProcess->markIsNoLongerInPrewarmedPool();
 
     return prewarmedProcess;
@@ -1157,8 +1154,23 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     registerHighDynamicRangeChangeCallback();
 }
 
-void WebProcessPool::prewarmProcess()
+void WebProcessPool::prewarmProcess(WebsiteDataStore* websiteDataStore)
 {
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // Bubblewrap can only expose the WebsiteDataStore directories at launch, so a sandboxed
+    // prewarmed process is launched for the WebsiteDataStore that will use it.
+    if (m_sandboxEnabled) {
+        if (!websiteDataStore)
+            return;
+
+        m_prewarmedProcesses.forEach([&](auto& process) {
+            if (process.websiteDataStore() != websiteDataStore)
+                process.shutDown();
+        });
+    } else
+#endif
+        websiteDataStore = nullptr;
+
     if (m_prewarmedProcesses.computeSize() >= prewarmedProcessCountLimit())
         return;
 
@@ -1171,7 +1183,7 @@ void WebProcessPool::prewarmProcess()
 
     auto lockdownMode = lockdownModeEnabledBySystem() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     auto enhancedSecurity = defaultEnhancedSecurity(lockdownMode, protect(m_defaultPageGroup->preferences()));
-    createNewWebProcess(nullptr, lockdownMode, enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed::Yes);
+    createNewWebProcess(websiteDataStore, lockdownMode, enhancedSecurity, WebProcessProxy::EnableWebAssemblyDebugger::No, WebProcessProxy::IsPrewarmed::Yes);
 }
 
 void WebProcessPool::enableProcessTermination()
@@ -1252,9 +1264,10 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 #else
         static Seconds prewarmedLaunchInterval = 0_s;
 #endif
-        WorkQueue::mainSingleton().dispatchAfter(prewarmedLaunchInterval, [weakThis = WeakPtr { *this }]() mutable {
+        RefPtr websiteDataStore = process.hasWebsiteDataStore() ? process.websiteDataStore() : nullptr;
+        WorkQueue::mainSingleton().dispatchAfter(prewarmedLaunchInterval, [weakThis = WeakPtr { *this }, websiteDataStore = WTF::move(websiteDataStore)] mutable {
             if (RefPtr protectedThis = weakThis.get())
-                protectedThis->didReachGoodTimeToPrewarm();
+                protectedThis->didReachGoodTimeToPrewarm(websiteDataStore.get());
         });
     }
 }
@@ -1562,8 +1575,14 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page, WebsiteDat
     if (iterator->value.isEmpty()) {
         m_sessionToPageIDsMap.remove(iterator);
 
-        if (sessionID.isEphemeral())
+        if (sessionID.isEphemeral()) {
             m_webProcessCache->clearAllProcessesForSession(sessionID);
+
+            m_prewarmedProcesses.forEach([&](auto& process) {
+                if (process.hasWebsiteDataStore() && process.websiteDataStore() == &dataStore)
+                    process.shutDown();
+            });
+        }
     }
     dataStore.removePage(page);
 }
@@ -1597,7 +1616,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
-void WebProcessPool::didReachGoodTimeToPrewarm()
+void WebProcessPool::didReachGoodTimeToPrewarm(WebsiteDataStore* websiteDataStore)
 {
     if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation() || usesSingleWebProcess())
         return;
@@ -1607,7 +1626,7 @@ void WebProcessPool::didReachGoodTimeToPrewarm()
         return;
     }
 
-    prewarmProcess();
+    prewarmProcess(websiteDataStore);
 }
 
 void WebProcessPool::populateVisitedLinks()
