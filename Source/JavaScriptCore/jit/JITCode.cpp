@@ -146,16 +146,6 @@ const RegisterAtOffsetList* JITCode::calleeSaveRegisters() const
 #endif
 }
 
-JITCode::CodeRef<JSEntryPtrTag> JITCode::swapCodeRefForDebugger(JITCode::CodeRef<JSEntryPtrTag>)
-{
-    return CodeRef<JSEntryPtrTag>();
-}
-
-CodePtr<JSEntryPtrTag> JITCode::swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>)
-{
-    return CodePtr<JSEntryPtrTag>();
-}
-
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
     : JITCode(jitType)
 {
@@ -213,24 +203,6 @@ bool JITCodeWithCodeRef::contains(void* address)
     return m_executableMemory->contains(address);
 }
 
-JITCode::CodeRef<JSEntryPtrTag> JITCodeWithCodeRef::swapCodeRefForDebugger(JITCode::CodeRef<JSEntryPtrTag> ref)
-{
-    ASSERT(canSwapCodeRefForDebugger());
-    RELEASE_ASSERT(m_addressForCall);
-    RELEASE_ASSERT(ref);
-
-    CodeRef<JSEntryPtrTag> old;
-    if (m_executableMemory) {
-        old = CodeRef<JSEntryPtrTag>(m_executableMemory.releaseNonNull());
-        RELEASE_ASSERT(old.code() == m_addressForCall);
-    } else
-        old = CodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(m_addressForCall);
-
-    m_addressForCall = ref.code();
-    m_executableMemory = ref.executableMemory();
-    return old;
-}
-
 DirectJITCode::DirectJITCode(JITType jitType)
     : JITCodeWithCodeRef(jitType)
 {
@@ -277,15 +249,6 @@ CodePtr<JSEntryPtrTag> DirectJITCode::addressForCall(ArityCheckMode arity)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CodePtr<JSEntryPtrTag>();
-}
-
-CodePtr<JSEntryPtrTag> DirectJITCode::swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag> withArityCheck)
-{
-    RELEASE_ASSERT(m_withArityCheck);
-    RELEASE_ASSERT(withArityCheck);
-    auto old = m_withArityCheck;
-    m_withArityCheck = withArityCheck;
-    return old;
 }
 
 NativeJITCode::NativeJITCode(JITType jitType)

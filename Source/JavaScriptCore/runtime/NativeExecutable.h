@@ -59,6 +59,10 @@ public:
         ASSERT(kind == CodeSpecializationKind::CodeForConstruct);
         return constructor();
     }
+
+    Ref<JSC::JITCode> swapGeneratedJITCodeForDebugger(CodeSpecializationKind, Ref<JSC::JITCode>&&);
+    Ref<JSC::JITCode> swapGeneratedJITCodeForCallForDebugger(Ref<JSC::JITCode>&&);
+    Ref<JSC::JITCode> swapGeneratedJITCodeForConstructForDebugger(Ref<JSC::JITCode>&&);
         
     static constexpr ptrdiff_t offsetOfNativeFunctionFor(CodeSpecializationKind kind)
     {
