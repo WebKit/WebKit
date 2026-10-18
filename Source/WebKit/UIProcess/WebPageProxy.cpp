@@ -6608,12 +6608,15 @@ URL WebPageProxy::topLevelCreationURL(const URL& url, bool isMainFrame) const
 // An about:blank document is only as trustworthy as the origin it inherits from its creator, such as a popup's opener.
 bool WebPageProxy::topLevelIsSecureContext(const URL& url, bool isMainFrame) const
 {
+    auto isTrustworthy = [](const URL& url) {
+        return !url.protocolIsData() && isURLPotentiallyTrustworthy(url);
+    };
     RefPtr mainFrame = m_mainFrame;
     if (isMainFrame || !mainFrame)
-        return isURLPotentiallyTrustworthy(url);
+        return isTrustworthy(url);
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(mainFrame->url()))
         return mainFrame->securityOrigin()->isPotentiallyTrustworthy();
-    return isURLPotentiallyTrustworthy(mainFrame->url());
+    return isTrustworthy(mainFrame->url());
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-similar-origin-window-agent

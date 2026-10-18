@@ -18,7 +18,11 @@ onmessage = (message) => {
 <iframe src="data:text/html,
 <!DOCTYPE html>
 <script>
-top.postMessage(navigator.locks ? 'FAIL' : 'PASS', '*');
+navigator.locks.request('abc', {mode: 'shared'}, () => {
+    top.postMessage('FAIL - Lock acquired', '*');
+}).then(
+    () => top.postMessage('FAIL - Promise resolved', '*'),
+    () => top.postMessage('PASS', '*'))
 </script>"></iframe>
 </body>
 </html>
