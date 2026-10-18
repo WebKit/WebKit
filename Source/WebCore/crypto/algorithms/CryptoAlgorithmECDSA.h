@@ -36,7 +36,7 @@ class CryptoAlgorithmECDSA final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "ECDSA"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::ECDSA;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmECDSA() = default;

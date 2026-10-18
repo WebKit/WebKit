@@ -35,7 +35,7 @@ class CryptoAlgorithmHMAC final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "HMAC"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HMAC;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
     // Operations can be performed directly.
     static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoKeyHMAC&, const Vector<uint8_t>&);

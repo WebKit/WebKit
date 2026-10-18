@@ -33,7 +33,7 @@ class CryptoAlgorithmSHA384 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "SHA-384"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_384;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmSHA384() = default;

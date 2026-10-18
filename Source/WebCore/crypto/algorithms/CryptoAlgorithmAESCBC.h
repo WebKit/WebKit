@@ -38,7 +38,7 @@ public:
 
     static constexpr ASCIILiteral s_name = "AES-CBC"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
     // Operations can be performed directly.
     WEBCORE_EXPORT static ExceptionOr<Vector<uint8_t>> platformEncrypt(const CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&, Padding padding = Padding::Yes);

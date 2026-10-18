@@ -36,7 +36,7 @@ class CryptoAlgorithmAESCFB final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "AES-CFB-8"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CFB;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmAESCFB() = default;

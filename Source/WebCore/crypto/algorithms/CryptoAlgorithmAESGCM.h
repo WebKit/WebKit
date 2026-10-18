@@ -36,7 +36,7 @@ class CryptoAlgorithmAESGCM final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "AES-GCM"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_GCM;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
     static constexpr size_t DefaultTagLength = 128;
 
 private:

@@ -35,7 +35,7 @@ class CryptoAlgorithmAESKW final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "AES-KW"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_KW;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
     static constexpr size_t s_extraSize = 64 / 8; // https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.1
 
 private:

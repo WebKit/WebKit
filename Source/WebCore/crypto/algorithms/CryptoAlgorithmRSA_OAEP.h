@@ -36,7 +36,7 @@ class CryptoAlgorithmRSA_OAEP final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "RSA-OAEP"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_OAEP;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmRSA_OAEP() = default;

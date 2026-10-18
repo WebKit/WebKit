@@ -35,7 +35,7 @@ class CryptoAlgorithmECDH final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "ECDH"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::ECDH;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
     // Operations can be performed directly.
     WEBCORE_EXPORT static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyEC&, const CryptoKeyEC&);

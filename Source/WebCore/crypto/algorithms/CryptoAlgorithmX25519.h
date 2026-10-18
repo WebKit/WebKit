@@ -29,7 +29,7 @@ class CryptoAlgorithmX25519 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "X25519"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::X25519;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmX25519() = default;

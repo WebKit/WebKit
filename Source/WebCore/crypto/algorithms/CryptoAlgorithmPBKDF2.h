@@ -36,7 +36,7 @@ class CryptoAlgorithmPBKDF2 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "PBKDF2"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::PBKDF2;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmPBKDF2() = default;

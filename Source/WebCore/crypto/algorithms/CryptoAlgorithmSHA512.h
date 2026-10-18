@@ -33,7 +33,7 @@ class CryptoAlgorithmSHA512 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "SHA-512"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_512;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmSHA512() = default;

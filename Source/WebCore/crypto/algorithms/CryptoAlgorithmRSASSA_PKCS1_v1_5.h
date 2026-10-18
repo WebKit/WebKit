@@ -35,7 +35,7 @@ class CryptoAlgorithmRSASSA_PKCS1_v1_5 final : public CryptoAlgorithm {
 public:
     static constexpr ASCIILiteral s_name = "RSASSA-PKCS1-v1_5"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;
-    static Ref<CryptoAlgorithm> create();
+    static Ref<CryptoAlgorithm> LEGACY_NODELETE create();
 
 private:
     CryptoAlgorithmRSASSA_PKCS1_v1_5() = default;

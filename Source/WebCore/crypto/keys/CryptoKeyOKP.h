@@ -42,10 +42,10 @@ public:
         Ed25519,
     };
 
-    static RefPtr<CryptoKeyOKP> create(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, KeyMaterial&&, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyOKP> LEGACY_NODELETE create(CryptoAlgorithmIdentifier, NamedCurve, CryptoKeyType, KeyMaterial&&, bool extractable, CryptoKeyUsageBitmap);
 
     WEBCORE_EXPORT static ExceptionOr<CryptoKeyPair> generatePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
-    WEBCORE_EXPORT static RefPtr<CryptoKeyOKP> importRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
+    WEBCORE_EXPORT static RefPtr<CryptoKeyOKP> LEGACY_NODELETE importRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importJwk(CryptoAlgorithmIdentifier, NamedCurve, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyOKP> importPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
