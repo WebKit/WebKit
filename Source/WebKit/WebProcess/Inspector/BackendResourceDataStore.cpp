@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "BackendResourceDataStore.h"
-
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/InspectorResourceUtilities.h>
@@ -168,11 +167,12 @@ bool BackendResourceDataStore::ensureFreeSpace(size_t size)
     return true;
 }
 
-void BackendResourceDataStore::resourceCreated(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, Inspector::ResourceType type)
+void BackendResourceDataStore::resourceCreated(ResourceLoaderIdentifier resourceID, FrameIdentifier frameID, Inspector::ResourceType type, CachedResource::Type resourceType)
 {
     ensureNoDataForId(resourceID);
     auto entry = makeUniqueRef<ResourceData>(resourceID, type);
     entry->setFrameID(frameID);
+    entry->setTypeRequestResource(resourceType);
     m_resourceDataMap.set(resourceID, WTF::move(entry));
 }
 
@@ -210,6 +210,14 @@ void BackendResourceDataStore::setResourceType(ResourceLoaderIdentifier resource
     if (!resourceData)
         return;
     resourceData->setType(type);
+}
+
+void BackendResourceDataStore::setRequestResourceType(ResourceLoaderIdentifier resourceID, WebCore::CachedResource::Type type)
+{
+    ResourceData* resourceData = resourceDataForId(resourceID);
+    if (!resourceData)
+        return;
+    resourceData->setTypeRequestResource(type);
 }
 
 void BackendResourceDataStore::setResourceContent(ResourceLoaderIdentifier resourceID, const String& content, bool base64Encoded)

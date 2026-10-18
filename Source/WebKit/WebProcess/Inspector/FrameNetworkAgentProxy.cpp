@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -49,6 +50,7 @@
 #include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
@@ -174,6 +176,30 @@ static ResourceType resourceTypeForRequest(const ResourceRequest& request, Docum
     return ResourceType::Other;
 }
 
+static CachedResource::Type inferCachedResourceType(const ResourceRequest& request, const CachedResource* cachedResource)
+{
+    if (cachedResource)
+        return cachedResource->type();
+
+    switch (request.requester()) {
+    case ResourceRequestRequester::XHR:
+    case ResourceRequestRequester::Fetch:
+        return CachedResource::Type::RawResource;
+    case ResourceRequestRequester::Media:
+        return CachedResource::Type::MediaResource;
+    case ResourceRequestRequester::Main:
+        return CachedResource::Type::MainResource;
+    case WebCore::ResourceRequestRequester::Ping:
+        return CachedResource::Type::Ping;
+    case WebCore::ResourceRequestRequester::Beacon:
+        return CachedResource::Type::Beacon;
+    default:
+        break;
+    }
+
+    return CachedResource::Type::RawResource;
+}
+
 void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     if (request.hiddenFromInspector())
@@ -195,8 +221,8 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
-
+    CachedResource::Type requestResourceType = inferCachedResourceType(request, cachedResource);
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType, requestResourceType);
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
     auto documentURL = protectedLoader->url().string();
@@ -217,11 +243,10 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType)
+void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType uncachedType)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
-
     // Apply the inspector's extra request headers here too, so Ping/Beacon loads carry them like
     // the legacy path (InspectorNetworkAgent funnels both willSendRequest paths through one core).
     for (auto& header : m_extraRequestHeaders)
@@ -234,9 +259,15 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
     if (!frameID)
         return;
 
+    CachedResource::Type requestType = CachedResource::Type::RawResource;
+    if (uncachedType == UncachedLoadType::Ping)
+        requestType = CachedResource::Type::Ping;
+    else if (uncachedType == UncachedLoadType::Beacon)
+        requestType = CachedResource::Type::Beacon;
+
     // FIXME: Map from UncachedLoadType to a more specific ResourceType.
     // https://webkit.org/b/312828
-    m_resourcesData->resourceCreated(resourceID, *frameID, ResourceType::Other);
+    m_resourcesData->resourceCreated(resourceID, *frameID, ResourceType::Other, requestType);
 
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto walltime = WallTime::now().secondsSinceEpoch().value();
@@ -252,6 +283,40 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
             qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
             ResourceUtilities::copyRequestExtras(request, nullptr), std::nullopt, ResourceType::Other, timestamp, walltime, WTF::move(initiator)),
         page->identifier());
+}
+
+void FrameNetworkAgentProxy::setRequestResourceType(const ResourceResponse& response, WebCore::ResourceLoaderIdentifier requestId, const CachedResource* cachedResource)
+{
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+    auto* resourceData = m_resourcesData->data(requestId);
+
+    // May already be set
+    if (resourceData)
+        resourceRequestType = resourceData->requestResourceType();
+
+    if (resourceRequestType == CachedResource::Type::RawResource) {
+        String mimeType = response.mimeType();
+        if (mimeType.isEmpty() && cachedResource)
+            mimeType = cachedResource->response().mimeType();
+
+        // Try to find the true value
+        if (!mimeType.isEmpty()) {
+            if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::ImageResource;
+            else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::Script;
+            else if (MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::JSON;
+            else if (MIMETypeRegistry::isSupportedStyleSheetMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::CSSStyleSheet;
+            else if (MIMETypeRegistry::isSupportedFontMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::FontResource;
+            else if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::MediaResource;
+
+            m_resourcesData->setRequestResourceType(requestId, resourceRequestType);
+        }
+    }
 }
 
 void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -272,6 +337,8 @@ void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourc
     auto* resourceData = m_resourcesData->data(resourceID);
     auto resourceType = resourceData ? resourceData->type() : ResourceType::Other;
     m_resourcesData->responseReceived(resourceID, response, resourceType);
+
+    setRequestResourceType(response, resourceID, nullptr);
 
     // The rest of the phase breakdown travels inside the response's own NetworkLoadMetrics; only the
     // start time has to be sent explicitly, since it lives on the ResourceLoader.
@@ -297,16 +364,16 @@ void FrameNetworkAgentProxy::didReceiveData(ResourceLoaderIdentifier resourceID,
         protect(m_page)->identifier());
 }
 
-void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
+void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
 
+    auto* resourceData = m_resourcesData->data(resourceID);
     RefPtr protectedLoader = loader;
     RefPtr frame = protectedLoader->frame();
     RefPtr document = frame->document();
     if (RefPtr frameLoader = protectedLoader->frameLoader()) {
-        auto* resourceData = m_resourcesData->data(resourceID);
         if (resourceData && resourceData->type() == ResourceType::Document) {
             if (RefPtr documentLoader = frameLoader->documentLoader())
                 m_resourcesData->addResourceSharedBuffer(resourceID, documentLoader->mainResourceData(), document->encoding());
@@ -335,7 +402,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // SourceMap/X-SourceMap response header (captured at response time), then fall back to
     // a "/*# sourceMappingURL=... */" comment in the decoded stylesheet text.
     String sourceMapURL;
-    if (auto* resourceData = m_resourcesData->data(resourceID); resourceData && resourceData->type() == ResourceType::StyleSheet) {
+    if (resourceData && resourceData->type() == ResourceType::StyleSheet) {
         sourceMapURL = resourceData->sourceMapURL();
         if (sourceMapURL.isEmpty() && resourceData->hasContent() && !resourceData->base64Encoded())
             sourceMapURL = ContentSearchUtilities::findStylesheetSourceMapURL(resourceData->content());
@@ -356,6 +423,11 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // Isolation, which is what keeps it out of the way.
     ASSERT(isMainRunLoop());
     auto completeMetrics = networkLoadMetrics.isComplete() ? networkLoadMetrics : platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(resourceID);
+
+    if (resourceData && completeMetrics.additionalNetworkLoadMetricsForWebInspector && !completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority.has_value()) {
+        WebCore::CachedResource::Type requestResourceType = resourceData->requestResourceType();
+        completeMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = WebCore::DefaultResourceLoadPriority::forResourceType(requestResourceType);
+    }
 
     // responseEnd is when the load actually completed; now() would charge the bookkeeping above to
     // the resource's load time.
@@ -393,7 +465,8 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     if (!frameID)
         return;
 
-    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
+    auto requestResourceType = WebCore::CachedResource::Type::RawResource;
+    m_resourcesData->resourceCreated(resourceID, *frameID, resourceType, cachedResource.type());
 
     // Copy content from the CachedResource now, since the store does not hold
     // CachedResource references and memory-cached resources don't go through

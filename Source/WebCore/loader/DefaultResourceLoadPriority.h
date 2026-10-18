@@ -24,13 +24,13 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "ResourceLoadPriority.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/ResourceLoadPriority.h>
 
 namespace WebCore {
 
 struct DefaultResourceLoadPriority {
-    static ResourceLoadPriority LEGACY_NODELETE forResourceType(CachedResource::Type);
+    WEBCORE_EXPORT static ResourceLoadPriority LEGACY_NODELETE forResourceType(CachedResource::Type);
 
     static constexpr auto asyncScript = ResourceLoadPriority::Medium;
     static constexpr auto inactiveStyleSheet = ResourceLoadPriority::VeryLow;

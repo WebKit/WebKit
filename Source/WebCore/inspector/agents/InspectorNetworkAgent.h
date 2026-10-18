@@ -114,6 +114,7 @@ public:
     void didRecalculateStyle();
     void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*) override;
     void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType) override;
+    void setRequestResourceType(const ResourceResponse&, String requestId, const CachedResource*);
     void didReceiveResponse(ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*) override;
     void didReceiveData(ResourceLoaderIdentifier, const SharedBuffer*, int expectedDataLength, int encodedDataLength) override;
     void didFinishLoading(ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*) override;
@@ -159,7 +160,7 @@ protected:
     virtual bool shouldForceBufferingNetworkResourceData() const = 0;
 
 private:
-    void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, Inspector::ResourceType, ResourceLoader*);
+    void willSendRequestInternal(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, Inspector::ResourceType, ResourceLoader*, CachedResource::Type);
 
     bool shouldIntercept(URL, Inspector::Protocol::Network::NetworkStage);
     void continuePendingRequests();

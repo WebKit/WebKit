@@ -77,8 +77,10 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     auto request = createPotentialAccessControlRequest(completeURL(document), WTF::move(options), document, crossOriginMode);
     request.setInitiatorType(m_initiatorType);
 
-    if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
+    if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic) {
+        request.setInitialPriority(DefaultResourceLoadPriority::asyncScript);
         request.setPriority(DefaultResourceLoadPriority::asyncScript);
+    }
 
     return request;
 }

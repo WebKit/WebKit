@@ -31,6 +31,7 @@
 #include "CachedScript.h"
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
+#include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
@@ -49,6 +50,7 @@
 #include "MemoryCache.h"
 #include "NetworkLoadMetrics.h"
 #include "Page.h"
+#include "ResourceLoadPriority.h"
 #include "ResourceLoader.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
@@ -69,6 +71,51 @@
 #include <wtf/URL.h>
 
 namespace Inspector {
+
+namespace Protocol {
+namespace Network {
+
+static LoadPriority LEGACY_NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case WebCore::ResourceLoadPriority::VeryLow:
+        return LoadPriority::Verylow;
+    case WebCore::ResourceLoadPriority::Low:
+        return LoadPriority::Low;
+    case WebCore::ResourceLoadPriority::Medium:
+        return LoadPriority::Medium;
+    case WebCore::ResourceLoadPriority::High:
+        return LoadPriority::High;
+    case WebCore::ResourceLoadPriority::VeryHigh:
+        return LoadPriority::Veryhigh;
+    }
+    ASSERT_NOT_REACHED();
+    return LoadPriority::Verylow;
+}
+
+static LoadPriority LEGACY_NODELETE toProtocol(WebCore::NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case WebCore::NetworkLoadPriority::Verylow:
+        return LoadPriority::Verylow;
+    case WebCore::NetworkLoadPriority::Low:
+        return LoadPriority::Low;
+    case WebCore::NetworkLoadPriority::Medium:
+        return LoadPriority::Medium;
+    case WebCore::NetworkLoadPriority::High:
+        return LoadPriority::High;
+    case WebCore::NetworkLoadPriority::Veryhigh:
+        return LoadPriority::Veryhigh;
+    case WebCore::NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return LoadPriority::Medium;
+}
+
+} // namespace Network
+} // namespace Protocol
 
 namespace ResourceUtilities {
 
@@ -522,24 +569,7 @@ Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeade
     return headersValue;
 }
 
-static Inspector::Protocol::Network::Metrics::Priority LEGACY_NODELETE toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::Priority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::Priority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::Priority::High;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::Priority::Medium;
-}
-
-Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
@@ -549,8 +579,12 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
     // The additional metrics are only captured while an inspector is attached
     // (InspectorInstrumentation::firstFrontendCreated enables it in the NetworkProcess).
     if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (additionalMetrics->initialPriority.has_value())
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
+        else
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
         if (!additionalMetrics->connectionIdentifier.isNull())
