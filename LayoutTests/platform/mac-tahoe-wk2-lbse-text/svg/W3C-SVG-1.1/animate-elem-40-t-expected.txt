@@ -145,7 +145,7 @@ layer at (-52.58,-47.02) size 106x112 backgroundClip at (0,0) size 480x360 clip 
     RenderSVGText {text} at (17,0) size 64x41 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 64x41
         chunk 1 text run 1 at (-35.00,-15.00) startOffset 0 endOffset 1 width 22.32: "1"
-        chunk 1 text run 1 at (5.00,-15.00) startOffset 0 endOffset 1 width 23.40: "2"
+        chunk 1 text run 2 at (5.00,-15.00) startOffset 1 endOffset 2 width 23.40: "2"
     RenderSVGText {text} at (0,93) size 106x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 106x18
         chunk 1 (middle anchor) text run 1 at (-52.57,60.00) startOffset 0 endOffset 16 width 105.14: "x/y on <text>(2)"
