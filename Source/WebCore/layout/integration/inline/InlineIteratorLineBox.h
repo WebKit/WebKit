@@ -263,7 +263,7 @@ inline float LineBox::contentLogicalLeft() const
 {
     auto writingMode = formattingContextRoot().writingMode();
     if (writingMode.isLogicalLeftLineLeft())
-        return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection();
+        return line().lineBoxLogicalRect().x() + line().contentLogicalLeftIgnoringInlineDirection();
     ASSERT(writingMode.isVertical()); // Currently only sideways-lr gets this far.
     return line().bottom() - (line().contentLogicalLeftIgnoringInlineDirection() + line().contentLogicalWidth());
 }

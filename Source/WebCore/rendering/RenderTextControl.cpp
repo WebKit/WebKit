@@ -146,11 +146,13 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     auto innerText = innerTextElement();
-    if (!innerText->renderer())
+    CheckedPtr innerTextBox = innerText->renderBox();
+    if (!innerTextBox)
         return;
 
     LayoutPoint adjustedLocation = accumulatedOffset + location();
-    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()) + toLayoutSize(scrollPosition());
+    LayoutSize innerTextOffset { toFloatSize(innerTextBox->localToContainerPoint({ }, this)) };
+    LayoutPoint localPoint = innerTextBox->flipForWritingMode(pointInContainer - toLayoutSize(adjustedLocation) - innerTextOffset);
     result.setInnerNode(innerText.get());
     result.setInnerNonSharedNode(innerText.get());
     result.setLocalPoint(localPoint);
