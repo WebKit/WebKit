@@ -1,0 +1,4 @@
+🏆
+
+PASS Surrogate pair should survive insertText
+

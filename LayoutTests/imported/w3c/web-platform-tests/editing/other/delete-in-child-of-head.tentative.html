@@ -165,7 +165,7 @@ promise_test(async () => {
   script2.setAttribute("style", "display:block");
   childDoc.head.appendChild(script1);
   childDoc.head.appendChild(script2);
-  // Now: <head><title>...</title><script>// abc</script><script>// def</script></head>...
+  // Now: <head><title>...</title><script>// abc</ script><script>// def</ script></head>...
   childDoc.getSelection().collapse(
     testingBackspace ? script2.firstChild : script1.firstChild,
     testingBackspace ? 0 : script1.firstChild.length
@@ -255,7 +255,7 @@ promise_test(async () => {
   div.innerHTML = "// def";
   childDoc.head.appendChild(script);
   childDoc.head.appendChild(div);
-  // Now: <head><title>...</title><script>// abc</script><div>// def</div></head>...
+  // Now: <head><title>...</title><script>// abc</ script><div>// def</div></head>...
   childDoc.getSelection().collapse(
     testingBackspace ? div.firstChild : script.firstChild,
     testingBackspace ? 0 : script.firstChild.length
@@ -340,7 +340,7 @@ promise_test(async () => {
   script.setAttribute("style", "display:block");
   childDoc.head.appendChild(div);
   childDoc.head.appendChild(script);
-  // Now: <head><title>...</title><div>// abc</div><script>// def</script></head>...
+  // Now: <head><title>...</title><div>// abc</div><script>// def</ script></head>...
   childDoc.getSelection().collapse(
     testingBackspace ? script.firstChild : div.firstChild,
     testingBackspace ? 0 : div.firstChild.length
