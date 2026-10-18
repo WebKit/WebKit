@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<body>
+<script src="full-screen-test.js"></script>
+<style>
+    #target { width: 10px; height: 10px; background-color: red; }
+    @media (display-mode: fullscreen) {
+        #target { background-color: green; }
+    }
+</style>
+<div id="target"></div>
+<picture>
+    <source media="(display-mode: fullscreen)" srcset="../fast/picture/resources/blue_rect.jpg?fullscreen">
+    <img id="image" src="../fast/picture/resources/blue_rect.jpg?browser">
+</picture>
+<script>
+    var target = document.getElementById('target');
+    var image = document.getElementById('image');
+
+    function currentSrcEndsWith(suffix) { return image.currentSrc.endsWith(suffix); }
+
+    testExpected("matchMedia('(display-mode: fullscreen)').matches", false);
+    testExpected("matchMedia('(display-mode: browser)').matches", true);
+    testExpected("getComputedStyle(target).backgroundColor", "rgb(255, 0, 0)");
+    testExpected("currentSrcEndsWith('?browser')", true);
+
+    waitForEventOnce(document, 'fullscreenchange', () => {
+        testExpected("document.fullscreenElement", target);
+        testExpected("matchMedia('(display-mode: fullscreen)').matches", true);
+        testExpected("matchMedia('(display-mode: browser)').matches", false);
+        testExpected("getComputedStyle(target).backgroundColor", "rgb(0, 128, 0)");
+        testExpected("currentSrcEndsWith('?fullscreen')", true);
+
+        waitForEventOnce(document, 'fullscreenchange', () => {
+            testExpected("document.fullscreenElement", null);
+            testExpected("matchMedia('(display-mode: fullscreen)').matches", false);
+            testExpected("getComputedStyle(target).backgroundColor", "rgb(255, 0, 0)");
+            testExpected("currentSrcEndsWith('?browser')", true);
+            endTest();
+        });
+        document.exitFullscreen();
+    });
+
+    runWithKeyDown(() => target.requestFullscreen());
+</script>
+</body>
