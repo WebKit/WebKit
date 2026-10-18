@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    .spacer { height: 120px; }
+    .backdrop { height: 20px; backdrop-filter: blur(0); }
+    .stacked { position: absolute; width: 300px; height: 60px; backdrop-filter: blur(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function waitForFrames(count, callback)
+    {
+        if (!count) {
+            callback();
+            return;
+        }
+        requestAnimationFrame(() => waitForFrames(count - 1, callback));
+    }
+
+    window.addEventListener("load", () => {
+        waitForFrames(10, () => {
+            document.getElementById("result").textContent = "PASS";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+</script>
+</head>
+<body>
+<div id="result">FAIL</div>
+<script>
+    // 24 backdrop-filter layers that do not overlap, and 24 that are stacked on top of each other.
+    for (let i = 0; i < 24; ++i)
+        document.write('<div class="spacer"></div><div class="backdrop"></div>');
+    for (let i = 0; i < 24; ++i)
+        document.write('<div class="stacked" style="left: ' + (20 + 3 * i) + 'px; top: ' + (40 + 3 * i) + 'px"></div>');
+</script>
+</body>
+</html>
