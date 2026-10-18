@@ -257,7 +257,7 @@ SUPPRESS_NODELETE ALWAYS_INLINE unsigned LEGACY_NODELETE ElementData::findAttrib
             if (attribute.localName() == caseAdjustedName)
                 return i;
         } else {
-            if (attribute.name().toString() == caseAdjustedName)
+            if (attribute.name().matches(caseAdjustedName))
                 return i;
         }
     }
