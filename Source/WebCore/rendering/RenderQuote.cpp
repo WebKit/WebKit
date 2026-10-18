@@ -273,7 +273,7 @@ struct SubtagComparison {
     std::strong_ordering comparison { std::strong_ordering::equal };
 };
 
-static SubtagComparison subtagCompare(std::span<const char> key, std::span<const char> range)
+static SubtagComparison LEGACY_NODELETE subtagCompare(std::span<const char> key, std::span<const char> range)
 {
     SubtagComparison result;
 
@@ -299,7 +299,7 @@ static SubtagComparison subtagCompare(std::span<const char> key, std::span<const
     return result;
 }
 
-static std::strong_ordering quoteTableLanguageComparisonFunction(const QuotesForLanguage& key, std::span<const QuotesForLanguage> range)
+static std::strong_ordering LEGACY_NODELETE quoteTableLanguageComparisonFunction(const QuotesForLanguage& key, std::span<const QuotesForLanguage> range)
 {
     // These strings need to be compared according to "Extended Filtering", as in Section 3.3.2 in RFC4647.
     // https://tools.ietf.org/html/rfc4647#page-10
@@ -354,7 +354,7 @@ static std::strong_ordering quoteTableLanguageComparisonFunction(const QuotesFor
     }
 }
 
-static const QuotesForLanguage* binaryFindQuotes(const QuotesForLanguage& key, std::span<const QuotesForLanguage> subrange = quoteTable)
+static const QuotesForLanguage* LEGACY_NODELETE binaryFindQuotes(const QuotesForLanguage& key, std::span<const QuotesForLanguage> subrange = quoteTable)
 {
     if (subrange.empty())
         return nullptr;

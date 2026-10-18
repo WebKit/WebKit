@@ -54,7 +54,7 @@ private:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
     void computeIntrinsicLogicalWidthContributions() override;
     void layoutSingleClampedFlexItem();
-    bool hasClampingAndNoFlexing() const;
+    bool LEGACY_NODELETE hasClampingAndNoFlexing() const;
 
     LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
     void LEGACY_NODELETE placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);

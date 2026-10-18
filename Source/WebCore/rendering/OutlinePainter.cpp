@@ -507,7 +507,7 @@ void OutlinePainter::collectFocusRingRectsForInlineChildren(const RenderBlockFlo
     }
 }
 
-static std::pair<FloatPoint, FloatPoint> startAndEndPointsForCorner(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
+static std::pair<FloatPoint, FloatPoint> LEGACY_NODELETE startAndEndPointsForCorner(const FloatPointGraph::Edge& fromEdge, const FloatPointGraph::Edge& toEdge, const FloatSize& radius)
 {
     FloatSize fromEdgeVector = *fromEdge.second - *fromEdge.first;
     FloatSize toEdgeVector = *toEdge.second - *toEdge.first;

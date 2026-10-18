@@ -80,7 +80,7 @@ private:
     void LEGACY_NODELETE updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
     void recordTextFragment(const SVGTextLayoutBox&, const Vector<SVGTextMetrics>&);
-    Vector<SVGTextFragment>& fragmentsForBox(const SVGTextLayoutBox&);
+    Vector<SVGTextFragment>& LEGACY_NODELETE fragmentsForBox(const SVGTextLayoutBox&);
     bool parentDefinesTextLength(RenderObject*) const;
 
     float computeTextPathStartOffset(const RenderSVGTextPath&) const;
@@ -89,7 +89,7 @@ private:
 
     bool LEGACY_NODELETE currentLogicalCharacterAttributes(SVGTextLayoutAttributes*&);
     bool LEGACY_NODELETE currentLogicalCharacterMetrics(SVGTextLayoutAttributes*&, SVGTextMetrics&);
-    bool currentVisualCharacterMetrics(const SVGTextLayoutBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
+    bool LEGACY_NODELETE currentVisualCharacterMetrics(const SVGTextLayoutBox&, const Vector<SVGTextMetrics>&, SVGTextMetrics&);
 
     void LEGACY_NODELETE advanceToNextLogicalCharacter(const SVGTextMetrics&);
     void LEGACY_NODELETE advanceToNextVisualCharacter(const SVGTextMetrics&);

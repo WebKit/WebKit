@@ -46,7 +46,7 @@ public:
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
-    bool usesSVGTextLayoutAlgorithm() const;
+    bool LEGACY_NODELETE usesSVGTextLayoutAlgorithm() const;
 
     // FIXME: [LBSE] Only needed for legacy SVG engine.
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }

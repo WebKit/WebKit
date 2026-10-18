@@ -41,7 +41,7 @@ public:
     PositionedLayoutConstraints(const RenderBox&, const Style::ComputedStyle& selfStyleOverride, LogicalBoxAxis selfAxis);
     void computeInsets();
 
-    static bool usesStaticPosition(const Style::ComputedStyle&, LogicalBoxAxis, bool isHorizontalWritingMode);
+    static bool LEGACY_NODELETE usesStaticPosition(const Style::ComputedStyle&, LogicalBoxAxis, bool isHorizontalWritingMode);
     static LayoutSize containingBlockOffsetForNonStaticAxes(const RenderBoxModelObject& container, const Style::ComputedStyle& outOfFlowBoxStyle);
 
     /*** The following are available without calling computeInsets(). ***/
@@ -99,8 +99,8 @@ public:
 
 private:
     bool LEGACY_NODELETE containingCoordsAreFlipped() const;
-    bool isOrthogonalToContainingBlockWithFlippedParent() const;
-    bool isParentOpposingContainingBlock() const;
+    bool LEGACY_NODELETE isOrthogonalToContainingBlockWithFlippedParent() const;
+    bool LEGACY_NODELETE isParentOpposingContainingBlock() const;
 
     void captureInsets();
     void captureGridArea();

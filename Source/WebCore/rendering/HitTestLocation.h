@@ -51,8 +51,8 @@ public:
     LayoutRect boundingBox() const { return m_boundingBox; }
 
     WEBCORE_EXPORT bool LEGACY_NODELETE intersects(const LayoutRect&) const;
-    bool intersects(const FloatRect&) const;
-    bool intersects(const LayoutRoundedRect&) const;
+    bool LEGACY_NODELETE intersects(const FloatRect&) const;
+    bool LEGACY_NODELETE intersects(const LayoutRoundedRect&) const;
 
     const FloatPoint& transformedPoint() const LIFETIME_BOUND { return m_transformedPoint; }
     const FloatQuad& transformedRect() const LIFETIME_BOUND { return m_transformedRect; }

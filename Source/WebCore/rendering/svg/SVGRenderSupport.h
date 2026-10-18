@@ -114,7 +114,7 @@ public:
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
 
     // Offset from a renderer's origin-relative bounding box to where it actually paints its content.
-    static FloatSize svgContentLocationOffset(const RenderObject&);
+    static FloatSize LEGACY_NODELETE svgContentLocationOffset(const RenderObject&);
 
     static void styleChanged(RenderElement&, const Style::ComputedStyle*);
 

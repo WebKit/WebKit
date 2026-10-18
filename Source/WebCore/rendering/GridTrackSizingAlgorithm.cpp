@@ -428,7 +428,7 @@ static bool LEGACY_NODELETE shouldProcessTrackForTrackSizeComputationPhase(Track
     return false;
 }
 
-static LayoutUnit trackSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track, TrackSizeRestriction restriction)
+static LayoutUnit LEGACY_NODELETE trackSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track, TrackSizeRestriction restriction)
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
@@ -445,7 +445,7 @@ static LayoutUnit trackSizeForTrackSizeComputationPhase(TrackSizeComputationPhas
     return track.baseSize();
 }
 
-static void updateTrackSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track)
+static void LEGACY_NODELETE updateTrackSizeForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track)
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
@@ -485,7 +485,7 @@ static bool LEGACY_NODELETE trackShouldGrowBeyondGrowthLimitsForTrackSizeComputa
     return false;
 }
 
-static void markAsInfinitelyGrowableForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track)
+static void LEGACY_NODELETE markAsInfinitelyGrowableForTrackSizeComputationPhase(TrackSizeComputationPhase phase, GridTrack& track)
 {
     switch (phase) {
     case TrackSizeComputationPhase::ResolveIntrinsicMinimums:
@@ -724,7 +724,7 @@ static double LEGACY_NODELETE getSizeDistributionWeight(const GridTrack& track)
     return track.cachedTrackSize().value.maxTrackBreadth().flex().value;
 }
 
-static bool sortByGridTrackGrowthPotential(const CheckedRef<GridTrack>& track1, const CheckedRef<GridTrack>& track2)
+static bool LEGACY_NODELETE sortByGridTrackGrowthPotential(const CheckedRef<GridTrack>& track1, const CheckedRef<GridTrack>& track2)
 {
     // This check ensures that we respect the irreflexivity property of the strict weak ordering required by std::sort
     // (forall x: NOT x < x).
@@ -742,7 +742,7 @@ static bool sortByGridTrackGrowthPotential(const CheckedRef<GridTrack>& track1, 
     return (track1Limit - track1->baseSize()) < (track2Limit - track2->baseSize());
 }
 
-static void clampGrowthShareIfNeeded(TrackSizeComputationPhase phase, const GridTrack& track, LayoutUnit& growthShare)
+static void LEGACY_NODELETE clampGrowthShareIfNeeded(TrackSizeComputationPhase phase, const GridTrack& track, LayoutUnit& growthShare)
 {
     if (phase != TrackSizeComputationPhase::ResolveMaxContentMaximums || !track.growthLimitCap())
         return;
@@ -755,7 +755,7 @@ static void clampGrowthShareIfNeeded(TrackSizeComputationPhase phase, const Grid
 }
 
 template <TrackSizeComputationPhase phase, SpaceDistributionLimit limit>
-static void distributeItemIncurredIncreaseToTrack(GridTrack& track, LayoutUnit& freeSpace, double shareFraction)
+static void LEGACY_NODELETE distributeItemIncurredIncreaseToTrack(GridTrack& track, LayoutUnit& freeSpace, double shareFraction)
 {
     LayoutUnit freeSpaceShare(freeSpace / shareFraction);
     LayoutUnit growthShare = limit == SpaceDistributionLimit::BeyondGrowthLimit || track.infiniteGrowthPotential() ? freeSpaceShare : std::min(freeSpaceShare, track.growthLimit() - trackSizeForTrackSizeComputationPhase(phase, track, TrackSizeRestriction::ForbidInfinity));
@@ -851,7 +851,7 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::estimatedGridAreaBreadthForG
     return gridAreaSize;
 }
 
-static LayoutUnit computeGridSpanSize(const Vector<UniqueRef<GridTrack>>& tracks, const GridSpan& gridSpan, const std::optional<LayoutUnit> gridItemOffset, const LayoutUnit totalGuttersSize)
+static LayoutUnit LEGACY_NODELETE computeGridSpanSize(const Vector<UniqueRef<GridTrack>>& tracks, const GridSpan& gridSpan, const std::optional<LayoutUnit> gridItemOffset, const LayoutUnit totalGuttersSize)
 {
     LayoutUnit totalTracksSize;
     for (auto trackPosition : gridSpan)
@@ -1481,7 +1481,7 @@ void IndefiniteSizeStrategy::maximizeTracks(Vector<UniqueRef<GridTrack>>& tracks
 }
 
 
-static inline double normalizedFlexFraction(const GridTrack& track)
+static inline double LEGACY_NODELETE normalizedFlexFraction(const GridTrack& track)
 {
     auto flexFactor = track.cachedTrackSize().value.maxTrackBreadth().flex().value;
     return track.baseSize() / std::max<double>(1, flexFactor);
@@ -2196,7 +2196,7 @@ void GridTrackSizingAlgorithm::computeBaselineAlignmentContext()
     }
 }
 
-static void removeSubgridMarginBorderPaddingFromTracks(Vector<UniqueRef<GridTrack>>& tracks, LayoutUnit mbp, bool forwards)
+static void LEGACY_NODELETE removeSubgridMarginBorderPaddingFromTracks(Vector<UniqueRef<GridTrack>>& tracks, LayoutUnit mbp, bool forwards)
 {
     int numTracks = tracks.size();
     int i = forwards ? 0 : numTracks - 1;

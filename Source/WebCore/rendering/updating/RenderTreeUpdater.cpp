@@ -111,7 +111,7 @@ static RefPtr<Element> LEGACY_NODELETE findRenderingAncestor(Node& node)
     return nullptr;
 }
 
-static RefPtr<ContainerNode> findRenderingRoot(ContainerNode& node)
+static RefPtr<ContainerNode> LEGACY_NODELETE findRenderingRoot(ContainerNode& node)
 {
     if (node.renderer())
         return &node;

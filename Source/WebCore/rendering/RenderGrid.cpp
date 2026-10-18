@@ -1838,7 +1838,7 @@ void RenderGrid::populateGridPositionsForDirection(const GridTrackSizingAlgorith
     }
 }
 
-static LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, LayoutUnit trackSize, LayoutUnit gridItemSize)
+static LayoutUnit LEGACY_NODELETE computeOverflowAlignmentOffset(OverflowAlignment overflow, LayoutUnit trackSize, LayoutUnit gridItemSize)
 {
     LayoutUnit offset = trackSize - gridItemSize;
     switch (overflow) {

@@ -56,7 +56,7 @@ static bool LEGACY_NODELETE canDropAnonymousBlock(const RenderBlock& anonymousBl
     return true;
 }
 
-static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next, const RenderObject*)
+static bool LEGACY_NODELETE canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRemoved, const RenderObject* previous, const RenderObject* next, const RenderObject*)
 {
     ASSERT(!rendererToBeRemoved.renderTreeBeingDestroyed());
 
@@ -89,7 +89,7 @@ struct ParentAndBeforeChild {
     RenderObject* beforeChild { nullptr };
 };
 
-static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
+static bool LEGACY_NODELETE isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
 {
     CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(child);
     if (!marker || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
@@ -97,7 +97,7 @@ static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& chil
     return is<RenderListItem>(parent);
 }
 
-static bool hasInlineInFlowChild(const RenderBlock& parent)
+static bool LEGACY_NODELETE hasInlineInFlowChild(const RenderBlock& parent)
 {
     for (CheckedPtr child = parent.firstChild(); child; child = child->nextSibling()) {
         if (child->isFloatingOrOutOfFlowPositioned())

@@ -51,7 +51,7 @@ public:
     void canvasSizeChanged();
 
     RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
-    void setInnerRenderer(RenderBlock*);
+    void LEGACY_NODELETE setInnerRenderer(RenderBlock*);
 
     bool hasDrawableContent() const final;
 

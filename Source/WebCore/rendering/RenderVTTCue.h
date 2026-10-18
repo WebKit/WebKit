@@ -67,8 +67,8 @@ private:
     void repositionCueSnapToLinesNotSet();
     void repositionGenericCue();
 
-    RenderBlockFlow* backdropBox() const;
-    RenderBoxModelObject* cueBox() const;
+    RenderBlockFlow* LEGACY_NODELETE backdropBox() const;
+    RenderBoxModelObject* LEGACY_NODELETE cueBox() const;
     static FloatRect unroundedAbsoluteBoundingBoxRect(const RenderBox&);
 
     WeakPtr<VTTCue, WeakPtrImplWithEventTargetData> m_cue;

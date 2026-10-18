@@ -262,7 +262,7 @@ public:
 
     void adjustBlockEndChildrenForMarginTrim();
 
-    void setStaticInlinePositionForChild(RenderBox& child, LayoutUnit inlinePosition);
+    void LEGACY_NODELETE setStaticInlinePositionForChild(RenderBox& child, LayoutUnit inlinePosition);
 
     LayoutUnit staticInlinePositionForOriginalDisplayInline(LayoutUnit logicalTop);
 
@@ -300,8 +300,8 @@ public:
     Position positionForPoint(const LayoutPoint&, HitTestSource) override;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    LayoutUnit lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
-    LayoutUnit lowestFloatLogicalBottom(FloatingObjectType) const;
+    LayoutUnit LEGACY_NODELETE lowestFloatLogicalBottom() const; // Defaults to FloatingObject::FloatLeftRight
+    LayoutUnit LEGACY_NODELETE lowestFloatLogicalBottom(FloatingObjectType) const;
 
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
@@ -329,9 +329,9 @@ public:
 
     void setChildrenInline(bool) final;
 
-    bool hasContentfulInlineOrBlockLine() const;
-    bool hasContentfulInlineLine() const;
-    bool hasBlocksInInlineLayout() const;
+    bool LEGACY_NODELETE hasContentfulInlineOrBlockLine() const;
+    bool LEGACY_NODELETE hasContentfulInlineLine() const;
+    bool LEGACY_NODELETE hasBlocksInInlineLayout() const;
 
     enum InvalidationReason : uint8_t {
         InternalMove,       // (anon) block is moved or collapsed
@@ -345,7 +345,7 @@ public:
     LineLayoutPath lineLayoutPath() const { return static_cast<LineLayoutPath>(renderBlockFlowLineLayoutPath()); }
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
-    int lineCount() const;
+    int LEGACY_NODELETE lineCount() const;
 
     bool containsNonZeroBidiLevel() const;
 
@@ -391,7 +391,7 @@ public:
 
     LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
 
-    std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
+    std::optional<LayoutUnit> LEGACY_NODELETE lowestInitialLetterLogicalBottom() const;
 
     void paintBlockLevelContentInInline(PaintInfo&, const LayoutPoint& paintOffset);
 
@@ -449,7 +449,7 @@ protected:
     LayoutIntegration::LineLayout& ensureInlineLayout();
 
 private:
-    bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
+    bool LEGACY_NODELETE isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
 
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;

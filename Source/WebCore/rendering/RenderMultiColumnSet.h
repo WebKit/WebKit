@@ -52,11 +52,11 @@ public:
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
     RenderMultiColumnFlow* multiColumnFlow() const { return downcast<RenderMultiColumnFlow>(fragmentedFlow()); }
 
-    RenderMultiColumnSet* nextSiblingMultiColumnSet() const;
-    RenderMultiColumnSet* previousSiblingMultiColumnSet() const;
+    RenderMultiColumnSet* LEGACY_NODELETE nextSiblingMultiColumnSet() const;
+    RenderMultiColumnSet* LEGACY_NODELETE previousSiblingMultiColumnSet() const;
 
     // Return the first object in the flow thread that's rendered inside this set.
-    RenderObject* firstRendererInFragmentedFlow() const;
+    RenderObject* LEGACY_NODELETE firstRendererInFragmentedFlow() const;
     // Return the last object in the flow thread that's rendered inside this set.
     RenderObject* lastRendererInFragmentedFlow() const;
 
@@ -65,7 +65,7 @@ public:
 
     void LEGACY_NODELETE setLogicalTopInFragmentedFlow(LayoutUnit);
     LayoutUnit logicalTopInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().y() : fragmentedFlowPortionRect().x(); }
-    void setLogicalBottomInFragmentedFlow(LayoutUnit);
+    void LEGACY_NODELETE setLogicalBottomInFragmentedFlow(LayoutUnit);
     LayoutUnit logicalBottomInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().maxY() : fragmentedFlowPortionRect().maxX(); }
     LayoutUnit logicalHeightInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().height() : fragmentedFlowPortionRect().width(); }
 
@@ -123,7 +123,7 @@ public:
     // Has this set been flowed in this layout pass?
     bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderFragmentedFlow::maxLogicalHeight(); }
 
-    bool requiresBalancing() const;
+    bool LEGACY_NODELETE requiresBalancing() const;
 
     LayoutPoint columnTranslationForOffset(const LayoutUnit&) const;
     

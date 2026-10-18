@@ -73,7 +73,7 @@ protected:
     void paintPlatformDocumentMarkers();
 
     void paintForeground(const StyledMarkedText&);
-    bool hasSynthesizedGlyph() const;
+    bool LEGACY_NODELETE hasSynthesizedGlyph() const;
     void paintSynthesizedGlyph();
     bool paintForegroundForShapeRange(TextPainter&);
     TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);

@@ -48,7 +48,7 @@ class GraphicsContextSwitcher;
 class RenderLayerFilters final : public RefCounted<RenderLayerFilters>, private CachedSVGDocumentClient {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerFilters);
 public:
-    static Ref<RenderLayerFilters> create(RenderLayer&, FloatSize scale);
+    static Ref<RenderLayerFilters> LEGACY_NODELETE create(RenderLayer&, FloatSize scale);
     virtual ~RenderLayerFilters();
 
     void detachFromLayer() { m_layer = nullptr; }

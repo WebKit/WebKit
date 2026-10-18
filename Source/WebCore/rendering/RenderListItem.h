@@ -51,7 +51,7 @@ public:
 
     RenderBoxModelObject* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderBoxModelObject& marker) { m_marker = marker; }
-    RenderListOutsideMarker* markerBox() const;
+    RenderListOutsideMarker* LEGACY_NODELETE markerBox() const;
 
     // Fills in what the marker shows, in whichever shape it was built.
     void updateMarkerContent();

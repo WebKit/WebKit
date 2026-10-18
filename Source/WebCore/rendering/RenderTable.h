@@ -57,7 +57,7 @@ public:
     LayoutUnit hBorderSpacing() const { return m_hSpacing; }
     LayoutUnit vBorderSpacing() const { return m_vSpacing; }
     
-    bool collapseBorders() const;
+    bool LEGACY_NODELETE collapseBorders() const;
 
     LayoutUnit borderStart() const final;
     LayoutUnit borderEnd() const final;
@@ -154,7 +154,7 @@ public:
     inline LayoutUnit bordersPaddingAndSpacingInRowDirection() const;
 
     // Return the first column or column-group.
-    RenderTableCol* firstColumn() const;
+    RenderTableCol* LEGACY_NODELETE firstColumn() const;
 
     RenderTableCol* colElement(unsigned col, bool* startEdge = nullptr, bool* endEdge = nullptr) const
     {

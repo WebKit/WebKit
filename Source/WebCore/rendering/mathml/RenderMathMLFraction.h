@@ -59,9 +59,9 @@ private:
 
     MathMLFractionElement& LEGACY_NODELETE element() const;
 
-    bool isValid() const;
-    RenderBox& numerator() const;
-    RenderBox& denominator() const;
+    bool LEGACY_NODELETE isValid() const;
+    RenderBox& LEGACY_NODELETE numerator() const;
+    RenderBox& LEGACY_NODELETE denominator() const;
     LayoutUnit horizontalOffset(RenderBox&, MathMLFractionElement::FractionAlignment) const;
     struct FractionParameters {
         LayoutUnit numeratorShiftUp;

@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::List);
 
-static RenderObject* firstNonMarkerChild(RenderBlock& parent)
+static RenderObject* LEGACY_NODELETE firstNonMarkerChild(RenderBlock& parent)
 {
     RenderObject* child = parent.firstChild();
     while (is<RenderListOutsideMarker>(child))
@@ -79,7 +79,7 @@ static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listIte
 // An inside marker among the list item's own inline content is not a box of its own: it is an anonymous inline box
 // holding the marker's content renderers, so that they are inline content of the list item's formatting context and are
 // laid out, reordered and painted with the rest of the line.
-static void adjustStyleForInlineMarker(Style::ComputedStyle& markerStyle)
+static void LEGACY_NODELETE adjustStyleForInlineMarker(Style::ComputedStyle& markerStyle)
 {
     markerStyle.setDisplay(Style::DisplayType::InlineFlow);
 }

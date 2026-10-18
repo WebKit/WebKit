@@ -87,7 +87,7 @@ protected:
 
     static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const Style::ComputedStyle&);
     static GradientSpreadMethod LEGACY_NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType);
-    ColorInterpolationMethod gradientColorInterpolationMethod() const;
+    ColorInterpolationMethod LEGACY_NODELETE gradientColorInterpolationMethod() const;
 
 private:
     void element() const = delete;

@@ -264,7 +264,7 @@ private:
 
     void computeColumnCountAndWidth() override;
 
-    bool shouldRepaint(const LayoutRect&) const;
+    bool LEGACY_NODELETE shouldRepaint(const LayoutRect&) const;
 
     // Returns true if we determine that the accumulated dirty rect makes up a significant fraction of viewRect.
     bool accumulateRepaintRect(IntRect dirtyRect, IntRect viewRect);
@@ -301,7 +301,7 @@ private:
     LegacyPrinting m_legacyPrinting;
     // End deprecated members.
 
-    bool shouldUsePrintingLayout() const;
+    bool LEGACY_NODELETE shouldUsePrintingLayout() const;
 
     const std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;

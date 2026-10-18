@@ -75,7 +75,7 @@ protected:
     void insertPositionedChildrenIntoContainingBlock();
     void layoutFloatingChildren();
 
-    void shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
+    void LEGACY_NODELETE shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
     void adjustContentLogicalWidthsForBorderAndPadding();
     void adjustLayoutForBorderAndPadding();
 

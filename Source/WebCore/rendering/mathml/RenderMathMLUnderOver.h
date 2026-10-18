@@ -51,11 +51,11 @@ private:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
     void stretchHorizontalOperatorsAndLayoutChildren();
-    bool isValid() const;
+    bool LEGACY_NODELETE isValid() const;
     bool shouldMoveLimits() const;
-    RenderBox& base() const;
-    RenderBox& under() const;
-    RenderBox& over() const;
+    RenderBox& LEGACY_NODELETE base() const;
+    RenderBox& LEGACY_NODELETE under() const;
+    RenderBox& LEGACY_NODELETE over() const;
     LayoutUnit horizontalOffset(const RenderBox&) const;
     bool hasAccent(bool accentUnder = false) const;
     bool hasAccentUnder() const { return hasAccent(true); };

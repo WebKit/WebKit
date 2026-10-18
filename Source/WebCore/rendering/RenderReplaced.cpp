@@ -813,7 +813,7 @@ static inline bool LEGACY_NODELETE hasIntrinsicSize(const RenderReplaced* svgRoo
     return (hasIntrinsicWidth && hasIntrinsicHeight) || ((hasIntrinsicWidth || hasIntrinsicHeight) && svgRoot);
 }
 
-static bool behavesAsAutoSize(const Style::PreferredSize& size, const Style::PreferredSize& otherAxisSize)
+static bool LEGACY_NODELETE behavesAsAutoSize(const Style::PreferredSize& size, const Style::PreferredSize& otherAxisSize)
 {
     return size.isAuto() && (!size.isCalcSize() || otherAxisSize.isCalcSize());
 }

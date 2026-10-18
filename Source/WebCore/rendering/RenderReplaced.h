@@ -47,7 +47,7 @@ public:
 
     // Out-of-line so callers outside style/rendering/layout code don't need to pull in
     // the (compile-time-expensive) computed style getter headers just to check this.
-    WEBCORE_EXPORT bool hasObjectViewBoxSet() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasObjectViewBoxSet() const;
 
     // Returns the full content rect scaled so the view-box sub-region maps onto destRect,
     // or destRect itself when object-view-box is not set.

@@ -487,10 +487,10 @@ public:
     std::optional<TransformationMatrix> containerTransformForRepaintForSVG() const;
     void setNeedsFullRepaintIfSVGContainerTransformChanged(const RenderLayerModelObject* repaintContainer);
     bool hasFailedFilterForSVG() const;
-    bool shouldSkipHitTestForSVG() const;
-    void updateAncestorDependentStateForSVG();
-    bool isCompositedSVGPaintOrderChild() const;
-    bool paintsInlineInSVGContainer() const;
+    bool LEGACY_NODELETE shouldSkipHitTestForSVG() const;
+    void LEGACY_NODELETE updateAncestorDependentStateForSVG();
+    bool LEGACY_NODELETE isCompositedSVGPaintOrderChild() const;
+    bool LEGACY_NODELETE paintsInlineInSVGContainer() const;
     bool isFlattenedByEnclosingSVGReferenceFilter() const;
 
     void repaintIncludingDescendants();
@@ -1048,7 +1048,7 @@ private:
     void updateAncestorDependentState();
 
     // SVG-specific methods -- defined in RenderLayerSVGAdditions.cpp.
-    bool setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
+    bool LEGACY_NODELETE setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
     void paintResourceCorrectedChildLayerForSVG(GraphicsContext&, RenderLayer& childLayer, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>, LayoutSize correction) const;
     bool paintForegroundForFragmentsForSVG(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*);
     void paintNegativeZOrderChildrenForSVG(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);

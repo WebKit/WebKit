@@ -44,7 +44,7 @@ struct BoxShapeGeometry {
     BorderShape borderShape;
     Edge edge { Edge::Outer };
 
-    LayoutRoundedRect roundedRect() const;
+    LayoutRoundedRect LEGACY_NODELETE roundedRect() const;
     // Empty when every corner is round, in which case roundedRect() describes the shape.
     Vector<FloatPoint> contour() const;
 };

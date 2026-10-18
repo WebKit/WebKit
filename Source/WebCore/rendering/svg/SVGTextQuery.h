@@ -52,7 +52,7 @@ private:
 
     void collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator);
     bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
-    void modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
+    void LEGACY_NODELETE modifyStartEndPositionsRespectingLigatures(Data*, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
 
 private:
     bool LEGACY_NODELETE numberOfCharactersCallback(Data*, const SVGTextFragment&) const;

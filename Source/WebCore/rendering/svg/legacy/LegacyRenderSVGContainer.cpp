@@ -46,7 +46,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
-static bool shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& container)
+static bool LEGACY_NODELETE shouldSuspendRepaintForChildren(const LegacyRenderSVGContainer& container)
 {
     // Issuing repaint requires absolute rect which means ancestor tree walk.
     // In cases when a container has many direct children, the overhead of resolving each individual repaint rects

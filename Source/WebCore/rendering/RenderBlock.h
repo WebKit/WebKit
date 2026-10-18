@@ -130,7 +130,7 @@ public:
     void LEGACY_NODELETE getSelectionGapInfo(HighlightState, bool& leftGap, bool& rightGap);
     bool isSelectionRoot() const;
 
-    LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
+    LayoutRect LEGACY_NODELETE logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
 
     bool establishesIndependentFormattingContext() const;
     bool createsNewFormattingContext() const;

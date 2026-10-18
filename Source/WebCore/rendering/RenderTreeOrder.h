@@ -31,6 +31,6 @@ namespace WebCore {
 
 class RenderObject;
 
-std::partial_ordering renderTreeOrder(const RenderObject&, const RenderObject&);
+std::partial_ordering LEGACY_NODELETE renderTreeOrder(const RenderObject&, const RenderObject&);
 
 } // namespace WebCore

@@ -157,11 +157,11 @@ public:
     // positive (never cleared once set); never a false negative — set on every
     // createLayer and on every attach of a subtree that already has the bit.
     bool mayHaveLayerInSubtree() const { return m_mayHaveLayerInSubtree; }
-    void setMayHaveLayerInSubtreeIncludingAncestors();
+    void LEGACY_NODELETE setMayHaveLayerInSubtreeIncludingAncestors();
 
     // Never cleared, so it may be a false positive - just like the mayHaveLayerInSubtree() logic.
     bool mayHaveNonScalingStrokeInSubtree() const { return m_mayHaveNonScalingStrokeInSubtree; }
-    void setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
+    void LEGACY_NODELETE setMayHaveNonScalingStrokeInSubtreeIncludingAncestors();
 
     void setChildNeedsLayout(MarkingBehavior = MarkingBehavior::MarkContainingBlockChain);
     void setOutOfFlowChildNeedsStaticPositionLayout();
@@ -279,7 +279,7 @@ public:
     void adjustFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();
 
-    WEBCORE_EXPORT ImageOrientation imageOrientation() const;
+    WEBCORE_EXPORT ImageOrientation LEGACY_NODELETE imageOrientation() const;
 
     virtual std::optional<FloatSize> usedImageSize() const { return std::nullopt; }
     inline std::optional<FloatSize> usedZoomedImageSize() const; // Defined in RenderElementInlines.h
@@ -315,7 +315,7 @@ public:
     void setPseudoElementRenderer(PseudoElementType, RenderBlockFlow&);
 
     ReferencedSVGResources& ensureReferencedSVGResources();
-    ReferencedSVGResources* referencedSVGResources() const;
+    ReferencedSVGResources* LEGACY_NODELETE referencedSVGResources() const;
 
     Overflow LEGACY_NODELETE effectiveOverflowX() const;
     Overflow LEGACY_NODELETE effectiveOverflowY() const;
@@ -509,7 +509,7 @@ private:
     Style::ComputedStyle m_style;
 };
 
-WEBCORE_EXPORT float opacity(const RenderElement&);
+WEBCORE_EXPORT float LEGACY_NODELETE opacity(const RenderElement&);
 
 inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 {

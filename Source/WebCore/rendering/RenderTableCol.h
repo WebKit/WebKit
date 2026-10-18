@@ -41,7 +41,7 @@ public:
     RenderTableCol(Document&, Style::ComputedStyle&&);
     virtual ~RenderTableCol();
 
-    void clearContentLogicalWidthsInvalidation();
+    void LEGACY_NODELETE clearContentLogicalWidthsInvalidation();
 
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
@@ -55,7 +55,7 @@ public:
     RenderTableCol* enclosingColumnGroupIfAdjacentAfter() const;
 
     // Returns the next column or column-group.
-    RenderTableCol* nextColumn() const;
+    RenderTableCol* LEGACY_NODELETE nextColumn() const;
 
     const BorderValue& LEGACY_NODELETE borderAdjoiningCellStartBorder() const;
     const BorderValue& LEGACY_NODELETE borderAdjoiningCellEndBorder() const;

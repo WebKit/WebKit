@@ -124,7 +124,7 @@ public:
     static GridIterator LEGACY_NODELETE createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer, GridSpan subgridSpanInOuter);
 
     RenderBox* LEGACY_NODELETE nextGridItem();
-    bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
+    bool LEGACY_NODELETE isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
     std::optional<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
 
     Style::GridTrackSizingDirection direction() const

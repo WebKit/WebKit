@@ -125,7 +125,7 @@ public:
         m_maskLayer.reset();
     }
 
-    bool paintsIntoMaskLayer() const { return !!m_maskLayer; }
+    bool LEGACY_NODELETE paintsIntoMaskLayer() const { return !!m_maskLayer; }
 
 private:
     void paintPhase(RenderLayerModelObject& renderer, PaintPhase phase, const LayoutPoint& paintOffset)

@@ -33,11 +33,11 @@ namespace WebCore {
 class GridSpan {
 public:
 
-    static GridSpan untranslatedDefiniteGridSpan(int startLine, int endLine);
-    static GridSpan translatedDefiniteGridSpan(unsigned startLine, unsigned endLine);
-    static GridSpan indefiniteGridSpan();
+    static GridSpan LEGACY_NODELETE untranslatedDefiniteGridSpan(int startLine, int endLine);
+    static GridSpan LEGACY_NODELETE translatedDefiniteGridSpan(unsigned startLine, unsigned endLine);
+    static GridSpan LEGACY_NODELETE indefiniteGridSpan();
 
-    static GridSpan stackingAxisTranslatedDefiniteGridSpan();
+    static GridSpan LEGACY_NODELETE stackingAxisTranslatedDefiniteGridSpan();
 
     friend bool operator==(const GridSpan&, const GridSpan&) = default;
 
@@ -74,9 +74,9 @@ public:
     // If reverse is specified, then swaps the direction to handle RTL/LTR changes.
     void LEGACY_NODELETE translateTo(const GridSpan& parent, bool reverse);
 
-    void clamp(int max);
+    void LEGACY_NODELETE clamp(int max);
 
-    bool clamp(int min, int max);
+    bool LEGACY_NODELETE clamp(int min, int max);
 
 private:
 

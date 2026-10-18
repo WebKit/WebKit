@@ -252,7 +252,7 @@ bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, c
     return false;
 }
 
-static inline bool canCollapseNextSibling(const RenderBox& previousSibling, const RenderBox& nextSibling)
+static inline bool LEGACY_NODELETE canCollapseNextSibling(const RenderBox& previousSibling, const RenderBox& nextSibling)
 {
     if (!previousSibling.isAnonymous() || !nextSibling.isAnonymous())
         return false;

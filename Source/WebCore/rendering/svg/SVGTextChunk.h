@@ -40,8 +40,8 @@ public:
     void appendFragments(std::span<SVGTextFragment>);
 
     unsigned LEGACY_NODELETE totalCharacters() const;
-    float totalLength() const;
-    float totalAnchorShift() const;
+    float LEGACY_NODELETE totalLength() const;
+    float LEGACY_NODELETE totalAnchorShift() const;
     void layout() const;
 
 private:
@@ -56,10 +56,10 @@ private:
         LengthAdjustSpacingAndGlyphs = 1 << 5
     };
 
-    void processTextAnchorCorrection() const;
-    void applySpacingAndGlyphsTransform() const;
-    void setLengthAdjustTransform(const AffineTransform&) const;
-    void processTextLengthSpacingCorrection() const;
+    void LEGACY_NODELETE processTextAnchorCorrection() const;
+    void LEGACY_NODELETE applySpacingAndGlyphsTransform() const;
+    void LEGACY_NODELETE setLengthAdjustTransform(const AffineTransform&) const;
+    void LEGACY_NODELETE processTextLengthSpacingCorrection() const;
 
     bool isVerticalText() const { return m_chunkStyle.contains(ChunkStyle::VerticalText); }
     float desiredTextLength() const { return m_desiredTextLength; }
@@ -69,7 +69,7 @@ private:
     bool hasLengthAdjustSpacing() const { return m_chunkStyle.contains(ChunkStyle::LengthAdjustSpacing); }
     bool hasLengthAdjustSpacingAndGlyphs() const { return m_chunkStyle.contains(ChunkStyle::LengthAdjustSpacingAndGlyphs); }
 
-    const SVGTextFragment* firstFragment() const;
+    const SVGTextFragment* LEGACY_NODELETE firstFragment() const;
 
 private:
     // Fragment ranges of the text boxes this chunk spans. A chunk may start or end inside a box.

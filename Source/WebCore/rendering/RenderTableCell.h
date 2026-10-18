@@ -202,7 +202,7 @@ private:
 
     unsigned parseRowSpanFromDOM() const;
     unsigned parseColSpanFromDOM() const;
-    unsigned calculateRowSpanForRowSpanZero() const;
+    unsigned LEGACY_NODELETE calculateRowSpanForRowSpanZero() const;
 
     void nextSibling() const = delete;
     void previousSibling() const = delete;

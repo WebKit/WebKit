@@ -250,8 +250,8 @@ private:
     RenderBlock* containingBlockForAutoHeightDetectionGeneric(const auto& logicalHeight) const;
 };
 
-bool isEmptyInline(const RenderBoxModelObject&);
-RenderObject* firstContentfulChild(RenderBoxModelObject&);
+bool LEGACY_NODELETE isEmptyInline(const RenderBoxModelObject&);
+RenderObject* LEGACY_NODELETE firstContentfulChild(RenderBoxModelObject&);
 
 WEBCORE_EXPORT LayoutUnit borderLeft(const RenderBoxModelObject&);
 WEBCORE_EXPORT LayoutUnit borderTop(const RenderBoxModelObject&);

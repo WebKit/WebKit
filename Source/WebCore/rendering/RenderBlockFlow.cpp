@@ -4989,7 +4989,7 @@ RenderObject* InlineMinMaxIterator::next()
 }
 
 template <typename SizeType>
-auto borderMarginOrPaddingWidth(LayoutUnit childValue, const SizeType& marginOrPadding, const Style::ZoomFactor& zoomFactor) -> LayoutUnit {
+LayoutUnit LEGACY_NODELETE borderMarginOrPaddingWidth(LayoutUnit childValue, const SizeType& marginOrPadding, const Style::ZoomFactor& zoomFactor) {
     if (auto fixed = marginOrPadding.tryFixed())
         return LayoutUnit(fixed->resolveZoom(zoomFactor));
     if constexpr (std::same_as<SizeType, Style::MarginEdge>) {

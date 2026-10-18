@@ -81,7 +81,7 @@ static LayoutBoxExtent computeSlices(const LayoutSize& size, const SliceValues& 
     };
 }
 
-static void scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)
+static void LEGACY_NODELETE scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)
 {
     LayoutUnit width  = std::max(LayoutUnit(1 / deviceScaleFactor), slices.left() + slices.right());
     LayoutUnit height = std::max(LayoutUnit(1 / deviceScaleFactor), slices.top() + slices.bottom());
@@ -181,7 +181,7 @@ static FloatSize LEGACY_NODELETE computeMiddleTileScale(const NinePieceScales& s
     return scale;
 }
 
-static NinePieceScales computeTileScales(const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
+static NinePieceScales LEGACY_NODELETE computeTileScales(const NinePieceRects& destinationRects, const NinePieceRects& sourceRects, NinePieceImageRule hRule, NinePieceImageRule vRule)
 {
     using enum ImagePiece;
 

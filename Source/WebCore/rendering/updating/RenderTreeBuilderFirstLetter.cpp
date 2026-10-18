@@ -117,7 +117,7 @@ static inline bool isPrecedingTypographicSpaceForFirstLetter(char32_t c)
 }
 
 // https://drafts.csswg.org/css-text/#word-separator
-static inline bool isWordSeparator(char32_t c)
+static inline bool LEGACY_NODELETE isWordSeparator(char32_t c)
 {
     switch (c) {
     case ' ':
@@ -148,7 +148,7 @@ static inline bool shouldSkipBeforeFirstLetter(char32_t c)
         || isPrecedingTypographicSpaceForFirstLetter(c);
 }
 
-static bool isDutchIJDigraph(StringView text, unsigned offset)
+static bool LEGACY_NODELETE isDutchIJDigraph(StringView text, unsigned offset)
 {
     if (offset + 1 >= text.length())
         return false;

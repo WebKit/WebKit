@@ -50,7 +50,7 @@ public:
         return adoptRef(*new HitTestingTransformState(other));
     }
 
-    void translate(int x, int y);
+    void LEGACY_NODELETE translate(int x, int y);
     void applyTransform(const TransformationMatrix& transformFromContainer);
 
     FloatPoint mappedPoint() const;

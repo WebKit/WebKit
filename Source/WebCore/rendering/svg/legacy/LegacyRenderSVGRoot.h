@@ -47,7 +47,7 @@ public:
     SVGSVGElement& LEGACY_NODELETE svgSVGElement() const;
 
     bool isEmbeddedThroughSVGImage() const;
-    bool isEmbeddedThroughFrameContainingSVGDocument() const;
+    bool LEGACY_NODELETE isEmbeddedThroughFrameContainingSVGDocument() const;
 
     FloatSize computeIntrinsicSize() const;
     FloatSize preferredAspectRatioAsSize() const final;

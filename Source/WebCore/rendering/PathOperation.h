@@ -89,7 +89,7 @@ protected:
 class ReferencePathOperation final : public PathOperation {
 public:
     static Ref<ReferencePathOperation> create(const Style::URL&, const AtomString& fragment, const RefPtr<SVGElement>);
-    WEBCORE_EXPORT static Ref<ReferencePathOperation> create(std::optional<Path>&&);
+    WEBCORE_EXPORT static Ref<ReferencePathOperation> LEGACY_NODELETE create(std::optional<Path>&&);
 
     Ref<PathOperation> clone() const final;
 
@@ -148,7 +148,7 @@ private:
 
 class BoxPathOperation final : public PathOperation {
 public:
-    WEBCORE_EXPORT static Ref<BoxPathOperation> create(CSSBoxType);
+    WEBCORE_EXPORT static Ref<BoxPathOperation> LEGACY_NODELETE create(CSSBoxType);
 
     Ref<PathOperation> clone() const final;
 
@@ -175,8 +175,8 @@ private:
 
 class RayPathOperation final : public PathOperation {
 public:
-    WEBCORE_EXPORT static Ref<RayPathOperation> create(Style::RayFunction&&, CSSBoxType = CSSBoxType::BoxMissing);
-    WEBCORE_EXPORT static Ref<RayPathOperation> create(const Style::RayFunction&, CSSBoxType = CSSBoxType::BoxMissing);
+    WEBCORE_EXPORT static Ref<RayPathOperation> LEGACY_NODELETE create(Style::RayFunction&&, CSSBoxType = CSSBoxType::BoxMissing);
+    WEBCORE_EXPORT static Ref<RayPathOperation> LEGACY_NODELETE create(const Style::RayFunction&, CSSBoxType = CSSBoxType::BoxMissing);
 
     Ref<PathOperation> clone() const final;
 

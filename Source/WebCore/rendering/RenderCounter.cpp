@@ -91,7 +91,7 @@ static RenderElement* previousInPreOrderRespectingContainment(const RenderElemen
 }
 
 // Unwrap anonymous block to find the real element it contains.
-static RenderElement* lastDescendantInAnonymousBlock(RenderElement& anonymousBlock)
+static RenderElement* LEGACY_NODELETE lastDescendantInAnonymousBlock(RenderElement& anonymousBlock)
 {
     ASSERT(anonymousBlock.isAnonymous());
     RenderElement* current = &anonymousBlock;
@@ -101,7 +101,7 @@ static RenderElement* lastDescendantInAnonymousBlock(RenderElement& anonymousBlo
     return current;
 }
 
-static RenderElement* previousSiblingUnwrappingAnonymous(const RenderElement& renderer)
+static RenderElement* LEGACY_NODELETE previousSiblingUnwrappingAnonymous(const RenderElement& renderer)
 {
     for (auto* previous = renderer.previousSibling(); previous; previous = previous->previousSibling()) {
         if (auto* previousElement = dynamicDowncast<RenderElement>(previous))

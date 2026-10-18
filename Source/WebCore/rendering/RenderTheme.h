@@ -436,7 +436,7 @@ protected:
     // setting the zoomed size on the computed style. In order to make sure this behavior remains if
     // the flag is off, we return the used zoom value, which was being used before, when the flag
     // is disabled and 1.0f when it is enabled so that we do not modify the value.
-    float usedZoomForComputedStyle(const Style::ComputedStyle&) const;
+    float LEGACY_NODELETE usedZoomForComputedStyle(const Style::ComputedStyle&) const;
 
 private:
     OptionSet<ControlStyle::State> extractControlStyleStatesForRendererInternal(const RenderElement&) const;
@@ -453,7 +453,7 @@ public:
     bool isSpinUpButtonPartPressed(const RenderElement&) const;
     bool isHovered(const RenderElement&) const;
     bool LEGACY_NODELETE isSpinUpButtonPartHovered(const RenderElement&) const;
-    bool isPresenting(const RenderElement&) const;
+    bool LEGACY_NODELETE isPresenting(const RenderElement&) const;
     bool isReadOnlyControl(const RenderElement&) const;
     bool LEGACY_NODELETE isDefault(const RenderElement&) const;
     bool hasListButton(const RenderElement&) const;

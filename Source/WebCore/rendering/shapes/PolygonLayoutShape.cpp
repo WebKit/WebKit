@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static inline FloatSize inwardEdgeNormal(const FloatPoint& vertex1, const FloatPoint& vertex2)
+static inline FloatSize LEGACY_NODELETE inwardEdgeNormal(const FloatPoint& vertex1, const FloatPoint& vertex2)
 {
     FloatSize edgeDelta = vertex2 - vertex1;
     if (!edgeDelta.width())

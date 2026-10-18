@@ -115,18 +115,18 @@ private:
     void collectTextBoxes();
     void computeCSSPositions();
     void resolveCharacterPositioning();
-    void adjustRelativePositions();
+    void LEGACY_NODELETE adjustRelativePositions();
     void applyTextLength();
-    void adjustAbsolutePositions();
+    void LEGACY_NODELETE adjustAbsolutePositions();
     void applyAnchoring();
     void positionOnPaths();
     void buildFragments();
 
-    float anchorShift(std::span<const unsigned> chunk) const;
-    std::pair<float, float> extent(std::span<const unsigned> characterIndexes) const;
-    float glyphLength(const Character&) const;
-    const SVGTextMetrics& metrics(const Character&) const;
-    unsigned typographicCharacterCount(std::span<const unsigned> characterIndexes) const;
+    float LEGACY_NODELETE anchorShift(std::span<const unsigned> chunk) const;
+    std::pair<float, float> LEGACY_NODELETE extent(std::span<const unsigned> characterIndexes) const;
+    float LEGACY_NODELETE glyphLength(const Character&) const;
+    const SVGTextMetrics& LEGACY_NODELETE metrics(const Character&) const;
+    unsigned LEGACY_NODELETE typographicCharacterCount(std::span<const unsigned> characterIndexes) const;
 
     const CheckedRef<const Layout::ElementBox> m_root;
     const InlineDisplay::Boxes& m_displayBoxes;

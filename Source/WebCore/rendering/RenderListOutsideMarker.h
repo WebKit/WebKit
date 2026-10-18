@@ -67,7 +67,7 @@ public:
     // rather than list-style-image/type.
     bool hasContentProperty() const;
 
-    RenderBlockFlow* contentContainer() const;
+    RenderBlockFlow* LEGACY_NODELETE contentContainer() const;
 
     RenderListItem* LEGACY_NODELETE listItem() const;
 
@@ -120,7 +120,7 @@ private:
 // The room an image marker keeps between itself and the content it labels.
 constexpr int listMarkerImagePadding = 7;
 ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
-bool listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document&);
+bool LEGACY_NODELETE listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document&);
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Document&);
 RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle);
 bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);

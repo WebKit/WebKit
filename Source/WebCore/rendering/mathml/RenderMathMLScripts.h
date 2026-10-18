@@ -60,7 +60,7 @@ private:
         const CheckedPtr<RenderBox> firstPostScript;
         const CheckedPtr<RenderBox> firstPreScript;
     };
-    std::optional<ReferenceChildren> validateAndGetReferenceChildren() const;
+    std::optional<ReferenceChildren> LEGACY_NODELETE validateAndGetReferenceChildren() const;
     LayoutUnit spaceAfterScript();
     LayoutUnit italicCorrection(const ReferenceChildren&);
     struct VerticalParameters {

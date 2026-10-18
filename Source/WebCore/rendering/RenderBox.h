@@ -418,9 +418,9 @@ public:
     std::optional<LayoutUnit> LEGACY_NODELETE overridingBorderBoxLogicalHeight() const;
     void setOverridingBorderBoxLogicalHeight(LayoutUnit);
     void setOverridingBorderBoxLogicalWidth(LayoutUnit);
-    void clearOverridingBorderBoxLogicalHeight();
-    void clearOverridingBorderBoxLogicalWidth();
-    void clearOverridingSize();
+    void LEGACY_NODELETE clearOverridingBorderBoxLogicalHeight();
+    void LEGACY_NODELETE clearOverridingBorderBoxLogicalWidth();
+    void LEGACY_NODELETE clearOverridingSize();
 
     // Grid item's containing block is not the grid container, but the grid area, for which we don't have a renderer.
     using GridAreaSize = std::optional<LayoutUnit>;
@@ -430,8 +430,8 @@ public:
     std::optional<GridAreaSize> LEGACY_NODELETE gridAreaContentLogicalHeight() const;
     void setGridAreaContentLogicalWidth(GridAreaSize);
     void setGridAreaContentLogicalHeight(GridAreaSize);
-    void clearGridAreaContentSize();
-    void clearGridAreaContentLogicalHeight();
+    void LEGACY_NODELETE clearGridAreaContentSize();
+    void LEGACY_NODELETE clearGridAreaContentLogicalHeight();
 
     // These are currently only used by Flexbox code. In some cases we must layout flex items with a different main size
     // (the size in the main direction) than the one specified by the item in order to compute the value of flex basis, i.e.,
@@ -440,14 +440,14 @@ public:
     std::optional<Style::PreferredSize> LEGACY_NODELETE overridingLogicalWidthForFlexBasisComputation() const;
     void setOverridingBorderBoxLogicalHeightForFlexBasisComputation(const Style::PreferredSize&);
     void setOverridingBorderBoxLogicalWidthForFlexBasisComputation(const Style::PreferredSize&);
-    void clearOverridingLogicalHeightForFlexBasisComputation();
-    void clearOverridingLogicalWidthForFlexBasisComputation();
+    void LEGACY_NODELETE clearOverridingLogicalHeightForFlexBasisComputation();
+    void LEGACY_NODELETE clearOverridingLogicalWidthForFlexBasisComputation();
 
     bool percentageLogicalHeightIsResolvable() const;
     bool logicalHeightBehavesAsAuto() const;
     bool shouldComputeLogicalHeightFromAspectRatio() const;
     bool shouldComputeLogicalWidthFromAspectRatio() const;
-    bool hasFullyConstrainedLogicalHeight() const;
+    bool LEGACY_NODELETE hasFullyConstrainedLogicalHeight() const;
     bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxWidthSizes() const;
     bool LEGACY_NODELETE shouldIgnoreLogicalMinMaxHeightSizes() const;
 
@@ -512,11 +512,11 @@ public:
     LayoutUnit LEGACY_NODELETE flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
     LayoutPoint LEGACY_NODELETE flipForWritingMode(const LayoutPoint&) const;
     LayoutSize LEGACY_NODELETE flipForWritingMode(const LayoutSize&) const;
-    FloatPoint flipForWritingMode(const FloatPoint&) const;
+    FloatPoint LEGACY_NODELETE flipForWritingMode(const FloatPoint&) const;
 
-    void flipForWritingMode(LayoutRect&) const;
-    void flipForWritingMode(FloatRect&) const;
-    void flipForWritingMode(RepaintRects&) const;
+    void LEGACY_NODELETE flipForWritingMode(LayoutRect&) const;
+    void LEGACY_NODELETE flipForWritingMode(FloatRect&) const;
+    void LEGACY_NODELETE flipForWritingMode(RepaintRects&) const;
 
     // These represent your location relative to your container as a physical offset.
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
@@ -643,7 +643,7 @@ protected:
 
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
-    void incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
+    void LEGACY_NODELETE incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize&);
     bool LEGACY_NODELETE shouldIgnoreAspectRatio() const;
     // -webkit-fill-available always resolves through the containing-block chain (walking up to the
     // viewport if needed), so it is considered resolvable regardless of whether the immediate CB has

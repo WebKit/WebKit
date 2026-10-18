@@ -45,7 +45,7 @@ class CounterNode : public RefCounted<CounterNode>, public CanMakeSingleThreadWe
 public:
     enum class Type : uint8_t { Increment, Reset, Set };
 
-    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value);
+    static Ref<CounterNode> LEGACY_NODELETE create(RenderElement&, OptionSet<Type>, int value);
     ~CounterNode();
     bool actsAsReset() const { return hasResetType() || !m_parent; }
     bool hasResetType() const { return m_type.contains(Type::Reset); }

@@ -46,7 +46,7 @@ public:
     void restoreColumnSpannersForContainer(RenderMultiColumnFlow&, const RenderElement& container);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
     void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative, RenderTreeBuilder::CanCollapseAnonymousBlock);
-    static RenderObject* adjustBeforeChildForMultiColumnSpannerIfNeeded(RenderObject& beforeChild);
+    static RenderObject* LEGACY_NODELETE adjustBeforeChildForMultiColumnSpannerIfNeeded(RenderObject& beforeChild);
 
 private:
     void createFragmentedFlow(RenderBlockFlow&);

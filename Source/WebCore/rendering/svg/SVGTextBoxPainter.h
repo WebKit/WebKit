@@ -82,6 +82,6 @@ private:
 
 TextRun constructTextRun(StringView, TextDirection, const Style::ComputedStyle&, const SVGTextFragment&);
 FloatRect selectionRectForTextFragment(const RenderSVGInlineText&, TextDirection, const SVGTextFragment&, unsigned startPosition, unsigned endPosition, const Style::ComputedStyle&);
-bool mapStartEndPositionsIntoFragmentCoordinates(unsigned textBoxStart, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition);
+bool LEGACY_NODELETE mapStartEndPositionsIntoFragmentCoordinates(unsigned textBoxStart, const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition);
 
 }

@@ -52,7 +52,7 @@ public:
     using LayerAndBoundsVector = Vector<LayerAndBounds, 2>;
 
     void add(const RenderLayer&, const LayoutRect&, const LayerAndBoundsVector& enclosingClippingLayers);
-    bool overlapsLayers(const RenderLayer&, const LayoutRect&, const LayerAndBoundsVector& enclosingClippingLayers) const;
+    bool LEGACY_NODELETE overlapsLayers(const RenderLayer&, const LayoutRect&, const LayerAndBoundsVector& enclosingClippingLayers) const;
     bool isCoveredByRecentRects(const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers) const;
     bool isEmpty() const { return m_isEmpty; }
 

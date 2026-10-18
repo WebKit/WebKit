@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-static size_t renderTreeDepth(const RenderObject& renderer)
+static size_t LEGACY_NODELETE renderTreeDepth(const RenderObject& renderer)
 {
     size_t depth = 0;
     CheckedPtr ancestor = &renderer;
@@ -46,7 +46,7 @@ struct AncestorAndChildren {
     const CheckedPtr<const RenderObject> distinctAncestorB;
 };
 
-static AncestorAndChildren commonInclusiveAncestorAndChildren(const RenderObject& a, const RenderObject& b)
+static AncestorAndChildren LEGACY_NODELETE commonInclusiveAncestorAndChildren(const RenderObject& a, const RenderObject& b)
 {
     // This check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.
@@ -78,7 +78,7 @@ static AncestorAndChildren commonInclusiveAncestorAndChildren(const RenderObject
     return { x, distinctAncestorA, distinctAncestorB };
 }
 
-static bool isSiblingSubsequent(const RenderObject& a, const RenderObject& b)
+static bool LEGACY_NODELETE isSiblingSubsequent(const RenderObject& a, const RenderObject& b)
 {
     ASSERT(a.parent());
     ASSERT(a.parent() == b.parent());

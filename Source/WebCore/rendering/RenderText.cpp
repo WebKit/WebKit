@@ -345,7 +345,7 @@ String capitalize(const String& string, char32_t previousCharacter, const AtomSt
     return result == string ? string : result.toString();
 }
 
-static LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, WritingMode writingMode)
+static LayoutRect LEGACY_NODELETE snappedSelectionRect(const LayoutRect& selectionRect, float logicalRight, WritingMode writingMode)
 {
     auto snappedSelectionRect = enclosingIntRect(selectionRect);
     LayoutUnit logicalWidth = snappedSelectionRect.width();
@@ -1574,7 +1574,7 @@ void RenderText::computeMinMaxIntrinsicLogicalWidths(float leadingWidth, SingleT
     clearContentLogicalWidthsInvalidation();
 }
 
-template<typename CharacterType> static inline bool containsOnlyCollapsibleWhitespace(std::span<const CharacterType> characters, const Style::ComputedStyle& style)
+template<typename CharacterType> static inline bool LEGACY_NODELETE containsOnlyCollapsibleWhitespace(std::span<const CharacterType> characters, const Style::ComputedStyle& style)
 {
     for (auto character : characters) {
         if (!style.isCollapsibleWhiteSpace(character))

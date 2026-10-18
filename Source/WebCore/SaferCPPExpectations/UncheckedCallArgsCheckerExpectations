@@ -37,7 +37,6 @@ layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/flex/LayoutIntegrationFlexLayout.cpp
-layout/integration/inline/InlineIteratorBox.cpp
 layout/integration/inline/InlineIteratorLineBox.h
 layout/integration/inline/InlineIteratorLineBoxInlines.h
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
@@ -51,7 +50,6 @@ layout/layouttree/LayoutContainingBlockChainIterator.h
 [ macOS ] rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
-rendering/BorderPainter.cpp
 rendering/CSSFilterRenderer.cpp
 rendering/CaretRectComputation.cpp
 rendering/ContentfulPaintChecker.cpp
@@ -191,6 +189,5 @@ style/Styleable.cpp
 style/Styleable.h
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
-style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleGradientImage.cpp
 style/values/primitives/StyleLengthResolution.cpp

@@ -57,13 +57,13 @@ public:
     // Inset of the scaled capture from the visualOverflowRect()
     LayoutPoint captureContentInset() const;
 
-    bool canUseExistingLayers() const;
+    bool LEGACY_NODELETE canUseExistingLayers() const;
 
     bool LEGACY_NODELETE paintsContent() const final;
 
     bool isRootElementCapture() const { return m_isRootElementCapture; }
 
-    RefPtr<ImageBuffer> image();
+    RefPtr<ImageBuffer> LEGACY_NODELETE image();
 
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }

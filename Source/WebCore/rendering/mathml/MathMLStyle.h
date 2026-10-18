@@ -44,7 +44,7 @@ public:
 
 private:
     const MathMLStyle* LEGACY_NODELETE getMathMLStyle(RenderObject* renderer);
-    CheckedPtr<RenderObject> getMathMLParentNode(RenderObject*);
+    CheckedPtr<RenderObject> LEGACY_NODELETE getMathMLParentNode(RenderObject*);
     void updateStyleIfNeeded(RenderObject*, MathVariant);
 
     MathVariant m_mathVariant { MathVariant::None };

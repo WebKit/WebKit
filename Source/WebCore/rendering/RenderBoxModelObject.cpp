@@ -124,7 +124,7 @@ static FirstLetterRemainingTextMap& LEGACY_NODELETE firstLetterRemainingTextMap(
     return map;
 }
 
-static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)
+static RenderObject* LEGACY_NODELETE firstContentfulChild(const RenderBoxModelObject& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
         if (current.isFloatingOrOutOfFlowPositioned())

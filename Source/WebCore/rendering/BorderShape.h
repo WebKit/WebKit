@@ -88,8 +88,8 @@ public:
     FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
 
     // Returns true if the given rect is entirely inside the inner/outer shape.
-    bool innerShapeContains(const LayoutRect&) const;
-    bool outerShapeContains(const LayoutRect&) const;
+    bool LEGACY_NODELETE innerShapeContains(const LayoutRect&) const;
+    bool LEGACY_NODELETE outerShapeContains(const LayoutRect&) const;
 
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
@@ -106,7 +106,7 @@ public:
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
-    bool allCornersClippedOut(const LayoutRect&) const;
+    bool LEGACY_NODELETE allCornersClippedOut(const LayoutRect&) const;
 
     const LayoutRoundedRectRadii& radii() const LIFETIME_BOUND { return m_borderRect.radii(); }
     void setRadii(const LayoutRoundedRectRadii& radii) { m_borderRect.setRadii(radii); }

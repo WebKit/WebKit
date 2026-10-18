@@ -69,7 +69,7 @@ struct RectList {
             append(rect);
     }
 
-    bool intersects(const LayoutRect& rect) const
+    bool LEGACY_NODELETE intersects(const LayoutRect& rect) const
     {
         if (!rects.size() || !rect.intersects(boundingRect))
             return false;
@@ -104,7 +104,7 @@ public:
 
     // Layers are added in z-order, lazily creating clipping scopes as necessary.
     void add(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers);
-    bool overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
+    bool LEGACY_NODELETE overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
     bool isCoveredByRecentRects(const LayoutRect& bounds, const LayerOverlapMap::LayerAndBoundsVector& enclosingClippingLayers) const;
     void append(std::unique_ptr<OverlapMapContainer>&&);
 

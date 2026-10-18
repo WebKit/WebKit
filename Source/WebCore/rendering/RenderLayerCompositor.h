@@ -244,13 +244,13 @@ public:
     static bool clipsCompositingDescendants(const RenderLayer&);
 
     // Whether the given layer needs an extra 'contents' layer.
-    bool needsContentsCompositingLayer(const RenderLayer&) const;
+    bool LEGACY_NODELETE needsContentsCompositingLayer(const RenderLayer&) const;
 
     bool fixedLayerIntersectsViewport(const RenderLayer&) const;
 
     bool LEGACY_NODELETE supportsFixedRootBackgroundCompositing() const;
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
-    GraphicsLayer* fixedRootBackgroundLayer() const;
+    GraphicsLayer* LEGACY_NODELETE fixedRootBackgroundLayer() const;
 
     void rootOrBodyStyleChanged(RenderElement&, const Style::ComputedStyle* oldStyle);
 
@@ -414,7 +414,7 @@ public:
 
     bool viewHasTransparentBackground(Color* backgroundColor = nullptr) const;
 
-    bool viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
+    bool LEGACY_NODELETE viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint() const;
 
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
@@ -616,12 +616,12 @@ private:
     // containing block chain between the given layer and its composited ancestor.
     Vector<CompositedClipData> computeAncestorClippingStack(const RenderLayer&, const RenderLayer* compositingAncestor) const;
 
-    bool requiresScrollLayer(RootLayerAttachment) const;
+    bool LEGACY_NODELETE requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
 #if HAVE(RUBBER_BANDING)
-    bool requiresOverhangAreasLayer() const;
+    bool LEGACY_NODELETE requiresOverhangAreasLayer() const;
     bool requiresContentShadowLayer() const;
 #endif
 

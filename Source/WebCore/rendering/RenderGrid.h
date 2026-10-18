@@ -95,7 +95,7 @@ public:
     const std::optional<LayoutUnit> availableLogicalHeightForContentBox() const;
 
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
-    const Vector<LayoutUnit>& trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
+    const Vector<LayoutUnit>& LEGACY_NODELETE trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
     const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const LIFETIME_BOUND { return m_rowPositions; }
@@ -140,7 +140,7 @@ public:
     bool isSubgridOf(Style::GridTrackSizingDirection, const RenderGrid& ancestor) const;
 
     bool LEGACY_NODELETE isGridLanes() const;
-    bool isStackingAxis(Style::GridTrackSizingDirection) const;
+    bool LEGACY_NODELETE isStackingAxis(Style::GridTrackSizingDirection) const;
     bool isStackingAxis(LogicalBoxAxis axis) const { return isStackingAxis(Style::gridTrackSizingDirection(axis)); }
     bool hasStackingAxisRows() const { return isStackingAxis(Style::GridTrackSizingDirection::Rows); }
     bool hasStackingAxisColumns() const { return isStackingAxis(Style::GridTrackSizingDirection::Columns); }
@@ -200,7 +200,7 @@ private:
 
     unsigned computeAutoRepeatTracksCount(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
-    unsigned clampAutoRepeatTracks(Style::GridTrackSizingDirection, unsigned autoRepeatTracks) const;
+    unsigned LEGACY_NODELETE clampAutoRepeatTracks(Style::GridTrackSizingDirection, unsigned autoRepeatTracks) const;
 
     WTF::Range<size_t> LEGACY_NODELETE autoRepeatTracksRange(Style::GridTrackSizingDirection) const;
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Style::GridTrackSizingDirection) const;

@@ -62,8 +62,8 @@ private:
     template<typename Layer> void paintFillLayer(const Color&, const FillLayerToPaint<Layer>&, const LayoutRect& paintRect, CompositeOperator);
     void paintBoxShadow(Style::ShadowStyle, const LayoutRect& paintRect);
 
-    const Style::ComputedStyle& style() const;
-    UsedStyle usedStyle() const;
+    const Style::ComputedStyle& LEGACY_NODELETE style() const;
+    UsedStyle LEGACY_NODELETE usedStyle() const;
     // FIXME: Make RenderBoxModelObject functions const.
     RenderBoxModelObject& renderer() const { return const_cast<RenderBoxModelObject&>(m_renderer); }
     bool isHorizontal() const { return m_isHorizontal; }

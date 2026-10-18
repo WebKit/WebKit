@@ -71,16 +71,16 @@ class GridTrack final : public CanMakeCheckedPtr<GridTrack> {
 public:
     GridTrack() = default;
 
-    LayoutUnit baseSize() const;
+    LayoutUnit LEGACY_NODELETE baseSize() const;
     LayoutUnit LEGACY_NODELETE unclampedBaseSize() const;
-    void setBaseSize(LayoutUnit);
+    void LEGACY_NODELETE setBaseSize(LayoutUnit);
 
     const LayoutUnit& LEGACY_NODELETE growthLimit() const LIFETIME_BOUND;
     bool growthLimitIsInfinite() const { return m_growthLimit == infinity; }
-    void setGrowthLimit(LayoutUnit);
+    void LEGACY_NODELETE setGrowthLimit(LayoutUnit);
 
     bool infiniteGrowthPotential() const { return growthLimitIsInfinite() || m_infinitelyGrowable; }
-    LayoutUnit growthLimitIfNotInfinite() const;
+    LayoutUnit LEGACY_NODELETE growthLimitIfNotInfinite() const;
 
     const LayoutUnit& plannedSize() const LIFETIME_BOUND { return m_plannedSize; }
     void setPlannedSize(LayoutUnit plannedSize) { m_plannedSize = plannedSize; }
@@ -101,7 +101,7 @@ public:
 private:
     bool isGrowthLimitBiggerThanBaseSize() const { return growthLimitIsInfinite() || m_growthLimit >= std::max(m_baseSize, 0_lu); }
 
-    void ensureGrowthLimitIsBiggerThanBaseSize();
+    void LEGACY_NODELETE ensureGrowthLimitIsBiggerThanBaseSize();
 
     LayoutUnit m_baseSize { 0 };
     LayoutUnit m_growthLimit { 0 };
@@ -246,11 +246,11 @@ private:
     // Helper methods for step 4. Stretch flexible tracks.
     typedef HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> TrackIndexSet;
     double computeFlexFactorUnitSize(const Vector<UniqueRef<GridTrack>>& tracks, double flexFactorSum, LayoutUnit& leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible = nullptr) const;
-    void computeFlexSizedTracksGrowth(double flexFraction, Vector<LayoutUnit>& increments, LayoutUnit& totalGrowth) const;
+    void LEGACY_NODELETE computeFlexSizedTracksGrowth(double flexFraction, Vector<LayoutUnit>& increments, LayoutUnit& totalGrowth) const;
     double findFrUnitSize(const GridSpan& tracksSpan, LayoutUnit leftOverSpace) const;
 
 
-    void handleInfinityGrowthLimit();
+    void LEGACY_NODELETE handleInfinityGrowthLimit();
 
     // Build up a map of min/max sizes for each span length for use during resolving intrinsic track sizes.
     // We also need to keep track of definite items separately, since they do not contribute to every track like indefinite items do.
@@ -383,7 +383,7 @@ protected:
 
     LayoutUnit logicalHeightForGridItem(RenderBox&, RenderGridLayoutState&) const;
     bool updateOverridingContainingBlockContentSizeForGridItem(RenderBox&, Style::GridTrackSizingDirection, std::optional<LayoutUnit> = std::nullopt) const;
-    bool isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
+    bool LEGACY_NODELETE isComputingColumnIntrinsicWidthForNonOrthogonalItem(const RenderBox&) const;
     bool shouldTreatGridAreaBlockSizeAsIndefinite(const RenderBox&) const;
 
     // GridTrackSizingAlgorithm accessors for subclasses.

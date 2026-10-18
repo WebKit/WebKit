@@ -47,7 +47,7 @@ public:
     FloatSize computeViewportSize() const;
 
     bool isEmbeddedThroughSVGImage() const;
-    bool isEmbeddedThroughFrameContainingSVGDocument() const;
+    bool LEGACY_NODELETE isEmbeddedThroughFrameContainingSVGDocument() const;
 
     FloatSize computeIntrinsicSize() const;
     FloatSize preferredAspectRatioAsSize() const final;
@@ -85,7 +85,7 @@ public:
 
     void invalidateCachedVisualOverflowRect() final { m_cachedVisualOverflowRect = std::nullopt; }
 
-    RenderSVGViewportContainer* viewportContainer() const;
+    RenderSVGViewportContainer* LEGACY_NODELETE viewportContainer() const;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     AXCustomColorSVGClassifier::Characteristics axCustomColorModeCharacteristics() const { return m_axCustomColorModeCharacteristics; }

@@ -2699,7 +2699,7 @@ void RenderBox::updateLogicalWidth()
     setMarginEnd(computedValues.margins.end);
 }
 
-static LayoutUnit inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatioValue, BoxSizing boxSizing, LayoutUnit blockSize, const Style::AspectRatio& aspectRatio, bool isRenderReplaced)
+static LayoutUnit LEGACY_NODELETE inlineSizeFromAspectRatio(LayoutUnit borderPaddingInlineSum, LayoutUnit borderPaddingBlockSum, double aspectRatioValue, BoxSizing boxSizing, LayoutUnit blockSize, const Style::AspectRatio& aspectRatio, bool isRenderReplaced)
 {
     if (boxSizing == BoxSizing::BorderBox && aspectRatio.isRatio() && !isRenderReplaced)
         return std::max(borderPaddingInlineSum, LayoutUnit(blockSize * aspectRatioValue));

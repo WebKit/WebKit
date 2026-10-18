@@ -195,7 +195,7 @@ protected:
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
 
     void updateFragmentsFragmentedFlowPortionRect();
-    bool shouldRepaint(const LayoutRect&) const;
+    bool LEGACY_NODELETE shouldRepaint(const LayoutRect&) const;
 
     bool LEGACY_NODELETE getFragmentRangeForBoxFromCachedInfo(const RenderBox&, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
