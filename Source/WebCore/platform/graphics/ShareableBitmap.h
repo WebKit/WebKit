@@ -104,10 +104,10 @@ private:
     );
 
     static ColorSpace validateColorSpace(const ColorSpace&);
-    static CheckedUint32 calculateBitsPerComponent(PixelFormat, const ColorSpace&);
-    static CheckedUint32 calculateBytesPerPixel(PixelFormat, const ColorSpace&);
+    static CheckedUint32 LEGACY_NODELETE calculateBitsPerComponent(PixelFormat, const ColorSpace&);
+    static CheckedUint32 LEGACY_NODELETE calculateBytesPerPixel(PixelFormat, const ColorSpace&);
 #if USE(CG)
-    static CGBitmapInfo calculateBitmapInfo(PixelFormat, bool isOpaque);
+    static CGBitmapInfo LEGACY_NODELETE calculateBitmapInfo(PixelFormat, bool isOpaque);
 #endif
 
     IntSize m_size;
@@ -159,7 +159,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> LEGACY_NODELETE create(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a NativeImage.
 #if USE(CG)

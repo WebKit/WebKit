@@ -183,7 +183,7 @@ private:
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
     dispatch_queue_t dispatchQueue() const;
-    RefPtr<WebCoreDecompressionSession> decompressionSession() const;
+    RefPtr<WebCoreDecompressionSession> LEGACY_NODELETE decompressionSession() const;
     bool LEGACY_NODELETE useDecompressionSessionForProtectedFallback() const;
     bool LEGACY_NODELETE useDecompressionSessionForProtectedContent() const;
     bool LEGACY_NODELETE useStereoDecoding() const;

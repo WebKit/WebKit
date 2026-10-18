@@ -32,8 +32,8 @@ namespace WebCore {
 
 class ProgressBarPart : public ControlPart {
 public:
-    static Ref<ProgressBarPart> create();
-    WEBCORE_EXPORT static Ref<ProgressBarPart> create(double position, const Seconds& animationStartTime);
+    static Ref<ProgressBarPart> LEGACY_NODELETE create();
+    WEBCORE_EXPORT static Ref<ProgressBarPart> LEGACY_NODELETE create(double position, const Seconds& animationStartTime);
 
     double position() const { return m_position; }
     void setPosition(double position) { m_position = position; }

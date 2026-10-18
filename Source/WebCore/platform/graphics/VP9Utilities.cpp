@@ -40,7 +40,7 @@ static bool LEGACY_NODELETE isValidVPProfile(uint8_t profile)
     return profile <= 3;
 }
 
-static bool isValidVPLevel(uint8_t level)
+static bool LEGACY_NODELETE isValidVPLevel(uint8_t level)
 {
     constexpr auto validLevels = WTF::toArray<uint8_t>({
         VPConfigurationLevel::Level_1,
@@ -82,7 +82,7 @@ static bool LEGACY_NODELETE isValidChromaSubsampling(uint8_t subsampling)
         && subsampling <= VPConfigurationChromaSubsampling::Subsampling_444;
 }
 
-static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
+static bool LEGACY_NODELETE isValidVPColorPrimaries(uint8_t colorPrimaries)
 {
     constexpr auto validColorPrimaries = WTF::toArray<uint8_t>({
         VPConfigurationColorPrimaries::BT_709_6,
@@ -103,7 +103,7 @@ static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
     return std::binary_search(std::begin(validColorPrimaries), std::end(validColorPrimaries), colorPrimaries);
 }
 
-static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
+static bool LEGACY_NODELETE isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
 {
     constexpr auto validTransferCharacteristics = WTF::toArray<uint8_t>({
         VPConfigurationTransferCharacteristics::BT_709_6,
@@ -128,7 +128,7 @@ static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
     return std::binary_search(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics), transferCharacteristics);
 }
 
-static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
+static bool LEGACY_NODELETE isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
 {
     constexpr auto validMatrixCoefficients = WTF::toArray<uint8_t>({
         VPConfigurationMatrixCoefficients::Identity,

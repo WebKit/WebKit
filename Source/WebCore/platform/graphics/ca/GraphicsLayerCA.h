@@ -576,7 +576,7 @@ private:
 #endif
     };
     bool ensureStructuralLayer(StructuralLayerPurpose);
-    StructuralLayerPurpose structuralLayerPurpose() const;
+    StructuralLayerPurpose LEGACY_NODELETE structuralLayerPurpose() const;
 
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.

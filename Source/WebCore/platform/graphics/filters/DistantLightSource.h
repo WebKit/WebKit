@@ -32,7 +32,7 @@ class DistantLightSource : public LightSource {
     friend struct IPC::ArgumentCoder<DistantLightSource>;
 
 public:
-    WEBCORE_EXPORT static Ref<DistantLightSource> create(float azimuth, float elevation);
+    WEBCORE_EXPORT static Ref<DistantLightSource> LEGACY_NODELETE create(float azimuth, float elevation);
 
     bool operator==(const DistantLightSource&) const;
 

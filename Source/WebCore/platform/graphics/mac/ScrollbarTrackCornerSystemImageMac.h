@@ -38,7 +38,7 @@ namespace WebCore {
 class WEBCORE_EXPORT ScrollbarTrackCornerSystemImageMac final : public AppKitControlSystemImage {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollbarTrackCornerSystemImageMac, WEBCORE_EXPORT);
 public:
-    static Ref<ScrollbarTrackCornerSystemImageMac> create();
+    static Ref<ScrollbarTrackCornerSystemImageMac> LEGACY_NODELETE create();
     static Ref<ScrollbarTrackCornerSystemImageMac> create(WebCore::Color&& tintColor, bool useDarkAppearance);
 
     virtual ~ScrollbarTrackCornerSystemImageMac() = default;

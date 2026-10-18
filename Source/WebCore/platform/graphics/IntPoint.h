@@ -109,9 +109,9 @@ public:
         };
     }
 
-    WEBCORE_EXPORT IntPoint constrainedBetween(const IntPoint& min, const IntPoint& max) const;
+    WEBCORE_EXPORT IntPoint LEGACY_NODELETE constrainedBetween(const IntPoint& min, const IntPoint& max) const;
     
-    WEBCORE_EXPORT IntPoint constrainedWithin(const IntRect&) const;
+    WEBCORE_EXPORT IntPoint LEGACY_NODELETE constrainedWithin(const IntRect&) const;
 
     int distanceSquaredToPoint(const IntPoint&) const;
 
@@ -129,7 +129,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
-    WEBCORE_EXPORT operator CGPoint() const;
+    WEBCORE_EXPORT operator CGPoint LEGACY_NODELETE () const;
 #endif
 
 #if PLATFORM(WIN)

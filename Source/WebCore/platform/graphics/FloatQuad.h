@@ -105,7 +105,7 @@ public:
     bool LEGACY_NODELETE intersectsCircle(const FloatPoint& center, float radius) const;
     bool LEGACY_NODELETE intersectsEllipse(const FloatPoint& center, const FloatSize& radii) const;
 
-    WEBCORE_EXPORT bool intersectsQuad(const FloatQuad&) const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE intersectsQuad(const FloatQuad&) const;
 
     // The center of the quad. If the quad is the result of a affine-transformed rectangle this is the same as the original center transformed.
     FloatPoint center() const
@@ -114,7 +114,7 @@ public:
                           (m_p1.y() + m_p2.y() + m_p3.y() + m_p4.y()) / 4.0);
     }
 
-    WEBCORE_EXPORT FloatRect boundingBox() const;
+    WEBCORE_EXPORT FloatRect LEGACY_NODELETE boundingBox() const;
     IntRect enclosingBoundingBox() const
     {
         return enclosingIntRect(boundingBox());
@@ -177,6 +177,6 @@ inline FloatQuad& operator-=(FloatQuad& a, const FloatSize& b)
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);
-WEBCORE_EXPORT FloatRect unitedBoundingBoxes(const Vector<FloatQuad>&);
+WEBCORE_EXPORT FloatRect LEGACY_NODELETE unitedBoundingBoxes(const Vector<FloatQuad>&);
 
 } // namespace WebCore

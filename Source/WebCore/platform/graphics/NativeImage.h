@@ -82,7 +82,7 @@ public:
     WEBCORE_EXPORT virtual ~NativeImage();
 
     WEBCORE_EXPORT virtual PlatformImagePtr platformImage() const;
-    WEBCORE_EXPORT const std::optional<GainMap>& gainMap() const;
+    WEBCORE_EXPORT const std::optional<GainMap>& LEGACY_NODELETE gainMap() const;
     WEBCORE_EXPORT virtual IntSize size() const;
     WEBCORE_EXPORT virtual bool hasAlpha() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;

@@ -30,7 +30,7 @@ namespace WebCore {
 
 class PointLightSource : public LightSource {
 public:
-    WEBCORE_EXPORT static Ref<PointLightSource> create(const FloatPoint3D& position);
+    WEBCORE_EXPORT static Ref<PointLightSource> LEGACY_NODELETE create(const FloatPoint3D& position);
 
     bool operator==(const PointLightSource&) const;
 

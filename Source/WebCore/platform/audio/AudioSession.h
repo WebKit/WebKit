@@ -135,7 +135,7 @@ public:
     // How many times the audio session has been made active, counting only transitions from inactive to active.
     using ActivationCountPromise = NativePromise<uint64_t, void>;
     virtual Ref<ActivationCountPromise> systemActivationCountForTesting();
-    uint64_t activationCountForTesting() const;
+    uint64_t LEGACY_NODELETE activationCountForTesting() const;
 
     virtual void clearInterruptionFlagForTesting() { }
 
@@ -166,7 +166,7 @@ protected:
     AudioSession();
 
     virtual Ref<SetActivePromise> tryToSetActiveInternal(bool);
-    void setActive(bool);
+    void LEGACY_NODELETE setActive(bool);
     void activeStateChanged();
 
     Logger& logger();

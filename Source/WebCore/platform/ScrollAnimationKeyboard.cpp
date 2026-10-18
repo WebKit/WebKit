@@ -52,7 +52,7 @@ static FloatSize LEGACY_NODELETE perpendicularAbsoluteUnitVector(ScrollDirection
     return { };
 }
 
-static FloatPoint farthestPointInDirection(FloatPoint a, FloatPoint b, ScrollDirection direction)
+static FloatPoint LEGACY_NODELETE farthestPointInDirection(FloatPoint a, FloatPoint b, ScrollDirection direction)
 {
     switch (direction) {
     case ScrollDirection::ScrollUp:

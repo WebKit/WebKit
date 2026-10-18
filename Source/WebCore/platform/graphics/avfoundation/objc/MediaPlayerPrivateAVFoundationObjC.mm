@@ -146,7 +146,7 @@
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AVPlayerAdditions.mm>)
 #import <WebKitAdditions/AVPlayerAdditions.mm>
 #else
-static void setPlayerScreenReserved(AVPlayer *, bool) { }
+static void LEGACY_NODELETE setPlayerScreenReserved(AVPlayer *, bool) { }
 #endif
 #endif
 

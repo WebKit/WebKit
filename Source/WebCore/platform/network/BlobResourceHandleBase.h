@@ -77,7 +77,7 @@ protected:
     WEBCORE_EXPORT void resizeBuffer(size_t);
     const Vector<uint8_t>& buffer() const LIFETIME_BOUND { return *m_buffer; }
 
-    static uint64_t clampReadSizeToRemaining(uint64_t requested, uint64_t totalRemaining);
+    static uint64_t LEGACY_NODELETE clampReadSizeToRemaining(uint64_t requested, uint64_t totalRemaining);
 
 private:
     void getSizeForNext();

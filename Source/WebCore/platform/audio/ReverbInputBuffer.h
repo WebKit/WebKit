@@ -44,7 +44,7 @@ public:
     // The realtime audio thread keeps writing samples here.
     // The assumption is that the buffer's length is evenly divisible by source.size() (for nearly all cases this will be fine).
     // FIXME: remove source.size() restriction...
-    void write(std::span<const float> source);
+    void LEGACY_NODELETE write(std::span<const float> source);
 
     // Background threads can call this to check if there's anything to read...
     size_t writeIndex() const { return m_writeIndex; }

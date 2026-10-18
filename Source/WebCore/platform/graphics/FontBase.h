@@ -195,7 +195,7 @@ protected:
     FontBase();
 
     WEBCORE_EXPORT void platformInit();
-    WEBCORE_EXPORT void platformVerticalDataInit();
+    WEBCORE_EXPORT void LEGACY_NODELETE platformVerticalDataInit();
     WEBCORE_EXPORT void applyFontMetricsOverrides();
 
 #if PLATFORM(COCOA)

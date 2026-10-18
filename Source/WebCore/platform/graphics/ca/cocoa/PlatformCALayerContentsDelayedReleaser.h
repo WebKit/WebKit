@@ -43,10 +43,10 @@ public:
 
     void takeLayerContents(PlatformCALayer&);
     
-    void mainThreadCommitWillStart();
+    void LEGACY_NODELETE mainThreadCommitWillStart();
     void mainThreadCommitDidEnd();
 
-    void scrollingThreadCommitWillStart();
+    void LEGACY_NODELETE scrollingThreadCommitWillStart();
     void scrollingThreadCommitDidEnd();
 
 private:

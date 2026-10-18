@@ -67,7 +67,7 @@ private:
 
     Seconds LEGACY_NODELETE keyframeTimeDelta() const;
     size_t LEGACY_NODELETE keyframeCount() const;
-    void updateGlowTail(float caretPosition, Seconds elapsedTime);
+    void LEGACY_NODELETE updateGlowTail(float caretPosition, Seconds elapsedTime);
     void resetGlowTail(FloatRect);
     void updateGlowTail(Seconds elapsedTime);
     void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const final;
@@ -75,7 +75,7 @@ private:
     Path makeDictationTailConePath(const FloatRect&) const;
     void fillCaretTail(const FloatRect&, GraphicsContext&, const Color&) const;
 
-    FloatRect computeTailRect() const;
+    FloatRect LEGACY_NODELETE computeTailRect() const;
     bool LEGACY_NODELETE isLeftToRightLayout() const;
     FloatRoundedRect expandedCaretRect(const FloatRect&, bool fillTail) const;
     int computeScrollLeft() const;

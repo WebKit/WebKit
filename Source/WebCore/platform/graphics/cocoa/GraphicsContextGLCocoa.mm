@@ -941,7 +941,7 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
 }
 
 // Says how the alpha of the contents of the surface buffers is to be interpreted.
-static CGImageAlphaInfo alphaInfoForSurfaceBufferContents(const GraphicsContextGLAttributes& attributes)
+static CGImageAlphaInfo LEGACY_NODELETE alphaInfoForSurfaceBufferContents(const GraphicsContextGLAttributes& attributes)
 {
     if (!attributes.alpha)
         return kCGImageAlphaNoneSkipFirst;

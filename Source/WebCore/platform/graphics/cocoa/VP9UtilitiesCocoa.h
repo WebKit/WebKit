@@ -73,7 +73,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t>);
 
 class VP9TestingOverrides {
 public:
-    static WEBCORE_EXPORT VP9TestingOverrides& singleton();
+    static WEBCORE_EXPORT VP9TestingOverrides& LEGACY_NODELETE singleton();
 
     WEBCORE_EXPORT void setHardwareDecoderDisabled(std::optional<bool>&&);
     std::optional<bool> hardwareDecoderDisabled() const { return m_hardwareDecoderDisabled; }

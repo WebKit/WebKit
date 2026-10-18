@@ -78,7 +78,7 @@ public:
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
     Ref<VideoDecoder::DecodePromise> decode(VideoEncodedData&&);
-    void close() { m_isClosed = true; }
+    void LEGACY_NODELETE close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
     bool LEGACY_NODELETE isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }

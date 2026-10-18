@@ -43,7 +43,7 @@ SPECIALIZE_OBJC_TYPE_TRAITS(GCController, WebCore::getGCControllerClassSingleton
 
 namespace WebCore {
 
-static bool shouldExcludeGameController(GCController *controller)
+static bool LEGACY_NODELETE shouldExcludeGameController(GCController *controller)
 {
 #if PLATFORM(VISION) && HAVE(SPATIAL_CONTROLLERS)
     if ((canLoad_GameController_GCProductCategoryLeftSpatialController() && [controller.productCategory isEqualToString:GCProductCategoryLeftSpatialController])

@@ -209,12 +209,12 @@ struct YCbCrMatrix {
 
     constexpr YCbCrMatrix(PixelRange, GLfloat cbCoefficient, GLfloat crCoefficient);
 
-    operator const GLfloat*() const
+    operator const GLfloat* LEGACY_NODELETE () const
     {
         return &rows[0][0];
     }
 
-    constexpr GLfloatColor operator*(const GLfloatColor&) const;
+    constexpr GLfloatColor LEGACY_NODELETE operator*(const GLfloatColor&) const;
 };
 
 constexpr YCbCrMatrix::YCbCrMatrix(PixelRange range, GLfloat cbCoefficient, GLfloat crCoefficient)

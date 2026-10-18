@@ -379,7 +379,7 @@ private:
 
     // Seek logic support
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool seeking() const;
+    bool LEGACY_NODELETE seeking() const;
     void seekInternal();
     void cancelPendingSeek(); // Called from destructor or running queue
     void completeSeek(const MediaTime&);

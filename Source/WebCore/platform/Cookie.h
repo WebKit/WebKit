@@ -46,7 +46,7 @@ struct Cookie {
     Cookie() = default;
 
     WEBCORE_EXPORT bool operator==(const Cookie&) const;
-    WEBCORE_EXPORT unsigned hash() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE hash() const;
 
 #ifdef __OBJC__
     WEBCORE_EXPORT Cookie(NSHTTPCookie *);

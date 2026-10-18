@@ -40,13 +40,13 @@ public:
 
     WEBCORE_EXPORT void recordFrame(Seconds frameDuration, Seconds presentStall, MonotonicTime presentTime);
 
-    WEBCORE_EXPORT std::optional<FramesPerSecond> preferredFramesPerSecond(MonotonicTime now) const;
+    WEBCORE_EXPORT std::optional<FramesPerSecond> LEGACY_NODELETE preferredFramesPerSecond(MonotonicTime now) const;
 
     WEBCORE_EXPORT void reset();
 
 private:
     void rebuildDivisorLadder();
-    size_t ladderIndexForDuration(Seconds) const;
+    size_t LEGACY_NODELETE ladderIndexForDuration(Seconds) const;
     void stepDownForStalls();
     void stepUpIfStallFree(MonotonicTime presentTime);
 

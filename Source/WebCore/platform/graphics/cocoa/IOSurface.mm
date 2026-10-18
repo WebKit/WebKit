@@ -254,7 +254,7 @@ static OSType LEGACY_NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Form
 }
 
 #if HAVE(IOSURFACE_ALPHA_CHANNEL_MODE)
-static CFStringRef alphaChannelModeValue(AlphaPremultiplication alphaPremultiplication)
+static CFStringRef LEGACY_NODELETE alphaChannelModeValue(AlphaPremultiplication alphaPremultiplication)
 {
     return alphaPremultiplication == AlphaPremultiplication::Premultiplied ? kIOSurfaceAlphaChannelMode_PremultipliedAlpha : kIOSurfaceAlphaChannelMode_StraightAlpha;
 }
@@ -643,7 +643,7 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
     return adoptCF(CGIOSurfaceContextCreateImage(context));
 }
 
-static std::optional<CGImageAlphaInfo> alphaInfoForNativeImage(const IOSurface& surface, IOSurface::ShouldForceOpaque shouldForceOpaque)
+static std::optional<CGImageAlphaInfo> LEGACY_NODELETE alphaInfoForNativeImage(const IOSurface& surface, IOSurface::ShouldForceOpaque shouldForceOpaque)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F) || ENABLE(PIXEL_FORMAT_RGBA16)
     // A 64-bit surface always uses IOSurface::Format::RGBA16F or RGBA16 regardless of whether

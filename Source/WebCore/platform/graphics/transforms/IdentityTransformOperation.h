@@ -33,7 +33,7 @@ struct BlendingContext;
 
 class IdentityTransformOperation final : public TransformOperation {
 public:
-    WEBCORE_EXPORT static Ref<IdentityTransformOperation> create();
+    WEBCORE_EXPORT static Ref<IdentityTransformOperation> LEGACY_NODELETE create();
 
     Ref<TransformOperation> clone() const override
     {

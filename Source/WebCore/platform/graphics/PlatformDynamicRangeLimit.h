@@ -68,7 +68,7 @@ private:
     PlatformDynamicRangeLimit(float standardPercent, float constrainedPercent, float noLimitPercent)
         : m_value(normalizedAverage(standardPercent, constrainedPercent, noLimitPercent)) { }
 
-    WEBCORE_EXPORT static ValueType normalizedAverage(float standardPercent, float constrainedPercent, float noLimitPercent);
+    WEBCORE_EXPORT static ValueType LEGACY_NODELETE normalizedAverage(float standardPercent, float constrainedPercent, float noLimitPercent);
 
     static constexpr ValueType standardValue = 0;
     static constexpr ValueType constrainedValue = 0.5;
@@ -77,9 +77,9 @@ private:
     ValueType m_value { noLimitValue };
 };
 
-WEBCORE_EXPORT PlatformDynamicRangeLimit effectiveDynamicRangeLimit(PlatformDynamicRangeLimit, bool suppressEDR, PlatformDynamicRangeLimit limitWhenSuppressing = PlatformDynamicRangeLimit::constrained());
+WEBCORE_EXPORT PlatformDynamicRangeLimit LEGACY_NODELETE effectiveDynamicRangeLimit(PlatformDynamicRangeLimit, bool suppressEDR, PlatformDynamicRangeLimit limitWhenSuppressing = PlatformDynamicRangeLimit::constrained());
 
-WEBCORE_EXPORT float headroomForDynamicRangeLimit(PlatformDynamicRangeLimit, float currentEDRHeadroom, bool suppressEDR);
+WEBCORE_EXPORT float LEGACY_NODELETE headroomForDynamicRangeLimit(PlatformDynamicRangeLimit, float currentEDRHeadroom, bool suppressEDR);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformDynamicRangeLimit);
 

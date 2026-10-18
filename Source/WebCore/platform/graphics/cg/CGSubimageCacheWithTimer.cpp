@@ -40,7 +40,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CGSubimageCacheWithTimer);
 
 static Lock subimageCacheLock;
 
-static std::unique_ptr<CGSubimageCacheWithTimer>& subimageCacheStorage() WTF_REQUIRES_LOCK(subimageCacheLock)
+static std::unique_ptr<CGSubimageCacheWithTimer>& LEGACY_NODELETE subimageCacheStorage() WTF_REQUIRES_LOCK(subimageCacheLock)
 {
     static NeverDestroyed<std::unique_ptr<CGSubimageCacheWithTimer>> cache;
     return cache.get();

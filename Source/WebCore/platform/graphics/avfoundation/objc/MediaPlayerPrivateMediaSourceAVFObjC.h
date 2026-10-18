@@ -128,7 +128,7 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setCDMSession(LegacyCDMSession*) override;
-    RefPtr<CDMSessionAVContentKeySession> cdmSession() const;
+    RefPtr<CDMSessionAVContentKeySession> LEGACY_NODELETE cdmSession() const;
     void keyAdded() final;
 #endif
 
@@ -211,14 +211,14 @@ private:
     void setPageIsVisible(bool) final;
     void setViewportVisibility(ViewportVisibility) final;
     void updateRendererVisibility();
-    bool shouldTeardownOnVisibilityChange() const;
+    bool LEGACY_NODELETE shouldTeardownOnVisibilityChange() const;
 
     MediaTime duration() const override;
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
-    bool seeking() const;
+    bool LEGACY_NODELETE seeking() const;
     void setRateDouble(double) override;
     double rate() const override;
     double effectiveRate() const override;

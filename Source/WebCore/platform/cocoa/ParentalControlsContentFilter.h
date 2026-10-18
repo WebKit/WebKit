@@ -47,7 +47,7 @@ class ParentalControlsContentFilter final : public PlatformContentFilter {
     WTF_MAKE_TZONE_ALLOCATED(ParentalControlsContentFilter);
 
 public:
-    static Ref<ParentalControlsContentFilter> create(const PlatformContentFilter::FilterParameters&);
+    static Ref<ParentalControlsContentFilter> LEGACY_NODELETE create(const PlatformContentFilter::FilterParameters&);
 
     bool isEnabled() const final { return enabled(); }
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override { }

@@ -46,7 +46,7 @@ ISOBox::ISOBox(ISOBox&&) = default;
 
 // A box's size field and the cursor these parsers walk it with are both 32-bit, so a larger view
 // cannot be walked at all: its remaining length would not even be representable.
-static bool isWalkableView(const ISOBox::ByteView& view)
+static bool LEGACY_NODELETE isWalkableView(const ISOBox::ByteView& view)
 {
     return isInBounds<unsigned>(view.size());
 }

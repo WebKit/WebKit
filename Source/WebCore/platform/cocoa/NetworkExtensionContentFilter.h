@@ -46,7 +46,7 @@ class NetworkExtensionContentFilter final : public PlatformContentFilter {
     WTF_MAKE_TZONE_ALLOCATED(NetworkExtensionContentFilter);
 
 public:
-    static Ref<NetworkExtensionContentFilter> create(const PlatformContentFilter::FilterParameters&);
+    static Ref<NetworkExtensionContentFilter> LEGACY_NODELETE create(const PlatformContentFilter::FilterParameters&);
 
     bool isEnabled() const final { return enabled(); }
     void willSendRequest(ResourceRequest&, const ResourceResponse&) override;

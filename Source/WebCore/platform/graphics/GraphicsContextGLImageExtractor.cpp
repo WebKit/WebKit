@@ -31,7 +31,7 @@
 namespace WebCore {
 
 // Returns whether uploading an image in format reads the alpha of the image.
-static bool formatUsesAlpha(GCGLenum format)
+static bool LEGACY_NODELETE formatUsesAlpha(GCGLenum format)
 {
     switch (format) {
     case GraphicsContextGL::RED:

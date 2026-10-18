@@ -86,7 +86,7 @@ public:
     WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     void clearProperty(AcceleratedEffectProperty);
-    void makeForwardsFilling();
+    void LEGACY_NODELETE makeForwardsFilling();
 
     // Encoding and decoding support
     const AnimationEffectTiming& timing() const LIFETIME_BOUND { return m_timing; }

@@ -109,7 +109,7 @@ enum class HEVCSliceType : uint8_t { B = 0, P = 1, I = 2 };
 
 constexpr size_t hevcNaluHeaderSize = 2;
 
-WEBCORE_EXPORT HEVCNaluType hevcNaluType(uint8_t);
+WEBCORE_EXPORT HEVCNaluType LEGACY_NODELETE hevcNaluType(uint8_t);
 
 WEBCORE_EXPORT size_t findHEVCAnnexBVpsIndex(std::span<const uint8_t>, const Vector<NaluIndex>&);
 WEBCORE_EXPORT std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t>, const Vector<NaluIndex>&);
@@ -199,16 +199,16 @@ private:
 
     enum class ParseResult { Ok, InvalidStream, UnsupportedStream };
 
-    static std::optional<ProfileTierLevel> parseProfileTierLevel(bool profilePresent, uint32_t maxNumSubLayersMinus1, BitReader&);
-    static bool parseScalingListData(BitReader&);
-    static std::optional<ShortTermRefPicSet> parseShortTermRefPicSet(uint32_t stRpsIndex, uint32_t numShortTermRefPicSets, const Vector<ShortTermRefPicSet>&, uint32_t spsMaxDecPicBufferingMinus1, BitReader&);
+    static std::optional<ProfileTierLevel> LEGACY_NODELETE parseProfileTierLevel(bool profilePresent, uint32_t maxNumSubLayersMinus1, BitReader&);
+    static bool LEGACY_NODELETE parseScalingListData(BitReader&);
+    static std::optional<ShortTermRefPicSet> LEGACY_NODELETE parseShortTermRefPicSet(uint32_t stRpsIndex, uint32_t numShortTermRefPicSets, const Vector<ShortTermRefPicSet>&, uint32_t spsMaxDecPicBufferingMinus1, BitReader&);
     static std::optional<SpsState> parseSps(std::span<const uint8_t>);
     static std::optional<PpsState> parsePps(std::span<const uint8_t>, const SpsState*);
 
     void parseSlice(std::span<const uint8_t>);
     ParseResult parseNonParameterSetNalu(std::span<const uint8_t>, uint8_t naluType);
-    const PpsState* pps(uint16_t ppsId) const;
-    const SpsState* sps(uint16_t spsId) const;
+    const PpsState* LEGACY_NODELETE pps(uint16_t ppsId) const;
+    const SpsState* LEGACY_NODELETE sps(uint16_t spsId) const;
 
     HashMap<uint32_t, SpsState, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_sps;
     HashMap<uint32_t, PpsState, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pps;

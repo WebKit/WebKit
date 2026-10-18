@@ -259,7 +259,7 @@ void MockDisplayCapturer::triggerMockCaptureConfigurationChange()
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
-    static MockRealtimeDisplaySourceFactory& singleton();
+    static MockRealtimeDisplaySourceFactory& LEGACY_NODELETE singleton();
 
     CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier) final
     {

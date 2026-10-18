@@ -57,7 +57,7 @@ class ControlFactory : public ThreadSafeRefCounted<ControlFactory, WTF::Destruct
 public:
     virtual ~ControlFactory() = default;
 
-    WEBCORE_EXPORT static Ref<ControlFactory> create();
+    WEBCORE_EXPORT static Ref<ControlFactory> LEGACY_NODELETE create();
     WEBCORE_EXPORT static ControlFactory& singleton();
 
 #if ENABLE(APPLE_PAY)

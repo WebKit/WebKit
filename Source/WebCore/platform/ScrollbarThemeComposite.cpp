@@ -221,7 +221,7 @@ void ScrollbarThemeComposite::splitTrack(Scrollbar& scrollbar, const IntRect& un
 
 // Returns the size represented by track taking into account scrolling past
 // the end of the document.
-static float usedTotalSize(Scrollbar& scrollbar)
+static float LEGACY_NODELETE usedTotalSize(Scrollbar& scrollbar)
 {
     float overhangAtStart = -scrollbar.currentPos();
     float overhangAtEnd = scrollbar.currentPos() + scrollbar.visibleSize() - scrollbar.totalSize();

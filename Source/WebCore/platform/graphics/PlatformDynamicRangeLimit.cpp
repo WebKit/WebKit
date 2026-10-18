@@ -63,7 +63,7 @@ PlatformDynamicRangeLimit effectiveDynamicRangeLimit(PlatformDynamicRangeLimit l
     return suppressEDR ? std::min(limit, limitWhenSuppressing) : limit;
 }
 
-static float interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
+static float LEGACY_NODELETE interpolateHeadroom(float headroomForLow, float headroomForHigh, float limit, float limitLow, float limitHigh)
 {
     if (headroomForHigh <= headroomForLow || limitHigh <= limitLow)
         return headroomForHigh;

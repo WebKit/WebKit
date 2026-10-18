@@ -46,7 +46,7 @@ public:
     EdgeModeType edgeMode() const { return m_edgeMode; }
     bool LEGACY_NODELETE setEdgeMode(EdgeModeType);
 
-    FloatSize effectiveStdDeviation(OptionSet<FilterRenderingOption> = { }) const;
+    FloatSize LEGACY_NODELETE effectiveStdDeviation(OptionSet<FilterRenderingOption> = { }) const;
 
     static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
     static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);

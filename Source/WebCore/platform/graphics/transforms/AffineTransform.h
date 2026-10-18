@@ -94,7 +94,7 @@ public:
     // box computations but may not be what is wanted in other contexts.
     WEBCORE_EXPORT IntRect mapRect(const IntRect&) const;
 
-    WEBCORE_EXPORT FloatRect mapRect(const FloatRect&) const;
+    WEBCORE_EXPORT FloatRect LEGACY_NODELETE mapRect(const FloatRect&) const;
     WEBCORE_EXPORT FloatQuad LEGACY_NODELETE mapQuad(const FloatQuad&) const;
 
     WEBCORE_EXPORT Region mapRegion(const Region&) const;
@@ -118,15 +118,15 @@ public:
 
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE multiply(const AffineTransform& other);
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(double);
-    WEBCORE_EXPORT AffineTransform& scale(double sx, double sy);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(double sx, double sy);
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
-    WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE scale(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& rotate(double);
     WEBCORE_EXPORT AffineTransform& rotateRadians(double);
     AffineTransform& rotateFromVector(double x, double y);
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(double tx, double ty);
-    WEBCORE_EXPORT AffineTransform& translate(const FloatPoint&);
-    WEBCORE_EXPORT AffineTransform& translate(const FloatSize&);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(const FloatPoint&);
+    WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE translate(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE shear(double sx, double sy);
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipX();
     WEBCORE_EXPORT AffineTransform& LEGACY_NODELETE flipY();
@@ -193,7 +193,7 @@ public:
     }
 
 #if USE(CG)
-    WEBCORE_EXPORT operator CGAffineTransform() const;
+    WEBCORE_EXPORT operator CGAffineTransform LEGACY_NODELETE () const;
 #endif
 
 #if USE(SKIA)

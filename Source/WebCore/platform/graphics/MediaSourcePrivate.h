@@ -82,11 +82,11 @@ public:
     explicit MediaSourcePrivate(MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivate();
 
-    RefPtr<MediaSourcePrivateClient> client() const;
+    RefPtr<MediaSourcePrivateClient> LEGACY_NODELETE client() const;
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
     virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
     virtual void willShutdown() { }
-    void shutdown();
+    void LEGACY_NODELETE shutdown();
     // Returns the target of the seek being waited on if any, the platform's current time otherwise.
     MediaTime currentTime() const;
     virtual bool timeIsProgressing() const;
@@ -119,7 +119,7 @@ public:
     virtual MediaSourceReadyState readyState() const { return m_readyState; }
     void setReadyState(MediaSourceReadyState readyState) { m_readyState = readyState; }
     void setLiveSeekableRange(const PlatformTimeRanges&);
-    const PlatformTimeRanges& liveSeekableRange() const;
+    const PlatformTimeRanges& LEGACY_NODELETE liveSeekableRange() const;
     void clearLiveSeekableRange();
 
     Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
@@ -156,7 +156,7 @@ public:
     MediaTime gapToleranceAtTime(const MediaTime&, std::optional<TrackID> excluded = std::nullopt) const;
     bool isWithinStartGapAllowance(const MediaTime&) const;
 
-    MediaTime duration() const;
+    MediaTime LEGACY_NODELETE duration() const;
     PlatformTimeRanges buffered() const;
     // Compares the argument against m_buffered under m_lock without copying
     // m_buffered into the caller. Useful for short-circuit checks on the main
@@ -173,7 +173,7 @@ public:
     // the cross-SourceBuffer intersection.
     MediaTime nextStallTime(const MediaTime& currentTime) const;
     MediaTime nextStallTime(const MediaTime& currentTime, const PlatformTimeRanges&) const;
-    bool hasBufferedData() const;
+    bool LEGACY_NODELETE hasBufferedData() const;
     bool hasCurrentTime() const;
     bool hasFutureTime() const;
     bool hasFutureTime(const MediaTime& currentTime) const;

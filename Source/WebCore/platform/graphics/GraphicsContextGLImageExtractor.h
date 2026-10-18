@@ -73,7 +73,7 @@ private:
     // The alpha op that converts contents of sourceAlphaPremultiplication to the premultiplication
     // the upload needs. Contents without a meaningful alpha channel must use AlphaOp::DoNothing
     // instead, as the alpha values would not be usable for either conversion.
-    static AlphaOp alphaOpForPremultiplication(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
+    static AlphaOp LEGACY_NODELETE alphaOpForPremultiplication(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha);
 
 #if USE(CG)
     bool makeAlphaChannelOpaque(size_t sourceBytesPerRow, bool pixelsAreConvertedRGBA8);

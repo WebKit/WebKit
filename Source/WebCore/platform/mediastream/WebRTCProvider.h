@@ -51,7 +51,7 @@ public:
     WebRTCProvider() = default;
     virtual ~WebRTCProvider() = default;
 
-    static bool webRTCAvailable();
+    static bool LEGACY_NODELETE webRTCAvailable();
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection();
 

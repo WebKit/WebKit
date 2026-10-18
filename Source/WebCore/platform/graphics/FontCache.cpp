@@ -397,7 +397,7 @@ void FontCache::invalidate()
     purgeInactiveFontData();
 }
 
-static Function<void()>& fontCacheInvalidationCallback()
+static Function<void()>& LEGACY_NODELETE fontCacheInvalidationCallback()
 {
     static NeverDestroyed<Function<void()>> callback;
     return callback.get();

@@ -51,8 +51,8 @@ class FloatRect;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const ColorSpace&, ImageBufferAllocator&);
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
+    static RefPtr<FilterImage> LEGACY_NODELETE create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const ColorSpace&, ImageBufferAllocator&);
+    static RefPtr<FilterImage> LEGACY_NODELETE create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
     static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, FilterImage& other, ImageBufferAllocator&);
 
     // The return values are in filter coordinates.

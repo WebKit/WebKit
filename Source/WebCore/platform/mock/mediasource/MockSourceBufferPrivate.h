@@ -41,7 +41,7 @@ class VideoTrackPrivate;
 
 class MockSourceBufferPrivate final : public SourceBufferPrivate {
 public:
-    static Ref<MockSourceBufferPrivate> create(MockMediaSourcePrivate&);
+    static Ref<MockSourceBufferPrivate> LEGACY_NODELETE create(MockMediaSourcePrivate&);
     virtual ~MockSourceBufferPrivate();
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::Mock; }

@@ -416,7 +416,7 @@ static void pendingStreamFinalize(CFReadStreamRef stream, void* context)
     });
 }
 
-static Boolean pendingStreamOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void*)
+static Boolean LEGACY_NODELETE pendingStreamOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void*)
 {
     *openComplete = TRUE;
     error->error = 0;
@@ -475,7 +475,7 @@ static void pendingStreamClose(CFReadStreamRef, void* context)
     protect(fields->state)->clearDataAvailableHandler();
 }
 
-static CFTypeRef pendingStreamCopyProperty(CFReadStreamRef, CFStringRef, void*)
+static CFTypeRef LEGACY_NODELETE pendingStreamCopyProperty(CFReadStreamRef, CFStringRef, void*)
 {
     // Deliberately do not answer WebKitFormDataStreamLength — length is unknown for a pending stream.
     return 0;

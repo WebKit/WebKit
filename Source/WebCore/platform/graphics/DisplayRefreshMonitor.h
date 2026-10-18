@@ -93,7 +93,7 @@ private:
 
     virtual void adjustPreferredFramesPerSecond(FramesPerSecond) { }
 
-    std::optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
+    std::optional<FramesPerSecond> LEGACY_NODELETE maximumClientPreferredFramesPerSecond() const;
     void computeMaxPreferredFramesPerSecond();
 
     HashSet<CheckedPtr<DisplayRefreshMonitorClient>> m_clients;

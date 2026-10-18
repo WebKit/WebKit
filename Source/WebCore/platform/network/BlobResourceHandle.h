@@ -40,7 +40,7 @@ class ResourceHandleClient;
 
 class BlobResourceHandle final : public BlobResourceHandleBase, public ResourceHandle  {
 public:
-    static Ref<BlobResourceHandle> createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
+    static Ref<BlobResourceHandle> LEGACY_NODELETE createAsync(BlobData*, const ResourceRequest&, ResourceHandleClient*);
 
     static void loadResourceSynchronously(BlobData*, const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
 

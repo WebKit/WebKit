@@ -46,7 +46,7 @@ class PathCG final : public PathImpl {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PathCG);
 public:
     WEBCORE_EXPORT static Ref<PathCG> create(std::span<const PathSegment> = { });
-    static Ref<PathCG> create(RetainPtr<CGMutablePathRef>&&);
+    static Ref<PathCG> LEGACY_NODELETE create(RetainPtr<CGMutablePathRef>&&);
 
     static PlatformPathPtr emptyPlatformPath();
 

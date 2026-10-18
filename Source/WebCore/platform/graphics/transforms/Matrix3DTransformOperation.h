@@ -34,7 +34,7 @@ struct BlendingContext;
 
 class Matrix3DTransformOperation final : public TransformOperation {
 public:
-    WEBCORE_EXPORT static Ref<Matrix3DTransformOperation> create(const TransformationMatrix&);
+    WEBCORE_EXPORT static Ref<Matrix3DTransformOperation> LEGACY_NODELETE create(const TransformationMatrix&);
 
     Ref<TransformOperation> clone() const override
     {

@@ -101,7 +101,7 @@ private:
     };
 
     std::optional<ShadowBlur::LayerImageProperties> calculateLayerBoundingRect(const AffineTransform&, const FloatRect& layerArea, const IntRect& clipRect);
-    IntSize templateSize(const IntSize& blurredEdgeSize, const CornerRadii&) const;
+    IntSize LEGACY_NODELETE templateSize(const IntSize& blurredEdgeSize, const CornerRadii&) const;
 
     void blurShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);
     void blurAndColorShadowBuffer(ImageBuffer& layerImage, const IntSize& templateSize);

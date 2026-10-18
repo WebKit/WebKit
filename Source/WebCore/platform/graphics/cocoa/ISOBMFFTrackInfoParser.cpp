@@ -47,7 +47,7 @@ struct ChildBox {
 // Reads the next box header from `data` starting at offset 0 and returns the
 // child's type and body span (following the 8 or 16 byte header). On success,
 // `consumed` is set to the total box size (header + body). Bound-checked.
-static std::optional<ChildBox> readNextChildBox(std::span<const uint8_t> data, size_t& consumed)
+static std::optional<ChildBox> LEGACY_NODELETE readNextChildBox(std::span<const uint8_t> data, size_t& consumed)
 {
     if (data.size() < 8)
         return std::nullopt;
@@ -98,7 +98,7 @@ static void forEachChildBox(std::span<const uint8_t> containerBody, NOESCAPE con
 }
 
 // FullBox: u8 version + u24 flags. Returns version on success, empty on truncation.
-static std::optional<uint8_t> readFullBoxVersion(std::span<const uint8_t> body)
+static std::optional<uint8_t> LEGACY_NODELETE readFullBoxVersion(std::span<const uint8_t> body)
 {
     if (body.size() < 4)
         return std::nullopt;
@@ -106,7 +106,7 @@ static std::optional<uint8_t> readFullBoxVersion(std::span<const uint8_t> body)
 }
 
 // mvhd (FullBox): timescale at body offset 12 (v0) or 20 (v1), uint32 big-endian.
-static std::optional<uint32_t> readMvhdTimescale(std::span<const uint8_t> body)
+static std::optional<uint32_t> LEGACY_NODELETE readMvhdTimescale(std::span<const uint8_t> body)
 {
     auto version = readFullBoxVersion(body);
     if (!version)
@@ -119,7 +119,7 @@ static std::optional<uint32_t> readMvhdTimescale(std::span<const uint8_t> body)
 }
 
 // tkhd (FullBox): track_ID at body offset 12 (v0) or 20 (v1), uint32 big-endian.
-static std::optional<uint32_t> readTkhdTrackID(std::span<const uint8_t> body)
+static std::optional<uint32_t> LEGACY_NODELETE readTkhdTrackID(std::span<const uint8_t> body)
 {
     auto version = readFullBoxVersion(body);
     if (!version)
@@ -133,7 +133,7 @@ static std::optional<uint32_t> readTkhdTrackID(std::span<const uint8_t> body)
 
 // elst (FullBox): looks at entry 0 only. If it's an empty edit
 // (media_time == -1), returns segment_duration; otherwise empty.
-static std::optional<uint64_t> readElstEntry0EmptyEditDuration(std::span<const uint8_t> body)
+static std::optional<uint64_t> LEGACY_NODELETE readElstEntry0EmptyEditDuration(std::span<const uint8_t> body)
 {
     auto version = readFullBoxVersion(body);
     if (!version)

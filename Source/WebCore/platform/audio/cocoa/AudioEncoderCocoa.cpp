@@ -71,7 +71,7 @@ public:
     };
     static std::expected<InternalConfig, String> checkConfiguration(const String&, const Config&);
 
-    static Ref<InternalAudioEncoderCocoa> create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
+    static Ref<InternalAudioEncoderCocoa> LEGACY_NODELETE create(const Config& config, InternalConfig&& internalConfig, AudioEncoder::DescriptionCallback&& descriptionCallback, AudioEncoder::OutputCallback&& outputCallback)
     {
         return adoptRef(*new InternalAudioEncoderCocoa(config, WTF::move(internalConfig), WTF::move(descriptionCallback), WTF::move(outputCallback)));
     }

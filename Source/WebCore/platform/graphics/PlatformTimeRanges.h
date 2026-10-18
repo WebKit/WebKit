@@ -57,9 +57,9 @@ public:
     static MediaTime LEGACY_NODELETE timeFudgeFactor();
 
     MediaTime LEGACY_NODELETE start(unsigned index) const;
-    MediaTime start(unsigned index, bool& valid) const;
+    MediaTime LEGACY_NODELETE start(unsigned index, bool& valid) const;
     MediaTime LEGACY_NODELETE end(unsigned index) const;
-    MediaTime end(unsigned index, bool& valid) const;
+    MediaTime LEGACY_NODELETE end(unsigned index, bool& valid) const;
     MediaTime duration(unsigned index) const;
     MediaTime LEGACY_NODELETE maximumBufferedTime() const;
     MediaTime LEGACY_NODELETE minimumBufferedTime() const;

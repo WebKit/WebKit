@@ -46,7 +46,7 @@ class MainThreadSharedTimer final : public SharedTimer
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadSharedTimer);
     friend class NeverDestroyed<MainThreadSharedTimer>;
 public:
-    static MainThreadSharedTimer& singleton();
+    static MainThreadSharedTimer& LEGACY_NODELETE singleton();
 
     // Do nothing since this is a singleton.
     void ref() const { }

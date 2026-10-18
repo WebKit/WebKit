@@ -40,7 +40,7 @@ namespace WebCore {
 class AudioSessionMac final : public AudioSessionCocoa {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
-    static Ref<AudioSessionMac> create();
+    static Ref<AudioSessionMac> LEGACY_NODELETE create();
     ~AudioSessionMac();
 
 private:

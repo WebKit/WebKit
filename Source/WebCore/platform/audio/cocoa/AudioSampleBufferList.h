@@ -40,7 +40,7 @@ namespace WebCore {
 
 class AudioSampleBufferList : public RefCounted<AudioSampleBufferList> {
 public:
-    static Ref<AudioSampleBufferList> create(const CAAudioStreamDescription&, size_t);
+    static Ref<AudioSampleBufferList> LEGACY_NODELETE create(const CAAudioStreamDescription&, size_t);
 
     ~AudioSampleBufferList();
 
@@ -49,7 +49,7 @@ public:
     WEBCORE_EXPORT static void applyGain(AudioBufferList&, float, AudioStreamDescription::PCMFormat);
     void applyGain(float);
 
-    OSStatus copyFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
+    OSStatus LEGACY_NODELETE copyFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
     OSStatus copyFrom(const AudioBufferList&, size_t frameCount, AudioConverterRef);
     OSStatus copyFrom(CARingBuffer&, size_t frameCount, uint64_t startFrame, CARingBuffer::FetchMode);
 
@@ -57,7 +57,7 @@ public:
 
     OSStatus mixFrom(const AudioBufferList&, size_t count = SIZE_MAX);
     OSStatus mixTo(AudioBufferList&, size_t count = SIZE_MAX);
-    OSStatus copyTo(AudioBufferList&, size_t count = SIZE_MAX);
+    OSStatus LEGACY_NODELETE copyTo(AudioBufferList&, size_t count = SIZE_MAX);
 
     const AudioStreamBasicDescription& streamDescription() const LIFETIME_BOUND { return m_internalFormat.streamDescription(); }
     const WebAudioBufferList& bufferList() const LIFETIME_BOUND { return m_bufferList; }

@@ -187,14 +187,14 @@ public:
         { return px >= x() && px < maxX() && py >= y() && py < maxY(); }
     bool contains(const LayoutPoint& point) const { return contains(point.x(), point.y()); }
 
-    WEBCORE_EXPORT void intersect(const LayoutRect&);
-    WEBCORE_EXPORT bool edgeInclusiveIntersect(const LayoutRect&);
-    WEBCORE_EXPORT void unite(const LayoutRect&);
-    void uniteEvenIfEmpty(const LayoutRect&);
-    void uniteXEvenIfEmpty(const LayoutRect&);
-    void uniteYEvenIfEmpty(const LayoutRect&);
-    void uniteIfNonZero(const LayoutRect&);
-    bool checkedUnite(const LayoutRect&);
+    WEBCORE_EXPORT void LEGACY_NODELETE intersect(const LayoutRect&);
+    WEBCORE_EXPORT bool LEGACY_NODELETE edgeInclusiveIntersect(const LayoutRect&);
+    WEBCORE_EXPORT void LEGACY_NODELETE unite(const LayoutRect&);
+    void LEGACY_NODELETE uniteEvenIfEmpty(const LayoutRect&);
+    void LEGACY_NODELETE uniteXEvenIfEmpty(const LayoutRect&);
+    void LEGACY_NODELETE uniteYEvenIfEmpty(const LayoutRect&);
+    void LEGACY_NODELETE uniteIfNonZero(const LayoutRect&);
+    bool LEGACY_NODELETE checkedUnite(const LayoutRect&);
 
     void inflateX(LayoutUnit dx)
     {
@@ -212,7 +212,7 @@ public:
     template<typename T> void inflate(T d) { inflateX(d); inflateY(d); }
 
     WEBCORE_EXPORT void LEGACY_NODELETE scale(float);
-    void scale(float xScale, float yScale);
+    void LEGACY_NODELETE scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
     bool isInfinite() const;
@@ -254,7 +254,7 @@ inline LayoutRect unionRect(const LayoutRect& a, const LayoutRect& b)
     return c;
 }
 
-LayoutRect unionRect(const Vector<LayoutRect>&);
+LayoutRect LEGACY_NODELETE unionRect(const Vector<LayoutRect>&);
 
 inline bool LayoutRect::isInfinite() const
 {

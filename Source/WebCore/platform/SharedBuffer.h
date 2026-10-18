@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT static Ref<DataSegment> create(Vector<uint8_t>&&);
 
 #if USE(CF)
-    WEBCORE_EXPORT static Ref<DataSegment> create(RetainPtr<CFDataRef>&&);
+    WEBCORE_EXPORT static Ref<DataSegment> LEGACY_NODELETE create(RetainPtr<CFDataRef>&&);
 #endif
 #if USE(GLIB)
     WEBCORE_EXPORT static Ref<DataSegment> create(GRefPtr<GBytes>&&);
@@ -100,14 +100,14 @@ public:
 #if USE(SKIA)
     WEBCORE_EXPORT static Ref<DataSegment> create(sk_sp<SkData>&&);
 #endif
-    WEBCORE_EXPORT static Ref<DataSegment> create(FileSystem::MappedFileData&&);
+    WEBCORE_EXPORT static Ref<DataSegment> LEGACY_NODELETE create(FileSystem::MappedFileData&&);
 
     struct Provider {
         Function<std::span<const uint8_t>()> span;
     };
-    WEBCORE_EXPORT static Ref<DataSegment> create(Provider&&);
+    WEBCORE_EXPORT static Ref<DataSegment> LEGACY_NODELETE create(Provider&&);
 
-    WEBCORE_EXPORT static Ref<DataSegment> create(std::unique_ptr<JSC::ArrayBufferContents>&&);
+    WEBCORE_EXPORT static Ref<DataSegment> LEGACY_NODELETE create(std::unique_ptr<JSC::ArrayBufferContents>&&);
 
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;

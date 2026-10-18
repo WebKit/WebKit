@@ -45,7 +45,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT DoubleRect(const CGRect&);
-    WEBCORE_EXPORT operator CGRect() const;
+    WEBCORE_EXPORT operator CGRect LEGACY_NODELETE () const;
     CGRect toCG() const { return static_cast<CGRect>(*this); }
 #endif
 

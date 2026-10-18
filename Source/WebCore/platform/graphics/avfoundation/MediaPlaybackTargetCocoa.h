@@ -39,7 +39,7 @@ namespace WebCore {
 
 class MediaPlaybackTargetCocoa final : public MediaPlaybackTarget {
 public:
-    WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> create(RetainPtr<AVOutputContext>&&);
+    WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> LEGACY_NODELETE create(RetainPtr<AVOutputContext>&&);
     WEBCORE_EXPORT static Ref<MediaPlaybackTargetCocoa> create();
 
     ~MediaPlaybackTargetCocoa();

@@ -398,8 +398,8 @@ protected:
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 
-    float dashedLineCornerWidthForStrokeWidth(float) const;
-    float dashedLinePatternWidthForStrokeWidth(float) const;
+    float LEGACY_NODELETE dashedLineCornerWidthForStrokeWidth(float) const;
+    float LEGACY_NODELETE dashedLinePatternWidthForStrokeWidth(float) const;
     float LEGACY_NODELETE dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
 

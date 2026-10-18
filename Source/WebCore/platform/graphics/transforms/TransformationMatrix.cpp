@@ -825,7 +825,7 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) c
     return projectedQuad;
 }
 
-static float clampEdgeValue(double value)
+static float LEGACY_NODELETE clampEdgeValue(double value)
 {
     ASSERT(!std::isnan(value));
     const double maxEdgeValue = (LayoutUnit::max() / 2).toDouble();

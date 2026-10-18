@@ -46,7 +46,7 @@ namespace WebCore {
 
 class MockMediaSample final : public MediaSample {
 public:
-    static Ref<MockMediaSample> create(const MockSampleBox& box) { return adoptRef(*new MockMediaSample(box)); }
+    static Ref<MockMediaSample> LEGACY_NODELETE create(const MockSampleBox& box) { return adoptRef(*new MockMediaSample(box)); }
     virtual ~MockMediaSample() = default;
 
 private:
