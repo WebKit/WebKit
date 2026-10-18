@@ -166,7 +166,6 @@ TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)
 
     __block bool isDone = false;
     [remoteObjectProxy checkAccessibilityWebProcessLoaderBundleIsLoaded:^(BOOL bundleLoaded, NSString *loadedPath) {
-#if PLATFORM(IOS_FAMILY)
         EXPECT_TRUE(bundleLoaded);
 #if PLATFORM(MACCATALYST)
         EXPECT_TRUE([loadedPath hasSuffix:@"/System/iOSSupport/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
@@ -174,9 +173,6 @@ TEST(AccessibilityTests, WebProcessLoaderBundleLoaded)
         EXPECT_TRUE([loadedPath hasSuffix:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
         EXPECT_FALSE([loadedPath hasSuffix:@"/System/iOSSupport/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"]);
 #endif
-#elif PLATFORM(MAC)
-        EXPECT_FALSE(bundleLoaded);
-#endif // PLATFORM(IOS_FAMILY)
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
