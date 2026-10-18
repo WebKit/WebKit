@@ -87,7 +87,8 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     }
 
     if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled()) {
-        m_clientRenderer->repaint();
+        if (m_clientRenderer->parent())
+            m_clientRenderer->repaint();
         return;
     }
 
