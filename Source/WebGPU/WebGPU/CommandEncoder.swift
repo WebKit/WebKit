@@ -1184,7 +1184,31 @@ extension WebGPU.Metal.CommandEncoder {
                 mtlAttachment.level = 0
                 mtlAttachment.slice = 0
                 var depthSliceOrArrayLayer: UInt64 = 0
-                // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
+                #if compiler(>=6.4)
+                if let depthSlice = Optional(fromCxx: attachment.depthSlice) {
+                    if !texture.is3DTexture() {
+                        return WebGPU.Metal.RenderPassEncoder.createInvalid(self, m_device.ptr(), "depthSlice specified on 2D texture")
+                    }
+                    depthSliceOrArrayLayer = textureIsDestroyed ? 0 : UInt64(depthSlice)
+                    if depthSliceOrArrayLayer >= texture.depthOrArrayLayers() {
+                        return WebGPU.Metal.RenderPassEncoder.createInvalid(
+                            self,
+                            m_device.ptr(),
+                            "depthSlice is greater than texture's depth or array layers"
+                        )
+                    }
+                } else {
+                    if texture.is3DTexture() {
+                        return WebGPU.Metal.RenderPassEncoder.createInvalid(
+                            self,
+                            m_device.ptr(),
+                            "textureDimension is 3D and no depth slice is specified"
+                        )
+                    }
+                    depthSliceOrArrayLayer = UInt64(textureIsDestroyed ? 0 : texture.baseArrayLayer())
+                }
+                #else
+                // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 if var depthSlice = Optional(fromCxx: attachment.depthSlice) {
                     if !texture.is3DTexture() {
                         return WebGPU.Metal.RenderPassEncoder.createInvalid(self, m_device.ptr(), "depthSlice specified on 2D texture")
@@ -1207,6 +1231,7 @@ extension WebGPU.Metal.CommandEncoder {
                     }
                     depthSliceOrArrayLayer = UInt64(textureIsDestroyed ? 0 : texture.baseArrayLayer())
                 }
+                #endif
                 let bridgedTexture = texture.parentTexture().gpuResourceID._impl
                 let baseMipLevel = textureIsDestroyed ? 0 : texture.baseMipLevel()
                 let depthAndMipLevel: UInt64 = depthSliceOrArrayLayer | (UInt64(baseMipLevel) << 32)
@@ -1247,10 +1272,16 @@ extension WebGPU.Metal.CommandEncoder {
                     }
                     resolveTarget.setCommandEncoder(self)
                     let resolveTexture = resolveTarget.texture()
-                    // FIXME: (rdar://170907318) This should be changed to `guard let` when possible.
+                    #if compiler(>=6.4)
+                    guard let resolveTexture, let mtlTexture else {
+                        return WebGPU.Metal.RenderPassEncoder.createInvalid(self, m_device.ptr(), "resolveTexture/mtlTexture is nil")
+                    }
+                    #else
+                    // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                     guard var resolveTexture, var mtlTexture else {
                         return WebGPU.Metal.RenderPassEncoder.createInvalid(self, m_device.ptr(), "resolveTexture/mtlTexture is nil")
                     }
+                    #endif
 
                     if mtlTexture.sampleCount == 1
                         || resolveTexture.sampleCount != 1
@@ -1277,7 +1308,18 @@ extension WebGPU.Metal.CommandEncoder {
                     compositorTextureSlice = compositorTexture.parentRelativeSlice()
                 }
 
-                // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
+                #if compiler(>=6.4)
+                if let textureToClear {
+                    let textureWithResolve = TextureAndClearColor(texture: textureToClear)
+                    attachmentsToClear[i as NSNumber] = textureWithResolve
+                    texture.setPreviouslyCleared()
+                    // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
+                    if var resolveTarget = optionalResolveTarget {
+                        resolveTarget.setPreviouslyCleared()
+                    }
+                }
+                #else
+                // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 if var textureToClear {
                     let textureWithResolve = TextureAndClearColor(texture: textureToClear)
                     attachmentsToClear[i as NSNumber] = textureWithResolve
@@ -1287,6 +1329,7 @@ extension WebGPU.Metal.CommandEncoder {
                         resolveTarget.setPreviouslyCleared()
                     }
                 }
+                #endif
             }
         }
 
@@ -1393,7 +1436,16 @@ extension WebGPU.Metal.CommandEncoder {
                         "no color targets and depth-stencil texture is destroyed"
                     )
                 }
-                // FIXME: (rdar://170907318) This should be changed to `guard let` when possible.
+                #if compiler(>=6.4)
+                guard let metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
+                    return WebGPU.Metal.RenderPassEncoder.createInvalid(
+                        self,
+                        m_device.ptr(),
+                        "no color targets and depth-stencil texture is nil"
+                    )
+                }
+                #else
+                // FIXME: (rdar://170907318) Remove this branch once the minimum supported compiler is Swift 6.4.
                 guard var metalDepthStencilTexture, metalDepthStencilTexture.sampleCount > 0 else {
                     return WebGPU.Metal.RenderPassEncoder.createInvalid(
                         self,
@@ -1401,6 +1453,7 @@ extension WebGPU.Metal.CommandEncoder {
                         "no color targets and depth-stencil texture is nil"
                     )
                 }
+                #endif
 
                 mtlDescriptor.defaultRasterSampleCount = metalDepthStencilTexture.sampleCount
                 mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width

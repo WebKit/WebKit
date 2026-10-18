@@ -23,7 +23,7 @@
 
 #if ENABLE_SWIFTUI
 
-public import Foundation
+import Foundation
 
 @available(anyAppleOSAndDownlevels 27.0, *)
 @available(iOS, unavailable)

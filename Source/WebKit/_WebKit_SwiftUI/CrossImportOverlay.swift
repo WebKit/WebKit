@@ -23,6 +23,9 @@
 
 #if ENABLE_SWIFTUI
 
+#if hasAttribute(diagnose)
+@diagnose(UnusedImportAccess, as: ignored, reason: "SwiftUI is the bystanding module of this cross-import overlay")
+#endif
 public import SwiftUI
 // This is a cross-import overlay of WebKit. Do not remove this @_exported import:
 @_exported public import WebKit
