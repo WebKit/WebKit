@@ -589,7 +589,7 @@ void ProcessLauncher::terminateXPCConnection()
 
     xpc_connection_cancel(m_xpcConnection.get());
 #if !USE(EXTENSIONKIT)
-    terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::Invalidation, "ProcessLauncher::platformInvalidate");
+    terminateWithReason(m_xpcConnection.get(), WebKitReasonCode::Invalidation, "ProcessLauncher::platformInvalidate");
 #endif
     m_xpcConnection = nullptr;
 }

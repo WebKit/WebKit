@@ -31,7 +31,7 @@
 namespace WebKit {
 
 #if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
-void terminateWithReason(xpc_connection_t connection, ReasonCode reasonCode, const char* reason, std::optional<IPC::MessageName> invalidMessageName)
+void terminateWithReason(xpc_connection_t connection, WebKitReasonCode reasonCode, const char* reason, std::optional<IPC::MessageName> invalidMessageName)
 {
     if (!connection)
         return;
@@ -39,8 +39,8 @@ void terminateWithReason(xpc_connection_t connection, ReasonCode reasonCode, con
 #if ASAN_ENABLED
     // Unlike xpc_connection_kill(), this leaves a crash report that run-webkit-tests can match.
     // Not done unconditionally because the SPI is blocked for embedders with a sandbox (Bug 224499).
-    if (reasonCode == ReasonCode::MessageCheckKilled || reasonCode == ReasonCode::WatchdogTimerFired) {
-        // Encode the ReasonCode in the low byte; for a message check, pack the failing
+    if (reasonCode == WebKitReasonCode::MessageCheckKilled || reasonCode == WebKitReasonCode::WatchdogTimerFired) {
+        // Encode the WebKitReasonCode in the low byte; for a message check, pack the failing
         // IPC message name above it so the crash report identifies which check failed.
         uint64_t code = std::to_underlying(reasonCode);
         if (invalidMessageName)

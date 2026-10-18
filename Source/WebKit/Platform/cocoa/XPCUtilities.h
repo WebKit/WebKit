@@ -26,21 +26,15 @@
 #pragma once
 
 #include <optional>
+#include <wtf/darwin/WebKitReasonCode.h>
 #include <wtf/darwin/XPCExtras.h>
 
 namespace IPC { enum class MessageName : uint16_t; }
 
 namespace WebKit {
 
-enum class ReasonCode : uint64_t {
-    WatchdogTimerFired,
-    Invalidation,
-    ConnectionKilled,
-    MessageCheckKilled,
-};
-
 #if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
-void terminateWithReason(xpc_connection_t, ReasonCode, const char* reason, std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
+void terminateWithReason(xpc_connection_t, WebKitReasonCode, const char* reason, std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
 #endif
 
 }

@@ -752,6 +752,7 @@ elseif (APPLE)
         darwin/OSLogPrintStream.h
         darwin/TypeCastsOSObject.h
         darwin/WeakLinking.h
+        darwin/WebKitReasonCode.h
         darwin/XPCExtras.h
         darwin/XPCObjectPtr.h
 

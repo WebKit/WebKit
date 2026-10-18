@@ -90,6 +90,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     darwin/DarwinExtras.h
     darwin/OSLogPrintStream.h
     darwin/WeakLinking.h
+    darwin/WebKitReasonCode.h
     darwin/XPCExtras.h
 
     ios/WebCoreThread.h

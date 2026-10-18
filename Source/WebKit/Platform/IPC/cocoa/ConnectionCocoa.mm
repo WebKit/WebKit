@@ -740,8 +740,8 @@ std::optional<audit_token_t> Connection::getAuditToken()
 bool Connection::kill(std::optional<MessageName> invalidMessageName)
 {
     if (OSObjectPtr xpcConnection = m_xpcConnection) {
-        auto reasonCode = invalidMessageName ? WebKit::ReasonCode::MessageCheckKilled : WebKit::ReasonCode::ConnectionKilled;
-        terminateWithReason(xpcConnection, reasonCode, "Connection::kill", invalidMessageName);
+        auto reasonCode = invalidMessageName ? WebKitReasonCode::MessageCheckKilled : WebKitReasonCode::ConnectionKilled;
+        WebKit::terminateWithReason(xpcConnection, reasonCode, "Connection::kill", invalidMessageName);
         m_didRequestProcessTermination = true;
         return true;
     }

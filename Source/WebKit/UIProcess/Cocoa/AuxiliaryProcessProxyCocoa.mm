@@ -121,7 +121,7 @@ void AuxiliaryProcessProxy::platformStartConnectionTerminationWatchdog()
 
     Ref assertion = ProcessAndUIAssertion::create(processID(), reason, ProcessAssertionType::Background, environmentIdentifier());
     auto terminationHandler = [assertion = WTF::move(assertion), xpcConnection = WTF::move(xpcConnection)]() {
-        terminateWithReason(xpcConnection.get(), ReasonCode::WatchdogTimerFired, reason);
+        terminateWithReason(xpcConnection.get(), WebKitReasonCode::WatchdogTimerFired, reason);
     };
 #endif
 
