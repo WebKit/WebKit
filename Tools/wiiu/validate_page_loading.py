@@ -71,6 +71,32 @@ if "set(_WKC_RESOURCE_HANDLE_SOURCE" not in cmake:
 if "if (WKC_ENABLE_FULL_WEBCORE)" not in cmake:
     errors.append("CMakeLists.txt: full-WebCore guard is not conditional on the full engine")
 
+# Compilation alone is insufficient: reject known compatibility shims that make
+# WebCore appear initialized while silently disabling its live network/cookie/TLS
+# management path. These are semantic failures even if every translation unit builds.
+view_without_comments = re.sub(r'/\\*.*?\\*/|//[^\\n]*', '', view, flags=re.S)
+for pattern, description in (
+    (r'static\\s+ResourceHandleManager\\*\\s+sharedInstance\\s*\\(\\s*\\)\\s*\\{\\s*return\\s+nullptr\\s*;',
+     'ResourceHandleManager::sharedInstance always returns null'),
+    (r'static\\s+bool\\s+createSharedInstance\\s*\\(\\s*\\)\\s*\\{\\s*return\\s+true\\s*;',
+     'ResourceHandleManager::createSharedInstance reports success without creating a manager'),
+    (r'void\\s+clearCookies\\s*\\(\\s*\\)\\s*\\{\\s*\\}',
+     'cookie clearing is implemented as a no-op'),
+    (r'void\\s+CookieDeserialize\\s*\\([^)]*\\)\\s*\\{\\s*\\}',
+     'cookie restoration is implemented as a no-op'),
+):
+    if re.search(pattern, view_without_comments):
+        errors.append(f'WKCWebView.cpp: semantic stub detected: {description}')
+
+# Verify the CI path actually configures and builds the full engine, not only the
+# bootstrap target. A successful bootstrap archive is not evidence of page loading.
+workflow_path = ROOT / '.github/workflows/build.yml'
+workflow = workflow_path.read_text(encoding='utf-8') if workflow_path.exists() else ''
+if '-DWKC_ENABLE_FULL_WEBCORE=ON' not in workflow:
+    errors.append('build.yml: CI does not configure the full WebCore page engine')
+if 'python3 Tools/wiiu/validate_page_loading.py' not in workflow:
+    errors.append('build.yml: semantic page-loading validation is not a required workflow step')
+
 if errors:
     print("WKC page-loading correctness checks FAILED:", file=sys.stderr)
     for error in errors:
