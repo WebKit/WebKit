@@ -1,3 +1,5 @@
+[ macOS ] Modules/cache/DOMCacheStorage.cpp
+[ macOS ] Modules/mediastream/UserMediaRequest.cpp
 StyleChangedAnimatablePropertiesGenerated.cpp
 [ iOS ] bindings/js/ScriptController.cpp
 css/CSSStyleProperties.cpp
@@ -17,6 +19,8 @@ dom/ViewTransition.cpp
 [ iOS ] page/WebKitNamespace.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] platform/PreviewConverter.cpp
+[ macOS ] platform/graphics/filters/FilterImage.cpp
+[ macOS ] platform/mac/PlatformPasteboardMac.mm
 rendering/BackgroundPainter.cpp
 rendering/HitTestResult.cpp
 rendering/LayerAncestorClippingStack.cpp

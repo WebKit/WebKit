@@ -34,6 +34,8 @@ typealias URL = Foundation.URL
 
 typealias String = Swift.String
 
+// FIXME: (rdar://190360330) Remove @_expose(!Cxx) once the generated C++ header no longer uses generic classes without template arguments.
+@_expose(!Cxx)
 struct UncheckedSendableKeyPathBox<Root, Value>: @unchecked Sendable {
     let keyPath: KeyPath<Root, Value>
 }
