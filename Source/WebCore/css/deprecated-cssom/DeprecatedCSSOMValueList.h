@@ -34,7 +34,7 @@ using DeprecatedCSSOMValueListBuilder = Vector<Ref<DeprecatedCSSOMValue>, 4>;
 
 class DeprecatedCSSOMValueList final : public DeprecatedCSSOMValue {
 public:
-    static Ref<DeprecatedCSSOMValueList> create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMValueList> LEGACY_NODELETE create(DeprecatedCSSOMValueListBuilder&&, CSSValue::ValueSeparator, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMValueList> create(const CSSValueContainingVector&, CSSStyleDeclaration&);
 
     String cssText() const override;

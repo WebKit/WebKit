@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSClipValue final : public CSSValue {
 public:
-    static Ref<CSSClipValue> create(CSS::Clip&&);
+    static Ref<CSSClipValue> LEGACY_NODELETE create(CSS::Clip&&);
     ~CSSClipValue();
 
     const CSS::Clip& clip() const LIFETIME_BOUND { return m_clip; }

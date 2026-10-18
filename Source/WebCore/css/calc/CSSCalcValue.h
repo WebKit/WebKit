@@ -47,7 +47,7 @@ namespace CSSCalc {
 // Boxes a `CSSCalc::Tree` along with the `Style::Calculation::Category` and `CSS::Range` used to construct it.
 class Value final : public RefCounted<Value> {
 public:
-    static Ref<Value> create(CSS::Category, CSS::Range, Tree&&);
+    static Ref<Value> LEGACY_NODELETE create(CSS::Category, CSS::Range, Tree&&);
     ~Value();
 
     CSS::Category category() const { return m_category; }

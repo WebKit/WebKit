@@ -33,7 +33,7 @@ class StyleRuleProperty;
 
 class CSSPropertyRule final : public CSSRule {
 public:
-    static Ref<CSSPropertyRule> create(StyleRuleProperty&, CSSStyleSheet* parent);
+    static Ref<CSSPropertyRule> LEGACY_NODELETE create(StyleRuleProperty&, CSSStyleSheet* parent);
     virtual ~CSSPropertyRule();
 
     String LEGACY_NODELETE name() const;

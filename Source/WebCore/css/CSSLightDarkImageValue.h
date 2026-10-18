@@ -36,7 +36,7 @@ class Image;
 
 class CSSLightDarkImageValue final : public CSSValue {
 public:
-    static Ref<CSSLightDarkImageValue> create(Ref<CSSValue>&& lightValue, Ref<CSSValue>&& darkValue);
+    static Ref<CSSLightDarkImageValue> LEGACY_NODELETE create(Ref<CSSValue>&& lightValue, Ref<CSSValue>&& darkValue);
     ~CSSLightDarkImageValue();
 
     String customCSSText(const CSS::SerializationContext&) const;

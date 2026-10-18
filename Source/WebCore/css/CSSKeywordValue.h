@@ -39,8 +39,8 @@ public:
     CSSValueID valueID() const { return m_keyword.value; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSKeywordValue&) const;
-    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+    bool LEGACY_NODELETE equals(const CSSKeywordValue&) const;
+    IterationStatus LEGACY_NODELETE customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
     bool LEGACY_NODELETE addDerivedHash(Hasher&) const;
 
     Ref<DeprecatedCSSOMValue> customCreateDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;

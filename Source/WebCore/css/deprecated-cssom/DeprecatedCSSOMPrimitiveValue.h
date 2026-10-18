@@ -85,16 +85,16 @@ public:
     };
 
     static Ref<DeprecatedCSSOMPrimitiveValue> create(Function<String(const CSS::SerializationContext&)>&&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnconstrainedPrimitiveNumericRaw&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::UnconstrainedPrimitiveNumericRaw&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::UnevaluatedCalcBase&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ClipRect&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::ClipRect&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::Color&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ContentCounterFunctionWrapper&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::ContentCountersFunctionWrapper&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::CustomIdent&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::FontFamilyName&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::Keyword&, CSSStyleDeclaration&);
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::String&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::CustomIdent&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::FontFamilyName&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::Keyword&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(const CSS::String&, CSSStyleDeclaration&);
     static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSS::URL&, CSSStyleDeclaration&);
     ~DeprecatedCSSOMPrimitiveValue();
 
@@ -115,7 +115,7 @@ public:
     bool isCSSWideKeyword() const;
 
 private:
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE create(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
     DeprecatedCSSOMPrimitiveValue(DeprecatedCSSOMPrimitiveValueData&&, CSSStyleDeclaration&);
 
     const UniqueRef<DeprecatedCSSOMPrimitiveValueData> m_data;

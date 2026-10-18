@@ -115,7 +115,7 @@ public:
     Ref<DOMMatrix> skewY(double sy = 0); // Angle is in degrees.
     Ref<DOMMatrix> inverse() const;
 
-    Ref<DOMPoint> transformPoint(DOMPointInit&&);
+    Ref<DOMPoint> LEGACY_NODELETE transformPoint(DOMPointInit&&);
 
     ExceptionOr<Ref<Float32Array>> toFloat32Array() const;
     ExceptionOr<Ref<Float64Array>> toFloat64Array() const;
@@ -124,7 +124,7 @@ public:
 
     const TransformationMatrix& transformationMatrix() const LIFETIME_BOUND { return m_matrix; }
     
-    Ref<DOMMatrix> cloneAsDOMMatrix() const;
+    Ref<DOMMatrix> LEGACY_NODELETE cloneAsDOMMatrix() const;
 
 protected:
     DOMMatrixReadOnly() = default;

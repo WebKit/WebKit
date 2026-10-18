@@ -32,7 +32,7 @@ namespace WebCore {
 class CSSMathInvert final : public CSSMathValue {
     WTF_MAKE_TZONE_ALLOCATED(CSSMathInvert);
 public:
-    static Ref<CSSMathInvert> create(CSSNumberish&&);
+    static Ref<CSSMathInvert> LEGACY_NODELETE create(CSSNumberish&&);
     CSSNumericValue& value() { return m_value.get(); }
     const CSSNumericValue& value() const { return m_value.get(); }
 

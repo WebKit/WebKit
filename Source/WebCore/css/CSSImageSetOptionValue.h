@@ -37,7 +37,7 @@ namespace WebCore {
 // https://drafts.csswg.org/css-images-4/#typedef-image-set-option
 class CSSImageSetOptionValue final : public CSSValue {
 public:
-    static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
+    static Ref<CSSImageSetOptionValue> LEGACY_NODELETE create(Ref<CSSValue>&&, std::optional<CSS::Resolution<>>&&, std::optional<FunctionNotation<CSSValueID::Type, CSS::String>>&&);
 
     bool equals(const CSSImageSetOptionValue&) const;
     String customCSSText(const CSS::SerializationContext&) const;

@@ -64,7 +64,7 @@ static bool LEGACY_NODELETE isCSSTokenizerIdentifier(StringView string)
 }
 
 // https://drafts.csswg.org/css-syntax-3/#non-printable-code-point
-static bool isNonPrintableCodePoint(char32_t c)
+static bool LEGACY_NODELETE isNonPrintableCodePoint(char32_t c)
 {
     return c <= 0x08 || c == 0x0b || (c >= 0x0e && c <= 0x1f) || c == deleteCharacter;
 }

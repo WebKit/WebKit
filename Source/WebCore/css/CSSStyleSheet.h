@@ -108,7 +108,7 @@ public:
     URL LEGACY_NODELETE baseURL() const final;
     bool isLoading() const final;
 
-    void clearOwnerRule();
+    void LEGACY_NODELETE clearOwnerRule();
 
     void removeAdoptingTreeScope(ContainerNode&);
     void addAdoptingTreeScope(ContainerNode&);

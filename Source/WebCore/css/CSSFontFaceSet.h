@@ -108,7 +108,7 @@ private:
 
     void ensureLocalFontFacesForFamilyRegistered(const AtomString&);
 
-    static AtomString familyName(const CSSValue&);
+    static AtomString LEGACY_NODELETE familyName(const CSSValue&);
 
     using FontSelectionKey = std::optional<FontSelectionRequest>;
     struct FontSelectionKeyHash : WTF::HasherBasedHash<FontSelectionKey> {

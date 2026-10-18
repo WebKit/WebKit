@@ -43,7 +43,7 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSVariableData);
 
-template<typename CharacterType> void CSSVariableData::updateBackingStringsInTokens()
+template<typename CharacterType> void LEGACY_NODELETE CSSVariableData::updateBackingStringsInTokens()
 {
     auto currentOffset = m_backingString.span<CharacterType>();
     for (auto& token : m_tokens) {

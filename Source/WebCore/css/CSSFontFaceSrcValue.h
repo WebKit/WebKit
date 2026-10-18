@@ -48,7 +48,7 @@ public:
     const AtomString& fontFaceName() const LIFETIME_BOUND { return m_fontFaceName; }
 
     SVGFontFaceElement* LEGACY_NODELETE svgFontFaceElement() const;
-    void setSVGFontFaceElement(SVGFontFaceElement&);
+    void LEGACY_NODELETE setSVGFontFaceElement(SVGFontFaceElement&);
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool LEGACY_NODELETE equals(const CSSFontFaceSrcLocalValue&) const;

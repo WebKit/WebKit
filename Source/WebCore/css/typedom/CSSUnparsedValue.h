@@ -38,7 +38,7 @@ using CSSUnparsedSegment = Variant<String, Ref<CSSOMVariableReferenceValue>>;
 class CSSUnparsedValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_ALLOCATED(CSSUnparsedValue);
 public:
-    static Ref<CSSUnparsedValue> create(Vector<CSSUnparsedSegment>&&);
+    static Ref<CSSUnparsedValue> LEGACY_NODELETE create(Vector<CSSUnparsedSegment>&&);
     static Ref<CSSUnparsedValue> create(CSSParserTokenRange);
 
     virtual ~CSSUnparsedValue();

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSBorderImageSourceValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageSourceValue> create(CSS::BorderImageSource&&);
+    static Ref<CSSBorderImageSourceValue> LEGACY_NODELETE create(CSS::BorderImageSource&&);
     ~CSSBorderImageSourceValue();
 
     const CSS::BorderImageSource& source() const LIFETIME_BOUND { return m_source; }

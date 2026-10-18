@@ -51,8 +51,8 @@ static auto evaluate(const Percentage&, const EvaluationOptions&) -> std::option
 static auto evaluate(const CanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const NonCanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Symbol&, const EvaluationOptions&) -> std::optional<double>;
-static auto evaluate(const SiblingCount&, const EvaluationOptions&) -> std::optional<double>;
-static auto evaluate(const SiblingIndex&, const EvaluationOptions&) -> std::optional<double>;
+static std::optional<double> LEGACY_NODELETE evaluate(const SiblingCount&, const EvaluationOptions&);
+static std::optional<double> LEGACY_NODELETE evaluate(const SiblingIndex&, const EvaluationOptions&);
 static auto evaluate(const IndirectNode<Sum>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Product>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Deg2Rad>&, const EvaluationOptions&) -> std::optional<double>;

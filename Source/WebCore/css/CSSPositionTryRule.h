@@ -56,7 +56,7 @@ private:
 
 class CSSPositionTryRule final : public CSSRule {
 public:
-    static Ref<CSSPositionTryRule> create(StyleRulePositionTry&, CSSStyleSheet*);
+    static Ref<CSSPositionTryRule> LEGACY_NODELETE create(StyleRulePositionTry&, CSSStyleSheet*);
     virtual ~CSSPositionTryRule();
 
     StyleRuleType styleRuleType() const { return StyleRuleType::PositionTry; }

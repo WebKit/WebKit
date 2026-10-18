@@ -277,21 +277,21 @@ struct Children {
     Children(Vector<Child>&&);
     Children& operator=(Vector<Child>&&);
 
-    iterator begin() LIFETIME_BOUND;
-    iterator end() LIFETIME_BOUND;
-    reverse_iterator rbegin() LIFETIME_BOUND;
-    reverse_iterator rend() LIFETIME_BOUND;
+    iterator LEGACY_NODELETE begin() LIFETIME_BOUND;
+    iterator LEGACY_NODELETE end() LIFETIME_BOUND;
+    reverse_iterator LEGACY_NODELETE rbegin() LIFETIME_BOUND;
+    reverse_iterator LEGACY_NODELETE rend() LIFETIME_BOUND;
 
-    const_iterator begin() const LIFETIME_BOUND;
-    const_iterator end() const LIFETIME_BOUND;
-    const_reverse_iterator rbegin() const LIFETIME_BOUND;
-    const_reverse_iterator rend() const LIFETIME_BOUND;
+    const_iterator LEGACY_NODELETE begin() const LIFETIME_BOUND;
+    const_iterator LEGACY_NODELETE end() const LIFETIME_BOUND;
+    const_reverse_iterator LEGACY_NODELETE rbegin() const LIFETIME_BOUND;
+    const_reverse_iterator LEGACY_NODELETE rend() const LIFETIME_BOUND;
 
-    bool isEmpty() const;
-    size_t size() const;
+    bool LEGACY_NODELETE isEmpty() const;
+    size_t LEGACY_NODELETE size() const;
 
-    Child& operator[](size_t i) LIFETIME_BOUND;
-    const Child& operator[](size_t i) const LIFETIME_BOUND;
+    Child& LEGACY_NODELETE operator[](size_t i) LIFETIME_BOUND;
+    const Child& LEGACY_NODELETE operator[](size_t i) const LIFETIME_BOUND;
 
     bool operator==(const Children&) const = default;
 };
@@ -957,7 +957,7 @@ std::optional<Type> toType(const Sum&);
 std::optional<Type> toType(const Product&);
 std::optional<Type> toType(const Negate&);
 std::optional<Type> toType(const Invert&);
-std::optional<Type> toType(const Deg2Rad&);
+std::optional<Type> LEGACY_NODELETE toType(const Deg2Rad&);
 std::optional<Type> toType(const Min&);
 std::optional<Type> toType(const Max&);
 std::optional<Type> toType(const Clamp&);
@@ -1017,16 +1017,16 @@ bool isNumeric(const Child& root);
 // Convenience constructors
 
 // Makes the appropriate child type (number, percentage, canonical-dimensions, non-canonical-dimension) based on the CSSUnitType.
-Child makeNumeric(double, CSSUnitType);
+Child LEGACY_NODELETE makeNumeric(double, CSSUnitType);
 
 Sum add(Child&& a, Child&& b);
 Product multiply(Child&& a, Child&& b);
 Sum subtract(Child&& a, Child&& b);
 
-Child makeChildWithValueBasedOn(double value, const Number&);
-Child makeChildWithValueBasedOn(double value, const Percentage&);
-Child makeChildWithValueBasedOn(double value, const CanonicalDimension&);
-Child makeChildWithValueBasedOn(double value, const NonCanonicalDimension&);
+Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const Number&);
+Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const Percentage&);
+Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const CanonicalDimension&);
+Child LEGACY_NODELETE makeChildWithValueBasedOn(double value, const NonCanonicalDimension&);
 
 // MARK: Tuple Conformance
 

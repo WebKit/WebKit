@@ -41,10 +41,10 @@ class MutableStyleProperties final : public StyleProperties, public CanMakeCheck
 public:
     inline void deref() const;
 
-    static Ref<MutableStyleProperties> create(CSSParserMode);
-    WEBCORE_EXPORT static Ref<MutableStyleProperties> create();
+    static Ref<MutableStyleProperties> LEGACY_NODELETE create(CSSParserMode);
+    WEBCORE_EXPORT static Ref<MutableStyleProperties> LEGACY_NODELETE create();
     static Ref<MutableStyleProperties> create(Vector<CSSProperty>&&);
-    static Ref<MutableStyleProperties> createEmpty();
+    static Ref<MutableStyleProperties> LEGACY_NODELETE createEmpty();
 
     WEBCORE_EXPORT ~MutableStyleProperties();
 

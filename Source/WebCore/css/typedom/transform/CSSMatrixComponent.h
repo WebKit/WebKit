@@ -39,7 +39,7 @@ template<typename> class ExceptionOr;
 class CSSMatrixComponent : public CSSTransformComponent {
     WTF_MAKE_TZONE_ALLOCATED(CSSMatrixComponent);
 public:
-    static Ref<CSSMatrixComponent> create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
+    static Ref<CSSMatrixComponent> LEGACY_NODELETE create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
     static ExceptionOr<Ref<CSSMatrixComponent>> create(Ref<const CSSFunctionValue>, Document&);
 
     ~CSSMatrixComponent();

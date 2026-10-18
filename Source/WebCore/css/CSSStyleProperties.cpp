@@ -108,12 +108,12 @@ static PropertyNamePrefix propertyNamePrefix(const StringImpl& propertyName)
     return PropertyNamePrefix::None;
 }
 
-static inline void writeWebKitPrefix(std::span<char>& buffer)
+static inline void LEGACY_NODELETE writeWebKitPrefix(std::span<char>& buffer)
 {
     memcpySpan(consumeSpan(buffer, 8), "-webkit-"_span);
 }
 
-static inline void writeEpubPrefix(std::span<char>& buffer)
+static inline void LEGACY_NODELETE writeEpubPrefix(std::span<char>& buffer)
 {
     memcpySpan(consumeSpan(buffer, 6), "-epub-"_span);
 }

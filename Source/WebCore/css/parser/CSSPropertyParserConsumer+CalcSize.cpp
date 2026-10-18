@@ -43,7 +43,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static bool isValidBasisKeyword(CSSValueID keyword, CSSPropertyID property)
+static bool LEGACY_NODELETE isValidBasisKeyword(CSSValueID keyword, CSSPropertyID property)
 {
     switch (keyword) {
     case CSSValueID::Auto:

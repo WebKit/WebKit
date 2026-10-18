@@ -1711,7 +1711,7 @@ template<typename T> auto copyAndSimplify(const std::optional<T>& root, const Si
     return { };
 }
 
-template<Leaf Op> static auto copyAndSimplifyChildren(const Op& op, const SimplificationOptions&) -> Op
+template<Leaf Op> static Op LEGACY_NODELETE copyAndSimplifyChildren(const Op& op, const SimplificationOptions&)
 {
     return op;
 }

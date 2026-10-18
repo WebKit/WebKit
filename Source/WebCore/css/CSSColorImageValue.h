@@ -37,7 +37,7 @@ class Image;
 
 class CSSColorImageValue final : public CSSValue {
 public:
-    static Ref<CSSColorImageValue> create(CSS::Color&&);
+    static Ref<CSSColorImageValue> LEGACY_NODELETE create(CSS::Color&&);
     ~CSSColorImageValue();
 
     const CSS::Color& color() const LIFETIME_BOUND { return m_color; }

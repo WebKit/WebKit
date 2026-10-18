@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-static Ref<DeprecatedCSSOMPrimitiveValue> createWrapperForColorComponent(double number, CSSStyleDeclaration& owner)
+static Ref<DeprecatedCSSOMPrimitiveValue> LEGACY_NODELETE createWrapperForColorComponent(double number, CSSStyleDeclaration& owner)
 {
     return CSS::makeDeprecatedCSSOMPrimitiveValueForNumericRaw(CSS::NumberRaw<> { number }, owner);
 }

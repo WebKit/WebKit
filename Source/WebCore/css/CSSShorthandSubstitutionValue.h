@@ -42,7 +42,7 @@ namespace WebCore {
 // to extract individual longhand values.
 class CSSShorthandSubstitutionValue final : public CSSValue {
 public:
-    static Ref<CSSShorthandSubstitutionValue> create(CSSPropertyID shorthandPropertyId, Ref<CSSSubstitutionValue>&&);
+    static Ref<CSSShorthandSubstitutionValue> LEGACY_NODELETE create(CSSPropertyID shorthandPropertyId, Ref<CSSSubstitutionValue>&&);
 
     CSSSubstitutionValue& shorthandValue() const { return m_shorthandValue; }
     CSSPropertyID shorthandPropertyId() const { return m_shorthandPropertyId; }

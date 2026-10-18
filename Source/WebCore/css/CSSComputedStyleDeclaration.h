@@ -41,9 +41,9 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     enum class AllowVisited : bool { No, Yes };
-    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
-    static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
-    static Ref<CSSComputedStyleDeclaration> createEmpty(Element&);
+    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE create(Element&, AllowVisited);
+    static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE create(Element&, const std::optional<Style::PseudoElementIdentifier>&);
+    static Ref<CSSComputedStyleDeclaration> LEGACY_NODELETE createEmpty(Element&);
 
     WEBCORE_EXPORT virtual ~CSSComputedStyleDeclaration();
 

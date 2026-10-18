@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CSSCalcSizeValue final : public CSSValue {
 public:
-    static Ref<CSSCalcSizeValue> create(CSS::CalcSizeFunction&&);
+    static Ref<CSSCalcSizeValue> LEGACY_NODELETE create(CSS::CalcSizeFunction&&);
 
     const CSS::CalcSizeFunction& calcSize() const LIFETIME_BOUND { return m_calcSize; }
 

@@ -35,7 +35,7 @@ template<typename> class ExceptionOr;
 
 class CSSStyleSheetObservableArray : public JSC::ObservableArray {
 public:
-    static Ref<CSSStyleSheetObservableArray> create(ContainerNode& treeScope);
+    static Ref<CSSStyleSheetObservableArray> LEGACY_NODELETE create(ContainerNode& treeScope);
 
     ExceptionOr<void> setSheets(Vector<Ref<CSSStyleSheet>>&&);
     const Vector<Ref<CSSStyleSheet>>& sheets() const LIFETIME_BOUND { return m_sheets; }

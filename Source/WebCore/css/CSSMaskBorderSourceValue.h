@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSMaskBorderSourceValue final : public CSSValue {
 public:
-    static Ref<CSSMaskBorderSourceValue> create(CSS::MaskBorderSource&&);
+    static Ref<CSSMaskBorderSourceValue> LEGACY_NODELETE create(CSS::MaskBorderSource&&);
     ~CSSMaskBorderSourceValue();
 
     const CSS::MaskBorderSource& source() const LIFETIME_BOUND { return m_source; }

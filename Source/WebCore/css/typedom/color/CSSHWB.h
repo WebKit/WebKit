@@ -36,11 +36,11 @@ public:
 
     CSSNumericValue& LEGACY_NODELETE h() const;
     ExceptionOr<void> setH(Ref<CSSNumericValue>&&);
-    CSSNumberish w() const;
+    CSSNumberish LEGACY_NODELETE w() const;
     ExceptionOr<void> setW(CSSNumberish&&);
-    CSSNumberish b() const;
+    CSSNumberish LEGACY_NODELETE b() const;
     ExceptionOr<void> setB(CSSNumberish&&);
-    CSSNumberish alpha() const;
+    CSSNumberish LEGACY_NODELETE alpha() const;
     ExceptionOr<void> setAlpha(CSSNumberish&&);
 
 private:

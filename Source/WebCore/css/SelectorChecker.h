@@ -131,7 +131,7 @@ public:
     static void clearCompiledHasArgumentSelectors();
 
     // Takes the first simple selector of the compound. https://drafts.csswg.org/selectors-4/#featureless
-    static bool isCompoundSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector&);
+    static bool LEGACY_NODELETE isCompoundSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector&);
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector&, const StyleRuleScope* = nullptr);

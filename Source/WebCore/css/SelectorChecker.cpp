@@ -309,7 +309,7 @@ inline static bool hasScrollbarPseudoElement(EnumSet<PseudoElementType> collecte
     return collectedPseudoElements.contains(PseudoElementType::WebKitResizer);
 }
 
-static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
+static SelectorChecker::LocalContext LEGACY_NODELETE localContextForParent(const SelectorChecker::LocalContext& context)
 {
     SelectorChecker::LocalContext updatedContext(context);
     // Disable :visited matching when we see the first link.
@@ -335,7 +335,7 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
     return updatedContext;
 }
 
-static bool isScopeOnlyCompoundSelector(const CSSSelector& selector)
+static bool LEGACY_NODELETE isScopeOnlyCompoundSelector(const CSSSelector& selector)
 {
     if (selector.match() != CSSSelector::Match::PseudoClass || selector.precedingInComplexSelector())
         return false;
@@ -355,7 +355,7 @@ static bool isScopeOnlyCompoundSelector(const CSSSelector& selector)
 }
 
 // A document scoping root is not an element, so the ancestor traversal never reaches it.
-static bool matchesDocumentScopingRoot(const SelectorChecker::CheckingContext& checkingContext, const CSSSelector& selector, const ContainerNode* ancestor)
+static bool LEGACY_NODELETE matchesDocumentScopingRoot(const SelectorChecker::CheckingContext& checkingContext, const CSSSelector& selector, const ContainerNode* ancestor)
 {
     return is<Document>(checkingContext.scope)
         && ancestor == checkingContext.scope
@@ -832,7 +832,7 @@ static inline bool LEGACY_NODELETE tagMatches(const Element& element, const CSSS
 static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList*);
 
 // https://drafts.csswg.org/selectors-4/#featureless
-static bool isSimpleSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& selector)
+static bool LEGACY_NODELETE isSimpleSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& selector)
 {
     if (selector.match() == CSSSelector::Match::PseudoElement || selector.match() == CSSSelector::Match::HasScope)
         return true;
@@ -865,7 +865,7 @@ bool SelectorChecker::isCompoundSelectorAllowedToMatchFeaturelessShadowHost(cons
     return hasAllowedSimpleSelector;
 }
 
-static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList* selectorList)
+static bool LEGACY_NODELETE isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
         return false;
@@ -1566,7 +1566,7 @@ void SelectorChecker::clearCompiledHasArgumentSelectors()
 // FIXME(https://bugs.webkit.org/show_bug.cgi?id=313164): The JIT doesn't generate the full set
 // of style relations needed for :has() invalidation with adjacent/sibling combinators. Skip JIT
 // for argument selectors containing these, or functional pseudo-classes that may nest them.
-static bool canJITCompileHasArgument(const CSSSelector& selector)
+static bool LEGACY_NODELETE canJITCompileHasArgument(const CSSSelector& selector)
 {
     for (auto* current = &selector; current; current = current->precedingInComplexSelector()) {
         auto relation = current->relation();

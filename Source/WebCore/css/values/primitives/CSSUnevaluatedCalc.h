@@ -90,7 +90,7 @@ public:
     bool LEGACY_NODELETE rootNodeIsPercentage() const;
     bool LEGACY_NODELETE requiresConversionData() const;
 
-    bool canBeCastedTo(Category) const;
+    bool LEGACY_NODELETE canBeCastedTo(Category) const;
 
     WTF::String serializationForCSS(const SerializationContext&) const;
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;

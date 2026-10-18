@@ -34,7 +34,7 @@ class WeakPtrImplWithEventTargetData;
 
 class InlineStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<InlineStylePropertyMap> create(StyledElement&);
+    static Ref<InlineStylePropertyMap> LEGACY_NODELETE create(StyledElement&);
 
     Type type() const final { return Type::Inline; }
 

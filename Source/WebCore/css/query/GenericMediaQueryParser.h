@@ -54,7 +54,7 @@ struct FeatureParser {
 
     static AtomString consumeFeatureName(CSSParserTokenRange&);
     static std::optional<Value> consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange&, const CSSParserContext&);
-    static std::optional<ComparisonOperator> consumeRangeComparisonOperator(CSSParserTokenRange&);
+    static std::optional<ComparisonOperator> LEGACY_NODELETE consumeRangeComparisonOperator(CSSParserTokenRange&);
 
     static bool validateFeatureAgainstSchema(Feature&, const FeatureSchema&);
 };

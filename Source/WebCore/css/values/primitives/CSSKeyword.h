@@ -45,7 +45,7 @@ template<typename Keyword> concept SpecificKeyword = Detail::isSpecificKeyword<K
 
 // MARK: - Conversion
 
-template<> struct CSSValueCreation<Keyword> { Ref<CSSValue> operator()(CSSValuePool&, const Keyword&); };
+template<> struct CSSValueCreation<Keyword> { Ref<CSSValue> LEGACY_NODELETE operator()(CSSValuePool&, const Keyword&); };
 template<> struct DeprecatedCSSOMValueCreation<Keyword> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const Keyword&); };
 
 // MARK: - Serialization

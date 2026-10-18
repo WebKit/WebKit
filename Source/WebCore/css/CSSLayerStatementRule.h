@@ -37,7 +37,7 @@ class StyleRuleLayer;
 
 class CSSLayerStatementRule final : public CSSRule {
 public:
-    static Ref<CSSLayerStatementRule> create(StyleRuleLayer&, CSSStyleSheet* parent);
+    static Ref<CSSLayerStatementRule> LEGACY_NODELETE create(StyleRuleLayer&, CSSStyleSheet* parent);
     virtual ~CSSLayerStatementRule();
 
     String cssText() const final;

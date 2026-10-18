@@ -175,7 +175,7 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     }
 }
 
-static CSSPrimitiveValue* valueFromPool(std::span<AlignedStorage<CSSPrimitiveValue>> pool, double value)
+static CSSPrimitiveValue* LEGACY_NODELETE valueFromPool(std::span<AlignedStorage<CSSPrimitiveValue>> pool, double value)
 {
     // Casting to a signed integer first since casting a negative floating point value to an unsigned
     // integer is undefined behavior.

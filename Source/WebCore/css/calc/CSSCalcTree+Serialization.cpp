@@ -258,7 +258,7 @@ static Vector<ChildRepresentation, 16> generateSortedChildrenMap(const Children&
 // MARK: Math Function
 // https://drafts.csswg.org/css-values-4/#serialize-a-math-function
 
-static double clampValue(double value, CSS::Range range)
+static double LEGACY_NODELETE clampValue(double value, CSS::Range range)
 {
     value = std::isnan(value) ? 0 : value;
     return std::clamp(value, range.min, range.max);

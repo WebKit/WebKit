@@ -28,7 +28,7 @@ namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
 public:
-    static Ref<DeprecatedCSSOMRGBColor> create(const WebCore::Color&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMRGBColor> LEGACY_NODELETE create(const WebCore::Color&, CSSStyleDeclaration&);
 
     DeprecatedCSSOMPrimitiveValue& red() { return m_red; }
     DeprecatedCSSOMPrimitiveValue& green() { return m_green; }

@@ -36,7 +36,7 @@ struct ClipRect;
 
 class DeprecatedCSSOMRect final : public RefCounted<DeprecatedCSSOMRect> {
 public:
-    static Ref<DeprecatedCSSOMRect> create(const CSS::ClipRect&, CSSStyleDeclaration&);
+    static Ref<DeprecatedCSSOMRect> LEGACY_NODELETE create(const CSS::ClipRect&, CSSStyleDeclaration&);
 
     DeprecatedCSSOMPrimitiveValue& top() const { return m_top; }
     DeprecatedCSSOMPrimitiveValue& right() const { return m_right; }

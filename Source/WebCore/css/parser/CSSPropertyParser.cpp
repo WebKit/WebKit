@@ -155,7 +155,7 @@ CSSPropertyID cssPropertyID(StringView string)
 // MARK: - CSSValueID parsing
 
 // FIXME: Remove this mechanism entirely once we can do it without breaking the web.
-static bool isAppleLegacyCSSValueKeyword(std::span<const char> characters)
+static bool LEGACY_NODELETE isAppleLegacyCSSValueKeyword(std::span<const char> characters)
 {
     return spanHasPrefix(characters.subspan(1), "apple-"_span)
         && !spanHasPrefix(characters.subspan(7), "system"_span)

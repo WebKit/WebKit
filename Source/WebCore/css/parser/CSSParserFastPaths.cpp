@@ -286,7 +286,7 @@ static size_t LEGACY_NODELETE parseDouble(std::span<const CharacterType> string,
 }
 
 template <typename CharacterType>
-static std::optional<uint8_t> parseColorIntOrPercentage(std::span<const CharacterType>& string, std::optional<char> consumableTerminator, CSSUnitType& expectedUnitType)
+static std::optional<uint8_t> LEGACY_NODELETE parseColorIntOrPercentage(std::span<const CharacterType>& string, std::optional<char> consumableTerminator, CSSUnitType& expectedUnitType)
 {
     auto current = string;
     double localValue = 0;
@@ -368,7 +368,7 @@ static inline bool LEGACY_NODELETE isTenthAlpha(std::span<const CharacterType> s
 }
 
 template <typename CharacterType>
-static inline std::optional<uint8_t> parseRGBAlphaValue(std::span<const CharacterType>& string, char terminator)
+static inline std::optional<uint8_t> LEGACY_NODELETE parseRGBAlphaValue(std::span<const CharacterType>& string, char terminator)
 {
     skipWhile<isASCIIWhitespace>(string);
 

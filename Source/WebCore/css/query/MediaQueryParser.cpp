@@ -69,7 +69,7 @@ std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange r
     return MediaQuery { { }, { }, condition };
 }
 
-static size_t mediaQueryCount(const CSSParserTokenRange& range)
+static size_t LEGACY_NODELETE mediaQueryCount(const CSSParserTokenRange& range)
 {
     size_t commaCount = 0;
     unsigned nestingLevel = 0;

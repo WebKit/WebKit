@@ -64,7 +64,7 @@ private:
 
 class CSSCounterStyleRule final : public CSSRule {
 public:
-    static Ref<CSSCounterStyleRule> create(StyleRuleCounterStyle&, CSSStyleSheet*);
+    static Ref<CSSCounterStyleRule> LEGACY_NODELETE create(StyleRuleCounterStyle&, CSSStyleSheet*);
     virtual ~CSSCounterStyleRule();
 
     String cssText() const final;

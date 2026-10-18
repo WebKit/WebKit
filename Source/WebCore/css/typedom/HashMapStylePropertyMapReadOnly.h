@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HashMapStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<HashMapStylePropertyMapReadOnly> create(HashMap<AtomString, RefPtr<CSSValue>>&&);
+    static Ref<HashMapStylePropertyMapReadOnly> LEGACY_NODELETE create(HashMap<AtomString, RefPtr<CSSValue>>&&);
     ~HashMapStylePropertyMapReadOnly();
 
     Type type() const final { return Type::HashMap; }

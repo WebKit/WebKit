@@ -114,7 +114,7 @@ public:
 
     bool propertyIsImportant(CSSPropertyID) const;
     String getPropertyShorthand(CSSPropertyID) const;
-    bool isPropertyImplicit(CSSPropertyID) const;
+    bool LEGACY_NODELETE isPropertyImplicit(CSSPropertyID) const;
 
     RefPtr<CSSValue> getCustomPropertyCSSValue(const String& propertyName) const;
     String getCustomPropertyValue(const String& propertyName) const;

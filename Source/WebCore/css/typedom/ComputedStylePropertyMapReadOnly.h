@@ -36,7 +36,7 @@ class WeakPtrImplWithEventTargetData;
 
 class ComputedStylePropertyMapReadOnly final : public MainThreadStylePropertyMapReadOnly {
 public:
-    static Ref<ComputedStylePropertyMapReadOnly> create(Element&);
+    static Ref<ComputedStylePropertyMapReadOnly> LEGACY_NODELETE create(Element&);
 
     Type type() const final { return Type::Computed; }
     Element* elementConcurrently() const { return m_element; }

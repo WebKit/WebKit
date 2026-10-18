@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSFontStyleRangeValue final : public CSSValue {
 public:
-    static Ref<CSSFontStyleRangeValue> create(CSS::FontStyleRange&&);
+    static Ref<CSSFontStyleRangeValue> LEGACY_NODELETE create(CSS::FontStyleRange&&);
 
     const CSS::FontStyleRange& fontStyleRange() const LIFETIME_BOUND { return m_fontStyleRange; };
 

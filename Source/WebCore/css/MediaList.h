@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT ~MediaList();
 
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
-    WEBCORE_EXPORT unsigned length() const;
+    WEBCORE_EXPORT unsigned LEGACY_NODELETE length() const;
     WEBCORE_EXPORT String item(unsigned index) const;
     WEBCORE_EXPORT ExceptionOr<void> deleteMedium(const String& oldMedium);
     WEBCORE_EXPORT void appendMedium(const String& newMedium);

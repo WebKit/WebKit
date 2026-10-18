@@ -33,9 +33,9 @@ class CSSNumericArray : public RefCounted<CSSNumericArray> {
     WTF_MAKE_TZONE_ALLOCATED(CSSNumericArray);
 public:
     static Ref<CSSNumericArray> create(FixedVector<CSSNumberish>&&);
-    static Ref<CSSNumericArray> create(Vector<Ref<CSSNumericValue>>&&);
+    static Ref<CSSNumericArray> LEGACY_NODELETE create(Vector<Ref<CSSNumericValue>>&&);
     size_t length() const { return m_array.size(); };
-    RefPtr<CSSNumericValue> item(size_t index);
+    RefPtr<CSSNumericValue> LEGACY_NODELETE item(size_t index);
     bool isSupportedPropertyIndex(unsigned index) const { return index < m_array.size(); }
     const Vector<Ref<CSSNumericValue>>& array() const LIFETIME_BOUND { return m_array; }
     void forEach(Function<void(const CSSNumericValue&, bool first)>);

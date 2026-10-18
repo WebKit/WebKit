@@ -32,7 +32,7 @@ namespace WebCore {
 
 class CSSFontPaletteValue final : public CSSValue {
 public:
-    static Ref<CSSFontPaletteValue> create(CSS::FontPalette&&);
+    static Ref<CSSFontPaletteValue> LEGACY_NODELETE create(CSS::FontPalette&&);
 
     const CSS::FontPalette& fontPalette() const LIFETIME_BOUND { return m_fontPalette; }
 

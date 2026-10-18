@@ -31,12 +31,12 @@ namespace WebCore {
 
 class CSSGridAutoFlowValue final : public CSSValue {
 public:
-    static Ref<CSSGridAutoFlowValue> create(CSS::GridAutoFlow);
+    static Ref<CSSGridAutoFlowValue> LEGACY_NODELETE create(CSS::GridAutoFlow);
 
     const CSS::GridAutoFlow& autoFlow() const LIFETIME_BOUND { return m_autoFlow; }
 
     String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSGridAutoFlowValue&) const;
+    bool LEGACY_NODELETE equals(const CSSGridAutoFlowValue&) const;
 
     IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 

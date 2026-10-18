@@ -33,7 +33,7 @@ class StyleRuleFunction;
 
 class CSSFunctionRule final : public CSSGroupingRule {
 public:
-    static Ref<CSSFunctionRule> create(StyleRuleFunction&, CSSStyleSheet* parent);
+    static Ref<CSSFunctionRule> LEGACY_NODELETE create(StyleRuleFunction&, CSSStyleSheet* parent);
 
     struct FunctionParameter {
         String name;

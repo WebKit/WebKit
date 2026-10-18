@@ -250,7 +250,7 @@ static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSPa
 
 // "If each <style-range-value> from the range have the same type" — a unitless zero is treated as a
 // zero <length> when compared against a <length>.
-static bool styleRangeValuesShareCategory(std::initializer_list<const std::optional<StyleRangeValue>*> operands)
+static bool LEGACY_NODELETE styleRangeValuesShareCategory(std::initializer_list<const std::optional<StyleRangeValue>*> operands)
 {
     std::optional<StyleRangeCategory> category;
     bool hasUnitlessZero = false;
@@ -280,7 +280,7 @@ struct StyleFeatureSchema : public FeatureSchema {
     // The compared value needs the same registrations as the queried property, or a shadowed
     // registration compares a token stream against a typed value.
     // https://drafts.csswg.org/css-mixins/#resolve-function-styles
-    static const Style::LocalPropertyRegistry* localPropertyRegistry(const FeatureEvaluationContext& context)
+    static const Style::LocalPropertyRegistry* LEGACY_NODELETE localPropertyRegistry(const FeatureEvaluationContext& context)
     {
         // Both evaluators that reach a style() feature, container queries and if(), have a builder state.
         CheckedRef builderState = *context.conversionData.styleBuilderState();
