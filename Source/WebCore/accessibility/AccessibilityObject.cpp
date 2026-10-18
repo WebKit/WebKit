@@ -1476,13 +1476,14 @@ bool AccessibilityObject::isRangeControl() const
     }
 }
 
-static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange)
+static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange, bool isHorizontal)
 {
     LayoutRect ourRect = rect1;
     ourRect.unite(rect2);
 
     // If the rectangle spans lines and contains multiple text characters, use the range's bounding box intead.
-    if (rect1.maxY() != rect2.maxY() && characterCount(dataRange) > 1) {
+    bool spansLines = isHorizontal ? rect1.maxY() != rect2.maxY() : rect1.maxX() != rect2.maxX();
+    if (spansLines && characterCount(dataRange) > 1) {
         if (auto boundingBox = unionRect(RenderObject::absoluteTextRects(dataRange)); !boundingBox.isEmpty())
             ourRect = boundingBox;
     }
@@ -1500,8 +1501,11 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
     LayoutRect rect1 = range.start.absoluteCaretBounds();
     LayoutRect rect2 = range.end.absoluteCaretBounds();
 
+    CheckedPtr style = this->style();
+    bool isHorizontal = !style || style->writingMode().isHorizontal();
+
     // Readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds
-    if (rect2.y() != rect1.y()) {
+    if (isHorizontal ? rect2.y() != rect1.y() : rect2.x() != rect1.x()) {
         VisiblePosition endOfFirstLine = endOfLine(range.start);
         if (range.start == endOfFirstLine) {
             range.start.setAffinity(Affinity::Downstream);
@@ -1513,7 +1517,7 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
         }
     }
 
-    return boundsForRects(rect1, rect2, *makeSimpleRange(range));
+    return boundsForRects(rect1, rect2, *makeSimpleRange(range), isHorizontal);
 }
 
 IntRect AccessibilityObject::boundsForRange(const SimpleRange& range) const
@@ -1528,8 +1532,11 @@ IntRect AccessibilityObject::boundsForRange(const SimpleRange& range) const
     auto rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
     auto rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
 
+    CheckedPtr style = this->style();
+    bool isHorizontal = !style || style->writingMode().isHorizontal();
+
     // Readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds.
-    if (rect2.y() != rect1.y()) {
+    if (isHorizontal ? rect2.y() != rect1.y() : rect2.x() != rect1.x()) {
         auto endOfFirstLine = cache->endCharacterOffsetOfLine(start);
         if (start.isEqual(endOfFirstLine)) {
             start = cache->nextCharacterOffset(start, false);
@@ -1541,7 +1548,7 @@ IntRect AccessibilityObject::boundsForRange(const SimpleRange& range) const
         }
     }
 
-    return boundsForRects(rect1, rect2, range);
+    return boundsForRects(rect1, rect2, range, isHorizontal);
 }
 
 IntPoint AccessibilityObject::linkClickPoint()
