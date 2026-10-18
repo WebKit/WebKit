@@ -1695,6 +1695,18 @@ public:
     String getComputedLabel(Element&) const;
     String getComputedRole(Element&) const;
 
+    struct AccessibilityProperties {
+        String accessibilityId;
+        String role;
+        String label;
+        String checked;
+        String pressed;
+        String parent;
+        Vector<String> children;
+    };
+    ExceptionOr<AccessibilityProperties> getAccessibilityPropertiesForElement(Element&) const;
+    ExceptionOr<AccessibilityProperties> getAccessibilityPropertiesForAccessibilityNode(const String& accessibilityId) const;
+
 
     struct PDFAnnotationRect {
         float x;

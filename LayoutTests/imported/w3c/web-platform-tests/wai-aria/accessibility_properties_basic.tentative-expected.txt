@@ -1,0 +1,6 @@
+
+
+PASS ARIA checkbox with aria-checked true
+PASS HTML checkbox with checked true
+PASS tablist subtree
+
