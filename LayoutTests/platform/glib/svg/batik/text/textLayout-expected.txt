@@ -222,12 +222,12 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (40,427) size 350x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 350x16
             chunk 1 text run 1 at (40.00,440.00) startOffset 0 endOffset 6 width 47.00: "Narrow"
-            chunk 1 text run 1 at (87.00,440.00) startOffset 0 endOffset 1 width 4.00: " "
-            chunk 1 text run 2 at (86.00,440.00) startOffset 1 endOffset 11 width 64.00: "separation"
-            chunk 1 text run 1 at (150.00,440.00) startOffset 0 endOffset 1 width 4.00: " "
-            chunk 1 text run 2 at (149.00,440.00) startOffset 1 endOffset 8 width 52.00: "between"
-            chunk 1 text run 1 at (201.00,440.00) startOffset 0 endOffset 1 width 4.00: " "
-            chunk 1 text run 2 at (200.00,440.00) startOffset 1 endOffset 6 width 38.00: "words"
+            chunk 1 text run 1 at (123.08,440.00) startOffset 0 endOffset 1 width 4.00: " "
+            chunk 1 text run 2 at (121.31,440.00) startOffset 1 endOffset 11 width 64.00: "separation"
+            chunk 1 text run 1 at (234.44,440.00) startOffset 0 endOffset 1 width 4.00: " "
+            chunk 1 text run 2 at (232.68,440.00) startOffset 1 endOffset 8 width 52.00: "between"
+            chunk 1 text run 1 at (324.60,440.00) startOffset 0 endOffset 1 width 4.00: " "
+            chunk 1 text run 2 at (322.83,440.00) startOffset 1 endOffset 6 width 38.00: "words"
         RenderSVGText {text} at (40,448) size 239x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 239x9
             chunk 1 text run 1 at (40.00,455.00) startOffset 0 endOffset 66 width 239.00: "textLength=\"350\" lengthAdjust=\"spacingAndGlyphs\" word-spacing=\"-5\""

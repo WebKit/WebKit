@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (33,9) size 85x31
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (0,-15) size 45x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 45x18
+      RenderSVGText {text} at (0,-15) size 46x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 46x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 7 width 45.00: "Failure"
       RenderSVGText {text} at (0,-15) size 51x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 51x18

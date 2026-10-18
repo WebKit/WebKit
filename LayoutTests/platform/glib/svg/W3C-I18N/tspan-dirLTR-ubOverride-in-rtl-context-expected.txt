@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
             chunk 1 (middle anchor) text run 1 at (80.97,150.00) startOffset 0 endOffset 25 width 197.86: "dirLTR ubOverride, \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
         RenderSVGInlineText {#text} at (0,0) size 12x20
           chunk 1 (middle anchor) text run 1 at (69.57,150.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"
-      RenderSVGText {text} at (20,171) size 84x12 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 84x12
+      RenderSVGText {text} at (20,171) size 85x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 85x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 84.00: "Reference graphic:"
       RenderSVGImage {image} at (100,300) size 584x65
     RenderSVGContainer {g} at (16,557) size 76x12

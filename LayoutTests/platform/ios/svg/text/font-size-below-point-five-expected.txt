@@ -27,10 +27,10 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (24,13) size 1x1
           chunk 1 text run 1 at (34.75,10.00) startOffset 0 endOffset 1 width 0.25: "5"
       RenderSVGInlineText {#text} at (24,0) size 4x18
-        chunk 1 text run 1 at (34.99,10.00) startOffset 0 endOffset 1 width 4.00: " "
+        chunk 1 text run 1 at (35.00,10.00) startOffset 0 endOffset 1 width 4.00: " "
       RenderSVGTSpan {tspan} at (28,14) size 2x1
         RenderSVGInlineText {#text} at (28,14) size 1x1
-          chunk 1 text run 1 at (38.99,10.00) startOffset 0 endOffset 1 width 0.05: "6"
+          chunk 1 text run 1 at (39.00,10.00) startOffset 0 endOffset 1 width 0.05: "6"
     RenderSVGText {text} at (64,42) size 122x10 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 121x9
         chunk 1 (middle anchor) text run 1 at (64.90,50.00) startOffset 0 endOffset 36 width 120.20: "Font size should decrease monotonic."

@@ -63,13 +63,14 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,9) size 95x10
           RenderSVGInlineText {#text} at (0,9) size 95x9
             chunk 1 text run 1 at (120.00,224.60) startOffset 0 endOffset 19 width 95.00: "xml:space=\"default\""
-      RenderSVGText {text} at (10,230) size 86x25 contains 1 chunk(s)
+      RenderSVGText {text} at (10,230) size 98x25 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 12x25
           chunk 1 text run 1 at (10.00,250.00) startOffset 0 endOffset 1 width 12.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 0x0
-          RenderSVGInlineText {#text} at (-10,-230) size 0x0
-        RenderSVGInlineText {#text} at (12,0) size 74x25
-          chunk 1 text run 1 at (22.00,250.00) startOffset 0 endOffset 6 width 74.00: "X  X  "
+        RenderSVGTSpan {tspan} at (12,0) size 12x25
+          RenderSVGInlineText {#text} at (12,0) size 12x25
+            chunk 1 text run 1 at (22.00,250.00) startOffset 0 endOffset 1 width 12.00: " "
+        RenderSVGInlineText {#text} at (24,0) size 74x25
+          chunk 1 text run 1 at (34.00,250.00) startOffset 0 endOffset 6 width 74.00: "X  X  "
       RenderSVGText {text} at (120,233) size 95x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x9
           chunk 1 text run 1 at (120.00,240.00) startOffset 0 endOffset 17 width 85.00: "tspan near start "
@@ -90,13 +91,14 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,9) size 95x10
           RenderSVGInlineText {#text} at (0,9) size 95x9
             chunk 1 text run 1 at (120.00,274.60) startOffset 0 endOffset 19 width 95.00: "xml:space=\"default\""
-      RenderSVGText {text} at (10,280) size 86x25 contains 1 chunk(s)
+      RenderSVGText {text} at (10,280) size 98x25 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 49x25
           chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 4 width 49.00: "  X "
-        RenderSVGTSpan {tspan} at (0,0) size 0x0
-          RenderSVGInlineText {#text} at (-10,-280) size 0x0
-        RenderSVGInlineText {#text} at (49,0) size 37x25
-          chunk 1 text run 1 at (59.00,300.00) startOffset 0 endOffset 3 width 37.00: "X  "
+        RenderSVGTSpan {tspan} at (49,0) size 12x25
+          RenderSVGInlineText {#text} at (49,0) size 12x25
+            chunk 1 text run 1 at (59.00,300.00) startOffset 0 endOffset 1 width 12.00: " "
+        RenderSVGInlineText {#text} at (61,0) size 37x25
+          chunk 1 text run 1 at (71.00,300.00) startOffset 0 endOffset 3 width 37.00: "X  "
       RenderSVGText {text} at (120,283) size 95x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x9
           chunk 1 text run 1 at (120.00,290.00) startOffset 0 endOffset 17 width 85.00: "tspan middle end "
@@ -179,13 +181,13 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,9) size 100x10
           RenderSVGInlineText {#text} at (0,9) size 100x9
             chunk 1 text run 1 at (345.00,199.60) startOffset 0 endOffset 20 width 100.00: "xml:space=\"preserve\""
-      RenderSVGText {text} at (235,205) size 50x25 contains 1 chunk(s)
+      RenderSVGText {text} at (235,205) size 62x25 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 12x25
           RenderSVGInlineText {#text} at (0,0) size 12x25
             chunk 1 text run 1 at (235.00,225.00) startOffset 0 endOffset 1 width 12.00: " "
-        RenderSVGInlineText {#text} at (12,0) size 38x25
-          chunk 1 text run 1 at (247.00,225.00) startOffset 1 endOffset 3 width 25.00: "X "
-          chunk 1 text run 1 at (272.00,225.00) startOffset 0 endOffset 1 width 13.00: "X"
+        RenderSVGInlineText {#text} at (12,0) size 50x25
+          chunk 1 text run 1 at (247.00,225.00) startOffset 0 endOffset 3 width 37.00: " X "
+          chunk 1 text run 1 at (284.00,225.00) startOffset 0 endOffset 1 width 13.00: "X"
       RenderSVGText {text} at (345,208) size 100x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 60x9
           chunk 1 text run 1 at (345.00,215.00) startOffset 0 endOffset 12 width 60.00: "tspan start "
@@ -205,14 +207,14 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,9) size 100x10
           RenderSVGInlineText {#text} at (0,9) size 100x9
             chunk 1 text run 1 at (345.00,249.60) startOffset 0 endOffset 20 width 100.00: "xml:space=\"preserve\""
-      RenderSVGText {text} at (235,255) size 38x25 contains 1 chunk(s)
+      RenderSVGText {text} at (235,255) size 50x25 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 13x25
           chunk 1 text run 1 at (235.00,275.00) startOffset 0 endOffset 1 width 13.00: "X"
         RenderSVGTSpan {tspan} at (13,0) size 12x25
           RenderSVGInlineText {#text} at (13,0) size 12x25
             chunk 1 text run 1 at (248.00,275.00) startOffset 0 endOffset 1 width 12.00: " "
-        RenderSVGInlineText {#text} at (25,0) size 13x25
-          chunk 1 text run 1 at (260.00,275.00) startOffset 1 endOffset 2 width 13.00: "X"
+        RenderSVGInlineText {#text} at (25,0) size 25x25
+          chunk 1 text run 1 at (260.00,275.00) startOffset 0 endOffset 2 width 25.00: " X"
       RenderSVGText {text} at (345,258) size 100x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 95x9
           chunk 1 text run 1 at (345.00,265.00) startOffset 0 endOffset 19 width 95.00: "tspan middle front "
