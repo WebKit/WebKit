@@ -344,8 +344,7 @@ protected:
 
     void crashIfBorrowed() const
     {
-        // FIXME: Switch to RELEASE_ASSERT once we have more experience and stability.
-        ASSERT(!m_isBorrowed);
+        RELEASE_ASSERT(!m_isBorrowed);
     }
 };
 
