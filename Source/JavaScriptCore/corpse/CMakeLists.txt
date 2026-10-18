@@ -23,6 +23,10 @@ set(JavaScriptCoreTools_FRAMEWORKS
     bmalloc
 )
 
+if (TARGET LLDB::LLDB)
+    list(APPEND JavaScriptCoreTools_LIBRARIES LLDB::LLDB)
+endif ()
+
 WEBKIT_LIBRARY_DECLARE(JavaScriptCoreTools)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -31,3 +35,8 @@ WEBKIT_LIBRARY(JavaScriptCoreTools)
 
 # The corpse sources use JavaScriptCore's generated headers.
 add_dependencies(JavaScriptCoreTools JavaScriptCore)
+
+# This keeps MYA fast even when we need debug info.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(JavaScriptCoreTools PRIVATE -O2)
+endif ()
