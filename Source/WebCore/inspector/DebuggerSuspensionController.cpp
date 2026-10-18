@@ -47,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DebuggerSuspensionController);
 static bool s_isFrameDebuggerPaused;
 
 // The paused frame may be detached by the time the pause ends, so remember its page and identifier for the end-of-pause notification.
-static WeakPtr<Page>& pausedPage()
+static WeakPtr<Page>& LEGACY_NODELETE pausedPage()
 {
     static NeverDestroyed<WeakPtr<Page>> page;
     return page;

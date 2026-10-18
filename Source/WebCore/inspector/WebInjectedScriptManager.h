@@ -40,7 +40,7 @@ class WebInjectedScriptManager final : public Inspector::InjectedScriptManager, 
     WTF_MAKE_TZONE_ALLOCATED(WebInjectedScriptManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebInjectedScriptManager);
 public:
-    static Ref<WebInjectedScriptManager> create(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
+    static Ref<WebInjectedScriptManager> LEGACY_NODELETE create(Inspector::InspectorEnvironment&, Ref<Inspector::InjectedScriptHost>&&);
 
     ~WebInjectedScriptManager() final;
 

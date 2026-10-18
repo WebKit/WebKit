@@ -144,7 +144,7 @@ public:
     void didRemoveDOMNode(Node&);
     void frameOwnerContentFrameChanged(HTMLFrameOwnerElement&);
     void willDestroyDOMNode(Node&);
-    void willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
+    void LEGACY_NODELETE willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue);
     void didModifyDOMAttr(Element&, const AtomString& name, const AtomString& value);
     void didRemoveDOMAttr(Element&, const AtomString& name);
     void characterDataModified(CharacterData&);

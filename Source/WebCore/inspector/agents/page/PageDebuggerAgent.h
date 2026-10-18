@@ -66,8 +66,8 @@ public:
     // InspectorInstrumentation
     void didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&);
     void mainFrameStartedLoading();
-    void mainFrameStoppedLoading();
-    void mainFrameNavigated();
+    void LEGACY_NODELETE mainFrameStoppedLoading();
+    void LEGACY_NODELETE mainFrameNavigated();
 
 private:
     void internalEnable();

@@ -100,7 +100,7 @@ public:
     static String toErrorString(ExceptionCode);
     static String toErrorString(Exception&&);
 
-    static String documentURLString(Document*);
+    static String LEGACY_NODELETE documentURLString(Document*);
     static String documentBaseURLString(Document*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
@@ -108,7 +108,7 @@ public:
     static Node* LEGACY_NODELETE innerFirstChild(Node*);
     static Node* LEGACY_NODELETE innerNextSibling(Node*);
     static Node* LEGACY_NODELETE innerPreviousSibling(Node*);
-    static unsigned innerChildNodeCount(Node*);
+    static unsigned LEGACY_NODELETE innerChildNodeCount(Node*);
     static Node* LEGACY_NODELETE innerParentNode(Node*);
 
     static Node* scriptValueAsNode(JSC::JSValue);

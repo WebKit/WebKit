@@ -169,8 +169,8 @@ class WEBCORE_EXPORT InstrumentingAgents : public WTF::RefCountedAndCanMakeWeakP
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
     WTF_MAKE_TZONE_ALLOCATED(InstrumentingAgents);
 public:
-    static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&);
-    static Ref<InstrumentingAgents> create(Inspector::InspectorEnvironment&, InstrumentingAgents& fallbackAgents);
+    static Ref<InstrumentingAgents> LEGACY_NODELETE create(Inspector::InspectorEnvironment&);
+    static Ref<InstrumentingAgents> LEGACY_NODELETE create(Inspector::InspectorEnvironment&, InstrumentingAgents& fallbackAgents);
 
     ~InstrumentingAgents();
     void reset();

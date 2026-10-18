@@ -161,7 +161,7 @@ void PageDOMDebuggerAgent::frameDocumentUpdated(LocalFrame& frame)
 }
 
 
-static std::optional<size_t> calculateDistance(Node& child, Node& ancestor)
+static std::optional<size_t> LEGACY_NODELETE calculateDistance(Node& child, Node& ancestor)
 {
     size_t distance = 0;
 

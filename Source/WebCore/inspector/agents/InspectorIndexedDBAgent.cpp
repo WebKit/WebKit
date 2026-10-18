@@ -94,7 +94,7 @@ private:
 
 class OpenDatabaseCallback final : public EventListener {
 public:
-    static Ref<OpenDatabaseCallback> create(ExecutableWithDatabase& executableWithDatabase)
+    static Ref<OpenDatabaseCallback> LEGACY_NODELETE create(ExecutableWithDatabase& executableWithDatabase)
     {
         return adoptRef(*new OpenDatabaseCallback(executableWithDatabase));
     }
@@ -195,7 +195,7 @@ static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, cons
 
 class DatabaseLoader final : public ExecutableWithDatabase {
 public:
-    static Ref<DatabaseLoader> create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
+    static Ref<DatabaseLoader> LEGACY_NODELETE create(ScriptExecutionContext* context, Ref<IndexedDBBackendDispatcherHandler::RequestDatabaseCallback>&& requestCallback)
     {
         return adoptRef(*new DatabaseLoader(context, WTF::move(requestCallback)));
     }
@@ -679,7 +679,7 @@ private:
 
 class ClearObjectStore final : public ExecutableWithDatabase {
 public:
-    static Ref<ClearObjectStore> create(ScriptExecutionContext* context, const String& objectStoreName, Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
+    static Ref<ClearObjectStore> LEGACY_NODELETE create(ScriptExecutionContext* context, const String& objectStoreName, Ref<IndexedDBBackendDispatcherHandler::ClearObjectStoreCallback>&& requestCallback)
     {
         return adoptRef(*new ClearObjectStore(context, objectStoreName, WTF::move(requestCallback)));
     }

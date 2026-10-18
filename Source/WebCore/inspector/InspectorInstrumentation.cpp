@@ -103,7 +103,7 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static HashSet<InstrumentingAgents*>& instrumentingAgentsSet()
+static HashSet<InstrumentingAgents*>& LEGACY_NODELETE instrumentingAgentsSet()
 {
     static NeverDestroyed<HashSet<InstrumentingAgents*>> set;
     return set;

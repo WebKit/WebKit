@@ -90,7 +90,7 @@ public:
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
 
     // True when this frame's own overlay holds the highlight state, not the page overlay.
-    WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
+    WEBCORE_EXPORT bool LEGACY_NODELETE hasOverlayContentToDraw() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
@@ -104,7 +104,7 @@ public:
 
     // Unlike debugger(), this is null while the frame's debugger exists but nothing is debugging
     // the frame yet. Callers that hand the debugger to a global object need this narrower answer.
-    JSC::Debugger* attachedDebugger() const;
+    JSC::Debugger* LEGACY_NODELETE attachedDebugger() const;
 
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;

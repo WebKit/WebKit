@@ -47,7 +47,7 @@ public:
 
 private:
     bool LEGACY_NODELETE checkEquals(const String&, const String&);
-    bool checkContains(const String&, const String&);
+    bool LEGACY_NODELETE checkContains(const String&, const String&);
     bool LEGACY_NODELETE checkStartsWith(const String&, const String&);
     bool LEGACY_NODELETE checkEndsWith(const String&, const String&);
 

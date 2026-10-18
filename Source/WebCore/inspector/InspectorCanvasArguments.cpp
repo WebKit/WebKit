@@ -302,7 +302,7 @@ static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURend
     return object;
 }
 
-static std::optional<InspectorCanvasProcessedArgument> processJSON(Ref<JSON::Value>&& valueIndex, RecordingSwizzleType swizzleType = RecordingSwizzleType::JSON)
+static std::optional<InspectorCanvasProcessedArgument> LEGACY_NODELETE processJSON(Ref<JSON::Value>&& valueIndex, RecordingSwizzleType swizzleType = RecordingSwizzleType::JSON)
 {
     return { { WTF::move(valueIndex), swizzleType } };
 }

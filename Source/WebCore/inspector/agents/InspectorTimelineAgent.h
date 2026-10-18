@@ -197,7 +197,7 @@ private:
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
 
-    bool shouldNestUnder(TimelineRecordType type, TimelineRecordType previousType) const;
+    bool LEGACY_NODELETE shouldNestUnder(TimelineRecordType type, TimelineRecordType previousType) const;
 
     void addRecordToTimeline(Ref<JSON::Object>&&, TimelineRecordType);
 

@@ -81,7 +81,7 @@ static const float minimumAttachedInspectedWidth = 320.0f;
 class InspectorBackendDispatchTask : public RefCounted<InspectorBackendDispatchTask> {
     WTF_MAKE_TZONE_ALLOCATED(InspectorBackendDispatchTask);
 public:
-    static Ref<InspectorBackendDispatchTask> create(PageInspectorController* inspectedPageController, InspectorFrontendClientLocal::DispatchBackendTarget dispatchTarget)
+    static Ref<InspectorBackendDispatchTask> LEGACY_NODELETE create(PageInspectorController* inspectedPageController, InspectorFrontendClientLocal::DispatchBackendTarget dispatchTarget)
     {
         return adoptRef(*new InspectorBackendDispatchTask(inspectedPageController, dispatchTarget));
     }

@@ -218,7 +218,7 @@ private:
 
 class EventFiredCallback final : public EventListener {
 public:
-    static Ref<EventFiredCallback> create(InspectorDOMAgent& domAgent)
+    static Ref<EventFiredCallback> LEGACY_NODELETE create(InspectorDOMAgent& domAgent)
     {
         return adoptRef(*new EventFiredCallback(domAgent));
     }

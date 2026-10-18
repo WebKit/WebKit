@@ -87,7 +87,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameCSSAgent);
 
-static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoElementType(PseudoElementType pseudoElementType)
+static std::optional<Inspector::Protocol::CSS::PseudoId> LEGACY_NODELETE protocolValueForPseudoElementType(PseudoElementType pseudoElementType)
 {
     switch (pseudoElementType) {
     case PseudoElementType::FirstLine:

@@ -288,7 +288,7 @@ private:
     bool isFrameScoped() const { return !!m_owner->overlayOwnerFrame(); }
 
     // Single answer to "are rulers being drawn", so the guide lines and tooltip insets agree.
-    bool shouldDrawRulers() const;
+    bool LEGACY_NODELETE shouldDrawRulers() const;
 
     const CheckedRef<const InspectorOverlayOwner> m_owner;
 

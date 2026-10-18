@@ -156,7 +156,7 @@ struct InspectorStyleProperty {
 
 class InspectorStyle final : public RefCounted<InspectorStyle> {
 public:
-    static Ref<InspectorStyle> create(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
+    static Ref<InspectorStyle> LEGACY_NODELETE create(const InspectorCSSId& styleId, Ref<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
     ~InspectorStyle();
 
     CSSStyleDeclaration& cssStyle() const { return m_style.get(); }
@@ -191,7 +191,7 @@ public:
 
     using StyleDeclarationOrCSSRule = Variant<CSSStyleDeclaration*, CSSRule*>;
 
-    static Ref<InspectorStyleSheet> create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
+    static Ref<InspectorStyleSheet> LEGACY_NODELETE create(Inspector::IdentifierRegistry&, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin, const String& documentURL, Listener*);
     static String LEGACY_NODELETE styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
     virtual ~InspectorStyleSheet();

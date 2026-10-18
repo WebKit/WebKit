@@ -65,14 +65,14 @@ template<typename> struct InspectorCanvasArgumentProcessor;
 
 class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas> {
 public:
-    static Ref<InspectorCanvas> create(CanvasRenderingContext&);
-    static Ref<InspectorCanvas> create(GPUDevice&);
+    static Ref<InspectorCanvas> LEGACY_NODELETE create(CanvasRenderingContext&);
+    static Ref<InspectorCanvas> LEGACY_NODELETE create(GPUDevice&);
     ~InspectorCanvas();
 
     const String& identifier() const LIFETIME_BOUND { return m_identifier; }
 
-    CanvasRenderingContext* canvasContext() const;
-    GPUDevice* deviceContext() const;
+    CanvasRenderingContext* LEGACY_NODELETE canvasContext() const;
+    GPUDevice* LEGACY_NODELETE deviceContext() const;
 
     HashSet<HTMLCanvasElement*> canvasElements() const;
 
@@ -106,11 +106,11 @@ public:
 
     void setRecordingName(const String& name) { m_recordingName = name; }
 
-    void setBufferLimit(long);
+    void LEGACY_NODELETE setBufferLimit(long);
     bool LEGACY_NODELETE hasBufferSpace() const;
     long bufferUsed() const { return m_bufferUsed; }
 
-    void setFrameCount(long);
+    void LEGACY_NODELETE setFrameCount(long);
     bool LEGACY_NODELETE overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);

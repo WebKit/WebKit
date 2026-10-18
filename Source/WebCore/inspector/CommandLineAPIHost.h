@@ -55,7 +55,7 @@ struct EventListenerInfo;
 
 class CommandLineAPIHost : public RefCounted<CommandLineAPIHost> {
 public:
-    static Ref<CommandLineAPIHost> create();
+    static Ref<CommandLineAPIHost> LEGACY_NODELETE create();
     ~CommandLineAPIHost() = default;
 
     void copyText(const String& text);
